@@ -1,2 +1,193 @@
-# panther-cli
-Write Panther Policies and Rules with a Developer Workflow
+# Panther CLI Tool
+`panther-cli` is a Python command line interface for testing and packaging Panther Policies and Rules. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data.
+
+## Installation
+
+Setup your environment:
+
+```bash
+$ make venv
+$ source venv/bin/activate
+$ make deps
+```
+
+Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) to install `panther-cli`.
+
+```bash
+pip install -e .
+```
+
+## Writing Policies
+
+Each Panther Policy consists of a Python body and a YAML or JSON specification file.
+
+In the Python body, returning a value of `True` indicates the resource being evaluated is compliant. Returning a value of `False` indicates the resource is non-compliant, and an alert may be sent or an auto-remediation may be performed as a result.
+
+The specification file defines the attributes of the Policy. This includes settings such as `Enabled`, `Severity`, and `ResourceTypes`, as well as metadata such as `DisplayName`, `Tags`, and `Runbook`. See the [Writing Local Policies](https://docs.runpanther.io/policies/writing-local) documentation for more details on what fields may be present, and how they are configured. 
+
+`example_policy.py`
+```python
+def policy(resource):
+  return True
+```
+
+`example_policy.yml`
+```yaml
+AnalysisType: policy
+Enabled: true
+Filename: example_policy.py
+PolicyID: Example.Policy.01
+ResourceTypes:
+  - Resource.Type.Here
+Severity: Low
+DisplayName: Example Policy to Check the Format of the Spec
+Tags:
+  - Tags
+  - Go
+  - Here
+Runbook: Find out who changed the spec format.
+Reference: https://www.link-to-info.io
+Tests:
+  -
+    Name: Name to describe our first test.
+    Schema: Resource.Type.Here
+    ExpectedResult: true/false
+    Resource:
+      Key: Values
+      For: Our Resource
+      Based: On the Schema
+```
+
+The requirements for the Policy body and specification files are listed below.
+
+The Python body MUST:
+  - Be valid Python3
+  - Define a function `policy` that accepts one argument
+  - Return a `bool` from the `policy` function
+
+The Python body SHOULD:
+  - Name the argument to the `policy` function `resource`
+
+The Python body MAY:
+  - Import standard Python3 libraries
+  - Define additional helper functions as needed
+  - Define variables and classes outside the scope of the `policy` function
+
+The specification file MUST:
+  - Be valid JSON/YAML
+  - Define an `AnalysisType` field with the value `policy`
+  - Define the additional following fields:
+    - Enabled
+    - FileName
+    - PolicyID
+    - ResourceTypes
+    - Severity 
+
+## Writing Rules
+
+Rules are very similar to Policies, and require a similar Python body and JSON or YAML specification file as Policies require.
+
+One very important distinction between Policies and Rules is the meaning of the return value. For Rules, returning a value of `False` indicates that the event being evaluated should not be alerted on. Returning a value of `True` indicates that the event is suspicious, and an alert may be sent or an auto-remediation may be performed as a result.
+
+`example_rule.py`
+```python
+def rule(event):
+  return False
+```
+
+`example_rule.yml`
+```yaml
+AnalysisType: rule 
+Enabled: true
+Filename: example_rule.py
+PolicyID: Example.Rule.01
+ResourceTypes:
+  - Log.Type.Here
+Severity: Low
+DisplayName: Example Rule to Check the Format of the Spec
+Tags:
+  - Tags
+  - Go
+  - Here
+Runbook: Find out who changed the spec format.
+Reference: https://www.link-to-info.io
+Tests:
+  -
+    Name: Name to describe our first test.
+    ResourceType: Log.Type.Here
+    ExpectedResult: true/false
+    Resource:
+      Key: Values
+      For: Our Log
+      Based: On the Schema
+```
+
+The requirements for the Rule body and specification files are listed below.
+
+The Python body MUST:
+  - Be valid Python3
+  - Define a function `rule` that accepts one argument
+  - Return a `bool` from the `rule` function
+
+The Python body SHOULD:
+  - Name the argument to the `rule` function `event`
+
+The Python body MAY:
+  - Import standard Python3 libraries
+  - Define additional helper functions as needed
+  - Define variables and classes outside the scope of the `rule` function
+
+The specification file MUST:
+  - Be valid JSON/YAML
+  - Define an `AnalysisType` field with the value `rule`
+  - Define the additional following fields:
+    - Enabled
+    - FileName
+    - PolicyID
+    - ResourceTypes
+    - Severity 
+
+## Commands and Usage
+
+```bash
+$ panther-cli --help
+
+usage: panther-cli [-h] {test,zip} ...
+
+Panther CLI
+
+positional arguments:
+  {test,zip}
+    test      Validate policy specifications and run policy tests.
+    zip       Create an archive of local Policies for uploading to Panther.
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+$ panther-cli test --policies tests/fixtures/valid_policies/
+
+[INFO]: Testing Policies in tests/fixtures/valid_policies/
+
+Testing policy 'AWS.IAM.MFAEnabled'
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+$ panther-cli zip --policies tests/fixtures/valid_policies/ --output-path tmp
+
+[INFO]: Testing Policies in tests/fixtures/valid_policies/
+
+Testing policy 'AWS.IAM.MFAEnabled'
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
+[INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
+```
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)

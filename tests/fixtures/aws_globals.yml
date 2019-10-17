@@ -1,0 +1,17 @@
+AnalysisType: policy
+Filename: aws_globals.py
+PolicyID: aws_globals
+Enabled: true
+ResourceTypes:
+  - AWS.Dummy.Type
+Tags:
+  - AWS
+Severity: Info
+Description: >
+  Used to define global helpers and variables.
+Tests:
+  -
+    Name: Dummy Test
+    ExpectedResult: true
+    ResourceType: AWS.Dummy.Type
+    Resource: {}
