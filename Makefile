@@ -28,7 +28,7 @@ install:
 	pipenv install
 
 unit:
-	nosetests -v
+	pipenv run nosetests -v
 
 integration:
 	panther-cli test --policies tests/fixtures/valid_policies/
