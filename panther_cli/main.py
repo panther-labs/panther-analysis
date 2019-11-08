@@ -59,6 +59,7 @@ SPEC_SCHEMA = Schema(
             str,
         Optional('Runbook'):
             str,
+        Optional('Suppressions'): [str],
         Optional('Tags'): [str],
         Optional('Tests'): [{
             'Name': str,
