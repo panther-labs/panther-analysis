@@ -83,6 +83,17 @@ The specification file MUST:
     - ResourceTypes
     - Severity 
 
+## Included Policies
+
+We include the following policy bundles:
+
+  - CIS
+    - These policies cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 1.x, 2.x, and 4.x. These policies can help an organization check compliance with CIS recommended best practices.
+  - Managed
+    - These policies cover many of the similar concerns as the AWS Config Managed rules. These policies can help an organization meet baseline good practice configurations as recommended by AWS.
+  - S3
+    - These policies cover S3 security configurations in general. These policies can help an organization ensure best security practices are in use with regards to their S3 buckets.
+
 ## Writing Rules
 
 Rules are very similar to Policies, and require a similar Python body and JSON or YAML specification file as Policies require.
@@ -146,6 +157,17 @@ The specification file MUST:
     - PolicyID
     - ResourceTypes
     - Severity 
+
+## Included Rules
+
+We include the following rule bundles:
+
+  - CIS
+    - These rules monitor CloudTrail log data and cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 3.x. These rules can help an organization ensure compliance with CIS recommended best practices.
+  - S3 Access Logs
+    - These rules monitor S3 access logs, and can serve as examples for additional S3 access log related rules
+  - VPC Flow Logs
+    - These rules monitor VPC Flow Logs, and can serve as examples for additional VPC flow log related rules.
 
 ## Commands and Usage
 
