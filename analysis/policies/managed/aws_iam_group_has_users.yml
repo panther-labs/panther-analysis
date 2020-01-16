@@ -1,0 +1,56 @@
+AnalysisType: policy
+Filename: aws_iam_group_has_users.py
+PolicyID: AWS.IAM.Group.HasUsers
+DisplayName: AWS IAM Group Has Users
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.Group
+Tags:
+  - AWS
+  - AWS Managed Rules
+  - Security, Identity & Compliance
+Severity: Low
+Description: >
+  This Policy ensures that all IAM groups have at least one IAM user. If they are vacant,
+  they should be deleted.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-iam-group-has-users
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Tests:
+  -
+    Name: Group Has No Users
+    ResourceType: AWS.IAM.Group
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "GroupId": "ABCDEFGHIJKLMNOP",
+        "GroupName": "ExampleGroup",
+        "Path": "/",
+        "Users": null
+      }
+  -
+    Name: Group Has Users
+    ResourceType: AWS.IAM.Group
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "GroupId": "ABCDEFGHIJKLMNOP",
+        "GroupName": "ExampleGroup",
+        "Path": "/",
+        "Users": [
+          {
+            "Arn": "arn:aws:iam::123456789012:user/Bobert",
+            "CreateDate": "2019-01-1T00:00:00Z",
+            "PasswordLastUsed": null,
+            "Path": "/",
+            "PermissionsBoundary": null,
+            "Tags": null,
+            "UserId": "ABCDEFGHIJKLMNOP",
+            "UserName": "Bobert"
+          }
+        ]
+      }

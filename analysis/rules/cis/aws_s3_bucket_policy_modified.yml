@@ -1,0 +1,127 @@
+AnalysisType: rule
+Filename: aws_s3_bucket_policy_modified.py
+PolicyID: AWS.CloudTrail.S3BucketPolicyModified
+DisplayName: AWS S3 Bucket Policy Modified
+Enabled: true
+ResourceTypes:
+  - AWS.CloudTrail.Log
+Tags:
+  - AWS
+  - CIS
+  - CIS 3.8
+Severity: Medium
+Description: >
+  An S3 Bucket was modified. 
+Runbook: >
+  reference.link 
+Reference: reference.link
+Tests:
+  -
+    Name: S3 Bucket Policy Modified
+    ResourceType: AWS.CloudTrail.Log
+    ExpectedResult: true
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  },
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:role/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "s3.amazonaws.com",
+          "eventName": "PutBucketAcl",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": {
+              "host": [
+                  "bucket.s3.us-west-2.amazonaws.com"
+              ],
+              "bucketName": "bucket",
+              "acl": [
+                  ""
+              ],
+              "x-amz-acl": [
+                  "private"
+              ]
+          },
+          "responseElements": null,
+          "additionalEventData": {
+              "SignatureVersion": "SigV4",
+              "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+              "AuthenticationMethod": "AuthHeader"
+          },
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: S3 Bucket Policy Not Modified
+    ResourceType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "false",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  },
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:role/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "s3.amazonaws.com",
+          "eventName": "GetBucketPolicy",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": {
+              "host": [
+                  "bucket.s3.us-west-2.amazonaws.com"
+              ],
+              "bucketName": "bucket",
+              "policy": [
+                  ""
+              ]
+          },
+          "responseElements": null,
+          "additionalEventData": {
+              "SignatureVersion": "SigV4",
+              "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+              "AuthenticationMethod": "AuthHeader"
+          },
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
