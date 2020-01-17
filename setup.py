@@ -8,7 +8,7 @@ setup(
     'Panther command line interface for writing, testing, and packaging policies/rules.',
     author='Panther Labs Inc',
     author_email='hello@runpanther.io',
-    url='https://github.com/panther-labs/panther-cli',
+    url='https://github.com/panther-labs/panther-analysis',
     # download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',
     keywords=['Security', 'CLI'],
     scripts=['bin/panther-cli'],

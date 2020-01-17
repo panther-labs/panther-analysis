@@ -1,0 +1,125 @@
+AnalysisType: policy
+Filename: aws_iam_policy_role_mapping_respected.py
+PolicyID: AWS.IAM.Policy.RoleMappingRespected
+DisplayName: AWS IAM Policy Role Mapping Is Respected
+Enabled: false
+ResourceTypes:
+  - AWS.IAM.Policy
+Tags:
+  - AWS
+  - AWS Managed Rules
+  - Configuration Required
+  - Security, Identity & Compliance
+Severity: High
+Description: >
+  This policy validates that policies that have been explicitly configured to be set to certain roles are still attached to those roles.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-iam-policy-role-mapping-is-respected
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html 
+Tests:
+  -
+    Name: Policy Applied To Required Roles
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP1",
+              "RoleName": "TestRole1"
+            },
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP2",
+              "RoleName": "TestRole2"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "TestPolicyName",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }
+  -
+    Name: Policy Does Not Have Role Mappings
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP",
+              "RoleName": "Example-Role"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "Example-Policy",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }
+  -
+    Name: Policy Not Applied To Required Roles
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP",
+              "RoleName": "Example-Role"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "TestPolicyName",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }

@@ -1,0 +1,75 @@
+AnalysisType: policy
+Filename: aws_cloudtrail_enabled_in_all_regions.py
+PolicyID: AWS.CloudTrail.EnabledInAllRegions
+DisplayName: AWS CloudTrail Is Enabled in All Regions
+Enabled: true
+ResourceTypes:
+  - AWS.CloudTrail.Meta
+Tags:
+  - AWS
+  - AWS Managed Rules
+  - Management and Governance
+  - CIS
+  - CIS 2.1
+  - PCI
+  - PCI 10.5.4
+Severity: High
+Description: >
+  This policy ensures that CloudTrail is enabled in all regions and at least one of them has
+  management (control plane) operations logged.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudtrail-enabled-in-all-regions
+Reference: >
+  https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html
+Tests:
+  -
+    Name: Global CloudTrail Is Enabled
+    ResourceType: AWS.CloudTrail.Meta
+    ExpectedResult: true
+    Resource:
+      {
+        "GlobalEventSelectors": [
+          {
+            "DataResources": null,
+            "IncludeManagementEvents": true,
+            "ReadWriteType": "All"
+          },
+          {
+            "DataResources": [
+              {
+                "Type": "AWS::S3::Object",
+                "Values": [
+                  "arn:aws:s3"
+                ]
+              }
+            ],
+            "IncludeManagementEvents": true,
+            "ReadWriteType": "All"
+          }
+        ],
+        "Trails": ["trail1"]
+      }
+  -
+    Name: CloudTrail Enabled with ReadOnly Management Events
+    ResourceType: AWS.CloudTrail.Meta
+    ExpectedResult: false
+    Resource:
+      {
+        "GlobalEventSelectors": [
+          {
+            "DataResources": null,
+            "IncludeManagementEvents": true,
+            "ReadWriteType": "Read"
+          }
+        ],
+        "Trails": ["trail1"]
+      }
+  -
+    Name: No Global CloudTrail Enabled
+    ResourceType: AWS.CloudTrail.Meta
+    ExpectedResult: false
+    Resource:
+      {
+        "GlobalEventSelectors": null,
+        "Trails": []
+      }

@@ -1,0 +1,691 @@
+AnalysisType: policy
+Filename: aws_ec2_ami_launched_on_approved_host.py
+PolicyID: AWS.EC2.AMI.LaunchedOnApprovedHost
+DisplayName: AWS EC2 AMI Launched on Approved Host
+Enabled: false
+ResourceTypes:
+  - AWS.EC2.Instance
+Tags:
+  - AWS
+  - AWS Managed Rules
+  - Configuration Required
+  - Compute
+Severity: Low
+Description: >
+  Checks that AWS EC2 AMI's are only launched on approved dedicated hosts.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-ami-launched-on-approved-host
+Reference: reference.link
+Tests:
+  -
+    Name: Instance AMI Does Not Have Required Host
+    ResourceType: AWS.EC2.Instance
+    ExpectedResult: true
+    Resource:
+      {
+        "AmiLaunchIndex": 0,
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "DeleteOnTermination": true,
+              "Status": "attached",
+              "VolumeId": "vol-0b111222333444"
+            }
+          }
+        ],
+        "CapacityReservationId": null,
+        "CapacityReservationSpecification": {
+          "CapacityReservationPreference": "open",
+          "CapacityReservationTarget": null
+        },
+        "ClientToken": null,
+        "CpuOptions": {
+          "CoreCount": 1,
+          "ThreadsPerCore": 1
+        },
+        "EbsOptimized": false,
+        "ElasticGpuAssociations": null,
+        "ElasticInferenceAcceleratorAssociations": null,
+        "EnaSupport": true,
+        "HibernationOptions": {
+          "Configured": false
+        },
+        "Hypervisor": "xen",
+        "IamInstanceProfile": null,
+        "ImageId": "ami-11122233344555",
+        "InstanceId": "i-111222333444555",
+        "InstanceLifecycle": null,
+        "InstanceType": "t2.micro",
+        "KernelId": null,
+        "KeyName": "key-1",
+        "LaunchTime": "2019-01-01T00:00:00Z",
+        "Licenses": null,
+        "Monitoring": {
+          "State": "disabled"
+        },
+        "NetworkInterfaces": [
+          {
+            "Association": {
+              "IpOwnerId": "amazon",
+              "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+              "PublicIp": "52.0.0.0"
+            },
+            "Attachment": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "AttachmentId": "eni-attach-111222333444",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "Status": "attached"
+            },
+            "Description": "Primary network interface",
+            "Groups": [
+              {
+                "GroupId": "sg-111222333444",
+                "GroupName": "base"
+              }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": null,
+            "MacAddress": "de:ad:be:ef:00:00",
+            "NetworkInterfaceId": "eni-111222333444",
+            "OwnerId": "123456789012",
+            "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+            "PrivateIpAddress": "10.0.0.0",
+            "PrivateIpAddresses": [
+              {
+                "Association": {
+                  "IpOwnerId": "amazon",
+                  "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+                  "PublicIp": "52.0.0.0"
+                },
+                "Primary": true,
+                "PrivateDnsName": "ip-10-0-0-o.us-west-2.compute.internal",
+                "PrivateIpAddress": "10.0.0.0"
+              }
+            ],
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-111222333444",
+            "VpcId": "vpc-111222333444"
+          }
+        ],
+        "Placement": {
+          "Affinity": null,
+          "AvailabilityZone": "us-west-2b",
+          "GroupName": null,
+          "HostId": null,
+          "PartitionNumber": null,
+          "SpreadDomain": null,
+          "Tenancy": "default"
+        },
+        "Platform": null,
+        "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+        "PrivateIpAddress": "10.0.0.0",
+        "ProductCodes": null,
+        "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+        "PublicIpAddress": "52.0.0.0",
+        "RamdiskId": null,
+        "RootDeviceName": "/dev/xvda",
+        "RootDeviceType": "ebs",
+        "SecurityGroups": [
+          {
+            "GroupId": "sg-111222333444",
+            "GroupName": "base"
+          }
+        ],
+        "SourceDestCheck": true,
+        "SpotInstanceRequestId": null,
+        "SriovNetSupport": null,
+        "State": {
+          "Code": 16,
+          "Name": "running"
+        },
+        "StateReason": null,
+        "StateTransitionReason": null,
+        "SubnetId": "subnet-111222333",
+        "Tags": [
+          {
+            "Key": "TagOne",
+            "Value": "True"
+          }
+        ],
+        "VirtualizationType": "hvm",
+        "Volumes": [
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2019-01-01T00:00:00Z",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-111222333",
+                "State": "attached",
+                "VolumeId": "vol-111222333"
+              }
+            ],
+            "AvailabilityZone": "us-west-2b",
+            "CreateTime": "2019-01-01T00:00:00Z",
+            "Encrypted": false,
+            "Iops": 100,
+            "KmsKeyId": null,
+            "Size": 8,
+            "SnapshotId": "snap-111222333444",
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "TagOne",
+                "Value": "True"
+              }
+            ],
+            "VolumeId": "vol-111222333444",
+            "VolumeType": "gp2"
+          }
+        ],
+        "VpcId": "vpc-111222333444"
+      }
+  -
+    Name: Instance Launched On Incorrect Host
+    ResourceType: AWS.EC2.Instance
+    ExpectedResult: false
+    Resource:
+      {
+        "AmiLaunchIndex": 0,
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "DeleteOnTermination": true,
+              "Status": "attached",
+              "VolumeId": "vol-0b111222333444"
+            }
+          }
+        ],
+        "CapacityReservationId": null,
+        "CapacityReservationSpecification": {
+          "CapacityReservationPreference": "open",
+          "CapacityReservationTarget": null
+        },
+        "ClientToken": null,
+        "CpuOptions": {
+          "CoreCount": 1,
+          "ThreadsPerCore": 1
+        },
+        "EbsOptimized": false,
+        "ElasticGpuAssociations": null,
+        "ElasticInferenceAcceleratorAssociations": null,
+        "EnaSupport": true,
+        "HibernationOptions": {
+          "Configured": false
+        },
+        "Hypervisor": "xen",
+        "IamInstanceProfile": null,
+        "ImageId": "EXAMPLE-AMI-ID",
+        "InstanceId": "i-111222333444555",
+        "InstanceLifecycle": null,
+        "InstanceType": "t2.micro",
+        "KernelId": null,
+        "KeyName": "key-1",
+        "LaunchTime": "2019-01-01T00:00:00Z",
+        "Licenses": null,
+        "Monitoring": {
+          "State": "disabled"
+        },
+        "NetworkInterfaces": [
+          {
+            "Association": {
+              "IpOwnerId": "amazon",
+              "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+              "PublicIp": "52.0.0.0"
+            },
+            "Attachment": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "AttachmentId": "eni-attach-111222333444",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "Status": "attached"
+            },
+            "Description": "Primary network interface",
+            "Groups": [
+              {
+                "GroupId": "sg-111222333444",
+                "GroupName": "base"
+              }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": null,
+            "MacAddress": "de:ad:be:ef:00:00",
+            "NetworkInterfaceId": "eni-111222333444",
+            "OwnerId": "123456789012",
+            "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+            "PrivateIpAddress": "10.0.0.0",
+            "PrivateIpAddresses": [
+              {
+                "Association": {
+                  "IpOwnerId": "amazon",
+                  "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+                  "PublicIp": "52.0.0.0"
+                },
+                "Primary": true,
+                "PrivateDnsName": "ip-10-0-0-o.us-west-2.compute.internal",
+                "PrivateIpAddress": "10.0.0.0"
+              }
+            ],
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-111222333444",
+            "VpcId": "vpc-111222333444"
+          }
+        ],
+        "Placement": {
+          "Affinity": null,
+          "AvailabilityZone": "us-west-2b",
+          "GroupName": null,
+          "HostId": "EXAMPLE-HOST-ID-2",
+          "PartitionNumber": null,
+          "SpreadDomain": null,
+          "Tenancy": "default"
+        },
+        "Platform": null,
+        "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+        "PrivateIpAddress": "10.0.0.0",
+        "ProductCodes": null,
+        "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+        "PublicIpAddress": "52.0.0.0",
+        "RamdiskId": null,
+        "RootDeviceName": "/dev/xvda",
+        "RootDeviceType": "ebs",
+        "SecurityGroups": [
+          {
+            "GroupId": "sg-111222333444",
+            "GroupName": "base"
+          }
+        ],
+        "SourceDestCheck": true,
+        "SpotInstanceRequestId": null,
+        "SriovNetSupport": null,
+        "State": {
+          "Code": 16,
+          "Name": "running"
+        },
+        "StateReason": null,
+        "StateTransitionReason": null,
+        "SubnetId": "subnet-111222333",
+        "Tags": [
+          {
+            "Key": "TagOne",
+            "Value": "True"
+          }
+        ],
+        "VirtualizationType": "hvm",
+        "Volumes": [
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2019-01-01T00:00:00Z",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-111222333",
+                "State": "attached",
+                "VolumeId": "vol-111222333"
+              }
+            ],
+            "AvailabilityZone": "us-west-2b",
+            "CreateTime": "2019-01-01T00:00:00Z",
+            "Encrypted": false,
+            "Iops": 100,
+            "KmsKeyId": null,
+            "Size": 8,
+            "SnapshotId": "snap-111222333444",
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "TagOne",
+                "Value": "True"
+              }
+            ],
+            "VolumeId": "vol-111222333444",
+            "VolumeType": "gp2"
+          }
+        ],
+        "VpcId": "vpc-111222333444"
+      }
+  -
+    Name: Instance Launched On Required Host
+    ResourceType: AWS.EC2.Instance
+    ExpectedResult: true
+    Resource:
+      {
+        "AmiLaunchIndex": 0,
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "DeleteOnTermination": true,
+              "Status": "attached",
+              "VolumeId": "vol-0b111222333444"
+            }
+          }
+        ],
+        "CapacityReservationId": null,
+        "CapacityReservationSpecification": {
+          "CapacityReservationPreference": "open",
+          "CapacityReservationTarget": null
+        },
+        "ClientToken": null,
+        "CpuOptions": {
+          "CoreCount": 1,
+          "ThreadsPerCore": 1
+        },
+        "EbsOptimized": false,
+        "ElasticGpuAssociations": null,
+        "ElasticInferenceAcceleratorAssociations": null,
+        "EnaSupport": true,
+        "HibernationOptions": {
+          "Configured": false
+        },
+        "Hypervisor": "xen",
+        "IamInstanceProfile": null,
+        "ImageId": "EXAMPLE-AMI-ID",
+        "InstanceId": "i-111222333444555",
+        "InstanceLifecycle": null,
+        "InstanceType": "t2.micro",
+        "KernelId": null,
+        "KeyName": "key-1",
+        "LaunchTime": "2019-01-01T00:00:00Z",
+        "Licenses": null,
+        "Monitoring": {
+          "State": "disabled"
+        },
+        "NetworkInterfaces": [
+          {
+            "Association": {
+              "IpOwnerId": "amazon",
+              "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+              "PublicIp": "52.0.0.0"
+            },
+            "Attachment": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "AttachmentId": "eni-attach-111222333444",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "Status": "attached"
+            },
+            "Description": "Primary network interface",
+            "Groups": [
+              {
+                "GroupId": "sg-111222333444",
+                "GroupName": "base"
+              }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": null,
+            "MacAddress": "de:ad:be:ef:00:00",
+            "NetworkInterfaceId": "eni-111222333444",
+            "OwnerId": "123456789012",
+            "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+            "PrivateIpAddress": "10.0.0.0",
+            "PrivateIpAddresses": [
+              {
+                "Association": {
+                  "IpOwnerId": "amazon",
+                  "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+                  "PublicIp": "52.0.0.0"
+                },
+                "Primary": true,
+                "PrivateDnsName": "ip-10-0-0-o.us-west-2.compute.internal",
+                "PrivateIpAddress": "10.0.0.0"
+              }
+            ],
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-111222333444",
+            "VpcId": "vpc-111222333444"
+          }
+        ],
+        "Placement": {
+          "Affinity": null,
+          "AvailabilityZone": "us-west-2b",
+          "GroupName": null,
+          "HostId": "EXAMPLE-HOST-ID",
+          "PartitionNumber": null,
+          "SpreadDomain": null,
+          "Tenancy": "default"
+        },
+        "Platform": null,
+        "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+        "PrivateIpAddress": "10.0.0.0",
+        "ProductCodes": null,
+        "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+        "PublicIpAddress": "52.0.0.0",
+        "RamdiskId": null,
+        "RootDeviceName": "/dev/xvda",
+        "RootDeviceType": "ebs",
+        "SecurityGroups": [
+          {
+            "GroupId": "sg-111222333444",
+            "GroupName": "base"
+          }
+        ],
+        "SourceDestCheck": true,
+        "SpotInstanceRequestId": null,
+        "SriovNetSupport": null,
+        "State": {
+          "Code": 16,
+          "Name": "running"
+        },
+        "StateReason": null,
+        "StateTransitionReason": null,
+        "SubnetId": "subnet-111222333",
+        "Tags": [
+          {
+            "Key": "TagOne",
+            "Value": "True"
+          }
+        ],
+        "VirtualizationType": "hvm",
+        "Volumes": [
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2019-01-01T00:00:00Z",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-111222333",
+                "State": "attached",
+                "VolumeId": "vol-111222333"
+              }
+            ],
+            "AvailabilityZone": "us-west-2b",
+            "CreateTime": "2019-01-01T00:00:00Z",
+            "Encrypted": false,
+            "Iops": 100,
+            "KmsKeyId": null,
+            "Size": 8,
+            "SnapshotId": "snap-111222333444",
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "TagOne",
+                "Value": "True"
+              }
+            ],
+            "VolumeId": "vol-111222333444",
+            "VolumeType": "gp2"
+          }
+        ],
+        "VpcId": "vpc-111222333444"
+      }
+  -
+    Name: Instance Not Launched On Dedicated Host But Has Host Requirement
+    ResourceType: AWS.EC2.Instance
+    ExpectedResult: false
+    Resource:
+      {
+        "AmiLaunchIndex": 0,
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "DeleteOnTermination": true,
+              "Status": "attached",
+              "VolumeId": "vol-0b111222333444"
+            }
+          }
+        ],
+        "CapacityReservationId": null,
+        "CapacityReservationSpecification": {
+          "CapacityReservationPreference": "open",
+          "CapacityReservationTarget": null
+        },
+        "ClientToken": null,
+        "CpuOptions": {
+          "CoreCount": 1,
+          "ThreadsPerCore": 1
+        },
+        "EbsOptimized": false,
+        "ElasticGpuAssociations": null,
+        "ElasticInferenceAcceleratorAssociations": null,
+        "EnaSupport": true,
+        "HibernationOptions": {
+          "Configured": false
+        },
+        "Hypervisor": "xen",
+        "IamInstanceProfile": null,
+        "ImageId": "EXAMPLE-AMI-ID",
+        "InstanceId": "i-111222333444555",
+        "InstanceLifecycle": null,
+        "InstanceType": "t2.micro",
+        "KernelId": null,
+        "KeyName": "key-1",
+        "LaunchTime": "2019-01-01T00:00:00Z",
+        "Licenses": null,
+        "Monitoring": {
+          "State": "disabled"
+        },
+        "NetworkInterfaces": [
+          {
+            "Association": {
+              "IpOwnerId": "amazon",
+              "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+              "PublicIp": "52.0.0.0"
+            },
+            "Attachment": {
+              "AttachTime": "2019-01-01T00:00:00Z",
+              "AttachmentId": "eni-attach-111222333444",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "Status": "attached"
+            },
+            "Description": "Primary network interface",
+            "Groups": [
+              {
+                "GroupId": "sg-111222333444",
+                "GroupName": "base"
+              }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": null,
+            "MacAddress": "de:ad:be:ef:00:00",
+            "NetworkInterfaceId": "eni-111222333444",
+            "OwnerId": "123456789012",
+            "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+            "PrivateIpAddress": "10.0.0.0",
+            "PrivateIpAddresses": [
+              {
+                "Association": {
+                  "IpOwnerId": "amazon",
+                  "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+                  "PublicIp": "52.0.0.0"
+                },
+                "Primary": true,
+                "PrivateDnsName": "ip-10-0-0-o.us-west-2.compute.internal",
+                "PrivateIpAddress": "10.0.0.0"
+              }
+            ],
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-111222333444",
+            "VpcId": "vpc-111222333444"
+          }
+        ],
+        "Placement": {
+          "Affinity": null,
+          "AvailabilityZone": "us-west-2b",
+          "GroupName": null,
+          "HostId": null,
+          "PartitionNumber": null,
+          "SpreadDomain": null,
+          "Tenancy": "default"
+        },
+        "Platform": null,
+        "PrivateDnsName": "ip-10-0-0-0.us-west-2.compute.internal",
+        "PrivateIpAddress": "10.0.0.0",
+        "ProductCodes": null,
+        "PublicDnsName": "ec2-52-0-0-0.us-west-2.compute.amazonaws.com",
+        "PublicIpAddress": "52.0.0.0",
+        "RamdiskId": null,
+        "RootDeviceName": "/dev/xvda",
+        "RootDeviceType": "ebs",
+        "SecurityGroups": [
+          {
+            "GroupId": "sg-111222333444",
+            "GroupName": "base"
+          }
+        ],
+        "SourceDestCheck": true,
+        "SpotInstanceRequestId": null,
+        "SriovNetSupport": null,
+        "State": {
+          "Code": 16,
+          "Name": "running"
+        },
+        "StateReason": null,
+        "StateTransitionReason": null,
+        "SubnetId": "subnet-111222333",
+        "Tags": [
+          {
+            "Key": "TagOne",
+            "Value": "True"
+          }
+        ],
+        "VirtualizationType": "hvm",
+        "Volumes": [
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2019-01-01T00:00:00Z",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-111222333",
+                "State": "attached",
+                "VolumeId": "vol-111222333"
+              }
+            ],
+            "AvailabilityZone": "us-west-2b",
+            "CreateTime": "2019-01-01T00:00:00Z",
+            "Encrypted": false,
+            "Iops": 100,
+            "KmsKeyId": null,
+            "Size": 8,
+            "SnapshotId": "snap-111222333444",
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "TagOne",
+                "Value": "True"
+              }
+            ],
+            "VolumeId": "vol-111222333444",
+            "VolumeType": "gp2"
+          }
+        ],
+        "VpcId": "vpc-111222333444"
+      }

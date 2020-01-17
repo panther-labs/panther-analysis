@@ -1,0 +1,124 @@
+AnalysisType: policy
+Filename: aws_iam_policy_does_not_grant_full_administrative_privileges.py
+PolicyID: AWS.IAM.Policy.DoesNotGrantFullAdministrativePrivileges
+DisplayName: AWS IAM Policy Does Not Grant Full Administrative Privileges
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.Policy
+Tags:
+  - AWS
+  - AWS Managed Rules
+  - CIS
+  - CIS 1.22
+  - Security, Identity & Compliance
+Severity: High
+Description: >
+  This policy validates that there are no IAM policies that grant full administrative
+  privileges to IAM users or groups.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-iam-policy-does-not-grant-full-administrative-privileges
+Reference: >
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Tests:
+  -
+    Name: Policy Does Not Grant Full Administrative Privileges
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP",
+              "RoleName": "Example-Role"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n        }\n    ]\n}",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "Example-Policy",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }
+  -
+    Name: Policy Grant Full Administrative Access With Multiple Resources
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP",
+              "RoleName": "Example-Role"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": [\"*\", \"S3*\"]\n        }\n    ]\n}",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "Example-Policy",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }
+  -
+    Name: Policy Grants Full Administrative Privileges
+    ResourceType: AWS.IAM.Policy
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "ABCDEFGHIJKLMNOP",
+              "RoleName": "Example-Role"
+            }
+          ],
+          "PolicyUsers": [
+            {
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert"
+            }
+          ]
+        },
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"*\"\n        }\n    ]\n}",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "Example-Policy",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }

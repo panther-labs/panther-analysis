@@ -1,0 +1,37 @@
+AnalysisType: rule
+Filename: aws_s3_insecure_access.py
+PolicyID: AWS.S3ServerAccess.InsecureAccess
+DisplayName: AWS S3 Insecure Access
+Enabled: true
+ResourceTypes:
+  - AWS.S3ServerAccess.Log
+Tags:
+  - AWS
+Severity: Medium
+Description: >
+  Checks whether HTTPS (an encrypted protocol) was used to access objects in an S3 bucket, as opposed to HTTP (an unencrypted protocol).
+Runbook: >
+  Consider adding a condition for access to the S3 bucket that denies access if an insecure protocol is used.
+Reference:
+  https://docs.aws.amazon.com/AmazonS3/latest/dev/security-best-practices.html#security-best-practices-prevent
+Tests:
+  -
+    Name: Secure Access
+    ResourceType: AWS.S3ServerAccess.Log
+    ExpectedResult: false
+    Resource: 
+      {
+        "bucket" : "example-bucket",
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+        "tlsVersion": "TLSv1.2"
+      }
+  -
+    Name: Insecure Access
+    ResourceType: AWS.S3ServerAccess.Log
+    ExpectedResult: true
+    Resource: 
+      {
+        "bucket" : "example-bucket",
+        "cipherSuite": "-",
+        "tlsVersion": "-"
+      }
