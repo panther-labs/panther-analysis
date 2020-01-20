@@ -4,7 +4,7 @@ PolicyID: AWS.S3ServerAccess.IPWhitelist
 DisplayName: AWS S3 Access IP Whitelist
 Enabled: true
 ResourceTypes:
-  - AWS.S3ServerAccess.Log
+  - AWS.S3ServerAccess
 Tags:
   - AWS
 Severity: Medium
@@ -17,7 +17,7 @@ Reference:
 Tests:
   -
     Name: Access From Approved IP
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: false
     Resource: 
       {
@@ -25,7 +25,7 @@ Tests:
       }
   -
     Name: Access From Unapproved IP
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: true
     Resource: 
       {

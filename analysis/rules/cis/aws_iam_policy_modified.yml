@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.IAMPolicyModified
 DisplayName: IAM Policy Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: IAM Policy Change
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -61,7 +61,7 @@ Tests:
       }
   -
     Name: Not IAM Policy Change
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

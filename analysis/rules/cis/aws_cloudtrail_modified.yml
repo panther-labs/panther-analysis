@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.CloudTrailModified
 DisplayName: CloudTrail Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: CloudTrail Was Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -62,7 +62,7 @@ Tests:
       }
   -
     Name: CloudTrail Was Not Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

@@ -4,7 +4,7 @@ PolicyID: AWS.VPCFlowLog.UnapprovedOutboundDNS
 DisplayName: VPC Flow Logs Unapproved Outbound DNS Traffic
 Enabled: true
 ResourceTypes:
-  - AWS.VPCFlow.Log
+  - AWS.VPCFlow
 Tags:
   - AWS
 Severity: Medium
@@ -15,7 +15,7 @@ Runbook: >
 Tests:
   -
     Name: Approved Outbound DNS Traffic
-    ResourceType: AWS.VPCFlow.Log
+    ResourceType: AWS.VPCFlow
     ExpectedResult: false
     Resource:
       {
@@ -25,7 +25,7 @@ Tests:
       }
   -
     Name: Unapproved Outbound DNS Traffic
-    ResourceType: AWS.VPCFlow.Log
+    ResourceType: AWS.VPCFlow
     ExpectedResult: true
     Resource:
       {
@@ -35,7 +35,7 @@ Tests:
       }
   -
     Name: Outbound Non-DNS Traffic
-    ResourceType: AWS.VPCFlow.Log
+    ResourceType: AWS.VPCFlow
     ExpectedResult: false
     Resource:
       {

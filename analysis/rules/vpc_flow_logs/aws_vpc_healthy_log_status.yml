@@ -4,7 +4,7 @@ PolicyID: AWS.VPCFlowLog.HealthyLogStatus
 DisplayName: AWS VPC Healthy Log Status
 Enabled: true
 ResourceTypes:
-  - AWS.VPCFlow.Log
+  - AWS.VPCFlow
 Tags:
   - AWS
 Severity: Low
@@ -17,11 +17,11 @@ Runbook: >
 Tests:
   -
     Name: Healthy Log Status
-    ResourceType: AWS.VPCFlow.Log
+    ResourceType: AWS.VPCFlow
     ExpectedResult: false
     Resource: {"log-status": "OK"}
   -
     Name: Unhealthy Log Status
-    ResourceType: AWS.VPCFlow.Log
+    ResourceType: AWS.VPCFlow
     ExpectedResult: true
     Resource: {"log-status": "SKIPDATA"}

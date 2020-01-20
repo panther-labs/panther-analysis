@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.ConfigServiceModified
 DisplayName: AWS Config Service Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: https://aws.amazon.com/config/
 Tests:
   -
     Name: Config Recorder Stopped
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -61,7 +61,7 @@ Tests:
       }
   -
     Name: Config Recorder Started
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

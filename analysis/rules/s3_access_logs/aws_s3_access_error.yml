@@ -4,7 +4,7 @@ PolicyID: AWS.S3ServerAccess.AccessError
 DisplayName: AWS S3 Access Error
 Enabled: true
 ResourceTypes:
-  - AWS.S3ServerAccess.Log
+  - AWS.S3ServerAccess
 Tags:
   - AWS
 Severity: Low
@@ -17,7 +17,7 @@ Reference:
 Tests:
   -
     Name: Access No Error
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: false
     Resource: 
       {
@@ -25,7 +25,7 @@ Tests:
       }
   -
     Name: Access Error
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: true
     Resource: 
       {

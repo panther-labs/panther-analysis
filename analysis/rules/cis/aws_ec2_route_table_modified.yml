@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.EC2RouteTableModified
 DisplayName: EC2 Route Table Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: Route Table Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -65,7 +65,7 @@ Tests:
       }
   -
     Name: Route Table Not Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

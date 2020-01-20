@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.RootActivity
 DisplayName: Root Account Activity
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
     Name: Root Activity
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -69,7 +69,7 @@ Tests:
       }
   -
     Name: IAMUser Activity
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {
