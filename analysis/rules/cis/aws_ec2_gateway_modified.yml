@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.EC2GatewayModified
 DisplayName: EC2 Network Gateway Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: Network Gateway Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -64,7 +64,7 @@ Tests:
       }
   -
     Name: Network Gateway Not Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

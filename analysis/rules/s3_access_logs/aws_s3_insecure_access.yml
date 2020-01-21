@@ -4,7 +4,7 @@ PolicyID: AWS.S3ServerAccess.InsecureAccess
 DisplayName: AWS S3 Insecure Access
 Enabled: true
 ResourceTypes:
-  - AWS.S3ServerAccess.Log
+  - AWS.S3ServerAccess
 Tags:
   - AWS
 Severity: Medium
@@ -17,7 +17,7 @@ Reference:
 Tests:
   -
     Name: Secure Access
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: false
     Resource: 
       {
@@ -27,7 +27,7 @@ Tests:
       }
   -
     Name: Insecure Access
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: true
     Resource: 
       {

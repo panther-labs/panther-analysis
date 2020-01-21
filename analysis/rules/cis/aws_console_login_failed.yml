@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.ConsoleLoginFailed
 DisplayName: Failed Console Login
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: Failed Login
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -51,7 +51,7 @@ Tests:
       }
   -
     Name: Successful Login
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {
@@ -84,7 +84,7 @@ Tests:
       }
   -
     Name: Non Login Event
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

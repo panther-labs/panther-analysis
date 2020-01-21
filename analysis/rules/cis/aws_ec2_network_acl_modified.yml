@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.EC2NetworkACLModified
 DisplayName: EC2 Network ACL Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: Network ACL Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -70,7 +70,7 @@ Tests:
       }
   -
     Name: Network ACL Not Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

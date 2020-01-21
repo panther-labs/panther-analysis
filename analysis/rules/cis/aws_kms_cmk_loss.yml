@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.KMSCustomerManagedKeyLoss
 DisplayName: Potential KMS CMK Loss
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: KMS Key Disabled
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -68,7 +68,7 @@ Tests:
       }
   -
     Name: KMS Key Scheduled For Deletion
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -123,7 +123,7 @@ Tests:
       }
   -
     Name: KMS Key Non Deletion Event
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

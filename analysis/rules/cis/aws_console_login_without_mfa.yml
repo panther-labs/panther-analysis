@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.ConsoleLoginWithoutMFA
 DisplayName: Logins Without MFA
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: No MFA
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -51,7 +51,7 @@ Tests:
       }
   -
     Name: Yes MFA 
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {
@@ -84,7 +84,7 @@ Tests:
       }
   -
     Name: No MFA but Login Failed
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

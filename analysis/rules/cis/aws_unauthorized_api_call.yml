@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.UnauthorizedAPICall
 DisplayName: Monitor Unauthorized API Calls
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: Unauthorized API Call
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -55,7 +55,7 @@ Tests:
       }
   -
     Name: Authorized API Call
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

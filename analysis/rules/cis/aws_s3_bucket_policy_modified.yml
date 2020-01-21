@@ -4,7 +4,7 @@ PolicyID: AWS.CloudTrail.S3BucketPolicyModified
 DisplayName: AWS S3 Bucket Policy Modified
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
@@ -18,7 +18,7 @@ Reference: reference.link
 Tests:
   -
     Name: S3 Bucket Policy Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
       {
@@ -74,7 +74,7 @@ Tests:
       }
   -
     Name: S3 Bucket Policy Not Modified
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

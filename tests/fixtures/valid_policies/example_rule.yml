@@ -6,7 +6,7 @@ Severity: High
 PolicyID: AWS.CloudTrail.MFAEnabled
 Enabled: true
 ResourceTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS Managed Rules - Security, Identity & Compliance
   - AWS
@@ -18,7 +18,7 @@ Reference: https://www.link-to-info.io
 Tests:
   -
     Name: Root MFA not enabled fails compliance
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       Arn: arn:aws:iam::123456789012:user/root
@@ -29,7 +29,7 @@ Tests:
       UserName: root
   -
     Name: User MFA not enabled fails compliance
-    ResourceType: AWS.CloudTrail.Log
+    ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
       {

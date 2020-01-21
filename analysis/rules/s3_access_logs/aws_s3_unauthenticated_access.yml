@@ -4,7 +4,7 @@ PolicyID: AWS.S3ServerAccess.UnauthenticatedAccess
 DisplayName: AWS S3 Unauthenticated Access
 Enabled: true
 ResourceTypes:
-  - AWS.S3ServerAccess.Log
+  - AWS.S3ServerAccess
 Tags:
   - AWS
 Severity: Low
@@ -15,7 +15,7 @@ Runbook: >
 Tests:
   -
     Name: Authenticated Access
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: false
     Resource: 
       {
@@ -24,7 +24,7 @@ Tests:
       }
   -
     Name: Unauthenticated Access
-    ResourceType: AWS.S3ServerAccess.Log
+    ResourceType: AWS.S3ServerAccess
     ExpectedResult: true
     Resource: 
       {
