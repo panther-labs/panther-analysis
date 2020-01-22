@@ -2,6 +2,8 @@
 
 This repository is a combination of open source policies and rules meant to be run with [Panther](https://github.com/panther-labs/panther), as well as the `panther-cli` tool which can be used to test and package these policies and rules without having to go through the Panther web interface.
 
+During initial deployments of Panther, the default configuration is to load all the policies and rules published during version releases of this project. This provides a set of out-of-the-box policies and rules to get analysis up and running. See the Panther documentation for how to override this default behavior if desired.
+
 ## Analysis - Policies & Rules
 
 Within the `analysis` directory, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
