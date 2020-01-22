@@ -6,6 +6,10 @@ This repository is a combination of open source policies and rules meant to be r
 
 Within the `analysis` directory, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
 
+### Standards
+
+Currently, many of our rules and policies are based on Center for Internet Security (CIS) reccomended best practices. As we grow, we intend to add support for more and varied compliance frameworks. Feel free to contribute policies and rules that help you meet your own compliance requirements!
+
 ### Included Policies
 
 We include the following policy bundles:
