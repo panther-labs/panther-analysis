@@ -1,7 +1,38 @@
-# Panther CLI Tool
+# Panther Analysis
+
+This repository is a combination of open source policies and rules meant to be run with [Panther](https://github.com/panther-labs/panther), as well as the `panther-cli` tool which can be used to test and package these policies and rules locally.
+
+## Analysis - Policies & Rules
+
+Within the `analysis` directory, you will find a collection of rules and policies. The policies check the configuration of cloud resources. The rules evaluate log events. 
+
+### Included Policies
+
+We include the following policy bundles:
+
+  - CIS
+    - These policies cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 1.x, 2.x, and 4.x. These policies can help an organization check compliance with CIS recommended best practices.
+  - Managed
+    - These policies cover many of the similar concerns as the AWS Config Managed rules. These policies can help an organization meet baseline good practice configurations as recommended by AWS.
+  - S3
+    - These policies cover S3 security configurations in general. These policies can help an organization ensure best security practices are in use with regards to their S3 buckets.
+
+### Included Rules
+
+We include the following rule bundles:
+
+  - CIS
+    - These rules monitor CloudTrail log data and cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 3.x. These rules can help an organization ensure compliance with CIS recommended best practices.
+  - S3 Access Logs
+    - These rules monitor S3 access logs, and can serve as examples for additional S3 access log related rules
+  - VPC Flow Logs
+    - These rules monitor VPC Flow Logs, and can serve as examples for additional VPC flow log related rules.
+
+## Panther CLI Tool
+
 `panther-cli` is a Python command line interface for testing and packaging Panther Policies and Rules. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data.
 
-## Installation
+### Installation
 
 Setup your environment:
 
@@ -17,7 +48,7 @@ Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) 
 pip install -e .
 ```
 
-## Writing Policies
+### Writing Policies
 
 Each Panther Policy consists of a Python body and a YAML or JSON specification file.
 
@@ -83,18 +114,8 @@ The specification file MUST:
     - ResourceTypes
     - Severity 
 
-## Included Policies
 
-We include the following policy bundles:
-
-  - CIS
-    - These policies cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 1.x, 2.x, and 4.x. These policies can help an organization check compliance with CIS recommended best practices.
-  - Managed
-    - These policies cover many of the similar concerns as the AWS Config Managed rules. These policies can help an organization meet baseline good practice configurations as recommended by AWS.
-  - S3
-    - These policies cover S3 security configurations in general. These policies can help an organization ensure best security practices are in use with regards to their S3 buckets.
-
-## Writing Rules
+### Writing Rules
 
 Rules are very similar to Policies, and require a similar Python body and JSON or YAML specification file as Policies require.
 
@@ -158,18 +179,7 @@ The specification file MUST:
     - ResourceTypes
     - Severity 
 
-## Included Rules
-
-We include the following rule bundles:
-
-  - CIS
-    - These rules monitor CloudTrail log data and cover the CIS benchmarks for AWS Cloud Infrastructure, specifically controls 3.x. These rules can help an organization ensure compliance with CIS recommended best practices.
-  - S3 Access Logs
-    - These rules monitor S3 access logs, and can serve as examples for additional S3 access log related rules
-  - VPC Flow Logs
-    - These rules monitor VPC Flow Logs, and can serve as examples for additional VPC flow log related rules.
-
-## Commands and Usage
+### Commands and Usage
 
 ```bash
 $ panther-cli --help
