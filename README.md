@@ -1,10 +1,10 @@
 # Panther Analysis
 
-This repository is a combination of open source policies and rules meant to be run with [Panther](https://github.com/panther-labs/panther), as well as the `panther-cli` tool which can be used to test and package these policies and rules locally.
+This repository is a combination of open source policies and rules meant to be run with [Panther](https://github.com/panther-labs/panther), as well as the `panther-cli` tool which can be used to test and package these policies and rules without having to go through the Panther web interface.
 
 ## Analysis - Policies & Rules
 
-Within the `analysis` directory, you will find a collection of rules and policies. The policies check the configuration of cloud resources. The rules evaluate log events. 
+Within the `analysis` directory, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
 
 ### Included Policies
 
@@ -30,7 +30,7 @@ We include the following rule bundles:
 
 ## Panther CLI Tool
 
-`panther-cli` is a Python command line interface for testing and packaging Panther Policies and Rules. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data.
+`panther-cli` is a Python command line interface for testing and packaging Panther Policies and Rules. This enables policies and rules to be managed in code and tracked via version control systems such as git or svn. This is also useful for devops and security personnel who prefer CLI management and configuration over web app interfaces.
 
 ### Installation
 
