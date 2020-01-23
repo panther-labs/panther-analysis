@@ -1,8 +1,8 @@
 # Panther Analysis
 
-This repository is a combination of open source policies and rules meant to be run with [Panther](https://github.com/panther-labs/panther), as well as the `panther-cli` tool which can be used to test and package these policies and rules without having to go through the Panther web interface.
+This repository contains open-source [Panther](https://github.com/panther-labs/panther) policies and rules, along with a CLI tool for testing and packaging.
 
-During initial deployments of Panther, the default configuration is to load all the policies and rules published during version releases of this project. This provides a set of out-of-the-box policies and rules to get analysis up and running. See the Panther documentation for how to override this default behavior if desired.
+During the initial deployment of Panther, all of the policies and rules published here are uploaded. This provides a set of out-of-the-box policies and rules to establish a strong detection baseline. See the [Panther documentation](https://docs.runpanther.io/quick-start) for how to override this default behavior if desired.
 
 ## Analysis - Policies & Rules
 
