@@ -3,7 +3,7 @@ setup(
     name='panther_cli',
     packages=['panther_cli'],
     version='0.1.5',
-    license='gpl-3.0',
+    license='apache-2.0',
     description=
     'Panther command line interface for writing, testing, and packaging policies/rules.',
     author='Panther Labs Inc',
@@ -20,7 +20,7 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Topic :: Security',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3.7',
     ],
 )

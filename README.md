@@ -4,13 +4,13 @@ This repository contains open-source [Panther](https://github.com/panther-labs/p
 
 During the initial deployment of Panther, all of the policies and rules published here are uploaded. This provides a set of out-of-the-box policies and rules to establish a strong detection baseline. See the [Panther documentation](https://docs.runpanther.io/quick-start) for how to override this default behavior if desired.
 
-## Analysis - Policies & Rules
+## Analysis with Policies and Rules
 
 Within the `analysis` directory, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
 
 ### Standards
 
-Currently, many of our rules and policies are based on Center for Internet Security (CIS) reccomended best practices. As we grow, we intend to add support for more and varied compliance frameworks. Feel free to contribute policies and rules that help you meet your own compliance requirements!
+Currently, many of our rules and policies are based on Center for Internet Security (CIS) recommended best practices. As we grow, we intend to add support for more and varied compliance frameworks. Feel free to contribute policies and rules that help you meet your own compliance requirements!
 
 ### Included Policies
 
@@ -54,13 +54,60 @@ Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) 
 pip install -e .
 ```
 
-### Writing Policies
+### Commands and Usage
+
+View available commands:
+
+```bash
+$ panther-cli --help
+
+usage: panther-cli [-h] {test,zip} ...
+
+Panther CLI
+
+positional arguments:
+  {test,zip}
+    test      Validate policy specifications and run policy tests.
+    zip       Create an archive of local Policies for uploading to Panther.
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+Run tests:
+
+```bash
+$ panther-cli test --policies tests/fixtures/valid_policies/
+
+[INFO]: Testing Policies in tests/fixtures/valid_policies/
+
+Testing policy 'AWS.IAM.MFAEnabled'
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+```
+
+Create packages to upload via the Panther UI:
+
+```bash
+$ panther-cli zip --policies tests/fixtures/valid_policies/ --output-path tmp
+
+[INFO]: Testing Policies in tests/fixtures/valid_policies/
+
+Testing policy 'AWS.IAM.MFAEnabled'
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
+[INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
+```
+
+## Writing Policies
 
 Each Panther Policy consists of a Python body and a YAML or JSON specification file.
 
 In the Python body, returning a value of `True` indicates the resource being evaluated is compliant. Returning a value of `False` indicates the resource is non-compliant, and an alert may be sent or an auto-remediation may be performed as a result.
 
-The specification file defines the attributes of the Policy. This includes settings such as `Enabled`, `Severity`, and `ResourceTypes`, as well as metadata such as `DisplayName`, `Tags`, and `Runbook`. See the [Writing Local Policies](https://docs.runpanther.io/policies/writing-local) documentation for more details on what fields may be present, and how they are configured. 
+The specification file defines the attributes of the Policy. This includes settings such as `Enabled`, `Severity`, and `ResourceTypes`, as well as metadata such as `DisplayName`, `Tags`, and `Runbook`. See the [Writing Local Policies](https://docs.runpanther.io/policies/writing-local) documentation for more details on what fields may be present, and how they are configured.
 
 `example_policy.py`
 ```python
@@ -118,10 +165,10 @@ The specification file MUST:
     - FileName
     - PolicyID
     - ResourceTypes
-    - Severity 
+    - Severity
 
 
-### Writing Rules
+## Writing Rules
 
 Rules are very similar to Policies, and require a similar Python body and JSON or YAML specification file as Policies require.
 
@@ -135,7 +182,7 @@ def rule(event):
 
 `example_rule.yml`
 ```yaml
-AnalysisType: rule 
+AnalysisType: rule
 Enabled: true
 Filename: example_rule.py
 PolicyID: Example.Rule.01
@@ -183,44 +230,7 @@ The specification file MUST:
     - FileName
     - PolicyID
     - ResourceTypes
-    - Severity 
-
-### Commands and Usage
-
-```bash
-$ panther-cli --help
-
-usage: panther-cli [-h] {test,zip} ...
-
-Panther CLI
-
-positional arguments:
-  {test,zip}
-    test      Validate policy specifications and run policy tests.
-    zip       Create an archive of local Policies for uploading to Panther.
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-$ panther-cli test --policies tests/fixtures/valid_policies/
-
-[INFO]: Testing Policies in tests/fixtures/valid_policies/
-
-Testing policy 'AWS.IAM.MFAEnabled'
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-$ panther-cli zip --policies tests/fixtures/valid_policies/ --output-path tmp
-
-[INFO]: Testing Policies in tests/fixtures/valid_policies/
-
-Testing policy 'AWS.IAM.MFAEnabled'
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
-[INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
-```
+    - Severity
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
