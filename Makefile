@@ -4,11 +4,11 @@ ci:
 	pipenv run $(MAKE) lint unit integration
 
 deps:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 deps-update:
-	pip install --upgrade –r requirements-top-level.txt
-	pip freeze –r requirements-top-level.txt > requirements.txt
+	pip3 install -r requirements-top-level.txt --upgrade
+	pip3 freeze -r requirements-top-level.txt > requirements.txt
 
 lint:
 	yapf $(packages) --diff --parallel --recursive --style google
