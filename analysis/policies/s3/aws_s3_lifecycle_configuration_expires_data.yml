@@ -17,10 +17,10 @@ Description: >
   Verifies that the S3 Bucket Object Lifecycle configuration expires data within 90 and 365 days.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-lifecycle-configuration-expires-data
-Reference: reference.link
+Reference: https://amzn.to/2visoXr
 Tests:
   -
-    Name: Bucket Has Lifecycle Configuration
+    Name: Bucket Has a Compliant 1-Year Lifecycle Configuration
     ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
@@ -40,7 +40,7 @@ Tests:
               "AbortIncompleteMultipartUpload": null,
               "Expiration": {
                 "Date": null,
-                "Days": 364,
+                "Days": 365,
                 "ExpiredObjectDeleteMarker": null
               },
               "Filter": {
@@ -50,7 +50,7 @@ Tests:
               },
               "ID": "ExpireAfter1Year",
               "NoncurrentVersionExpiration": {
-                "NoncurrentDays": 364
+                "NoncurrentDays": 365
               },
               "NoncurrentVersionTransitions": null,
               "Prefix": null,
