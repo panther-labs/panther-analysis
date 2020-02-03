@@ -17,10 +17,10 @@ jobs:
             command: pipenv run -- make deps
         - run:
             name: Install Panther CLI
-            command: pip3 install -e .
+            command: pipenv run -- pip3 install -e .
         - run:
             name: CLI Tests
-            command: make ci && make integration
+            command: make ci && pipenv run make integration
         - run:
             name: Analysis Tests
-            command: panther-cli test --policies analysis
+            command: pipenv run -- panther-cli test --policies analysis
