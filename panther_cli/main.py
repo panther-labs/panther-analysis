@@ -16,6 +16,7 @@ limitations under the License.
 
 import argparse
 from datetime import datetime
+from collections import defaultdict
 import importlib.util
 from importlib.abc import Loader
 import json
@@ -23,8 +24,7 @@ import logging
 import os
 import shutil
 import sys
-from typing import Any, Callable, Dict, Iterator, List, Tuple
-
+from typing import Any, Callable, DefaultDict, Dict, Iterator, List, Tuple
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)
 import yaml
@@ -180,7 +180,7 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
         A tuple of the return code, and a list of tuples containing invalid specs and their error.
     """
     invalid_specs = []
-    failed_tests: Dict[str, list] = {}
+    failed_tests: DefaultDict[str, list] = defaultdict(list)
     tests: List[str] = []
     logging.info('Testing Policies in %s\n', args.policies)
 
@@ -244,7 +244,7 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
 
 
 def run_tests(policy: Dict[str, Any], run_func: Callable[[TestCase], bool],
-              failed_tests: Dict[str, list]) -> Dict[str, list]:
+              failed_tests: DefaultDict[str, list]) -> DefaultDict[str, list]:
 
     for unit_test in policy['Tests']:
         try:
