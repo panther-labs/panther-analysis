@@ -51,7 +51,7 @@ $ make deps
 Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) to install `panther-cli`.
 
 ```bash
-pip install -e .
+pip3 install -e .
 ```
 
 ### Commands and Usage

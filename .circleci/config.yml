@@ -16,5 +16,8 @@ jobs:
             name: Install dependencies
             command: pipenv run -- make deps
         - run:
+            name: Install Panther CLI
+            command: pipenv run -- pip3 install -e .
+        - run:
             name: CLI Tests
-            command: make ci
+            command: make ci && make integration
