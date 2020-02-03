@@ -43,15 +43,23 @@ We include the following rule bundles:
 Setup your environment:
 
 ```bash
+$ make install
 $ make venv
 $ source venv/bin/activate
-$ make deps
+$ pipenv run -- make deps
 ```
 
 Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) to install `panther-cli`.
 
 ```bash
-pip install -e .
+$ pipenv run -- pip3 install -e .
+```
+
+If you want to use the `panther-cli` tool outside of the virtual environment, install it to the host directly.
+
+```bash
+$ make deps
+$ pip3 install -e .
 ```
 
 ### Commands and Usage

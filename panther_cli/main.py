@@ -15,16 +15,16 @@ limitations under the License.
 '''
 
 import argparse
-from collections import defaultdict
 from datetime import datetime
+from collections import defaultdict
 import importlib.util
+from importlib.abc import Loader
 import json
 import logging
 import os
 import shutil
 import sys
-from typing import Any, Iterator, Tuple, Dict
-
+from typing import Any, Callable, DefaultDict, Dict, Iterator, List, Tuple
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)
 import yaml
@@ -100,6 +100,7 @@ def load_module(filename: str) -> Tuple[Any, Any]:
     spec = importlib.util.spec_from_file_location(module_name, filename)
     module = importlib.util.module_from_spec(spec)
     try:
+        assert isinstance(spec.loader, Loader)  #nosec
         spec.loader.exec_module(module)
     except FileNotFoundError as err:
         print('\t[ERROR] File not found, skipping\n')
@@ -170,7 +171,7 @@ def zip_policies(args: argparse.Namespace) -> Tuple[int, str]:
 
 
 def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
-    """Runs tests on each Policy as defined in their specification.
+    """Imports each Policy/Rule and runs their tests.
 
     Args:
         args: The populated Argparse namespace with parsed command-line arguments.
@@ -178,15 +179,14 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
     Returns:
         A tuple of the return code, and a list of tuples containing invalid specs and their error.
     """
-    return_code = 0
     invalid_specs = []
-    failed_tests = defaultdict(list)
-    passed_tests = defaultdict(list)
+    failed_tests: DefaultDict[str, list] = defaultdict(list)
+    tests: List[str] = []
     logging.info('Testing Policies in %s\n', args.policies)
 
+    # First import the globals file
     specs = list(load_policy_specs(args.policies))
-    for index, (policy_spec_filename, dir_name,
-                policy_spec) in enumerate(specs):
+    for policy_spec_filename, dir_name, policy_spec in specs:
         if policy_spec.get('PolicyID') != 'aws_globals':
             continue
         module, load_err = load_module(
@@ -196,9 +196,12 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
             invalid_specs.append((policy_spec_filename, load_err))
             break
         sys.modules['aws_globals'] = module
-        del specs[index]
 
+    # Next import each policy and run its tests
     for policy_spec_filename, dir_name, policy_spec in specs:
+        if policy_spec.get('PolicyID') == 'aws_globals':
+            continue
+
         try:
             SPEC_SCHEMA.validate(policy_spec)
         except (SchemaError, SchemaMissingKeyError, SchemaForbiddenKeyError,
@@ -209,8 +212,7 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
         print(policy_spec['PolicyID'])
 
         # Check if the PolicyID has already been loaded
-        if policy_spec['PolicyID'] in failed_tests or policy_spec[
-                'PolicyID'] in passed_tests:
+        if policy_spec['PolicyID'] in tests:
             print('\t[ERROR] Conflicting PolicyID\n')
             invalid_specs.append(
                 (policy_spec_filename,
@@ -224,41 +226,41 @@ def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
             invalid_specs.append((policy_spec_filename, load_err))
             continue
 
+        tests.append(policy_spec['PolicyID'])
         if policy_spec['AnalysisType'] == 'policy':
             run_func = module.policy
         elif policy_spec['AnalysisType'] == 'rule':
             run_func = module.rule
-
-        for unit_test in policy_spec['Tests']:
-            try:
-                test_case = TestCase(unit_test['Resource'],
-                                     unit_test['ResourceType'])
-                result = run_func(test_case)
-            except KeyError as err:
-                print("KeyError: {0}".format(err))
-                continue
-            test_result = 'PASS'
-            if result != unit_test['ExpectedResult']:
-                test_result = 'FAIL'
-                failed_tests[policy_spec['PolicyID']].append(unit_test['Name'])
-            else:
-                passed_tests[policy_spec['PolicyID']].append(unit_test['Name'])
-            print('\t[{}] {}'.format(test_result, unit_test['Name']))
+        failed_tests = run_tests(policy_spec, run_func, failed_tests)
         print('')
 
-    if failed_tests:
-        return_code = 1
-        logging.error("Failed Tests:\n")
-        for policy_id, failed_tests in failed_tests.items():
-            print("{}\n\t{}\n".format(policy_id, failed_tests))
+    for policy_id in failed_tests:
+        print("Failed: {}\n\t{}\n".format(policy_id, failed_tests[policy_id]))
 
-    if invalid_specs:
-        return_code = 1
-        logging.error("Invalid Policy Files:\n")
-        for spec_filename, spec_error in invalid_specs:
-            print("{}\n\t{}\n".format(spec_filename, spec_error))
+    for spec_filename, spec_error in invalid_specs:
+        print("Invalid: {}\n\t{}\n".format(spec_filename, spec_error))
 
-    return return_code, invalid_specs
+    return int(bool(failed_tests or invalid_specs)), invalid_specs
+
+
+def run_tests(policy: Dict[str, Any], run_func: Callable[[TestCase], bool],
+              failed_tests: DefaultDict[str, list]) -> DefaultDict[str, list]:
+
+    for unit_test in policy['Tests']:
+        try:
+            test_case = TestCase(unit_test['Resource'],
+                                 unit_test['ResourceType'])
+            result = run_func(test_case)
+        except KeyError as err:
+            print("KeyError: {0}".format(err))
+            continue
+        test_result = 'PASS'
+        if result != unit_test['ExpectedResult']:
+            test_result = 'FAIL'
+            failed_tests[policy['PolicyID']].append(unit_test['Name'])
+        print('\t[{}] {}'.format(test_result, unit_test['Name']))
+
+    return failed_tests
 
 
 def setup_parser() -> argparse.ArgumentParser:

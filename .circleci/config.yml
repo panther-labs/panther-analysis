@@ -7,5 +7,20 @@ jobs:
     steps:
         - checkout
         - run:
-            name: Pass
-            command: echo 'true'
+            name: Install core utilities
+            command: make install
+        - run:
+            name: Setup the Virtual Environment
+            command: make venv && source venv/bin/activate
+        - run:
+            name: Install dependencies
+            command: pipenv run -- make deps
+        - run:
+            name: Install Panther CLI
+            command: pipenv run -- pip3 install -e .
+        - run:
+            name: CLI Tests
+            command: make ci && pipenv run make integration
+        - run:
+            name: Analysis Tests
+            command: pipenv run -- panther-cli test --policies analysis
