@@ -23,7 +23,7 @@ fmt:
 	pipenv run yapf $(packages) --in-place --recursive --parallel --style google
 
 install:
-	pip3 install --upgrade pip
+	pip3 install --user --upgrade pip
 	pip3 install pipenv --upgrade
 	pipenv install
 
