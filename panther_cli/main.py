@@ -15,7 +15,6 @@ limitations under the License.
 '''
 
 import argparse
-# from collections import defaultdict
 from datetime import datetime
 import importlib.util
 from importlib.abc import Loader
@@ -24,7 +23,7 @@ import logging
 import os
 import shutil
 import sys
-from typing import Any, Dict, Iterator, List, Tuple, Callable
+from typing import Any, Callable, Dict, Iterator, List, Tuple
 
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)

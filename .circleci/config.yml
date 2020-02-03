@@ -7,8 +7,16 @@ jobs:
     steps:
         - checkout
         - run:
-            name: setup
-            command: make install && make venv && source venv/bin/activate && make deps
+            name: Install core utilities
+            command: make install
         - run:
-            name: CLI CI
+            name: Setup the Virtual Environment
+            command: make venv && source venv/bin/activate
+        - run:
+            name: Install dependencies
+            command: pipenv run -- make deps
+  test:
+    steps:
+        - run:
+            name: CLI Tests
             command: make ci
