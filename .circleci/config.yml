@@ -7,5 +7,8 @@ jobs:
     steps:
         - checkout
         - run:
+            name: setup
+            command: make venv && source venv/bin/activate && make deps
+        - run:
             name: CLI CI
             command: make ci
