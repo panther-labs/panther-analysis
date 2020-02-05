@@ -170,26 +170,6 @@ def zip_policies(args: argparse.Namespace) -> Tuple[int, str]:
         'zip', args.policies)
 
 
-def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
-    """Tests, validates, packages, and then uploads all policies into a Panther deployment.
-
-    Returns 1 if the policy tests, validation, or packaging fails.
-
-    Args:
-        args: The populated Argparse namespace with parsed command-line arguments.
-
-    Returns:
-        A tuple of return code and the archive filename.
-    """
-    return_code, _ = zip_policies(args)
-    if return_code == 1:
-        logging.info('ERROR!')
-        return return_code, ''
-
-    logging.info('done!')
-    return 0, ''
-
-
 def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
     """Imports each Policy/Rule and runs their tests.
 
@@ -313,19 +293,6 @@ def setup_parser() -> argparse.ArgumentParser:
                             help='The path to write zipped policies to.',
                             required=True)
     zip_parser.set_defaults(func=zip_policies)
-
-    upload_parser = subparsers.add_parser(
-        'upload', help='Upload specified policies to a Panther deployment.')
-    upload_parser.add_argument('--policies',
-                               type=str,
-                               help='The relative path to Panther policies.',
-                               required=True)
-    upload_parser.add_argument('--output-path',
-                               default='.',
-                               type=str,
-                               help='The relative path to Panther policies.',
-                               required=False)
-    upload_parser.set_defaults(func=upload_policies)
 
     return parser
 
