@@ -10,7 +10,9 @@ DMZ_NETWORKS = [
 
 
 def is_dmz_cidr(ip_range):
-    return any(ip_network(ip_range).overlaps(pci_network) for pci_network in PCI_NETWORKS)
+    return any(
+        ip_network(ip_range).overlaps(pci_network)
+        for pci_network in PCI_NETWORKS)
 
 
 DMZ_TAG_KEY = 'environment'

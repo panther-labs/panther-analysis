@@ -20,7 +20,9 @@ def policy(resource):
         return False
 
     # Build the list of role names this policy is actually attached to
-    roles_attached = [role['RoleName'] for role in resource['Entities']['PolicyRoles']]
+    roles_attached = [
+        role['RoleName'] for role in resource['Entities']['PolicyRoles']
+    ]
 
     # For each required role, ensure that role has the policy attached
     for role_needed in POLICY_ROLE_MAPPINGS[resource['PolicyName']]:

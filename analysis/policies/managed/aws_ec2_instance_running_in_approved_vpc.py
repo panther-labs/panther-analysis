@@ -17,7 +17,8 @@ def policy(resource):
     if resource['Tags'] is not None:
         tag_presence = [
             tag['Key'] in IGNORED_INSTANCE_TAGS and
-            tag['Value'] == IGNORED_INSTANCE_TAGS[tag['Key']] for tag in resource['Tags']
+            tag['Value'] == IGNORED_INSTANCE_TAGS[tag['Key']]
+            for tag in resource['Tags']
         ]
         if any(tag_presence):
             return True

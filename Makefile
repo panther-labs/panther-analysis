@@ -1,4 +1,4 @@
-packages = panther_cli
+packages = panther_cli analysis
 
 ci:
 	pipenv run $(MAKE) lint unit integration

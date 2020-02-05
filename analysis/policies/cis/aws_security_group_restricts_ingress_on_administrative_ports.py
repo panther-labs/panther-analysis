@@ -27,8 +27,8 @@ def policy(resource):
                 src_open = src_open or ip_range['CidrIp'] == '0.0.0.0/0'
             for ipv6_range in permission['Ipv6Ranges'] or []:
                 src_open = src_open or ipv6_range['CidrIpv6'] == '::/0'
-            if src_open and port_checker(
-                RESTRICTED_PORTS, permission['FromPort'], permission['ToPort']
-            ):
+            if src_open and port_checker(RESTRICTED_PORTS,
+                                         permission['FromPort'],
+                                         permission['ToPort']):
                 return False
     return True

@@ -5,12 +5,13 @@ CHECK_GSI = True
 
 def policy(resource):
     # Check if this table has never had auto scaling configured
-    if resource['BillingModeSummary'] is None and resource['AutoScalingDescriptions'] is None:
+    if resource['BillingModeSummary'] is None and resource[
+            'AutoScalingDescriptions'] is None:
         return False
 
     # Check if this table is not on provisioned billing (and therefore auto scaling does not apply)
-    if resource['BillingModeSummary'
-               ] and resource['BillingModeSummary']['BillingMode'] != 'PROVISIONED':
+    if resource['BillingModeSummary'] and resource['BillingModeSummary'][
+            'BillingMode'] != 'PROVISIONED':
         return True
 
     # Check if application auto scaling is configured
@@ -23,7 +24,8 @@ def policy(resource):
     if CHECK_GSI:
         # We cannot use resource.get('GSI', []) here as the value is present, it is just a NoneType
         for gsi in resource['GlobalSecondaryIndexes'] or []:
-            resource_auto_scaling[table_id + '/index/' + gsi['IndexName']] = False
+            resource_auto_scaling[table_id + '/index/' +
+                                  gsi['IndexName']] = False
 
     # Check that each resource that requires application autoscaling has it enabled
     for auto_scale_target in resource['AutoScalingDescriptions']:
