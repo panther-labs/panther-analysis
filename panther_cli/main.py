@@ -15,10 +15,11 @@ limitations under the License.
 '''
 
 import argparse
+import base64
 from datetime import datetime
-from collections import defaultdict
 import importlib.util
 from importlib.abc import Loader
+from collections import defaultdict
 import json
 import logging
 import os
@@ -28,6 +29,8 @@ from typing import Any, Callable, DefaultDict, Dict, Iterator, List, Tuple
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)
 import yaml
+
+import boto3
 
 
 class TestCase():
@@ -170,6 +173,64 @@ def zip_policies(args: argparse.Namespace) -> Tuple[int, str]:
         'zip', args.policies)
 
 
+def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
+    """Tests, validates, packages, and then uploads all policies into a Panther deployment.
+
+    Returns 1 if the policy tests, validation, or packaging fails.
+
+    Args:
+        args: The populated Argparse namespace with parsed command-line arguments.
+
+    Returns:
+        A tuple of return code and the archive filename.
+    """
+    return_code, archive = zip_policies(args)
+    if return_code == 1:
+        return return_code, ''
+
+    client = boto3.client('lambda')
+
+    with open(archive, 'rb') as analysis_zip:
+        zip_bytes = analysis_zip.read()
+        payload = {
+            'resource':
+                '/upload',
+            'HTTPMethod':
+                'POST',
+            'Body':
+                json.dumps({
+                    'Data': base64.b64encode(zip_bytes).decode('utf-8'),
+                    # The UserID is required by Panther for this API call, but we have no way of
+                    # acquiring it and it isn't used for anything. This is a random, valid UUID so
+                    # that the input can be validated by the API.
+                    'UserID': 'c273fd96-88d0-41c4-a74e-941e17832915',
+                }),
+        }
+
+        logging.info('Uploading pack to Panther')
+        response = client.invoke(FunctionName='panther-analysis-api',
+                                 InvocationType='RequestResponse',
+                                 LogType='None',
+                                 Payload=json.dumps(payload))
+
+        response_str = response['Payload'].read().decode('utf-8')
+        response_payload = json.loads(response_str)
+
+        if response_payload['statusCode'] != 200:
+            return 1, ''
+
+        body = json.loads(response_payload['body'])
+        logging.info('Upload success.')
+        logging.info('API Response:\n%s',
+                     json.dumps(body, indent=2, sort_keys=True))
+        #logging.info(
+        #    '\n\t%d new policies\n\t%d modified policies\n\t%d new rules\n\t%d modified rules',
+        #    body['newPolicies'], body['modifiedPolicies'], body['newRules'],
+        #    body['modifiedRules'])
+
+    return 0, ''
+
+
 def test_policies(args: argparse.Namespace) -> Tuple[int, list]:
     """Imports each Policy/Rule and runs their tests.
 
@@ -294,12 +355,26 @@ def setup_parser() -> argparse.ArgumentParser:
                             required=True)
     zip_parser.set_defaults(func=zip_policies)
 
+    upload_parser = subparsers.add_parser(
+        'upload', help='Upload specified policies to a Panther deployment.')
+    upload_parser.add_argument('--policies',
+                               type=str,
+                               help='The relative path to Panther policies.',
+                               required=True)
+    upload_parser.add_argument(
+        '--output-path',
+        default='.',
+        type=str,
+        help='The location to store a local copy of the packaged policies.',
+        required=False)
+    upload_parser.set_defaults(func=upload_policies)
+
     return parser
 
 
 def run() -> None:
     logging.basicConfig(format='[%(levelname)s]: %(message)s',
-                        level=logging.DEBUG)
+                        level=logging.INFO)
 
     parser = setup_parser()
     args = parser.parse_args()
