@@ -36,7 +36,7 @@ We include the following rule bundles:
 
 ## Panther CLI Tool
 
-`panther-cli` is a Python command line interface for testing and packaging Panther Policies and Rules. This enables policies and rules to be managed in code and tracked via version control systems such as git or svn. This is also useful for devops and security personnel who prefer CLI management and configuration over web app interfaces.
+`panther-cli` is a Python command line interface for testing, packaging, and deploying Panther Policies and Rules. This enables policies and rules to be managed in code and tracked via version control systems such as git or svn. This is also useful for devops and security personnel who prefer CLI management and configuration over web interfaces.
 
 ### Installation
 
@@ -111,7 +111,7 @@ Testing policy 'AWS.IAM.MFAEnabled'
 [INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
 ```
 
-Upload packages to Panther directly:
+Upload packages to Panther directly. Note, this expects your environment to be setup the same way as if you were using the AWS CLI, see the setup instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). We also recommend using a credentials manager such as [aws-vault](https://github.com/99designs/aws-vault).
 
 ```bash
 $ panther-cli upload --policies tests/fixtures/valid_policies/ --output-path tmp

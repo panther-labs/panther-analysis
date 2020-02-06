@@ -364,7 +364,7 @@ def setup_parser() -> argparse.ArgumentParser:
     upload_parser.add_argument('--output-path',
                                default='.',
                                type=str,
-                               help='The relative path to Panther policies.',
+                            help='The location to store a local copy of the packaged policies.',
                                required=False)
     upload_parser.set_defaults(func=upload_policies)
 
