@@ -4,5 +4,4 @@ def policy(resource):
         resource['KeyManager'] != 'CUSTOMER'
         # Check that the KeyRotation exists
         # Explicit True check to avoid returning NoneType
-        or resource['KeyRotationEnabled'] is True
-    )
+        or resource['KeyRotationEnabled'] is True)

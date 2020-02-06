@@ -9,4 +9,5 @@ def policy(resource):
     if resource['ImageId'] not in APPROVED_HOSTS:
         return True
 
-    return resource['Placement']['HostId'] in APPROVED_HOSTS[resource['ImageId']]
+    return resource['Placement']['HostId'] in APPROVED_HOSTS[
+        resource['ImageId']]

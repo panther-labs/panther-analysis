@@ -16,4 +16,5 @@ def policy(resource):
         return False
 
     # Check that the correct Web ACL is assigned for this load balancer
-    return resource['WebAcl']['WebACLId'] == MAPPINGS[resource['LoadBalancerArn']]
+    return resource['WebAcl']['WebACLId'] == MAPPINGS[
+        resource['LoadBalancerArn']]

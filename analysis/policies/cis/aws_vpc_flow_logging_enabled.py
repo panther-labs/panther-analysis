@@ -4,8 +4,8 @@ def policy(resource):
 
     for flow in resource['FlowLogs']:
         if flow['FlowLogStatus'] == 'ACTIVE' and (
-            flow['TrafficType'] == 'REJECT' or flow['TrafficType'] == 'ALL'
-        ):
+                flow['TrafficType'] == 'REJECT' or
+                flow['TrafficType'] == 'ALL'):
             return True
 
     return False

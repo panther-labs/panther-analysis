@@ -19,9 +19,11 @@ def policy(resource):
         return True
 
     if report['PasswordEnabled']:
-        if report['PasswordLastUsed'] != DEFAULT_TIME and aged_out(report['PasswordLastUsed']):
+        if report['PasswordLastUsed'] != DEFAULT_TIME and aged_out(
+                report['PasswordLastUsed']):
             return False
-        if report['PasswordLastUsed'] == DEFAULT_TIME and aged_out(report['PasswordLastChanged']):
+        if report['PasswordLastUsed'] == DEFAULT_TIME and aged_out(
+                report['PasswordLastChanged']):
             return False
 
     return True
