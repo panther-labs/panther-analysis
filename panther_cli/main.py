@@ -26,10 +26,11 @@ import os
 import shutil
 import sys
 from typing import Any, Callable, DefaultDict, Dict, Iterator, List, Tuple
-import boto3
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)
 import yaml
+
+import boto3
 
 
 class TestCase():
@@ -199,6 +200,9 @@ def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
             'Body':
                 json.dumps({
                     'Data': base64.b64encode(zip_bytes).decode('utf-8'),
+                    # The UserID is required by Panther for this API call, but we have no way of
+                    # acquiring it and it isn't used for anything. This is a random, valid UUID so
+                    # that the input can be validated by the API.
                     'UserID': 'c273fd96-88d0-41c4-a74e-941e17832915',
                 }),
         }
@@ -217,10 +221,11 @@ def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
 
         body = json.loads(response_payload['body'])
         logging.info('Upload success.')
-        logging.info(
-            '\n\t%d new policies\n\t%d modified policies\n\t%d new rules\n\t%d modified rules',
-            body['newPolicies'], body['modifiedPolicies'], body['newRules'],
-            body['modifiedRules'])
+        logging.info('API Response:\n%s', json.dumps(body, indent=2, sort_keys=True))
+        #logging.info(
+        #    '\n\t%d new policies\n\t%d modified policies\n\t%d new rules\n\t%d modified rules',
+        #    body['newPolicies'], body['modifiedPolicies'], body['newRules'],
+        #    body['modifiedRules'])
 
     return 0, ''
 
