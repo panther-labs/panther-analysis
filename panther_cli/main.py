@@ -18,8 +18,8 @@ import argparse
 import base64
 from datetime import datetime
 import importlib.util
-from collections import defaultdict
 from importlib.abc import Loader
+from collections import defaultdict
 import json
 import logging
 import os
@@ -221,7 +221,8 @@ def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
 
         body = json.loads(response_payload['body'])
         logging.info('Upload success.')
-        logging.info('API Response:\n%s', json.dumps(body, indent=2, sort_keys=True))
+        logging.info('API Response:\n%s',
+                     json.dumps(body, indent=2, sort_keys=True))
         #logging.info(
         #    '\n\t%d new policies\n\t%d modified policies\n\t%d new rules\n\t%d modified rules',
         #    body['newPolicies'], body['modifiedPolicies'], body['newRules'],
