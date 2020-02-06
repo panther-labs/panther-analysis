@@ -15,9 +15,10 @@ limitations under the License.
 '''
 
 import argparse
+import base64
 from datetime import datetime
-from collections import defaultdict
 import importlib.util
+from collections import defaultdict
 from importlib.abc import Loader
 import json
 import logging
@@ -25,6 +26,7 @@ import os
 import shutil
 import sys
 from typing import Any, Callable, DefaultDict, Dict, Iterator, List, Tuple
+import boto3
 from schema import (Optional, Or, Schema, SchemaError, SchemaMissingKeyError,
                     SchemaForbiddenKeyError, SchemaUnexpectedTypeError)
 import yaml
@@ -181,12 +183,45 @@ def upload_policies(args: argparse.Namespace) -> Tuple[int, str]:
     Returns:
         A tuple of return code and the archive filename.
     """
-    return_code, _ = zip_policies(args)
+    return_code, archive = zip_policies(args)
     if return_code == 1:
-        logging.info('ERROR!')
         return return_code, ''
 
-    logging.info('done!')
+    client = boto3.client('lambda')
+
+    with open(archive, 'rb') as analysis_zip:
+        zip_bytes = analysis_zip.read()
+        payload = {
+            'resource':
+                '/upload',
+            'HTTPMethod':
+                'POST',
+            'Body':
+                json.dumps({
+                    'Data': base64.b64encode(zip_bytes).decode('utf-8'),
+                    'UserID': 'c273fd96-88d0-41c4-a74e-941e17832915',
+                }),
+        }
+
+        logging.info('Uploading pack to Panther')
+        response = client.invoke(FunctionName='panther-analysis-api',
+                                 InvocationType='RequestResponse',
+                                 LogType='None',
+                                 Payload=json.dumps(payload))
+
+        response_str = response['Payload'].read().decode('utf-8')
+        response_payload = json.loads(response_str)
+
+        if response_payload['statusCode'] != 200:
+            return 1, ''
+
+        body = json.loads(response_payload['body'])
+        logging.info('Upload success.')
+        logging.info(
+            '\n\t%d new policies\n\t%d modified policies\n\t%d new rules\n\t%d modified rules',
+            body['newPolicies'], body['modifiedPolicies'], body['newRules'],
+            body['modifiedRules'])
+
     return 0, ''
 
 
@@ -332,7 +367,7 @@ def setup_parser() -> argparse.ArgumentParser:
 
 def run() -> None:
     logging.basicConfig(format='[%(levelname)s]: %(message)s',
-                        level=logging.DEBUG)
+                        level=logging.INFO)
 
     parser = setup_parser()
     args = parser.parse_args()
