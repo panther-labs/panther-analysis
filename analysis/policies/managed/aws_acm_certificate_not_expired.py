@@ -5,7 +5,7 @@ EXPIRATION_BUFFER = datetime.timedelta(days=60)
 
 
 def policy(resource):
-    time_to_expiration = datetime.datetime.strptime(resource['NotAfter'],
-                                                    AWS_TIMESTAMP_FORMAT) - datetime.datetime.now()
+    time_to_expiration = datetime.datetime.strptime(
+        resource['NotAfter'], AWS_TIMESTAMP_FORMAT) - datetime.datetime.now()
 
     return time_to_expiration >= EXPIRATION_BUFFER

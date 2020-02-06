@@ -5,8 +5,6 @@ def policy(resource):
     if not resource['CredentialReport']:
         return True
 
-    return (
-        not resource['CredentialReport']['PasswordEnabled'] or
-        # Explicit True check to avoid returning NoneType
-        resource['CredentialReport']['MfaActive'] is True
-    )
+    return (not resource['CredentialReport']['PasswordEnabled'] or
+            # Explicit True check to avoid returning NoneType
+            resource['CredentialReport']['MfaActive'] is True)

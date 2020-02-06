@@ -11,12 +11,12 @@ def policy(resource):
     for statement in iam_policy.statements:
         if statement.effect != 'Allow':
             continue
-        if (
-            'Condition' not in statement.statement or
-            'Bool' not in statement.statement['Condition'] or
-            'aws:SecureTransport' not in statement.statement['Condition']['Bool'] or
-            statement.statement['Condition']['Bool']['aws:SecureTransport'] != 'true'
-        ):
+        if ('Condition' not in statement.statement or
+                'Bool' not in statement.statement['Condition'] or
+                'aws:SecureTransport' not in statement.statement['Condition']
+            ['Bool'] or
+                statement.statement['Condition']['Bool']['aws:SecureTransport']
+                != 'true'):
             return False
 
     return True

@@ -7,9 +7,11 @@ def policy(resource):
         return False
 
     for lifecycle_rule in resource['LifecycleRules']:
-        if lifecycle_rule['Expiration'] is None or lifecycle_rule['Status'] != 'Enabled':
+        if lifecycle_rule['Expiration'] is None or lifecycle_rule[
+                'Status'] != 'Enabled':
             continue
-        if MIN_RETENTION_PERIOD <= lifecycle_rule['Expiration']['Days'] <= MAX_RETENTION_PERIOD:
+        if MIN_RETENTION_PERIOD <= lifecycle_rule['Expiration'][
+                'Days'] <= MAX_RETENTION_PERIOD:
             return True
 
     return False

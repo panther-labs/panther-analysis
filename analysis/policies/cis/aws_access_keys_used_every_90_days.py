@@ -20,21 +20,17 @@ def policy(resource):
 
     if report['AccessKey1Active']:
         if report['AccessKey1LastUsedDate'] != DEFAULT_TIME and aged_out(
-            report['AccessKey1LastUsedDate']
-        ):
+                report['AccessKey1LastUsedDate']):
             return False
         if report['AccessKey1LastUsedDate'] == DEFAULT_TIME and aged_out(
-            report['AccessKey1LastRotated']
-        ):
+                report['AccessKey1LastRotated']):
             return False
     if report['AccessKey2Active']:
         if report['AccessKey2LastUsedDate'] != DEFAULT_TIME and aged_out(
-            report['AccessKey2LastUsedDate']
-        ):
+                report['AccessKey2LastUsedDate']):
             return False
         if report['AccessKey2LastUsedDate'] == DEFAULT_TIME and aged_out(
-            report['AccessKey2LastRotated']
-        ):
+                report['AccessKey2LastRotated']):
             return False
 
     return True

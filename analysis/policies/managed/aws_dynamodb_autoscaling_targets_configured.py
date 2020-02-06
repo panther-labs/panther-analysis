@@ -15,7 +15,8 @@ WRITE_CAP = {
 
 def policy(resource):
     # Check if this table has never had auto scaling configured
-    if resource['BillingModeSummary'] is None and resource['AutoScalingDescriptions'] is None:
+    if resource['BillingModeSummary'] is None and resource[
+            'AutoScalingDescriptions'] is None:
         return False
 
     # Check if this table is not on provisioned billing (and therefore auto scaling does not apply)
@@ -37,20 +38,23 @@ def policy(resource):
     if CHECK_GSI:
         # We cannot use resource.get('GSI', []) here as the value is present, it is just a NoneType
         for gsi in resource['GlobalSecondaryIndexes'] or []:
-            resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] + '/READ'] = False
-            resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] + '/WRITE'] = False
+            resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] +
+                                  '/READ'] = False
+            resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] +
+                                  '/WRITE'] = False
 
     # Check that each resource that requires application autoscaling has it enabled
     for auto_scale_target in resource['AutoScalingDescriptions']:
         # Determine if this is a target for reading capacity or writing capacity
-        cap = WRITE_CAP if 'WriteCapacityUnits' in auto_scale_target['ScalableDimension'
-                                                                    ] else READ_CAP
+        cap = WRITE_CAP if 'WriteCapacityUnits' in auto_scale_target[
+            'ScalableDimension'] else READ_CAP
 
         # Verify that the minimum and maximum scalable targets are within the configured bounds
-        resource_auto_scaling[auto_scale_target['ResourceId'] + '/' + cap['TYPE']] = (
-            auto_scale_target['MinCapacity'] > cap['MIN'] and
-            auto_scale_target['MaxCapacity'] < cap['MAX']
-        )
+        resource_auto_scaling[auto_scale_target['ResourceId'] + '/' +
+                              cap['TYPE']] = (
+                                  auto_scale_target['MinCapacity'] > cap['MIN']
+                                  and
+                                  auto_scale_target['MaxCapacity'] < cap['MAX'])
 
     # Verify that each scalable target was within configured bounds
     return all(resource_auto_scaling.values())

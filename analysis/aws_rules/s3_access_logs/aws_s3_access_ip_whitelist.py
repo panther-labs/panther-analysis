@@ -7,4 +7,6 @@ IP_WHITELIST = {
 
 def rule(event):
     cidr_ip = ip_network(event['remoteIP'])
-    return not any(cidr_ip.subnet_of(approved_ip_range) for approved_ip_range in IP_WHITELIST)
+    return not any(
+        cidr_ip.subnet_of(approved_ip_range)
+        for approved_ip_range in IP_WHITELIST)

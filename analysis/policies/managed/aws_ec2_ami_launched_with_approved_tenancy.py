@@ -10,4 +10,5 @@ def policy(resource):
     if resource['ImageId'] not in APPROVED_TENANCIES:
         return True
 
-    return resource['Placement']['Tenancy'] in APPROVED_TENANCIES[resource['ImageId']]
+    return resource['Placement']['Tenancy'] in APPROVED_TENANCIES[
+        resource['ImageId']]
