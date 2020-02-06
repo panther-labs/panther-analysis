@@ -68,18 +68,20 @@ View available commands:
 
 ```bash
 $ panther-cli --help
+usage: panther_cli [-h] [--version] {test,zip,upload} ...
 
-usage: panther-cli [-h] {test,zip} ...
-
-Panther CLI
+Panther CLI: A tool for writing, testing, and packaging Panther Policies/Rules
 
 positional arguments:
-  {test,zip}
-    test      Validate policy specifications and run policy tests.
-    zip       Create an archive of local Policies for uploading to Panther.
+  {test,zip,upload}
+    test             Validate policy specifications and run policy tests.
+    zip              Create an archive of local policies for uploading to
+                     Panther.
+    upload           Upload specified policies to a Panther deployment.
 
 optional arguments:
-  -h, --help  show this help message and exit
+  -h, --help         show this help message and exit
+  --version          show program's version number and exit
 ```
 
 Run tests:
@@ -107,6 +109,40 @@ Testing policy 'AWS.IAM.MFAEnabled'
 
 [INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
 [INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
+```
+
+Upload packages to Panther directly:
+
+```bash
+$ panther-cli upload --policies tests/fixtures/valid_policies/ --output-path tmp
+
+[INFO]: Testing Policies in tests/fixtures/valid_policies/
+
+AWS.IAM.MFAEnabled
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+AWS.IAM.BetaTest
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+AWS.CloudTrail.MFAEnabled
+	[PASS] Root MFA not enabled fails compliance
+	[PASS] User MFA not enabled fails compliance
+
+[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
+[INFO]: Found credentials in environment variables.
+[INFO]: Uploading pack to Panther
+[INFO]: Upload success.
+[INFO]: API Response:
+{
+  "modifiedPolicies": 0,
+  "modifiedRules": 0,
+  "newPolicies": 2,
+  "newRules": 1,
+  "totalPolicies": 2,
+  "totalRules": 1
+}
 ```
 
 ## Writing Policies
