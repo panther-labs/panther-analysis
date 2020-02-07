@@ -36,7 +36,7 @@ We include the following rule bundles:
 
 ### Policy & Rule Management
 
-Customizing Policies and Rules to meet your organizations needs is one of the most powerful capabilities Panther offers. This can present additional challenges when it comes to managing these policies and rules, however. In order to help manage custom configurations of Policies & Rules internally, we create a private fork of this public repo. All development we do in the public repo, and all custom configuration we do in the private repo. At tagged releases, we pull the changes from the public repo into the private repo. Here is how we set this up:
+Customizing Policies and Rules to meet your organization's needs is one of the most powerful capabilities Panther offers. This can present additional challenges when it comes to managing these policies and rules, however. In order to help manage custom configurations of Policies & Rules internally, we create a private fork of this public repo. All development we do in the public repo, and all custom configuration we do in the private repo. At tagged releases, we pull the changes from the public repo into the private repo. Here is how we set this up:
 
 #### Setup
 
