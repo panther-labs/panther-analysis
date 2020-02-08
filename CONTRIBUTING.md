@@ -1,8 +1,9 @@
 # Contributing
 
-Before contributing to this repository, please first discuss the change you wish to make by creating an [issue](https://github.com/panther-labs/panther-cli/issues).
+Please follow the [Code of Conduct](https://github.com/panther-labs/panther-analysis/blob/master/CODE_OF_CONDUCT.md)
+in all of your interactions with the project.
 
-Please note we have a [Code of Conduct](https://github.com/panther-labs/panther-cli/blob/master/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
+Prior to contributing code, you will be required to sign our [Contributor License Agreement](https://cla-assistant.io/panther-labs/panther-analysis).
 
 ## Pull Request Process
 
