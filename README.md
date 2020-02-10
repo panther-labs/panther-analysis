@@ -51,17 +51,30 @@ We include the following rule bundles:
 
 Customizing Policies and Rules to meet your organization's needs is one of the most powerful capabilities Panther offers. This can present additional challenges when it comes to managing these policies and rules, however. In order to help manage custom configurations of Policies & Rules internally, we create a private fork of this public repo. All development we do in the public repo, and all custom configuration we do in the private repo. At tagged releases, we pull the changes from the public repo into the private repo. Here is how we set this up:
 
-#### Setup
+#### Setup - GitHub
 
-First create a new blank repository, ideally without even a README. For this example, we will call the repo `private-analysis`
+The following setup will assume that you are using GitHub to host your git repositories.
+
+  - Navigate to github.com while logged in to a user in your organization
+  - Select the `+` button drop down in the top right corner, and select `Import repository`
+  - In the `Your old repository's clone URL` section add our public repo: `git@github.com:panther-labs/panther-analysis.git`
+  - Make sure the `Owner` drop down is set to your organization, and then add a `Name` (such as `panther-analysis-internal`)
+  - Set the `Privacy` radio button to `Private` (unless you want your configurations to be public)
+  - You will be redirected to a loading page while the repository is being imported. After a short while, you the repository will be available and you can clone it and begin development normally.
+
+#### Setup - git command line 
+
+The following setup will use the git command line directly.
+
+  - Create a new blank repository on your git server. For this example, we will call the repo `private-analysis`
 
 Perform these steps if you are able to push to master:
-  - Clone the public repository (recommend cloning into /tmp): `git clone --bare git@github.com:panther-labs/panther-analysis.git`
+  - Clone the public repository (recommend cloning into /tmp or similar): `git clone --bare git@github.com:panther-labs/panther-analysis.git`
   - Enter the public repository: `cd panther-analysis.git`
-  - Mirror the public repository to the private repository: `git push --mirror git@github.com:your-org/private-analysis.git`
+  - Mirror the public repository to the private repository: `git push --mirror git@your-server.com:your-org/private-analysis.git`
 
 Perform these steps if you are not able to push to master:
-  - Clone the private repository: `git clone git@github.com:your-org/private-analysis.git`
+  - Clone the private repository: `git clone git@your-server.com:your-org/private-analysis.git`
   - Enter the private repository: `cd private-analysis`
   - Add the public repository as an upstream remote of this repository: `git remote add panther-upstream git@github.com:panther-labs/panther-analysis.git`
   - Create and checkout a branch: `git checkout -b initial-commit`
@@ -69,13 +82,13 @@ Perform these steps if you are not able to push to master:
   - Push your commit up to master: `git push --set-upstream origin initial-commit`
   - Merge your commit into master. If you are following the fork and pull request workflow, this will involve opening a PR, possibly getting approval, and then merging.
 
-#### Development
+#### Updating
 
-Now that you have a private repository will all the default policies and rules, you can customize away to your hearts content. When you are ready pull in the newest changes from our public repository, perform the following steps:
+Now that you have a private repository will all the default policies and rules, you can customize away to your hearts content. When you are ready pull in the newest changes from our public repository, perform the following steps from within your private repo:
 
-  - If you have not already done so, add the public repository as a remote: `git remote add panther-upstream`
+  - If you have not already done so, add the public repository as a remote: `git remote add panther-upstream git@github.com:panther-labs/panther-analysis.git`
   - Pull in the latest changes (in a local branch if you cannot push to master): `git pull panther-upstream master`
-    - You may need to use the `--allow-unrelated-histories` flag if you did not push to master originally
+    - You may need to use the `--allow-unrelated-histories` flag if you did not maintain the history originally
   - Push the latest changes up and merge them: `git push`
 
 ## Panther CLI Tool
