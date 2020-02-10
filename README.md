@@ -1,6 +1,19 @@
-# Panther Analysis
+<h1 align="center">Panther Analysis</h1>
 
-This repository contains open-source [Panther](https://github.com/panther-labs/panther) policies and rules, along with a CLI tool for testing and packaging.
+<p align="center">
+  <a href="https://docs.runpanther.io">Documentation</a> |
+  <a href="https://docs.runpanther.io/quick-start">Quick Start</a>
+</p>
+
+<p align="center">
+  <a href="https://gitter.im/runpanther/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/runpanther/community.svg" alt="Gitter"/></a>
+  <a href="https://circleci.com/gh/panther-labs/panther-analysis"><img src="https://circleci.com/gh/panther-labs/panther-analysis.svg?style=svg" alt="CircleCI"/></a>
+  <a href="https://cla-assistant.io/panther-labs/panther-analysis" alt="CLA Assistant"><img src="https://cla-assistant.io/readme/badge/panther-labs/panther-analysis"/></a>
+</p>
+
+---
+
+This repository contains open-source [Panther](https://github.com/panther-labs/panther) policies and rules along with a CLI tool for testing and packaging.
 
 During the initial deployment of Panther, all of the policies and rules published here are uploaded. This provides a set of out-of-the-box policies and rules to establish a strong detection baseline. See the [Panther documentation](https://docs.runpanther.io/quick-start) for how to override this default behavior if desired.
 
@@ -312,5 +325,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+## Contributing
+
+We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
+
 ## License
-[Apache](https://choosealicense.com/licenses/apache-2.0/)
+
+This repository is licensed under the Apache-2.0 [license](https://github.com/panther-labs/panther-analysis/blob/master/LICENSE).
