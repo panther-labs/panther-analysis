@@ -6,6 +6,10 @@ IP_WHITELIST = {
 
 
 def rule(event):
+    # Only evaluate if the remoteIP field is present
+    if 'remoteIP' not in event:
+        return False
+
     cidr_ip = ip_network(event['remoteIP'])
     return not any(
         cidr_ip.subnet_of(approved_ip_range)

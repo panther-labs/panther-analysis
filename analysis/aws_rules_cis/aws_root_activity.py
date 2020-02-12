@@ -1,4 +1,4 @@
 def rule(event):
-    return (event['userIdentity']['type'] == 'Root' and
-            event['userIdentity'].get('invokedBy') is None and
-            event['eventType'] != 'AwsServiceEvent')
+    return (event.get('userIdentity', {}).get('type') == 'Root' and
+            event.get('userIdentity', {}).get('invokedBy') is None and
+            event.get('eventType') != 'AwsServiceEvent')

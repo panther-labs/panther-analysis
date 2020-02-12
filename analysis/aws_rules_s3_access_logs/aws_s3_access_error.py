@@ -1,2 +1,2 @@
 def rule(event):
-    return event['errorCode'] != '-'
+    return 'errorCode' in event

@@ -6,6 +6,10 @@ APPROVED_PORTS = [
 
 
 def rule(event):
+    # This rule can only be evaluated if users have enabled these fields in their VPC Flow Logs
+    if 'dstport' not in event or 'srcaddr' not in event or 'dstaddr' not in event:
+        return False
+
     # Only monitor for non whitelisted ports
     if event['dstport'] in APPROVED_PORTS:
         return False

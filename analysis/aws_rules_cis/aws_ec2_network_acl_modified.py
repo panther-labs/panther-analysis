@@ -10,4 +10,4 @@ EC2_NACL_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event['eventName'] in EC2_NACL_MODIFIED_EVENTS
+    return event.get('eventName') in EC2_NACL_MODIFIED_EVENTS

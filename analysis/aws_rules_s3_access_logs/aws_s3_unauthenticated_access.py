@@ -5,7 +5,7 @@ NO_AUTH_BUCKETS = {
 
 
 def rule(event):
-    if event['bucket'] in NO_AUTH_BUCKETS:
+    if event.get('bucket') in NO_AUTH_BUCKETS:
         return False
 
-    return event['requester'] == '-'
+    return 'requester' not in event

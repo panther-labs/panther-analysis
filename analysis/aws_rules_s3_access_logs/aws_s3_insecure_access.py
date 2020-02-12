@@ -1,2 +1,2 @@
 def rule(event):
-    return event['cipherSuite'] == '-' or event['tlsVersion'] == '-'
+    return 'cipherSuite' not in event or 'tlsVersion' not in event

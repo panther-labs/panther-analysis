@@ -9,4 +9,4 @@ CLOUDTRAIL_CHANGE_EVENTS = {
 
 
 def rule(event):
-    return event['eventName'] in CLOUDTRAIL_CHANGE_EVENTS
+    return event.get('eventName') in CLOUDTRAIL_CHANGE_EVENTS
