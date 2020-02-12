@@ -121,6 +121,8 @@ $ pip3 install -e .
 
 ### Commands and Usage
 
+It is important to note that wherever the `panther-cli` refers to policies, it is actually referring to both policies and rules. So the `--policies` flag can be passed either a directory of policies, rules, or both.
+
 View available commands:
 
 ```bash
@@ -200,6 +202,12 @@ AWS.CloudTrail.MFAEnabled
   "totalPolicies": 2,
   "totalRules": 1
 }
+```
+
+In order to upload all currently available policies and rules to your Panther deployment, run the following command. This command will recursively traverse all directories under `analysis` and package all rules and policies it finds into one package and then upload them:
+
+```bash
+$ panther-cli upload --policies analysis/ --output-path tmp
 ```
 
 ## Writing Policies
