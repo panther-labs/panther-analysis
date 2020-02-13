@@ -19,5 +19,5 @@ def rule(event):
     if not ip_network(event.get('srcaddr', '0.0.0.0/32')).is_private:
         return False
 
-    # No clean way to check set memmbership and default to False (no alert), so explicitly check for key
-    return 'dstaddr' in event && event['dstaddr'] not in APPROVED_DNS_SERVERS
+    # No clean way to default to False (no alert), so explicitly check for key
+    return 'dstaddr' in event and event['dstaddr'] not in APPROVED_DNS_SERVERS

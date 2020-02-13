@@ -21,4 +21,4 @@ def rule(event):
     # Alert if the traffic is destined for internal IP addresses
     #
     # Defaults to False(no alert) if 'dstaddr' key is not present
-    return ip_network(event.get('dstaddr', '1.0.0.0/32')).is_private:
+    return ip_network(event.get('dstaddr', '1.0.0.0/32')).is_private
