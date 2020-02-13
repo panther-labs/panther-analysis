@@ -8,11 +8,16 @@ APPROVED_DNS_SERVERS = {
 
 def rule(event):
     # Common DNS ports, for better security use an application layer aware network monitor
-    if event['dstport'] != 53 and event['dstport'] != 5353:
+    #
+    # Defaults to True (no alert) if 'dstport' key is not present
+    if event.get('dstport') != 53 and event.get('dstport') != 5353:
         return False
 
     # Only monitor traffic that is originating internally
-    if not ip_network(event['srcaddr']).is_private:
+    #
+    # Defaults to True (no alert) if 'srcaddr' key is not present
+    if not ip_network(event.get('srcaddr', '0.0.0.0/32')).is_private:
         return False
 
-    return event['dstaddr'] not in APPROVED_DNS_SERVERS
+    # No clean way to default to False (no alert), so explicitly check for key
+    return 'dstaddr' in event and event['dstaddr'] not in APPROVED_DNS_SERVERS

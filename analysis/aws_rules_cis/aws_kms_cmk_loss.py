@@ -6,4 +6,4 @@ KMS_LOSS_EVENTS = {
 
 
 def rule(event):
-    return event['eventName'] in KMS_LOSS_EVENTS
+    return event.get('eventName') in KMS_LOSS_EVENTS
