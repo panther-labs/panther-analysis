@@ -1,13 +1,13 @@
 from ipaddress import ip_network
-APPROVED_PORTS = [
+APPROVED_PORTS = {
     80,
     443,
-]
+}
 
 
 def rule(event):
-    # This rule can only be evaluated if users have enabled these fields in their VPC Flow Logs
-    if 'dstport' not in event or 'srcaddr' not in event or 'dstaddr' not in event:
+    # Can't perform this check without a destination port
+    if 'dstport' not in event:
         return False
 
     # Only monitor for non whitelisted ports
@@ -15,11 +15,12 @@ def rule(event):
         return False
 
     # Only monitor for traffic coming from non-private IP space
-    if ip_network(event['srcaddr']).is_private:
+    #
+    # Defaults to True (no alert) if 'srcaddr' key is not present
+    if ip_network(event.get('srcaddr', '0.0.0.0/32')).is_private:
         return False
 
     # Alert if the traffic is destined for internal IP addresses
-    if ip_network(event['dstaddr']).is_private:
-        return True
-
-    return False
+    #
+    # Defaults to False (no alert) if 'dstaddr' key is not present
+    return ip_network(event.get('dstaddr', '1.0.0.0/32')).is_private:
