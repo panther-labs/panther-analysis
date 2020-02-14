@@ -1,0 +1,43 @@
+AnalysisType: rule
+Filename: osquery_mac_osx_attacks.py
+PolicyID: OSquery.Mac.OSXAttacks
+DisplayName: macOS Malware Detected with osquery
+Enabled: true
+ResourceTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+  - Panther
+Severity: Medium
+Description: Malware has potentially been detected on a macOS system
+Runbook: Check the executable against VirusTotal
+Reference: https://support.apple.com/en-us/HT204899
+Tests:
+  -
+    Name: App running on Desktop that is watching keyboard events
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_osx-attacks_Keyboard_Event_Taps",
+        "action": "added",
+        "columns": {
+          "path": "/Users/johnny/Desktop/Siri.app/Contents/MacOS/Siri",
+          "pid": 100,
+          "name": "Siri"
+        }
+      }
+  -
+    Name: App is running from approved path
+    ResourceType: Osquery.Differential
+    ExpectedResult: false
+    Resource:
+      {
+        "name": "pack_osx-attacks_Keyboard_Event_Taps",
+        "action": "added",
+        "columns": {
+          "path": "/System/Library/CoreServices/Siri.app/Contents/MacOS/Siri",
+          "pid": 100,
+          "name": "Siri"
+        }
+      }
