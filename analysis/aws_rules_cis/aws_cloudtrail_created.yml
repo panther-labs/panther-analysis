@@ -1,23 +1,22 @@
 AnalysisType: rule
-Filename: aws_config_service_modified.py
-PolicyID: AWS.CloudTrail.ConfigServiceModified
-DisplayName: AWS Config Service Modified
+Filename: aws_cloudtrail_created.py
+PolicyID: AWS.CloudTrail.CloudTrailCreated
+DisplayName: A CloudTrail Was Created or Updated
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
-  - CIS 3.9
-Severity: High
+  - CIS 3.5
+Severity: Info
 Description: >
-  An AWS Config Recorder or Delivery Channel was stopped, deleted, or modified.
-Runbook: >
-  Verify that the Config Service changes were authorized. If not, revert them and investigate who caused the change. Consider altering permissions to prevent this from happening again in the future.
-Reference: https://aws.amazon.com/config/
+  A CloudTrail Trail was created, updated, or enabled.
+Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-cloudtrail-modified
+Reference: https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_Operations.html
 Tests:
   -
-    Name: Config Recorder Stopped
+    Name: CloudTrail Was Created
     ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
@@ -25,7 +24,7 @@ Tests:
           "eventVersion": "1.05",
           "userIdentity": {
               "type": "AssumedRole",
-              "principalId": "1111:tester",
+              "principalId": "tester",
               "arn": "arn:aws:sts::123456789012:assumed-role/tester",
               "accountId": "123456789012",
               "accessKeyId": "1",
@@ -35,7 +34,7 @@ Tests:
                       "principalId": "1111",
                       "arn": "arn:aws:iam::123456789012:role/tester",
                       "accountId": "123456789012",
-                      "userName": "tester"
+                      "userName": "Tester"
                   },
                   "webIdFederationData": {},
                   "attributes": {
@@ -45,22 +44,23 @@ Tests:
               }
           },
           "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "config.amazonaws.com",
-          "eventName": "StopConfigurationRecorder",
+          "eventSource": "cloudtrail.amazonaws.com",
+          "eventName": "CreateTrail",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
           "userAgent": "console.amazonaws.com",
           "requestParameters": {
-              "configurationRecorderName": "default"
+              "name": "arn:aws:cloudtrail:us-west-2:123456789012:trail/example-trail"
           },
           "responseElements": null,
           "requestID": "1",
           "eventID": "1",
+          "readOnly": false,
           "eventType": "AwsApiCall",
           "recipientAccountId": "123456789012"
       }
   -
-    Name: Config Recorder Started
+    Name: KMS Decrypt Event
     ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
@@ -68,37 +68,46 @@ Tests:
           "eventVersion": "1.05",
           "userIdentity": {
               "type": "AssumedRole",
-              "principalId": "1111:tester",
+              "principalId": "111:panther-snapshot-scheduler",
               "arn": "arn:aws:sts::123456789012:assumed-role/tester",
               "accountId": "123456789012",
               "accessKeyId": "1",
               "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "false",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  },
                   "sessionIssuer": {
                       "type": "Role",
                       "principalId": "1111",
                       "arn": "arn:aws:iam::123456789012:role/tester",
                       "accountId": "123456789012",
                       "userName": "tester"
-                  },
-                  "webIdFederationData": {},
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
                   }
               }
           },
           "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "config.amazonaws.com",
-          "eventName": "StartConfigurationRecorder",
+          "eventSource": "kms.amazonaws.com",
+          "eventName": "Decrypt",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
+          "userAgent": "Mozilla",
           "requestParameters": {
-              "configurationRecorderName": "default"
+              "encryptionContext": {
+                  "aws:lambda:FunctionArn": "arn:aws:lambda:us-west-2:123456789012:function:test-function"
+              }
           },
           "responseElements": null,
           "requestID": "1",
           "eventID": "1",
+          "readOnly": true,
+          "resources": [
+              {
+                  "ARN": "arn:aws:kms:us-west-2:123456789012:key/1",
+                  "accountId": "123456789012",
+                  "type": "AWS::KMS::Key"
+              }
+          ],
           "eventType": "AwsApiCall",
           "recipientAccountId": "123456789012"
       }

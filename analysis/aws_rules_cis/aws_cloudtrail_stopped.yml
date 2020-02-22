@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_modified.py
-PolicyID: AWS.CloudTrail.CloudTrailModified
-DisplayName: CloudTrail Modified
+Filename: aws_cloudtrail_stopped.py
+PolicyID: AWS.CloudTrail.CloudTrailStopped
+DisplayName: CloudTrail Stopped
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
@@ -16,7 +16,7 @@ Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-cloudtrail-modifi
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_Operations.html
 Tests:
   -
-    Name: CloudTrail Was Modified
+    Name: CloudTrail Was Stopped
     ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
@@ -45,7 +45,7 @@ Tests:
           },
           "eventTime": "2019-01-01T00:00:00Z",
           "eventSource": "cloudtrail.amazonaws.com",
-          "eventName": "StartLogging",
+          "eventName": "StopLogging",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
           "userAgent": "console.amazonaws.com",
@@ -60,7 +60,7 @@ Tests:
           "recipientAccountId": "123456789012"
       }
   -
-    Name: CloudTrail Was Not Modified
+    Name: CloudTrail Was Started
     ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
@@ -87,8 +87,8 @@ Tests:
               }
           },
           "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "kms.amazonaws.com",
-          "eventName": "Decrypt",
+          "eventSource": "cloudtrail.amazonaws.com",
+          "eventName": "StartLogging",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
           "userAgent": "Mozilla",
