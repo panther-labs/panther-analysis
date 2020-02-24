@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_kms_cmk_loss.py
 PolicyID: AWS.CloudTrail.KMSCustomerManagedKeyLoss
-DisplayName: Potential KMS CMK Loss
+DisplayName: KMS CMK Disabled or Deleted
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
@@ -9,7 +9,7 @@ Tags:
   - AWS
   - CIS
   - CIS 3.7
-Severity: Low
+Severity: Info
 Description: >
   A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
 Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-kms-cmk-loss

@@ -1,21 +1,23 @@
 AnalysisType: rule
-Filename: aws_ec2_gateway_modified.py
-PolicyID: AWS.CloudTrail.EC2GatewayModified
-DisplayName: EC2 Network Gateway Modified
+Filename: aws_config_service_created.py
+PolicyID: AWS.CloudTrail.ConfigServiceCreated
+DisplayName: AWS Config Service Created
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
   - CIS
-  - CIS 3.12
+  - CIS 3.9
 Severity: Info
-Description: An EC2 Network Gateway was modified.
-Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-ec2-gateway-modified
-Reference: reference.link
+Description: >
+  An AWS Config Recorder or Delivery Channel was created
+Runbook: >
+  Verify that the Config Service changes were authorized. If not, revert them and investigate who caused the change. Consider altering permissions to prevent this from happening again in the future.
+Reference: https://aws.amazon.com/config/
 Tests:
   -
-    Name: Network Gateway Modified
+    Name: Config Recorder Delivery Channel Created
     ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
@@ -24,52 +26,6 @@ Tests:
           "userIdentity": {
               "type": "AssumedRole",
               "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
-                  },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/tester",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
-          },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "ec2.amazonaws.com",
-          "eventName": "AttachInternetGateway",
-          "awsRegion": "us-west-2",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.ec2.amazonaws.com",
-          "requestParameters": {
-              "internetGatewayId": "igw-1",
-              "vpcId": "vpc-1"
-          },
-          "responseElements": {
-              "requestId": "1",
-              "_return": true
-          },
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
-      }
-  -
-    Name: Network Gateway Not Modified
-    ResourceType: AWS.CloudTrail
-    ExpectedResult: false
-    Resource:
-      {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:2222",
               "arn": "arn:aws:sts::123456789012:assumed-role/tester",
               "accountId": "123456789012",
               "accessKeyId": "1",
@@ -83,33 +39,62 @@ Tests:
                   },
                   "webIdFederationData": {},
                   "attributes": {
-                      "mfaAuthenticated": "false",
+                      "mfaAuthenticated": "true",
                       "creationDate": "2019-01-01T00:00:00Z"
                   }
               }
           },
           "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "ec2.amazonaws.com",
-          "eventName": "DescribeRouteTables",
+          "eventSource": "config.amazonaws.com",
+          "eventName": "PutDeliveryChannel",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
-          "userAgent": "Mozilla",
+          "userAgent": "console.amazonaws.com",
           "requestParameters": {
-              "routeTableIdSet": {},
-              "filterSet": {
-                  "items": [
-                      {
-                          "name": "resource-id",
-                          "valueSet": {
-                              "items": [
-                                  {
-                                      "value": "vpc-1"
-                                  }
-                              ]
-                          }
-                      }
-                  ]
+              "configurationRecorderName": "default"
+          },
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Config Recorder Deleted
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: false
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:role/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  },
+                  "webIdFederationData": {},
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
               }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "config.amazonaws.com",
+          "eventName": "DeleteDeliveryChannel",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "console.amazonaws.com",
+          "requestParameters": {
+              "configurationRecorderName": "default"
           },
           "responseElements": null,
           "requestID": "1",

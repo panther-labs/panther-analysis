@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_modified.py
-PolicyID: AWS.CloudTrail.CloudTrailModified
-DisplayName: CloudTrail Modified
+Filename: aws_cloudtrail_created.py
+PolicyID: AWS.CloudTrail.CloudTrailCreated
+DisplayName: A CloudTrail Was Created or Updated
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
@@ -9,14 +9,14 @@ Tags:
   - AWS
   - CIS
   - CIS 3.5
-Severity: Medium
+Severity: Info
 Description: >
-  A CloudTrail Trail was modified.
+  A CloudTrail Trail was created, updated, or enabled.
 Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-cloudtrail-modified
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_Operations.html
 Tests:
   -
-    Name: CloudTrail Was Modified
+    Name: CloudTrail Was Created
     ResourceType: AWS.CloudTrail
     ExpectedResult: true
     Resource:
@@ -45,7 +45,7 @@ Tests:
           },
           "eventTime": "2019-01-01T00:00:00Z",
           "eventSource": "cloudtrail.amazonaws.com",
-          "eventName": "StartLogging",
+          "eventName": "CreateTrail",
           "awsRegion": "us-west-2",
           "sourceIPAddress": "111.111.111.111",
           "userAgent": "console.amazonaws.com",
@@ -60,7 +60,7 @@ Tests:
           "recipientAccountId": "123456789012"
       }
   -
-    Name: CloudTrail Was Not Modified
+    Name: KMS Decrypt Event
     ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
