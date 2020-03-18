@@ -1,7 +1,7 @@
 packages = analysis
 
 ci:
-	pipenv run $(MAKE) lint unit integration
+	pipenv run $(MAKE) lint test
 
 deps:
 	pip3 install -r requirements.txt
@@ -27,4 +27,4 @@ install:
 	pipenv install
 
 test:
-	panther-cli test --policies $(packages)
+	panther_analysis_tool test --policies $(packages)
