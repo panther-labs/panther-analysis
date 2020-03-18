@@ -2,11 +2,12 @@ AnalysisType: rule
 Filename: aws_s3_unauthenticated_access.py
 PolicyID: AWS.S3.ServerAccess.Unauthenticated
 DisplayName: AWS S3 Unauthenticated Access
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.S3ServerAccess
 Tags:
   - AWS
+  - Configuration Required
 Severity: Low
 Description: >
   Checks for S3 access attempts where the requester is not an authenticated AWS user.
