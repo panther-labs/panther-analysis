@@ -1,7 +1,7 @@
-packages = panther_cli analysis
+packages = analysis
 
 ci:
-	pipenv run $(MAKE) lint unit integration
+	pipenv run $(MAKE) lint test
 
 deps:
 	pip3 install -r requirements.txt
@@ -12,7 +12,6 @@ deps-update:
 
 lint:
 	yapf $(packages) --diff --parallel --recursive --style google
-	mypy panther_cli --disallow-untyped-defs --ignore-missing-imports --warn-unused-ignores || true # TODO(jack) Figure out why mypy is failinig on 'has no attribute' error
 	bandit -r $(packages)
 	pylint $(packages) --disable=missing-docstring,bad-continuation,duplicate-code,W0511 --exit-zero
 
@@ -27,8 +26,5 @@ install:
 	pip3 install pipenv --upgrade
 	pipenv install
 
-unit:
-	pipenv run nosetests -v
-
-integration:
-	panther-cli test --policies tests/fixtures/valid_policies/
+test:
+	panther_analysis_tool test --policies $(packages)
