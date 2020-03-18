@@ -17,13 +17,13 @@
 
 ---
 
-This repository contains open-source [Panther](https://github.com/panther-labs/panther) policies and rules along with a CLI tool for testing and packaging.
+This repository contains open-source [Panther](https://github.com/panther-labs/panther) policies and rules.
 
 During the initial deployment of Panther, all of the policies and rules published here are uploaded. This provides a set of out-of-the-box policies and rules to establish a strong detection baseline. See the [Panther documentation](https://docs.runpanther.io/quick-start) for how to override this default behavior if desired.
 
 ## Analysis with Policies and Rules
 
-Within the `analysis` directory, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
+Within this repository, you will find a collection of rules and policies. Policies define the compliant and secure state of a cloud Resource, whereas Rules perform analysis on log data. These can be used in conjunction to ensure a cloud environment is configured securely, as well as detect possible malicious activity.
 
 ### Standards
 
@@ -99,120 +99,6 @@ Now that you have a private repository will all the default policies and rules, 
 
 `panther-cli` is a Python command line interface for testing, packaging, and deploying Panther Policies and Rules. This enables policies and rules to be managed in code and tracked via version control systems such as git or svn. This is also useful for devops and security personnel who prefer CLI management and configuration over web interfaces.
 
-### Installation
-
-Setup your environment:
-
-```bash
-$ make install
-$ make venv
-$ source venv/bin/activate
-$ pipenv run -- make deps
-```
-
-Use the [pip](https://pip.pypa.io/en/stable/) package manager (locally for now) to install `panther-cli`.
-
-```bash
-$ pipenv run -- pip3 install -e .
-```
-
-If you want to use the `panther-cli` tool outside of the virtual environment, install it to the host directly.
-
-```bash
-$ make deps
-$ pip3 install -e .
-```
-
-### Commands and Usage
-
-It is important to note that wherever the `panther-cli` refers to policies, it is actually referring to both policies and rules. So the `--policies` flag can be passed either a directory of policies, rules, or both.
-
-View available commands:
-
-```bash
-$ panther-cli --help
-usage: panther_cli [-h] [--version] {test,zip,upload} ...
-
-Panther CLI: A tool for writing, testing, and packaging Panther Policies/Rules
-
-positional arguments:
-  {test,zip,upload}
-    test             Validate policy specifications and run policy tests.
-    zip              Create an archive of local policies for uploading to
-                     Panther.
-    upload           Upload specified policies to a Panther deployment.
-
-optional arguments:
-  -h, --help         show this help message and exit
-  --version          show program's version number and exit
-```
-
-Run tests:
-
-```bash
-$ panther-cli test --policies tests/fixtures/valid_policies/
-
-[INFO]: Testing Policies in tests/fixtures/valid_policies/
-
-Testing policy 'AWS.IAM.MFAEnabled'
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-```
-
-Create packages to upload via the Panther UI:
-
-```bash
-$ panther-cli zip --policies tests/fixtures/valid_policies/ --output-path tmp
-
-[INFO]: Testing Policies in tests/fixtures/valid_policies/
-
-Testing policy 'AWS.IAM.MFAEnabled'
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
-[INFO]: /Users/user_name/panther-cli/tmp/panther-policies-2019-01-01T16-00-00.zip
-```
-
-Upload packages to Panther directly. Note, this expects your environment to be setup the same way as if you were using the AWS CLI, see the setup instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). We also recommend using a credentials manager such as [aws-vault](https://github.com/99designs/aws-vault).
-
-```bash
-$ panther-cli upload --policies tests/fixtures/valid_policies/ --output-path tmp
-
-[INFO]: Testing Policies in tests/fixtures/valid_policies/
-
-AWS.IAM.MFAEnabled
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-AWS.IAM.BetaTest
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-AWS.CloudTrail.MFAEnabled
-	[PASS] Root MFA not enabled fails compliance
-	[PASS] User MFA not enabled fails compliance
-
-[INFO]: Zipping policies in tests/fixtures/valid_policies/ to tmp
-[INFO]: Found credentials in environment variables.
-[INFO]: Uploading pack to Panther
-[INFO]: Upload success.
-[INFO]: API Response:
-{
-  "modifiedPolicies": 0,
-  "modifiedRules": 0,
-  "newPolicies": 2,
-  "newRules": 1,
-  "totalPolicies": 2,
-  "totalRules": 1
-}
-```
-
-In order to upload all currently available policies and rules to your Panther deployment, run the following command. This command will recursively traverse all directories under `analysis` and package all rules and policies it finds into one package and then upload them:
-
-```bash
-$ panther-cli upload --policies analysis/ --output-path tmp
-```
 
 ## Writing Policies
 
