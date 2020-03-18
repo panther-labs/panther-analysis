@@ -1,6 +1,10 @@
 <h1 align="center">Panther Analysis</h1>
 
 <p align="center">
+  <i>Built-in Panther Detections</i>
+</p>
+
+<p align="center">
   <a href="https://docs.runpanther.io">Documentation</a> |
   <a href="https://docs.runpanther.io/quick-start">Quick Start</a>
 </p>
@@ -62,7 +66,7 @@ The following setup will assume that you are using GitHub to host your git repos
   - Set the `Privacy` radio button to `Private` (unless you want your configurations to be public)
   - You will be redirected to a loading page while the repository is being imported. After a short while, you the repository will be available and you can clone it and begin development normally.
 
-#### Setup - git command line 
+#### Setup - git command line
 
 The following setup will use the git command line directly.
 
