@@ -97,7 +97,7 @@ Now that you have a private repository will all the default policies and rules, 
 
 ## Panther Analysis Tool
 
-The `panther_analysis_tool` is a Python command line interface for testing, packaging, and deploying Panther Policies and Rules. Consider checking it out here: [panther\_analysis\_tool](https://github.com/panther-labs/panther_analysis_tool) for help managing your Panther analysis packs.
+The `panther_analysis_tool` is a Python command line interface for testing, packaging, and deploying Panther Policies and Rules. Consider checking it out here [panther\_analysis\_tool](https://github.com/panther-labs/panther_analysis_tool) for help managing your Panther analysis packs.
 
 ## Writing Policies
 
