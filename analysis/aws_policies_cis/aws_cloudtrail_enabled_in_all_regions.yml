@@ -1,18 +1,17 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_enabled_in_all_regions.py
-PolicyID: AWS.CloudTrail.EnabledInAllRegions
-DisplayName: AWS CloudTrail Is Enabled in All Regions
+PolicyID: AWS.CloudTrail.Enabled
+DisplayName: AWS CloudTrail Enabled
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail.Meta
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Management and Governance
-  - CIS
-  - CIS 2.1
-  - PCI
-  - PCI 10.5.4
+Reports:
+  CIS:
+    - 2.1
+  PCI:
+    - 10.5.4
 Severity: High
 Description: >
   This policy ensures that CloudTrail is enabled in all regions and at least one of them has

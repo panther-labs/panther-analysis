@@ -1,18 +1,17 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_log_validation_enabled.py
-PolicyID: AWS.CloudTrail.LogValidationEnabled
-DisplayName: AWS CloudTrail Has Log Validation Enabled
+PolicyID: AWS.CloudTrail.LogValidation
+DisplayName: AWS CloudTrail Log Validation
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
-  - AWS Managed Rules
-  - CIS
-  - CIS 2.2
-  - PCI
-  - PCI 10.5.5
-  - Management and Governance
+Reports:
+  CIS:
+    - 2.2
+  PCI:
+    - 10.5.5
 Severity: Medium
 Description: >
   This policy ensures that CloudTrail logs have file integrity validation enabled.

@@ -1,16 +1,15 @@
 AnalysisType: policy
 Filename: aws_dynamodb_table_encryption_enabled.py
-PolicyID: AWS.DynamoDB.TableEncryptionEnabled
-DisplayName: AWS DynamoDB Table Has Encryption Enabled
+PolicyID: AWS.DynamoDB.TableEncryption
+DisplayName: AWS DynamoDB Table Encryption
 Enabled: true
 ResourceTypes:
   - AWS.DynamoDB.Table
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Database
-  - PCI
-  - PCI 3.4
+Reports:
+  PCI:
+    - 3.4
 Severity: High
 Description: >
   Table encryption provides an additional layer of data protection by securing from

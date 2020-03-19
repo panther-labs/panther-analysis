@@ -1,16 +1,14 @@
 AnalysisType: policy
 Filename: aws_waf_has_correct_rule_ordering.py
-PolicyID: AWS.WAF.HasCorrectRuleOrdering
-DisplayName: AWS WAF Has Correct Rule Ordering
+PolicyID: AWS.WAF.RuleOrdering
+DisplayName: AWS WAF Rule Ordering
 Enabled: false
 ResourceTypes:
   - AWS.WAF.Regional.WebACL
   - AWS.WAF.WebACL
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Security, Identity & Compliance
 Severity: High
 Description: >
   This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.

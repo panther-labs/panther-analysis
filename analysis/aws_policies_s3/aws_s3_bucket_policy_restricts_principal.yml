@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_policy_restricts_principal.py
-PolicyID: AWS.S3.Bucket.PolicyRestrictsPrincipal
-DisplayName: AWS S3 Bucket Policy Restricts Principal
+PolicyID: AWS.S3.Bucket.PrincipalRestrictions
+DisplayName: AWS S3 Bucket Principal Restrictions
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - PCI
-  - PCI 10.5.1
-  - PCI 10.5.2
-  - S3
+Reports:
+  PCI:
+    - 10.5.1
+    - 10.5.2
 Severity: High
 Description: >
   Ensures the S3 bucket access policy does not allow any principal, in accordance with the principal of least privilege.

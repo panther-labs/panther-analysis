@@ -1,21 +1,19 @@
 AnalysisType: policy
 Filename: aws_ec2_ami_launched_on_approved_host.py
-PolicyID: AWS.EC2.AMI.LaunchedOnApprovedHost
-DisplayName: AWS EC2 AMI Launched on Approved Host
+PolicyID: AWS.EC2.AMI.ApprovedHost
+DisplayName: AWS EC2 AMI Approved Host
 Enabled: false
 ResourceTypes:
   - AWS.EC2.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Compute
 Severity: Low
 Description: >
   Checks that AWS EC2 AMI's are only launched on approved dedicated hosts.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-ami-launched-on-approved-host
-Reference: reference.link
+Reference: https://aws.amazon.com/ec2/dedicated-hosts/
 Tests:
   -
     Name: Instance AMI Does Not Have Required Host

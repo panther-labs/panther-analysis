@@ -1,19 +1,19 @@
 AnalysisType: policy
 Filename: aws_root_account_has_mfa_enabled.py
-PolicyID: AWS.RootAccount.HasMFAEnabled
-DisplayName: AWS Root Account Has MFA Enabled
+PolicyID: AWS.RootAccount.MFA
+DisplayName: AWS Root Account MFA
 Enabled: true
 ResourceTypes:
   - AWS.IAM.RootUser
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Security, Identity & Compliance
-  - CIS
-  - CIS 1.13
-  - CIS 1.14
-  - PCI
-  - PCI 7.1.2
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.13
+    - 1.14
+  PCI:
+    - 7.1.2
 Severity: Critical
 Description: >
   This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.

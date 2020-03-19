@@ -1,21 +1,19 @@
 AnalysisType: policy
 Filename: aws_ec2_instance_running_on_approved_host.py
-PolicyID: AWS.EC2.Instance.RunningOnApprovedHost
-DisplayName: AWS EC2 Instance Running On Approved Host
+PolicyID: AWS.EC2.Instance.ApprovedHost
+DisplayName: AWS EC2 Instance Approved Host
 Enabled: false
 ResourceTypes:
   - AWS.EC2.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Compute
 Severity: Low
 Description: >
   This policy ensures the given EC2 Instance is running on an approved dedicated host.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-instance-running-on-approved-host
-Reference: reference.link
+Reference: https://aws.amazon.com/ec2/dedicated-hosts/
 Tests:
   -
     Name: Instance Not Running On A Dedicated Host

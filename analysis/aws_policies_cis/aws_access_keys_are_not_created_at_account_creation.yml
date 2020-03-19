@@ -1,16 +1,17 @@
 AnalysisType: policy
 Filename: aws_access_keys_are_not_created_at_account_creation.py
-DisplayName: AWS Access Keys not Created During Account Creation
-PolicyID: AWS.AccessKeys.NotCreatedAtAccountCreation
+DisplayName: AWS Access Keys At Account Creation
+PolicyID: AWS.AccessKeys.AccountCreation
 Enabled: true
 ResourceTypes:
   - AWS.IAM.User
   - AWS.IAM.RootUser
 Tags:
   - AWS
-  - CIS
-  - CIS 1.21
-  - IAM
+  - Identity & Access Management
+Reports:
+  CIS: 
+    - 1.21
 Severity: Low
 Description: >
   This policy validates that AWS IAM user accounts do not have access keys that were

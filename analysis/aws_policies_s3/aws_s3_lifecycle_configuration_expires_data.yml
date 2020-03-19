@@ -1,17 +1,17 @@
 AnalysisType: policy
 Filename: aws_s3_lifecycle_configuration_expires_data.py
-PolicyID: AWS.S3.LifecycleConfigurationExpiresData
-DisplayName: AWS S3 Bucket Lifecycle Configuration Expires Data
+PolicyID: AWS.S3.Bucket.LifecycleConfiguration
+DisplayName: AWS S3 Bucket Lifecycle Configuration
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
   - Configuration Required
-  - S3
-  - PCI
-  - PCI 3.1
-  - PCI 10.7
+Reports:
+  PCI:
+    - 3.1
+    - 10.7
 Severity: Low
 Description: >
   Verifies that the S3 Bucket Object Lifecycle configuration expires data within 90 and 365 days.

@@ -1,13 +1,12 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_policy_does_not_use_allow_with_not_principal.py
-PolicyID: AWS.S3.Bucket.PolicyDoesNotUseAllowWithNotPrincipal
-DisplayName: AWS S3 Bucket Policy Does Not Use Allow With Not Principal
+PolicyID: AWS.S3.Bucket.PolicyAllowWithNotPrincipal
+DisplayName: AWS S3 Bucket Policy Allow With Not Principal
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - S3
 Severity: High
 Description: >
   Prevents the use of a 'Not' principal in conjunction with an allow effect in an S3 bucket policy, which would allow global access for the resource besides the principals specified.

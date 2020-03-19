@@ -1,21 +1,19 @@
 AnalysisType: policy
 Filename: aws_ec2_ami_launched_with_approved_tenancy.py
-PolicyID: AWS.EC2.AMI.Launched.With.Approved.Tenancy
-DisplayName: AWS EC2 AMI Launched With Approved Tenancy
+PolicyID: AWS.EC2.AMI.ApprovedTenancy
+DisplayName: AWS EC2 AMI Approved Tenancy
 Enabled: false
 ResourceTypes:
   - AWS.EC2.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Compute
 Severity: Low
 Description: >
   This policy ensures that the EC2 instance was launched with a tenancy approved for its AMI.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-ami-launched-with-approved-tenancy
-Reference: reference.link
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html
 Tests:
   -
     Name: Instance Does Not Have Tenancy Requirements

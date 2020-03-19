@@ -1,16 +1,17 @@
 AnalysisType: policy
 Filename: aws_customer_created_cmk_has_key_rotation_enabled.py
-PolicyID: AWS.CMK.KeyRotationEnabled
-DisplayName: AWS KMS CMK Key Rotation Is Enabled
+PolicyID: AWS.CMK.KeyRotation
+DisplayName: AWS KMS CMK Key Rotation
 Enabled: true
 ResourceTypes:
   - AWS.KMS.Key
 Tags:
   - AWS
-  - CIS
-  - CIS 2.8
-  - PCI
-  - PCI 3.5.2
+Reports:
+  CIS:
+    - 2.8
+  PCI:
+    - 3.5.2
 Severity: Low
 Description: >
   This policy validates that customer master keys (CMKs) have automatic key rotation enabled.

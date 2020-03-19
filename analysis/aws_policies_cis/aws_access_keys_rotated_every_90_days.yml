@@ -1,17 +1,17 @@
 AnalysisType: policy
 Filename: aws_access_keys_rotated_every_90_days.py
-PolicyID: AWS.AccessKeys.RotatedEvery90Days
-DisplayName: AWS Access Keys are Rotated Every 90 Days
+PolicyID: AWS.AccessKeys.Rotation
+DisplayName: AWS Access Keys Rotation
 Enabled: true
 ResourceTypes:
   - AWS.IAM.RootUser
   - AWS.IAM.User
 Tags:
   - AWS
-  - AWS Managed Rules
-  - CIS
-  - CIS 1.4
-  - Security, Identity & Compliance
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.4
 Severity: Medium
 Description: >
   This policy validates that AWS IAM account access keys are rotated every 90 days.

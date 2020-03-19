@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_policy_enforces_secure_access.py
-PolicyID: AWS.S3.Bucket.PolicyEnforcesSecureAccess
-DisplayName: AWS S3 Bucket Policy Enforces Secure Access
+PolicyID: AWS.S3.Bucket.SecureAccess
+DisplayName: AWS S3 Bucket Secure Access
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - S3
-  - PCI
-  - PCI 2.2.3
-  - PCI 4.1
+Reports:
+  PCI:
+    - 2.2.3
+    - 4.1
 Severity: Low
 Description: >
   Ensures access to S3 buckets is forced to use a secure (HTTPS) connection.

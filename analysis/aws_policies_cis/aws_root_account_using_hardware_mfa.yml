@@ -1,17 +1,17 @@
 AnalysisType: policy
 Filename: aws_root_account_using_hardware_mfa.py
-PolicyID: AWS.RootAccount.UsingHardwareMFA
-DisplayName: AWS Root Account Is Using Hardware MFA
+PolicyID: AWS.RootAccount.HardwareMFA
+DisplayName: AWS Root Account Hardware MFA
 Enabled: true
 ResourceTypes:
   - AWS.IAM.RootUser
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Security, Identity & Compliance
-  - CIS
-  - PCI
-  - PCI 7.1.2
+  - Identity & Access Management
+Reports:
+  CIS:
+  PCI:
+    - 7.1.2
 Severity: High
 Description: >
   This policy validates that a hardware MFA device is in use for access to the root account.

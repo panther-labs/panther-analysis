@@ -1,18 +1,18 @@
 AnalysisType: policy
 Filename: aws_access_keys_used_every_90_days.py
-PolicyID: AWS.AccessKeys.UsedEvery90Days
-DisplayName: AWS Access Keys Are Used Every 90 Days
+PolicyID: AWS.AccessKeys.Unused
+DisplayName: AWS Unused Access Keys
 Enabled: true
 ResourceTypes:
   - AWS.IAM.User
 Tags:
   - AWS
-  - AWS Managed Rules
-  - CIS
-  - CIS 1.3
-  - PCI
-  - PCI 8.1.4
-  - Security, Identity & Compliance
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.3
+  PCI:
+    - 8.1.4
 Severity: Low
 Description: >
   This policy validates that IAM user access keys are used at least once every 90 days.

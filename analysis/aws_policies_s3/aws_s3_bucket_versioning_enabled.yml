@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_versioning_enabled.py
-PolicyID: AWS.S3.Bucket.VersioningEnabled
-DisplayName: AWS S3 Bucket Has Versioning Enabled
+PolicyID: AWS.S3.Bucket.Versioning
+DisplayName: AWS S3 Bucket Versioning
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - S3
-  - PCI
-  - PCI 10.5.3
-  - PCI 10.5.5
+Reports:
+  PCI:
+    - 10.5.3
+    - 10.5.5
 Severity: Low
 Description: >
   Checks that object versioning is enabled in the S3 bucket.

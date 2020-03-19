@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_rds_instance_storage_encrypted.py
-PolicyID: AWS.RDS.Instance.StorageEncrypted
-DisplayName: AWS RDS Instance Has Storage Encrypted
+PolicyID: AWS.RDS.Instance.Encryption
+DisplayName: AWS RDS Instance Encryption
 Enabled: true
 ResourceTypes:
   - AWS.RDS.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Database
-  - PCI
-  - PCI 3.4
+  - Data Protection
+Reports:
+  PCI:
+    - 3.4
 Severity: High
 Description: >
   This policy validates that RDS instances have encryption enabled.

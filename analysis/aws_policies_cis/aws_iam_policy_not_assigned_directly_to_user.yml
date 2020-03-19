@@ -1,19 +1,19 @@
 AnalysisType: policy
 Filename: aws_iam_policy_not_assigned_directly_to_user.py
-PolicyID: AWS.IAM.Policy.NotAssignedDirectlyToUser
-DisplayName: AWS IAM Policy Is Not Assigned Directly to User
+PolicyID: AWS.IAM.Policy.AssignedToUser
+DisplayName: AWS IAM Policy Assigned to User
 Enabled: true
 ResourceTypes:
   - AWS.IAM.User
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Security, Identity & Compliance
-  - CIS
-  - CIS 1.16
-  - PCI
-  - PCI 2.2.4
-  - PCI 7.1.1
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.16
+  PCI:
+    - 2.2.4
+    - 7.1.1
 Severity: Low
 Description: >
   This policy validates that there are no IAM policies assigned directly to users.

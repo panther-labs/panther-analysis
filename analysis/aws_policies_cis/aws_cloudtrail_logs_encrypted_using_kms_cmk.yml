@@ -1,16 +1,15 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_logs_encrypted_using_kms_cmk.py
-PolicyID: AWS.CloudTrail.LogsEncryptedUsingKMSCMK
-DisplayName: AWS CloudTrail Logs Encrypted Using KMS CMK
+PolicyID: AWS.CloudTrail.LogEncryption
+DisplayName: AWS CloudTrail Log Encryption
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
-  - AWS Managed Rules
-  - CIS
-  - CIS 2.7
-  - Management and Governance
+Reports:
+  CIS:
+    - 2.7
 Severity: Medium
 Description: >
   This policy validates that CloudTrail Logs are encrypted at rest with customer managed KMS key.

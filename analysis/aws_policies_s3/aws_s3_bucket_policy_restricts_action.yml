@@ -1,22 +1,22 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_policy_restricts_action.py
-PolicyID: AWS.S3.Bucket.PolicyRestrictsAction
-DisplayName: AWS S3 Bucket Policy Restricts Allowed Actions
+PolicyID: AWS.S3.Bucket.ActionRestrictions
+DisplayName: AWS S3 Bucket Action Restrictions
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - PCI
-  - PCI 10.5.1
-  - PCI 10.5.2
-  - S3
+Reports:
+  PCI:
+    - 10.5.1
+    - 10.5.2
 Severity: Medium
 Description: >
   Ensures that the S3 bucket policy does not allow any action on the bucket, in accordance with the principal of least privilege.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-policy-restricts-allowed-actions
-Reference: reference.link
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
 Tests:
   -
     Name: Bucket Restricts Action

@@ -1,15 +1,14 @@
 AnalysisType: policy
 Filename: aws_guardduty_centralized_logging.py
-PolicyID: AWS.GuardDuty.CentralizedLogging
-DisplayName: AWS GuardDuty is Logging to a Master Account
+PolicyID: AWS.GuardDuty.MasterAccount
+DisplayName: AWS GuardDuty Master Account
 Enabled: false
 ResourceTypes:
   - AWS.GuardDuty.Detector
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Security, Identity & Compliance
+  - Monitoring
 Severity: High
 Description: >
   Ensure that all GuardDuty logs are sending into a single Master account. This is a best practice for centralizing detection logic and useful data during an investigation.
@@ -18,7 +17,7 @@ Runbook: >
 Reference: https://aws.amazon.com/guardduty/
 Tests:
   -
-    # This can't be tested right now as we cannot set the MASTER_ACCOUNT_ID variablefor testing
+    # This can't be tested right now as we cannot set the MASTER_ACCOUNT_ID variable for testing
     Name: Detector Not Logging to Master
     ResourceType: AWS.GuardDuty.Detector
     # Should be false if we could set MASTER_ACCOUNT_ID for testing

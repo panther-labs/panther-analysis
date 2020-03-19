@@ -1,14 +1,13 @@
 AnalysisType: policy
 Filename: aws_rds_instance_snapshot_not_publicly_accessible.py
-PolicyID: AWS.RDS.Instance.SnapshotNotPubliclyAccessible
-DisplayName: AWS RDS Instance Snapshots Are Not Publicly Accessible
+PolicyID: AWS.RDS.Instance.SnapshotPubliclyAccess
+DisplayName: AWS RDS Instance Snapshot Publicly Access
 Enabled: true
 ResourceTypes:
   - AWS.RDS.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Database
+  - Data Protection
 Severity: Critical
 Description: >
   This policy validates that RDS Instance snapshots are not publicly restorable. This would allow anyone to restore an old version of your database and have full access to its contents.

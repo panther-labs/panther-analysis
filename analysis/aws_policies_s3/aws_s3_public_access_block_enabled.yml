@@ -1,15 +1,15 @@
 AnalysisType: policy
 Filename: aws_s3_public_access_block_enabled.py
-PolicyID: AWS.S3.PublicAccessBlockEnabled
-DisplayName: AWS S3 Bucket Has Public Access Block Enabled
+PolicyID: AWS.S3.Bucket.PublicAccessBlock
+DisplayName: AWS S3 Bucket Public Access Block
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - S3
-  - PCI
-  - PCI 2.2.3
+Reports:
+  PCI:
+    - 2.2.3
 Severity: Medium
 Description: >
   Ensures that a Public Access Block Configuration is set for the given S3 bucket.

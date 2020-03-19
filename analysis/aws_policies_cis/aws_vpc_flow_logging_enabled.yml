@@ -1,15 +1,14 @@
 AnalysisType: policy
 Filename: aws_vpc_flow_logging_enabled.py
-PolicyID: AWS.VPC.FlowLoggingEnabled
-DisplayName: AWS VPC Has Flow Logging Enabled
+PolicyID: AWS.VPC.FlowLogging
+DisplayName: AWS VPC Flow Logging
 Enabled: true
 ResourceTypes:
   - AWS.EC2.VPC
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Network and Content Delivery
-  - CIS
+Reports:
+  CIS:
 Severity: Medium
 Description: >
   This policy validates that AWS VPCs (Virtual Private Clouds) have network flow logging enabled.

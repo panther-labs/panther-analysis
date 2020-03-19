@@ -1,21 +1,19 @@
 AnalysisType: policy
 Filename: aws_ec2_ami_launched_with_approved_instance_type.py
-PolicyID: AWS.EC2.AMI.LaunchedWithApprovedInstanceType
-DisplayName: AWS EC2 AMI Launched on Approved Instance Type
+PolicyID: AWS.EC2.AMI.ApprovedInstanceType
+DisplayName: AWS EC2 AMI Approved Instance Type
 Enabled: false
 ResourceTypes:
   - AWS.EC2.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Compute
 Severity: Low
 Description: >
   This policy ensures that the EC2 instance is running with an instance type approved for its AMI.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-ami-launched-on-approved-instance-type
-Reference: reference.link
+Reference: https://aws.amazon.com/ec2/instance-types/
 Tests:
   -
     Name: Instance Does Not Have Type Restriction

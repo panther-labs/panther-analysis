@@ -1,15 +1,16 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_s3_bucket_has_access_logging_enabled.py
-PolicyID: AWS.CloudTrail.S3Bucket.AccessLoggingEnabled
-DisplayName: AWS CloudTrail S3 Bucket Has Access Logging Enabled
+PolicyID: AWS.CloudTrail.S3Bucket.AccessLogging
+DisplayName: AWS CloudTrail S3 Bucket Access Logging
 # TODO: re-enable this policy when resource lookup is supported again
 Enabled: false
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
-  - CIS
-  - CIS 2.6
+Reports:
+  CIS:
+    - 2.6
 Severity: Medium
 Description: >
   This policy validates that the bucket receiving CloudTrail Logs is configured with

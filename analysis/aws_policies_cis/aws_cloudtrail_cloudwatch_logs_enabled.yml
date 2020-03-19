@@ -1,16 +1,15 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_cloudwatch_logs_enabled.py
-PolicyID: AWS.CloudTrail.CloudWatchLogsEnabled
-DisplayName: AWS CloudTrail Sending to CloudWatch Logs
+PolicyID: AWS.CloudTrail.CloudWatchLogs
+DisplayName: AWS CloudTrail CloudWatch Logs
 Enabled: false
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Management and Governance
-  - CIS
-  - CIS 2.4
+Reports:
+  CIS:
+    - 2.4
 Severity: Low
 Description: >
   CloudTrail supports sending data and management events to CloudWatch Logs. This setup can be

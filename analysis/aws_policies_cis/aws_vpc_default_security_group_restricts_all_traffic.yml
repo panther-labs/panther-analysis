@@ -1,18 +1,17 @@
 AnalysisType: policy
 Filename: aws_vpc_default_security_group_restricts_all_traffic.py
-PolicyID: AWS.VPC.DefaultSecurityGroup.RestrictsAllTraffic
-DisplayName: AWS VPC Default Security Group Restricts All Traffic
+PolicyID: AWS.VPC.DefaultSecurityGroup.Restrictions
+DisplayName: AWS VPC Default Security Group Restrictions 
 Enabled: true
 ResourceTypes:
   - AWS.EC2.VPC
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Network and Content Delivery
-  - CIS
-  - CIS 4.3
-  - PCI
-  - PCI 1.2.1
+Reports:
+  CIS:
+    - 4.3
+  PCI:
+    - 1.2.1
 Severity: Low
 Description: >
   This policy validates that the default Security Group for a given AWS VPC is restricting all inbound and outbound traffic.

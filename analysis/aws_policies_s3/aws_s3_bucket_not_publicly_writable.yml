@@ -1,15 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_not_publicly_writable.py
-PolicyID: AWS.S3.Bucket.NotPubliclyWritable
-DisplayName: AWS S3 Bucket Not Publicly Writable
+PolicyID: AWS.S3.Bucket.PublicWrite
+DisplayName: AWS S3 Bucket Public Write
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - PCI
-  - PCI 10.5.2
-  - S3
+  - Data Protection
+Reports:
+  PCI:
+    - 10.5.2
 Severity: Critical
 Description: >
   Ensures that the S3 bucket is not publicly writeable.

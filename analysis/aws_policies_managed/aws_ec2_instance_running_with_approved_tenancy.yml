@@ -1,21 +1,19 @@
 AnalysisType: policy
 Filename: aws_ec2_instance_running_with_approved_tenancy.py
-PolicyID: AWS.EC2.Instance.RunningWithApprovedTenancy
-DisplayName: AWS EC2 Instance Running With Approved Tenancy
+PolicyID: AWS.EC2.Instance.ApprovedTenancy
+DisplayName: AWS EC2 Instance Approved Tenancy
 Enabled: false
 ResourceTypes:
   - AWS.EC2.Instance
 Tags:
   - AWS
-  - AWS Managed Rules
   - Configuration Required
-  - Compute
 Severity: Low
 Description: >
   This policy ensures the given EC2 Instance is running with an approved tenancy option. The possible tenancy options are dedicated, host, and default.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-ec2-instance-running-with-approved-tenancy
-Reference: reference.link
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html
 Tests:
   -
     Name: Instance Not Running With Required Tenancy

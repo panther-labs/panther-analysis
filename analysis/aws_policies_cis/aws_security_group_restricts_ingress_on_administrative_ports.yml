@@ -1,13 +1,14 @@
 AnalysisType: policy
 Filename: aws_security_group_restricts_ingress_on_administrative_ports.py
-PolicyID: AWS.SecurityGroup.RestrictsIngressOnAdministrativePorts
-DisplayName: AWS Security Group Restricts Ingress On Administrative Ports
+PolicyID: AWS.SecurityGroup.AdministrativeIngress
+DisplayName: AWS Security Group Administrative Ingress
 Enabled: true
 ResourceTypes:
   - AWS.EC2.VPC
 Tags:
   - AWS
-  - CIS
+Reports:
+  CIS:
 Severity: High
 Description: >
   This policy validates that AWS Security Groups don't allow unrestricted inbound traffic on

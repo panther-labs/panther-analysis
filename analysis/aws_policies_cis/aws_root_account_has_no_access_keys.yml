@@ -1,18 +1,18 @@
 AnalysisType: policy
 Filename: aws_root_account_has_no_access_keys.py
-PolicyID: AWS.RootAccount.HasNoAccessKeys
-DisplayName: AWS Root Account Does Not Have Access Keys
+PolicyID: AWS.RootAccount.AccessKeys
+DisplayName: AWS Root Account Access Keys
 Enabled: true
 ResourceTypes:
   - AWS.IAM.RootUser
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Security, Identity & Compliance
-  - CIS
-  - PCI
-  - PCI 7.1.2
-  - PCI 8.5
+  - Identity & Access Management
+Reports:
+  CIS:
+  PCI:
+    - 7.1.2
+    - 8.5
 Severity: Critical
 Description: >
   This policy validates that no programmatic access keys exist for the root account.

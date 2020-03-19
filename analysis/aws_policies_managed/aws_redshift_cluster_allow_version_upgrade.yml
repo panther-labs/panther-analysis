@@ -1,16 +1,15 @@
 AnalysisType: policy
 Filename: aws_redshift_cluster_allow_version_upgrade.py
-PolicyID: AWS.Redshift.Cluster.AllowVersionUpgrade
-DisplayName: AWS Redshift Cluster Allows Version Upgrades
+PolicyID: AWS.Redshift.Cluster.VersionUpgrade
+DisplayName: AWS Redshift Cluster Version Upgrade
 Enabled: true
 ResourceTypes:
   - AWS.Redshift.Cluster
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Database
-  - PCI
-  - PCI 6.2
+Reports:
+  PCI:
+    - 6.2
 Severity: Low
 Description: >
   This policy validates that Redshift Clusters automatically perform upgrades during scheduled maintenance windows.

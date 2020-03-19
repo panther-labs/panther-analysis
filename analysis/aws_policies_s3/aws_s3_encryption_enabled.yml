@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_encryption_enabled.py
-PolicyID: AWS.S3.Encryption.Enabled
-DisplayName: AWS S3 Bucket Has Encryption Enabled
+PolicyID: AWS.S3.Bucket.Encryption
+DisplayName: AWS S3 Bucket Encryption
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - S3
-  - PCI
-  - PCI 2.2.3
-  - PCI 3.4
+Reports:
+  PCI:
+    - 2.2.3
+    - 3.4
 Severity: High
 Description: >
   Ensures that the S3 bucket has encryption enabled.

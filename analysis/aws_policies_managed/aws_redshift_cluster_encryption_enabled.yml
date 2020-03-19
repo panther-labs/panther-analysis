@@ -1,16 +1,16 @@
 AnalysisType: policy
 Filename: aws_redshift_cluster_encryption_enabled.py
-PolicyID: AWS.Redshift.Cluster.EncryptionEnabled
-DisplayName: AWS Redshift Cluster Has Encryption Enabled
+PolicyID: AWS.Redshift.Cluster.Encryption
+DisplayName: AWS Redshift Cluster Encryption
 Enabled: true
 ResourceTypes:
   - AWS.Redshift.Cluster
 Tags:
   - AWS
-  - AWS Managed Rules
-  - Database
-  - PCI
-  - PCI 3.4
+  - Data Protection
+Reports:
+  PCI:
+    - 3.4
 Severity: High
 Description: >
   This policy validates that Redshift Clusters have encryption enabled.

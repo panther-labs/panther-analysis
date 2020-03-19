@@ -1,15 +1,16 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_not_publicly_readable.py
-PolicyID: AWS.S3.Bucket.NotPubliclyReadable
-DisplayName: AWS S3 Bucket Not Publicly Readable
+PolicyID: AWS.S3.Bucket.PublicRead
+DisplayName: AWS S3 Bucket Public Read
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - PCI
-  - PCI 10.5.1
-  - S3
+  - Data Protection
+Reports:
+  PCI:
+    - 10.5.1
 Severity: High
 Description: >
   Ensures that the S3 bucket is not publicly readable.
