@@ -14,3 +14,11 @@ def rule(event):
     return not any(
         cidr_ip.subnet_of(approved_ip_range)
         for approved_ip_range in IP_WHITELIST)
+
+
+def dedup(event):
+    return event.get('bucket')
+
+
+def title(event):
+    return 'Non-Approved Access to S3 Bucket {}'.format(event.get('bucket'))

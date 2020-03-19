@@ -2,11 +2,12 @@ AnalysisType: rule
 Filename: aws_s3_insecure_access.py
 PolicyID: AWS.S3.ServerAccess.Insecure
 DisplayName: AWS S3 Insecure Access
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.S3ServerAccess
 Tags:
   - AWS
+  - Configuration Required
 Severity: Medium
 Description: >
   Checks if HTTP (unencrypted) was used to access objects in an S3 bucket, as opposed to HTTPS (encrypted).
