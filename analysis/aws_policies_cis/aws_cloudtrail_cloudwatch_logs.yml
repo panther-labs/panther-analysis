@@ -1,27 +1,26 @@
 AnalysisType: policy
-Filename: aws_cloudtrail_log_validation_enabled.py
-PolicyID: AWS.CloudTrail.LogValidation
-DisplayName: AWS CloudTrail Log Validation
-Enabled: true
+Filename: aws_cloudtrail_cloudwatch_logs.py
+PolicyID: AWS.CloudTrail.CloudWatchLogs
+DisplayName: AWS CloudTrail CloudWatch Logs
+Enabled: false
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
 Reports:
   CIS:
-    - 2.2
-  PCI:
-    - 10.5.5
-Severity: Medium
+    - 2.4
+Severity: Low
 Description: >
-  This policy ensures that CloudTrail logs have file integrity validation enabled.
+  CloudTrail supports sending data and management events to CloudWatch Logs. This setup can be
+  used for real-time processing of all CloudTrail data events.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudtrail-log-validation-enabled
+  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudtrail-trails-integrated-with-cloudwatch-logs
 Reference: >
-  https://amzn.to/2MMgE6W
+  https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html
 Tests:
   -
-    Name: Log File Validation Disabled
+    Name: CloudWatch Logs Not Setup
     ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
@@ -31,60 +30,7 @@ Tests:
             "DataResources": [
               {
                 "Type": "AWS::S3::Object",
-                "Values": null
-              }
-            ],
-            "IncludeManagementEvents": false,
-            "ReadWriteType": "All"
-          }
-        ],
-        "CloudWatchLogsLogGroupArn": null,
-        "CloudWatchLogsRoleArn": null,
-        "HasCustomEventSelectors": true,
-        "HomeRegion": "us-west-2",
-        "IncludeGlobalServiceEvents": true,
-        "IsMultiRegionTrail": false,
-        "IsOrganizationTrail": false,
-        "KmsKeyId": null,
-        "LogFileValidationEnabled": false,
-        "Name": "cloudtrail-name",
-        "S3BucketName": "bucket-name",
-        "S3KeyPrefix": null,
-        "SnsTopicARN": null,
-        "SnsTopicName": null,
-        "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
-        "Status": {
-          "IsLogging": true,
-          "LatestCloudWatchLogsDeliveryError": null,
-          "LatestCloudWatchLogsDeliveryTime": null,
-          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
-          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
-          "LatestDeliveryError": null,
-          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestDigestDeliveryError": null,
-          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
-          "LatestNotificationError": null,
-          "LatestNotificationTime": null,
-          "StartLoggingTime": "2019-01-01T00:00:00Z",
-          "StopLoggingTime": null,
-          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
-        }
-      }
-  -
-    Name: Log File Validation Enabled
-    ResourceType: AWS.CloudTrail
-    ExpectedResult: true
-    Resource:
-      {
-        "EventSelectors": [
-          {
-            "DataResources": [
-              {
-                "Type": "AWS::S3::Object",
-                "Values": null
+                "Values": []
               }
             ],
             "IncludeManagementEvents": false,
@@ -116,18 +62,18 @@ Tests:
           "LatestDeliveryTime": "2019-01-01T00:00:00Z",
           "LatestDigestDeliveryError": null,
           "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
+          "LatestNotificationAttemptSucceeded": "",
+          "LatestNotificationAttemptTime": "",
           "LatestNotificationError": null,
           "LatestNotificationTime": null,
           "StartLoggingTime": "2019-01-01T00:00:00Z",
           "StopLoggingTime": null,
           "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
+          "TimeLoggingStopped": ""
         }
       }
   -
-    Name: Log File Validation Not Set
+    Name: CloudTrail Set But No Logs Delivered
     ResourceType: AWS.CloudTrail
     ExpectedResult: false
     Resource:
@@ -137,14 +83,14 @@ Tests:
             "DataResources": [
               {
                 "Type": "AWS::S3::Object",
-                "Values": null
+                "Values": []
               }
             ],
             "IncludeManagementEvents": false,
             "ReadWriteType": "All"
           }
         ],
-        "CloudWatchLogsLogGroupArn": null,
+        "CloudWatchLogsLogGroupArn": "arn:aws:cloudwatch:us-west-2:123456789012:watch/cloudwatch-name",
         "CloudWatchLogsRoleArn": null,
         "HasCustomEventSelectors": true,
         "HomeRegion": "us-west-2",
@@ -152,7 +98,7 @@ Tests:
         "IsMultiRegionTrail": false,
         "IsOrganizationTrail": false,
         "KmsKeyId": null,
-        "LogFileValidationEnabled": null,
+        "LogFileValidationEnabled": true,
         "Name": "cloudtrail-name",
         "S3BucketName": "bucket-name",
         "S3KeyPrefix": null,
@@ -169,13 +115,119 @@ Tests:
           "LatestDeliveryTime": "2019-01-01T00:00:00Z",
           "LatestDigestDeliveryError": null,
           "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
+          "LatestNotificationAttemptSucceeded": "",
+          "LatestNotificationAttemptTime": "",
           "LatestNotificationError": null,
           "LatestNotificationTime": null,
           "StartLoggingTime": "2019-01-01T00:00:00Z",
           "StopLoggingTime": null,
           "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
+          "TimeLoggingStopped": ""
+        }
+      }
+  -
+    Name: CloudTrail Set But Logs Delivered Too Long Ago
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: false
+    Resource:
+      {
+        "EventSelectors": [
+          {
+            "DataResources": [
+              {
+                "Type": "AWS::S3::Object",
+                "Values": []
+              }
+            ],
+            "IncludeManagementEvents": false,
+            "ReadWriteType": "All"
+          }
+        ],
+        "CloudWatchLogsLogGroupArn": "arn:aws:cloudwatch:us-west-2:123456789012:watch/cloudwatch-name",
+        "CloudWatchLogsRoleArn": null,
+        "HasCustomEventSelectors": true,
+        "HomeRegion": "us-west-2",
+        "IncludeGlobalServiceEvents": true,
+        "IsMultiRegionTrail": false,
+        "IsOrganizationTrail": false,
+        "KmsKeyId": null,
+        "LogFileValidationEnabled": true,
+        "Name": "cloudtrail-name",
+        "S3BucketName": "bucket-name",
+        "S3KeyPrefix": null,
+        "SnsTopicARN": null,
+        "SnsTopicName": null,
+        "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
+        "Status": {
+          "IsLogging": true,
+          "LatestCloudWatchLogsDeliveryError": null,
+          "LatestCloudWatchLogsDeliveryTime": "1019-01-01T00:00:00Z",
+          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
+          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
+          "LatestDeliveryError": null,
+          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
+          "LatestDigestDeliveryError": null,
+          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
+          "LatestNotificationAttemptSucceeded": "",
+          "LatestNotificationAttemptTime": "",
+          "LatestNotificationError": null,
+          "LatestNotificationTime": null,
+          "StartLoggingTime": "2019-01-01T00:00:00Z",
+          "StopLoggingTime": null,
+          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
+          "TimeLoggingStopped": ""
+        }
+      }
+  -
+    Name: CloudTrail Set And Logs Delivered Recently
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: true
+    Resource:
+      {
+        "EventSelectors": [
+          {
+            "DataResources": [
+              {
+                "Type": "AWS::S3::Object",
+                "Values": []
+              }
+            ],
+            "IncludeManagementEvents": false,
+            "ReadWriteType": "All"
+          }
+        ],
+        "CloudWatchLogsLogGroupArn": "arn:aws:cloudwatch:us-west-2:123456789012:watch/cloudwatch-name",
+        "CloudWatchLogsRoleArn": null,
+        "HasCustomEventSelectors": true,
+        "HomeRegion": "us-west-2",
+        "IncludeGlobalServiceEvents": true,
+        "IsMultiRegionTrail": false,
+        "IsOrganizationTrail": false,
+        "KmsKeyId": null,
+        "LogFileValidationEnabled": true,
+        "Name": "cloudtrail-name",
+        "S3BucketName": "bucket-name",
+        "S3KeyPrefix": null,
+        "SnsTopicARN": null,
+        "SnsTopicName": null,
+        "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
+        "Status": {
+          "IsLogging": true,
+          "LatestCloudWatchLogsDeliveryError": null,
+          "LatestCloudWatchLogsDeliveryTime": "3019-01-01T00:00:00Z",
+          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
+          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
+          "LatestDeliveryError": null,
+          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
+          "LatestDigestDeliveryError": null,
+          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
+          "LatestNotificationAttemptSucceeded": "",
+          "LatestNotificationAttemptTime": "",
+          "LatestNotificationError": null,
+          "LatestNotificationTime": null,
+          "StartLoggingTime": "2019-01-01T00:00:00Z",
+          "StopLoggingTime": null,
+          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
+          "TimeLoggingStopped": ""
         }
       }
