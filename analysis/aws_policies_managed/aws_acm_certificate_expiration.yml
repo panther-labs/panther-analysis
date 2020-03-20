@@ -1,0 +1,152 @@
+AnalysisType: policy
+Filename: aws_acm_certificate_expiration.py
+PolicyID: AWS.ACM.Certificate.Expiration
+DisplayName: AWS ACM Certificate Expiration
+Enabled: true
+ResourceTypes:
+  - AWS.ACM.Certificate
+Tags:
+  - AWS
+Severity: Medium
+Description: >
+  When a certificate is 60 days away from expiration, ACM automatically attempts to renew it every hour.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-acm-certificate-is-not-expired
+Reference: https://docs.aws.amazon.com/acm/latest/userguide/troubleshooting-renewal.html
+Tests:
+  -
+    Name: Future Expiration
+    ResourceType: AWS.ACM.Certificate
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "CertificateAuthorityArn": null,
+        "CreatedAt": "2019-05-23T19:20:52Z",
+        "DomainName": "test.domain.io",
+        "DomainValidationOptions": [
+          {
+            "DomainName": "test.domain.io",
+            "ResourceRecord": {
+              "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+              "Type": "CNAME",
+              "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws."
+            },
+            "ValidationDomain": "test.domain.io",
+            "ValidationEmails": null,
+            "ValidationMethod": "DNS",
+            "ValidationStatus": "SUCCESS"
+          }
+        ],
+        "ExtendedKeyUsages": [
+          {
+            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+            "OID": "1.3.6.1.5.5.7.3.2"
+          },
+          {
+            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+            "OID": "1.3.6.1.5.5.7.3.1"
+          }
+        ],
+        "FailureReason": null,
+        "ImportedAt": null,
+        "InUseBy": null,
+        "IssuedAt": "2019-05-23T19:21:48Z",
+        "Issuer": "Amazon",
+        "KeyAlgorithm": "RSA-2048",
+        "KeyUsages": [
+          {
+            "Name": "DIGITAL_SIGNATURE"
+          },
+          {
+            "Name": "KEY_ENCIPHERMENT"
+          }
+        ],
+        "NotAfter": "3020-06-23T12:00:00Z",
+        "NotBefore": "2019-05-23T00:00:00Z",
+        "Options": {
+          "CertificateTransparencyLoggingPreference": "ENABLED"
+        },
+        "RenewalEligibility": "INELIGIBLE",
+        "RenewalSummary": null,
+        "RevocationReason": null,
+        "RevokedAt": null,
+        "Serial": "00:bb:cc:aa:66:11:22:00:dd:88:f8:48:3e:92:6e:0d",
+        "SignatureAlgorithm": "SHA256WITHRSA",
+        "Status": "ISSUED",
+        "Subject": "CN=test.domain.io",
+        "SubjectAlternativeNames": [
+          "test.domain.io"
+        ],
+        "Type": "AMAZON_ISSUED",
+        "Domain": "test.domain.io"
+      }
+  -
+    Name: Past Expiration
+    ResourceType: AWS.ACM.Certificate
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "CertificateAuthorityArn": null,
+        "CreatedAt": "2019-05-23T19:20:52Z",
+        "DomainName": "test.domain.io",
+        "DomainValidationOptions": [
+          {
+            "DomainName": "test.domain.io",
+            "ResourceRecord": {
+              "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+              "Type": "CNAME",
+              "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws."
+            },
+            "ValidationDomain": "test.domain.io",
+            "ValidationEmails": null,
+            "ValidationMethod": "DNS",
+            "ValidationStatus": "SUCCESS"
+          }
+        ],
+        "ExtendedKeyUsages": [
+          {
+            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+            "OID": "1.3.6.1.5.5.7.3.2"
+          },
+          {
+            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+            "OID": "1.3.6.1.5.5.7.3.1"
+          }
+        ],
+        "FailureReason": null,
+        "ImportedAt": null,
+        "InUseBy": null,
+        "IssuedAt": "2019-05-23T19:21:48Z",
+        "Issuer": "Amazon",
+        "KeyAlgorithm": "RSA-2048",
+        "KeyUsages": [
+          {
+            "Name": "DIGITAL_SIGNATURE"
+          },
+          {
+            "Name": "KEY_ENCIPHERMENT"
+          }
+        ],
+        "NotAfter": "2000-06-23T12:00:00Z",
+        "NotBefore": "2019-05-23T00:00:00Z",
+        "Options": {
+          "CertificateTransparencyLoggingPreference": "ENABLED"
+        },
+        "RenewalEligibility": "INELIGIBLE",
+        "RenewalSummary": null,
+        "RevocationReason": null,
+        "RevokedAt": null,
+        "Serial": "00:bb:cc:aa:66:11:22:00:dd:88:f8:48:3e:92:6e:0d",
+        "SignatureAlgorithm": "SHA256WITHRSA",
+        "Status": "ISSUED",
+        "Subject": "CN=test.domain.io",
+        "SubjectAlternativeNames": [
+          "test.domain.io"
+        ],
+        "Type": "AMAZON_ISSUED",
+        "Domain": "test.domain.io"
+      }

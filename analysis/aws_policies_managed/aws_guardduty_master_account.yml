@@ -1,0 +1,66 @@
+AnalysisType: policy
+Filename: aws_guardduty_master_account.py
+PolicyID: AWS.GuardDuty.MasterAccount
+DisplayName: AWS GuardDuty Master Account
+Enabled: false
+ResourceTypes:
+  - AWS.GuardDuty.Detector
+Tags:
+  - AWS
+  - Configuration Required
+Severity: High
+Description: >
+  Ensure that all GuardDuty logs are sending into a single Master account. This is a best practice for centralizing detection logic and useful data during an investigation.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-guardduty-is-logging-to-a-master-account
+Reference: https://aws.amazon.com/guardduty/
+Tests:
+  -
+    # This can't be tested right now as we cannot set the MASTER_ACCOUNT_ID variable for testing
+    Name: Detector Not Logging to Master
+    ResourceType: AWS.GuardDuty.Detector
+    # Should be false if we could set MASTER_ACCOUNT_ID for testing
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Region": "eu-central-1",
+        "Id": "12a12345b12345c12ab12a1a1ab1a1ab1",
+        "Tags": {
+          "KeyName1": "Value1"
+        },
+        "ResourceId": "123456789012:eu-central-1:AWS.GuardDuty.Detector",
+        "ResourceType": "AWS.GuardDuty.Detector",
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "FindingPublishingFrequency": "SIX_HOURS",
+        "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
+        "Status": "ENABLED",
+        "UpdatedAt": "2019-01-01T00:00:00.000Z",
+        "Master": null
+      }
+  -
+    Name: Detector Logging to Master
+    ResourceType: AWS.GuardDuty.Detector
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Region": "eu-central-1",
+        "Id": "12a12345b12345c12ab12a1a1ab1a1ab1",
+        "Tags": {
+          "KeyName1": "Value1"
+        },
+        "ResourceId": "123456789012:eu-central-1:AWS.GuardDuty.Detector",
+        "ResourceType": "AWS.GuardDuty.Detector",
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "FindingPublishingFrequency": "SIX_HOURS",
+        "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
+        "Status": "ENABLED",
+        "UpdatedAt": "2019-01-01T00:00:00.000Z",
+        "Master": {
+          "AccountId": "123456789012",
+          "InvitationId": "11111111111111",
+          "InvitedAt": "2019",
+          "RelationshipStatus": "active"
+        }
+      }
