@@ -1,25 +1,25 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_versioning_enabled.py
-PolicyID: AWS.S3.Bucket.Versioning
-DisplayName: AWS S3 Bucket Versioning
+Filename: aws_s3_bucket_public_read.py
+PolicyID: AWS.S3.Bucket.PublicRead
+DisplayName: AWS S3 Bucket Public Read
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
+  - Data Protection
 Reports:
   PCI:
-    - 10.5.3
-    - 10.5.5
-Severity: Low
+    - 10.5.1
+Severity: High
 Description: >
-  Checks that object versioning is enabled in the S3 bucket.
+  Ensures that the S3 bucket is not publicly readable.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-versioning-enabled
-Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-not-publicly-readable
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
 Tests:
   -
-    Name: Bucket Versioning Disabled
+    Name: Bucket Allows READ Access For All Users
     ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
@@ -40,9 +40,9 @@ Tests:
               "EmailAddress": null,
               "ID": "11112223334445556667778899aaabbbcccdddeeee",
               "Type": "CanonicalUser",
-              "URI": null
+              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
             },
-            "Permission": "FULL_CONTROL"
+            "Permission": "READ"
           },
           {
             "Grantee": {
@@ -74,9 +74,9 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Versioning Enabled
+    Name: Bucket Allows READ For All Authenticated Users
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: true
+    ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -95,9 +95,9 @@ Tests:
               "EmailAddress": null,
               "ID": "11112223334445556667778899aaabbbcccdddeeee",
               "Type": "CanonicalUser",
-              "URI": null
+              "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
             },
-            "Permission": "FULL_CONTROL"
+            "Permission": "READ"
           },
           {
             "Grantee": {
@@ -126,5 +126,60 @@ Tests:
           "IgnorePublicAcls": false,
           "RestrictPublicBuckets": false
         },
-        "Versioning": "Enabled"
+        "Versioning": null
+      }
+  -
+    Name: Bucket Allows WRITE To All Users
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "WRITE"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
       }

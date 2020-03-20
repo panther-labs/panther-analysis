@@ -1,82 +1,22 @@
 AnalysisType: policy
-Filename: aws_s3_lifecycle_configuration_expires_data.py
-PolicyID: AWS.S3.Bucket.LifecycleConfiguration
-DisplayName: AWS S3 Bucket Lifecycle Configuration
+Filename: aws_s3_bucket_mfa_delete.py
+PolicyID: AWS.S3.Bucket.MFADelete
+DisplayName: AWS S3 Bucket MFA Delete
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - Configuration Required
-Reports:
-  PCI:
-    - 3.1
-    - 10.7
+  - Data Protection
 Severity: Low
 Description: >
-  Verifies that the S3 Bucket Object Lifecycle configuration expires data within 90 and 365 days.
+  Ensures that MFA delete is enabled for a bucket so that all objects can only be deleted by users authenticated with MFA.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-lifecycle-configuration-expires-data
-Reference: https://amzn.to/2visoXr
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-has-mfa-delete-enabled
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html
 Tests:
   -
-    Name: Bucket Has a Compliant 1-Year Lifecycle Configuration
-    ResourceType: AWS.S3.Bucket
-    ExpectedResult: true
-    Resource:
-      {
-        "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules": [
-          {
-            "ApplyServerSideEncryptionByDefault": {
-              "KMSMasterKeyID": null,
-              "SSEAlgorithm": "AES256"
-            }
-          }
-        ],
-        "Grants": null,
-        "LifecycleRules": [
-            {
-              "AbortIncompleteMultipartUpload": null,
-              "Expiration": {
-                "Date": null,
-                "Days": 365,
-                "ExpiredObjectDeleteMarker": null
-              },
-              "Filter": {
-                "And": null,
-                "Prefix": "",
-                "Tag": null
-              },
-              "ID": "ExpireAfter1Year",
-              "NoncurrentVersionExpiration": {
-                "NoncurrentDays": 365
-              },
-              "NoncurrentVersionTransitions": null,
-              "Prefix": null,
-              "Status": "Enabled",
-              "Transitions": null
-            }
-          ],
-        "Location": "us-east-2",
-        "LoggingPolicy": null,
-        "MFADelete": null,
-        "Name": "bucket-name",
-        "Owner": {
-          "DisplayName": "user.name",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        },
-        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
-        "Versioning": null
-      }
-  -
-    Name: Bucket Does Not Have Lifecycle Configuration
+    Name: Bucket MFA Delete Never Set
     ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
@@ -110,7 +50,41 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Has Insufficient Lifecycle Configuration
+    Name: Bucket Has MFA Delete Enabled
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": "Enabled",
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Does Not MFA Delete Enabled
     ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
@@ -125,32 +99,10 @@ Tests:
           }
         ],
         "Grants": null,
-        "LifecycleRules": [
-            {
-              "AbortIncompleteMultipartUpload": null,
-              "Expiration": {
-                "Date": null,
-                "Days": 30,
-                "ExpiredObjectDeleteMarker": null
-              },
-              "Filter": {
-                "And": null,
-                "Prefix": "",
-                "Tag": null
-              },
-              "ID": "ExpireAfter1Year",
-              "NoncurrentVersionExpiration": {
-                "NoncurrentDays": 30
-              },
-              "NoncurrentVersionTransitions": null,
-              "Prefix": null,
-              "Status": "Enabled",
-              "Transitions": null
-            }
-          ],
+        "LifecycleRules": null,
         "Location": "us-east-2",
         "LoggingPolicy": null,
-        "MFADelete": null,
+        "MFADelete": "Disabled",
         "Name": "bucket-name",
         "Owner": {
           "DisplayName": "user.name",

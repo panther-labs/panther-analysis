@@ -1,23 +1,24 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_name_has_no_periods.py
-PolicyID: AWS.S3.Bucket.NameDNSCompliance
-DisplayName: AWS S3 Bucket Name DNS Compliance
+Filename: aws_s3_bucket_logging.py
+PolicyID: AWS.S3.Bucket.Logging
+DisplayName: AWS S3 Bucket Logging
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-Severity: Info
+  - Monitoring
+Severity: Low
 Description: >
-  This policy validates that the AWS S3 bucket name is DNS compliant.
+  Ensures that a logging policy is set for the S3 bucket.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-name-has-no-periods
-Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-logging-enabled
+Reference: https://blog.runpanther.io/s3-bucket-access-logging/
 Tests:
   -
-    Name: Bucket Name Has No Periods
+    Name: Bucket Logging Policy Is Disabled
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: true
+    ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -70,9 +71,9 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Name Has Periods
+    Name: Bucket Logging Policy Is Enabled
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: false
+    ExpectedResult: true
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -108,9 +109,9 @@ Tests:
         ],
         "LifecycleRules": null,
         "Location": "us-east-2",
-        "LoggingPolicy": null,
+        "LoggingPolicy": "enabled",
         "MFADelete": null,
-        "Name": "bucket.name",
+        "Name": "bucket-name",
         "Owner": {
           "DisplayName": "user.name",
           "ID": "11112223334445556667778899aaabbbcccdddeeee"

@@ -1,27 +1,28 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_policy_restricts_principal.py
-PolicyID: AWS.S3.Bucket.PrincipalRestrictions
-DisplayName: AWS S3 Bucket Principal Restrictions
+Filename: aws_s3_bucket_lifecycle_configuration.py
+PolicyID: AWS.S3.Bucket.LifecycleConfiguration
+DisplayName: AWS S3 Bucket Lifecycle Configuration
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
+  - Configuration Required
 Reports:
   PCI:
-    - 10.5.1
-    - 10.5.2
-Severity: High
+    - 3.1
+    - 10.7
+Severity: Low
 Description: >
-  Ensures the S3 bucket access policy does not allow any principal, in accordance with the principal of least privilege.
+  Verifies that the S3 Bucket Object Lifecycle configuration expires data within 90 and 365 days.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-policy-restricts-principal
-Reference: https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-resources/
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-lifecycle-configuration-expires-data
+Reference: https://amzn.to/2visoXr
 Tests:
   -
-    Name: Bucket Does Not Restrict Principal
+    Name: Bucket Has a Compliant 1-Year Lifecycle Configuration
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: false
+    ExpectedResult: true
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -34,7 +35,29 @@ Tests:
           }
         ],
         "Grants": null,
-        "LifecycleRules": null,
+        "LifecycleRules": [
+            {
+              "AbortIncompleteMultipartUpload": null,
+              "Expiration": {
+                "Date": null,
+                "Days": 365,
+                "ExpiredObjectDeleteMarker": null
+              },
+              "Filter": {
+                "And": null,
+                "Prefix": "",
+                "Tag": null
+              },
+              "ID": "ExpireAfter1Year",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 365
+              },
+              "NoncurrentVersionTransitions": null,
+              "Prefix": null,
+              "Status": "Enabled",
+              "Transitions": null
+            }
+          ],
         "Location": "us-east-2",
         "LoggingPolicy": null,
         "MFADelete": null,
@@ -43,7 +66,7 @@ Tests:
           "DisplayName": "user.name",
           "ID": "11112223334445556667778899aaabbbcccdddeeee"
         },
-        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]},{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:Get*\",\"s3:List*\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": false,
           "BlockPublicPolicy": false,
@@ -53,9 +76,9 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Does Not Restrict Principal
+    Name: Bucket Does Not Have Lifecycle Configuration
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: true
+    ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -87,9 +110,9 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Does Not Restrict Principal But Has Condition
+    Name: Bucket Has Insufficient Lifecycle Configuration
     ResourceType: AWS.S3.Bucket
-    ExpectedResult: true
+    ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
@@ -102,7 +125,29 @@ Tests:
           }
         ],
         "Grants": null,
-        "LifecycleRules": null,
+        "LifecycleRules": [
+            {
+              "AbortIncompleteMultipartUpload": null,
+              "Expiration": {
+                "Date": null,
+                "Days": 30,
+                "ExpiredObjectDeleteMarker": null
+              },
+              "Filter": {
+                "And": null,
+                "Prefix": "",
+                "Tag": null
+              },
+              "ID": "ExpireAfter1Year",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30
+              },
+              "NoncurrentVersionTransitions": null,
+              "Prefix": null,
+              "Status": "Enabled",
+              "Transitions": null
+            }
+          ],
         "Location": "us-east-2",
         "LoggingPolicy": null,
         "MFADelete": null,
@@ -111,7 +156,7 @@ Tests:
           "DisplayName": "user.name",
           "ID": "11112223334445556667778899aaabbbcccdddeeee"
         },
-        "Policy": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"Access\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:GetObject\",\"s3:GetObjectAcl\",\"s3:ListBucket\"],\"Resource\":[\"arn:aws:s3:::example-bucket\"],\"Condition\":{\"StringEquals\":{\"aws:PrincipalOrgID\":\"111111\"}}}]}",
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": false,
           "BlockPublicPolicy": false,

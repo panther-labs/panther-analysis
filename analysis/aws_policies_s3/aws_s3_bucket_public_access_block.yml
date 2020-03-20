@@ -1,80 +1,24 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_not_publicly_readable.py
-PolicyID: AWS.S3.Bucket.PublicRead
-DisplayName: AWS S3 Bucket Public Read
+Filename: aws_s3_bucket_public_access_block.py
+PolicyID: AWS.S3.Bucket.PublicAccessBlock
+DisplayName: AWS S3 Bucket Public Access Block
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
 Tags:
   - AWS
-  - Data Protection
 Reports:
   PCI:
-    - 10.5.1
-Severity: High
+    - 2.2.3
+Severity: Medium
 Description: >
-  Ensures that the S3 bucket is not publicly readable.
+  Ensures that a Public Access Block Configuration is set for the given S3 bucket.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-bucket-not-publicly-readable
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-public-access-block-enabled
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
 Tests:
   -
-    Name: Bucket Allows READ Access For All Users
-    ResourceType: AWS.S3.Bucket
-    ExpectedResult: false
-    Resource:
-      {
-        "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules": [
-          {
-            "ApplyServerSideEncryptionByDefault": {
-              "KMSMasterKeyID": null,
-              "SSEAlgorithm": "AES256"
-            }
-          }
-        ],
-        "Grants": [
-          {
-            "Grantee": {
-              "DisplayName": "user.name",
-              "EmailAddress": null,
-              "ID": "11112223334445556667778899aaabbbcccdddeeee",
-              "Type": "CanonicalUser",
-              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
-            },
-            "Permission": "READ"
-          },
-          {
-            "Grantee": {
-              "DisplayName": null,
-              "EmailAddress": null,
-              "ID": null,
-              "Type": "Group",
-              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
-            },
-            "Permission": "WRITE"
-          }
-        ],
-        "LifecycleRules": null,
-        "Location": "us-east-2",
-        "LoggingPolicy": null,
-        "MFADelete": null,
-        "Name": "bucket-name",
-        "Owner": {
-          "DisplayName": "user.name",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        },
-        "Policy": null,
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
-        "Versioning": null
-      }
-  -
-    Name: Bucket Allows READ For All Authenticated Users
+    Name: Public Access Block Configuration Is Not Set
     ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
@@ -97,7 +41,7 @@ Tests:
               "Type": "CanonicalUser",
               "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
             },
-            "Permission": "READ"
+            "Permission": "WRITE"
           },
           {
             "Grantee": {
@@ -120,16 +64,11 @@ Tests:
           "ID": "11112223334445556667778899aaabbbcccdddeeee"
         },
         "Policy": null,
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
+        "PublicAccessBlockConfiguration": null,
         "Versioning": null
       }
   -
-    Name: Bucket Allows WRITE To All Users
+    Name: Public Access Block Configuration Is Set
     ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
@@ -150,7 +89,7 @@ Tests:
               "EmailAddress": null,
               "ID": "11112223334445556667778899aaabbbcccdddeeee",
               "Type": "CanonicalUser",
-              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+              "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
             },
             "Permission": "WRITE"
           },
@@ -176,9 +115,9 @@ Tests:
         },
         "Policy": null,
         "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
+          "BlockPublicAcls": true,
           "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
+          "IgnorePublicAcls": true,
           "RestrictPublicBuckets": false
         },
         "Versioning": null
