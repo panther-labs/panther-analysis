@@ -1,14 +1,15 @@
 AnalysisType: rule
 Filename: aws_config_service_disabled_deleted.py
 PolicyID: AWS.ConfigService.DisabledDeleted
-DisplayName: AWS Config Service Created
+DisplayName: AWS Config Service Disabled
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
-  - CIS
-  - CIS 3.9
+Reports:
+  CIS:
+    - 3.9
 Severity: Medium
 Description: >
   An AWS Config Recorder or Delivery Channel was created

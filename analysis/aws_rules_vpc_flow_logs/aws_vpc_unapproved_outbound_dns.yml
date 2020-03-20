@@ -2,11 +2,12 @@ AnalysisType: rule
 Filename: aws_vpc_unapproved_outbound_dns.py
 PolicyID: AWS.VPC.UnapprovedOutboundDNS
 DisplayName: VPC Flow Logs Unapproved Outbound DNS Traffic
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.VPCFlow
 Tags:
   - AWS
+  - Configuration Required
 Severity: Medium
 Description: >
   Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
