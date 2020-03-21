@@ -1,0 +1,34 @@
+AnalysisType: rule
+Filename: aws_s3_access_error.py
+PolicyID: AWS.S3.ServerAccess.Error
+DisplayName: AWS S3 Access Error
+Enabled: true
+ResourceTypes:
+  - AWS.S3ServerAccess
+Tags:
+  - AWS
+  - Security Control
+Severity: Low
+Description: >
+  Checks for errors during S3 access. This could be due to insufficient access permissions, non-existant buckets, or other many other reasons.
+Runbook: >
+  Investigate the specific error and determine if it is an ongoing issue that needs to be addressed or a one off or transient error that can be ignored.
+Reference:
+  https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorCode.html
+Tests:
+  -
+    Name: Access No Error
+    ResourceType: AWS.S3ServerAccess
+    ExpectedResult: false
+    Resource:
+      {
+        "otherFields": "values"
+      }
+  -
+    Name: Access Error
+    ResourceType: AWS.S3ServerAccess
+    ExpectedResult: true
+    Resource:
+      {
+        "errorCode": "NoSuchKey"
+      }

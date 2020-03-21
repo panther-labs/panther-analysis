@@ -1,0 +1,413 @@
+AnalysisType: policy
+Filename: aws_access_key_unused.py
+PolicyID: AWS.AccessKey.Unused
+DisplayName: AWS Unused Access Key
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.User
+Tags:
+  - AWS
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.3
+  PCI:
+    - 8.1.4
+Severity: Low
+Description: >
+  This policy validates that IAM user access keys are used at least once every 90 days.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-access-keys-used-every-90-days
+Reference: >
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+Tests:
+  -
+    Name: Root User Access Key 1 Used And Rotated Over 90 Days Ago
+    ResourceType: AWS.IAM.RootUser
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2000-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "2000-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: Root User Access Key 2 Never Used But Rotated Less Than 90 Days Ago
+    ResourceType: AWS.IAM.RootUser
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": true,
+          "AccessKey2LastRotated": "3000-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Access Key 1 Never Used But Rotated Less Than 90 Days Ago
+    ResourceType: AWS.IAM.User
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "3000-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Access Key 1 Used And Rotated Over 90 Days Ago
+    ResourceType: AWS.IAM.User
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2000-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "2000-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Access Key 1 Used Less Than 90 Days Ago
+    ResourceType: AWS.IAM.User
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "3000-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Access Key 2 Used And Rotated Over 90 Days Ago
+    ResourceType: AWS.IAM.User
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": true,
+          "AccessKey2LastRotated": "2000-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "2000-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Access Key 2 Used Less Than 90 Days Ago
+    ResourceType: AWS.IAM.User
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": true,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "3000-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User No Active Access Keys
+    ResourceType: AWS.IAM.User
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }

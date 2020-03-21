@@ -1,0 +1,117 @@
+AnalysisType: rule
+Filename: aws_console_login_without_mfa.py
+PolicyID: AWS.Console.LoginWithoutMFA
+DisplayName: Logins Without MFA
+Enabled: true
+ResourceTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 3.2
+Severity: High
+Description: A console login was made without MFA.
+Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-console-login-without-mfa
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html
+Tests:
+  -
+    Name: No MFA
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: true
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Yes MFA
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: false
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "Yes"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: No MFA but Login Failed
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: false
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012"
+      }

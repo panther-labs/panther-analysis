@@ -1,0 +1,95 @@
+AnalysisType: policy
+Filename: aws_root_account_mfa.py
+PolicyID: AWS.RootAccount.MFA
+DisplayName: AWS Root Account MFA
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.RootUser
+Tags:
+  - AWS
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 1.13
+    - 1.14
+  PCI:
+    - 7.1.2
+Severity: Critical
+Description: >
+  This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-root-account-has-mfa-enabled
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Tests:
+  -
+    Name: MFA Enabled
+    ResourceType: AWS.IAM.RootUser
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: MFA Not Enabled
+    ResourceType: AWS.IAM.RootUser
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }

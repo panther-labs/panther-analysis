@@ -1,0 +1,890 @@
+AnalysisType: policy
+Filename: aws_security_group_administrative_ingress.py
+PolicyID: AWS.SecurityGroup.AdministrativeIngress
+DisplayName: AWS Security Group Administrative Ingress
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.VPC
+Tags:
+  - AWS
+  - Security Control
+Reports:
+  CIS:
+Severity: High
+Description: >
+  This policy validates that AWS Security Groups don't allow unrestricted inbound traffic on
+  port 3389 or 22, ports commonly used for the remote access protocols RDP and SSH respectively.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-securitygroup-restricts-ingress-on-administrative-ports
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+Tests:
+  -
+    Name: Inbound IP Permission On All IPs On Acceptable Ports
+    ResourceType: AWS.EC2.VPC
+    ExpectedResult: true
+    Resource:
+      {
+        "CidrBlock": "172.31.0.0/16",
+        "CidrBlockAssociationSet": [
+          {
+            "AssociationId": "vpc-cidr-assoc-112233",
+            "CidrBlock": "172.0.0.0/16",
+            "CidrBlockState": {
+              "State": "associated",
+              "StatusMessage": null
+            }
+          }
+        ],
+        "DhcpOptionsId": "dopt-1122e3344",
+        "FlowLogs": null,
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": null,
+        "IsDefault": true,
+        "NetworkAcls": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-1122abc444",
+                "NetworkAclId": "acl-123abc",
+                "SubnetId": "subnet-123abc"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-123abc",
+                "NetworkAclId": "acl-1122abc",
+                "SubnetId": "subnet-112233aabb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": null,
+                "Ipv6CidrBlock": null,
+                "PortRange": null,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 12345
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-123aabb",
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-1234321"
+          }
+        ],
+        "OwnerId": "112233445566",
+        "RouteTables": [
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-1122aa33",
+                "RouteTableId": "rtb-1122abc33",
+                "SubnetId": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "PropagatingVgws": null,
+            "RouteTableId": "rtb-11223344",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "DestinationIpv6CidrBlock": null,
+                "DestinationPrefixListId": null,
+                "EgressOnlyInternetGatewayId": null,
+                "GatewayId": "igw-abc123",
+                "InstanceId": null,
+                "InstanceOwnerId": null,
+                "NatGatewayId": null,
+                "NetworkInterfaceId": null,
+                "Origin": "CreateRoute",
+                "State": "active",
+                "TransitGatewayId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ],
+            "Tags": null,
+            "VpcId": "vpc-11223344"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+              {
+                "FromPort": 30,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": 45,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "1122334455",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+          }
+        ],
+        "StaleSecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc567",
+            "GroupName": "default",
+            "StaleIpPermissions": null,
+            "StaleIpPermissionsEgress": [
+              {
+                "FromPort": 5555,
+                "IpProtocol": "tcp",
+                "IpRanges": null,
+                "PrefixListIds": null,
+                "ToPort": 5555,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc567",
+                    "GroupName": "default",
+                    "PeeringStatus": "deleted",
+                    "UserId": "123456789012",
+                    "VpcId": "vpc-abc111222333444",
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "VpcId": "vpc-abc123"
+          }
+        ],
+        "State": "available",
+        "Tags": null,
+        "VpcId": "vpc-1234321"
+      }
+  -
+    Name: Inbound IP Permissions On All IPs On Restricted Ports
+    ResourceType: AWS.EC2.VPC
+    ExpectedResult: false
+    Resource:
+      {
+        "CidrBlock": "172.31.0.0/16",
+        "CidrBlockAssociationSet": [
+          {
+            "AssociationId": "vpc-cidr-assoc-112233",
+            "CidrBlock": "172.0.0.0/16",
+            "CidrBlockState": {
+              "State": "associated",
+              "StatusMessage": null
+            }
+          }
+        ],
+        "DhcpOptionsId": "dopt-1122e3344",
+        "FlowLogs": null,
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": null,
+        "IsDefault": true,
+        "NetworkAcls": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-1122abc444",
+                "NetworkAclId": "acl-123abc",
+                "SubnetId": "subnet-123abc"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-123abc",
+                "NetworkAclId": "acl-1122abc",
+                "SubnetId": "subnet-112233aabb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": null,
+                "Ipv6CidrBlock": null,
+                "PortRange": null,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 12345
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-123aabb",
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-1234321"
+          }
+        ],
+        "OwnerId": "112233445566",
+        "RouteTables": [
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-1122aa33",
+                "RouteTableId": "rtb-1122abc33",
+                "SubnetId": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "PropagatingVgws": null,
+            "RouteTableId": "rtb-11223344",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "DestinationIpv6CidrBlock": null,
+                "DestinationPrefixListId": null,
+                "EgressOnlyInternetGatewayId": null,
+                "GatewayId": "igw-abc123",
+                "InstanceId": null,
+                "InstanceOwnerId": null,
+                "NatGatewayId": null,
+                "NetworkInterfaceId": null,
+                "Origin": "CreateRoute",
+                "State": "active",
+                "TransitGatewayId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ],
+            "Tags": null,
+            "VpcId": "vpc-11223344"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+              {
+                "FromPort": 22,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": 22,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "1122334455",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+          }
+        ],
+        "StaleSecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc567",
+            "GroupName": "default",
+            "StaleIpPermissions": null,
+            "StaleIpPermissionsEgress": [
+              {
+                "FromPort": 5555,
+                "IpProtocol": "tcp",
+                "IpRanges": null,
+                "PrefixListIds": null,
+                "ToPort": 5555,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc567",
+                    "GroupName": "default",
+                    "PeeringStatus": "deleted",
+                    "UserId": "123456789012",
+                    "VpcId": "vpc-abc111222333444",
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "VpcId": "vpc-abc123"
+          }
+        ],
+        "State": "available",
+        "Tags": null,
+        "VpcId": "vpc-1234321"
+      }
+  -
+    Name: Inbound IP Permission On All IPv6 On Restricted Ports
+    ResourceType: AWS.EC2.VPC
+    ExpectedResult: false
+    Resource:
+      {
+        "CidrBlock": "172.31.0.0/16",
+        "CidrBlockAssociationSet": [
+          {
+            "AssociationId": "vpc-cidr-assoc-112233",
+            "CidrBlock": "172.0.0.0/16",
+            "CidrBlockState": {
+              "State": "associated",
+              "StatusMessage": null
+            }
+          }
+        ],
+        "DhcpOptionsId": "dopt-1122e3344",
+        "FlowLogs": null,
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": null,
+        "IsDefault": true,
+        "NetworkAcls": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-1122abc444",
+                "NetworkAclId": "acl-123abc",
+                "SubnetId": "subnet-123abc"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-123abc",
+                "NetworkAclId": "acl-1122abc",
+                "SubnetId": "subnet-112233aabb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": null,
+                "Ipv6CidrBlock": null,
+                "PortRange": null,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 12345
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-123aabb",
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-1234321"
+          }
+        ],
+        "OwnerId": "112233445566",
+        "RouteTables": [
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-1122aa33",
+                "RouteTableId": "rtb-1122abc33",
+                "SubnetId": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "PropagatingVgws": null,
+            "RouteTableId": "rtb-11223344",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "DestinationIpv6CidrBlock": null,
+                "DestinationPrefixListId": null,
+                "EgressOnlyInternetGatewayId": null,
+                "GatewayId": "igw-abc123",
+                "InstanceId": null,
+                "InstanceOwnerId": null,
+                "NatGatewayId": null,
+                "NetworkInterfaceId": null,
+                "Origin": "CreateRoute",
+                "State": "active",
+                "TransitGatewayId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ],
+            "Tags": null,
+            "VpcId": "vpc-11223344"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+              {
+                "FromPort": 22,
+                "IpProtocol": "-1",
+                "IpRanges": null,
+                "Ipv6Ranges": [
+                  {
+                    "CidrIpv6": "::/0",
+                    "Description": null
+                  }
+                ],
+                "PrefixListIds": null,
+                "ToPort": 22,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "1122334455",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+          }
+        ],
+        "StaleSecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc567",
+            "GroupName": "default",
+            "StaleIpPermissions": null,
+            "StaleIpPermissionsEgress": [
+              {
+                "FromPort": 5555,
+                "IpProtocol": "tcp",
+                "IpRanges": null,
+                "PrefixListIds": null,
+                "ToPort": 5555,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc567",
+                    "GroupName": "default",
+                    "PeeringStatus": "deleted",
+                    "UserId": "123456789012",
+                    "VpcId": "vpc-abc111222333444",
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "VpcId": "vpc-abc123"
+          }
+        ],
+        "State": "available",
+        "Tags": null,
+        "VpcId": "vpc-1234321"
+      }
+  -
+    Name: Inbound IP Permission On Specific IP On Restricted Port
+    ResourceType: AWS.EC2.VPC
+    ExpectedResult: true
+    Resource:
+      {
+        "CidrBlock": "172.31.0.0/16",
+        "CidrBlockAssociationSet": [
+          {
+            "AssociationId": "vpc-cidr-assoc-112233",
+            "CidrBlock": "172.0.0.0/16",
+            "CidrBlockState": {
+              "State": "associated",
+              "StatusMessage": null
+            }
+          }
+        ],
+        "DhcpOptionsId": "dopt-1122e3344",
+        "FlowLogs": null,
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": null,
+        "IsDefault": true,
+        "NetworkAcls": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-1122abc444",
+                "NetworkAclId": "acl-123abc",
+                "SubnetId": "subnet-123abc"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-123abc",
+                "NetworkAclId": "acl-1122abc",
+                "SubnetId": "subnet-112233aabb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": null,
+                "Ipv6CidrBlock": null,
+                "PortRange": null,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 12345
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-123aabb",
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-1234321"
+          }
+        ],
+        "OwnerId": "112233445566",
+        "RouteTables": [
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-1122aa33",
+                "RouteTableId": "rtb-1122abc33",
+                "SubnetId": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "PropagatingVgws": null,
+            "RouteTableId": "rtb-11223344",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "DestinationIpv6CidrBlock": null,
+                "DestinationPrefixListId": null,
+                "EgressOnlyInternetGatewayId": null,
+                "GatewayId": "igw-abc123",
+                "InstanceId": null,
+                "InstanceOwnerId": null,
+                "NatGatewayId": null,
+                "NetworkInterfaceId": null,
+                "Origin": "CreateRoute",
+                "State": "active",
+                "TransitGatewayId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ],
+            "Tags": null,
+            "VpcId": "vpc-11223344"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+              {
+                "FromPort": 22,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "1.1.1.1/32",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": 22,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "1122334455",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+          }
+        ],
+        "StaleSecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc567",
+            "GroupName": "default",
+            "StaleIpPermissions": null,
+            "StaleIpPermissionsEgress": [
+              {
+                "FromPort": 5555,
+                "IpProtocol": "tcp",
+                "IpRanges": null,
+                "PrefixListIds": null,
+                "ToPort": 5555,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc567",
+                    "GroupName": "default",
+                    "PeeringStatus": "deleted",
+                    "UserId": "123456789012",
+                    "VpcId": "vpc-abc111222333444",
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "VpcId": "vpc-abc123"
+          }
+        ],
+        "State": "available",
+        "Tags": null,
+        "VpcId": "vpc-1234321"
+      }
+  -
+    Name: No Inbound IP Permissions
+    ResourceType: AWS.EC2.VPC
+    ExpectedResult: true
+    Resource:
+      {
+        "CidrBlock": "172.31.0.0/16",
+        "CidrBlockAssociationSet": [
+          {
+            "AssociationId": "vpc-cidr-assoc-112233",
+            "CidrBlock": "172.0.0.0/16",
+            "CidrBlockState": {
+              "State": "associated",
+              "StatusMessage": null
+            }
+          }
+        ],
+        "DhcpOptionsId": "dopt-1122e3344",
+        "FlowLogs": null,
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": null,
+        "IsDefault": true,
+        "NetworkAcls": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-1122abc444",
+                "NetworkAclId": "acl-123abc",
+                "SubnetId": "subnet-123abc"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-123abc",
+                "NetworkAclId": "acl-1122abc",
+                "SubnetId": "subnet-112233aabb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "IcmpTypeCode": null,
+                "Ipv6CidrBlock": null,
+                "PortRange": null,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 12345
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-123aabb",
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-1234321"
+          }
+        ],
+        "OwnerId": "112233445566",
+        "RouteTables": [
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-1122aa33",
+                "RouteTableId": "rtb-1122abc33",
+                "SubnetId": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "PropagatingVgws": null,
+            "RouteTableId": "rtb-11223344",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "DestinationIpv6CidrBlock": null,
+                "DestinationPrefixListId": null,
+                "EgressOnlyInternetGatewayId": null,
+                "GatewayId": "igw-abc123",
+                "InstanceId": null,
+                "InstanceOwnerId": null,
+                "NatGatewayId": null,
+                "NetworkInterfaceId": null,
+                "Origin": "CreateRoute",
+                "State": "active",
+                "TransitGatewayId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ],
+            "Tags": null,
+            "VpcId": "vpc-11223344"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": null,
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "1122334455",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "FromPort": null,
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": null
+                  }
+                ],
+                "Ipv6Ranges": null,
+                "PrefixListIds": null,
+                "ToPort": null,
+                "UserIdGroupPairs": null
+              }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+          }
+        ],
+        "StaleSecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc567",
+            "GroupName": "default",
+            "StaleIpPermissions": null,
+            "StaleIpPermissionsEgress": [
+              {
+                "FromPort": 5555,
+                "IpProtocol": "tcp",
+                "IpRanges": null,
+                "PrefixListIds": null,
+                "ToPort": 5555,
+                "UserIdGroupPairs": [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-abc567",
+                    "GroupName": "default",
+                    "PeeringStatus": "deleted",
+                    "UserId": "123456789012",
+                    "VpcId": "vpc-abc111222333444",
+                    "VpcPeeringConnectionId": null
+                  }
+                ]
+              }
+            ],
+            "VpcId": "vpc-abc123"
+          }
+        ],
+        "State": "available",
+        "Tags": null,
+        "VpcId": "vpc-1234321"
+      }

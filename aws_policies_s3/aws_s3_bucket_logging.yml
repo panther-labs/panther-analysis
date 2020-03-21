@@ -1,0 +1,128 @@
+AnalysisType: policy
+Filename: aws_s3_bucket_logging.py
+PolicyID: AWS.S3.Bucket.Logging
+DisplayName: AWS S3 Bucket Logging
+Enabled: true
+ResourceTypes:
+  - AWS.S3.Bucket
+Tags:
+  - AWS
+  - Monitoring
+  - Security Control
+Severity: Low
+Description: >
+  Ensures that a logging policy is set for the S3 bucket.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-s3-logging-enabled
+Reference: https://blog.runpanther.io/s3-bucket-access-logging/
+Tests:
+  -
+    Name: Bucket Logging Policy Is Disabled
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": null
+            },
+            "Permission": "FULL_CONTROL"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Logging Policy Is Enabled
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": null
+            },
+            "Permission": "FULL_CONTROL"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": "enabled",
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }

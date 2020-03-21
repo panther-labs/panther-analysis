@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: aws_unauthorized_api_call.py
+PolicyID: AWS.CloudTrail.UnauthorizedAPICall
+DisplayName: Monitor Unauthorized API Calls
+Enabled: true
+ResourceTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+Reports:
+  CIS:
+    - 3.1
+Severity: Low
+Description: An unauthorized AWS API call was made.
+Runbook: https://docs.runpanther.io/log-analysis/rules/aws/aws-unauthorized-api-call
+Reference: https://amzn.to/3aOukaA
+Tests:
+  -
+    Name: Unauthorized API Call
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: true
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "signin.amazonaws.com",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Authorized API Call
+    ResourceType: AWS.CloudTrail
+    ExpectedResult: false
+    Resource:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "signin.amazonaws.com",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
