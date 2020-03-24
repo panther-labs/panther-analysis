@@ -29,5 +29,5 @@ install:
 test:
 	for d in $(analysis_directories); \
 	do \
-		panther_analysis_tool test --policies $$d; \
+		panther_analysis_tool test --path $$d; \
 	done
