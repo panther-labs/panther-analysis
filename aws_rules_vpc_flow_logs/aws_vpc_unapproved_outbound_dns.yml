@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_vpc_unapproved_outbound_dns.py
-PolicyID: AWS.VPC.UnapprovedOutboundDNS
+RuleID: AWS.VPC.UnapprovedOutboundDNS
 DisplayName: VPC Flow Logs Unapproved Outbound DNS Traffic
 Enabled: false
-ResourceTypes:
+LogTypes:
   - AWS.VPCFlow
 Tags:
   - AWS
@@ -17,9 +17,9 @@ Runbook: >
 Tests:
   -
     Name: Approved Outbound DNS Traffic
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "dstport": 53,
         "dstaddr": "1.1.1.1",
@@ -27,9 +27,9 @@ Tests:
       }
   -
     Name: Unapproved Outbound DNS Traffic
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "dstport": 53,
         "dstaddr": "100.100.100.100",
@@ -37,9 +37,9 @@ Tests:
       }
   -
     Name: Outbound Non-DNS Traffic
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "dstport": 80,
         "dstaddr": "100.100.100.100",

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_s3_access_error.py
-PolicyID: AWS.S3.ServerAccess.Error
+RuleID: AWS.S3.ServerAccess.Error
 DisplayName: AWS S3 Access Error
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.S3ServerAccess
 Tags:
   - AWS
@@ -18,17 +18,17 @@ Reference:
 Tests:
   -
     Name: Access No Error
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "otherFields": "values"
       }
   -
     Name: Access Error
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "errorCode": "NoSuchKey"
       }

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_ec2_vpc_modified.py
-PolicyID: AWS.EC2.VPCModified
+RuleID: AWS.EC2.VPCModified
 DisplayName: EC2 VPC Modified
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -18,9 +18,9 @@ Reference: reference.link
 Tests:
   -
     Name: VPC Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -87,9 +87,9 @@ Tests:
       }
   -
     Name: VPC Not Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

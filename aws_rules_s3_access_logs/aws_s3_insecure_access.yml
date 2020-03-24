@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_s3_insecure_access.py
-PolicyID: AWS.S3.ServerAccess.Insecure
+RuleID: AWS.S3.ServerAccess.Insecure
 DisplayName: AWS S3 Insecure Access
 Enabled: false
-ResourceTypes:
+LogTypes:
   - AWS.S3ServerAccess
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference:
 Tests:
   -
     Name: Secure Access to S3 Bucket
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "bucketowner": "f16a9e81a6589df1c902c8e3610de4107fe14d7f99fce56f7982fd14a88787db",
         "bucket": "cloudtrail",
@@ -55,9 +55,9 @@ Tests:
       }
   -
     Name: Insecure Access to S3 Bucket
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "bucketowner": "f16a9e81a6589df1c902c8e3610de4107fe14d7f99fce56f7982fd14a88787db",
         "bucket": "cloudtrail",

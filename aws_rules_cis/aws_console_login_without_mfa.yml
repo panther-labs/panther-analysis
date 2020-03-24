@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_console_login_without_mfa.py
-PolicyID: AWS.Console.LoginWithoutMFA
+RuleID: AWS.Console.LoginWithoutMFA
 DisplayName: Logins Without MFA
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -18,9 +18,9 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.h
 Tests:
   -
     Name: No MFA
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -51,9 +51,9 @@ Tests:
       }
   -
     Name: Yes MFA
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -84,9 +84,9 @@ Tests:
       }
   -
     Name: No MFA but Login Failed
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
