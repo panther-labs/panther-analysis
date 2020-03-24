@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_mac_alf_disabled.py
-PolicyID: OSquery.Mac.ALFDisabled
+RuleID: OSquery.Mac.ALFDisabled
 DisplayName: macOS Application Level Firewall Disabled
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -15,9 +15,9 @@ Reference: https://support.apple.com/en-us/HT201642
 Tests:
   -
     Name: ALF Disabled
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_alf",
         "action": "added",
@@ -34,9 +34,9 @@ Tests:
       }
   -
     Name: ALF Enabled
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_alf",
         "action": "added",

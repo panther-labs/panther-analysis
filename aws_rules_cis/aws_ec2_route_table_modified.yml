@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_ec2_route_table_modified.py
-PolicyID: AWS.EC2.RouteTableModified
+RuleID: AWS.EC2.RouteTableModified
 DisplayName: EC2 Route Table Modified
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -17,9 +17,9 @@ Reference: reference.link
 Tests:
   -
     Name: Route Table Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -64,9 +64,9 @@ Tests:
       }
   -
     Name: Route Table Not Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_mac_osx_attacks.py
-PolicyID: OSquery.Mac.OSXAttacks
+RuleID: OSquery.Mac.OSXAttacks
 DisplayName: macOS Malware Detected with osquery
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -14,9 +14,9 @@ Reference: https://support.apple.com/en-us/HT204899
 Tests:
   -
     Name: App running on Desktop that is watching keyboard events
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_osx-attacks_Keyboard_Event_Taps",
         "action": "added",
@@ -28,9 +28,9 @@ Tests:
       }
   -
     Name: App is running from approved path
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "name": "pack_osx-attacks_Keyboard_Event_Taps",
         "action": "added",

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_kms_cmk_loss.py
-PolicyID: AWS.KMS.CustomerManagedKeyLoss
+RuleID: AWS.KMS.CustomerManagedKeyLoss
 DisplayName: KMS CMK Disabled or Deleted
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference: https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.h
 Tests:
   -
     Name: KMS Key Disabled
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -69,9 +69,9 @@ Tests:
       }
   -
     Name: KMS Key Scheduled For Deletion
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -124,9 +124,9 @@ Tests:
       }
   -
     Name: KMS Key Non Deletion Event
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

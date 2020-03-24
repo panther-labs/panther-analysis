@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_guardduty_high_sev_findings.py
-PolicyID: AWS.GuardDuty.HighSeverityFinding
+RuleID: AWS.GuardDuty.HighSeverityFinding
 DisplayName: AWS GuardDuty High Severity Finding
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.GuardDuty
 Tags:
   - AWS
@@ -17,9 +17,9 @@ Reference:
 Tests:
   -
     Name: High Sev Finding
-    ResourceType: AWS.GuardDuty
+    LogType: AWS.GuardDuty
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "schemaVersion": "2.0",
         "accountId": "123456789012",

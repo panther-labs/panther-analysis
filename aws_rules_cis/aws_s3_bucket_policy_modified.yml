@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_s3_bucket_policy_modified.py
-PolicyID: AWS.S3.BucketPolicyModified
+RuleID: AWS.S3.BucketPolicyModified
 DisplayName: AWS S3 Bucket Policy Modified
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.ht
 Tests:
   -
     Name: S3 Bucket Policy Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -75,9 +75,9 @@ Tests:
       }
   -
     Name: S3 Bucket Policy Not Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

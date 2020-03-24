@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_s3_bucket_deleted.py
-PolicyID: AWS.S3.BucketDeleted
+RuleID: AWS.S3.BucketDeleted
 DisplayName: S3 Bucket Deleted
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
   - Availability
 Tags:
@@ -15,9 +15,9 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html
 Tests:
   -
     Name: An S3 Bucket was deleted
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -67,9 +67,9 @@ Tests:
       }
   -
     Name: An S3 Object Deleted
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "eventName": "DeleteObject",
         "awsRegion": "us-east-2",

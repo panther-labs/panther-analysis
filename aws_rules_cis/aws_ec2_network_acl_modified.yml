@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_ec2_network_acl_modified.py
-PolicyID: AWS.EC2.NetworkACLModified
+RuleID: AWS.EC2.NetworkACLModified
 DisplayName: EC2 Network ACL Modified
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -18,9 +18,9 @@ Reference: reference.link
 Tests:
   -
     Name: Network ACL Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -70,9 +70,9 @@ Tests:
       }
   -
     Name: Network ACL Not Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

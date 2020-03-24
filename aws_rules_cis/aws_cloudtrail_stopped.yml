@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_cloudtrail_stopped.py
-PolicyID: AWS.CloudTrail.Stopped
+RuleID: AWS.CloudTrail.Stopped
 DisplayName: CloudTrail Stopped
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference: https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_Ope
 Tests:
   -
     Name: CloudTrail Was Stopped
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -63,9 +63,9 @@ Tests:
       }
   -
     Name: CloudTrail Was Started
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_vpc_healthy_log_status.py
-PolicyID: AWS.VPC.HealthyLogStatus
+RuleID: AWS.VPC.HealthyLogStatus
 DisplayName: AWS VPC Healthy Log Status
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.VPCFlow
 Tags:
   - AWS
@@ -18,11 +18,11 @@ Runbook: >
 Tests:
   -
     Name: Healthy Log Status
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: false
-    Resource: {"log-status": "OK"}
+    Log: {"log-status": "OK"}
   -
     Name: Unhealthy Log Status
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: true
-    Resource: {"log-status": "SKIPDATA"}
+    Log: {"log-status": "SKIPDATA"}

@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_console_login_failed.py
-PolicyID: AWS.Console.LoginFailed
+RuleID: AWS.Console.LoginFailed
 DisplayName: Failed Console Login
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference: https://amzn.to/3aMSmTd
 Tests:
   -
     Name: Failed Login
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -52,9 +52,9 @@ Tests:
       }
   -
     Name: Successful Login
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -85,9 +85,9 @@ Tests:
       }
   -
     Name: Non Login Event
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.06",
           "userIdentity": {

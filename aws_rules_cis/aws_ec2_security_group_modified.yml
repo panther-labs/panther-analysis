@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_ec2_security_group_modified.py
-PolicyID: AWS.EC2.SecurityGroupModified
+RuleID: AWS.EC2.SecurityGroupModified
 DisplayName: EC2 Security Group Modified
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -19,9 +19,9 @@ Reference: reference.link
 Tests:
   -
     Name: Security Group Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -85,9 +85,9 @@ Tests:
       }
   -
     Name: Security Group Not Modified
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

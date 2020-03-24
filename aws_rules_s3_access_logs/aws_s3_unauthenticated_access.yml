@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_s3_unauthenticated_access.py
-PolicyID: AWS.S3.ServerAccess.Unauthenticated
+RuleID: AWS.S3.ServerAccess.Unauthenticated
 DisplayName: AWS S3 Unauthenticated Access
 Enabled: false
-ResourceTypes:
+LogTypes:
   - AWS.S3ServerAccess
 Tags:
   - AWS
@@ -17,18 +17,18 @@ Runbook: >
 Tests:
   -
     Name: Authenticated Access
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "bucket" : "example-bucket",
         "requester": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be"
       }
   -
     Name: Unauthenticated Access
-    ResourceType: AWS.S3ServerAccess
+    LogType: AWS.S3ServerAccess
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "bucket" : "example-bucket",
       }

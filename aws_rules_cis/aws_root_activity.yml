@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_root_activity.py
-PolicyID: AWS.Root.Activity
+RuleID: AWS.Root.Activity
 DisplayName: Root Account Activity
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -20,9 +20,9 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
     Name: Root Activity
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -71,9 +71,9 @@ Tests:
       }
   -
     Name: IAMUser Activity
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {

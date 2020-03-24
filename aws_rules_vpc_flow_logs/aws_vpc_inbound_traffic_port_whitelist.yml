@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_vpc_inbound_traffic_port_whitelist.py
-PolicyID: AWS.VPC.InboundPortWhitelist
+RuleID: AWS.VPC.InboundPortWhitelist
 DisplayName: VPC Flow Logs Inbound Port Whitelist
 Enabled: false
-ResourceTypes:
+LogTypes:
   - AWS.VPCFlow
 Tags:
   - AWS
@@ -17,9 +17,9 @@ Runbook: >
 Tests:
   -
     Name: Public to Private IP on Restricted Port
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: true
-    Resource:
+    Log:
       {
       "dstport": 22,
       "dstaddr": "10.0.0.1",
@@ -27,9 +27,9 @@ Tests:
       }
   -
     Name: Public to Private IP on Allowed Port
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: false
-    Resource:
+    Log:
       {
       "dstport": 443,
       "dstaddr": "10.0.0.1",
@@ -37,9 +37,9 @@ Tests:
       }
   -
     Name: Private to Private IP on Restricted Port
-    ResourceType: AWS.VPCFlow
+    LogType: AWS.VPCFlow
     ExpectedResult: false
-    Resource:
+    Log:
       {
       "dstport": 22,
       "dstaddr": "10.0.0.1",

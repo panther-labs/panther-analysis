@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: aws_config_service_created.py
-PolicyID: AWS.ConfigService.Created
+RuleID: AWS.ConfigService.Created
 DisplayName: AWS Config Service Created
 Enabled: true
-ResourceTypes:
+LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
@@ -20,9 +20,9 @@ Reference: https://aws.amazon.com/config/
 Tests:
   -
     Name: Config Recorder Delivery Channel Created
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
@@ -63,9 +63,9 @@ Tests:
       }
   -
     Name: Config Recorder Deleted
-    ResourceType: AWS.CloudTrail
+    LogType: AWS.CloudTrail
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "eventVersion": "1.05",
           "userIdentity": {
