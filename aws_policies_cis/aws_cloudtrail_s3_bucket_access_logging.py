@@ -1,5 +1,8 @@
+from panther import resource_lookup  # pylint disable:import-error
+
+
 def policy(resource):
-    # TODO: Use the get_resource() helper func here
-    return (resource['Bucket']['LoggingPolicy'] is not None or
-            # Verify that the bucket exists in the same account
-            resource['Bucket']['Location'] is None)
+    bucket_arn = 'arn:aws:s3:::' + resource['S3BucketName']
+    bucket = resource_lookup(bucket_arn)
+
+    return bucket['LoggingPolicy'] is not None
