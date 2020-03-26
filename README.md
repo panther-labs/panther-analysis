@@ -140,8 +140,6 @@ Tests:
       Based: On the Schema
 ```
 
-Note that unit testing currently does not support function mocks. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
-
 The requirements for the Policy body and specification files are listed below.
 
 The Python body MUST:
@@ -206,7 +204,6 @@ Tests:
       For: Our Log
       Based: On the Schema
 ```
-Note that unit testing currently does not support function mocks. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
 
 The requirements for the Rule body and specification files are listed below.
 
@@ -232,6 +229,28 @@ The specification file MUST:
     - PolicyID
     - ResourceTypes
     - Severity
+
+## Testing
+Both policies and tests can define unit tests, which can be used to ensure they are performing as expected on test data before pushing them live to a production environment. This can help guarantee correctness of code, as well as protect against exceptions and unexpected behavior. To run these tests, consider using the `panther_analysis_tool` directly or making use of the `Makefile` provided here. For using the `panther_analysis_tool` directly, please refer to the [documentation](https://github.com/panther-labs/panther_analysis_tool).
+
+The benefit of using this Makefile is that (if run from this directory), it will automatically include the `aws_globals` helper functtions.
+
+The `make test` target will test all policies and rules in the packs already in this repo, and this functionality can be expanded by modifying the `Makefile`. The `make test-single` target takes a single parameter, `pack`, and will test just the contents of that directory. Example usage:
+
+```bash
+make test-single pack=osquery_rules
+[INFO]: Testing analysis packs in /var/folders/p3/l1lxj0057dj01rw34rfr0r8h0000gn/T/tmp.Bq2hgZNI
+
+OSquery.Mac.ALFDisabled
+	[PASS] ALF Disabled
+	[PASS] ALF Enabled
+
+OSquery.Mac.OSXAttacks
+	[PASS] App running on Desktop that is watching keyboard events
+	[PASS] App is running from approved path
+```
+
+Note that unit testing currently does not support function call mocking. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
