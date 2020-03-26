@@ -231,7 +231,7 @@ The specification file MUST:
     - Severity
 
 ## Testing
-Both policies and tests can define unit tests, which can be used to ensure they are performing as expected on test data before pushing them live to a production environment. This can help guarantee correctness of code, as well as protect against exceptions and unexpected behavior. To run these tests, consider using the `panther_analysis_tool` directly or making use of the `Makefile` provided here. For using the `panther_analysis_tool` directly, please refer to the [documentation](https://github.com/panther-labs/panther_analysis_tool).
+Both policies and rules can define unit tests, which can be used to ensure they are performing as expected on test data before pushing them live to a production environment. This can help guarantee correctness of code, as well as protect against exceptions and unexpected behavior. To run these tests, consider using the `panther_analysis_tool` directly or making use of the `Makefile` provided here. For using the `panther_analysis_tool` directly, please refer to the [documentation](https://github.com/panther-labs/panther_analysis_tool).
 
 The benefit of using this Makefile is that (if run from this directory), it will automatically include the `aws_globals` helper functions.
 
