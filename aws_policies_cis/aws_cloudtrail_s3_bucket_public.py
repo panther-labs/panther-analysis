@@ -1,3 +1,4 @@
+from panther import resource_lookup  # pylint disable:import-error
 BAD_PERMISSIONS = {
     'http://acs.amazonaws.com/groups/global/AuthenticatedUsers',
     'http://acs.amazonaws.com/groups/global/AllUsers',
@@ -5,11 +6,11 @@ BAD_PERMISSIONS = {
 
 
 def policy(resource):
-    # TODO: Use the get_resource() helper func here
-    if resource['Bucket']['Grants'] is None:
-        return True
+    bucket_arn = 'arn:aws:s3:::' + resource['S3BucketName']
+    bucket = resource_lookup(bucket_arn)
 
-    for grant in resource['Bucket']['Grants']:
+    for grant in bucket['Grants'] or []:
         if grant['Grantee']['URI'] in BAD_PERMISSIONS:
             return False
+
     return True

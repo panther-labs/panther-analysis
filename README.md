@@ -140,6 +140,8 @@ Tests:
       Based: On the Schema
 ```
 
+Note that unit testing currently does not support function mocks. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
+
 The requirements for the Policy body and specification files are listed below.
 
 The Python body MUST:
@@ -204,6 +206,7 @@ Tests:
       For: Our Log
       Based: On the Schema
 ```
+Note that unit testing currently does not support function mocks. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
 
 The requirements for the Rule body and specification files are listed below.
 
