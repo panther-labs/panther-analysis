@@ -61,7 +61,7 @@ The following setup will assume that you are using GitHub to host your git repos
 
   - Navigate to github.com while logged in to a user in your organization
   - Select the `+` button drop down in the top right corner, and select `Import repository`
-  - In the `Your old repository's clone URL` section add our public repo: `git@github.com:panther-labs/panther-analysis.git`
+  - In the `Your old repository's clone URL` section add our public repo: `https://github.com/panther-labs/panther-analysis.git`
   - Make sure the `Owner` drop down is set to your organization, and then add a `Name` (such as `panther-analysis-internal`)
   - Set the `Privacy` radio button to `Private` (unless you want your configurations to be public)
   - You will be redirected to a loading page while the repository is being imported. After a short while, you the repository will be available and you can clone it and begin development normally.
