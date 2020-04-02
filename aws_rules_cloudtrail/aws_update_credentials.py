@@ -4,7 +4,8 @@ UPDATE_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in UPDATE_EVENTS
+    return event.get(
+        'eventName') in UPDATE_EVENTS and not event.get('errorCode')
 
 
 def dedup(event):
