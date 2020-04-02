@@ -10,10 +10,10 @@ def policy(resource):
 
     # Check if this resource type has any tag requirements.
     # If this resource type doesn't have tag requirements, the policy should be updated.
-    if resource.schema not in REQUIRED_TAGS_MAPPINGS:
+    if resource['ResourceType'] not in REQUIRED_TAGS_MAPPINGS:
         return False
 
-    required_tags = REQUIRED_TAGS_MAPPINGS[resource.schema]
+    required_tags = REQUIRED_TAGS_MAPPINGS[resource['ResourceType']]
     actual_tags = set(tag['Key'] for tag in resource['Tags'])
 
     return required_tags.issubset(actual_tags)

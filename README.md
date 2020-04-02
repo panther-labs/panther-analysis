@@ -61,7 +61,7 @@ The following setup will assume that you are using GitHub to host your git repos
 
   - Navigate to github.com while logged in to a user in your organization
   - Select the `+` button drop down in the top right corner, and select `Import repository`
-  - In the `Your old repository's clone URL` section add our public repo: `git@github.com:panther-labs/panther-analysis.git`
+  - In the `Your old repository's clone URL` section add our public repo: `https://github.com/panther-labs/panther-analysis.git`
   - Make sure the `Owner` drop down is set to your organization, and then add a `Name` (such as `panther-analysis-internal`)
   - Set the `Privacy` radio button to `Private` (unless you want your configurations to be public)
   - You will be redirected to a loading page while the repository is being imported. After a short while, you the repository will be available and you can clone it and begin development normally.
@@ -229,6 +229,28 @@ The specification file MUST:
     - PolicyID
     - ResourceTypes
     - Severity
+
+## Testing
+Both policies and rules can define unit tests, which can be used to ensure they are performing as expected on test data before pushing them live to a production environment. This can help guarantee correctness of code, as well as protect against exceptions and unexpected behavior. To run these tests, consider using the `panther_analysis_tool` directly or making use of the `Makefile` provided here. For using the `panther_analysis_tool` directly, please refer to the [documentation](https://github.com/panther-labs/panther_analysis_tool).
+
+The benefit of using this Makefile is that (if run from this directory), it will automatically include the `aws_globals` helper functions.
+
+The `make test` target will test all policies and rules in the packs already in this repo, and this functionality can be expanded by modifying the `Makefile`. The `make test-single` target takes a single parameter, `pack`, and will test just the contents of that directory. Example usage:
+
+```bash
+make test-single pack=osquery_rules
+[INFO]: Testing analysis packs in /var/folders/p3/l1lxj0057dj01rw34rfr0r8h0000gn/T/tmp.Bq2hgZNI
+
+OSquery.Mac.ALFDisabled
+	[PASS] ALF Disabled
+	[PASS] ALF Enabled
+
+OSquery.Mac.OSXAttacks
+	[PASS] App running on Desktop that is watching keyboard events
+	[PASS] App is running from approved path
+```
+
+Note that unit testing currently does not support function call mocking. We recommend not writing unit tests for functions that make network calls, as the behavior may be unexpected.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
