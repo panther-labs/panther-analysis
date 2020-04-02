@@ -14,3 +14,12 @@ S3_POLICY_CHANGE_EVENTS = {
 
 def rule(event):
     return event.get('eventName') in S3_POLICY_CHANGE_EVENTS
+
+
+def dedup(event):
+    return event.get('userIdentity', {}).get('arn')
+
+
+def title(event):
+    return 'S3 bucket modified by: {}'.format(
+        event.get('userIdentity', {}).get('arn'))

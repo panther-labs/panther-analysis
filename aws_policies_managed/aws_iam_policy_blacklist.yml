@@ -11,10 +11,9 @@ Tags:
   - AWS
   - Configuration Required
   - Identity & Access Management
-Severity: Critical
+Severity: Medium
 Description: >
-  This Policy checks that specific IAM Policies are not attached to either Users, Groups, or Roles.
-  This protects usage around highly permissive policies. This may be used to outright blacklist the usage of certain AWS managed roles that cannot be deleted, or alternatively protect highly permissive roles that should only be assigned to a small number of users, roles, or groups by adding those entities as suppressions on this policy.
+  This detects the usage of highly permissive IAM Policies that should only be assigned to a small number of users, roles, or groups.
 Runbook: >
   https://docs.runpanther.io/amazon-web-services/policies/aws-iam-policy-blacklist-is-respected
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
