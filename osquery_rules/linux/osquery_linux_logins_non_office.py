@@ -4,6 +4,7 @@ import ipaddress
 OFFICE_NETWORK = ipaddress.ip_network('192.0.1.0/24')
 
 
+# TODO: Switch this to the `last` query and check the epoch to make sure they are new logins.
 def rule(event):
     if event['action'] != 'added':
         return False
@@ -28,4 +29,4 @@ def dedup(event):
 
 def title(event):
     return 'User {} has logged into production from a non-office network'.format(
-        event['columns'].get('user'))
+        event['columns'].get('user', '<USER_NOT_FOUND>'))

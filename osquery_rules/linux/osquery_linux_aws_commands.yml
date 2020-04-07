@@ -1,0 +1,49 @@
+AnalysisType: rule
+Filename: osquery_linux_aws_commands.py
+PolicyID: Osquery.Linux.AWSCommandExecuted
+DisplayName: AWS command executed on the command line
+Enabled: true
+ResourceTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+  - Linux
+Reports:
+  MITRE ATT&CK:
+    Initial Access:
+      - Valid Accounts
+Severity: Medium
+Description: An aws command was executed on an EC2 instance
+Runbook: See which other commands were executed, and then remove IAM role causing the access
+Reference: https://attack.mitre.org/techniques/T1078/
+Tests:
+  -
+    Name: AWS command executed
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_incident-response_shell_history",
+        "action": "added",
+        "columns": {
+          "command": "aws s3 ls",
+          "uid": "1000",
+          "directory": "/home/ubuntu",
+          "username": "ubuntu"
+        }
+      }
+  -
+    Name: Tail command executed
+    ResourceType: Osquery.Differential
+    ExpectedResult: false
+    Resource:
+      {
+        "name": "pack_incident-response_shell_history",
+        "action": "added",
+        "columns": {
+          "command": "tail -f /var/log/all",
+          "uid": "1000",
+          "directory": "/home/ubuntu",
+          "username": "ubuntu"
+        }
+      }

@@ -1,28 +1,15 @@
-from fnmatch import fnmatch
-
-# sip protects against writing malware into the paths below.
-# additional apps can be added to this list based on your environments.
-#
-# more info: https://support.apple.com/en-us/HT204899
-APPROVED_PROCESS_PATHS = {
-    '/System/*',
-    '/usr/*',
-    '/bin/*',
-    '/sbin/*',
-    '/var/*',
-}
-
-
 def rule(event):
-    if 'osx-attacks' not in event.get('name', ''):
+    if 'osx-attacks' not in event['name']:
         return False
 
-    if event.get('action') != 'added':
+    # There is another rule specifically for this query
+    if 'Keyboard_Event_Taps' in event['name']:
         return False
 
-    process_path = event.get('columns', {}).get('path')
-    # Alert if the process is running outside any of the approved paths
-    return not any([fnmatch(process_path, p) for p in APPROVED_PROCESS_PATHS])
+    if event['action'] != 'added':
+        return False
+
+    return True
 
 
 def dedup(event):

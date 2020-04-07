@@ -8,5 +8,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unwanted chrome extension(s) detected on {}'.format(
+    return 'Unwanted Chrome extension(s) detected on {}'.format(
         event['hostIdentifier'])

