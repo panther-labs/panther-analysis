@@ -4,4 +4,4 @@ def rule(event):
             event['columns'].get('domain') == 'com.apple.SoftwareUpdate' and
             event['columns'].get('key') == 'AutomaticCheckEnabled' and
             # Send an alert if not set to "true"
-            not bool(event['columns'].get('value')))
+            event['columns'].get('value') == 'false')

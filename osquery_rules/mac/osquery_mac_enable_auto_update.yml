@@ -1,6 +1,6 @@
 AnalysisType: rule
 Filename: osquery_mac_enable_auto_update.py
-RuleID: OSquery.Mac.AutoUpdateEnabled
+RuleID: Osquery.Mac.AutoUpdateEnabled
 DisplayName: OSQuery Reports Application Firewall Disabled
 Enabled: true
 LogTypes:
@@ -8,7 +8,7 @@ LogTypes:
 Tags:
   - Osquery
 Severity: Medium
-DedupPeriodMinutes: 24h
+DedupPeriodMinutes: 1440
 Description: >
   Verifies that MacOS has automatic software updates enabled.
 Runbook: >
@@ -16,7 +16,7 @@ Runbook: >
 Tests:
   -
     Name: Auto Updates Disabled
-    LogType: Osquery.Differential.Log
+    LogType: Osquery.Differential
     ExpectedResult: true
     Log:
       {
@@ -30,7 +30,7 @@ Tests:
       }
   -
     Name: Auto Updates Enabled
-    LogType: Osquery.Differential.Log
+    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {
@@ -44,7 +44,7 @@ Tests:
       }
   -
     Name: Wrong Key
-    LogType: Osquery.Differential.Log
+    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {
