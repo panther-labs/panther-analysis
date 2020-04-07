@@ -1,7 +1,12 @@
 def rule(event):
-    return 'unwanted-chrome-extensions' in event['name'] and event[
-        'action'] == 'added'
+    return ('unwanted-chrome-extensions' in event['name'] and
+            event['action'] == 'added')
 
 
 def dedup(event):
-    return event['columns'].get('user')
+    return event.get('hostIdentifier')
+
+
+def title(event):
+    return 'Unwanted chrome extension(s) detected on {}'.format(
+        event['hostIdentifier'])
