@@ -7,9 +7,8 @@ LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
-Reports:
-  CIS:
 Severity: Medium
+DedupPeriodMinutes: 24h
 Description: >
   Verifies that MacOS has automatic software updates enabled.
 Runbook: >
@@ -21,9 +20,13 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "domain": "com.apple.SoftwareUpdate",
-        "key": "AutomaticCheckEnabled",
-        "value": false
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "AutomaticCheckEnabled",
+          "value": "false"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
       }
   -
     Name: Auto Updates Enabled
@@ -31,9 +34,13 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "domain": "com.apple.SoftwareUpdate",
-        "key": "AutomaticCheckEnabled",
-        "value": true
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "AutomaticCheckEnabled",
+          "value": "true"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
       }
   -
     Name: Wrong Key
@@ -41,7 +48,11 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "domain": "com.apple.SoftwareUpdate",
-        "key": "AnotherKey",
-        "value": true
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "LastFullSuccessfulDate",
+          "value": "false"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
       }
