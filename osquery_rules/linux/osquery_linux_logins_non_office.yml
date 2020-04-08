@@ -1,0 +1,46 @@
+AnalysisType: rule
+Filename: osquery_linux_logins_non_office.py
+PolicyID: Osquery.Linux.LoginFromNonOffice
+DisplayName: A Login from Outside the Corporate Office
+Enabled: false
+ResourceTypes:
+  - Osquery.Differential
+Tags:
+  - Configuration Required
+  - Osquery
+  - Linux
+Reports:
+  MITRE ATT&CK:
+    Initial Access:
+      - Valid Accounts
+Severity: High
+Description: A system has been logged into from a non approved IP space.
+Runbook: Analyze the host IP, and if possible, update whitelist or fix ACL.
+Reference: https://attack.mitre.org/techniques/T1078/
+Tests:
+  -
+    Name: Non-office network login
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+        "name": "pack-logged_in_users",
+        "action": "added",
+        "columns": {
+          "host": "10.0.3.1",
+          "user": "ubuntu"
+        }
+      }
+  -
+    Name: Office network login
+    ResourceType: Osquery.Differential
+    ExpectedResult: false
+    Resource:
+      {
+        "name": "pack-logged_in_users",
+        "action": "added",
+        "columns": {
+          "host": "192.0.1.10",
+          "user": "ubuntu"
+        }
+      }

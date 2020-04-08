@@ -12,16 +12,22 @@ APPROVED_PROCESS_PATHS = {
     '/var/*',
 }
 
+QUERIES = {
+    'pack_osx-attacks_Keyboard_Event_Taps',
+    'pack/osx-attacks/Keyboard_Event_Taps'
+}
+
 
 def rule(event):
-    if 'osx-attacks' not in event.get('name', ''):
+    if event['name'] not in QUERIES and event['action'] != 'added':
         return False
 
-    if event.get('action') != 'added':
+    process_path = event['columns'].get('path')
+    if not process_path:
         return False
 
-    process_path = event.get('columns', {}).get('path')
     # Alert if the process is running outside any of the approved paths
+    # TODO: Convert this fnmatch pattern below to a helper
     return not any([fnmatch(process_path, p) for p in APPROVED_PROCESS_PATHS])
 
 
@@ -30,4 +36,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'MacOS Malware Detected on {}'.format(event.get('hostIdentifier'))
+    return 'MacOS malware detected on {}'.format(event.get('hostIdentifier'))

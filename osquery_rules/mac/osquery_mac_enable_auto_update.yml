@@ -1,0 +1,63 @@
+AnalysisType: rule
+Filename: osquery_mac_enable_auto_update.py
+RuleID: Osquery.Mac.AutoUpdateEnabled
+DisplayName: OSQuery Reports Application Firewall Disabled
+Enabled: true
+LogTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+  - MacOS
+  - Security Control
+Reports:
+  CIS:
+    - 1.2
+Severity: Medium
+DedupPeriodMinutes: 1440
+Description: >
+  Verifies that MacOS has automatic software updates enabled.
+Runbook: >
+  Enable the auto updates on the host.
+Tests:
+  -
+    Name: Auto Updates Disabled
+    LogType: Osquery.Differential
+    ExpectedResult: true
+    Log:
+      {
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "AutomaticCheckEnabled",
+          "value": "false"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
+      }
+  -
+    Name: Auto Updates Enabled
+    LogType: Osquery.Differential
+    ExpectedResult: false
+    Log:
+      {
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "AutomaticCheckEnabled",
+          "value": "true"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
+      }
+  -
+    Name: Wrong Key
+    LogType: Osquery.Differential
+    ExpectedResult: false
+    Log:
+      {
+        "columns": {
+          "domain": "com.apple.SoftwareUpdate",
+          "key": "LastFullSuccessfulDate",
+          "value": "false"
+        },
+        "action": "added",
+        "name": "pack/mac-cis/SoftwareUpdate"
+      }

@@ -1,15 +1,22 @@
 AnalysisType: rule
-Filename: osquery_mac_alf_disabled.py
-RuleID: OSquery.Mac.ALFDisabled
-DisplayName: macOS Application Level Firewall Disabled
+Filename: osquery_mac_application_firewall.py
+RuleID: Osquery.Mac.ApplicationFirewallSettings
+DisplayName: MacOS ALF is misconfigured
 Enabled: true
 LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
+  - MacOS
   - Security Control
+Reports:
+  CIS:
+    - 2.6.3
+    - 2.6.4
 Severity: High
-Description: This macOS system has the ALF disabled
+Description: >
+  The application level firewall blocks unwanted network connections made to your
+  computer from other computers on your network.
 Runbook: Re-enable the firewall manually or with configuration management
 Reference: https://support.apple.com/en-us/HT201642
 Tests:
