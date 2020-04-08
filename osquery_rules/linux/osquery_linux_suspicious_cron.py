@@ -3,7 +3,7 @@ import shlex
 
 SUSPICIOUS_CRON_CMD_ARGS = {
     # Running in unexpected locations
-    '/tmp/*',
+    '/tmp/*',  #nosec
     # Reaching out to the internet
     'curl',
     'dig',
