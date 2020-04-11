@@ -42,3 +42,34 @@ Tests:
           "name": "Siri"
         }
       }
+  -
+    Name: Unrelated query does not alert
+    LogType: Osquery.Differential
+    ExpectedResult: false
+    Log:
+      {
+        "action": "added",
+        "calendarTime": "2020-04-10 23:26:11.000000000",
+        "columns": {
+          "blocks_size": "4096",
+          "inodes": "2448101320",
+          "path": "/",
+          "blocks": "61202533",
+          "blocks_available": "22755926",
+          "blocks_free": "58479522",
+          "device": "/dev/disk1s5",
+          "device_alias": "/dev/disk1s5",
+          "flags": "75550721",
+          "inodes_free": "2447613763",
+          "type": "apfs"
+        },
+        "counter": 28,
+        "decorations": {
+          "host_uuid": "0ec3540f-1dd9-4462-bd28-0f63b2611621",
+          "hostname": "MacBook-Pro.local"
+        },
+        "epoch": 0,
+        "hostIdentifier": "MacBook-Pro.local",
+        "name": "pack/incident-response/mounts",
+        "unixTime": 1586561171
+      }
