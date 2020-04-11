@@ -19,7 +19,10 @@ QUERIES = {
 
 
 def rule(event):
-    if event['name'] not in QUERIES and event['action'] != 'added':
+    if event['name'] not in QUERIES:
+        return False
+
+    if event['action'] != 'added':
         return False
 
     process_path = event['columns'].get('path')
@@ -36,4 +39,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'MacOS malware detected on {}'.format(event.get('hostIdentifier'))
+    return 'Keylogger malware detected on {}'.format(
+        event.get('hostIdentifier'))
