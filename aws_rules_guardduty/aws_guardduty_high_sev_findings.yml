@@ -8,8 +8,9 @@ LogTypes:
 Tags:
   - AWS
 Severity: High
+DedupPeriodMinutes: 60
 Description: >
-  A high-severity GuardDuty finding has been identified, which could indicate a host-compromise.
+  A high-severity GuardDuty finding has been identified.
 Runbook: >
   Search related logs to understand the root cause of the activity.
 Reference:
@@ -53,6 +54,7 @@ Tests:
           "count": 1
         },
         "severity": 8,
+        "id": "eeb88ab56556eb7771b266670dddee5a",
         "createdAt": "2020-02-14T18:12:22.316Z",
         "updatedAt": "2020-02-14T18:12:22.316Z",
         "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves that is highly permissive.",

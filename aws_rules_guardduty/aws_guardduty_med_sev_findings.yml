@@ -8,8 +8,9 @@ LogTypes:
 Tags:
   - AWS
 Severity: Medium
+DedupPeriodMinutes: 60
 Description: >
-  A medium-severity GuardDuty finding has been identified, which could indicate a host-compromise.
+  A medium-severity GuardDuty finding has been identified.
 Runbook: >
   Search related logs to understand the root cause of the activity.
 Reference:
@@ -24,6 +25,7 @@ Tests:
         "schemaVersion": "2.0",
         "accountId": "123456789012",
         "region": "us-east-1",
+        "id": "eeb88ab56556eb7771b266670dddee5a",
         "partition": "aws",
         "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a",
         "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions",
