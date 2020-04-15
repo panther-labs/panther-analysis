@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: osquery_linux_suspicious_cron.py
-PolicyID: Osquery.Linux.SuspiciousCron
-DisplayName: Suspicious cron
+Filename: osquery_suspicious_cron.py
+PolicyID: Osquery.SuspiciousCron
+DisplayName: Suspicious cron detected
 Enabled: true
 ResourceTypes:
   - Osquery.Differential
@@ -16,7 +16,7 @@ Reports:
       - Resource Hijacking
 Severity: High
 Description: A suspicious cron has been added
-Runbook: Analyze the user who added it and the command being executed
+Runbook: Analyze the command to ensure no nefarious activity is occurring
 Reference: https://en.wikipedia.org/wiki/Cron
 Tests:
   -

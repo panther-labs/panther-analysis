@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: osquery_ossec.py
+PolicyID: Osquery.OSSECRootkitDetected
+DisplayName: OSSEC Rootkit Detected via Osquery
+Enabled: true
+ResourceTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+Severity: Medium
+Description: >
+  Checks if any results are returned for the Osquery OSSEC Rootkit pack.
+Runbook: >
+  Verify the presence of the rootkit and re-image the machine.
+Tests:
+  -
+    Name: Rootkit Detected
+    ResourceType: Osquery.Differential
+    ExpectedResult: true
+    Resource:
+      {
+          "action": "added",
+          "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",
+          "columns": {
+              "build_distro": "10.12",
+              "build_platform": "darwin",
+              "config_hash": "1111",
+              "config_valid": "1",
+              "counter": "14",
+              "global_state": "0",
+              "extensions": "active",
+              "instance_id": "1111",
+              "pid": "223",
+              "resident_size": "54894592",
+              "start_time": "1536634519",
+              "system_time": "12472",
+              "user_time": "31800",
+              "uuid": "37821E12-CC8A-5AA3-A90C-FAB28A5BF8F9",
+              "version": "3.2.6",
+              "watcher": "92"
+          },
+          "counter": "255",
+          "decorations": {
+              "host_uuid": "1111",
+              "environment": "corp"
+          },
+          "epoch": "0",
+          "hostIdentifier": "test.lan",
+          "log_type": "result",
+          "name": "pack_ossec-rootkit_pwned",
+          "unixTime": "1536682461"
+      }
+  -
+    Name: Rootkit Not Detected
+    ResourceType: Osquery.Differential
+    ExpectedResult: false
+    Resource:
+      {
+          "action": "added",
+          "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",
+          "columns": {
+              "build_distro": "10.12",
+              "build_platform": "darwin",
+              "config_hash": "1111",
+              "config_valid": "1",
+              "counter": "14",
+              "global_state": "2",
+              "extensions": "active",
+              "instance_id": "1111",
+              "pid": "223",
+              "resident_size": "54894592",
+              "start_time": "1536634519",
+              "system_time": "12472",
+              "user_time": "31800",
+              "uuid": "37821E12-CC8A-5AA3-A90C-FAB28A5BF8F9",
+              "version": "3.2.6",
+              "watcher": "92"
+          },
+          "counter": "255",
+          "decorations": {
+              "host_uuid": "1111",
+              "environment": "corp"
+          },
+          "epoch": "0",
+          "hostIdentifier": "test.lan",
+          "log_type": "result",
+          "name": "pack_osquery-response_alf",
+          "unixTime": "1536682461"
+      }
