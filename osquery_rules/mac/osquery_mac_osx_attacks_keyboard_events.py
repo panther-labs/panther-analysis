@@ -12,14 +12,11 @@ APPROVED_PROCESS_PATHS = {
     '/var/*',
 }
 
-QUERIES = {
-    'pack_osx-attacks_Keyboard_Event_Taps',
-    'pack/osx-attacks/Keyboard_Event_Taps'
-}
+APPROVED_APPLICATION_NAMES = {'Adobe Photoshop CC 2019'}
 
 
 def rule(event):
-    if event['name'] not in QUERIES:
+    if 'Keyboard_Event_Taps' not in event['name']:
         return False
 
     if event['action'] != 'added':
@@ -27,6 +24,9 @@ def rule(event):
 
     process_path = event['columns'].get('path')
     if not process_path:
+        return False
+
+    if event['columns'].get('name') in APPROVED_APPLICATION_NAMES:
         return False
 
     # Alert if the process is running outside any of the approved paths
@@ -39,5 +39,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Keylogger malware detected on {}'.format(
-        event.get('hostIdentifier'))
+    return 'Keylogger detected on {}'.format(event.get('hostIdentifier'))
