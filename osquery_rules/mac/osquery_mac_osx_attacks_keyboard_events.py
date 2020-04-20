@@ -39,4 +39,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Keylogger detected on {}'.format(event.get('hostIdentifier'))
+    return 'Keylogger malware detected on [{}]'.format(
+        event.get('hostIdentifier'))

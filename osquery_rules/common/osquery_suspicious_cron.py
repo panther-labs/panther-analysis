@@ -47,4 +47,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Suspicious cron found on {}'.format(event.get('hostIdentifier'))
+    return 'Suspicious cron found on [{}]'.format(event.get('hostIdentifier'))
