@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_linux_logins_non_office.py
-PolicyID: Osquery.Linux.LoginFromNonOffice
+RuleID: Osquery.Linux.LoginFromNonOffice
 DisplayName: A Login from Outside the Corporate Office
 Enabled: false
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Configuration Required
@@ -20,9 +20,9 @@ Reference: https://attack.mitre.org/techniques/T1078/
 Tests:
   -
     Name: Non-office network login
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack-logged_in_users",
         "action": "added",
@@ -33,9 +33,9 @@ Tests:
       }
   -
     Name: Office network login
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "name": "pack-logged_in_users",
         "action": "added",
