@@ -1,4 +1,4 @@
-analysis_directories = aws_policies_cis aws_policies_managed aws_policies_s3 aws_rules_cis aws_rules_cloudtrail aws_rules_guardduty aws_rules_s3_access_logs aws_rules_vpc_flow_logs globals osquery_rules osquery_rules_cis
+analysis_directories = aws_policies_cis aws_policies_managed aws_policies_s3 aws_rules_cis aws_rules_cloudtrail aws_rules_guardduty aws_rules_s3_access_logs aws_rules_vpc_flow_logs globals osquery_rules
 
 ci:
 	pipenv run $(MAKE) lint test

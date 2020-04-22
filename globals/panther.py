@@ -1,12 +1,16 @@
 """Utility functions provided to policies and rules during execution."""
 import os
 from typing import Any, Dict
-
+from ipaddress import ip_network
 import boto3
 
 # Default to us-east-1 so this doesn't fail during CI (env variable is not always present in CI)
 # Used to communicate directly with the Panther resource data store
-TABLE = boto3.resource('dynamodb', os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')).Table('panther-resources')  # pylint: disable=no-member
+# pylint: disable=no-member
+TABLE = boto3.resource('dynamodb',
+                       os.environ.get('AWS_DEFAULT_REGION',
+                                      'us-east-1')).Table('panther-resources')
+# pylint: enable=no-member
 
 
 class BadLookup(Exception):
@@ -55,7 +59,7 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
     # Return just the attributes of the item
     return response['Item']['attributes']
 
-from ipaddress import ip_network
+
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as DMZ space.
 DMZ_NETWORKS = [
@@ -65,7 +69,7 @@ DMZ_NETWORKS = [
 
 
 def is_dmz_cidr(ip_range):
-    """This function is used to determine whether a given IP range is within the pre-defined DMZ IP range."""
+    """This function determines whether a given IP range is within the defined DMZ IP range."""
     return any(
         ip_network(ip_range).overlaps(dmz_network)
         for dmz_network in DMZ_NETWORKS)
@@ -77,7 +81,7 @@ DMZ_TAG_VALUE = 'dmz'
 
 # Defaults to False to assume something is not a DMZ if it is not tagged
 def is_dmz_tags(resource):
-    """This function is used to determine whether a given resource is tagged as exisitng in a DMZ."""
+    """This function determines whether a given resource is tagged as exisitng in a DMZ."""
     if resource['Tags'] is None:
         return False
     return resource['Tags'].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
