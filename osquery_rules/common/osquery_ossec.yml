@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_ossec.py
-PolicyID: Osquery.OSSECRootkitDetected
+RuleID: Osquery.OSSECRootkitDetected
 DisplayName: OSSEC Rootkit Detected via Osquery
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -20,9 +20,9 @@ Runbook: >
 Tests:
   -
     Name: Rootkit Detected
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "action": "added",
           "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",
@@ -57,9 +57,9 @@ Tests:
       }
   -
     Name: Rootkit Not Detected
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "action": "added",
           "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",

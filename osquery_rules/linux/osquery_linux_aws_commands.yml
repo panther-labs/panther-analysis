@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_linux_aws_commands.py
-PolicyID: Osquery.Linux.AWSCommandExecuted
+RuleID: Osquery.Linux.AWSCommandExecuted
 DisplayName: AWS command executed on the command line
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -19,9 +19,9 @@ Reference: https://attack.mitre.org/techniques/T1078/
 Tests:
   -
     Name: AWS command executed
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
@@ -34,9 +34,9 @@ Tests:
       }
   -
     Name: Tail command executed
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",

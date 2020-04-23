@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_suspicious_cron.py
-PolicyID: Osquery.SuspiciousCron
+RuleID: Osquery.SuspiciousCron
 DisplayName: Suspicious cron detected
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -20,9 +20,9 @@ Reference: https://en.wikipedia.org/wiki/Cron
 Tests:
   -
     Name: Netcat Listener
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_crontab",
         "action": "added",
@@ -39,9 +39,9 @@ Tests:
       }
   -
     Name: Wget Pipe Bash
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_crontab",
         "action": "added",
@@ -58,9 +58,9 @@ Tests:
       }
   -
     Name: Wget Execute
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_crontab",
         "action": "added",
@@ -77,9 +77,9 @@ Tests:
       }
   -
     Name: Dig
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_crontab",
         "action": "added",
@@ -96,9 +96,9 @@ Tests:
       }
   -
     Name: Built-in Cron
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
         "name": "pack_incident-response_crontab",
         "action": "added",

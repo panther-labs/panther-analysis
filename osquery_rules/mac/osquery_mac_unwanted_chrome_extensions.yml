@@ -1,9 +1,9 @@
 AnalysisType: rule
 Filename: osquery_mac_unwanted_chrome_extensions.py
-PolicyID: Osquery.Mac.UnwantedChromeExtensions
+RuleID: Osquery.Mac.UnwantedChromeExtensions
 DisplayName: OSQuery Detected Unwanted Chrome Extensions
 Enabled: true
-ResourceTypes:
+LogTypes:
   - Osquery.Differential
 Tags:
   - Osquery
@@ -20,9 +20,9 @@ Runbook: Uninstall the unwanted extension
 Tests:
   -
     Name: Unwanted Extension Detected
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: true
-    Resource:
+    Log:
       {
           "action": "added",
           "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",
@@ -58,9 +58,9 @@ Tests:
       }
   -
     Name: No Unwanted Chrome Extension Detected
-    ResourceType: Osquery.Differential
+    LogType: Osquery.Differential
     ExpectedResult: false
-    Resource:
+    Log:
       {
           "action": "added",
           "calendarTime": "Tue Sep 11 16:14:21 2018 UTC",
