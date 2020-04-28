@@ -7,4 +7,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'OSSEC rootkit found on {}'.format(event.get('hostIdentifier'))
+    return 'OSSEC rootkit found on [{}]'.format(event.get('hostIdentifier'))

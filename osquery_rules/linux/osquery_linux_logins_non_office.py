@@ -1,7 +1,10 @@
 import ipaddress
 
-# Note: The IP Network below is only an example
-OFFICE_NETWORK = ipaddress.ip_network('192.0.1.0/24')
+# This is only an example network, but you can set it to whatever you'd like
+OFFICE_NETWORKS = [
+    ipaddress.ip_network('192.168.1.100/32'),
+    ipaddress.ip_network('192.168.1.200/32')
+]
 
 
 # TODO: Switch this to the `last` query and check the epoch to make sure they are new logins.
@@ -15,11 +18,13 @@ def rule(event):
     host_ip = event['columns'].get('host')
     if not host_ip:
         return False
+    host_ipaddr = ipaddress.IPv4Address(host_ip)
 
-    if ipaddress.IPv4Address(host_ip) not in OFFICE_NETWORK.hosts():
-        return True
+    non_office_logins = []
+    for office_network in OFFICE_NETWORKS:
+        non_office_logins.append(host_ipaddr in office_network)
 
-    return False
+    return not any(non_office_logins)
 
 
 def dedup(event):
@@ -28,5 +33,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'User {} has logged into production from a non-office network'.format(
+    return 'User [{}] has logged into production from a non-office network'.format(
         event['columns'].get('user', '<USER_NOT_FOUND>'))

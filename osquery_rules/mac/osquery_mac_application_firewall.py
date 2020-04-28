@@ -22,4 +22,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'MacOS firewall disabled on {}'.format(event.get('hostIdentifier'))
+    return 'MacOS firewall disabled on [{}]'.format(event.get('hostIdentifier'))

@@ -17,4 +17,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'MacOS malware detected on {}'.format(event.get('hostIdentifier'))
+    return 'MacOS malware detected on [{}]'.format(event.get('hostIdentifier'))
