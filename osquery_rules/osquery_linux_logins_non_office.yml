@@ -19,16 +19,34 @@ Runbook: Analyze the host IP, and if possible, update whitelist or fix ACL.
 Reference: https://attack.mitre.org/techniques/T1078/
 Tests:
   -
-    Name: Non-office network login
+    Name: Non-office network login (logged_in_users)
     LogType: Osquery.Differential
     ExpectedResult: true
     Log:
       {
-        "name": "pack-logged_in_users",
+        "name": "pack/incident_response/logged_in_users",
         "action": "added",
         "columns": {
           "host": "10.0.3.1",
+          "type": "user",
           "user": "ubuntu"
+        }
+      }
+  -
+    Name: Non-office network login (last)
+    LogType: Osquery.Differential
+    ExpectedResult: true
+    Log:
+      {
+        "name": "pack-incident_response-last",
+        "action": "added",
+        "columns": {
+          "host": "10.0.3.1",
+          "type": "8",
+          "username": "ubuntu",
+          "tty": "ttys008",
+          "pid": "648",
+          "time": "1587502574"
         }
       }
   -
