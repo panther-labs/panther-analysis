@@ -6,6 +6,7 @@ OFFICE_NETWORKS = [
     ipaddress.ip_network('192.168.1.200/32')
 ]
 
+
 def _login_from_non_office_network(host):
     host_ipaddr = ipaddress.IPv4Address(host)
 
@@ -14,6 +15,7 @@ def _login_from_non_office_network(host):
         non_office_logins.append(host_ipaddr in office_network)
 
     return not any(non_office_logins)
+
 
 def rule(event):
     if event['action'] != 'added':
@@ -32,6 +34,7 @@ def rule(event):
 
     return _login_from_non_office_network(host_ip)
 
+
 def dedup(event):
     # Dedup by user to view lateral movement
     user = event['columns'].get('user')
@@ -39,6 +42,7 @@ def dedup(event):
     if user is None:
         return username
     return user
+
 
 def title(event):
     msg = 'User [{}] has logged into production from a non-office network'
