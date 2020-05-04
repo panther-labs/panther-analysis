@@ -1,4 +1,5 @@
-analysis_directories = aws_policies_cis aws_policies_managed aws_policies_s3 aws_rules_cis aws_rules_cloudtrail aws_rules_guardduty aws_rules_s3_access_logs aws_rules_vpc_flow_logs globals osquery_rules
+# How to get this list: ls | egrep 'policies|rules|helpers' | xargs | pbcopy
+analysis_directories = aws_account_policies aws_acm_policies aws_cloudtrail_policies aws_cloudtrail_rules aws_config_policies aws_dynamodb_policies aws_ec2_policies aws_elb_policies aws_guardduty_policies aws_guardduty_rules aws_iam_policies aws_kms_policies aws_rds_policies aws_redshift_policies aws_s3_policies aws_s3_rules aws_vpc_policies aws_vpc_rules aws_waf_policies helpers osquery_rules
 
 ci:
 	pipenv run $(MAKE) lint test
