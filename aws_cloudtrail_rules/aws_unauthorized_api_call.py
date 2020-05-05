@@ -4,7 +4,7 @@ from ipaddress import ip_address
 def rule(event):
     # Validate the request came from outside of AWS
     try:
-        ip_address(event.get('sourceIpAddress'))
+        ip_address(event.get('sourceIPAddress'))
     except ValueError:
         return False
     return event.get('errorCode') == 'AccessDenied'
