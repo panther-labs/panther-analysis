@@ -4,8 +4,8 @@ SECURE_BUCKETS = {
 
 
 def rule(event):
-    return (event['bucket'] in SECURE_BUCKETS and 'ciphersuite' not in event or
-            'tlsVersion' not in event)
+    return (event['bucket'] in SECURE_BUCKETS and
+            'ciphersuite' not in event or 'tlsVersion' not in event)
 
 
 def dedup(event):
@@ -13,4 +13,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Insecure AWS S3 Access on {}'.format(event.get('bucket'))
+    return 'Insecure AWS S3 access to {}'.format(event.get('bucket'))
