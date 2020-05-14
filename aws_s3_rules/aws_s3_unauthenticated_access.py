@@ -1,12 +1,9 @@
-# A list of buckets where unauthenticated access is not expected
+# A list of buckets where authenticated access is expected
 AUTH_BUCKETS = {'example-bucket'}
 
 
 def rule(event):
-    if event.get('bucket') not in AUTH_BUCKETS:
-        return False
-
-    return 'requester' not in event
+    return event.get('bucket') in AUTH_BUCKETS and 'requester' not in event
 
 
 def dedup(event):
@@ -14,4 +11,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unauthenticated Access to S3 Bucket  {}'.format(event.get('bucket'))
+    return 'Unauthenticated access to S3 bucket  {}'.format(event.get('bucket'))

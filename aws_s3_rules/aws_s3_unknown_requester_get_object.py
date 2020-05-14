@@ -1,0 +1,35 @@
+from fnmatch import fnmatch
+
+BUCKET_ROLE_MAPPING = {
+    'panther-bootstrap-processeddata-*': [
+        'arn:aws:sts::*:assumed-role/panther-log-analysis-AthenaApiFunctionRole-*/panther-athena-api',
+        'arn:aws:sts::*:assumed-role/panther-cloud-security-EventProcessorFunctionRole-*/panther-aws-event-processor',
+        'arn:aws:sts::*:assumed-role/panther-log-analysis-RulesEngineFunctionRole-*/panther-rules-engine'
+    ]
+}
+
+
+def _unknown_requester_access(event):
+    for bucket_pattern, role_patterns in BUCKET_ROLE_MAPPING.items():
+        if not fnmatch(event['bucket'], bucket_pattern):
+            continue
+        if not any([
+                fnmatch(event['requester'], role_pattern)
+                for role_pattern in role_patterns
+        ]):
+            return True
+    return False
+
+
+def rule(event):
+    return (event['operation'] == 'REST.GET.OBJECT' and
+            _unknown_requester_access(event))
+
+
+def dedup(event):
+    return event.get('bucket')
+
+
+def title(event):
+    return 'Unknown requester pulling data from S3 bucket {}'.format(
+        event.get('bucket'))
