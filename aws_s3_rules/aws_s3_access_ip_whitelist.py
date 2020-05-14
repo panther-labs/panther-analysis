@@ -1,6 +1,6 @@
 from ipaddress import ip_network
-BUCKET_NAMES = {
-    # Example bucket names go here
+BUCKETS_TO_MONITOR = {
+    # Example bucket names to watch go here
 }
 WHITELIST_NETWORKS = {
     # IP addresses (in CIDR notation) indicating approved IP ranges for accessing S3 buckets}
@@ -9,8 +9,8 @@ WHITELIST_NETWORKS = {
 
 
 def rule(event):
-    if BUCKET_NAMES:
-        if event['bucket'] not in BUCKET_NAMES:
+    if BUCKETS_TO_MONITOR:
+        if event['bucket'] not in BUCKETS_TO_MONITOR:
             return False
 
     if 'remoteIP' not in event:
