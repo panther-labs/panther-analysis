@@ -11,7 +11,8 @@ Tags:
   - Security Control
 Severity: Low
 Description: >
-  Checks for errors during S3 access. This could be due to insufficient access permissions, non-existant buckets, or other reasons.
+  Checks for errors during S3 Object access.
+  This could be due to insufficient access permissions, non-existant buckets, or other reasons.
 Runbook: >
   Investigate the specific error and determine if it is an ongoing issue that needs to be addressed or a one off or transient error that can be ignored.
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorCode.html
@@ -27,9 +28,25 @@ Tests:
         "remoteip": "10.106.38.245",
         "requester": "arn:aws:iam::162777425019:user/awslogsdelivery",
         "requestid": "5CDAB4038253B0E4",
-        "operation": "REST.HEAD.BUCKET",
+        "operation": "REST.GET.OBJECT",
         "httpstatus": 403,
         "errorcode": "AccessDenied",
+        "tlsversion": "TLSv1.2"
+      }
+  -
+    Name: 403 on HEAD.BUCKET
+    LogType: AWS.S3ServerAccess
+    ExpectedResult: false
+    Log:
+      {
+        "bucket": "panther-auditlogs",
+        "time": "2020-04-22 07:48:45.000",
+        "remoteip": "10.106.38.245",
+        "requester": "arn:aws:iam::162777425019:user/awslogsdelivery",
+        "requestid": "5CDAB4038253B0E4",
+        "operation": "REST.HEAD.BUCKET",
+        "httpstatus": 403,
+        "errorcode": "InternalServerError",
         "tlsversion": "TLSv1.2"
       }
   -
