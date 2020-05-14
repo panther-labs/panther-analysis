@@ -8,13 +8,18 @@ BUCKET_ROLE_MAPPING = {
     ]
 }
 
+
 def _unknown_requester_access(event):
-    for bucket_pattern, role_patterns in event.items():
-        if not fnmatch(bucket_pattern, event['bucket']):
+    for bucket_pattern, role_patterns in BUCKET_ROLE_MAPPING.items():
+        if not fnmatch(event['bucket'], bucket_pattern):
             continue
-        if not any([fnmatch(role, event['requester']) for role in role_patterns]):
+        if not any([
+                fnmatch(event['requester'], role_pattern)
+                for role_pattern in role_patterns
+        ]):
             return True
     return False
+
 
 def rule(event):
     return (event['operation'] == 'REST.GET.OBJECT' and
@@ -26,4 +31,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unknown requester pulling data from S3 bucket {}'.format(event.get('bucket'))
+    return 'Unknown requester pulling data from S3 bucket {}'.format(
+        event.get('bucket'))

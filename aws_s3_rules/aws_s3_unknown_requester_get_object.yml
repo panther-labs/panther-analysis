@@ -14,10 +14,8 @@ Reports:
   Panther:
     - Data Access
 Severity: Low
-Description: >
-  Checks for S3 access attempts where the requester is not an authenticated AWS user.
-Runbook: >
-  If unathenticated S3 access is not expected for this bucket, update it's access policies.
+Description: Validates that proper IAM entities are accessing sensitive data buckets.
+Runbook: If the S3 access is not expected for this bucket, investigate the requester's other traffic.
 Tests:
   -
     Name: Expected Access

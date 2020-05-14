@@ -14,4 +14,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unauthenticated Access to S3 Bucket  {}'.format(event.get('bucket'))
+    return 'Unauthenticated access to S3 bucket  {}'.format(event.get('bucket'))
