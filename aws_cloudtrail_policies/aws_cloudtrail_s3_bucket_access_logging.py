@@ -1,4 +1,4 @@
-from panther import resource_lookup  # pylint disable:import-error
+from panther_os_helpers import resource_lookup  # pylint disable:import-error
 
 
 def policy(resource):
