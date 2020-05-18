@@ -1,16 +1,12 @@
 """Utility functions provided to policies and rules during execution."""
-import os
-from typing import Any, Dict
 from ipaddress import ip_network
-import boto3
+from typing import Any, Dict
 
-# Default to us-east-1 so this doesn't fail during CI (env variable is not always present in CI)
-# Used to communicate directly with the Panther resource data store
-# pylint: disable=no-member
-TABLE = boto3.resource('dynamodb',
-                       os.environ.get('AWS_DEFAULT_REGION',
-                                      'us-east-1')).Table('panther-resources')
-# pylint: enable=no-member
+import boto3
+from boto3.dynamodb.conditions import Attr
+import botocore
+
+_RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 
 
 class BadLookup(Exception):
@@ -33,9 +29,14 @@ def s3_lookup_by_name(name: str) -> Dict[str, Any]:
     return resource_lookup(get_s3_arn_by_name(name))
 
 
-def dynamo_lookup(key: str) -> Dict[str, Any]:
-    """Make a dynamodb GetItem API call."""
-    return TABLE.get_item(Key={'id': key})
+def resource_table() -> boto3.resource:
+    """Lazily build resource table"""
+    # pylint: disable=global-statement
+    global _RESOURCE_TABLE
+    if not _RESOURCE_TABLE:
+        # pylint: disable=no-member
+        _RESOURCE_TABLE = boto3.resource('dynamodb').Table('panther-resources')
+    return _RESOURCE_TABLE
 
 
 def resource_lookup(resource_id: str) -> Dict[str, Any]:
@@ -45,7 +46,7 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
         raise PantherBadInput('resourceId cannot be blank')
 
     # Get the item from dynamo
-    response = dynamo_lookup(resource_id)
+    response = resource_table().get_item(Key={'id': resource_id})
 
     # Check if dynamo failed
     status_code = response['ResponseMetadata']['HTTPStatusCode']
@@ -85,3 +86,77 @@ def is_dmz_tags(resource):
     if resource['Tags'] is None:
         return False
     return resource['Tags'].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
+
+
+_KV_TABLE = None
+_COUNT_COL = 'intCount'  # name of the count column
+
+
+def kv_table() -> boto3.resource:
+    """Lazily build key-value table resource"""
+    # pylint: disable=global-statement
+    global _KV_TABLE
+    if not _KV_TABLE:
+        # pylint: disable=no-member
+        _KV_TABLE = boto3.resource('dynamodb').Table('panther-kv-store')
+    return _KV_TABLE
+
+
+def get_counter(key: str) -> int:
+    """Get a counter's current value (defaulting to 0 if key does not exit)."""
+    response = kv_table().get_item(
+        Key={'key': key},
+        ProjectionExpression=_COUNT_COL,
+    )
+    return response.get('Item', {}).get(_COUNT_COL, 0)
+
+
+def increment_counter(key: str, val: int = 1) -> int:
+    """Increment a counter in the table.
+
+    Args:
+        key: The name of the counter (need not exist yet)
+        val: How much to add to the counter
+
+    Returns:
+        The new value of the count
+    """
+    table = kv_table()
+    try:
+        response = table.update_item(
+            Key={'key': key},
+            ReturnValues='UPDATED_NEW',
+            # You can only increment attributes which already exist
+            ConditionExpression=Attr(_COUNT_COL).exists(),
+            UpdateExpression='SET #col = intCount + :incr',
+            ExpressionAttributeNames={'#col': _COUNT_COL},
+            ExpressionAttributeValues={':incr': val})
+
+        # Numeric values are returned as decimal.Decimal
+        return response['Attributes'][_COUNT_COL].to_integral_value()
+    except botocore.exceptions.ClientError as ex:
+        if ex.response['Error']['Code'] != 'ConditionalCheckFailedException':
+            raise
+
+    # The conditional check failed, meaning this item doesn't exist yet. Add it!
+    table.put_item(Item={'key': key, _COUNT_COL: val})
+    return val
+
+
+def reset_counter(key: str) -> None:
+    """Reset a counter to 0."""
+    kv_table().put_item(Item={'key': key, _COUNT_COL: 0})
+
+
+def set_counter_expiration(key: str, epoch_seconds: int) -> None:
+    """Configure the counter to automatically expire at the given time.
+
+    DynamoDB typically deletes expired items within 48 hours of expiration.
+
+    Args:
+        key: The name of the counter
+        epoch_seconds: When you want the counter to expire (set to 0 to disable)
+    """
+    kv_table().update_item(Key={'key': key},
+                           UpdateExpression='SET expiresAt = :time',
+                           ExpressionAttributeValues={':time': epoch_seconds})
