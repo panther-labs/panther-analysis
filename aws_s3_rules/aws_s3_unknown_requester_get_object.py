@@ -1,5 +1,5 @@
 from fnmatch import fnmatch
-
+# pylint: disable=line-too-long
 BUCKET_ROLE_MAPPING = {
     'panther-bootstrap-processeddata-*': [
         'arn:aws:sts::*:assumed-role/panther-log-analysis-AthenaApiFunctionRole-*/panther-athena-api',
@@ -7,6 +7,7 @@ BUCKET_ROLE_MAPPING = {
         'arn:aws:sts::*:assumed-role/panther-log-analysis-RulesEngineFunctionRole-*/panther-rules-engine'
     ]
 }
+# pylint: enable=line-too-long
 
 
 def _unknown_requester_access(event):

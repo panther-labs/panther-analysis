@@ -1,4 +1,4 @@
-from panther import resource_lookup  # pylint disable:import-error
+from panther_oss_helpers import resource_lookup  # pylint disable:import-error
 BAD_PERMISSIONS = {
     'http://acs.amazonaws.com/groups/global/AuthenticatedUsers',
     'http://acs.amazonaws.com/groups/global/AllUsers',
