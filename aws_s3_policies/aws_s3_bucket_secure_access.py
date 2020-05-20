@@ -13,8 +13,8 @@ def policy(resource):
             continue
         if ('Condition' not in statement.statement or
                 'Bool' not in statement.statement['Condition'] or
-                'aws:SecureTransport'
-                not in statement.statement['Condition']['Bool'] or
+                'aws:SecureTransport' not in statement.statement['Condition']
+            ['Bool'] or
                 statement.statement['Condition']['Bool']['aws:SecureTransport']
                 != 'true'):
             return False

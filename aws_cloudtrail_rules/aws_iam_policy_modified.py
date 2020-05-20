@@ -24,4 +24,4 @@ POLICY_CHANGE_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in POLICY_CHANGE_EVENTS
+    return event['eventName'] in POLICY_CHANGE_EVENTS
