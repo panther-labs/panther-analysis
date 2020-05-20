@@ -212,8 +212,8 @@ def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     return response['Attributes'][_STRING_SET_COL]
 
 
-def remove_from_string_set(key: str,
-                           val: Union[str, Sequence[str]]) -> Set[str]:
+def remove_from_string_set(key: str, val: Union[str,
+                                                Sequence[str]]) -> Set[str]:
     """Remove one or more strings from a set.
 
     Args:
