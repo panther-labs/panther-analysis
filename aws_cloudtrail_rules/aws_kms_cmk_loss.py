@@ -4,7 +4,7 @@ KMS_KEY_TYPE = 'AWS::KMS::Key'
 
 
 def rule(event):
-    return event.get('eventName') in KMS_LOSS_EVENTS
+    return event['eventName'] in KMS_LOSS_EVENTS
 
 
 def dedup(event):

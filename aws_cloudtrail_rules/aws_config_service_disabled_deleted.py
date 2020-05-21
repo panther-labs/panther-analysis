@@ -6,4 +6,4 @@ CONFIG_SERVICE_DISABLE_DELETE_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in CONFIG_SERVICE_DISABLE_DELETE_EVENTS
+    return event['eventName'] in CONFIG_SERVICE_DISABLE_DELETE_EVENTS

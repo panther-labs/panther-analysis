@@ -7,4 +7,4 @@ CONFIG_SERVICE_CREATE_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in CONFIG_SERVICE_CREATE_EVENTS
+    return event['eventName'] in CONFIG_SERVICE_CREATE_EVENTS

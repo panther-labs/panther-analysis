@@ -55,6 +55,26 @@ Tests:
         ]
       }
   -
+    Name: Delete Marker Call
+    LogType: AWS.S3ServerAccess
+    ExpectedResult: False
+    Log:
+      {
+        "bucketowner": "06c722119dedc1896ef",
+        "bucket": "panther-yyykkj4jj66e",
+        "time": "2020-05-21 07:05:13.000000000",
+        "requester": "AmazonS3",
+        "requestid": "1366A0B06E7A7728",
+        "operation": "S3.CREATE.DELETEMARKER",
+        "key": "test/083ec760-bbbb-4444-8888-185614f4b0fc.csv.metadata",
+        "versionid": "mNwtwD6vrqwx11g9kSpb2MDY",
+        "hostid": "KxrLgSKGXXiKBBhTYbks6XeL1juvDqx+OBHflvk",
+        "p_log_type": "AWS.S3ServerAccess",
+        "p_row_id": "4ec7d72e6f5392c2c7c1b6e302ee01",
+        "p_event_time": "2020-05-21 07:05:13.000000000",
+        "p_parse_time": "2020-05-21 08:19:50.085391216"
+      }
+  -
     Name: Insecure Access to S3 Bucket
     LogType: AWS.S3ServerAccess
     ExpectedResult: true
