@@ -11,4 +11,4 @@ EC2_RT_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in EC2_RT_MODIFIED_EVENTS
+    return event['eventName'] in EC2_RT_MODIFIED_EVENTS

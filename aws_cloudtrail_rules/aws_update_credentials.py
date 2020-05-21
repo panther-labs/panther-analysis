@@ -9,10 +9,10 @@ def rule(event):
 
 
 def dedup(event):
-    return event.get('userIdentity', {}).get('userName')
+    return event['userIdentity'].get('userName')
 
 
 def title(event):
-    user_identity = event.get('userIdentity', {})
+    user_identity = event['userIdentity']
     return '{} {} updated IAM credentials'.format(user_identity.get('type'),
                                                   user_identity.get('arn'))
