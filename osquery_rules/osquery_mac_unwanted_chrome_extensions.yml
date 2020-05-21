@@ -5,14 +5,16 @@ DisplayName: OSQuery Detected Unwanted Chrome Extensions
 Enabled: true
 LogTypes:
   - Osquery.Differential
+  - AWS.S3ServerAccess
+  - AWS.VPCFlow
+  - AWS.CloudTrail
 Tags:
   - Osquery
   - MacOS
   - Malware
 Reports:
   MITRE ATT&CK:
-    Initial Access:
-      - Trusted Relationship
+    - Initial Access:Trusted Relationship
 Severity: Medium
 Description: >
   Monitor for chrome extensions that could lead to a credential compromise.
