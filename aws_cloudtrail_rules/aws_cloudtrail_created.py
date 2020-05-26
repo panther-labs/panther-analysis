@@ -7,4 +7,4 @@ CLOUDTRAIL_CREATE_UPDATE = {
 
 
 def rule(event):
-    return event.get('eventName') in CLOUDTRAIL_CREATE_UPDATE
+    return event['eventName'] in CLOUDTRAIL_CREATE_UPDATE

@@ -10,4 +10,4 @@ EC2_GATEWAY_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event.get('eventName') in EC2_GATEWAY_MODIFIED_EVENTS
+    return event['eventName'] in EC2_GATEWAY_MODIFIED_EVENTS

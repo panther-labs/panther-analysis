@@ -19,7 +19,7 @@ def helper_strip_role_session_id(user_identity_arn):
 
 
 def dedup(event):
-    user_identity = event.get('userIdentity', {})
+    user_identity = event['userIdentity']
     if user_identity.get('type') == 'AssumedRole':
         return helper_strip_role_session_id(user_identity.get('arn', ''))
     return user_identity.get('arn')

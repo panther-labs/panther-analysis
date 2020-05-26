@@ -6,7 +6,7 @@ CLOUDTRAIL_STOP_DELETE = {
 
 
 def rule(event):
-    return event.get('eventName') in CLOUDTRAIL_STOP_DELETE
+    return event['eventName'] in CLOUDTRAIL_STOP_DELETE
 
 
 def dedup(event):
@@ -17,4 +17,4 @@ def dedup(event):
 def title(event):
     trail_arn = event['requestParameters'].get('name')
     return 'CloudTrail {} Has Been Disabled with {}'.format(
-        trail_arn, event.get('eventName'))
+        trail_arn, event['eventName'])

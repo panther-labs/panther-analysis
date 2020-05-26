@@ -1,0 +1,104 @@
+AnalysisType: rule
+Filename: aws_console_root_login.py
+RuleID: AWS.Console.RootLogin
+DisplayName: Root Console Login
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Identity & Access Management
+Reports:
+  CIS:
+    - 3.6
+Severity: High
+Description: The root account has been logged into.
+Runbook: >
+  Investigate the usage of the root account. If this root activity was not authorized, immediately change the root credentials and investigate what actions the root account took.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
+Tests:
+  -
+    Name: Successful Root Login
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "Root",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:root",
+              "accountId": "123456789012",
+              "userName": "root"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Non-Login Event
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.06",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:user/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  },
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "dynamodb.amazonaws.com",
+          "eventName": "DescribeTable",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "console.amazonaws.com",
+          "requestParameters": {
+              "tableName": "table"
+          },
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "readOnly": true,
+          "resources": [
+              {
+                  "accountId": "123456789012",
+                  "type": "AWS::DynamoDB::Table",
+                  "ARN": "arn::::table/table"
+              }
+          ],
+          "eventType": "AwsApiCall",
+          "apiVersion": "2012-08-10",
+          "managementEvent": true,
+          "recipientAccountId": "123456789012"
+      }
