@@ -2,9 +2,10 @@ from fnmatch import fnmatch
 # pylint: disable=line-too-long
 BUCKET_ROLE_MAPPING = {
     'panther-bootstrap-processeddata-*': [
-        'arn:aws:sts::*:assumed-role/panther-log-analysis-AthenaApiFunctionRole-*/panther-athena-api',
         'arn:aws:sts::*:assumed-role/panther-cloud-security-EventProcessorFunctionRole-*/panther-aws-event-processor',
-        'arn:aws:sts::*:assumed-role/panther-log-analysis-RulesEngineFunctionRole-*/panther-rules-engine'
+        'arn:aws:sts::*:assumed-role/panther-log-analysis-AthenaApiFunctionRole-*/panther-athena-api',
+        'arn:aws:sts::*:assumed-role/panther-log-analysis-RulesEngineFunctionRole-*/panther-rules-engine',
+        'arn:aws:sts::*:assumed-role/panther-snowflake-logprocessing-role-*/snowflake'
     ]
 }
 # pylint: enable=line-too-long
@@ -32,5 +33,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unknown requester pulling data from S3 bucket {}'.format(
+    return 'Unknown requester accessing data in S3 bucket [{}]'.format(
         event.get('bucket'))
