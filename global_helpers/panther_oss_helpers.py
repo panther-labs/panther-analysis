@@ -250,6 +250,14 @@ def reset_string_set(key: str) -> None:
     )
 
 
+def aws_strip_role_session_id(user_identity_arn):
+    # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
+    arn_parts = user_identity_arn.split('/')
+    if arn_parts:
+        return '/'.join(arn_parts[:2])
+    return user_identity_arn
+
+
 def _test_kv_store():
     """Integration tests which validate the functions which interact with the key-value store.
 
