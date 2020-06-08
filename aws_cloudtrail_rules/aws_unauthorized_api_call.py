@@ -1,6 +1,14 @@
 from ipaddress import ip_address
 from panther_oss_helpers import aws_strip_role_session_id  # pylint disable:import-error
 
+# Do not alert on these access denied errors for these events.
+# Events could be exceptions because they are particularly noisy and provide little to no value,
+# or because they are expected as part of the normal operating procedure for certain tools.
+EVENT_EXCEPTIONS = {
+    'DescribeEventAggregates',  # Noisy, doesn't really provide any actionable info
+    'ListResourceTags',  # The audit role hits this when scanning locked down resources
+}
+
 
 def rule(event):
     # Validate the request came from outside of AWS
@@ -9,7 +17,7 @@ def rule(event):
     except ValueError:
         return False
     return event.get('errorCode') == 'AccessDenied' and event[
-        'eventName'] != 'DescribeEventAggregates'
+        'eventName'] not in EVENT_EXCEPTIONS
 
 
 def dedup(event):
