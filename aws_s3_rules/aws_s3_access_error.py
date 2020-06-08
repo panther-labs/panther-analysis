@@ -10,7 +10,9 @@ HTTP_STATUS_CODES_TO_MONITOR = {
 
 def rule(event):
     return (fnmatch(event['operation'], 'REST.*.OBJECT') and
-            event['httpstatus'] in HTTP_STATUS_CODES_TO_MONITOR)
+            event['httpstatus'] in HTTP_STATUS_CODES_TO_MONITOR and
+            event['errorcode'] != 'IncompleteBody'
+           )  # This just happens sometimes
 
 
 def dedup(event):
