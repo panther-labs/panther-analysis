@@ -8,7 +8,8 @@ def rule(event):
         ip_address(event.get('sourceIPAddress'))
     except ValueError:
         return False
-    return event.get('errorCode') == 'AccessDenied'
+    return event.get('errorCode') == 'AccessDenied' and event[
+        'eventName'] != 'DescribeEventAggregates'
 
 
 def dedup(event):
