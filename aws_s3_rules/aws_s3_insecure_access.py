@@ -2,7 +2,7 @@ from fnmatch import fnmatch
 
 
 def rule(event):
-    return (fnmatch(event['operation'], 'REST.*.OBJECT') and
+    return (fnmatch(event.get('operation'), 'REST.*.OBJECT') and
             ('ciphersuite' not in event or 'tlsVersion' not in event))
 
 

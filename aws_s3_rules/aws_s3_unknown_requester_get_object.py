@@ -13,10 +13,10 @@ BUCKET_ROLE_MAPPING = {
 
 def _unknown_requester_access(event):
     for bucket_pattern, role_patterns in BUCKET_ROLE_MAPPING.items():
-        if not fnmatch(event['bucket'], bucket_pattern):
+        if not fnmatch(event.get('bucket'), bucket_pattern):
             continue
         if not any([
-                fnmatch(event['requester'], role_pattern)
+                fnmatch(event.get('requester'), role_pattern)
                 for role_pattern in role_patterns
         ]):
             return True
@@ -24,7 +24,7 @@ def _unknown_requester_access(event):
 
 
 def rule(event):
-    return (event['operation'] == 'REST.GET.OBJECT' and
+    return (event.get('operation') == 'REST.GET.OBJECT' and
             _unknown_requester_access(event))
 
 
