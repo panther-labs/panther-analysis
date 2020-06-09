@@ -10,13 +10,13 @@ WHITELIST_NETWORKS = {
 
 def rule(event):
     if BUCKETS_TO_MONITOR:
-        if event['bucket'] not in BUCKETS_TO_MONITOR:
+        if event.get('bucket') not in BUCKETS_TO_MONITOR:
             return False
 
-    if 'remoteIP' not in event:
+    if 'remoteip' not in event:
         return False
 
-    cidr_ip = ip_network(event['remoteIP'])
+    cidr_ip = ip_network(event['remoteip'])
     return not any(
         cidr_ip.subnet_of(approved_ip_range)
         for approved_ip_range in WHITELIST_NETWORKS)
