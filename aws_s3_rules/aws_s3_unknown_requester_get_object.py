@@ -33,5 +33,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Unknown requester accessing data in S3 bucket [{}]'.format(
+    return 'Unknown requester accessing data from S3 Bucket [{}]'.format(
         event.get('bucket'))

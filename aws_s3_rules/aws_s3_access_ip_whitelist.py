@@ -27,4 +27,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'Non-Approved IP access to S3 bucket {}'.format(event.get('bucket'))
+    return 'Non-Approved IP access to S3 Bucket [{}]'.format(
+        event.get('bucket'))
