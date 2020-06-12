@@ -2,15 +2,9 @@ from panther import lookup_aws_account_name  # pylint: disable=import-error
 
 
 def rule(event):
-    if event['eventName'] != 'ConsoleLogin':
-        return False
-
     additional_event_data = event.get('additionalEventData', {})
-    response_elements = event.get('responseElements', {})
-
-    return (response_elements.get('ConsoleLogin') == 'Success' and
-            additional_event_data.get('MFAUsed') == 'No' and
-            # Ignore SSO login events
+    return (event['eventName'] == 'ConsoleLogin' and
+            event['userIdentity'].get('type') != 'AssumedRole' and
             not additional_event_data.get('SamlProviderArn'))
 
 
@@ -19,5 +13,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'AWS logins detected without MFA in account [{}]'.format(
+    return 'AWS logins without SAML in account [{}]'.format(
         lookup_aws_account_name(event.get('recipientAccountId')))

@@ -21,5 +21,5 @@ def dedup(event):
 
 def title(event):
     user_identity = event['userIdentity']
-    return '{} {} destroyed a bucket'.format(user_identity.get('type'),
-                                             dedup(event))
+    return '{} [{}] destroyed a bucket'.format(user_identity.get('type'),
+                                               dedup(event))

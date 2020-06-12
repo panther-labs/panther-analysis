@@ -22,4 +22,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'S3 bucket modified by: {}'.format(event['userIdentity'].get('arn'))
+    return 'S3 bucket modified by [{}]'.format(event['userIdentity'].get('arn'))

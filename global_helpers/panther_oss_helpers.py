@@ -1,4 +1,5 @@
 """Utility functions provided to policies and rules during execution."""
+from fnmatch import fnmatch
 from ipaddress import ip_network
 import time
 from typing import Any, Dict, Union, Sequence, Set
@@ -256,6 +257,26 @@ def aws_strip_role_session_id(user_identity_arn):
     if arn_parts:
         return '/'.join(arn_parts[:2])
     return user_identity_arn
+
+
+def evaluate_threshold(key: str,
+                       threshold: int = 10,
+                       expiry_seconds: int = 3600) -> bool:
+    hourly_error_count = increment_counter(key)
+    if hourly_error_count == 1:
+        set_key_expiration(key, time.time() + expiry_seconds)
+    # If it exceeds our threshold, reset and then return an alert
+    elif hourly_error_count >= threshold:
+        reset_counter(key)
+        return True
+    return False
+
+
+# Basic helpers
+
+
+def pattern_match(string_to_match: str, pattern: str):
+    return fnmatch(string_to_match, pattern)
 
 
 def _test_kv_store():

@@ -1,3 +1,5 @@
+from panther import lookup_aws_account_name  # pylint: disable=import-error
+
 # API calls that are indicative of CloudTrail changes
 CLOUDTRAIL_STOP_DELETE = {
     'DeleteTrail',
@@ -10,11 +12,10 @@ def rule(event):
 
 
 def dedup(event):
-    # Merge on the specific CloudTrail
+    # Merge on the CloudTrail ARN
     return event['requestParameters'].get('name')
 
 
 def title(event):
-    trail_arn = event['requestParameters'].get('name')
-    return 'CloudTrail {} Has Been Disabled with {}'.format(
-        trail_arn, event['eventName'])
+    return 'CloudTrail [{}] in account [{}] was stopped/deleted'.format(
+        dedup(event), lookup_aws_account_name(event.get('recipientAccountId')))

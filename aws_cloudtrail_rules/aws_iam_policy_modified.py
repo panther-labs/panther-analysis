@@ -3,13 +3,11 @@ POLICY_CHANGE_EVENTS = {
     'DeleteGroupPolicy',
     'DeleteRolePolicy',
     'DeleteUserPolicy',
-    # PutEntityPolicy is for inline policies, these can optionally be split out
-    # if inline policies are a greater concern
-    ###
+    # Put<Entity>Policy is for inline policies.
+    # these can be moved into their own rule if inline policies are of a greater concern.
     'PutGroupPolicy',
     'PutRolePolicy',
     'PutUserPolicy',
-    ###
     'CreatePolicy',
     'DeletePolicy',
     'CreatePolicyVersion',
@@ -25,3 +23,7 @@ POLICY_CHANGE_EVENTS = {
 
 def rule(event):
     return event['eventName'] in POLICY_CHANGE_EVENTS
+
+
+def dedup(event):
+    return event.get('recipientAccountId')

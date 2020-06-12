@@ -11,3 +11,7 @@ EC2_GATEWAY_MODIFIED_EVENTS = {
 
 def rule(event):
     return event['eventName'] in EC2_GATEWAY_MODIFIED_EVENTS
+
+
+def dedup(event):
+    return event.get('recipientAccountId')

@@ -1,58 +1,20 @@
 AnalysisType: rule
-Filename: aws_unauthorized_api_call.py
-RuleID: AWS.CloudTrail.UnauthorizedAPICall
-DisplayName: Monitor Unauthorized API Calls
+Filename: aws_iam_user_recon_denied.py
+RuleID: AWS.IAMUser.ReconAccessDenied
+DisplayName: Detect Reconnaisance from IAM Users
 Enabled: true
-DedupPeriodMinutes: 720 # 12 hours
 LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
 Reports:
-  CIS:
-    - 3.1
-Severity: Low
-Description: An unauthorized AWS API call was made
-Runbook: https://docs.runpanther.io/log-analysis/rules/built-in-rule-runbooks/aws-unauthorized-api-call
-Reference: https://amzn.to/3aOukaA
+  MITRE ATT&CK:
+    - 'Discovery:Cloud Service Discovery'
+Severity: Medium
+Description: An IAM user was denied access more than 5 times to compute/storage services.
+Runbook: Analyze the IP they came from, and other actions taken before/after.
+Reference: https://runpanther.io
 Tests:
-  -
-    Name: Unauthorized API Call
-    LogType: AWS.CloudTrail
-    ExpectedResult: true
-    Log:
-      {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "IAMUser",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:user/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "userName": "tester",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
-                  }
-              },
-              "invokedBy": "signin.amazonaws.com"
-          },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateServiceLinkedRole",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "3.10.107.144",
-          "userAgent": "signin.amazonaws.com",
-          "errorCode": "AccessDenied",
-          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
-          "requestParameters": null,
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
-      }
   -
     Name: Unauthorized API Call from Within AWS
     LogType: AWS.CloudTrail

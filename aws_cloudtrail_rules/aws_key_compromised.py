@@ -1,8 +1,10 @@
+EXPOSED_CRED_POLICY = 'AWSExposedCredentialPolicy_DO_NOT_REMOVE'
+
+
 def rule(event):
-    # Capture PutUserPolicy
-    return event.get(
-        'eventName') == 'PutUserPolicy' and event['requestParameters'].get(
-            'policyName') == 'AWSExposedCredentialPolicy_DO_NOT_REMOVE'
+    request_params = event.get('requestParameters', {})
+    return (event['eventName'] == 'PutUserPolicy' and
+            request_params.get('policyName') == EXPOSED_CRED_POLICY)
 
 
 def dedup(event):
@@ -10,5 +12,6 @@ def dedup(event):
 
 
 def title(event):
-    return '{} {} key was uploaded to public github repo'.format(
-        event['userIdentity'].get('accessKeyId'), dedup(event))
+    message = '{username}\'s access key ID [{key}] was uploaded to a public GitHub repo'
+    return message.format(username=dedup(event),
+                          key=event['userIdentity'].get('accessKeyId'))

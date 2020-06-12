@@ -1,8 +1,8 @@
-from fnmatch import fnmatch
+from panther_oss_helpers import pattern_match  # pylint: disable=import-error
 
 
 def rule(event):
-    return (fnmatch(event.get('operation'), 'REST.*.OBJECT') and
+    return (pattern_match(event.get('operation'), 'REST.*.OBJECT') and
             ('ciphersuite' not in event or 'tlsVersion' not in event))
 
 
@@ -11,4 +11,4 @@ def dedup(event):
 
 
 def title(event):
-    return 'Insecure AWS S3 access to {}'.format(event.get('bucket'))
+    return 'Insecure access to S3 Bucket [{}]'.format(event.get('bucket'))
