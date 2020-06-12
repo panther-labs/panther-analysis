@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 from ipaddress import ip_address
-from panther_oss_helpers import check_threshold  # pylint: disable=import-error
+from panther_oss_helpers import evaluate_threshold  # pylint: disable=import-error
 
 # service/event patterns to monitor
 RECON_ACTIONS = {
@@ -16,7 +16,7 @@ THRESH_TTL = 600  # 10 minutes
 
 def rule(event):
     # Filter events
-    if event['errorCode'] != 'AccessDenied':
+    if event.get('errorCode') != 'AccessDenied':
         return False
     if event['userIdentity'].get('type') != 'IAMUser':
         return False
@@ -31,12 +31,11 @@ def rule(event):
     for event_source, event_patterns in RECON_ACTIONS.items():
         if event['eventSource'].startswith(event_source) and any(
                 fnmatch(event['eventName'], event_pattern)
-                for event_pattern in event_patterns
-        )):
+                for event_pattern in event_patterns):
             return True
 
     # Return an alert if the threshold was exceeded
-    return check_threshold(
+    return evaluate_threshold(
         '{}-AccessDeniedCounter'.format(event['userIdentity'].get('arn')),
         THRESH,
         THRESH_TTL,

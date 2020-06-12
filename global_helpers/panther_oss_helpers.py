@@ -259,9 +259,9 @@ def aws_strip_role_session_id(user_identity_arn):
     return user_identity_arn
 
 
-def check_threshold(key: str,
-                    threshold: int = 10,
-                    expiry_seconds: int = 3600) -> bool:
+def evaluate_threshold(key: str,
+                       threshold: int = 10,
+                       expiry_seconds: int = 3600) -> bool:
     hourly_error_count = increment_counter(key)
     if hourly_error_count == 1:
         set_key_expiration(key, time.time() + expiry_seconds)
