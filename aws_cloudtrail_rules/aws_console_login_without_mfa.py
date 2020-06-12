@@ -2,9 +2,16 @@ from panther import lookup_aws_account_name  # pylint: disable=import-error
 
 
 def rule(event):
-    return (event['eventName'] == 'ConsoleLogin' and event.get(
-        'responseElements', {}).get('ConsoleLogin') == 'Success' and
-            event.get('additionalEventData', {}).get('MFAUsed') == 'No')
+    if event['eventName'] != 'ConsoleLogin':
+        return False
+
+    additional_event_data = event.get('additionalEventData', {})
+    response_elements = event.get('responseElements', {})
+
+    return (response_elements.get('ConsoleLogin') == 'Success' and
+            additional_event_data.get('MFAUsed') == 'No' and
+            # Ignore SSO login events
+            not additional_event_data.get('SamlProviderArn'))
 
 
 def dedup(event):
