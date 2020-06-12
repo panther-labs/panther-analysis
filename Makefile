@@ -19,7 +19,7 @@ venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run yapf $(analysis_directories) --in-place --recursive --parallel --style google
+	pipenv run yapf $(analysis_directories) --in-place --parallel --recursive  --style google
 
 install:
 	pip3 install --user --upgrade pip

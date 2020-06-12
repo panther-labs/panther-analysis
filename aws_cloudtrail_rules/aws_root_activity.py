@@ -10,10 +10,10 @@ def rule(event):
 
 def dedup(event):
     return '{ip}-{account}'.format(ip=event['sourceIPAddress'],
-                                   account=event['recipientAccountId'])
+                                   account=event.get('recipientAccountId'))
 
 
 def title(event):
     return 'AWS root activity detected from [{ip}] in account [{account}]'.format(
         ip=event['sourceIPAddress'],
-        account=lookup_aws_account_name(event['recipientAccountId']))
+        account=lookup_aws_account_name(event.get('recipientAccountId')))

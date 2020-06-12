@@ -15,9 +15,9 @@ def rule(event):
 
 
 def dedup(event):
-    return event['recipientAccountId']
+    return event.get('recipientAccountId')
 
 
 def title(event):
     return 'AWS logins detected without MFA in account [{}]'.format(
-        lookup_aws_account_name(event['recipientAccountId']))
+        lookup_aws_account_name(event.get('recipientAccountId')))

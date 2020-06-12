@@ -19,4 +19,4 @@ def rule(event):
 
 
 def dedup(event):
-    return event['recipientAccountId']
+    return event.get('recipientAccountId')
