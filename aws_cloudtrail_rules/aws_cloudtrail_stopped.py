@@ -17,10 +17,5 @@ def dedup(event):
 
 
 def title(event):
-    trail_arn = event['requestParameters'].get('name')
-    if event['eventName'] == 'DeleteTrail':
-        action = 'deleted'
-    elif event['eventName'] == 'StopLogging':
-        action = 'stopped'
-    return 'CloudTrail [{}] in account [{}] has been {}'.format(
-        trail_arn, lookup_aws_account_name(event['recipientAccountId']), action)
+    return 'CloudTrail [{}] in account [{}] was stopped/deleted'.format(
+        dedup(event), lookup_aws_account_name(event['recipientAccountId']))
