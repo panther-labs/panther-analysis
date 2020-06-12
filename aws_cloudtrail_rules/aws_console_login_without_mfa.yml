@@ -2,17 +2,19 @@ AnalysisType: rule
 Filename: aws_console_login_without_mfa.py
 RuleID: AWS.Console.LoginWithoutMFA
 DisplayName: Logins Without MFA
+DedupPeriodMinutes: 60
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
   - Identity & Access Management
+  - Authentication
 Reports:
   CIS:
     - 3.2
 Severity: High
-Description: A console login was made without MFA.
+Description: An AWS console login was made without multi-factor authentication.
 Runbook: https://docs.runpanther.io/log-processing/built-in-rule-runbooks/aws-console-login-without-mfa
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html
 Tests:

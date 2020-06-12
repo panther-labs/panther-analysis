@@ -11,3 +11,7 @@ EC2_NACL_MODIFIED_EVENTS = {
 
 def rule(event):
     return event['eventName'] in EC2_NACL_MODIFIED_EVENTS
+
+
+def dedup(event):
+    return event['recipientAccountId']

@@ -1,3 +1,6 @@
+from panther import lookup_aws_account_name  # pylint: disable=import-error
+
+
 def rule(event):
     return (event['eventName'] == 'ConsoleLogin' and
             event['userIdentity'].get('type') == 'IAMUser' and
@@ -5,4 +8,9 @@ def rule(event):
 
 
 def dedup(event):
-    return event['userIdentity'].get('arn')
+    return event['recipientAccountId']
+
+
+def title(event):
+    return 'AWS logins failed in account [{}]'.format(
+        lookup_aws_account_name(event['recipientAccountId']))

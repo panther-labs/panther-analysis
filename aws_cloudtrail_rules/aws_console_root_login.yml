@@ -3,11 +3,13 @@ Filename: aws_console_root_login.py
 RuleID: AWS.Console.RootLogin
 DisplayName: Root Console Login
 Enabled: true
+DedupPeriodMinutes: 15
 LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
   - Identity & Access Management
+  - Authentication
 Reports:
   CIS:
     - 3.6

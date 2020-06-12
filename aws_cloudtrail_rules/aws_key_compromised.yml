@@ -24,10 +24,10 @@ Tests:
         "userIdentity":
           {
             "type": "IAMUser",
-            "userName": "Nulluser",
+            "userName": "compromised_user",
             "principalId": "XXXXXXXXXXXXXXXXXXX",
             "accessKeyId": "XXXXXXXXXXXXXXXXXXXXX",
-            "arn": "arn:aws:iam::123456789012:user/NullUser",
+            "arn": "arn:aws:iam::123456789012:user/compromised_user",
             "accountId": "123456789012",
           },
         "eventName": "PutUserPolicy",
@@ -36,7 +36,7 @@ Tests:
         "requestParameters":
           {
             "policyDocument": '{"Version":"2012-10-17","Statement":[{"Sid":"Stmt1538161409","Effect":"Deny","Action":["lambda:CreateFunction","iam:AttachUserPolicy","iam:PutUserPolicy","organizations:InviteAccountToOrganization","ec2:RunInstances","iam:DetachUserPolicy","iam:CreateUser","lightsail:Create*","lightsail:Update*","ec2:StartInstances","ec2:RequestSpotInstances","iam:ChangePassword","iam:CreateLoginProfile","organizations:CreateOrganization","organizations:CreateAccount","lightsail:Delete*","iam:AttachGroupPolicy","iam:CreateAccessKey","iam:UpdateUser","iam:UpdateAccountPasswordPolicy","iam:DeleteUserPolicy","iam:PutUserPermissionsBoundary","iam:UpdateAccessKey","lightsail:DownloadDefaultKeyPair","iam:CreateInstanceProfile","lightsail:Start*","lightsail:GetInstanceAccessDetails","iam:CreateRole","iam:PutGroupPolicy","iam:AttachRolePolicy"],"Resource":["*"]}]}',
-            "userName": "NullUser",
+            "userName": "compromised_user",
             "policyName": "AWSExposedCredentialPolicy_DO_NOT_REMOVE",
           },
         "eventID": "1c2a53d1-58cc-41b3-85b8-bd7565370e0d",
