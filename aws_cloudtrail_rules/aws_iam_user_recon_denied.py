@@ -29,12 +29,11 @@ def rule(event):
 
     # Pattern match this event to the recon actions
     for event_source, event_patterns in RECON_ACTIONS.items():
-        if event['eventSource'].startswith(event_source):
-            if any([
-                    fnmatch(event['eventName'], event_pattern)
-                    for event_pattern in event_patterns
-            ]):
-                return True
+        if event['eventSource'].startswith(event_source) and any(
+                fnmatch(event['eventName'], event_pattern)
+                for event_pattern in event_patterns
+        )):
+            return True
 
     # Return an alert if the threshold was exceeded
     return check_threshold(
