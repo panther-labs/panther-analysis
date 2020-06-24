@@ -10,7 +10,7 @@ RECON_ACTIONS = {
     's3': ['List*', 'Get*'],
     'rds': ['Describe*', 'List*'],
 }
-THRESH = 5
+THRESH = 10
 THRESH_TTL = 600  # 10 minutes
 
 
