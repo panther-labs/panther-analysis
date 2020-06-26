@@ -264,7 +264,7 @@ def evaluate_threshold(key: str,
                        expiry_seconds: int = 3600) -> bool:
     hourly_error_count = increment_counter(key)
     if hourly_error_count == 1:
-        set_key_expiration(key, time.time() + expiry_seconds)
+        set_key_expiration(key, int(time.time()) + expiry_seconds)
     # If it exceeds our threshold, reset and then return an alert
     elif hourly_error_count >= threshold:
         reset_counter(key)
