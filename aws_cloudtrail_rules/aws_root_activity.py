@@ -1,11 +1,13 @@
 from panther import lookup_aws_account_name  # pylint: disable=import-error
 
+EVENT_ALLOW_LIST = {'CreateServiceLinkedRole', 'ConsoleLogin'}
+
 
 def rule(event):
     return (event['userIdentity'].get('type') == 'Root' and
             event['userIdentity'].get('invokedBy') is None and
             event['eventType'] != 'AwsServiceEvent' and
-            event['eventName'] != 'ConsoleLogin')
+            event['eventName'] not in EVENT_ALLOW_LIST)
 
 
 def dedup(event):
