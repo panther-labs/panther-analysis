@@ -19,6 +19,57 @@ Runbook: >
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
+    Name: Root Activity - CreateServiceLinkedRole
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "Root",
+              "principalId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "false",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "s3.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": {
+              "bucketName": "bucket",
+              "versioning": [
+                  ""
+              ],
+              "host": [
+                  "bucket.s3.us-west-2.amazonaws.com"
+              ],
+              "VersioningConfiguration": {
+                  "Status": "Enabled",
+                  "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+                  "MfaDelete": "Enabled"
+              }
+          },
+          "responseElements": null,
+          "additionalEventData": {
+              "SignatureVersion": "SigV4",
+              "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+              "AuthenticationMethod": "AuthHeader"
+          },
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
     Name: Root Activity
     LogType: AWS.CloudTrail
     ExpectedResult: true
