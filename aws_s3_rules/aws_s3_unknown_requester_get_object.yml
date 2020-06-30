@@ -71,3 +71,30 @@ Tests:
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
         "tlsVersion": "TLSv1.2"
       }
+  -
+    Name: Failed Request
+    LogType: AWS.S3ServerAccess
+    ExpectedResult: false
+    Log:
+      {
+        "bucketowner": "f16a9e81a6589df1c902c86f7982fd14a88787db",
+        "bucket": "panther-bootstrap-processeddata-AF1341JAK",
+        "time": "2020-02-14 00:53:48.000000000",
+        "errorcode": "AuthorizationHeaderMalformed",
+        "remoteip": "127.0.0.1",
+        "requestid": "101B7403B9828743",
+        "operation": "REST.GET.OBJECT",
+        "key": "AWSLogs/o-wwwwwwgggg/234567890123/CloudTrail-Digest/ca-central-1/2020/02/14/234567890123_CloudTrail-Digest_ca-central-1_POrgTrail_us-east-1_20200214T001007Z.json.gz",
+        "requesturi": "PUT /AWSLogs/o-wwwwwwgggg/234567890123/CloudTrail-Digest/ca-central-1/2020/02/14/234567890123_CloudTrail-Digest_ca-central-1_POrgTrail_us-east-1_20200214T001007Z.json.gz HTTP/1.1",
+        "httpstatus": 400,
+        "objectsize": 747,
+        "totaltime": 110,
+        "turnaroundtime": 20,
+        "useragent": "aws-internal/3 aws-sdk-java/1.11.714 Linux/4.9.184-0.1.ac.235.83.329.metal1.x86_64 OpenJDK_64-Bit_Server_VM/25.242-b08 java/1.8.0_242 vendor/Oracle_Corporation",
+        "hostid": "neRpT/AXRsS3LMBqq/wND59opwPRWWKn7F6evEhdbS99me5fyIXpVI/MMIn6ECgU1YZAqwuF8Bw=",
+        "signatureversion": "SigV4",
+        "ciphersuite": "ECDHE-RSA-AES128-SHA",
+        "authenticationtype": "AuthHeader",
+        "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
+        "tlsVersion": "TLSv1.2"
+      }
