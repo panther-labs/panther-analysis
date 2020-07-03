@@ -111,3 +111,22 @@ Tests:
           "path": "/etc/crontab"
         }
       }
+  -
+    Name: Command with quotes
+    LogType: Osquery.Differential
+    ExpectedResult: false
+    Log:
+      {
+        "name": "pack_incident-response_crontab",
+        "action": "added",
+        "columns": {
+          "event": "",
+          "minute": "17",
+          "hour": "*",
+          "day_of_month": "*",
+          "month": "*",
+          "day_of_week": "7",
+          "command": "runit 'go fast'",
+          "path": "/etc/crontab"
+        }
+      }
