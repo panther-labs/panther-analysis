@@ -13,7 +13,7 @@ def rule(event):
     if not command:
         return False
     command_args = shlex.split(command.replace("'",
-                                               "\\'")) # escape single quotes
+                                               "\\'"))  # escape single quotes
 
     if command_args[0] == 'aws':
         return True
