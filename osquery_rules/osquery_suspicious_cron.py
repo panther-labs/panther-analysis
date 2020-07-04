@@ -24,7 +24,8 @@ def suspicious_cmd_pairs(command):
 
 
 def suspicious_cmd_args(command):
-    command_args = shlex.split(command.replace("'", "\\'")) # escape single quotes
+    command_args = shlex.split(command.replace("'",
+                                               "\\'")) # escape single quotes
     for cmd in command_args:
         if any([fnmatch(cmd, c) for c in SUSPICIOUS_CRON_CMD_ARGS]):
             return True
