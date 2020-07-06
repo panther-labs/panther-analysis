@@ -12,7 +12,8 @@ def rule(event):
     command = event['columns'].get('command')
     if not command:
         return False
-    command_args = shlex.split(command)
+    command_args = shlex.split(command.replace("'",
+                                               "\\'"))  # escape single quotes
 
     if command_args[0] == 'aws':
         return True
