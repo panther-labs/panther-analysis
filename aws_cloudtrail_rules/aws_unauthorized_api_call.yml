@@ -17,7 +17,7 @@ Runbook: https://docs.runpanther.io/log-analysis/rules/built-in-rule-runbooks/aw
 Reference: https://amzn.to/3aOukaA
 Tests:
   -
-    Name: Unauthorized API Call
+    Name: Unauthorized API Call from Within AWS (IP)
     LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
@@ -43,9 +43,9 @@ Tests:
           "eventName": "CreateServiceLinkedRole",
           "awsRegion": "us-east-1",
           "sourceIPAddress": "3.10.107.144",
-          "userAgent": "signin.amazonaws.com",
           "errorCode": "AccessDenied",
           "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+          "userAgent": "sqs.amazonaws.com",
           "requestParameters": null,
           "responseElements": null,
           "requestID": "1",
@@ -54,7 +54,7 @@ Tests:
           "recipientAccountId": "123456789012"
       }
   -
-    Name: Unauthorized API Call from Within AWS
+    Name: Unauthorized API Call from Within AWS (FQDN)
     LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:

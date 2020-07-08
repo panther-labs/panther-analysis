@@ -16,7 +16,44 @@ Runbook: Analyze the IP they came from, and other actions taken before/after.
 Reference: https://runpanther.io
 Tests:
   -
-    Name: Unauthorized API Call from Within AWS
+    Name: Unauthorized API Call from Within AWS (IP)
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "3.10.107.144",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+          "userAgent": "sqs.amazonaws.com",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Unauthorized API Call from Within AWS (FQDN)
     LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
