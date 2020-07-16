@@ -6,6 +6,7 @@ BUCKET_ROLE_MAPPING = {
         'arn:aws:sts::*:assumed-role/panther-log-analysis-AthenaApiFunctionRole-*/panther-athena-api',
         'arn:aws:sts::*:assumed-role/panther-log-analysis-RulesEngineFunctionRole-*/panther-rules-engine',
         'arn:aws:sts::*:assumed-role/panther-snowflake-logprocessing-role-*/snowflake'
+        'arn:aws:sts::*:assumed-role/panther-data-replication-role-*/s3-replication'
     ]
 }
 # pylint: enable=line-too-long
