@@ -5,7 +5,8 @@ def rule(event):
     for details in event.get('events', [{}]):
         if (details.get('type') == 'suspicious_activity' and
                 details.get('name') == 'DEVICE_COMPROMISED_EVENT' and
-                details.get('parameters', {}).get('DEVICE_COMPROMISED_STATE') == 'COMPROMISED'):
+                details.get('parameters', {}).get('DEVICE_COMPROMISED_STATE')
+                == 'COMPROMISED'):
             return True
 
     return False

@@ -1,11 +1,11 @@
 RESOURCE_CHANGE_EVENTS = {
     'create',
-   'move',
+    'move',
     'upload',
-    'edit', 
+    'edit',
 }
 
-PERMISSIVE_VISIBILITY  = {
+PERMISSIVE_VISIBILITY = {
     'people_with_link',
     'public_on_the_web',
 }

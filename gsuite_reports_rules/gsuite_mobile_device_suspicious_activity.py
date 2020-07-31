@@ -4,7 +4,7 @@ def rule(event):
 
     for details in event.get('events', [{}]):
         if (details.get('type') == 'suspicious_activity' and
-                details.get('name') == 'SUSPICIOUS_ACTIVITY_EVENT'): 
+                details.get('name') == 'SUSPICIOUS_ACTIVITY_EVENT'):
             return True
 
     return False

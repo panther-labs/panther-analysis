@@ -8,7 +8,8 @@ def rule(event):
     for details in event.get('events', [{}]):
         if (details.get('type') == 'suspicious_activity' and
                 details.get('name') == 'FAILED_PASSWORD_ATTEMPTS_EVENT' and
-                details.get('parameters', {}).get('FAILED_PASSWD_ATTEMPTS') > MAX_UNLOCK_ATTEMPTS):
+                details.get('parameters', {}).get('FAILED_PASSWD_ATTEMPTS') >
+                MAX_UNLOCK_ATTEMPTS):
             return True
 
     return False
