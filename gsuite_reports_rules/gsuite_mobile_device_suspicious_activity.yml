@@ -1,0 +1,41 @@
+AnalysisType: rule
+Filename: gsuite_mobile_device_suspicious_activity.py
+RuleID: GSuite.DeviceSuspiciousActivity
+DisplayName: GSuite Device Suspicious Activity
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Low
+Description: >
+  GSuite reported a suspicious activity on a user's device.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/mobile#SUSPICIOUS_ACTIVITY_EVENT
+Runbook: >
+  Validate that the suspicious activity was expected by the user.
+Tests:
+  -
+    Name: Normal Mobile Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [{'type': 'device_updates'}]
+      }
+  -
+    Name: Suspicious Activity
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'SUSPICIOUS_ACTIVITY_EVENT',
+          }
+        ]
+      }

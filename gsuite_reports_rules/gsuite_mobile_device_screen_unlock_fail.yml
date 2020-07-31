@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: gsuite_mobile_device_screen_unlock_fail.py
+RuleID: GSuite.DeviceUnlockFailure
+DisplayName: GSuite User's Device Unlock Failures
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  Someone failed to unlock a user's device multiple times in quick succession.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/mobile#FAILED_PASSWORD_ATTEMPTS_EVENT
+Runbook: >
+  Verify that these unlock attempts came from the user, and not a malicious actor which has acquired the user's device.
+Tests:
+  -
+    Name: Normal Mobile Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [{'type': 'device_updates'}]
+      }
+  -
+    Name: Small Number of Failed Logins
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'FAILED_PASSWORD_ATTEMPTS_EVENT',
+            'parameters': {'FAILED_PASSWD_ATTEMPTS': 1}
+          }
+        ]
+      }
+  -
+    Name: Multiple Failed Login Attempts
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'FAILED_PASSWORD_ATTEMPTS_EVENT',
+            'parameters': {'FAILED_PASSWD_ATTEMPTS': 100}
+          }
+        ]
+      }

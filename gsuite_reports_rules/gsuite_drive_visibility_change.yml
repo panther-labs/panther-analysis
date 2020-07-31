@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: gsuite_drive_visibility_change.py
+RuleID: GSuite.DriveVisiblityChanged
+DisplayName: GSuite External Drive Document
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  A Google drive resource became externally accessible.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/drive#acl_change
+Runbook: >
+  Investigate whether the drive document is appropriate to be publicly accessible.
+Tests:
+  -
+    Name: Access Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'access',
+            'name': 'upload'
+          }
+        ]
+      }
+  -
+    Name: ACL Change without Visiblity Change
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'acl_change',
+            'name': 'shared_drive_settings_change'
+          }
+        ]
+      }
+  -
+    Name: Doc Became Public
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'acl_change',
+            'visibility_change': 'external'
+          }
+        ]
+      }
+  -
+    Name: Doc Became Private
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'acl_change',
+            'visibility_change': 'internal'
+          }
+        ]
+      }

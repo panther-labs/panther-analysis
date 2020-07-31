@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: gsuite_mobile_device_compromise.py
+RuleID: GSuite.DeviceCompromise
+DisplayName: GSuite User's Device Compromised
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  GSuite reported a user's device has been compromised.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/mobile#DEVICE_COMPROMISED_EVENT
+Runbook: >
+  Have the user change their passwords and reset the device.
+Tests:
+  -
+    Name: Normal Mobile Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [{'type': 'device_updates'}]
+      }
+  -
+    Name: Suspicious Activity Shows not Compromised
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'DEVICE_COMPROMISED_EVENT',
+            'parameters': {'DEVICE_COMPROMISED_STATE': 'NOT_COMPROMISED'}
+          }
+        ]
+      }
+  -
+    Name: Suspicious Activity Shows Compromised
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'DEVICE_COMPROMISED_EVENT',
+            'parameters': {'DEVICE_COMPROMISED_STATE': 'COMPROMISED'}
+          }
+        ]
+      }
