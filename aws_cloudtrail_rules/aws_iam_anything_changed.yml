@@ -1,0 +1,106 @@
+AnalysisType: rule
+Filename: aws_iam_anything_changed.py
+RuleID: AWS.CloudTrail.IAMAnythingChanged
+DisplayName: IAM Change
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail.Log
+Tags:
+  - AWS
+  - Identity and Access Management
+Severity: Info
+Description: >
+  A change occurred in the IAM configuration. This could be a resource being created, deleted, or modified. This is a high level view of changes, helfpul to indicate how dynamic a certain IAM environment is.
+Runbook: >
+  Ensure this was an approved IAM configuration change.
+Reference: reference.link
+Tests:
+  -
+    Name: IAM Change
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: true
+    Log:
+      {
+          "awsRegion": "us-east-1",
+          "eventID": "1111",
+          "eventName": "AttachRolePolicy",
+          "eventSource": "iam.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "policyArn": "arn:aws:iam::aws:policy/example-policy",
+              "roleName": "LambdaFunctionRole-1111"
+          },
+          "responseElements": null,
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "cloudformation.amazonaws.com",
+          "userIdentity": {
+              "accesKeyId": "1111",
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "invokedBy": "cloudformation.amazonaws.com",
+              "principalId": "1111:example-user",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-user"
+                  }
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: IAM Read Only Activity
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-east-1",
+          "eventID": "1111",
+          "eventName": "DescribePolicy",
+          "eventSource": "iam.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "roleName": "LambdaFunctionRole-1111"
+          },
+          "responseElements": null,
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "cloudformation.amazonaws.com",
+          "userIdentity": {
+              "accesKeyId": "1111",
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "invokedBy": "cloudformation.amazonaws.com",
+              "principalId": "1111:example-user",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-user"
+                  }
+              },
+              "type": "AssumedRole"
+          }
+      }

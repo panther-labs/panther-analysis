@@ -1,0 +1,213 @@
+AnalysisType: policy
+Filename: aws_acm_certificate_has_secure_algorithms.py
+PolicyID: AWS.ACM.HasSecureAlgorithms
+DisplayName: AWS ACM Secure Algorithms
+Enabled: false
+ResourceTypes:
+  - AWS.ACM.Certificate
+Tags:
+  - AWS
+  - Configuration Required
+  - PCI
+Reports:
+  PCI:
+    - 2.2.3
+Severity: High
+Description: >
+  This policy validates that all ACM certificates are using secure key and signature algorithms.
+Runbook: >
+  Delete the insecure certificate, and re-create with appropriately secure key and signature algorithms.
+Reference: https://docs.aws.amazon.com/acm/latest/userguide/acm-certificate.html#algorithms
+Tests:
+  -
+    Name: Certificate Has Secure Algorithms
+    ResourceType: AWS.ACM.Certificate
+    ExpectedResult: true
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "CertificateAuthorityArn": null,
+          "DomainName": "example.com",
+          "DomainValidationOptions": [
+              {
+                  "DomainName": "example.com",
+                  "ResourceRecord": {
+                      "Name": "aaaa.example.com.",
+                      "Type": "CNAME",
+                      "Value": "aaaa.bbbb.acm-validations.aws."
+                  },
+                  "ValidationDomain": "example.com",
+                  "ValidationEmails": null,
+                  "ValidationMethod": "DNS",
+                  "ValidationStatus": "SUCCESS"
+              }
+          ],
+          "ExtendedKeyUsages": [
+              {
+                  "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+                  "OID": "1.3.6.1.5.5.7.3.1"
+              }
+          ],
+          "FailureReason": null,
+          "InUseBy": null,
+          "IssuedAt": "2019-01-01T00:00:00Z",
+          "Issuer": "Amazon",
+          "KeyAlgorithm": "RSA-2048",
+          "KeyUsages": [
+              {
+                  "Name": "DIGITAL_SIGNATURE"
+              }
+          ],
+          "Name": "example.com",
+          "NotAfter": "2020-01-01T00:00:00Z",
+          "NotBefore": "2019-01-01T00:00:00Z",
+          "Options": {
+              "CertificateTransparencyLoggingPreference": "ENABLED"
+          },
+          "Region": "us-east-1",
+          "RenewalEligibility": "INELIGIBLE",
+          "RenewalSummary": null,
+          "ResourceId": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "ResourceType": "AWS.ACM.Certificate",
+          "RevocationReason": null,
+          "RevokedAt": null,
+          "Serial": "00:00:00",
+          "SignatureAlgorithm": "SHA256WITHRSA",
+          "Status": "ISSUED",
+          "Subject": "CN=example.com",
+          "SubjectAlternativeNames": [
+              "example.com"
+          ],
+          "Tags": null,
+          "TimeCreated": null,
+          "Type": "AMAZON_ISSUED"
+      }
+  -
+    Name: Certificate Has One Insecure Agorithm
+    ResourceType: AWS.ACM.Certificate
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "CertificateAuthorityArn": null,
+          "DomainName": "example.com",
+          "DomainValidationOptions": [
+              {
+                  "DomainName": "example.com",
+                  "ResourceRecord": {
+                      "Name": "aaaa.example.com.",
+                      "Type": "CNAME",
+                      "Value": "aaaa.bbbb.acm-validations.aws."
+                  },
+                  "ValidationDomain": "example.com",
+                  "ValidationEmails": null,
+                  "ValidationMethod": "DNS",
+                  "ValidationStatus": "SUCCESS"
+              }
+          ],
+          "ExtendedKeyUsages": [
+              {
+                  "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+                  "OID": "1.3.6.1.5.5.7.3.1"
+              }
+          ],
+          "FailureReason": null,
+          "InUseBy": null,
+          "IssuedAt": "2019-01-01T00:00:00Z",
+          "Issuer": "Amazon",
+          "KeyAlgorithm": "LANMAN",
+          "KeyUsages": [
+              {
+                  "Name": "DIGITAL_SIGNATURE"
+              }
+          ],
+          "Name": "example.com",
+          "NotAfter": "2020-01-01T00:00:00Z",
+          "NotBefore": "2019-01-01T00:00:00Z",
+          "Options": {
+              "CertificateTransparencyLoggingPreference": "ENABLED"
+          },
+          "Region": "us-east-1",
+          "RenewalEligibility": "INELIGIBLE",
+          "RenewalSummary": null,
+          "ResourceId": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "ResourceType": "AWS.ACM.Certificate",
+          "RevocationReason": null,
+          "RevokedAt": null,
+          "Serial": "00:00:00",
+          "SignatureAlgorithm": "SHA256WITHRSA",
+          "Status": "ISSUED",
+          "Subject": "CN=example.com",
+          "SubjectAlternativeNames": [
+              "example.com"
+          ],
+          "Tags": null,
+          "TimeCreated": null,
+          "Type": "AMAZON_ISSUED"
+      }
+  -
+    Name: Certificate Has Two Insecure Agorithms
+    ResourceType: AWS.ACM.Certificate
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "CertificateAuthorityArn": null,
+          "DomainName": "example.com",
+          "DomainValidationOptions": [
+              {
+                  "DomainName": "example.com",
+                  "ResourceRecord": {
+                      "Name": "aaaa.example.com.",
+                      "Type": "CNAME",
+                      "Value": "aaaa.bbbb.acm-validations.aws."
+                  },
+                  "ValidationDomain": "example.com",
+                  "ValidationEmails": null,
+                  "ValidationMethod": "DNS",
+                  "ValidationStatus": "SUCCESS"
+              }
+          ],
+          "ExtendedKeyUsages": [
+              {
+                  "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+                  "OID": "1.3.6.1.5.5.7.3.1"
+              }
+          ],
+          "FailureReason": null,
+          "InUseBy": null,
+          "IssuedAt": "2019-01-01T00:00:00Z",
+          "Issuer": "Amazon",
+          "KeyAlgorithm": "LANMAN",
+          "KeyUsages": [
+              {
+                  "Name": "DIGITAL_SIGNATURE"
+              }
+          ],
+          "Name": "example.com",
+          "NotAfter": "2020-01-01T00:00:00Z",
+          "NotBefore": "2019-01-01T00:00:00Z",
+          "Options": {
+              "CertificateTransparencyLoggingPreference": "ENABLED"
+          },
+          "Region": "us-east-1",
+          "RenewalEligibility": "INELIGIBLE",
+          "RenewalSummary": null,
+          "ResourceId": "arn:aws:acm:us-east-1:123456789012:certificate/1",
+          "ResourceType": "AWS.ACM.Certificate",
+          "RevocationReason": null,
+          "RevokedAt": null,
+          "Serial": "00:00:00",
+          "SignatureAlgorithm": "MD5",
+          "Status": "ISSUED",
+          "Subject": "CN=example.com",
+          "SubjectAlternativeNames": [
+              "example.com"
+          ],
+          "Tags": null,
+          "TimeCreated": null,
+          "Type": "AMAZON_ISSUED"
+      }

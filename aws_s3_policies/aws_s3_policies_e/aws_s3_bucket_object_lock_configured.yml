@@ -1,0 +1,200 @@
+AnalysisType: policy
+Filename: aws_s3_bucket_object_lock_configured.py
+PolicyID: AWS.S3.BucketObjectLockConfigured
+DisplayName: AWS S3 Bucket Object Lock Configured
+Enabled: true
+ResourceTypes:
+  - AWS.S3.Bucket
+Tags:
+  - AWS
+  - S3
+  - PCI
+Reports:
+  PCI:
+    - 10.5.3
+Severity: Low
+Description: >
+  This policy validates that S3 buckets have an Object Lock configuration enabled. This should be used with specific suppression lists to ensure it is applied only to appropriate S3 buckets, such as those containing CloudTrail or other auditable records.
+Runbook: Create a new S3 bucket with an appropriate Object Lock configuration and point audit records to that bucket.
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html
+Tests:
+  -
+    Name: Obect Lock Configured With Governance
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:s3:::example-bucket",
+          "EncryptionRules": [
+              {
+                  "ApplyServerSideEncryptionByDefault": {
+                      "KMSMasterKeyID": null,
+                      "SSEAlgorithm": "AES256"
+                  }
+              }
+          ],
+          "Grants": [
+              {
+                  "Grantee": {
+                      "DisplayName": "example.user",
+                      "EmailAddress": null,
+                      "ID": "1",
+                      "Type": "CanonicalUser",
+                      "URI": null
+                  },
+                  "Permission": "FULL_CONTROL"
+              }
+          ],
+          "LifecycleRules": null,
+          "LoggingPolicy": null,
+          "MFADelete": "Disabled",
+          "Name": "example-bucket",
+          "ObjectLockConfiguration": {
+              "ObjectLockEnabled": "Enabled",
+              "Rule": {
+                  "DefaultRetention": {
+                      "Days": 1,
+                      "Mode": "GOVERNANCE",
+                      "Years": null
+                  }
+              }
+          },
+          "Owner": {
+              "DisplayName": "example.user",
+              "ID": "1"
+          },
+          "Policy": null,
+          "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": true,
+              "BlockPublicPolicy": true,
+              "IgnorePublicAcls": true,
+              "RestrictPublicBuckets": true
+          },
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:s3:::example-bucket",
+          "ResourceType": "AWS.S3.Bucket",
+          "Tags": {
+            "environment": "pci",
+          },
+          "TimeCreated": "2019-01-01T00:00:00.000Z",
+          "Versioning": "Enabled"
+      }
+  -
+    Name: Obect Lock Configured With Compliance
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: true
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:s3:::example-bucket",
+          "EncryptionRules": [
+              {
+                  "ApplyServerSideEncryptionByDefault": {
+                      "KMSMasterKeyID": null,
+                      "SSEAlgorithm": "AES256"
+                  }
+              }
+          ],
+          "Grants": [
+              {
+                  "Grantee": {
+                      "DisplayName": "example.user",
+                      "EmailAddress": null,
+                      "ID": "1",
+                      "Type": "CanonicalUser",
+                      "URI": null
+                  },
+                  "Permission": "FULL_CONTROL"
+              }
+          ],
+          "LifecycleRules": null,
+          "LoggingPolicy": null,
+          "MFADelete": "Disabled",
+          "Name": "example-bucket",
+          "ObjectLockConfiguration": {
+              "ObjectLockEnabled": "Enabled",
+              "Rule": {
+                  "DefaultRetention": {
+                      "Days": 365,
+                      "Mode": "COMPLIANCE",
+                      "Years": null
+                  }
+              }
+          },
+          "Owner": {
+              "DisplayName": "example.user",
+              "ID": "1"
+          },
+          "Policy": null,
+          "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": true,
+              "BlockPublicPolicy": true,
+              "IgnorePublicAcls": true,
+              "RestrictPublicBuckets": true
+          },
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:s3:::example-bucket",
+          "ResourceType": "AWS.S3.Bucket",
+          "Tags": {
+            "environment": "pci",
+          },
+          "TimeCreated": "2019-01-01T00:00:00.000Z",
+          "Versioning": "Enabled"
+      }
+  -
+    Name: Obect Lock Not Configured
+    ResourceType: AWS.S3.Bucket
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:s3:::example-bucket",
+          "EncryptionRules": [
+              {
+                  "ApplyServerSideEncryptionByDefault": {
+                      "KMSMasterKeyID": null,
+                      "SSEAlgorithm": "AES256"
+                  }
+              }
+          ],
+          "Grants": [
+              {
+                  "Grantee": {
+                      "DisplayName": "example.user",
+                      "EmailAddress": null,
+                      "ID": "1",
+                      "Type": "CanonicalUser",
+                      "URI": null
+                  },
+                  "Permission": "FULL_CONTROL"
+              }
+          ],
+          "LifecycleRules": null,
+          "LoggingPolicy": null,
+          "MFADelete": "Disabled",
+          "Name": "example-bucket",
+          "ObjectLockConfiguration": {
+              "ObjectLockEnabled": "Disabled",
+              "Rule": null
+          },
+          "Owner": {
+              "DisplayName": "example.user",
+              "ID": "1"
+          },
+          "Policy": null,
+          "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": true,
+              "BlockPublicPolicy": true,
+              "IgnorePublicAcls": true,
+              "RestrictPublicBuckets": true
+          },
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:s3:::example-bucket",
+          "ResourceType": "AWS.S3.Bucket",
+          "Tags": {
+            "environment": "pci",
+          },
+          "TimeCreated": "2019-01-01T00:00:00.000Z",
+          "Versioning": "Enabled"
+      }

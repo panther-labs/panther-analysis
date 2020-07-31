@@ -1,0 +1,175 @@
+AnalysisType: policy
+Filename: aws_security_group_tightly_restricts_outbound_traffic.py
+PolicyID: AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+  - PCI
+Reports:
+  PCI:
+    - 1.1.4
+Severity: Medium
+Description: >
+  This policy validates that Security Groups have restrictive controls on outbound traffic.
+Runbook: >
+  Add appropriate restrictions to outbound traffic on Security Groups via IP permissions
+Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
+Tests:
+  -
+    Name: Security Group Tightly Restricts Outbound Traffic
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": 2222,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": 2222,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Security Group Does Not Restrict Outbound Traffic
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: false
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Security Group Does Not Tightly Restrict Outbound Traffic
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: false
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": 80,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": 443,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }

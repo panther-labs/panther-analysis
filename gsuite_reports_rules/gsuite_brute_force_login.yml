@@ -1,0 +1,41 @@
+AnalysisType: rule
+Filename: gsuite_brute_force_login.py
+RuleID: GSuite.BruteForceLogin
+DisplayName: GSuite Brute Force Login
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: A GSuite user was denied access more times than the configured threshold allows.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login_failure
+Runbook: Analyze the IP they came from, and other actions taken before/after.
+Tests:
+  -
+    Name: Normal Login Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'login',
+            'name': 'login_success'
+          }
+        ]
+      }
+  -
+    Name: Non Login Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'account_warning',
+          }
+        ]
+      }

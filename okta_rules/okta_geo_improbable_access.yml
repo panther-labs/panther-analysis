@@ -1,0 +1,307 @@
+AnalysisType: rule
+Filename: okta_geo_improbable_access.py 
+RuleID: Okta.GeographicallyImprobableAccess
+DisplayName: Geographically Improbable Okta Login
+Enabled: true
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+Severity: Medium
+Tests:
+  -
+    Name: Non Login
+    LogType: Okta.SystemLog
+    ExpectedResult: false
+    Log:
+      {
+      "eventType": "thingy"
+      }
+# These unit tests require AWS credentials to be configured to run properly.
+#
+# To use these tests, uncomment them and run panther_analysis_tool test with hAWS credentials configured.
+#  -
+#    Name: First Login - Baseline
+#    LogType: Okta.SystemLog
+#    ExpectedResult: false
+#    Log:
+#      {
+#          "actor": {
+#              "alternateId": "buser@example.com",
+#              "displayName": "Bobert User",
+#              "id": "111",
+#              "type": "User"
+#          },
+#          "authenticationContext": {
+#              "authenticationStep": 0,
+#              "externalSessionId": "111"
+#          },
+#          "client": {
+#              "device": "Computer",
+#              "geographicalContext": {
+#                  "city": "Baltimore",
+#                  "country": "United States",
+#                  "geolocation": {
+#                      "lat": 39.2891,
+#                      "lon": -76.5583
+#                  },
+#                  "postalCode": "21224",
+#                  "state": "Maryland"
+#              },
+#              "ipAddress": "192.168.0.9",
+#              "userAgent": {
+#                  "browser": "CHROME",
+#                  "os": "Windows 10",
+#                  "rawUserAgent": "Mozilla/5.0"
+#              },
+#              "zone": "null"
+#          },
+#          "debugContext": {
+#              "debugData": {
+#                  "requestId": "11111",
+#                  "requestUri": "/api/v1/authn/factors/password/verify",
+#                  "threatSuspected": "false",
+#                  "url": "/api/v1/authn/factors/password/verify?rememberDevice=false"
+#              }
+#          },
+#          "displayMessage": "User login to Okta",
+#          "eventType": "user.session.start",
+#          "legacyEventType": "core.user_auth.login_success",
+#          "outcome": {
+#              "result": "SUCCESS"
+#          },
+#          "p_any_domain_names": [
+#              "comcast.net"
+#          ],
+#          "p_any_ip_addresses": [
+#              "192.168.0.9"
+#          ],
+#          "p_event_time": "2020-01-01 00:00:00.000000000",
+#          "p_log_type": "Okta.SystemLog",
+#          "p_parse_time": "2020-01-01 00:00:01.000000000",
+#          "p_row_id": "111222",
+#          "published": "2020-01-01 00:00:00.000000000",
+#          "request": {
+#              "ipChain": [
+#                  {
+#                      "geographicalContext": {
+#                          "city": "Baltimore",
+#                          "country": "United States",
+#                          "geolocation": {
+#                              "lat": 39.2891,
+#                              "lon": -76.5583
+#                          },
+#                          "postalCode": "21224",
+#                          "state": "Maryland"
+#                      },
+#                      "ip": "192.168.0.9",
+#                      "version": "V4"
+#                  }
+#              ]
+#          },
+#          "securityContext": {
+#              "asNumber": 1234,
+#              "asOrg": "comcast",
+#              "domain": "comcast.net",
+#              "isProxy": false,
+#              "isp": "comcast cable communications  llc"
+#          },
+#          "severity": "INFO",
+#          "transaction": {
+#              "detail": {},
+#              "id": "AbC",
+#              "type": "WEB"
+#          },
+#          "uuid": "1234-abc-1234",
+#          "version": "0"
+#      }
+#  -
+#    Name: Second Login - Safe
+#    LogType: Okta.SystemLog
+#    ExpectedResult: false
+#    Log:
+#      {
+#          "actor": {
+#              "alternateId": "buser@example.com",
+#              "displayName": "Bobert User",
+#              "id": "111",
+#              "type": "User"
+#          },
+#          "authenticationContext": {
+#              "authenticationStep": 0,
+#              "externalSessionId": "111"
+#          },
+#          "client": {
+#              "device": "Computer",
+#              "geographicalContext": {
+#                  "city": "Bethesda",
+#                  "country": "United States",
+#                  "geolocation": {
+#                      "lat": 38.9846,
+#                      "lon": -77.0947
+#                  },
+#                  "postalCode": "20810",
+#                  "state": "Maryland"
+#              },
+#              "ipAddress": "192.168.0.9",
+#              "userAgent": {
+#                  "browser": "CHROME",
+#                  "os": "Windows 10",
+#                  "rawUserAgent": "Mozilla/5.0"
+#              },
+#              "zone": "null"
+#          },
+#          "debugContext": {
+#              "debugData": {
+#                  "requestId": "11111",
+#                  "requestUri": "/api/v1/authn/factors/password/verify",
+#                  "threatSuspected": "false",
+#                  "url": "/api/v1/authn/factors/password/verify?rememberDevice=false"
+#              }
+#          },
+#          "displayMessage": "User login to Okta",
+#          "eventType": "user.session.start",
+#          "legacyEventType": "core.user_auth.login_success",
+#          "outcome": {
+#              "result": "SUCCESS"
+#          },
+#          "p_any_domain_names": [
+#              "comcast.net"
+#          ],
+#          "p_any_ip_addresses": [
+#              "192.168.0.9"
+#          ],
+#          "p_event_time": "2020-01-02 00:00:00.000000000",
+#          "p_log_type": "Okta.SystemLog",
+#          "p_parse_time": "2020-01-02 00:00:01.000000000",
+#          "p_row_id": "111222",
+#          "published": "2020-01-02 00:00:00.000000000",
+#          "request": {
+#              "ipChain": [
+#                  {
+#                      "geographicalContext": {
+#                          "city": "Bethesda",
+#                          "country": "United States",
+#                          "geolocation": {
+#                              "lat": 38.9846,
+#                              "lon": -77.0947
+#                          },
+#                          "postalCode": "20810",
+#                          "state": "Maryland"
+#                      },
+#                      "ip": "192.168.0.9",
+#                      "version": "V4"
+#                  }
+#              ]
+#          },
+#          "securityContext": {
+#              "asNumber": 1234,
+#              "asOrg": "comcast",
+#              "domain": "comcast.net",
+#              "isProxy": false,
+#              "isp": "comcast cable communications  llc"
+#          },
+#          "severity": "INFO",
+#          "transaction": {
+#              "detail": {},
+#              "id": "AbC",
+#              "type": "WEB"
+#          },
+#          "uuid": "1234-abc-1234",
+#          "version": "0"
+#      }
+#  -
+#    Name: Third Login - Too Fast
+#    LogType: Okta.SystemLog
+#    ExpectedResult: true
+#    Log:
+#      {
+#          "actor": {
+#              "alternateId": "buser@example.com",
+#              "displayName": "Bobert User",
+#              "id": "111",
+#              "type": "User"
+#          },
+#          "authenticationContext": {
+#              "authenticationStep": 0,
+#              "externalSessionId": "111"
+#          },
+#          "client": {
+#              "device": "Computer",
+#              "geographicalContext": {
+#                  "city": "Baltimore",
+#                  "country": "United States",
+#                  "geolocation": {
+#                      "lat": 39.2891,
+#                      "lon": -76.5583
+#                  },
+#                  "postalCode": "21224",
+#                  "state": "Maryland"
+#              },
+#              "ipAddress": "192.168.0.9",
+#              "userAgent": {
+#                  "browser": "CHROME",
+#                  "os": "Windows 10",
+#                  "rawUserAgent": "Mozilla/5.0"
+#              },
+#              "zone": "null"
+#          },
+#          "debugContext": {
+#              "debugData": {
+#                  "requestId": "11111",
+#                  "requestUri": "/api/v1/authn/factors/password/verify",
+#                  "threatSuspected": "false",
+#                  "url": "/api/v1/authn/factors/password/verify?rememberDevice=false"
+#              }
+#          },
+#          "displayMessage": "User login to Okta",
+#          "eventType": "user.session.start",
+#          "legacyEventType": "core.user_auth.login_success",
+#          "outcome": {
+#              "result": "SUCCESS"
+#          },
+#          "p_any_domain_names": [
+#              "comcast.net"
+#          ],
+#          "p_any_ip_addresses": [
+#              "192.168.0.9"
+#          ],
+#          "p_event_time": "2020-01-02 00:01:00.000000000",
+#          "p_log_type": "Okta.SystemLog",
+#          "p_parse_time": "2020-01-02 00:01:01.000000000",
+#          "p_row_id": "111222",
+#          "published": "2020-01-02 00:00:01.000000000",
+#          "request": {
+#              "ipChain": [
+#                  {
+#                      "geographicalContext": {
+#                          "city": "Baltimore",
+#                          "country": "United States",
+#                          "geolocation": {
+#                              "lat": 39.2891,
+#                              "lon": -76.5583
+#                          },
+#                          "postalCode": "21224",
+#                          "state": "Maryland"
+#                      },
+#                      "ip": "192.168.0.9",
+#                      "version": "V4"
+#                  }
+#              ]
+#          },
+#          "securityContext": {
+#              "asNumber": 1234,
+#              "asOrg": "comcast",
+#              "domain": "comcast.net",
+#              "isProxy": false,
+#              "isp": "comcast cable communications  llc"
+#          },
+#          "severity": "INFO",
+#          "transaction": {
+#              "detail": {},
+#              "id": "AbC",
+#              "type": "WEB"
+#          },
+#          "uuid": "1234-abc-1234",
+#          "version": "0"
+#      }

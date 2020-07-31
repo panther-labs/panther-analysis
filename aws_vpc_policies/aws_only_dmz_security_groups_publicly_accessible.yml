@@ -1,0 +1,212 @@
+AnalysisType: policy
+Filename: aws_only_dmz_security_groups_publicly_accessible.py
+PolicyID: AWS.SecurityGroup.OnlyDMZPubliclyAccessible
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+  - PCI
+Reports:
+  PCI:
+    - 1.3.1
+    - 1.1.4
+Severity: High
+Description: >
+  This policy validates that only Security Groups designated as DMZs allow inbound traffic from public IP space. This helps ensure no traffic is bypassing the DMZ.
+Runbook: >
+  Remove the IP permissions in non-DMZ Security Groups that are allowing inbound traffic from public IP space.
+Reference: https://en.wikipedia.org/wiki/DMZ_(computing)
+Tests:
+  -
+    Name: DMZ Security Group Does Allows Public Access
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          },
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "1.0.0.0/24",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {"environment": "dmz"},
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Non DMZ Security Group Allows Public Access
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: false
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          },
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "1.1.1.1/32",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "192.0.2.0/24",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {"environment": "pci"},
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Non DMZ Security Group Does Not Allow Public Access
+    ResourceType: AWS.EC2.SecurityGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          },
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "192.168.0.0/24",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "192.0.2.0/24",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {"environment": "pci"},
+        "VpcId": "vpc-abc111222333"
+      }

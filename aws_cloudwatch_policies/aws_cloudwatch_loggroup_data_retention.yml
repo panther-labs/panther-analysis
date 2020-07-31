@@ -1,0 +1,114 @@
+AnalysisType: policy
+Filename: aws_cloudwatch_loggroup_data_retention.py
+PolicyID: AWS.CloudWatchLogs.DataRetention1Year
+DisplayName: AWS CloudWatch Logs Data Retention
+Enabled: true
+ResourceTypes:
+  - AWS.CloudWatch.LogGroup
+Tags:
+  - AWS
+  - Panther
+Severity: Low
+Description: >
+  By default, logs are kept indefinitely and never expire. You can adjust the retention policy
+  for each log group, keeping the indefinite retention, or choosing a specific retention period.
+Runbook: >
+  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudtrail-logs-has-data-retention-of-one-year
+Reference: https://docs.aws.amazon.com/cli/latest/reference/logs/put-retention-policy.html
+Tests:
+  -
+    Name: Unlimited Log Retention
+    ResourceType: AWS.CloudWatch.LogGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": "arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012",
+        "LogGroupName": "LogGroup-2",
+        "MetricFilterCount": 0,
+        "Name": "LogGroup-2",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": null,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }
+  -
+    Name: Logs Retained 1 Year
+    ResourceType: AWS.CloudWatch.LogGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": null,
+        "LogGroupName": "LogGroup-2",
+        "MetricFilterCount": 0,
+        "Name": "LogGroup-2",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": 365,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }
+  -
+    Name: Logs Retained 2 Years
+    ResourceType: AWS.CloudWatch.LogGroup
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": null,
+        "LogGroupName": "LogGroup-2",
+        "MetricFilterCount": 0,
+        "Name": "LogGroup-2",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": 730,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }
+  -
+    Name: Logs Retained 1 Week
+    ResourceType: AWS.CloudWatch.LogGroup
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": null,
+        "LogGroupName": "LogGroup-2",
+        "MetricFilterCount": 0,
+        "Name": "LogGroup-2",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": 7,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }

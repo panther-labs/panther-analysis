@@ -1,0 +1,191 @@
+AnalysisType: policy
+Filename: aws_cloudformation_stack_uses_iam_role.py
+PolicyID: AWS.CloudFormation.Stack.UsesIAMServiceRole
+DisplayName: AWS CloudFormation Stack IAM Service Role
+Enabled: true
+ResourceTypes:
+  - AWS.CloudFormation.Stack
+Tags:
+  - AWS
+  - Operations
+  - Panther
+Severity: Info
+Description: >
+  Assocating IAM roles with CloudFormation stacks ensures least privilege when making
+  changes to your account.
+Runbook: >
+  Create a new IAM role to be assumable by the cloudformation service, and then update the
+  current stack with the --role-arn argument.
+  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudformation-stack-uses-iam-service-role
+Reference: https://amzn.to/2HAdfny
+Tests:
+  -
+    Name: IAM Service Role Attached
+    ResourceType: AWS.CloudFormation.Stack
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "Name": "iam-roles",
+        "Tags": {},
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "Capabilities": [
+          "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM role stack",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+          "StackDriftStatus": "IN-SYNC"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-01-01T00:00:00Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "10000",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": "arn:aws:iam::123456789012:role/CFNServiceRole",
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }
+  -
+    Name: No Service Role Provided
+    ResourceType: AWS.CloudFormation.Stack
+    ExpectedResult: false
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "Name": "iam-roles",
+        "Tags": {},
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-01-01T17:16:30.000Z",
+        "Capabilities": [
+          "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM role stack",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+          "StackDriftStatus": "IN-SYNC"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-01-01T00:00:00Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "10000",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": null,
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/1",
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }
+  -
+    Name: No Service Role Provided But Stack Is StackSet
+    ResourceType: AWS.CloudFormation.Stack
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/StackSet-iam-roles/1",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/StackSet-iam-roles/1",
+        "Name": "StackSet-iam-roles",
+        "Tags": {},
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/StackSet-iam-roles/1",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "Capabilities": [
+          "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM role stack set",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+          "StackDriftStatus": "IN-SYNC"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-01-01T00:00:00Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "10000",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": null,
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }

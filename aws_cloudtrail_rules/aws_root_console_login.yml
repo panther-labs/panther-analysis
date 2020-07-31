@@ -1,0 +1,151 @@
+AnalysisType: rule
+Filename: aws_root_console_login.py
+RuleID: AWS.CloudTrail.RootConsoleLogin
+DisplayName: Root Account Console Login
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail.Log
+Tags:
+  - AWS
+  - Identity and Access Management
+Severity: High
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Valid Accounts
+Description: Someone logged into the root account from the AWS console.
+Runbook: >
+  Verify that the root login was authorized. If not, investigate the root activity and ensure no malicious activity was performed. Change the root password.
+Reference: reference.link
+Tests:
+  -
+    Name: Root Console Login
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: true
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }
+  -
+    Name: Root Non Console Login
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "NonConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }
+  -
+    Name: Non Root Console Login
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:user/bob",
+              "principalId": "123456789012",
+              "type": "IAMUser"
+          }
+      }
+  -
+    Name: Root Failed Console Login
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }
