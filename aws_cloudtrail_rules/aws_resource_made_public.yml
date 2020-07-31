@@ -1,0 +1,157 @@
+AnalysisType: rule
+Filename: aws_resource_made_public.py
+RuleID: AWS.CloudTrail.ResourceMadePublic
+DisplayName: AWS Resource Made Public
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail.Log
+Tags:
+  - AWS
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - Exfiltration:Transfer Data to Cloud Account
+Description: >
+  Some AWS resource was made publicly accessible over the internet.
+  Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
+Runbook: Adjust the policy so that the resource is no longer publicly accessible
+Reference: reference.link
+Tests:
+  -
+    Name: S3 Made Publicly Accessible
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: true
+    Log:
+      {
+          "additionalEventData": {
+              "AuthenticationMethod": "AuthHeader",
+              "CipherSuite": "ECDHE-RSA-AES128-SHA",
+              "SignatureVersion": "SigV4",
+              "vpcEndpointId": "vpce-1111"
+          },
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "PutBucketPolicy",
+          "eventSource": "s3.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "bucketName": "example-bucket",
+              "bucketPolicy": {
+                  "Statement": [
+                      {
+                          "Action": "s3:GetBucketAcl",
+                          "Effect": "Allow",
+                          "Principal": {
+                              "AWS": "*"
+                          },
+                          "Resource": "arn:aws:s3:::example-bucket",
+                          "Sid": "Public Access"
+                      }
+                  ],
+                  "Version": "2012-10-17"
+              },
+              "host": [
+                  "s3.us-west-2.amazonaws.com"
+              ],
+              "policy": [
+                  ""
+              ]
+          },
+          "responseElements": null,
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  }
+              },
+              "type": "AssumedRole"
+          },
+          "vpcEndpointId": "vpce-1111"
+      }
+  -
+    Name: S3 Not Made Publicly Accessible
+    LogType: AWS.CloudTrail.Log
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "AuthenticationMethod": "AuthHeader",
+              "CipherSuite": "ECDHE-RSA-AES128-SHA",
+              "SignatureVersion": "SigV4",
+              "vpcEndpointId": "vpce-1111"
+          },
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "PutBucketPolicy",
+          "eventSource": "s3.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "bucketName": "example-bucket",
+              "bucketPolicy": {
+                  "Statement": [
+                      {
+                          "Action": "s3:GetBucketAcl",
+                          "Effect": "Allow",
+                          "Principal": {
+                              "Service": "cloudtrail.amazonaws.com"
+                          },
+                          "Resource": "arn:aws:s3:::example-bucket",
+                          "Sid": "Public Access"
+                      }
+                  ],
+                  "Version": "2012-10-17"
+              },
+              "host": [
+                  "s3.us-west-2.amazonaws.com"
+              ],
+              "policy": [
+                  ""
+              ]
+          },
+          "responseElements": null,
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  }
+              },
+              "type": "AssumedRole"
+          },
+          "vpcEndpointId": "vpce-1111"
+      }

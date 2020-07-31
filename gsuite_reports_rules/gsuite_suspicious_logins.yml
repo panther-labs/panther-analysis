@@ -1,0 +1,56 @@
+AnalysisType: rule
+Filename: gsuite_suspicious_logins.py
+RuleID: GSuite.SuspiciousLogins
+DisplayName: Suspicious GSuite Login
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  GSuite reported a suspicious login for this user.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#suspicious_login
+Runbook: >
+  Checkout the details of the login and verify this behavior with the user to ensure the account wasn't compromised.
+Tests:
+  -
+    Name: Normal Login Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'login'},
+        'events': [{'type': 'login'}]
+      }
+  -
+    Name: Account Warning Not For Suspicious Login
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'account_warning',
+            'name': 'account_suspended'
+          }
+        ]
+      }
+  -
+    Name: Account Warning For Suspicious Login
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'account_warning',
+            'name': 'suspicious_login'
+          }
+        ]
+      }

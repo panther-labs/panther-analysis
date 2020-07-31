@@ -1,0 +1,468 @@
+AnalysisType: rule
+Filename: gcp_iam_admin_role_assigned.py
+RuleID: GCP.IAM.AdminRoleAssigned
+DisplayName: GCP IAM Admin Role Assigned
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Identity & Access Management
+Reports:
+  MITRE ATT&CK:
+    - Privilege Escalation:Valid Accounts
+Severity: Medium
+Description: Attaching an audit role manually could be a sign of privilege escalation
+Runbook: Verify with the user who attached the role or add to a whitelist
+Tests:
+  -
+    Name: Service Admin Role Assigned
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/eastern-nurve-222999/logs/cloudaudit.googleapis.com%2Factivity",
+        "severity": "NOTICE",
+        "insertId": "-4fgf8odw6xy",
+        "resource": {
+          "type": "project",
+          "labels": {
+            "project_id": "eastern-nurve-222999"
+          }
+        },
+        "timestamp": "2020-05-04 20:53:02.915000000",
+        "receiveTimestamp": "2020-05-04 20:53:04.281679681",
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "resourceName": "projects/eastern-nurve-222999",
+          "status": {},
+          "authenticationInfo": {
+            "principalEmail": "test@runpanther.io"
+          },
+          "authorizationInfo": [
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            },
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            }
+          ],
+          "requestMetadata": {
+            "callerIP": "136.24.229.58",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,gzip(gfe)",
+            "requestAttributes": {},
+            "destinationAttributes": {}
+          },
+          "request": {
+            "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+            "policy": {
+              "bindings": [
+                {
+                  "members": [
+                    "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/compute.serviceAgent"
+                },
+                {
+                  "members": [
+                    "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                    "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                  ],
+                  "role": "roles/editor"
+                },
+                {
+                  "members": [
+                    "user:test@runpanther.io"
+                  ],
+                  "role": "roles/owner"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.subscriber"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.viewer"
+                },
+                {
+                  "members": [
+                    "user:test@gmail.com"
+                  ],
+                  "role": "roles/browser"
+                }
+              ],
+              "etag": "BwWk11rbCfY="
+            },
+            "resource": "eastern-nurve-222999"
+          },
+          "response": {
+            "@type": "type.googleapis.com/google.iam.v1.Policy",
+            "bindings": [
+              {
+                "members": [
+                  "user:test@gmail.com"
+                ],
+                "role": "roles/browser"
+              },
+              {
+                "members": [
+                  "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                ],
+                "role": "roles/compute.serviceAgent"
+              },
+              {
+                "members": [
+                  "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                  "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                ],
+                "role": "roles/editor"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.io"
+                ],
+                "role": "roles/owner"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.subscriber"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.viewer"
+              }
+            ],
+            "etag": "BwWk2LeSpmA="
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "user:test@runpanther.io",
+                  "role": "roles/actions.Admin"
+                },
+                {
+                  "action": "ADD",
+                  "member": "user:test@runpanther.io",
+                  "role": "roles/appengine.appAdmin"
+                },
+                {
+                  "action": "REMOVE",
+                  "member": "user:test@runpanther.io",
+                  "role": "roles/browser"
+                }
+              ]
+            }
+          }
+        }
+      }
+  -
+    Name: Admin Role Assigned
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/eastern-nurve-222999/logs/cloudaudit.googleapis.com%2Factivity",
+        "severity": "NOTICE",
+        "insertId": "-4fgf8odw6xy",
+        "resource": {
+          "type": "project",
+          "labels": {
+            "project_id": "eastern-nurve-222999"
+          }
+        },
+        "timestamp": "2020-05-04 20:53:02.915000000",
+        "receiveTimestamp": "2020-05-04 20:53:04.281679681",
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "resourceName": "projects/eastern-nurve-222999",
+          "status": {},
+          "authenticationInfo": {
+            "principalEmail": "test@runpanther.io"
+          },
+          "authorizationInfo": [
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            },
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            }
+          ],
+          "requestMetadata": {
+            "callerIP": "136.24.229.58",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,gzip(gfe)",
+            "requestAttributes": {},
+            "destinationAttributes": {}
+          },
+          "request": {
+            "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+            "policy": {
+              "bindings": [
+                {
+                  "members": [
+                    "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/compute.serviceAgent"
+                },
+                {
+                  "members": [
+                    "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                    "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                  ],
+                  "role": "roles/editor"
+                },
+                {
+                  "members": [
+                    "user:test@runpanther.io"
+                  ],
+                  "role": "roles/owner"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.subscriber"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.viewer"
+                },
+                {
+                  "members": [
+                    "user:test@gmail.com"
+                  ],
+                  "role": "roles/browser"
+                }
+              ],
+              "etag": "BwWk11rbCfY="
+            },
+            "resource": "eastern-nurve-222999"
+          },
+          "response": {
+            "@type": "type.googleapis.com/google.iam.v1.Policy",
+            "bindings": [
+              {
+                "members": [
+                  "user:test@gmail.com"
+                ],
+                "role": "roles/browser"
+              },
+              {
+                "members": [
+                  "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                ],
+                "role": "roles/compute.serviceAgent"
+              },
+              {
+                "members": [
+                  "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                  "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                ],
+                "role": "roles/editor"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.io"
+                ],
+                "role": "roles/owner"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.subscriber"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.viewer"
+              }
+            ],
+            "etag": "BwWk2LeSpmA="
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "user:test@gmail.com",
+                  "role": "roles/owner"
+                }
+              ]
+            }
+          }
+        }
+      }
+  -
+    Name: Browser Role Assigned
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/eastern-nurve-222999/logs/cloudaudit.googleapis.com%2Factivity",
+        "severity": "NOTICE",
+        "insertId": "-4fgf8odw6xy",
+        "resource": {
+          "type": "project",
+          "labels": {
+            "project_id": "eastern-nurve-222999"
+          }
+        },
+        "timestamp": "2020-05-04 20:53:02.915000000",
+        "receiveTimestamp": "2020-05-04 20:53:04.281679681",
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "resourceName": "projects/eastern-nurve-222999",
+          "status": {},
+          "authenticationInfo": {
+            "principalEmail": "test@runpanther.io"
+          },
+          "authorizationInfo": [
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            },
+            {
+              "resource": "projects/eastern-nurve-222999",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true
+            }
+          ],
+          "requestMetadata": {
+            "callerIP": "136.24.229.58",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36,gzip(gfe)",
+            "requestAttributes": {},
+            "destinationAttributes": {}
+          },
+          "request": {
+            "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+            "policy": {
+              "bindings": [
+                {
+                  "members": [
+                    "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/compute.serviceAgent"
+                },
+                {
+                  "members": [
+                    "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                    "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                  ],
+                  "role": "roles/editor"
+                },
+                {
+                  "members": [
+                    "user:test@runpanther.io"
+                  ],
+                  "role": "roles/owner"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.subscriber"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.viewer"
+                },
+                {
+                  "members": [
+                    "user:test@gmail.com"
+                  ],
+                  "role": "roles/browser"
+                }
+              ],
+              "etag": "BwWk11rbCfY="
+            },
+            "resource": "eastern-nurve-222999"
+          },
+          "response": {
+            "@type": "type.googleapis.com/google.iam.v1.Policy",
+            "bindings": [
+              {
+                "members": [
+                  "user:test@gmail.com"
+                ],
+                "role": "roles/browser"
+              },
+              {
+                "members": [
+                  "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                ],
+                "role": "roles/compute.serviceAgent"
+              },
+              {
+                "members": [
+                  "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                  "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                ],
+                "role": "roles/editor"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.io"
+                ],
+                "role": "roles/owner"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.subscriber"
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@eastern-nurve-222999.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.viewer"
+              }
+            ],
+            "etag": "BwWk2LeSpmA="
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "user:test@gmail.com",
+                  "role": "roles/browser"
+                }
+              ]
+            }
+          }
+        }
+      }

@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: domain_blocked.py
+RuleID: CiscoUmbrella.DNS.Blocked
+DisplayName: Cisco Umbrella Domain Blocked
+Enabled: true
+DedupPeriodMinutes: 480 # 8 hours
+LogTypes:
+  - CiscoUmbrella.DNS
+Tags:
+  - DNS
+Severity: Low
+Description: Monitor blocked domains
+Runbook: Inspect the blocked domain and lookup for malware
+Tests:
+  -
+    Name: Domain Blocked
+    LogType: CiscoUmbrella.DNS
+    ExpectedResult: true
+    Log:
+      {
+        "action": "Blocked",
+        "internalIp": "136.24.229.58",
+        "externalIp": "136.24.229.58",
+        "timestamp": "2020-05-21 19:20:25.000",
+        "responseCode": "NOERROR",
+        "domain": "malware.gvt2.com."
+      }
+  -
+    Name: Action Allowed
+    LogType: CiscoUmbrella.DNS
+    ExpectedResult: false
+    Log:
+      {
+        "action": "Allowed",
+        "internalIp": "136.24.229.58",
+        "externalIp": "136.24.229.58",
+        "timestamp": "2020-05-21 19:20:25.000",
+        "responseCode": "NOERROR",
+        "domain": "beacons3.gvt2.com."
+      }

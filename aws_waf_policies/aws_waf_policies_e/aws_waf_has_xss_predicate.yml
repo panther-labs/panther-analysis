@@ -1,0 +1,107 @@
+AnalysisType: policy
+Filename: aws_waf_has_xss_predicate.py
+PolicyID: AWS.WAF.HasXSSPredicate
+DisplayName: AWS WAF Has XSS Predicate
+Enabled: true
+ResourceTypes:
+  - AWS.WAF.Regional.WebACL
+  - AWS.WAF.WebACL
+Tags:
+  - AWS
+  - PCI
+Reports:
+  PCI:
+    - 6.5.7
+Severity: High
+Description: >
+  This policy validates that all WAF's have at least one rule with a predicate matching on and blocking XSS attacks.
+Runbook: >
+  Configure a web ACL rule with a XSS matching predicate and add it to the WAF.
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-xss-conditions.html
+Tests:
+  -
+    Name: Web ACL Has XSS Predicate
+    ResourceType: AWS.WAF.Regional.WebACL
+    ExpectedResult: true
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:waf-regional:us-west-2:123456789012:webacl/1",
+          "DefaultAction": {
+              "Type": "ALLOW"
+          },
+          "Id": "1",
+          "MetricName": "example-metric",
+          "Name": "example-waf",
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:waf-regional:us-west-2:123456789012:webacl/1",
+          "ResourceType": "AWS.WAF.Regional.WebACL",
+          "Rules": [
+              {
+                  "Action": {
+                      "Type": "BLOCK"
+                  },
+                  "ExcludedRules": null,
+                  "MetricName": "example-rule",
+                  "Name": "example-rule",
+                  "OverrideAction": null,
+                  "Predicates": [
+                      {
+                          "DataId": "1",
+                          "Negated": false,
+                          "Type": "XssMatch"
+                      }
+                  ],
+                  "Priority": 2,
+                  "RuleId": "1",
+                  "Type": "REGULAR"
+              }
+          ],
+          "Tags": {
+            "environment": "pci"
+          },
+          "TimeCreated": null
+      }
+  -
+    Name: Web ACL Does Not Have XSS Predicate
+    ResourceType: AWS.WAF.Regional.WebACL
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:waf-regional:us-west-2:123456789012:webacl/1",
+          "DefaultAction": {
+              "Type": "ALLOW"
+          },
+          "Id": "1",
+          "MetricName": "example-metric",
+          "Name": "example-waf",
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:waf-regional:us-west-2:123456789012:webacl/1",
+          "ResourceType": "AWS.WAF.Regional.WebACL",
+          "Rules": [
+              {
+                  "Action": {
+                      "Type": "BLOCK"
+                  },
+                  "ExcludedRules": null,
+                  "MetricName": "example-rule",
+                  "Name": "example-rule",
+                  "OverrideAction": null,
+                  "Predicates": [
+                      {
+                          "DataId": "1",
+                          "Negated": false,
+                          "Type": "NotXssMatch"
+                      }
+                  ],
+                  "Priority": 2,
+                  "RuleId": "1",
+                  "Type": "REGULAR"
+              }
+          ],
+          "Tags": {
+            "environment": "pci"
+          },
+          "TimeCreated": null
+      }

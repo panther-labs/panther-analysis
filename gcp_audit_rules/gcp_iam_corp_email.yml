@@ -1,0 +1,390 @@
+AnalysisType: rule
+Filename: gcp_iam_corp_email.py
+RuleID: GCP.IAM.CorporateEmail
+DisplayName: GCP Corporate Email Not Used
+Enabled: true
+DedupPeriodMinutes: 720 # 12 hours
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Identity & Access Management
+Reports:
+  MITRE ATT&CK:
+    - Persistence:Create Account
+  CIS:
+    - 1.1
+Severity: Low
+Description: A Gmail account is being used instead of a corporate email
+Runbook: Remove the user
+Tests:
+  -
+    Name: Gmail account added
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "status": {},
+          "authenticationInfo": {
+            "principalEmail": "test@runpanther.com"
+          },
+          "requestMetadata": {
+            "callerIp": "136.24.229.58",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
+            "requestAttributes": {},
+            "destinationAttributes": {}
+          },
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "authorizationInfo": [
+            {
+              "resource": "projects/western-verve-123456",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true,
+              "resourceAttributes": {}
+            },
+            {
+              "resource": "projects/western-verve-123456",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true,
+              "resourceAttributes": {}
+            }
+          ],
+          "resourceName": "projects/western-verve-123456",
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "role": "roles/viewer",
+                  "member": "user:username@gmail.com"
+                }
+              ]
+            }
+          },
+          "request": {
+            "resource": "western-verve-123456",
+            "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+            "policy": {
+              "bindings": [
+                {
+                  "members": [
+                    "user:user-two@gmail.com"
+                  ],
+                  "role": "roles/appengine.serviceAdmin"
+                },
+                {
+                  "members": [
+                    "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/compute.serviceAgent"
+                },
+                {
+                  "role": "roles/editor",
+                  "members": [
+                    "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                    "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                  ]
+                },
+                {
+                  "members": [
+                    "user:test@runpanther.com"
+                  ],
+                  "role": "roles/owner"
+                },
+                {
+                  "members": [
+                    "user:user-two@gmail.com"
+                  ],
+                  "role": "roles/pubsub.admin"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.subscriber"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.viewer"
+                },
+                {
+                  "role": "roles/resourcemanager.organizationAdmin",
+                  "members": [
+                    "user:test@runpanther.com"
+                  ]
+                },
+                {
+                  "members": [
+                    "user:username@gmail.com"
+                  ],
+                  "role": "roles/viewer"
+                }
+              ],
+              "etag": "BwWk8zJlg2o="
+            }
+          },
+          "response": {
+            "etag": "BwWlp7rH6tY=",
+            "bindings": [
+              {
+                "members": [
+                  "user:user-two@gmail.com"
+                ],
+                "role": "roles/appengine.serviceAdmin"
+              },
+              {
+                "members": [
+                  "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                ],
+                "role": "roles/compute.serviceAgent"
+              },
+              {
+                "members": [
+                  "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                  "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                ],
+                "role": "roles/editor"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.com"
+                ],
+                "role": "roles/owner"
+              },
+              {
+                "role": "roles/pubsub.admin",
+                "members": [
+                  "user:user-two@gmail.com"
+                ]
+              },
+              {
+                "role": "roles/pubsub.subscriber",
+                "members": [
+                  "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                ]
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.viewer"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.com"
+                ],
+                "role": "roles/resourcemanager.organizationAdmin"
+              },
+              {
+                "members": [
+                  "user:username@gmail.com"
+                ],
+                "role": "roles/viewer"
+              }
+            ],
+            "@type": "type.googleapis.com/google.iam.v1.Policy"
+          }
+        },
+        "insertId": "mrbji0dal80",
+        "resource": {
+          "type": "project",
+          "labels": {
+            "project_id": "western-verve-123456"
+          }
+        },
+        "timestamp": "2020-05-15T03:51:35.019Z",
+        "severity": "NOTICE",
+        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2020-05-15T03:51:35.977314225Z"
+      }
+  -
+    Name: Runpanther account added
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "status": {},
+          "authenticationInfo": {
+            "principalEmail": "test@runpanther.com"
+          },
+          "requestMetadata": {
+            "callerIp": "136.24.229.58",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
+            "requestAttributes": {},
+            "destinationAttributes": {}
+          },
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "authorizationInfo": [
+            {
+              "resource": "projects/western-verve-123456",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true,
+              "resourceAttributes": {}
+            },
+            {
+              "resource": "projects/western-verve-123456",
+              "permission": "resourcemanager.projects.setIamPolicy",
+              "granted": true,
+              "resourceAttributes": {}
+            }
+          ],
+          "resourceName": "projects/western-verve-123456",
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "role": "roles/viewer",
+                  "member": "user:username@runpanther.com"
+                }
+              ]
+            }
+          },
+          "request": {
+            "resource": "western-verve-123456",
+            "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+            "policy": {
+              "bindings": [
+                {
+                  "members": [
+                    "user:user-two@gmail.com"
+                  ],
+                  "role": "roles/appengine.serviceAdmin"
+                },
+                {
+                  "members": [
+                    "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/compute.serviceAgent"
+                },
+                {
+                  "role": "roles/editor",
+                  "members": [
+                    "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                    "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                  ]
+                },
+                {
+                  "members": [
+                    "user:test@runpanther.com"
+                  ],
+                  "role": "roles/owner"
+                },
+                {
+                  "members": [
+                    "user:user-two@gmail.com"
+                  ],
+                  "role": "roles/pubsub.admin"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.subscriber"
+                },
+                {
+                  "members": [
+                    "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                  ],
+                  "role": "roles/pubsub.viewer"
+                },
+                {
+                  "role": "roles/resourcemanager.organizationAdmin",
+                  "members": [
+                    "user:test@runpanther.com"
+                  ]
+                },
+                {
+                  "members": [
+                    "user:username@gmail.com"
+                  ],
+                  "role": "roles/viewer"
+                }
+              ],
+              "etag": "BwWk8zJlg2o="
+            }
+          },
+          "response": {
+            "etag": "BwWlp7rH6tY=",
+            "bindings": [
+              {
+                "members": [
+                  "user:user-two@gmail.com"
+                ],
+                "role": "roles/appengine.serviceAdmin"
+              },
+              {
+                "members": [
+                  "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com"
+                ],
+                "role": "roles/compute.serviceAgent"
+              },
+              {
+                "members": [
+                  "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
+                  "serviceAccount:951849100836@cloudservices.gserviceaccount.com"
+                ],
+                "role": "roles/editor"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.com"
+                ],
+                "role": "roles/owner"
+              },
+              {
+                "role": "roles/pubsub.admin",
+                "members": [
+                  "user:user-two@gmail.com"
+                ]
+              },
+              {
+                "role": "roles/pubsub.subscriber",
+                "members": [
+                  "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                ]
+              },
+              {
+                "members": [
+                  "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com"
+                ],
+                "role": "roles/pubsub.viewer"
+              },
+              {
+                "members": [
+                  "user:test@runpanther.com"
+                ],
+                "role": "roles/resourcemanager.organizationAdmin"
+              },
+              {
+                "members": [
+                  "user:username@gmail.com"
+                ],
+                "role": "roles/viewer"
+              }
+            ],
+            "@type": "type.googleapis.com/google.iam.v1.Policy"
+          }
+        },
+        "insertId": "mrbji0dal80",
+        "resource": {
+          "type": "project",
+          "labels": {
+            "project_id": "western-verve-123456"
+          }
+        },
+        "timestamp": "2020-05-15T03:51:35.019Z",
+        "severity": "NOTICE",
+        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2020-05-15T03:51:35.977314225Z"
+      }

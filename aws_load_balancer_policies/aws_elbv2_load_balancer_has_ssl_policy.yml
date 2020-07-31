@@ -1,0 +1,182 @@
+AnalysisType: policy
+Filename: aws_elbv2_load_balancer_has_ssl_policy.py
+PolicyID: AWS.ELBV2.LoadBalancer.HasSSLPolicy
+DisplayName: AWS Enforces SSL Policies
+Enabled: true
+ResourceTypes:
+  - AWS.ELBV2.ApplicationLoadBalancer
+Tags:
+  - AWS
+  - PCI
+Reports:
+  PCI:
+    - 2.2.3
+    - 4.1
+Severity: High
+Description: This policy validates that ELBV2 load balancer listeners are using an SSL policy.
+Runbook: Apply an SSL policy to the listener to force HTTPS.
+Reference: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-update-certificates.html#update-security-policy
+Tests:
+  -
+    Name: LB Using SSL Policy
+    ResourceType: AWS.ELBV2.ApplicationLoadBalancer
+    ExpectedResult: true
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+          "AvailabilityZones": [
+              {
+                  "LoadBalancerAddresses": null,
+                  "SubnetId": "subnet-1",
+                  "ZoneName": "us-west-2d"
+              },
+              {
+                  "LoadBalancerAddresses": null,
+                  "SubnetId": "subnet-1",
+                  "ZoneName": "us-west-2a"
+              }
+          ],
+          "CanonicalHostedZonedId": "AAAA",
+          "DNSName": "internal-example-lb-1111.us-west-2.elb.amazonaws.com",
+          "IpAddressType": "ipv4",
+          "Listeners": [
+              {
+                  "Certificates": [
+                      {
+                          "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/example-cert",
+                          "IsDefault": null
+                      }
+                  ],
+                  "DefaultActions": [
+                      {
+                          "AuthenticateCognitoConfig": null,
+                          "AuthenticateOidcConfig": null,
+                          "FixedResponseConfig": null,
+                          "Order": null,
+                          "RedirectConfig": null,
+                          "TargetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/test-lb-target-group/1",
+                          "Type": "forward"
+                      }
+                  ],
+                  "ListenerArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:listener/app/example-lb/1/1",
+                  "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+                  "Port": 443,
+                  "Protocol": "HTTPS",
+                  "SslPolicy": "ELBSecurityPolicy-2016-08"
+              }
+          ],
+          "Name": "example-lb",
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+          "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer",
+          "SSLPolicies": {
+              "ELBSecurityPolicy-2016-08": {
+                  "Ciphers": [
+                      {
+                          "Name": "ECDHE-ECDSA-AES128-GCM-SHA256",
+                          "Priority": 1
+                      },
+                      {
+                          "Name": "ECDHE-RSA-AES128-GCM-SHA256",
+                          "Priority": 2
+                      },
+                      {
+                          "Name": "AES256-SHA",
+                          "Priority": 3
+                      }
+                  ],
+                  "Name": "ELBSecurityPolicy-2016-08",
+                  "SslProtocols": [
+                      "TLSv1",
+                      "TLSv1.1",
+                      "TLSv1.2"
+                  ]
+              }
+          },
+          "Scheme": "internal",
+          "SecurityGroups": [
+              "sg-1"
+          ],
+          "State": {
+              "Code": "active",
+              "Reason": null
+          },
+          "Tags": {
+              "environment": "pci"
+          },
+          "TimeCreated": "2019-01-01T00:00:00.000Z",
+          "Type": "application",
+          "VpcId": "vpc-1",
+          "WebAcl": "1111-2222-3333"
+      }
+  -
+    Name: LB Not Using SSL Policy
+    ResourceType: AWS.ELBV2.ApplicationLoadBalancer
+    ExpectedResult: False
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+          "AvailabilityZones": [
+              {
+                  "LoadBalancerAddresses": null,
+                  "SubnetId": "subnet-1",
+                  "ZoneName": "us-west-2d"
+              },
+              {
+                  "LoadBalancerAddresses": null,
+                  "SubnetId": "subnet-1",
+                  "ZoneName": "us-west-2a"
+              }
+          ],
+          "CanonicalHostedZonedId": "AAAA",
+          "DNSName": "internal-example-lb-1111.us-west-2.elb.amazonaws.com",
+          "IpAddressType": "ipv4",
+          "Listeners": [
+              {
+                  "Certificates": [
+                      {
+                          "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/example-cert",
+                          "IsDefault": null
+                      }
+                  ],
+                  "DefaultActions": [
+                      {
+                          "AuthenticateCognitoConfig": null,
+                          "AuthenticateOidcConfig": null,
+                          "FixedResponseConfig": null,
+                          "Order": null,
+                          "RedirectConfig": null,
+                          "TargetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/test-lb-target-group/1",
+                          "Type": "forward"
+                      }
+                  ],
+                  "ListenerArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:listener/app/example-lb/1/1",
+                  "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+                  "Port": 443,
+                  "Protocol": "HTTPS",
+                  "SslPolicy": "ELBSecurityPolicy-2016-08"
+              }
+          ],
+          "Name": "example-lb",
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/example-lb/1",
+          "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer",
+          "SSLPolicies": null,
+          "Scheme": "internal",
+          "SecurityGroups": [
+              "sg-1"
+          ],
+          "State": {
+              "Code": "active",
+              "Reason": null
+          },
+          "Tags": {
+              "environment": "pci"
+          },
+          "TimeCreated": "2019-01-01T00:00:00.000Z",
+          "Type": "application",
+          "VpcId": "vpc-1",
+          "WebAcl": "1111-2222-3333"
+      }
