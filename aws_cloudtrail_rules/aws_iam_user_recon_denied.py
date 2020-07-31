@@ -32,18 +32,18 @@ def rule(event):
         if event['eventSource'].startswith(event_source) and any(
                 fnmatch(event['eventName'], event_pattern)
                 for event_pattern in event_patterns):
-            return True
+            return evaluate_threshold(
+                '{}-AccessDeniedCounter'.format(
+                    event['userIdentity'].get('arn')),
+                THRESH,
+                THRESH_TTL,
+            )
 
-    # Return an alert if the threshold was exceeded
-    return evaluate_threshold(
-        '{}-AccessDeniedCounter'.format(event['userIdentity'].get('arn')),
-        THRESH,
-        THRESH_TTL,
-    )
+    return False
 
 
 def dedup(event):
-    return event['userIdentity']['arn']
+    return event['userIdentity'].get('arn')
 
 
 def title(event):
