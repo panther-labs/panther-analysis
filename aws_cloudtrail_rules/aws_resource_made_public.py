@@ -1,13 +1,27 @@
 import json
 from policyuniverse.policy import Policy
 
-API_TO_PARAMETER_MAPPING = {
-    'SetRepositoryPolicy': 'policyText',
-    'CreateElasticsearchDomain': 'accessPolicies',
-    'UpdateElasticsearchDomainConfig': 'accessPolicies',
-    'CreateKey': 'policy',
-    'PutKeyPolicy': 'policy',
-    'PutResourcePolicy': 'resourcePolicy',
+PARAMETER_LOOKUP_MAPPING = {
+    'PutBucketPolicy':
+        lambda x: x.get('bucketPolicy'),
+    'SetVaultAccessPolicy':
+        lambda x: json.loads(x.get('policy', {}).get('policy', '{}')),
+    'SetQueueAttributes':
+        lambda x: json.loads(x.get('attributes', {}).get('Policy', '{}')),
+    'CreateTopic':
+        lambda x: json.loads(x.get('attributes', {}).get('Policy', '{}')),
+    'SetRepositoryPolicy':
+        lambda x: json.loads(x.get('policyText', {})),
+    'CreateElasticsearchDomain':
+        lambda x: json.loads(x.get('accessPolicies', {})),
+    'UpdateElasticsearchDomainConfig':
+        lambda x: json.loads(x.get('accessPolicies', {})),
+    'CreateKey':
+        lambda x: json.loads(x.get('policy', {})),
+    'PutKeyPolicy':
+        lambda x: json.loads(x.get('policy', {})),
+    'PutResourcePolicy':
+        lambda x: json.loads(x.get('resourcePolicy', {})),
 }
 
 
@@ -22,27 +36,13 @@ def policy_is_not_acceptable(json_policy):
 
 def rule(event):
     parameters = event.get('requestParameters', {})
+    parameter_lookup = PARAMETER_LOOKUP_MAPPING.get(event['eventName'])
 
-    parameter_name = API_TO_PARAMETER_MAPPING.get(event['eventName'], '{}')
-    if parameter_name:
-        policy = parameters.get(parameter_name, '{}')
-        return policy_is_not_acceptable(json.loads(policy))
+    if parameter_lookup:
+        policy = parameter_lookup(parameters)
+        return policy_is_not_acceptable(policy)
 
-    # S3
-    if event['eventName'] == 'PutBucketPolicy':
-        return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
-
-    # S3 Glacier
-    if event['eventName'] == 'SetVaultAccessPolicy':
-        policy = parameters.get('policy', {}).get('policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
-
-    # SQS
-    if event['eventName'] in ['SetQueueAttributes', 'CreateTopic']:
-        policy = parameters.get('attributes', {}).get('Policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
-
-    # SNS
+    # SNS special case
     if event['eventName'] == 'SetTopicAttributes':
         if parameters.get('attributeName') == 'Policy':
             policy = parameters.get('attributeValue', '{}')
