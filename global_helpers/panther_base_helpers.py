@@ -58,8 +58,3 @@ def is_dmz_tags(resource):
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
 IS_DMZ = is_dmz_tags
-
-
-# This policy is a no-op
-def policy(_):
-    return True

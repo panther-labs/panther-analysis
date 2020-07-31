@@ -56,15 +56,15 @@ def gen_key(event):
 # Taken from stack overflow user Michael0x2a: https://stackoverflow.com/a/19412565/6645635
 def haversine_distance(grid_one, grid_two):
     # approximate radius of earth in km
-    R = 6373.0
+    radius = 6373.0
     dlat = radians(grid_two['lat']) - radians(grid_one['lat'])
     dlon = radians(grid_two['lon']) - radians(grid_one['lon'])
 
-    a = sin(dlat / 2)**2 + cos(grid_one['lat']) * cos(grid_two['lat']) * sin(
-        dlon / 2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    distance_a = sin(dlat / 2)**2 + cos(grid_one['lat']) * cos(
+        grid_two['lat']) * sin(dlon / 2)**2
+    distance_c = 2 * atan2(sqrt(distance_a), sqrt(1 - distance_a))
 
-    return R * c
+    return radius * distance_c
 
 
 def store_login_info(key, event):

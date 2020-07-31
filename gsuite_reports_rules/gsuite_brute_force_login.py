@@ -1,5 +1,4 @@
-from fnmatch import fnmatch
-from ipaddress import ip_address
+from panther_oss_helpers import evaluate_threshold  # pylint: disable=import-error
 
 # TODO change to native thresholding once support is added
 # tentatively slated for 1.7
@@ -16,7 +15,6 @@ def rule(event):
     for detail in event.get('events', [{}]):
         if detail.get('type') == 'login' and detail.get(
                 'name') == 'login_failure':
-            from panther_oss_helpers import evaluate_threshold  # pylint: disable=import-error
             return evaluate_threshold(
                 '{}-GSuiteLoginFailedCounter'.format(
                     event.get('actor', {}).get('email')),
