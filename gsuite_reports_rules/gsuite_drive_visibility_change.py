@@ -1,10 +1,14 @@
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup
+
+
 def rule(event):
     if event['id'].get('applicationName') != 'drive':
         return False
 
     for details in event.get('events', [{}]):
         if (details.get('type') == 'acl_change' and
-                details.get('visibility_change') == 'external'):
+                param_lookup(details.get('parameters', {}),
+                             'visibility_change') == 'external'):
             return True
 
     return False

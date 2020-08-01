@@ -1,0 +1,62 @@
+AnalysisType: rule
+Filename: gsuite_high_severity_rule.py
+RuleID: GSuite.HighSeverityRule
+DisplayName: GSuite High Severity Rule Triggered
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: High
+Description: >
+  A high severity GSuite rule was triggered.
+Reference: https://support.google.com/a/answer/9420866
+Runbook: >
+  Investigate what triggered the rule.
+Tests:
+  -
+    Name: Non Triggered Rule
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'rules'},
+        'events': [
+          {
+            'type': 'action_complete_type',
+          }
+        ]
+      }
+  -
+    Name: High Severity Rule
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'rules'},
+        'events': [
+          {
+            'type': 'rule_trigger_type',
+            'name': 'rule_trigger',
+            'parameters': [{'name': 'severity', 'value': 'HIGH'}]
+          }
+        ]
+      }
+  -
+    Name: Medium Severity Rule
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'rules'},
+        'events': [
+          {
+            'type': 'rule_trigger_type',
+            'name': 'rule_trigger',
+            'parameters': [{'name': 'severity', 'value': 'MEDIUM'}]
+          }
+        ]
+      }

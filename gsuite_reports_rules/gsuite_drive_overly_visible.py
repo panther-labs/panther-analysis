@@ -1,3 +1,5 @@
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup
+
 RESOURCE_CHANGE_EVENTS = {
     'create',
     'move',
@@ -18,7 +20,8 @@ def rule(event):
     for details in event.get('events', [{}]):
         if (details.get('type') == 'access' and
                 details.get('name') in RESOURCE_CHANGE_EVENTS and
-                details.get('visibility') in PERMISSIVE_VISIBILITY):
+                param_lookup(details.get('parameters', {}),
+                             'visibility') in PERMISSIVE_VISIBILITY):
             return True
 
     return False
