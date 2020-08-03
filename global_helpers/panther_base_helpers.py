@@ -79,17 +79,17 @@ GSUITE_PARAMETER_VALUES = [
 # Example parameters list:
 # parameters = [
 #   {
-#		"name": "event_id",
-#		"value": "abc123"
-#	},
-#	{
-#		"name": "start_time",
-#		"intValue": "63731901000"
-#	},
-#	{
-#		"name": "end_time",
-#		"intValue": "63731903000"
-#	},
+#       "name": "event_id",
+#       "value": "abc123"
+#   },
+#   {
+#       "name": "start_time",
+#       "intValue": 63731901000
+#   },
+#   {
+#       "name": "end_time",
+#       "intValue": 63731903000
+#   },
 #   {
 #       "name": "things",
 #       "multiValue": [ "DRIVE" , "MEME"]
