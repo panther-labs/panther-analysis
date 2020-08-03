@@ -58,3 +58,49 @@ def is_dmz_tags(resource):
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
 IS_DMZ = is_dmz_tags
+
+GSUITE_PARAMETER_VALUES = [
+    'value',
+    'intValue',
+    'boolValue',
+    'multiValue',
+    'multiIntValue',
+    'messageValue',
+    'multiMessageValue',
+]
+
+
+# GSuite parameters are formatted as a list of dictionaries, where each dictionary has a 'name' key
+# that maps to the name of the parameter, and one key from GSUITE_PARAMETER_VALUES that maps to the
+# value of the parameter. This means to lookup the value of a particular parameter, you must
+# traverse the entire list of parameters to find it and then know (or guess) what type of value it
+# contains. This helper function handles that for us.
+#
+# Example parameters list:
+# parameters = [
+#   {
+#       "name": "event_id",
+#       "value": "abc123"
+#   },
+#   {
+#       "name": "start_time",
+#       "intValue": 63731901000
+#   },
+#   {
+#       "name": "end_time",
+#       "intValue": 63731903000
+#   },
+#   {
+#       "name": "things",
+#       "multiValue": [ "DRIVE" , "MEME"]
+#   }
+# ]
+def gsuite_parameter_lookup(parameters, key):
+    for param in parameters:
+        if param['name'] != key:
+            continue
+        for value in GSUITE_PARAMETER_VALUES:
+            if value in param:
+                return param[value]
+        return None
+    return None

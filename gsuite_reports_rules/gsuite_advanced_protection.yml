@@ -1,0 +1,46 @@
+AnalysisType: rule
+Filename: gsuite_advanced_protection.py
+RuleID: GSuite.AdvancedProtection
+DisplayName: GSuite User Advanced Protection Change
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Low
+Description: >
+  A user disabled advanced protection for themselves.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/user-accounts#titanium_change
+Runbook: >
+  Have the user re-enable Google Advanced Protection
+Tests:
+  -
+    Name: Advanced Protection Enabled
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'user_accounts'},
+        'events': [
+          {
+            'type': 'titanium_change',
+            'name': 'titanium_enroll'
+          }
+        ]
+      }
+  -
+    Name: Advanced Protection Disabled
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'user_accounts'},
+        'events': [
+          {
+            'type': 'titanium_change',
+            'name': 'titanium_unenroll'
+          }
+        ]
+      }

@@ -1,0 +1,46 @@
+AnalysisType: rule
+Filename: gsuite_group_banned_user.py
+RuleID: GSuite.GroupBannedUser
+DisplayName: GSuite User Banned from Group
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Low
+Description: >
+  A GSuite user was banned from an enterprise group by moderator action.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/groups-enterprise#ban_user_with_moderation
+Runbook: >
+  Investigate the banned user to see if further disciplinary action needs to be taken.
+Tests:
+  -
+    Name: User Added
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'groups_enterprise'},
+        'events': [
+          {
+            'type': 'moderator_action',
+            'name': 'add_user'
+          }
+        ]
+      }
+  -
+    Name: User Banned from Group
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'groups_enterprise'},
+        'events': [
+          {
+            'type': 'moderator_action',
+            'name': 'ban_user_with_moderation'
+          }
+        ]
+      }

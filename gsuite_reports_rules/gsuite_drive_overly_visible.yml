@@ -1,0 +1,63 @@
+AnalysisType: rule
+Filename: gsuite_drive_overly_visible.py
+RuleID: GSuite.DriveOverlyVisible
+DisplayName: GSuite Overly Visible Drive Document
+Enabled: true
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  A Google drive resource that is overly visible has been modified.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/drive#access
+Runbook: >
+  Investigate whether the drive document is appropriate to be this visible.
+Tests:
+  -
+    Name: Access Event
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'access',
+            'name': 'download'
+          }
+        ]
+      }
+  -
+    Name: Modify Event Without Over Visibility
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'access',
+            'name': 'edit',
+            'parameters': [{'name': 'visibility', 'value': 'private'}]
+          }
+        ]
+      }
+  -
+    Name: Overly Visible Doc Modified
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'access',
+            'name': 'edit',
+            'parameters': [{'name': 'visibility', 'value': 'people_with_link'}]
+          }
+        ]
+      }

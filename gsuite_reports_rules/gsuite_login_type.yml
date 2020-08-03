@@ -1,0 +1,47 @@
+AnalysisType: rule
+Filename: gsuite_login_type.py
+RuleID: GSuite.LoginType
+DisplayName: GSuite Login Type
+Enabled: false
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+  - Configuration Required
+Severity: Medium
+Description: >
+  A login of a non-approved type was detected for this user.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login
+Runbook: >
+  Correct the user account settings so that only logins of approved types are available.
+Tests:
+  -
+    Name: Login With Approved Type
+    LogType: GSuites.Reports
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'login',
+            'parameters': [{'name': 'login_type', 'value': 'saml'}]
+          }
+        ]
+      }
+  -
+    Name: Unapproved Login Type
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'login'},
+        'events': [
+          {
+            'type': 'login',
+            'parameters': [{'name': 'login_type', 'value': 'carrier_pigeon'}]
+          }
+        ]
+      }
