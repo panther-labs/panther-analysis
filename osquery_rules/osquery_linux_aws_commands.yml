@@ -47,7 +47,7 @@ Tests:
         }
       }
   -
-    Name:  Command with quote executed
+    Name: Command with quote executed
     LogType: Osquery.Differential
     ExpectedResult: false
     Log:
@@ -56,6 +56,21 @@ Tests:
         "action": "added",
         "columns": {
           "command": "git commit -m 'all done'",
+          "uid": "1000",
+          "directory": "/home/ubuntu",
+          "username": "ubuntu"
+        }
+      }
+  -
+    Name: Invalid command ignored
+    LogType: Osquery.Differential
+    ExpectedResult: false
+    Log:
+      {
+        "name": "pack_incident-response_shell_history",
+        "action": "added",
+        "columns": {
+          "command": "unopened '",
           "uid": "1000",
           "directory": "/home/ubuntu",
           "username": "ubuntu"
