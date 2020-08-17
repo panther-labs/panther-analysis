@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: teleport_errors.py
+RuleID: Teleport.HighErrorRate
+DisplayName: Teleport High SSH Errors
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - SSH
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Valid Accounts
+Description: A high volume of SSH errors could indicate a brute-force attack
+Threshold: 10
+DedupPeriodMinutes: 15
+Reference: https://gravitational.com/teleport/docs/admin-guide/
+Runbook: >
+  Check that the user making the failed requests legitimately tried logging in that many times.
+Tests:
+  -
+    Name: SSH Errors
+    LogType: Gravitational.TeleportAudit
+    ExpectedResult: true
+    Log:
+      {
+        "code": "T3007W",
+        "error": "ssh: principal \"jack\" not in the set of valid principals for given certificate: [\"ec2-user\"]",
+        "event": "auth",
+        "success": false,
+        "time": "2020-08-13T18:39:42Z",
+        "uid": "53e474cc-db1c-45f1-a60d-b31239e20098",
+        "user": "panther"
+      }
+  -
+    Name: Echo command
+    LogType: Gravitational.TeleportAudit
+    ExpectedResult: false
+    Log:
+      {
+        "argv": [],
+        "cgroup_id": 4294967537,
+        "code": "T4000I",
+        "ei": 15,
+        "event": "session.command",
+        "login": "root",
+        "namespace": "default",
+        "path": "/bin/echo",
+        "pid": 7143,
+        "ppid": 7115,
+        "program": "echo",
+        "return_code": 0,
+        "server_id": "e75992b4-9e27-456f-b1c9-7a32da83c661",
+        "sid": "8a3fc038-785b-43f3-8737-827b3e25fe5b",
+        "time": "2020-08-17T17:40:37.491Z",
+        "uid": "8eaf8f39-09d4-4a42-a22a-65163d2af702",
+        "user": "panther"
+      }
