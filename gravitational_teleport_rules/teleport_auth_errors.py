@@ -1,5 +1,5 @@
 def rule(event):
-    return bool(event.get('error'))
+    return bool(event.get('error')) and event['event'] == 'auth'
 
 
 def dedup(event):

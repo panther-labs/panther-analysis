@@ -15,11 +15,10 @@ Reports:
     - Execution:Command and Scripting Interpreter
 Reference: https://gravitational.com/teleport/docs/admin-guide/
 Runbook: >
-  Find related commands within the time window and determine if the command was invoked legitimately. Examine the arguments to determine how the command was used.
+  Find related commands within the time window and determine if the command was invoked legitimately. Examine the arguments to determine how the command was used and reach out to the user to verify the intentions.
 Tests:
   -
     Name: Echo command
-    LogType: Gravitational.TeleportAudit
     ExpectedResult: false
     Log:
       {
@@ -43,7 +42,6 @@ Tests:
       }
   -
     Name: Netcat command
-    LogType: Gravitational.TeleportAudit
     ExpectedResult: true
     Log:
       {

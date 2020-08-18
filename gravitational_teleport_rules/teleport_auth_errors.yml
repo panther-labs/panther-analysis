@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: teleport_errors.py
-RuleID: Teleport.HighErrorRate
-DisplayName: Teleport High SSH Errors
+Filename: teleport_auth_errors.py
+RuleID: Teleport.AuthErrors
+DisplayName: Teleport SSH Auth Errors
 Enabled: true
 LogTypes:
   - Gravitational.TeleportAudit
@@ -20,7 +20,6 @@ Runbook: >
 Tests:
   -
     Name: SSH Errors
-    LogType: Gravitational.TeleportAudit
     ExpectedResult: true
     Log:
       {
@@ -34,7 +33,6 @@ Tests:
       }
   -
     Name: Echo command
-    LogType: Gravitational.TeleportAudit
     ExpectedResult: false
     Log:
       {

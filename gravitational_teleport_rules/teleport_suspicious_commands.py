@@ -7,7 +7,7 @@ def rule(event):
     # Ignore commands without arguments
     if not event.get('argv'):
         return False
-    return event['program'] in SUSPICIOUS_COMMANDS
+    return event.get('program') in SUSPICIOUS_COMMANDS
 
 
 def dedup(event):

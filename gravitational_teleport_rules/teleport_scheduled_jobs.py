@@ -5,7 +5,7 @@ def rule(event):
     # Ignore list/read events
     if '-l' in event.get('argv', []):
         return False
-    return event['program'] == 'crontab'
+    return event.get('program') == 'crontab'
 
 
 def dedup(event):

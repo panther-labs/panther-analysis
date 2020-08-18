@@ -9,7 +9,7 @@ def rule(event):
     if not event.get('argv'):
         return False
     # Check that the program is in our watch list
-    return event['program'] in SCAN_COMMANDS
+    return event.get('program') in SCAN_COMMANDS
 
 
 def dedup(event):
