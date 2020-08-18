@@ -279,6 +279,10 @@ def pattern_match(string_to_match: str, pattern: str):
     return fnmatch(string_to_match, pattern)
 
 
+def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
+    return any(fnmatch(string_to_match, p) for p in patterns)
+
+
 def _test_kv_store():
     """Integration tests which validate the functions which interact with the key-value store.
 
