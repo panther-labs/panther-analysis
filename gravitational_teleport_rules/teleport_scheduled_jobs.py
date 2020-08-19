@@ -13,5 +13,5 @@ def dedup(event):
 
 
 def title(event):
-    return 'User [{}] has manually entered a scheduled Linux job'.format(
+    return 'User [{}] has modified scheduled jobs'.format(
         event.get('user', 'USER_NOT_FOUND'))
