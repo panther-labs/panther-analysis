@@ -18,6 +18,29 @@ Reference: https://gravitational.com/teleport/docs/admin-guide/
 Runbook: Validate the user behavior and rotate the host if necessary.
 Tests:
   -
+    Name: Crontab no args
+    ExpectedResult: true
+    Log:
+      {
+        "argv": [],
+        "cgroup_id": 4294967717,
+        "code": "T4000I",
+        "ei": 39,
+        "event": "session.command",
+        "login": "root",
+        "namespace": "default",
+        "path": "/bin/crontab",
+        "pid": 18415,
+        "ppid": 18413,
+        "program": "crontab",
+        "return_code": 0,
+        "server_id": "e073ecab-6091-45da-83e4-80196e7bc659",
+        "sid": "29a3d18c-2c05-453d-979a-2ed888a14788",
+        "time": "2020-08-18T00:05:12.465Z",
+        "uid": "83e88438-efbc-41a2-8135-b0157e0d14c0",
+        "user": "panther"
+      }
+  -
     Name: Crontab Edit
     ExpectedResult: true
     Log:
