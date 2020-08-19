@@ -59,8 +59,10 @@ def haversine_distance(grid_one, grid_two):
     radius = 6371.0
 
     # Convert the grid elements to radians
-    lon1, lat1, lon2, lat2 = map(radians, [grid_one['lon'], grid_one['lat'], grid_two['lon'], grid_two['lat']])
-
+    lon1, lat1, lon2, lat2 = map(
+        radians,
+        [grid_one['lon'], grid_one['lat'], grid_two['lon'], grid_two['lat']])
+    
     dlat = lat2 - lat1
     dlon = lon2 - lon1
 
