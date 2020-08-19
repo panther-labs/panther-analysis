@@ -2,11 +2,8 @@ SCAN_COMMANDS = {'arp', 'arp-scan', 'fping', 'nmap'}
 
 
 def rule(event):
-    # Filter to only the session commands
-    if event['event'] != 'session.command':
-        return False
-    # Ignore scan commands without arguments
-    if not event.get('argv'):
+    # Filter out commands
+    if event['event'] == 'session.command' and not event.get('argv'):
         return False
     # Check that the program is in our watch list
     return event.get('program') in SCAN_COMMANDS
