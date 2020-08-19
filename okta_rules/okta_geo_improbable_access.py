@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from json import dumps, loads
-from math import sin, cos, sqrt, atan2, radians
+from math import sin, cos, sqrt, asin, radians
 from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
 PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
@@ -56,13 +56,18 @@ def gen_key(event):
 # Taken from stack overflow user Michael0x2a: https://stackoverflow.com/a/19412565/6645635
 def haversine_distance(grid_one, grid_two):
     # approximate radius of earth in km
-    radius = 6373.0
-    dlat = radians(grid_two['lat']) - radians(grid_one['lat'])
-    dlon = radians(grid_two['lon']) - radians(grid_one['lon'])
+    radius = 6371.0
 
-    distance_a = sin(dlat / 2)**2 + cos(grid_one['lat']) * cos(
-        grid_two['lat']) * sin(dlon / 2)**2
-    distance_c = 2 * atan2(sqrt(distance_a), sqrt(1 - distance_a))
+    # Convert the grid elements to radians
+    lon1, lat1, lon2, lat2 = map(
+        radians,
+        [grid_one['lon'], grid_one['lat'], grid_two['lon'], grid_two['lat']])
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    distance_a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    distance_c = 2 * asin(sqrt(distance_a))
 
     return radius * distance_c
 
