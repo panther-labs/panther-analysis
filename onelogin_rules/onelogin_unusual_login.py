@@ -4,7 +4,7 @@ from panther_oss_helpers import get_string_set, put_string_set
 
 
 def rule(event):
-    # Pre-filter to save compute time where possible
+    # Pre-filter to save compute time where possible. event_type_id = 5 is login events.
     if event.get('event_type_id') != 5 or event.get('ipaddr') is None:
         return False
 
