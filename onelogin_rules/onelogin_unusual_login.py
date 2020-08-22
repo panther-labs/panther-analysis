@@ -1,6 +1,7 @@
-import requests
 import json
+import requests
 from panther_oss_helpers import get_string_set, put_string_set
+
 
 def rule(event):
     # Pre-filter to save compute time where possible
@@ -9,7 +10,7 @@ def rule(event):
 
     # Lookup geo-ip data via API call
     url = 'https://ipinfo.io/' + event['ipaddr'] + '/geo'
-    
+
     # Skip API call if this is a unit test
     if __name__ == 'PolicyApiTestingPolicy':
         resp = lambda: None
@@ -22,8 +23,9 @@ def rule(event):
         # Could raise an exception here for ops team to look into
         return False
     login_info = json.loads(resp.text)
-    login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get('city', '<CITY>')
-    
+    login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
+        'city', '<CITY>')
+
     # Lookup & store persistent data
     event_key = get_key(event)
     last_login_info = get_string_set(event_key)
@@ -32,10 +34,10 @@ def rule(event):
         put_string_set(event_key, [json.dumps({login_tuple: 1})])
         return False
     last_login_info = json.loads(last_login_info.pop())
-    
+
     last_login_info[login_tuple] = last_login_info.get(login_tuple, 0) + 1
     put_string_set(event_key, [json.dumps(last_login_info)])
-    
+
     tuple_count = last_login_info[login_tuple]
     higher_tuples = 0
     for tcount in last_login_info.values():
@@ -43,7 +45,7 @@ def rule(event):
             higher_tuples += 1
         if higher_tuples == 3:
             return True
-    
+
     return False
 
 
@@ -53,5 +55,6 @@ def get_key(event):
 
 
 def title(event):
-	# (Optional) Return a string which will be shown as the alert title.
-	return 'Unusual logins in OneLogin for user [{}]'.format(event.get('user_name', '<UNKNOWN_USER>'))
+    # (Optional) Return a string which will be shown as the alert title.
+    return 'Unusual logins in OneLogin for user [{}]'.format(
+        event.get('user_name', '<UNKNOWN_USER>'))
