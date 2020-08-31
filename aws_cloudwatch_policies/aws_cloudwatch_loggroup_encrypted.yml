@@ -8,11 +8,12 @@ ResourceTypes:
 Tags:
   - AWS
   - Panther
-Severity: Medium
+Severity: Low
 Description: >
-  Logs can be encrypted with a CMK to protect sensitive data in logs.
+  AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK
+  to protect extra sensitive log data.
 Runbook: >
-  https://docs.runpanther.io/amazon-web-services/policies/aws-cloudwatch-logs-are-encrypted
+  Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list.
 Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
 Tests:
   -
