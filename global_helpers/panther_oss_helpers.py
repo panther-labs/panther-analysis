@@ -178,7 +178,7 @@ def put_string_set(key: str, val: Sequence[str]) -> None:
         key: The name of the string set
         val: A list/set/tuple of strings to store
     """
-    if len(val) == 0:
+    if not val:
         # Can't put an empty string set - remove it instead
         reset_string_set(key)
     else:
@@ -199,7 +199,7 @@ def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
         item_value = {val}
     else:
         item_value = set(val)
-        if len(item_value) == 0:
+        if not item_value:
             # We can't add empty sets, just return the existing value instead
             return get_string_set(key)
 
@@ -228,7 +228,7 @@ def remove_from_string_set(key: str, val: Union[str,
         item_value = {val}
     else:
         item_value = set(val)
-        if len(item_value) == 0:
+        if not item_value:
             # We can't remove empty sets, just return the existing value instead
             return get_string_set(key)
 
