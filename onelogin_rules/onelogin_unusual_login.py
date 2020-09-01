@@ -1,6 +1,7 @@
 import json
 import requests
 from panther_oss_helpers import get_string_set, put_string_set
+FINGERPRINT_THRESHOLD = 3
 
 
 def rule(event):
@@ -17,12 +18,17 @@ def rule(event):
         setattr(resp, 'status_code', 200)
         setattr(resp, 'text', event['api_data'])
     else:
+        # This response looks like the following:
+        # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
+        # 'loc': '37.4056,-122.0775', 'postal': '94043', 'timezone': 'America/Los_Angeles'}
         resp = requests.get(url)
 
     if resp.status_code != 200:
         # Could raise an exception here for ops team to look into
         return False
     login_info = json.loads(resp.text)
+    # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
+    # for a given user's logins. In this way, we can detect unusual logins.
     login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
         'city', '<CITY>')
 
@@ -38,12 +44,14 @@ def rule(event):
     last_login_info[login_tuple] = last_login_info.get(login_tuple, 0) + 1
     put_string_set(event_key, [json.dumps(last_login_info)])
 
+    # Here we are checking if this login's fingerprint is one of the top three most common
+    # fingerprints for this user. If it is not, we fire an alert.
     tuple_count = last_login_info[login_tuple]
     higher_tuples = 0
     for tcount in last_login_info.values():
         if tcount > tuple_count:
             higher_tuples += 1
-        if higher_tuples == 3:
+        if higher_tuples >= FINGERPRINT_THRESHOLD:
             return True
 
     return False
