@@ -12,4 +12,5 @@ def dedup(event):
 
 
 def title(event):
-    'Osquery Version {} is Outdated'.format(event['columns'].get('version'))
+    return 'Osquery Version {} is Outdated'.format(
+        event['columns'].get('version'))
