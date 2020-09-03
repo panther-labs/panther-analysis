@@ -33,5 +33,5 @@ def dedup(event):
 
 
 def title(event):
-    'GCS bucket [{}] made public'.format(event['resource'].get(
+    return 'GCS bucket [{}] made public'.format(event['resource'].get(
         'labels', {}).get('bucket_name', '<BUCKET_NOT_FOUND>'))
