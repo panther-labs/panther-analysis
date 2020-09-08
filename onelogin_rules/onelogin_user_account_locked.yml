@@ -1,0 +1,52 @@
+AnalysisType: rule
+Filename: onelogin_user_account_locked.py
+RuleID: OneLogin.UserAccountLocked
+DisplayName: OneLogin User Locked Rule Triggered
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Low
+Description: >
+  User locked out of their account
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: >
+  Investigate whether this was purposeful action.
+Tests:
+  -
+    Name: User account locked via api.
+    LogType: OneLogin.Events
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 531,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+  - 
+    Name: User account locked via api.
+    LogType: OneLogin.Events
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 553,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+  - 
+    Name: User account suspended via api.
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 551,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      } 

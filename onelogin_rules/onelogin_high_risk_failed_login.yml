@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: onelogin_high_risk_failed_login.py
+RuleID: OneLogin.HighRiskFailedLogin
+DisplayName: OneLogin Failed High Risk Login
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Low
+Description: A OneLogin attempt with a high risk factor (>50) resulted in a failed authentication.
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: Determine if this high risk user login
+Tests:
+  -
+    Name: Normal Login Event
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 6,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+  - 
+    Name: Failed High Risk Login
+    LogType: OneLogin.Events
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 6,
+        'risk_score': 55,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+      

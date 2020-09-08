@@ -1,0 +1,52 @@
+AnalysisType: rule
+Filename: onelogin_user_account_suspended.py
+RuleID: OneLogin.UserAccountSuspended
+DisplayName: OneLogin User Suspended Rule Triggered
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Low
+Description: >
+  User suspended from their account
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: >
+  Investigate whether this was purposeful action.
+Tests:
+  - 
+    Name: User account suspended.
+    LogType: OneLogin.Events
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 21,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+  - 
+    Name: User account suspended via api.
+    LogType: OneLogin.Events
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 551,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }   
+  - 
+    Name: User account locked via api.
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 553,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }

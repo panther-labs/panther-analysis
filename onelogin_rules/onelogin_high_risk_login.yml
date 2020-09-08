@@ -1,0 +1,27 @@
+AnalysisType: rule
+Filename: onelogin_high_risk_login.py
+RuleID: OneLogin.HighRiskLogin
+DisplayName: OneLogin High Risk Login
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Medium
+Description: A OneLogin user successfully logged in after a failed high-risk login attempt.
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: Determine if this high risk user login
+Tests:
+  -
+    Name: Normal Login Event
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 6,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+      

@@ -1,0 +1,31 @@
+AnalysisType: rule
+Filename: onelogin_threshold_accounts_modified.py
+RuleID: OneLogin.ThresholdAccountsModified
+DisplayName: OneLogin Multiple Accounts Modified
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - Impact:Account Access Removal
+Description: >
+  Possible Denial of Sevice detected. Threshold for user account password changes exceeded.
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: Determine if this is normal user-cleanup activity.  
+Tests:
+  -
+    Name: Normal User Activated Event
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 16,
+        'actor_user_id': 654321,
+        'actor_user_name': ' Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+      

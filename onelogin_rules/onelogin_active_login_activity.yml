@@ -1,0 +1,32 @@
+AnalysisType: rule
+Filename: onelogin_active_login_activity.py
+RuleID: OneLogin.ActiveLoginActivity
+DisplayName: OneLogin Active Login Activity
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - Lateral Movement:Use Alternate Authentication Material
+Description: Multiple user accounts logged in from the same ip address.
+Threshold: 2
+DedupPeriodMinutes: 720
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource 
+Runbook: Investigate if this is expected activity. Rule out normal user access from shared a shared proxy server. 
+Tests:
+  -
+    Name: Normal Login Event
+    LogType: OneLogin.Events
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 6,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+      
