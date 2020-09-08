@@ -6,12 +6,19 @@ def rule(event):
         return False
 
     additional_event_data = event.get('additionalEventData', {})
+    session_context = event.get('userIdentity', {}).get('sessionContext', {})
     response_elements = event.get('responseElements', {})
 
-    return (response_elements.get('ConsoleLogin') == 'Success' and
-            additional_event_data.get('MFAUsed') == 'No' and
-            # Ignore SSO login events
-            not additional_event_data.get('SamlProviderArn'))
+    return (
+        # Only alert on successful logins
+        response_elements.get('ConsoleLogin') == 'Success' and
+        # Where MFA is not in use
+        additional_event_data.get('MFAUsed') == 'No' and
+        # Ignoring SSO login events
+        not additional_event_data.get('SamlProviderArn') and
+        # And ignoring logins that were authenticated via a session that was itself
+        # authenticated with MFA
+        session_context.get('attributes', {}).get('mfaAuthenticated') != 'true')
 
 
 def dedup(event):
