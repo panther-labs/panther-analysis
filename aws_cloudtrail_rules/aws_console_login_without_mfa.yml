@@ -151,3 +151,49 @@ Tests:
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012"
       }
+  -
+    Name: No MFA but was authenticated from session with MFA
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:role/MFAOnlyRole",
+              "accountId": "123456789012",
+              "userName": "tester",
+              "sessionContext": {
+                "attributes": {
+                  "creationDate": "2020-01-01T00:00:00Z",
+                  "mfaAuthenticated": "true"
+                },
+                "sessionIssuer": {
+                  "accountId": "123456789012",
+                  "arn": "arn:aws:iam::123456789012:role/MFAOnlyRole",
+                  "principalId": "ABC123",
+                  "type": "Role",
+                  "userName": "MFAOnlyRole"
+                },
+                "webIdFederationData": {}
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012"
+      }
