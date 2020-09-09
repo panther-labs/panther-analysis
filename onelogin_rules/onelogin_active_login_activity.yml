@@ -12,14 +12,11 @@ Reports:
   MITRE ATT&CK:
     - Lateral Movement:Use Alternate Authentication Material
 Description: Multiple user accounts logged in from the same ip address.
-Threshold: 2
-DedupPeriodMinutes: 720
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource 
-Runbook: Investigate if this is expected activity. Rule out normal user access from shared a shared proxy server. 
+Runbook: Investigate if this is expected activity. Rule out normal user access from shared a shared proxy server or public ip space. 
 Tests:
   -
     Name: Normal Login Event
-    LogType: OneLogin.Events
     ExpectedResult: false
     Log:
       {
@@ -29,4 +26,15 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat'
       }
-      
+  -
+    Name: Shared IP Login Event
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 5,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat',
+        'ipaddr': '192.168.1.1'
+      }     
