@@ -41,7 +41,7 @@ Tests:
         ]
       }
   -
-    Name: Multiple Failed Login Attempts
+    Name: Multiple Failed Login Attempts with int Type
     LogType: GSuites.Reports
     ExpectedResult: true
     Log:
@@ -56,3 +56,20 @@ Tests:
           }
         ]
       }
+  -
+    Name: Multiple Failed Login Attempts with String Type
+    LogType: GSuites.Reports
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'mobile'},
+        'events': [
+          {
+            'type': 'suspicious_activity',
+            'name': 'FAILED_PASSWORD_ATTEMPTS_EVENT',
+            'parameters': [{'name': 'FAILED_PASSWD_ATTEMPTS', 'intValue': '100'}]
+          }
+        ]
+      }
+
