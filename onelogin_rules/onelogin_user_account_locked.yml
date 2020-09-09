@@ -12,11 +12,10 @@ Description: >
   User locked out of their account
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
 Runbook: >
-  Investigate whether this was purposeful action.
+  Investigate whether this was caused by expected action.
 Tests:
   -
     Name: User account locked via api.
-    LogType: OneLogin.Events
     ExpectedResult: true
     Log:
       {
@@ -28,7 +27,6 @@ Tests:
       }
   - 
     Name: User account locked via api.
-    LogType: OneLogin.Events
     ExpectedResult: true
     Log:
       {
@@ -40,7 +38,6 @@ Tests:
       }
   - 
     Name: User account suspended via api.
-    LogType: OneLogin.Events
     ExpectedResult: false
     Log:
       {

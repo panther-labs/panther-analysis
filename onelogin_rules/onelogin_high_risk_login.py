@@ -11,7 +11,7 @@ def rule(event):
     if not event.get('user_id') or event.get('event_type_id') not in [5, 6]:
         return False
 
-    event_key = '{}-UserHighRiskFailures'.format(event.get('user_id'))
+    event_key = get_key(event)
     # check risk associated with this event
     if event.get('risk_score', 0) > 50:
         # a failed authentication attempt with high risk score
@@ -28,6 +28,14 @@ def rule(event):
             reset_counter(event_key)
             return True
     return False
+
+
+def get_key(event):
+    return __name__ + ':' + event.get('user_name', '<UNKNOWN_USER>')
+
+
+def dedup(event):
+    return event.get('user_name')
 
 
 def title(event):

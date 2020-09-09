@@ -1,22 +1,10 @@
-from panther_oss_helpers import evaluate_threshold  # pylint: disable=import-error
-
-# TODO change to native thresholding once support is added
-THRESH = 10
-THRESH_TTL = 600  # 10 minutes
-
-
 def rule(event):
-
     # filter events; event type 90 is an unauthorized applicaiton access event id
-    if event.get('event_type_id') != 90 or not event.get('user_id'):
-        return False
+    return event.get('event_type_id') == 90
 
-    # keep track of user application unauthorized access attempts
-    return (evaluate_threshold(
-        '{}-OneLoginUnauhtorizedAccessUsername'.format(event.get('user_id')),
-        THRESH,
-        THRESH_TTL,
-    ))
+
+def dedup(event):
+    return event.get('user_id')
 
 
 def title(event):

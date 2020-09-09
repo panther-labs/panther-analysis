@@ -10,7 +10,8 @@ def rule(event):
 
 
 def dedup(event):
-    return event.get('actor_user_name') + ':' + event.get('app_name','<UNKNOWN_APP>')
+    return event.get('actor_user_name') + ':' + event.get(
+        'app_name', '<UNKNOWN_APP>')
 
 
 def title(event):

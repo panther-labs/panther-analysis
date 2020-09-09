@@ -13,12 +13,13 @@ Reports:
     - Impact:Account Access Removal
 Description: >
   Possible Denial of Sevice detected. Threshold for user account password changes exceeded.
+Threshold: 10
+DedupPeriodMinutes: 10
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
 Runbook: Determine if this is normal user-cleanup activity.  
 Tests:
   -
     Name: Normal User Activated Event
-    LogType: OneLogin.Events
     ExpectedResult: false
     Log:
       {

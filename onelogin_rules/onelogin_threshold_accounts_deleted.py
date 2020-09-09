@@ -1,6 +1,3 @@
-from panther_oss_helpers import evaluate_threshold  # pylint: disable=import-error
-
-
 def rule(event):
 
     # filter events; event type 17 is a user deleted

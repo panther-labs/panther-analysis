@@ -10,11 +10,10 @@ Tags:
 Severity: Medium
 Description: A OneLogin user successfully logged in after a failed high-risk login attempt.
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
-Runbook: Determine if this high risk user login
+Runbook: Investigate whether this was caused by expected user activity.
 Tests:
   -
     Name: Normal Login Event
-    LogType: OneLogin.Events
     ExpectedResult: false
     Log:
       {
