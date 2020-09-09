@@ -9,6 +9,10 @@ def rule(event):
     return event.get('actor_user_id') != event.get('user_id')
 
 
+def dedup(event):
+    return event.get('actor_user_id') + ':' + event.get('app_name','<UNKNOWN_APP>')
+
+
 def title(event):
     return 'A user [{}] accessed another user [{}] application password'.format(
         event.get('actor_user_name'), event.get('user_name'))

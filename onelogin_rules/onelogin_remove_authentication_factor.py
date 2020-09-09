@@ -6,6 +6,10 @@ def rule(event):
     return event.get('event_type_id') == 24 or event.get('event_type_id') == 172
 
 
+def dedup(event):
+    return event.get('user_name')
+
+
 def title(event):
     if event.get('event_type_id') == 172:
         return 'A user [{}] removed an authentication factor [{}]'.format(

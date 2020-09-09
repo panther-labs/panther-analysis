@@ -10,6 +10,8 @@ def rule(event):
     # user changed another user's password
     return event.get('actor_user_id') != event.get('user_id')
 
+def dedup(event):
+    return event.get('user_id')
 
 def title(event):
     return 'A user [{}] password changed by another user [{}]'.format(
