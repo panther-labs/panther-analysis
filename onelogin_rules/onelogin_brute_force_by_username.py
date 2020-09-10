@@ -9,4 +9,4 @@ def dedup(event):
 
 def title(event):
     return 'User [{}] has exceeded the failed logins threshold'.format(
-        event.get('user_name'))
+        event.get('user_name', '<UNKNOWN_USER>'))
