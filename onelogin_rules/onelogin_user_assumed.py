@@ -5,10 +5,6 @@ def rule(event):
         'actor_user_id', 'UNKNOWN_USER') != event.get('user_id', 'UNKNOWN_USER')
 
 
-def dedup(event):
-    return event.get('actor_user_name')
-
-
 def title(event):
     return 'A user [{}] assumed another user [{}] account'.format(
         event.get('actor_user_name'), event.get('user_name'))

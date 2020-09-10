@@ -34,10 +34,6 @@ def get_key(event):
     return __name__ + ':' + event.get('user_name', '<UNKNOWN_USER>')
 
 
-def dedup(event):
-    return event.get('user_name')
-
-
 def title(event):
     return 'A user [{}] successfully logged in after a failed high risk login event'.format(
         event.get('user_name', '<UNKNOWN_USER>'))

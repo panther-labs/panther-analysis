@@ -7,10 +7,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('user_name')
-
-
 def title(event):
     return 'A user [{}] failed a high risk login attempt'.format(
         event.get('user_name', '<UNKNOWN_USER>'))
