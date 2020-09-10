@@ -15,7 +15,7 @@ Description: A OneLogin user was denied access more times than the configured th
 Threshold: 10
 DedupPeriodMinutes: 10
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
-Runbook: Analyze the IP they came from, and other actions taken before/after.
+Runbook: Analyze the IP they came from, and other actions taken before/after.  Check if this user eventually authenticated successfully. 
 Tests:
   -
     Name: Normal Login Event
@@ -39,4 +39,3 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat'
       }
-      
