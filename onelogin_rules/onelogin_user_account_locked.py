@@ -7,4 +7,5 @@ def rule(event):
 
 
 def title(event):
-    return 'A user [{}] was locked or suspended via api call'.format(event.get('user_name'))
+    return 'A user [{}] was locked or suspended via api call'.format(
+        event.get('user_name'))

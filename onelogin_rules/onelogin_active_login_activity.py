@@ -8,7 +8,7 @@ THRESH_TTL = 43200  # 1/2 day
 # Each entry in the list should be in CIDR notation
 # This should include any source ip addresses
 # that are shared among users such as:
-# proxy servers, the public corporate ip space, 
+# proxy servers, the public corporate ip space,
 # scanner ips etc
 SHARED_IP_SPACE = [
     '192.168.0.0/16',

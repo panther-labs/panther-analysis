@@ -3,6 +3,7 @@ from panther_oss_helpers import get_counter, increment_counter, set_key_expirati
 
 THRESH_TTL = 600
 
+
 def rule(event):
 
     # Filter events down to successful and failed login events
