@@ -9,9 +9,10 @@ def rule(event):
 
     for details in event.get('events', [{}]):
         if (details.get('type') == 'suspicious_activity' and
-                details.get('name') == 'FAILED_PASSWORD_ATTEMPTS_EVENT' and
-                param_lookup(details.get('parameters', {}),
-                             'FAILED_PASSWD_ATTEMPTS') > MAX_UNLOCK_ATTEMPTS):
+                details.get('name') == 'FAILED_PASSWORD_ATTEMPTS_EVENT' and int(
+                    param_lookup(details.get('parameters', {}),
+                                 'FAILED_PASSWD_ATTEMPTS')) >
+                MAX_UNLOCK_ATTEMPTS):
             return True
 
     return False
