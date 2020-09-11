@@ -20,7 +20,6 @@ Reference: https://en.wikipedia.org/wiki/DMZ_(computing)
 Tests:
   -
     Name: DMZ Security Group Does Allows Public Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {
@@ -84,7 +83,6 @@ Tests:
       }
   -
     Name: Non DMZ Security Group Allows Public Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: false
     Resource:
       {
@@ -148,7 +146,6 @@ Tests:
       }
   -
     Name: Non DMZ Security Group Does Not Allow Public Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {

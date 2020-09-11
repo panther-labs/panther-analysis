@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWi
 Tests:
   -
     Name: Instance Has No Snapshots
-    ResourceType: AWS.RDS.Instance
     ExpectedResult: true
     Resource:
       {
@@ -140,7 +139,6 @@ Tests:
       }
   -
     Name: Instance Snapshot Can Be Returned By All
-    ResourceType: AWS.RDS.Instance
     ExpectedResult: false
     Resource:
       {
@@ -282,7 +280,6 @@ Tests:
       }
   -
     Name: Instance Snapshot Can Be Returned By All In List
-    ResourceType: AWS.RDS.Instance
     ExpectedResult: false
     Resource:
       {
@@ -427,7 +424,6 @@ Tests:
       }
   -
     Name: Instance Snapshot Can Be Returned By Some
-    ResourceType: AWS.RDS.Instance
     ExpectedResult: true
     Resource:
       {
@@ -569,7 +565,6 @@ Tests:
       }
   -
     Name: Instance Snapshot Cannot Be Restored By All
-    ResourceType: AWS.RDS.Instance
     ExpectedResult: true
     Resource:
       {

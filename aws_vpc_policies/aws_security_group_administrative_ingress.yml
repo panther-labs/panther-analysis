@@ -22,7 +22,6 @@ Reference: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.h
 Tests:
   -
     Name: Inbound IP Permission On All IPs On Acceptable Ports
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {
@@ -197,7 +196,6 @@ Tests:
       }
   -
     Name: Inbound IP Permissions On All IPs On Restricted Ports
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: false
     Resource:
       {
@@ -372,7 +370,6 @@ Tests:
       }
   -
     Name: Inbound IP Permission On All IPv6 On Restricted Ports
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: false
     Resource:
       {
@@ -547,7 +544,6 @@ Tests:
       }
   -
     Name: Inbound IP Permission On Specific IP On Restricted Port
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {
@@ -722,7 +718,6 @@ Tests:
       }
   -
     Name: No Inbound IP Permissions
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {

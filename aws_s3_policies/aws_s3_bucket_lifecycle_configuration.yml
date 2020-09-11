@@ -22,7 +22,6 @@ Reference: https://amzn.to/2visoXr
 Tests:
   -
     Name: Bucket Has a Compliant 1-Year Lifecycle Configuration
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -78,7 +77,6 @@ Tests:
       }
   -
     Name: Bucket Does Not Have Lifecycle Configuration
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -112,7 +110,6 @@ Tests:
       }
   -
     Name: Bucket Has Insufficient Lifecycle Configuration
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {

@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.ht
 Tests:
   -
     Name: Bucket Grants READ To All Authenticated Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -75,7 +74,6 @@ Tests:
       }
   -
     Name: Bucket Grants WRITE To All Authenticated Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -130,7 +128,6 @@ Tests:
       }
   -
     Name: Bucket Grants WRITE To All Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {

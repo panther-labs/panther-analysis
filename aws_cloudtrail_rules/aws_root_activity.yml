@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
     Name: Root Activity - CreateServiceLinkedRole
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -71,7 +70,6 @@ Tests:
       }
   -
     Name: Root Activity
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -122,7 +120,6 @@ Tests:
       }
   -
     Name: IAMUser Activity
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
     Name: Successful Root Login
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -54,7 +53,6 @@ Tests:
       }
   -
     Name: Non-Login Event
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

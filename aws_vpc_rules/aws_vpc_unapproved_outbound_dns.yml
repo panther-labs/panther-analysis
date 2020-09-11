@@ -17,7 +17,6 @@ Runbook: >
 Tests:
   -
     Name: Approved Outbound DNS Traffic
-    LogType: AWS.VPCFlow
     ExpectedResult: false
     Log:
       {
@@ -27,7 +26,6 @@ Tests:
       }
   -
     Name: Unapproved Outbound DNS Traffic
-    LogType: AWS.VPCFlow
     ExpectedResult: true
     Log:
       {
@@ -37,7 +35,6 @@ Tests:
       }
   -
     Name: Outbound Non-DNS Traffic
-    LogType: AWS.VPCFlow
     ExpectedResult: false
     Log:
       {

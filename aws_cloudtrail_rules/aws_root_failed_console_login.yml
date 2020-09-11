@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Tests:
   -
     Name: Root Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -53,7 +52,6 @@ Tests:
       }
   -
     Name: Root Non Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -86,7 +84,6 @@ Tests:
       }
   -
     Name: Non Root Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -119,7 +116,6 @@ Tests:
       }
   -
     Name: Root Failed Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {

@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   -
     Name: IAM Policy Change
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -62,7 +61,6 @@ Tests:
       }
   -
     Name: Not IAM Policy Change
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

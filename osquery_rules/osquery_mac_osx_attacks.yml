@@ -16,7 +16,6 @@ Reference: https://github.com/osquery/osquery/blob/master/packs/osx-attacks.conf
 Tests:
   -
     Name: Valid malware discovered
-    LogType: Osquery.Differential
     ExpectedResult: true
     Log:
       {
@@ -31,7 +30,6 @@ Tests:
       }
   -
     Name: Keyboard event taps query is ignored
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {

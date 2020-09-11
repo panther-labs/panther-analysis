@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.ht
 Tests:
   -
     Name: Key Usage Not Restricted
-    ResourceType: AWS.KMS.Key
     ExpectedResult: false
     Resource:
       {
@@ -43,7 +42,6 @@ Tests:
       }
   -
     Name: Key Restricts Usage With Condition
-    ResourceType: AWS.KMS.Key
     ExpectedResult: true
     Resource:
       {

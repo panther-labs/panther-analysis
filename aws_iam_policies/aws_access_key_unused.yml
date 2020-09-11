@@ -23,7 +23,6 @@ Reference: >
 Tests:
   -
     Name: Root User Access Key 1 Used And Rotated Over 90 Days Ago
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: false
     Resource:
       {
@@ -59,7 +58,6 @@ Tests:
       }
   -
     Name: Root User Access Key 2 Never Used But Rotated Less Than 90 Days Ago
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: true
     Resource:
       {
@@ -95,7 +93,6 @@ Tests:
       }
   -
     Name: User Access Key 1 Never Used But Rotated Less Than 90 Days Ago
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -148,7 +145,6 @@ Tests:
       }
   -
     Name: User Access Key 1 Used And Rotated Over 90 Days Ago
-    ResourceType: AWS.IAM.User
     ExpectedResult: false
     Resource:
       {
@@ -201,7 +197,6 @@ Tests:
       }
   -
     Name: User Access Key 1 Used Less Than 90 Days Ago
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -254,7 +249,6 @@ Tests:
       }
   -
     Name: User Access Key 2 Used And Rotated Over 90 Days Ago
-    ResourceType: AWS.IAM.User
     ExpectedResult: false
     Resource:
       {
@@ -307,7 +301,6 @@ Tests:
       }
   -
     Name: User Access Key 2 Used Less Than 90 Days Ago
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -360,7 +353,6 @@ Tests:
       }
   -
     Name: User No Active Access Keys
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {

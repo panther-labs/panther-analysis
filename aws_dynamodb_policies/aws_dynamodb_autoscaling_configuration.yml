@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Auto
 Tests:
   -
     Name: AutoScaling Correctly Provisioned
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: true
     Resource:
       {
@@ -140,7 +139,6 @@ Tests:
       }
   -
     Name: AutoScaling Never Configured
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -194,7 +192,6 @@ Tests:
       }
   -
     Name: AutoScaling Not Applicable
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: true
     Resource:
       {
@@ -251,7 +248,6 @@ Tests:
       }
   -
     Name: AutoScaling Not Configured
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -334,7 +330,6 @@ Tests:
       }
   -
     Name: Secondary Index Max Write Capacity Over Provisioned
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -454,7 +449,6 @@ Tests:
       }
   -
     Name: Table Min Read Capacity Under Provisioned
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -574,7 +568,6 @@ Tests:
       }
   -
     Name: Table Min Write Capacity Under Provisioned
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {

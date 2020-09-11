@@ -23,7 +23,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_e
 Tests:
   -
     Name: Password Disabled, MFA Disabled
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -76,7 +75,6 @@ Tests:
       }
   -
     Name: Password Disabled, MFA Enabled
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -129,7 +127,6 @@ Tests:
       }
   -
     Name: Password Enabled, MFA Disabled
-    ResourceType: AWS.IAM.User
     ExpectedResult: false
     Resource:
       {
@@ -182,7 +179,6 @@ Tests:
       }
   -
     Name: Password Enabled, MFA Enabled
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {

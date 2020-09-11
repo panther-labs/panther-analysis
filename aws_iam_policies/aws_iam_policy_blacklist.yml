@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   -
     Name: IAM User Does Not Have Blacklisted Policy
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {
@@ -73,7 +72,6 @@ Tests:
       }
   -
     Name: IAM User Has Blacklisted Policy
-    ResourceType: AWS.IAM.User
     ExpectedResult: false
     Resource:
       {

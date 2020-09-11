@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.h
 Tests:
   -
     Name: No MFA Login
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -53,7 +52,6 @@ Tests:
       }
   -
     Name: MFA Login but with SAML
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -87,7 +85,6 @@ Tests:
       }
   -
     Name: Yes MFA Login
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -120,7 +117,6 @@ Tests:
       }
   -
     Name: No MFA but Login Failed
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -153,7 +149,6 @@ Tests:
       }
   -
     Name: No MFA but was authenticated from session with MFA
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

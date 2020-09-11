@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-
 Tests:
   -
     Name: Bucket Allows READ Access For All Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -76,7 +75,6 @@ Tests:
       }
   -
     Name: Bucket Allows READ For All Authenticated Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -131,7 +129,6 @@ Tests:
       }
   -
     Name: Bucket Allows WRITE To All Users
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {

@@ -19,7 +19,6 @@ Tests:
   -
     # This can't be tested right now as we cannot set the MASTER_ACCOUNT_ID variable for testing
     Name: Detector Not Logging to Master
-    ResourceType: AWS.GuardDuty.Detector
     # Should be false if we could set MASTER_ACCOUNT_ID for testing
     ExpectedResult: true
     Resource:
@@ -41,7 +40,6 @@ Tests:
       }
   -
     Name: Detector Logging to Master
-    ResourceType: AWS.GuardDuty.Detector
     ExpectedResult: true
     Resource:
       {

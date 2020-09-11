@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   -
     Name: IAM Policy Does Not Grant VPC Permissions
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: true
     Resource:
       {
@@ -53,7 +52,6 @@ Tests:
       }
   -
     Name: IAM Policy Does Grant VPC Write Permissions
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: false
     Resource:
       {
@@ -87,7 +85,6 @@ Tests:
       }
   -
     Name: IAM Policy Grants Only VPC Read Permissions
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: true
     Resource:
       {

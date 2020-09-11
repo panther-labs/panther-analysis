@@ -18,7 +18,6 @@ Reference: https://aws.amazon.com/blogs/aws/aws-web-application-firewall-waf-for
 Tests:
   -
     Name: Load Balancer Does Not Have Required WAF Web ACL
-    ResourceType: AWS.ELBV2.ApplicationLoadBalancer
     ExpectedResult: false
     Resource:
       {
@@ -54,7 +53,6 @@ Tests:
       }
   -
     Name: Load Balancer Does Not Require WAF Web ACL
-    ResourceType: AWS.ELBV2.ApplicationLoadBalancer
     ExpectedResult: true
     Resource:
       {
@@ -90,7 +88,6 @@ Tests:
       }
   -
     Name: Load Balancer Has Correct WAF Web ACL
-    ResourceType: AWS.ELBV2.ApplicationLoadBalancer
     ExpectedResult: true
     Resource:
       {

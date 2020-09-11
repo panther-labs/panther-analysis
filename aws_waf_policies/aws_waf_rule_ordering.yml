@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-rules.h
 Tests:
   -
     Name: Web ACL Configured Properly
-    ResourceType: AWS.WAF.Regional.WebACL
     ExpectedResult: true
     Resource:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Web ACL Has Incorrect Rules
-    ResourceType: AWS.WAF.Regional.WebACL
     ExpectedResult: false
     Resource:
       {
@@ -91,7 +89,6 @@ Tests:
       }
   -
     Name: Web ACL Has Rules In Incorrect Order
-    ResourceType: AWS.WAF.Regional.WebACL
     ExpectedResult: false
     Resource:
       {
@@ -127,7 +124,6 @@ Tests:
       }
   -
     Name: Web ACL Has No Ordering Configured
-    ResourceType: AWS.WAF.Regional.WebACL
     ExpectedResult: true
     Resource:
       {

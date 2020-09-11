@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Encr
 Tests:
   -
     Name: Encryption Disabled
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -78,7 +77,6 @@ Tests:
       }
   -
     Name: Encryption Enabled
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: true
     Resource:
       {
@@ -135,7 +133,6 @@ Tests:
       }
   -
     Name: Encryption Not Set
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {

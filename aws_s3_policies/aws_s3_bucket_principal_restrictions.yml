@@ -21,7 +21,6 @@ Reference: https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-reso
 Tests:
   -
     Name: Bucket Does Not Restrict Principal
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Bucket Does Restrict Principal
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -89,7 +87,6 @@ Tests:
       }
   -
     Name: Bucket Does Not Restrict Principal But Has Condition
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {

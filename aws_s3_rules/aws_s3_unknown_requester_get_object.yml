@@ -19,7 +19,6 @@ Runbook: If the S3 access is not expected for this bucket, investigate the reque
 Tests:
   -
     Name: Expected Access
-    LogType: AWS.S3ServerAccess
     ExpectedResult: false
     Log:
       {
@@ -46,7 +45,6 @@ Tests:
       }
   -
     Name: Unexpected Access
-    LogType: AWS.S3ServerAccess
     ExpectedResult: true
     Log:
       {
@@ -73,7 +71,6 @@ Tests:
       }
   -
     Name: Failed Request
-    LogType: AWS.S3ServerAccess
     ExpectedResult: false
     Log:
       {

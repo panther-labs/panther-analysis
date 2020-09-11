@@ -23,7 +23,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   -
     Name: Access Key 1 Active
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: false
     Resource:
       {
@@ -59,7 +58,6 @@ Tests:
       }
   -
     Name: Access Key 2 Active
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: false
     Resource:
       {
@@ -95,7 +93,6 @@ Tests:
       }
   -
     Name: Access Keys 1 and 2 Active
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: false
     Resource:
       {
@@ -131,7 +128,6 @@ Tests:
       }
   -
     Name: No Access Keys Enabled
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: true
     Resource:
       {

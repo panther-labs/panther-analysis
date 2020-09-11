@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.
 Tests:
   -
     Name: Security Group Restricts Inbound Traffic
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {
@@ -72,7 +71,6 @@ Tests:
       }
   -
     Name: Security Group Does Not Restrict Inbound Traffic (None)
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: false
     Resource:
       {
@@ -124,7 +122,6 @@ Tests:
       }
   -
     Name: Security Group Does Not Restrict Inbound Traffic
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: false
     Resource:
       {

@@ -17,7 +17,6 @@ Reference: https://aws.amazon.com/ec2/dedicated-hosts/
 Tests:
   -
     Name: Instance AMI Does Not Have Required Host
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: true
     Resource:
       {
@@ -185,7 +184,6 @@ Tests:
       }
   -
     Name: Instance Launched On Incorrect Host
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: false
     Resource:
       {
@@ -353,7 +351,6 @@ Tests:
       }
   -
     Name: Instance Launched On Required Host
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: true
     Resource:
       {
@@ -521,7 +518,6 @@ Tests:
       }
   -
     Name: Instance Not Launched On Dedicated Host But Has Host Requirement
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: false
     Resource:
       {

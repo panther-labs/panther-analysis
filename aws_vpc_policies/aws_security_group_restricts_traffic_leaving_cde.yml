@@ -16,7 +16,6 @@ Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.
 Tests:
   -
     Name: Security Group Restricts Traffic Leaving CDE
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {
@@ -66,7 +65,6 @@ Tests:
       }
   -
     Name: Security Group Does Not Restrict Traffic Leaving CDE
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: false
     Resource:
       {
@@ -116,7 +114,6 @@ Tests:
       }
   -
     Name: Not In Scope Security Group Does Not Restrict Traffic Leaving CDE
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {

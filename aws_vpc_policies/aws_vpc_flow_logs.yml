@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
 Tests:
   -
     Name: Flow Logging Not Enabled
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: false
     Resource:
       {
@@ -161,7 +160,6 @@ Tests:
       }
   -
     Name: Flow Logs Enabled For Type ACCEPT
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: false
     Resource:
       {
@@ -316,7 +314,6 @@ Tests:
       }
   -
     Name: Flow Logs Enabled For Type ALL
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {
@@ -471,7 +468,6 @@ Tests:
       }
   -
     Name: Flow Logs Enabled For Type REJECT
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {
@@ -626,7 +622,6 @@ Tests:
       }
   -
     Name: Flow Logs Enabled For Types ACCEPT, ALL
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: true
     Resource:
       {
@@ -794,7 +789,6 @@ Tests:
       }
   -
     Name: Flow Logs Inactive For Type ALL
-    ResourceType: AWS.EC2.VPC
     ExpectedResult: false
     Resource:
       {

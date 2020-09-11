@@ -16,7 +16,6 @@ Reference: https://support.apple.com/en-us/HT204899
 Tests:
   -
     Name: App running on Desktop that is watching keyboard events
-    LogType: Osquery.Differential
     ExpectedResult: true
     Log:
       {
@@ -31,7 +30,6 @@ Tests:
       }
   -
     Name: App is running from approved path
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {
@@ -46,7 +44,6 @@ Tests:
       }
   -
     Name: Unrelated query does not alert
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {

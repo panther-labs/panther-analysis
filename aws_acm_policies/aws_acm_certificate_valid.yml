@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/acm/latest/userguide/check-certificate-re
 Tests:
   -
     Name: Certificate renewal pending validation
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: false
     Resource:
       {
@@ -89,7 +88,6 @@ Tests:
       }
   -
     Name: Certificate renewal failed
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: false
     Resource:
       {
@@ -159,7 +157,6 @@ Tests:
       }
   -
     Name: Certificate has been issued
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: true
     Resource:
       {
@@ -229,7 +226,6 @@ Tests:
       }
   -
     Name: Certificate is INELIGIBLE but not in use
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: true
     Resource:
       {

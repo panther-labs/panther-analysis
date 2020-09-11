@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Auto
 Tests:
   -
     Name: AutoScaling Enabled
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: true
     Resource:
       {
@@ -139,7 +138,6 @@ Tests:
       }
   -
     Name: AutoScaling Never Configured
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -219,7 +217,6 @@ Tests:
       }
   -
     Name: AutoScaling Not Enabled For Table
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: false
     Resource:
       {
@@ -321,7 +318,6 @@ Tests:
       }
   -
     Name: Billing Mode Pay Per Request
-    ResourceType: AWS.DynamoDB.Table
     ExpectedResult: true
     Resource:
       {
