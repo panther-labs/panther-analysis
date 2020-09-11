@@ -1,9 +1,7 @@
 import time
 from panther_oss_helpers import get_counter, increment_counter, set_key_expiration, reset_counter  # pylint: disable=import-error
 
-THRESH = 2
 THRESH_TTL = 600
-
 
 def rule(event):
 
@@ -17,9 +15,8 @@ def rule(event):
         # a failed authentication attempt with high risk score
         if event.get('event_type_id') == 6:
             # update a counter for this user's failed login attempts with a high risk score
-            count_failures = increment_counter(event_key)
-            if count_failures == 1:
-                set_key_expiration(event_key, time.time() + THRESH_TTL)
+            increment_counter(event_key)
+            set_key_expiration(event_key, time.time() + THRESH_TTL)
 
     # Trigger alert if this user recently
     # failed a high risk login
