@@ -9,7 +9,7 @@ Tags:
   - OneLogin
 Severity: Low
 Description: >
-  User locked out of their account
+  User locked or suspended from their account.
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
 Runbook: >
   Investigate whether this was caused by expected action.
@@ -38,7 +38,7 @@ Tests:
       }
   - 
     Name: User account suspended via api.
-    ExpectedResult: false
+    ExpectedResult: true
     Log:
       {
         'event_type_id': 551,
@@ -47,3 +47,14 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat'
       } 
+  -
+    Name: Normal User Activated Event
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 11,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
