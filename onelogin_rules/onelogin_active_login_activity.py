@@ -5,9 +5,11 @@ THRESH = 2
 THRESH_TTL = 43200  # 1/2 day
 
 # Safelist for IP Subnets to ignore in this ruleset
+# Each entry in the list should be in CIDR notation
 # This should include any source ip addresses
 # that are shared among users such as:
-# proxy servers, the public corporate ip space, etc
+# proxy servers, the public corporate ip space, 
+# scanner ips etc
 SHARED_IP_SPACE = [
     '192.168.0.0/16',
 ]
@@ -21,7 +23,7 @@ def rule(event):
     # We expect to see multiple user logins from these shared, common ip addresses
     if is_ip_in_network(event.get('ipaddr'), SHARED_IP_SPACE):
         return False
-    # This track multiple successful logins for different accounts from the same ip address
+    # This tracks multiple successful logins for different accounts from the same ip address
     # First, keep a list of unique user ids that have logged in from this ip address
     event_key = get_key(event)
     user_ids = get_string_set(event_key)
