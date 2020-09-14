@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorCode.html
 Tests:
   -
     Name: Amazon Access Error
-    LogType: AWS.S3ServerAccess
     ExpectedResult: false
     Log:
       {
@@ -45,7 +44,6 @@ Tests:
       }
   -
     Name: Access Error
-    LogType: AWS.S3ServerAccess
     ExpectedResult: true
     Log:
       {
@@ -61,7 +59,6 @@ Tests:
       }
   -
     Name: 403 on HEAD.BUCKET
-    LogType: AWS.S3ServerAccess
     ExpectedResult: false
     Log:
       {
@@ -77,7 +74,6 @@ Tests:
       }
   -
     Name: Internal Server Error
-    LogType: AWS.S3ServerAccess
     ExpectedResult: false
     Log:
       {

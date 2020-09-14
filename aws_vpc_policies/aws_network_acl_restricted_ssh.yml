@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl
 Tests:
   -
     Name: Secure VPC SSH Access
-    ResourceType: AWS.EC2.NetworkACL
     ExpectedResult: true
     Resource:
       {
@@ -71,7 +70,6 @@ Tests:
       }
   -
     Name: Global VPC SSH Access
-    ResourceType: AWS.EC2.NetworkACL
     ExpectedResult: false
     Resource:
       {
@@ -112,7 +110,6 @@ Tests:
       }
   -
     Name: Global VPC SSH Access From Range
-    ResourceType: AWS.EC2.NetworkACL
     ExpectedResult: false
     Resource:
       {
@@ -153,7 +150,6 @@ Tests:
       }
   -
     Name: Global VPC SSH Access From Unrestricted Port Range
-    ResourceType: AWS.EC2.NetworkACL
     ExpectedResult: false
     Resource:
       {

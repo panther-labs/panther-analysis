@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html
 Tests:
   -
     Name: Bucket MFA Delete Never Set
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -51,7 +50,6 @@ Tests:
       }
   -
     Name: Bucket Has MFA Delete Enabled
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -85,7 +83,6 @@ Tests:
       }
   -
     Name: Bucket Does Not MFA Delete Enabled
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {

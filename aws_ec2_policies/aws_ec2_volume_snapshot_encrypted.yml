@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.htm
 Tests:
   -
     Name: Volume Snapshot Encrypted
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: true
     Resource:
       {
@@ -97,7 +96,6 @@ Tests:
       }
   -
     Name: Volume Snapshot Not Encrypted
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: false
     Resource:
       {
@@ -177,7 +175,6 @@ Tests:
       }
   -
     Name: No Snapshots
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: true
     Resource:
       {

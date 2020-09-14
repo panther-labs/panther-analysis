@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html
 Tests:
   -
     Name: User In Conflicting Groups
-    ResourceType: AWS.IAM.User
     ExpectedResult: false
     Resource:
       {
@@ -81,7 +80,6 @@ Tests:
       }
   -
     Name: User Not In Conflicting Groups
-    ResourceType: AWS.IAM.User
     ExpectedResult: true
     Resource:
       {

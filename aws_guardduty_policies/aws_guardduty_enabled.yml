@@ -17,7 +17,6 @@ Reference: https://aws.amazon.com/guardduty/
 Tests:
   -
     Name: Detectors Do Not Exist
-    ResourceType: AWS.GuardDuty.Detector.Meta
     ExpectedResult: false
     Resource:
       {
@@ -31,7 +30,6 @@ Tests:
       }
   -
     Name: Detectors Exist
-    ResourceType: AWS.GuardDuty.Detector.Meta
     ExpectedResult: true
     Resource:
       {
@@ -49,7 +47,6 @@ Tests:
       }
   -
     Name: Detectors Exist But Not in Required Regions
-    ResourceType: AWS.GuardDuty.Detector.Meta
     ExpectedResult: false
     Resource:
       {

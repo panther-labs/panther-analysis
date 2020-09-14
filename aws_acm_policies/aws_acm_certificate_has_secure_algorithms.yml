@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/acm/latest/userguide/acm-certificate.html
 Tests:
   -
     Name: Certificate Has Secure Algorithms
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: true
     Resource:
       {
@@ -85,7 +84,6 @@ Tests:
       }
   -
     Name: Certificate Has One Insecure Agorithm
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: false
     Resource:
       {
@@ -149,7 +147,6 @@ Tests:
       }
   -
     Name: Certificate Has Two Insecure Agorithms
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: false
     Resource:
       {

@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.SecurityConfigurationChange
 DisplayName: Account Security Configuration Changed
 Enabled: true
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
 Severity: Medium
@@ -18,7 +18,6 @@ Reference: reference.link
 Tests:
   -
     Name: Security Configuration Changed
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -63,7 +62,6 @@ Tests:
       }
   -
     Name: Security Configuration Not Changed
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -108,7 +106,6 @@ Tests:
       }
   -
     Name: Non Security Configuration Change
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-polici
 Tests:
   -
     Name: Bucket Restricts Action
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Bucket Does Not Restrict S3 Actions
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -89,7 +87,6 @@ Tests:
       }
   -
     Name: Bucket Does Not Restrict Any Actions Expanded
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -124,7 +121,6 @@ Tests:
       }
   -
     Name: Bucket Restricts Action With Deny Statement
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {

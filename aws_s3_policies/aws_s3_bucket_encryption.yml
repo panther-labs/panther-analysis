@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.htm
 Tests:
   -
     Name: Bucket Has No Encryption Rules
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -69,7 +68,6 @@ Tests:
       }
   -
     Name: Encryption Is Set
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -124,7 +122,6 @@ Tests:
       }
   -
     Name: SSE Algorithm Is Not Set
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {

@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.h
 Tests:
   -
     Name: KMS Key Disabled
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -69,7 +68,6 @@ Tests:
       }
   -
     Name: KMS Key Scheduled For Deletion
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -124,7 +122,6 @@ Tests:
       }
   -
     Name: KMS Key Non Deletion Event
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

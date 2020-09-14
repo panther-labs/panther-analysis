@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.NetworkACLPermissiveEntry
 DisplayName: AWS Network ACL Overly Permissive Entry Created
 Enabled: true
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
 Severity: Medium
@@ -19,7 +19,6 @@ Reference: reference.link
 Tests:
   -
     Name: Overly Permissive Entry Added
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -75,7 +74,6 @@ Tests:
       }
   -
     Name: Not Overly Permissive Entry Added
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

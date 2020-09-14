@@ -18,7 +18,6 @@ Reference: https://attack.mitre.org/techniques/T1078/
 Tests:
   -
     Name: AWS command executed
-    LogType: Osquery.Differential
     ExpectedResult: true
     Log:
       {
@@ -33,7 +32,6 @@ Tests:
       }
   -
     Name: Tail command executed
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {
@@ -48,7 +46,6 @@ Tests:
       }
   -
     Name: Command with quote executed
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {
@@ -63,7 +60,6 @@ Tests:
       }
   -
     Name: Invalid command ignored
-    LogType: Osquery.Differential
     ExpectedResult: false
     Log:
       {

@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.IAMAnythingChanged
 DisplayName: IAM Change
 Enabled: true
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - Identity and Access Management
@@ -17,7 +17,6 @@ Reference: reference.link
 Tests:
   -
     Name: IAM Change
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -62,7 +61,6 @@ Tests:
       }
   -
     Name: IAM Read Only Activity
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

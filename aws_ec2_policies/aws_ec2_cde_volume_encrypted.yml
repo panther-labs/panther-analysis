@@ -22,7 +22,6 @@ Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.htm
 Tests:
   -
     Name: Volume Encrypted
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: true
     Resource:
       {
@@ -78,7 +77,6 @@ Tests:
       }
   -
     Name: Volume Not Encrypted
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: false
     Resource:
       {
@@ -133,7 +131,6 @@ Tests:
       }
   -
     Name: Volume Not Encrypted But Not In Scope
-    ResourceType: AWS.EC2.Volume
     ExpectedResult: true
     Resource:
       {

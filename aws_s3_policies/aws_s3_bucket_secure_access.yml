@@ -21,7 +21,6 @@ Reference: https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-reso
 Tests:
   -
     Name: Bucket Uses Allow With Condition
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: true
     Resource:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Bucket Uses Allow With Wrong Condition
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -89,7 +87,6 @@ Tests:
       }
   -
     Name: Bucket Uses Allow Without Condition
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {
@@ -123,7 +120,6 @@ Tests:
       }
   -
     Name: Bucket Has No Access Policy 
-    ResourceType: AWS.S3.Bucket
     ExpectedResult: false
     Resource:
       {

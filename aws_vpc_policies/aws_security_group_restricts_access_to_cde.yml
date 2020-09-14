@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.
 Tests:
   -
     Name: In Scope Security Group Restricts Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {
@@ -84,7 +83,6 @@ Tests:
       }
   -
     Name: In Scope Security Group Does Not Restrict Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: false
     Resource:
       {
@@ -148,7 +146,6 @@ Tests:
       }
   -
     Name: Out Of Scope Security Group Does Not Restrict Access
-    ResourceType: AWS.EC2.SecurityGroup
     ExpectedResult: true
     Resource:
       {

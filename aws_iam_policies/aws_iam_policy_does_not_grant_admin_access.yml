@@ -21,7 +21,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   -
     Name: Policy Does Not Grant Administrative Privileges
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: true
     Resource:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Policy Does Grant Administrative Privileges
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: false
     Resource:
       {

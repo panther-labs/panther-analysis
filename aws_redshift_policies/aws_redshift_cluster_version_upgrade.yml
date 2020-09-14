@@ -20,7 +20,6 @@ Reference: https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-cluster
 Tests:
   -
     Name: Allow Version Upgrade Not Set
-    ResourceType: AWS.Redshift.Cluster
     ExpectedResult: false
     Resource:
       {
@@ -105,7 +104,6 @@ Tests:
       }
   -
     Name: Allow Version Upgrade
-    ResourceType: AWS.Redshift.Cluster
     ExpectedResult: true
     Resource:
       {
@@ -190,7 +188,6 @@ Tests:
       }
   -
     Name: Does Not Allow Version Upgrade
-    ResourceType: AWS.Redshift.Cluster
     ExpectedResult: false
     Resource:
       {

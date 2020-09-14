@@ -18,7 +18,6 @@ Reference: https://amzn.to/3aOukaA
 Tests:
   -
     Name: Unauthorized API Call from Within AWS (IP)
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -55,7 +54,6 @@ Tests:
       }
   -
     Name: Unauthorized API Call from Within AWS (FQDN)
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -92,7 +90,6 @@ Tests:
       }
   -
     Name: Authorized API Call
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

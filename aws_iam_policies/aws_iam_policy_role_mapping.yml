@@ -18,7 +18,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html
 Tests:
   -
     Name: Policy Applied To Required Roles
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: true
     Resource:
       {
@@ -56,7 +55,6 @@ Tests:
       }
   -
     Name: Policy Does Not Have Role Mappings
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: true
     Resource:
       {
@@ -90,7 +88,6 @@ Tests:
       }
   -
     Name: Policy Not Applied To Required Roles
-    ResourceType: AWS.IAM.Policy
     ExpectedResult: false
     Resource:
       {

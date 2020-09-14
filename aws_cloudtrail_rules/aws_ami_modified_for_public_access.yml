@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.AMIModifiedForPublicAccess
 DisplayName: Amazon Machine Image (AMI) Modified to Allow Public Access
 Enabled: true
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
 Severity: Medium
@@ -22,7 +22,6 @@ Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sharingamis-intro
 Tests:
   -
     Name: AMI Made Public
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -77,7 +76,6 @@ Tests:
       }
   -
     Name: AMI Not Made Public
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -132,7 +130,6 @@ Tests:
       }
   -
     Name: AMI Launch Permissions Not Modified
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

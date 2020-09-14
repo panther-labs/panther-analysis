@@ -18,7 +18,6 @@ Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-
 Tests:
   -
     Name: Logs Are Encrypted
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: true
     Resource:
       {
@@ -42,7 +41,6 @@ Tests:
       }
   -
     Name: Logs Are Not Encrypted
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: false
     Resource:
       {

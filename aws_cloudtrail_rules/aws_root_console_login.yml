@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.RootConsoleLogin
 DisplayName: Root Account Console Login
 Enabled: true
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - Identity and Access Management
@@ -19,7 +19,6 @@ Reference: reference.link
 Tests:
   -
     Name: Root Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -52,7 +51,6 @@ Tests:
       }
   -
     Name: Root Non Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -85,7 +83,6 @@ Tests:
       }
   -
     Name: Non Root Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {
@@ -118,7 +115,6 @@ Tests:
       }
   -
     Name: Root Failed Console Login
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

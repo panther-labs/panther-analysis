@@ -4,7 +4,7 @@ RuleID: AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored
 DisplayName: IAM Assume Role Blacklist Ignored
 Enabled: false
 LogTypes:
-  - AWS.CloudTrail.Log
+  - AWS.CloudTrail
 Tags:
   - AWS
   - Configuration Required
@@ -18,7 +18,6 @@ Reference: reference.link
 Tests:
   -
     Name: IAM Blacklisted Role Assumed
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: true
     Log:
       {
@@ -75,7 +74,6 @@ Tests:
       }
   -
     Name: IAM Non Blacklisted Role Assumed
-    LogType: AWS.CloudTrail.Log
     ExpectedResult: false
     Log:
       {

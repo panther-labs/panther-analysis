@@ -23,7 +23,6 @@ Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   -
     Name: MFA Active With No Virtual MFA Device
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: true
     Resource:
       {
@@ -59,7 +58,6 @@ Tests:
       }
   -
     Name: MFA Active With Virtual MFA Device
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: false
     Resource:
       {
@@ -98,7 +96,6 @@ Tests:
       }
   -
     Name: MFA Not Active
-    ResourceType: AWS.IAM.RootUser
     ExpectedResult: true
     Resource:
       {

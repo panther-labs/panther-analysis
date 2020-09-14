@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.ht
 Tests:
   -
     Name: S3 Bucket Policy Modified
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -75,7 +74,6 @@ Tests:
       }
   -
     Name: S3 Bucket Policy Modified Error Response
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -132,7 +130,6 @@ Tests:
       }
   -
     Name: S3 Bucket Policy Not Modified
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

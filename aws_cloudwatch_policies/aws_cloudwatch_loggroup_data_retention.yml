@@ -19,7 +19,6 @@ Reference: https://docs.aws.amazon.com/cli/latest/reference/logs/put-retention-p
 Tests:
   -
     Name: Unlimited Log Retention
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: true
     Resource:
       {
@@ -43,7 +42,6 @@ Tests:
       }
   -
     Name: Logs Retained 1 Year
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: true
     Resource:
       {
@@ -67,7 +65,6 @@ Tests:
       }
   -
     Name: Logs Retained 2 Years
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: true
     Resource:
       {
@@ -91,7 +88,6 @@ Tests:
       }
   -
     Name: Logs Retained 1 Week
-    ResourceType: AWS.CloudWatch.LogGroup
     ExpectedResult: false
     Resource:
       {

@@ -14,7 +14,6 @@ Reference: https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html
 Tests:
   -
     Name: An S3 Bucket was deleted
-    LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
       {
@@ -67,7 +66,6 @@ Tests:
       }
   -
     Name: S3 Bucket Deletion Failed
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {
@@ -87,7 +85,6 @@ Tests:
       }
   -
     Name: An S3 Object Deleted
-    LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:
       {

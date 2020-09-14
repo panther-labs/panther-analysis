@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/acm/latest/userguide/troubleshooting-rene
 Tests:
   -
     Name: Future Expiration
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: true
     Resource:
       {
@@ -85,7 +84,6 @@ Tests:
       }
   -
     Name: Past Expiration
-    ResourceType: AWS.ACM.Certificate
     ExpectedResult: false
     Resource:
       {

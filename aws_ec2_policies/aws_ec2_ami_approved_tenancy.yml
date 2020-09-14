@@ -17,7 +17,6 @@ Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instanc
 Tests:
   -
     Name: Instance Does Not Have Tenancy Requirements
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: true
     Resource:
       {
@@ -185,7 +184,6 @@ Tests:
       }
   -
     Name: Instance Does Not Meet Tenancy Requirements
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: false
     Resource:
       {
@@ -353,7 +351,6 @@ Tests:
       }
   -
     Name: Instance Meets Tenancy Requirements
-    ResourceType: AWS.EC2.Instance
     ExpectedResult: true
     Resource:
       {
