@@ -15,7 +15,7 @@ def title(event):
         return 'A user [{}] removed an authentication factor [{}]'.format(
             event.get('user_name'),
             event.get('authentication_factor_description',
-                      'UNKNOWN_AUTH_FACTOR'))
+                      '<UNKNOWN_AUTH_FACTOR>'))
     return 'A user [{}] deactivated an otp device [{}]'.format(
         event.get('user_name'),
-        event.get('otp_device_name', 'UNKNOWN_OTP_DEVICE'))
+        event.get('otp_device_name', '<UNKNOWN_OTP_DEVICE>'))

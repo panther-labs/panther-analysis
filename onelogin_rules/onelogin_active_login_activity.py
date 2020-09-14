@@ -35,6 +35,7 @@ def rule(event):
     # add a new username if this is a unique user from this ip address
     if event.get('user_id') not in user_ids:
         user_ids = add_to_string_set(event_key, event.get('user_id'))
+        set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
     return len(user_ids) > THRESH
 
 
