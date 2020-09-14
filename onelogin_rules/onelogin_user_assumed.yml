@@ -1,0 +1,37 @@
+AnalysisType: rule
+Filename: onelogin_user_assumed.py
+RuleID: OneLogin.UserAssumption
+DisplayName: OneLogin User Assumed Another User
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Low
+Description: User assumed another user account
+Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
+Runbook: >
+  Investigate whether this was authorized access.
+Tests:
+  -
+    Name: User assumed their own account
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 240,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
+  - 
+    Name: User assumed another user's account
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 3,
+        'actor_user_id': 654321,
+        'actor_user_name': 'Mountain Lion',
+        'user_id': 123456,
+        'user_name': 'Bob Cat'
+      }
