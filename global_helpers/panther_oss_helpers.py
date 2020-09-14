@@ -1,6 +1,6 @@
 """Utility functions provided to policies and rules during execution."""
 from fnmatch import fnmatch
-from ipaddress import ip_network
+from ipaddress import ip_address, ip_network
 import time
 from typing import Any, Dict, Union, Sequence, Set
 
@@ -86,6 +86,14 @@ def is_dmz_tags(resource):
     if resource['Tags'] is None:
         return False
     return resource['Tags'].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
+
+
+# Check that an ip address (e.g. '192.168.1.1.') is in
+# a list of networks in cidr notation (e.g. '192.168.0.0/14)
+def is_ip_in_network(ip_addr, networks):
+    """This function determines whether a given IP address is within a defined IP range."""
+    return any(
+        ip_address(ip_addr) in ip_network(network) for network in networks)
 
 
 # Helper functions for accessing Dynamo key-value store.
