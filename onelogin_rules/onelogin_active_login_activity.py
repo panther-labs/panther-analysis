@@ -27,14 +27,16 @@ def rule(event):
     # First, keep a list of unique user ids that have logged in from this ip address
     event_key = get_key(event)
     user_ids = get_string_set(event_key)
+    # the user id of the user that has just logged in
+    user_id = str(event.get('user_id'))
     if not user_ids:
         # store this as the first user login from this ip address
-        put_string_set(event_key, [event.get('user_id')])
+        put_string_set(event_key, [user_id])
         set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
         return False
     # add a new username if this is a unique user from this ip address
-    if event.get('user_id') not in user_ids:
-        user_ids = add_to_string_set(event_key, event.get('user_id'))
+    if user_id not in user_ids:
+        user_ids = add_to_string_set(event_key, user_id)
         set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
     return len(user_ids) > THRESH
 

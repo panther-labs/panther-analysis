@@ -11,7 +11,9 @@ Reports:
   MITRE ATT&CK:
     - Discovery:Cloud Service Discovery
 Severity: Medium
-Description: An IAM user was denied access more than 5 times to compute/storage services.
+Threshold: 15
+DedupPeriodMinutes: 10
+Description: An IAM user has a high volume of access denied API calls.
 Runbook: Analyze the IP they came from, and other actions taken before/after.
 Reference: https://runpanther.io
 SummaryAttributes:
@@ -23,6 +25,43 @@ SummaryAttributes:
   - p_any_aws_arns
   - p_any_aws_account_ids
 Tests:
+  -
+    Name: Unauthorized API Call
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "GetRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "40.185.186.6",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:GetRole on resource: arn:aws:iam::123456789012:role/FooBar",
+          "userAgent": "aws-sdk-go/1.32.7 (go1.14.6; linux; amd64) exec-env/AWS_Lambda_go1.x",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
   -
     Name: Unauthorized API Call from Within AWS (FQDN)
     ExpectedResult: false
