@@ -17,6 +17,14 @@ Description: >
 Runbook: >
   Verify that the Config Service changes were authorized. If not, revert them and investigate who caused the change. Consider altering permissions to prevent this from happening again in the future.
 Reference: https://aws.amazon.com/config/
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - recipientAccountId
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: Config Recorder Delivery Channel Created

@@ -16,6 +16,12 @@ Threshold: 10
 DedupPeriodMinutes: 10
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
 Runbook: Analyze the IP they came from, and other actions taken before/after. Check if a user from this ip eventually authenticated successfully.
+SummaryAttributes:
+  - event_type_id
+  - actor_user_name
+  - user_name
+  - actor_user_id
+  - user_id
 Tests:
   -
     Name: Normal Login Event

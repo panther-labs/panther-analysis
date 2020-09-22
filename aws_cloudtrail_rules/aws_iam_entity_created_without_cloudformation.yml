@@ -15,6 +15,13 @@ Description: >
 Runbook: >
   Verify whether IAM entity needs to exist. If so, re-create it in an appropriate CloudFormation, Terraform, or other template. Delete the original manually created entity.
 Reference: reference.link
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - recipientAccountId
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: IAM Entity Created Automatically

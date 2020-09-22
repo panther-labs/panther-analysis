@@ -16,6 +16,13 @@ Description: >
   Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
 Runbook: Adjust the policy so that the resource is no longer publicly accessible
 Reference: reference.link
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - vpcEndpointId
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: S3 Made Publicly Accessible

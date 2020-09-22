@@ -14,6 +14,10 @@ Description: >
   Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
 Runbook: >
   Investigate the host sending unapproved DNS activity for signs of compromise or other malicious activity. Update network configurations appropriately to ensure all DNS traffic is routed to approved DNS servers.
+SummaryAttributes:
+  - srcaddr
+  - dstaddr
+  - dstport
 Tests:
   -
     Name: Approved Outbound DNS Traffic

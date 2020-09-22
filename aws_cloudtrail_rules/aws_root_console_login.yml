@@ -16,6 +16,14 @@ Description: Someone logged into the root account from the AWS console.
 Runbook: >
   Verify that the root login was authorized. If not, investigate the root activity and ensure no malicious activity was performed. Change the root password.
 Reference: reference.link
+SummaryAttributes:
+  - eventName
+  - eventSource
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - p_any_aws_account_ids
+  - p_any_aws_arns
 Tests:
   -
     Name: Root Console Login

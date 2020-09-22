@@ -14,6 +14,14 @@ Severity: Medium
 Description: An IAM user was denied access more than 5 times to compute/storage services.
 Runbook: Analyze the IP they came from, and other actions taken before/after.
 Reference: https://runpanther.io
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - errorMessage
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: Unauthorized API Call from Within AWS (FQDN)

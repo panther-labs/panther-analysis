@@ -17,6 +17,13 @@ Description: >
 Runbook: >
   Verify that the root login attempt was authorized. If not, investigate the root account failed logins to see if there is a pattern.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: Root Console Login

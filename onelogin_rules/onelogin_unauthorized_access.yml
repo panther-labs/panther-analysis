@@ -12,7 +12,12 @@ Description: A OneLogin user was denied access to an app more times than the con
 Threshold: 10
 DedupPeriodMinutes: 10
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
-Runbook: Analyze the user activity and actions. 
+Runbook: Analyze the user activity and actions.
+SummaryAttributes:
+  - event_type_id
+  - user_name
+  - user_id
+  - app_name
 Tests:
   -
     Name: Normal Event

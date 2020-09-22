@@ -19,6 +19,13 @@ Runbook: >
   If not, first modify the AMI to not be publicly accessible then change any sensitive data stored
   in the block devices associated to the AMI (as they may be compromised).
 Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sharingamis-intro.html
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - awsRegion
+  - recipientAccountId
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: AMI Made Public

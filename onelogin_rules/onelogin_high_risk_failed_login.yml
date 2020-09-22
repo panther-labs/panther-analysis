@@ -11,6 +11,12 @@ Severity: Low
 Description: A OneLogin attempt with a high risk factor (>50) resulted in a failed authentication.
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
 Runbook: Investigate why this user login is tagged as high risk as well as whether this was caused by expected user activity.
+SummaryAttributes:
+  - event_type_id
+  - actor_user_name
+  - user_name
+  - actor_user_id
+  - user_id
 Tests:
   -
     Name: Normal Login Event
