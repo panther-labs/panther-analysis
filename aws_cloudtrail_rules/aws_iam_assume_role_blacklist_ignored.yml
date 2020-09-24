@@ -15,6 +15,11 @@ Description: >
 Runbook: >
   Verify that this was an approved assume role action. If not, consider revoking the access immediately and updating the AssumeRolePolicyDocument to prevent this from happening again.
 Reference: reference.link
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: IAM Blacklisted Role Assumed

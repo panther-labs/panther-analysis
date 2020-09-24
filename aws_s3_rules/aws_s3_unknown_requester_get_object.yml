@@ -16,6 +16,15 @@ Reports:
 Severity: Low
 Description: Validates that proper IAM entities are accessing sensitive data buckets.
 Runbook: If the S3 access is not expected for this bucket, investigate the requester's other traffic.
+SummaryAttributes:
+  - bucket
+  - key
+  - operation
+  - userAgent
+  - remoteip
+  - requester
+  - p_any_aws_arns
+  - p_any_aws_account_ids
 Tests:
   -
     Name: Expected Access

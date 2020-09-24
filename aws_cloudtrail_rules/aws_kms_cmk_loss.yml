@@ -16,6 +16,12 @@ Description: >
   A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
 Runbook: https://docs.runpanther.io/log-analysis/rules/built-in-rule-runbooks/aws-kms-cmk-loss
 Reference: https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: KMS Key Disabled

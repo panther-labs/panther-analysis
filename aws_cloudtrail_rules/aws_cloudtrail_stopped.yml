@@ -16,6 +16,12 @@ Description: >
   A CloudTrail Trail was modified.
 Runbook: https://docs.runpanther.io/log-analysis/rules/built-in-rule-runbooks/aws-cloudtrail-modified
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_Operations.html
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: CloudTrail Was Stopped

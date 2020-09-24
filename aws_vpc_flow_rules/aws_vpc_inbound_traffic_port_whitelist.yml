@@ -14,6 +14,10 @@ Description: >
   VPC Flow Logs observed inbound traffic violating the port whitelist.
 Runbook: >
   Block the unapproved traffic, or update the approved ports list.
+SummaryAttributes:
+  - srcaddr
+  - dstaddr
+  - dstport
 Tests:
   -
     Name: Public to Private IP on Restricted Port

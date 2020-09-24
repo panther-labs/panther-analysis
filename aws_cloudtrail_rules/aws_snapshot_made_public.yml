@@ -14,6 +14,11 @@ Severity: Medium
 Description: An AWS storage snapshot was made public.
 Runbook: Adjust the snapshot configuration so that it is no longer public.
 Reference: reference.link
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: Snapshot Made Publicly Accessible
