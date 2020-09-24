@@ -18,6 +18,11 @@ Runbook: >
   and change the root login credentials. If it was created for legitimate reasons, monitor its use
   and ensure it is revoked when its need is gone.
 Reference: https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: Root Access Key Created

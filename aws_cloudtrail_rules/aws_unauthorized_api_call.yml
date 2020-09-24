@@ -15,6 +15,12 @@ Severity: Info
 Description: An unauthorized AWS API call was made
 Runbook: https://docs.runpanther.io/log-analysis/rules/built-in-rule-runbooks/aws-unauthorized-api-call
 Reference: https://amzn.to/3aOukaA
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
 Tests:
   -
     Name: Unauthorized API Call from Within AWS (IP)

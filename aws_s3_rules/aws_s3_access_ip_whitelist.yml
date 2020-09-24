@@ -17,6 +17,10 @@ Runbook: >
   Verify whether unapproved access of S3 objects occurred, and take appropriate steps to remediate damage (for example, informing related parties of unapproved access and potentially invalidating data that was accessed). Consider updating the access policies of the S3 bucket to prevent future unapproved access.
 Reference:
   https://aws.amazon.com/premiumsupport/knowledge-center/block-s3-traffic-vpc-ip/
+SummaryAttributes:
+  - bucket
+  - key
+  - remoteip
 Tests:
   -
     Name: Access From Approved IP

@@ -11,6 +11,11 @@ Severity: Info
 Description: A S3 Bucket, Policy, or Website was deleted
 Runbook: Explore if this bucket deletion was potentially destructive
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html
+SummaryAttributes:
+  - sourceIpAddress
+  - userAgent
+  - recipientAccountId
+  - vpcEndpointId
 Tests:
   -
     Name: An S3 Bucket was deleted

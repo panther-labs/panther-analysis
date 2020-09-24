@@ -16,6 +16,13 @@ DedupPeriodMinutes: 10
 Description: An IAM user has a high volume of access denied API calls.
 Runbook: Analyze the IP they came from, and other actions taken before/after.
 Reference: https://runpanther.io
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - errorMessage
+  - p_any_aws_arns
 Tests:
   -
     Name: Unauthorized API Call
