@@ -7,11 +7,6 @@ def rule(event):
             event.get('responseElements', {}).get('ConsoleLogin') == 'Failure')
 
 
-def dedup(event):
-    return '{ip}-{account}'.format(ip=event['sourceIPAddress'],
-                                   account=event.get('recipientAccountId'))
-
-
 def title(event):
     return 'AWS root login failed from [{ip}] in account [{account}]'.format(
         ip=event['sourceIPAddress'],

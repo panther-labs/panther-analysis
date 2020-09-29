@@ -27,11 +27,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event['resource'].get('labels', {}).get('bucket_name',
-                                                   '<BUCKET_NOT_FOUND>')
-
-
 def title(event):
     return 'GCS bucket [{}] made public'.format(event['resource'].get(
         'labels', {}).get('bucket_name', '<BUCKET_NOT_FOUND>'))

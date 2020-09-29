@@ -17,10 +17,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'A suspicious login was reported for user [{}]'.format(
         event.get('actor', {}).get('email'))

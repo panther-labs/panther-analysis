@@ -18,10 +18,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'User [{}]\'s device had multiple failed unlock attempts'.format(
         event.get('actor', {}).get('email'))

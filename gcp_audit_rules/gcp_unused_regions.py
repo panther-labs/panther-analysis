@@ -38,11 +38,7 @@ def rule(event):
     return _resource_in_active_region(_get_location_or_zone(event))
 
 
-def dedup(event):
-    return event['resource'].get('labels', {}).get('project_id',
-                                                   '<PROJECT_NOT_FOUND>')
-
-
 def title(event):
     return 'GCP resource(s) created in unused region/zone in project {}'.format(
-        dedup(event))
+        event['resource'].get('labels', {}).get('project_id',
+                                                '<PROJECT_NOT_FOUND>'))

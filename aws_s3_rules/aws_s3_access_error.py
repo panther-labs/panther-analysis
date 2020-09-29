@@ -15,11 +15,6 @@ def rule(event):
             event.get('httpstatus') in HTTP_STATUS_CODES_TO_MONITOR)
 
 
-def dedup(event):
-    return '{status}-{bucket}'.format(status=event.get('httpstatus'),
-                                      bucket=event.get('bucket'))
-
-
 def title(event):
     return '{status} errors found to S3 Bucket [{bucket}]'.format(
         status=event.get('httpstatus'), bucket=event.get('bucket'))

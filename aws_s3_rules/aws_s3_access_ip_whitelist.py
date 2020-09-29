@@ -22,10 +22,6 @@ def rule(event):
         for approved_ip_range in WHITELIST_NETWORKS)
 
 
-def dedup(event):
-    return event.get('bucket')
-
-
 def title(event):
     return 'Non-Approved IP access to S3 Bucket [{}]'.format(
         event.get('bucket'))

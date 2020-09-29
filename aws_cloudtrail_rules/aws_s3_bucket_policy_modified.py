@@ -17,9 +17,5 @@ def rule(event):
         'eventName') in S3_POLICY_CHANGE_EVENTS and not event.get('errorCode')
 
 
-def dedup(event):
-    return event['userIdentity'].get('arn')
-
-
 def title(event):
     return 'S3 bucket modified by [{}]'.format(event['userIdentity'].get('arn'))

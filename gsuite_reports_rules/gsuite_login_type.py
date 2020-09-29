@@ -24,10 +24,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'A login attempt of a non-approved type was detected for user [{}]'.format(
         event.get('actor', {}).get('email'))

@@ -25,10 +25,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'User [{}] exceeded the failed logins threshold'.format(
         event.get('actor', {}).get('email'))

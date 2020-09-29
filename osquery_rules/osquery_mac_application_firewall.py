@@ -17,9 +17,5 @@ def rule(event):
         int(event['columns'].get('stealth_enabled')) == 0)
 
 
-def dedup(event):
-    return event.get('hostIdentifier')
-
-
 def title(event):
     return 'MacOS firewall disabled on [{}]'.format(event.get('hostIdentifier'))

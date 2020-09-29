@@ -34,10 +34,6 @@ def rule(event):
     return not any([fnmatch(process_path, p) for p in APPROVED_PROCESS_PATHS])
 
 
-def dedup(event):
-    return event.get('hostIdentifier')
-
-
 def title(event):
     return 'Keylogger malware detected on [{}]'.format(
         event.get('hostIdentifier'))

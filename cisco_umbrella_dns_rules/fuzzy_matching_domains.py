@@ -17,7 +17,3 @@ def rule(event):
 
 def title(event):
     return 'Suspicious DNS resolution to {}'.format(event['domain'])
-
-
-def dedup(event):
-    return event['domain']

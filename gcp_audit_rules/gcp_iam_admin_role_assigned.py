@@ -21,11 +21,7 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event['resource'].get('labels', {}).get('project_id',
-                                                   '<PROJECT_NOT_FOUND>')
-
-
 def title(event):
     return 'An admin role has been configured in GCP project {}'.format(
-        dedup(event))
+        event['resource'].get('labels', {}).get('project_id',
+                                                '<PROJECT_NOT_FOUND>'))

@@ -10,10 +10,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'Two step verification was disabled for user [{}]'.format(
         event.get('actor', {}).get('email'))

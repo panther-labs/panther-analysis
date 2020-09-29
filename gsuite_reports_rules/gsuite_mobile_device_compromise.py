@@ -15,10 +15,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'User [{}]\'s device was compromised'.format(
         event.get('actor', {}).get('email'))

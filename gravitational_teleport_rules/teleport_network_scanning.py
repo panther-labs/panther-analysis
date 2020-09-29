@@ -9,12 +9,6 @@ def rule(event):
     return event.get('program') in SCAN_COMMANDS
 
 
-def dedup(event):
-    # Group by user and program
-    return '{}-{}'.format(event.get('user', 'USER_NOT_FOUND'),
-                          event.get('program', 'PROGRAM_NOT_FOUND'))
-
-
 def title(event):
     return 'User [{}] has issued a network scan with [{}]'.format(
         event.get('user', 'USER_NOT_FOUND'),

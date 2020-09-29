@@ -15,11 +15,6 @@ def rule(event):
     return pattern_match_list(event.get('program', ''), USER_CREATE_PATTERNS)
 
 
-def dedup(event):
-    # Group all events by user
-    return event.get('user', 'USER_NOT_FOUND')
-
-
 def title(event):
     return 'User [{}] has manually modified system users'.format(
         event.get('user', 'USER_NOT_FOUND'))
