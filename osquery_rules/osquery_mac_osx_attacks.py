@@ -12,9 +12,5 @@ def rule(event):
     return True
 
 
-def dedup(event):
-    return event.get('hostIdentifier')
-
-
 def title(event):
     return 'MacOS malware detected on [{}]'.format(event.get('hostIdentifier'))

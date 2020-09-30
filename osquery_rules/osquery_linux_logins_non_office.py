@@ -35,15 +35,6 @@ def rule(event):
     return _login_from_non_office_network(host_ip)
 
 
-def dedup(event):
-    # Dedup by user to view lateral movement
-    user = event['columns'].get('user')
-    username = event['columns'].get('username')
-    if user is None:
-        return username
-    return user
-
-
 def title(event):
     msg = 'User [{}] has logged into production from a non-office network'
     user = event['columns'].get('user')

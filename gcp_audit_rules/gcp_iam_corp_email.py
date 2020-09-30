@@ -19,11 +19,7 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event['resource'].get('labels', {}).get('project_id',
-                                                   '<PROJECT_NOT_FOUND>')
-
-
 def title(event):
     return 'A GCP IAM account has been created with a Gmail email in {}'.format(
-        dedup(event))
+        event['resource'].get('labels', {}).get('project_id',
+                                                '<PROJECT_NOT_FOUND>'))

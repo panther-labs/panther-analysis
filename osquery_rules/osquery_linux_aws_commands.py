@@ -24,12 +24,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    user = event['columns'].get('username')
-    host = event['hostIdentifier']
-    return '{}-{}'.format(user, host)
-
-
 def title(event):
     return 'User [{}] issued sensitive `aws` command on [{}]'.format(
         event['columns'].get('username'), event['hostIdentifier'])

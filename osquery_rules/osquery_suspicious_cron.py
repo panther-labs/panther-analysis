@@ -43,9 +43,5 @@ def rule(event):
     return any([suspicious_cmd_args(command), suspicious_cmd_pairs(command)])
 
 
-def dedup(event):
-    return event.get('hostIdentifier')
-
-
 def title(event):
     return 'Suspicious cron found on [{}]'.format(event.get('hostIdentifier'))

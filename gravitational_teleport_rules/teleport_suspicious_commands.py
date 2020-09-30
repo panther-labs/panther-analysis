@@ -10,11 +10,6 @@ def rule(event):
     return event.get('program') in SUSPICIOUS_COMMANDS
 
 
-def dedup(event):
-    return '{}-{}'.format(event.get('user', 'USER_NOT_FOUND'),
-                          event.get('program', 'PROGRAM_NOT_FOUND'))
-
-
 def title(event):
     return 'User [{}] has executed the command [{}]'.format(
         event.get('user', 'USER_NOT_FOUND'),

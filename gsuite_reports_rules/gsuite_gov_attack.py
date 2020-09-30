@@ -10,10 +10,6 @@ def rule(event):
     return False
 
 
-def dedup(event):
-    return event.get('actor', {}).get('email')
-
-
 def title(event):
     return 'User [{}] may have been targeted by a government attack'.format(
         event.get('actor', {}).get('email'))

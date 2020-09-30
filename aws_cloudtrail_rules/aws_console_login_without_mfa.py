@@ -21,10 +21,6 @@ def rule(event):
         session_context.get('attributes', {}).get('mfaAuthenticated') != 'true')
 
 
-def dedup(event):
-    return event.get('recipientAccountId')
-
-
 def title(event):
     return 'AWS logins detected without MFA in account [{}]'.format(
         lookup_aws_account_name(event.get('recipientAccountId')))

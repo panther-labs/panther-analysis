@@ -7,10 +7,6 @@ def rule(event):
             event['action'] == 'added')
 
 
-def dedup(event):
-    return event['columns'].get('version')
-
-
 def title(event):
     return 'Osquery Version {} is Outdated'.format(
         event['columns'].get('version'))

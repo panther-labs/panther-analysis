@@ -6,9 +6,5 @@ def rule(event):
             ('ciphersuite' not in event or 'tlsVersion' not in event))
 
 
-def dedup(event):
-    return event.get('bucket')
-
-
 def title(event):
     return 'Insecure access to S3 Bucket [{}]'.format(event.get('bucket'))

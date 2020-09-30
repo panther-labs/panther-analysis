@@ -10,10 +10,6 @@ def rule(event):
     return event['eventName'] in CLOUDTRAIL_CREATE_UPDATE
 
 
-def dedup(event):
-    # Merge events by CloudTrail ARN
-    return event['requestParameters'].get('name')
-
-
 def title(event):
-    return 'CloudTrail [{}] was created/updated'.format(dedup(event))
+    return 'CloudTrail [{}] was created/updated'.format(
+        event['requestParameters'].get('name'))

@@ -10,11 +10,6 @@ def rule(event):
             event['eventName'] not in EVENT_ALLOW_LIST)
 
 
-def dedup(event):
-    return '{ip}-{account}'.format(ip=event['sourceIPAddress'],
-                                   account=event.get('recipientAccountId'))
-
-
 def title(event):
     return 'AWS root activity detected from [{ip}] in account [{account}]'.format(
         ip=event['sourceIPAddress'],

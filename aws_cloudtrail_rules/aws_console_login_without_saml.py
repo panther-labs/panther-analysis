@@ -8,10 +8,6 @@ def rule(event):
             not additional_event_data.get('SamlProviderArn'))
 
 
-def dedup(event):
-    return event.get('recipientAccountId')
-
-
 def title(event):
     return 'AWS logins without SAML in account [{}]'.format(
         lookup_aws_account_name(event.get('recipientAccountId')))

@@ -32,10 +32,6 @@ def rule(event):
             _unknown_requester_access(event))
 
 
-def dedup(event):
-    return event.get('bucket')
-
-
 def title(event):
     return 'Unknown requester accessing data from S3 Bucket [{}]'.format(
         event.get('bucket'))
