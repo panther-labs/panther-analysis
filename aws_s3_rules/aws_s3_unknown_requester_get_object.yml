@@ -104,3 +104,27 @@ Tests:
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
         "tlsVersion": "TLSv1.2"
       }
+  - 
+    Name: Snowflake Request
+    ExpectedResult: false
+    Log: 
+      {
+        "authenticationtype": "AuthHeader",
+        "bucket": "panther-bootstrap-processeddata-AF1341JAK",
+        "bucketowner": "f16a9e81a6589df1c902c86f7982fd14a88787db",
+        "ciphersuite": "ECDHE-RSA-AES128-GCM-SHA256",
+        "httpstatus": 200,
+        "key": "logs/logdir/year%253D2020/month%253D09/day%253D30/hour%253D19/file.json.gz",
+        "requesturi": "GET /logs/logdir/year%3D2020/month%3D09/day%3D30/hour%3D19/file.json.gz HTTP/1.1",
+        "objectsize": 4063,
+        "operation": "REST.GET.OBJECT",
+        "remoteip": "127.0.0.1",
+        "requester": "arn:aws:sts::123456789012:assumed-role/panther-snowflake-logprocessing-role-us-west-2/snowflake",
+        "requestid": "101B7403B9828743",
+        "signatureversion": "SigV4",
+        "time": "2020-09-30 20:49:19.000000000",
+        "tlsVersion": "TLSv1.2",
+        "totaltime": 10,
+        "turnaroundtime": 9,
+        "useragent": "snowflake/1.0"
+      }

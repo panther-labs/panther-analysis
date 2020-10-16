@@ -183,8 +183,8 @@ def rule(event):
 AnalysisType: rule
 Enabled: true
 Filename: example_rule.py
-PolicyID: Example.Rule.01
-ResourceTypes:
+RuleID: Example.Rule.01
+LogTypes:
   - Log.Type.Here
 Severity: Low
 DisplayName: Example Rule to Check the Format of the Spec
@@ -199,10 +199,12 @@ Tests:
     Name: Name to describe our first test.
     ResourceType: Log.Type.Here
     ExpectedResult: true/false
-    Resource:
+    Log:
+    {
       Key: Values
       For: Our Log
       Based: On the Schema
+    }
 ```
 
 The requirements for the Rule body and specification files are listed below.
