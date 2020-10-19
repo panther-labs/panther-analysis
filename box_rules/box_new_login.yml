@@ -1,0 +1,90 @@
+AnalysisType: rule
+Filename: box_new_login.py
+RuleID: Box.New.Login
+DisplayName: Box New Login
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+Severity: Info
+Description: >
+  A user logged in from a new device. 
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Investigate whether this is a valid user login. 
+SummaryAttributes:
+  - event_type
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "ceo@example.com",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "DELETE",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "item_id": 123456789012,
+          "item_name": "regular_file.pdf",
+          "item_type": "file",
+          "owned_by": {
+            "id": 12345678,
+            "type": "user",
+            "login": "ceo@example.com",
+            "name": "Bob Cat"
+          },
+          "parent": {
+            "id": 12345,
+            "type": "folder",
+            "etag": 1,
+            "name": "Parent_Folder",
+            "sequence_id": 2
+          }
+        }
+      }
+  -
+    Name: Access Granted
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "ceo@example.com",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "ADD_LOGIN_ACTIVITY_DEVICE",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "created_at": "2012-12-12T10:53:43-08:00",
+          "language": "en",
+          "login": "user@example.com",
+          "max_upload_size": 88999900,
+          "modified_at": "2012-12-12T10:53:43-08:00",
+          "name": "Bob Cat",
+          "notification_email": {
+            "email": "notifications@example.com",
+            "is_confirmed": true
+          },
+          "phone": 1234567890,
+          "status": "active",
+        }
+      }

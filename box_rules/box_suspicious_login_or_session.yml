@@ -1,0 +1,324 @@
+AnalysisType: rule
+Filename: box_suspicious_login_or_session.py
+RuleID: Box.Shield.Suspicious.Alert
+DisplayName: Box Shield Suspicious Alert Triggered
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+Severity: High
+Description: >
+  A user login or session event was tagged as medium to high severity by Box Shield.
+Reference: https://developer.box.com/guides/events/shield-alert-events/
+Runbook: >
+   Investigate whether this was triggered by an expected user event or if the user account is being targeted.
+SummaryAttributes:
+  - event_type
+  - ip_address
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "ceo@example",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "DELETE",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "item_id": 123456789012,
+          "item_name": "regular_file.pdf",
+          "item_type": "file",
+          "owned_by": {
+            "id": 12345678,
+            "type": "user",
+            "login": "ceo@example",
+            "name": "Bob Cat"
+          },
+          "parent": {
+            "id": 12345,
+            "type": "folder",
+            "etag": 1,
+            "name": "Parent_Folder",
+            "sequence_id": 2
+          }
+        }
+      }
+  -
+    Name: Suspicious Login Event
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details":{
+          "shield_alert":{
+            "rule_category":"Suspicious Locations",
+            "rule_id":123,
+            "rule_name":"Suspicious Location",
+            "risk_score":60,
+            "alert_summary":{
+              "alert_activities":[
+                {
+                  "occurred_at":"2019-12-20T11:37:05-08:00",
+                  "event_type":"Download",
+                  "item_name":"a_file.txt",
+                  "item_type":"file",
+                  "item_id":"127",
+                  "item_path":"path/location",
+                  "ip_info":{
+                    "ip":"1.2.3.4",
+                    "latitude":"47.22222",
+                    "longitude":"-130.1234",
+                    "registrant":"A Corporation",
+                    "country_code":"US",
+                    "city_name":"San Jose",
+                    "region_name":"California"
+                  },
+                  "service_name":"A Service Name"
+                }
+              ]
+            },
+            "alert_id":1234,
+            "priority":"medium",
+            "user":{
+              "id":2320,
+              "name":"Bob Cat",
+              "email":"bob@example"
+            },
+            "created_at":"2019-12-20T11:37:15-08:00"
+          }
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "bob@example",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "SHIELD_ALERT",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "created_at": "2012-12-12T10:53:43-08:00",
+          "language": "en",
+          "login": "bob@example",
+          "max_upload_size": 88999900,
+          "modified_at": "2012-12-12T10:53:43-08:00",
+          "name": "Bob Cat",
+          "notification_email": {
+            "email": "notifications@example",
+            "is_confirmed": true
+          },
+          "phone": 1234567890,
+          "status": "active",
+        }
+      }
+  -
+    Name: Suspicious Session Event
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details":{
+          "shield_alert":{
+            "rule_category":"Suspicious Sessions",
+            "rule_id":123,
+            "rule_name":"Suspicious Session",
+            "risk_score":70,
+            "alert_summary":{
+              "description":"First time in prior month user connected from ip 1.2.3.4.",
+              "sessions":[
+                {
+                  "session_type":"suspicious",
+                  "activities":[
+                    {
+                      "occurred_at":"2019-01-12T10:15:00-08:00",
+                      "event_type":"Set shared link expiration",
+                      "item_name":"a_file.txt",
+                      "item_type":"file",
+                      "item_id":"123456",
+                      "item_path":"path/to/file",
+                      "ip_info":{
+                        "ip":"1.2.3.4",
+                        "latitude":"25.1234",
+                        "longitude":"-130.12345",
+                        "registrant":"A Company",
+                        "country_code":"US",
+                        "city_name":"San Jose",
+                        "region_name":"California"
+                      },
+                      "service_name":"A Service"
+                    }
+                  ]
+                },
+                {
+                  "session_type":"typical",
+                  "activities":[
+                    {
+                      "occurred_at":"2019-12-19T11:37:59-08:00",
+                      "event_type":"Item Modified",
+                      "item_name":"another_file",
+                      "item_type":"file",
+                      "item_id":"1234567",
+                      "item_path":"another/path",
+                      "ip_info":{
+                        "ip":"9.8.7.6",
+                        "latitude":"35.6666",
+                        "longitude":"-30.1234",
+                        "country_code":"US",
+                        "city_name":"different city",
+                        "region_name":"different region"
+                      },
+                      "service_name":"Another Service"
+                    }
+                  ]
+                }
+              ]
+            },
+            "alert_id":123,
+            "priority":"medium",
+            "user":{
+              "id":55555,
+              "name":"Bob",
+              "email":"bob@example"
+            },
+            "link":"https://cloud.app.box.com/master/shield/alerts/500",
+            "created_at":"2019-12-20T11:38:16-08:00"
+          }
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "bob@example",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "SHIELD_ALERT",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "created_at": "2012-12-12T10:53:43-08:00",
+          "language": "en",
+          "login": "bob@example",
+          "max_upload_size": 88999900,
+          "modified_at": "2012-12-12T10:53:43-08:00",
+          "name": "Bob Cat",
+          "notification_email": {
+            "email": "notifications@example",
+            "is_confirmed": true
+          },
+          "phone": 1234567890,
+          "status": "active",
+        }
+      }
+  -
+    Name: Suspicious Session Event - Low Risk
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details":{
+          "shield_alert":{
+            "rule_category":"Suspicious Sessions",
+            "rule_id":123,
+            "rule_name":"Suspicious Session",
+            "risk_score":10,
+            "alert_summary":{
+              "description":"First time in prior month user connected from ip 1.2.3.4.",
+              "sessions":[
+                {
+                  "session_type":"suspicious",
+                  "activities":[
+                    {
+                      "occurred_at":"2019-01-12T10:15:00-08:00",
+                      "event_type":"Set shared link expiration",
+                      "item_name":"a_file.txt",
+                      "item_type":"file",
+                      "item_id":"123456",
+                      "item_path":"path/to/file",
+                      "ip_info":{
+                        "ip":"1.2.3.4",
+                        "latitude":"25.1234",
+                        "longitude":"-130.12345",
+                        "registrant":"A Company",
+                        "country_code":"US",
+                        "city_name":"San Jose",
+                        "region_name":"California"
+                      },
+                      "service_name":"A Service"
+                    }
+                  ]
+                },
+                {
+                  "session_type":"typical",
+                  "activities":[
+                    {
+                      "occurred_at":"2019-12-19T11:37:59-08:00",
+                      "event_type":"Item Modified",
+                      "item_name":"another_file",
+                      "item_type":"file",
+                      "item_id":"1234567",
+                      "item_path":"another/path",
+                      "ip_info":{
+                        "ip":"9.8.7.6",
+                        "latitude":"35.6666",
+                        "longitude":"-30.1234",
+                        "country_code":"US",
+                        "city_name":"different city",
+                        "region_name":"different region"
+                      },
+                      "service_name":"Another Service"
+                    }
+                  ]
+                }
+              ]
+            },
+            "alert_id":123,
+            "priority":"medium",
+            "user":{
+              "id":55555,
+              "name":"Bob",
+              "email":"bob@example"
+            },
+            "link":"https://cloud.app.box.com/master/shield/alerts/500",
+            "created_at":"2019-12-20T11:38:16-08:00"
+          }
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "bob@example",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "SHIELD_ALERT",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "created_at": "2012-12-12T10:53:43-08:00",
+          "language": "en",
+          "login": "bob@example",
+          "max_upload_size": 88999900,
+          "modified_at": "2012-12-12T10:53:43-08:00",
+          "name": "Bob Cat",
+          "notification_email": {
+            "email": "notifications@example",
+            "is_confirmed": true
+          },
+          "phone": 1234567890,
+          "status": "active",
+        }
+      }   

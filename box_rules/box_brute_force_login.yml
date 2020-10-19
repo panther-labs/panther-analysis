@@ -1,0 +1,93 @@
+AnalysisType: rule
+Filename: box_brute_force_login.py
+RuleID: Box.Brute.Force.Login
+DisplayName: Box Brute Force Login
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+Severity: Medium
+Description: >
+  A Box user was denied access more times than the configured threshold.
+Threshold: 10
+DedupPeriodMinutes: 10
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Analyze the IP they came from, and other actions taken before/after.  Check if this user eventually authenticated successfully. 
+SummaryAttributes:
+  - event_type
+  - ip_address
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "ceo@example.com",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "DELETE",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "item_id": 123456789012,
+          "item_name": "regular_file.pdf",
+          "item_type": "file",
+          "owned_by": {
+            "id": 12345678,
+            "type": "user",
+            "login": "ceo@example.com",
+            "name": "Bob Cat"
+          },
+          "parent": {
+            "id": 12345,
+            "type": "folder",
+            "etag": 1,
+            "name": "Parent_Folder",
+            "sequence_id": 2
+          }
+        }
+      }
+  -
+    Name: Login Failed
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "ceo@example.com",
+          "name": "Bob Cat"
+        },
+        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
+        "event_type": "FAILED_LOGIN",
+        "session_id": "12345678901234567890abcd",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "created_at": "2012-12-12T10:53:43-08:00",
+          "language": "en",
+          "login": "user@example.com",
+          "max_upload_size": 88999900,
+          "modified_at": "2012-12-12T10:53:43-08:00",
+          "name": "Bob Cat",
+          "notification_email": {
+            "email": "notifications@example.com",
+            "is_confirmed": true
+          },
+          "phone": 1234567890,
+          "status": "active",
+        }
+      }
