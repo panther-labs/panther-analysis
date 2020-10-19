@@ -3,6 +3,7 @@ SUSPICIOUS_EVENT_TYPES = [
     'Suspicious Sessions',
 ]
 
+
 def rule(event):
     if event.get('event_type') != 'SHIELD_ALERT':
         return False
@@ -14,8 +15,12 @@ def rule(event):
 
 
 def title(event):
-    description = event.get('additional_details', {}).get('shield_alert', {}).get('alert_summary',{}).get('description', '')
+    description = event.get('additional_details',
+                            {}).get('shield_alert',
+                                    {}).get('alert_summary',
+                                            {}).get('description', '')
     if description:
         return description
     return 'Shield medium to high risk, suspicious event alert triggered for user [{}]'.format(
-        event.get('additional_details', {}).get('shield_alert', {}).get('user',{}).get('email'))
+        event.get('additional_details',
+                  {}).get('shield_alert', {}).get('user', {}).get('email'))

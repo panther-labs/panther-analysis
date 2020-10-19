@@ -1,6 +1,7 @@
 def rule(event):
-    return (event.get('event_type') == 'CONTENT_WORKFLOW_UPLOAD_POLICY_VIOLATION' or
-            event.get('event_type') == 'CONTENT_WORKFLOW_SHARING_POLICY_VIOLATION' )
+    return (
+        event.get('event_type') == 'CONTENT_WORKFLOW_UPLOAD_POLICY_VIOLATION' or
+        event.get('event_type') == 'CONTENT_WORKFLOW_SHARING_POLICY_VIOLATION')
 
 
 def title(event):

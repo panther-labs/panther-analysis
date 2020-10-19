@@ -1,5 +1,5 @@
 def rule(event):
-    return (event.get('event_type') == 'ADD_LOGIN_ACTIVITY_DEVICE' or 
+    return (event.get('event_type') == 'ADD_LOGIN_ACTIVITY_DEVICE' or
             event.get('event_type') == 'DEVICE_TRUST_CHECK_FAILED	')
 
 

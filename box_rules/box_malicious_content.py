@@ -11,13 +11,17 @@ def rule(event):
             return True
     return False
 
+
 def title(event):
     if event.get('event_type') == 'FILE_MARKED_MALICIOUS':
         return 'File [{}], owned by [{}], was marked malicious.'.format(
-        event.get('source', {}).get('item_name', "<UNKNOWN_FILE>"), 
-        event.get('source', {}).get('owned_by', {}).get('login','<UNKNOWN_USER>'))
+            event.get('source', {}).get('item_name', "<UNKNOWN_FILE>"),
+            event.get('source', {}).get('owned_by',
+                                        {}).get('login', '<UNKNOWN_USER>'))
 
     alert_details = event.get('additional_details', {}).get('shield_alert', {})
     return 'File [{}], owned by [{}], was marked malicious.'.format(
-        alert_details.get('alert_summary',{}).get('upload_activity',{}).get('item_name','<UNKNOWN_FILE_NAME>'),
-        alert_details.get('user',{}).get('email','<UNKNOWN_USER>'))
+        alert_details.get('alert_summary',
+                          {}).get('upload_activity',
+                                  {}).get('item_name', '<UNKNOWN_FILE_NAME>'),
+        alert_details.get('user', {}).get('email', '<UNKNOWN_USER>'))
