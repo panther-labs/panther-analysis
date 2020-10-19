@@ -4,4 +4,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}] granted access to their account'.format(
-        event.get('created_by', {}).get('name', "<UNKNOWN_USER>"))
+        event.get('created_by', {}).get('name', '<UNKNOWN_USER>'))
