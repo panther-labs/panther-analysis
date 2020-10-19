@@ -7,7 +7,7 @@ LogTypes:
   - Box.Event
 Tags:
   - Box
-Severity: Medium
+Severity: Low
 Description: >
   A user violated the content workflow policy. 
 Reference: https://developer.box.com/reference/resources/event/
@@ -31,9 +31,7 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "DELETE",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "item_id": 123456789012,
           "item_name": "regular_file.pdf",
@@ -68,9 +66,7 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "CONTENT_WORKFLOW_UPLOAD_POLICY_VIOLATION",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",
@@ -103,9 +99,7 @@ Tests:
           "login": "cat@example",
           "name": "Mountain Lion"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "CONTENT_WORKFLOW_SHARING_POLICY_VIOLATION",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",

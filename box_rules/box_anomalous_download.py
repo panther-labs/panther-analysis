@@ -9,5 +9,11 @@ def rule(event):
 
 
 def title(event):
+    description = event.get('additional_details',
+                            {}).get('shield_alert',
+                                    {}).get('alert_summary',
+                                            {}).get('description', '')
+    if description:
+        return description
     return 'Anamalous download activity triggered by user [{}].'.format(
         event.get('created_by', {}).get('name', '<UNKNOWN_USER>'))

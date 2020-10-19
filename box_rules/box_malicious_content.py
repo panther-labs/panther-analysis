@@ -1,5 +1,5 @@
 def rule(event):
-    # enterprise events alerts on malicious files
+    # enterprise  malicious file alert event
     if event.get('event_type') == 'FILE_MARKED_MALICIOUS':
         return True
     # Box Shield will also alert on malicious content

@@ -11,10 +11,10 @@ Severity: High
 Description: >
   Box has detect malicious content, such as a virus. 
 Reference: >
-  https://developer.box.com/guides/events/shield-alert-events/
+  https://developer.box.com/guides/events/shield-alert-events/, 
   https://developer.box.com/reference/resources/event/
 Runbook: >
-  Investigate whether this is a false positive or if the virus needs to be sandboxed and contained appropriately.
+  Investigate whether this is a false positive or if the virus needs to be contained appropriately.
 SummaryAttributes:
   - event_type
 Tests:
@@ -33,9 +33,7 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "DELETE",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "item_id": 123456789012,
           "item_name": "regular_file.pdf",
@@ -70,9 +68,7 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "FILE_MARKED_MALICIOUS",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "item_id": 123456789012,
           "item_name": "bad_file.pdf",
@@ -135,10 +131,6 @@ Tests:
                 "name":"Bob",
                 "email":"cat@example"
               },
-              "file_hash":"b63e886ab9b215c683bd29b4d1ad5978e128949e",
-              "file_hash_type":"SHA-1",
-              "file_size_bytes":51345,
-              "file_version_uploaded":"2019-12-20T11:37:05-08:00",
               "file_version_uploaded_by":{
                 "id":1011,
                 "name":"Mountain",
@@ -176,9 +168,7 @@ Tests:
           "login": "bob@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "SHIELD_ALERT",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",

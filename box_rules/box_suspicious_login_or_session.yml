@@ -9,10 +9,10 @@ Tags:
   - Box
 Severity: High
 Description: >
-  A user login or session event was tagged as medium to high severity by Box Shield.
+  A user login event or session event was tagged as medium to high severity by Box Shield.
 Reference: https://developer.box.com/guides/events/shield-alert-events/
 Runbook: >
-   Investigate whether this was triggered by an expected user event or if the user account is being targeted.
+   Investigate whether this was triggered by an expected user event.
 SummaryAttributes:
   - event_type
   - ip_address
@@ -32,9 +32,7 @@ Tests:
           "login": "ceo@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "DELETE",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "item_id": 123456789012,
           "item_name": "regular_file.pdf",
@@ -104,22 +102,10 @@ Tests:
           "login": "bob@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "SHIELD_ALERT",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",
-          "created_at": "2012-12-12T10:53:43-08:00",
-          "language": "en",
-          "login": "bob@example",
-          "max_upload_size": 88999900,
-          "modified_at": "2012-12-12T10:53:43-08:00",
-          "name": "Bob Cat",
-          "notification_email": {
-            "email": "notifications@example",
-            "is_confirmed": true
-          },
           "phone": 1234567890,
           "status": "active",
         }
@@ -203,22 +189,10 @@ Tests:
           "login": "bob@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "SHIELD_ALERT",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",
-          "created_at": "2012-12-12T10:53:43-08:00",
-          "language": "en",
-          "login": "bob@example",
-          "max_upload_size": 88999900,
-          "modified_at": "2012-12-12T10:53:43-08:00",
-          "name": "Bob Cat",
-          "notification_email": {
-            "email": "notifications@example",
-            "is_confirmed": true
-          },
           "phone": 1234567890,
           "status": "active",
         }
@@ -302,22 +276,10 @@ Tests:
           "login": "bob@example",
           "name": "Bob Cat"
         },
-        "event_id": "cd50d19784897085a8d0e3e413f8612b097c03f1",
         "event_type": "SHIELD_ALERT",
-        "session_id": "12345678901234567890abcd",
         "source": {
           "id": 12345678,
           "type": "user",
-          "created_at": "2012-12-12T10:53:43-08:00",
-          "language": "en",
-          "login": "bob@example",
-          "max_upload_size": 88999900,
-          "modified_at": "2012-12-12T10:53:43-08:00",
-          "name": "Bob Cat",
-          "notification_email": {
-            "email": "notifications@example",
-            "is_confirmed": true
-          },
           "phone": 1234567890,
           "status": "active",
         }
