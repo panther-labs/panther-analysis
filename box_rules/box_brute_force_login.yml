@@ -1,0 +1,74 @@
+AnalysisType: rule
+Filename: box_brute_force_login.py
+RuleID: Box.Brute.Force.Login
+DisplayName: Box Brute Force Login
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+Severity: Medium
+Description: >
+  A Box user was denied access more times than the configured threshold.
+Threshold: 10
+DedupPeriodMinutes: 10
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Analyze the IP they came from, and other actions taken before/after.  Check if this user eventually authenticated successfully. 
+SummaryAttributes:
+  - event_type
+  - ip_address
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "DELETE",
+        "source": {
+          "item_id": 123456789012,
+          "item_name": "regular_file.pdf",
+          "item_type": "file",
+          "owned_by": {
+            "id": 12345678,
+            "type": "user",
+            "login": "cat@example",
+            "name": "Bob Cat"
+          },
+          "parent": {
+            "id": 12345,
+            "type": "folder",
+            "etag": 1,
+            "name": "Parent_Folder",
+            "sequence_id": 2
+          }
+        }
+      }
+  -
+    Name: Login Failed
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "FAILED_LOGIN",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "name": "Bob Cat",
+        }
+      }
