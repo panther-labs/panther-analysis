@@ -1,3 +1,6 @@
+from panther_base_helpers import box_parse_additional_details  # pylint: disable=import-error
+
+
 def rule(event):
     # enterprise  malicious file alert event
     if event.get('event_type') == 'FILE_MARKED_MALICIOUS':
@@ -5,7 +8,7 @@ def rule(event):
     # Box Shield will also alert on malicious content
     if event.get('event_type') != 'SHIELD_ALERT':
         return False
-    alert_details = event.get('additional_details', {}).get('shield_alert', {})
+    alert_details = box_parse_additional_details(event).get('shield_alert', {})
     if alert_details.get('rule_category', '') == 'Malicious Content':
         if alert_details.get('risk_score', 0) > 50:
             return True
@@ -19,7 +22,7 @@ def title(event):
             event.get('source', {}).get('owned_by',
                                         {}).get('login', '<UNKNOWN_USER>'))
 
-    alert_details = event.get('additional_details', {}).get('shield_alert', {})
+    alert_details = box_parse_additional_details(event).get('shield_alert', {})
     return 'File [{}], owned by [{}], was marked malicious.'.format(
         alert_details.get('alert_summary',
                           {}).get('upload_activity',

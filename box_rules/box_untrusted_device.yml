@@ -1,20 +1,19 @@
 AnalysisType: rule
-Filename: box_anomalous_download.py
-RuleID: Box.Shield.Anomalous.Download
-DisplayName: Box Shield Detected Anomalous Download Activity
+Filename: box_untrusted_device.py
+RuleID: Box.Untrusted.Device
+DisplayName: Box Untrusted Device Login
 Enabled: true
 LogTypes:
   - Box.Event
 Tags:
   - Box
-Severity: High
+Severity: Info
 Description: >
-  A user's download activity has altered significantly. 
-Reference: https://developer.box.com/guides/events/shield-alert-events/
+  A user attempted to login from an untrusted device. 
+Reference: https://developer.box.com/reference/resources/event/
 Runbook: >
-   Investigate whether this was triggered by expected user download activity.
+  Investigate whether this is a valid user attempting to login to box. 
 SummaryAttributes:
-  - event_type
   - ip_address
 Tests:
   -
@@ -23,9 +22,7 @@ Tests:
     Log:
       {
         "type": "event",
-        "additional_details": {
-          '"key": "value"'
-        },
+        "additional_details": '{"key": "value"}',
         "created_by": {
           "id": 12345678,
           "type": "user",
@@ -48,27 +45,27 @@ Tests:
             "type": "folder",
             "etag": 1,
             "name": "Parent_Folder",
+            "sequence_id": 2
           }
         }
       }
   -
-    Name: Anomalous Download Event
+    Name: New Login Event
     ExpectedResult: true
     Log:
       {
         "type": "event",
-        "additional_details": '{"shield_alert":{"rule_category":"Anomalous Download","risk_score":77,"alert_summary":{"description":"Significant increase in download content week over week, 9999% (50.00 MB) more than last week."}}}',
+        "additional_details": '{"key": "value"}',
         "created_by": {
           "id": 12345678,
           "type": "user",
-          "login": "bob@example",
+          "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_type": "SHIELD_ALERT",
+        "event_type": "DEVICE_TRUST_CHECK_FAILED",
         "source": {
           "id": 12345678,
           "type": "user",
-          "login": "bob@example",
-          "name": "Bob Cat",
+          "login": "user@example",
         }
-      } 
+      }

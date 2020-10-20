@@ -23,9 +23,7 @@ Tests:
     Log:
       {
         "type": "event",
-        "additional_details": {
-          "key": "value"
-        },
+        "additional_details": '{"key": "value"}',
         "created_by": {
           "id": 12345678,
           "type": "user",
@@ -58,44 +56,7 @@ Tests:
     Log:
       {
         "type": "event",
-        "additional_details":{
-          "shield_alert":{
-            "rule_category":"Suspicious Locations",
-            "rule_id":123,
-            "rule_name":"Suspicious Location",
-            "risk_score":60,
-            "alert_summary":{
-              "alert_activities":[
-                {
-                  "occurred_at":"2019-12-20T11:37:05-08:00",
-                  "event_type":"Download",
-                  "item_name":"a_file.txt",
-                  "item_type":"file",
-                  "item_id":"127",
-                  "item_path":"path/location",
-                  "ip_info":{
-                    "ip":"1.2.3.4",
-                    "latitude":"47.22222",
-                    "longitude":"-130.1234",
-                    "registrant":"A Corporation",
-                    "country_code":"US",
-                    "city_name":"San Jose",
-                    "region_name":"California"
-                  },
-                  "service_name":"A Service Name"
-                }
-              ]
-            },
-            "alert_id":1234,
-            "priority":"medium",
-            "user":{
-              "id":2320,
-              "name":"Bob Cat",
-              "email":"bob@example"
-            },
-            "created_at":"2019-12-20T11:37:15-08:00"
-          }
-        },
+        "additional_details":'{"shield_alert":{"rule_category":"Suspicious Locations","risk_score":60,"user":{"email":"bob@example"}}}',
         "created_by": {
           "id": 12345678,
           "type": "user",
@@ -116,73 +77,7 @@ Tests:
     Log:
       {
         "type": "event",
-        "additional_details":{
-          "shield_alert":{
-            "rule_category":"Suspicious Sessions",
-            "rule_id":123,
-            "rule_name":"Suspicious Session",
-            "risk_score":70,
-            "alert_summary":{
-              "description":"First time in prior month user connected from ip 1.2.3.4.",
-              "sessions":[
-                {
-                  "session_type":"suspicious",
-                  "activities":[
-                    {
-                      "occurred_at":"2019-01-12T10:15:00-08:00",
-                      "event_type":"Set shared link expiration",
-                      "item_name":"a_file.txt",
-                      "item_type":"file",
-                      "item_id":"123456",
-                      "item_path":"path/to/file",
-                      "ip_info":{
-                        "ip":"1.2.3.4",
-                        "latitude":"25.1234",
-                        "longitude":"-130.12345",
-                        "registrant":"A Company",
-                        "country_code":"US",
-                        "city_name":"San Jose",
-                        "region_name":"California"
-                      },
-                      "service_name":"A Service"
-                    }
-                  ]
-                },
-                {
-                  "session_type":"typical",
-                  "activities":[
-                    {
-                      "occurred_at":"2019-12-19T11:37:59-08:00",
-                      "event_type":"Item Modified",
-                      "item_name":"another_file",
-                      "item_type":"file",
-                      "item_id":"1234567",
-                      "item_path":"another/path",
-                      "ip_info":{
-                        "ip":"9.8.7.6",
-                        "latitude":"35.6666",
-                        "longitude":"-30.1234",
-                        "country_code":"US",
-                        "city_name":"different city",
-                        "region_name":"different region"
-                      },
-                      "service_name":"Another Service"
-                    }
-                  ]
-                }
-              ]
-            },
-            "alert_id":123,
-            "priority":"medium",
-            "user":{
-              "id":55555,
-              "name":"Bob",
-              "email":"bob@example"
-            },
-            "link":"https://cloud.app.box.com/master/shield/alerts/500",
-            "created_at":"2019-12-20T11:38:16-08:00"
-          }
-        },
+        "additional_details":'{"shield_alert":{"rule_category":"Suspicious Sessions","risk_score":70,"alert_summary":{"description":"First time in prior month user connected from ip 1.2.3.4."},"user":{"email":"bob@example"}}}',
         "created_by": {
           "id": 12345678,
           "type": "user",
@@ -203,73 +98,7 @@ Tests:
     Log:
       {
         "type": "event",
-        "additional_details":{
-          "shield_alert":{
-            "rule_category":"Suspicious Sessions",
-            "rule_id":123,
-            "rule_name":"Suspicious Session",
-            "risk_score":10,
-            "alert_summary":{
-              "description":"First time in prior month user connected from ip 1.2.3.4.",
-              "sessions":[
-                {
-                  "session_type":"suspicious",
-                  "activities":[
-                    {
-                      "occurred_at":"2019-01-12T10:15:00-08:00",
-                      "event_type":"Set shared link expiration",
-                      "item_name":"a_file.txt",
-                      "item_type":"file",
-                      "item_id":"123456",
-                      "item_path":"path/to/file",
-                      "ip_info":{
-                        "ip":"1.2.3.4",
-                        "latitude":"25.1234",
-                        "longitude":"-130.12345",
-                        "registrant":"A Company",
-                        "country_code":"US",
-                        "city_name":"San Jose",
-                        "region_name":"California"
-                      },
-                      "service_name":"A Service"
-                    }
-                  ]
-                },
-                {
-                  "session_type":"typical",
-                  "activities":[
-                    {
-                      "occurred_at":"2019-12-19T11:37:59-08:00",
-                      "event_type":"Item Modified",
-                      "item_name":"another_file",
-                      "item_type":"file",
-                      "item_id":"1234567",
-                      "item_path":"another/path",
-                      "ip_info":{
-                        "ip":"9.8.7.6",
-                        "latitude":"35.6666",
-                        "longitude":"-30.1234",
-                        "country_code":"US",
-                        "city_name":"different city",
-                        "region_name":"different region"
-                      },
-                      "service_name":"Another Service"
-                    }
-                  ]
-                }
-              ]
-            },
-            "alert_id":123,
-            "priority":"medium",
-            "user":{
-              "id":55555,
-              "name":"Bob",
-              "email":"bob@example"
-            },
-            "link":"https://cloud.app.box.com/master/shield/alerts/500",
-            "created_at":"2019-12-20T11:38:16-08:00"
-          }
-        },
+        "additional_details":'{"shield_alert":{"rule_category":"Suspicious Sessions","risk_score":10,"alert_summary":{"description":"First time in prior month user connected from ip 1.2.3.4."},"user":{"email":"bob@example"}}}',
         "created_by": {
           "id": 12345678,
           "type": "user",

@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: box_access_granted.py
-RuleID: Box.Access.Granted
-DisplayName: Box Access Granted
+Filename: box_user_permission_updates.py
+RuleID: Box.Large.Number.Permission.Updates
+DisplayName: Box Large Number of Permission Changes
 Enabled: true
 LogTypes:
   - Box.Event
@@ -9,12 +9,14 @@ Tags:
   - Box
 Severity: Low
 Description: >
-  A user granted access to their box account to Box technical support from account settings.
+  A user has exceeded the threshold for number of folder permission changes within a single time frame. 
 Reference: https://developer.box.com/reference/resources/event/
 Runbook: >
-  Investigate whether the user purposefully granted access to their account. 
+  Investigate whether this user's activity is expected. 
 SummaryAttributes:
-  - p_any_ip_addresses
+  - ip_address
+Threshold: 100
+DedupPeriodMinutes: 60
 Tests:
   -
     Name: Regular Event
@@ -49,7 +51,7 @@ Tests:
         }
       }
   -
-    Name: Access Granted
+    Name: User Permission Change
     ExpectedResult: true
     Log:
       {
@@ -61,7 +63,28 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "event_type": "ACCESS_GRANTED",
+        "event_type": "CHANGE_FOLDER_PERMISSION",
+        "source": {
+          "id": 12345678,
+          "type": "user",
+          "login": "user@example",
+          "name": "Bob Cat",
+        }
+      }
+  -
+    Name: User Shares Item
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": 12345678,
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "ITEM_SHARED_CREATE",
         "source": {
           "id": 12345678,
           "type": "user",

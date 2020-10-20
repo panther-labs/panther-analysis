@@ -1,3 +1,4 @@
+import json
 from ipaddress import ip_network
 # This file exists to define global variables for use by other policies.
 
@@ -104,3 +105,15 @@ def gsuite_parameter_lookup(parameters, key):
                 return param[value]
         return None
     return None
+
+
+# 'additional_details' from box logs varies by event_type
+# but it should be a valid json string. This helper
+# wraps the process of extracting those details.
+def box_parse_additional_details(event):
+    if event.get('additional_details', {}):
+        try:
+            return json.loads(event.get('additional_details', {}))
+        except ValueError:
+            return {}
+    return {}
