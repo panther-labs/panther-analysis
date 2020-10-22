@@ -1,8 +1,8 @@
 def rule(event):
     return (event.get('event_type') == 'CHANGE_FOLDER_PERMISSION' or
             event.get('event_type') == 'ITEM_SHARED_CREATE' or
-            event.get('event_type') == 'SHARE' or 
-            event.get('event_type') == 'ITEM_SHARED') 
+            event.get('event_type') == 'ITEM_SHARED' or
+            event.get('event_type') == 'SHARE')
 
 
 def title(event):
