@@ -1,6 +1,9 @@
+from panther_oss_helpers import resource_lookup  # pylint: disable=import-error
+
+
 def policy(resource):
-    for group in resource['SecurityGroups']:
-        if group['GroupName'] == 'default':
-            return group['IpPermissions'] is None and group[
-                'IpPermissionsEgress'] is None
-    return False
+    default_id = 'arn:aws:ec2:' + resource['Region'] + ':' + resource[
+        'AccountId'] + ':security-group/' + resource['DefaultSecurityGroupId']
+    default_sg = resource_lookup(default_id)
+    return default_sg['IpPermissions'] is None and default_sg[
+        'IpPermissionsEgress'] is None
