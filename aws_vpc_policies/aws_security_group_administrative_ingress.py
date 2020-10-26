@@ -20,9 +20,13 @@ def policy(resource):
     for permission in resource['IpPermissions']:
         src_open = False
         for ip_range in permission['IpRanges'] or []:
-            src_open = src_open or ip_range['CidrIp'] == '0.0.0.0/0'
+            if ip_range['CidrIp'] == '0.0.0.0/0':
+                src_open = True
+                break
         for ipv6_range in permission['Ipv6Ranges'] or []:
-            src_open = src_open or ipv6_range['CidrIpv6'] == '::/0'
+            if src_open or ipv6_range['CidrIpv6'] == '::/0':
+                src_open = True
+                break
         if src_open and port_checker(RESTRICTED_PORTS, permission['FromPort'],
                                      permission['ToPort']):
             return False
