@@ -12,13 +12,30 @@ Reports:
   MITRE ATT&CK:
     - Initial Access:Valid Accounts
 Severity: Medium
-Description: An aws command was executed on an EC2 instance
+Description: An AWS command was executed on a Linux instance
 Runbook: See which other commands were executed, and then remove IAM role causing the access
 Reference: https://attack.mitre.org/techniques/T1078/
 SummaryAttributes:
   - name
   - action
 Tests:
+  -
+    Name: AWS command executed on MacOS
+    ExpectedResult: false
+    Log:
+      {
+        "name": "pack_incident-response_shell_history",
+        "action": "added",
+        "decorations": {
+          "platform": "darwin"
+        },
+        "columns": {
+          "command": "aws sts get-caller-identity",
+          "uid": "1000",
+          "directory": "/home/ubuntu",
+          "username": "ubuntu"
+        }
+      }
   -
     Name: AWS command executed
     ExpectedResult: true
