@@ -1,5 +1,8 @@
+import base64
+import json
 from datetime import datetime, timedelta
-from botocore.exceptions import ClientError
+
+import boto3
 
 try:
     # boxsdk will only be available if `boxapi[jwt]` is
@@ -11,21 +14,17 @@ except ImportError as err:
     JWTAuth = None
     BoxAPIException = Exception
 
-import base64
-import boto3
-import json
-
 # Name for BOX secrets in AWS Secrets Manager
 BOX_API_ACCESS_NAME = 'panther-analyis/box_api_access'
 
 # The following keys and associated values
 #   should be stored in AWS Secrets Manager
 BOX_CLIENT_ID = 'BOX_CLIENT_ID'
-BOX_CLIENT_SECRET = 'BOX_CLIENT_SECRET'
+BOX_CLIENT_SECRET = 'BOX_CLIENT_SECRET'  # nosec
 BOX_JWT_PRIVATE_KEY = 'BOX_JWT_PRIVATE_KEY'
 BOX_JWT_PUB_KEY_ID = 'BOX_JWT_PUB_KEY_ID'
 BOX_ENTERPRISE_ID = 'BOX_ENTERPRISE_ID'
-BOX_JWT_KEY_PASSPHRASE = 'BOX_JWT_KEY_PASSPHRASE'
+BOX_JWT_KEY_PASSPHRASE = 'BOX_JWT_KEY_PASSPHRASE'  #nosec
 
 # Used to cache client connetion to BOX API
 BOX_CLIENT = None
@@ -55,7 +54,7 @@ def lookup_box_file(user_id: str, file_id: str) -> dict:
         file_info = client.as_user(user).file(file_id=file_id).get()
         return file_info
     except BoxAPIException as err:
-        raise BadBoxLookup('Exception looking up file info: ', err)
+        raise BadBoxLookup('Exception looking up file info.') from err
 
 
 def lookup_box_folder(user_id: str, folder_id: str) -> dict:
@@ -65,15 +64,16 @@ def lookup_box_folder(user_id: str, folder_id: str) -> dict:
         folder = client.as_user(user).folder(folder_id=folder_id).get()
         return folder
     except BoxAPIException as err:
-        raise BadBoxLookup('Exception looking up folder info: ', err)
+        raise BadBoxLookup('Exception looking up folder info.') from err
 
 
 def get_box_client() -> Client:
+    # pylint: disable=global-statement
     global BOX_ACCESS_AGE
     global BOX_CLIENT
     if not Client or not JWTAuth:
         raise Exception('Could not import necessary Box Library.')
-    if BOX_CLIENT != None and BOX_ACCESS_AGE != None and datetime.now(
+    if BOX_CLIENT is not None and BOX_ACCESS_AGE is not None and datetime.now(
     ) - BOX_ACCESS_AGE < timedelta(mintues=MAX_BOX_ACCESS_AGE):
         return BOX_CLIENT
     response = boto3.client('secretsmanager').get_secret_value(
@@ -90,7 +90,7 @@ def build_jwt_settings(response: dict) -> dict:
         data = response['SecretString']
     else:
         data = base64.b64decode(response['SecretBinary'])
-    # convert str (from aws secrets mgr to json 
+    # convert str (from aws secrets mgr to json
     data = json.loads(data)
     # check that all necessary secrets are configured
     if not all(key in data for key in [
@@ -108,9 +108,9 @@ def build_jwt_settings(response: dict) -> dict:
             "clientSecret": data[BOX_CLIENT_SECRET],
             "appAuth": {
                 "publicKeyID": data[BOX_JWT_PUB_KEY_ID],
-                # handling of escaped newlines when dealing with 
+                # handling of escaped newlines when dealing with
                 #   secrets mgr -> str -> json.loads()
-                "privateKey": data[BOX_JWT_PRIVATE_KEY].replace('\\n','\n'),
+                "privateKey": data[BOX_JWT_PRIVATE_KEY].replace('\\n', '\n'),
                 "passphrase": data[BOX_JWT_KEY_PASSPHRASE],
             },
         },

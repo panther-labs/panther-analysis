@@ -9,6 +9,7 @@ SHARE_EVENTS = [
     'SHARE',
 ]
 
+
 def rule(event):
     # filter events
     if event.get('event_type') not in SHARE_EVENTS:
