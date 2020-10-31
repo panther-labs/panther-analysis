@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 from datetime import datetime, timedelta
 
 import boto3
@@ -33,6 +34,9 @@ BOX_CLIENT = None
 #  (the default box access token lifetime)
 BOX_ACCESS_AGE = None
 MAX_BOX_ACCESS_AGE = 60
+
+# prevent logs from going into the rules engine cloudtrail
+logging.getLogger('boxsdk').setLevel(logging.CRITICAL)
 
 
 class BadBoxLookup(Exception):
