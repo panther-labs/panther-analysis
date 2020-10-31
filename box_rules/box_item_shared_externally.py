@@ -17,7 +17,7 @@ def rule(event):
     # only try to lookup file/folder info if sdk is enabled in the env
     if is_box_sdk_enabled():
         item = get_item(event)
-        if item:
+        if item is not None and item['shared_link']:
             return item['shared_link'][
                 'effective_access'] not in ALLOWED_SHARED_ACCESS
     return False
@@ -38,4 +38,4 @@ def title(event):
     message = ('User [{}] shared an item [{}] externally.')
     return message.format(
         event.get('created_by', {}).get('login', '<UNKNOWN_USER>'),
-        event.get('source', {}).get('item_name', '<UNKNOWN_NAME'))
+        event.get('source', {}).get('item_name', '<UNKNOWN_NAME>'))
