@@ -78,7 +78,7 @@ def get_box_client() -> Client:
     if not Client or not JWTAuth:
         raise Exception('Could not import necessary Box Library.')
     if BOX_CLIENT is not None and BOX_ACCESS_AGE is not None and datetime.now(
-    ) - BOX_ACCESS_AGE < timedelta(mintues=MAX_BOX_ACCESS_AGE):
+    ) - BOX_ACCESS_AGE < timedelta(minutes=MAX_BOX_ACCESS_AGE):
         return BOX_CLIENT
     response = boto3.client('secretsmanager').get_secret_value(
         SecretId=BOX_API_ACCESS_NAME)
@@ -105,7 +105,7 @@ def build_jwt_settings(response: dict) -> dict:
             BOX_CLIENT_ID, BOX_CLIENT_SECRET, BOX_JWT_PRIVATE_KEY,
             BOX_JWT_PUB_KEY_ID, BOX_ENTERPRISE_ID, BOX_JWT_KEY_PASSPHRASE
         ]))
-    # build box jwt settings from gather secrets
+    # build box jwt settings from gathered secrets
     settings = {
         "boxAppSettings": {
             "clientID": data[BOX_CLIENT_ID],
