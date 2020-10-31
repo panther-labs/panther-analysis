@@ -17,7 +17,7 @@ except ImportError as err:
 
 # Name for BOX secrets in AWS Secrets Manager
 #   replace "secretid" with your secret id
-BOX_API_ACCESS_NAME = 'panther-analyis/secretid'
+BOX_API_ACCESS_NAME = 'panther-analysis/secretid'
 
 # The following keys and associated values
 #   should be stored in AWS Secrets Manager
@@ -28,7 +28,7 @@ BOX_JWT_PUB_KEY_ID = 'BOX_JWT_PUB_KEY_ID'
 BOX_ENTERPRISE_ID = 'BOX_ENTERPRISE_ID'
 BOX_JWT_KEY_PASSPHRASE = 'BOX_JWT_KEY_PASSPHRASE'  #nosec
 
-# Used to cache client connetion to BOX API
+# Used to cache client connection to BOX API
 BOX_CLIENT = None
 
 # Cache credentials for 60 minutes at most
