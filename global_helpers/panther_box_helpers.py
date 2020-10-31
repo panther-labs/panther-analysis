@@ -7,7 +7,7 @@ import boto3
 
 try:
     # boxsdk will only be available if `boxapi[jwt]` is
-    #   in the pip env via panther_config.yml
+    #   in the pip env
     from boxsdk.exception import BoxAPIException
     from boxsdk import Client, JWTAuth
 except ImportError as err:
@@ -35,7 +35,7 @@ BOX_CLIENT = None
 BOX_ACCESS_AGE = None
 MAX_BOX_ACCESS_AGE = 60
 
-# prevent logs from going into the rules engine cloudtrail
+# prevent INFO logs from going into the rules engine cloudtrail
 logging.getLogger('boxsdk').setLevel(logging.CRITICAL)
 
 
@@ -94,7 +94,7 @@ def build_jwt_settings(response: dict) -> dict:
         data = response['SecretString']
     else:
         data = base64.b64decode(response['SecretBinary'])
-    # convert str (from aws secrets mgr to json
+    # convert str from aws secrets mgr to json
     data = json.loads(data)
     # check that all necessary secrets are configured
     if not all(key in data for key in [
