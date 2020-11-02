@@ -94,7 +94,7 @@ def build_jwt_settings(response: dict) -> dict:
     if 'SecretString' in response:
         data = response.get('SecretString')
     else:
-        data = base64.b64decode(response.get('SecretBinary','{}'))
+        data = base64.b64decode(response.get('SecretBinary', '{}'))
     # convert str from aws secrets mgr to json
     data = json.loads(data)
     # check that all necessary secrets are configured
