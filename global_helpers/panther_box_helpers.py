@@ -97,11 +97,14 @@ def build_jwt_settings(response: dict) -> dict:
     # convert str from aws secrets mgr to json
     data = json.loads(data)
     # check that all necessary secrets are configured
-    expected_keys = {BOX_CLIENT_ID, BOX_CLIENT_SECRET, BOX_JWT_PRIVATE_KEY,
-            BOX_JWT_PUB_KEY_ID, BOX_ENTERPRISE_ID, BOX_JWT_KEY_PASSPHRASE}
+    expected_keys = {
+        BOX_CLIENT_ID, BOX_CLIENT_SECRET, BOX_JWT_PRIVATE_KEY,
+        BOX_JWT_PUB_KEY_ID, BOX_ENTERPRISE_ID, BOX_JWT_KEY_PASSPHRASE
+    }
     missing_keys = expected_keys - set(data.keys())
     if len(missing_keys) != 0:
-        raise BadSecretsLookup('Missing necessary secret(s): {}'.format(missing_keys))
+        raise BadSecretsLookup(
+            'Missing necessary secret(s): {}'.format(missing_keys))
     # build box jwt settings from gathered secrets
     settings = {
         "boxAppSettings": {
