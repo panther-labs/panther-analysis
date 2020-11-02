@@ -16,8 +16,7 @@ except ImportError as err:
     BoxAPIException = Exception
 
 # Name for BOX secrets in AWS Secrets Manager
-#   replace "secretid" with your secret id
-BOX_API_ACCESS_NAME = 'panther-analysis/secretid'
+BOX_API_ACCESS_NAME = 'panther-analysis/box_api_access'
 
 # The following keys and associated values
 #   should be stored in AWS Secrets Manager
