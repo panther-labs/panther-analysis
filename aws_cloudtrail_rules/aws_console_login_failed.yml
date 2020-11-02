@@ -2,7 +2,7 @@ AnalysisType: rule
 Filename: aws_console_login_failed.py
 RuleID: AWS.Console.LoginFailed
 DisplayName: Failed Console Login
-DedupPeriodMinutes: 240 # 4 hours
+DedupPeriodMinutes: 60
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
@@ -10,6 +10,7 @@ Tags:
   - AWS
   - Identity & Access Management
   - Authentication
+Threshold: 5
 Reports:
   CIS:
     - 3.6
