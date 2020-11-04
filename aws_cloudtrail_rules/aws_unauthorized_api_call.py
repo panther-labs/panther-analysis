@@ -24,7 +24,7 @@ def dedup(event):
     user_identity = event['userIdentity']
     if user_identity.get('type') == 'AssumedRole':
         return aws_strip_role_session_id(user_identity.get('arn', ''))
-    return user_identity.get('arn')
+    return user_identity.get('arn', '')
 
 
 def title(event):
