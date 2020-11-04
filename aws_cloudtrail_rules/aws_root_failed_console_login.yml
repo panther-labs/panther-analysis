@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_root_failed_console_login.py
 RuleID: AWS.CloudTrail.RootFailedConsoleLogin
-DisplayName: Root Account Failed Console Login
+DisplayName: [DEPRECATED] Root Account Failed Console Login
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
@@ -13,7 +13,7 @@ Reports:
   MITRE ATT&CK:
     - Initial Access:Valid Accounts
 Description: >
-  Someone attempted to log into the root account from the AWS console and failed. This could be an indication of a password guessing attack against your root account.
+  Deprecated. Please see AWS.Console.LoginFailed instead.
 Runbook: >
   Verify that the root login attempt was authorized. If not, investigate the root account failed logins to see if there is a pattern.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
