@@ -108,14 +108,14 @@ def build_jwt_settings(response: dict) -> dict:
     # build box jwt settings from gathered secrets
     settings = {
         "boxAppSettings": {
-            "clientID": data[BOX_CLIENT_ID],
-            "clientSecret": data[BOX_CLIENT_SECRET],
+            "clientID": data.get(BOX_CLIENT_ID),
+            "clientSecret": data.get(BOX_CLIENT_SECRET),
             "appAuth": {
-                "publicKeyID": data[BOX_JWT_PUB_KEY_ID],
+                "publicKeyID": data.get(BOX_JWT_PUB_KEY_ID),
                 # handling of escaped newlines when dealing with
                 #   secrets mgr -> str -> json.loads()
-                "privateKey": data[BOX_JWT_PRIVATE_KEY].replace('\\n', '\n'),
-                "passphrase": data[BOX_JWT_KEY_PASSPHRASE],
+                "privateKey": data.get(BOX_JWT_PRIVATE_KEY).replace('\\n', '\n'),
+                "passphrase": data.get(BOX_JWT_KEY_PASSPHRASE),
             },
         },
         "enterpriseID": data[BOX_ENTERPRISE_ID],
