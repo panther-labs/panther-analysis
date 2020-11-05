@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: aws_root_console_login.py
 RuleID: AWS.CloudTrail.RootConsoleLogin
-DisplayName: Root Account Console Login
-Enabled: true
+DisplayName: \[DEPRECATED\] Root Account Console Login
+Enabled: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -12,7 +12,7 @@ Severity: High
 Reports:
   MITRE ATT&CK:
     - Initial Access:Valid Accounts
-Description: Someone logged into the root account from the AWS console.
+Description: Deprecated. Please see AWS.Console.RootLogin instead.
 Runbook: >
   Verify that the root login was authorized. If not, investigate the root activity and ensure no malicious activity was performed. Change the root password.
 Reference: reference.link
