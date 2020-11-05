@@ -1,20 +1,22 @@
 AnalysisType: rule
-Filename: box_new_login.py
-RuleID: Box.New.Login
-DisplayName: Box New Login
+Filename: box_event_triggered_externally.py
+RuleID: Box.Event.Triggered.Externally
+DisplayName: Box event triggered by unknown or external user
 Enabled: true
 LogTypes:
   - Box.Event
 Tags:
   - Box
-Severity: Info
+Severity: Medium
 Description: >
-  A user logged in from a new device. 
+  An external user has triggered a box enterprise event.
 Reference: https://developer.box.com/reference/resources/event/
 Runbook: >
-  Investigate whether this is a valid user login. 
+  Investigate whether this user's activity is expected. 
 SummaryAttributes:
   - ip_address
+Threshold: 10
+DedupPeriodMinutes: 60
 Tests:
   -
     Name: Regular Event
@@ -26,28 +28,22 @@ Tests:
         "created_by": {
           "id": "12345678",
           "type": "user",
-          "login": "cat@example",
+          "login": "cat@example.com",
           "name": "Bob Cat"
         },
         "event_type": "DELETE",
       }
   -
-    Name: New Login Event
+    Name: Previewed Anonymously
     ExpectedResult: true
     Log:
       {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
         "created_by": {
-          "id": "12345678",
+          "id": "2",
           "type": "user",
-          "login": "cat@example",
-          "name": "Bob Cat"
+          "name": "Unknown User"
         },
-        "event_type": "ADD_LOGIN_ACTIVITY_DEVICE",
-        "source": {
-          "id": "12345678",
-          "type": "user",
-          "login": "user@example",
-        }
+        "event_type": "PREVIEW",
+        "type": "event",
+        "ip_address": "1.2.3.4",
       }
