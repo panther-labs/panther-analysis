@@ -1,15 +1,14 @@
 SECURITY_CONFIG_ACTIONS = [
-    'DeleteFlowLogs',
-    'DeleteTrail',
-    'UpdateTrail',
-    'StopLogging',
-    'DeleteDeliveryChannel',
-    'StopConfigurationRecorder',
-    'DeleteRule',
-    'DisableRule',
-    'DeleteDetector',
     'DeleteAccountPublicAccessBlock',
+    'DeleteDeliveryChannel',
+    'DeleteDetector',
+    'DeleteFlowLogs',
+    'DeleteRule',
+    'DeleteTrail',
     'DisableEbsEncryptionByDefault',
+    'DisableRule',
+    'StopConfigurationRecorder',
+    'StopLogging',
 ]
 
 
