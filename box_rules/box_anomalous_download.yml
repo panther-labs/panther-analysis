@@ -27,29 +27,12 @@ Tests:
           '"key": "value"'
         },
         "created_by": {
-          "id": 12345678,
+          "id": "12345678",
           "type": "user",
           "login": "cat@example",
           "name": "Bob Cat"
         },
         "event_type": "DELETE",
-        "source": {
-          "item_id": 123456789012,
-          "item_name": "regular_file.pdf",
-          "item_type": "file",
-          "owned_by": {
-            "id": 12345678,
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat"
-          },
-          "parent": {
-            "id": 12345,
-            "type": "folder",
-            "etag": 1,
-            "name": "Parent_Folder",
-          }
-        }
       }
   -
     Name: Anomalous Download Event
@@ -59,14 +42,14 @@ Tests:
         "type": "event",
         "additional_details": '{"shield_alert":{"rule_category":"Anomalous Download","risk_score":77,"alert_summary":{"description":"Significant increase in download content week over week, 9999% (50.00 MB) more than last week."}}}',
         "created_by": {
-          "id": 12345678,
+          "id": "12345678",
           "type": "user",
           "login": "bob@example",
           "name": "Bob Cat"
         },
         "event_type": "SHIELD_ALERT",
         "source": {
-          "id": 12345678,
+          "id": "12345678",
           "type": "user",
           "login": "bob@example",
           "name": "Bob Cat",
