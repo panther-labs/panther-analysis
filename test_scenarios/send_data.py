@@ -23,7 +23,7 @@ def main():
         data = yaml.load(file, Loader=yaml.FullLoader)
 
     if data['Type'] == 'AWS.CloudTrail':
-        print('Sending {} logs...'.format(len(data['Logs'])))
+        print('Sending {} CloudTrail Logs...'.format(len(data['Logs'])))
         for indx, log in enumerate(data['Logs']):
             resp = send_message(client, {'Records': [log]})
             print('\t{}: {}'.format(indx+1, resp['ResponseMetadata']['HTTPStatusCode']))
