@@ -300,3 +300,171 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
+  -
+    additionalEventData: ~
+    awsRegion: us-east-1
+    eventID: "1"
+    eventName: CreateAccessKey
+    eventSource: iam.amazonaws.com
+    eventTime: "2020-11-01T08:37:03Z"
+    eventType: AwsApiCall
+    eventVersion: "1.05"
+    recipientAccountId: "493859302102"
+    requestParameters:
+      userName: "tracy_stone"
+    responseElements:
+      accessKey:
+        accessKeyId: AKIASWJJJ66ZZZII4IYY
+        userName: tracy_stone
+        status: Active
+        createDate: Nov 01, 2020 8:37:03 PM
+    sourceIPAddress: "92.55.146.245"
+    userAgent: aws-cli/1.18.39 Python/3.7.2 Darwin/19.4.0 botocore/1.15.24
+    userIdentity:
+      accountId: "493859302102"
+      arn: "arn:aws:iam::493859302102:root"
+      principalId: "493859302102"
+      type: Root
+      userName: root
+  -
+    additionalEventData: ~
+    awsRegion: us-east-1
+    eventID: "1"
+    eventName: RunInstances
+    eventSource: ec2.amazonaws.com
+    eventTime: "2020-11-03T04:12:28Z"
+    eventType: AwsApiCall
+    eventVersion: "1.05"
+    recipientAccountId: "493859302102"
+    requestParameters:
+      ebsOptimized: false
+      blockDeviceMapping:
+        items:
+        - ebs:
+            volumeType: gp2
+            deleteOnTermination: true
+            volumeSize: '32'
+          deviceName: "/dev/sda1"
+        - noDevice: {}
+          deviceName: "/dev/sdb"
+        - noDevice: {}
+          deviceName: "/dev/sdc"
+      capacityReservationSpecification:
+        capacityReservationPreference: open
+      instanceType: t2.micro
+      tenancy: default
+      creditSpecification:
+        cpuCredits: standard
+      monitoring:
+        enabled: false
+      groupSet:
+        items:
+        - groupId: sg-07ebc4087aa0b2a81
+      hibernationOptions:
+        configured: false
+      instancesSet:
+        items:
+        - imageId: ami-085925f297f89fce1
+          keyName: panther-test
+          minCount: '1'
+          maxCount: '1'
+      instanceInitiatedShutdownBehavior: stop
+      disableApiTermination: false
+      metadataOptions:
+        httpPutResponseHopLimit: '1'
+        httpEndpoint: enabled
+        httpTokens: optional
+    responseElements:
+      instancesSet:
+        items:
+        - subnetId: subnet-73a1094d
+          virtualizationType: hvm
+          capacityReservationSpecification:
+            capacityReservationPreference: open
+          amiLaunchIndex: '0'
+          stateReason:
+            code: pending
+            message: pending
+          sourceDestCheck: true
+          groupSet:
+            items:
+            - groupName: test-box
+              groupId: sg-0917d39b0f1a143b5
+          hibernationOptions:
+            configured: false
+          platform: linux
+          instanceId: i-05261ffb46217cdc3
+          instanceState:
+            code: '0'
+            name: pending
+          vpcId: vpc-c85cedb2
+          hypervisor: xen
+          rootDeviceName: "/dev/sda1"
+          productCodes: {}
+          architecture: x86_64
+          ebsOptimized: false
+          imageId: ami-04a0ee204b44cc91a
+          networkInterfaceSet:
+            items:
+            - networkInterfaceId: eni-0b13344793d4fde67
+              subnetId: subnet-73a1094d
+              ownerId: '493859302102'
+              sourceDestCheck: true
+              groupSet:
+                items:
+                - groupName: test-box
+                  groupId: sg-0917d39b0f1a143b5
+              privateIpAddress: 172.31.77.110
+              interfaceType: interface
+              tagSet: {}
+              macAddress: 06:02:cd:a5:08:67
+              attachment:
+                attachmentId: eni-attach-00e2ef9b796c88634
+                deleteOnTermination: true
+                deviceIndex: '0'
+                attachTime: '1590777496000'
+                status: attaching
+              vpcId: vpc-c85cedb2
+              ipv6AddressesSet: {}
+              privateDnsName: ip-172-31-77-110.ec2.internal
+              privateIpAddressesSet:
+                item:
+                - privateDnsName: ip-172-31-77-110.ec2.internal
+                  privateIpAddress: 172.31.77.110
+                  primary: true
+              status: in-use
+          blockDeviceMapping: {}
+          instanceType: t2.micro
+          keyName: panther-test
+          cpuOptions:
+            threadsPerCore: '1'
+            coreCount: '1'
+          monitoring:
+            state: disabled
+          privateIpAddress: 172.31.77.110
+          rootDeviceType: ebs
+          enclaveOptions:
+            enabled: false
+          launchTime: '1590777496000'
+          metadataOptions:
+            httpPutResponseHopLimit: '1'
+            httpEndpoint: enabled
+            state: pending
+            httpTokens: optional
+          privateDnsName: ip-172-31-77-110.ec2.internal
+          placement:
+            tenancy: default
+            availabilityZone: us-east-1e
+      reservationId: r-07e78c128894ab85b
+      requestId: c4cc9607-2ff7-4193-8070-f487c01bb90d
+      ownerId: '493859302102'
+      groupSet: {}
+    sourceIPAddress: "92.55.146.245"
+    userAgent: console.ec2.amazonaws.com
+    userIdentity:
+      accountId: "493859302102"
+      accesskeyid: AKIASWJJJ66ZZZII4IYY
+      arn: "arn:aws:iam::493859302102:user/tracy_stone"
+      principalId: "493859302102"
+      type: IAMUser
+      userName: tracy_stone
