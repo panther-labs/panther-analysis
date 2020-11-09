@@ -1,5 +1,6 @@
 ---
 Type: AWS.CloudTrail
+Format: json
 Logs:
   -
     additionalEventData:
@@ -351,7 +352,7 @@ Logs:
           deviceName: "/dev/sdc"
       capacityReservationSpecification:
         capacityReservationPreference: open
-      instanceType: t2.micro
+      instanceType: p2.8xlarge
       tenancy: default
       creditSpecification:
         cpuCredits: standard
@@ -434,7 +435,7 @@ Logs:
                   primary: true
               status: in-use
           blockDeviceMapping: {}
-          instanceType: t2.micro
+          instanceType: p2.8xlarge
           keyName: panther-test
           cpuOptions:
             threadsPerCore: '1'
