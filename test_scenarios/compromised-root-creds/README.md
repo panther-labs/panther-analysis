@@ -1,4 +1,4 @@
-# Test Scenario 1 - Compromised AWS Root Credentials
+# Test Scenario - Compromised AWS Root Credentials
 
 ## Usage
 
@@ -32,12 +32,12 @@ tracey.stone@acme.io
 
 ## Timeline
 
-Date of compromise: 11/3/2020
+Date of compromise: 11/01/2020
 
-- Failed Logins from Attacker (Okta)
-- Legit Logins from team (CloudTrail)
-- Failed logins from attacker (CloudTrail)
-- Successful login from attacker (CloudTrail)
-- Attacker creates a user and root access key (CloudTrail)
-- Attacker spins up EC2s and Bucket
-- Accessing customer data bucket
+- 10/26/2020: Failed Logins from attacker (Okta) 
+- 10/27/2020: Legit Logins from team (CloudTrail) 
+- 10/30/2020: Failed logins from attacker (CloudTrail) 
+- 11/01/2020: Successful login from attacker (CloudTrail) 
+- 11/01/2020: Attacker creates a user and root access key (CloudTrail)
+- 11/03/2020: Attacker spins up EC2s and Bucket, Stops CloudTrail (CloudTrail) 
+- 11/03/2020: Accessing customer data bucket (S3 Access Logs) 
