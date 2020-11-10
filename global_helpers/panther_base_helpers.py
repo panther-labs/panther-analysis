@@ -107,6 +107,15 @@ def gsuite_parameter_lookup(parameters, key):
     return None
 
 
+def gsuite_details_lookup(detail_type, detail_name, event):
+    for details in event.get('events', {}):
+        if (details.get('type') == detail_type and
+            details.get('name') in detail_name):
+            return details
+    # not found, return empty dict
+    return {}
+
+
 # 'additional_details' from box logs varies by event_type
 # but it should be a valid json string. This helper
 # wraps the process of extracting those details.

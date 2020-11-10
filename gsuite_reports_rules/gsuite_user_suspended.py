@@ -1,3 +1,6 @@
+from panther_base_helpers import gsuite_details_lookup as details_lookup  # pylint: disable=import-error
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup  # pylint: disable=import-error
+
 USER_SUSPENDED_EVENTS = {
     'account_disabled_generic',
     'account_disabled_spamming_through_relay',
@@ -10,14 +13,12 @@ def rule(event):
     if event['id'].get('applicationName') != 'login':
         return False
 
-    for details in event.get('events', [{}]):
-        if (details.get('type') == 'account_warning' and
-                details.get('name') in USER_SUSPENDED_EVENTS):
-            return True
-
-    return False
+    return bool(details_lookup('account_warning', USER_SUSPENDED_EVENTS, event))
 
 
 def title(event):
-    return 'User [{}]\'s account was disabled'.format(
-        event.get('actor', {}).get('email'))
+    details = details_lookup('account_warning', USER_SUSPENDED_EVENTS, event)
+    user = param_lookup(details.get('parameters', {}), 'affected_email_address')
+    if not user:
+        user = '<UNKNOWN_USER>'
+    return 'User [{}]\'s account was disabled'.format(user)
