@@ -1,4 +1,4 @@
-from panther_base_helpers import gsuite_parameter_lookup as param_lookup
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup  # pylint: disable=import-error
 
 MAX_UNLOCK_ATTEMPTS = 10
 
