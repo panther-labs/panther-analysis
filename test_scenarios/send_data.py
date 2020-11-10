@@ -19,7 +19,7 @@ def send_message(client, queue_url, message, message_format):
 
 def process_file(client, queue_url, logs, log_type, message_format):
     if log_type == 'AWS.CloudTrail':
-        logging.info('Sending %d CloudTrail logs...', len(logs))
+        logging.info('Sending [%d] CloudTrail logs...', len(logs))
         for indx, log in enumerate(logs):
             # Wrap the CloudTrail in a 'Records' top-level key
             resp = send_message(client, queue_url, {'Records': [log]},
@@ -34,7 +34,7 @@ def process_file(client, queue_url, logs, log_type, message_format):
         logging.debug('Message [1] response: %s',
                       resp['ResponseMetadata']['HTTPStatusCode'])
 
-    logging.info('Sending %d %s logs...', len(logs), log_type)
+    logging.info('Sending [%d] %s logs...', len(logs), log_type)
     for indx, log in enumerate(logs):
         resp = send_message(client, queue_url, log, message_format)
         logging.debug('Message [%d] response: %s', indx + 1,
@@ -51,9 +51,10 @@ def main(args):
 
     process_file(
         boto3.client('sqs', region_name=args.region),
-        QUEUE_URL.format(AccountID=args.account_id, QueueName=args.queue_name),
-        data.get('Logs', []), data.get('LogType', ''),
-        data.get('Format', 'json'))
+        QUEUE_URL.format(AccountID=args.account_id,
+                         Region=args.region,
+                         QueueName=args.queue_name), data.get('Logs', []),
+        data.get('LogType', ''), data.get('Format', 'json'))
 
 
 if __name__ == '__main__':
