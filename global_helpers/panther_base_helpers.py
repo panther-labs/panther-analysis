@@ -110,7 +110,7 @@ def gsuite_parameter_lookup(parameters, key):
 def gsuite_details_lookup(detail_type, detail_name, event):
     for details in event.get('events', {}):
         if (details.get('type') == detail_type and
-            details.get('name') in detail_name):
+                details.get('name') in detail_name):
             return details
     # not found, return empty dict
     return {}

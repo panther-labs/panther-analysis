@@ -6,7 +6,8 @@ def rule(event):
     if event['id'].get('applicationName') != 'admin':
         return False
 
-    return bool(details_lookup('DELEGATED_ADMIN_SETTINGS', ['ASSIGN_ROLE'], event))
+    return bool(
+        details_lookup('DELEGATED_ADMIN_SETTINGS', ['ASSIGN_ROLE'], event))
 
 
 def title(event):
