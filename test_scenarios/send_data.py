@@ -1,13 +1,15 @@
 import argparse
-from datetime import datetime, date, timezone
 import boto3
-import logging
+from datetime import datetime, date, timezone
+import gzip
+from io import BytesIO
 import json
+import logging
 from os import path
+import uuid
 import yaml
 
-QUEUE_URL = 'https://sqs.{Region}.amazonaws.com/{AccountID}/{QueueName}'
-FLOW_LOG_HEADER = 'version account-id interface-id srcaddr dstaddr srcport dstport protocol packets bytes start end action log-status'
+# FIXME: refactor and generalize
 
 def main(args):
     if not path.exists(args.file):
@@ -25,75 +27,73 @@ def main(args):
 
     process_file(
         args.panther_compromise_datetime - args.compromise_datetime,
-        boto3.client('sqs', region_name=args.region),
-        QUEUE_URL.format(AccountID=args.account_id,
-                         Region=args.region,
-                         QueueName=args.queue_name),
-                         data.get('Logs', []),
-                         data.get('LogType', ''),
-                         data.get('Format', 'json'))
+        boto3.client('s3', region_name=args.region),
+        args.bucket_name,
+        data.get('Logs', []),
+        data.get('LogType', ''),
+        data.get('Format', 'json'))
 
-def process_file(event_time_shift, client, queue_url, logs, log_type, message_format):
+def process_file(event_time_shift, client, bucket_name, logs, log_type, message_format):
     # these 2 are special
     if log_type == 'AWS.CloudTrail':
-        process_cloudtrail(event_time_shift, client, queue_url, logs, log_type)
+        process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type)
         return
     if log_type == 'AWS.VPCFlow':
-        process_vpcflow(event_time_shift, client, queue_url, logs, log_type)
+        process_vpcflow(event_time_shift, client, bucket_name, logs, log_type)
         return
 
-    # nothing special to do
-    if message_format == 'json':
-        process_any_json(event_time_shift, client, queue_url, logs, log_type)
+    # nothing special to do ...
+    if message_format == 'jsonl':
+        process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type)
         return
     if message_format == 'raw':
-       process_any_raw(event_time_shift, client, queue_url, logs, log_type)
+       process_any_raw(event_time_shift, client, bucket_name, logs, log_type)
        return
 
     return
 
-def process_cloudtrail(event_time_shift, client, queue_url, logs, log_type):
+def process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_json_logs(event_time_shift, logs, log_type)
     logging.info('Sending [%d] CloudTrail logs...', len(logs))
     # Wrap the CloudTrail in a 'Records' top-level key
-    resp = send_message(client, queue_url, {'Records': logs}, 'json')
+    resp = write_s3(client, bucket_name, {'Records': logs}, 'json')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
-def process_vpcflow(event_time_shift, client, queue_url, logs, log_type):
+FLOW_LOG_HEADER = 'version account-id interface-id srcaddr dstaddr srcport dstport protocol packets bytes start end action log-status'
+def process_vpcflow(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_vpcflow_logs(event_time_shift, logs, log_type)
-    logging.debug('Sending VPC Flow log header')
-    resp = send_message(client, queue_url, FLOW_LOG_HEADER, 'raw')
+    logging.info('Sending [%d] %s logs...', len(logs), log_type)
+    resp = write_s3(client, bucket_name, [FLOW_LOG_HEADER]+logs, 'raw')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
-    logging.info('Sending [%d] %s logs...', len(logs), log_type)
-    for indx, log in enumerate(logs):
-        resp = send_message(client, queue_url, log, 'raw')
-        logging.debug('Message [%d] response: %s', indx + 1, resp['ResponseMetadata']['HTTPStatusCode'])
-
-def process_any_json(event_time_shift, client, queue_url, logs, log_type):
+def process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_json_logs(event_time_shift, logs, log_type)
     logging.info('Sending [%d] %s logs...', len(logs), log_type)
-    for indx, log in enumerate(logs):
-        resp = send_message(client, queue_url, log, 'json')
-        logging.debug('Message [%d] response: %s', indx + 1, resp['ResponseMetadata']['HTTPStatusCode'])
+    resp = write_s3(client, bucket_name, logs, 'jsonl')
+    logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
-def process_any_raw(event_time_shift, client, queue_url, logs, log_type):
+def process_any_raw(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_raw_logs(event_time_shift, logs, log_type)
     logging.info('Sending [%d] %s logs...', len(logs), log_type)
-    for indx, log in enumerate(logs):
-        resp = send_message(client, queue_url, log, 'raw')
-        logging.debug('Message [%d] response: %s', indx + 1, resp['ResponseMetadata']['HTTPStatusCode'])
+    resp = write_s3(client, bucket_name, logs, 'raw')
+    logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
-# FIXME: we need to change to S3 files, sqs does not guarantee order of events and VPC flow needs a header to precede
-# FIXME: the work around is to push only 1 file per minute maximum and hope for the best
-def send_message(client, queue_url, message, message_format):
-    if message_format == 'raw':
-        message_str = message
-    elif message_format == 'json':
-        message_str = json.dumps(message)
-    return client.send_message(QueueUrl=queue_url, MessageBody=message_str)
+def write_s3(client, bucket_name, logs, format):
+    if format == 'raw':
+        data = "\n".join(logs)
+    elif format == 'json':
+        data = json.dumps(logs) + "\n"
+    elif format == 'jsonl':
+        data = ''
+        for log in logs:
+            data += json.dumps(logs) + "\n"
+    data_stream = BytesIO()
+    writer = gzip.GzipFile(fileobj=data_stream, mode='wb')
+    writer.write(data.encode('utf-8'))
+    writer.close()
+    data_stream.seek(0)
+    return client.put_object(Bucket=bucket_name, ContentType='gzip', Body=data_stream, Key=str(uuid.uuid4())+".gz")
 
-# FIXME: event shifting should be in its own file
 def time_shift_json_logs(event_time_shift, logs, log_type):
     shifted_logs = []
     event_time = get_event_time(log_type)
@@ -129,7 +129,6 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
     for log in logs:
         log = log.split(' ')
 
-        logging.error("%s",log[start_time_index])
         log_event_time = datetime.fromtimestamp(int(log[start_time_index]))
         log_event_time += event_time_shift
         log[start_time_index] = str(int(log_event_time.timestamp()))
@@ -161,8 +160,8 @@ if __name__ == '__main__':
     parser.add_argument('--account-id',
                         help='the AWS account ID of the Panther deployment',
                         required=True)
-    parser.add_argument('--queue-name',
-                        help='the SQS Queue of the Panther source',
+    parser.add_argument('--bucket-name',
+                        help='the S3 bucket name of the Panther source',
                         required=True)
     parser.add_argument('--region',
                         help='the region of the SQS Queue of the Panther source',
