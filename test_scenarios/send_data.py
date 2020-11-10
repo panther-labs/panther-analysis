@@ -9,7 +9,7 @@ from os import path
 import uuid
 import yaml
 
-# FIXME: refactor and generalize
+# FIXME: refactor and generalize this to more log types
 
 def main(args):
     if not path.exists(args.file):
@@ -31,9 +31,9 @@ def main(args):
         args.bucket_name,
         data.get('Logs', []),
         data.get('LogType', ''),
-        data.get('Format', 'json'))
+        data.get('Format', 'jsonl'))
 
-def process_file(event_time_shift, client, bucket_name, logs, log_type, message_format):
+def process_file(event_time_shift, client, bucket_name, logs, log_type, log_format):
     # these 2 are special
     if log_type == 'AWS.CloudTrail':
         process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type)
@@ -43,14 +43,14 @@ def process_file(event_time_shift, client, bucket_name, logs, log_type, message_
         return
 
     # nothing special to do ...
-    if message_format == 'jsonl':
+    if log_format == 'jsonl':
         process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type)
         return
-    if message_format == 'raw':
+    if log_format == 'raw':
        process_any_raw(event_time_shift, client, bucket_name, logs, log_type)
        return
 
-    return
+    raise Exception('unknown log format: ' + log_format)
 
 def process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_json_logs(event_time_shift, logs, log_type)
@@ -86,7 +86,7 @@ def write_s3(client, bucket_name, logs, format):
     elif format == 'jsonl':
         data = ''
         for log in logs:
-            data += json.dumps(logs) + "\n"
+            data += json.dumps(log) + "\n"
     data_stream = BytesIO()
     writer = gzip.GzipFile(fileobj=data_stream, mode='wb')
     writer.write(data.encode('utf-8'))
