@@ -9,7 +9,7 @@ from os import path
 import uuid
 import yaml
 
-# FIXME: refactor and generalize this to more log types
+# FIXME: refactor and generalize this to more log types for more scenarios
 
 def main(args):
     if not path.exists(args.file):
@@ -103,7 +103,6 @@ def time_shift_json_logs(event_time_shift, logs, log_type):
         log_event_time = datetime.strptime(log[event_time_attr], event_time_format)
         log_event_time += event_time_shift
         log[event_time_attr] = log_event_time.strftime(event_time_format)
-        logging.debug("%s %s", log_event_time, log[event_time_attr])
         shifted_logs.append(log)
     return shifted_logs
 
@@ -117,7 +116,6 @@ def time_shift_raw_logs(event_time_shift, logs, log_type):
         log_event_time = datetime.strptime(log[event_time_index], event_time_format)
         log_event_time += event_time_shift
         log[event_time_index] = log_event_time.strftime(event_time_format)
-        logging.debug("%s %s", log_event_time, log[event_time_index])
         log = ' '.join(log)
         shifted_logs.append(log)
     return shifted_logs
@@ -132,12 +130,10 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
         log_event_time = datetime.fromtimestamp(int(log[start_time_index]))
         log_event_time += event_time_shift
         log[start_time_index] = str(int(log_event_time.timestamp()))
-        logging.debug("%s %s", log_event_time, log[start_time_index])
 
         log_event_time = datetime.fromtimestamp(int(log[end_time_index]))
         log_event_time += event_time_shift
         log[end_time_index] = str(int(log_event_time.timestamp()))
-        logging.debug("%s %s", log_event_time, log[end_time_index])
 
         log = ' '.join(log)
         shifted_logs.append(log)
@@ -171,7 +167,7 @@ if __name__ == '__main__':
                         type=datetime.fromisoformat,
                         required=True)
     parser.add_argument('--panther-compromise-datetime',
-                         help='the datetime to shift all events from the compromise date UTC in iso format',
+                         help='the datetime to shift all events from the compromise date UTC in iso format (defaults to now)',
                          type=datetime.fromisoformat,
                          default=datetime.now(timezone.utc),
                          required=False)

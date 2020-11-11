@@ -39,5 +39,7 @@ Date of compromise: 11/01/2020
 - 10/30/2020: Failed logins from attacker (CloudTrail) 
 - 11/01/2020: Successful login from attacker (CloudTrail) 
 - 11/01/2020: Attacker creates a user and root access key (CloudTrail)
-- 11/03/2020: Attacker spins up EC2s and Bucket, Stops CloudTrail (CloudTrail) 
-- 11/03/2020: Accessing customer data bucket (S3 Access Logs) 
+- 11/01/2020: Attacker spins up EC2s and Bucket, Stops CloudTrail (CloudTrail) 
+- 11/01/2020: Accessing customer data bucket (S3 Access Logs) 
+- 11/01/2020: Attacker uses EC2 instance to exfil data (VPC Flow) 
+
