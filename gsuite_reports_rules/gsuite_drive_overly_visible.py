@@ -1,4 +1,5 @@
-from panther_base_helpers import gsuite_parameter_lookup as param_lookup  # pylint: disable=import-error
+from panther_base_helpers import gsuite_details_lookup as details_lookup
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 RESOURCE_CHANGE_EVENTS = {
     'create',
@@ -17,14 +18,9 @@ def rule(event):
     if event['id'].get('applicationName') != 'drive':
         return False
 
-    for details in event.get('events', [{}]):
-        if (details.get('type') == 'access' and
-                details.get('name') in RESOURCE_CHANGE_EVENTS and
-                param_lookup(details.get('parameters', {}),
-                             'visibility') in PERMISSIVE_VISIBILITY):
-            return True
-
-    return False
+    details = details_lookup('access', RESOURCE_CHANGE_EVENTS, event)
+    return bool(details) and param_lookup(details.get('parameters', {}),
+                                          'visibility') in PERMISSIVE_VISIBILITY
 
 
 def dedup(event):
