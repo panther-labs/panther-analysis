@@ -11,6 +11,13 @@ import yaml
 
 # FIXME: refactor and generalize this to more log types for more scenarios
 
+# example:
+#  python send_data.py
+#   --account-id 050603629922
+#   --region us-east-1
+#   --compromise-datetime '2020-11-01T18:00:00+00:00'
+#   --bucket-name panther-demo-2020-11
+#   --file compromised-root-creds/threat_hunting_vpc.yaml
 def main(args):
     if not path.exists(args.file):
         logging.error('File does not exist: %s', args.file)
@@ -19,14 +26,16 @@ def main(args):
     with open(args.file) as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
 
-    logging.info('Loading file %s (%s)', args.file, data.get('LogType', ''))
-
     # ensure UTC
     args.panther_compromise_datetime = args.panther_compromise_datetime.replace(tzinfo=timezone.utc)
     args.compromise_datetime = args.compromise_datetime.replace(tzinfo=timezone.utc)
 
+    time_shift = args.panther_compromise_datetime - args.compromise_datetime
+
+    logging.info('Loading file %s (%s) time shifted %s', args.file, data.get('LogType', ''), time_shift)
+
     process_file(
-        args.panther_compromise_datetime - args.compromise_datetime,
+        time_shift,
         boto3.client('s3', region_name=args.region),
         args.bucket_name,
         data.get('Logs', []),
@@ -100,7 +109,7 @@ def time_shift_json_logs(event_time_shift, logs, log_type):
     event_time_attr = event_time['attr']
     event_time_format = event_time['format']
     for log in logs:
-        log_event_time = datetime.strptime(log[event_time_attr], event_time_format)
+        log_event_time = datetime.strptime(log[event_time_attr], event_time_format).replace(tzinfo=timezone.utc)
         log_event_time += event_time_shift
         log[event_time_attr] = log_event_time.strftime(event_time_format)
         shifted_logs.append(log)
@@ -113,7 +122,7 @@ def time_shift_raw_logs(event_time_shift, logs, log_type):
     event_time_format = event_time['format']
     for log in logs:
         log = log.split(' ')
-        log_event_time = datetime.strptime(log[event_time_index], event_time_format)
+        log_event_time = datetime.strptime(log[event_time_index], event_time_format).replace(tzinfo=timezone.utc)
         log_event_time += event_time_shift
         log[event_time_index] = log_event_time.strftime(event_time_format)
         log = ' '.join(log)
@@ -127,11 +136,11 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
     for log in logs:
         log = log.split(' ')
 
-        log_event_time = datetime.fromtimestamp(int(log[start_time_index]))
+        log_event_time = datetime.fromtimestamp(int(log[start_time_index])).replace(tzinfo=timezone.utc)
         log_event_time += event_time_shift
         log[start_time_index] = str(int(log_event_time.timestamp()))
 
-        log_event_time = datetime.fromtimestamp(int(log[end_time_index]))
+        log_event_time = datetime.fromtimestamp(int(log[end_time_index])).replace(tzinfo=timezone.utc)
         log_event_time += event_time_shift
         log[end_time_index] = str(int(log_event_time.timestamp()))
 

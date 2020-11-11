@@ -43,3 +43,5 @@ Date of compromise: 11/01/2020
 - 11/01/2020: Accessing customer data bucket (S3 Access Logs) 
 - 11/01/2020: Attacker uses EC2 instance to exfil data (VPC Flow) 
 
+Last timestamp: 2020-11-01T18:01:00+00:00
+
