@@ -9,6 +9,7 @@ IAM_ADMIN_ROLES = {
 IAM_ADMIN_ROLE_PATTERNS = { 
     'arn:aws:iam::[0-9]+:role/IdentityCFNServiceRole'
 }
+
 # API calls that are indicative of IAM entity creation
 IAM_ENTITY_CREATION_EVENTS = { 
     'BatchCreateUser',
@@ -20,13 +21,17 @@ IAM_ENTITY_CREATION_EVENTS = {
     'CreateServiceLinkedRole',
     'CreateUser',
 }
+
+
 def rule(event):
     # Check if this event is in scope
     if event['eventName'] not in IAM_ENTITY_CREATION_EVENTS:
         return False
+
     # All IAM changes MUST go through CloudFormation
     if event['userIdentity'].get('invokedBy') != 'cloudformation.amazonaws.com':
         return True
+
     # Only approved IAM Roles can make IAM Changes
     for admin_role_pattern in IAM_ADMIN_ROLES:
         # Check if the arn matches any role patterns, returns False (whitelisting it) if there is a match
