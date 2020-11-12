@@ -31,7 +31,7 @@ def rule(event):
         return True
 
     # Only approved IAM Roles can make IAM Changes
-    for admin_role_pattern in IAM_ADMIN_ROLES:
+    for admin_role_pattern in IAM_ADMIN_ROLE_PATTERNS:
         # Check if the arn matches any role patterns, returns False (whitelisting it) if there is a match
         if (len(
                 re.findall(
