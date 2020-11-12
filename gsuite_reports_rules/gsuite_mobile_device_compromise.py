@@ -1,3 +1,4 @@
+from panther_base_helpers import gsuite_details_lookup as details_lookup
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 
@@ -5,14 +6,10 @@ def rule(event):
     if event['id'].get('applicationName') != 'mobile':
         return False
 
-    for details in event.get('events', [{}]):
-        if (details.get('type') == 'suspicious_activity' and
-                details.get('name') == 'DEVICE_COMPROMISED_EVENT' and
-                param_lookup(details.get('parameters', {}),
-                             'DEVICE_COMPROMISED_STATE') == 'COMPROMISED'):
-            return True
-
-    return False
+    details = details_lookup('suspicious_activity',
+                             ['DEVICE_COMPROMISED_EVENT'], event)
+    return bool(details) and param_lookup(details.get(
+        'parameters', {}), 'DEVICE_COMPROMISED_STATE') == 'COMPROMISED'
 
 
 def title(event):

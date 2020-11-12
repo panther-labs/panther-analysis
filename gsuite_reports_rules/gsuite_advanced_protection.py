@@ -1,13 +1,11 @@
+from panther_base_helpers import gsuite_details_lookup as details_lookup
+
+
 def rule(event):
     if event['id'].get('applicationName') != 'user_accounts':
         return False
 
-    for details in event.get('events', [{}]):
-        if (details.get('type') == 'titanium_change' and
-                details.get('name') == 'titanium_unenroll'):
-            return True
-
-    return False
+    return bool(details_lookup('titanium_change', ['titanium_unenroll'], event))
 
 
 def title(event):
