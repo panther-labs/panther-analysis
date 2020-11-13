@@ -5,6 +5,7 @@ EVENT_ALLOW_LIST = {'CreateServiceLinkedRole', 'ConsoleLogin'}
 
 def rule(event):
     return (event['userIdentity'].get('type') == 'Root' and
+            event.get('errorMessage') is None and
             event['userIdentity'].get('invokedBy') is None and
             event['eventType'] != 'AwsServiceEvent' and
             event['eventName'] not in EVENT_ALLOW_LIST)
