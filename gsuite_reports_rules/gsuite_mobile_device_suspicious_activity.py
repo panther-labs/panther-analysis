@@ -1,13 +1,13 @@
+from panther_base_helpers import gsuite_details_lookup as details_lookup
+
+
 def rule(event):
     if event['id'].get('applicationName') != 'mobile':
         return False
 
-    for details in event.get('events', [{}]):
-        if (details.get('type') == 'suspicious_activity' and
-                details.get('name') == 'SUSPICIOUS_ACTIVITY_EVENT'):
-            return True
-
-    return False
+    return bool(
+        details_lookup('suspicious_activity', ['SUSPICIOUS_ACTIVITY_EVENT'],
+                       event))
 
 
 def title(event):

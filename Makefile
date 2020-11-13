@@ -13,7 +13,7 @@ deps-update:
 lint:
 	yapf $(analysis_directories) --diff --parallel --recursive --style google
 	bandit -r $(analysis_directories) --skip B101  # allow assert statements in tests
-	pylint $(analysis_directories) --disable=missing-docstring,bad-continuation,duplicate-code,W0511 --exit-zero
+	pylint $(analysis_directories) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --exit-zero
 
 venv:
 	virtualenv -p python3.7 venv
