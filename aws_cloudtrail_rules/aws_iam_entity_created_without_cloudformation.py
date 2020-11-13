@@ -43,4 +43,3 @@ def rule(event):
 
     return (event["userIdentity"]["sessionContext"]["sessionIssuer"]["arn"]
             not in IAM_ADMIN_ROLES)
-
