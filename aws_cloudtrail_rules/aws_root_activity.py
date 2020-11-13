@@ -6,12 +6,12 @@ EVENT_ALLOW_LIST = {'CreateServiceLinkedRole', 'ConsoleLogin'}
 def rule(event):
     return (event['userIdentity'].get('type') == 'Root' and
             event.get('errorMessage') is None and
-            event['userIdentity'].get('invokedBy') is None and
-            event['eventType'] != 'AwsServiceEvent' and
-            event['eventName'] not in EVENT_ALLOW_LIST)
+            event.get('userIdentity', {}).get('invokedBy') is None and
+            event.get('eventType') != 'AwsServiceEvent' and
+            event.get('eventName') not in EVENT_ALLOW_LIST)
 
 
 def title(event):
     return 'AWS root activity detected from [{ip}] in account [{account}]'.format(
-        ip=event['sourceIPAddress'],
+        ip=event.get('sourceIPAddress'),
         account=lookup_aws_account_name(event.get('recipientAccountId')))
