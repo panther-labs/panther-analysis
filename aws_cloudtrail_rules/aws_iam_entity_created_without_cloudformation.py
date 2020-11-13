@@ -41,8 +41,6 @@ def rule(event):
                 )) > 0):
             return False
 
-        return (event["userIdentity"]["sessionContext"]["sessionIssuer"]["arn"]
-                not in IAM_ADMIN_ROLES)
-
     return (event["userIdentity"]["sessionContext"]["sessionIssuer"]["arn"]
             not in IAM_ADMIN_ROLES)
+
