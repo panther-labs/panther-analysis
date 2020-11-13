@@ -2,10 +2,17 @@
 
 ## Usage
 
-The script below is used to mimic real-life data consumption into Panther. It sends SQS messages for each line of the sample YAMLs.
+Play the files in this order using the send_data.py script.
 
-```
-$ python send_data.py --file <LOG_FILE>.yaml --account-id <AWS ACCOUNT ID> --queue-name <PANTHER QUEUE NAME> --region <REGION>
+```python
+
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/victim_okta.yml 
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/victim_cloudtrail.yml 
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/attacker_okta.yml 
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/attacker_cloudtrail.yml
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/attacker_s3_access.yml 
+python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-datetime '2020-11-01T18:00:00+00:00' --bucket-name my-panther-demo  --file compromised-root-creds/attacker_vpc.yml 
+
 ```
 
 ## Background Info
