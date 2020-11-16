@@ -19,8 +19,108 @@ Tests:
     ExpectedResult: false
     Log:
       {
-      "eventType": "thingy"
+      "eventType": "logout"
       }
+  -
+    Name: Failed Login
+    ExpectedResult: false
+    Log:
+      {
+          "actor": {
+              "alternateId": "admin",
+              "displayName": "unknown",
+              "id": "unknown",
+              "type": "User"
+          },
+          "authenticationContext": {
+              "authenticationStep": 0,
+              "externalSessionId": "unknown"
+          },
+          "client": {
+              "device": "Computer",
+              "geographicalContext": {
+                  "city": "Dois Irmaos",
+                  "country": "Brazil",
+                  "geolocation": {
+                      "lat": -29.6116,
+                      "lon": -51.0933
+                  },
+                  "postalCode": "93950",
+                  "state": "Rio Grande do Sul"
+              },
+              "ipAddress": "redacted",
+              "userAgent": {
+                  "browser": "CHROME",
+                  "os": "Linux",
+                  "rawUserAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36"
+              },
+              "zone": "null"
+          },
+          "debugContext": {
+              "debugData": {
+                  "loginResult": "VERIFICATION_ERROR",
+                  "requestId": "redacted",
+                  "requestUri": "redacted",
+                  "threatSuspected": "false",
+                  "url": "redacted"
+              }
+          },
+          "displayMessage": "User login to Okta",
+          "eventType": "user.session.start",
+          "legacyEventType": "core.user_auth.login_failed",
+          "outcome": {
+              "reason": "VERIFICATION_ERROR",
+              "result": "FAILURE"
+          },
+          "p_any_domain_names": [
+              "rnvtelecom.com.br"
+          ],
+          "p_any_ip_addresses": [
+              "redacted"
+          ],
+          "p_event_time": "redacted",
+          "p_log_type": "Okta.SystemLog",
+          "p_parse_time": "redacted",
+          "p_row_id": "redacted",
+          "p_source_id": "redacted",
+          "p_source_label": "Okta",
+          "published": "redacted",
+          "request": {
+              "ipChain": [
+                  {
+                      "geographicalContext": {
+                          "city": "Dois Irmaos",
+                          "country": "Brazil",
+                          "geolocation": {
+                              "lat": -29.6116,
+                              "lon": -51.0933
+                          },
+                          "postalCode": "93950",
+                          "state": "Rio Grande do Sul"
+                      },
+                      "ip": "redacted",
+                      "version": "V4"
+                  }
+              ]
+          },
+          "securityContext": {
+              "asNumber": 263297,
+              "asOrg": "renovare telecom",
+              "domain": "rnvtelecom.com.br",
+              "isProxy": false,
+              "isp": "renovare telecom"
+          },
+          "severity": "INFO",
+          "transaction": {
+              "detail": {},
+              "id": "redacted",
+              "type": "WEB"
+          },
+          "uuid": "redacted",
+          "version": "0"
+      }
+
+
 # These unit tests require AWS credentials to be configured to run properly.
 #
 # To use these tests, uncomment them and run panther_analysis_tool test with hAWS credentials configured.

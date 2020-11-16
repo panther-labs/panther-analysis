@@ -6,8 +6,9 @@ PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 def rule(event):
-    # We only want to evaluate user logins
-    if event['eventType'] != 'user.session.start':
+    # We only want to successful evaluate user logins
+    if event['eventType'] != 'user.session.start' or event.get(
+            'outcome', {}).get('result') == 'FAILURE':
         return False
 
     # Generate a unique key for each user

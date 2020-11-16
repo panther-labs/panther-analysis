@@ -176,3 +176,59 @@ Tests:
           "recipientAccountId": "123456789012",
           "vpcEndpointId": "vpce-1"
       }
+  -
+    Name: Root User Failed Activity
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "redacted",
+          "errorMessage": "Not a valid response for the provided request id: aws_ccV60redacted",
+          "eventID": "redacted",
+          "eventName": "ExternalIdPDirectoryLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "redacted",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "p_alert_creation_time": "redacted",
+          "p_alert_id": "redacted",
+          "p_alert_update_time": "redacted",
+          "p_any_aws_account_ids": [
+              "redacted"
+          ],
+          "p_any_aws_arns": [],
+          "p_any_ip_addresses": [
+              "redacted"
+          ],
+          "p_event_time": "redacted",
+          "p_log_type": "AWS.CloudTrail",
+          "p_parse_time": "redacted",
+          "p_row_id": "redacted",
+          "p_rule_error": null,
+          "p_rule_id": "AWS.Root.Activity",
+          "p_rule_reports": {
+              "CIS": [
+                  "3.3"
+              ]
+          },
+          "p_rule_tags": [
+              "AWS",
+              "Identity & Access Management"
+          ],
+          "p_source_id": "redacted",
+          "p_source_label": "CloudTrail",
+          "readOnly": false,
+          "recipientAccountId": "redacted",
+          "requestID": "redacted",
+          "responseElements": {
+              "ExternalIdPDirectoryLogin": "Failure"
+          },
+          "sourceIPAddress": "redacted",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "redacted",
+              "arn": "",
+              "principalId": "redacted",
+              "type": "Root"
+          }
+      }
