@@ -6,7 +6,7 @@ def rule(event):
     for item in event.get('requestParameters',
                           {}).get('launchPermission',
                                   {}).get('add', {}).get('items', []):
-        if item['group'] == 'all':
+        if item.get('group') == 'all':
             return True
 
     return False
