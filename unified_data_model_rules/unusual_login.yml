@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: unusual_login.py
+RuleID: DataModel.Unusual.Login
+DisplayName: Unusual Login
+# This rule is disabled by default because it makes API calls out to the internet. At high volumes
+# of activity, this could get throttled unless you buy a subscription to ipinfo.
+Enabled: false
+LogTypes:
+  - GSuite.Events
+  - Okta.SystemLog
+  - OneLogin.Events
+Tags:
+  - DataModel
+  - Identity & Access Management
+Severity: Medium
+Description: An actor user logged in from a new ip address, exceeding the threshold for unique login locations.
+Reference: TODO # TODO 
+Runbook: Determine if this login was by the actual user and whether this is on-going expected behavior.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  - 
+    Name: Okta - Non Login
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "logout",
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: Okta - Failed Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "redacted",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "FAILURE"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: OneLogin - Non Login
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 8,
+        "p_log_type": "OneLogin.Events",
+      }

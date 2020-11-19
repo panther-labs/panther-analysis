@@ -1,0 +1,231 @@
+AnalysisType: rule
+Filename: brute_force_by_ip.py
+RuleID: DataModel.BruteForceByIP
+DedupPeriodMinutes: 60
+DisplayName: Brute Force By IP
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+  - Box.Event
+  - GSuite.Reports
+  - Okta.SystemLog
+  - OneLogin.Events
+Severity: Medium
+Tags:
+  - DataModel
+Threshold: 5
+Reports:
+  MITRE ATT&CK:
+    - Brute Force:Password Spraying
+Description: An actor user was denied login access more times than the configured threshold.
+Reference: TODO # TODO
+Runbook: Analyze the IP they came from, and other actions taken before/after. Check if a user from this ip eventually authenticated successfully.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: AWS.CloudTrail - Successful Login
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012",
+          "p_log_type": "AWS.CloudTrail"
+      }
+  -
+    Name: AWS.CloudTrail - Failed Login
+    ExpectedResult: true
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012",
+          "p_log_type": "AWS.CloudTrail"
+      }
+  -
+    Name: Box - Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "ip_address": "2.2.2.2",
+        "event_type": "DELETE",
+        "p_log_type": "Box.Event",
+      }
+  -
+    Name: Box - Login Failed
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "FAILED_LOGIN",
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "name": "Bob Cat",
+        },
+        "ip_address": "2.2.2.2",
+        "p_log_type": "Box.Event",
+      }
+  -
+    Name: GSuite - Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {"applicationName": "login"},
+        "ipAddress": "4.3.2.1",
+        "events": [
+          {
+            "type": "login",
+            "name": "login_success"
+          }
+        ],
+        "p_log_type": "GSuite.Reports",
+      }
+  -
+    Name: GSuite - Failed Login Event
+    ExpectedResult: true
+    Log:
+      {
+        "actor" : { 
+          "email": "bob@example.com"
+        },
+        "id": {"applicationName": "login"},
+        "ipAddress": "4.3.2.1",
+        "events": [
+          {
+            "type": "login",
+            "name": "login_failure"
+          }
+        ],
+        "p_log_type": "GSuite.Reports",
+      }
+  -
+    Name: Okta - Successful Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "redacted",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "SUCCES"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: Okta - Failed Login
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "redacted",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "FAILURE"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: OneLogin - Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 8,
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "ipaddr": "1.2.3.4",
+        "p_log_type": "OneLogin.Events",
+      }
+  -
+    Name: OneLogin - Failed Login Event
+    ExpectedResult: true
+    Log:
+      {
+        "event_type_id": 6,
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "ipaddr": "1.2.3.4",
+        "p_log_type": "OneLogin.Events"
+      }
