@@ -1,0 +1,15 @@
+AnalysisType: datamodel
+LogTypes: 
+  - AWS.CloudTrail
+DataModelID: AWS.CloudTrail.DataModel
+Filename: aws_cloudtrail_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.userIdentity.userName
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: sourceIPAddress
+  - Name: user_agent
+    Path: userAgent

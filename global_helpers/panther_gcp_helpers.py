@@ -1,8 +1,8 @@
 def get_binding_deltas(event):
-    if event['protoPayload'].get('methodName') != 'SetIamPolicy':
+    if event.get('protoPayload',{}).get('methodName') != 'SetIamPolicy':
         return []
 
-    service_data = event['protoPayload'].get('serviceData')
+    service_data = event.get('protoPayload',{}).get('serviceData')
     if not service_data:
         return []
 

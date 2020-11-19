@@ -1,0 +1,18 @@
+AnalysisType: datamodel
+LogTypes: 
+  - AWS.VPCFlow
+DataModelID: AWS.VPCFlow.DataModel
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.userIdentity.userName
+  - Name: destination_ip
+    Path: dstAddr  
+  - Name: destination_port
+    Path: dstPort
+  - Name: source_ip
+    Path: srcAddr
+  - Name: source_port
+    Path: srcPort
+  - Name: user_agent
+    Path: userAgent
