@@ -20,7 +20,7 @@ def rule(event):
 
     if not parameters:
         return False
-        
+
     # S3
     if event['eventName'] == 'PutBucketPolicy':
         return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
