@@ -18,6 +18,9 @@ def policy_is_not_acceptable(json_policy):
 def rule(event):
     parameters = event.get('requestParameters', {})
 
+    if not parameters:
+        return False
+
     # S3
     if event['eventName'] == 'PutBucketPolicy':
         return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
