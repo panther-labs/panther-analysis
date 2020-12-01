@@ -8,7 +8,9 @@ def rule(event):
 
 
 def dedup(event):
-    for resource in event['resources']:
-        if resource['type'] == KMS_KEY_TYPE:
-            return resource['ARN']
-    return None
+    resources = event.get('resources', {})
+    if resources:
+        for resource in event.get('resources', {}):
+            if resource.get('type', '') == KMS_KEY_TYPE:
+                return resource['ARN']
+    return event.get('p_row_id')
