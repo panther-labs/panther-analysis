@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from json import dumps, loads
 from math import sin, cos, sqrt, asin, radians
 from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_base_helpers import okta_alert_context
+
 PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 
@@ -97,3 +99,7 @@ def title(event):
 def dedup(event):
     # (Optional) Return a string which will de-duplicate similar alerts.
     return event['actor']['alternateId']
+
+
+def alert_context(event):
+    return okta_alert_context(event)
