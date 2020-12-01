@@ -130,3 +130,13 @@ def box_parse_additional_details(event):
         except ValueError:
             return {}
     return {}
+
+
+def okta_alert_context(event):
+    '''Returns common context for automation of Okta alerts'''
+    return {
+        'ips': event.get('p_any_ip_addresses', []),
+        'actor': event['actor'],
+        'target': event['target'],
+        'client': event['client'],
+    }

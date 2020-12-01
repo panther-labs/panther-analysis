@@ -1,5 +1,5 @@
 AnalysisType: rule
-Filename: okta_geo_improbable_access.py 
+Filename: okta_geo_improbable_access.py
 RuleID: Okta.GeographicallyImprobableAccess
 DisplayName: Geographically Improbable Okta Login
 Enabled: true
@@ -7,7 +7,9 @@ LogTypes:
   - Okta.SystemLog
 Tags:
   - Identity & Access Management
-Severity: Medium
+Severity: High
+Description: A user has subsequent logins from two geographic locations that are very far apart
+Runbook: Reach out to the user if needed to validate the activity, then lock the account
 SummaryAttributes:
   - eventType
   - severity
