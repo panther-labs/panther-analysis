@@ -9,7 +9,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event['userIdentity'].get('userName')
+    return event.get('userIdentity', {}).get('userName', '<UNKNOWN_USER>')
 
 
 def title(event):
