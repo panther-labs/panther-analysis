@@ -181,3 +181,36 @@ Tests:
         },
         "Versioning": null
       }
+  -
+    Name: Null Configuration
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:s3:::something-prodsec",
+        "LoggingPolicy": null,
+        "Policy": null,
+        "MFADelete": null,
+        "ObjectLockConfiguration": null,
+        "LifecycleRules": null,
+        "Grants": null,
+        "Versioning": null,
+        "EncryptionRules": null,
+        "PublicAccessBlockConfiguration": null,
+        "AccountId": "123456789",
+        "Tags": {
+          "something": "ttd",
+          "user": "prodsec",
+          "service": "-",
+          "owner": "-",
+          "team": "-"
+        },
+        "Region": "us-west-2",
+        "ResourceType": "AWS.S3.Bucket",
+        "Name": "something-prodsec",
+        "ResourceId": "arn:aws:s3:::something-prodsec",
+        "TimeCreated": "2020-06-27T00:11:11Z",
+        "Owner": {
+          "DisplayName": "aws-corp",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        }
+      }
