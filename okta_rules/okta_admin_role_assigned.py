@@ -1,3 +1,4 @@
+from panther_base_helpers import okta_alert_context
 import re
 
 
@@ -10,6 +11,10 @@ def rule(event):
                 event['debugContext']['debugData'].get('privilegeGranted'))))
 
 
+def dedup(event):
+    return 'requestId-' + event['debugContext']['debugData'].get('requestId')
+
+
 def title(event):
     title_str = '{} <{}> granted [{}] privileges to {} <{}>'
     return title_str.format(
@@ -20,9 +25,4 @@ def title(event):
 
 
 def alert_context(event):
-    return {
-        'ips': event.get('p_any_ip_addresses', []),
-        'actor': event['actor'],
-        'target': event['target'],
-        'client': event['client'],
-    }
+    return okta_alert_context(event)

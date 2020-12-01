@@ -11,10 +11,12 @@ Severity: Info
 Description: A user has been granted administrative privileges in Okta
 Reference: https://help.okta.com/en/prod/Content/Topics/Security/administrators-admin-comparison.htm
 Runbook: Reach out to the user if needed to validate the activity
+DedupPeriodMinutes: 15
 SummaryAttributes:
   - eventType
   - severity
   - displayMessage
+  - p_any_ip_addresses
 Tests:
   -
     Name: Admin Access Assigned
