@@ -4,9 +4,11 @@ import panther_event_type_helpers as event_type
 from panther_oss_helpers import get_string_set, put_string_set
 FINGERPRINT_THRESHOLD = 3
 
+
 def rule(event):
     # Pre-filter to save compute time where possible. event_type_id = 5 is login events.
-    if not event.udm('event_type') or event.udm('event_type') != event_type.SUCCESSFUL_LOGIN:
+    if not event.udm('event_type') or event.udm(
+            'event_type') != event_type.SUCCESSFUL_LOGIN:
         return False
     # we use udm 'actor_user' field as a key
     if not event.udm('actor_user'):
