@@ -10,6 +10,7 @@ ADMIN_ROLES = {
     'roles/*Admin'
 }
 
+
 def get_event_type(event):
     # currently, only tracking a handful of event types
     for delta in get_binding_deltas(event):

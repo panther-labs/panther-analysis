@@ -1,5 +1,6 @@
 import panther_event_type_helpers as event_type
 
+
 def get_event_type(event):
     # currently, only tracking a few event types
     if event.get('event_type') == 'FAILED_LOGIN':
