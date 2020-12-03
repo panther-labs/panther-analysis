@@ -20,9 +20,11 @@ def rule(event):
 
     if not parameters:
         return False
-
+    if event.get('errorCode') == 'AccessDenied':
+        return False
     # S3
     if event['eventName'] == 'PutBucketPolicy':
+        # Don't alert if access is denied
         return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
 
     # ECR
