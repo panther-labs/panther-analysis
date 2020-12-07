@@ -1,0 +1,141 @@
+AnalysisType: policy
+Filename: aws_security_group_unused_security_group.py
+PolicyID: AWS.SecurityGroup.UnusedSecurityGroup
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+  - PCI
+Reports:
+  PCI:
+    - 1.1.4
+    - 1.2.1
+    - 8.2.1
+Severity: Low
+Description: >
+  This policy validates that Security Groups created are being used. Test need live resource infromation to make second call.
+Runbook: >
+  Delete unused Security Groups.
+Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
+# Tests:
+#   -
+#     Name: Not In Use Security Group
+#     ExpectedResult: false
+#     Resource:
+#       {
+#         "Id": "sg-123456789",
+#         "Description": "Test for Cloud Security Policy Function",
+#         "ResourceId": "arn:aws:ec2:us-west-2:123456789:security-group/sg-123456789",
+#         "VpcId": "vpc-a4fbb2dc",
+#         "AccountId": "123456789",
+#         "OwnerId": "123456789",
+#         "ResourceType": "AWS.EC2.SecurityGroup",
+#         "TimeCreated": null,
+#         "Tags": {
+#             "Detection": "Cloud Security"
+#         },
+#         "Name": "Unattached Test",
+#         "Region": "us-west-2",
+#         "IpPermissions": null,
+#         "Arn": "arn:aws:ec2:us-west-2:123456789:security-group/sg-123456789",
+#         "IpPermissionsEgress": [
+#             {
+#                 "PrefixListIds": null,
+#                 "FromPort": null,
+#                 "ToPort": null,
+#                 "IpProtocol": "-1",
+#                 "Ipv6Ranges": null,
+#                 "IpRanges": [
+#                     {
+#                         "CidrIp": "0.0.0.0/0",
+#                         "Description": null
+#                     }
+#                 ],
+#                 "UserIdGroupPairs": null
+#             }
+#         ]
+#      }
+#   -
+#     Name: In Use Security Group
+#     ExpectedResult: true
+#     Resource:
+#         {
+#             "OwnerId": "123456789",
+#             "TimeCreated": null,
+#             "ResourceId": "arn:aws:ec2:us-west-2:123456789:security-group/sg-123456789",
+#             "Region": "us-west-2",
+#             "Name": "panther-web-container",
+#             "Id": "sg-123456789",
+#             "Description": "Access to the Fargate containers",
+#             "VpcId": "vpc-123456789",
+#             "IpPermissionsEgress": [
+#                 {
+#                     "PrefixListIds": null,
+#                     "FromPort": null,
+#                     "ToPort": null,
+#                     "IpProtocol": "-1",
+#                     "Ipv6Ranges": null,
+#                     "IpRanges": [
+#                         {
+#                             "Description": null,
+#                             "CidrIp": "0.0.0.0/0"
+#                         }
+#                     ],
+#                     "UserIdGroupPairs": null
+#                 }
+#             ],
+#             "AccountId": "123456789",
+#             "IpPermissions": [
+#                 {
+#                     "FromPort": 80,
+#                     "ToPort": 80,
+#                     "IpProtocol": "tcp",
+#                     "Ipv6Ranges": null,
+#                     "IpRanges": null,
+#                     "UserIdGroupPairs": [
+#                         {
+#                             "VpcId": null,
+#                             "UserId": "123456789",
+#                             "PeeringStatus": null,
+#                             "GroupId": "sg-123456789",
+#                             "GroupName": null,
+#                             "VpcPeeringConnectionId": null,
+#                             "Description": null
+#                         }
+#                     ],
+#                     "PrefixListIds": null
+#                 },
+#                 {
+#                     "IpRanges": null,
+#                     "UserIdGroupPairs": [
+#                         {
+#                             "PeeringStatus": null,
+#                             "GroupId": "sg-123456789",
+#                             "GroupName": null,
+#                             "VpcPeeringConnectionId": null,
+#                             "Description": "Ingress from the public ALB",
+#                             "VpcId": null,
+#                             "UserId": "123456789"
+#                         }
+#                     ],
+#                     "PrefixListIds": null,
+#                     "FromPort": null,
+#                     "ToPort": null,
+#                     "IpProtocol": "-1",
+#                     "Ipv6Ranges": null
+#                 }
+#             ],
+#             "Arn": "arn:aws:ec2:us-west-2:123456789:security-group/sg-123456789,
+#             "ResourceType": "AWS.EC2.SecurityGroup",
+#             "Tags": {
+#                 "aws:cloudformation:stack-name": "panther-bootstrap",
+#                 "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-west-2:123456789:stack/panther-bootstrap/df98f440-2914-11eb-b126-123456789",
+#                 "PantherEdition": "Community",
+#                 "PantherVersion": "v1.12.1-horakj-123456789",
+#                 "aws:cloudformation:logical-id": "WebApplicationServerSecurityGroup",
+#                 "Application": "Panther",
+#                 "Name": "panther-web-container-sg",
+#                 "Stack": "panther-bootstrap"
+#             }
+#         }
