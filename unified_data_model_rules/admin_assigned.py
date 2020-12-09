@@ -17,7 +17,7 @@ def title(event):
 
 def alert_context(event):
     return {
-        'ips': event.udm('p_any_ip_addresses', []),
+        'ips': event.get('p_any_ip_addresses', []),
         'actor': event.udm('actor_user'),
         'user': event.udm('user')
     }

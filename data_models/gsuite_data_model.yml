@@ -7,11 +7,11 @@ Enabled: true
 Mappings:
   - Name: actor_user
     Path: $.actor.email
-  #- Name: admin_role
-  #  Path: $.events[*].parameters[?(@.name == 'ROLE_NAME')].value
+  - Name: admin_role
+    Path: $.events[*].parameters[?(@.name == 'ROLE_NAME')].value
   - Name: event_type
     Method: get_event_type
   - Name: source_ip
     Path: ipAddress
-  #- Name: user
-  #  Path: $.events[*].parameters[?(@.name == 'USER_EMAIL')].value
+  - Name: user
+    Path: $.events[*].parameters[?(@.name == 'USER_EMAIL')].value
