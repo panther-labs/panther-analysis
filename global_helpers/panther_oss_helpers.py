@@ -16,31 +16,6 @@ class BadLookup(Exception):
 class PantherBadInput(Exception):
     """Error returned when a Panther helper function is provided bad input."""
 
-def build_client(resource):
-    """Function builds resource client that assumes Panther audit role"""
-    tmp = resource['ResourceId'].split(':')
-    resource_type = tmp[2]
-    region = tmp[3]
-    account = tmp[4]
-    role_arn = f'arn:aws:iam::{account}:role/PantherAuditRole-{region}'
-    sts_connection = boto3.client('sts')
-    acct_b = sts_connection.assume_role(
-        RoleArn=role_arn,
-        RoleSessionName="lambda_assume_audit_role"
-    )
-    ACCESS_KEY = acct_b['Credentials']['AccessKeyId']
-    SECRET_KEY = acct_b['Credentials']['SecretAccessKey']
-    SESSION_TOKEN = acct_b['Credentials']['SessionToken']
-    # create service client using the assumed role credentials, e.g. S3
-    client = boto3.client(
-        resource_type,
-        region,
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_KEY,
-        aws_session_token=SESSION_TOKEN,
-    )
-    return client
-
 
 def get_s3_arn_by_name(name: str) -> str:
     """This function is used to construct an s3 bucket ARN from its name."""
