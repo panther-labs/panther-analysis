@@ -1,8 +1,9 @@
+import datetime
 import json
 import requests
 import panther_event_type_helpers as event_type
 from panther_oss_helpers import get_string_set, put_string_set
-FINGERPRINT_THRESHOLD = 3
+FINGERPRINT_THRESHOLD = 5
 
 
 def rule(event):
@@ -40,25 +41,27 @@ def rule(event):
     # Lookup & store persistent data
     event_key = get_key(event)
     last_login_info = get_string_set(event_key)
+    fingerprint_timestamp = datetime.datetime.now()
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
-        put_string_set(event_key, [json.dumps({login_tuple: 1})])
+        put_string_set(event_key, [json.dumps({login_tuple: fingerprint_timestamp})])
         return False
     last_login_info = json.loads(last_login_info.pop())
 
-    last_login_info[login_tuple] = last_login_info.get(login_tuple, 0) + 1
+    # update the timestamp associated with this fingerprint
+    last_login_info[login_tuple] = fingerprint_timestamp
     put_string_set(event_key, [json.dumps(last_login_info)])
 
-    # Here we are checking if this login's fingerprint is one of the top three most common
-    # fingerprints for this user. If it is not, we fire an alert.
-    tuple_count = last_login_info[login_tuple]
-    higher_tuples = 0
-    for tcount in last_login_info.values():
-        if tcount > tuple_count:
-            higher_tuples += 1
-        if higher_tuples >= FINGERPRINT_THRESHOLD:
-            return True
-
+    # fire an alert when number of unique, recent fingerprints is greater than a threshold
+    if len(last_login_info) > FINGERPRINT_THRESHOLD:
+        oldest = login_tuple
+        for fp_tuple, fp_time in last_login_info.items():
+            if fp_time < oldest:
+                oldest = fp_tuple
+        # remove oldest login tuple
+        last_login_info.pop(oldest)
+        put_string_set(event_key, [json.dumps(last_login_info)])
+        return True
     return False
 
 
