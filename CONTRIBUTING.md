@@ -7,10 +7,8 @@ Prior to contributing code, you will be required to sign our [Contributor Licens
 
 ## Pull Request Process
 
-1. Ensure no new install or build artifacts are included in the request.
-2. Update the `README.md` with details of changes to the interface, this includes new environment
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of other code owners. If you
-   do not have permission to do that, you may request a reviewer to merge it for you.
+1. Create new detections in the appropriate folder (or create your own) or make modifications to existing ones
+2. Commit both the Python and Metadata files
+3. Write a clear commit message
+4. Open a [Pull Request](https://github.com/panther-labs/panther-analysis/pulls)
+5. Incorporate feedback and merge once you have the sign-off of other code owners. If you do not have permission, you may request a reviewer to merge it for you.
