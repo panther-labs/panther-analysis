@@ -1,0 +1,37 @@
+AnalysisType: rule
+Filename: aws_vpc_sunburst_iocs.py
+RuleID: AWS.VPC.SunburstIOCs
+DisplayName: VPC Flow Logs Sunburst IOCs
+Enabled: true
+LogTypes:
+  - AWS.VPCFlow
+Tags:
+  - AWS
+  - Configuration Required
+  - Security Control
+Severity: Medium
+Description: >
+  Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
+Runbook: >
+  Investigate the host sending unapproved DNS activity for signs of compromise or other malicious activity. Update network configurations appropriately to ensure all DNS traffic is routed to approved DNS servers.
+SummaryAttributes:
+  - p_any_domain_names
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Non-matching traffic 
+    ExpectedResult: false
+    Log:
+      {
+        "dstport": 53,
+        "dstaddr": "1.1.1.1",
+        "srcaddr": "10.0.0.1"
+      }
+  -
+    Name: Matching IP Indicator of Compromise
+    ExpectedResult: true
+    Log:
+      {
+        "srcaddr": "13.59.205.66",
+        "dstaddr": "10.0.0.1",
+      }
