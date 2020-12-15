@@ -1,5 +1,3 @@
-from ipaddress import ip_network
-
 SUNBURST_FQDN_IOCS = [
     "6a57jk2ba1d9keg15cbg.appsync-api.eu-west-1.avsvmcloud.com",
     "7sbvaemscs0mc925tb99.appsync-api.us-west-2.avsvmcloud.com",
