@@ -50,3 +50,9 @@ def rule(event):
                 return True
 
     return False
+
+def dedup(event):
+    return ""
+
+def title(event):
+    return "Sunburst Indicators of Compromise Detected"
