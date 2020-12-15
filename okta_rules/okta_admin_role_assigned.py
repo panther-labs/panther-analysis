@@ -1,5 +1,5 @@
-from panther_base_helpers import okta_alert_context
 import re
+from panther_base_helpers import okta_alert_context
 
 
 def rule(event):
