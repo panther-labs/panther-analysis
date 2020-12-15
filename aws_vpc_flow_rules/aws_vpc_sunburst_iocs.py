@@ -35,7 +35,8 @@ SUNBURST_IP_IOCS = [
 
 def rule(event):
     # Check against src/dst addr
-    if event.get("srcaddr") in SUNBURST_IP_IOCS or event.get("dstaddr") in SUNBURST_IP_IOCS:
+    if event.get("srcaddr") in SUNBURST_IP_IOCS or event.get(
+        "dstaddr") in SUNBURST_IP_IOCS:
         return True
 
     # Check through the FQDN IOCs
