@@ -7,13 +7,12 @@ LogTypes:
   - AWS.VPCFlow
 Tags:
   - AWS
-  - Configuration Required
   - Security Control
-Severity: Medium
+Severity: Critical
 Description: >
-  Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
+  Alerts if any-directional traffic is detected with known indicators of compromise (IOC). These IOCs indicate a potenial breach and have been associated with a sophisticated nation-state actor.
 Runbook: >
-  Investigate the host sending unapproved DNS activity for signs of compromise or other malicious activity. Update network configurations appropriately to ensure all DNS traffic is routed to approved DNS servers.
+  Investigate the resources communicating with the matched IP/FQDN for signs of compromise or other malicious activity. 
 SummaryAttributes:
   - p_any_domain_names
   - p_any_ip_addresses
