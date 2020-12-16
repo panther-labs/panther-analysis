@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    # pylint: disable=line-too-long
+    domains = ','.join(
+        ioc_match(event.get('p_any_domain_names'), SUNBURST_FQDN_IOCS))
     return sanitize_domain(
-        f"Sunburst Indicator of Compromise Detected [Domains]: {','.join(ioc_match(event.get('p_any_domain_names'), SUNBURST_FQDN_IOCS))}"
-    )
+        f"Sunburst Indicator of Compromise Detected [Domains]: {domains}")

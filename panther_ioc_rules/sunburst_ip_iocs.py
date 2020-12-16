@@ -6,5 +6,5 @@ def rule(event):
 
 
 def title(event):
-    # pylint: disable=line-too-long
-    return f"Sunburst Indicator of Compromise Detected [IPs]: {','.join(ioc_match(event.get('p_any_ip_addresses'), SUNBURST_IP_IOCS))}"
+    ips = ','.join(ioc_match(event.get('p_any_ip_addresses'), SUNBURST_IP_IOCS))
+    return f"Sunburst Indicator of Compromise Detected [IPs]: {ips}"
