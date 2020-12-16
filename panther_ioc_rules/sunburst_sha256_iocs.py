@@ -1,15 +1,11 @@
-from panther_iocs import sunburst_sha256_ioc_match, intersection, SUNBURST_SHA256_IOCS
+from panther_iocs import ioc_match, SUNBURST_SHA256_IOCS
 
 
 def rule(event):
-    return sunburst_sha256_ioc_match(event)
+    return any(ioc_match(event.get('p_any_sha256_hashes'),
+                         SUNBURST_SHA256_IOCS))
 
 
 def title(event):
-    title_str = "Sunburst Indicator of Compromise Detected"
-    if "p_any_sha256_hashes" in event:
-        matches = intersection(event.get("p_any_sha256_hashes"),
-                               SUNBURST_SHA256_IOCS)
-        single_quote = '\''
-        title_str += f" - {str(matches).replace(single_quote, '')}"
-    return title_str
+    # pylint: disable=line-too-long
+    return f"Sunburst Indicator of Compromise Detected [SHA256 hash]: {','.join(ioc_match(event.get('p_any_sha256_hashes'), SUNBURST_SHA256_IOCS))}"
