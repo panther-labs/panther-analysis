@@ -17,53 +17,53 @@ def policy_is_not_acceptable(json_policy):
 # pylint: disable=too-many-return-statements
 def rule(event):
     parameters = event.get('requestParameters', {})
+    event_name = event.get('eventName', "")
+    policy = ""
 
+    # Handle malformed events
     if not parameters:
         return False
-    if event.get('errorCode') == 'AccessDenied':
+    if event.get('errorCode') == 'AccessDenied' or event_name == "":
         return False
     # S3
-    if event['eventName'] == 'PutBucketPolicy':
-        # Don't alert if access is denied
+    # Don't alert if access is denied
+    if event_name == 'PutBucketPolicy':
         return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
 
     # ECR
-    if event['eventName'] == 'SetRepositoryPolicy':
+    if event_name == 'SetRepositoryPolicy':
         policy = parameters.get('policyText', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # Elasticsearch
-    if event['eventName'] in [
+    if event_name in [
             'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
     ]:
         policy = parameters.get('accessPolicies', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # KMS
-    if event['eventName'] in ['CreateKey', 'PutKeyPolicy']:
+    if event_name in ['CreateKey', 'PutKeyPolicy']:
         policy = parameters.get('policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # S3 Glacier
-    if event['eventName'] == 'SetVaultAccessPolicy':
+    if event_name == 'SetVaultAccessPolicy':
         policy = parameters.get('policy', {}).get('policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # SNS & SQS
-    if event['eventName'] in ['SetQueueAttributes', 'CreateTopic']:
+    if event_name in ['SetQueueAttributes', 'CreateTopic']:
         policy = parameters.get('attributes', {}).get('Policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # SNS
-    if event['eventName'] == 'SetTopicAttributes':
+    if event_name == 'SetTopicAttributes':
         if parameters.get('attributeName') == 'Policy':
             policy = parameters.get('attributeValue', '{}')
             return policy_is_not_acceptable(json.loads(policy))
         return False
 
     # SecretsManager
-    if event['eventName'] == 'PutResourcePolicy':
+    if event_name == 'PutResourcePolicy':
         policy = parameters.get('resourcePolicy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
-    return False
+    if policy == "":
+        return False
+
+    return policy_is_not_acceptable(json.loads(policy))
