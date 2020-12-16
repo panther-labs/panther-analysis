@@ -7,14 +7,16 @@ FINGERPRINT_THRESHOLD = 5
 
 
 def rule(event):
-    # Pre-filter to save compute time where possible. event_type_id = 5 is login events.
-    if not event.udm('event_type') or event.udm(
-            'event_type') != event_type.SUCCESSFUL_LOGIN:
+    # Pre-filter to save compute time where possible.
+    if event.udm('event_type') != event_type.SUCCESSFUL_LOGIN:
         return False
     # we use udm 'actor_user' field as a key
     if not event.udm('actor_user'):
         return False
 
+    if not event.udm('source_ip'):
+        # source_ip field is required to perform the api call
+        return False
     # Lookup geo-ip data via API call
     url = 'https://ipinfo.io/' + event.udm('source_ip') + '/geo'
 
@@ -30,8 +32,7 @@ def rule(event):
         resp = requests.get(url)
 
     if resp.status_code != 200:
-        # Could raise an exception here for ops team to look into
-        return False
+        raise Exception("API call failed: GET {} returned {}".format(url, resp.status_code))
     login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
@@ -71,6 +72,5 @@ def get_key(event):
 
 
 def title(event):
-    # (Optional) Return a string which will be shown as the alert title.
     return '{}: Unusual logins detected for user [{}]'.format(
         event.get('p_log_type'), event.udm('actor_user'))

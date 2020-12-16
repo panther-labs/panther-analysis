@@ -3,9 +3,7 @@ import panther_event_type_helpers as event_type
 
 def rule(event):
     # filter events on unified data model field
-    if event.udm('event_type'):
-        return event.udm('event_type') == event_type.ADMIN_ROLE_ASSIGNED
-    return False
+    return event.udm('event_type') == event_type.ADMIN_ROLE_ASSIGNED
 
 
 def title(event):

@@ -20,5 +20,5 @@ def get_event_type(event):
                     for admin_role_pattern in ADMIN_ROLES
             ]):
                 return event_type.ADMIN_ROLE_ASSIGNED
-        ## TODO: check for successful and failed login actions
+
     return None

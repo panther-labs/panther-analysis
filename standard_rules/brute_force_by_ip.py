@@ -3,8 +3,7 @@ import panther_event_type_helpers as event_type
 
 def rule(event):
     # filter events on unified data model field
-    return bool(event.udm('event_type')) and event.udm(
-        'event_type') == event_type.FAILED_LOGIN
+    return event.udm('event_type') == event_type.FAILED_LOGIN
 
 
 def title(event):
