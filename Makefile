@@ -32,8 +32,11 @@ test:
 	do \
 		cp -r $$d "$$tmp"; \
 	done; \
-	panther_analysis_tool test --path "$$tmp"; \
-	rm -r "$$tmp";
+	current_dir=$$(pwd); \
+	cd $$tmp; \
+	panther_analysis_tool test ; \
+	rm -r "$$tmp"; \
+	cd $$current_dir; 
 
 test-single:
 	@tmp=$$(mktemp -d); \
