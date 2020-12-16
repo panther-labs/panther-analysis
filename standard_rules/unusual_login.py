@@ -10,13 +10,11 @@ def rule(event):
     # Pre-filter to save compute time where possible.
     if event.udm('event_type') != event_type.SUCCESSFUL_LOGIN:
         return False
-    # we use udm 'actor_user' field as a key
-    if not event.udm('actor_user'):
+
+    # we use udm 'actor_user' field as a ddb and 'source_ip' in the api call
+    if not event.udm('actor_user') or not event.udm('source_ip'):
         return False
 
-    if not event.udm('source_ip'):
-        # source_ip field is required to perform the api call
-        return False
     # Lookup geo-ip data via API call
     url = 'https://ipinfo.io/' + event.udm('source_ip') + '/geo'
 
