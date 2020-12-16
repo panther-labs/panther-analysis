@@ -8,7 +8,8 @@ def rule(event):
 def title(event):
     title_str = "Sunburst Indicator of Compromise Detected"
     if "p_any_domain_names" in event:
-        matches = intersection(event.get("p_any_domain_names"), SUNBURST_FQDN_IOCS)
+        matches = intersection(event.get("p_any_domain_names"),
+                               SUNBURST_FQDN_IOCS)
         single_quote = '\''
         title_str += f" - {str(matches).replace('.', '[.]').replace(single_quote, '')}"
     return title_str
