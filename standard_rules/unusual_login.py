@@ -32,7 +32,8 @@ def rule(event):
         resp = requests.get(url)
 
     if resp.status_code != 200:
-        raise Exception("API call failed: GET {} returned {}".format(url, resp.status_code))
+        raise Exception("API call failed: GET {} returned {}".format(
+            url, resp.status_code))
     login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
@@ -45,7 +46,8 @@ def rule(event):
     fingerprint_timestamp = datetime.datetime.now()
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
-        put_string_set(event_key, [json.dumps({login_tuple: fingerprint_timestamp})])
+        put_string_set(event_key,
+                       [json.dumps({login_tuple: fingerprint_timestamp})])
         return False
     last_login_info = json.loads(last_login_info.pop())
 
