@@ -33,6 +33,10 @@ SUNBURST_SHA256_IOCS = [
 ]
 
 
+def intersection(first: list, second: list) -> list:
+    return list(set(first) & set(second))
+
+
 def sunburst_fqdn_ioc_match(event: dict) -> bool:
     """Matches a Fully Qualified Domain Name against known Sunburst Indicators of Compromise
 
