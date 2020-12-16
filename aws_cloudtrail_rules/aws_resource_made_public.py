@@ -30,29 +30,24 @@ def rule(event):
     # ECR
     if event['eventName'] == 'SetRepositoryPolicy':
         policy = parameters.get('policyText', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # Elasticsearch
     if event['eventName'] in [
             'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
     ]:
         policy = parameters.get('accessPolicies', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # KMS
     if event['eventName'] in ['CreateKey', 'PutKeyPolicy']:
         policy = parameters.get('policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # S3 Glacier
     if event['eventName'] == 'SetVaultAccessPolicy':
         policy = parameters.get('policy', {}).get('policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # SNS & SQS
     if event['eventName'] in ['SetQueueAttributes', 'CreateTopic']:
         policy = parameters.get('attributes', {}).get('Policy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
     # SNS
     if event['eventName'] == 'SetTopicAttributes':
@@ -64,6 +59,8 @@ def rule(event):
     # SecretsManager
     if event['eventName'] == 'PutResourcePolicy':
         policy = parameters.get('resourcePolicy', '{}')
-        return policy_is_not_acceptable(json.loads(policy))
 
-    return False
+    if len(policy) == 0:
+        return False
+
+    return policy_is_not_acceptable(json.loads(policy))
