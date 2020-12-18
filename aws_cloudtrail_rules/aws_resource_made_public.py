@@ -67,3 +67,14 @@ def rule(event):
         return policy_is_not_acceptable(json.loads(policy))
 
     return False
+
+
+def title(event):
+    # Should use data models for this once that's been rolled out
+    user = event['userIdentity'].get('userName') or event['userIdentity'].get(
+        'sessionContext').get('sessionIssuer').get('userName')
+
+    if event.get('Resources'):
+        return f"AWS Resource {event.get('Resources')[0]['arn']} made public by {user}"
+
+    return f"{event['eventSource']} resource made public by {user}"
