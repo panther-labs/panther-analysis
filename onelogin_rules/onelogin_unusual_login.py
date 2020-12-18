@@ -2,6 +2,7 @@ import json
 import requests
 from panther_oss_helpers import get_string_set, put_string_set  # pylint: disable=import-error
 FINGERPRINT_THRESHOLD = 3
+EVENT_LOGIN_INFO = {}
 
 
 def rule(event):
@@ -13,10 +14,10 @@ def rule(event):
     url = 'https://ipinfo.io/' + event['ipaddr'] + '/geo'
 
     # Skip API call if this is a unit test
-    if __name__ == 'PolicyApiTestingPolicy':
+    if 'panther_api_data' in event:
         resp = lambda: None
         setattr(resp, 'status_code', 200)
-        setattr(resp, 'text', event['api_data'])
+        setattr(resp, 'text', event['panther_api_data'])
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
@@ -31,6 +32,7 @@ def rule(event):
     # for a given user's logins. In this way, we can detect unusual logins.
     login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
         'city', '<CITY>')
+    EVENT_LOGIN_INFO[event['p_row_id']] = login_tuple
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -64,5 +66,6 @@ def get_key(event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    return 'Unusual logins in OneLogin for user [{}]'.format(
-        event.get('user_name', '<UNKNOWN_USER>'))
+    return 'Unusual OneLogin access for user [{}] from [{}]'.format(
+        event.get('user_name', '<UNKNOWN_USER>'),
+        EVENT_LOGIN_INFO[event['p_row_id']])
