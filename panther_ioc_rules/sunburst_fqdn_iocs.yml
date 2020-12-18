@@ -1,0 +1,59 @@
+AnalysisType: rule
+Filename: sunburst_fqdn_iocs.py
+RuleID: IOC.SunburstFQDNIOCs
+DisplayName: Sunburst Indicators of Compromise (FQDN)
+Enabled: true
+LogTypes:
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.GuardDuty
+  - AWS.S3ServerAccess
+  - AWS.VPCFlow
+  - Box.Event
+  - CiscoUmbrella.DNS
+  - GCP.AuditLog
+  - Gravitational.TeleportAudit
+  - GSuite.Reports
+  - Okta.SystemLog
+  - OneLogin.Events
+  - Osquery.Differential
+Tags:
+  - AWS
+  - Box
+  - DNS
+  - GCP
+  - GSuite
+  - SSH
+  - OneLogin
+  - Osquery
+Severity: High
+Description: >
+  Monitors for communication to known Sunburst Backdoor FQDNs. These IOCs indicate a potential breach and have been associated with a sophisticated nation-state actor.
+Reference: >
+  https://www.fireeye.com/blog/threat-research/2020/12/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor.html
+Runbook: >
+  Investigate the resources communicating with the matched IOC for signs of compromise or other malicious activity. Consider rotating credentials on any systems observed communicating with these known malicious systems.
+SummaryAttributes:
+  - p_any_domain_names
+  - p_any_ip_addresses
+  - p_any_sha256_hashes
+Tests:
+  -
+    Name: Non-matching traffic
+    ExpectedResult: false
+    Log:
+      {
+        "dstport": 53,
+        "dstaddr": "1.1.1.1",
+        "srcaddr": "10.0.0.1",
+        "p_any_domain_names": ["example.com"],
+      }
+  -
+    Name: Sunburst Indicator of Compromise (FQDN) Detected
+    ExpectedResult: true
+    Log:
+      {
+        "srcaddr": "13.59.205.66",
+        "dstaddr": "10.0.0.1",
+        "p_any_domain_names": ["incomeupdate.com"],
+      }
