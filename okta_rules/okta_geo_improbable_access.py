@@ -100,7 +100,8 @@ def title(event):
     # (Optional) Return a string which will be shown as the alert title.
     return 'Geographically improbably login for user [{}] from [{}] to [{}]'.format(
         event['actor']['alternateId'],
-        EVENT_CITY_TRACKING[event['p_row_id']]['old_city'],
+        EVENT_CITY_TRACKING[event['p_row_id']].get(
+            'old_city', '<NOT_STORED>'),  # For compatability
         EVENT_CITY_TRACKING[event['p_row_id']]['new_city'],
     )
 
@@ -112,6 +113,7 @@ def dedup(event):
 
 def alert_context(event):
     context = okta_alert_context(event)
-    context['old_city'] = EVENT_CITY_TRACKING[event['p_row_id']]['old_city']
+    context['old_city'] = EVENT_CITY_TRACKING[event['p_row_id']].get(
+        'old_city', '<NOT_STORED>')
     context['new_city'] = EVENT_CITY_TRACKING[event['p_row_id']]['new_city']
     return context
