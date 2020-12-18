@@ -20,13 +20,12 @@ def rule(event):
     event_name = event.get('eventName', "")
     policy = ""
 
-    # Handle malformed events
-    if not parameters:
+    # Ignore malformed events & access denied issues
+    if not parameters or event.get(
+            'errorCode') == 'AccessDenied' or event_name == "":
         return False
-    if event.get('errorCode') == 'AccessDenied' or event_name == "":
-        return False
+
     # S3
-    # Don't alert if access is denied
     if event_name == 'PutBucketPolicy':
         return policy_is_not_acceptable(parameters.get('bucketPolicy', None))
 
@@ -66,7 +65,7 @@ def rule(event):
     if policy == "":
         return False
 
-    return False
+    return policy_is_not_acceptable(json.loads(policy))
 
 
 def title(event):
