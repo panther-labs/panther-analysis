@@ -46,7 +46,10 @@ def policy(resource):
     if content_managed:
         for managed_policy_name in content_managed:
             managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
-            managed_policy = resource_lookup(managed_policy_id)
+            try:
+                managed_policy = resource_lookup(managed_policy_id)
+            except:
+                return True
             policy_text = json.loads(managed_policy['PolicyDocument'])
             permissions = policy_text['Statement'][0]['Action']
             
