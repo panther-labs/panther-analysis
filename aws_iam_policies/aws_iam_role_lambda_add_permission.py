@@ -50,3 +50,10 @@ def policy(resource):
             return check_account(resource)
 
     return True
+
+# to mock a Managed Policy, add “IsUnitTest: True” attribute:value to test resource object
+# insert code below in place of "managed_policy = resource_lookup(managed_policy_id)", above:
+# if not resource.get('IsUnitTest'):
+#   managed_policy = resource_lookup(managed_policy_id)
+# else:
+#   managed_policy = <mock managed policy in JSON notation>
