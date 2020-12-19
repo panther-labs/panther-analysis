@@ -31,23 +31,27 @@ def check_account(resource):
 
 
 def policy(resource):
-    content_inline = resource['InlinePolicies']
+    content_inline = resource.get('InlinePolicies', {})
+    
+    if content_inline:
+        for policy in content_inline:
+            policy_text = json.loads(content_inline[policy])
+            permissions = policy_text['Statement'][0]['Action']
+    
+            if permission_check in permissions:
+                return check_account(resource)
 
-    for policy in content_inline:
-        policy_text = json.loads(content_inline[policy])
-        permissions = policy_text['Statement'][0]['Action']
+    content_managed = resource.get('ManagedPolicyNames', [])
 
-        if permission_check in permissions:
-            return check_account(resource)
-
-    for managed_policy_name in resource['ManagedPolicyNames']:
-        managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
-        managed_policy = resource_lookup(managed_policy_id)
-        policy_text = json.loads(managed_policy['PolicyDocument'])
-        permissions = policy_text['Statement'][0]['Action']
-        
-        if permission_check in permissions:
-            return check_account(resource)
+    if content_managed:
+        for managed_policy_name in content_managed:
+            managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
+            managed_policy = resource_lookup(managed_policy_id)
+            policy_text = json.loads(managed_policy['PolicyDocument'])
+            permissions = policy_text['Statement'][0]['Action']
+            
+            if permission_check in permissions:
+                return check_account(resource)
 
     return True
 
