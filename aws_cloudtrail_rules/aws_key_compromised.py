@@ -8,6 +8,7 @@ def rule(event):
                 request_params.get('policyName') == EXPOSED_CRED_POLICY)
     return False
 
+
 def dedup(event):
     return event['userIdentity'].get('userName')
 
