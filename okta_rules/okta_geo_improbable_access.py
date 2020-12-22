@@ -5,6 +5,7 @@ from panther_oss_helpers import get_string_set, put_string_set, set_key_expirati
 from panther_base_helpers import okta_alert_context
 
 PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
+EVENT_CITY_TRACKING = {}
 
 
 def rule(event):
@@ -28,6 +29,7 @@ def rule(event):
     # Load the last login into an object we can compare
     old_login_stats = loads(last_login.pop())
     new_login_stats = {
+        'city': event['client']['geographicalContext']['city'],
         'lon': event['client']['geographicalContext']['geolocation']['lon'],
         'lat': event['client']['geographicalContext']['geolocation']['lat'],
     }
@@ -48,6 +50,10 @@ def rule(event):
 
     # Calculation is complete, so store the most recent login for the next check
     store_login_info(login_key, event)
+    EVENT_CITY_TRACKING[event['p_row_id']] = {
+        'new_city': new_login_stats['city'],
+        'old_city': old_login_stats['city'],
+    }
 
     return speed > 900  # Boeing 747 cruising speed
 
@@ -79,6 +85,7 @@ def store_login_info(key, event):
     # Map the user to the lon/lat and time of the most recent login
     put_string_set(key, [
         dumps({
+            'city': event['client']['geographicalContext']['city'],
             'lon': event['client']['geographicalContext']['geolocation']['lon'],
             'lat': event['client']['geographicalContext']['geolocation']['lat'],
             'time': event['p_event_time']
@@ -91,9 +98,12 @@ def store_login_info(key, event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    return 'Geographically improbably login for user [{}] in [{}]'.format(
+    return 'Geographically improbably login for user [{}] from [{}] to [{}]'.format(
         event['actor']['alternateId'],
-        event['client']['geographicalContext']['city'])
+        EVENT_CITY_TRACKING[event['p_row_id']].get(
+            'old_city', '<NOT_STORED>'),  # For compatability
+        EVENT_CITY_TRACKING[event['p_row_id']]['new_city'],
+    )
 
 
 def dedup(event):
@@ -102,4 +112,8 @@ def dedup(event):
 
 
 def alert_context(event):
-    return okta_alert_context(event)
+    context = okta_alert_context(event)
+    context['old_city'] = EVENT_CITY_TRACKING[event['p_row_id']].get(
+        'old_city', '<NOT_STORED>')
+    context['new_city'] = EVENT_CITY_TRACKING[event['p_row_id']]['new_city']
+    return context

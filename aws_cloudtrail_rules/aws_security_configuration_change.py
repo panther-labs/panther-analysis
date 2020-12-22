@@ -1,4 +1,4 @@
-SECURITY_CONFIG_ACTIONS = [
+SECURITY_CONFIG_ACTIONS = {
     'DeleteAccountPublicAccessBlock',
     'DeleteDeliveryChannel',
     'DeleteDetector',
@@ -9,7 +9,7 @@ SECURITY_CONFIG_ACTIONS = [
     'DisableRule',
     'StopConfigurationRecorder',
     'StopLogging',
-]
+}
 
 
 def rule(event):
@@ -17,3 +17,10 @@ def rule(event):
         return not event['requestParameters'].get('enable', True)
 
     return event['eventName'] in SECURITY_CONFIG_ACTIONS
+
+
+def title(event):
+    user = event['userIdentity'].get('userName') or event['userIdentity'].get(
+        'sessionContext').get('sessionIssuer').get('userName')
+
+    return f"Sensitive AWS API call {event['eventName']} made by {user}"

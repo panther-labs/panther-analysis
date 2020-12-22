@@ -23,13 +23,15 @@ Tests:
       {
         "event_type_id": 8
       }
-# The following tests only work if being run in AWS by Panther. Not supported by the CLI today.
+# These tests can be enabled if testing is done through the UI or from the CLI with valid AWS
+# credentials loaded to talk to the panther-kv table.
+
 #  -
 #    Name: Login1
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Mountain View\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Mountain View\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -39,7 +41,7 @@ Tests:
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Mountain View\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Mountain View\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -49,7 +51,7 @@ Tests:
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Palo Alto\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Palo Alto\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -59,7 +61,7 @@ Tests:
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Palo Alto\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Palo Alto\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -69,7 +71,7 @@ Tests:
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Walnut Creek\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Walnut Creek\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -79,7 +81,7 @@ Tests:
 #    ExpectedResult: false
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Walnut Creek\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Walnut Creek\", \"region\": \"California\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
 #        "user_id": 123
@@ -89,8 +91,9 @@ Tests:
 #    ExpectedResult: true
 #    Log:
 #      {
-#        "api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Seattle\", \"region\": \"Washington\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
+#        "panther_api_data": "{\"ip\": \"8.8.8.8\", \"city\": \"Seattle\", \"region\": \"Washington\", \"country\": \"US\", \"loc\": \"37.4056,-122.0775\", \"postal\": \"94043\", \"timezone\": \"America/Los_Angeles\", \"readme\": \"https://ipinfo.io/missingauth\"}",
 #        "event_type_id": 5,
 #        "ipaddr": "8.8.8.8",
-#        "user_id": 123
+#        "user_id": 123,
+#        "user_name": "Bobert Bobson" 
 #      }
