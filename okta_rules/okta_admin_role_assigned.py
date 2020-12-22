@@ -1,18 +1,26 @@
 import re
 from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
 
+ADMIN_PATTERN = re.compile(r'[aA]dministrator')
+
 
 def rule(event):
     return (event['eventType'] == 'user.account.privilege.grant' and
             deep_get(event, 'outcome', 'result') == 'SUCCESS' and bool(
-                re.search(
-                    r'[aA]dministrator',
-                    deep_get(event, 'debugContext', 'debugData',
-                             'privilegeGranted'))))
+                ADMIN_PATTERN.search(
+                    deep_get(event,
+                             'debugContext',
+                             'debugData',
+                             'privilegeGranted',
+                             default=''))))
 
 
 def dedup(event):
-    request_id = deep_get(event, 'debugContext', 'debugData', 'requestId')
+    request_id = deep_get(event,
+                          'debugContext',
+                          'debugData',
+                          'requestId',
+                          default='REQUEST_ID_NOT_FOUND')
     return f'requestId-{request_id}'
 
 
