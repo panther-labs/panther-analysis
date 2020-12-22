@@ -1,5 +1,7 @@
 import json
+from collections.abc import Mapping
 from ipaddress import ip_network
+from functools import reduce
 # This file exists to define global variables for use by other policies.
 
 # Expects a map with the a Key 'Tags' that maps to a map of key/value string pairs, or None if no
@@ -136,7 +138,17 @@ def okta_alert_context(event):
     '''Returns common context for automation of Okta alerts'''
     return {
         'ips': event.get('p_any_ip_addresses', []),
-        'actor': event['actor'],
-        'target': event['target'],
-        'client': event['client'],
+        'actor': event.get('actor', ''),
+        'target': event.get('target', ''),
+        'client': event.get('client', ''),
     }
+
+
+def deep_get(dictionary, *keys, default=None):
+    '''Safely return the value from a nested map
+
+    Taken from https://stackoverflow.com/questions/25833613/python-safe-method-to-get-value-of-nested-dictionary
+    '''
+    return reduce(
+        lambda d, key: d.get(key, default)
+        if isinstance(d, Mapping) else default, keys, dictionary)
