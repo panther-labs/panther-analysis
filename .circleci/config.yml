@@ -34,7 +34,7 @@ jobs:
           command: pipenv run -- make deps
       - run:
           name: Linting
-          command: make lint
+          command: pipenv run -- make lint
   unit_tests:
     docker:
       - image: 'circleci/python:3.8'
@@ -51,7 +51,7 @@ jobs:
           command: pipenv run -- make deps
       - run:
           name: Linting
-          command: make test
+          command: pipenv run -- make test
 
 workflows:
   version: 2
