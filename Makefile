@@ -36,7 +36,7 @@ test:
 	cd $$tmp; \
 	panther_analysis_tool test ; \
 	rm -r "$$tmp"; \
-	cd $$current_dir; 
+	cd $$current_dir;
 
 test-single:
 	@tmp=$$(mktemp -d); \

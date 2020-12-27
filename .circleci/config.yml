@@ -1,20 +1,54 @@
 version: 2
 
-jobs:
-  build:
-    docker:
-      - image: circleci/python:3.7.4
+commands:
+  restore_cache:
     steps:
-        - checkout
-        - run:
-            name: Install core utilities
-            command: make install
-        - run:
-            name: Setup the Virtual Environment
-            command: make venv && source venv/bin/activate
-        - run:
-            name: Install dependencies
-            command: pipenv run -- make deps
-        - run:
-            name: CLI Tests
-            command: make ci
+      - restore_cache:
+          name: 'Restore cache: python env'
+          keys:
+            # These caches are persisted for 15 days. If you need to reset the cache,
+            # just change the "a" to any other value which hasn't been used recently.
+            - 'venv-a-{{ checksum "requirements.txt" }}'
+  save_cache:
+    steps:
+      - save_cache:
+          name: 'Save cache: python env'
+          key: 'venv-a-{{ checksum "requirements.txt" }}'
+          paths:
+            - .setup/venv
+
+jobs:
+  lint:
+    docker:
+      - image: 'circleci/python:3.8'
+    steps:
+      - checkout
+      - run:
+          name: Install core utilities
+          command: make install
+      - run:
+          name: Setup the Virtual Environment
+          command: make venv && source venv/bin/activate
+      - run:
+          name: Install dependencies
+          command: pipenv run -- make deps
+      - run:
+          name: Linting
+          command: make lint
+  unit_tests:
+    docker:
+      - image: 'circleci/python:3.8'
+    steps:
+      - checkout
+      - run:
+          name: Install core utilities
+          command: make install
+      - run:
+          name: Setup the Virtual Environment
+          command: make venv && source venv/bin/activate
+      - run:
+          name: Install dependencies
+          command: pipenv run -- make deps
+      - run:
+          name: Linting
+          command: make test
