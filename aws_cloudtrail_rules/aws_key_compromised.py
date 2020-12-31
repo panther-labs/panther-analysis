@@ -3,8 +3,10 @@ EXPOSED_CRED_POLICY = 'AWSExposedCredentialPolicy_DO_NOT_REMOVE'
 
 def rule(event):
     request_params = event.get('requestParameters', {})
-    return (event['eventName'] == 'PutUserPolicy' and
-            request_params.get('policyName') == EXPOSED_CRED_POLICY)
+    if request_params:
+        return (event['eventName'] == 'PutUserPolicy' and
+                request_params.get('policyName') == EXPOSED_CRED_POLICY)
+    return False
 
 
 def dedup(event):

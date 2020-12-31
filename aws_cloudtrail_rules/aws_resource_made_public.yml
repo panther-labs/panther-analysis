@@ -206,7 +206,7 @@ Tests:
           "vpcEndpointId": "vpce-1111"
       }
   -
-    Name: S3 Failed to made Publicly Accessible
+    Name: S3 Failed to make Publicly Accessible
     ExpectedResult: false
     Log:
       {
@@ -273,4 +273,54 @@ Tests:
               "type": "AssumedRole"
           },
           "vpcEndpointId": "vpce-1111"
+      }
+  - Name: Empty Policy Payload
+    ExpectedResult: false
+    Log:
+      {
+        "additionalEventData": {
+          "AuthenticationMethod": "AuthHeader",
+          "CipherSuite": "ECDHE-RSA-AES128-SHA",
+          "SignatureVersion": "SigV4",
+          "vpcEndpointId": "vpce-1111"
+        },
+        "awsRegion": "us-west-2",
+        "eventID": "1111",
+        "eventName": "SetQueueAttributes",
+        "eventSource": "s3.amazonaws.com",
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.05",
+        "recipientAccountId": "123456789012",
+        "requestID": "1111",
+        "requestParameters": {
+          "attributes": {
+            "Policy": ""
+          },
+          "queueUrl": "https://sqs.us-east-1.amazonaws.com/123456789012/example-queue"
+        },
+        "responseElements": null,
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+        "userIdentity": {
+          "accessKeyId": "1111",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+          "principalId": "1111",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2019-01-01T00:00:00Z",
+              "mfaAuthenticated": "true"
+            },
+            "sessionIssuer": {
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:role/example-role",
+              "principalId": "1111",
+              "type": "Role",
+              "userName": "example-role"
+            }
+          },
+          "type": "AssumedRole"
+        },
+        "vpcEndpointId": "vpce-1111"
       }
