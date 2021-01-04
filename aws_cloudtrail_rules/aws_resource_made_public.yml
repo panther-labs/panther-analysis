@@ -24,6 +24,73 @@ SummaryAttributes:
   - p_any_aws_arns
 Tests:
   -
+    Name: ECR Made Public
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "eu-west-1",
+        "eventID": "685e066d-a3aa-4323-a6a1-2f187a2fc986",
+        "eventName": "SetRepositoryPolicy",
+        "eventSource": "ecr.amazonaws.com",
+        "eventTime": "2020-11-20 06:19:05.000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.05",
+        "recipientAccountId": "112233445566",
+        "requestID": "95fd6392-627c-467b-b940-895183d3298d",
+        "requestParameters": {
+          "force": false,
+          "policyText": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"ecr:BatchCheckLayerAvailability\",\"ecr:BatchGetImage\",\"ecr:GetAuthorizationToken\",\"ecr:GetDownloadUrlForLayer\"],\"Effect\":\"Allow\",\"Principal\":\"*\",\"Sid\":\"PublicRead\"}]}",
+          "repositoryName": "community"
+        },
+        "resources": [
+          {
+            "accountId": "112233445566",
+            "arn": "arn:aws:ecr:eu-west-1:112233445566:repository/community"
+          }
+        ],
+        "responseElements": {
+          "policyText": "{\n  \"Version\" : \"2012-10-17\",\n  \"Statement\" : [ {\n    \"Sid\" : \"PublicRead\",\n    \"Effect\" : \"Allow\",\n    \"Principal\" : \"*\",\n    \"Action\" : [ \"ecr:BatchCheckLayerAvailability\", \"ecr:BatchGetImage\", \"ecr:GetAuthorizationToken\", \"ecr:GetDownloadUrlForLayer\" ]\n  } ]\n}",
+          "registryId": "112233445566",
+          "repositoryName": "community"
+        },
+        "sourceIPAddress": "cloudformation.amazonaws.com",
+        "userAgent": "cloudformation.amazonaws.com",
+        "userIdentity": {
+          "accessKeyId": "ASIAIJJG73VC6IW5OFVQ",
+          "accountId": "112233445566",
+          "arn": "arn:aws:sts::112233445566:assumed-role/ServiceRole/AWSCloudFormation",
+          "invokedBy": "cloudformation.amazonaws.com",
+          "principalId": "AROAJJJJTTTT44445IJJJ:AWSCloudFormation",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2020-11-20T06:19:04Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "112233445566",
+              "arn": "arn:aws:iam::112233445566:role/ServiceRole",
+              "principalId": "AROAJJJJTTTT44445IJJJ",
+              "type": "Role",
+              "userName": "ServiceRole"
+            },
+            "webIdFederationData": {}
+          },
+          "type": "AssumedRole"
+        },
+        "p_event_time": "2020-11-20 06:19:05.000",
+        "p_parse_time": "2020-11-20 06:31:53.258",
+        "p_log_type": "AWS.CloudTrail",
+        "p_row_id": "ea68a92f0295a6bed49fa8af068faa05",
+        "p_any_aws_account_ids": [
+          "112233445566"
+        ],
+        "p_any_aws_arns": [
+          "arn:aws:ecr:eu-west-1:112233445566:repository/community",
+          "arn:aws:iam::112233445566:role/ServiceRole",
+          "arn:aws:sts::112233445566:assumed-role/ServiceRole/AWSCloudFormation"
+        ]
+      }
+  -
     Name: S3 Made Publicly Accessible
     ExpectedResult: true
     Log:

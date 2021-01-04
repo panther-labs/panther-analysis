@@ -3,7 +3,7 @@ AUTH_BUCKETS = {'example-bucket'}
 
 
 def rule(event):
-    return event.get('bucket') in AUTH_BUCKETS and 'requester' not in event
+    return event.get('bucket') in AUTH_BUCKETS and not event.get('requester')
 
 
 def title(event):

@@ -1,27 +1,44 @@
 import re
-from panther_base_helpers import okta_alert_context
+from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
+
+ADMIN_PATTERN = re.compile(r'[aA]dministrator')
 
 
 def rule(event):
-    return (
-        event['eventType'] == 'user.account.privilege.grant' and
-        event['outcome'].get('result', '') == 'SUCCESS' and bool(
-            re.search(
-                r'[aA]dministrator',
-                event['debugContext']['debugData'].get('privilegeGranted'))))
+    return (event['eventType'] == 'user.account.privilege.grant' and
+            deep_get(event, 'outcome', 'result') == 'SUCCESS' and bool(
+                ADMIN_PATTERN.search(
+                    deep_get(event,
+                             'debugContext',
+                             'debugData',
+                             'privilegeGranted',
+                             default=''))))
 
 
 def dedup(event):
-    return 'requestId-' + event['debugContext']['debugData'].get('requestId')
+    request_id = deep_get(event,
+                          'debugContext',
+                          'debugData',
+                          'requestId',
+                          default='REQUEST_ID_NOT_FOUND')
+    return f'requestId-{request_id}'
 
 
 def title(event):
     title_str = '{} <{}> granted [{}] privileges to {} <{}>'
+
+    target = event.get('target', [])
+    display_name = target[0]['displayName'] if target else ''
+    alternate_id = target[0]['alternateId'] if target else ''
+
     return title_str.format(
-        event['actor']['displayName'], event['actor']['alternateId'],
-        event['debugContext']['debugData'].get('privilegeGranted',
-                                               'PRIV_NOT_FOUND'),
-        event['target'][0]['displayName'], event['target'][0]['alternateId'])
+        deep_get(event, 'actor', 'displayName'),
+        deep_get(event, 'actor', 'alternateId'),
+        deep_get(event,
+                 'debugContext',
+                 'debugData',
+                 'privilegeGranted',
+                 default='PRIV_NOT_FOUND'), display_name, alternate_id)
 
 
 def alert_context(event):
