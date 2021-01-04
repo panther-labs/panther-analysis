@@ -1,37 +1,39 @@
 from datetime import datetime, timedelta
 from json import dumps, loads
 from math import sin, cos, sqrt, asin, radians
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
-from panther_base_helpers import okta_alert_context
+from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration  # pylint: disable=import-error
+from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
 
 PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 EVENT_CITY_TRACKING = {}
 
 
 def rule(event):
-    # We only want to successful evaluate user logins
-    if event['eventType'] != 'user.session.start' or event.get(
-            'outcome', {}).get('result') == 'FAILURE':
+    # Only evaluate successful logins
+    if (event['eventType'] != 'user.session.start' or
+            deep_get(event, 'outcome', 'result') == 'FAILURE'):
         return False
 
-    # Generate a unique key for each user
+    # Generate a unique cache key for each user
     login_key = gen_key(event)
-
-    # Retrieve the prior login info, if any
+    # Retrieve the prior login info from the cache, if any
     last_login = get_string_set(login_key)
-
-    # If we haven't seen this user login recently, store this login for future
-    # use and don't alert
+    # If we haven't seen this user login recently, store this login for future use and don't alert
     if not last_login:
         store_login_info(login_key, event)
         return False
 
-    # Load the last login into an object we can compare
+    # Load the last login from the cache into an object we can compare
     old_login_stats = loads(last_login.pop())
     new_login_stats = {
-        'city': event['client']['geographicalContext']['city'],
-        'lon': event['client']['geographicalContext']['geolocation']['lon'],
-        'lat': event['client']['geographicalContext']['geolocation']['lat'],
+        'city':
+            deep_get(event, 'client', 'geographicalContext', 'city'),
+        'lon':
+            deep_get(event, 'client', 'geographicalContext', 'geolocation',
+                     'lon'),
+        'lat':
+            deep_get(event, 'client', 'geographicalContext', 'geolocation',
+                     'lat'),
     }
 
     distance = haversine_distance(old_login_stats, new_login_stats)
@@ -44,7 +46,6 @@ def rule(event):
 
     # Don't let time_delta be 0 (divide by zero error below)
     time_delta = time_delta or .0001
-
     # Calculate speed in Kilometers / Hour
     speed = distance / time_delta
 
@@ -59,7 +60,8 @@ def rule(event):
 
 
 def gen_key(event):
-    return 'Okta.Login.GeographicallyImprobable' + event['actor']['alternateId']
+    return 'Okta.Login.GeographicallyImprobable{}'.format(
+        deep_get(event, 'actor', 'alternateId'))
 
 
 # Taken from stack overflow user Michael0x2a: https://stackoverflow.com/a/19412565/6645635
@@ -85,10 +87,16 @@ def store_login_info(key, event):
     # Map the user to the lon/lat and time of the most recent login
     put_string_set(key, [
         dumps({
-            'city': event['client']['geographicalContext']['city'],
-            'lon': event['client']['geographicalContext']['geolocation']['lon'],
-            'lat': event['client']['geographicalContext']['geolocation']['lat'],
-            'time': event['p_event_time']
+            'city':
+                deep_get(event, 'client', 'geographicalContext', 'city'),
+            'lon':
+                deep_get(event, 'client', 'geographicalContext', 'geolocation',
+                         'lon'),
+            'lat':
+                deep_get(event, 'client', 'geographicalContext', 'geolocation',
+                         'lat'),
+            'time':
+                event['p_event_time']
         })
     ])
     # Expire the entry after a week so the table doesn't fill up with past users
@@ -99,7 +107,7 @@ def store_login_info(key, event):
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
     return 'Geographically improbably login for user [{}] from [{}] to [{}]'.format(
-        event['actor']['alternateId'],
+        deep_get(event, 'actor', 'alternateId'),
         EVENT_CITY_TRACKING[event['p_row_id']].get(
             'old_city', '<NOT_STORED>'),  # For compatability
         EVENT_CITY_TRACKING[event['p_row_id']]['new_city'],
@@ -108,7 +116,7 @@ def title(event):
 
 def dedup(event):
     # (Optional) Return a string which will de-duplicate similar alerts.
-    return event['actor']['alternateId']
+    return deep_get(event, 'actor', 'alternateId')
 
 
 def alert_context(event):
