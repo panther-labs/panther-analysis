@@ -33,7 +33,7 @@ jobs:
           name: Install dependencies
           command: pipenv run -- make deps
       - run:
-          name: Linting
+          name: Run linting
           command: pipenv run -- make lint
   unit_tests:
     docker:
@@ -50,7 +50,7 @@ jobs:
           name: Install dependencies
           command: pipenv run -- make deps
       - run:
-          name: Linting
+          name: Run unit tests
           command: pipenv run -- make test
 
 workflows:
