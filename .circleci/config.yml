@@ -1,22 +1,5 @@
 version: 2
 
-commands:
-  restore_cache:
-    steps:
-      - restore_cache:
-          name: 'Restore cache: python env'
-          keys:
-            # These caches are persisted for 15 days. If you need to reset the cache,
-            # just change the "a" to any other value which hasn't been used recently.
-            - 'venv-a-{{ checksum "requirements.txt" }}'
-  save_cache:
-    steps:
-      - save_cache:
-          name: 'Save cache: python env'
-          key: 'venv-a-{{ checksum "requirements.txt" }}'
-          paths:
-            - .setup/venv
-
 jobs:
   lint:
     docker:
@@ -28,10 +11,19 @@ jobs:
           command: make install
       - run:
           name: Setup the Virtual Environment
-          command: make venv && source venv/bin/activate
+          command: make venv
+      - restore_cache:
+          name: Restore pip cache
+          keys:
+            - &pip_cache_key venv-{{ checksum "requirements.txt" }}
       - run:
           name: Install dependencies
           command: pipenv run -- make deps
+      - save_cache:
+          name: Save pip cache
+          key: *pip_cache_key
+          paths:
+            - venv
       - run:
           name: Run linting
           command: pipenv run -- make lint
@@ -45,10 +37,19 @@ jobs:
           command: make install
       - run:
           name: Setup the Virtual Environment
-          command: make venv && source venv/bin/activate
+          command: make venv
+      - restore_cache:
+          name: Restore pip cache
+          keys:
+            - *pip_cache_key
       - run:
           name: Install dependencies
           command: pipenv run -- make deps
+      - save_cache:
+          name: Save pip cache
+          key: *pip_cache_key
+          paths:
+            - venv
       - run:
           name: Run unit tests
           command: pipenv run -- make test
