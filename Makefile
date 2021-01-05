@@ -11,7 +11,6 @@ deps-update:
 	pip3 freeze -r requirements-top-level.txt > requirements.txt
 
 lint:
-	yapf $(analysis_directories) --diff --parallel --recursive --style google
 	bandit -r $(analysis_directories) --skip B101  # allow assert statements in tests
 	pylint $(analysis_directories) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --exit-zero
 
@@ -36,7 +35,7 @@ test:
 	cd $$tmp; \
 	panther_analysis_tool test ; \
 	rm -r "$$tmp"; \
-	cd $$current_dir; 
+	cd $$current_dir;
 
 test-single:
 	@tmp=$$(mktemp -d); \
