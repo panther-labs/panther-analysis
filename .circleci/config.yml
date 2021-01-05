@@ -15,7 +15,7 @@ jobs:
       - restore_cache:
           name: Restore pip cache
           keys:
-            - &pip_cache_key venv-{{ checksum "requirements.txt" }}
+            - &pip_cache_key venv-x-{{ checksum "requirements.txt" }}
       - run:
           name: Install dependencies
           command: pipenv run -- make deps
