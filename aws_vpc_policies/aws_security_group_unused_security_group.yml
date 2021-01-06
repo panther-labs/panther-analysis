@@ -1,0 +1,14 @@
+AnalysisType: policy
+Filename: aws_security_group_unused_security_group.py
+PolicyID: AWS.SecurityGroup.UnusedSecurityGroup
+Enabled: false
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+Severity: Low
+Description: >
+  This policy validates that created Security Groups are in use. Test need live resource infromation to make second call.
+Runbook: >
+  Delete unused Security Groups.
+Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
