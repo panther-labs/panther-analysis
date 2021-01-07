@@ -1,20 +1,62 @@
 version: 2
 
 jobs:
-  build:
+  lint:
     docker:
-      - image: circleci/python:3.7.4
+      - image: 'circleci/python:3.7'
     steps:
-        - checkout
-        - run:
-            name: Install core utilities
-            command: make install
-        - run:
-            name: Setup the Virtual Environment
-            command: make venv && source venv/bin/activate
-        - run:
-            name: Install dependencies
-            command: pipenv run -- make deps
-        - run:
-            name: CLI Tests
-            command: make ci
+      - checkout
+      - run:
+          name: Install core utilities
+          command: make install
+      - run:
+          name: Setup the Virtual Environment
+          command: make venv
+      - restore_cache:
+          name: Restore pip cache
+          keys:
+            - &pip_cache_key venv-x-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install dependencies
+          command: pipenv run -- make deps
+      - save_cache:
+          name: Save pip cache
+          key: *pip_cache_key
+          paths:
+            - venv
+      - run:
+          name: Run linting
+          command: pipenv run -- make lint
+  unit_tests:
+    docker:
+      - image: 'circleci/python:3.7'
+    steps:
+      - checkout
+      - run:
+          name: Install core utilities
+          command: make install
+      - run:
+          name: Setup the Virtual Environment
+          command: make venv
+      - restore_cache:
+          name: Restore pip cache
+          keys:
+            - *pip_cache_key
+      - run:
+          name: Install dependencies
+          command: pipenv run -- make deps
+      - save_cache:
+          name: Save pip cache
+          key: *pip_cache_key
+          paths:
+            - venv
+      - run:
+          name: Run unit tests
+          command: pipenv run -- make test
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - lint
+      - unit_tests
