@@ -1,0 +1,17 @@
+AnalysisType: datamodel
+LogTypes: 
+  - GCP.AuditLog
+DataModelID: Standard.GCP.AuditLog
+Filename: gcp_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.protoPayload.authenticationInfo.principalEmail
+  - Name: admin_role
+    Path: $.protoPayload.serviceData.policyDelta.bindingDeltas[?(@.action == 'ADD')].role # this may only be the case in some instances - may need to make a method
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: $.protoPayload.requestMetadata.callerIP
+  - Name: user
+    Path: $.protoPayload.serviceData.policyDelta.bindingDeltas[?(@.action == 'ADD')].member # this may only be the case in some instances - may need to make a method

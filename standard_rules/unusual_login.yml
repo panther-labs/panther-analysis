@@ -1,0 +1,91 @@
+AnalysisType: rule
+Filename: unusual_login.py
+RuleID: Standard.UnusualLogin
+DisplayName: Unusual Login
+# This rule is disabled by default because it makes API calls out to the internet. At high volumes
+# of activity, this could get throttled unless you buy a subscription to ipinfo.
+Enabled: false
+LogTypes:
+  - AWS.CloudTrail
+  - GSuite.Events
+  - Okta.SystemLog
+  - OneLogin.Events
+Tags:
+  - DataModel
+  - Identity & Access Management
+Severity: Medium
+Description: An actor user logged in from a new ip address, exceeding the threshold for unique login locations.
+Runbook: Determine if this login was triggered by legitimate user access.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: AWS.CloudTrail - Failed Login
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012",
+          "p_log_type": "AWS.CloudTrail"
+      }  
+  - 
+    Name: Okta - Non Login
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "logout",
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: Okta - Failed Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "redacted",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "FAILURE"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: OneLogin - Non Login
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 8,
+        "p_log_type": "OneLogin.Events",
+      }

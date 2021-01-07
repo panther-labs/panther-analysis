@@ -1,4 +1,4 @@
-analysis_directories := $(shell ls | egrep 'policies|rules|helpers' | xargs)
+analysis_directories := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
 
 ci:
 	pipenv run $(MAKE) lint test
