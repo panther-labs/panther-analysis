@@ -16,7 +16,7 @@ def policy_is_internet_accessible(json_policy):
 # Any solution that avoids too many return statements only increases the complexity of this rule.
 # pylint: disable=too-many-return-statements
 def rule(event):
-    if event.get('errorCode') == 'AccessDenied':
+    if event.get('errorCode', '') == 'AccessDenied':
         return False
 
     parameters = event.get('requestParameters', {})
@@ -54,7 +54,7 @@ def rule(event):
 
     # SNS
     if event['eventName'] == 'SetTopicAttributes' and parameters.get(
-            'attributeName') == 'Policy':
+            'attributeName', '') == 'Policy':
         policy = parameters.get('attributeValue', '{}')
 
     # SecretsManager
@@ -73,6 +73,6 @@ def title(event):
         event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')
 
     if event.get('Resources'):
-        return f"AWS Resource {event.get('Resources')[0]['arn']} made public by {user}"
+        return f"AWS Resource {event.get('Resources')[0].get('arn', 'MISSING ARN')} made public by {user}"
 
-    return f"{event['eventSource']} resource made public by {user}"
+    return f"{event.get('eventSource', 'MISSING SOURCE')} resource made public by {user}"
