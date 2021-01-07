@@ -7,7 +7,7 @@ Enabled: true
 Mappings:
   - Name: actor_user
     Path: $.actor.email
-  - Name: admin_role
+  - Name: assigned_admin_role
     Path: $.events[*].parameters[?(@.name == 'ROLE_NAME')].value
   - Name: event_type
     Method: get_event_type

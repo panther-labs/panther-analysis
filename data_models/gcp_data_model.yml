@@ -7,7 +7,7 @@ Enabled: true
 Mappings:
   - Name: actor_user
     Path: $.protoPayload.authenticationInfo.principalEmail
-  - Name: admin_role
+  - Name: assigned_admin_role
     Path: $.protoPayload.serviceData.policyDelta.bindingDeltas[?(@.action == 'ADD')].role # this may only be the case in some instances - may need to make a method
   - Name: event_type
     Method: get_event_type
