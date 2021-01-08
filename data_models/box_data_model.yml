@@ -1,0 +1,13 @@
+AnalysisType: datamodel
+LogTypes: 
+  - Box.Event
+DataModelID: Standard.Box.Event
+Filename: box_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.created_by.name
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: ip_address

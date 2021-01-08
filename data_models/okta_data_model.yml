@@ -1,0 +1,15 @@
+AnalysisType: datamodel
+LogTypes: 
+  - Okta.SystemLog
+DataModelID: Standard.Okta.SystemLog
+Filename: okta_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.displayName
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: $.client.ipAddress
+  - Name: user_agent
+    Path: $.client.userAgent.rawUserAgent

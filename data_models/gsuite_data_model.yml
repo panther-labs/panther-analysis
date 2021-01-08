@@ -1,0 +1,17 @@
+AnalysisType: datamodel
+LogTypes: 
+  - GSuite.Reports
+DataModelID: Standard.GSuite.Reports
+Filename: gsuite_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.email
+  - Name: assigned_admin_role
+    Path: $.events[*].parameters[?(@.name == 'ROLE_NAME')].value
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: ipAddress
+  - Name: user
+    Path: $.events[*].parameters[?(@.name == 'USER_EMAIL')].value

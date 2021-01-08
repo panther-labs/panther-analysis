@@ -1,0 +1,118 @@
+AnalysisType: rule
+Filename: admin_assigned.py
+RuleID: test.AdminRoleAssigned
+DisplayName: Admin Role Assigned
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+  - GSuite.Reports
+  - OneLogin.Events
+Tags:
+  - DataModel
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - Privilege Escalation:Valid Accounts
+Description: Attaching an audit role manually could be a sign of privilege escalation
+Runbook: Verify with the user who attached the role or add to a whitelist
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GCP - Admin Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "authenticationInfo": {
+            "principalEmail": "bob@example.com"
+          },
+          "requestMetadata": {
+            "callerIP": "4.4.4.4"
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "cat@example.com",
+                  "role": "roles/resourcemanager.organizationAdmin"
+                }
+              ]
+            }
+          }
+        },
+        "p_log_type": "GCP.AuditLog"
+      }
+  -
+    Name: GSuite - Other Admin Action
+    ExpectedResult: false
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'admin'},
+        'events': [
+          {
+            'type': 'DELEGATED_ADMIN_SETTINGS',
+            'name': 'RENAME_ROLE'
+          }
+        ], 
+        "p_log_type": "GSuite.Reports",
+      }
+  -
+    Name: GSuite - Privileges Assigned
+    ExpectedResult: true
+    Log:
+      {
+        'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'admin'},
+        'events': [
+          {
+            'type': 'DELEGATED_ADMIN_SETTINGS',
+            'name': 'ASSIGN_ROLE',
+            'parameters': [
+              {
+                'name': 'ROLE_NAME',
+                'value': 'Some Admin Role',
+              },
+              {
+                'name':'USER_EMAIL',
+                'value':'bob@example.com',
+              },
+            ]
+          }
+        ],
+        "p_log_type": "GSuite.Reports",
+      }
+  -
+    Name: OneLogin - Non permissions assigned event
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 8,
+        "p_log_type": "OneLogin.Events",
+      }
+  -
+    Name: OneLogin - Non super user permissions assigned
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 72,
+        "privilege_name": "Manage users",
+        "p_log_type": "OneLogin.Events",
+      }
+  -
+    Name: OneLogin - Super user permissions assigned
+    ExpectedResult: true
+    Log:
+      {
+        "event_type_id": 72,
+        "privilege_name": "Super user",
+        "user_name": "Evil Bob",
+        "actor_user_name": "Bobert O'Bobly",
+        "p_log_type": "OneLogin.Events",
+      }
