@@ -6,7 +6,7 @@ PERMISSIONS = {'WRITE', 'WRITE_ACP', 'FULL_CONTROL'}
 
 
 def policy(resource):
-    if 'Grants' in resource and resource['Grants'] is not None:
+    if resource.get('Grants') is not None:  
         for grant in resource['Grants']:
             if grant['Grantee']['URI'] in GRANTEES and grant[
                     'Permission'] in PERMISSIONS:

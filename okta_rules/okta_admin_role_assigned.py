@@ -5,7 +5,7 @@ ADMIN_PATTERN = re.compile(r'[aA]dministrator')
 
 
 def rule(event):
-    return (event['eventType'] == 'user.account.privilege.grant' and
+    return (event.get('eventType', None) == 'user.account.privilege.grant' and
             deep_get(event, 'outcome', 'result') == 'SUCCESS' and bool(
                 ADMIN_PATTERN.search(
                     deep_get(event,
@@ -27,9 +27,9 @@ def dedup(event):
 def title(event):
     title_str = '{} <{}> granted [{}] privileges to {} <{}>'
 
-    target = event.get('target', [])
-    display_name = target[0]['displayName'] if target else ''
-    alternate_id = target[0]['alternateId'] if target else ''
+    target = event.get('target', [{}])
+    display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else ''
+    alternate_id = target[0].get('alternateId', 'MISSING ALTERNATE ID') if target else ''
 
     return title_str.format(
         deep_get(event, 'actor', 'displayName'),
