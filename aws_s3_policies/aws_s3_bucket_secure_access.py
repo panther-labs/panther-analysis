@@ -12,7 +12,8 @@ def policy(resource):
     for statement in iam_policy.statements:
         if statement.effect != 'Allow':
             continue
-        if not deep_get(statement.statement, 'Condition', 'Bool', 'aws:SecureTransport'):
+        if not deep_get(statement.statement, 'Condition', 'Bool',
+                        'aws:SecureTransport'):
             return False
 
     return True

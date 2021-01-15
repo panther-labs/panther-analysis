@@ -1,4 +1,4 @@
-from panther import lookup_aws_account_name  # pylint: disable=import-error
+from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 
 

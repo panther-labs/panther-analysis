@@ -1,6 +1,6 @@
 import json
 import requests
-from panther_oss_helpers import get_string_set, put_string_set  # pylint: disable=import-error
+from panther_oss_helpers import get_string_set, put_string_set
 FINGERPRINT_THRESHOLD = 3
 EVENT_LOGIN_INFO = {}
 
