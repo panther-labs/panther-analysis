@@ -39,7 +39,7 @@ def policy(resource):
 
     if CHECK_GSI:
         # We cannot use resource.get('GSI', []) here as the value is present, it is just a NoneType
-        for gsi in deep_get(resource, 'GlobalSecondaryIndexes', default=[]):
+        for gsi in resource['GlobalSecondaryIndexes'] or []:
             resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] +
                                   '/READ'] = False
             resource_auto_scaling[table_id + '/index/' + gsi['IndexName'] +

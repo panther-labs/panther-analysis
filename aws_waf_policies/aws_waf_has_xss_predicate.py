@@ -5,7 +5,7 @@ def policy(resource):
     if not IN_PCI_SCOPE(resource):
         return True
 
-    for rule in deep_get(resource, 'Rules', default=[]):
+    for rule in resource['Rules'] or []:
         # Must block the XSS
         if deep_get(rule, 'Action', 'Type') != 'BLOCK':
             continue

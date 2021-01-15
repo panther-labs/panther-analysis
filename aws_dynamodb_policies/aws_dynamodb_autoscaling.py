@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 # If you do not wish to enforce application auto-scaling on your dynamo tables Global
 # Secondary Indices, set this variable to False
 CHECK_GSI = True
@@ -25,7 +23,7 @@ def policy(resource):
     resource_auto_scaling = {table_id: False}
     if CHECK_GSI:
         # We cannot use resource.get('GSI', []) here as the value is present, it is just a NoneType
-        for gsi in deep_get(resource, 'GlobalSecondaryIndexes', default=[]):
+        for gsi in resource['GlobalSecondaryIndexes'] or []:
             resource_auto_scaling[table_id + '/index/' +
                                   gsi['IndexName']] = False
 

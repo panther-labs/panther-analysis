@@ -11,7 +11,7 @@ def policy(resource):
     bucket_arn = 'arn:aws:s3:::' + resource['S3BucketName']
     bucket = resource_lookup(bucket_arn)
 
-    for grant in deep_get(bucket, 'Grants', default=[]):
+    for grant in bucket['Grants'] or []:
         if deep_get(grant, 'Grantee', 'URI') in BAD_PERMISSIONS:
             return False
 
