@@ -28,8 +28,10 @@ def title(event):
     title_str = '{} <{}> granted [{}] privileges to {} <{}>'
 
     target = event.get('target', [{}])
-    display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else ''
-    alternate_id = target[0].get('alternateId', 'MISSING ALTERNATE ID') if target else ''
+    display_name = target[0].get('displayName',
+                                 'MISSING DISPLAY NAME') if target else ''
+    alternate_id = target[0].get('alternateId',
+                                 'MISSING ALTERNATE ID') if target else ''
 
     return title_str.format(
         deep_get(event, 'actor', 'displayName'),

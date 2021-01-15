@@ -1,2 +1,5 @@
+from panther_base_helpers import deep_get
+
+
 def policy(resource):
-    return resource['Monitoring']['State'] != 'disabled'
+    return deep_get(resource, 'Monitoring', 'State') != 'disabled'

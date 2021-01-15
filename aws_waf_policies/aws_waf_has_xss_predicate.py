@@ -1,13 +1,13 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE, deep_get
 
 
 def policy(resource):
     if not IN_PCI_SCOPE(resource):
         return True
 
-    for rule in resource['Rules'] or []:
+    for rule in deep_get(resource, 'Rules', default=[]):
         # Must block the XSS
-        if rule['Action']['Type'] != 'BLOCK':
+        if deep_get(rule, 'Action', 'Type') != 'BLOCK':
             continue
 
         # Only passes if there is an XSS matching predicate

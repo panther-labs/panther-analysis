@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 # This is a list of default ports for insecure protocols. As AWS Network ACLs and Security Groups
 # are not application layer aware, this is the closest approximation that can be made to blocking
 # insecure protocols. Application layer firewalls can provide stronger protections.

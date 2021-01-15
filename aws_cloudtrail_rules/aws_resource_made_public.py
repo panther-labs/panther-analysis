@@ -73,6 +73,6 @@ def title(event):
         event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')
 
     if event.get('Resources'):
-        return f"AWS Resource {event.get('Resources')[0].get('arn', 'MISSING ARN')} made public by {user}"
+        return f"Resource {event.get('Resources')[0].get('arn', 'MISSING ARN')} made public by {user}"
 
     return f"{event.get('eventSource', 'MISSING SOURCE')} resource made public by {user}"

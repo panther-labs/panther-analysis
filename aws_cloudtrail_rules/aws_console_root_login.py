@@ -1,10 +1,11 @@
 from panther import lookup_aws_account_name  # pylint: disable=import-error
+from panther_base_helpers import deep_get
 
 
 def rule(event):
     return (event['eventName'] == 'ConsoleLogin' and
-            event['userIdentity'].get('type') == 'Root' and
-            event.get('responseElements', {}).get('ConsoleLogin') == 'Success')
+            deep_get(event, 'userIdentity', 'type') == 'Root' and
+            deep_get(event, 'responseElements', 'ConsoleLogin') == 'Success')
 
 
 def title(event):
@@ -22,8 +23,8 @@ def dedup(event):
 def alert_context(event):
     return {
         'sourceIPAddress': event['sourceIPAddress'],
-        'userIdentityAccountId': event['userIdentity']['accountId'],
-        'userIdentityArn': event['userIdentity']['arn'],
+        'userIdentityAccountId': deep_get(event, 'userIdentity', 'accountId'),
+        'userIdentityArn': deep_get(event, 'userIdentity', 'arn'),
         'eventTime': event['eventTime'],
-        'mfaUsed': event.get('additionalEventData', {}).get('MFAUsed')
+        'mfaUsed': deep_get(event, 'additionalEventData', 'MFAUsed')
     }

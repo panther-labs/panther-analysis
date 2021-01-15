@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE, deep_get
 RETENTION_PERIOD_DAYS = 365
 
 
@@ -14,8 +14,9 @@ def policy(resource):
         return False
 
     # Ensure ObjectLockConfiguration is in COMPLIANCE mode, not GOVERNANCE mode
-    if object_lock['Rule']['DefaultRetention']['Mode'] != 'COMPLIANCE':
+    if deep_get(object_lock, 'Rule', 'DefaultRetention',
+                'Mode') != 'COMPLIANCE':
         return False
 
-    return object_lock['Rule']['DefaultRetention'][
-        'Days'] >= RETENTION_PERIOD_DAYS
+    return deep_get(object_lock, 'Rule', 'DefaultRetention', 'Days',
+                    default=0) >= RETENTION_PERIOD_DAYS

@@ -1,4 +1,5 @@
 import json
+from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 
 
@@ -11,12 +12,7 @@ def policy(resource):
     for statement in iam_policy.statements:
         if statement.effect != 'Allow':
             continue
-        if ('Condition' not in statement.statement or
-                'Bool' not in statement.statement['Condition'] or
-                'aws:SecureTransport'
-                not in statement.statement['Condition']['Bool'] or
-                statement.statement['Condition']['Bool']['aws:SecureTransport']
-                != 'true'):
+        if not deep_get(statement.statement, 'Condition', 'Bool', 'aws:SecureTransport'):
             return False
 
     return True
