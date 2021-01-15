@@ -52,8 +52,8 @@ def rule(event):
     # Calculation is complete, so store the most recent login for the next check
     store_login_info(login_key, event)
     EVENT_CITY_TRACKING[event['p_row_id']] = {
-        'new_city': new_login_stats['city'],
-        'old_city': old_login_stats['city'],
+        'new_city': new_login_stats.get('city', 'None'),
+        'old_city': old_login_stats.get('city', 'None'),
     }
 
     return speed > 900  # Boeing 747 cruising speed
