@@ -1,7 +1,7 @@
 import boto3
 import os
 
-PANTHER_MASTER_REGION = os.environ['AWS_REGION']
+PANTHER_MASTER_REGION = os.environ.get('AWS_REGION')
 
 
 def build_client(resource, service, region=None):
