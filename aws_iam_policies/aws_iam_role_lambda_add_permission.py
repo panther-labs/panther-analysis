@@ -29,34 +29,41 @@ def check_account(resource):
     return True
 
 
+def check_policy(policy):
+    statements = policy.get('Statement')
+    for statement in statements:
+        actions = statement.get('Action',[])
+        if type(actions) is str:
+            return actions == permission_check
+        elif type(actions) is list:
+            for action in actions:
+                if action == permission_check:
+                    return True
+
+                
 def policy(resource):
     content_inline = resource.get('InlinePolicies', {})
-
     if content_inline:
         for policy in content_inline:
             policy_text = json.loads(content_inline[policy])
-            permissions = policy_text['Statement'][0]['Action']
-
-            if permission_check in permissions:
-                return check_account(resource)
-
+            if check_policy(policy_text):
+                return False
+                
     content_managed = resource.get('ManagedPolicyNames', [])
-
     if content_managed:
         for managed_policy_name in content_managed:
             managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
             try:
                 managed_policy = resource_lookup(managed_policy_id)
+            # policy does not exist or other lookup failure
             except:
                 return True
-            policy_text = json.loads(managed_policy['PolicyDocument'])
-            permissions = policy_text['Statement'][0]['Action']
-
-            if permission_check in permissions:
-                return check_account(resource)
+                
+            policy_text = json.loads(managed_policy.get('PolicyDocument'))
+            if check_policy(policy_text):
+                return False
 
     return True
-
 
 # to mock a Managed Policy, add “IsUnitTest: True” attribute:value to test resource object
 # insert code below in place of "managed_policy = resource_lookup(managed_policy_id)", above:
