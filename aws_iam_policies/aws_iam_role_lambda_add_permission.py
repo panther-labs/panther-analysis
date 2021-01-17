@@ -32,7 +32,7 @@ def check_account(resource):
 def check_policy(policy):
     statements = policy.get('Statement')
     for statement in statements:
-        actions = statement.get('Action',[])
+        actions = statement.get('Action', [])
         if type(actions) is str:
             return actions == permission_check
         elif type(actions) is list:
