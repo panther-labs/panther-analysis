@@ -12,4 +12,4 @@ def policy(resource):
         return True
 
     return deep_get(resource, 'Placement',
-                    'HostId') in APPROVED_HOSTS[resource['ImageId']]
+                    'HostId') in APPROVED_HOSTS[resource.get('ImageId')]
