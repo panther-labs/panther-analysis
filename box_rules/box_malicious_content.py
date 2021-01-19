@@ -1,4 +1,4 @@
-from panther_base_helpers import box_parse_additional_details  # pylint: disable=import-error
+from panther_base_helpers import box_parse_additional_details
 
 
 def rule(event):

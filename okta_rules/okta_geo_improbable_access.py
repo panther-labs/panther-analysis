@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from json import dumps, loads
 from math import sin, cos, sqrt, asin, radians
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration  # pylint: disable=import-error
-from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
+from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_base_helpers import deep_get, okta_alert_context
 
 PANTHER_TIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 EVENT_CITY_TRACKING = {}

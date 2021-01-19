@@ -1,4 +1,4 @@
-from panther import lookup_aws_account_name  # pylint: disable=import-error
+from panther import lookup_aws_account_name
 
 # API calls that are indicative of CloudTrail changes
 CLOUDTRAIL_STOP_DELETE = {

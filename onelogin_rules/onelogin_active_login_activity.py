@@ -1,5 +1,5 @@
 import time
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration, add_to_string_set, is_ip_in_network  # pylint: disable=import-error,line-too-long
+from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration, add_to_string_set, is_ip_in_network  # pylint: disable=line-too-long
 
 THRESH = 2
 THRESH_TTL = 43200  # 1/2 day

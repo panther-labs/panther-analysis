@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 # If you do not wish to enforce application auto-scaling on your dynamo tables'
 # Global Secondary Indices, set this variable to False
 CHECK_GSI = True
@@ -20,7 +22,7 @@ def policy(resource):
         return False
 
     # Check if this table is not on provisioned billing (and therefore auto scaling does not apply)
-    if resource['BillingModeSummary']['BillingMode'] != 'PROVISIONED':
+    if deep_get(resource, 'BillingModeSummary', 'BillingMode') != 'PROVISIONED':
         return True
 
     # Check if application auto scaling is configued at all

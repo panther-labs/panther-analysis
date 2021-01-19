@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
+
 def policy(resource):
-    return (resource['SSEDescription'] is not None and
-            resource['SSEDescription']['Status'] == 'ENABLED')
+    return deep_get(resource, 'SSEDescription', 'Status') == 'ENABLED'

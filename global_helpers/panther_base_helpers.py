@@ -147,7 +147,8 @@ def okta_alert_context(event):
 def deep_get(dictionary, *keys, default=None):
     '''Safely return the value from a nested map
 
-    Taken from https://stackoverflow.com/questions/25833613/python-safe-method-to-get-value-of-nested-dictionary
+    Taken from here:
+    https://stackoverflow.com/questions/25833613/python-safe-method-to-get-value-of-nested-dictionary
     '''
     return reduce(
         lambda d, key: d.get(key, default)

@@ -1,4 +1,5 @@
 import datetime
+from panther_base_helpers import deep_get
 
 AWS_TIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 PANTHER_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
@@ -13,7 +14,7 @@ def policy(resource):
     if not resource['CredentialReport']:
         return True
 
-    key_rot = resource['CredentialReport']['AccessKey1LastRotated']
+    key_rot = deep_get(resource, 'CredentialReport', 'AccessKey1LastRotated')
     if key_rot == DEFAULT_TIME:
         return True
 

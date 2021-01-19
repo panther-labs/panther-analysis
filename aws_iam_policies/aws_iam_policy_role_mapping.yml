@@ -1,4 +1,4 @@
-AnalysisType: policy
+aws_iam_policies/aws_iam_policy_role_mapping.ymlAnalysisType: policy
 Filename: aws_iam_policy_role_mapping.py
 PolicyID: AWS.IAM.Policy.RoleMapping
 DisplayName: AWS IAM Policy Role Mapping
@@ -117,5 +117,24 @@ Tests:
         "PolicyDocument": "JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "TestPolicyName",
+        "UpdateDate": "2019-01-01T00:00:00Z"
+      }
+  -
+    Name: Policy Not Applied to Anything
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
+        "AttachmentCount": 2,
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities": null,
+        "IsAttachable": true,
+        "Path": "/service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details",
+        "PolicyId": "ABCDEFGHIJKLMNOP",
+        "PolicyName": "Example-Policy",
         "UpdateDate": "2019-01-01T00:00:00Z"
       }

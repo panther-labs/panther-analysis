@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 # This is a mapping of what policies must be attached to what roles in the account.
 # The mapping is keyed by string policy names to tuples of role names. Ordering doesn't matter.
 # Example:
@@ -16,12 +18,13 @@ def policy(resource):
         return True
 
     # Check if this policy is attached to any roles
-    if resource['Entities']['PolicyRoles'] is None:
+    if deep_get(resource, 'Entities', 'PolicyRoles') is None:
         return False
 
     # Build the list of role names this policy is actually attached to
     roles_attached = [
-        role['RoleName'] for role in resource['Entities']['PolicyRoles']
+        role['RoleName']
+        for role in deep_get(resource, 'Entities', 'PolicyRoles', default=[])
     ]
 
     # For each required role, ensure that role has the policy attached
