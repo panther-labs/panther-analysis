@@ -8,7 +8,7 @@ APPROVED_HOSTS = {
 
 def policy(resource):
     # Check if this Instance's AMI is restricted to certain hosts
-    if resource['ImageId'] not in APPROVED_HOSTS:
+    if resource.get('ImageId') not in APPROVED_HOSTS:
         return True
 
     return deep_get(resource, 'Placement',
