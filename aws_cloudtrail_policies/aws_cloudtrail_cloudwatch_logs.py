@@ -7,7 +7,7 @@ AWS_TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 def policy(resource):
     # Check if a CloudWatch Logs Group has been set, and received at least one log
-    if not (resource['CloudWatchLogsLogGroupArn'] and
+    if not (resource.get('CloudWatchLogsLogGroupArn') and
             deep_get(resource, 'Status', 'LatestCloudWatchLogsDeliveryTime')):
         return False
 
