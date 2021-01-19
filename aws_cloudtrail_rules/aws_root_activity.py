@@ -1,12 +1,13 @@
-from panther import lookup_aws_account_name  # pylint: disable=import-error
+from panther import lookup_aws_account_name
+from panther_base_helpers import deep_get
 
 EVENT_ALLOW_LIST = {'CreateServiceLinkedRole', 'ConsoleLogin'}
 
 
 def rule(event):
-    return (event['userIdentity'].get('type') == 'Root' and
+    return (deep_get(event, 'userIdentity', 'type') == 'Root' and
             event.get('errorMessage') is None and
-            event.get('userIdentity', {}).get('invokedBy') is None and
+            deep_get(event, 'userIdentity', 'invokedBy') is None and
             event.get('eventType') != 'AwsServiceEvent' and
             event.get('eventName') not in EVENT_ALLOW_LIST)
 
@@ -20,8 +21,8 @@ def title(event):
 def alert_context(event):
     return {
         'sourceIPAddress': event['sourceIPAddress'],
-        'userIdentityAccountId': event['userIdentity']['accountId'],
-        'userIdentityArn': event['userIdentity']['arn'],
+        'userIdentityAccountId': deep_get(event, 'userIdentity', 'accountId'),
+        'userIdentityArn': deep_get(event, 'userIdentity', 'arn'),
         'eventTime': event['eventTime'],
-        'mfaUsed': event.get('additionalEventData', {}).get('MFAUsed')
+        'mfaUsed': deep_get(event, 'additionalEventData', 'MFAUsed')
     }

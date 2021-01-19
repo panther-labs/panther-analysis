@@ -1,5 +1,5 @@
 import re
-from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
+from panther_base_helpers import deep_get, okta_alert_context
 
 ADMIN_PATTERN = re.compile(r'[aA]dministrator')
 
@@ -28,8 +28,10 @@ def title(event):
     title_str = '{} <{}> granted [{}] privileges to {} <{}>'
 
     target = event.get('target', [{}])
-    display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else ''
-    alternate_id = target[0].get('alternateId', 'MISSING ALTERNATE ID') if target else ''
+    display_name = target[0].get('displayName',
+                                 'MISSING DISPLAY NAME') if target else ''
+    alternate_id = target[0].get('alternateId',
+                                 'MISSING ALTERNATE ID') if target else ''
 
     return title_str.format(
         deep_get(event, 'actor', 'displayName'),

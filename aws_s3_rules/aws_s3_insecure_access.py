@@ -1,4 +1,4 @@
-from panther_oss_helpers import pattern_match  # pylint: disable=import-error
+from panther_oss_helpers import pattern_match
 
 
 def rule(event):

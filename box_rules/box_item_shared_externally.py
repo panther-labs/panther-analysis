@@ -1,4 +1,5 @@
-from panther_box_helpers import is_box_sdk_enabled, lookup_box_file, lookup_box_folder  # pylint: disable=import-error
+from panther_base_helpers import deep_get
+from panther_box_helpers import is_box_sdk_enabled, lookup_box_file, lookup_box_folder
 
 ALLOWED_SHARED_ACCESS = ['collaborators', 'company']
 SHARE_EVENTS = [
@@ -18,18 +19,18 @@ def rule(event):
     if is_box_sdk_enabled():
         item = get_item(event)
         if item is not None and item['shared_link']:
-            return item['shared_link'][
-                'effective_access'] not in ALLOWED_SHARED_ACCESS
+            return deep_get(item, 'shared_link',
+                            'effective_access') not in ALLOWED_SHARED_ACCESS
     return False
 
 
 def get_item(event):
-    item_id = event.get('source', {}).get('item_id', '')
-    user_id = event.get('source', {}).get('owned_by', {}).get('id', '')
+    item_id = deep_get(event, 'source', 'item_id', default='')
+    user_id = deep_get(event, 'source', 'owned_by', 'id', default='')
     item = {}
-    if event.get('source', {}).get('item_type') == 'folder':
+    if deep_get(event, 'source', 'item_type') == 'folder':
         item = lookup_box_folder(user_id, item_id)
-    elif event.get('source', {}).get('item_type') == 'file':
+    elif deep_get(event, 'source', 'item_type') == 'file':
         item = lookup_box_file(user_id, item_id)
     return item
 
@@ -37,5 +38,5 @@ def get_item(event):
 def title(event):
     message = ('User [{}] shared an item [{}] externally.')
     return message.format(
-        event.get('created_by', {}).get('login', '<UNKNOWN_USER>'),
-        event.get('source', {}).get('item_name', '<UNKNOWN_NAME>'))
+        deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>'),
+        deep_get(event, 'source', 'item_name', default='<UNKNOWN_NAME>'))

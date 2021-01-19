@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 # APPROVED_TENANCIES maps AMI IDs to a list of approved tenancy states for that AMI.
 # The possible tenancy states are dedicated, host, and default
 APPROVED_TENANCIES = {
@@ -10,5 +12,5 @@ def policy(resource):
     if resource['ImageId'] not in APPROVED_TENANCIES:
         return True
 
-    return resource['Placement']['Tenancy'] in APPROVED_TENANCIES[
-        resource['ImageId']]
+    return deep_get(resource, 'Placement',
+                    'Tenancy') in APPROVED_TENANCIES[resource['ImageId']]

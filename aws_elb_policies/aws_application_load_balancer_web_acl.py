@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 # MAPPINGS is a dictionary where the Key is an application load balancer ARN, and the
 # Value is a WAF web ACL ID. For each Load Balancer ARN present in MAPPINGS,
 # this rule verifies that the load balancer has the associated Web ACL
@@ -16,5 +18,5 @@ def policy(resource):
         return False
 
     # Check that the correct Web ACL is assigned for this load balancer
-    return resource['WebAcl']['WebACLId'] == MAPPINGS[
-        resource['LoadBalancerArn']]
+    return deep_get(resource, 'WebAcl',
+                    'WebACLId') == MAPPINGS[resource['LoadBalancerArn']]

@@ -1,5 +1,5 @@
 import time
-from panther_oss_helpers import get_counter, increment_counter, set_key_expiration, reset_counter  # pylint: disable=import-error
+from panther_oss_helpers import get_counter, increment_counter, set_key_expiration, reset_counter
 
 THRESH_TTL = 600
 

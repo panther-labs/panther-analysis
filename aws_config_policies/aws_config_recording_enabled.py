@@ -1,2 +1,5 @@
+from panther_base_helpers import deep_get
+
+
 def policy(resource):
-    return resource['Status']['Recording'] is True
+    return deep_get(resource, 'Status', 'Recording', default=False)

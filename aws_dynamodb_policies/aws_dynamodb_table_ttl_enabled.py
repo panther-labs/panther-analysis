@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE, deep_get
 
 
 def policy(resource):
@@ -8,4 +8,5 @@ def policy(resource):
     if not resource['TimeToLiveDescription']:
         return False
 
-    return resource['TimeToLiveDescription']['TimeToLiveStatus'] == 'ENABLED'
+    return deep_get(resource, 'TimeToLiveDescription',
+                    'TimeToLiveStatus') == 'ENABLED'

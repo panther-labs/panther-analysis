@@ -1,4 +1,4 @@
-from panther_oss_helpers import pattern_match_list  # pylint: disable=import-error
+from panther_oss_helpers import pattern_match_list
 
 USER_CREATE_PATTERNS = [
     'chage',  # user password expiry

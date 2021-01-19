@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, okta_alert_context  # pylint: disable=import-error
+from panther_base_helpers import deep_get, okta_alert_context
 
 
 def rule(event):
