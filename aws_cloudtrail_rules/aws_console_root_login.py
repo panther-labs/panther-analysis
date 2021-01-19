@@ -25,6 +25,6 @@ def alert_context(event):
         'sourceIPAddress': event['sourceIPAddress'],
         'userIdentityAccountId': deep_get(event, 'userIdentity', 'accountId'),
         'userIdentityArn': deep_get(event, 'userIdentity', 'arn'),
-        'eventTime': event['eventTime'],
+        'eventTime': event.get('eventTime'),
         'mfaUsed': deep_get(event, 'additionalEventData', 'MFAUsed')
     }
