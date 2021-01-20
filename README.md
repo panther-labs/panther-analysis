@@ -107,6 +107,7 @@ def title(event):
     return 'Suspected brute force Okta logins to account {} due to [{}]'.format(
         event.get('actor', {}).get('alternateId', 'ID_NOT_PRESENT'),
         event.get('outcome', {}).get('reason', 'REASON_NOT_PRESENT')
+    )
 ```
 
 Example detection metadata: `okta_brute_force_logins.yml`
