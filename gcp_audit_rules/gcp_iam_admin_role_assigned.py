@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
 from panther_gcp_helpers import get_binding_deltas
+from panther_base_helpers import deep_get
 
 ADMIN_ROLES = {
     # Primitive Roles
