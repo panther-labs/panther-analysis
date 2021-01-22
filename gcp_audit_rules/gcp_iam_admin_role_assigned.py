@@ -11,7 +11,7 @@ ADMIN_ROLES = {
 
 def rule(event):
     for delta in get_binding_deltas(event):
-        if delta['action'] != 'ADD':
+        if delta.get('action') != 'ADD':
             continue
         if any([
                 fnmatch(delta.get('role', ''), admin_role_pattern)
@@ -23,5 +23,6 @@ def rule(event):
 
 def title(event):
     return 'An admin role has been configured in GCP project {}'.format(
-        event['resource'].get('labels', {}).get('project_id',
-                                                '<PROJECT_NOT_FOUND>'))
+        deep_get(event, 'resource', 'labels', 'project_id', 
+            default='<PROJECT_NOT_FOUND>'))
+
