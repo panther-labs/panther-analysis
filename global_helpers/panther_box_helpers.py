@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 from datetime import datetime, timedelta
+from panther_base_helpers import ENABLE_FIPS, FIPS_SUFFIX
 
 import boto3
 
@@ -80,7 +81,7 @@ def get_box_client() -> Client:
     if BOX_CLIENT is not None and BOX_ACCESS_AGE is not None and datetime.now(
     ) - BOX_ACCESS_AGE < timedelta(minutes=MAX_BOX_ACCESS_AGE):
         return BOX_CLIENT
-    response = boto3.client('secretsmanager').get_secret_value(
+    response = boto3.client('secretsmanager', endpoint_url='https://secretsmanager'+FIPS_SUFFIX if ENABLE_FIPS else None).get_secret_value(
         SecretId=BOX_API_ACCESS_NAME)
     settings = build_jwt_settings(response)
     BOX_CLIENT = Client(JWTAuth.from_settings_dictionary(settings))
