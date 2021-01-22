@@ -1,0 +1,217 @@
+schema: GCP.AuditLog
+parser:
+  native:
+    name: GCP.AuditLog
+description: |
+  Cloud Audit Logs maintains three audit logs for each Google Cloud project, folder, and organization: Admin Activity, Data Access, and System Event.
+  Google Cloud services write audit log entries to these logs to help you answer the questions of "who did what, where, and when?" within your Google Cloud resources.
+referenceURL: https://cloud.google.com/logging/docs/audit
+version: 0
+fields:
+- name: logName
+  required: true
+  description: The resource name of the log to which this log entry belongs.
+  type: string
+- name: severity
+  description: The severity of the log entry. The default value is LogSeverity.DEFAULT.
+  type: string
+- name: insertId
+  description: A unique identifier for the log entry.
+  type: string
+- name: resource
+  description: The monitored resource that produced this log entry.
+  type: object
+  fields:
+  - name: type
+    required: true
+    description: Type of resource that produced this log entry
+    type: string
+  - name: labels
+    required: true
+    description: Labels describing the resource
+    type: json
+- name: timestamp
+  description: The time the event described by the log entry occurred.
+  type: timestamp
+- name: receiveTimestamp
+  required: true
+  description: The time the log entry was received by Logging.
+  type: timestamp
+- name: labels
+  description: A set of user-defined (key, value) data that provides additional information about the log entry.
+  type: json
+- name: operation
+  description: Information about an operation associated with the log entry, if applicable.
+  type: object
+  fields:
+  - name: id
+    description: Whether or not an entity was served from cache (with or without validation).
+    type: string
+  - name: producer
+    description: An arbitrary producer identifier. The combination of id and producer must be globally unique.
+    type: string
+  - name: first
+    description: This is the first entry in an operation
+    type: boolean
+  - name: last
+    description: This is the last entry in an operation
+    type: boolean
+- name: trace
+  description: Resource name of the trace associated with the log entry, if any.
+  type: string
+- name: httpRequest
+  description: Information about the HTTP request associated with this log entry, if applicable.
+  type: object
+  fields:
+  - name: requestMethod
+    description: The request HTTP method.
+    type: string
+  - name: requestURL
+    description: The scheme (http, https), the host name, the path and the query portion of the URL that was requested.
+    type: string
+  - name: requestSize
+    description: The size of the HTTP request message in bytes, including the request headers and the request body.
+    type: bigint
+  - name: status
+    description: The response HTTP status code
+    type: smallint
+  - name: responseSize
+    description: The size of the HTTP response message sent back to the client, in bytes, including the response headers and the response body.
+    type: bigint
+  - name: userAgent
+    description: The user agent sent by the client.
+    type: string
+  - name: remoteIP
+    description: The IP address (IPv4 or IPv6) of the client that issued the HTTP request.
+    type: string
+  - name: serverIP
+    description: The IP address (IPv4 or IPv6) of the origin server that the request was sent to.
+    type: string
+  - name: referer
+    description: The referer URL of the request
+    type: string
+  - name: latency
+    description: The request processing latency in seconds on the server, from the time the request was received until the response was sent.
+    type: string
+  - name: cacheLookup
+    description: Whether or not a cache lookup was attempted.
+    type: boolean
+  - name: cacheHit
+    description: Whether or not an entity was served from cache (with or without validation).
+    type: boolean
+  - name: cacheValidatedWithOriginServer
+    description: Whether or not an entity was served from cache (with or without validation).
+    type: boolean
+  - name: cacheFillBytes
+    description: Whether or not an entity was served from cache (with or without validation).
+    type: bigint
+  - name: protocol
+    description: Protocol used for the request.
+    type: string
+- name: spanId
+  description: The span ID within the trace associated with the log entry.
+  type: string
+- name: traceSampled
+  description: The sampling decision of the trace associated with the log entry.
+  type: boolean
+- name: sourceLocation
+  description: Source code location information associated with the log entry, if any.
+  type: object
+  fields:
+  - name: file
+    description: Source file name. Depending on the runtime environment, this might be a simple name or a fully-qualified name.
+    type: string
+  - name: line
+    description: Line within the source file. 1-based; 0 indicates no line number available.
+    type: bigint
+  - name: function
+    description: Human-readable name of the function or method being invoked, with optional context such as the class or package name.
+    type: string
+- name: protoPayload
+  required: true
+  description: The AuditLog payload
+  type: object
+  fields:
+  - name: '@type'
+    required: true
+    description: The type of payload
+    type: string
+  - name: serviceName
+    description: The name of the API service performing the operation
+    type: string
+  - name: methodName
+    description: The name of the service method or operation. For API calls, this should be the name of the API method.
+    type: string
+  - name: resourceName
+    description: The resource or collection that is the target of the operation. The name is a scheme-less URI, not including the API service name.
+    type: string
+  - name: numResponseItems
+    description: The number of items returned from a List or Query API method, if applicable.
+    type: bigint
+  - name: status
+    description: The status of the overall operation.
+    type: object
+    fields:
+    - name: code
+      description: The status code, which should be an enum value of google.rpc.Code.
+      type: int
+    - name: message
+      description: A developer-facing error message, which should be in English.
+      type: string
+    - name: details
+      description: A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      type: json
+  - name: authenticationInfo
+    description: Authentication information.
+    type: object
+    fields:
+    - name: principalEmail
+      required: true
+      description: The email address of the authenticated user making the request.
+      type: string
+    - name: authoritySelector
+      description: The authority selector specified by the requestor, if any. It is not guaranteed that the principal was allowed to use this authority.
+      type: string
+  - name: authorizationInfo
+    description: Authorization information. If there are multiple resources or permissions involved, then there is one AuthorizationInfo element for each {resource, permission} tuple.
+    type: array
+    element:
+      type: object
+      fields:
+      - name: resource
+        description: The resource being accessed, as a REST-style string.
+        type: string
+      - name: permission
+        description: The required IAM permission
+        type: string
+      - name: granted
+        description: Whether or not authorization for resource and permission was granted.
+        type: boolean
+  - name: requestMetadata
+    description: Metadata about the request
+    type: object
+    fields:
+    - name: callerIP
+      description: The IP address of the caller.
+      type: string
+    - name: callerSuppliedUserAgent
+      description: The user agent of the caller. This information is not authenticated and should be treated accordingly.
+      type: string
+    - name: callerNetwork
+      description: The network of the caller. Set only if the network host project is part of the same GCP organization (or project) as the accessed resource.
+      type: string
+    - name: requestAttributes
+      description: Request attributes used in IAM condition evaluation. This field contains request attributes like request time and access levels associated with the request.
+      type: json
+    - name: destinationAttributes
+      description: The destination of a network activity, such as accepting a TCP connection.
+      type: json
+  - name: request
+    description: The operation request. This may not include all request parameters, such as those that are too large, privacy-sensitive, or duplicated elsewhere in the log record. When the JSON object represented here has a proto equivalent, the proto name will be indicated in the @type property.
+    type: json
+  - name: response
+    description: The operation response. This may not include all response parameters, such as those that are too large, privacy-sensitive, or duplicated elsewhere in the log record. When the JSON object represented here has a proto equivalent, the proto name will be indicated in the @type property.
+    type: json
+  - name: serviceData
+    description: Other service-specific data about the request, response, and other activities.
+    type: json

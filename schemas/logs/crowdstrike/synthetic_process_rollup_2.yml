@@ -1,0 +1,177 @@
+schema: Crowdstrike.SyntheticProcessRollup2
+parser:
+  native:
+    name: Crowdstrike.SyntheticProcessRollup2
+description: A synthetic version of the process rollup (PR2) event
+referenceURL: '-'
+version: 0
+fields:
+- name: event_simpleName
+  required: true
+  description: event name
+  type: string
+- name: name
+  required: true
+  description: The event name
+  type: string
+- name: aid
+  description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+  type: string
+- name: aip
+  description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+  type: string
+  indicators:
+  - ip
+- name: cid
+  description: CID
+  type: string
+- name: id
+  description: ID
+  type: string
+- name: event_platform
+  description: The platform the sensor was running on
+  type: string
+- name: timestamp
+  description: Timestamp when the event was received by the CrowdStrike cloud.
+  type: timestamp
+  timeFormat: unix_ms
+  isEventTime: true
+- name: _time
+  description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
+  type: timestamp
+  timeFormat: layout=01/02/2006 15:04:05.999
+- name: ComputerName
+  description: The name of the host.
+  type: string
+  indicators:
+  - hostname
+- name: ConfigBuild
+  description: Config build
+  type: string
+- name: ConfigStateHash
+  description: Config state hash
+  type: string
+- name: Entitlements
+  description: Entitlements
+  type: string
+- name: TreeId
+  description: If this event is part of a detection tree, the tree ID it is part of
+  type: string
+  indicators:
+  - trace_id
+- name: TreeId_decimal
+  description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
+  type: bigint
+- name: ContextThreadId
+  description: The unique ID of a process that was spawned by another process.
+  type: string
+- name: ContextThreadId_decimal
+  description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+  type: bigint
+- name: ContextTimeStamp
+  description: The time at which an event occurred on the system, as seen by the sensor.
+  type: timestamp
+  timeFormat: unix
+- name: ContextTimeStamp_decimal
+  description: The time at which an event occurred on the system, as seen by the sensor (in decimal, non-hex format).
+  type: timestamp
+  timeFormat: unix_ms
+- name: ContextProcessId
+  description: The unique ID of a process that was spawned by another process.
+  type: string
+- name: ContextProcessId_decimal
+  description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+  type: bigint
+- name: InContext
+  description: In context (N/A on iOS)
+  type: string
+- name: TargetProcessId
+  description: The unique ID of a target process
+  type: bigint
+- name: SourceProcessId
+  description: The unique ID of creating process.
+  type: bigint
+- name: SourceThreadId
+  description: The unique ID of thread from creating process.
+  type: bigint
+- name: ParentProcessId
+  description: The unique ID of the parent process.
+  type: bigint
+- name: ImageFileName
+  description: The full path to an executable (PE) file. The context of this field provides more information as to its meaning. For ProcessRollup2 events, this is the full path to the main executable for the created process
+  type: string
+- name: CommandLine
+  description: The command line used to create this process. May be empty in some circumstances
+  type: string
+- name: RawProcessId
+  description: The operating system’s internal PID. For matching, use the UPID fields which guarantee a unique process identifier
+  type: bigint
+- name: ProcessStartTime
+  description: The time the process began in UNIX epoch time (in decimal, non-hex format).
+  type: timestamp
+  timeFormat: unix
+- name: ProcessEndTime
+  description: The time the process finished (in decimal, non-hex format).
+  type: timestamp
+  timeFormat: unix
+- name: SHA256HashData
+  description: The SHA256 hash of a file. In most cases, the hash of the file referred to by the ImageFileName field.
+  type: string
+  indicators:
+  - sha256
+- name: SHA1HashData
+  description: The SHA1 hash of a file
+  type: string
+  indicators:
+  - sha1
+- name: MD5HashData
+  description: The MD5 hash of a file
+  type: string
+  indicators:
+  - md5
+- name: SyntheticPR2Flags
+  description: PR2 flags (PROCESS_RUNDOWN = 0, PROCESS_HOLLOWED = 1, IMAGEHASH_FAILURE = 4, FILE_PATH_EXCLUDED = 8, PROCESS_FORK_FOLDING = 16, APP_MONITORING = 2)
+  type: object
+  fields:
+  - name: Value
+    description: Value field uint16
+    type: int
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: ImageSubsystem
+  description: Subsystem of the image filename (Windows only)
+  type: string
+- name: UserSid
+  description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system. (Windows only)
+  type: string
+- name: AuthenticationId
+  description: The authentication identifier (Windows only)
+  type: string
+- name: IntegrityLevel
+  description: The integrity level (Windows only)
+  type: string
+- name: ProcessGroupId
+  description: Process group id (Mac)
+  type: bigint
+- name: UID
+  description: UID (Mac)
+  type: bigint
+- name: RUID
+  description: RUID (Mac)
+  type: bigint
+- name: SVUID
+  description: SVUID (Mac)
+  type: bigint
+- name: GID
+  description: GID (Mac)
+  type: bigint
+- name: RGID
+  description: RGID (Mac)
+  type: bigint
+- name: SVGID
+  description: SVGID (Mac)
+  type: bigint
+- name: SessionProcessId
+  description: Session process id (Mac)
+  type: bigint

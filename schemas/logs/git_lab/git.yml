@@ -1,0 +1,27 @@
+schema: GitLab.Git
+parser:
+  native:
+    name: GitLab.Git
+description: GitLab log file containing all failed requests from GitLab to Git repositories.
+referenceURL: https://docs.gitlab.com/ee/administration/logs.html#git_jsonlog
+version: 0
+fields:
+- name: severity
+  required: true
+  description: The log level
+  type: string
+- name: time
+  required: true
+  description: The event timestamp
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: correlation_id
+  description: Unique id across logs
+  type: string
+  indicators:
+  - trace_id
+- name: message
+  required: true
+  description: The error message from git
+  type: string

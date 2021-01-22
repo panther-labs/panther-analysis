@@ -1,0 +1,69 @@
+schema: Juniper.Firewall
+parser:
+  native:
+    name: Juniper.Firewall
+description: Juniper.Firewall stores information about dropped packets from the iptables firewall.
+referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-incident-log-format.html
+version: 0
+fields:
+- name: timestamp
+  required: true
+  description: Log timestamp
+  type: timestamp
+- name: hostname
+  description: Hostname
+  type: string
+- name: event
+  description: Event name
+  type: string
+- name: DST
+  description: Destination IP address
+  type: string
+- name: DPT
+  description: Destination port
+  type: int
+- name: SRC
+  description: Source IP address
+  type: string
+- name: SPT
+  description: Source port
+  type: int
+- name: TTL
+  description: IP TTL in milliseconds
+  type: bigint
+- name: ID
+  description: Packet id
+  type: bigint
+- name: MAC
+  description: MAC address
+  type: string
+- name: LEN
+  description: Packet length
+  type: int
+- name: TOS
+  description: Packet Type of Service field
+  type: string
+- name: PREC
+  description: Packet precedence bits
+  type: string
+- name: RST
+  description: Packet is RST
+  type: boolean
+- name: SYN
+  description: Packet is SYN
+  type: boolean
+- name: DF
+  description: Packet has do not fragment flag
+  type: boolean
+- name: IN
+  description: Input interface
+  type: string
+- name: OUT
+  description: Output interface
+  type: string
+- name: PROTO
+  description: Protocol
+  type: string
+- name: WINDOW
+  description: Transmit window
+  type: int

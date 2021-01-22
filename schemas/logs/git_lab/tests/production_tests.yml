@@ -1,0 +1,186 @@
+name: TestGitLabProduction
+input: |
+  {
+    "method":"GET",
+    "path":"/gitlab/gitlab-foss/issues/1234",
+    "format":"html",
+    "controller":"Projects::IssuesController",
+    "action":"show",
+    "status":200,
+    "time":"2017-08-08T20:15:54.821Z",
+    "params":[{"key":"param_key","value":"param_value"}],
+    "remote_ip":"18.245.0.1",
+    "user_id":1,
+    "username":"admin",
+    "queue_duration_s":0.0,
+    "gitaly_calls":16,
+    "gitaly_duration_s":0.16,
+    "redis_calls":115,
+    "redis_duration_s":0.13,
+    "redis_read_bytes":1507378,
+    "redis_write_bytes":2920,
+    "correlation_id":"O1SdybnnIq7",
+    "cpu_s":17.50,
+    "db_duration_s":0.08,
+    "view_duration_s":2.39,
+    "duration_s":20.54
+  }
+result: |
+  {
+    "method":"GET",
+    "path":"/gitlab/gitlab-foss/issues/1234",
+    "format":"html",
+    "controller":"Projects::IssuesController",
+    "action":"show",
+    "status":200,
+    "time":"2017-08-08T20:15:54.821Z",
+    "params":[{"key":"param_key","value":"param_value"}],
+    "remote_ip":"18.245.0.1",
+    "user_id":1,
+    "username":"admin",
+    "queue_duration_s":0.0,
+    "gitaly_calls":16,
+    "gitaly_duration_s":0.16,
+    "redis_calls":115,
+    "redis_duration_s":0.13,
+    "redis_read_bytes":1507378,
+    "redis_write_bytes":2920,
+    "correlation_id":"O1SdybnnIq7",
+    "cpu_s":17.50,
+    "db_duration_s":0.08,
+    "view_duration_s":2.39,
+    "duration_s":20.54,
+    "p_event_time": "2017-08-08T20:15:54.821Z",
+    "p_any_ip_addresses": ["18.245.0.1"],
+    "p_any_trace_ids": ["O1SdybnnIq7"],
+    "p_any_usernames": ["admin"],
+    "p_log_type": "GitLab.Production"
+  }
+results: []
+logType: GitLab.Production
+---
+name: TestGitLabProductionException
+input: "{\n  \"method\": \"GET\",\n  \"path\": \"/admin\",\n  \"format\": \"html\",\n  \"controller\": \"Admin::DashboardController\",\n  \"action\": \"index\",\n  \"status\": 500,\n  \"time\": \"2019-11-14T13:12:46.156Z\",\n  \"params\": [],\n  \"remote_ip\": \"127.0.0.1\",\n  \"user_id\": 1,\n  \"username\": \"root\",\n  \"ua\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0\",\n  \"queue_duration\": 274.35,\n  \"correlation_id\": \"KjDVUhNvvV3\",\n  \"queue_duration_s\":0.0,\n  \"gitaly_calls\":16,\n  \"gitaly_duration_s\":0.16,\n  \"redis_calls\":115,\n  \"redis_duration_s\":0.13,\n  \"cpu_s\":17.50,\n  \"db_duration_s\":0.08,\n  \"view_duration_s\":2.39,\n  \"duration_s\":20.54,\n  \"exception.class\": \"NameError\",\n  \"exception.message\": \"undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>\",\n\t\"exception.backtrace\": [\n\t\t\"ee/lib/gitlab/jira/middleware.rb:19:in call\"]\n}\n"
+result: "{\n  \"method\": \"GET\",\n  \"path\": \"/admin\",\n  \"format\": \"html\",\n  \"controller\": \"Admin::DashboardController\",\n  \"action\": \"index\",\n  \"status\": 500,\n  \"time\": \"2019-11-14T13:12:46.156Z\",\n  \"remote_ip\": \"127.0.0.1\",\n  \"user_id\": 1,\n  \"username\": \"root\",\n  \"ua\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0\",\n  \"correlation_id\": \"KjDVUhNvvV3\",\n  \"queue_duration_s\":0.0,\n  \"gitaly_calls\":16,\n  \"gitaly_duration_s\":0.16,\n  \"redis_calls\":115,\n  \"redis_duration_s\":0.13,\n  \"cpu_s\":17.50,\n  \"db_duration_s\":0.08,\n  \"view_duration_s\":2.39,\n  \"duration_s\":20.54,\n  \"exception.class\": \"NameError\",\n  \"exception.message\": \"undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>\",\n\t\"exception.backtrace\": [\"ee/lib/gitlab/jira/middleware.rb:19:in call\"],\n  \"p_event_time\": \"2019-11-14T13:12:46.156Z\",\n  \"p_any_ip_addresses\": [\"127.0.0.1\"],\n  \"p_any_trace_ids\": [\"KjDVUhNvvV3\"],\n  \"p_any_usernames\": [\"root\"],\n  \"p_log_type\": \"GitLab.Production\"\n}\n"
+results: []
+logType: GitLab.Production
+---
+name: TestGitLabProductionRedirect
+input: |
+  {
+    "method":"GET",
+    "path":"/index.php",
+    "format":null,
+    "controller":"ApplicationController",
+    "action":"route_not_found",
+    "status":302,
+    "location":"http://34.222.254.254/users/sign_in",
+    "time":"2020-07-05T19:35:32.337Z",
+    "params":[{"key":"vars","value":{"0":"md5","1":["HelloThinkPHP"]}}],
+    "remote_ip":"195.54.254.254",
+    "user_id":null,
+    "username":null,
+    "ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+    "queue_duration_s":0.007208,
+    "correlation_id":"DScuWzVUYA5",
+    "meta.caller_id":"ApplicationController#route_not_found",
+    "redis_calls":1,
+    "redis_duration_s":0.000292,
+    "cpu_s":0.02,
+    "db_duration_s":0.0,
+    "view_duration_s":0.0,
+    "duration_s":0.00341,
+    "tag":"test"
+  }
+result: |
+  {
+    "method":"GET",
+    "path":"/index.php",
+    "controller":"ApplicationController",
+    "action":"route_not_found",
+    "status":302,
+    "location":"http://34.222.254.254/users/sign_in",
+    "time":"2020-07-05T19:35:32.337Z",
+    "params":[{"key":"vars","value":{"0":"md5","1":["HelloThinkPHP"]}}],
+    "remote_ip":"195.54.254.254",
+    "ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+    "queue_duration_s":0.007208,
+    "correlation_id":"DScuWzVUYA5",
+    "meta.caller_id":"ApplicationController#route_not_found",
+    "redis_calls":1,
+    "redis_duration_s":0.000292,
+    "cpu_s":0.02,
+    "db_duration_s":0.0,
+    "view_duration_s":0.0,
+    "duration_s":0.00341,
+    "p_event_time": "2020-07-05T19:35:32.337Z",
+    "p_any_ip_addresses": ["195.54.254.254"],
+    "p_any_trace_ids": ["DScuWzVUYA5"],
+    "p_log_type": "GitLab.Production"
+  }
+results: []
+logType: GitLab.Production
+---
+name: TestProductionRedirect304
+input: |
+  {
+    "method": "GET",
+    "path": "/super-secret-confidential-space-plans/space-marines/pipelines.json",
+    "format": "json",
+    "controller": null,
+    "action": null,
+    "status": 304,
+    "params": [
+      {
+        "key": "scope",
+        "value": "all"
+      },
+      {
+        "key": "page",
+        "value": "1"
+      }
+    ],
+    "remote_ip": null,
+    "user_id": null,
+    "username": null,
+    "ua": null,
+    "queue_duration_s": null,
+    "redis_calls": 1,
+    "redis_duration_s": 0.000105,
+    "etag_route": "project_pipelines",
+    "correlation_id": null,
+    "cpu_s": 0.0,
+    "db_duration_s": 0.0,
+    "view_duration_s": 0.0,
+    "duration_s": 9.0e-05,
+    "time": "2019-11-14T13:12:46.156Z"
+  }
+result: |
+  {
+    "method": "GET",
+    "path": "/super-secret-confidential-space-plans/space-marines/pipelines.json",
+    "format": "json",
+    "status": 304,
+    "params": [
+      {
+        "key": "scope",
+        "value": "all"
+      },
+      {
+        "key": "page",
+        "value": "1"
+      }
+    ],
+    "redis_calls": 1,
+    "redis_duration_s": 0.000105,
+    "etag_route": "project_pipelines",
+    "cpu_s": 0.0,
+    "db_duration_s": 0.0,
+    "view_duration_s": 0.0,
+    "duration_s": 9.0e-05,
+    "time": "2019-11-14T13:12:46.156Z",
+    "p_event_time": "2019-11-14T13:12:46.156Z",
+    "p_log_type": "GitLab.Production"
+  }
+results: []
+logType: GitLab.Production

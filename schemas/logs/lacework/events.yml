@@ -1,0 +1,449 @@
+schema: Lacework.Events
+parser:
+  native:
+    name: Lacework.Events
+description: Lacework.Events represents the content of an exported Lacework Alert S3 Object.
+referenceURL: https://www.lacework.com/platform-overview/
+version: 0
+fields:
+- name: EVENT_CATEGORY
+  required: true
+  description: The category the event falls into
+  type: string
+- name: EVENT_DETAILS
+  required: true
+  description: The event details
+  type: object
+  fields:
+  - name: data
+    description: The array of event data
+    type: array
+    element:
+      type: object
+      fields:
+      - name: START_TIME
+        description: The event start time.
+        type: timestamp
+      - name: END_TIME
+        description: The event end time.
+        type: timestamp
+      - name: EVENT_TYPE
+        description: The event type description eg - launched new binary.
+        type: string
+      - name: EVENT_ID
+        description: The event alert ID.
+        type: string
+      - name: EVENT_ACTOR
+        description: The origin of the event eg - AWS, User.
+        type: string
+      - name: EVENT_MODEL
+        description: The model that triggered an alert.
+        type: string
+      - name: ENTITY_MAP
+        description: The map of related fields to the detection alert.
+        type: object
+        fields:
+        - name: User
+          description: Any user based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: MACHINE_HOSTNAME
+              description: Hostname field *string
+              type: string
+            - name: USERNAME
+              description: Username field *string
+              type: string
+        - name: Application
+          description: Any application based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: APPLICATION
+              description: Application field *string
+              type: string
+            - name: HAS_EXTERNAL_CONNS
+              description: HasExternalConns field *numerics.Integer
+              type: int
+            - name: IS_CLIENT
+              description: IsClient field *numerics.Integer
+              type: int
+            - name: IS_SERVER
+              description: IsServer field *numerics.Integer
+              type: int
+            - name: EARLIEST_KNOWN_TIME
+              description: EarliestKnownTime field *timestamp.RFC3339
+              type: timestamp
+        - name: Machine
+          description: Any machine based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: HOSTNAME
+              description: Hostname field *string
+              type: string
+            - name: EXTERNAL_IP
+              description: ExternalIP field *string
+              type: string
+            - name: INSTANCE_ID
+              description: InstanceID field *string
+              type: string
+            - name: INSTANCE_NAME
+              description: InstanceName field *string
+              type: string
+            - name: CPU_PERCENTAGE
+              description: CPUPercentage field *float32
+              type: float
+            - name: INTERNAL_IP_ADDR
+              description: InternalIPAddress field *string
+              type: string
+            - name: IS_EXTERNAL
+              description: IsExternal field *numerics.Integer
+              type: int
+        - name: Container
+          description: Any container based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: IMAGE_REPO
+              description: ImageRepo field *string
+              type: string
+            - name: IMAGE_TAG
+              description: ImageTag field *string
+              type: string
+            - name: HAS_EXTERNAL_CONNS
+              description: HasExternalConns field *numerics.Integer
+              type: int
+            - name: IS_CLIENT
+              description: IsClient field *numerics.Integer
+              type: int
+            - name: IS_SERVER
+              description: IsServer field *numerics.Integer
+              type: int
+            - name: FIRST_SEEN_TIME
+              description: FirstSeenTime field *timestamp.RFC3339
+              type: timestamp
+            - name: POD_NAMESPACE
+              description: PodNamespace field *string
+              type: string
+            - name: POD_IP_ADDR
+              description: PodIPAddress field *string
+              type: string
+        - name: DnsName
+          description: Any dns based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: HOSTNAME
+              description: Hostname field *string
+              type: string
+            - name: PORT_LIST
+              description: PortList field []int32
+              type: array
+              element:
+                type: int
+            - name: TOTAL_IN_BYTES
+              description: TotalINBytes field *float32
+              type: float
+            - name: TOTAL_OUT_BYTES
+              description: TotalOUTBytes field *float32
+              type: float
+        - name: IpAddress
+          description: Any ip based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: IP_ADDRESS
+              description: SourceIPAddress field *string
+              type: string
+            - name: TOTAL_IN_BYTES
+              description: TotalINBytes field *float32
+              type: float
+            - name: TOTAL_OUT_BYTES
+              description: TotalOUTBytes field *float32
+              type: float
+            - name: THREAT_TAGS
+              description: ThreatTags field []string
+              type: array
+              element:
+                type: string
+            - name: THREAT_SOURCE
+              description: ThreatSource field *jsoniter.RawMessage
+              type: json
+            - name: COUNTRY
+              description: Country field *string
+              type: string
+            - name: REGION
+              description: Region field *string
+              type: string
+            - name: PORT_LIST
+              description: PortList field []int32
+              type: array
+              element:
+                type: int
+            - name: FIRST_SEEN_TIME
+              description: FirstSeenTime field *string
+              type: string
+        - name: Process
+          description: Any process based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: HOSTNAME
+              description: Hostname field *string
+              type: string
+            - name: PROCESS_ID
+              description: ProcessID field *numerics.Integer
+              type: int
+            - name: PROCESS_START_TIME
+              description: ProcessStartTime field *timestamp.RFC3339
+              type: timestamp
+            - name: CMDLINE
+              description: CommandLine field *string
+              type: string
+            - name: CPU_PERCENTAGE
+              description: CPUPercentage field *float32
+              type: float
+        - name: FileDataHash
+          description: Any filehash based info involved in an alert.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: FILEDATA_HASH
+              description: FiledataHash field *string
+              type: string
+            - name: MACHINE_COUNT
+              description: MachineCount field *numerics.Integer
+              type: int
+            - name: EXE_PATH_LIST
+              description: EXEPathList field []string
+              type: array
+              element:
+                type: string
+            - name: FIRST_SEEN_TIME
+              description: FirstSeenTime field *timestamp.RFC3339
+              type: timestamp
+            - name: IS_KNOWN_BAD
+              description: ISKnownBad field *numerics.Integer
+              type: int
+        - name: FileExePath
+          description: Any executable filepath information.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: EXE_PATH
+              description: EXEPath field *string
+              type: string
+            - name: FIRST_SEEN_TIME
+              description: FirstSeenTime field *timestamp.RFC3339
+              type: timestamp
+            - name: LAST_FILEDATA_HASH
+              description: LastFileDataHash field *string
+              type: string
+            - name: LAST_PACKAGE_NAME
+              description: LastPackageName field *string
+              type: string
+            - name: LAST_VERSION
+              description: LastVersion field *string
+              type: string
+            - name: LAST_FILE_OWNER
+              description: LastFileOwner field *string
+              type: string
+        - name: SourceIpAddress
+          description: Source IP based information.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: IP_ADDRESS
+              description: SourceIPAddress field *string
+              type: string
+            - name: REGION
+              description: Region field *string
+              type: string
+            - name: COUNTRY
+              description: Country field *string
+              type: string
+        - name: API
+          description: The service and endpoint.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: SERVICE
+              description: EventSource field *string
+              type: string
+            - name: API
+              description: EventName field *string
+              type: string
+        - name: Region
+          description: Regional based information.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: REGION
+              description: Region field *string
+              type: string
+            - name: ACCOUNT_LIST
+              description: RecipientAccountID field []string
+              type: array
+              element:
+                type: string
+        - name: CT_User
+          description: Cloudtrail user information.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: USERNAME
+              description: Username field *string
+              type: string
+            - name: ACCOUNT_ID
+              description: AccountID field *string
+              type: string
+            - name: MFA
+              description: MFA field *numerics.Integer
+              type: int
+            - name: API_LIST
+              description: APIList field []string
+              type: array
+              element:
+                type: string
+            - name: REGION_LIST
+              description: RegionList field []string
+              type: array
+              element:
+                type: string
+            - name: PRINCIPAL_ID
+              description: AccessKeyID field *string
+              type: string
+        - name: Resource
+          description: Resource values.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: NAME
+              description: Name field *string
+              type: string
+            - name: VALUE
+              description: Value field *string
+              type: string
+        - name: RecId
+          description: Receiver account info.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: REC_ID
+              description: RECID field *string
+              type: string
+            - name: ACCOUNT_ID
+              description: RecipientAccountID field *string
+              type: string
+            - name: ACCOUNT_ALIAS
+              description: AccountAlias field *string
+              type: string
+            - name: TITLE
+              description: Title field *string
+              type: string
+            - name: STATUS
+              description: Status field *string
+              type: string
+            - name: EVAL_TYPE
+              description: EVALType field *string
+              type: string
+            - name: EVAL_GUID
+              description: EVALGUID field *string
+              type: string
+        - name: CustomRule
+          description: Custom Rule info.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: LAST_UPDATED_TIME
+              description: LastUpdatedTime field *timestamp.RFC3339
+              type: timestamp
+            - name: LAST_UPDATED_USER
+              description: LastUpdatedUser field *string
+              type: string
+            - name: DISPLAY_FILTER
+              description: DisplayFilter field *string
+              type: string
+            - name: RULE_GUID
+              description: RuleGUID field *string
+              type: string
+        - name: NewViolation
+          description: Violation Ref.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: REC_ID
+              description: RECID field *string
+              type: string
+            - name: REASON
+              description: Reason field *string
+              type: string
+            - name: RESOURCE
+              description: Resource field *string
+              type: string
+        - name: ViolationReason
+          description: A reason for the violation.
+          type: array
+          element:
+            type: object
+            fields:
+            - name: REC_ID
+              description: RECID field *string
+              type: string
+            - name: REASON
+              description: Reason field *string
+              type: string
+- name: SEVERITY
+  required: true
+  description: The severity level of the alert
+  type: int
+- name: START_TIME
+  required: true
+  description: The event start time.
+  type: timestamp
+- name: SUMMARY
+  required: true
+  description: The alert title and quick summary
+  type: string
+- name: EVENT_TYPE
+  required: true
+  description: The type of event
+  type: string
+- name: EVENT_NAME
+  required: true
+  description: The event name
+  type: string
+- name: LINK
+  required: true
+  description: A link to the Lacework dashboard for the event
+  type: string
+- name: EVENT_ID
+  required: true
+  description: The eventID reference
+  type: int
+- name: ACCOUNT
+  required: true
+  description: The Lacework tenent that created the event
+  type: string
+- name: SOURCE
+  required: true
+  description: The data source the event triggered on
+  type: string

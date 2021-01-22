@@ -1,0 +1,155 @@
+schema: GitLab.API
+parser:
+  native:
+    name: GitLab.API
+description: "GitLab log for API requests received from GitLab.\n\t\tNOTE: We are using the latest version of GitLab API logs. Some fields differ from the official documentation"
+referenceURL: https://docs.gitlab.com/ee/administration/logs.html#api_jsonlog
+version: 0
+fields:
+- name: time
+  required: true
+  description: The request timestamp
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: severity
+  required: true
+  description: The log level
+  type: string
+- name: duration_s
+  required: true
+  description: The time spent serving the request (in seconds)
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: db_duration_s
+  description: The time spent quering the database (in seconds)
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: view_duration_s
+  description: The time spent rendering the view for the Rails controller (in seconds)
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: status
+  required: true
+  description: The HTTP response status code
+  type: smallint
+- name: method
+  required: true
+  description: The HTTP method of the request
+  type: string
+- name: path
+  required: true
+  description: The URL path for the request
+  type: string
+- name: params
+  description: The URL query parameters
+  type: array
+  element:
+    type: object
+    fields:
+    - name: key
+      required: true
+      description: Query parameter name
+      type: string
+    - name: value
+      description: Query parameter value
+      type: json
+- name: host
+  required: true
+  description: Hostname serving the request
+  type: string
+  indicators:
+  - hostname
+- name: ua
+  description: User-Agent HTTP header
+  type: string
+- name: route
+  required: true
+  description: Rails route for the API endpoint
+  type: string
+- name: remote_ip
+  description: The remote IP address of the HTTP request
+  type: string
+  indicators:
+  - ip
+- name: user_id
+  description: The user id of the request
+  type: bigint
+- name: username
+  description: The username of the request
+  type: string
+  indicators:
+  - username
+- name: gitaly_calls
+  description: Total number of calls made to Gitaly
+  type: bigint
+- name: gitaly_duration_s
+  description: Total time taken by Gitaly calls
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: redis_calls
+  description: Total number of calls made to Redis
+  type: bigint
+- name: redis_duration_s
+  description: Total time to retrieve data from Redis
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: correlation_id
+  description: Request unique id across logs
+  type: string
+  indicators:
+  - trace_id
+- name: queue_duration_s
+  description: Total time that the request was queued inside GitLab Workhorse
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: meta.user
+  description: User that invoked the request
+  type: string
+  indicators:
+  - username
+- name: meta.project
+  description: Project associated with the request
+  type: string
+- name: meta.root_namespace
+  description: Root namespace
+  type: string
+- name: meta.caller_id
+  description: Caller ID
+  type: string

@@ -1,0 +1,35 @@
+schema: Juniper.Postgres
+parser:
+  native:
+    name: Juniper.Postgres
+description: Juniper.Postgres contains logs of manipulations on the schema of the database that WebApp Secure uses, as well as any errors that occurred during database operations.
+referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-postgres-log.html
+version: 0
+fields:
+- name: timestamp
+  description: Log entry timestamp
+  type: timestamp
+- name: hostname
+  description: The hostname of the appliance
+  type: string
+- name: pid
+  description: The process ID of the postgres instance.
+  type: int
+- name: group_id_major
+  description: Group id major number
+  type: int
+- name: group_id_minor
+  description: Group id minor number
+  type: int
+- name: sql_error_code
+  description: The SQL error code.
+  type: string
+- name: session_id
+  description: A somewhat unique session identifier that can be used to search for specific lines in the log.
+  type: string
+- name: message_type
+  description: The type of the message. Can be LOG, WARNING, ERROR, or STATEMENT.
+  type: string
+- name: message
+  description: The message.
+  type: string

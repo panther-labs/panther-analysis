@@ -1,0 +1,72 @@
+schema: GitLab.Exceptions
+parser:
+  native:
+    name: GitLab.Exceptions
+description: GitLab log file containing changes to group or project settings
+referenceURL: https://docs.gitlab.com/ee/administration/logs.html#exceptions_jsonlog
+version: 0
+fields:
+- name: severity
+  required: true
+  description: The log level
+  type: string
+- name: time
+  required: true
+  description: The event timestamp
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: correlation_id
+  description: Request unique id across logs
+  type: string
+  indicators:
+  - trace_id
+- name: extra.server
+  description: Information about the server on which the exception occurred
+  type: object
+  fields:
+  - name: os
+    description: Server OS info
+    type: object
+    fields:
+    - name: name
+      description: OS name
+      type: string
+    - name: version
+      description: OS version
+      type: string
+    - name: build
+      description: OS build
+      type: string
+  - name: runtime
+    description: Runtime executing gitlab code
+    type: object
+    fields:
+    - name: name
+      description: Runtime name
+      type: string
+    - name: version
+      description: Runtime version
+      type: string
+- name: extra.project_id
+  description: Project id where the exception occurred
+  type: bigint
+- name: extra.relation_key
+  description: Relation on which the exception occurred
+  type: string
+- name: extra.relation_index
+  description: Relation index on which the exception occurred
+  type: bigint
+- name: exception.class
+  required: true
+  description: Class name of the exception that occurred
+  type: string
+- name: exception.message
+  required: true
+  description: Message of the exception that occurred
+  type: string
+- name: exception.backtrace
+  description: Stack trace of the exception that occurred
+  type: array
+  element:
+    type: string

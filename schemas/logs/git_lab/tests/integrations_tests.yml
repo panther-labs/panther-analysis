@@ -1,0 +1,55 @@
+name: TestIntegrationsError
+input: |
+  {
+    "severity":"ERROR",
+    "time":"2018-09-06T14:56:20.439Z",
+    "service_class":"JiraService",
+    "project_id":8,
+    "project_path":"h5bp/html5-boilerplate",
+    "message":"Error sending message",
+    "client_url":"http://jira.gitlap.com:8080",
+    "error":"execution expired"
+  }
+result: |
+  {
+    "severity":"ERROR",
+    "time":"2018-09-06T14:56:20.439Z",
+    "service_class":"JiraService",
+    "project_id":8,
+    "project_path":"h5bp/html5-boilerplate",
+    "message":"Error sending message",
+    "client_url":"http://jira.gitlap.com:8080",
+    "error":"execution expired",
+    "p_event_time": "2018-09-06T14:56:20.439Z",
+    "p_any_domain_names": ["jira.gitlap.com"],
+    "p_log_type": "GitLab.Integrations"
+  }
+results: []
+logType: GitLab.Integrations
+---
+name: TestIntegrations
+input: |
+  {
+    "severity":"INFO",
+    "time":"2018-09-06T17:15:16.365Z",
+    "service_class":"JiraService",
+    "project_id":3,
+    "project_path":"namespace2/project2",
+    "message":"Successfully posted",
+    "client_url":"http://jira.example.com"
+  }
+result: |
+  {
+    "severity":"INFO",
+    "time":"2018-09-06T17:15:16.365Z",
+    "service_class":"JiraService",
+    "project_id":3,
+    "project_path":"namespace2/project2",
+    "message":"Successfully posted",
+    "client_url":"http://jira.example.com",
+    "p_event_time": "2018-09-06T17:15:16.365Z",
+    "p_any_domain_names": ["jira.example.com"],
+    "p_log_type": "GitLab.Integrations"
+  }
+results: []
+logType: GitLab.Integrations

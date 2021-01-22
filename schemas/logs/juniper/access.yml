@@ -1,0 +1,35 @@
+schema: Juniper.Access
+parser:
+  native:
+    name: Juniper.Access
+description: Juniper.Access logs for all traffic coming to and from the box.
+referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-access-log.html
+version: 0
+fields:
+- name: timestamp
+  description: Log entry timestamp
+  type: timestamp
+- name: hostname
+  description: The hostname of the appliance
+  type: string
+- name: log_level
+  description: The importance level of a log entry. Can be TRACE, DEBUG, INFO, WARN, or ERROR.
+  type: string
+- name: thread
+  description: The specific thread that is handling the request or response.
+  type: string
+- name: unique_request_key
+  description: This is a key used to uniquely identify requests.
+  type: string
+- name: type
+  description: Whether the HTTP packet is a client request, or a server response (REQUEST,RESPONSE).
+  type: string
+- name: stage
+  description: Whether the HTTP packet is being logged before or after Security Engine processes it (and potentially manipulates it).
+  type: string
+- name: proxy_client_ip
+  description: The incoming client IP. Since WebApp Secure works around a Nginx proxy, the client IP will most-likely be '127.0.0.1'.
+  type: string
+- name: url
+  description: The full request or response URL.
+  type: string

@@ -1,0 +1,94 @@
+schema: AWS.GuardDuty
+parser:
+  native:
+    name: AWS.GuardDuty
+description: Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior inside AWS Accounts.
+referenceURL: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-format.html
+version: 0
+fields:
+- name: schemaVersion
+  required: true
+  description: The schema format version of this record.
+  type: string
+- name: accountId
+  required: true
+  description: The ID of the AWS account in which the activity took place that prompted GuardDuty to generate this finding.
+  type: string
+- name: region
+  required: true
+  description: The AWS region in which the finding was generated.
+  type: string
+- name: partition
+  required: true
+  description: The AWS partition in which the finding was generated.
+  type: string
+- name: id
+  required: true
+  description: A unique identifier for the finding.
+  type: string
+- name: arn
+  required: true
+  description: A unique identifier formatted as an ARN for the finding.
+  type: string
+- name: type
+  required: true
+  description: A concise yet readable description of the potential security issue.
+  type: string
+- name: resource
+  required: true
+  description: The AWS resource against which the activity took place that prompted GuardDuty to generate this finding.
+  type: json
+- name: severity
+  required: true
+  description: The value of the severity can fall anywhere within the 0.1 to 8.9 range.
+  type: float
+- name: createdAt
+  required: true
+  description: The initial creation time of the finding (UTC).
+  type: timestamp
+- name: updatedAt
+  required: true
+  description: The last update time of the finding (UTC).
+  type: timestamp
+- name: title
+  required: true
+  description: A short description of the finding.
+  type: string
+- name: description
+  required: true
+  description: A long description of the finding.
+  type: string
+- name: service
+  required: true
+  description: Additional information about the affected service.
+  type: object
+  fields:
+  - name: additionalInfo
+    description: AdditionalInfo field *jsoniter.RawMessage
+    type: json
+  - name: action
+    description: Action field *jsoniter.RawMessage
+    type: json
+  - name: serviceName
+    required: true
+    description: ServiceName field *string
+    type: string
+  - name: detectorId
+    required: true
+    description: DetectorID field *string
+    type: string
+  - name: resourceRole
+    description: ResourceRole field *string
+    type: string
+  - name: eventFirstSeen
+    description: EventFirstSeen field *timestamp.RFC3339
+    type: timestamp
+  - name: eventLastSeen
+    description: EventLastSeen field *timestamp.RFC3339
+    type: timestamp
+  - name: archived
+    description: Archived field *bool
+    type: boolean
+  - name: count
+    description: Count field *int
+    type: int

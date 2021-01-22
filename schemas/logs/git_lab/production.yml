@@ -1,0 +1,172 @@
+schema: GitLab.Production
+parser:
+  native:
+    name: GitLab.Production
+description: GitLab log for Production controller requests received from GitLab
+referenceURL: https://docs.gitlab.com/ee/administration/logs.html#production_jsonlog
+version: 0
+fields:
+- name: method
+  required: true
+  description: The HTTP method of the request
+  type: string
+- name: path
+  required: true
+  description: The URL path for the request
+  type: string
+- name: format
+  description: The response output format
+  type: string
+- name: controller
+  description: The Production controller class name
+  type: string
+- name: action
+  description: The Production controller action
+  type: string
+- name: status
+  required: true
+  description: The HTTP response status code
+  type: bigint
+- name: time
+  required: true
+  description: The request timestamp
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: params
+  description: The URL query parameters
+  type: array
+  element:
+    type: object
+    fields:
+    - name: key
+      required: true
+      description: Query parameter name
+      type: string
+    - name: value
+      description: Query parameter value
+      type: json
+- name: remote_ip
+  description: The remote IP address of the HTTP request
+  type: string
+  indicators:
+  - ip
+- name: user_id
+  description: The user id of the request
+  type: bigint
+- name: username
+  description: The username of the request
+  type: string
+  indicators:
+  - username
+- name: ua
+  description: The User-Agent of the requester
+  type: string
+- name: queue_duration_s
+  description: Total time that the request was queued inside GitLab Workhorse
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: gitaly_calls
+  description: Total number of calls made to Gitaly
+  type: bigint
+- name: gitaly_duration_s
+  description: Total time taken by Gitaly calls
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: redis_calls
+  description: Total number of calls made to Redis
+  type: bigint
+- name: redis_duration_s
+  description: Total time to retrieve data from Redis
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: redis_read_bytes
+  description: Total bytes read from Redis
+  type: bigint
+- name: redis_write_bytes
+  description: Total bytes written to Redis
+  type: bigint
+- name: correlation_id
+  description: Request unique id across logs
+  type: string
+  indicators:
+  - trace_id
+- name: cpu_s
+  description: Total time spent on CPU
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: db_duration_s
+  description: Total time to retrieve data from PostgreSQL
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: view_duration_s
+  description: Total time taken inside the Rails views
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: duration_s
+  required: true
+  description: Total time taken to retrieve the request
+  type: object
+  fields:
+  - name: Value
+    description: Value field float32
+    type: float
+  - name: Exists
+    description: Exists field bool
+    type: boolean
+- name: meta.caller_id
+  description: Caller ID
+  type: string
+- name: location
+  description: (Applies only to redirects) The redirect URL
+  type: string
+- name: exception.class
+  description: Class name of the exception that occurred
+  type: string
+- name: exception.message
+  description: Message of the exception that occurred
+  type: string
+- name: exception.backtrace
+  description: Stack trace of the exception that occurred
+  type: array
+  element:
+    type: string
+- name: etag_route
+  description: Route name etag (on redirects)
+  type: string

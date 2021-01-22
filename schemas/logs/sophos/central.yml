@@ -1,0 +1,147 @@
+schema: Sophos.Central
+parser:
+  native:
+    name: Sophos.Central
+description: Sophos Central events
+referenceURL: https://support.sophos.com/support/s/article/KB-000038307?language=en_US
+version: 0
+fields:
+- name: endpoint_id
+  required: true
+  description: Endpoint ID associated with the event
+  type: string
+- name: endpoint_type
+  required: true
+  description: Type of endpoint
+  type: string
+- name: customer_id
+  description: Customer ID
+  type: string
+- name: severity
+  description: Severity of the event
+  type: string
+- name: source_info
+  description: Source IP of the endpoint
+  type: object
+  fields:
+  - name: ip
+    description: First IPv4 address of the endpoint
+    type: string
+    indicators:
+    - ip
+- name: name
+  description: Name of threat, or other event details
+  type: string
+- name: id
+  required: true
+  description: Unique identifier for the event
+  type: string
+- name: type
+  required: true
+  description: Type of event
+  type: string
+- name: group
+  required: true
+  description: Category of event
+  type: string
+- name: end
+  required: true
+  description: Time the event occurred on the endpoint
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: rt
+  description: Time the event was uploaded to Sophos Central
+  type: timestamp
+- name: dhost
+  description: Source host of the event
+  type: string
+- name: suser
+  description: Logged in user
+  type: string
+  indicators:
+  - username
+- name: datastream
+  description: Alert, or Event, to distinguish between event types
+  type: string
+- name: duid
+  description: Undocumented field
+  type: string
+- name: threat
+  description: Name of the threat
+  type: string
+- name: detection_identity_name
+  description: Name of the detection
+  type: string
+- name: filePath
+  description: Path to the threat
+  type: string
+- name: user
+  description: Undocumented field, but should be same as User
+  type: string
+- name: rule
+  description: DLP rule
+  type: string
+- name: user_action
+  description: DLP user action
+  type: string
+- name: app_name
+  description: DLP application name
+  type: string
+- name: action
+  description: DLP action
+  type: string
+- name: file_type
+  description: DLP file type
+  type: string
+- name: file_size
+  description: DLP file size
+  type: bigint
+- name: file_path
+  description: DLP file path
+  type: string
+- name: appSha256
+  description: SHA 256 hash of the application associated with the threat, if available
+  type: string
+  indicators:
+  - sha256
+- name: appCerts
+  description: Certificate information for the application associated with the threat, if available
+  type: array
+  element:
+    type: object
+    fields:
+    - name: signer
+      description: PUA app certificate signer
+      type: string
+    - name: thumbprint
+      description: PUA app certificate thumbprint
+      type: string
+- name: origin
+  description: Originating component of a detection
+  type: string
+- name: core_remedy_items
+  description: Details of the items cleaned or restored
+  type: object
+  fields:
+  - name: items
+    description: List of remediations
+    type: array
+    element:
+      type: object
+      fields:
+      - name: type
+        description: Type of item
+        type: string
+      - name: result
+        description: Remedy outcome
+        type: string
+      - name: descriptor
+        description: Path to file
+        type: string
+      - name: processPath
+        description: Undocumented field
+        type: string
+  - name: totalItems
+    description: Remediation count
+    type: int
