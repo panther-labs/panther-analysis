@@ -41,7 +41,7 @@ def main(args):
     process_file(
         time_shift,
         boto3.client('s3', config=Config(s3={'addressing_style': 'virtual'}),
-                     endpoint_url='https://s3' + panther_base_helpers.FIPS_SUFFIX if panther_base_helpers.ENABLE_FIPS else None),
+                     endpoint_url='https://s3' + panther_base_helpers.FIPS_SUFFIX if panther_base_helpers.FIPS_ENABLED else None),
         args.bucket_name,
         data.get('Logs', []),
         data.get('LogType', ''),

@@ -157,5 +157,5 @@ def deep_get(dictionary, *keys, default=None):
         if isinstance(d, Mapping) else default, keys, dictionary)
 
 
-ENABLE_FIPS = os.getenv('ENABLE_FIPS', '').lower() == 'true'
+FIPS_ENABLED = os.getenv('ENABLE_FIPS', '').lower() == 'true'
 FIPS_SUFFIX = '-fips.' + os.getenv('AWS_REGION', '') + '.amazonaws.com'
