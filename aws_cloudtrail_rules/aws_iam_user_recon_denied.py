@@ -35,7 +35,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event['userIdentity'].get('arn')
+    return deep_get(event, 'userIdentity', 'arn')
 
 
 def title(event):
