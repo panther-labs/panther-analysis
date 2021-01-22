@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
 from ipaddress import ip_address
+from panther_base_helpers import deep_get
 
 # service/event patterns to monitor
 RECON_ACTIONS = {
@@ -15,7 +16,7 @@ def rule(event):
     # Filter events
     if event.get('errorCode') != 'AccessDenied':
         return False
-    if event['userIdentity'].get('type') != 'IAMUser':
+    if deep_get(event, 'userIdentity', 'type') != 'IAMUser':
         return False
 
     # Validate the request came from outside of AWS
@@ -26,8 +27,8 @@ def rule(event):
 
     # Pattern match this event to the recon actions
     for event_source, event_patterns in RECON_ACTIONS.items():
-        if event['eventSource'].startswith(event_source) and any(
-                fnmatch(event['eventName'], event_pattern)
+        if event.get('eventSource', '').startswith(event_source) and any(
+                fnmatch(event.get('eventName', ''), event_pattern)
                 for event_pattern in event_patterns):
             return True
     return False
