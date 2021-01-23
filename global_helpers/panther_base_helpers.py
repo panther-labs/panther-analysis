@@ -145,11 +145,30 @@ def okta_alert_context(event):
 
 
 def deep_get(dictionary, *keys, default=None):
-    '''Safely return the value from a nested map
+    '''Safely return the value of an arbitrarily nested map
 
-    Taken from here:
-    https://stackoverflow.com/questions/25833613/python-safe-method-to-get-value-of-nested-dictionary
+    Inspired by https://bit.ly/3a0hq9E
     '''
     return reduce(
         lambda d, key: d.get(key, default)
         if isinstance(d, Mapping) else default, keys, dictionary)
+
+
+def get_binding_deltas(event):
+    '''A GCP helper function to return the binding deltas from audit events
+
+    Binding deltas provide context on a permission change, including the
+    action, role, and member associated with the request.
+    '''
+    if event.get('protoPayload', {}).get('methodName') != 'SetIamPolicy':
+        return []
+
+    service_data = event.get('protoPayload', {}).get('serviceData')
+    if not service_data:
+        return []
+
+    # Reference: bit.ly/2WsJdZS
+    binding_deltas = service_data.get('policyDelta', {}).get('bindingDeltas')
+    if not binding_deltas:
+        return []
+    return binding_deltas
