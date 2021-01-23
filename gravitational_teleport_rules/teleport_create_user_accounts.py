@@ -1,4 +1,4 @@
-from panther_oss_helpers import pattern_match_list
+from panther_base_helpers import pattern_match_list
 
 USER_CREATE_PATTERNS = [
     'chage',  # user password expiry

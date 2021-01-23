@@ -1,6 +1,4 @@
 """Utility functions provided to policies and rules during execution."""
-from fnmatch import fnmatch
-from ipaddress import ip_address, ip_network
 import time
 from typing import Any, Dict, Union, Sequence, Set
 
@@ -59,41 +57,6 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 
     # Return just the attributes of the item
     return response['Item']['attributes']
-
-
-# Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
-# Returns True if any ip in the range is marked as DMZ space.
-DMZ_NETWORKS = [
-    ip_network('10.1.0.0/24'),
-    ip_network('100.1.0.0/24'),
-]
-
-
-def is_dmz_cidr(ip_range):
-    """This function determines whether a given IP range is within the defined DMZ IP range."""
-    return any(
-        ip_network(ip_range).overlaps(dmz_network)
-        for dmz_network in DMZ_NETWORKS)
-
-
-DMZ_TAG_KEY = 'environment'
-DMZ_TAG_VALUE = 'dmz'
-
-
-# Defaults to False to assume something is not a DMZ if it is not tagged
-def is_dmz_tags(resource):
-    """This function determines whether a given resource is tagged as exisitng in a DMZ."""
-    if resource['Tags'] is None:
-        return False
-    return resource['Tags'].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
-
-
-# Check that an ip address (e.g. '192.168.1.1.') is in
-# a list of networks in cidr notation (e.g. '192.168.0.0/14)
-def is_ip_in_network(ip_addr, networks):
-    """This function determines whether a given IP address is within a defined IP range."""
-    return any(
-        ip_address(ip_addr) in ip_network(network) for network in networks)
 
 
 # Helper functions for accessing Dynamo key-value store.
@@ -259,14 +222,6 @@ def reset_string_set(key: str) -> None:
     )
 
 
-def aws_strip_role_session_id(user_identity_arn):
-    # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
-    arn_parts = user_identity_arn.split('/')
-    if arn_parts:
-        return '/'.join(arn_parts[:2])
-    return user_identity_arn
-
-
 def evaluate_threshold(key: str,
                        threshold: int = 10,
                        expiry_seconds: int = 3600) -> bool:
@@ -278,17 +233,6 @@ def evaluate_threshold(key: str,
         reset_counter(key)
         return True
     return False
-
-
-# Basic helpers
-
-
-def pattern_match(string_to_match: str, pattern: str):
-    return fnmatch(string_to_match, pattern)
-
-
-def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
-    return any(fnmatch(string_to_match, p) for p in patterns)
 
 
 def _test_kv_store():

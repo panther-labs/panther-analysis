@@ -1,8 +1,13 @@
 import json
 from collections.abc import Mapping
-from ipaddress import ip_network
+from fnmatch import fnmatch
+from ipaddress import ip_address, ip_network
 from functools import reduce
-# This file exists to define global variables for use by other policies.
+from typing import Sequence
+
+# # # # # # # # # # # # # #
+#   Compliance Helpers    #
+# # # # # # # # # # # # # #
 
 # Expects a map with the a Key 'Tags' that maps to a map of key/value string pairs, or None if no
 # tags are present.
@@ -25,7 +30,7 @@ PCI_NETWORKS = [
 ]
 
 
-def in_pci_scope_cidr(ip_range):
+def is_pci_scope_cidr(ip_range):
     return any(
         ip_network(ip_range).overlaps(pci_network)
         for pci_network in PCI_NETWORKS)
@@ -40,9 +45,10 @@ DMZ_NETWORKS = [
 
 
 def is_dmz_cidr(ip_range):
+    """This function determines whether a given IP range is within the defined DMZ IP range."""
     return any(
-        ip_network(ip_range).overlaps(pci_network)
-        for pci_network in PCI_NETWORKS)
+        ip_network(ip_range).overlaps(dmz_network)
+        for dmz_network in DMZ_NETWORKS)
 
 
 DMZ_TAG_KEY = 'environment'
@@ -51,6 +57,7 @@ DMZ_TAG_VALUE = 'dmz'
 
 # Defaults to False to assume something is not a DMZ if it is not tagged
 def is_dmz_tags(resource):
+    """This function determines whether a given resource is tagged as exisitng in a DMZ."""
     if resource['Tags'] is None:
         return False
     return resource['Tags'].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
@@ -61,6 +68,11 @@ def is_dmz_tags(resource):
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
 IS_DMZ = is_dmz_tags
+
+
+# # # # # # # # # # # # # #
+#      GSuite Helpers     #
+# # # # # # # # # # # # # #
 
 GSUITE_PARAMETER_VALUES = [
     'value',
@@ -122,10 +134,15 @@ def gsuite_details_lookup(detail_type, detail_names, event):
     return {}
 
 
+# # # # # # # # # # # # # #
+#      Generic Helpers    #
+# # # # # # # # # # # # # #
+
+
 # 'additional_details' from box logs varies by event_type
 # but it should be a valid json string. This helper
 # wraps the process of extracting those details.
-def box_parse_additional_details(event):
+def box_parse_additional_details(event: dict):
     if event.get('additional_details', {}):
         try:
             return json.loads(event.get('additional_details', {}))
@@ -134,7 +151,7 @@ def box_parse_additional_details(event):
     return {}
 
 
-def okta_alert_context(event):
+def okta_alert_context(event: dict):
     '''Returns common context for automation of Okta alerts'''
     return {
         'ips': event.get('p_any_ip_addresses', []),
@@ -144,7 +161,7 @@ def okta_alert_context(event):
     }
 
 
-def deep_get(dictionary, *keys, default=None):
+def deep_get(dictionary: dict, *keys, default=None):
     '''Safely return the value of an arbitrarily nested map
 
     Inspired by https://bit.ly/3a0hq9E
@@ -152,6 +169,30 @@ def deep_get(dictionary, *keys, default=None):
     return reduce(
         lambda d, key: d.get(key, default)
         if isinstance(d, Mapping) else default, keys, dictionary)
+
+
+def aws_strip_role_session_id(user_identity_arn):
+    # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
+    arn_parts = user_identity_arn.split('/')
+    if arn_parts:
+        return '/'.join(arn_parts[:2])
+    return user_identity_arn
+
+
+def is_ip_in_network(ip_addr, networks):
+    """Check that a given IP is within a list of IP ranges"""
+    return any(
+        ip_address(ip_addr) in ip_network(network) for network in networks)
+
+
+def pattern_match(string_to_match: str, pattern: str):
+    '''Wrapper around fnmatch for basic pattern globs'''
+    return fnmatch(string_to_match, pattern)
+
+
+def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
+    '''Check that a string matches any pattern in a given list'''
+    return any(fnmatch(string_to_match, p) for p in patterns)
 
 
 def get_binding_deltas(event):
