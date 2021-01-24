@@ -121,10 +121,12 @@ def gsuite_parameter_lookup(parameters, key):
     return None
 
 
-# GSuite event details are fomatted as a list of dictionaries.  Each entry has a 'type'
-# and 'name'.  In order to find the event details of interest, you must loop through
-# the list searching for a particular type and name. This helper function handles the
-# looping functionality that is common in many of the gsuite rules
+# GSuite event details are fomatted as a list of dictionaries. Each entry has a 'type' and 'name'.
+#
+# In order to find the event details of interest, you must loop through
+# the list searching for a particular type and name.
+#
+# This helper function handles the looping functionality that is common in many of the gsuite rules
 def gsuite_details_lookup(detail_type, detail_names, event):
     for details in event.get('events', {}):
         if (details.get('type') == detail_type and
