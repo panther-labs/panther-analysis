@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+from panther_base_helpers import deep_get
 
 # sip protects against writing malware into the paths below.
 # additional apps can be added to this list based on your environments.
@@ -16,17 +17,17 @@ APPROVED_APPLICATION_NAMES = {'Adobe Photoshop CC 2019'}
 
 
 def rule(event):
-    if 'Keyboard_Event_Taps' not in event['name']:
+    if 'Keyboard_Event_Taps' not in event.get('name', ''):
         return False
 
-    if event['action'] != 'added':
+    if event.get('action') != 'added':
         return False
 
-    process_path = event['columns'].get('path')
-    if not process_path:
+    process_path = deep_get(event, 'columns', 'path', default='')
+    if process_path == '':
         return False
 
-    if event['columns'].get('name') in APPROVED_APPLICATION_NAMES:
+    if deep_get(event, 'columns', 'name') in APPROVED_APPLICATION_NAMES:
         return False
 
     # Alert if the process is running outside any of the approved paths

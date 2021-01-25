@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
 from panther_gcp_helpers import get_binding_deltas
+from panther_base_helpers import deep_get
 
 ADMIN_ROLES = {
     # Primitive Roles
@@ -11,10 +12,10 @@ ADMIN_ROLES = {
 
 def rule(event):
     for delta in get_binding_deltas(event):
-        if delta['action'] != 'ADD':
+        if delta.get('action') != 'ADD':
             continue
         if any([
-                fnmatch(delta.get('role'), admin_role_pattern)
+                fnmatch(delta.get('role', ''), admin_role_pattern)
                 for admin_role_pattern in ADMIN_ROLES
         ]):
             return True
@@ -23,5 +24,6 @@ def rule(event):
 
 def title(event):
     return 'An admin role has been configured in GCP project {}'.format(
-        event['resource'].get('labels', {}).get('project_id',
-                                                '<PROJECT_NOT_FOUND>'))
+        deep_get(event, 'resource', 'labels', 'project_id', 
+            default='<PROJECT_NOT_FOUND>'))
+
