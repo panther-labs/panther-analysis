@@ -9,6 +9,9 @@ def build_client(resource, service, region=None):
     account = resource['AccountId']
     role_arn = f'arn:aws:iam::{account}:role/PantherAuditRole-{PANTHER_MASTER_REGION}'
 
+    fips_enabled = os.getenv('ENABLE_FIPS', '').lower() == 'true'
+    fips_suffix = '-fips.' + PANTHER_MASTER_REGION + '.amazonaws.com'
+
     sts_connection = boto3.client('sts', endpoint_url='https://sts' + fips_suffix if fips_enabled else None)
 
     acct_b = sts_connection.assume_role(
@@ -18,8 +21,7 @@ def build_client(resource, service, region=None):
     session_token = acct_b['Credentials']['SessionToken']
     # create service client using the assumed role credentials, e.g. S3
 
-    fips_enabled = os.getenv('ENABLE_FIPS', '').lower() == 'true'
-    fips_suffix = '-fips.' + PANTHER_MASTER_REGION + '.amazonaws.com'
+
 
     if region is None:
         client = boto3.client(

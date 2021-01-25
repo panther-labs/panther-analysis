@@ -35,8 +35,6 @@ def resource_table() -> boto3.resource:
     """Lazily build resource table"""
     # pylint: disable=global-statement
     global _RESOURCE_TABLE
-    global FIPS_ENABLED
-    global FIPS_SUFFIX
     if not _RESOURCE_TABLE:
         # pylint: disable=no-member
         _RESOURCE_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-resources')
@@ -115,8 +113,6 @@ def kv_table() -> boto3.resource:
     """Lazily build key-value table resource"""
     # pylint: disable=global-statement
     global _KV_TABLE
-    global FIPS_ENABLED
-    global FIPS_SUFFIX
     if not _KV_TABLE:
         # pylint: disable=no-member
         _KV_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-kv-store')
