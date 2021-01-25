@@ -1,6 +1,3 @@
-import datetime
-from panther_base_helpers import deep_get, pattern_match, pattern_match_list
-
 """
 Panther rule focused on detecting G Suite users who have shared a file with
 an external user.
@@ -33,6 +30,9 @@ WHERE
     and target_user not like '%@acme.com'```
 
 """
+
+import datetime
+from panther_base_helpers import deep_get, pattern_match, pattern_match_list
 
 COMPANY_DOMAIN = 'your-company-name.com'
 EXCEPTION_PATTERNS = {
@@ -124,7 +124,3 @@ def title(event):
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
     # How could there not be if title() gets called?
     return "ERROR - No matching events, but DangerousShares still fired?"
-
-
-def dedup(event):
-    return title(event)
