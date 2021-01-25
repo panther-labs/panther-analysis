@@ -27,12 +27,14 @@ ALLOWED_ROLE_NAMES = {
 
 
 def rule(event):
-    return (event.get('eventName') in SG_CHANGE_EVENTS.keys() and
-            event.get('recipientAccountId') in PROD_ACCOUNT_IDS and
-            # Validate the deployment mechanism (Console, CloudFormation, or Terraform)
-            not (pattern_match_list(event.get('userAgent'), ALLOWED_USER_AGENTS) and
-            # Validate the IAM Role used is in our acceptable list
-            any(role in deep_get(event, 'userIdentity', 'arn') for role in ALLOWED_ROLE_NAMES)))
+    return (
+        event.get('eventName') in SG_CHANGE_EVENTS.keys() and
+        event.get('recipientAccountId') in PROD_ACCOUNT_IDS and
+        # Validate the deployment mechanism (Console, CloudFormation, or Terraform)
+        not (pattern_match_list(event.get('userAgent'), ALLOWED_USER_AGENTS) and
+             # Validate the IAM Role used is in our acceptable list
+             any(role in deep_get(event, 'userIdentity', 'arn')
+                 for role in ALLOWED_ROLE_NAMES)))
 
 
 def dedup(event):
@@ -46,7 +48,8 @@ def title(event):
         field: deep_get(event, 'requestParameters', field)
         for field in SG_CHANGE_EVENTS[event.get('eventName')]['fields']
     }
-    user = deep_get(event, 'userIdentity', 'arn', default='UNKNOWN').split('/')[-1]
+    user = deep_get(event, 'userIdentity', 'arn',
+                    default='UNKNOWN').split('/')[-1]
     title_template = SG_CHANGE_EVENTS[event.get('eventName')]['title']
     title_fields['actor'] = user
     return title_template.format(**title_fields)

@@ -73,11 +73,12 @@ def _check_acl_change_event(actor_email, acl_change_event):
         # This is a dangerous share, check exceptions:
         for pattern, details in EXCEPTION_PATTERNS.items():
             doc_title_match = pattern_match(doc_title.lower(), pattern)
-            allowed_for_match = pattern_match_list(actor_email, details.get("allowed_for"))
+            allowed_for_match = pattern_match_list(actor_email,
+                                                   details.get("allowed_for"))
             allowed_for_all_match = details.get("allowed_for") == {"all"}
 
             if (doc_title_match and
-                    (allowed_for_match or allowed_for_all_match) and
+                (allowed_for_match or allowed_for_all_match) and
                     current_time < details.get("allowed_until")):
                 return False
             # No exceptions match.
