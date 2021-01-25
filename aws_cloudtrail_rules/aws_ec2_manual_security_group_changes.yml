@@ -1,5 +1,5 @@
 AnalysisType: rule
-Filename: aws_manual_securtygroup_changes.py
+Filename: aws_ec2_manual_security_group_changes.py
 RuleID: AWS.EC2.ManualSecurityGroupChange
 DisplayName: AWS EC2 Manual Security Group Change
 Enabled: false
@@ -13,10 +13,9 @@ Severity: Medium
 Description: >
   An EC2 security group was manually updated without abiding by the organization's accepted processes. This rule expects organizations to either use the Console, CloudFormation, or Terraform, configurable in the rule's ALLOWED_USER_AGENTS.
 Runbook: Identify the actor who changed the security group and validate it was legitimate
-Reference: None
 Tests:
   -
-    Name: AWS Console Ingress SG Authorization
+    Name: AWS Console - Ingress SG Authorization
     LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
@@ -158,7 +157,7 @@ Tests:
          "userIdentity":{
             "type":"AssumedRole",
             "principalId":"AROAIZCYMDBM4SJU65M54:ryan@example.com",
-            "arn":"arn:aws:sts::112233445566:assumed-role/Operator/ryan@example.com",
+            "arn":"arn:aws:sts::112233445566:assumed-role/ContinousDeployment/ryan@example.com",
             "accountId":"112233445566",
             "accessKeyId":"ASIAWDWBPTM3RJH7XXXX",
             "sessionContext":{

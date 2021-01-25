@@ -23,10 +23,10 @@ def load_ip_address(event):
     if not source_ip:
         return None
     try:
-        ip = ipaddress.IPv4Address(source_ip)
+        ipaddress.IPv4Address(source_ip)
     except ipaddress.AddressValueError:
         try:
-            ip = ipaddress.IPv6Address(source_ip)
+            ipaddress.IPv6Address(source_ip)
         except ipaddress.AddressValueError:
             return None
-    return ip
+    return source_ip

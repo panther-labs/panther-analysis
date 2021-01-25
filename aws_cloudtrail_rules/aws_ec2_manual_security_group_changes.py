@@ -15,30 +15,36 @@ SG_CHANGE_EVENTS = {
         'title': 'User {actor} has updated security group [{groupId}]',
     },
 }
-
 ALLOWED_USER_AGENTS = {
     '* HashiCorp/?.0 Terraform/*',
     # 'console.ec2.amazonaws.com',
     # 'cloudformation.amazonaws.com',
+}
+ALLOWED_ROLE_NAMES = {
+    'Operator',
+    'ContinousDeployment',
 }
 
 
 def rule(event):
     return (event.get('eventName') in SG_CHANGE_EVENTS.keys() and
             event.get('recipientAccountId') in PROD_ACCOUNT_IDS and
-            not pattern_match_list(event.get('userAgent'), ALLOWED_USER_AGENTS))
+            # Validate the deployment mechanism (Console, CloudFormation, or Terraform)
+            not (pattern_match_list(event.get('userAgent'), ALLOWED_USER_AGENTS) and
+            # Validate the IAM Role used is in our acceptable list
+            any(role in deep_get(event, 'userIdentity', 'arn') for role in ALLOWED_ROLE_NAMES)))
 
 
 def dedup(event):
     return ':'.join(
-        deep_get(event, 'requestParameters', name)
-        for name in SG_CHANGE_EVENTS[event.get('eventName')]['fields'])
+        deep_get(event, 'requestParameters', field)
+        for field in SG_CHANGE_EVENTS[event.get('eventName')]['fields'])
 
 
 def title(event):
     title_fields = {
-        name: deep_get(event, 'requestParameters', name)
-        for name in SG_CHANGE_EVENTS[event.get('eventName')]['fields']
+        field: deep_get(event, 'requestParameters', field)
+        for field in SG_CHANGE_EVENTS[event.get('eventName')]['fields']
     }
     user = deep_get(event, 'userIdentity', 'arn', default='UNKNOWN').split('/')[-1]
     title_template = SG_CHANGE_EVENTS[event.get('eventName')]['title']
