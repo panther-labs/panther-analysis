@@ -1,9 +1,7 @@
 import json
-import os
 from collections.abc import Mapping
 from ipaddress import ip_network
 from functools import reduce
-
 # This file exists to define global variables for use by other policies.
 
 # Expects a map with the a Key 'Tags' that maps to a map of key/value string pairs, or None if no
@@ -155,4 +153,3 @@ def deep_get(dictionary, *keys, default=None):
     return reduce(
         lambda d, key: d.get(key, default)
         if isinstance(d, Mapping) else default, keys, dictionary)
-
