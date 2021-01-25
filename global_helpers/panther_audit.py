@@ -1,8 +1,6 @@
 import os
 import boto3
 
-from panther_base_helpers import FIPS_ENABLED, FIPS_SUFFIX
-
 PANTHER_MASTER_REGION = os.environ.get('AWS_REGION')
 
 
@@ -11,7 +9,7 @@ def build_client(resource, service, region=None):
     account = resource['AccountId']
     role_arn = f'arn:aws:iam::{account}:role/PantherAuditRole-{PANTHER_MASTER_REGION}'
 
-    sts_connection = boto3.client('sts', endpoint_url='https://sts' + FIPS_SUFFIX if FIPS_ENABLED else None)
+    sts_connection = boto3.client('sts', endpoint_url='https://sts' + fips_suffix if fips_enabled else None)
 
     acct_b = sts_connection.assume_role(
         RoleArn=role_arn, RoleSessionName="lambda_assume_audit_role")
@@ -19,6 +17,10 @@ def build_client(resource, service, region=None):
     secret_key = acct_b['Credentials']['SecretAccessKey']
     session_token = acct_b['Credentials']['SessionToken']
     # create service client using the assumed role credentials, e.g. S3
+
+    fips_enabled = os.getenv('ENABLE_FIPS', '').lower() == 'true'
+    fips_suffix = '-fips.' + PANTHER_MASTER_REGION + '.amazonaws.com'
+
     if region is None:
         client = boto3.client(
             service,
@@ -29,8 +31,8 @@ def build_client(resource, service, region=None):
     else:
         client = boto3.client(
             service,
-            region=region if not FIPS_ENABLED else None,  # if FIPS is disabled, fall back to default region
-            endpoint_url='https://sts' + FIPS_SUFFIX if FIPS_ENABLED else None,
+            region=region if not fips_enabled else None,  # if FIPS is disabled, fall back to default region
+            endpoint_url='https://sts' + fips_suffix if fips_enabled else None,
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
             aws_session_token=session_token,

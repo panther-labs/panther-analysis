@@ -2,7 +2,6 @@ import base64
 import json
 import logging
 from datetime import datetime, timedelta
-from panther_base_helpers import FIPS_ENABLED, FIPS_SUFFIX
 
 import boto3
 
@@ -76,12 +75,16 @@ def get_box_client() -> Client:
     # pylint: disable=global-statement
     global BOX_ACCESS_AGE
     global BOX_CLIENT
+
+    fips_enabled = os.getenv('ENABLE_FIPS', '').lower() == 'true'
+    fips_suffix = '-fips.' + os.getenv('AWS_REGION', '') + '.amazonaws.com'
+
     if not Client or not JWTAuth:
         raise Exception('Could not import necessary Box Library.')
     if BOX_CLIENT is not None and BOX_ACCESS_AGE is not None and datetime.now(
     ) - BOX_ACCESS_AGE < timedelta(minutes=MAX_BOX_ACCESS_AGE):
         return BOX_CLIENT
-    response = boto3.client('secretsmanager', endpoint_url='https://secretsmanager'+FIPS_SUFFIX if FIPS_ENABLED else None).get_secret_value(
+    response = boto3.client('secretsmanager', endpoint_url='https://secretsmanager'+fips_suffix if fips_enabled else None).get_secret_value(
         SecretId=BOX_API_ACCESS_NAME)
     settings = build_jwt_settings(response)
     BOX_CLIENT = Client(JWTAuth.from_settings_dictionary(settings))
