@@ -1,5 +1,5 @@
 from ipaddress import ip_address
-from panther_oss_helpers import aws_strip_role_session_id
+from panther_base_helpers import aws_strip_role_session_id
 
 # Do not alert on these access denied errors for these events.
 # Events could be exceptions because they are particularly noisy and provide little to no value,
