@@ -26,20 +26,7 @@ install:
 	pipenv install
 
 test:
-	@tmp=$$(mktemp -d); \
-	for d in $(analysis_directories); \
-	do \
-		cp -r $$d "$$tmp"; \
-	done; \
-	current_dir=$$(pwd); \
-	cd $$tmp; \
-	panther_analysis_tool test ; \
-	rm -r "$$tmp"; \
-	cd $$current_dir;
+	panther_analysis_tool test 
 
 test-single:
-	@tmp=$$(mktemp -d); \
-	cp -r global_helpers "$$tmp"; \
-	cp -r $(pack) "$$tmp"; \
-	panther_analysis_tool test --path "$$tmp"; \
-	rm -r "$$tmp";
+	panther_analysis_tool test --path $(pack)
