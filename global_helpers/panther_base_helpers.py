@@ -6,6 +6,15 @@ from functools import reduce
 from typing import Sequence
 
 # # # # # # # # # # # # # #
+#       Exceptions        #
+# # # # # # # # # # # # # #
+
+
+class PantherUnexpectedAlert(Exception):
+    """Error returned when a Panther detection encounters an unexpected situation."""
+
+
+# # # # # # # # # # # # # #
 #   Compliance Helpers    #
 # # # # # # # # # # # # # #
 
@@ -68,7 +77,6 @@ def is_dmz_tags(resource):
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
 IS_DMZ = is_dmz_tags
-
 
 # # # # # # # # # # # # # #
 #      GSuite Helpers     #

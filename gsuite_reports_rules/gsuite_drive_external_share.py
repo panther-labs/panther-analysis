@@ -32,7 +32,7 @@ WHERE
 """
 
 import datetime
-from panther_base_helpers import deep_get, pattern_match, pattern_match_list
+from panther_base_helpers import deep_get, PantherUnexpectedAlert, pattern_match, pattern_match_list
 
 COMPANY_DOMAIN = 'your-company-name.com'
 EXCEPTION_PATTERNS = {
@@ -123,5 +123,5 @@ def title(event):
         if len(matching_events) > 1:
             return f'Multiple dangerous shares ({len_events}) by [{actor}], including "{doc_title}" to {target_user}'
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
-    # How could there not be if title() gets called?
-    return "ERROR - No matching events, but DangerousShares still fired?"
+    raise PantherUnexpectedAlert(
+        "No matching events, but DangerousShares still fired")
