@@ -16,5 +16,6 @@ def dedup(event):
 
 def title(event):
     return 'A user [{}] accessed another user\'s [{}] [{}] password'.format(
-        event.get('actor_user_name'), event.get('user_name'),
+        event.get('actor_user_name', '<UNKNOWN_USER>'),
+        event.get('user_name', '<UNKNOWN_USER>'),
         event.get('app_name', '<UNKNOWN_APP>'))

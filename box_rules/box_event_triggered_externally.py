@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 DOMAINS = {
     '@example.com',
 }
@@ -11,11 +13,11 @@ def rule(event):
         if user.get('id', '') == '2':
             return True
         return user.get('login') and not any(
-            user.get('login').endswith(x) for x in DOMAINS)
+            user.get('login', '').endswith(x) for x in DOMAINS)
     return False
 
 
 def title(event):
-    message = ('External user [{}] triggered a box event.')
+    message = 'External user [{}] triggered a box event.'
     return message.format(
-        event.get('created_by', {}).get('login', '<UNKNOWN_USER>'))
+        deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>'))

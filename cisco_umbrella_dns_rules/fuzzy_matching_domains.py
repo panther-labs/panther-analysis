@@ -9,11 +9,11 @@ SIMILARITY_RATIO = 0.70
 
 def rule(event):
     # Domains coming through umbrella end with a dot, such as google.com.
-    domain = '.'.join(event['domain'].rstrip('.').split('.')[-2:]).lower()
+    domain = '.'.join(event.get('domain').rstrip('.').split('.')[-2:]).lower()
 
     return (domain not in ALLOW_SET and
             SequenceMatcher(None, DOMAIN, domain).ratio() >= SIMILARITY_RATIO)
 
 
 def title(event):
-    return 'Suspicious DNS resolution to {}'.format(event['domain'])
+    return 'Suspicious DNS resolution to {}'.format(event.get('domain'))

@@ -7,15 +7,15 @@ def rule(event):
 
 
 def dedup(event):
-    return event.get('user_name')
+    return event.get('user_name', '<UNKNOWN_USER>')
 
 
 def title(event):
     if event.get('event_type_id') == 172:
         return 'A user [{}] removed an authentication factor [{}]'.format(
-            event.get('user_name'),
+            event.get('user_name', '<UNKNOWN_USER>'),
             event.get('authentication_factor_description',
                       '<UNKNOWN_AUTH_FACTOR>'))
     return 'A user [{}] deactivated an otp device [{}]'.format(
-        event.get('user_name'),
+        event.get('user_name', '<UNKNOWN_USER>'),
         event.get('otp_device_name', '<UNKNOWN_OTP_DEVICE>'))

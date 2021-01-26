@@ -25,5 +25,5 @@ def rule(event):
 def title(event):
     return 'An admin role has been configured in GCP project {}'.format(
         deep_get(event, 'resource', 'labels', 'project_id', 
-            default='<PROJECT_NOT_FOUND>'))
+            default='<UNKNOWN_PROJECT>'))
 

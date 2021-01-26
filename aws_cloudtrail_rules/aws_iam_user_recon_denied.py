@@ -39,6 +39,6 @@ def dedup(event):
 
 
 def title(event):
-    user_identity = event.get('userIdentity')
+    user_identity = event.get('userIdentity', {})
     return 'Reconnaisance activity denied to {} [{}]'.format(
         user_identity.get('type'), dedup(event))

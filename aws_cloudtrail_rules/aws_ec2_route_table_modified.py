@@ -11,7 +11,7 @@ EC2_RT_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event['eventName'] in EC2_RT_MODIFIED_EVENTS
+    return event.get('eventName') in EC2_RT_MODIFIED_EVENTS
 
 
 def dedup(event):

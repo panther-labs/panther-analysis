@@ -1,4 +1,4 @@
-from panther_base_helpers import box_parse_additional_details
+from panther_base_helpers import box_parse_additional_details, deep_get
 
 
 def rule(event):
@@ -13,10 +13,9 @@ def rule(event):
 
 def title(event):
     details = box_parse_additional_details(event)
-    description = details.get('shield_alert',
-                              {}).get('alert_summary',
-                                      {}).get('description', '')
+    description = deep_get(details, 'shield_alert', 'alert_summary', 'description')
+
     if description:
         return description
     return 'Anamalous download activity triggered by user [{}].'.format(
-        event.get('created_by', {}).get('name', '<UNKNOWN_USER>'))
+        deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>'))

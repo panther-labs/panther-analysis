@@ -16,9 +16,9 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, 'actor', 'email')
+    return deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')
 
 
 def title(event):
     return 'User [{}] made a document externally visible for the first time'.format(
-        deep_get(event, 'actor', 'email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>'))

@@ -16,18 +16,18 @@ def rule(event):
         ip_address(event.get('sourceIPAddress'))
     except ValueError:
         return False
-    return event.get('errorCode') == 'AccessDenied' and event[
-        'eventName'] not in EVENT_EXCEPTIONS
+    return event.get('errorCode') == 'AccessDenied' and event.get(
+        'eventName') not in EVENT_EXCEPTIONS
 
 
 def dedup(event):
-    user_identity = event['userIdentity']
+    user_identity = event.get('userIdentity', {})
     if user_identity.get('type') == 'AssumedRole':
         return aws_strip_role_session_id(user_identity.get('arn', ''))
     return user_identity.get('arn', '')
 
 
 def title(event):
-    user_identity = event.get('userIdentity')
+    user_identity = event.get('userIdentity', {})
     return 'Access denied to {} [{}]'.format(user_identity.get('type'),
                                              dedup(event))

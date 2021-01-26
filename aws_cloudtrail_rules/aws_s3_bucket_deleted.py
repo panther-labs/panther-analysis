@@ -1,6 +1,6 @@
 def rule(event):
     # Capture DeleteBucket, DeleteBucketPolicy, DeleteBucketWebsite
-    return event['eventName'].startswith(
+    return event.get('eventName').startswith(
         'DeleteBucket') and not event.get('errorCode')
 
 
@@ -13,13 +13,13 @@ def helper_strip_role_session_id(user_identity_arn):
 
 
 def dedup(event):
-    user_identity = event['userIdentity']
+    user_identity = event.get('userIdentity', {})
     if user_identity.get('type') == 'AssumedRole':
         return helper_strip_role_session_id(user_identity.get('arn', ''))
     return user_identity.get('arn')
 
 
 def title(event):
-    user_identity = event['userIdentity']
+    user_identity = event.get('userIdentity', {})
     return '{} [{}] destroyed a bucket'.format(user_identity.get('type'),
                                                dedup(event))

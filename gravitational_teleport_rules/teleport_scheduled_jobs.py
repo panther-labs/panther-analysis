@@ -1,6 +1,6 @@
 def rule(event):
     # Filter the events
-    if event['event'] != 'session.command':
+    if event.get('event') != 'session.command':
         return False
     # Ignore list/read events
     if '-l' in event.get('argv', []):
@@ -10,4 +10,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}] has modified scheduled jobs'.format(
-        event.get('user', 'USER_NOT_FOUND'))
+        event.get('user', '<UNKNOWN_USER>'))

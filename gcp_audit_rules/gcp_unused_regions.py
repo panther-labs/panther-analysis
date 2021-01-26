@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 APPROVED_ACTIVE_REGIONS = {
     # 'asia',
     # 'australia',
@@ -20,11 +22,11 @@ def _get_location_or_zone(event):
     if not resource:
         return False
 
-    resource_location = resource['labels'].get('location')
+    resource_location = deep_get(resource, 'labels', 'location')
     if resource_location:
         return resource_location
 
-    resource_zone = resource['labels'].get('zone')
+    resource_zone = deep_get(resource, 'labels', 'zone')
     if resource_zone:
         return resource_zone
 
@@ -32,7 +34,7 @@ def _get_location_or_zone(event):
 
 
 def rule(event):
-    method_name = event['protoPayload'].get('methodName')
+    method_name = deep_get(event, 'protoPayload', 'methodName')
     if not (method_name.endswith('.insert') or method_name.endswith('.create')):
         return False
     return _resource_in_active_region(_get_location_or_zone(event))
@@ -40,5 +42,7 @@ def rule(event):
 
 def title(event):
     return 'GCP resource(s) created in unused region/zone in project {}'.format(
-        event['resource'].get('labels', {}).get('project_id',
-                                                '<PROJECT_NOT_FOUND>'))
+        deep_get(
+            event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>'
+        )
+    )

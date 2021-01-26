@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+from panther_base_helpers import deep_get
 import shlex
 
 SUSPICIOUS_CRON_CMD_ARGS = {
@@ -33,10 +34,10 @@ def suspicious_cmd_args(command):
 
 
 def rule(event):
-    if 'crontab' not in event['name']:
+    if 'crontab' not in event.get('name'):
         return False
 
-    command = event['columns'].get('command')
+    command = deep_get(event, 'columns', 'command')
     if not command:
         return False
 

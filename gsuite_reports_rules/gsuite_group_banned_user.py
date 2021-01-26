@@ -1,8 +1,9 @@
 from panther_base_helpers import gsuite_details_lookup as details_lookup
+from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if event['id'].get('applicationName') != 'groups_enterprise':
+    if deep_get(event, 'id', 'applicationName') != 'groups_enterprise':
         return False
 
     return bool(
@@ -11,4 +12,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}] banned another user from a group.'.format(
-        event.get('actor', {}).get('email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>'))

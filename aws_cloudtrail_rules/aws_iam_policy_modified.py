@@ -22,7 +22,7 @@ POLICY_CHANGE_EVENTS = {
 
 
 def rule(event):
-    return event['eventName'] in POLICY_CHANGE_EVENTS
+    return event.get('eventName') in POLICY_CHANGE_EVENTS
 
 
 def dedup(event):

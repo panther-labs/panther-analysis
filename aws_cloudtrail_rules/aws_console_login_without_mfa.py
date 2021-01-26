@@ -1,12 +1,12 @@
 from panther import lookup_aws_account_name
-
+from panther_base_helpers import deep_get
 
 def rule(event):
-    if event['eventName'] != 'ConsoleLogin':
+    if event.get('eventName') != 'ConsoleLogin':
         return False
 
     additional_event_data = event.get('additionalEventData', {})
-    session_context = event.get('userIdentity', {}).get('sessionContext', {})
+    session_context = deep_get(event, 'userIdentity', 'sessionContext', default={})
     response_elements = event.get('responseElements', {})
 
     return (
@@ -18,7 +18,7 @@ def rule(event):
         not additional_event_data.get('SamlProviderArn') and
         # And ignoring logins that were authenticated via a session that was itself
         # authenticated with MFA
-        session_context.get('attributes', {}).get('mfaAuthenticated') != 'true')
+        deep_get(session_context, 'attributes', 'mfaAuthenticated') != 'true')
 
 
 def title(event):

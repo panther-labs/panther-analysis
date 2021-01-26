@@ -20,9 +20,9 @@ def title(event):
 
 def alert_context(event):
     return {
-        'sourceIPAddress': event['sourceIPAddress'],
+        'sourceIPAddress': event.get('sourceIPAddress'),
         'userIdentityAccountId': deep_get(event, 'userIdentity', 'accountId'),
         'userIdentityArn': deep_get(event, 'userIdentity', 'arn'),
-        'eventTime': event['eventTime'],
+        'eventTime': event.get('eventTime'),
         'mfaUsed': deep_get(event, 'additionalEventData', 'MFAUsed')
     }

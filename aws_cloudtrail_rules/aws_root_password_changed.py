@@ -3,7 +3,7 @@ from panther_base_helpers import deep_get
 
 def rule(event):
     # Only check password update changes
-    if event['eventName'] != 'PasswordUpdated':
+    if event.get('eventName') != 'PasswordUpdated':
         return False
 
     # Only check root activity

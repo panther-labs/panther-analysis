@@ -1,11 +1,12 @@
 from panther_base_helpers import gsuite_details_lookup as details_lookup
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
+from panther_base_helpers import deep_get
 
 MAX_UNLOCK_ATTEMPTS = 10
 
 
 def rule(event):
-    if event['id'].get('applicationName') != 'mobile':
+    if deep_get(event, 'id', 'applicationName') != 'mobile':
         return False
 
     details = details_lookup('suspicious_activity',
@@ -17,4 +18,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}]\'s device had multiple failed unlock attempts'.format(
-        event.get('actor', {}).get('email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>'))

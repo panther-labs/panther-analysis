@@ -26,38 +26,38 @@ def rule(event):
     policy = ''
 
     # S3
-    if event['eventName'] == 'PutBucketPolicy':
+    if event.get('eventName') == 'PutBucketPolicy':
         return policy_is_internet_accessible(parameters.get('bucketPolicy'))
 
     # ECR
-    if event['eventName'] == 'SetRepositoryPolicy':
+    if event.get('eventName') == 'SetRepositoryPolicy':
         policy = parameters.get('policyText', '{}')
 
     # Elasticsearch
-    if event['eventName'] in [
+    if event.get('eventName') in [
             'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
     ]:
         policy = parameters.get('accessPolicies', '{}')
 
     # KMS
-    if event['eventName'] in ['CreateKey', 'PutKeyPolicy']:
+    if event.get('eventName') in ['CreateKey', 'PutKeyPolicy']:
         policy = parameters.get('policy', '{}')
 
     # S3 Glacier
-    if event['eventName'] == 'SetVaultAccessPolicy':
+    if event.get('eventName') == 'SetVaultAccessPolicy':
         policy = deep_get(parameters, 'policy', 'policy', default='{}')
 
     # SNS & SQS
-    if event['eventName'] in ['SetQueueAttributes', 'CreateTopic']:
+    if event.get('eventName') in ['SetQueueAttributes', 'CreateTopic']:
         policy = deep_get(parameters, 'attributes', 'Policy', default='{}')
 
     # SNS
-    if event['eventName'] == 'SetTopicAttributes' and parameters.get(
+    if event.get('eventName') == 'SetTopicAttributes' and parameters.get(
             'attributeName', '') == 'Policy':
         policy = parameters.get('attributeValue', '{}')
 
     # SecretsManager
-    if event['eventName'] == 'PutResourcePolicy':
+    if event.get('eventName') == 'PutResourcePolicy':
         policy = parameters.get('resourcePolicy', '{}')
 
     if not policy:

@@ -10,7 +10,7 @@ EVENT_CITY_TRACKING = {}
 
 def rule(event):
     # Only evaluate successful logins
-    if (event['eventType'] != 'user.session.start' or
+    if (event.get('eventType') != 'user.session.start' or
             deep_get(event, 'outcome', 'result') == 'FAILURE'):
         return False
 
@@ -39,7 +39,7 @@ def rule(event):
     distance = haversine_distance(old_login_stats, new_login_stats)
     old_time = datetime.strptime(old_login_stats['time'][:26],
                                  PANTHER_TIME_FORMAT)
-    new_time = datetime.strptime(event['p_event_time'][:26],
+    new_time = datetime.strptime(event.get('p_event_time')[:26],
                                  PANTHER_TIME_FORMAT)
     time_delta = (new_time -
                   old_time).total_seconds() / 3600  # seconds in an hour
@@ -51,9 +51,9 @@ def rule(event):
 
     # Calculation is complete, so store the most recent login for the next check
     store_login_info(login_key, event)
-    EVENT_CITY_TRACKING[event['p_row_id']] = {
-        'new_city': new_login_stats.get('city', 'Not Found'),
-        'old_city': old_login_stats.get('city', 'Not Found'),
+    EVENT_CITY_TRACKING[event.get('p_row_id')] = {
+        'new_city': new_login_stats.get('city', '<UNKNOWN_NEW_CITY>'),
+        'old_city': old_login_stats.get('city', '<UNKNOWN_OLD_CITY>'),
     }
 
     return speed > 900  # Boeing 747 cruising speed
@@ -96,7 +96,7 @@ def store_login_info(key, event):
                 deep_get(event, 'client', 'geographicalContext', 'geolocation',
                          'lat'),
             'time':
-                event['p_event_time']
+                event.get('p_event_time')
         })
     ])
     # Expire the entry after a week so the table doesn't fill up with past users
@@ -108,9 +108,16 @@ def title(event):
     # (Optional) Return a string which will be shown as the alert title.
     return 'Geographically improbably login for user [{}] from [{}] to [{}]'.format(
         deep_get(event, 'actor', 'alternateId'),
-        EVENT_CITY_TRACKING[event['p_row_id']].get(
-            'old_city', '<NOT_STORED>'),  # For compatability
-        EVENT_CITY_TRACKING[event['p_row_id']]['new_city'],
+        deep_get(
+            EVENT_CITY_TRACKING.get(event.get('p_row_id')),
+            'old_city',
+            default='<NOT_STORED>'
+        ),  # For compatibility
+        deep_get(
+            EVENT_CITY_TRACKING.get(event.get('p_row_id')),
+            'new_city',
+            default='<UNKNOWN_NEW_CITY>'
+        ),
     )
 
 
@@ -121,7 +128,14 @@ def dedup(event):
 
 def alert_context(event):
     context = okta_alert_context(event)
-    context['old_city'] = EVENT_CITY_TRACKING[event['p_row_id']].get(
-        'old_city', '<NOT_STORED>')
-    context['new_city'] = EVENT_CITY_TRACKING[event['p_row_id']]['new_city']
+    context['old_city'] = deep_get(
+        EVENT_CITY_TRACKING.get(event.get('p_row_id')),
+        'old_city',
+        default='<NOT_STORED>'
+    )
+    context['new_city'] = deep_get(
+        EVENT_CITY_TRACKING.get(event.get('p_row_id')),
+        'new_city',
+        default='<UNKNOWN_NEW_CITY>'
+    )
     return context

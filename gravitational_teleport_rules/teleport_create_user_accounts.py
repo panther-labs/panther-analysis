@@ -9,7 +9,7 @@ USER_CREATE_PATTERNS = [
 
 def rule(event):
     # Filter the events
-    if event['event'] != 'session.command':
+    if event.get('event') != 'session.command':
         return False
     # Check that the program matches our list above
     return pattern_match_list(event.get('program', ''), USER_CREATE_PATTERNS)
@@ -17,4 +17,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}] has manually modified system users'.format(
-        event.get('user', 'USER_NOT_FOUND'))
+        event.get('user', '<UNKNOWN_USER>'))

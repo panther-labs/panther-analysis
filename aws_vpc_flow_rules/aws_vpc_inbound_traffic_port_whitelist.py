@@ -11,7 +11,7 @@ def rule(event):
         return False
 
     # Only monitor for non whitelisted ports
-    if event['dstport'] in APPROVED_PORTS:
+    if event.get('dstport') in APPROVED_PORTS:
         return False
 
     # Only monitor for traffic coming from non-private IP space

@@ -1,3 +1,6 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
     # DEVICE_TRUST_CHECK_FAILED
     #  detect when a user attempts to login from an untrusted device
@@ -6,4 +9,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}] attempted to login from an untrusted device.'.format(
-        event.get('created_by', {}).get('name', "<UNKNOWN_USER>"))
+        deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>'))

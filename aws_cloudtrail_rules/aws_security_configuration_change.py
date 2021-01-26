@@ -1,26 +1,29 @@
+from panther_base_helpers import deep_get
+
 SECURITY_CONFIG_ACTIONS = {
-    'DeleteAccountPublicAccessBlock',
-    'DeleteDeliveryChannel',
-    'DeleteDetector',
-    'DeleteFlowLogs',
-    'DeleteRule',
-    'DeleteTrail',
-    'DisableEbsEncryptionByDefault',
-    'DisableRule',
-    'StopConfigurationRecorder',
-    'StopLogging',
+    "DeleteAccountPublicAccessBlock",
+    "DeleteDeliveryChannel",
+    "DeleteDetector",
+    "DeleteFlowLogs",
+    "DeleteRule",
+    "DeleteTrail",
+    "DisableEbsEncryptionByDefault",
+    "DisableRule",
+    "StopConfigurationRecorder",
+    "StopLogging",
 }
 
 
 def rule(event):
-    if event['eventName'] == 'UpdateDetector':
-        return not event['requestParameters'].get('enable', True)
+    if event.get("eventName") == "UpdateDetector":
+        return not event.get("requestParameters", {}).get("enable", True)
 
-    return event['eventName'] in SECURITY_CONFIG_ACTIONS
+    return event.get("eventName") in SECURITY_CONFIG_ACTIONS
 
 
 def title(event):
-    user = event['userIdentity'].get('userName') or event['userIdentity'].get(
-        'sessionContext').get('sessionIssuer').get('userName')
+    user = deep_get(event, "userIdentity", "userName") or deep_get(
+        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
+    )
 
-    return f"Sensitive AWS API call {event['eventName']} made by {user}"
+    return f"Sensitive AWS API call {event.get('eventName')} made by {user}"

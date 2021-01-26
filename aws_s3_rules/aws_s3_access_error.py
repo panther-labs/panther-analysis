@@ -11,7 +11,7 @@ def rule(event):
     if event.get('useragent', '').startswith('aws-internal'):
         return False
 
-    return (pattern_match(event.get('operation'), 'REST.*.OBJECT') and
+    return (pattern_match(event.get('operation', ''), 'REST.*.OBJECT') and
             event.get('httpstatus') in HTTP_STATUS_CODES_TO_MONITOR)
 
 

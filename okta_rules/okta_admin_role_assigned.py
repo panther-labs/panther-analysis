@@ -20,7 +20,7 @@ def dedup(event):
                           'debugContext',
                           'debugData',
                           'requestId',
-                          default='REQUEST_ID_NOT_FOUND')
+                          default='UNKNOWN_REQUEST_ID')
     return f'requestId-{request_id}'
 
 
@@ -40,7 +40,7 @@ def title(event):
                  'debugContext',
                  'debugData',
                  'privilegeGranted',
-                 default='PRIV_NOT_FOUND'), display_name, alternate_id)
+                 default='UNKNOWN_PRIV'), display_name, alternate_id)
 
 
 def alert_context(event):

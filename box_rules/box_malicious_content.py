@@ -1,4 +1,4 @@
-from panther_base_helpers import box_parse_additional_details
+from panther_base_helpers import box_parse_additional_details, deep_get
 
 
 def rule(event):
@@ -18,13 +18,12 @@ def rule(event):
 def title(event):
     if event.get('event_type') == 'FILE_MARKED_MALICIOUS':
         return 'File [{}], owned by [{}], was marked malicious.'.format(
-            event.get('source', {}).get('item_name', "<UNKNOWN_FILE>"),
-            event.get('source', {}).get('owned_by',
-                                        {}).get('login', '<UNKNOWN_USER>'))
+            deep_get(event, 'source', 'item_name', default='<UNKNOWN_FILE'),
+            deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>'),
+        )
 
     alert_details = box_parse_additional_details(event).get('shield_alert', {})
     return 'File [{}], owned by [{}], was marked malicious.'.format(
-        alert_details.get('alert_summary',
-                          {}).get('upload_activity',
-                                  {}).get('item_name', '<UNKNOWN_FILE_NAME>'),
-        alert_details.get('user', {}).get('email', '<UNKNOWN_USER>'))
+        deep_get(alert_details, 'alert_summary', 'upload_activity', 'item_name', default='<UNKNOWN_FILE>'),
+        deep_get(alert_details, 'user', 'email', default='<UNKNOWN_USER>'),
+    )

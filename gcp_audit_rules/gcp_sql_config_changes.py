@@ -1,8 +1,11 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
-    return event['protoPayload'].get(
-        'methodName') == 'cloudsql.instances.update'
+    return deep_get(event, 'protoPayload', 'methodName') == 'cloudsql.instances.update'
 
 
 def dedup(event):
-    return event['resource'].get('labels', {}).get('project_id',
-                                                   '<PROJECT_NOT_FOUND>')
+    return deep_get(
+        event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>'
+    )

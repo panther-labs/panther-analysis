@@ -1,3 +1,6 @@
+from panther_base_helpers import deep_get
+
+
 ROLE_METHODS = {
     'google.iam.admin.v1.CreateRole', 'google.iam.admin.v1.DeleteRole',
     'google.iam.admin.v1.UpdateRole'
@@ -5,10 +8,11 @@ ROLE_METHODS = {
 
 
 def rule(event):
-    return (event['resource'].get('type') == 'iam_role' and
-            event['protoPayload'].get('methodName') in ROLE_METHODS)
+    return deep_get(event, 'resource', 'type') == 'iam_role' and \
+           deep_get(event, 'protoPayload', 'methodName') in ROLE_METHODS
 
 
 def dedup(event):
-    return event['resource'].get('labels', {}).get('project_id',
-                                                   '<PROJECT_NOT_FOUND>')
+    return deep_get(
+        event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>'
+    )

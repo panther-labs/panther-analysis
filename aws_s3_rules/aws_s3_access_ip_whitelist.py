@@ -16,7 +16,7 @@ def rule(event):
     if 'remoteip' not in event:
         return False
 
-    cidr_ip = ip_network(event['remoteip'])
+    cidr_ip = ip_network(event.get('remoteip'))
     return not any(
         cidr_ip.subnet_of(approved_ip_range)
         for approved_ip_range in WHITELIST_NETWORKS)
@@ -24,4 +24,4 @@ def rule(event):
 
 def title(event):
     return 'Non-Approved IP access to S3 Bucket [{}]'.format(
-        event.get('bucket'))
+        event.get('bucket', '<UNKNOWN_BUCKET>'))

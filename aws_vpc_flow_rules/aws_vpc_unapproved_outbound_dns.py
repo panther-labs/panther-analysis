@@ -20,4 +20,4 @@ def rule(event):
         return False
 
     # No clean way to default to False (no alert), so explicitly check for key
-    return 'dstaddr' in event and event['dstaddr'] not in APPROVED_DNS_SERVERS
+    return 'dstaddr' in event and event.get('dstaddr') not in APPROVED_DNS_SERVERS

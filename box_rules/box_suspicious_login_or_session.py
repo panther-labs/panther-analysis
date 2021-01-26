@@ -1,9 +1,9 @@
-from panther_base_helpers import box_parse_additional_details
+from panther_base_helpers import box_parse_additional_details, deep_get
 
-SUSPICIOUS_EVENT_TYPES = [
+SUSPICIOUS_EVENT_TYPES = {
     'Suspicious Locations',
     'Suspicious Sessions',
-]
+}
 
 
 def rule(event):
@@ -18,10 +18,8 @@ def rule(event):
 
 def title(event):
     details = box_parse_additional_details(event)
-    description = details.get('shield_alert',
-                              {}).get('alert_summary',
-                                      {}).get('description', '')
+    description = deep_get(details, 'shield_alert', 'alert_summary', 'description', default='')
     if description:
         return description
     return 'Shield medium to high risk, suspicious event alert triggered for user [{}]'.format(
-        details.get('shield_alert', {}).get('user', {}).get('email'))
+        deep_get(details, 'shield_alert', 'user', 'email', default='<UNKNOWN_USER>'))

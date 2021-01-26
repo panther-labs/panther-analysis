@@ -1,3 +1,5 @@
+from panther_base_helpers import deep_get
+
 UPDATE_EVENTS = {
     'ChangePassword', 'CreateAccessKey', 'CreateLoginProfile', 'CreateUser'
 }
@@ -9,10 +11,10 @@ def rule(event):
 
 
 def dedup(event):
-    return event.get('userIdentity', {}).get('userName', '<UNKNOWN_USER>')
+    return deep_get(event, 'userIdentity', 'userName', default='<UNKNOWN_USER>')
 
 
 def title(event):
-    user_identity = event['userIdentity']
+    user_identity = event.get('userIdentity', {})
     return '{} [{}] has updated their IAM credentials'.format(
         user_identity.get('type'), user_identity.get('arn'))

@@ -1,5 +1,8 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
-    if event['id'].get('applicationName') != 'user_accounts':
+    if deep_get(event, 'id', 'applicationName') != 'user_accounts':
         return False
 
     for details in event.get('events', [{}]):
@@ -12,4 +15,4 @@ def rule(event):
 
 def title(event):
     return 'Two step verification was disabled for user [{}]'.format(
-        event.get('actor', {}).get('email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>'))

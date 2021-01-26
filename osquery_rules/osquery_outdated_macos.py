@@ -8,7 +8,7 @@ SUPPORTED_VERSIONS = [
 
 
 def rule(event):
-    return (event['name'] == 'pack_vuln-management_os_version' and
+    return (event.get('name') == 'pack_vuln-management_os_version' and
             deep_get(event, 'columns', 'platform') == 'darwin' and
             deep_get(event, 'columns', 'version') not in SUPPORTED_VERSIONS and
-            event['action'] == 'added')
+            event.get('action') == 'added')

@@ -3,7 +3,7 @@ from panther_base_helpers import deep_get
 
 def rule(event):
     # Only check console logins
-    if event['eventName'] != 'ConsoleLogin':
+    if event.get('eventName') != 'ConsoleLogin':
         return False
 
     # Only check root activity

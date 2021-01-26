@@ -1,8 +1,9 @@
 from panther_base_helpers import gsuite_details_lookup as details_lookup
+from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if event['id'].get('applicationName') != 'mobile':
+    if deep_get(event, 'id', 'applicationName') != 'mobile':
         return False
 
     return bool(
@@ -12,4 +13,4 @@ def rule(event):
 
 def title(event):
     return 'User [{}]\'s device was compromised'.format(
-        event.get('actor', {}).get('email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>'))

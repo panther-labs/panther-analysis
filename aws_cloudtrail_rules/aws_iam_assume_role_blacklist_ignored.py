@@ -8,7 +8,7 @@ ASSUME_ROLE_BLACKLIST = [
 
 def rule(event):
     # Only considering the AssumeRole action
-    if event['eventName'] != 'AssumeRole':
+    if event.get('eventName') != 'AssumeRole':
         return False
 
     # Only considering user actions

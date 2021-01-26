@@ -25,9 +25,9 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, 'actor', 'email')
+    return deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')
 
 
 def title(event):
     return 'User [{}] modified a document that has overly permissive share settings'.format(
-        deep_get(event, 'actor', 'email'))
+        deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>'))

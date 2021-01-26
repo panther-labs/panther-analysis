@@ -1,12 +1,12 @@
 def rule(event):
-    if 'osx-attacks' not in event['name']:
+    if 'osx-attacks' not in event.get('name', ''):
         return False
 
     # There is another rule specifically for this query
-    if 'Keyboard_Event_Taps' in event['name']:
+    if 'Keyboard_Event_Taps' in event.get('name', ''):
         return False
 
-    if event['action'] != 'added':
+    if event.get('action') != 'added':
         return False
 
     return True

@@ -22,7 +22,7 @@ def rule(event):
     if __name__ == 'PolicyApiTestingPolicy':
         resp = lambda: None
         setattr(resp, 'status_code', 200)
-        setattr(resp, 'text', event['api_data'])
+        setattr(resp, 'text', event.get('api_data'))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',

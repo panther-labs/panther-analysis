@@ -11,13 +11,13 @@ def rule(event):
         return False
 
     # Lookup geo-ip data via API call
-    url = 'https://ipinfo.io/' + event['ipaddr'] + '/geo'
+    url = 'https://ipinfo.io/' + event.get('ipaddr') + '/geo'
 
     # Skip API call if this is a unit test
     if 'panther_api_data' in event:
         resp = lambda: None
         setattr(resp, 'status_code', 200)
-        setattr(resp, 'text', event['panther_api_data'])
+        setattr(resp, 'text', event.get('panther_api_data'))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
@@ -32,7 +32,7 @@ def rule(event):
     # for a given user's logins. In this way, we can detect unusual logins.
     login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
         'city', '<CITY>')
-    EVENT_LOGIN_INFO[event['p_row_id']] = login_tuple
+    EVENT_LOGIN_INFO[event.get('p_row_id')] = login_tuple
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -48,7 +48,7 @@ def rule(event):
 
     # Here we are checking if this login's fingerprint is one of the top three most common
     # fingerprints for this user. If it is not, we fire an alert.
-    tuple_count = last_login_info[login_tuple]
+    tuple_count = last_login_info.get(login_tuple)
     higher_tuples = 0
     for tcount in last_login_info.values():
         if tcount > tuple_count:
@@ -68,4 +68,4 @@ def title(event):
     # (Optional) Return a string which will be shown as the alert title.
     return 'Unusual OneLogin access for user [{}] from [{}]'.format(
         event.get('user_name', '<UNKNOWN_USER>'),
-        EVENT_LOGIN_INFO[event['p_row_id']])
+        EVENT_LOGIN_INFO.get(event.get('p_row_id')))
