@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
 
+
 def rule(event):
     # EC2 Volume snapshot made public
     if event.get('eventName') == 'ModifySnapshotAttribute':

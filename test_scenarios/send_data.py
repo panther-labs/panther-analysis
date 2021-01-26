@@ -18,6 +18,8 @@ import yaml
 #   --compromise-datetime '2020-11-01T18:00:00+00:00'
 #   --bucket-name panther-demo-2020-11
 #   --file compromised-root-creds/threat_hunting_vpc.yaml
+
+
 def main(args):
     if not path.exists(args.file):
         logging.error('File does not exist: %s', args.file)
@@ -42,6 +44,7 @@ def main(args):
         data.get('LogType', ''),
         data.get('Format', 'jsonl'))
 
+
 def process_file(event_time_shift, client, bucket_name, logs, log_type, log_format):
     # these 2 are special
     if log_type == 'AWS.CloudTrail':
@@ -56,10 +59,11 @@ def process_file(event_time_shift, client, bucket_name, logs, log_type, log_form
         process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type)
         return
     if log_format == 'raw':
-       process_any_raw(event_time_shift, client, bucket_name, logs, log_type)
-       return
+        process_any_raw(event_time_shift, client, bucket_name, logs, log_type)
+        return
 
     raise Exception('unknown log format: ' + log_format)
+
 
 def process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_json_logs(event_time_shift, logs, log_type)
@@ -68,12 +72,16 @@ def process_cloudtrail(event_time_shift, client, bucket_name, logs, log_type):
     resp = write_s3(client, bucket_name, {'Records': logs}, 'json')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
+
 FLOW_LOG_HEADER = 'version account-id interface-id srcaddr dstaddr srcport dstport protocol packets bytes start end action log-status'
+
+
 def process_vpcflow(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_vpcflow_logs(event_time_shift, logs, log_type)
     logging.info('Sending [%d] %s logs...', len(logs), log_type)
     resp = write_s3(client, bucket_name, [FLOW_LOG_HEADER]+logs, 'raw')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
+
 
 def process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_json_logs(event_time_shift, logs, log_type)
@@ -81,11 +89,13 @@ def process_any_jsonl(event_time_shift, client, bucket_name, logs, log_type):
     resp = write_s3(client, bucket_name, logs, 'jsonl')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
 
+
 def process_any_raw(event_time_shift, client, bucket_name, logs, log_type):
     logs = time_shift_raw_logs(event_time_shift, logs, log_type)
     logging.info('Sending [%d] %s logs...', len(logs), log_type)
     resp = write_s3(client, bucket_name, logs, 'raw')
     logging.debug('Response: %s', resp['ResponseMetadata']['HTTPStatusCode'])
+
 
 def write_s3(client, bucket_name, logs, format):
     if format == 'raw':
@@ -103,6 +113,7 @@ def write_s3(client, bucket_name, logs, format):
     data_stream.seek(0)
     return client.put_object(Bucket=bucket_name, ContentType='gzip', Body=data_stream, Key=str(uuid.uuid4())+".gz")
 
+
 def time_shift_json_logs(event_time_shift, logs, log_type):
     shifted_logs = []
     event_time = get_event_time(log_type)
@@ -114,6 +125,7 @@ def time_shift_json_logs(event_time_shift, logs, log_type):
         log[event_time_attr] = log_event_time.strftime(event_time_format)
         shifted_logs.append(log)
     return shifted_logs
+
 
 def time_shift_raw_logs(event_time_shift, logs, log_type):
     shifted_logs = []
@@ -128,6 +140,7 @@ def time_shift_raw_logs(event_time_shift, logs, log_type):
         log = ' '.join(log)
         shifted_logs.append(log)
     return shifted_logs
+
 
 def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
     shifted_logs = []
@@ -148,14 +161,16 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
         shifted_logs.append(log)
     return shifted_logs
 
+
 def get_event_time(log_type):
-    if log_type == 'AWS.CloudTrail': #  eventTime: "2020-11-01T08:35:19Z"
+    if log_type == 'AWS.CloudTrail':  # eventTime: "2020-11-01T08:35:19Z"
         return {'attr': 'eventTime', 'format': '%Y-%m-%dT%H:%M:%SZ'}
-    if log_type == 'Okta.SystemLog': # published:
+    if log_type == 'Okta.SystemLog':  # published:
         return {'attr': 'published', 'format': '%Y-%m-%dT%H:%M:%S.%fZ'}
-    if log_type == 'AWS.S3ServerAccess': # [03/Nov/2020:04:43:07 +0000]
+    if log_type == 'AWS.S3ServerAccess':  # [03/Nov/2020:04:43:07 +0000]
         return {'index': 2, 'format': '[%d/%b/%Y:%H:%M:%S'}
     raise Exception('unknown logType: ' + log_type)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Send test data to Panther.')
@@ -176,10 +191,10 @@ if __name__ == '__main__':
                         type=datetime.fromisoformat,
                         required=True)
     parser.add_argument('--panther-compromise-datetime',
-                         help='the datetime to shift all events from the compromise date UTC in iso format (defaults to now)',
-                         type=datetime.fromisoformat,
-                         default=datetime.now(timezone.utc),
-                         required=False)
+                        help='the datetime to shift all events from the compromise date UTC in iso format (defaults to now)',
+                        type=datetime.fromisoformat,
+                        default=datetime.now(timezone.utc),
+                        required=False)
     args = parser.parse_args()
 
     logging.basicConfig(format='[%(asctime)s %(levelname)-8s] %(message)s',

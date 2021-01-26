@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
 
+
 def rule(event):
     return event.get('event_type') == 'ACCESS_GRANTED'
 

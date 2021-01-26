@@ -1,6 +1,7 @@
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 
+
 def rule(event):
     if event.get('eventName') != 'ConsoleLogin':
         return False

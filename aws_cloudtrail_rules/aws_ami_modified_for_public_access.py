@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
 
+
 def rule(event):
     # Only check ModiyImageAttribute events
     if event.get('eventName') != 'ModifyImageAttribute':
