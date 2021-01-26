@@ -29,4 +29,4 @@ test:
 	panther_analysis_tool test 
 
 test-single:
-	panther_analysis_tool test --path $(pack)
+	panther_analysis_tool test --path $(path)
