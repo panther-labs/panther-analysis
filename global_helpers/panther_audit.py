@@ -21,8 +21,6 @@ def build_client(resource, service, region=None):
     session_token = acct_b['Credentials']['SessionToken']
     # create service client using the assumed role credentials, e.g. S3
 
-
-
     if region is None:
         client = boto3.client(
             service,
@@ -33,7 +31,7 @@ def build_client(resource, service, region=None):
     else:
         client = boto3.client(
             service,
-            region=region if not fips_enabled else None,  # if FIPS is disabled, fall back to default region
+            region='fips-' + region if fips_enabled and region else region,
             endpoint_url='https://sts' + fips_suffix if fips_enabled else None,
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
