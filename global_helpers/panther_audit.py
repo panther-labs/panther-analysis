@@ -20,7 +20,6 @@ def build_client(resource, service, region=None):
     secret_key = acct_b['Credentials']['SecretAccessKey']
     session_token = acct_b['Credentials']['SessionToken']
     # create service client using the assumed role credentials, e.g. S3
-
     if region is None:
         client = boto3.client(
             service,
