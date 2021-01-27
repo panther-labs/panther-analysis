@@ -1,5 +1,4 @@
-from panther_base_helpers import gsuite_details_lookup as details_lookup
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, gsuite_details_lookup as details_lookup
 
 
 def rule(event):

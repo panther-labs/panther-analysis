@@ -33,6 +33,7 @@ git clone git@github.com:panther-labs/panther-analysis.git
 cd panther-analysis
 
 # Configure your Python environment
+make install
 make venv
 source venv/bin/activate
 
