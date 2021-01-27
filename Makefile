@@ -1,4 +1,4 @@
-analysis_directories := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
+dirs := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -11,14 +11,14 @@ deps-update:
 	pip3 freeze -r requirements-top-level.txt > requirements.txt
 
 lint:
-	bandit -r $(analysis_directories) --skip B101  # allow assert statements in tests
-	pylint $(analysis_directories) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --exit-zero
+	bandit -r $(dirs) --skip B101  # allow assert statements in tests
+	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --exit-zero
 
 venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run yapf $(analysis_directories) --in-place --parallel --recursive  --style google
+	pipenv run yapf $(dirs) --in-place --parallel --recursive  --style google
 
 install:
 	pip3 install --user --upgrade pip
@@ -26,20 +26,4 @@ install:
 	pipenv install
 
 test:
-	@tmp=$$(mktemp -d); \
-	for d in $(analysis_directories); \
-	do \
-		cp -r $$d "$$tmp"; \
-	done; \
-	current_dir=$$(pwd); \
-	cd $$tmp; \
-	panther_analysis_tool test ; \
-	rm -r "$$tmp"; \
-	cd $$current_dir;
-
-test-single:
-	@tmp=$$(mktemp -d); \
-	cp -r global_helpers "$$tmp"; \
-	cp -r $(pack) "$$tmp"; \
-	panther_analysis_tool test --path "$$tmp"; \
-	rm -r "$$tmp";
+	panther_analysis_tool test

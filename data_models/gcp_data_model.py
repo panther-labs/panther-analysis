@@ -1,7 +1,7 @@
 from fnmatch import fnmatch
 
 import panther_event_type_helpers as event_type
-from panther_gcp_helpers import get_binding_deltas
+from panther_base_helpers import get_binding_deltas
 
 ADMIN_ROLES = {
     # Primitive Roles

@@ -1,4 +1,4 @@
-from panther_oss_helpers import pattern_match
+from panther_base_helpers import pattern_match
 
 
 def rule(event):
