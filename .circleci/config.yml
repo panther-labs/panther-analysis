@@ -1,6 +1,50 @@
 version: 2
+commands:
+  autofmt:
+    steps:
+      - run:
+          # Generate source files, fmt the repo, and commit any resulting changes.
+          # If a new commit is pushed, CircleCI will immediately restart the workflow.
+          #
+          # This will not run on the master branch, and to prevent a feedback loop it will also not
+          # run if the last commit that triggered this build was authored by the bot.
+          name: Autofmt
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "master" ]]; then
+                echo "master branch: skipping autofmt"
+                exit 0
+            fi
 
+            if [[ "`git log -1 --pretty=format:'%an'`" == "panther-bot" ]]; then
+                echo "panther-bot made the last commit: skipping autofmt"
+                exit 0
+            fi
+
+            /tmp/panther/magebin gen doc fmt
+            git config --global user.email "github-service-account@runpanther.io"
+            git config --global user.name "panther-bot"
+            git add -A .
+            git commit -m "mage gen doc fmt" || true
+            git push origin $CIRCLE_BRANCH
 jobs:
+  setup:
+    # Install dependencies, compile the mage binary, and autofmt.
+    # Subsequent jobs can load libraries from the cache and mage from workspace storage.
+    executor: panther-buildpack
+    resource_class: large
+    steps:
+      - checkout
+      - restore_pip_cache
+      - run:
+          # This is the only time 'mage' is invoked directly in CI
+          name: Compile mage binary
+          command: mage -compile /tmp/panther/magebin
+      - run:
+          # "mage setup" will have no effect unless new dependencies have been introduced.
+          name: Install new dependencies
+          command: /tmp/panther/magebin -v setup
+      - save_caches
+      - autofmt
   lint:
     docker:
       - image: 'circleci/python:3.7'
