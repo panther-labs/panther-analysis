@@ -1,10 +1,12 @@
 """Utility functions provided to policies and rules during execution."""
 import time
 from typing import Any, Dict, Union, Sequence, Set
-
+import os
 import boto3
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
+FIPS_ENABLED = os.getenv('ENABLE_FIPS', '').lower() == 'true'
+FIPS_SUFFIX = '-fips.' + os.getenv('AWS_REGION', '') + '.amazonaws.com'
 
 
 class BadLookup(Exception):
@@ -33,7 +35,7 @@ def resource_table() -> boto3.resource:
     global _RESOURCE_TABLE
     if not _RESOURCE_TABLE:
         # pylint: disable=no-member
-        _RESOURCE_TABLE = boto3.resource('dynamodb').Table('panther-resources')
+        _RESOURCE_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-resources')
     return _RESOURCE_TABLE
 
 
@@ -76,7 +78,7 @@ def kv_table() -> boto3.resource:
     global _KV_TABLE
     if not _KV_TABLE:
         # pylint: disable=no-member
-        _KV_TABLE = boto3.resource('dynamodb').Table('panther-kv-store')
+        _KV_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-kv-store')
     return _KV_TABLE
 
 
