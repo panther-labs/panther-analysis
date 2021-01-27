@@ -20,7 +20,7 @@ def dedup(event):
                           'debugContext',
                           'debugData',
                           'requestId',
-                          default='UNKNOWN_REQUEST_ID')
+                          default='<UNKNOWN_REQUEST_ID>')
     return f'requestId-{request_id}'
 
 
