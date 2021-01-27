@@ -58,5 +58,9 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - lint
-      - unit_tests
+      - lint:
+          requires:
+            - setup
+      - unit_tests:
+          requires:
+            - setup
