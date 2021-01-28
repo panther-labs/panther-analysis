@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """
 Panther rule focused on detecting G Suite users who have shared a file with
 an external user.

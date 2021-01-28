@@ -12,7 +12,7 @@ deps-update:
 
 lint:
 	bandit -r $(dirs) --skip B101  # allow assert statements in tests
-	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --exit-zero
+	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511
 
 venv:
 	virtualenv -p python3.7 venv

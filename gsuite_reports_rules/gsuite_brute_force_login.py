@@ -1,4 +1,6 @@
 from panther_base_helpers import deep_get, gsuite_details_lookup
+
+# pylint: disable=pointless-string-statement
 '''
 SELECT *
 FROM panther_logs.public.gsuite_reports
