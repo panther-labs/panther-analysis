@@ -114,10 +114,5 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - setup
-      - lint:
-          requires:
-            - setup
-      - unit_tests:
-          requires:
-            - setup
+      - lint
+      - unit_tests
