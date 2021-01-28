@@ -1,4 +1,5 @@
 analysis_directories := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
+schema_files := $(shell find schemas/ -type f -name '*.yml' -and -not -wholename '*/tests/*' | sort | xargs)
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -43,3 +44,16 @@ test-single:
 	cp -r $(pack) "$$tmp"; \
 	panther_analysis_tool test --path "$$tmp"; \
 	rm -r "$$tmp";
+
+managed-schemas.zip:
+	@tmp=$$(mktemp -d); \
+	for f in $(schema_files); do \
+		echo "---"; \
+		cat "$$f"; \
+	done > "$$tmp/manifest.yml"; \
+	sha256sum "$$tmp/manifest.yml" > "$$tmp/SHA256SUMS"; \
+	mkdir -p dist; \
+	rm -f dist/managed-schemas.zip; \
+	zip -jrD dist/managed-schemas.zip "$$tmp"; \
+	rm -rf "$$tmp";
+
