@@ -85,8 +85,11 @@ def get_box_client() -> Client:
     if BOX_CLIENT is not None and BOX_ACCESS_AGE is not None and datetime.now(
     ) - BOX_ACCESS_AGE < timedelta(minutes=MAX_BOX_ACCESS_AGE):
         return BOX_CLIENT
-    response = boto3.client('secretsmanager', endpoint_url='https://secretsmanager'+fips_suffix if fips_enabled else None).get_secret_value(
-        SecretId=BOX_API_ACCESS_NAME)
+    response = boto3.client(
+        'secretsmanager',
+        endpoint_url='https://secretsmanager' +
+        fips_suffix if fips_enabled else None).get_secret_value(
+            SecretId=BOX_API_ACCESS_NAME)
     settings = build_jwt_settings(response)
     BOX_CLIENT = Client(JWTAuth.from_settings_dictionary(settings))
     BOX_ACCESS_AGE = datetime.now()

@@ -1,43 +1,5 @@
 version: 2
 
-# The images that jobs can have
-executors:
-  panther-buildpack:
-    docker:
-      - image: pantherlabs/panther-buildpack:1.15.0
-        # The images are public, but DockerHub requires authenticated pulls for
-        # higher rate limits. https://circleci.com/docs/2.0/private-images/
-        # TODO: Use ECS instead of DockerHub to host build images
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-commands:
-  autofmt:
-    steps:
-      - run:
-          # Generate source files, fmt the repo, and commit any resulting changes.
-          # If a new commit is pushed, CircleCI will immediately restart the workflow.
-          #
-          # This will not run on the master branch, and to prevent a feedback loop it will also not
-          # run if the last commit that triggered this build was authored by the bot.
-          name: Autofmt
-          command: |
-            if [[ "$CIRCLE_BRANCH" == "master" ]]; then
-                echo "master branch: skipping autofmt"
-                exit 0
-            fi
-
-            if [[ "`git log -1 --pretty=format:'%an'`" == "panther-bot" ]]; then
-                echo "panther-bot made the last commit: skipping autofmt"
-                exit 0
-            fi
-
-            /tmp/panther/magebin gen doc fmt
-            git config --global user.email "github-service-account@runpanther.io"
-            git config --global user.name "panther-bot"
-            git add -A .
-            git commit -m "mage gen doc fmt" || true
-            git push origin $CIRCLE_BRANCH
 jobs:
   lint:
     docker:

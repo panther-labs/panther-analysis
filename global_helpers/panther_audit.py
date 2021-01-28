@@ -6,6 +6,7 @@ PANTHER_MASTER_REGION = os.environ.get('AWS_REGION')
 import math
 UNUSED_VARIABLE_DO_NOT_MERGE_DELETE_THIS_AND_IMPORT = 'please fail'
 
+
 def build_client(resource, service, region=None):
     """Function builds resource client that assumes Panther audit role"""
     account = resource['AccountId']
@@ -14,7 +15,9 @@ def build_client(resource, service, region=None):
     fips_enabled = os.getenv('ENABLE_FIPS', '').lower() == 'true'
     fips_suffix = '-fips.' + PANTHER_MASTER_REGION + '.amazonaws.com'
 
-    sts_connection = boto3.client('sts', endpoint_url='https://sts' + fips_suffix if fips_enabled else None)
+    sts_connection = boto3.client('sts',
+                                  endpoint_url='https://sts' +
+                                  fips_suffix if fips_enabled else None)
 
     acct_b = sts_connection.assume_role(
         RoleArn=role_arn, RoleSessionName="lambda_assume_audit_role")
