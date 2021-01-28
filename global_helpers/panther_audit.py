@@ -3,6 +3,8 @@ import boto3
 
 PANTHER_MASTER_REGION = os.environ.get('AWS_REGION')
 
+import math
+UNUSED_VARIABLE_DO_NOT_MERGE_DELETE_THIS_AND_IMPORT = 'please fail'
 
 def build_client(resource, service, region=None):
     """Function builds resource client that assumes Panther audit role"""
