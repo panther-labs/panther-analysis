@@ -105,14 +105,29 @@ def write_s3(client, bucket_name, logs, format):
 
 def time_shift_json_logs(event_time_shift, logs, log_type):
     shifted_logs = []
+
     event_time = get_event_time(log_type)
-    event_time_attr = event_time['attr']
+    event_time_attrs = event_time['attrs']
     event_time_format = event_time['format']
+
     for log in logs:
-        log_event_time = datetime.strptime(log[event_time_attr], event_time_format).replace(tzinfo=timezone.utc)
+        if len(event_time_attrs) == 1:
+            log_event_time = datetime.strptime(
+                log[event_time_attrs[0]], event_time_format).replace(tzinfo=timezone.utc)
+        elif len(event_time_attrs) == 2:
+            log_event_time = datetime.strptime(
+                log[event_time_attrs[0]][event_time_attrs[1]],
+                event_time_format).replace(tzinfo=timezone.utc)
+
         log_event_time += event_time_shift
-        log[event_time_attr] = log_event_time.strftime(event_time_format)
+
+        if len(event_time_attrs) == 1:
+            log[event_time_attrs[0]] = log_event_time.strftime(event_time_format)
+        if len(event_time_attrs) == 2:
+            log[event_time_attrs[0]][event_time_attrs[1]] = log_event_time.strftime(event_time_format)
+
         shifted_logs.append(log)
+
     return shifted_logs
 
 def time_shift_raw_logs(event_time_shift, logs, log_type):
@@ -149,10 +164,12 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
     return shifted_logs
 
 def get_event_time(log_type):
+    if log_type == 'GSuite.Reports': #  eventTime: "2020-11-01T08:35:19Z"
+        return {'attrs': ['id', 'time'], 'format': '%Y-%m-%dT%H:%M:%S.%fZ'}
     if log_type == 'AWS.CloudTrail': #  eventTime: "2020-11-01T08:35:19Z"
-        return {'attr': 'eventTime', 'format': '%Y-%m-%dT%H:%M:%SZ'}
+        return {'attrs': ['eventTime'], 'format': '%Y-%m-%dT%H:%M:%SZ'}
     if log_type == 'Okta.SystemLog': # published:
-        return {'attr': 'published', 'format': '%Y-%m-%dT%H:%M:%S.%fZ'}
+        return {'attrs': ['published'], 'format': '%Y-%m-%dT%H:%M:%S.%fZ'}
     if log_type == 'AWS.S3ServerAccess': # [03/Nov/2020:04:43:07 +0000]
         return {'index': 2, 'format': '[%d/%b/%Y:%H:%M:%S'}
     raise Exception('unknown logType: ' + log_type)
@@ -162,14 +179,11 @@ if __name__ == '__main__':
     parser.add_argument('--file',
                         help='the yml file with test data',
                         required=True)
-    parser.add_argument('--account-id',
-                        help='the AWS account ID of the Panther deployment',
-                        required=True)
     parser.add_argument('--bucket-name',
                         help='the S3 bucket name of the Panther source',
                         required=True)
     parser.add_argument('--region',
-                        help='the region of the SQS Queue of the Panther source',
+                        help='the region of the S3 Bucket of the Panther source',
                         required=True)
     parser.add_argument('--compromise-datetime',
                         help='the datetime of the compromise UTC in iso format',
