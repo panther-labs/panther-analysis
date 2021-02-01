@@ -3,10 +3,10 @@ analysis_directories := $(shell ls | egrep 'policies|rules|helpers|models' | xar
 schema_files := $(shell find schemas/ -type f -name '*.yml' -and -not -wholename '*/tests/*' | sort | xargs)
 # Last release tag
 last_release := $(shell git tag --sort=version:refname --list 'v*' | tail -n1)
-# Revision sha at current commit
+# Revision SHA1 at current commit
 rev := $(shell git rev-parse HEAD)
-# Tag for current commit
-release := $(shell git tag --points-at=$rev)
+# Release tag for current commit
+release := $(shell git tag --points-at=$rev --sort=version:refname --list 'v*' | tail -n1)
 
 ci:
 	pipenv run $(MAKE) lint test
