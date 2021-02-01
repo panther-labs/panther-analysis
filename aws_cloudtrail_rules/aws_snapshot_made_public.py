@@ -14,7 +14,7 @@ def rule(event):
 
     # RDS snapshot made public
     if event['eventName'] == 'ModifyDBClusterSnapshotAttribute':
-        return 'all' in event.get('requestParemeters',
+        return 'all' in event.get('requestParameters',
                                   {}).get('valuesToAdd', [])
 
     return False

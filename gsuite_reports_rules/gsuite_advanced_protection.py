@@ -1,4 +1,4 @@
-from panther_base_helpers import gsuite_details_lookup as details_lookup
+from panther_base_helpers import deep_get, gsuite_details_lookup as details_lookup
 
 
 def rule(event):
@@ -10,4 +10,4 @@ def rule(event):
 
 def title(event):
     return 'Advanced protection was disabled for user [{}]'.format(
-        event.get('actor', {}).get('email'))
+        deep_get(event, 'actor', 'email'))

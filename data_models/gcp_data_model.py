@@ -1,7 +1,7 @@
 from fnmatch import fnmatch
 
 import panther_event_type_helpers as event_type
-from panther_gcp_helpers import get_binding_deltas
+from panther_base_helpers import get_binding_deltas
 
 ADMIN_ROLES = {
     # Primitive Roles
@@ -16,7 +16,7 @@ def get_event_type(event):
     for delta in get_binding_deltas(event):
         if delta['action'] == 'ADD':
             if any([
-                    fnmatch(delta.get('role'), admin_role_pattern)
+                    fnmatch(delta.get('role', ''), admin_role_pattern)
                     for admin_role_pattern in ADMIN_ROLES
             ]):
                 return event_type.ADMIN_ROLE_ASSIGNED

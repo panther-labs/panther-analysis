@@ -33,7 +33,7 @@ Tests:
               "principalId": "1111",
               "arn": "arn:aws:iam::123456789012:user/tester",
               "accountId": "123456789012",
-              "userName": "tester"
+              "userName": "testuser"
           },
           "eventTime": "2019-01-01T00:00:00Z",
           "eventSource": "signin.amazonaws.com",
@@ -87,7 +87,7 @@ Tests:
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012",
           "p_log_type": "AWS.CloudTrail"
-      }  
+      }
   -
     Name: Box - Regular Event
     ExpectedResult: false
@@ -147,7 +147,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "actor" : { 
+        "actor" : {
           "email": "bob@example.com"
         },
         "id": {"applicationName": "login"},
