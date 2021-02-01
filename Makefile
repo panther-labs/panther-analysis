@@ -1,5 +1,12 @@
 analysis_directories := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
+# Find all *.yml files under schemas/ that are not in a '/tests/' path.
 schema_files := $(shell find schemas/ -type f -name '*.yml' -and -not -wholename '*/tests/*' | sort | xargs)
+# Last release tag
+last_release := $(shell git tag --sort=version:refname --list 'v*' | tail -n1)
+# Revision sha at current commit
+rev := $(shell git rev-parse HEAD)
+# Tag for current commit
+release := $(shell git tag --points-at=$rev)
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -45,15 +52,25 @@ test-single:
 	panther_analysis_tool test --path "$$tmp"; \
 	rm -r "$$tmp";
 
+
 managed-schemas.zip:
-	@tmp=$$(mktemp -d); \
+	TMP=$$(mktemp -d); \
 	for f in $(schema_files); do \
 		echo "---"; \
 		cat "$$f"; \
-	done > "$$tmp/manifest.yml"; \
-	sha256sum "$$tmp/manifest.yml" > "$$tmp/SHA256SUMS"; \
+	done > "$$TMP/manifest.yml"; \
+	sha256sum "$$TMP/manifest.yml" > "$$TMP/SHA256SUMS"; \
 	mkdir -p dist; \
 	rm -f dist/managed-schemas.zip; \
-	zip -jrD dist/managed-schemas.zip "$$tmp"; \
-	rm -rf "$$tmp";
+	if [ -v "$(release)" ]; then \
+		echo "$(release)"; \
+	else \
+		echo "$(last_release)-$(rev)"; \
+	fi | zip \
+		--archive-comment \
+		--junk-paths \
+		--recurse-paths \
+		--no-dir-entries \
+		dist/managed-schemas.zip "$$TMP"; \
+	rm -rf "$$TMP";
 
