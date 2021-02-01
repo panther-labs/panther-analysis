@@ -5,7 +5,7 @@ last_release := $(shell git tag --sort=version:refname --list 'v*' | tail -n1)
 # Revision SHA1 at current commit
 rev := $(shell git rev-parse HEAD)
 # Release tag for current commit
-release := $(shell git tag --points-at=$rev --sort=version:refname --list 'v*' | tail -n1)
+release := $(shell git tag --points-at=$(rev) --sort=version:refname --list 'v*' | tail -n1)
 
 dirs := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
 
@@ -37,14 +37,15 @@ install:
 test:
 	panther_analysis_tool test
 
-managed-schemas.zip:
-	TMP=$$(mktemp -d); \
+managed-schemas:
+	mkdir -p dist/managed-schemas; \
 	for f in $(schema_files); do \
 		echo "---"; \
 		cat "$$f"; \
-	done > "$$TMP/manifest.yml"; \
-	sha256sum "$$TMP/manifest.yml" > "$$TMP/SHA256SUMS"; \
-	mkdir -p dist; \
+	done > "dist/managed-schemas/manifest.yml"; \
+	sha256sum "dist/managed-schemas/manifest.yml" > "dist/managed-schemas/SHA256SUMS";
+
+managed-schemas.zip: managed-schemas
 	rm -f dist/managed-schemas.zip; \
 	if [ -v "$(release)" ]; then \
 		echo "$(release)"; \
@@ -54,6 +55,6 @@ managed-schemas.zip:
 		--archive-comment \
 		--junk-paths \
 		--recurse-paths \
+		-q \
 		--no-dir-entries \
-		dist/managed-schemas.zip "$$TMP"; \
-	rm -rf "$$TMP";
+		dist/managed-schemas.zip "dist/managed-schemas";
