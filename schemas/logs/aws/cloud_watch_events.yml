@@ -40,6 +40,7 @@ fields:
   required: true
   description: The event timestamp, which can be specified by the service originating the event. If the event spans a time interval, the service might choose to report the start time, so this value can be noticeably before the time the event is actually received.
   type: timestamp
+  timeFormat: rfc3339
 - name: detail
   required: true
   description: A JSON object, whose content is at the discretion of the service originating the event. The detail content in the example above is very simple, just two fields. AWS API call events have detail objects with around 50 fields nested several levels deep.

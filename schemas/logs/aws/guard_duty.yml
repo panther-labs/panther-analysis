@@ -46,10 +46,12 @@ fields:
   required: true
   description: The initial creation time of the finding (UTC).
   type: timestamp
+  timeFormat: rfc3339
 - name: updatedAt
   required: true
   description: The last update time of the finding (UTC).
   type: timestamp
+  timeFormat: rfc3339
 - name: title
   required: true
   description: A short description of the finding.
@@ -64,31 +66,33 @@ fields:
   type: object
   fields:
   - name: additionalInfo
-    description: AdditionalInfo field *jsoniter.RawMessage
+    description: AdditionalInfo field
     type: json
   - name: action
-    description: Action field *jsoniter.RawMessage
+    description: Action field
     type: json
   - name: serviceName
     required: true
-    description: ServiceName field *string
+    description: ServiceName field
     type: string
   - name: detectorId
     required: true
-    description: DetectorID field *string
+    description: DetectorID field
     type: string
   - name: resourceRole
-    description: ResourceRole field *string
+    description: ResourceRole field
     type: string
   - name: eventFirstSeen
-    description: EventFirstSeen field *timestamp.RFC3339
+    description: EventFirstSeen field
     type: timestamp
+    timeFormat: rfc3339
   - name: eventLastSeen
-    description: EventLastSeen field *timestamp.RFC3339
+    description: EventLastSeen field
     type: timestamp
+    timeFormat: rfc3339
   - name: archived
-    description: Archived field *bool
+    description: Archived field
     type: boolean
   - name: count
-    description: Count field *int
+    description: Count field
     type: int

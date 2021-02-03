@@ -9,6 +9,7 @@ fields:
 - name: timestamp
   description: Log entry timestamp
   type: timestamp
+  timeFormat: rfc3339
 - name: hostname
   description: The hostname of the appliance
   type: string
@@ -60,12 +61,15 @@ fields:
 - name: created_date
   description: The date and time the response was created.
   type: timestamp
+  timeFormat: rfc3339
 - name: delay_date
   description: The date and time the response is set to be delayed until.
   type: timestamp
+  timeFormat: rfc3339
 - name: expiration_date
   description: The date and time the response is set to expire.
   type: timestamp
+  timeFormat: rfc3339
 - name: response_config
   description: The configuration used in this response. Displayed as an XML-like node.
   type: string

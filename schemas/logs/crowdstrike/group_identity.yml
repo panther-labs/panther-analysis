@@ -1,15 +1,11 @@
-schema: Crowdstrike.NetworkConnect
+schema: Crowdstrike.GroupIdentity
 parser:
   native:
-    name: Crowdstrike.NetworkConnect
-description: This event is generated when an application attempts a remote connection on an interface
-referenceURL: '-'
+    name: Crowdstrike.GroupIdentity
+description: Provides the sensor boot unique mapping between GID, AuthenticationId, UserPrincipal, and UserSid. Available only for the Mac platform.
+referenceURL: https://developer.crowdstrike.com/crowdstrike/page/event-explorer#section-event-GroupIdentity
 version: 0
 fields:
-- name: event_simpleName
-  required: true
-  description: Event name
-  type: string
 - name: name
   required: true
   description: The event name
@@ -85,79 +81,31 @@ fields:
 - name: InContext
   description: In context (N/A on iOS)
   type: string
-- name: LocalAddressIP4
-  description: Local IPv4 address for the connection
+- name: event_simpleName
+  required: true
+  description: Event Name
   type: string
-  indicators:
-  - ip
-- name: LocalAddressIP6
-  description: Local IPv6 address for the connection
+- name: GID
+  required: true
+  description: The user Group ID.
+  type: bigint
+- name: AuthenticationUuid
+  required: true
+  description: AuthenticationUUID field
   type: string
-  indicators:
-  - ip
-- name: RemoteAddressIP4
-  description: Remote IPv4 address for the connection
+- name: AuthenticationUuidAsString
+  required: true
+  description: AuthenticationUUIDAsString field
   type: string
-  indicators:
-  - ip
-- name: RemoteAddressIP6
-  description: Remote IPv6 address for the connection
+- name: AuthenticationId
+  required: true
+  description: 'Values: INVALID_LUID (0), NETWORK_SERVICE (996), LOCAL_SERVICE (997), SYSTEM (999), RESERVED_LUID_MAX (1000)'
+  type: int
+- name: UserPrincipal
+  required: true
+  description: UserPrincipal field
   type: string
-  indicators:
-  - ip
-- name: ConnectionFlags
-  description: Connection flags (PROMISCUOUS_MODE_SIO_RCVALL = 2, RAW_SOCKET = 1, PROMISCUOUS_MODE_SIO_RCVALL_IGMPMCAST = 4, PROMISCUOUS_MODE_SIO_RCVALL_MCAST = 8)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: Protocol
-  description: IP Protocol (ICMP = 1, TCP = 6, UDP = 17)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: LocalPort
-  description: Connection local port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: RemotePort
-  description: Connection remote port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: ConnectionDirection
-  description: Direction of the connection (OUTBOUND = 0, INBOUND = 1, NEITHER = 2, BOTH = 3)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: IcmpType
-  description: ICMP type (N/A on iOS)
-  type: string
-- name: IcmpCode
-  description: ICMP code (N/A on iOS)
+- name: UserSid
+  required: true
+  description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system.
   type: string

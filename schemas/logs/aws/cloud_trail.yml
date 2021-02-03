@@ -72,17 +72,17 @@ fields:
     type: object
     fields:
     - name: arn
-      description: ARN field null.String
+      description: ARN field
       type: string
       indicators:
       - aws_arn
     - name: accountId
-      description: AccountID field null.String
+      description: AccountID field
       type: string
       indicators:
       - aws_account_id
     - name: type
-      description: Type field null.String
+      description: Type field
       type: string
 - name: responseElements
   description: The response element for actions that make changes (create, update, or delete actions). If an action does not change state (for example, a request to get or list objects), this element is omitted. These actions are documented in the API reference documentation for the appropriate AWS service.
@@ -108,79 +108,79 @@ fields:
   type: object
   fields:
   - name: type
-    description: Type field null.String
+    description: Type field
     type: string
   - name: principalId
-    description: PrincipalID field null.String
+    description: PrincipalID field
     type: string
   - name: arn
-    description: ARN field null.String
+    description: ARN field
     type: string
     indicators:
     - aws_arn
   - name: accountId
-    description: AccountID field null.String
+    description: AccountID field
     type: string
     indicators:
     - aws_account_id
   - name: accessKeyId
-    description: AccessKeyID field null.String
+    description: AccessKeyID field
     type: string
   - name: userName
-    description: Username field null.String
+    description: Username field
     type: string
   - name: sessionContext
-    description: SessionContext field *awslogs.CloudTrailSessionContext
+    description: SessionContext field
     type: object
     fields:
     - name: attributes
-      description: Attributes field *awslogs.CloudTrailSessionContextAttributes
+      description: Attributes field
       type: object
       fields:
       - name: mfaAuthenticated
-        description: MfaAuthenticated field null.String
+        description: MfaAuthenticated field
         type: string
       - name: creationDate
-        description: CreationDate field null.String
+        description: CreationDate field
         type: string
     - name: sessionIssuer
-      description: SessionIssuer field *awslogs.CloudTrailSessionContextSessionIssuer
+      description: SessionIssuer field
       type: object
       fields:
       - name: type
-        description: Type field null.String
+        description: Type field
         type: string
       - name: principalId
-        description: PrincipalID field null.String
+        description: PrincipalID field
         type: string
       - name: arn
-        description: Arn field null.String
+        description: Arn field
         type: string
         indicators:
         - aws_arn
       - name: accountId
-        description: AccountID field null.String
+        description: AccountID field
         type: string
         indicators:
         - aws_account_id
       - name: userName
-        description: Username field null.String
+        description: Username field
         type: string
     - name: webIdFederationData
-      description: WebIDFederationData field *awslogs.CloudTrailSessionContextWebIDFederationData
+      description: WebIDFederationData field
       type: object
       fields:
       - name: federatedProvider
-        description: FederatedProvider field null.String
+        description: FederatedProvider field
         type: string
       - name: attributes
-        description: Attributes field jsoniter.RawMessage
+        description: Attributes field
         type: json
   - name: invokedBy
-    description: InvokedBy field null.String
+    description: InvokedBy field
     type: string
   - name: identityProvider
-    description: IdentityProvider field null.String
+    description: IdentityProvider field
     type: string
 - name: vpcEndpointId
   description: Identifies the VPC endpoint in which requests were made from a VPC to another AWS service, such as Amazon S3.

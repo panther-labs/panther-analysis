@@ -1,15 +1,11 @@
-schema: Crowdstrike.NetworkConnect
+schema: Crowdstrike.UserIdentity
 parser:
   native:
-    name: Crowdstrike.NetworkConnect
-description: This event is generated when an application attempts a remote connection on an interface
-referenceURL: '-'
+    name: Crowdstrike.UserIdentity
+description: The UserIdentity event is generated when a user logs in to a host. It conveys important security-related characteristics associated with a user to the CrowdStrike cloud, such as the user name. It’s normally generated once per security principal, and is thus not on its own a sign of a suspicious activity. Available for Mac & Windows platforms.
+referenceURL: https://developer.crowdstrike.com/crowdstrike/page/event-explorer#section-event-UserIdentity
 version: 0
 fields:
-- name: event_simpleName
-  required: true
-  description: Event name
-  type: string
 - name: name
   required: true
   description: The event name
@@ -85,79 +81,76 @@ fields:
 - name: InContext
   description: In context (N/A on iOS)
   type: string
-- name: LocalAddressIP4
-  description: Local IPv4 address for the connection
+- name: event_simpleName
+  required: true
+  description: Event Name
+  type: string
+- name: AuthenticationId
+  required: true
+  description: 'Values: INVALID_LUID (0), NETWORK_SERVICE (996), LOCAL_SERVICE (997), SYSTEM (999), RESERVED_LUID_MAX (1000)'
+  type: int
+- name: UserPrincipal
+  required: true
+  description: UserPrincipal field
+  type: string
+- name: UserSid
+  required: true
+  description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system.
+  type: string
+- name: AuthenticationUuid
+  description: AuthenticationUUID field
+  type: string
+- name: AuthenticationUuidAsString
+  description: AuthenticationUUIDAsString field
+  type: string
+- name: UID
+  description: The User ID.
+  type: bigint
+- name: UserName
+  description: UserName field
   type: string
   indicators:
-  - ip
-- name: LocalAddressIP6
-  description: Local IPv6 address for the connection
+  - username
+- name: UserCanonical
+  description: UserCanonical field
+  type: string
+- name: LogonId
+  description: LogonID field
+  type: string
+- name: LogonDomain
+  description: LogonDomain field
+  type: string
+- name: AuthenticationPackage
+  description: AuthenticationPackage field
+  type: string
+- name: LogonType
+  description: 'Values: INTERACTIVE (2), NETWORK (3), BATCH (4), SERVICE (5), PROXY (6), UNLOCK (7), NETWORK_CLEARTEXT (8), CACHED_UNLOCK (13), NEW_CREDENTIALS (9), REMOTE_INTERACTIVE (10), CACHED_INTERACTIVE (11), CACHED_REMOTE_INTERACTIVE (12)'
+  type: int
+- name: LogonTime
+  description: LogonTime field
+  type: timestamp
+  timeFormat: unix
+- name: LogonServer
+  description: LogonServer field
+  type: string
+- name: UserFlags
+  description: 'Values: LOGON_OPTIMIZED (0x4000), LOGON_WINLOGON (0x8000), LOGON_PKINIT (0x10000), LOGON_NOT_OPTIMIZED (0x20000)'
+  type: bigint
+- name: PasswordLastSet
+  description: PasswordLastSet field
+  type: timestamp
+  timeFormat: unix
+- name: RemoteAccount
+  description: RemoteAccount field
+  type: int
+- name: UserIsAdmin
+  description: UserIsAdmin field
+  type: int
+- name: SessionId
+  description: SessionID field
   type: string
   indicators:
-  - ip
-- name: RemoteAddressIP4
-  description: Remote IPv4 address for the connection
-  type: string
-  indicators:
-  - ip
-- name: RemoteAddressIP6
-  description: Remote IPv6 address for the connection
-  type: string
-  indicators:
-  - ip
-- name: ConnectionFlags
-  description: Connection flags (PROMISCUOUS_MODE_SIO_RCVALL = 2, RAW_SOCKET = 1, PROMISCUOUS_MODE_SIO_RCVALL_IGMPMCAST = 4, PROMISCUOUS_MODE_SIO_RCVALL_MCAST = 8)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: Protocol
-  description: IP Protocol (ICMP = 1, TCP = 6, UDP = 17)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: LocalPort
-  description: Connection local port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: RemotePort
-  description: Connection remote port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: ConnectionDirection
-  description: Direction of the connection (OUTBOUND = 0, INBOUND = 1, NEITHER = 2, BOTH = 3)
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: IcmpType
-  description: ICMP type (N/A on iOS)
-  type: string
-- name: IcmpCode
-  description: ICMP code (N/A on iOS)
-  type: string
+  - trace_id
+- name: UserLogonFlags
+  description: 'Values: LOGON_IS_SYNTHETIC (0x00000001), USER_IS_ADMIN (0x00000002), USER_IS_LOCAL (0x00000004), USER_IS_BUILT_IN (0x00000008), USER_IDENTITY_MISSING (0x00000010)'
+  type: int

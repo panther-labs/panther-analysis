@@ -14,6 +14,7 @@ fields:
   required: true
   description: The time when the load balancer generated a response to the client (UTC). For WebSockets, this is the time when the connection is closed.
   type: timestamp
+  timeFormat: rfc3339
 - name: elb
   description: The resource ID of the load balancer. If you are parsing access log entries, note that resources IDs can contain forward slashes (/).
   type: string
@@ -87,6 +88,7 @@ fields:
 - name: requestCreationTime
   description: The time when the load balancer received the request from the client.
   type: timestamp
+  timeFormat: rfc3339
 - name: actionsExecuted
   description: The actions taken when processing the request. This value is a comma-separated list that can include the values described in Actions Taken. If no action was taken, such as for a malformed request, this value is set to NULL.
   type: array
