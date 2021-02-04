@@ -31,34 +31,34 @@ def rule(event):
 
     # ECR
     if event['eventName'] == 'SetRepositoryPolicy':
-        policy = parameters.get('policyText', '{}')
+        policy = parameters.get('policyText', {})
 
     # Elasticsearch
     if event['eventName'] in [
             'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
     ]:
-        policy = parameters.get('accessPolicies', '{}')
+        policy = parameters.get('accessPolicies', {})
 
     # KMS
     if event['eventName'] in ['CreateKey', 'PutKeyPolicy']:
-        policy = parameters.get('policy', '{}')
+        policy = parameters.get('policy', {})
 
     # S3 Glacier
     if event['eventName'] == 'SetVaultAccessPolicy':
-        policy = deep_get(parameters, 'policy', 'policy', default='{}')
+        policy = deep_get(parameters, 'policy', 'policy', default={})
 
     # SNS & SQS
     if event['eventName'] in ['SetQueueAttributes', 'CreateTopic']:
-        policy = deep_get(parameters, 'attributes', 'Policy', default='{}')
+        policy = deep_get(parameters, 'attributes', 'Policy', default={})
 
     # SNS
     if event['eventName'] == 'SetTopicAttributes' and parameters.get(
             'attributeName', '') == 'Policy':
-        policy = parameters.get('attributeValue', '{}')
+        policy = parameters.get('attributeValue', {})
 
     # SecretsManager
     if event['eventName'] == 'PutResourcePolicy':
-        policy = parameters.get('resourcePolicy', '{}')
+        policy = parameters.get('resourcePolicy', {})
 
     if not policy:
         return False
