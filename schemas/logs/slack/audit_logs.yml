@@ -1,0 +1,232 @@
+schema: Slack.AuditLogs
+parser:
+  native:
+    name: Slack.AuditLogs
+description: Slack audit logs provide a view of the actions users perform in an Enterprise Grid organization.
+referenceURL: https://api.slack.com/enterprise/audit-logs
+version: 0
+fields:
+- name: id
+  required: true
+  description: The event id
+  type: string
+- name: date_create
+  required: true
+  description: Creation timestamp for the event
+  type: timestamp
+  timeFormat: unix
+  isEventTime: true
+- name: action
+  required: true
+  description: The action performed. See https://api.slack.com/enterprise/audit-logs#audit_logs_actions
+  type: string
+- name: actor
+  required: true
+  description: An actor will always be a user on a workspace and will be identified by their user ID, such as W123AB456.
+  type: object
+  fields:
+  - name: type
+    required: true
+    description: The type of actor (always user)
+    type: string
+  - name: user
+    description: Information about the user
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the user ('USLACKUSER' if no user performed the action)
+      type: string
+    - name: name
+      description: The user's display name
+      type: string
+      indicators:
+      - username
+    - name: email
+      description: The user's email
+      type: string
+      indicators:
+      - email
+    - name: team
+      description: The user's team
+      type: string
+- name: entity
+  required: true
+  description: An entity is the thing that the actor has taken the action upon and it will be the Slack ID of the thing.
+  type: object
+  fields:
+  - name: type
+    required: true
+    description: The type of item that was affected by the action (user,channel,file,app,workspace,enterprise,message,workflow)
+    type: string
+  - name: user
+    description: Information about the affected user
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the user ('USLACKUSER' if no user performed the action)
+      type: string
+    - name: name
+      description: The user's display name
+      type: string
+      indicators:
+      - username
+    - name: email
+      description: The user's email
+      type: string
+      indicators:
+      - email
+    - name: team
+      description: The user's team
+      type: string
+  - name: channel
+    description: Information about the affected channel
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the channel
+      type: string
+    - name: name
+      description: The name of the channel
+      type: string
+    - name: privacy
+      description: The privacy mode of the channel
+      type: string
+    - name: is_shared
+      description: Whether the channel is shared
+      type: boolean
+    - name: is_org_shared
+      description: Whether the channel is shared in the organisation
+      type: boolean
+    - name: teams_shared_with
+      description: The teams the channel is shared with
+      type: array
+      element:
+        type: string
+  - name: file
+    description: Information about the affected file
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the file
+      type: string
+    - name: name
+      description: The filename
+      type: string
+    - name: title
+      description: The file title
+      type: string
+    - name: filetype
+      description: The filetype
+      type: string
+  - name: app
+    description: Information about the affected app
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the app
+      type: string
+    - name: name
+      description: The name of the app
+      type: string
+    - name: is_distributed
+      description: Whether the app is distributed
+      type: boolean
+    - name: is_directory_approved
+      description: Whether the app is in the approved apps directory
+      type: boolean
+    - name: scopes
+      description: The OAuth2 scopes the app requires
+      type: array
+      element:
+        type: string
+  - name: workspace
+    description: Information about the affected workspace
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the workspace
+      type: string
+    - name: name
+      description: The name of the workspace
+      type: string
+    - name: domain
+      description: The workspace domain
+      type: string
+  - name: enterprise
+    description: Information about the affected enterprise
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the enterprise
+      type: string
+    - name: name
+      description: The name of the enterprise
+      type: string
+    - name: domain
+      description: The enterprise domain
+      type: string
+  - name: workflow
+    description: Information about the affected workflow
+    type: object
+    fields:
+    - name: id
+      required: true
+      description: The id of the workflow
+      type: string
+    - name: name
+      description: The name of the workflow
+      type: string
+  - name: message
+    description: Information about the affected message
+    type: object
+    fields:
+    - name: team
+      description: The team the message was posted in
+      type: string
+    - name: channel
+      description: The channel the message was posted on
+      type: string
+    - name: timestamp
+      description: The timestamp of the message
+      type: string
+- name: context
+  required: true
+  description: Context is the location that the actor took the action on the entity. It will always be either a Workspace or an Enterprise, with the appropriate ID.
+  type: object
+  fields:
+  - name: ua
+    description: The user agent used for the action
+    type: string
+  - name: ip_address
+    description: The ip address the action was performed from
+    type: string
+    indicators:
+    - ip
+  - name: location
+    description: The location that the actor took the action on the entity.
+    type: object
+    fields:
+    - name: type
+      required: true
+      description: The location type. It will always be either a Workspace or an Enterprise
+      type: string
+    - name: id
+      required: true
+      description: The location id
+      type: string
+    - name: domain
+      description: The location domain
+      type: string
+    - name: name
+      description: The location name
+      type: string
+- name: details
+  description: Additional details about the audit log event
+  type: json

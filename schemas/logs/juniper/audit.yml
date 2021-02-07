@@ -1,0 +1,30 @@
+schema: Juniper.Audit
+parser:
+  native:
+    name: Juniper.Audit
+description: Juniper.Audit The audit log contains log entries that indicate non-idempotent (state changing) actions performed on WebApp Secure.
+referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-incident-log-format.html
+version: 0
+fields:
+- name: timestamp
+  description: Log entry timestamp
+  type: timestamp
+  timeFormat: rfc3339
+- name: hostname
+  description: The hostname of the appliance
+  type: string
+- name: log_level
+  description: The importance level of a log entry. Can be TRACE, DEBUG, INFO, WARN, or ERROR.
+  type: string
+- name: message
+  description: The message. Can indicate any of the previously mentioned actions.
+  type: string
+- name: api_key
+  description: The key used to perform the action described in the message.
+  type: string
+- name: login_ip
+  description: The IP address the user performed logged in from
+  type: string
+- name: username
+  description: The user that performed the login
+  type: string

@@ -1,0 +1,94 @@
+schema: AWS.VPCDns
+parser:
+  native:
+    name: AWS.VPCDns
+description: DNS query logs of the queries that VPC DNS resolvers forward to Route 53.
+referenceURL: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-query-logs-format.html
+version: 0
+fields:
+- name: version
+  required: true
+  description: The version number of the query log format. If we add fields to the log or change the format of existing fields, we'll increment this value.
+  type: string
+- name: account_id
+  required: true
+  description: The ID of the AWS account that created the VPC.
+  type: string
+  indicators:
+  - aws_account_id
+- name: region
+  required: true
+  description: The AWS Region that you created the VPC in.
+  type: string
+- name: vpc_id
+  required: true
+  description: The ID of the VPC that the query originated in.
+  type: string
+- name: query_timestamp
+  required: true
+  description: The date and time that the query was submitted, in ISO 8601 format and Coordinated Universal Time (UTC)
+  type: timestamp
+  timeFormat: rfc3339
+  isEventTime: true
+- name: query_name
+  required: true
+  description: The domain name (example.com) or subdomain name (www.example.com) that was specified in the query.
+  type: string
+- name: query_type
+  required: true
+  description: Either the DNS record type that was specified in the request, or ANY. For information about the types that Route 53 supports.
+  type: string
+- name: query_class
+  required: true
+  description: The class of the query.
+  type: string
+- name: rcode
+  required: true
+  description: The DNS response code that Resolver returned in response to the DNS query. The response code indicates whether the query was valid or not. The most common response code is NOERROR, meaning that the query was valid. If the response is not valid, Resolver returns a response code that explains why not. For a list of possible response codes, see DNS RCODEs on the IANA website.
+  type: string
+- name: answers
+  required: true
+  description: Answers to the query
+  type: array
+  element:
+    type: object
+    fields:
+    - name: Rdata
+      required: true
+      description: The value that Resolver returned in response to the query. For example, for an A record, this is an IP address in IPv4 format. For a CNAME record, this is the domain name in the CNAME record.
+      type: string
+    - name: Type
+      required: true
+      description: The DNS record type (such as A, MX, or CNAME) of the value that Resolver is returning in response to the query.
+      type: string
+    - name: Class
+      required: true
+      description: The class of the Resolver response to the query.
+      type: string
+- name: srcaddr
+  required: true
+  description: The IP address of the instance that the query originated from.
+  type: string
+  indicators:
+  - ip
+- name: srcport
+  required: true
+  description: The port on the instance that the query originated from.
+  type: string
+- name: transport
+  required: true
+  description: The protocol used to submit the DNS query.
+  type: string
+- name: srcids
+  required: true
+  description: The list of IDs of the sources the DNS query originated from or passed through.
+  type: object
+  fields:
+  - name: instance
+    description: The ID of the instance that the query originated from.
+    type: string
+    indicators:
+    - aws_instance_id
+  - name: resolver-endpoint
+    description: The ID of the resolver endpoint that passes the DNS query to on-premises DNS servers.
+    type: string

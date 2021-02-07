@@ -1,0 +1,27 @@
+schema: Juniper.MWS
+parser:
+  native:
+    name: Juniper.MWS
+description: Juniper.MWS is the main log file for most WebApp Secure logging needs. All messages that don't have a specific log location are sent, by default, to mws.log.
+referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-mws-log.html
+version: 0
+fields:
+- name: timestamp
+  description: The date of the log entry, in UTC.
+  type: timestamp
+  timeFormat: rfc3339
+- name: hostname
+  description: The appliance hostname.
+  type: string
+- name: log_level
+  description: The importance level of a log entry. Can be TRACE, DEBUG, INFO, WARN, or ERROR.
+  type: string
+- name: service_name
+  description: The WebApp Secure service that generated the log entry.
+  type: string
+- name: service_component
+  description: The specific component that is issuing the log message.
+  type: string
+- name: log_message
+  description: The message. This can be anything, but usually contains information to help you narrow down problems or confirm certain events have occurred as they should.
+  type: string

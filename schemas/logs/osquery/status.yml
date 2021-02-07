@@ -1,0 +1,49 @@
+schema: Osquery.Status
+parser:
+  native:
+    name: Osquery.Status
+description: Status is a diagnostic osquery log about the daemon.
+referenceURL: https://osquery.readthedocs.io/en/stable/deployment/logging/
+version: 0
+fields:
+- name: calendarTime
+  required: true
+  description: The time of the event (UTC).
+  type: timestamp
+  timeFormat: rfc3339
+- name: decorations
+  description: Decorations
+  type: json
+- name: filename
+  required: true
+  description: Filename
+  type: string
+- name: hostIdentifier
+  required: true
+  description: HostIdentifier
+  type: string
+- name: line
+  required: true
+  description: Line
+  type: int
+- name: logType
+  description: LogType
+  type: string
+- name: log_type
+  description: LogUnderScoreType
+  type: string
+- name: message
+  description: Message
+  type: string
+- name: severity
+  required: true
+  description: Severity
+  type: int
+- name: unixTime
+  required: true
+  description: UnixTime
+  type: int
+- name: version
+  required: true
+  description: Version
+  type: string

@@ -1,0 +1,46 @@
+schema: Osquery.Snapshot
+parser:
+  native:
+    name: Osquery.Snapshot
+description: Snapshot contains all the data included in OsQuery differential logs
+referenceURL: https://osquery.readthedocs.io/en/stable/deployment/logging/
+version: 0
+fields:
+- name: action
+  required: true
+  description: Action
+  type: string
+- name: calendarTime
+  required: true
+  description: The time of the event (UTC).
+  type: timestamp
+  timeFormat: rfc3339
+- name: counter
+  required: true
+  description: Counter
+  type: int
+- name: decorations
+  description: Decorations
+  type: json
+- name: epoch
+  required: true
+  description: Epoch
+  type: int
+- name: hostIdentifier
+  required: true
+  description: HostIdentifier
+  type: string
+- name: name
+  required: true
+  description: Name
+  type: string
+- name: snapshot
+  required: true
+  description: Snapshot
+  type: array
+  element:
+    type: json
+- name: unixTime
+  required: true
+  description: UnixTime
+  type: int
