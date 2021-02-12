@@ -10,7 +10,7 @@ def title(event):
 
     target = event.get('target', [{}])
     display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else ''
-    
+
     return title_str.format(
         deep_get(event, 'actor', 'displayName'),
         deep_get(event, 'actor', 'alternateId'),
