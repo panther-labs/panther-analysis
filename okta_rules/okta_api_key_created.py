@@ -9,7 +9,7 @@ def title(event):
     title_str = '{} <{}> created a new API key [{}]'
 
     target = event.get('target', [{}])
-    display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else ''
+    display_name = target[0].get('displayName', 'MISSING DISPLAY NAME') if target else 'MISSING TARGET'
 
     return title_str.format(
         deep_get(event, 'actor', 'displayName'),
