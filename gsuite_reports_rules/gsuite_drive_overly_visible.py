@@ -24,6 +24,10 @@ def rule(event):
                                           'visibility') in PERMISSIVE_VISIBILITY
 
 
+def dedup(event):
+    return deep_get(event, 'actor', 'email')
+
+
 def title(event):
     events = event.get('events', [{}])
     actor_email = deep_get(event, 'actor', 'email', default='EMAIL_UNKNOWN')
