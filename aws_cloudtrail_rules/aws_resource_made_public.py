@@ -40,12 +40,8 @@ def rule(event):
     if event['eventName'] == 'PutBucketPolicy':
         return policy_is_internet_accessible(
             json.loads(
-                json.dumps(
-                    parameters.get('bucketPolicy'),
-                    default=PANTHER_JSON_ENCODER
-                )
-            )
-        )
+                json.dumps(parameters.get('bucketPolicy'),
+                           default=PANTHER_JSON_ENCODER)))
 
     # ECR
     if event['eventName'] == 'SetRepositoryPolicy':
@@ -53,7 +49,7 @@ def rule(event):
 
     # Elasticsearch
     if event['eventName'] in [
-        'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
+            'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
     ]:
         policy = parameters.get('accessPolicies', {})
 
