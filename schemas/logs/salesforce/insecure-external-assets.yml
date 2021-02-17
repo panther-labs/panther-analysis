@@ -1,0 +1,143 @@
+schema: Salesforce.InsecureExternalAssets
+version: 0
+referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_insecureexternalassets.htm
+description: >-
+  Insecure External Assets events contain information about external assets.
+  External assets include images or videos accessed by users over an insecure HTTP protocol.
+  The event lists all your Salesforce pages that contain assets hosted insecurely on third-party sites
+  that users loaded with a Chrome, Firefox, Microsoft Edge, or Safari browser.
+parser:
+  csv:
+    delimiter: ","
+    hasHeader: true
+fields:
+  - name: EVENT_TYPE
+    type: string
+    required: true
+    validate:
+      allow: ["InsecureExternalAssets"]
+    description: The type of event. The value is always InsecureExternalAssets.
+  - name: ASSET_TYPE
+    type: string
+    required: false
+    description: >-
+      Type of insecure asset.
+      Possible Values: Base URI, Connect, Font,
+      Frame Ancestor: External page that embeds the Salesforce page in an iframe,
+      Frame, Image, Media, Object, Other, Plugin Types, Script, Style
+  - name: CLIENT_IP
+    required: false
+    type: string
+    indicators:
+      - ip
+    description: >-
+      The IP address of the client that’s using Salesforce services.
+      A Salesforce internal IP (such as a login from Salesforce Workbench
+      or AppExchange) is shown as "Salesforce.com IP".
+      For example: 10.0.0.1.
+  - name: CPU_TIME
+    required: false
+    type: bigint
+    description: >-
+      The CPU time in milliseconds used to complete the request.
+      This field indicates the amount of activity taking place in the app server layer.
+  - name: DOCUMENT_URI
+    required: false
+    type: string
+    description: >-
+      URL of the page that contains the insecure asset, excluding the query parameter.
+      Example: https://company.my.salesforce.com/00XXXXXXXXX
+  - name: INSECURE_URI
+    required: true
+    type: string
+    description: >-
+      Insecure external asset URL being used to load an asset insecurely.
+      For example, loading Javascript libraries using http://ajax.googleapis.com/ in your custom
+      code will log an Insecure External Asset Event with the INSECURE_URI
+      field set to this URL. Find this reference in your code and
+      update it to use https://ajax.googleapis.com/  instead.
+      Example: http://pbs.twimg.com/profile_images/5699091412070816/Z4Stwts_normal.jpeg
+  - name: LOGIN_KEY
+    required: false
+    type: string
+    description: >-
+      The string that ties together all events in a given user’s login session. It starts with a login event and
+      ends with either a logout event or the user session expiring. For example: GeJCsym5eyvtEK2I.
+  - name: ORGANIZATION_ID
+    required: true
+    type: string
+    description: "The 15-character ID of the organization. For example: 00D000000000123."
+  - name: REQUEST_ID
+    required: false
+    type: string
+    indicators:
+      - trace_id
+    description: >-
+      The unique ID of a single transaction. A transaction can contain one or more events.
+      Each event in a given transaction has the same REQUEST_ID.
+      For example: 3nWgxWbDKWWDIk0FKfF5DV.
+  - name: RUN_TIME
+    required: false
+    type: bigint
+    description: The amount of time that the request took in milliseconds.
+  - name: SESSION_KEY
+    required: false
+    type: string
+    description: >-
+      The user’s unique session ID. You can use this value to identify all user events within a session.
+      When a user logs out and logs in again, a new session is started. For Login Event Type,
+      this field is usually null because the event is captured before a session is created.
+      Example d7DEq/ANa7nNZZVD
+  - name: TIMESTAMP
+    required: false
+    type: timestamp
+    timeFormat: "%Y%m%d%H%M%S.%f"
+    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
+  - name: TIMESTAMP_DERIVED
+    required: true
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+    description: >-
+      The access time of Salesforce services in ISO8601-compatible format (YYYY-MM-DDTHH:MM:SS.sssZ).
+      For example: 2015-07-27T11:32:59.555Z. Timezone is GMT.
+  - name: TYPE
+    required: false
+    type: string
+    description: >-
+      Type of Salesforce page.
+      Possible Values:
+        Appserver: Page without My Domain subdomain (for example, https://na44.salesforce.com)
+        Communities: Customer Experience Cloud site
+        Email: Email preview
+        Login: Login page (for example, https://login.salesforce.com)
+        Mydomain: Page on My Domain subdomain (for example, https://mycompany.my.salesforce.com)
+        Sites: Customer site
+        Static: Static content (for example, https://sfdcstatic.com)
+        Unknown: other type of page
+  - name: UNIQUE_ID
+    required: false
+    type: string
+    description: >-
+      The 32-character ID of the event log file in which the insecure external asset event data is found.
+      Example: 44e128a5-ac7a-4c9a-be4c-224b6bf81b20
+  - name: URI
+    required: false
+    type: string
+    description: "The URI of the page that’s receiving the request. For example: /home/home.jsp."
+  - name: URI_ID_DERIVED
+    required: false
+    type: string
+    description: The 18-character case insensitive ID of the URI of the page that’s receiving the request.
+  - name: USER_ID
+    required: false
+    type: string
+    description: >-
+      The 15-character ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00530000009M943
+  - name: USER_ID_DERIVED
+    required: false
+    type: string
+    description: >-
+      The 18-character case insensitive ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00590000000I1SNIA0.
