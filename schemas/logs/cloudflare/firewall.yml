@@ -6,100 +6,100 @@ description: Cloudflare Firewall logs. When selecting event fields on the Cloudf
 referenceURL: https://developers.cloudflare.com/logs/log-fields#firewall-events
 version: 0
 fields:
-- name: Action
-  description: The code of the first-class action the Cloudflare Firewall took on this request
-  type: string
-- name: ClientASN
-  description: The ASN number of the visitor
-  type: bigint
-- name: ClientASNDescription
-  description: The ASN of the visitor as string
-  type: string
-- name: ClientCountry
-  description: Country from which request originated
-  type: string
-- name: ClientIP
-  description: The visitor's IP address (IPv4 or IPv6)
-  type: string
-  indicators:
-  - ip
-- name: ClientIPClass
-  description: 'The classification of the visitor''s IP address, possible values are: unknown | clean | badHost | searchEngine | whitelist | greylist | monitoringService |securityScanner | noRecord | scan | backupService | mobilePlatform | tor'
-  type: string
-- name: ClientRefererHost
-  description: The referer host
-  type: string
-  indicators:
-  - hostname
-- name: ClientRefererPath
-  description: The referer path requested by visitor
-  type: string
-- name: ClientRefererQuery
-  description: The referer query-string was requested by the visitor
-  type: string
-- name: ClientRefererScheme
-  description: The referer url scheme requested by the visitor
-  type: string
-- name: ClientRequestHost
-  description: The HTTP hostname requested by the visitor
-  type: string
-  indicators:
-  - hostname
-- name: ClientRequestMethod
-  description: The HTTP method used by the visitor
-  type: string
-- name: ClientRequestPath
-  description: The path requested by visitor
-  type: string
-- name: ClientRequestProtocol
-  description: The version of HTTP protocol requested by the visitor
-  type: string
-- name: ClientRequestQuery
-  description: The query-string was requested by the visitor
-  type: string
-- name: ClientRequestScheme
-  description: The url scheme requested by the visitor
-  type: string
-- name: ClientRequestUserAgent
-  description: Visitor's user-agent string
-  type: string
-- name: Datetime
-  required: true
-  description: The date and time the event occurred at the edge
-  type: timestamp
-  timeFormat: cloudflare
-  isEventTime: true
-- name: EdgeColoCode
-  description: The airport code of the Cloudflare datacenter that served this request
-  type: string
-- name: EdgeResponseStatus
-  description: HTTP response status code returned to browser
-  type: smallint
-- name: Kind
-  description: 'The kind of event, currently only possible values are: firewall'
-  type: string
-- name: MatchIndex
-  description: Rules match index in the chain
-  type: bigint
-- name: Metadata
-  description: Additional product-specific information. Metadata is organized in key:value pairs. Key and Value formats can vary by Cloudflare security product and can change over time
-  type: json
-- name: OriginResponseStatus
-  description: HTTP origin response status code returned to browser
-  type: smallint
-- name: OriginatorRayID
-  description: The RayID of the request that issued the challenge/jschallenge
-  type: string
-  indicators:
-  - trace_id
-- name: RayID
-  description: The RayID of the request
-  type: string
-  indicators:
-  - trace_id
-- name: RuleID
-  description: The Cloudflare security product-specific RuleID triggered by this request
-  type: string
-- name: Source
-  description: The Cloudflare security product triggered by this request
-  type: string
+  - name: Action
+    description: The code of the first-class action the Cloudflare Firewall took on this request
+    type: string
+  - name: ClientASN
+    description: The ASN number of the visitor
+    type: bigint
+  - name: ClientASNDescription
+    description: The ASN of the visitor as string
+    type: string
+  - name: ClientCountry
+    description: Country from which request originated
+    type: string
+  - name: ClientIP
+    description: The visitor's IP address (IPv4 or IPv6)
+    type: string
+    indicators:
+      - ip
+  - name: ClientIPClass
+    description: 'The classification of the visitor''s IP address, possible values are: unknown | clean | badHost | searchEngine | whitelist | greylist | monitoringService |securityScanner | noRecord | scan | backupService | mobilePlatform | tor'
+    type: string
+  - name: ClientRefererHost
+    description: The referer host
+    type: string
+    indicators:
+      - hostname
+  - name: ClientRefererPath
+    description: The referer path requested by visitor
+    type: string
+  - name: ClientRefererQuery
+    description: The referer query-string was requested by the visitor
+    type: string
+  - name: ClientRefererScheme
+    description: The referer url scheme requested by the visitor
+    type: string
+  - name: ClientRequestHost
+    description: The HTTP hostname requested by the visitor
+    type: string
+    indicators:
+      - hostname
+  - name: ClientRequestMethod
+    description: The HTTP method used by the visitor
+    type: string
+  - name: ClientRequestPath
+    description: The path requested by visitor
+    type: string
+  - name: ClientRequestProtocol
+    description: The version of HTTP protocol requested by the visitor
+    type: string
+  - name: ClientRequestQuery
+    description: The query-string was requested by the visitor
+    type: string
+  - name: ClientRequestScheme
+    description: The url scheme requested by the visitor
+    type: string
+  - name: ClientRequestUserAgent
+    description: Visitor's user-agent string
+    type: string
+  - name: Datetime
+    required: true
+    description: The date and time the event occurred at the edge
+    type: timestamp
+    timeFormat: cloudflare
+    isEventTime: true
+  - name: EdgeColoCode
+    description: The airport code of the Cloudflare datacenter that served this request
+    type: string
+  - name: EdgeResponseStatus
+    description: HTTP response status code returned to browser
+    type: smallint
+  - name: Kind
+    description: 'The kind of event, currently only possible values are: firewall'
+    type: string
+  - name: MatchIndex
+    description: Rules match index in the chain
+    type: bigint
+  - name: Metadata
+    description: Additional product-specific information. Metadata is organized in key:value pairs. Key and Value formats can vary by Cloudflare security product and can change over time
+    type: json
+  - name: OriginResponseStatus
+    description: HTTP origin response status code returned to browser
+    type: smallint
+  - name: OriginatorRayID
+    description: The RayID of the request that issued the challenge/jschallenge
+    type: string
+    indicators:
+      - trace_id
+  - name: RayID
+    description: The RayID of the request
+    type: string
+    indicators:
+      - trace_id
+  - name: RuleID
+    description: The Cloudflare security product-specific RuleID triggered by this request
+    type: string
+  - name: Source
+    description: The Cloudflare security product triggered by this request
+    type: string

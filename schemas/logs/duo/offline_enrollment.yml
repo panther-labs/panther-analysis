@@ -6,30 +6,30 @@ description: Duo Authentication for Windows Logon offline enrollment events.
 referenceURL: https://duo.com/docs/adminapi#offline-enrollment-logs
 version: 0
 fields:
-- name: action
-  required: true
-  description: The offline enrollment operation. One of "o2fa_user_provisioned", "o2fa_user_deprovisioned", or "o2fa_user_reenrolled".
-  type: string
-- name: description
-  description: Information about the Duo Windows Logon client system as reported by the application.
-  type: string
-- name: isotimestamp
-  required: true
-  description: ISO8601 timestamp of the event.
-  type: timestamp
-  timeFormat: rfc3339
-  isEventTime: true
-- name: object
-  required: true
-  description: The Duo Windows Logon integration's name.
-  type: string
-- name: timestamp
-  description: Unix timestamp of the event.
-  type: timestamp
-  timeFormat: unix
-- name: username
-  required: true
-  description: The Duo username.
-  type: string
-  indicators:
-  - username
+  - name: action
+    required: true
+    description: The offline enrollment operation. One of "o2fa_user_provisioned", "o2fa_user_deprovisioned", or "o2fa_user_reenrolled".
+    type: string
+  - name: description
+    description: Information about the Duo Windows Logon client system as reported by the application.
+    type: string
+  - name: isotimestamp
+    required: true
+    description: ISO8601 timestamp of the event.
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+  - name: object
+    required: true
+    description: The Duo Windows Logon integration's name.
+    type: string
+  - name: timestamp
+    description: Unix timestamp of the event.
+    type: timestamp
+    timeFormat: unix
+  - name: username
+    required: true
+    description: The Duo username.
+    type: string
+    indicators:
+      - username

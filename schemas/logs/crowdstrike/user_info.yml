@@ -6,73 +6,73 @@ description: User Account & Logon information provided by Falcon Discover
 referenceURL: https://developer.crowdstrike.com/crowdstrike/docs/falcon-data-replicator-guide#section-userinfo
 version: 0
 fields:
-- name: _time
-  required: true
-  description: The host's local time in epoch format.
-  type: timestamp
-  timeFormat: unix
-  isEventTime: true
-- name: cid
-  required: true
-  description: The customer ID.
-  type: string
-- name: AccountType
-  required: true
-  description: 'The type of account set for the user: ''Domain User'', ''Domain Administrator'', ''Local User''.'
-  type: string
-- name: DomainUser
-  required: true
-  description: 'Indicates if the user''s credentials are part of a domain controller: ''Yes'', ''No''.'
-  type: string
-- name: UserName
-  required: true
-  description: The username of the system.
-  type: string
-  indicators:
-  - username
-- name: UserSid_readable
-  required: true
-  description: The user SID associated with this process.
-  type: string
-- name: LastLoggedOnHost
-  description: The host that was last logged into the system.
-  type: string
-- name: LocalAdminAccess
-  description: 'Indicates whether a local user is an admin: ''Yes'', ''No''.'
-  type: string
-- name: LoggedOnHostCount
-  description: The number of hosts logged in at _time.
-  type: int
-- name: LogonInfo
-  description: The login information.
-  type: string
-- name: LogonTime
-  description: The last login time by this user in epoch format.
-  type: timestamp
-  timeFormat: unix
-- name: LogonType
-  description: 'Values defined as follows, INTERACTIVE: The security principal is logging on interactively, NETWORK: The security principal is logging on using a network, TERMINAL SERVER: The security principal has logged in via a terminal server.'
-  type: string
-- name: monthsincereset
-  description: The number of months since this user's password was last reset.
-  type: int
-- name: PasswordLastSet
-  description: The last time in epoch format that this user's password in the system was set.
-  type: timestamp
-  timeFormat: unix
-- name: User
-  description: A system username with domain.
-  type: string
-- name: UserIsAdmin
-  description: Indicates whether the user account has administrator privileges.
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: smallint
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: UserLogonFlags_decimal
-  description: A bitfield for various bits of a UserLogon, or failed user logon.
-  type: int
+  - name: _time
+    required: true
+    description: The host's local time in epoch format.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: cid
+    required: true
+    description: The customer ID.
+    type: string
+  - name: AccountType
+    required: true
+    description: 'The type of account set for the user: ''Domain User'', ''Domain Administrator'', ''Local User''.'
+    type: string
+  - name: DomainUser
+    required: true
+    description: 'Indicates if the user''s credentials are part of a domain controller: ''Yes'', ''No''.'
+    type: string
+  - name: UserName
+    required: true
+    description: The username of the system.
+    type: string
+    indicators:
+      - username
+  - name: UserSid_readable
+    required: true
+    description: The user SID associated with this process.
+    type: string
+  - name: LastLoggedOnHost
+    description: The host that was last logged into the system.
+    type: string
+  - name: LocalAdminAccess
+    description: 'Indicates whether a local user is an admin: ''Yes'', ''No''.'
+    type: string
+  - name: LoggedOnHostCount
+    description: The number of hosts logged in at _time.
+    type: int
+  - name: LogonInfo
+    description: The login information.
+    type: string
+  - name: LogonTime
+    description: The last login time by this user in epoch format.
+    type: timestamp
+    timeFormat: unix
+  - name: LogonType
+    description: 'Values defined as follows, INTERACTIVE: The security principal is logging on interactively, NETWORK: The security principal is logging on using a network, TERMINAL SERVER: The security principal has logged in via a terminal server.'
+    type: string
+  - name: monthsincereset
+    description: The number of months since this user's password was last reset.
+    type: int
+  - name: PasswordLastSet
+    description: The last time in epoch format that this user's password in the system was set.
+    type: timestamp
+    timeFormat: unix
+  - name: User
+    description: A system username with domain.
+    type: string
+  - name: UserIsAdmin
+    description: Indicates whether the user account has administrator privileges.
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: smallint
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: UserLogonFlags_decimal
+    description: A bitfield for various bits of a UserLogon, or failed user logon.
+    type: int
