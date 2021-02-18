@@ -47,7 +47,7 @@ managed-schemas:
 
 managed-schemas.zip: managed-schemas
 	rm -f dist/managed-schemas.zip; \
-	if [ -v "$(release)" ]; then \
+	if [ "$(release)" != "" ]; then \
 		echo "$(release)"; \
 	else \
 		echo "$(last_release)-$(rev)"; \
