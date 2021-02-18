@@ -6,53 +6,53 @@ description: GitLab log file containing changes to group or project settings
 referenceURL: https://docs.gitlab.com/ee/administration/logs.html#audit_jsonlog
 version: 0
 fields:
-- name: severity
-  required: true
-  description: The log level
-  type: string
-- name: time
-  required: true
-  description: The event timestamp
-  type: timestamp
-  timeFormat: rfc3339
-  isEventTime: true
-- name: author_id
-  required: true
-  description: User id that made the change
-  type: bigint
-- name: entity_id
-  required: true
-  description: Id of the entity that was modified
-  type: bigint
-- name: entity_type
-  required: true
-  description: Type of the modified entity
-  type: string
-- name: change
-  required: true
-  description: Type of change to the settings
-  type: string
-- name: from
-  required: true
-  description: Old setting value
-  type: string
-- name: to
-  required: true
-  description: New setting value
-  type: string
-- name: author_name
-  required: true
-  description: Name of the user that made the change
-  type: string
-- name: target_id
-  required: true
-  description: Target id of the modified setting
-  type: bigint
-- name: target_type
-  required: true
-  description: Target type of the modified setting
-  type: string
-- name: target_details
-  required: true
-  description: Details of the target of the modified setting
-  type: string
+  - name: severity
+    required: true
+    description: The log level
+    type: string
+  - name: time
+    required: true
+    description: The event timestamp
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+  - name: author_id
+    required: true
+    description: User id that made the change
+    type: bigint
+  - name: entity_id
+    required: true
+    description: Id of the entity that was modified
+    type: bigint
+  - name: entity_type
+    required: true
+    description: Type of the modified entity
+    type: string
+  - name: change
+    required: true
+    description: Type of change to the settings
+    type: string
+  - name: from
+    required: true
+    description: Old setting value
+    type: string
+  - name: to
+    required: true
+    description: New setting value
+    type: string
+  - name: author_name
+    required: true
+    description: Name of the user that made the change
+    type: string
+  - name: target_id
+    required: true
+    description: Target id of the modified setting
+    type: bigint
+  - name: target_type
+    required: true
+    description: Target type of the modified setting
+    type: string
+  - name: target_details
+    required: true
+    description: Details of the target of the modified setting
+    type: string

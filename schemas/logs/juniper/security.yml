@@ -2,77 +2,80 @@ schema: Juniper.Security
 parser:
   native:
     name: Juniper.Security
-description: "Juniper.Security Webapp Secure is configured to log security incidents to mws-security.log.\n\t\tAll security alerts should be sent to security.log (previously named security-alert.log).\n\t\tThere are different types of security incidents that will be a part of this log: new profiles, security incidents, new counter responses."
+description: |-
+  Juniper.Security Webapp Secure is configured to log security incidents to mws-security.log.
+  		All security alerts should be sent to security.log (previously named security-alert.log).
+  		There are different types of security incidents that will be a part of this log: new profiles, security incidents, new counter responses.
 referenceURL: https://www.juniper.net/documentation/en_US/webapp5.6/topics/reference/w-a-s-log-format.html
 version: 0
 fields:
-- name: timestamp
-  description: Log entry timestamp
-  type: timestamp
-  timeFormat: rfc3339
-- name: hostname
-  description: The hostname of the appliance
-  type: string
-- name: log_level
-  description: The importance level of a log entry. Can be TRACE, DEBUG, INFO, WARN, or ERROR.
-  type: string
-- name: service
-  description: The WebApp Secure service that triggered the security log entry.
-  type: string
-- name: category
-  description: Log entry category
-  type: string
-- name: profile_id
-  description: The numerical ID assigned to the Profile that caused the security alert, or the profile ID that received a Response.
-  type: string
-- name: profile_name
-  description: The friendly name assigned to the Profile that caused the security alert, or the Profile that received a Response.
-  type: string
-- name: pubkey
-  description: The Public ID that can be used in conjunction with the Support_Processor to unblock Profiles.
-  type: string
-- name: incident
-  description: The name of the incident that triggered this security alert.
-  type: string
-- name: severity
-  description: The numerical severity of the incident that triggered this security alert. This can be a number from 0 to 4, inclusive.
-  type: smallint
-- name: source_ip
-  description: The IP the request that generated this alert originated from.
-  type: string
-- name: user_agent
-  description: The client's user agent string that generated this alert.
-  type: string
-- name: url
-  description: The request URL that generated this alert.
-  type: string
-- name: count
-  description: The number of times the profile triggered this incident. This is used for certain incidents to decide whether or not to elevate the profile or increase the responses on the profile.
-  type: int
-- name: fake_response
-  description: Whether or not (true or false) the response sent back to the client was a fake one created by WebApp Secure.
-  type: boolean
-- name: response_code
-  description: The numerical code for the response issued.
-  type: string
-- name: response_name
-  description: The friendly name for the response issued on the profile indicated in the alert.
-  type: string
-- name: created_date
-  description: The date and time the response was created.
-  type: timestamp
-  timeFormat: rfc3339
-- name: delay_date
-  description: The date and time the response is set to be delayed until.
-  type: timestamp
-  timeFormat: rfc3339
-- name: expiration_date
-  description: The date and time the response is set to expire.
-  type: timestamp
-  timeFormat: rfc3339
-- name: response_config
-  description: The configuration used in this response. Displayed as an XML-like node.
-  type: string
-- name: silent_running
-  description: Whether or not this Counter Response was set to be silent with the Silent Running service at the time of activation.
-  type: boolean
+  - name: timestamp
+    description: Log entry timestamp
+    type: timestamp
+    timeFormat: rfc3339
+  - name: hostname
+    description: The hostname of the appliance
+    type: string
+  - name: log_level
+    description: The importance level of a log entry. Can be TRACE, DEBUG, INFO, WARN, or ERROR.
+    type: string
+  - name: service
+    description: The WebApp Secure service that triggered the security log entry.
+    type: string
+  - name: category
+    description: Log entry category
+    type: string
+  - name: profile_id
+    description: The numerical ID assigned to the Profile that caused the security alert, or the profile ID that received a Response.
+    type: string
+  - name: profile_name
+    description: The friendly name assigned to the Profile that caused the security alert, or the Profile that received a Response.
+    type: string
+  - name: pubkey
+    description: The Public ID that can be used in conjunction with the Support_Processor to unblock Profiles.
+    type: string
+  - name: incident
+    description: The name of the incident that triggered this security alert.
+    type: string
+  - name: severity
+    description: The numerical severity of the incident that triggered this security alert. This can be a number from 0 to 4, inclusive.
+    type: smallint
+  - name: source_ip
+    description: The IP the request that generated this alert originated from.
+    type: string
+  - name: user_agent
+    description: The client's user agent string that generated this alert.
+    type: string
+  - name: url
+    description: The request URL that generated this alert.
+    type: string
+  - name: count
+    description: The number of times the profile triggered this incident. This is used for certain incidents to decide whether or not to elevate the profile or increase the responses on the profile.
+    type: int
+  - name: fake_response
+    description: Whether or not (true or false) the response sent back to the client was a fake one created by WebApp Secure.
+    type: boolean
+  - name: response_code
+    description: The numerical code for the response issued.
+    type: string
+  - name: response_name
+    description: The friendly name for the response issued on the profile indicated in the alert.
+    type: string
+  - name: created_date
+    description: The date and time the response was created.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: delay_date
+    description: The date and time the response is set to be delayed until.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: expiration_date
+    description: The date and time the response is set to expire.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: response_config
+    description: The configuration used in this response. Displayed as an XML-like node.
+    type: string
+  - name: silent_running
+    description: Whether or not this Counter Response was set to be silent with the Silent Running service at the time of activation.
+    type: boolean

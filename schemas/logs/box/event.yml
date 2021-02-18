@@ -6,106 +6,106 @@ description: Contains events for the entire enterprise
 referenceURL: https://developer.box.com/reference/get-events
 version: 0
 fields:
-- name: additional_details
-  description: This object provides additional information about the event if available.
-  type: json
-- name: created_at
-  description: The timestamp of the event
-  type: timestamp
-  timeFormat: rfc3339
-- name: created_by
-  description: The user that performed the action represented by the event.
-  type: object
-  fields:
-  - name: id
-    description: The unique identifier for this object
-    type: string
-  - name: type
-    description: The object type (always 'user')
-    type: string
-  - name: login
-    description: The primary email address of this user
-    type: string
-  - name: name
-    description: The display name of this user
-    type: string
-- name: event_id
-  required: true
-  description: The ID of the event object. You can use this to detect duplicate events
-  type: string
-- name: event_type
-  required: true
-  description: The event type that triggered this event
-  type: string
-- name: type
-  required: true
-  description: The object type (always 'event')
-  type: string
-- name: source
-  required: true
-  description: The item that triggered this event
-  type: object
-  fields:
-  - name: id
-    description: The unique identifier for this object
-    type: string
-  - name: type
-    description: The object type (always 'user')
-    type: string
-  - name: login
-    description: The primary email address of this user
-    type: string
-  - name: name
-    description: The display name of this user
-    type: string
-  - name: item_id
-    description: The unique identifier that represents the item.
-    type: string
-  - name: item_name
-    description: The name of the item.
-    type: string
-  - name: item_type
-    description: The type of the item that the event represents. Can be file or folder.
-    type: string
-  - name: owned_by
-    description: The user who owns this item.
+  - name: additional_details
+    description: This object provides additional information about the event if available.
+    type: json
+  - name: created_at
+    description: The timestamp of the event
+    type: timestamp
+    timeFormat: rfc3339
+  - name: created_by
+    description: The user that performed the action represented by the event.
     type: object
     fields:
-    - name: id
-      description: The unique identifier for this object
-      type: string
-    - name: type
-      description: The object type (always 'user')
-      type: string
-    - name: login
-      description: The primary email address of this user
-      type: string
-    - name: name
-      description: The display name of this user
-      type: string
-  - name: parent
-    description: The optional folder that this folder is located within.
+      - name: id
+        description: The unique identifier for this object
+        type: string
+      - name: type
+        description: The object type (always 'user')
+        type: string
+      - name: login
+        description: The primary email address of this user
+        type: string
+      - name: name
+        description: The display name of this user
+        type: string
+  - name: event_id
+    required: true
+    description: The ID of the event object. You can use this to detect duplicate events
+    type: string
+  - name: event_type
+    required: true
+    description: The event type that triggered this event
+    type: string
+  - name: type
+    required: true
+    description: The object type (always 'event')
+    type: string
+  - name: source
+    required: true
+    description: The item that triggered this event
     type: object
     fields:
-    - name: etag
-      description: The HTTP etag of this folder.
-      type: string
-    - name: id
-      description: The unique identifier that represent a folder.
-      type: string
-    - name: type
-      required: true
-      description: The type of the object (always 'folder')
-      type: string
-    - name: name
-      description: The name of the folder
-      type: string
-    - name: sequence_id
-      description: A numeric identifier that represents the most recent user event that has been applied to this item.
-      type: string
-- name: session_id
-  description: The event type that triggered this event
-  type: string
-- name: ip_address
-  description: The IP address the request was made from.
-  type: string
+      - name: id
+        description: The unique identifier for this object
+        type: string
+      - name: type
+        description: The object type (always 'user')
+        type: string
+      - name: login
+        description: The primary email address of this user
+        type: string
+      - name: name
+        description: The display name of this user
+        type: string
+      - name: item_id
+        description: The unique identifier that represents the item.
+        type: string
+      - name: item_name
+        description: The name of the item.
+        type: string
+      - name: item_type
+        description: The type of the item that the event represents. Can be file or folder.
+        type: string
+      - name: owned_by
+        description: The user who owns this item.
+        type: object
+        fields:
+          - name: id
+            description: The unique identifier for this object
+            type: string
+          - name: type
+            description: The object type (always 'user')
+            type: string
+          - name: login
+            description: The primary email address of this user
+            type: string
+          - name: name
+            description: The display name of this user
+            type: string
+      - name: parent
+        description: The optional folder that this folder is located within.
+        type: object
+        fields:
+          - name: etag
+            description: The HTTP etag of this folder.
+            type: string
+          - name: id
+            description: The unique identifier that represent a folder.
+            type: string
+          - name: type
+            required: true
+            description: The type of the object (always 'folder')
+            type: string
+          - name: name
+            description: The name of the folder
+            type: string
+          - name: sequence_id
+            description: A numeric identifier that represents the most recent user event that has been applied to this item.
+            type: string
+  - name: session_id
+    description: The event type that triggered this event
+    type: string
+  - name: ip_address
+    description: The IP address the request was made from.
+    type: string

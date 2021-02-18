@@ -6,47 +6,47 @@ description: 'Sensor and Host information provided by Falcon Insight (Network In
 referenceURL: https://developer.crowdstrike.com/crowdstrike/docs/falcon-data-replicator-guide#section-managedassets
 version: 0
 fields:
-- name: _time
-  required: true
-  description: The host's local time in epoch format.
-  type: timestamp
-  timeFormat: unix
-  isEventTime: true
-- name: aid
-  required: true
-  description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
-  type: string
-- name: cid
-  required: true
-  description: The customer ID.
-  type: string
-- name: GatewayIP
-  required: true
-  description: The gateway of the system where the sensor is installed.
-  type: string
-  indicators:
-  - ip
-- name: GatewayMAC
-  required: true
-  description: The MAC address of the gateway.
-  type: string
-- name: MacPrefix
-  required: true
-  description: An identifier unique to the organization.
-  type: string
-- name: MAC
-  required: true
-  description: The MAC address of the system.
-  type: string
-- name: LocalAddressIP4
-  required: true
-  description: The device's local IP address in IPv4 format.
-  type: string
-  indicators:
-  - ip
-- name: InterfaceAlias
-  description: The user-friendly name of the IP interface.
-  type: string
-- name: InterfaceDescription
-  description: The network adapter used for the IP interface.
-  type: string
+  - name: _time
+    required: true
+    description: The host's local time in epoch format.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: aid
+    required: true
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: cid
+    required: true
+    description: The customer ID.
+    type: string
+  - name: GatewayIP
+    required: true
+    description: The gateway of the system where the sensor is installed.
+    type: string
+    indicators:
+      - ip
+  - name: GatewayMAC
+    required: true
+    description: The MAC address of the gateway.
+    type: string
+  - name: MacPrefix
+    required: true
+    description: An identifier unique to the organization.
+    type: string
+  - name: MAC
+    required: true
+    description: The MAC address of the system.
+    type: string
+  - name: LocalAddressIP4
+    required: true
+    description: The device's local IP address in IPv4 format.
+    type: string
+    indicators:
+      - ip
+  - name: InterfaceAlias
+    description: The user-friendly name of the IP interface.
+    type: string
+  - name: InterfaceDescription
+    description: The network adapter used for the IP interface.
+    type: string

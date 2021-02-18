@@ -6,56 +6,56 @@ description: Integration activity logs for a team, including when integrations a
 referenceURL: https://api.slack.com/methods/team.integrationLogs
 version: 0
 fields:
-- name: user_id
-  required: true
-  description: The id of the user performing the action.
-  type: string
-- name: user_name
-  description: The username of the user performing the action.
-  type: string
-  indicators:
-  - username
-- name: service_id
-  description: The service id for which this log is about.
-  type: string
-- name: service_type
-  description: The service type for which this log is about.
-  type: string
-- name: app_id
-  description: The app id for which this log is about.
-  type: string
-- name: app_type
-  description: The app type for which this log is about.
-  type: string
-- name: date
-  required: true
-  description: The date when the action happened.
-  type: timestamp
-  timeFormat: unix
-  isEventTime: true
-- name: change_type
-  required: true
-  description: The type of this action (added, removed, enabled, disabled, updated).
-  type: string
-- name: scope
-  required: true
-  description: The scope used for this action.
-  type: string
-- name: channel
-  description: The related channel.
-  type: string
-- name: reason
-  description: The reason of the disable action, populated if this event refers to such an action.
-  type: string
-- name: rss_feed
-  description: True if this log entry is an RSS feed. If true, more RSS feed related fields will be present.
-  type: boolean
-- name: rss_feed_change_type
-  description: The change type for the RSS feed.
-  type: boolean
-- name: rss_feed_title
-  description: The title of the RSS feed.
-  type: boolean
-- name: rss_feed_url
-  description: The url of the RSS feed.
-  type: boolean
+  - name: user_id
+    required: true
+    description: The id of the user performing the action.
+    type: string
+  - name: user_name
+    description: The username of the user performing the action.
+    type: string
+    indicators:
+      - username
+  - name: service_id
+    description: The service id for which this log is about.
+    type: string
+  - name: service_type
+    description: The service type for which this log is about.
+    type: string
+  - name: app_id
+    description: The app id for which this log is about.
+    type: string
+  - name: app_type
+    description: The app type for which this log is about.
+    type: string
+  - name: date
+    required: true
+    description: The date when the action happened.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: change_type
+    required: true
+    description: The type of this action (added, removed, enabled, disabled, updated).
+    type: string
+  - name: scope
+    required: true
+    description: The scope used for this action.
+    type: string
+  - name: channel
+    description: The related channel.
+    type: string
+  - name: reason
+    description: The reason of the disable action, populated if this event refers to such an action.
+    type: string
+  - name: rss_feed
+    description: True if this log entry is an RSS feed. If true, more RSS feed related fields will be present.
+    type: boolean
+  - name: rss_feed_change_type
+    description: The change type for the RSS feed.
+    type: boolean
+  - name: rss_feed_title
+    description: The title of the RSS feed.
+    type: boolean
+  - name: rss_feed_url
+    description: The url of the RSS feed.
+    type: boolean
