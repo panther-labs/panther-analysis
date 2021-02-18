@@ -14,7 +14,7 @@ def build_client(resource, service, region=None):
 
     sts_connection = boto3.client('sts',
                                   endpoint_url='https://sts' +
-                                               fips_suffix if fips_enabled else None)
+                                  fips_suffix if fips_enabled else None)
 
     acct_b = sts_connection.assume_role(
         RoleArn=role_arn, RoleSessionName="lambda_assume_audit_role")
