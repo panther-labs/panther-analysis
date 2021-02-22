@@ -98,6 +98,7 @@ def store_login_info(key, event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
+    #  pylint: disable=line-too-long
     return (
         f"Geographically improbably login for user [{deep_get(event, 'actor', 'alternateId')}] "
         f"from [{deep_get(EVENT_CITY_TRACKING.get(event.get('p_row_id')), 'old_city', default='<NOT_STORED>')}]"

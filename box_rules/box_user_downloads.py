@@ -7,6 +7,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] exceeded threshold for number "
-        f"of downloads in the configured time frame."
+        f"User [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] "
+        f"exceeded threshold for number of downloads in the configured time frame."
     )

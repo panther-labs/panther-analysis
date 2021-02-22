@@ -27,6 +27,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"GCS bucket [{deep_get(event, 'resource', 'labels', 'bucket_name', default='<UNKNOWN_BUCKET>')}] "
+        f"GCS bucket "
+        f"[{deep_get(event, 'resource', 'labels', 'bucket_name', default='<UNKNOWN_BUCKET>')}] "
         f"made public"
     )

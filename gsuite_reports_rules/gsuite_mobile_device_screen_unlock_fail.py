@@ -19,6 +19,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]'s device had multiple"
-        f" failed unlock attempts"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
+        f"'s device had multiple failed unlock attempts"
     )

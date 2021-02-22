@@ -27,4 +27,7 @@ def rule(event):
 
 
 def title(event):
-    return f"AWS logins detected without MFA in account [{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+    return (
+        f"AWS logins detected without MFA in account "
+        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+    )

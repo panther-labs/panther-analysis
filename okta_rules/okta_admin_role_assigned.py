@@ -29,6 +29,7 @@ def title(event):
     display_name = target[0].get("displayName", "MISSING DISPLAY NAME") if target else ""
     alternate_id = target[0].get("alternateId", "MISSING ALTERNATE ID") if target else ""
 
+    #  pylint: disable=line-too-long
     return (
         f"{deep_get(event, 'actor', 'displayName')} <{deep_get(event, 'actor', 'alternateId')}> was granted "
         f"[{deep_get(event, 'debugContext', 'debugData', 'privilegeGranted', default='<UNKNOWN_PRIVILEGE>')}] "

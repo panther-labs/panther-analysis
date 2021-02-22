@@ -37,6 +37,6 @@ def title(event):
             doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
             break
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] modified a document "
-        f"[{doc_title}] that has overly permissive share settings"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"
+        f" modified a document [{doc_title}] that has overly permissive share settings"
     )

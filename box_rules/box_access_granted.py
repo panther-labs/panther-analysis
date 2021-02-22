@@ -6,4 +6,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] granted access to their account"
+    return (
+        f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] granted "
+        f"access to their account"
+    )

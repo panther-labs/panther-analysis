@@ -19,12 +19,14 @@ def title(event):
     if event.get("event_type") == "FILE_MARKED_MALICIOUS":
         return (
             f"File [{deep_get(event, 'source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
-            f"[{deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], was marked malicious."
+            f"[{deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], "
+            f"was marked malicious."
         )
 
     alert_details = box_parse_additional_details(event).get("shield_alert", {})
+    #  pylint: disable=line-too-long
     return (
         f"File [{deep_get(alert_details, 'user', 'email', default='<UNKNOWN_USER>')}], owned by "
-        f"[{deep_get(alert_details, 'alert_summary', 'upload_activity', 'item_name', default='<UNKNOWN_FILE>')}],"
-        f" was marked malicious."
+        f"[{deep_get(alert_details, 'alert_summary', 'upload_activity', 'item_name', default='<UNKNOWN_FILE>')}], "
+        f"was marked malicious."
     )

@@ -44,4 +44,7 @@ def title(event):
         else deep_get(event, "columns", "username")
     )
 
-    return f"User [{user if user else '<UNKNOWN_USER>'} has logged into production from a non-office network"
+    return (
+        f"User [{user if user else '<UNKNOWN_USER>'}"
+        f" has logged into production from a non-office network"
+    )

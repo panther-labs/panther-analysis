@@ -10,4 +10,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]'s device was compromised"
+    return (
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
+        f"'s device was compromised"
+    )

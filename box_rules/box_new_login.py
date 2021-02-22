@@ -8,4 +8,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] logged in from a new device."
+    return (
+        f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] "
+        f"logged in from a new device."
+    )

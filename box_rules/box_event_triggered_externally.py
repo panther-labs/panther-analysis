@@ -17,4 +17,7 @@ def rule(event):
 
 
 def title(event):
-    return f"External user [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] triggered a box event."
+    return (
+        f"External user [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] "
+        f"triggered a box event."
+    )
