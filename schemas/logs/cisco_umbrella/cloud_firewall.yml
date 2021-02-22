@@ -1,0 +1,52 @@
+schema: CiscoUmbrella.CloudFirewall
+parser:
+  native:
+    name: CiscoUmbrella.CloudFirewall
+description: Cloud Firewall logs show traffic that has been handled by network tunnels.
+referenceURL: https://docs.umbrella.com/deployment-umbrella/docs/log-formats-and-versioning#section-cloud-firewall-logs
+version: 0
+fields:
+  - name: timestamp
+    required: true
+    description: The timestamp of the request transaction in UTC (2015-01-16 17:48:41).
+    type: timestamp
+    timeFormat: rfc3339
+  - name: originId
+    description: The unique identity of the network tunnel.
+    type: string
+  - name: identity
+    description: The name of the network tunnel.
+    type: string
+  - name: identityType
+    description: The type of identity that made the request. Should always be 'CDFW Tunnel Device'.
+    type: string
+  - name: direction
+    description: The direction of the packet. It is destined either towards the internet or to the customer's network.
+    type: string
+  - name: ipProtocol
+    description: The actual IP protocol of the traffic. It could be TCP, UDP, ICMP.
+    type: int
+  - name: packetSize
+    description: The size of the packet that Umbrella CDFW received.
+    type: int
+  - name: sourceIp
+    description: The internal IP address of the user-generated traffic towards the CDFW. If the traffic goes through NAT before it comes to CDFW, it will be the NAT IP address.
+    type: string
+  - name: sourcePort
+    description: The internal port number of the user-generated traffic towards the CDFW.
+    type: int
+  - name: destinationIp
+    description: The destination IP address of the user-generated traffic towards the CDFW.
+    type: string
+  - name: destinationPort
+    description: The destination port number of the user-generated traffic towards the CDFW.
+    type: int
+  - name: dataCenter
+    description: The name of the Umbrella Data Center that processed the user-generated traffic.
+    type: string
+  - name: ruleId
+    description: The ID of the rule that processed the user traffic.
+    type: string
+  - name: verdict
+    description: The final verdict whether to allow or block the traffic based on the rule.
+    type: string

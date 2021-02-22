@@ -1,0 +1,226 @@
+schema: Cloudflare.HttpRequest
+parser:
+  native:
+    name: Cloudflare.HttpRequest
+description: Cloudflare http request logs. When selecting event fields on the Cloudflare UI, make sure you include the "EdgeStartTimestamp" field as it is required by Panther.
+referenceURL: https://developers.cloudflare.com/logs/log-fields#http-requests
+version: 0
+fields:
+  - name: BotScore
+    description: Cloudflare Bot Score (available for Bot Management customers; please contact your account team to enable)
+    type: bigint
+  - name: BotScoreSrc
+    description: Underlying detection engine or source on where a Bot Score is calculated. Possible values are Not Computed | Heuristics | Machine Learning | Behavioral Analysis | Verified Bot
+    type: string
+  - name: CacheCacheStatus
+    description: unknown | miss | expired | updating | stale | hit | ignored | bypass | revalidated
+    type: string
+  - name: CacheResponseBytes
+    description: Number of bytes returned by the cache
+    type: bigint
+  - name: CacheResponseStatus
+    description: HTTP status code returned by the cache to the edge; all requests (including non-cacheable ones) go through the cache; also see CacheStatus field
+    type: smallint
+  - name: CacheTieredFill
+    description: Tiered Cache was used to serve this request
+    type: boolean
+  - name: ClientASN
+    description: Client AS number
+    type: bigint
+  - name: ClientCountry
+    description: Country of the client IP address
+    type: string
+  - name: ClientDeviceType
+    description: Client device type
+    type: string
+  - name: ClientIP
+    description: IP address of the client
+    type: string
+    indicators:
+      - ip
+  - name: ClientIPClass
+    description: unknown | clean | badHost | searchEngine | whitelist | greylist | monitoringService | securityScanner | noRecord | scan |backupService | mobilePlatform | tor
+    type: string
+  - name: ClientRequestBytes
+    description: Number of bytes in the client request
+    type: bigint
+  - name: ClientRequestHost
+    description: Host requested by the client
+    type: string
+    indicators:
+      - hostname
+  - name: ClientRequestMethod
+    description: HTTP method of client request
+    type: string
+  - name: ClientRequestPath
+    description: URI path requested by the client
+    type: string
+  - name: ClientRequestProtocol
+    description: HTTP protocol of client request
+    type: string
+  - name: ClientRequestReferer
+    description: HTTP request referrer
+    type: string
+    indicators:
+      - hostname
+  - name: ClientRequestURI
+    description: URI requested by the client
+    type: string
+  - name: ClientRequestUserAgent
+    description: User agent reported by the client
+    type: string
+  - name: ClientSSLProtocol
+    description: Client SSL (TLS) protocol
+    type: string
+  - name: ClientSrcPort
+    description: Client source port
+    type: int
+  - name: ClientXRequestedWith
+    description: X-Requested-With HTTP header
+    type: string
+  - name: EdgeColoCode
+    description: IATA airport code of data center that received the request
+    type: string
+  - name: EdgeColoID
+    description: Cloudflare edge colo id
+    type: bigint
+  - name: EdgeEndTimestamp
+    description: Timestamp at which the edge finished sending response to the client
+    type: timestamp
+    timeFormat: cloudflare
+  - name: EdgePathingOp
+    description: Indicates what type of response was issued for this request (unknown = no specific action)
+    type: string
+  - name: EdgePathingSrc
+    description: Details how the request was classified based on security checks (unknown = no specific classification)
+    type: string
+  - name: EdgePathingStatus
+    description: Indicates what data was used to determine the handling of this request (unknown = no data)
+    type: string
+  - name: EdgeRateLimitAction
+    description: The action taken by the blocking rule; empty if no action taken
+    type: string
+  - name: EdgeRateLimitID
+    description: The internal rule ID of the rate-limiting rule that triggered a block (ban) or simulate action. 0 if no action taken
+    type: string
+  - name: EdgeRequestHost
+    description: Host header on the request from the edge to the origin
+    type: string
+    indicators:
+      - hostname
+  - name: EdgeResponseBytes
+    description: Number of bytes returned by the edge to the client
+    type: bigint
+  - name: EdgeResponseCompressionRatio
+    description: Edge response compression ratio
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: float
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: EdgeResponseContentType
+    description: Edge response Content-Type header value
+    type: string
+  - name: EdgeResponseStatus
+    description: HTTP status code returned by Cloudflare to the client
+    type: smallint
+  - name: EdgeServerIP
+    description: IP of the edge server making a request to the origin
+    type: string
+    indicators:
+      - ip
+  - name: EdgeStartTimestamp
+    required: true
+    description: Timestamp at which the edge received request from the client
+    type: timestamp
+    timeFormat: cloudflare
+    isEventTime: true
+  - name: FirewallMatchesActions
+    description: Array of actions the Cloudflare firewall products performed on this request. The individual firewall products associated with this action be found in FirewallMatchesSources and their respective RuleIds can be found in FirewallMatchesRuleIDs. The length of the array is the same as FirewallMatchesRuleIDs and FirewallMatchesSources. Possible actions are allow | log | simulate | drop | challenge | jschallenge | connectionClose | challengeSolved | challengeFailed | challengeBypassed | jschallengeSolved | jschallengeFailed | jschallengeBypassed | bypass
+    type: array
+    element:
+      type: string
+  - name: FirewallMatchesRuleIDs
+    description: Array of RuleIDs of the firewall product that has matched the request. The firewall product associated with the RuleID can be found in FirewallMatchesSources. The length of the array is the same as FirewallMatchesActions and FirewallMatchesSources.
+    type: array
+    element:
+      type: string
+  - name: FirewallMatchesSources
+    description: The firewall products that matched the request. The same product can appear multiple times, which indicates different rules or actions that were activated. The RuleIDs can be found in FirewallMatchesRuleIDs, the actions can be found in FirewallMatchesActions. The length of the array is the same as FirewallMatchesRuleIDs and FirewallMatchesActions. Possible sources are asn | country | ip | ipRange | securityLevel | zoneLockdown | waf | firewallRules | uaBlock | rateLimit |bic | hot | l7ddos | sanitycheck | protect
+    type: array
+    element:
+      type: string
+  - name: OriginIP
+    description: IP of the origin server
+    type: string
+    indicators:
+      - ip
+  - name: OriginResponseBytes
+    description: Number of bytes returned by the origin server
+    type: bigint
+  - name: OriginResponseHTTPExpires
+    description: Value of the origin 'expires' header in RFC1123 format
+    type: timestamp
+    timeFormat: layout=Mon, 02 Jan 2006 15:04:05 MST
+  - name: OriginResponseHTTPLastModified
+    description: Value of the origin 'last-modified' header in RFC1123 format
+    type: timestamp
+    timeFormat: layout=Mon, 02 Jan 2006 15:04:05 MST
+  - name: OriginResponseStatus
+    description: Status returned by the origin server
+    type: smallint
+  - name: OriginResponseTime
+    description: Number of nanoseconds it took the origin to return the response to edge
+    type: bigint
+  - name: OriginSSLProtocol
+    description: SSL (TLS) protocol used to connect to the origin
+    type: string
+  - name: ParentRayID
+    description: Ray ID of the parent request if this request was made using a Worker script
+    type: string
+    indicators:
+      - trace_id
+  - name: RayID
+    description: ID of the request
+    type: string
+    indicators:
+      - trace_id
+  - name: SecurityLevel
+    description: The security level configured at the time of this request. This is used to determine the sensitivity of the IP Reputation system
+    type: string
+  - name: WAFAction
+    description: Action taken by the WAF, if triggered
+    type: string
+  - name: WAFFlags
+    description: 'Additional configuration flags: simulate (0x1) | null'
+    type: string
+  - name: WAFMatchedVar
+    description: The full name of the most-recently matched variable
+    type: string
+  - name: WAFProfile
+    description: low | med | high
+    type: string
+  - name: WAFRuleID
+    description: ID of the applied WAF rule
+    type: string
+  - name: WAFRuleMessage
+    description: Rule message associated with the triggered rule
+    type: string
+  - name: WorkerCPUTime
+    description: Amount of time in microseconds spent executing a worker, if any
+    type: bigint
+  - name: WorkerStatus
+    description: Status returned from worker daemon
+    type: string
+  - name: WorkerSubrequest
+    description: Whether or not this request was a worker subrequest
+    type: boolean
+  - name: WorkerSubrequestCount
+    description: Number of subrequests issued by a worker when handling this request
+    type: bigint
+  - name: ZoneID
+    description: Internal zone ID
+    type: bigint

@@ -1,0 +1,253 @@
+schema: Crowdstrike.ProcessRollup2
+parser:
+  native:
+    name: Crowdstrike.ProcessRollup2
+description: This event (often called "PR2" for short) is generated for a process that is running or has finished running on a host and contains information about that process.
+version: 0
+fields:
+  - name: event_simpleName
+    required: true
+    description: Event name
+    type: string
+  - name: name
+    required: true
+    description: The event name
+    type: string
+  - name: aid
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: aip
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: cid
+    description: CID
+    type: string
+  - name: id
+    description: ID
+    type: string
+  - name: event_platform
+    description: The platform the sensor was running on
+    type: string
+  - name: timestamp
+    description: Timestamp when the event was received by the CrowdStrike cloud.
+    type: timestamp
+    timeFormat: unix_ms
+    isEventTime: true
+  - name: _time
+    description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
+    type: timestamp
+    timeFormat: layout=01/02/2006 15:04:05.999
+  - name: ComputerName
+    description: The name of the host.
+    type: string
+    indicators:
+      - hostname
+  - name: ConfigBuild
+    description: Config build
+    type: string
+  - name: ConfigStateHash
+    description: Config state hash
+    type: string
+  - name: Entitlements
+    description: Entitlements
+    type: string
+  - name: TreeId
+    description: If this event is part of a detection tree, the tree ID it is part of
+    type: string
+    indicators:
+      - trace_id
+  - name: TreeId_decimal
+    description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
+    type: bigint
+  - name: TargetProcessId
+    description: The unique ID of a target process
+    type: bigint
+  - name: SourceProcessId
+    description: The unique ID of creating process.
+    type: bigint
+  - name: SourceThreadId
+    description: The unique ID of thread from creating process.
+    type: bigint
+  - name: ParentProcessId
+    description: The unique ID of the parent process.
+    type: bigint
+  - name: ImageFileName
+    description: The full path to an executable (PE) file. The context of this field provides more information as to its meaning. For ProcessRollup2 events, this is the full path to the main executable for the created process
+    type: string
+  - name: CommandLine
+    description: The command line used to create this process. May be empty in some circumstances
+    type: string
+  - name: RawProcessId
+    description: The operating system’s internal PID. For matching, use the UPID fields which guarantee a unique process identifier
+    type: bigint
+  - name: ProcessStartTime
+    description: The time the process began in UNIX epoch time (in decimal, non-hex format).
+    type: timestamp
+    timeFormat: unix
+  - name: ProcessEndTime
+    description: The time the process finished (in decimal, non-hex format).
+    type: timestamp
+    timeFormat: unix
+  - name: SHA256HashData
+    description: The SHA256 hash of a file. In most cases, the hash of the file referred to by the ImageFileName field.
+    type: string
+    indicators:
+      - sha256
+  - name: SHA1HashData
+    description: The SHA1 hash of a file
+    type: string
+    indicators:
+      - sha1
+  - name: MD5HashData
+    description: The MD5 hash of a file
+    type: string
+    indicators:
+      - md5
+  - name: ImageSubsystem
+    description: Subsystem of the image filename (Windows only)
+    type: string
+  - name: UserSid
+    description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system. (Windows only)
+    type: string
+  - name: AuthenticationId
+    description: The authentication identifier (Windows only)
+    type: string
+  - name: IntegrityLevel
+    description: The integrity level (Windows only)
+    type: string
+  - name: ProcessCreateFlags
+    description: Captured flags from original process create. This is a bitfield. (Windows only)
+    type: string
+  - name: ProcessParameterFlags
+    description: Flags from the ‘NtCreateUserProcess’ API. This bitfield includes data like if DLL redirection is enabled. (Windows only)
+    type: string
+  - name: ProcessSxsFlags
+    description: Flags from the communications path with the Windows Subsystem Process. This bitfield includes data like if there’s a manifest and if it’s local or not. (Windows only)
+    type: string
+  - name: ParentAuthenticationId
+    description: The authentication identifier for the parent process (Windows only)
+    type: string
+  - name: TokenType
+    description: The token type (Windows only)
+    type: string
+  - name: SessionId
+    description: The id of the session (Windows only)
+    type: string
+  - name: WindowFlags
+    description: Flags from the window (Windows only)
+    type: string
+  - name: ShowWindowFlags
+    description: Window visibility flags (Windows only)
+    type: string
+  - name: WindowStartingPositionHorizontal
+    description: Start horizontal position of the process window (Windows only)
+    type: bigint
+  - name: WindowStartingPositionVertical
+    description: Start vertical position of the process window (Windows only)
+    type: bigint
+  - name: WindowStartingWidth
+    description: Start width of the process window (Windows only)
+    type: bigint
+  - name: WindowStartingHeight
+    description: Start height of the process window (Windows only)
+    type: bigint
+  - name: Desktop
+    description: The desktop of the process window (Windows only)
+    type: string
+  - name: WindowStation
+    description: The  process window station (Windows only)
+    type: string
+  - name: WindowTitle
+    description: The title of the process window (WindowsOnly)
+    type: string
+  - name: LinkName
+    description: Link name (Windows only)
+    type: string
+  - name: ApplicationUserModelId
+    description: Application user model id (WindowsOnly)
+    type: string
+  - name: CallStackModuleNames
+    description: Call stack module names (Windows only)
+    type: string
+  - name: CallStackModuleNamesVersion
+    description: Call stack module names version (Windows only)
+    type: string
+  - name: RpcClientProcessId
+    description: RPC client process id (Windows only)
+    type: string
+  - name: CsaProcessDataCollectionInstanceId
+    description: CSA process data collection instance id (Windows only)
+    type: string
+  - name: OriginalCommandLine
+    description: The original command line used to create this process (Windows only)
+    type: string
+  - name: CreateProcessType
+    description: Create process type (Windows only)
+    type: string
+  - name: ZoneIdentifier
+    description: Zone identifier (Windows only)
+    type: string
+  - name: HostUrl
+    description: Host URL (Windows only)
+    type: string
+  - name: ReferrerUrl
+    description: Referrer URL (Windows only)
+    type: string
+    indicators:
+      - url
+  - name: GrandParent
+    description: Grant parent (Windows only)
+    type: string
+  - name: BaseFileName
+    description: Base file name (Windows only)
+    type: string
+  - name: Tags
+    description: Process tags comma separated list (Windows, Mac)
+    type: string
+  - name: ParentBaseFileName
+    description: Parent process base file name (Windows, Mac)
+    type: string
+  - name: ProcessGroupId
+    description: Process group id (Windows, Mac)
+    type: bigint
+  - name: UID
+    description: UID (Mac, Linux, Android)
+    type: bigint
+  - name: RUID
+    description: RUID (Mac, Linux, Android)
+    type: bigint
+  - name: SVUID
+    description: SVUID (Mac, Linux, Android)
+    type: bigint
+  - name: GID
+    description: GID (Mac, Linux, Android)
+    type: bigint
+  - name: RGID
+    description: RGID (Mac, Linux, Android)
+    type: bigint
+  - name: SVGID
+    description: SVGID (Mac, Linux, Android)
+    type: bigint
+  - name: SessionProcessId
+    description: Session process id (Mac, Linux)
+    type: bigint
+  - name: MachOSubType
+    description: MachOSubType (Mac only)
+    type: string
+  - name: TtyName
+    description: TTY name (Linux only)
+    type: string
+  - name: OciContainerId
+    description: OCI Container id (Linux only)
+    type: string
+  - name: SourceAndroidComponentName
+    description: Source component name (Android only)
+    type: string
+  - name: TargetAndroidComponentName
+    description: Target component name (Android only)
+    type: string
+  - name: TargetAndroidComponentType
+    description: Target component type (Android only)
+    type: string

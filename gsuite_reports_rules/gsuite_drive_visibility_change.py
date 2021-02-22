@@ -21,7 +21,12 @@ def dedup(event):
 
 
 def title(event):
+    doc_title = "<UNKNOWN_TITLE>"
+    for detail in event.get("events", [{}]):
+        if param_lookup(detail.get("parameters", {}), "doc_title"):
+            doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+            break
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] made a document externally "
-        f"visible for the first time"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] made a document "
+        f"[{doc_title}] externally visible for the first time"
     )

@@ -1,0 +1,40 @@
+schema: AWS.AuroraMySQLAudit
+parser:
+  native:
+    name: AWS.AuroraMySQLAudit
+description: AuroraMySQLAudit is an RDS Aurora audit log which contains context around database calls.
+referenceURL: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Auditing.html
+version: 0
+fields:
+  - name: timestamp
+    description: The timestamp for the logged event with microsecond precision (UTC).
+    type: timestamp
+    timeFormat: rfc3339
+  - name: serverHost
+    description: The name of the instance that the event is logged for.
+    type: string
+  - name: username
+    description: The connected user name of the user.
+    type: string
+  - name: host
+    description: The host that the user connected from.
+    type: string
+  - name: connectionId
+    description: The connection ID number for the logged operation.
+    type: int
+  - name: queryId
+    description: The query ID number, which can be used for finding the relational table events and related queries. For TABLE events, multiple lines are added.
+    type: int
+  - name: operation
+    required: true
+    description: 'The recorded action type. Possible values are: CONNECT, QUERY, READ, WRITE, CREATE, ALTER, RENAME, and DROP.'
+    type: string
+  - name: database
+    description: The active database, as set by the USE command.
+    type: string
+  - name: object
+    description: For QUERY events, this value indicates the executed query. For TABLE events, it indicates the table name.
+    type: string
+  - name: retCode
+    description: The return code of the logged operation.
+    type: int

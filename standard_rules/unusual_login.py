@@ -71,4 +71,6 @@ def get_key(event):
 
 
 def title(event):
-    return f"{event.get('p_log_type')}: Unusual logins detected for user [{event.udm('actor_user')}]"
+    return (
+        f"{event.get('p_log_type')}: Unusual logins detected for user [{event.udm('actor_user')}]"
+    )

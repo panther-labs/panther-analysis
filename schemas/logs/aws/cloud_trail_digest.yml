@@ -1,0 +1,101 @@
+schema: AWS.CloudTrailDigest
+parser:
+  native:
+    name: AWS.CloudTrailDigest
+description: AWSCloudTrailDigest contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the signature of the previous digest file.
+referenceURL: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-digest-file-structure.html
+version: 0
+fields:
+  - name: awsAccountId
+    required: true
+    description: The AWS account ID for which the digest file has been delivered.
+    type: string
+    indicators:
+      - aws_account_id
+  - name: digestStartTime
+    required: true
+    description: The starting UTC time range that the digest file covers, taking as a reference the time in which log files have been delivered by CloudTrail.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: digestEndTime
+    required: true
+    description: The ending UTC time range that the digest file covers, taking as a reference the time in which log files have been delivered by CloudTrail.
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+  - name: digestS3Bucket
+    required: true
+    description: The name of the Amazon S3 bucket to which the current digest file has been delivered.
+    type: string
+  - name: digestS3Object
+    required: true
+    description: The Amazon S3 object key (that is, the Amazon S3 bucket location) of the current digest file.
+    type: string
+  - name: newestEventTime
+    description: The UTC time of the most recent event among all of the events in the log files in the digest.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: oldestEventTime
+    description: The UTC time of the oldest event among all of the events in the log files in the digest.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: previousDigestS3Bucket
+    description: The Amazon S3 bucket to which the previous digest file was delivered.
+    type: string
+  - name: previousDigestS3Object
+    description: The Amazon S3 object key (that is, the Amazon S3 bucket location) of the previous digest file.
+    type: string
+  - name: previousDigestHashValue
+    description: The hexadecimal encoded hash value of the uncompressed contents of the previous digest file.
+    type: string
+    indicators:
+      - sha256
+  - name: previousDigestHashAlgorithm
+    description: The name of the hash algorithm that was used to hash the previous digest file.
+    type: string
+  - name: previousDigestSignature
+    description: The hexadecimal encoded signature of the previous digest file.
+    type: string
+  - name: digestPublicKeyFingerprint
+    required: true
+    description: The hexadecimal encoded fingerprint of the public key that matches the private key used to sign this digest file.
+    type: string
+  - name: digestSignatureAlgorithm
+    required: true
+    description: The algorithm used to sign the digest file.
+    type: string
+  - name: logFiles
+    required: true
+    description: Log files delivered in this digest
+    type: array
+    element:
+      type: object
+      fields:
+        - name: s3Bucket
+          required: true
+          description: The name of the Amazon S3 bucket for the log file.
+          type: string
+        - name: s3Object
+          required: true
+          description: The Amazon S3 object key of the current log file.
+          type: string
+        - name: hashValue
+          required: true
+          description: The hexadecimal encoded hash value of the uncompressed log file content.
+          type: string
+          indicators:
+            - sha256
+        - name: hashAlgorithm
+          required: true
+          description: The hash algorithm used to hash the log file.
+          type: string
+        - name: newestEventTime
+          required: true
+          description: The UTC time of the most recent event among the events in the log file.
+          type: timestamp
+          timeFormat: rfc3339
+        - name: oldestEventTime
+          required: true
+          description: The UTC time of the oldest event among the events in the log file.
+          type: timestamp
+          timeFormat: rfc3339

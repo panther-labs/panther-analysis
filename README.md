@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://docs.runpanther.io/quick-start">Panther Deployment</a> |
-  <a href="https://docs.runpanther.io/user-guide/analysis/panther-analysis-tool">CLI Documentation</a> |
+  <a href="https://docs.runpanther.io/writing-detections/panther-analysis-tool">CLI Documentation</a> |
   <a href="https://slack.runpanther.io/">Community Slack Channel</a>
 </p>
 
@@ -84,7 +84,7 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 
 * **Rules** analyze [logs](https://docs.runpanther.io/log-analysis/supported-logs) to detect malicious activity
 * **Policies** represent the desired secure state of a [resource](https://docs.runpanther.io/cloud-security/resources) to detect security misconfigurations
-* **Scheduled rules** (coming soon) analyze output of periodically executed [SQL queries](https://docs.runpanther.io/enterprise/data-analytics/example-queries)
+* **Scheduled rules** (coming soon) analyze output of periodically executed [SQL queries](https://docs.runpanther.io/data-analytics/example-queries)
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
 
@@ -92,7 +92,7 @@ Additionally, groups of detections may be linked to multiple "Reports", which is
 
 # Writing Detections
 
-*For a full reference on writing detections, read our [docs](https://docs.runpanther.io/user-guide/analysis/panther-analysis-tool)!*
+*For a full reference on writing detections, read our [docs](https://docs.runpanther.io/writing-detections/panther-analysis-tool)!*
 
 Each detection has a Python file (`.py`) and a metadata file (`.yml`) of the same name (in the same location), for example:
 
@@ -184,4 +184,4 @@ git push
 
 # License
 
-This repository is licensed under the Apache-2.0 [license](https://github.com/panther-labs/panther-analysis/blob/master/LICENSE).
+This repository is licensed under the AGPL-3.0 [license](https://github.com/panther-labs/panther-analysis/blob/master/LICENSE).

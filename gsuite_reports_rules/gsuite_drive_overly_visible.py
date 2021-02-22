@@ -31,7 +31,12 @@ def dedup(event):
 
 
 def title(event):
+    doc_title = "<UNKNOWN_TITLE>"
+    for detail in event.get("events", [{}]):
+        if param_lookup(detail.get("parameters", {}), "doc_title"):
+            doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+            break
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] modified a document that "
-        f"has overly permissive share settings"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] modified a document "
+        f"[{doc_title}] that has overly permissive share settings"
     )

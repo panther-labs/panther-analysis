@@ -1,0 +1,52 @@
+schema: Osquery.Differential
+parser:
+  native:
+    name: Osquery.Differential
+description: Differential contains all the data included in OsQuery differential logs
+referenceURL: https://osquery.readthedocs.io/en/stable/deployment/logging/
+version: 0
+fields:
+  - name: action
+    required: true
+    description: Action
+    type: string
+  - name: calendarTime
+    required: true
+    description: The time of the event (UTC).
+    type: timestamp
+    timeFormat: rfc3339
+  - name: columns
+    required: true
+    description: Columns
+    type: json
+  - name: counter
+    description: Counter
+    type: int
+  - name: decorations
+    description: Decorations
+    type: json
+  - name: epoch
+    required: true
+    description: Epoch
+    type: int
+  - name: hostIdentifier
+    required: true
+    description: HostIdentifier
+    type: string
+  - name: logType
+    description: LogType
+    type: string
+  - name: log_type
+    description: LogUnderscoreType
+    type: string
+  - name: name
+    required: true
+    description: Name
+    type: string
+  - name: unixTime
+    required: true
+    description: UnixTime
+    type: int
+  - name: logNumericsAsNumbers
+    description: LogNumericsAsNumbers
+    type: boolean

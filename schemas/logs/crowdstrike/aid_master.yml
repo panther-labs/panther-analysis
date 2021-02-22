@@ -1,0 +1,109 @@
+schema: Crowdstrike.AIDMaster
+parser:
+  native:
+    name: Crowdstrike.AIDMaster
+description: Sensor and Host information provided by Falcon Insight
+referenceURL: https://developer.crowdstrike.com/crowdstrike/docs/falcon-data-replicator-guide#section-aid-master
+version: 0
+fields:
+  - name: Time
+    required: true
+    description: Timestamp of when the event was received by the CrowdStrike cloud. This is not to be confused with the time the event was generated locally on the system (the _timeevent). This is the timestamp of the event from the cloud's point of view. This value can be converted to any time format and can be used for calculations.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: AgentLoadFlags
+    required: true
+    description: 'Whether the sensor loaded during or after the Windows host''s boot process. Example values: 0, 1'
+    type: int
+  - name: AgentLocalTime
+    required: true
+    description: The local time for the sensor in epoch format.
+    type: timestamp
+    timeFormat: unix
+  - name: AgentTimeOffset
+    required: true
+    description: The time since the last reboot in epoch format.
+    type: float
+  - name: AgentVersion
+    required: true
+    description: The version of the sensor running on a host.
+    type: string
+  - name: aid
+    required: true
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: cid
+    required: true
+    description: The customer ID.
+    type: string
+  - name: aip
+    required: true
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: BiosManufacturer
+    description: The manufacturer of the host's BIOS.
+    type: string
+  - name: BiosVersion
+    description: The version of the host's BIOS.
+    type: string
+  - name: ChassisType
+    description: Type of system chassis, as defined in SMBIOS Standard.
+    type: string
+  - name: City
+    description: The system's city of origin.
+    type: string
+  - name: Country
+    description: The system's country of origin.
+    type: string
+  - name: Continent
+    description: The sensor's continent, as seen from the CrowdStrike cloud.
+    type: string
+  - name: ComputerName
+    description: The name of the host.
+    type: string
+  - name: ConfigIDBuild
+    description: Build number used as part of the ConfigID.
+    type: string
+  - name: event_platform
+    description: 'The platform the sensor is running on. Example values: ''Win'', ''Lin'', ''Mac''.'
+    type: string
+  - name: FirstSeen
+    description: The first time the sensor was seen by the CrowdStrike cloud in epoch format.
+    type: timestamp
+    timeFormat: unix
+  - name: MachineDomain
+    description: The Windows domain name to which the host is currently joined.
+    type: string
+  - name: OU
+    description: The organizational unit of the host as seen by the sensor (defined by system admin).
+    type: string
+  - name: PointerSize
+    description: 'The processor architecture (in decimal, non-hex format): ''4'' for 32-bit, ''8'' for 64-bit, or ''none'' for unknown.'
+    type: string
+  - name: ProductType
+    description: 'The type of product (in decimal, non-hex format). Example values: ''1'' (Workstation), ''2'' (Domain Controller), ''3'' (Server).'
+    type: string
+  - name: ServicePackMajor
+    description: 'The major version # of the OS Service Pack (in decimal, non-hex format).'
+    type: string
+  - name: SiteName
+    description: The site name of the domain to which the host is joined (defined by system admin).
+    type: string
+  - name: SystemManufacturer
+    description: The host's system manufacturer.
+    type: string
+  - name: SystemProductName
+    description: The host's product name.
+    type: string
+  - name: Timezone
+    description: The sensor's time zone, as seen from the CrowdStrike cloud.
+    type: string
+  - name: Version
+    description: The host's system version.
+    type: string
+  - name: HostHiddenStatus
+    description: Whether the host is visible or not.
+    type: string

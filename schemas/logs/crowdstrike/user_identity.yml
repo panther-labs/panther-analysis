@@ -1,0 +1,156 @@
+schema: Crowdstrike.UserIdentity
+parser:
+  native:
+    name: Crowdstrike.UserIdentity
+description: The UserIdentity event is generated when a user logs in to a host. It conveys important security-related characteristics associated with a user to the CrowdStrike cloud, such as the user name. It’s normally generated once per security principal, and is thus not on its own a sign of a suspicious activity. Available for Mac & Windows platforms.
+referenceURL: https://developer.crowdstrike.com/crowdstrike/page/event-explorer#section-event-UserIdentity
+version: 0
+fields:
+  - name: name
+    required: true
+    description: The event name
+    type: string
+  - name: aid
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: aip
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: cid
+    description: CID
+    type: string
+  - name: id
+    description: ID
+    type: string
+  - name: event_platform
+    description: The platform the sensor was running on
+    type: string
+  - name: timestamp
+    description: Timestamp when the event was received by the CrowdStrike cloud.
+    type: timestamp
+    timeFormat: unix_ms
+    isEventTime: true
+  - name: _time
+    description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
+    type: timestamp
+    timeFormat: layout=01/02/2006 15:04:05.999
+  - name: ComputerName
+    description: The name of the host.
+    type: string
+    indicators:
+      - hostname
+  - name: ConfigBuild
+    description: Config build
+    type: string
+  - name: ConfigStateHash
+    description: Config state hash
+    type: string
+  - name: Entitlements
+    description: Entitlements
+    type: string
+  - name: TreeId
+    description: If this event is part of a detection tree, the tree ID it is part of
+    type: string
+    indicators:
+      - trace_id
+  - name: TreeId_decimal
+    description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
+    type: bigint
+  - name: ContextThreadId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextThreadId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: ContextTimeStamp
+    description: The time at which an event occurred on the system, as seen by the sensor.
+    type: timestamp
+    timeFormat: unix
+  - name: ContextTimeStamp_decimal
+    description: The time at which an event occurred on the system, as seen by the sensor (in decimal, non-hex format).
+    type: timestamp
+    timeFormat: unix_ms
+  - name: ContextProcessId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextProcessId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: InContext
+    description: In context (N/A on iOS)
+    type: string
+  - name: event_simpleName
+    required: true
+    description: Event Name
+    type: string
+  - name: AuthenticationId
+    required: true
+    description: 'Values: INVALID_LUID (0), NETWORK_SERVICE (996), LOCAL_SERVICE (997), SYSTEM (999), RESERVED_LUID_MAX (1000)'
+    type: int
+  - name: UserPrincipal
+    required: true
+    description: UserPrincipal field
+    type: string
+  - name: UserSid
+    required: true
+    description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system.
+    type: string
+  - name: AuthenticationUuid
+    description: AuthenticationUUID field
+    type: string
+  - name: AuthenticationUuidAsString
+    description: AuthenticationUUIDAsString field
+    type: string
+  - name: UID
+    description: The User ID.
+    type: bigint
+  - name: UserName
+    description: UserName field
+    type: string
+    indicators:
+      - username
+  - name: UserCanonical
+    description: UserCanonical field
+    type: string
+  - name: LogonId
+    description: LogonID field
+    type: string
+  - name: LogonDomain
+    description: LogonDomain field
+    type: string
+  - name: AuthenticationPackage
+    description: AuthenticationPackage field
+    type: string
+  - name: LogonType
+    description: 'Values: INTERACTIVE (2), NETWORK (3), BATCH (4), SERVICE (5), PROXY (6), UNLOCK (7), NETWORK_CLEARTEXT (8), CACHED_UNLOCK (13), NEW_CREDENTIALS (9), REMOTE_INTERACTIVE (10), CACHED_INTERACTIVE (11), CACHED_REMOTE_INTERACTIVE (12)'
+    type: int
+  - name: LogonTime
+    description: LogonTime field
+    type: timestamp
+    timeFormat: unix
+  - name: LogonServer
+    description: LogonServer field
+    type: string
+  - name: UserFlags
+    description: 'Values: LOGON_OPTIMIZED (0x4000), LOGON_WINLOGON (0x8000), LOGON_PKINIT (0x10000), LOGON_NOT_OPTIMIZED (0x20000)'
+    type: bigint
+  - name: PasswordLastSet
+    description: PasswordLastSet field
+    type: timestamp
+    timeFormat: unix
+  - name: RemoteAccount
+    description: RemoteAccount field
+    type: int
+  - name: UserIsAdmin
+    description: UserIsAdmin field
+    type: int
+  - name: SessionId
+    description: SessionID field
+    type: string
+    indicators:
+      - trace_id
+  - name: UserLogonFlags
+    description: 'Values: LOGON_IS_SYNTHETIC (0x00000001), USER_IS_ADMIN (0x00000002), USER_IS_LOCAL (0x00000004), USER_IS_BUILT_IN (0x00000008), USER_IDENTITY_MISSING (0x00000010)'
+    type: int

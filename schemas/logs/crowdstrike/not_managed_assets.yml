@@ -1,0 +1,80 @@
+schema: Crowdstrike.NotManagedAssets
+parser:
+  native:
+    name: Crowdstrike.NotManagedAssets
+description: Unmanaged Host discovery information provided by Falcon Insight
+referenceURL: https://developer.crowdstrike.com/crowdstrike/docs/falcon-data-replicator-guide#section-notmanaged
+version: 0
+fields:
+  - name: _time
+    required: true
+    description: The host's local time in epoch format.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: aip
+    required: true
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: aipcount
+    required: true
+    description: The number of public-facing IP addresses.
+    type: bigint
+  - name: localipCount
+    required: true
+    description: The number of local IP addresses.
+    type: bigint
+  - name: cid
+    required: true
+    description: The customer ID.
+    type: string
+  - name: CurrentLocalIP
+    required: true
+    description: The current local IP address of the machine, found via the IPv4 network discovery protocol.
+    type: string
+    indicators:
+      - ip
+  - name: subnet
+    description: The subnet of the system.
+    type: string
+  - name: MAC
+    required: true
+    description: The MAC address of the system.
+    type: string
+  - name: MacPrefix
+    required: true
+    description: An identifier unique to the organization.
+    type: string
+  - name: discovererCount
+    required: true
+    description: The number of aid's that have discovered this system.
+    type: bigint
+  - name: discoverer_aid
+    description: The agent IDs that have discovered this system.
+    type: array
+    element:
+      type: string
+  - name: discoverer_devicetype
+    description: The type of device that discovered this system ('VM' or 'Server').
+    type: string
+  - name: FirstDiscoveredDate
+    description: The first time the system was discovered in epoch format.
+    type: timestamp
+    timeFormat: unix
+  - name: LastDiscoveredBy
+    description: The most recent time the system was discovered in epoch format.
+    type: timestamp
+    timeFormat: unix
+  - name: LocalAddressIP4
+    description: The device's local IP address in IPv4 format.
+    type: string
+    indicators:
+      - ip
+  - name: ComputerName
+    description: The name of the host that discovered the neighbor.
+    type: string
+  - name: NeighborName
+    description: The neighbor's host name.
+    type: string

@@ -1,0 +1,107 @@
+schema: GSuite.Reports
+parser:
+  native:
+    name: GSuite.Reports
+description: Contains the activity events for a specific account and application such as the Admin console application or the Google Drive application.
+referenceURL: https://developers.google.com/admin-sdk/reports/v1/reference/activities/list#response
+version: 0
+fields:
+  - name: id
+    required: true
+    description: Unique identifier for each activity record.
+    type: object
+    fields:
+      - name: applicationName
+        description: Application name to which the event belongs.
+        type: string
+      - name: customerId
+        description: The unique identifier for a G suite account.
+        type: string
+      - name: time
+        description: Time of occurrence of the activity.
+        type: timestamp
+        timeFormat: rfc3339
+        isEventTime: true
+      - name: uniqueQualifier
+        description: Unique qualifier if multiple events have the same time.
+        type: string
+  - name: actor
+    description: User doing the action.
+    type: object
+    fields:
+      - name: email
+        description: The primary email address of the actor. May be absent if there is no email address associated with the actor.
+        type: string
+        indicators:
+          - email
+      - name: profileId
+        description: The unique G Suite profile ID of the actor. May be absent if the actor is not a G Suite user.
+        type: string
+      - name: callerType
+        description: The type of actor.
+        type: string
+      - name: key
+        description: Only present when callerType is KEY. Can be the consumer_key of the requestor for OAuth 2LO API requests or an identifier for robot accounts.
+        type: string
+  - name: kind
+    required: true
+    description: The type of API resource. For an activity report, the value is reports#activities.
+    type: string
+  - name: ownerDomain
+    description: This is the domain that is affected by the report's event. For example domain of Admin console or the Drive application's document owner.
+    type: string
+    indicators:
+      - domain
+  - name: ipAddress
+    description: IP address of the user doing the action. This is the Internet Protocol (IP) address of the user when logging into G Suite which may or may not reflect the user's physical location. For example, the IP address can be the user's proxy server's address or a virtual private network (VPN) address. The API supports IPv4 and IPv6.
+    type: string
+    indicators:
+      - ip
+  - name: events
+    description: Activity events in the report.
+    type: array
+    element:
+      type: object
+      fields:
+        - name: type
+          description: Type of event. The G Suite service or feature that an administrator changes is identified in the type property which identifies an event using the eventName property. For a full list of the API's type categories, see the list of event names for various applications above in applicationName.
+          type: string
+        - name: name
+          description: Name of the event. This is the specific name of the activity reported by the API. And each eventName is related to a specific G Suite service or feature which the API organizes into types of events.
+          type: string
+        - name: parameters
+          description: Parameter value pairs for various applications. For more information about eventName parameters, see the list of event names for various applications above in applicationName.
+          type: array
+          element:
+            type: object
+            fields:
+              - name: name
+                description: The name of the parameter.
+                type: string
+              - name: value
+                description: String value of the parameter.
+                type: string
+              - name: intValue
+                description: Integer value of the parameter.
+                type: bigint
+              - name: boolValue
+                description: Boolean value of the parameter.
+                type: boolean
+              - name: multiValue
+                description: String values of the parameter.
+                type: array
+                element:
+                  type: string
+              - name: multiIntValue
+                description: Integer values of the parameter.
+                type: array
+                element:
+                  type: bigint
+              - name: messageValue
+                description: 'Nested parameter value pairs associated with this parameter. Complex value type for a parameter are returned as a list of parameter values. For example, the address parameter may have a value as [{parameter: [{name: city, value: abc}]}]'
+                type: json
+              - name: multiMessageValue
+                description: List of messageValue objects.
+                type: array
+                element:
+                  type: json

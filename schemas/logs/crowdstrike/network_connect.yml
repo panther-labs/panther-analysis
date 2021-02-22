@@ -1,0 +1,162 @@
+schema: Crowdstrike.NetworkConnect
+parser:
+  native:
+    name: Crowdstrike.NetworkConnect
+description: This event is generated when an application attempts a remote connection on an interface
+version: 0
+fields:
+  - name: event_simpleName
+    required: true
+    description: Event name
+    type: string
+  - name: name
+    required: true
+    description: The event name
+    type: string
+  - name: aid
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: aip
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: cid
+    description: CID
+    type: string
+  - name: id
+    description: ID
+    type: string
+  - name: event_platform
+    description: The platform the sensor was running on
+    type: string
+  - name: timestamp
+    description: Timestamp when the event was received by the CrowdStrike cloud.
+    type: timestamp
+    timeFormat: unix_ms
+    isEventTime: true
+  - name: _time
+    description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
+    type: timestamp
+    timeFormat: layout=01/02/2006 15:04:05.999
+  - name: ComputerName
+    description: The name of the host.
+    type: string
+    indicators:
+      - hostname
+  - name: ConfigBuild
+    description: Config build
+    type: string
+  - name: ConfigStateHash
+    description: Config state hash
+    type: string
+  - name: Entitlements
+    description: Entitlements
+    type: string
+  - name: TreeId
+    description: If this event is part of a detection tree, the tree ID it is part of
+    type: string
+    indicators:
+      - trace_id
+  - name: TreeId_decimal
+    description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
+    type: bigint
+  - name: ContextThreadId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextThreadId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: ContextTimeStamp
+    description: The time at which an event occurred on the system, as seen by the sensor.
+    type: timestamp
+    timeFormat: unix
+  - name: ContextTimeStamp_decimal
+    description: The time at which an event occurred on the system, as seen by the sensor (in decimal, non-hex format).
+    type: timestamp
+    timeFormat: unix_ms
+  - name: ContextProcessId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextProcessId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: InContext
+    description: In context (N/A on iOS)
+    type: string
+  - name: LocalAddressIP4
+    description: Local IPv4 address for the connection
+    type: string
+    indicators:
+      - ip
+  - name: LocalAddressIP6
+    description: Local IPv6 address for the connection
+    type: string
+    indicators:
+      - ip
+  - name: RemoteAddressIP4
+    description: Remote IPv4 address for the connection
+    type: string
+    indicators:
+      - ip
+  - name: RemoteAddressIP6
+    description: Remote IPv6 address for the connection
+    type: string
+    indicators:
+      - ip
+  - name: ConnectionFlags
+    description: Connection flags (PROMISCUOUS_MODE_SIO_RCVALL = 2, RAW_SOCKET = 1, PROMISCUOUS_MODE_SIO_RCVALL_IGMPMCAST = 4, PROMISCUOUS_MODE_SIO_RCVALL_MCAST = 8)
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: Protocol
+    description: IP Protocol (ICMP = 1, TCP = 6, UDP = 17)
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: LocalPort
+    description: Connection local port
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: RemotePort
+    description: Connection remote port
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: ConnectionDirection
+    description: Direction of the connection (OUTBOUND = 0, INBOUND = 1, NEITHER = 2, BOTH = 3)
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: IcmpType
+    description: ICMP type (N/A on iOS)
+    type: string
+  - name: IcmpCode
+    description: ICMP code (N/A on iOS)
+    type: string
