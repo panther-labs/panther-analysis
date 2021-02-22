@@ -2,7 +2,11 @@ import time
 
 from panther_base_helpers import is_ip_in_network
 from panther_oss_helpers import (  # pylint: disable=line-too-long
-    add_to_string_set, get_string_set, put_string_set, set_key_expiration)
+    add_to_string_set,
+    get_string_set,
+    put_string_set,
+    set_key_expiration,
+)
 
 THRESH = 2
 THRESH_TTL = 43200  # 1/2 day

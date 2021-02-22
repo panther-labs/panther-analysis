@@ -1,7 +1,6 @@
 import time
 
-from panther_oss_helpers import (get_counter, increment_counter, reset_counter,
-                                 set_key_expiration)
+from panther_oss_helpers import get_counter, increment_counter, reset_counter, set_key_expiration
 
 THRESH_TTL = 600
 
