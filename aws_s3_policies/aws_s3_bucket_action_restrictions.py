@@ -1,4 +1,5 @@
 import json
+
 from policyuniverse.expander_minimizer import minimize_statement_actions
 
 BAD_ACTIONS = {

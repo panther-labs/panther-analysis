@@ -1,6 +1,5 @@
 from panther_base_helpers import deep_get
 
-
 ROLE_METHODS = {
     "google.iam.admin.v1.CreateRole",
     "google.iam.admin.v1.DeleteRole",

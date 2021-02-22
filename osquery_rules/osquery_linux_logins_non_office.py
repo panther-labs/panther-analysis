@@ -1,4 +1,5 @@
 import ipaddress
+
 from panther_base_helpers import deep_get
 
 # This is only an example network, but you can set it to whatever you'd like

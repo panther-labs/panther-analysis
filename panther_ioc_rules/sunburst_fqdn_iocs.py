@@ -1,4 +1,4 @@
-from panther_iocs import ioc_match, SUNBURST_FQDN_IOCS, sanitize_domain
+from panther_iocs import SUNBURST_FQDN_IOCS, ioc_match, sanitize_domain
 
 
 def rule(event):

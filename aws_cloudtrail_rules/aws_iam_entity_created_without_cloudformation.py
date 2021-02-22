@@ -1,4 +1,5 @@
 import re
+
 from panther_base_helpers import deep_get
 
 # The role dedicated for IAM administration

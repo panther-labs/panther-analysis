@@ -1,4 +1,5 @@
 import datetime
+
 from panther_base_helpers import deep_get
 
 MAX_TIME_BETWEEN_LOGS = datetime.timedelta(hours=24)

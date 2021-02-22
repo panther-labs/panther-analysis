@@ -1,4 +1,4 @@
-from panther_iocs import ioc_match, SUNBURST_IP_IOCS
+from panther_iocs import SUNBURST_IP_IOCS, ioc_match
 
 
 def rule(event):

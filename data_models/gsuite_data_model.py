@@ -1,6 +1,6 @@
-from panther_base_helpers import gsuite_details_lookup as details_lookup
-from panther_base_helpers import deep_get
 import panther_event_type_helpers as event_type
+from panther_base_helpers import deep_get
+from panther_base_helpers import gsuite_details_lookup as details_lookup
 
 
 def get_event_type(event):

@@ -1,4 +1,5 @@
 import json
+
 from policyuniverse.policy import Policy
 
 BAD_PRINCIPALS = {

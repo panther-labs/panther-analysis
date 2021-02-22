@@ -1,4 +1,4 @@
-from panther_iocs import ioc_match, SUNBURST_SHA256_IOCS
+from panther_iocs import SUNBURST_SHA256_IOCS, ioc_match
 
 
 def rule(event):

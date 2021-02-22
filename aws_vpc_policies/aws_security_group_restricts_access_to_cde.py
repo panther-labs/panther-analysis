@@ -1,4 +1,5 @@
 from ipaddress import ip_network
+
 from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
 
 

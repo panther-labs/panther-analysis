@@ -1,12 +1,13 @@
 import argparse
-import boto3
-from datetime import datetime, date, timezone
 import gzip
-from io import BytesIO
 import json
 import logging
-from os import path
 import uuid
+from datetime import date, datetime, timezone
+from io import BytesIO
+from os import path
+
+import boto3
 import yaml
 
 # FIXME: refactor and generalize this to more log types for more scenarios

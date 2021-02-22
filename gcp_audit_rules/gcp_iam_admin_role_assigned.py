@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+
 from panther_base_helpers import deep_get, get_binding_deltas
 
 ADMIN_ROLES = {

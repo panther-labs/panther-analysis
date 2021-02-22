@@ -1,6 +1,7 @@
 import json
-from policyuniverse.policy import Policy
+
 from policyuniverse.expander_minimizer import expand_policy
+from policyuniverse.policy import Policy
 
 # White listed policies (e.g. the approved admin policies) can be specified here, or as an
 # exception to this policy.

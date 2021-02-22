@@ -1,7 +1,8 @@
 """Utility functions provided to policies and rules during execution."""
-import time
-from typing import Any, Dict, Union, Sequence, Set
 import os
+import time
+from typing import Any, Dict, Sequence, Set, Union
+
 import boto3
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed

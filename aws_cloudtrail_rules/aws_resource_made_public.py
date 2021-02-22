@@ -1,6 +1,7 @@
 import json
-from policyuniverse.policy import Policy
+
 from panther_base_helpers import deep_get
+from policyuniverse.policy import Policy
 
 
 # Check that the IAM policy allows resource accessibility via the Internet

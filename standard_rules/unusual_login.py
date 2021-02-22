@@ -1,7 +1,8 @@
 import datetime
 import json
-import requests
+
 import panther_event_type_helpers as event_type
+import requests
 from panther_oss_helpers import get_string_set, put_string_set
 
 FINGERPRINT_THRESHOLD = 5

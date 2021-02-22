@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+
 from panther_base_helpers import deep_get
 
 # sip protects against writing malware into the paths below.

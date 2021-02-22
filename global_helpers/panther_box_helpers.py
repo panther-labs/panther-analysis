@@ -9,8 +9,8 @@ import boto3
 try:
     # boxsdk will only be available if `boxapi[jwt]` is
     #   in the pip env
-    from boxsdk.exception import BoxAPIException
     from boxsdk import Client, JWTAuth
+    from boxsdk.exception import BoxAPIException
 except ImportError as err:
     Client = None
     JWTAuth = None

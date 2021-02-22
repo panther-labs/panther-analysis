@@ -1,7 +1,6 @@
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 
-
 # API calls that are indicative of CloudTrail changes
 CLOUDTRAIL_STOP_DELETE = {
     "DeleteTrail",

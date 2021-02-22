@@ -1,6 +1,5 @@
 from panther_base_helpers import deep_get
 
-
 GCS_READ_ROLES = {"roles/storage.objectAdmin", "roles/storage.objectViewer", "roles/storage.admin"}
 GLOBAL_USERS = {"allUsers", "allAuthenticatedUsers"}
 

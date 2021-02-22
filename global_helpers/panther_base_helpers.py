@@ -1,8 +1,8 @@
 import json
 from collections.abc import Mapping
 from fnmatch import fnmatch
-from ipaddress import ip_address, ip_network
 from functools import reduce
+from ipaddress import ip_address, ip_network
 from typing import Sequence
 
 # # # # # # # # # # # # # #

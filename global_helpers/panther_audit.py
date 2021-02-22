@@ -1,4 +1,5 @@
 import os
+
 import boto3
 
 PANTHER_MASTER_REGION = os.environ.get("AWS_REGION")

@@ -1,4 +1,5 @@
 import json
+
 from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 

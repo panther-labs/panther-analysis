@@ -1,6 +1,7 @@
-from fnmatch import fnmatch
-from panther_base_helpers import deep_get
 import shlex
+from fnmatch import fnmatch
+
+from panther_base_helpers import deep_get
 
 SUSPICIOUS_CRON_CMD_ARGS = {
     # Running in unexpected locations

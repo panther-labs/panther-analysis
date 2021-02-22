@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
 from ipaddress import ip_address
+
 from panther_base_helpers import deep_get
 
 # service/event patterns to monitor

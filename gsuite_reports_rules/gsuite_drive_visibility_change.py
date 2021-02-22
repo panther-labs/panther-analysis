@@ -1,5 +1,5 @@
-from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 from panther_base_helpers import deep_get
+from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 
 def rule(event):

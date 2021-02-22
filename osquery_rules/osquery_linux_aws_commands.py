@@ -1,4 +1,5 @@
 import shlex
+
 from panther_base_helpers import deep_get
 
 PLATFORM_IGNORE_LIST = {"darwin"}

@@ -1,4 +1,5 @@
 import ipaddress
+
 import panther_event_type_helpers as event_type
 from panther_base_helpers import deep_get
 

@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
-from panther_box_helpers import is_box_sdk_enabled, lookup_box_file, lookup_box_folder
+from panther_box_helpers import (is_box_sdk_enabled, lookup_box_file,
+                                 lookup_box_folder)
 
 ALLOWED_SHARED_ACCESS = {"collaborators", "company"}
 SHARE_EVENTS = {
