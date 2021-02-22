@@ -4,19 +4,19 @@ import shlex
 
 SUSPICIOUS_CRON_CMD_ARGS = {
     # Running in unexpected locations
-    '/tmp/*',  #nosec
+    "/tmp/*",  # nosec
     # Reaching out to the internet
-    'curl',
-    'dig',
-    'http?://*',
-    'nc',
-    'wget',
+    "curl",
+    "dig",
+    "http?://*",
+    "nc",
+    "wget",
 }
 
 SUSPICIOUS_CRON_CMDS = {
     # Passing arguments into /bin/sh
-    '*|*sh',
-    '*sh -c *'
+    "*|*sh",
+    "*sh -c *",
 }
 
 
@@ -25,8 +25,7 @@ def suspicious_cmd_pairs(command):
 
 
 def suspicious_cmd_args(command):
-    command_args = shlex.split(command.replace("'",
-                                               "\\'"))  # escape single quotes
+    command_args = shlex.split(command.replace("'", "\\'"))  # escape single quotes
     for cmd in command_args:
         if any([fnmatch(cmd, c) for c in SUSPICIOUS_CRON_CMD_ARGS]):
             return True
@@ -34,10 +33,10 @@ def suspicious_cmd_args(command):
 
 
 def rule(event):
-    if 'crontab' not in event.get('name'):
+    if "crontab" not in event.get("name"):
         return False
 
-    command = deep_get(event, 'columns', 'command')
+    command = deep_get(event, "columns", "command")
     if not command:
         return False
 
@@ -45,4 +44,4 @@ def rule(event):
 
 
 def title(event):
-    return 'Suspicious cron found on [{}]'.format(event.get('hostIdentifier'))
+    return "Suspicious cron found on [{}]".format(event.get("hostIdentifier"))

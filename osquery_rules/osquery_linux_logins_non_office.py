@@ -3,8 +3,8 @@ from panther_base_helpers import deep_get
 
 # This is only an example network, but you can set it to whatever you'd like
 OFFICE_NETWORKS = [
-    ipaddress.ip_network('192.168.1.100/32'),
-    ipaddress.ip_network('192.168.1.200/32')
+    ipaddress.ip_network("192.168.1.100/32"),
+    ipaddress.ip_network("192.168.1.200/32"),
 ]
 
 
@@ -19,27 +19,27 @@ def _login_from_non_office_network(host):
 
 
 def rule(event):
-    if event.get('action') != 'added':
+    if event.get("action") != "added":
         return False
 
-    if 'logged_in_users' in event.get('name'):
+    if "logged_in_users" in event.get("name"):
         # Only pay attention to users and not system-level accounts
-        if deep_get(event, 'columns', 'type') != 'user':
+        if deep_get(event, "columns", "type") != "user":
             return False
-    elif 'last' in event.get('name'):
+    elif "last" in event.get("name"):
         pass
     else:
         # A query we don't care about
         return False
 
-    host_ip = deep_get(event, 'columns', 'host')
+    host_ip = deep_get(event, "columns", "host")
     return _login_from_non_office_network(host_ip)
 
 
 def title(event):
-    msg = 'User [{}] has logged into production from a non-office network'
-    user = deep_get(event, 'columns', 'user')
-    username = deep_get(event, 'columns', 'username')
+    msg = "User [{}] has logged into production from a non-office network"
+    user = deep_get(event, "columns", "user")
+    username = deep_get(event, "columns", "username")
 
     if user is not None:
         return msg.format(user)
@@ -47,4 +47,4 @@ def title(event):
     if username is not None:
         return msg.format(username)
 
-    return msg.format('<UNKNOWN_USER>')
+    return msg.format("<UNKNOWN_USER>")

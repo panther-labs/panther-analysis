@@ -1,23 +1,24 @@
 import json
 import requests
 from panther_oss_helpers import get_string_set, put_string_set
+
 FINGERPRINT_THRESHOLD = 3
 EVENT_LOGIN_INFO = {}
 
 
 def rule(event):
     # Pre-filter to save compute time where possible. event_type_id = 5 is login events.
-    if event.get('event_type_id') != 5 or event.get('ipaddr') is None:
+    if event.get("event_type_id") != 5 or event.get("ipaddr") is None:
         return False
 
     # Lookup geo-ip data via API call
-    url = 'https://ipinfo.io/' + event.get('ipaddr') + '/geo'
+    url = "https://ipinfo.io/" + event.get("ipaddr") + "/geo"
 
     # Skip API call if this is a unit test
-    if 'panther_api_data' in event:
+    if "panther_api_data" in event:
         resp = lambda: None
-        setattr(resp, 'status_code', 200)
-        setattr(resp, 'text', event.get('panther_api_data'))
+        setattr(resp, "status_code", 200)
+        setattr(resp, "text", event.get("panther_api_data"))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
@@ -30,9 +31,8 @@ def rule(event):
     login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
-    login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
-        'city', '<CITY>')
-    EVENT_LOGIN_INFO[event.get('p_row_id')] = login_tuple
+    login_tuple = login_info.get("region", "<REGION>") + ":" + login_info.get("city", "<CITY>")
+    EVENT_LOGIN_INFO[event.get("p_row_id")] = login_tuple
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -61,11 +61,11 @@ def rule(event):
 
 def get_key(event):
     # Use the name so that test data doesn't interfere with live data
-    return __name__ + ':' + str(event.get('user_id', '<UNKNOWN_USER>'))
+    return __name__ + ":" + str(event.get("user_id", "<UNKNOWN_USER>"))
 
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    return 'Unusual OneLogin access for user [{}] from [{}]'.format(
-        event.get('user_name', '<UNKNOWN_USER>'),
-        EVENT_LOGIN_INFO.get(event.get('p_row_id')))
+    return "Unusual OneLogin access for user [{}] from [{}]".format(
+        event.get("user_name", "<UNKNOWN_USER>"), EVENT_LOGIN_INFO.get(event.get("p_row_id"))
+    )

@@ -1,17 +1,19 @@
 import shlex
 from panther_base_helpers import deep_get
 
-PLATFORM_IGNORE_LIST = {'darwin'}
+PLATFORM_IGNORE_LIST = {"darwin"}
 
 
 def rule(event):
     # Filter out irrelevant logs & systems
-    if (event.get('action') != 'added' or
-            'shell_history' not in event.get('name') or
-            deep_get(event, 'decorations', 'platform') in PLATFORM_IGNORE_LIST):
+    if (
+        event.get("action") != "added"
+        or "shell_history" not in event.get("name")
+        or deep_get(event, "decorations", "platform") in PLATFORM_IGNORE_LIST
+    ):
         return False
 
-    command = deep_get(event, 'columns', 'command')
+    command = deep_get(event, "columns", "command")
     if not command:
         return False
     try:
@@ -20,13 +22,14 @@ def rule(event):
         # "No escaped character" or "No closing quotation", probably an invalid command
         return False
 
-    if command_args[0] == 'aws':
+    if command_args[0] == "aws":
         return True
 
     return False
 
 
 def title(event):
-    return 'User [{}] issued an aws-cli command on [{}]'.format(
-        deep_get(event, 'columns', 'username', default='<UNKNOWN_USER>'),
-        event.get('hostIdentifier', '<UNKNOWN_HOST>'))
+    return "User [{}] issued an aws-cli command on [{}]".format(
+        deep_get(event, "columns", "username", default="<UNKNOWN_USER>"),
+        event.get("hostIdentifier", "<UNKNOWN_HOST>"),
+    )

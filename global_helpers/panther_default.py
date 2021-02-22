@@ -14,7 +14,7 @@ def example_helper():
 
 AWS_ACCOUNTS = {
     # Add your AWS account IDs/names below:
-    '123456789012': 'sample-account',
+    "123456789012": "sample-account",
 }
 
 
@@ -44,11 +44,11 @@ def aws_event_tense(event_name):
         str: A tensed version of the event name
     """
     mapping = {
-        'Create': 'created',
-        'Delete': 'deleted',
-        'Start': 'started',
-        'Stop': 'stopped',
-        'Update': 'updated',
+        "Create": "created",
+        "Delete": "deleted",
+        "Start": "started",
+        "Stop": "stopped",
+        "Update": "updated",
     }
     for event_prefix, tensed in mapping.items():
         if event_name.startswith(event_prefix):

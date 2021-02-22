@@ -5,8 +5,8 @@ import os
 import boto3
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
-FIPS_ENABLED = os.getenv('ENABLE_FIPS', '').lower() == 'true'
-FIPS_SUFFIX = '-fips.' + os.getenv('AWS_REGION', '') + '.amazonaws.com'
+FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
+FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 
 
 class BadLookup(Exception):
@@ -19,9 +19,9 @@ class PantherBadInput(Exception):
 
 def get_s3_arn_by_name(name: str) -> str:
     """This function is used to construct an s3 bucket ARN from its name."""
-    if name == '':
-        raise PantherBadInput('s3 name cannot be blank')
-    return 'arn:aws:s3:::' + name
+    if name == "":
+        raise PantherBadInput("s3 name cannot be blank")
+    return "arn:aws:s3:::" + name
 
 
 def s3_lookup_by_name(name: str) -> Dict[str, Any]:
@@ -35,30 +35,32 @@ def resource_table() -> boto3.resource:
     global _RESOURCE_TABLE
     if not _RESOURCE_TABLE:
         # pylint: disable=no-member
-        _RESOURCE_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-resources')
+        _RESOURCE_TABLE = boto3.resource(
+            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
+        ).Table("panther-resources")
     return _RESOURCE_TABLE
 
 
 def resource_lookup(resource_id: str) -> Dict[str, Any]:
     """This function is used to get a resource from the resources-api based on its resourceID."""
     # Validate input so we can provide meaningful error messages to users
-    if resource_id == '':
-        raise PantherBadInput('resourceId cannot be blank')
+    if resource_id == "":
+        raise PantherBadInput("resourceId cannot be blank")
 
     # Get the item from dynamo
-    response = resource_table().get_item(Key={'id': resource_id})
+    response = resource_table().get_item(Key={"id": resource_id})
 
     # Check if dynamo failed
-    status_code = response['ResponseMetadata']['HTTPStatusCode']
+    status_code = response["ResponseMetadata"]["HTTPStatusCode"]
     if status_code != 200:
-        raise BadLookup('dynamodb - ' + str(status_code) + ' HTTPStatusCode')
+        raise BadLookup("dynamodb - " + str(status_code) + " HTTPStatusCode")
 
     # Check if the item was found
-    if 'Item' not in response:
-        raise BadLookup(resource_id + ' not found')
+    if "Item" not in response:
+        raise BadLookup(resource_id + " not found")
 
     # Return just the attributes of the item
-    return response['Item']['attributes']
+    return response["Item"]["attributes"]
 
 
 # Helper functions for accessing Dynamo key-value store.
@@ -68,8 +70,8 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 #
 # Use kv_table() if you want to interact with the table directly.
 _KV_TABLE = None
-_COUNT_COL = 'intCount'
-_STRING_SET_COL = 'stringSet'
+_COUNT_COL = "intCount"
+_STRING_SET_COL = "stringSet"
 
 
 def kv_table() -> boto3.resource:
@@ -78,17 +80,16 @@ def kv_table() -> boto3.resource:
     global _KV_TABLE
     if not _KV_TABLE:
         # pylint: disable=no-member
-        _KV_TABLE = boto3.resource('dynamodb', endpoint_url='https://dynamodb' + FIPS_SUFFIX if FIPS_ENABLED else None).Table('panther-kv-store')
+        _KV_TABLE = boto3.resource(
+            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
+        ).Table("panther-kv-store")
     return _KV_TABLE
 
 
 def get_counter(key: str) -> int:
     """Get a counter's current value (defaulting to 0 if key does not exist)."""
-    response = kv_table().get_item(
-        Key={'key': key},
-        ProjectionExpression=_COUNT_COL,
-    )
-    return response.get('Item', {}).get(_COUNT_COL, 0)
+    response = kv_table().get_item(Key={"key": key}, ProjectionExpression=_COUNT_COL,)
+    return response.get("Item", {}).get(_COUNT_COL, 0)
 
 
 def increment_counter(key: str, val: int = 1) -> int:
@@ -102,20 +103,20 @@ def increment_counter(key: str, val: int = 1) -> int:
         The new value of the count
     """
     response = kv_table().update_item(
-        Key={'key': key},
-        ReturnValues='UPDATED_NEW',
-        UpdateExpression='ADD #col :incr',
-        ExpressionAttributeNames={'#col': _COUNT_COL},
-        ExpressionAttributeValues={':incr': val},
+        Key={"key": key},
+        ReturnValues="UPDATED_NEW",
+        UpdateExpression="ADD #col :incr",
+        ExpressionAttributeNames={"#col": _COUNT_COL},
+        ExpressionAttributeValues={":incr": val},
     )
 
     # Numeric values are returned as decimal.Decimal
-    return response['Attributes'][_COUNT_COL].to_integral_value()
+    return response["Attributes"][_COUNT_COL].to_integral_value()
 
 
 def reset_counter(key: str) -> None:
     """Reset a counter to 0."""
-    kv_table().put_item(Item={'key': key, _COUNT_COL: 0})
+    kv_table().put_item(Item={"key": key, _COUNT_COL: 0})
 
 
 def set_key_expiration(key: str, epoch_seconds: int) -> None:
@@ -127,18 +128,17 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
         key: The name of the counter
         epoch_seconds: When you want the counter to expire (set to 0 to disable)
     """
-    kv_table().update_item(Key={'key': key},
-                           UpdateExpression='SET expiresAt = :time',
-                           ExpressionAttributeValues={':time': epoch_seconds})
+    kv_table().update_item(
+        Key={"key": key},
+        UpdateExpression="SET expiresAt = :time",
+        ExpressionAttributeValues={":time": epoch_seconds},
+    )
 
 
 def get_string_set(key: str) -> Set[str]:
     """Get a string set's current value (defaulting to empty set if key does not exit)."""
-    response = kv_table().get_item(
-        Key={'key': key},
-        ProjectionExpression=_STRING_SET_COL,
-    )
-    return response.get('Item', {}).get(_STRING_SET_COL, set())
+    response = kv_table().get_item(Key={"key": key}, ProjectionExpression=_STRING_SET_COL,)
+    return response.get("Item", {}).get(_STRING_SET_COL, set())
 
 
 def put_string_set(key: str, val: Sequence[str]) -> None:
@@ -155,7 +155,7 @@ def put_string_set(key: str, val: Sequence[str]) -> None:
         # Can't put an empty string set - remove it instead
         reset_string_set(key)
     else:
-        kv_table().put_item(Item={'key': key, _STRING_SET_COL: set(val)})
+        kv_table().put_item(Item={"key": key, _STRING_SET_COL: set(val)})
 
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
@@ -177,17 +177,16 @@ def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
             return get_string_set(key)
 
     response = kv_table().update_item(
-        Key={'key': key},
-        ReturnValues='UPDATED_NEW',
-        UpdateExpression='ADD #col :ss',
-        ExpressionAttributeNames={'#col': _STRING_SET_COL},
-        ExpressionAttributeValues={':ss': item_value},
+        Key={"key": key},
+        ReturnValues="UPDATED_NEW",
+        UpdateExpression="ADD #col :ss",
+        ExpressionAttributeNames={"#col": _STRING_SET_COL},
+        ExpressionAttributeValues={":ss": item_value},
     )
-    return response['Attributes'][_STRING_SET_COL]
+    return response["Attributes"][_STRING_SET_COL]
 
 
-def remove_from_string_set(key: str, val: Union[str,
-                                                Sequence[str]]) -> Set[str]:
+def remove_from_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Remove one or more strings from a set.
 
     Args:
@@ -206,27 +205,25 @@ def remove_from_string_set(key: str, val: Union[str,
             return get_string_set(key)
 
     response = kv_table().update_item(
-        Key={'key': key},
-        ReturnValues='UPDATED_NEW',
-        UpdateExpression='DELETE #col :ss',
-        ExpressionAttributeNames={'#col': _STRING_SET_COL},
-        ExpressionAttributeValues={':ss': item_value},
+        Key={"key": key},
+        ReturnValues="UPDATED_NEW",
+        UpdateExpression="DELETE #col :ss",
+        ExpressionAttributeNames={"#col": _STRING_SET_COL},
+        ExpressionAttributeValues={":ss": item_value},
     )
-    return response['Attributes'][_STRING_SET_COL]
+    return response["Attributes"][_STRING_SET_COL]
 
 
 def reset_string_set(key: str) -> None:
     """Reset a string set to empty."""
     kv_table().update_item(
-        Key={'key': key},
-        UpdateExpression='REMOVE #col',
-        ExpressionAttributeNames={'#col': _STRING_SET_COL},
+        Key={"key": key},
+        UpdateExpression="REMOVE #col",
+        ExpressionAttributeNames={"#col": _STRING_SET_COL},
     )
 
 
-def evaluate_threshold(key: str,
-                       threshold: int = 10,
-                       expiry_seconds: int = 3600) -> bool:
+def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
     hourly_error_count = increment_counter(key)
     if hourly_error_count == 1:
         set_key_expiration(key, int(time.time()) + expiry_seconds)
@@ -242,52 +239,52 @@ def _test_kv_store():
 
     Deploy Panther and then simply run "python3 panther.py" to test.
     """
-    assert increment_counter('panther', 1) == 1
-    assert increment_counter('labs', 3) == 3
-    assert increment_counter('panther', -2) == -1
-    assert increment_counter('panther', 0) == -1
-    assert increment_counter('panther', 11) == 10
+    assert increment_counter("panther", 1) == 1
+    assert increment_counter("labs", 3) == 3
+    assert increment_counter("panther", -2) == -1
+    assert increment_counter("panther", 0) == -1
+    assert increment_counter("panther", 11) == 10
 
-    assert get_counter('panther') == 10
-    assert get_counter('labs') == 3
-    assert get_counter('nonexistent') == 0
+    assert get_counter("panther") == 10
+    assert get_counter("labs") == 3
+    assert get_counter("nonexistent") == 0
 
-    reset_counter('panther')
-    reset_counter('labs')
-    assert get_counter('panther') == 0
-    assert get_counter('labs') == 0
+    reset_counter("panther")
+    reset_counter("labs")
+    assert get_counter("panther") == 0
+    assert get_counter("labs") == 0
 
-    set_key_expiration('panther', int(time.time()))
+    set_key_expiration("panther", int(time.time()))
 
     # Add elements in a list, tuple, set, or as singleton strings
     # The same key can be used to store int counts and string sets
-    assert add_to_string_set('panther', ['a', 'b']) == {'a', 'b'}
-    assert add_to_string_set('panther', ['b', 'a']) == {'a', 'b'}
-    assert add_to_string_set('panther', 'c') == {'a', 'b', 'c'}
-    assert add_to_string_set('panther', set()) == {'a', 'b', 'c'}
-    assert add_to_string_set('panther', {'b', 'c', 'd'}) == {'a', 'b', 'c', 'd'}
-    assert add_to_string_set('panther', ('d', 'e')) == {'a', 'b', 'c', 'd', 'e'}
+    assert add_to_string_set("panther", ["a", "b"]) == {"a", "b"}
+    assert add_to_string_set("panther", ["b", "a"]) == {"a", "b"}
+    assert add_to_string_set("panther", "c") == {"a", "b", "c"}
+    assert add_to_string_set("panther", set()) == {"a", "b", "c"}
+    assert add_to_string_set("panther", {"b", "c", "d"}) == {"a", "b", "c", "d"}
+    assert add_to_string_set("panther", ("d", "e")) == {"a", "b", "c", "d", "e"}
 
     # Empty strings are allowed
-    assert add_to_string_set('panther', '') == {'a', 'b', 'c', 'd', 'e', ''}
+    assert add_to_string_set("panther", "") == {"a", "b", "c", "d", "e", ""}
 
-    assert get_string_set('labs') == set()
-    assert get_string_set('panther') == {'a', 'b', 'c', 'd', 'e', ''}
+    assert get_string_set("labs") == set()
+    assert get_string_set("panther") == {"a", "b", "c", "d", "e", ""}
 
-    assert remove_from_string_set('panther', ['b', 'c', 'd']) == {'a', 'e', ''}
-    assert remove_from_string_set('panther', '') == {'a', 'e'}
-    assert remove_from_string_set('panther', '') == {'a', 'e'}
+    assert remove_from_string_set("panther", ["b", "c", "d"]) == {"a", "e", ""}
+    assert remove_from_string_set("panther", "") == {"a", "e"}
+    assert remove_from_string_set("panther", "") == {"a", "e"}
 
     # Overwrite contents completely
-    put_string_set('panther', ['go', 'python'])
-    assert get_string_set('panther') == {'go', 'python'}
-    put_string_set('labs', [])
-    assert get_string_set('labs') == set()
+    put_string_set("panther", ["go", "python"])
+    assert get_string_set("panther") == {"go", "python"}
+    put_string_set("labs", [])
+    assert get_string_set("labs") == set()
 
-    reset_string_set('panther')
-    reset_string_set('nonexistent')  # no error
-    assert get_string_set('panther') == set()
+    reset_string_set("panther")
+    reset_string_set("nonexistent")  # no error
+    assert get_string_set("panther") == set()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _test_kv_store()

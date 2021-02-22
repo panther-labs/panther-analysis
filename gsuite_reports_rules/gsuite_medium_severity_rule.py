@@ -4,9 +4,8 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if deep_get(event, 'id', 'applicationName') != 'rules':
+    if deep_get(event, "id", "applicationName") != "rules":
         return False
 
-    details = details_lookup('rule_trigger_type', ['rule_trigger'], event)
-    return bool(details) and param_lookup(details.get('parameters', {}),
-                                          'severity') == 'MEDIUM'
+    details = details_lookup("rule_trigger_type", ["rule_trigger"], event)
+    return bool(details) and param_lookup(details.get("parameters", {}), "severity") == "MEDIUM"

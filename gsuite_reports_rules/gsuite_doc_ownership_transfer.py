@@ -3,18 +3,16 @@ from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 from panther_base_helpers import deep_get
 
 ORG_DOMAINS = {
-    '@example.com',
+    "@example.com",
 }
 
 
 def rule(event):
-    if deep_get(event, 'id', 'applicationName') != 'admin':
+    if deep_get(event, "id", "applicationName") != "admin":
         return False
 
-    details = details_lookup('DOCS_SETTINGS', ['TRANSFER_DOCUMENT_OWNERSHIP'],
-                             event)
+    details = details_lookup("DOCS_SETTINGS", ["TRANSFER_DOCUMENT_OWNERSHIP"], event)
     if bool(details):
-        new_owner = param_lookup(details.get('parameters', {}), 'NEW_VALUE')
-        return bool(new_owner) and not any(
-            new_owner.endswith(x) for x in ORG_DOMAINS)
+        new_owner = param_lookup(details.get("parameters", {}), "NEW_VALUE")
+        return bool(new_owner) and not any(new_owner.endswith(x) for x in ORG_DOMAINS)
     return False

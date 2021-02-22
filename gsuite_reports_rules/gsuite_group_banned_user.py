@@ -3,13 +3,13 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if deep_get(event, 'id', 'applicationName') != 'groups_enterprise':
+    if deep_get(event, "id", "applicationName") != "groups_enterprise":
         return False
 
-    return bool(
-        details_lookup('moderator_action', ['ban_user_with_moderation'], event))
+    return bool(details_lookup("moderator_action", ["ban_user_with_moderation"], event))
 
 
 def title(event):
-    return 'User [{}] banned another user from a group.'.format(
-        deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>'))
+    return "User [{}] banned another user from a group.".format(
+        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
+    )

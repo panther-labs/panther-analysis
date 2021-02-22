@@ -15,50 +15,50 @@ def policy_is_internet_accessible(json_policy):
 # Any solution that avoids too many return statements only increases the complexity of this rule.
 # pylint: disable=too-many-return-statements
 def rule(event):
-    if event.get('errorCode', '') == 'AccessDenied':
+    if event.get("errorCode", "") == "AccessDenied":
         return False
 
-    parameters = event.get('requestParameters', {})
+    parameters = event.get("requestParameters", {})
     # Ignore events that are missing request params
     if not parameters:
         return False
 
-    policy = ''
+    policy = ""
 
     # S3
-    if event.get('eventName') == 'PutBucketPolicy':
-        return policy_is_internet_accessible(parameters.get('bucketPolicy'))
+    if event.get("eventName") == "PutBucketPolicy":
+        return policy_is_internet_accessible(parameters.get("bucketPolicy"))
 
     # ECR
-    if event.get('eventName') == 'SetRepositoryPolicy':
-        policy = parameters.get('policyText', '{}')
+    if event.get("eventName") == "SetRepositoryPolicy":
+        policy = parameters.get("policyText", "{}")
 
     # Elasticsearch
-    if event.get('eventName') in [
-            'CreateElasticsearchDomain', 'UpdateElasticsearchDomainConfig'
-    ]:
-        policy = parameters.get('accessPolicies', '{}')
+    if event.get("eventName") in ["CreateElasticsearchDomain", "UpdateElasticsearchDomainConfig"]:
+        policy = parameters.get("accessPolicies", "{}")
 
     # KMS
-    if event.get('eventName') in ['CreateKey', 'PutKeyPolicy']:
-        policy = parameters.get('policy', '{}')
+    if event.get("eventName") in ["CreateKey", "PutKeyPolicy"]:
+        policy = parameters.get("policy", "{}")
 
     # S3 Glacier
-    if event.get('eventName') == 'SetVaultAccessPolicy':
-        policy = deep_get(parameters, 'policy', 'policy', default='{}')
+    if event.get("eventName") == "SetVaultAccessPolicy":
+        policy = deep_get(parameters, "policy", "policy", default="{}")
 
     # SNS & SQS
-    if event.get('eventName') in ['SetQueueAttributes', 'CreateTopic']:
-        policy = deep_get(parameters, 'attributes', 'Policy', default='{}')
+    if event.get("eventName") in ["SetQueueAttributes", "CreateTopic"]:
+        policy = deep_get(parameters, "attributes", "Policy", default="{}")
 
     # SNS
-    if event.get('eventName') == 'SetTopicAttributes' and parameters.get(
-            'attributeName', '') == 'Policy':
-        policy = parameters.get('attributeValue', '{}')
+    if (
+        event.get("eventName") == "SetTopicAttributes"
+        and parameters.get("attributeName", "") == "Policy"
+    ):
+        policy = parameters.get("attributeValue", "{}")
 
     # SecretsManager
-    if event.get('eventName') == 'PutResourcePolicy':
-        policy = parameters.get('resourcePolicy', '{}')
+    if event.get("eventName") == "PutResourcePolicy":
+        policy = parameters.get("resourcePolicy", "{}")
 
     if not policy:
         return False
@@ -68,10 +68,11 @@ def rule(event):
 
 def title(event):
     # TODO(): Update this rule to use data models
-    user = deep_get(event, 'userIdentity', 'userName') or deep_get(
-        event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')
+    user = deep_get(event, "userIdentity", "userName") or deep_get(
+        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
+    )
 
-    if event.get('Resources'):
+    if event.get("Resources"):
         return f"Resource {event.get('Resources')[0].get('arn', 'MISSING')} made public by {user}"
 
     return f"{event.get('eventSource', 'MISSING SOURCE')} resource made public by {user}"

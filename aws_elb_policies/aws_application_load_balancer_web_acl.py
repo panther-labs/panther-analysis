@@ -10,13 +10,12 @@ MAPPINGS = {
 
 def policy(resource):
     # Check if a Web ACL is required for this load balancer
-    if resource['LoadBalancerArn'] not in MAPPINGS:
+    if resource["LoadBalancerArn"] not in MAPPINGS:
         return True
 
     # Check if a Web ACL exists for this load balancer
-    if resource['WebAcl'] is None:
+    if resource["WebAcl"] is None:
         return False
 
     # Check that the correct Web ACL is assigned for this load balancer
-    return deep_get(resource, 'WebAcl',
-                    'WebACLId') == MAPPINGS[resource['LoadBalancerArn']]
+    return deep_get(resource, "WebAcl", "WebACLId") == MAPPINGS[resource["LoadBalancerArn"]]
