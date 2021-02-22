@@ -18,4 +18,4 @@ def rule(event):
 
 
 def title(event):
-    return "Suspicious DNS resolution to {}".format(event.get("domain"))
+    return f"Suspicious DNS resolution to {event.get('domain')}"

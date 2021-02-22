@@ -55,7 +55,7 @@ def rule(event):
 
 
 def gen_key(event):
-    return "Okta.Login.GeographicallyImprobable{}".format(deep_get(event, "actor", "alternateId"))
+    return f"Okta.Login.GeographicallyImprobable{deep_get(event, 'actor', 'alternateId')}"
 
 
 # Taken from stack overflow user Michael0x2a: https://stackoverflow.com/a/19412565/6645635
@@ -98,14 +98,10 @@ def store_login_info(key, event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    return "Geographically improbably login for user [{}] from [{}] to [{}]".format(
-        deep_get(event, "actor", "alternateId"),
-        deep_get(
-            EVENT_CITY_TRACKING.get(event.get("p_row_id")), "old_city", default="<NOT_STORED>"
-        ),  # For compatibility
-        deep_get(
-            EVENT_CITY_TRACKING.get(event.get("p_row_id")), "new_city", default="<UNKNOWN_NEW_CITY>"
-        ),
+    return (
+        f"Geographically improbably login for user [{deep_get(event, 'actor', 'alternateId')}] "
+        f"from [{deep_get(EVENT_CITY_TRACKING.get(event.get('p_row_id')), 'old_city', default='<NOT_STORED>')}]"
+        f" to [{deep_get(EVENT_CITY_TRACKING.get(event.get('p_row_id')), 'new_city', default='<UNKNOWN_NEW_CITY>')}]"
     )
 
 

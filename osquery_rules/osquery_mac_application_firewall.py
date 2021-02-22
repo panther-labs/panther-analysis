@@ -22,4 +22,4 @@ def rule(event):
 
 
 def title(event):
-    return "MacOS firewall disabled on [{}]".format(event.get("hostIdentifier"))
+    return f"MacOS firewall disabled on [{event.get('hostIdentifier')}]"

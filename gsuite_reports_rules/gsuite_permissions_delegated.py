@@ -22,6 +22,7 @@ def title(event):
         role = "<UNKNOWN_ROLE>"
     if not user:
         user = "<UNKNOWN_USER>"
-    return "User [{}] delegated new administrator privileges [{}] to [{}]".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_USER>"), role, user
+    return (
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] delegated new"
+        f" administrator privileges [{role}] to [{user}]"
     )

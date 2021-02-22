@@ -21,6 +21,7 @@ def dedup(event):
 
 
 def title(event):
-    return "User [{}] made a document externally visible for the first time".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
+    return (
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] made a document externally "
+        f"visible for the first time"
     )

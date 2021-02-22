@@ -17,5 +17,4 @@ def rule(event):
 
 
 def title(event):
-    message = "External user [{}] triggered a box event."
-    return message.format(deep_get(event, "created_by", "login", default="<UNKNOWN_USER>"))
+    return f"External user [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] triggered a box event."

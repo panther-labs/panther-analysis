@@ -13,6 +13,4 @@ def rule(event):
 
 
 def title(event):
-    return "CloudTrail [{}] was created/updated".format(
-        deep_get(event, "requestParameters", "name")
-    )
+    return f"CloudTrail [{deep_get(event, 'requestParameters', 'name')}] was created/updated"

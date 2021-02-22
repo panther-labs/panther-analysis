@@ -19,6 +19,4 @@ def rule(event):
 
 
 def title(event):
-    return "Brute force login suspected for user [{}]".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
-    )
+    return f"Brute force login suspected for user [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"

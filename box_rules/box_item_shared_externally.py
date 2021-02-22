@@ -35,8 +35,7 @@ def get_item(event):
 
 
 def title(event):
-    message = "User [{}] shared an item [{}] externally."
-    return message.format(
-        deep_get(event, "created_by", "login", default="<UNKNOWN_USER>"),
-        deep_get(event, "source", "item_name", default="<UNKNOWN_NAME>"),
+    return (
+        f"User [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] shared an item "
+        f"[{deep_get(event, 'source', 'item_name', default='<UNKNOWN_NAME>')}] externally."
     )

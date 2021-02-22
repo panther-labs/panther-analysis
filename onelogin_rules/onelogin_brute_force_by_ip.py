@@ -4,6 +4,4 @@ def rule(event):
 
 
 def title(event):
-    return "IP [{}] has exceeded the failed logins threshold".format(
-        event.get("ipaddr", "<UNKNOWN_IP>")
-    )
+    return f"IP [{event.get('ipaddr', '<UNKNOWN_IP>')}] has exceeded the failed logins threshold"

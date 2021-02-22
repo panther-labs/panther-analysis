@@ -18,6 +18,4 @@ def rule(event):
 
 
 def title(event):
-    return "{status} errors found to S3 Bucket [{bucket}]".format(
-        status=event.get("httpstatus"), bucket=event.get("bucket")
-    )
+    return f"{event.get('httpstatus')} errors found to S3 Bucket [{event.get('bucket')}]"

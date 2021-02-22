@@ -45,4 +45,4 @@ def rule(event):
 
 
 def title(event):
-    return "Suspicious cron found on [{}]".format(event.get("hostIdentifier"))
+    return f"Suspicious cron found on [{event.get('hostIdentifier', '<UNKNOWN_HOST>')}]"

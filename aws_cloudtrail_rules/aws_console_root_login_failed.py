@@ -11,7 +11,7 @@ def rule(event):
 
 
 def title(event):
-    return "AWS root login failed from [{ip}] in account [{account}]".format(
-        ip=event.get("sourceIPAddress"),
-        account=lookup_aws_account_name(event.get("recipientAccountId")),
+    return (
+        f"AWS root login failed from [{event.get('sourceIPAddress')}] in account "
+        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )

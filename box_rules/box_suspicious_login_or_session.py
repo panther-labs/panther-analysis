@@ -21,6 +21,7 @@ def title(event):
     description = deep_get(details, "shield_alert", "alert_summary", "description", default="")
     if description:
         return description
-    return "Shield medium to high risk, suspicious event alert triggered for user [{}]".format(
-        deep_get(details, "shield_alert", "user", "email", default="<UNKNOWN_USER>")
+    return (
+        f"Shield medium to high risk, suspicious event alert triggered for user "
+        f"[{deep_get(details, 'shield_alert', 'user', 'email', default='<UNKNOWN_USER>')}]"
     )

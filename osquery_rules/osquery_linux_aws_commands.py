@@ -30,7 +30,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] issued an aws-cli command on [{}]".format(
-        deep_get(event, "columns", "username", default="<UNKNOWN_USER>"),
-        event.get("hostIdentifier", "<UNKNOWN_HOST>"),
+    return (
+        f"User [{deep_get(event, 'columns', 'username', default='<UNKNOWN_USER>')}] issued an"
+        f" aws-cli command on [{event.get('hostIdentifier', '<UNKNOWN_HOST>')}]"
     )

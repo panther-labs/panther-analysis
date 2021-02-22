@@ -17,6 +17,7 @@ def rule(event):
 
 def title(event):
     # use unified data model field in title
-    return "{}: User [{}] from IP [{}] has exceeded the failed logins threshold".format(
-        event.get("p_log_type"), event.udm("actor_user"), event.udm("source_ip")
+    return (
+        f"{event.get('p_log_type')}: User [{event.udm('actor_user')}] from IP [{event.udm('source_ip')}] "
+        f"has exceeded the failed logins threshold"
     )

@@ -13,4 +13,4 @@ def rule(event):
 
 
 def title(event):
-    return "MacOS malware detected on [{}]".format(event.get("hostIdentifier"))
+    return f"MacOS malware detected on [{event.get('hostIdentifier')}]"

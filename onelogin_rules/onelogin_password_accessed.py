@@ -17,8 +17,8 @@ def dedup(event):
 
 
 def title(event):
-    return "A user [{}] accessed another user's [{}] [{}] password".format(
-        event.get("actor_user_name", "<UNKNOWN_USER>"),
-        event.get("user_name", "<UNKNOWN_USER>"),
-        event.get("app_name", "<UNKNOWN_APP>"),
+    return (
+        f"A user [{event.get('actor_user_name', '<UNKNOWN_USER>')}] accessed another user's "
+        f"[{event.get('user_name', '<UNKNOWN_USER>')}] "
+        f"[{event.get('app_name', '<UNKNOWN_APP>')}] password"
     )

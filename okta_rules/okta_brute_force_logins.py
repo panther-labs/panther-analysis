@@ -9,9 +9,10 @@ def rule(event):
 
 
 def title(event):
-    return "Suspected brute force Okta logins to account {} due to [{}]".format(
-        deep_get(event, "actor", "alternateId", default="<UNKNOWN_ACCOUNT>"),
-        deep_get(event, "outcome", "reason", default="<UNKNOWN_REASON>"),
+    return (
+        f"Suspected brute force Okta logins to account "
+        f"{deep_get(event, 'actor', 'alternateId', default='<UNKNOWN_ACCOUNT>')}, due to "
+        f"[{deep_get(event, 'outcome', 'reason', default='<UNKNOWN_REASON>')}]"
     )
 
 

@@ -40,6 +40,7 @@ def rule(event):
 
 
 def title(event):
-    return "GCP resource(s) created in unused region/zone in project {}".format(
-        deep_get(event, "resource", "labels", "project_id", default="<UNKNOWN_PROJECT>")
+    return (
+        f"GCP resource(s) created in unused region/zone in project "
+        f"{deep_get(event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )

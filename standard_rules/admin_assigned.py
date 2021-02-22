@@ -8,11 +8,9 @@ def rule(event):
 
 def title(event):
     # use unified data model field in title
-    return "{}: [{}] assigned admin privileges [{}] to [{}]".format(
-        event.get("p_log_type"),
-        event.udm("actor_user"),
-        event.udm("assigned_admin_role"),
-        event.udm("user"),
+    return (
+        f"{event.get('p_log_type')}: [{event.udm('actor_user')}] assigned admin privileges "
+        f"[{event.udm('assigned_admin_role')}] to [{event.udm('user')}]"
     )
 
 

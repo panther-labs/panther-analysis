@@ -34,6 +34,7 @@ def get_key(event):
 
 
 def title(event):
-    return "A user [{}] successfully logged in after a failed high risk login event".format(
-        event.get("user_name", "<UNKNOWN_USER>")
+    return (
+        f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] successfully logged in "
+        f"after a failed high risk login event"
     )

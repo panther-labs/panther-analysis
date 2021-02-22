@@ -11,6 +11,4 @@ def rule(event):
 
 
 def title(event):
-    return "AWS logins failed in account [{}]".format(
-        lookup_aws_account_name(event.get("recipientAccountId"))
-    )
+    return f"AWS logins failed in account [{lookup_aws_account_name(event.get('recipientAccountId'))}]"

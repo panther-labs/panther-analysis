@@ -13,6 +13,7 @@ def rule(event):
 
 
 def title(event):
-    return "Two step verification was disabled for user [{}]".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_USER>")
+    return (
+        f"Two step verification was disabled for user"
+        f" [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
     )

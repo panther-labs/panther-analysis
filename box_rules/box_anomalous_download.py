@@ -17,6 +17,7 @@ def title(event):
 
     if description:
         return description
-    return "Anamalous download activity triggered by user [{}].".format(
-        deep_get(event, "created_by", "name", default="<UNKNOWN_USER>")
+    return (
+        f"Anomalous download activity triggered by user "
+        f"[{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}]."
     )

@@ -38,14 +38,10 @@ def rule(event):
 
 
 def title(event):
-    msg = "User [{}] has logged into production from a non-office network"
-    user = deep_get(event, "columns", "user")
-    username = deep_get(event, "columns", "username")
+    user = (
+        deep_get(event, "columns", "user")
+        if deep_get(event, "columns", "user")
+        else deep_get(event, "columns", "username")
+    )
 
-    if user is not None:
-        return msg.format(user)
-
-    if username is not None:
-        return msg.format(username)
-
-    return msg.format("<UNKNOWN_USER>")
+    return f"User [{user if user else '<UNKNOWN_USER>'} has logged into production from a non-office network"

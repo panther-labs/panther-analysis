@@ -10,6 +10,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] may have been targeted by a government attack".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
+    return (
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] may have been "
+        f"targeted by a government attack"
     )

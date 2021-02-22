@@ -11,6 +11,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has executed the command [{}]".format(
-        event.get("user", "<UNKNOWN_USER>"), event.get("program", "<UNKNOWN_PROGRAM>")
+    return (
+        f"User [{event.get('user', '<UNKNOWN_USER>')}] has executed the command "
+        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}]"
     )

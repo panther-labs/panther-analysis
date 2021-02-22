@@ -21,4 +21,4 @@ def title(event):
     user = param_lookup(details.get("parameters", {}), "affected_email_address")
     if not user:
         user = "<UNKNOWN_USER>"
-    return "A suspicious login was reported for user [{}]".format(user)
+    return f"A suspicious login was reported for user [{user}]"

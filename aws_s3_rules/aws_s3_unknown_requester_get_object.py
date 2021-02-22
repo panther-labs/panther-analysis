@@ -32,6 +32,4 @@ def rule(event):
 
 
 def title(event):
-    return "Unknown requester accessing data from S3 Bucket [{}]".format(
-        event.get("bucket", "<UNKNOWN_BUCKET>")
-    )
+    return f"Unknown requester accessing data from S3 Bucket [{event.get('bucket', '<UNKNOWN_BUCKET>')}]"

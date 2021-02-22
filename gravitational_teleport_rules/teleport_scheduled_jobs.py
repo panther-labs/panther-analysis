@@ -9,4 +9,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has modified scheduled jobs".format(event.get("user", "<UNKNOWN_USER>"))
+    return f"User [{event.get('user', '<UNKNOWN_USER>')}] has modified scheduled jobs"

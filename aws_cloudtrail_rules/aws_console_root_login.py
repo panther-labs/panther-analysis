@@ -11,9 +11,9 @@ def rule(event):
 
 
 def title(event):
-    return "AWS root login detected from [{ip}] in account [{account}]".format(
-        ip=event.get("sourceIPAddress"),
-        account=lookup_aws_account_name(event.get("recipientAccountId")),
+    return (
+        f"AWS root login detected from [{event.get('sourceIPAddress')}] in account "
+        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 
 

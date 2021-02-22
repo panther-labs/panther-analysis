@@ -117,7 +117,7 @@ def build_jwt_settings(response: dict) -> dict:
     }
     missing_keys = expected_keys - set(data.keys())
     if len(missing_keys) != 0:
-        raise BadSecretsLookup("Missing necessary secret(s): {}".format(missing_keys))
+        raise BadSecretsLookup(f"Missing necessary secret(s): {missing_keys}")
     # build box jwt settings from gathered secrets
     settings = {
         "boxAppSettings": {

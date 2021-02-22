@@ -1,3 +1,6 @@
+from panther_base_helpers import deep_get
+
+
 # API calls that are indicative of KMS CMK Deletion
 S3_POLICY_CHANGE_EVENTS = {
     "PutBucketAcl",
@@ -17,4 +20,4 @@ def rule(event):
 
 
 def title(event):
-    return "S3 bucket modified by [{}]".format(event.get("userIdentity").get("arn"))
+    return f"S3 bucket modified by [{deep_get(event, 'userIdentity', 'arn')}]"

@@ -18,5 +18,7 @@ def dedup(event):
 
 
 def title(event):
-    message = "{username}'s access key ID [{key}] was uploaded to a public GitHub repo"
-    return message.format(username=dedup(event), key=deep_get(event, "userIdentity", "accessKeyId"))
+    return (
+        f"{dedup(event)}'s access key ID [{deep_get(event, 'userIdentity', 'accessKeyId')}]"
+        f" was uploaded to a public GitHub repo"
+    )

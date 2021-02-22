@@ -4,6 +4,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has exceeded the failed logins threshold".format(
-        event.get("user_name", "<UNKNOWN_USER>")
-    )
+    return f"User [{event.get('user_name', '<UNKNOWN_USER>')}] has exceeded the failed logins threshold"

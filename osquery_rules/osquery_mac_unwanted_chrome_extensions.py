@@ -3,4 +3,4 @@ def rule(event):
 
 
 def title(event):
-    return "Unwanted Chrome extension(s) detected on [{}]".format(event.get("hostIdentifier"))
+    return f"Unwanted Chrome extension(s) detected on [{event.get('hostIdentifier')}]"

@@ -23,6 +23,7 @@ def rule(event):
 
 
 def title(event):
-    return "A GCP IAM account has been created with a Gmail email in {}".format(
-        deep_get(event, "resource", "labels", "project_id", default="<UNKNOWN_PROJECT>")
+    return (
+        f"A GCP IAM account has been created with a Gmail email in "
+        f"{deep_get(event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )

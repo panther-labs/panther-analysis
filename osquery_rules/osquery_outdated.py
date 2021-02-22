@@ -12,4 +12,4 @@ def rule(event):
 
 
 def title(event):
-    return "Osquery Version {} is Outdated".format(deep_get(event, "columns", "version"))
+    return f"Osquery Version {deep_get(event, 'columns', 'version')} is Outdated"

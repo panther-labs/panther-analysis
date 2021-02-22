@@ -12,7 +12,7 @@ def dedup(event):
 
 
 def title(event):
-    user_identity = event.get("userIdentity", {})
-    return "{} [{}] has updated their IAM credentials".format(
-        user_identity.get("type"), user_identity.get("arn")
+    return (
+        f"{deep_get(event, 'userIdentity', 'type')} [{deep_get(event, 'userIdentity', 'arn')}]"
+        f" has updated their IAM credentials"
     )

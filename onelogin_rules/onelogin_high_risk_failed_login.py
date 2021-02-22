@@ -8,6 +8,4 @@ def rule(event):
 
 
 def title(event):
-    return "A user [{}] failed a high risk login attempt".format(
-        event.get("user_name", "<UNKNOWN_USER>")
-    )
+    return f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] failed a high risk login attempt"

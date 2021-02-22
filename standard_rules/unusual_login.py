@@ -32,7 +32,7 @@ def rule(event):
         resp = requests.get(url)
 
     if resp.status_code != 200:
-        raise Exception("API call failed: GET {} returned {}".format(url, resp.status_code))
+        raise Exception(f"API call failed: GET {url} returned {resp.status_code}")
     login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
@@ -71,6 +71,4 @@ def get_key(event):
 
 
 def title(event):
-    return "{}: Unusual logins detected for user [{}]".format(
-        event.get("p_log_type"), event.udm("actor_user")
-    )
+    return f"{event.get('p_log_type')}: Unusual logins detected for user [{event.udm('actor_user')}]"

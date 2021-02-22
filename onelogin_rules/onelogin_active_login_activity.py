@@ -52,6 +52,4 @@ def get_key(event):
 
 
 def title(event):
-    return "Unusual logins in OneLogin for multiple users from ip [{}]".format(
-        event.get("ipaddr", "<UNKNOWN_IP>")
-    )
+    return f"Unusual logins in OneLogin for multiple users from ip [{event.get('ipaddr', '<UNKNOWN_IP>')}]"

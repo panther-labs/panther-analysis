@@ -7,6 +7,7 @@ def rule(event):
 
 
 def title(event):
-    return "A user [{}] password changed by user [{}]".format(
-        event.get("user_name", "<UNKNOWN_USER>"), event.get("actor_user_name", "<UNKNOWN_USER>")
+    return (
+        f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] password changed by user "
+        f"[{event.get('actor_user_name', '<UNKNOWN_USER>')}]"
     )

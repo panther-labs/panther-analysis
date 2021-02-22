@@ -10,6 +10,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has issued a network scan with [{}]".format(
-        event.get("user", "<UNKNOWN_USER>"), event.get("program", "<UNKNOWN_PROGRAM>")
+    return (
+        f"User [{event.get('user', '<UNKNOWN_USER>')}] has issued a network scan with "
+        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}]"
     )

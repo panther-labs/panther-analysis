@@ -10,6 +10,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] banned another user from a group.".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
-    )
+    return f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] banned another user from a group."

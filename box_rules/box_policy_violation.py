@@ -11,6 +11,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] violated a content workflow policy.".format(
-        deep_get(event, "created_by", "name", default="<UNKNOWN_USER>")
+    return (
+        f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] "
+        f"violated a content workflow policy."
     )

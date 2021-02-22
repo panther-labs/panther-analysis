@@ -8,6 +8,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] attempted to login from an untrusted device.".format(
-        deep_get(event, "created_by", "name", default="<UNKNOWN_USER>")
+    return (
+        f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] "
+        f"attempted to login from an untrusted device."
     )

@@ -5,6 +5,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has exceeded the user account deletion threshold".format(
-        event.get("actor_user_name", "<UNKNOWN_USER>")
-    )
+    return f"User [{event.get('actor_user_name', '<UNKNOWN_USER>')}] has exceeded the user account deletion threshold"

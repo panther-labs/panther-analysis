@@ -10,6 +10,4 @@ def rule(event):
 
 
 def title(event):
-    return "Advanced protection was disabled for user [{}]".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
-    )
+    return f"Advanced protection was disabled for user [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"

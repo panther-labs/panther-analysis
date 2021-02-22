@@ -37,4 +37,4 @@ def rule(event):
 
 
 def title(event):
-    return "Keylogger malware detected on [{}]".format(event.get("hostIdentifier"))
+    return f"Keylogger malware detected on [{event.get('hostIdentifier')}]"

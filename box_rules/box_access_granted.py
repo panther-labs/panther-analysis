@@ -6,6 +6,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] granted access to their account".format(
-        deep_get(event, "created_by", "name", default="<UNKNOWN_USER>")
-    )
+    return f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] granted access to their account"

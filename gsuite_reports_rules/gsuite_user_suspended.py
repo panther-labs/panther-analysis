@@ -22,4 +22,4 @@ def title(event):
     user = param_lookup(details.get("parameters", {}), "affected_email_address")
     if not user:
         user = "<UNKNOWN_USER>"
-    return "User [{}]'s account was disabled".format(user)
+    return f"User [{user}]'s account was disabled"

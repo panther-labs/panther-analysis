@@ -3,4 +3,4 @@ def rule(event):
 
 
 def title(event):
-    return "OSSEC rootkit found on [{}]".format(event.get("hostIdentifier"))
+    return f"OSSEC rootkit found on [{event.get('hostIdentifier')}]"

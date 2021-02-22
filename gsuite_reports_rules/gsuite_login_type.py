@@ -28,6 +28,7 @@ def rule(event):
 
 
 def title(event):
-    return "A login attempt of a non-approved type was detected for user [{}]".format(
-        deep_get(event, "actor", "email", default="<UNKNOWN_USER>")
+    return (
+        f"A login attempt of a non-approved type was detected for user "
+        f"[{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
     )

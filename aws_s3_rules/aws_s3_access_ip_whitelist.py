@@ -22,6 +22,4 @@ def rule(event):
 
 
 def title(event):
-    return "Non-Approved IP access to S3 Bucket [{}]".format(
-        event.get("bucket", "<UNKNOWN_BUCKET>")
-    )
+    return f"Non-Approved IP access to S3 Bucket [{event.get('bucket', '<UNKNOWN_BUCKET>')}]"

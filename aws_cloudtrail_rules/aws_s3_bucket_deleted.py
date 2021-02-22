@@ -1,3 +1,6 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
     # Capture DeleteBucket, DeleteBucketPolicy, DeleteBucketWebsite
     return event.get("eventName").startswith("DeleteBucket") and not event.get("errorCode")
@@ -19,5 +22,4 @@ def dedup(event):
 
 
 def title(event):
-    user_identity = event.get("userIdentity", {})
-    return "{} [{}] destroyed a bucket".format(user_identity.get("type"), dedup(event))
+    return f"{deep_get(event, 'userIdentity', 'type')} [{dedup(event)}] destroyed a bucket"

@@ -7,6 +7,4 @@ def rule(event):
 
 
 def title(event):
-    return "Unauthenticated access to S3 Bucket [{}]".format(
-        event.get("bucket", "<UNKNOWN_BUCKET>")
-    )
+    return f"Unauthenticated access to S3 Bucket [{event.get('bucket', '<UNKNOWN_BUCKET')}]"

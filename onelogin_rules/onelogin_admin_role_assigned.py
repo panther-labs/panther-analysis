@@ -5,6 +5,7 @@ def rule(event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    return "[{}] assigned super user permissions to [{}]".format(
-        event.get("actor_user_name", "<UNKNOWN_USER>"), event.get("user_name", "<UNKNOWN_USER>")
+    return (
+        f"[{event.get('actor_user_name', '<UNKNOWN_USER>')}] assigned super user"
+        f" permissions to [{event.get('user_name', '<UNKNOWN_USER>')}]"
     )

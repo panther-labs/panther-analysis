@@ -3,6 +3,4 @@ def rule(event):
 
 
 def title(event):
-    return "A high volume of SSH errors was detected from user [{}]".format(
-        event.get("user", "<UNKNOWN_USER>")
-    )
+    return f"A high volume of SSH errors was detected from user [{event.get('user', '<UNKNOWN_USER>')}]"

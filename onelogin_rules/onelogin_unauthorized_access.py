@@ -4,6 +4,7 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has exceeded the unauthorized application access attempt threshold".format(
-        event.get("user_name", "<UNKNOWN_USER>")
+    return (
+        f"User [{event.get('user_name', '<UNKNOWN_USER>')}] has exceeded the unauthorized "
+        f"application access attempt threshold"
     )

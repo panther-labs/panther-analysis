@@ -18,6 +18,7 @@ def dedup(event):
 
 
 def title(event):
-    return "CloudTrail [{}] in account [{}] was stopped/deleted".format(
-        dedup(event), lookup_aws_account_name(event.get("recipientAccountId"))
+    return (
+        f"CloudTrail [{dedup(event)}] in account [{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f" was stopped/deleted"
     )

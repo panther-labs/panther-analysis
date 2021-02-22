@@ -16,6 +16,4 @@ def rule(event):
 
 
 def title(event):
-    return "User [{}] has manually modified system users".format(
-        event.get("user", "<UNKNOWN_USER>")
-    )
+    return f"User [{event.get('user', '<UNKNOWN_USER>')}] has manually modified system users"

@@ -17,15 +17,14 @@ def rule(event):
 
 def title(event):
     if event.get("event_type") == "FILE_MARKED_MALICIOUS":
-        return "File [{}], owned by [{}], was marked malicious.".format(
-            deep_get(event, "source", "item_name", default="<UNKNOWN_FILE"),
-            deep_get(event, "source", "owned_by", "login", default="<UNKNOWN_USER>"),
+        return (
+            f"File [{deep_get(event, 'source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
+            f"[{deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], was marked malicious."
         )
 
     alert_details = box_parse_additional_details(event).get("shield_alert", {})
-    return "File [{}], owned by [{}], was marked malicious.".format(
-        deep_get(
-            alert_details, "alert_summary", "upload_activity", "item_name", default="<UNKNOWN_FILE>"
-        ),
-        deep_get(alert_details, "user", "email", default="<UNKNOWN_USER>"),
+    return (
+        f"File [{deep_get(alert_details, 'user', 'email', default='<UNKNOWN_USER>')}], owned by "
+        f"[{deep_get(alert_details, 'alert_summary', 'upload_activity', 'item_name', default='<UNKNOWN_FILE>')}],"
+        f" was marked malicious."
     )
