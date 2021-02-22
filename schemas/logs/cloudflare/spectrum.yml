@@ -6,119 +6,119 @@ description: Cloudflare Spectrum logs. When selecting event fields on the Cloudf
 referenceURL: https://developers.cloudflare.com/logs/log-fields#spectrum-events
 version: 0
 fields:
-- name: Application
-  description: The unique public ID of the application on which the event occurred
-  type: string
-- name: ClientASN
-  description: Client AS number
-  type: bigint
-- name: ClientBytes
-  description: The number of bytes read from the client by the Spectrum service
-  type: bigint
-- name: ClientCountry
-  description: Country of the client IP address
-  type: string
-- name: ClientIP
-  description: IP address of the client
-  type: string
-  indicators:
-  - ip
-- name: ClientMatchedIpFirewall
-  description: Whether the connection matched any IP Firewall rules; UNKNOWN | ALLOW | BLOCK_ERROR | BLOCK_IP | BLOCK_COUNTRY | BLOCK_ASN | WHITELIST_IP |WHITELIST_COUNTRY | WHITELIST_ASN
-  type: string
-- name: ClientPort
-  description: Client port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
+  - name: Application
+    description: The unique public ID of the application on which the event occurred
+    type: string
+  - name: ClientASN
+    description: Client AS number
+    type: bigint
+  - name: ClientBytes
+    description: The number of bytes read from the client by the Spectrum service
+    type: bigint
+  - name: ClientCountry
+    description: Country of the client IP address
+    type: string
+  - name: ClientIP
+    description: IP address of the client
+    type: string
+    indicators:
+      - ip
+  - name: ClientMatchedIpFirewall
+    description: Whether the connection matched any IP Firewall rules; UNKNOWN | ALLOW | BLOCK_ERROR | BLOCK_IP | BLOCK_COUNTRY | BLOCK_ASN | WHITELIST_IP |WHITELIST_COUNTRY | WHITELIST_ASN
+    type: string
+  - name: ClientPort
+    description: Client port
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: ClientProto
+    description: Transport protocol used by client; tcp | udp | unix
+    type: string
+  - name: ClientTcpRtt
+    description: The TCP round-trip time in nanoseconds between the client and Spectrum
+    type: bigint
+  - name: ClientTlsCipher
+    description: The cipher negotiated between the client and Spectrum
+    type: string
+  - name: ClientTlsClientHelloServerName
+    description: The server name in the Client Hello message from client to Spectrum
+    type: string
+  - name: ClientTlsProtocol
+    description: The TLS version negotiated between the client and Spectrum; unknown | none | SSLv3 | TLSv1 | TLSv1.1 | TLSv1.2 | TLSv1.3
+    type: string
+  - name: ClientTlsStatus
+    description: Indicates state of TLS session from the client to Spectrum; UNKNOWN | OK | INTERNAL_ERROR | INVALID_CONFIG | INVALID_SNI | HANDSHAKE_FAILED | KEYLESS_RPC
+    type: string
+  - name: ColoCode
+    description: IATA airport code of data center that received the request
+    type: string
+  - name: ConnectTimestamp
+    description: Timestamp at which both legs of the connection (client/edge, edge/origin or nexthop) were established
+    type: timestamp
+    timeFormat: cloudflare
+  - name: DisconnectTimestamp
+    description: Timestamp at which the connection was closed
+    type: timestamp
+    timeFormat: cloudflare
+  - name: Event
+    description: connect | disconnect | clientFiltered | tlsError | resolveOrigin | originError
+    type: string
+  - name: IpFirewall
+    description: Whether IP Firewall was enabled at time of connection
     type: boolean
-- name: ClientProto
-  description: Transport protocol used by client; tcp | udp | unix
-  type: string
-- name: ClientTcpRtt
-  description: The TCP round-trip time in nanoseconds between the client and Spectrum
-  type: bigint
-- name: ClientTlsCipher
-  description: The cipher negotiated between the client and Spectrum
-  type: string
-- name: ClientTlsClientHelloServerName
-  description: The server name in the Client Hello message from client to Spectrum
-  type: string
-- name: ClientTlsProtocol
-  description: The TLS version negotiated between the client and Spectrum; unknown | none | SSLv3 | TLSv1 | TLSv1.1 | TLSv1.2 | TLSv1.3
-  type: string
-- name: ClientTlsStatus
-  description: Indicates state of TLS session from the client to Spectrum; UNKNOWN | OK | INTERNAL_ERROR | INVALID_CONFIG | INVALID_SNI | HANDSHAKE_FAILED | KEYLESS_RPC
-  type: string
-- name: ColoCode
-  description: IATA airport code of data center that received the request
-  type: string
-- name: ConnectTimestamp
-  description: Timestamp at which both legs of the connection (client/edge, edge/origin or nexthop) were established
-  type: timestamp
-  timeFormat: cloudflare
-- name: DisconnectTimestamp
-  description: Timestamp at which the connection was closed
-  type: timestamp
-  timeFormat: cloudflare
-- name: Event
-  description: connect | disconnect | clientFiltered | tlsError | resolveOrigin | originError
-  type: string
-- name: IpFirewall
-  description: Whether IP Firewall was enabled at time of connection
-  type: boolean
-- name: OriginBytes
-  description: The number of bytes read from the origin by Spectrum
-  type: bigint
-- name: OriginIP
-  description: Origin IP address
-  type: string
-  indicators:
-  - ip
-- name: OriginPort
-  description: Origin port
-  type: object
-  fields:
-  - name: Value
-    description: Value field
-    type: int
-  - name: Exists
-    description: Exists field
-    type: boolean
-- name: OriginProto
-  description: Transport protocol used by origin; tcp | udp | unix
-  type: string
-- name: OriginTcpRtt
-  description: The TCP round-trip time in nanoseconds between Spectrum and the origin
-  type: bigint
-- name: OriginTlsCipher
-  description: The cipher negotiated between Spectrum and the origin
-  type: string
-- name: OriginTlsFingerprint
-  description: SHA256 hash of origin certificate
-  type: string
-- name: OriginTlsMode
-  description: If and how the upstream connection is encrypted; unknown | off | flexible | full | strict
-  type: string
-- name: OriginTlsProtocol
-  description: The TLS version negotiated between Spectrum and the origin; unknown | none | SSLv3 | TLSv1 | TLSv1.1 | TLSv1.2 | TLSv1.3
-  type: string
-- name: OriginTlsStatus
-  description: The state of the TLS session from Spectrum to the origin; UNKNOWN | OK | INTERNAL_ERROR | INVALID_CONFIG | INVALID_SNI | HANDSHAKE_FAILED | KEYLESS_RPC
-  type: string
-- name: ProxyProtocol
-  description: Which form of proxy protocol is applied to the given connection; off | v1 | v2 | simple
-  type: string
-- name: Status
-  description: A code indicating reason for connection closure
-  type: bigint
-- name: Timestamp
-  required: true
-  description: Timestamp at which the event took place
-  type: timestamp
-  timeFormat: cloudflare
-  isEventTime: true
+  - name: OriginBytes
+    description: The number of bytes read from the origin by Spectrum
+    type: bigint
+  - name: OriginIP
+    description: Origin IP address
+    type: string
+    indicators:
+      - ip
+  - name: OriginPort
+    description: Origin port
+    type: object
+    fields:
+      - name: Value
+        description: Value field
+        type: int
+      - name: Exists
+        description: Exists field
+        type: boolean
+  - name: OriginProto
+    description: Transport protocol used by origin; tcp | udp | unix
+    type: string
+  - name: OriginTcpRtt
+    description: The TCP round-trip time in nanoseconds between Spectrum and the origin
+    type: bigint
+  - name: OriginTlsCipher
+    description: The cipher negotiated between Spectrum and the origin
+    type: string
+  - name: OriginTlsFingerprint
+    description: SHA256 hash of origin certificate
+    type: string
+  - name: OriginTlsMode
+    description: If and how the upstream connection is encrypted; unknown | off | flexible | full | strict
+    type: string
+  - name: OriginTlsProtocol
+    description: The TLS version negotiated between Spectrum and the origin; unknown | none | SSLv3 | TLSv1 | TLSv1.1 | TLSv1.2 | TLSv1.3
+    type: string
+  - name: OriginTlsStatus
+    description: The state of the TLS session from Spectrum to the origin; UNKNOWN | OK | INTERNAL_ERROR | INVALID_CONFIG | INVALID_SNI | HANDSHAKE_FAILED | KEYLESS_RPC
+    type: string
+  - name: ProxyProtocol
+    description: Which form of proxy protocol is applied to the given connection; off | v1 | v2 | simple
+    type: string
+  - name: Status
+    description: A code indicating reason for connection closure
+    type: bigint
+  - name: Timestamp
+    required: true
+    description: Timestamp at which the event took place
+    type: timestamp
+    timeFormat: cloudflare
+    isEventTime: true

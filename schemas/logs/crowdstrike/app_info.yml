@@ -6,43 +6,43 @@ description: Detected Application Information provided by Falcon Discover
 referenceURL: https://developer.crowdstrike.com/crowdstrike/docs/falcon-data-replicator-guide#section-appinfo
 version: 0
 fields:
-- name: _time
-  required: true
-  description: The host's local time in epoch format.
-  type: timestamp
-  timeFormat: unix
-  isEventTime: true
-- name: cid
-  required: true
-  description: The customer ID.
-  type: string
-- name: CompanyName
-  required: true
-  description: The name of the company.
-  type: string
-- name: detectioncount
-  required: true
-  description: The number of detections.
-  type: bigint
-- name: FileName
-  required: true
-  description: The name of the file.
-  type: string
-- name: SHA256HashData
-  required: true
-  description: The file hash bashed on SHA-256.
-  type: string
-  indicators:
-  - sha256
-- name: FileDescription
-  description: The description of the file, if any.
-  type: string
-- name: FileVersion
-  description: The version of the file.
-  type: string
-- name: ProductName
-  description: The name of the product.
-  type: string
-- name: ProductVersion
-  description: The version of the product.
-  type: string
+  - name: _time
+    required: true
+    description: The host's local time in epoch format.
+    type: timestamp
+    timeFormat: unix
+    isEventTime: true
+  - name: cid
+    required: true
+    description: The customer ID.
+    type: string
+  - name: CompanyName
+    required: true
+    description: The name of the company.
+    type: string
+  - name: detectioncount
+    required: true
+    description: The number of detections.
+    type: bigint
+  - name: FileName
+    required: true
+    description: The name of the file.
+    type: string
+  - name: SHA256HashData
+    required: true
+    description: The file hash bashed on SHA-256.
+    type: string
+    indicators:
+      - sha256
+  - name: FileDescription
+    description: The description of the file, if any.
+    type: string
+  - name: FileVersion
+    description: The version of the file.
+    type: string
+  - name: ProductName
+    description: The name of the product.
+    type: string
+  - name: ProductVersion
+    description: The version of the product.
+    type: string

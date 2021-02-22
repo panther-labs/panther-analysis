@@ -6,30 +6,30 @@ description: Fluentd syslog parser for the RFC3164 format (ie. BSD-syslog messag
 referenceURL: https://docs.fluentd.org/parser/syslog#rfc3164-log
 version: 0
 fields:
-- name: pri
-  description: Priority is calculated by (Facility * 8 + Severity). The lower this value, the higher importance of the log message.
-  type: smallint
-- name: host
-  required: true
-  description: Hostname identifies the machine that originally sent the syslog message.
-  type: string
-- name: ident
-  required: true
-  description: Appname identifies the device or application that originated the syslog message.
-  type: string
-- name: pid
-  description: ProcID is often the process ID, but can be any value used to enable log analyzers to detect discontinuities in syslog reporting.
-  type: int
-- name: message
-  required: true
-  description: Message contains free-form text that provides information about the event.
-  type: string
-- name: time
-  required: true
-  description: Timestamp of the syslog message in UTC.
-  type: timestamp
-  timeFormat: rfc3339
-- name: tag
-  required: true
-  description: Tag of the syslog message
-  type: string
+  - name: pri
+    description: Priority is calculated by (Facility * 8 + Severity). The lower this value, the higher importance of the log message.
+    type: smallint
+  - name: host
+    required: true
+    description: Hostname identifies the machine that originally sent the syslog message.
+    type: string
+  - name: ident
+    required: true
+    description: Appname identifies the device or application that originated the syslog message.
+    type: string
+  - name: pid
+    description: ProcID is often the process ID, but can be any value used to enable log analyzers to detect discontinuities in syslog reporting.
+    type: int
+  - name: message
+    required: true
+    description: Message contains free-form text that provides information about the event.
+    type: string
+  - name: time
+    required: true
+    description: Timestamp of the syslog message in UTC.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: tag
+    required: true
+    description: Tag of the syslog message
+    type: string

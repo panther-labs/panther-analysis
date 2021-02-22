@@ -56,13 +56,73 @@ result: |
     "p_any_usernames": ["admin"],
     "p_log_type": "GitLab.Production"
   }
-results: []
+results: [ ]
 logType: GitLab.Production
 ---
 name: TestGitLabProductionException
-input: "{\n  \"method\": \"GET\",\n  \"path\": \"/admin\",\n  \"format\": \"html\",\n  \"controller\": \"Admin::DashboardController\",\n  \"action\": \"index\",\n  \"status\": 500,\n  \"time\": \"2019-11-14T13:12:46.156Z\",\n  \"params\": [],\n  \"remote_ip\": \"127.0.0.1\",\n  \"user_id\": 1,\n  \"username\": \"root\",\n  \"ua\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0\",\n  \"queue_duration\": 274.35,\n  \"correlation_id\": \"KjDVUhNvvV3\",\n  \"queue_duration_s\":0.0,\n  \"gitaly_calls\":16,\n  \"gitaly_duration_s\":0.16,\n  \"redis_calls\":115,\n  \"redis_duration_s\":0.13,\n  \"cpu_s\":17.50,\n  \"db_duration_s\":0.08,\n  \"view_duration_s\":2.39,\n  \"duration_s\":20.54,\n  \"exception.class\": \"NameError\",\n  \"exception.message\": \"undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>\",\n\t\"exception.backtrace\": [\n\t\t\"ee/lib/gitlab/jira/middleware.rb:19:in call\"]\n}\n"
-result: "{\n  \"method\": \"GET\",\n  \"path\": \"/admin\",\n  \"format\": \"html\",\n  \"controller\": \"Admin::DashboardController\",\n  \"action\": \"index\",\n  \"status\": 500,\n  \"time\": \"2019-11-14T13:12:46.156Z\",\n  \"remote_ip\": \"127.0.0.1\",\n  \"user_id\": 1,\n  \"username\": \"root\",\n  \"ua\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0\",\n  \"correlation_id\": \"KjDVUhNvvV3\",\n  \"queue_duration_s\":0.0,\n  \"gitaly_calls\":16,\n  \"gitaly_duration_s\":0.16,\n  \"redis_calls\":115,\n  \"redis_duration_s\":0.13,\n  \"cpu_s\":17.50,\n  \"db_duration_s\":0.08,\n  \"view_duration_s\":2.39,\n  \"duration_s\":20.54,\n  \"exception.class\": \"NameError\",\n  \"exception.message\": \"undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>\",\n\t\"exception.backtrace\": [\"ee/lib/gitlab/jira/middleware.rb:19:in call\"],\n  \"p_event_time\": \"2019-11-14T13:12:46.156Z\",\n  \"p_any_ip_addresses\": [\"127.0.0.1\"],\n  \"p_any_trace_ids\": [\"KjDVUhNvvV3\"],\n  \"p_any_usernames\": [\"root\"],\n  \"p_log_type\": \"GitLab.Production\"\n}\n"
-results: []
+input: |
+  {
+    "method": "GET",
+    "path": "/admin",
+    "format": "html",
+    "controller": "Admin::DashboardController",
+    "action": "index",
+    "status": 500,
+    "time": "2019-11-14T13:12:46.156Z",
+    "params": [],
+    "remote_ip": "127.0.0.1",
+    "user_id": 1,
+    "username": "root",
+    "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0",
+    "queue_duration": 274.35,
+    "correlation_id": "KjDVUhNvvV3",
+    "queue_duration_s":0.0,
+    "gitaly_calls":16,
+    "gitaly_duration_s":0.16,
+    "redis_calls":115,
+    "redis_duration_s":0.13,
+    "cpu_s":17.50,
+    "db_duration_s":0.08,
+    "view_duration_s":2.39,
+    "duration_s":20.54,
+    "exception.class": "NameError",
+    "exception.message": "undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>",
+  	"exception.backtrace": [
+  		"ee/lib/gitlab/jira/middleware.rb:19:in call"]
+  }
+result: |
+  {
+    "method": "GET",
+    "path": "/admin",
+    "format": "html",
+    "controller": "Admin::DashboardController",
+    "action": "index",
+    "status": 500,
+    "time": "2019-11-14T13:12:46.156Z",
+    "remote_ip": "127.0.0.1",
+    "user_id": 1,
+    "username": "root",
+    "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:70.0) Gecko/20100101 Firefox/70.0",
+    "correlation_id": "KjDVUhNvvV3",
+    "queue_duration_s":0.0,
+    "gitaly_calls":16,
+    "gitaly_duration_s":0.16,
+    "redis_calls":115,
+    "redis_duration_s":0.13,
+    "cpu_s":17.50,
+    "db_duration_s":0.08,
+    "view_duration_s":2.39,
+    "duration_s":20.54,
+    "exception.class": "NameError",
+    "exception.message": "undefined local variable or method for #<Admin::DashboardController:0x00007ff3c9648588>",
+  	"exception.backtrace": ["ee/lib/gitlab/jira/middleware.rb:19:in call"],
+    "p_event_time": "2019-11-14T13:12:46.156Z",
+    "p_any_ip_addresses": ["127.0.0.1"],
+    "p_any_trace_ids": ["KjDVUhNvvV3"],
+    "p_any_usernames": ["root"],
+    "p_log_type": "GitLab.Production"
+  }
+results: [ ]
 logType: GitLab.Production
 ---
 name: TestGitLabProductionRedirect
@@ -118,7 +178,7 @@ result: |
     "p_any_trace_ids": ["DScuWzVUYA5"],
     "p_log_type": "GitLab.Production"
   }
-results: []
+results: [ ]
 logType: GitLab.Production
 ---
 name: TestProductionRedirect304
@@ -182,5 +242,5 @@ result: |
     "p_event_time": "2019-11-14T13:12:46.156Z",
     "p_log_type": "GitLab.Production"
   }
-results: []
+results: [ ]
 logType: GitLab.Production

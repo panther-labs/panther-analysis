@@ -6,38 +6,38 @@ description: GitLab log with information about integrations activities such as J
 referenceURL: https://docs.gitlab.com/ee/administration/logs.html#integrations_jsonlog
 version: 0
 fields:
-- name: severity
-  required: true
-  description: The log level
-  type: string
-- name: time
-  required: true
-  description: The event timestamp
-  type: timestamp
-  timeFormat: rfc3339
-  isEventTime: true
-- name: service_class
-  required: true
-  description: The class name of the integrated service
-  type: string
-- name: project_id
-  required: true
-  description: The project id the integration was running on
-  type: bigint
-- name: project_path
-  required: true
-  description: The project path the integration was running on
-  type: string
-- name: message
-  required: true
-  description: The log message from the service
-  type: string
-- name: client_url
-  required: true
-  description: The client url of the service
-  type: string
-  indicators:
-  - url
-- name: error
-  description: The error name if an error has occurred
-  type: string
+  - name: severity
+    required: true
+    description: The log level
+    type: string
+  - name: time
+    required: true
+    description: The event timestamp
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+  - name: service_class
+    required: true
+    description: The class name of the integrated service
+    type: string
+  - name: project_id
+    required: true
+    description: The project id the integration was running on
+    type: bigint
+  - name: project_path
+    required: true
+    description: The project path the integration was running on
+    type: string
+  - name: message
+    required: true
+    description: The log message from the service
+    type: string
+  - name: client_url
+    required: true
+    description: The client url of the service
+    type: string
+    indicators:
+      - url
+  - name: error
+    description: The error name if an error has occurred
+    type: string

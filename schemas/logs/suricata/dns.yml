@@ -6,161 +6,161 @@ description: Suricata parser for the DNS event type in the EVE JSON output.
 referenceURL: https://suricata.readthedocs.io/en/suricata-5.0.2/output/eve/eve-json-output.html#dns
 version: 0
 fields:
-- name: community_id
-  description: Suricata DNS CommunityID
-  type: string
-- name: dns
-  required: true
-  description: Suricata DNS DNS
-  type: object
-  fields:
-  - name: aa
-    description: Suricata DNSDetails Aa
-    type: boolean
-  - name: answers
-    description: Suricata DNSDetails Answers
-    type: array
-    element:
-      type: object
-      fields:
-      - name: rdata
-        description: Suricata DNSDetailsAnswers Rdata
-        type: string
-      - name: rrname
-        description: Suricata DNSDetailsAnswers Rrname
-        type: string
-      - name: rrtype
-        description: Suricata DNSDetailsAnswers Rrtype
-        type: string
-      - name: ttl
-        description: Suricata DNSDetailsAnswers TTL
-        type: int
-  - name: authorities
-    description: Suricata DNSDetails Authorities
-    type: array
-    element:
-      type: object
-      fields:
-      - name: rrname
-        description: Suricata DNSDetailsAuthorities Rrname
-        type: string
-      - name: rrtype
-        description: Suricata DNSDetailsAuthorities Rrtype
-        type: string
-      - name: ttl
-        description: Suricata DNSDetailsAuthorities TTL
-        type: int
-  - name: flags
-    description: Suricata DNSDetails Flags
+  - name: community_id
+    description: Suricata DNS CommunityID
     type: string
-  - name: grouped
-    description: Suricata DNSDetails Grouped
+  - name: dns
+    required: true
+    description: Suricata DNS DNS
     type: object
     fields:
-    - name: A
-      description: Suricata DNSDetailsGrouped A
-      type: array
-      element:
+      - name: aa
+        description: Suricata DNSDetails Aa
+        type: boolean
+      - name: answers
+        description: Suricata DNSDetails Answers
+        type: array
+        element:
+          type: object
+          fields:
+            - name: rdata
+              description: Suricata DNSDetailsAnswers Rdata
+              type: string
+            - name: rrname
+              description: Suricata DNSDetailsAnswers Rrname
+              type: string
+            - name: rrtype
+              description: Suricata DNSDetailsAnswers Rrtype
+              type: string
+            - name: ttl
+              description: Suricata DNSDetailsAnswers TTL
+              type: int
+      - name: authorities
+        description: Suricata DNSDetails Authorities
+        type: array
+        element:
+          type: object
+          fields:
+            - name: rrname
+              description: Suricata DNSDetailsAuthorities Rrname
+              type: string
+            - name: rrtype
+              description: Suricata DNSDetailsAuthorities Rrtype
+              type: string
+            - name: ttl
+              description: Suricata DNSDetailsAuthorities TTL
+              type: int
+      - name: flags
+        description: Suricata DNSDetails Flags
         type: string
-    - name: AAAA
-      description: Suricata DNSDetailsGrouped Aaaa
-      type: array
-      element:
+      - name: grouped
+        description: Suricata DNSDetails Grouped
+        type: object
+        fields:
+          - name: A
+            description: Suricata DNSDetailsGrouped A
+            type: array
+            element:
+              type: string
+          - name: AAAA
+            description: Suricata DNSDetailsGrouped Aaaa
+            type: array
+            element:
+              type: string
+          - name: CNAME
+            description: Suricata DNSDetailsGrouped Cname
+            type: array
+            element:
+              type: string
+          - name: MX
+            description: Suricata DNSDetailsGrouped Mx
+            type: array
+            element:
+              type: string
+          - name: PTR
+            description: Suricata DNSDetailsGrouped Ptr
+            type: array
+            element:
+              type: string
+          - name: TXT
+            description: Suricata DNSDetailsGrouped Txt
+            type: array
+            element:
+              type: string
+      - name: id
+        description: Suricata DNSDetails ID
+        type: int
+      - name: qr
+        description: Suricata DNSDetails Qr
+        type: boolean
+      - name: ra
+        description: Suricata DNSDetails Ra
+        type: boolean
+      - name: rcode
+        description: Suricata DNSDetails Rcode
         type: string
-    - name: CNAME
-      description: Suricata DNSDetailsGrouped Cname
-      type: array
-      element:
+      - name: rd
+        description: Suricata DNSDetails Rd
+        type: boolean
+      - name: rrname
+        description: Suricata DNSDetails Rrname
         type: string
-    - name: MX
-      description: Suricata DNSDetailsGrouped Mx
-      type: array
-      element:
+      - name: rdata
+        description: Suricata DNSDetails RData
         type: string
-    - name: PTR
-      description: Suricata DNSDetailsGrouped Ptr
-      type: array
-      element:
+      - name: rrtype
+        description: Suricata DNSDetails Rrtype
         type: string
-    - name: TXT
-      description: Suricata DNSDetailsGrouped Txt
-      type: array
-      element:
+      - name: ttl
+        description: Suricata DNSDetails TTL
+        type: int
+      - name: tx_id
+        description: Suricata DNSDetails TxID
+        type: int
+      - name: type
+        description: Suricata DNSDetails Type
         type: string
-  - name: id
-    description: Suricata DNSDetails ID
-    type: int
-  - name: qr
-    description: Suricata DNSDetails Qr
-    type: boolean
-  - name: ra
-    description: Suricata DNSDetails Ra
-    type: boolean
-  - name: rcode
-    description: Suricata DNSDetails Rcode
+      - name: version
+        description: Suricata DNSDetails Version
+        type: int
+  - name: dest_ip
+    required: true
+    description: Suricata DNS DestIP
     type: string
-  - name: rd
-    description: Suricata DNSDetails Rd
-    type: boolean
-  - name: rrname
-    description: Suricata DNSDetails Rrname
-    type: string
-  - name: rdata
-    description: Suricata DNSDetails RData
-    type: string
-  - name: rrtype
-    description: Suricata DNSDetails Rrtype
-    type: string
-  - name: ttl
-    description: Suricata DNSDetails TTL
+  - name: dest_port
+    description: Suricata DNS DestPort
     type: int
-  - name: tx_id
-    description: Suricata DNSDetails TxID
-    type: int
-  - name: type
-    description: Suricata DNSDetails Type
+  - name: event_type
+    required: true
+    description: Suricata DNS EventType
     type: string
-  - name: version
-    description: Suricata DNSDetails Version
+  - name: flow_id
+    description: Suricata DNS FlowID
     type: int
-- name: dest_ip
-  required: true
-  description: Suricata DNS DestIP
-  type: string
-- name: dest_port
-  description: Suricata DNS DestPort
-  type: int
-- name: event_type
-  required: true
-  description: Suricata DNS EventType
-  type: string
-- name: flow_id
-  description: Suricata DNS FlowID
-  type: int
-- name: pcap_cnt
-  description: Suricata DNS PcapCnt
-  type: int
-- name: pcap_filename
-  description: Suricata DNS PcapFilename
-  type: string
-- name: proto
-  required: true
-  description: Suricata DNS Proto
-  type: int
-- name: src_ip
-  required: true
-  description: Suricata DNS SrcIP
-  type: string
-- name: src_port
-  description: Suricata DNS SrcPort
-  type: int
-- name: timestamp
-  required: true
-  description: Suricata DNS Timestamp
-  type: timestamp
-  timeFormat: rfc3339
-- name: vlan
-  description: Suricata DNS Vlan
-  type: array
-  element:
+  - name: pcap_cnt
+    description: Suricata DNS PcapCnt
     type: int
+  - name: pcap_filename
+    description: Suricata DNS PcapFilename
+    type: string
+  - name: proto
+    required: true
+    description: Suricata DNS Proto
+    type: int
+  - name: src_ip
+    required: true
+    description: Suricata DNS SrcIP
+    type: string
+  - name: src_port
+    description: Suricata DNS SrcPort
+    type: int
+  - name: timestamp
+    required: true
+    description: Suricata DNS Timestamp
+    type: timestamp
+    timeFormat: rfc3339
+  - name: vlan
+    description: Suricata DNS Vlan
+    type: array
+    element:
+      type: int
