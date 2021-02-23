@@ -1,7 +1,7 @@
 import time
 
 from panther_base_helpers import is_ip_in_network
-from panther_oss_helpers import (  # pylint: disable=line-too-long
+from panther_oss_helpers import (
     add_to_string_set,
     get_string_set,
     put_string_set,
