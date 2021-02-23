@@ -8,7 +8,7 @@ def rule(event):
 
 
 def dedup(event):
-    for resource in event.get("resources", [{}]) or [{}]:
+    for resource in event.get("resources") or []:
         if resource.get("type", "") == KMS_KEY_TYPE:
             return resource.get("ARN")
     return event.get("eventName")
