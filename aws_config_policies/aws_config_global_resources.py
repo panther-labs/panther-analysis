@@ -1,2 +1,2 @@
 def policy(resource):
-    return resource['GlobalResourcesEnabled']
+    return resource["GlobalResourcesEnabled"]

@@ -10,12 +10,12 @@ def listify(maybe_list):
 
 
 def policy(resource):
-    iam_policy = json.loads(resource['PolicyDocument'])
-    statements = listify(iam_policy['Statement'])
+    iam_policy = json.loads(resource["PolicyDocument"])
+    statements = listify(iam_policy["Statement"])
     for state in statements:
-        actions = listify(state.get('Action', []))
-        resources = listify(state.get('Resource', []))
+        actions = listify(state.get("Action", []))
+        resources = listify(state.get("Resource", []))
 
-        if state['Effect'] == 'Allow' and '*' in actions and '*' in resources:
+        if state["Effect"] == "Allow" and "*" in actions and "*" in resources:
             return False
     return True

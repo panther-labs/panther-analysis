@@ -1,2 +1,2 @@
 def policy(event):
-    return event['BackupRetentionPeriod'] != 0
+    return event.get("BackupRetentionPeriod") != 0

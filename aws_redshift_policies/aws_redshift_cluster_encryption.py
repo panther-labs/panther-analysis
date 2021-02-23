@@ -1,2 +1,2 @@
 def policy(resource):
-    return bool(resource['Encrypted'])
+    return bool(resource["Encrypted"])

@@ -1,2 +1,2 @@
 def policy(resource):
-    return resource['LoggingPolicy'] is not None
+    return resource["LoggingPolicy"] is not None

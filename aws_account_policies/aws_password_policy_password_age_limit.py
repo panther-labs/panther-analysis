@@ -1,4 +1,4 @@
 def policy(resource):
-    if resource['MaxPasswordAge'] is None:
+    if resource["MaxPasswordAge"] is None:
         return False
-    return resource['MaxPasswordAge'] <= 90
+    return resource["MaxPasswordAge"] <= 90
