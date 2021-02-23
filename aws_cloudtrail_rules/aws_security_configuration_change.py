@@ -16,7 +16,7 @@ SECURITY_CONFIG_ACTIONS = {
 
 def rule(event):
     if event.get("eventName") == "UpdateDetector":
-        return not event.get("requestParameters", {}).get("enable", True)
+        return not deep_get(event, "requestParameters", "enable", default=True)
 
     return event.get("eventName") in SECURITY_CONFIG_ACTIONS
 
