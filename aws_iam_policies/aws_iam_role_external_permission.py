@@ -1,5 +1,6 @@
 import json
 from panther_oss_helpers import resource_lookup
+from panther_oss_helpers import BadLookup
 
 # This is a list of the account numbers included in the organization
 # Example:
@@ -142,7 +143,7 @@ def policy(resource):
                     return True
             # uncomment next line to optimize for production use
             # managed_policy = resource_lookup(managed_policy_id)
-        except:
+        except BadLookup:
             print('Managed policy does not exist or other lookup failure')
             return True
 
