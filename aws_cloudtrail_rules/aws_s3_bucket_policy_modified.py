@@ -1,6 +1,5 @@
 from panther_base_helpers import deep_get
 
-
 # API calls that are indicative of KMS CMK Deletion
 S3_POLICY_CHANGE_EVENTS = {
     "PutBucketAcl",

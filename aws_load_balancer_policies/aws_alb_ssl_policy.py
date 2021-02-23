@@ -14,5 +14,5 @@ def policy(resource):
         return True
 
     return len(resource["Listeners"]) >= 1 and all(
-        [policy in TLS_1_2_POLICIES for policy in resource["SSLPolicies"].keys()]
+        (policy in TLS_1_2_POLICIES for policy in resource["SSLPolicies"].keys())
     )

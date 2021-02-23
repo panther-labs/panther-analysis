@@ -21,4 +21,4 @@ def rule(event):
     if event.get("eventSource") != "iam.amazonaws.com":
         return False
 
-    return any([event.get("eventName", "").startswith(action) for action in IAM_CHANGE_ACTIONS])
+    return any((event.get("eventName", "").startswith(action) for action in IAM_CHANGE_ACTIONS))

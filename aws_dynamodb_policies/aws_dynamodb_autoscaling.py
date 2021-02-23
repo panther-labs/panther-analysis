@@ -1,6 +1,5 @@
 from panther_base_helpers import deep_get
 
-
 # If you do not wish to enforce application auto-scaling on your dynamo tables Global
 # Secondary Indices, set this variable to False
 CHECK_GSI = True

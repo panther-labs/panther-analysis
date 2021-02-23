@@ -33,7 +33,7 @@ def rule(event):
 
     # Alert if the process is running outside any of the approved paths
     # TODO: Convert this fnmatch pattern below to a helper
-    return not any([fnmatch(process_path, p) for p in APPROVED_PROCESS_PATHS])
+    return not any((fnmatch(process_path, p) for p in APPROVED_PROCESS_PATHS))
 
 
 def title(event):

@@ -38,9 +38,7 @@ def rule(event):
 
 
 def title(event):
-    user = (
-        deep_get(event, "columns", "user", default=deep_get(event, "columns", "username"))
-    )
+    user = deep_get(event, "columns", "user", default=deep_get(event, "columns", "username"))
 
     return (
         f"User [{user if user else '<UNKNOWN_USER>'}"

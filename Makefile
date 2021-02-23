@@ -21,13 +21,14 @@ deps-update:
 
 lint:
 	bandit -r $(dirs) --skip B101  # allow assert statements in tests
-	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511
+	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511 --max-line-length=100
 
 venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run yapf $(dirs) --in-place --parallel --recursive  --style google
+	pipenv run isort --profile=black $(dirs)
+	pipenv run black --line-length=100 $(dirs)
 
 install:
 	pip3 install --user --upgrade pip

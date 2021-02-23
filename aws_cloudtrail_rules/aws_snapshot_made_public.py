@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+
 from panther_base_helpers import deep_get
 
 
