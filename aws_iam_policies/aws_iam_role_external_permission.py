@@ -17,7 +17,7 @@ accounts = [
 # The specific permission that the policy checks
 # CONFIGURATION_REQUIRED: replace default "lambda:AddPermission" in unit tests
 #  with specified permission
-permission_check = 'lambda:AddPermission'
+PERMISSION = 'lambda:AddPermission'
 
 # CONFIGURATION_REQUIRED: modify policy to contain specified permission, above
 mock_policy_has_permission = json.loads('''
@@ -54,10 +54,10 @@ mock_policy_no_permission = json.loads('''
 ''')
 
 
-# check to see if the account that is granted permission_check is third party
+# check to see if the account that is granted permission is third party
 def check_account(resource):
     content_assumerole = resource.get('AssumeRolePolicyDocument')
-    if type(content_assumerole) is str:
+    if isinstance(content_assumerole, str):
         content_assumerole = json.loads(content_assumerole)
     print('json loaded content_assumerole is:\n\n',
           json.dumps(content_assumerole, indent=2),
@@ -67,7 +67,7 @@ def check_account(resource):
     print('Principal is', principal, '\n')
     if 'AWS' in principal.keys():
         print('There\'s an AWS trust principal\n')
-        if type(principal['AWS']) is list:
+        if isinstance(principal['AWS'], list):
             print('The AWS trust principal is a list (multiple principals)\n')
             for principal_aws in principal['AWS']:
                 if not check_account_number(principal_aws):
@@ -85,17 +85,16 @@ def check_account_number(principal_aws):
     if principal_aws.split(':')[4] not in accounts:
         print('The account of the principal is not an internal account\n')
         return False
-    else:
-        print('The account of the principal is an internal account\n')
+    print('The account of the principal is an internal account\n')
     return True
 
 
 def check_policy(policy_text):
-    if type(policy_text) is str:
+    if isinstance(policy_text, str):
         policy_text = json.loads(policy_text)
     for statement in policy_text.get('Statement', []):
-        if permission_check in statement.get('Action', []):
-            print('permission_check matches:', permission_check, '\n')
+        if PERMISSION in statement.get('Action', []):
+            print('permission matches:', PERMISSION, '\n')
             print('Checking account...\n')
             return False
     return True
@@ -109,10 +108,9 @@ def policy(resource):
             if not check_account(resource):
                 print('Result: Inline permission found for external account\n')
                 return False
-            else:
-                print(
-                    'Result: Inline permission found for internal account or AWS service\n'
-                )
+            print(
+                'Result: Inline permission found for internal account or AWS service\n'
+            )
         else:
             print('Result: Inline permission not found\n')
 
@@ -132,15 +130,14 @@ def policy(resource):
                 managed_policy = resource_lookup(managed_policy_id)
             else:
                 print("Running unit test for managed policy (mock lookup)\n")
-                try:
-                    if resource.get('HasPermission'):
-                        print("Using mock policy with specified permission\n")
-                        managed_policy = mock_policy_has_permission
-                    elif resource.get('DoesNotHavePermission'):
-                        print(
-                            "Using mock policy without specified permission\n")
-                        managed_policy = mock_policy_no_permission
-                except:
+                if resource.get('HasPermission'):
+                    print("Using mock policy with specified permission\n")
+                    managed_policy = mock_policy_has_permission
+                elif resource.get('DoesNotHavePermission'):
+                    print(
+                        "Using mock policy without specified permission\n")
+                    managed_policy = mock_policy_no_permission
+                else:
                     print("Mock policy does not specify type (required)")
                     return True
             # uncomment next line to optimize for production use
@@ -155,8 +152,7 @@ def policy(resource):
             if not check_account(resource):
                 print('Permission found for external account\n')
                 return False
-            else:
-                print('Permission found for internal account or AWS service\n')
+            print('Permission found for internal account or AWS service\n')
         else:
             print('Permission not found\n')
 
