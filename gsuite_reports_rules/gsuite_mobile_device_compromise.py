@@ -8,10 +8,7 @@ def rule(event):
         return False
 
     details = details_lookup("suspicious_activity", ["DEVICE_COMPROMISED_EVENT"], event)
-    return (
-        details
-        and param_lookup(details.get("parameters", {}), "DEVICE_COMPROMISED_STATE") == "COMPROMISED"
-    )
+    return param_lookup(details.get("parameters", {}), "DEVICE_COMPROMISED_STATE") == "COMPROMISED"
 
 
 def title(event):
