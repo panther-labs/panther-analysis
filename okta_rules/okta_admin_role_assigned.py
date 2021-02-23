@@ -21,7 +21,7 @@ def dedup(event):
     request_id = deep_get(
         event, "debugContext", "debugData", "requestId", default="<UNKNOWN_REQUEST_ID>"
     )
-    return f"requestId-{request_id}"
+    return f"{request_id}"
 
 
 def title(event):
