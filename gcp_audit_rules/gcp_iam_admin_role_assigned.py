@@ -15,10 +15,10 @@ def rule(event):
         if delta.get("action") != "ADD":
             continue
         if any(
-            [
+            (
                 fnmatch(delta.get("role", ""), admin_role_pattern)
                 for admin_role_pattern in ADMIN_ROLES
-            ]
+            )
         ):
             return True
     return False

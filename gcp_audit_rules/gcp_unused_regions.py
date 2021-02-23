@@ -12,7 +12,7 @@ APPROVED_ACTIVE_REGIONS = {
 
 def _resource_in_active_region(location):
     return not any(
-        [location.startswith(active_region) for active_region in APPROVED_ACTIVE_REGIONS]
+        (location.startswith(active_region) for active_region in APPROVED_ACTIVE_REGIONS)
     )
 
 

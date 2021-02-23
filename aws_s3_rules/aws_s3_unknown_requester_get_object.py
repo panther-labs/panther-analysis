@@ -18,7 +18,7 @@ def _unknown_requester_access(event):
         if not fnmatch(event.get("bucket", ""), bucket_pattern):
             continue
         if not any(
-            [fnmatch(event.get("requester", ""), role_pattern) for role_pattern in role_patterns]
+            (fnmatch(event.get("requester", ""), role_pattern) for role_pattern in role_patterns)
         ):
             return True
     return False
