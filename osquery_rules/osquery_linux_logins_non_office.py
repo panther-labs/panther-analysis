@@ -39,9 +39,7 @@ def rule(event):
 
 def title(event):
     user = (
-        deep_get(event, "columns", "user")
-        if deep_get(event, "columns", "user")
-        else deep_get(event, "columns", "username")
+        deep_get(event, "columns", "user", default=deep_get(event, "columns", "username"))
     )
 
     return (
