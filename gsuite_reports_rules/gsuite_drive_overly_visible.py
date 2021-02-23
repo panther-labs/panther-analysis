@@ -31,11 +31,12 @@ def dedup(event):
 
 
 def title(event):
-    doc_title = 'UNKNOWN_TITLE'
-    details = details_lookup('access', RESOURCE_CHANGE_EVENTS, event)
-    doc_title = param_lookup(details.get('parameters', {}), 'doc_title')
-    share_settings = param_lookup(details.get('parameters', {}), 'visibility')
+    doc_title = "UNKNOWN_TITLE"
+    details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
+    doc_title = param_lookup(details.get("parameters", {}), "doc_title")
+    share_settings = param_lookup(details.get("parameters", {}), "visibility")
     return (
         f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"
-        f" modified a document [{doc_title}] that has overly permissive share settings [{share_settings}]"
+        f" modified a document [{doc_title}] that has overly permissive share"
+        f" settings [{share_settings}]"
     )
