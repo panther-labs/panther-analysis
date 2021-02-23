@@ -154,12 +154,9 @@ def policy(resource):
             policy_text = managed_policy.get('PolicyDocument')
             print('policy_text is', policy_text, '\n')
             if not check_policy(policy_text):
-                if not check_account(resource):
-                    print('Permission found for external account\n')
-                    return False
-                print('Permission found for internal account or AWS service\n')
-            else:
-                print('Permission not found\n')
+                print('Permission found for external account\n')
+                return False
+            print('Permission not found\n')
 
     print('Result: Role only assumable by internal account or AWS service\n')
 
