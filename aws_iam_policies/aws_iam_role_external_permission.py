@@ -1,6 +1,7 @@
 import json
 from panther_oss_helpers import resource_lookup
 from panther_oss_helpers import BadLookup
+from botocore.exceptions import NoCredentialsError
 
 # This is a list of the account numbers included in the organization
 # Example:
@@ -103,58 +104,63 @@ def check_policy(policy_text):
 
 def policy(resource):
     print('\n----New Test Case----\n')
-    for policy_text in (resource.get('InlinePolicies') or {}).values():
-        print('Inline policy_text is', policy_text, '\n')
-        if not check_policy(policy_text):
-            if not check_account(resource):
+    if not check_account(resource):
+        print('External account can assume role\n')
+        for policy_text in (resource.get('InlinePolicies') or {}).values():
+            print('Inline policy_text is', policy_text, '\n')
+            if not check_policy(policy_text):
                 print('Result: Inline permission found for external account\n')
                 return False
-            print(
-                'Result: Inline permission found for internal account or AWS service\n'
-            )
-        else:
             print('Result: Inline permission not found\n')
 
-    for managed_policy_name in resource.get('ManagedPolicyNames') or []:
-        managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
-        print('managed_policy_id is', managed_policy_id, '\n')
-        try:
-            # CONFIGURATION REQUIRED
-            # to mock a Managed Policy
-            #   - create mock policy, above
-            #   - add '“IsUnitTest": true,' to test resource in .yml
-            #   - add an additional 'key: value' pair and 'if/elif' block for each
-            #     mocked case to .yml
-            # Note: all Managed Policies in the test resource will be mocked
-            # comment out 'if, else' block to optimize for production use
-            if not resource.get('IsUnitTest'):
-                managed_policy = resource_lookup(managed_policy_id)
-            else:
-                print("Running unit test for managed policy (mock lookup)\n")
-                if resource.get('HasPermission'):
-                    print("Using mock policy with specified permission\n")
-                    managed_policy = mock_policy_has_permission
-                elif resource.get('DoesNotHavePermission'):
-                    print(
-                        "Using mock policy without specified permission\n")
-                    managed_policy = mock_policy_no_permission
+        for managed_policy_name in resource.get('ManagedPolicyNames') or []:
+            managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
+            print('managed_policy_id is', managed_policy_id, '\n')
+            try:
+                # CONFIGURATION REQUIRED
+                # to mock a Managed Policy
+                #   - create mock policy, above
+                #   - add '“IsUnitTest": true,' to test resource in .yml
+                #   - add an additional 'key: value' pair and 'if/elif' block for each
+                #     mocked case to .yml
+                # Note: all Managed Policies in the test resource will be mocked
+                # comment out 'if, else' block to optimize for production use
+                if not resource.get('IsUnitTest'):
+                    managed_policy = resource_lookup(managed_policy_id)
                 else:
-                    print("Mock policy does not specify type (required)")
-                    return True
-            # uncomment next line to optimize for production use
-            # managed_policy = resource_lookup(managed_policy_id)
-        except BadLookup:
-            print('Managed policy does not exist or other lookup failure')
-            return True
+                    print(
+                        "Running unit test for managed policy (mock lookup)\n")
+                    if resource.get('HasPermission'):
+                        print("Using mock policy with specified permission\n")
+                        managed_policy = mock_policy_has_permission
+                    elif resource.get('DoesNotHavePermission'):
+                        print(
+                            "Using mock policy without specified permission\n")
+                        managed_policy = mock_policy_no_permission
+                    else:
+                        print("Mock policy does not specify type (required)\n")
+                        return True
+                # uncomment next line to optimize for production use
+                # managed_policy = resource_lookup(managed_policy_id)
+            except BadLookup:
+                print(
+                    'Managed policy does not exist or DynamoDB lookup failure\n'
+                )
+                return True
+            except NoCredentialsError:
+                print('Lookup failure (no credentials)\n')
+                return True
 
-        policy_text = managed_policy.get('PolicyDocument')
-        print('policy_text is', policy_text, '\n')
-        if not check_policy(policy_text):
-            if not check_account(resource):
-                print('Permission found for external account\n')
-                return False
-            print('Permission found for internal account or AWS service\n')
-        else:
-            print('Permission not found\n')
+            policy_text = managed_policy.get('PolicyDocument')
+            print('policy_text is', policy_text, '\n')
+            if not check_policy(policy_text):
+                if not check_account(resource):
+                    print('Permission found for external account\n')
+                    return False
+                print('Permission found for internal account or AWS service\n')
+            else:
+                print('Permission not found\n')
+
+    print('Result: Role only assumable by internal account or AWS service\n')
 
     return True
