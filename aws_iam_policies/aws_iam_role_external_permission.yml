@@ -1,0 +1,327 @@
+AnalysisType: policy
+Filename: aws_iam_role_external_permission.py
+PolicyID: AWS.IAM.Role.ExternalPermission
+DisplayName: AWS IAM Role Grants (permission) to Non-organizational Account
+Enabled: false
+ResourceTypes:
+  - AWS.IAM.Role
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Configuration Required
+Severity: Critical
+Description: >
+  This policy validates that IAM roles that grant the (specified) permission do not allow accounts outside the organization to assume them.
+Tests:
+  -
+    Name: Permission Present Inline Internal Account
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "CONFIGURATION_REQUIRED": "set Action: <specified permission> in TestPermPolicy",
+        "InlinePolicies": {
+          "TestPermPolicy": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"lambda:AddPermission\", \"test:Permission\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission\", \"test2:Permission\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [],
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Permission Not Present Inline
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "CONFIGURATION_REQUIRED": "set_AccountId_to_any_org_acct_see_accounts_variable",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "InlinePolicies": {
+          "TestPolicy1": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [],
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Permission Present Inline External Account Multi-Principal
+    ExpectedResult: false
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": [
+                  "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct",
+                  "arn:aws:iam::123456789013:root"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "CONFIGURATION_REQUIRED": "set Action: <specified permission> in TestPermPolicy",
+        "InlinePolicies": {
+          "TestPermPolicy": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"lambda:AddPermission\", \"test:Permission\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission\", \"test2:Permission\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [],
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Null inline policy
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "InlinePolicies": null,
+        "ManagedPolicyNames": [],
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Permission Present Managed Internal Account
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "CONFIGURATION_REQUIRED": "set_AccountId_to_any_org_acct",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "InlinePolicies": {
+          "TestPolicy1": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [
+          "CONFIGURATION_REQUIRED_Policy_must_actually_exist_in_Principal_acct_and_have_specified_permission",
+          "Alternate_method_is_create_mock_see_instructions_in_policy"
+        ],
+        "IsUnitTest": true,
+        "HasPermission": true,
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Permission Present Managed External Account
+    ExpectedResult: false
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "CONFIGURATION_REQUIRED": "set_AccountId_to_any_org_acct_see_accounts_variable",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789013:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "InlinePolicies": {
+          "TestPolicy1": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission1\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [
+          "CONFIGURATION_REQUIRED_Policy_must_actually_exist_in_Principal_acct_and_have_specified_permission",
+          "Alternate_method_is_create_mock_see_instructions_in_policy"
+        ],
+        "IsUnitTest": true,
+        "HasPermission": true,
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Permission Not Present Managed Internal Account
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "CONFIGURATION_REQUIRED": "set_AccountId_to_any_org_acct_see_accounts_variable",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:root"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "InlinePolicies": {
+          "TestPolicy1": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission1\"],\"Resource\": \"*\"}]}",
+          "TestPolicy2": "{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Sid\": \"TestSid\",\"Effect\": \"Allow\",\"Action\": [\"test:Permission1\", \"test:Permission2\"],\"Resource\": \"*\"}]}"
+        },
+        "ManagedPolicyNames": [
+          "CONFIGURATION_REQUIRED_Policy_must_actually_exist_in_Principal_acct_and_NOT_have_specified_permission",
+          "Alternate_method_is_create_mock_see_instructions_in_policy"
+        ],
+        "IsUnitTest": true,
+        "DoesNotHavePermission": true,
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Managed Policy Not Found Internal Account
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "CONFIGURATION_REQUIRED": "set Action: <specified permission> in TestPermPolicy",
+        "InlinePolicies": null,
+        "ManagedPolicyNames": [
+            "PolicyDoesNotExist"
+          ],
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Null Managed Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:role/SampleRole",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {},
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::123456789012:role/CONFIGURATION_REQUIRED_set_AccountId_to_any_org_acct"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "CreateDate": "2018-01-01T19:00:00+00:00",
+        "CONFIGURATION_REQUIRED": "set Action: <specified permission> in TestPermPolicy",
+        "InlinePolicies": null,
+        "ManagedPolicyNames": null,
+        "Path": "/",
+        "RoleId": "ROLEID",
+        "RoleName": "SampleRole"
+      }
+  -
+    Name: Non-AWS Trust Principal
+    ExpectedResult: true
+    Resource:
+      {
+	    "AccountId": "123456789012",
+	    "Arn": "arn:aws:iam::123456789012:role/somerole",
+	    "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}",
+	    "Description": "A role",
+	    "Id": "AROOOOOOOOOOOOOOOOOOO",
+	    "InlinePolicies": null,
+	    "ManagedPolicyNames": [
+		    "somepolicy"
+	    ],
+	    "MaxSessionDuration": 3600,
+	    "Name": "somename",
+	    "Path": "/",
+	    "PermissionsBoundary": null,
+	    "Region": "global",
+	    "ResourceId": "arn:aws:iam::123456789012:role/somerole",
+	    "ResourceType": "AWS.IAM.Role",
+	    "TimeCreated": "2020-01-01T00:00:00.000Z"
+      }
