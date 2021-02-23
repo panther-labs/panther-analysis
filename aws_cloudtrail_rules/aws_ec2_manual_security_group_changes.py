@@ -43,17 +43,17 @@ def rule(event):
 
 def dedup(event):
     return ":".join(
-        deep_get(event, "requestParameters", field)
+        deep_get(event, "requestParameters", field, default="<UNKNOWN_FIELD>")
         for field in SG_CHANGE_EVENTS[event.get("eventName")]["fields"]
     )
 
 
 def title(event):
     title_fields = {
-        field: deep_get(event, "requestParameters", field)
+        field: deep_get(event, "requestParameters", field, default="<UNKNOWN_FIELD>")
         for field in SG_CHANGE_EVENTS[event.get("eventName")]["fields"]
     }
-    user = deep_get(event, "userIdentity", "arn", default="UNKNOWN").split("/")[-1]
+    user = deep_get(event, "userIdentity", "arn", default="<UNKNOWN_USER>").split("/")[-1]
     title_template = SG_CHANGE_EVENTS[event.get("eventName")]["title"]
     title_fields["actor"] = user
     return title_template.format(**title_fields)
