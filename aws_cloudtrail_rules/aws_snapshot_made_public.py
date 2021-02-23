@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from panther_base_helpers import deep_get
 
 
@@ -10,7 +11,7 @@ def rule(event):
 
         items = deep_get(parameters, "createVolumePermission", "add", "items", default=[])
         for item in items:
-            if not isinstance(item, dict):
+            if not isinstance(item, (Mapping, dict)):
                 continue
             if item.get("group") == "all":
                 return True
