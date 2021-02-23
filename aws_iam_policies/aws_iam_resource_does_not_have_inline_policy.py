@@ -1,2 +1,2 @@
 def policy(resource):
-    return not resource['InlinePolicies']
+    return not resource["InlinePolicies"]

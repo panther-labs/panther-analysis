@@ -8,13 +8,14 @@ HTTP_STATUS_CODES_TO_MONITOR = {
 
 
 def rule(event):
-    if event.get('useragent', '').startswith('aws-internal'):
+    if event.get("useragent", "").startswith("aws-internal"):
         return False
 
-    return (pattern_match(event.get('operation'), 'REST.*.OBJECT') and
-            event.get('httpstatus') in HTTP_STATUS_CODES_TO_MONITOR)
+    return (
+        pattern_match(event.get("operation", ""), "REST.*.OBJECT")
+        and event.get("httpstatus") in HTTP_STATUS_CODES_TO_MONITOR
+    )
 
 
 def title(event):
-    return '{status} errors found to S3 Bucket [{bucket}]'.format(
-        status=event.get('httpstatus'), bucket=event.get('bucket'))
+    return f"{event.get('httpstatus')} errors found to S3 Bucket [{event.get('bucket')}]"

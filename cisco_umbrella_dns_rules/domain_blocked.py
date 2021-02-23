@@ -1,6 +1,6 @@
 def rule(event):
-    return event['action'] == 'Blocked'
+    return event.get("action") == "Blocked"
 
 
 def title(event):
-    return 'Access denied to domain ' + event['domain']
+    return "Access denied to domain " + event.get("domain", "<UNKNOWN_DOMAIN>")

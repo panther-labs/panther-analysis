@@ -1,2 +1,2 @@
 def policy(resource):
-    return resource['AutoMinorVersionUpgrade']
+    return resource["AutoMinorVersionUpgrade"]

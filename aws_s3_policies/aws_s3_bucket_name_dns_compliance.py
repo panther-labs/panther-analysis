@@ -1,2 +1,2 @@
 def policy(resource):
-    return '.' not in resource['Name']
+    return "." not in resource["Name"]

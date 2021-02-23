@@ -1,28 +1,30 @@
 import datetime
 import json
-import requests
+
 import panther_event_type_helpers as event_type
+import requests
 from panther_oss_helpers import get_string_set, put_string_set
+
 FINGERPRINT_THRESHOLD = 5
 
 
 def rule(event):
     # Pre-filter to save compute time where possible.
-    if event.udm('event_type') != event_type.SUCCESSFUL_LOGIN:
+    if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
         return False
 
     # we use udm 'actor_user' field as a ddb and 'source_ip' in the api call
-    if not event.udm('actor_user') or not event.udm('source_ip'):
+    if not event.udm("actor_user") or not event.udm("source_ip"):
         return False
 
     # Lookup geo-ip data via API call
-    url = 'https://ipinfo.io/' + event.udm('source_ip') + '/geo'
+    url = "https://ipinfo.io/" + event.udm("source_ip") + "/geo"
 
     # Skip API call if this is a unit test
-    if __name__ == 'PolicyApiTestingPolicy':
+    if __name__ == "PolicyApiTestingPolicy":
         resp = lambda: None
-        setattr(resp, 'status_code', 200)
-        setattr(resp, 'text', event['api_data'])
+        setattr(resp, "status_code", 200)
+        setattr(resp, "text", event.get("api_data"))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
@@ -30,13 +32,11 @@ def rule(event):
         resp = requests.get(url)
 
     if resp.status_code != 200:
-        raise Exception("API call failed: GET {} returned {}".format(
-            url, resp.status_code))
+        raise Exception(f"API call failed: GET {url} returned {resp.status_code}")
     login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
-    login_tuple = login_info.get('region', '<REGION>') + ":" + login_info.get(
-        'city', '<CITY>')
+    login_tuple = login_info.get("region", "<REGION>") + ":" + login_info.get("city", "<CITY>")
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -44,8 +44,7 @@ def rule(event):
     fingerprint_timestamp = datetime.datetime.now()
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
-        put_string_set(event_key,
-                       [json.dumps({login_tuple: fingerprint_timestamp})])
+        put_string_set(event_key, [json.dumps({login_tuple: fingerprint_timestamp})])
         return False
     last_login_info = json.loads(last_login_info.pop())
 
@@ -68,9 +67,10 @@ def rule(event):
 
 def get_key(event):
     # Use the name so that test data doesn't interfere with live data
-    return __name__ + ':' + str(event.udm('actor_user'))
+    return __name__ + ":" + str(event.udm("actor_user"))
 
 
 def title(event):
-    return '{}: Unusual logins detected for user [{}]'.format(
-        event.get('p_log_type'), event.udm('actor_user'))
+    return (
+        f"{event.get('p_log_type')}: Unusual logins detected for user [{event.udm('actor_user')}]"
+    )
