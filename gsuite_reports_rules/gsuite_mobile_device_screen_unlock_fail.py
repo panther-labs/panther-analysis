@@ -11,7 +11,7 @@ def rule(event):
 
     details = details_lookup("suspicious_activity", ["FAILED_PASSWORD_ATTEMPTS_EVENT"], event)
     return (
-        bool(details)
+        details
         and int(param_lookup(details.get("parameters", {}), "FAILED_PASSWD_ATTEMPTS"))
         > MAX_UNLOCK_ATTEMPTS
     )
