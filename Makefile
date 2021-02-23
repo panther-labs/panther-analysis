@@ -27,7 +27,8 @@ venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run yapf $(dirs) --in-place --parallel --recursive  --style google
+	pipenv run isort ./
+	pipenv run black --line-length=100 ./
 
 install:
 	pip3 install --user --upgrade pip

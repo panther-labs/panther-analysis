@@ -89,7 +89,10 @@ def kv_table() -> boto3.resource:
 
 def get_counter(key: str) -> int:
     """Get a counter's current value (defaulting to 0 if key does not exist)."""
-    response = kv_table().get_item(Key={"key": key}, ProjectionExpression=_COUNT_COL,)
+    response = kv_table().get_item(
+        Key={"key": key},
+        ProjectionExpression=_COUNT_COL,
+    )
     return response.get("Item", {}).get(_COUNT_COL, 0)
 
 
@@ -138,7 +141,10 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
 
 def get_string_set(key: str) -> Set[str]:
     """Get a string set's current value (defaulting to empty set if key does not exit)."""
-    response = kv_table().get_item(Key={"key": key}, ProjectionExpression=_STRING_SET_COL,)
+    response = kv_table().get_item(
+        Key={"key": key},
+        ProjectionExpression=_STRING_SET_COL,
+    )
     return response.get("Item", {}).get(_STRING_SET_COL, set())
 
 
