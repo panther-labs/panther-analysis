@@ -17,7 +17,7 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, "actor", "email")
+    return deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
 
 
 def title(event):
