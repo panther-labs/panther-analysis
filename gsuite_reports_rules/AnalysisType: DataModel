@@ -1,0 +1,68 @@
+AnalysisType: DataModel
+LogTypes: 
+  - OneLogin.Events
+ID: onelogin.DataModel
+Filename: onelogin_datamodel.py
+Enabled: true
+Mappings:
+  - name: source_ip
+    path: ipAddress
+  - name: dest_ip
+    path: destAddress
+  - name: event_type
+    method: get_event_type
+
+
+
+# use /apigateway to test new api
+
+
+
+{
+    "userId":"00000000-0000-4000-8000-000000000000",
+    "displayName":"my test data model for s3 server access logs",
+    "id":"my.test.s3.datamodel",
+    "description":"my test data model desc",
+    "logTypes":["AWS.S3ServerAccess"],
+    "mappings":[
+        {
+            "name":"source_ip",
+            "field":"remoteip"
+        },
+        {
+            "name":"useragent",
+            "method":"get_user_agent"
+        }
+        ],
+    "body": "def get_user_agent(event):\n    return 'useragent'",
+    "enabled":true,
+    "severity":"HIGH"
+}
+
+			return nil, errors.Wrapf(err, "could not scan aws resource: %v, in accounts: %v", *scanRequest.ResourceID, *scanRequest.AWSAccountID)
+
+
+
+{
+  "body": "def get_user_agent(event):\n    return 'hello'",
+  "description": "my test data model desc",
+  "enabled": true,
+  "id": "my.test.s3.datamodel",
+  "logTypes": [
+    "AWS.S3ServerAccess"
+  ],
+  "mappings": [
+    {
+      "field": "remoteip",
+      "name": "source_ip"
+    },
+    {
+      "method": "get_user_agent",
+      "name": "mytestfield"
+    }
+  ],
+}
+
+
+dataModelId=my.test.data.model
+

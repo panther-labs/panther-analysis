@@ -27,7 +27,7 @@ venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run isort ./
+	pipenv run isort --profile=black ./
 	pipenv run black --line-length=100 ./
 
 install:
