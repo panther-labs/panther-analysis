@@ -21,12 +21,16 @@ def dedup(event):
 
 
 def title(event):
+    target_user_email = "<EMAIL_UNKNOWN>"
     doc_title = "<UNKNOWN_TITLE>"
     for detail in event.get("events", [{}]):
-        if param_lookup(detail.get("parameters", {}), "doc_title"):
-            doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+        if detail.get("type") == "acl_change":
+            if param_lookup(detail.get("parameters", {}), "doc_title"):
+                doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+            if param_lookup(detail.get("parameters", {}), "target_user"):
+                target_user_email = param_lookup(detail.get("parameters", {}), "target_user")
             break
     return (
         f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] made a document "
-        f"[{doc_title}] externally visible for the first time"
+        f"[{doc_title}] externally visible for the first time with [{target_user_email}]"
     )
