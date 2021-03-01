@@ -1,16 +1,16 @@
 APPROVED_OWNERS = [
-    'amazon',
-    'microsoft',
+    "amazon",
+    "microsoft",
 ]
 
 
 def policy(resource):
     # These are trusted public snapshot distributors, allow
-    if resource['ImageOwnerAlias'] in APPROVED_OWNERS:
+    if resource["ImageOwnerAlias"] in APPROVED_OWNERS:
         return True
 
     # Ignore AMIs that are not owned by the scanned account
-    if resource['AccountId'] != resource['OwnerId']:
+    if resource["AccountId"] != resource["OwnerId"]:
         return True
 
-    return not resource['Public']
+    return not resource["Public"]

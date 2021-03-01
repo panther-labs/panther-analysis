@@ -1,20 +1,21 @@
 import json
+
 from policyuniverse.policy import Policy
 
 BAD_PRINCIPALS = {
-    '*',
+    "*",
 }
 
 
 def policy(resource):
-    if resource['AssumeRolePolicyDocument'] is None:
+    if resource["AssumeRolePolicyDocument"] is None:
         return True
 
-    iam_policy = Policy(json.loads(resource['AssumeRolePolicyDocument']))
+    iam_policy = Policy(json.loads(resource["AssumeRolePolicyDocument"]))
 
     for statement in iam_policy.statements:
         # Only apply to allow effects
-        if statement.effect != 'Allow':
+        if statement.effect != "Allow":
             continue
 
         # Don't apply where there are strong conditions

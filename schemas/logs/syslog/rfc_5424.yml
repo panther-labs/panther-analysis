@@ -6,41 +6,41 @@ description: Syslog parser for the RFC5424 format.
 referenceURL: https://tools.ietf.org/html/rfc5424
 version: 0
 fields:
-- name: priority
-  required: true
-  description: Priority is calculated by (Facility * 8 + Severity). The lower this value, the higher importance of the log message.
-  type: smallint
-- name: facility
-  required: true
-  description: 'Facility value helps determine which process created the message. Eg: 0 = kernel messages, 3 = system daemons.'
-  type: smallint
-- name: severity
-  required: true
-  description: 'Severity indicates how severe the message is. Eg: 0=Emergency to 7=Debug.'
-  type: smallint
-- name: version
-  required: true
-  description: Version of the syslog message protocol. RFC5424 mandates that version cannot be 0, so a 0 value signals no version.
-  type: int
-- name: timestamp
-  description: Timestamp of the syslog message in UTC.
-  type: timestamp
-  timeFormat: rfc3339
-- name: hostname
-  description: Hostname identifies the machine that originally sent the syslog message.
-  type: string
-- name: appname
-  description: Appname identifies the device or application that originated the syslog message.
-  type: string
-- name: procid
-  description: ProcID is often the process ID, but can be any value used to enable log analyzers to detect discontinuities in syslog reporting.
-  type: string
-- name: msgid
-  description: MsgID identifies the type of message. For example, a firewall might use the MsgID 'TCPIN' for incoming TCP traffic.
-  type: string
-- name: structured_data
-  description: StructuredData provides a mechanism to express information in a well defined and easily parsable format.
-  type: json
-- name: message
-  description: Message contains free-form text that provides information about the event.
-  type: string
+  - name: priority
+    required: true
+    description: Priority is calculated by (Facility * 8 + Severity). The lower this value, the higher importance of the log message.
+    type: smallint
+  - name: facility
+    required: true
+    description: "Facility value helps determine which process created the message. Eg: 0 = kernel messages, 3 = system daemons."
+    type: smallint
+  - name: severity
+    required: true
+    description: "Severity indicates how severe the message is. Eg: 0=Emergency to 7=Debug."
+    type: smallint
+  - name: version
+    required: true
+    description: Version of the syslog message protocol. RFC5424 mandates that version cannot be 0, so a 0 value signals no version.
+    type: int
+  - name: timestamp
+    description: Timestamp of the syslog message in UTC.
+    type: timestamp
+    timeFormat: rfc3339
+  - name: hostname
+    description: Hostname identifies the machine that originally sent the syslog message.
+    type: string
+  - name: appname
+    description: Appname identifies the device or application that originated the syslog message.
+    type: string
+  - name: procid
+    description: ProcID is often the process ID, but can be any value used to enable log analyzers to detect discontinuities in syslog reporting.
+    type: string
+  - name: msgid
+    description: MsgID identifies the type of message. For example, a firewall might use the MsgID 'TCPIN' for incoming TCP traffic.
+    type: string
+  - name: structured_data
+    description: StructuredData provides a mechanism to express information in a well defined and easily parsable format.
+    type: json
+  - name: message
+    description: Message contains free-form text that provides information about the event.
+    type: string

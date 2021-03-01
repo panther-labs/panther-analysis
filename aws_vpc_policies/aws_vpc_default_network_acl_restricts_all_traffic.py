@@ -9,4 +9,4 @@ def policy(resource):
     # pylint: disable=line-too-long
     default_id = f"arn:aws:ec2:{resource['Region']}:{resource['AccountId']}:network-acl/{resource['DefaultNetworkAclId']}"
     default_acl = resource_lookup(default_id)
-    return not default_acl['Entries']
+    return not default_acl["Entries"]

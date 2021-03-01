@@ -1,2 +1,2 @@
 def policy(resource):
-    return resource['MFADelete'] == 'Enabled'
+    return resource["MFADelete"] == "Enabled"

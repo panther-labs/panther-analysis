@@ -6,4 +6,4 @@ def policy(resource):
         return True
 
     # Casting to Bool as this may be None and we cannot return a NoneType
-    return bool(resource['SSLPolicies'])
+    return bool(resource["SSLPolicies"])

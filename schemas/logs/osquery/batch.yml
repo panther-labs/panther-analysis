@@ -6,46 +6,46 @@ description: Batch contains all the data included in OsQuery batch logs
 referenceURL: https://osquery.readthedocs.io/en/stable/deployment/logging/
 version: 0
 fields:
-- name: calendarTime
-  required: true
-  description: The time of the event (UTC).
-  type: timestamp
-  timeFormat: rfc3339
-- name: counter
-  required: true
-  description: Counter
-  type: int
-- name: decorations
-  description: Decorations
-  type: json
-- name: diffResults
-  required: true
-  description: Computed differences.
-  type: object
-  fields:
-  - name: added
-    description: Added field
-    type: array
-    element:
-      type: json
-  - name: removed
-    description: Removed field
-    type: array
-    element:
-      type: json
-- name: epoch
-  required: true
-  description: Epoch
-  type: int
-- name: hostname
-  required: true
-  description: Hostname
-  type: string
-- name: name
-  required: true
-  description: Name
-  type: string
-- name: unixTime
-  required: true
-  description: Unix epoch
-  type: int
+  - name: calendarTime
+    required: true
+    description: The time of the event (UTC).
+    type: timestamp
+    timeFormat: rfc3339
+  - name: counter
+    required: true
+    description: Counter
+    type: int
+  - name: decorations
+    description: Decorations
+    type: json
+  - name: diffResults
+    required: true
+    description: Computed differences.
+    type: object
+    fields:
+      - name: added
+        description: Added field
+        type: array
+        element:
+          type: json
+      - name: removed
+        description: Removed field
+        type: array
+        element:
+          type: json
+  - name: epoch
+    required: true
+    description: Epoch
+    type: int
+  - name: hostname
+    required: true
+    description: Hostname
+    type: string
+  - name: name
+    required: true
+    description: Name
+    type: string
+  - name: unixTime
+    required: true
+    description: Unix epoch
+    type: int

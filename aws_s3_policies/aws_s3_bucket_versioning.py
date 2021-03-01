@@ -1,2 +1,2 @@
 def policy(resource):
-    return resource['Versioning'] == 'Enabled'
+    return resource["Versioning"] == "Enabled"

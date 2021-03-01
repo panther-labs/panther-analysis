@@ -6,106 +6,106 @@ description: Provides the sensor boot unique mapping between GID, Authentication
 referenceURL: https://developer.crowdstrike.com/crowdstrike/page/event-explorer#section-event-GroupIdentity
 version: 0
 fields:
-- name: name
-  required: true
-  description: The event name
-  type: string
-- name: aid
-  description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
-  type: string
-- name: aip
-  description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
-  type: string
-  indicators:
-  - ip
-- name: cid
-  description: CID
-  type: string
-- name: id
-  description: ID
-  type: string
-- name: event_platform
-  description: The platform the sensor was running on
-  type: string
-- name: timestamp
-  description: Timestamp when the event was received by the CrowdStrike cloud.
-  type: timestamp
-  timeFormat: unix_ms
-  isEventTime: true
-- name: _time
-  description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
-  type: timestamp
-  timeFormat: layout=01/02/2006 15:04:05.999
-- name: ComputerName
-  description: The name of the host.
-  type: string
-  indicators:
-  - hostname
-- name: ConfigBuild
-  description: Config build
-  type: string
-- name: ConfigStateHash
-  description: Config state hash
-  type: string
-- name: Entitlements
-  description: Entitlements
-  type: string
-- name: TreeId
-  description: If this event is part of a detection tree, the tree ID it is part of
-  type: string
-  indicators:
-  - trace_id
-- name: TreeId_decimal
-  description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
-  type: bigint
-- name: ContextThreadId
-  description: The unique ID of a process that was spawned by another process.
-  type: string
-- name: ContextThreadId_decimal
-  description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
-  type: bigint
-- name: ContextTimeStamp
-  description: The time at which an event occurred on the system, as seen by the sensor.
-  type: timestamp
-  timeFormat: unix
-- name: ContextTimeStamp_decimal
-  description: The time at which an event occurred on the system, as seen by the sensor (in decimal, non-hex format).
-  type: timestamp
-  timeFormat: unix_ms
-- name: ContextProcessId
-  description: The unique ID of a process that was spawned by another process.
-  type: string
-- name: ContextProcessId_decimal
-  description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
-  type: bigint
-- name: InContext
-  description: In context (N/A on iOS)
-  type: string
-- name: event_simpleName
-  required: true
-  description: Event Name
-  type: string
-- name: GID
-  required: true
-  description: The user Group ID.
-  type: bigint
-- name: AuthenticationUuid
-  required: true
-  description: AuthenticationUUID field
-  type: string
-- name: AuthenticationUuidAsString
-  required: true
-  description: AuthenticationUUIDAsString field
-  type: string
-- name: AuthenticationId
-  required: true
-  description: 'Values: INVALID_LUID (0), NETWORK_SERVICE (996), LOCAL_SERVICE (997), SYSTEM (999), RESERVED_LUID_MAX (1000)'
-  type: int
-- name: UserPrincipal
-  required: true
-  description: UserPrincipal field
-  type: string
-- name: UserSid
-  required: true
-  description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system.
-  type: string
+  - name: name
+    required: true
+    description: The event name
+    type: string
+  - name: aid
+    description: The sensor ID. This value is unique to each installation of a Falcon sensor. When a sensor is updated or reinstalled, the host gets a new aid. In those situations, a single host could have multiple aid values over time.
+    type: string
+  - name: aip
+    description: The sensor’s IP, as seen from the CrowdStrike cloud. This is typically the public IP of the sensor. This helps determine the location of a computer, depending on your network.
+    type: string
+    indicators:
+      - ip
+  - name: cid
+    description: CID
+    type: string
+  - name: id
+    description: ID
+    type: string
+  - name: event_platform
+    description: The platform the sensor was running on
+    type: string
+  - name: timestamp
+    description: Timestamp when the event was received by the CrowdStrike cloud.
+    type: timestamp
+    timeFormat: unix_ms
+    isEventTime: true
+  - name: _time
+    description: Timestamp when the event was received by the CrowdStrike cloud (human readable)
+    type: timestamp
+    timeFormat: layout=01/02/2006 15:04:05.999
+  - name: ComputerName
+    description: The name of the host.
+    type: string
+    indicators:
+      - hostname
+  - name: ConfigBuild
+    description: Config build
+    type: string
+  - name: ConfigStateHash
+    description: Config state hash
+    type: string
+  - name: Entitlements
+    description: Entitlements
+    type: string
+  - name: TreeId
+    description: If this event is part of a detection tree, the tree ID it is part of
+    type: string
+    indicators:
+      - trace_id
+  - name: TreeId_decimal
+    description: If this event is part of a detection tree, the tree ID it is part of. (in decimal, non-hex format)
+    type: bigint
+  - name: ContextThreadId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextThreadId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: ContextTimeStamp
+    description: The time at which an event occurred on the system, as seen by the sensor.
+    type: timestamp
+    timeFormat: unix
+  - name: ContextTimeStamp_decimal
+    description: The time at which an event occurred on the system, as seen by the sensor (in decimal, non-hex format).
+    type: timestamp
+    timeFormat: unix_ms
+  - name: ContextProcessId
+    description: The unique ID of a process that was spawned by another process.
+    type: string
+  - name: ContextProcessId_decimal
+    description: The unique ID of a process that was spawned by another process (in decimal, non-hex format).
+    type: bigint
+  - name: InContext
+    description: In context (N/A on iOS)
+    type: string
+  - name: event_simpleName
+    required: true
+    description: Event Name
+    type: string
+  - name: GID
+    required: true
+    description: The user Group ID.
+    type: bigint
+  - name: AuthenticationUuid
+    required: true
+    description: AuthenticationUUID field
+    type: string
+  - name: AuthenticationUuidAsString
+    required: true
+    description: AuthenticationUUIDAsString field
+    type: string
+  - name: AuthenticationId
+    required: true
+    description: "Values: INVALID_LUID (0), NETWORK_SERVICE (996), LOCAL_SERVICE (997), SYSTEM (999), RESERVED_LUID_MAX (1000)"
+    type: int
+  - name: UserPrincipal
+    required: true
+    description: UserPrincipal field
+    type: string
+  - name: UserSid
+    required: true
+    description: The User Security Identifier (UserSID) of the user who executed the command. A UserSID uniquely identifies a user in a system.
+    type: string

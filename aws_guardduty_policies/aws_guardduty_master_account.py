@@ -9,7 +9,7 @@ def policy(resource):
     if MASTER_ACCOUNT_ID is None:
         return True
 
-    if resource['Master'] is None:
+    if resource["Master"] is None:
         return False
 
-    return MASTER_ACCOUNT_ID == deep_get(resource, 'Master', 'AccountId')
+    return MASTER_ACCOUNT_ID == deep_get(resource, "Master", "AccountId")

@@ -66,6 +66,74 @@ input: |
     },
     "kind": "admin#reports#activity"
   }
-result: "{\n \"actor\": {\n   \"email\": \"test@runpanther.io\",\n   \"profileId\": \"108239653464319429999\"\n },\n \"events\": [\n   {\n     \"name\": \"revoke\",\n     \"parameters\": [\n       {\n         \"name\": \"client_id\",\n         \"value\": \"77185425430.apps.googleusercontent.com\"\n       },\n\t{\n         \"name\": \"video_send_seconds\",\n\t  \"intValue\": 1487\n\t},\n\t{\n\t  \"name\": \"video_send_seconds\",\n\t  \"multiIntValue\": [1487,123]\n\t},\n       {\n         \"name\": \"app_name\",\n         \"value\": \"Google Chrome\"\n       },\n       {\n         \"name\": \"client_type\",\n         \"value\": \"NATIVE_APPLICATION\"\n       },\n       {\n         \"multiMessageValue\": [\n           {\n             \"parameter\": [\n               {\n                 \"name\": \"scope_name\",\n                 \"value\": \"https://www.google.com/accounts/OAuthLogin\"\n               },\n               {\n                 \"multiValue\": [\n                   \"IDENTITY\"\n                 ],\n                 \"name\": \"product_bucket\"\n               }\n             ]\n           }\n         ],\n         \"name\": \"scope_data\"\n       },\n       {\n         \"multiValue\": [\n           \"https://www.google.com/accounts/OAuthLogin\"\n         ],\n         \"name\": \"scope\"\n       }\n     ]\n   }\n ],\n \"id\": {\n   \"applicationName\": \"token\",\n   \"customerId\": \"C045p8dnk\",\n   \"time\": \"2020-06-10T04:11:42.949Z\",\n   \"uniqueQualifier\": \"5153173006988512167\"\n },\n \"kind\": \"admin#reports#activity\",\n \"p_event_time\": \"2020-06-10T04:11:42.949Z\",\n \"p_any_emails\": [\"test@runpanther.io\"],\n \"p_log_type\": \"GSuite.Reports\"\n}\n"
+result: |
+  {
+   "actor": {
+     "email": "test@runpanther.io",
+     "profileId": "108239653464319429999"
+   },
+   "events": [
+     {
+       "name": "revoke",
+       "parameters": [
+         {
+           "name": "client_id",
+           "value": "77185425430.apps.googleusercontent.com"
+         },
+  	{
+           "name": "video_send_seconds",
+  	  "intValue": 1487
+  	},
+  	{
+  	  "name": "video_send_seconds",
+  	  "multiIntValue": [1487,123]
+  	},
+         {
+           "name": "app_name",
+           "value": "Google Chrome"
+         },
+         {
+           "name": "client_type",
+           "value": "NATIVE_APPLICATION"
+         },
+         {
+           "multiMessageValue": [
+             {
+               "parameter": [
+                 {
+                   "name": "scope_name",
+                   "value": "https://www.google.com/accounts/OAuthLogin"
+                 },
+                 {
+                   "multiValue": [
+                     "IDENTITY"
+                   ],
+                   "name": "product_bucket"
+                 }
+               ]
+             }
+           ],
+           "name": "scope_data"
+         },
+         {
+           "multiValue": [
+             "https://www.google.com/accounts/OAuthLogin"
+           ],
+           "name": "scope"
+         }
+       ]
+     }
+   ],
+   "id": {
+     "applicationName": "token",
+     "customerId": "C045p8dnk",
+     "time": "2020-06-10T04:11:42.949Z",
+     "uniqueQualifier": "5153173006988512167"
+   },
+   "kind": "admin#reports#activity",
+   "p_event_time": "2020-06-10T04:11:42.949Z",
+   "p_any_emails": ["test@runpanther.io"],
+   "p_log_type": "GSuite.Reports"
+  }
 results: []
 logType: GSuite.Reports

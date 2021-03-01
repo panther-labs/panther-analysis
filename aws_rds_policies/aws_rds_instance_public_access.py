@@ -1,2 +1,2 @@
 def policy(resource):
-    return not resource['PubliclyAccessible']
+    return not resource["PubliclyAccessible"]

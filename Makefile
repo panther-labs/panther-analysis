@@ -21,13 +21,15 @@ deps-update:
 
 lint:
 	bandit -r $(dirs) --skip B101  # allow assert statements in tests
-	pylint $(dirs) --disable=missing-docstring,bad-continuation,duplicate-code,import-error,W0511
+	pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme --max-line-length=100
 
 venv:
 	virtualenv -p python3.7 venv
 
 fmt:
-	pipenv run yapf $(dirs) --in-place --parallel --recursive  --style google
+	pipenv run isort --profile=black $(dirs)
+	pipenv run black --line-length=100 $(dirs)
+	prettier -w schemas schemas/**/*.yml
 
 install:
 	pip3 install --user --upgrade pip
@@ -47,7 +49,7 @@ managed-schemas:
 
 managed-schemas.zip: managed-schemas
 	rm -f dist/managed-schemas.zip; \
-	if [ -v "$(release)" ]; then \
+	if [ "$(release)" != "" ]; then \
 		echo "$(release)"; \
 	else \
 		echo "$(last_release)-$(rev)"; \
