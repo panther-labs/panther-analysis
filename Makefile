@@ -29,6 +29,7 @@ venv:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
+	prettier -w schemas schemas/**/*.yml
 
 install:
 	pip3 install --user --upgrade pip
