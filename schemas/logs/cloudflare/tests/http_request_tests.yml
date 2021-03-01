@@ -1,4 +1,6 @@
+---
 name: http_request
+logType: Cloudflare.HttpRequest
 input: |
   {
     "BotScore":10,
@@ -133,10 +135,9 @@ result: |
   	"p_any_ip_addresses": ["127.0.0.1", "127.127.127.127", "128.128.128.128"],
   	"p_any_trace_ids": ["parent-ray-id", "ray-id"]
   }
-results: []
-logType: Cloudflare.HttpRequest
 ---
 name: httprequest required fields only
+logType: Cloudflare.HttpRequest
 input: |
   {
     "EdgeStartTimestamp": "2020-09-17T18:00:00Z"
@@ -147,5 +148,3 @@ result: |
     "p_log_type": "Cloudflare.HttpRequest",
     "p_event_time":"2020-09-17T18:00:00Z"
   }
-results: []
-logType: Cloudflare.HttpRequest
