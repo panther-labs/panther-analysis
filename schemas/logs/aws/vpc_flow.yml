@@ -47,11 +47,11 @@ fields:
     type: timestamp
     timeFormat: rfc3339
   - name: action
-    description: 'The action that is associated with the traffic. ACCEPT: The recorded traffic was permitted by the security groups or network ACLs. REJECT: The recorded traffic was not permitted by the security groups or network ACLs.'
+    description: "The action that is associated with the traffic. ACCEPT: The recorded traffic was permitted by the security groups or network ACLs. REJECT: The recorded traffic was not permitted by the security groups or network ACLs."
     type: string
   - name: status
     required: true
-    description: 'The logging status of the flow log. OK: Data is logging normally to the chosen destinations. NODATA: There was no network traffic to or from the network interface during the capture window. SKIPDATA: Some flow log records were skipped during the capture window. This may be because of an internal capacity constraint, or an internal error.'
+    description: "The logging status of the flow log. OK: Data is logging normally to the chosen destinations. NODATA: There was no network traffic to or from the network interface during the capture window. SKIPDATA: Some flow log records were skipped during the capture window. This may be because of an internal capacity constraint, or an internal error."
     type: string
   - name: vpcId
     description: The ID of the VPC that contains the network interface for which the traffic is recorded.
@@ -63,10 +63,10 @@ fields:
     description: The ID of the instance that's associated with network interface for which the traffic is recorded, if the instance is owned by you. Returns a '-' symbol for a requester-managed network interface; for example, the network interface for a NAT gateway.
     type: string
   - name: tcpFlags
-    description: 'The bitmask value for the following TCP flags: SYN: 2, SYN-ACK: 18, FIN: 1, RST: 4. ACK is reported only when it''s accompanied with SYN. TCP flags can be OR-ed during the aggregation interval. For short connections, the flags might be set on the same line in the flow log record, for example, 19 for SYN-ACK and FIN, and 3 for SYN and FIN.'
+    description: "The bitmask value for the following TCP flags: SYN: 2, SYN-ACK: 18, FIN: 1, RST: 4. ACK is reported only when it's accompanied with SYN. TCP flags can be OR-ed during the aggregation interval. For short connections, the flags might be set on the same line in the flow log record, for example, 19 for SYN-ACK and FIN, and 3 for SYN and FIN."
     type: int
   - name: trafficType
-    description: 'The type of traffic: IPv4, IPv6, or EFA.'
+    description: "The type of traffic: IPv4, IPv6, or EFA."
     type: string
   - name: pktSrcAddr
     description: The packet-level (original) source IP address of the traffic. Use this field with the srcaddr field to distinguish between the IP address of an intermediate layer through which traffic flows, and the original source IP address of the traffic. For example, when traffic flows through a network interface for a NAT gateway, or where the IP address of a pod in Amazon EKS is different from the IP address of the network interface of the instance node on which the pod is running.

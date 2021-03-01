@@ -8,7 +8,7 @@ version: 0
 fields:
   - name: action
     required: true
-    description: 'The action applied by WAF. Possible values for a terminating rule: ALLOW and BLOCK. COUNT is not a valid value for a terminating rule.'
+    description: "The action applied by WAF. Possible values for a terminating rule: ALLOW and BLOCK. COUNT is not a valid value for a terminating rule."
     type: string
   - name: formatVersion
     description: The format version for the log.
@@ -67,7 +67,7 @@ fields:
     description: The source ID. This field shows the ID of the associated resource.
     type: string
   - name: httpSourceName
-    description: 'The source of the request. Possible values: CF for Amazon CloudFront, APIGW for Amazon API Gateway, ALB for Application Load Balancer, and APPSYNC for AWS AppSync.'
+    description: "The source of the request. Possible values: CF for Amazon CloudFront, APIGW for Amazon API Gateway, ALB for Application Load Balancer, and APPSYNC for AWS AppSync."
     type: string
   - name: nonTerminatingMatchingRules
     description: The list of non-terminating rules in the rule group that match the request. These are always COUNT rules (non-terminating rules that match).
@@ -105,7 +105,7 @@ fields:
       type: object
       fields:
         - name: limitKey
-          description: 'The field that AWS WAF uses to determine if requests are likely arriving from a single source and thus subject to rate monitoring. Possible value: IP.'
+          description: "The field that AWS WAF uses to determine if requests are likely arriving from a single source and thus subject to rate monitoring. Possible value: IP."
           type: string
         - name: limitValue
           description: The IP address used by a rate-based rule to aggregate requests for rate limiting. If a request contains an IP address that isn't valid, the limitvalue is INVALID.
@@ -224,7 +224,7 @@ fields:
           element:
             type: string
   - name: terminatingRuleType
-    description: 'The type of rule that terminated the request. Possible values: RATE_BASED, REGULAR, GROUP, and MANAGED_RULE_GROUP.'
+    description: "The type of rule that terminated the request. Possible values: RATE_BASED, REGULAR, GROUP, and MANAGED_RULE_GROUP."
     type: string
   - name: timestamp
     required: true
