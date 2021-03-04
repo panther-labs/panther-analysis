@@ -73,6 +73,7 @@ def get_key(event):
 
 def title(event):
     return (
-        f"{event.get('p_log_type')}: Unusual access for user [{event.get('user_name', '<UNKNOWN_USER>')}]"
+        f"{event.get('p_log_type')}: Unusual access for user"
+        f" [{event.get('user_name', '<UNKNOWN_USER>')}]"
         f" from {EVENT_LOGIN_INFO[event.get('p_row_id')]}"
     )
