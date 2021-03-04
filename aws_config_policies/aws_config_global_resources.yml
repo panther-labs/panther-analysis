@@ -17,118 +17,56 @@ Runbook: >
 Reference: https://amzn.to/2MO8xXM
 Tests:
   -
-    Name: Global Resources Are Not Enabled - us-west-1
+    Name: No Global Recoders Present
     ExpectedResult: false
     Resource:
       {
-        "Name": "Default",
-        "Status": {
-          "LastStatusChangeTime": "2021-03-02T18:44:20.599Z",
-          "LastErrorCode": null,
-          "LastStartTime": "2018-10-05T22:44:09.84Z",
-          "Recording": true,
-          "Name": "Default",
-          "LastStatus": "SUCCESS",
-          "LastStopTime": null,
-          "LastErrorMessage": null
-        },
-        "ResourceType": "AWS.Config.Recorder",
-        "AccountId": "123456789012",
-        "RoleARN": "arn:aws:iam::123456789012:role/BobertConfigRole",
-        "Tags": null,
         "TimeCreated": null,
-        "ResourceId": "123456789012:us-west-1:AWS.Config.Recorder",
-        "Region": "us-west-1",
-        "RecordingGroup": {
-          "ResourceTypes": null,
-          "AllSupported": true,
-          "IncludeGlobalResourceTypes": false
-        }
+        "AccountId": "123456789012",
+        "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+        "ResourceType": "AWS.Config.Recorder.Meta",
+        "Tags": null,
+        "Region": "global",
+        "Recorders": null,
+        "Name": "AWS.Config.Recorder.Meta",
+        "GlobalRecorderCount": 0
       }
   -
-    Name: Global Resources Are Enabled - us-west-2
+    Name: __REPLACE_ACCOUNT_ID_TO_SUPPORT_TESTING__ Global Resources Are Enabled
     ExpectedResult: true
     Resource:
       {
-        "Region": "us-west-2",
-        "Name": "Default",
-        "AccountId": "123456789012",
-        "ResourceType": "AWS.Config.Recorder",
-        "RecordingGroup": {
-          "AllSupported": true,
-          "IncludeGlobalResourceTypes": true,
-          "ResourceTypes": null
-        },
-        "ResourceId": "123456789012:us-west-2:AWS.Config.Recorder",
-        "TimeCreated": null,
-        "RoleARN": "arn:aws:iam::123456789012:role/BobertConfigRole",
-        "Tags": null,
-        "Status": {
-          "Name": "Default",
-          "LastStatus": "SUCCESS",
-          "LastStopTime": null,
-          "LastErrorMessage": null,
-          "LastStatusChangeTime": "2021-03-02T19:08:33.874Z",
-          "LastErrorCode": null,
-          "LastStartTime": "2018-10-05T21:51:28.665Z",
-          "Recording": true
-        }
+          "TimeCreated": null,
+          "AccountId": "123456789012",
+          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+          "ResourceType": "AWS.Config.Recorder.Meta",
+          "Tags": null,
+          "Region": "global",
+          "Recorders": [
+              "123456789012:us-east-1:AWS.Config.Recorder",
+              "123456789012:us-east-2:AWS.Config.Recorder",
+              "123456789012:us-west-1:AWS.Config.Recorder",
+              "123456789012:us-west-2:AWS.Config.Recorder"
+        ],
+          "Name": "AWS.Config.Recorder.Meta",
+          "GlobalRecorderCount": 4
       }
-  -
-    Name: Global Resources Are Not Enabled - us-east-1
-    ExpectedResult: false
-    Resource:
-      {
-        "ResourceId": "123456789012:us-east-1:AWS.Config.Recorder",
-        "RecordingGroup": {
-          "AllSupported": true,
-          "IncludeGlobalResourceTypes": false,
-          "ResourceTypes": null
-        },
-        "RoleARN": "arn:aws:iam::123456789012:role/BobertConfigRole",
-        "AccountId": "123456789012",
-        "Region": "us-east-1",
-        "ResourceType": "AWS.Config.Recorder",
-        "Name": "Default",
-        "Status": {
-          "LastErrorMessage": null,
-          "LastStatusChangeTime": "2021-03-02T17:45:16.47Z",
-          "LastErrorCode": null,
-          "LastStartTime": "2018-10-05T22:45:01.838Z",
-          "Recording": true,
-          "Name": "Default",
-          "LastStatus": "SUCCESS",
-          "LastStopTime": null
-        },
-        "TimeCreated": null,
-        "Tags": null
-      }
-  -
-    Name: Global Resources Are Not Enabled - us-east-2
-    ExpectedResult: false
-    Resource:
-      {
-        "Name": "Default",
-        "ResourceId": "123456789012:us-east-2:AWS.Config.Recorder",
-        "TimeCreated": null,
-        "AccountId": "123456789012",
-        "Status": {
-          "Recording": true,
-          "Name": "Default",
-          "LastStatus": "SUCCESS",
-          "LastStopTime": null,
-          "LastErrorMessage": null,
-          "LastStatusChangeTime": "2021-03-02T19:45:33.138Z",
-          "LastErrorCode": null,
-          "LastStartTime": "2018-10-05T22:45:02.49Z"
-        },
-        "Tags": null,
-        "Region": "us-east-2",
-        "ResourceType": "AWS.Config.Recorder",
-        "RecordingGroup": {
-          "AllSupported": true,
-          "IncludeGlobalResourceTypes": false,
-          "ResourceTypes": null
-        },
-        "RoleARN": "arn:aws:iam::123456789012:role/BobertConfigRole"
-      }
+
+
+# Requires unit test mocking to properly support this unit test
+#  - Name: Global Recorders Present - None Recording Global Resources
+#    ExpectedResult: false
+#    Resource:
+#      {
+#        "TimeCreated": null,
+#        "Recorders": [
+#          "123456789012:us-west-2:AWS.Config.Recorder"
+#        ],
+#        "AccountId": "123456789012",
+#        "Name": "AWS.Config.Recorder.Meta",
+#        "GlobalRecorderCount": 1,
+#        "Tags": null,
+#        "Region": "global",
+#        "ResourceType": "AWS.Config.Recorder.Meta",
+#        "ResourceId": "123456789012::AWS.Config.Recorder.Meta"
+#      }
