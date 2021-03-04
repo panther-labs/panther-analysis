@@ -1,0 +1,140 @@
+schema: Salesforce.URI
+version: 0
+referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_uri.htm
+description: "URI events contain details about user interaction with the web browser UI."
+parser:
+  csv:
+    delimiter: ","
+    hasHeader: true
+fields:
+  - name: EVENT_TYPE
+    required: true
+    type: string
+    validate:
+      allow: ["URI"]
+    description: The type of event. The value is always URI.
+  - name: TIMESTAMP
+    required: false
+    type: timestamp
+    timeFormat: "%Y%m%d%H%M%S.%f"
+    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
+  - name: REQUEST_ID
+    required: false
+    type: string
+    indicators:
+      - trace_id
+    description: >-
+      The unique ID of a single transaction. A transaction can contain one or more events.
+      Each event in a given transaction has the same REQUEST_ID.
+      For example: 3nWgxWbDKWWDIk0FKfF5DV.
+  - name: ORGANIZATION_ID
+    required: true
+    type: string
+    description: "The 15-character ID of the organization. For example: 00D000000000123."
+  - name: USER_ID
+    required: false
+    type: string
+    description: >-
+      The 15-character ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00530000009M943
+  - name: RUN_TIME
+    required: false
+    type: bigint
+    description: "The amount of time that the request took in milliseconds."
+  - name: CPU_TIME
+    required: false
+    type: bigint
+    description: >-
+      The CPU time in milliseconds used to complete the request.
+      This field indicates the amount of activity taking place in the app server layer.
+  - name: URI
+    required: true
+    type: string
+    description: >-
+      The URI of the page that’s receiving the request. For more granular URI information for Lightning Experience
+      and the Salesforce app, see the Lightning Error, Lightning Interaction, Lightning Page View,
+      and Lightning Performance event types.
+      Examples:
+      /aura (Lightning Experience),
+      /lightning (Lightning Experience and the Salesforce app),
+      /home/home.jsp (Salesforce Classic)
+  - name: SESSION_KEY
+    required: false
+    type: string
+    description: >-
+      The user’s unique session ID. You can use this value to identify all user events within a session.
+      When a user logs out and logs in again, a new session is started. For Login Event Type,
+      this field is usually null because the event is captured before a session is created.
+      Example d7DEq/ANa7nNZZVD
+  - name: LOGIN_KEY
+    required: false
+    type: string
+    description: >-
+      The string that ties together all events in a given user’s login session. It starts with a login event and
+      ends with either a logout event or the user session expiring. For example: GeJCsym5eyvtEK2I.
+  - name: REQUEST_STATUS
+    required: false
+    type: string
+    description: >-
+      The status of the request for a page view or user interface action.
+      Possible values are:
+        S—Success. Salesforce handled the request successfully. If an Apex controller throws an exception, this status is also returned.
+        F—Failure. Typically 4xx or 5xx HTTP codes, such as no permission to view page, page took too long to render, page is read-only.
+        U—Undefined
+        A—Authorization Error
+        R—Redirect. Typically a 3xx HTTP code, possibly initiated by an Apex controller in a Visualforce page.
+        N—Not Found. 404 error.
+  - name: DB_TOTAL_TIME
+    required: false
+    type: bigint
+    description: >-
+      The time in nanoseconds for a database round trip. Includes time spent in the JDBC driver,
+      network to the database, and DB_CPU_TIME. Compare this field to CPU_TIME to determine whether
+      performance issues are occurring in the database layer or in your own code.
+  - name: DB_BLOCKS
+    required: false
+    type: bigint
+    description: >-
+      Indicates how much activity is occurring in the database.
+      A high value for this field suggests that adding indexes or
+      filters on your queries would benefit performance.
+  - name: DB_CPU_TIME
+    required: false
+    type: bigint
+    description: >-
+      The CPU time in milliseconds to complete the request.
+      Indicates the amount of activity taking place in the database
+      layer during the request.
+  - name: REFERRER_URI
+    required: false
+    type: string
+    description: The referring URI of the page that’s receiving the request.
+  - name: TIMESTAMP_DERIVED
+    required: true
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+    description: >-
+      The access time of Salesforce services in ISO8601-compatible format (YYYY-MM-DDTHH:MM:SS.sssZ).
+      For example: 2015-07-27T11:32:59.555Z. Timezone is GMT.
+  - name: USER_ID_DERIVED
+    required: false
+    type: string
+    description: >-
+      The 18-character case insensitive ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00590000000I1SNIA0.
+  - name: CLIENT_IP
+    required: false
+    type: string
+    indicators:
+      - ip
+    description: >-
+      The IP address of the client that’s using Salesforce services.
+      A Salesforce internal IP (such as a login from Salesforce Workbench
+      or AppExchange) is shown as "Salesforce.com IP".
+      For example: 10.0.0.1.
+  - name: URI_ID_DERIVED
+    required: false
+    type: string
+    description: The 18-character case insensitive ID of the URI of the page that’s receiving the request.
+
