@@ -508,3 +508,27 @@ Tests:
         "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
         "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
       }
+  -
+    Name: Observed - No Listeners len() issue
+    ExpectedResult: false
+    Resource:
+      {
+        "Listeners": null,
+        "Scheme": "internet-facing",
+        "SSLPolicies": {
+          "ELBSecurityPolicy-2016-08": {
+            "Ciphers": [
+              {
+                "Priority": 1,
+                "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
+              }
+            ],
+            "SslProtocols": [
+                "TLSv1",
+                "TLSv1.1",
+                "TLSv1.2"
+            ],
+            "Name": "ELBSecurityPolicy-2016-08"
+          }
+        }
+      }
