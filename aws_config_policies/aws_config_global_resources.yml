@@ -31,28 +31,28 @@ Tests:
         "Name": "AWS.Config.Recorder.Meta",
         "GlobalRecorderCount": 0
       }
-  -
-    Name: __REPLACE_ACCOUNT_ID_TO_SUPPORT_TESTING__ Global Resources Are Enabled
-    ExpectedResult: true
-    Resource:
-      {
-          "TimeCreated": null,
-          "AccountId": "123456789012",
-          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
-          "ResourceType": "AWS.Config.Recorder.Meta",
-          "Tags": null,
-          "Region": "global",
-          "Recorders": [
-              "123456789012:us-east-1:AWS.Config.Recorder",
-              "123456789012:us-east-2:AWS.Config.Recorder",
-              "123456789012:us-west-1:AWS.Config.Recorder",
-              "123456789012:us-west-2:AWS.Config.Recorder"
-        ],
-          "Name": "AWS.Config.Recorder.Meta",
-          "GlobalRecorderCount": 4
-      }
-
-
+#  -
+#    Name: __REPLACE_ACCOUNT_ID_TO_SUPPORT_TESTING__ Global Resources Are Enabled
+#    ExpectedResult: true
+#    Resource:
+#      {
+#          "TimeCreated": null,
+#          "AccountId": "123456789012",
+#          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+#          "ResourceType": "AWS.Config.Recorder.Meta",
+#          "Tags": null,
+#          "Region": "global",
+#          "Recorders": [
+#              "123456789012:us-east-1:AWS.Config.Recorder",
+#              "123456789012:us-east-2:AWS.Config.Recorder",
+#              "123456789012:us-west-1:AWS.Config.Recorder",
+#              "123456789012:us-west-2:AWS.Config.Recorder"
+#        ],
+#          "Name": "AWS.Config.Recorder.Meta",
+#          "GlobalRecorderCount": 4
+#      }
+#
+#
 # Requires unit test mocking to properly support this unit test
 #  - Name: Global Recorders Present - None Recording Global Resources
 #    ExpectedResult: false
