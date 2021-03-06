@@ -8,6 +8,7 @@ from panther_oss_helpers import get_string_set, put_string_set
 FINGERPRINT_THRESHOLD = 5
 EVENT_LOGIN_INFO = {}
 
+
 def rule(event):
     # Pre-filter to save compute time where possible.
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
