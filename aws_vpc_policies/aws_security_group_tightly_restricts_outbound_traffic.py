@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 MAX_PORTS_PER_PERMISSION = 10
 RESTRICTED_PORTS = [
