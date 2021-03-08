@@ -10,9 +10,9 @@ TLS_1_2_POLICIES = {
 
 def policy(resource):
     # Ignore load balancers that aren't serving internet traffic
-    if resource["Scheme"] == "internal":
+    if resource.get("Scheme") == "internal":
         return True
 
-    return len(resource["Listeners"]) >= 1 and all(
-        (policy in TLS_1_2_POLICIES for policy in resource["SSLPolicies"].keys())
+    return len(resource.get("Listeners") if resource.get("Listeners") else []) >= 1 and all(
+        (each_policy in TLS_1_2_POLICIES for each_policy in resource.get("SSLPolicies", {}).keys())
     )
