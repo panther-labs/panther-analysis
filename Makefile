@@ -24,6 +24,7 @@ lint:
 	pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme --max-line-length=100
 
 venv:
+	pipenv install
 	virtualenv -p python3.7 venv
 
 fmt:
@@ -32,9 +33,8 @@ fmt:
 	prettier -w schemas schemas/**/*.yml
 
 install:
-	pip3 install --user --upgrade pip
+	pip3 install --upgrade pip
 	pip3 install pipenv --upgrade
-	pipenv install
 
 test:
 	panther_analysis_tool test
