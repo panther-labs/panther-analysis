@@ -1,6 +1,6 @@
 # This is a generic policy for checking inbound rules on a Network ACL.
 # It is recommended to add additional logic here based on your own use cases.
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 
 def policy(resource):

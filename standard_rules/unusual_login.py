@@ -6,6 +6,7 @@ import requests
 from panther_oss_helpers import get_string_set, put_string_set
 
 FINGERPRINT_THRESHOLD = 5
+EVENT_LOGIN_INFO = {}
 
 
 def rule(event):
@@ -21,10 +22,10 @@ def rule(event):
     url = "https://ipinfo.io/" + event.udm("source_ip") + "/geo"
 
     # Skip API call if this is a unit test
-    if __name__ == "PolicyApiTestingPolicy":
+    if "panther_api_data" in event:
         resp = lambda: None
         setattr(resp, "status_code", 200)
-        setattr(resp, "text", event.get("api_data"))
+        setattr(resp, "text", event.get("panther_api_data"))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
@@ -37,6 +38,7 @@ def rule(event):
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
     login_tuple = login_info.get("region", "<REGION>") + ":" + login_info.get("city", "<CITY>")
+    EVENT_LOGIN_INFO[event.get("p_row_id")] = login_tuple
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -72,5 +74,7 @@ def get_key(event):
 
 def title(event):
     return (
-        f"{event.get('p_log_type')}: Unusual logins detected for user [{event.udm('actor_user')}]"
+        f"{event.get('p_log_type')}: Unusual access for user"
+        f" [{event.get('user_name', '<UNKNOWN_USER>')}]"
+        f" from {EVENT_LOGIN_INFO[event.get('p_row_id')]}"
     )

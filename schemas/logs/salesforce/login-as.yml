@@ -6,6 +6,24 @@ parser:
   csv:
     delimiter: ","
     hasHeader: true
+    columns:
+    - EVENT_TYPE
+    - TIMESTAMP
+    - REQUEST_ID
+    - ORGANIZATION_ID
+    - USER_ID
+    - RUN_TIME
+    - CPU_TIME
+    - URI
+    - SESSION_KEY
+    - LOGIN_KEY
+    - DELEGATED_USER_NAME
+    - DELEGATED_USER_ID
+    - TIMESTAMP_DERIVED
+    - USER_ID_DERIVED
+    - CLIENT_IP
+    - URI_ID_DERIVED
+    - DELEGATED_USER_ID_DERIVED
 fields:
   - name: EVENT_TYPE
     required: true
@@ -113,4 +131,3 @@ fields:
     description: >-
       The 18-character case-insensitive ID of the user who’s using Salesforce services
       through the UI or API. In this case, the user who’s doing the impersonation.
-

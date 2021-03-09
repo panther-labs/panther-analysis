@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 # This is a generic policy that checks inbound permissions on a Security Group.
 # You may wish to add additional logic specific to your use cases.

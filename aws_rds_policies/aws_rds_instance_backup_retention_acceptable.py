@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 MAX_RETENTION_DAYS = 180
 MIN_RETENTION_DAYS = 7
