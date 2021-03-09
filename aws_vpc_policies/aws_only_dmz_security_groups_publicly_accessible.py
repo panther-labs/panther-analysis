@@ -1,6 +1,6 @@
 from ipaddress import ip_network
 
-from panther_base_helpers import IS_DMZ  # pylint: disable=import-error
+from panther_base_helpers import IS_DMZ
 
 
 def policy(resource):

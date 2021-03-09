@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 # This is generic policy that checks outbound traffic rules on a Network ACL.
 # It is recommended you add additional logic for your own use cases.

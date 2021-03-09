@@ -17,18 +17,56 @@ Runbook: >
 Reference: https://amzn.to/2MO8xXM
 Tests:
   -
-    Name: Global Resources Are Enabled
-    ExpectedResult: true
-    Resource:
-      {
-        "GlobalRecorderCount": 4,
-        "GlobalResourcesEnabled": true
-      }
-  -
-    Name: Global Resources Are Not Enabled
+    Name: No Global Recoders Present
     ExpectedResult: false
     Resource:
       {
-        "GlobalRecorderCount": 4,
-        "GlobalResourcesEnabled": false
+        "TimeCreated": null,
+        "AccountId": "123456789012",
+        "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+        "ResourceType": "AWS.Config.Recorder.Meta",
+        "Tags": null,
+        "Region": "global",
+        "Recorders": null,
+        "Name": "AWS.Config.Recorder.Meta",
+        "GlobalRecorderCount": 0
       }
+#  -
+#    Name: __REPLACE_ACCOUNT_ID_TO_SUPPORT_TESTING__ Global Resources Are Enabled
+#    ExpectedResult: true
+#    Resource:
+#      {
+#          "TimeCreated": null,
+#          "AccountId": "123456789012",
+#          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+#          "ResourceType": "AWS.Config.Recorder.Meta",
+#          "Tags": null,
+#          "Region": "global",
+#          "Recorders": [
+#              "123456789012:us-east-1:AWS.Config.Recorder",
+#              "123456789012:us-east-2:AWS.Config.Recorder",
+#              "123456789012:us-west-1:AWS.Config.Recorder",
+#              "123456789012:us-west-2:AWS.Config.Recorder"
+#        ],
+#          "Name": "AWS.Config.Recorder.Meta",
+#          "GlobalRecorderCount": 4
+#      }
+#
+#
+# Requires unit test mocking to properly support this unit test
+#  - Name: Global Recorders Present - None Recording Global Resources
+#    ExpectedResult: false
+#    Resource:
+#      {
+#        "TimeCreated": null,
+#        "Recorders": [
+#          "123456789012:us-west-2:AWS.Config.Recorder"
+#        ],
+#        "AccountId": "123456789012",
+#        "Name": "AWS.Config.Recorder.Meta",
+#        "GlobalRecorderCount": 1,
+#        "Tags": null,
+#        "Region": "global",
+#        "ResourceType": "AWS.Config.Recorder.Meta",
+#        "ResourceId": "123456789012::AWS.Config.Recorder.Meta"
+#      }

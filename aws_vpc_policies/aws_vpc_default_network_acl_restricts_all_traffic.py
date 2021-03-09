@@ -1,5 +1,5 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
-from panther_oss_helpers import resource_lookup  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
+from panther_oss_helpers import resource_lookup
 
 
 def policy(resource):
