@@ -15,7 +15,7 @@ def policy(resource):
         return False
 
     if (
-        not (resource.get("MinimumPasswordLength") and resource.get("MinimumPasswordLength") >= 14)
+        not (resource.get("MinimumPasswordLength") and resource.get("MinimumPasswordLength", 0) >= 14)
         and "MinimumPasswordLength" not in IGNORED
     ):
         return False
