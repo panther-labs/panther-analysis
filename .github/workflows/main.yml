@@ -36,14 +36,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ${{ env.SOURCE_REPO_CHECKOUT_PATH }}
-          token: ${{ secrets.PR_SYNC_TOKEN }}
+          token: ${{ secrets.PANTHER_ANALYSIS_PR_SYNC_TOKEN }}
 
       - name: Checkout Dest Repo
         uses: actions/checkout@v2
         with:
           path: ${{ env.DEST_REPO_CHECKOUT_PATH }}
           repository: ${{ env.DEST_REPO }}
-          token: ${{ secrets.PR_SYNC_TOKEN }}
+          token: ${{ secrets.PANTHER_ANALYSIS_PR_SYNC_TOKEN }}
 
       - name: Setup Git Credentials
         working-directory: ${{ env.DEST_REPO_CHECKOUT_PATH }}
@@ -71,4 +71,4 @@ jobs:
         with:
           repo: ${{ env.DEST_REPO }}
           head: ${{ env.HEAD }}
-          token: ${{ secrets.PR_SYNC_TOKEN }}
+          token: ${{ secrets.PANTHER_ANALYSIS_PR_SYNC_TOKEN }}
