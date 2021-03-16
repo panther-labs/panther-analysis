@@ -1,0 +1,62 @@
+AnalysisType: pack
+PackID: PantherManaged.AWS.Core
+Description: Group of the most critical and high value detections pertinent to the aws environment
+PackDefinition:
+  IDs:
+    # Data Exposure
+    - AWS.AMI.Private
+    - AWS.CloudTrail.S3Bucket.Public
+    - AWS.IAM.AccessKeyCompromised
+    - AWS.KMS.RestrictsUsage
+    - AWS.RDS.Instance.PublicAccess
+    - AWS.RDS.Instance.SnapshotPublicAccess
+    - AWS.S3.Bucket.PublicRead
+    - AWS.S3.Bucket.PublicWrite
+    - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
+    - AWS.S3.Bucket.PrincipalRestrictions
+    # Encryption Status
+    - AWS.DynamoDB.TableEncryption
+    - AWS.EC2.Volume.Encryption
+    - AWS.EC2.Volume.Snapshot.Encrypted
+    - AWS.Redshift.Cluster.Encryption
+    - AWS.RDS.Instance.Encryption
+    - AWS.S3.Bucket.Encryption
+    # Networking Policies
+    - AWS.NetworkACL.RestrictsInboundTraffic
+    - AWS.SecurityGroup.AdministrativeIngress
+    - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
+    - AWS.SecurityGroup.RestrictsInboundTraffic
+    # Root Activity
+    - AWS.Console.RootLogin
+    - AWS.Console.RootLoginFailed
+    - AWS.Root.Activity
+    - AWS.CloudTrail.RootAccessKeyCreated
+    - AWS.CloudTrail.RootPasswordChanged
+    - AWS.RootAccount.AccessKeys
+    - AWS.RootAccount.MFA
+    # User and Account Policies and Rules
+    - AWS.Console.LoginWithoutMFA
+    - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
+    - AWS.IAM.User.MFA
+    - AWS.PasswordPolicy.ComplexityGuidelines
+    # General Policies and Rules
+    - AWS.ACM.Certificate.Valid
+    - AWS.CloudTrail.Enabled
+    - AWS.Config.RecordingEnabled
+    - AWS.IAM.Policy.AdministrativePrivileges
+    - AWS.GuardDuty.Enabled
+    - AWS.GuardDuty.HighSeverityFinding
+    - AWS.ELBV2.LoadBalancer.HasSSLPolicy
+    - AWS.WAF.HasXSSPredicate
+    # Standard Rules applicable to AWS
+    - Standard.BruteForceByIP
+    # AWS DataModels
+    - Standard.AWS.ALB
+    - Standard.AWS.CloudTrail
+    - Standard.AWS.S3ServerAccess
+    - Standard.AWS.VPCFlow
+    # Globals used in these rules/policies
+    - panther_base_helpers
+    - panther_event_type_helpers
+    - panther_oss_helpers
+DisplayName: Panther Core AWS Pack
