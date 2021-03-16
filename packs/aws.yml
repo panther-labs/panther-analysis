@@ -5,6 +5,7 @@ PackDefinition:
   IDs:
     # Data Exposure
     - AWS.AMI.Private
+    - AWS.CloudTrail.AMIModifiedForPublicAccess
     - AWS.CloudTrail.S3Bucket.Public
     - AWS.IAM.AccessKeyCompromised
     - AWS.KMS.RestrictsUsage
@@ -38,11 +39,14 @@ PackDefinition:
     - AWS.Console.LoginWithoutMFA
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.User.MFA
+    - AWS.Password.Unused
     - AWS.PasswordPolicy.ComplexityGuidelines
+    - AWS.PasswordPolicy.PasswordAgeLimit
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
     - AWS.CloudTrail.Enabled
     - AWS.Config.RecordingEnabled
+    - AWS.Config.RecordingNoErrors
     - AWS.IAM.Policy.AdministrativePrivileges
     - AWS.GuardDuty.Enabled
     - AWS.GuardDuty.HighSeverityFinding
