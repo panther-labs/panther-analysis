@@ -74,3 +74,15 @@ fields:
   - name: pktDstAddr
     description: The packet-level (original) destination IP address for the traffic. Use this field with the dstaddr field to distinguish between the IP address of an intermediate layer through which traffic flows, and the final destination IP address of the traffic. For example, when traffic flows through a network interface for a NAT gateway, or where the IP address of a pod in Amazon EKS is different from the IP address of the network interface of the instance node on which the pod is running.
     type: string
+  - name: pktSrcAwsService
+    description: "The name of the subset of IP address ranges for the pkt-srcaddr field, if the source IP address is for an AWS service. The possible values are: AMAZON | AMAZON_APPFLOW | AMAZON_CONNECT | API_GATEWAY | CHIME_MEETINGS | CHIME_VOICECONNECTOR | CLOUD9 | CLOUDFRONT | CODEBUILD | DYNAMODB | EC2 | EC2_INSTANCE_CONNECT | GLOBALACCELERATOR | KINESIS_VIDEO_STREAMS | ROUTE53 | ROUTE53_HEALTHCHECKS | S3 | WORKSPACES_GATEWAYS."
+    type: string
+  - name: pktDstAwsService
+    description: The name of the subset of IP address ranges for the pkt-dstaddr field, if the destination IP address is for an AWS service. For a list of possible values, see the pkt-src-aws-service field.
+    type: string
+  - name: flowDirection
+    description: "The direction of the flow with respect to the interface where traffic is captured. The possible values are: ingress | egress."
+    type: string
+  - name: trafficPath
+    description: The path that egress traffic takes to the destination. To determine whether the traffic is egress traffic, check the flow-direction field. The possible values are as follows. If none of the values apply, the field is set to -. If the network interface is attached to an instance based on the Nitro System, the possible values include 7 and 8 but not 2. With instances not based on the Nitro System (for example, T2 and M4), the possible values include 2 but not 7 or 8. 1 — Through another resource in the same VPC, 2 — Through an internet gateway or a gateway VPC endpoint, 3 — Through a virtual private gateway, 4 — Through an intra-region VPC peering connection, 5 — Through an inter-region VPC peering connection, 6 — Through a local gateway, 7 — Through a gateway VPC endpoint, 8 — Through an internet gateway
+    type: smallint
