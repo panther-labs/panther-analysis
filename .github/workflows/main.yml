@@ -61,6 +61,7 @@ jobs:
           CONFLICTS=$(git diff --name-only --diff-filter=U)
           git add -A .
           git commit -m "merge changes from $GITHUB_REPOSITORY#${{ github.event.pull_request.number }}" -m "$CONFLICTS" || true
+          git remote set-url origin https://panther-bot:${{ secrets.PANTHER_ANALYSIS_PR_SYNC_TOKEN }}@github.com/${{ env.DEST_REPO }}.git > /dev/null 2>&1
           git push origin $HEAD
 
       - name: Clone original PR
