@@ -1,0 +1,275 @@
+---
+name: TestOkta
+logType: Okta.SystemLog
+input: |
+  {
+  	"uuid": "dbb36998-8c07-11eb-aa28-255b5cdbab05",
+  	"published": "2021-03-23 18:44:54.356",
+  	"eventType": "user.session.start",
+  	"version": "0",
+  	"severity": "INFO",
+  	"legacyEventType": "core.user_auth.login_success",
+  	"displayMessage": "User login to Okta",
+  	"actor": {
+  		"alternateid": "test@runpanther.io",
+  		"displayname": "Test",
+  		"id": "00uu1uuudddttttWL356",
+  		"type": "User"
+  	},
+  	"client": {
+  		"useragent": {
+  			"browser": "CHROME",
+  			"os": "Mac OS X",
+  			"rawuseragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML"
+  		},
+  		"geographicalcontext": {
+  			"geolocation": {
+  				"lat": "37.7642",
+  				"lon": "-122.3993"
+  			},
+  			"city": "San Francisco",
+  			"state": "California",
+  			"country": "United States",
+  			"postalcode": "94107"
+  		},
+  		"ipaddress": "136.25.37.134",
+  		"device": "Computer"
+  	},
+  	"request": {
+  		"ipchain": [
+  			"{ip=136.25.37.134",
+  			"geographicalcontext={geolocation={lat=37.7642",
+  			"lon=-122.3993}",
+  			"city=San Francisco",
+  			"state=California",
+  			"country=United States",
+  			"postalcode=94107}",
+  			"version=V4",
+  			"source=null}"
+  		]
+  	},
+  	"outcome": {
+  		"result": "SUCCESS"
+  	},
+  	"transaction": {
+  		"id": "YFo3JmFUbYNh4haNqEpC4AAAAe4",
+  		"type": "WEB"
+  	},
+  	"debugContext": "null",
+  	"authenticationContext": {
+  		"authenticationstep": 0,
+  		"externalsessionid": "102Jn-J7IfJTB-ahiXsJPaIZg"
+  	},
+  	"securityContext": "null"
+  }
+result: |
+  {
+  	"uuid": "dbb36998-8c07-11eb-aa28-255b5cdbab05",
+  	"published": "2021-03-23 18:44:54.356",
+  	"eventType": "user.session.start",
+  	"version": "0",
+  	"severity": "INFO",
+  	"legacyEventType": "core.user_auth.login_success",
+  	"displayMessage": "User login to Okta",
+  	"actor": {
+  		"alternateid": "test@runpanther.io",
+  		"displayname": "Test",
+  		"id": "00uu1uuudddttttWL356",
+  		"type": "User"
+  	},
+  	"client": {
+  		"useragent": {
+  			"browser": "CHROME",
+  			"os": "Mac OS X",
+  			"rawuseragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML"
+  		},
+  		"geographicalcontext": {
+  			"geolocation": {
+  				"lat": "37.7642",
+  				"lon": "-122.3993"
+  			},
+  			"city": "San Francisco",
+  			"state": "California",
+  			"country": "United States",
+  			"postalcode": "94107"
+  		},
+  		"ipaddress": "136.25.37.134",
+  		"device": "Computer"
+  	},
+  	"request": {
+  		"ipchain": [
+  			"{ip=136.25.37.134",
+  			"geographicalcontext={geolocation={lat=37.7642",
+  			"lon=-122.3993}",
+  			"city=San Francisco",
+  			"state=California",
+  			"country=United States",
+  			"postalcode=94107}",
+  			"version=V4",
+  			"source=null}"
+  		]
+  	},
+  	"outcome": {
+  		"result": "SUCCESS"
+  	},
+  	"transaction": {
+  		"id": "YFo3JmFUbYNh4haNqEpC4AAAAe4",
+  		"type": "WEB"
+  	},
+  	"debugContext": "null",
+  	"authenticationContext": {
+  		"authenticationstep": 0,
+  		"externalsessionid": "102Jn-J7IfJTB-ahiXsJPaIZg"
+  	},
+  	"securityContext": "null",
+  	"p_log_type": "Okta.SystemLog",
+  	"p_event_time": "2021-03-23 18:44:54.356",
+  	"p_any_ip_addresses": [
+  		"136.25.37.134"
+  	],
+    "p_any_emails": [
+      "test@runpanther.io"
+    ]
+  }
+---
+name: TestOktaWithTarget
+logType: Okta.SystemLog
+input: |
+  {
+  	"uuid": "dbb36998-8c07-11eb-aa28-255b5cdbab05",
+  	"published": "2021-03-23 18:44:54.356",
+  	"eventType": "user.session.start",
+  	"version": "0",
+  	"severity": "INFO",
+  	"legacyEventType": "core.user_auth.login_success",
+  	"displayMessage": "User login to Okta",
+  	"actor": {
+  		"alternateid": "test@runpanther.io",
+  		"displayname": "Test",
+  		"id": "00uu1uuudddttttWL356",
+  		"type": "User"
+  	},
+  	"client": {
+  		"useragent": {
+  			"browser": "CHROME",
+  			"os": "Mac OS X",
+  			"rawuseragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML"
+  		},
+  		"geographicalcontext": {
+  			"geolocation": {
+  				"lat": "37.7642",
+  				"lon": "-122.3993"
+  			},
+  			"city": "San Francisco",
+  			"state": "California",
+  			"country": "United States",
+  			"postalcode": "94107"
+  		},
+  		"ipaddress": "136.25.37.134",
+  		"device": "Computer"
+  	},
+  	"request": {
+  		"ipchain": [
+  			"{ip=136.25.37.134",
+  			"geographicalcontext={geolocation={lat=37.7642",
+  			"lon=-122.3993}",
+  			"city=San Francisco",
+  			"state=California",
+  			"country=United States",
+  			"postalcode=94107}",
+  			"version=V4",
+  			"source=null}"
+  		]
+  	},
+    "target": [
+    	{
+    		"id": "00uc1umudIxtsadWL356",
+    		"type": "User",
+    		"alternateid": "target@runpanther.io",
+    		"displayname": "Target"
+    	}
+    ],
+  	"outcome": {
+  		"result": "SUCCESS"
+  	},
+  	"transaction": {
+  		"id": "YFo3JmFUbYNh4haNqEpC4AAAAe4",
+  		"type": "WEB"
+  	},
+  	"debugContext": "null",
+  	"authenticationContext": {
+  		"authenticationstep": 0,
+  		"externalsessionid": "102Jn-J7IfJTB-ahiXsJPaIZg"
+  	},
+  	"securityContext": "null"
+  }
+result: |
+  {
+  	"uuid": "dbb36998-8c07-11eb-aa28-255b5cdbab05",
+  	"published": "2021-03-23 18:44:54.356",
+  	"eventType": "user.authentication.auth_via_mfa",
+  	"version": "0",
+  	"severity": "INFO",
+  	"legacyEventType": "core.user.factor.attempt_fail",
+  	"displayMessage": "User login to Okta",
+  	"actor": {
+  		"alternateid": "test@runpanther.io",
+  		"displayname": "Test",
+  		"id": "00uu1uuudddttttWL356",
+  		"type": "User"
+  	},
+  	"client": {
+  		"useragent": {
+  			"browser": "CHROME",
+  			"os": "Mac OS X",
+  			"rawuseragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_1) AppleWebKit/537.36 (KHTML"
+  		},
+  		"geographicalcontext": {
+  			"geolocation": {
+  				"lat": "37.7642",
+  				"lon": "-122.3993"
+  			},
+  			"city": "San Francisco",
+  			"state": "California",
+  			"country": "United States",
+  			"postalcode": "94107"
+  		},
+  		"ipaddress": "136.25.37.134",
+  		"device": "Computer"
+  	},
+  	"request": {
+  		"ipchain": [
+  			"{ip=136.25.37.134",
+  			"geographicalcontext={geolocation={lat=37.7642",
+  			"lon=-122.3993}",
+  			"city=San Francisco",
+  			"state=California",
+  			"country=United States",
+  			"postalcode=94107}",
+  			"version=V4",
+  			"source=null}"
+  		]
+  	},
+  	"outcome": {
+  		"result": "SUCCESS"
+  	},
+  	"transaction": {
+  		"id": "YFo3JmFUbYNh4haNqEpC4AAAAe4",
+  		"type": "WEB"
+  	},
+  	"debugContext": "null",
+  	"authenticationContext": {
+  		"authenticationstep": 0,
+  		"externalsessionid": "102Jn-J7IfJTB-ahiXsJPaIZg"
+  	},
+  	"securityContext": "null",
+  	"p_log_type": "Okta.SystemLog",
+  	"p_event_time": "2021-03-23 18:44:54.356",
+  	"p_any_ip_addresses": [
+  		"136.25.37.134"
+  	],
+    "p_any_emails": [
+      "target@runpanther.io",
+      "test@runpanther.io"
+    ]
+  }
