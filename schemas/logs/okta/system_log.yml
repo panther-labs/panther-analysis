@@ -3,9 +3,7 @@ parser:
   native:
     name: Okta.SystemLog
 description: |
-  The Okta System Log records system events related to your organization in order to provide an audit trail that can be used to understand platform activity and to diagnose problems.
-
-  Panther Enterprise Only
+  The Okta System Log records system events related to your organization to provide an audit trail that can be used to understand platform activity and diagnose problems.
 referenceURL: https://developer.okta.com/docs/reference/api/system-log/
 version: 0
 fields:
@@ -51,6 +49,8 @@ fields:
       - name: alternateId
         description: Alternative id of the actor
         type: string
+        indicators:
+          - email
       - name: displayName
         description: Display name of the actor
         type: string
@@ -125,6 +125,8 @@ fields:
             - name: ip
               description: IP address
               type: string
+              indicators:
+                - ip
             - name: geographicalContext
               description: Geographical context of the IP address
               type: object
@@ -184,6 +186,8 @@ fields:
         - name: alternateId
           description: Alternative id of the target
           type: string
+          indicators:
+            - email
         - name: displayName
           description: Display name of the target
           type: string
