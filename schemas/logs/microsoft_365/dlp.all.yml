@@ -1,0 +1,253 @@
+schema: Microsoft365.DLP.All
+parser:
+  native:
+    name: Microsoft365.DLP.All
+description: DLP events for all workloads.
+referenceURL: https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema#dlp-schema
+version: 0
+fields:
+  - name: Id
+    required: true
+    description: Unique identifier of an audit record.
+    type: string
+  - name: RecordType
+    required: true
+    description: The type of operation indicated by the record. See https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema#auditlogrecordtype for details on the types of audit log records.
+    type: int
+  - name: CreationTime
+    required: true
+    description: The date and time in Coordinated Universal Time (UTC) when the user performed the activity.
+    type: timestamp
+    timeFormat: layout=2006-01-02T15:04:05
+    isEventTime: true
+  - name: Operation
+    required: true
+    description: The name of the user or admin activity.
+    type: string
+  - name: OrganizationId
+    required: true
+    description: The GUID for your organization's Office 365 tenant. This value will always be the same for your organization, regardless of the Office 365 service in which it occurs.
+    type: string
+  - name: UserType
+    required: true
+    description: The type of user that performed the operation. See https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema#user-type for details on the types of users.
+    type: int
+  - name: UserKey
+    required: true
+    description: An alternative ID for the user identified in the UserId property. For example, this property is populated with the passport unique ID (PUID) for events performed by users in SharePoint, OneDrive for Business, and Exchange. This property may also specify the same value as the UserID property for events occurring in other services and events performed by system accounts.
+    type: string
+    indicators:
+      - username
+  - name: Workload
+    description: The Office 365 service where the activity occurred.
+    type: string
+  - name: ResultStatus
+    description: Indicates whether the action (specified in the Operation property) was successful or not. Possible values are Succeeded, PartiallySucceeded, or Failed. For Exchange admin activity, the value is either True or False.
+    type: string
+  - name: ObjectId
+    description: For SharePoint and OneDrive for Business activity, the full path name of the file or folder accessed by the user. For Exchange admin audit logging, the name of the object that was modified by the cmdlet.
+    type: string
+  - name: UserId
+    required: true
+    description: The UPN (User Principal Name) of the user who performed the action (specified in the Operation property) that resulted in the record being logged; for example, my_name@my_domain_name. Note that records for activity performed by system accounts (such as SHAREPOINT\system or NT AUTHORITY\SYSTEM) are also included. In SharePoint, another value display in the UserId property is app@sharepoint. This indicates that the "user" who performed the activity was an application that has the necessary permissions in SharePoint to perform organization-wide actions (such as search a SharePoint site or OneDrive account) on behalf of a user, admin, or service.
+    type: string
+    indicators:
+      - username
+  - name: ClientIP
+    description: The IP address of the device that was used when the activity was logged. The IP address is displayed in either an IPv4 or IPv6 address format. For some services, the value displayed in this property might be the IP address for a trusted application (for example, Office on the web apps) calling into the service on behalf of a user and not the IP address of the device used by person who performed the activity. Also, for Azure Active Directory-related events, the IP address isn't logged and the value for the ClientIP property is null.
+    type: string
+    indicators:
+      - ip
+  - name: Scope
+    description: Was this event created by a hosted M365 service or an on-premises server? Possible values are online and onprem. Note that SharePoint is the only workload currently sending events from on-premises to M365.
+    type: string
+  - name: SharePointMetaData
+    description: Describes metadata about the document in SharePoint or OneDrive for Business that contained the sensitive information.
+    type: object
+    fields:
+      - name: From
+        description: The user who triggered the event. This will be either the FileOwner, LastModifier, or LastSharer.
+        type: string
+        indicators:
+          - username
+      - name: itemCreationTime
+        description: Datetimestamp in UTC of when event logged.
+        type: timestamp
+        timeFormat: layout=2006-01-02T15:04:05
+      - name: SiteCollectionGuid
+        description: The GUID of the site collection.
+        type: string
+      - name: SiteCollectionUrl
+        description: Name of the SharePoint site.
+        type: string
+      - name: FileName
+        description: Name of the path.
+        type: string
+      - name: FileOwner
+        description: The document owner.
+        type: string
+        indicators:
+          - username
+      - name: FilePathUrl
+        description: The URL of the document
+        type: string
+      - name: DocumentLastModifier
+        description: The user who last modified the document.
+        type: string
+        indicators:
+          - username
+      - name: DocumentSharer
+        description: The user who last modified sharing of the document.
+        type: string
+        indicators:
+          - username
+      - name: UniqueId
+        description: A guid that identifies the file.
+        type: string
+      - name: LastModifiedTime
+        description: Timestamp in UTC for when doc was last modified.
+        type: timestamp
+        timeFormat: layout=2006-01-02T15:04:05
+  - name: ExchangeMetaData
+    description: Describes metadata about the email message that contained the sensitive information.
+    type: object
+    fields:
+      - name: MessageID
+        description: The message ID of the email that triggered the event.
+        type: string
+      - name: From
+        description: The user who sent the email.
+        type: string
+        indicators:
+          - username
+          - email
+      - name: To
+        description: A collection of email addresses that were on the To line of the message.
+        type: array
+        element:
+          type: string
+        indicators:
+          - email
+      - name: CC
+        description: A collection of email addresses that were on the CC line of the message.
+        type: array
+        element:
+          type: string
+        indicators:
+          - email
+      - name: BCC
+        description: A collection of email addresses that were on the BCC line of the message.
+        type: array
+        element:
+          type: string
+        indicators:
+          - email
+      - name: Subject
+        description: Subject of the email message.
+        type: string
+      - name: Sent
+        description: The time in UTC of when the email was sent.
+        type: timestamp
+        timeFormat: layout=2006-01-02T15:04:05
+      - name: RecipientCount
+        description: The total number of all recipients on the TO, CC, and BCC lines of the message.
+        type: int
+  - name: ExceptionInfo
+    description: Identifies reasons why a policy no longer applies and/or any information about false positive and/or override noted by the end user.
+    type: string
+  - name: PolicyDetails
+    required: true
+    description: Information about 1 or more policies that triggered the DLP event.
+    type: array
+    element:
+      type: object
+      fields:
+        - name: PolicyId
+          description: The guid of the DLP policy for this event.
+          type: string
+        - name: PolicyName
+          description: The friendly name of the DLP policy for this event.
+          type: string
+        - name: Rules
+          description: Information about the rules within the policy that were matched for this event.
+          type: array
+          element:
+            type: object
+            fields:
+              - name: RuleId
+                description: The guid of the DLP rule for this event.
+                type: string
+              - name: RuleName
+                description: The friendly name of the DLP rule for this event.
+                type: string
+              - name: Actions
+                description: A list of actions taken as a result of a DLP RuleMatch event.
+                type: array
+                element:
+                  type: string
+              - name: OverriddenActions
+                description: A list of actions previously taken that were now undone as a result of a DLPRuleUndo event.
+                type: array
+                element:
+                  type: string
+              - name: Severity
+                description: The severity (Low, Medium and High) of the rule match.
+                type: string
+              - name: RuleMode
+                description: Indicate whether the DLP Rule was set to Enforce, Audit with Notify, or Audit only.
+                type: string
+              - name: ConditionsMatched
+                description: Details about what conditions of the rule were matched for this event.
+                type: object
+                fields:
+                  - name: SensitiveInformation
+                    description: Information about the type of sensitive information detected.
+                    type: object
+                    fields:
+                      - name: Confidence
+                        description: The confidence of pattern that matched the detection.
+                        type: bigint
+                      - name: Count
+                        description: The number of sensitive instances detected.
+                        type: bigint
+                      - name: SensitiveType
+                        description: A guid that identifies the type of sensitive data detected.
+                        type: string
+                      - name: SensitiveInformationDetections
+                        description: An array of objects that contain sensitive information data with the following details – matched value and context of matched value.
+                        type: object
+                        fields:
+                          - name: Detections
+                            description: An array of sensitive information that was detected. Information contains key value pairs with Value = matched value (eg. Value of credit card of SSN) and Context = an excerpt from source content that contains the matched value.
+                            type: json
+                          - name: ResultsTruncated
+                            description: Indicates if the logs were truncated due to large number of results.
+                            type: boolean
+                  - name: DocumentProperties
+                    description: Information about document properties that triggered a rule match.
+                    type: array
+                    element:
+                      type: object
+                      fields:
+                        - name: Name
+                          description: Name field
+                          type: string
+                        - name: Value
+                          description: Value field
+                          type: string
+                  - name: OtherConditions
+                    description: A list of key value pairs describing any other conditions that were matched.
+                    type: array
+                    element:
+                      type: object
+                      fields:
+                        - name: Name
+                          description: Name field
+                          type: string
+                        - name: Value
+                          description: Value field
+                          type: string
+  - name: SensitiveInfoDetectionIsIncluded
+    required: true
+    description: Indicates whether the event contains the value of the sensitive data type and surrounding context from the source content. Accessing sensitive data requires the "Read DLP policy events including sensitive details" permission in Azure Active Directory.
+    type: boolean
