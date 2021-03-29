@@ -69,5 +69,5 @@ def title(event):
     # (Optional) Return a string which will be shown as the alert title.
     return (
         f"Unusual OneLogin access for user [{event.get('user_name', '<UNKNOWN_USER>')}]"
-        f" from [{event.get('p_row_id')}]"
+        f" from [{EVENT_LOGIN_INFO[event.get('p_row_id')]}]"
     )
