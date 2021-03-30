@@ -1,7 +1,4 @@
 schema: Gravitational.TeleportAudit
-parser:
-  native:
-    name: Gravitational.TeleportAudit
 description: Teleport logs events like successful user logins along with the metadata like remote IP address, time and the session ID.
 referenceURL: https://gravitational.com/teleport/docs/admin-guide/#audit-log
 version: 0
@@ -172,14 +169,7 @@ fields:
       - ip
   - name: dst_port
     description: Destination port
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: int
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: smallint
   - name: version
     description: Event version
     type: int
