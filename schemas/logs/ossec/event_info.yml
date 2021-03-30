@@ -1,7 +1,4 @@
 schema: OSSEC.EventInfo
-parser:
-  native:
-    name: OSSEC.EventInfo
 description: OSSEC EventInfo alert parser. Currently only JSON output is supported.
 referenceURL: https://www.ossec.net/docs/docs/formats/alerts.html
 version: 0
@@ -62,7 +59,8 @@ fields:
     required: true
     description: Timestamp in UTC.
     type: timestamp
-    timeFormat: rfc3339
+    timeFormat: unix_ms
+    isEventTime: true
   - name: location
     required: true
     description: Source of the event (filename, command, etc).
@@ -81,6 +79,8 @@ fields:
   - name: agentip
     description: The IP address of an agent extracted from the hostname.
     type: string
+    indicators:
+      - ip
   - name: agent_name
     description: The name of an agent extracted from the hostname.
     type: string
@@ -121,12 +121,16 @@ fields:
   - name: dstip
     description: The destination IP address.
     type: string
+    indicators:
+      - ip
   - name: dstport
     description: The destination port.
     type: string
   - name: dstuser
     description: The destination (target) username.
     type: string
+    indicators:
+      - username
   - name: logfile
     description: The source log file that was decoded to generate the event.
     type: string
@@ -145,12 +149,16 @@ fields:
   - name: srcip
     description: The source IP address.
     type: string
+    indicators:
+      - ip
   - name: srcport
     description: The source port.
     type: string
   - name: srcuser
     description: The source username.
     type: string
+    indicators:
+      - username
   - name: status
     description: Event status (success, failure, etc).
     type: string
@@ -167,9 +175,13 @@ fields:
       - name: md5_after
         description: MD5 hash of the file after modification.
         type: string
+        indicators:
+          - md5
       - name: md5_before
         description: MD5 hash of the file before modification.
         type: string
+        indicators:
+          - md5
       - name: owner_after
         description: The file owner after modification.
         type: string
@@ -188,9 +200,13 @@ fields:
       - name: sha1_after
         description: SHA1 hash of the file after modification.
         type: string
+        indicators:
+          - sha1
       - name: sha1_before
         description: SHA1 hash of the file before modification.
         type: string
+        indicators:
+          - sha1
   - name: systemname
     description: The system name extracted by the decoder.
     type: string
