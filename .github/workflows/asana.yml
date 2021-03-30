@@ -11,7 +11,7 @@ jobs:
     if: ${{ github.event.pull_request.state == 'open' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: panther-labs/github-asana-action@v3.0.4
+      - uses: panther-labs/github-asana-action@v3.0.5
         name: Adds a comment to the related Asana task whenever a PR has been opened
         with:
           asana-pat: ${{ secrets.ASANA_PAT }}
@@ -19,7 +19,7 @@ jobs:
           text: ${{ format('A Pull Request has been opened {0}', github.event.pull_request.html_url) }}
           is-pinned: true
 
-      - uses: panther-labs/github-asana-action@v3.0.4
+      - uses: panther-labs/github-asana-action@v3.0.5
         name: Moves the Asana task to "In Review" when the PR is opened
         with:
           asana-pat: ${{ secrets.ASANA_PAT }}
@@ -30,14 +30,14 @@ jobs:
     if: ${{ github.event.pull_request.state == 'closed' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: panther-labs/github-asana-action@v3.0.4
+      - uses: panther-labs/github-asana-action@v3.0.5
         name: Adds a comment to the related Asana task when the PR is closed
         with:
           asana-pat: ${{ secrets.ASANA_PAT }}
           action: 'add-comment'
           text: ${{ format('A Pull Request is now closed {0}', github.event.pull_request.html_url) }}
 
-      - uses: panther-labs/github-asana-action@v3.0.4
+      - uses: panther-labs/github-asana-action@v3.0.5
         name: Closes the related Asana tasks when the PR gets merged
         if: github.event.pull_request.merged
         with:
