@@ -21,34 +21,13 @@ fields:
   - name: duration_s
     required: true
     description: The time spent serving the request (in seconds)
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: db_duration_s
     description: The time spent quering the database (in seconds)
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: view_duration_s
     description: The time spent rendering the view for the Rails controller (in seconds)
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: status
     required: true
     description: The HTTP response status code
@@ -105,27 +84,13 @@ fields:
     type: bigint
   - name: gitaly_duration_s
     description: Total time taken by Gitaly calls
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: redis_calls
     description: Total number of calls made to Redis
     type: bigint
   - name: redis_duration_s
     description: Total time to retrieve data from Redis
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: correlation_id
     description: Request unique id across logs
     type: string
@@ -133,14 +98,7 @@ fields:
       - trace_id
   - name: queue_duration_s
     description: Total time that the request was queued inside GitLab Workhorse
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: meta.user
     description: User that invoked the request
     type: string
