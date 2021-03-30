@@ -13,6 +13,7 @@ fields:
     description: The timestamp of the event
     type: timestamp
     timeFormat: rfc3339
+    isEventTime: true
   - name: created_by
     description: The user that performed the action represented by the event.
     type: object
@@ -106,6 +107,10 @@ fields:
   - name: session_id
     description: The event type that triggered this event
     type: string
+    indicators:
+      - trace_id
   - name: ip_address
     description: The IP address the request was made from.
     type: string
+    indicators:
+      - ip
