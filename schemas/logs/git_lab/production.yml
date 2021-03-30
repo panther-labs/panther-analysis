@@ -64,40 +64,19 @@ fields:
     type: string
   - name: queue_duration_s
     description: Total time that the request was queued inside GitLab Workhorse
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: gitaly_calls
     description: Total number of calls made to Gitaly
     type: bigint
   - name: gitaly_duration_s
     description: Total time taken by Gitaly calls
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: redis_calls
     description: Total number of calls made to Redis
     type: bigint
   - name: redis_duration_s
     description: Total time to retrieve data from Redis
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: redis_read_bytes
     description: Total bytes read from Redis
     type: bigint
@@ -111,45 +90,17 @@ fields:
       - trace_id
   - name: cpu_s
     description: Total time spent on CPU
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: db_duration_s
     description: Total time to retrieve data from PostgreSQL
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: view_duration_s
     description: Total time taken inside the Rails views
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: duration_s
     required: true
     description: Total time taken to retrieve the request
-    type: object
-    fields:
-      - name: Value
-        description: Value field
-        type: float
-      - name: Exists
-        description: Exists field
-        type: boolean
+    type: float
   - name: meta.caller_id
     description: Caller ID
     type: string
