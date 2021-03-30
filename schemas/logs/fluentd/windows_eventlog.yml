@@ -12,7 +12,6 @@ fields:
   description: The name of the machine that logged the event. 
   type: string
 - name: description_title
-  required: false
   description: A brief description of the event.
   type: string
 - name: event_category
@@ -28,7 +27,6 @@ fields:
   description: The type of event. 
   type: string
 - name: record_number
-  required: false
   description: The record number assigned to the event when it was logged.
   type: bigint
 - name: source_name
@@ -42,7 +40,6 @@ fields:
   isEventTime: true
   timeFormat: "%Y-%m-%d %H:%M:%S %z"
 - name: time_written
-  required: false
   description: The timestamp when the event was processed.
   type: timestamp
   timeFormat: "%Y-%m-%d %H:%M:%S %z"
@@ -51,83 +48,56 @@ fields:
   description: The name of the user that is logged in when the event is created.
   type: string
 - name: detailed_authentication_information.authentication_package
-  required: false
   type: string
 - name: detailed_authentication_information.key_length
-  required: false
   type: bigint
 - name: detailed_authentication_information.logon_process
-  required: false
   type: string
 - name: detailed_authentication_information.package_name_(ntlm_only)
-  required: false
   type: string
 - name: detailed_authentication_information.transited_services
-  required: false
   type: string
 - name: impersonation_level
-  required: false
   type: string
 - name: logon_information.elevated_token
-  required: false
   type: string
 - name: logon_information.logon_type
-  required: false
   type: bigint
 - name: logon_information.restricted_admin_mode
-  required: false
   type: string
 - name: logon_information.virtual_account
-  required: false
   type: string
 - name: network_information.source_network_address
-  required: false
   type: string
 - name: network_information.source_port
-  required: false
   type: string
 - name: network_information.workstation_name
-  required: false
   type: string
 - name: new_logon.account_domain
-  required: false
   type: string
 - name: new_logon.account_name
-  required: false
   type: string
 - name: new_logon.linked_logon_id
-  required: false
   type: string
 - name: new_logon.logon_guid
-  required: false
   type: string
 - name: new_logon.logon_id
-  required: false
   type: string
 - name: new_logon.network_account_domain
-  required: false
   type: string
 - name: new_logon.network_account_name
-  required: false
   type: string
 - name: new_logon.security_id
-  required: false
   type: string
 - name: process_information.process_id
-  required: false
   type: string
 - name: process_information.process_name
-  required: false
   type: string
 - name: subject.account_domain
-  required: false
   type: string
 - name: subject.account_name
-  required: false
   type: string
 - name: subject.logon_id
-  required: false
   type: string
 - name: subject.security_id
-  required: false
   type: string 
