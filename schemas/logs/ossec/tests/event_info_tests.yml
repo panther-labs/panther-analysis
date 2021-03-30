@@ -1,0 +1,87 @@
+name: eventinfo.basic
+logType: OSSEC.EventInfo
+input: |
+  {
+    "rule":
+    {
+      "level":5,
+      "comment":"Syslogd restarted.",
+      "sidid":1005,
+      "group":"syslog,errors,"
+    },
+    "id":"1510376401.0",
+    "TimeStamp":1510376401000,
+    "location":"/var/log/messages",
+    "full_log":"Nov 11 00:00:01 ix syslogd[72090]: restart",
+    "hostname":"ix",
+    "program_name":"syslogd"
+  }
+result: |
+  {
+    "rule":
+    {
+      "level":5,
+      "comment":"Syslogd restarted.",
+      "sidid":1005,
+      "group":"syslog,errors,"
+    },
+    "id":"1510376401.0",
+    "TimeStamp":1510376401000,
+    "location":"/var/log/messages",
+    "full_log":"Nov 11 00:00:01 ix syslogd[72090]: restart",
+    "hostname":"ix",
+    "program_name":"syslogd",
+    "p_log_type": "OSSEC.EventInfo",
+    "p_event_time": "2017-11-11T05:00:01Z"
+  }
+---
+name: eventinfo.withfilecontext
+logType: OSSEC.EventInfo
+input: |
+  {
+    "rule":{
+      "level":7,
+      "comment":"Integrity checksum changed.",
+      "sidid":550,
+      "group":"ossec,syscheck,"
+    },
+    "id":"1540845340.16991",
+    "TimeStamp":1540845340000,
+    "decoder":"syscheck_integrity_changed",
+    "location":"syscheck",
+    "full_log":"Integrity checksum changed for:'/usr/bin/ssm-cli'\nOld md5sum was:'22271cce0732d887e3980e5a6868e459'\nNew md5sum is :'220a8f105af5e711f99e52583209a871'\nOld sha1sum was:'4df65340f366c18f85be228c26817e20391f32c4'\nNew sha1sum is :'c7414fd048c81361720e2d9c8d2f82faf33748b6'\n",
+    "SyscheckFile":{
+      "path":"/usr/bin/ssm-cli",
+      "md5_before":"22271cce0732d887e3980e5a6868e459",
+      "md5_after":"220a8f105af5e711f99e52583209a871",
+      "sha1_before":"4df65340f366c18f85be228c26817e20391f32c4",
+      "sha1_after":"c7414fd048c81361720e2d9c8d2f82faf33748b6"
+    },
+    "hostname":"ip-172-16-2-16"
+  }
+result: |
+  {
+    "rule":{
+      "level":7,
+      "comment":"Integrity checksum changed.",
+      "sidid":550,
+      "group":"ossec,syscheck,"
+    },
+    "id":"1540845340.16991",
+    "TimeStamp":1540845340000,
+    "decoder":"syscheck_integrity_changed",
+    "location":"syscheck",
+    "full_log":"Integrity checksum changed for:'/usr/bin/ssm-cli'\nOld md5sum was:'22271cce0732d887e3980e5a6868e459'\nNew md5sum is :'220a8f105af5e711f99e52583209a871'\nOld sha1sum was:'4df65340f366c18f85be228c26817e20391f32c4'\nNew sha1sum is :'c7414fd048c81361720e2d9c8d2f82faf33748b6'\n",
+    "SyscheckFile":{
+      "path":"/usr/bin/ssm-cli",
+      "md5_before":"22271cce0732d887e3980e5a6868e459",
+      "md5_after":"220a8f105af5e711f99e52583209a871",
+      "sha1_before":"4df65340f366c18f85be228c26817e20391f32c4",
+      "sha1_after":"c7414fd048c81361720e2d9c8d2f82faf33748b6"
+    },
+    "hostname":"ip-172-16-2-16",
+    "p_log_type": "OSSEC.EventInfo",
+    "p_event_time": "2018-10-29T20:35:40Z",
+    "p_any_md5_hashes": ["220a8f105af5e711f99e52583209a871", "22271cce0732d887e3980e5a6868e459"],
+    "p_any_sha1_hashes": ["4df65340f366c18f85be228c26817e20391f32c4", "c7414fd048c81361720e2d9c8d2f82faf33748b6"]
+  }
