@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from panther_base_helpers import deep_get
 
 AWS_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
