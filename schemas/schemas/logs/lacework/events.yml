@@ -1,4 +1,7 @@
 schema: Lacework.Events
+parser:
+  native:
+    name: Lacework.Events
 description: Lacework.Events represents the content of an exported Lacework Alert S3 Object.
 referenceURL: https://www.lacework.com/platform-overview/
 version: 0
@@ -163,8 +166,6 @@ fields:
                       - name: IP_ADDRESS
                         description: SourceIPAddress field
                         type: string
-                        indicators:
-                          - ip
                       - name: TOTAL_IN_BYTES
                         description: TotalINBytes field
                         type: float
@@ -273,8 +274,6 @@ fields:
                       - name: IP_ADDRESS
                         description: SourceIPAddress field
                         type: string
-                        indicators:
-                          - ip
                       - name: REGION
                         description: Region field
                         type: string
@@ -428,8 +427,7 @@ fields:
     required: true
     description: The event start time.
     type: timestamp
-    timeFormat: "%d %b %Y %H:%M %Z"
-    isEventTime: true
+    timeFormat: rfc3339
   - name: SUMMARY
     required: true
     description: The alert title and quick summary

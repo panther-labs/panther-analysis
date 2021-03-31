@@ -1,5 +1,8 @@
-schema: Microsoft365.Audit.SharePoint
-description: Microsoft SharePoint audit events.
+schema: Microsoft365.Audit.AzureActiveDirectory
+parser:
+  native:
+    name: Microsoft365.Audit.AzureActiveDirectory
+description: Azure Active Directory audit events.
 referenceURL: https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema
 version: 0
 fields:
@@ -15,7 +18,7 @@ fields:
     required: true
     description: The date and time in Coordinated Universal Time (UTC) when the user performed the activity.
     type: timestamp
-    timeFormat: "%Y-%m-%dT%H:%M:%S"
+    timeFormat: layout=2006-01-02T15:04:05
     isEventTime: true
   - name: Operation
     required: true
@@ -58,68 +61,93 @@ fields:
   - name: Scope
     description: Was this event created by a hosted M365 service or an on-premises server? Possible values are online and onprem. Note that SharePoint is the only workload currently sending events from on-premises to M365.
     type: string
-  - name: Site
-    description: The GUID of the site where the file or folder accessed by the user is located.
-    type: string
-  - name: ItemType
-    description: The type of object that was accessed or modified.
-    type: string
-  - name: EventSource
-    description: Identifies that an event occurred in SharePoint. Possible values are SharePoint or ObjectModel.
-    type: string
-  - name: SourceName
-    description: The entity that triggered the audited operation. Possible values are SharePoint or ObjectModel.
-    type: string
-  - name: UserAgent
-    description: Information about the user's client or browser. This information is provided by the client or browser.
-    type: string
-  - name: MachineDomainInfo
-    description: Information about device sync operations. This information is reported only if it's present in the request.
-    type: string
-  - name: MachineId
-    description: Information about device sync operations. This information is reported only if it's present in the request.
-    type: string
-  - name: SiteUrl
-    description: The URL of the site where the file or folder accessed by the user is located.
-    type: string
-  - name: SourceRelativeUrl
-    description: The URL of the folder that contains the file accessed by the user. The combination of the values for the SiteURL, SourceRelativeURL, and SourceFileName parameters is the same as the value for the ObjectID property, which is the full path name for the file accessed by the user.
-    type: string
-  - name: SourceFileName
-    description: The name of the file or folder accessed by the user.
-    type: string
-  - name: SourceFileExtension
-    description: The file extension of the file that was accessed by the user. This property is blank if the object that was accessed is a folder.
-    type: string
-  - name: DestinationRelativeUrl
-    description: The URL of the destination folder where a file is copied or moved. The combination of the values for SiteURL, DestinationRelativeURL, and DestinationFileName parameters is the same as the value for the ObjectID property, which is the full path name for the file that was copied. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: DestinationFileName
-    description: The name of the file that is copied or moved. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: DestinationFileExtension
-    description: The file extension of a file that is copied or moved. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: UserSharedWith
-    description: The user that a resource was shared with.
-    type: string
-  - name: SharingType
-    description: The type of sharing permissions that were assigned to the user that the resource was shared with. This user is identified by the UserSharedWith parameter.
-    type: string
-  - name: TargetUserOrGroupName
-    description: Stores the UPN or name of the target user or group that a resource was shared with.
-    type: string
-  - name: TargetUserOrGroupType
-    description: Identifies whether the target user or group is a Member, Guest, Group, or Partner.
-    type: string
-  - name: EventData
-    description: Conveys follow-up information about the sharing action that has occurred, such as adding a user to a group or granting edit permissions.
-    type: string
-  - name: CustomEvent
-    description: Optional string for custom events.
-    type: string
+  - name: AzureActiveDirectoryEventType
+    required: true
+    description: The type of Azure AD event.
+    type: int
+  - name: ExtendedProperties
+    description: The extended properties of the Azure AD event.
+    type: array
+    element:
+      type: object
+      fields:
+        - name: Name
+          description: Name field
+          type: string
+        - name: Value
+          description: Value field
+          type: string
   - name: ModifiedProperties
-    description: The property is included for admin events, such as adding a user as a member of a site or a site collection admin group. The property includes the name of the property that was modified (for example, the Site Admin group), the new value of the modified property (such the user who was added as a site admin), and the previous value of the modified object.
+    description: This property is included for admin events. The property includes the name of the property that was modified, the new value of the modified property, and the previous value of the modified property.
     type: array
     element:
       type: string
+  - name: Application
+    description: The application that triggers the account login event, such as Office 15.
+    type: string
+  - name: Client
+    description: Details about the client device, device OS, and device browser that was used for the of the account login event.
+    type: string
+  - name: LoginStatus
+    description: This property is from OrgIdLogon.LoginStatus directly. The mapping of various interesting logon failures could be done by alerting algorithms.
+    type: int
+  - name: UserDomain
+    description: The Tenant Identity Information (TII).
+    type: string
+  - name: Actor
+    description: The user or service principal that performed the action.
+    type: array
+    element:
+      type: object
+      fields:
+        - name: ID
+          description: The value of the identity given the type.
+          type: string
+          indicators:
+            - username
+        - name: Type
+          description: The type of the identity.
+          type: int
+  - name: ActorContextId
+    description: The GUID of the organization that the actor belongs to.
+    type: string
+  - name: ActorIpAddress
+    description: The actor's IP address in IPV4 or IPV6 address format.
+    type: string
+    indicators:
+      - ip
+  - name: InterSystemsId
+    description: The GUID that track the actions across components within the Office 365 service.
+    type: string
+  - name: IntraSystemId
+    description: The GUID that's generated by Azure Active Directory to track the action.
+    type: string
+  - name: SupportTicketId
+    description: The customer support ticket ID for the action in "act-on-behalf-of" situations.
+    type: string
+  - name: Target
+    description: The user that the action (identified by the Operation property) was performed on.
+    type: array
+    element:
+      type: object
+      fields:
+        - name: ID
+          description: The value of the identity given the type.
+          type: string
+          indicators:
+            - username
+        - name: Type
+          description: The type of the identity.
+          type: int
+  - name: TargetContextId
+    description: The GUID of the organization that the targeted user belongs to.
+    type: string
+  - name: ApplicationId
+    description: The GUID that represents the application that is requesting the login. The display name can be looked up via the Azure Active Directory Graph API.
+    type: string
+  - name: ErrorCode
+    description: For failed logins (where the value for the Operation property is UserLoginFailed), this property contains the Azure Active Directory STS (AADSTS) error code. A value of 0 indicates a successful login.
+    type: string
+  - name: LogonError
+    description: For failed logins, this property contains a user-readable description of the reason for the failed login.
+    type: string

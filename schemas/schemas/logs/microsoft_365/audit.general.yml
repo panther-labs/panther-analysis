@@ -1,5 +1,8 @@
-schema: Microsoft365.Audit.SharePoint
-description: Microsoft SharePoint audit events.
+schema: Microsoft365.Audit.General
+parser:
+  native:
+    name: Microsoft365.Audit.General
+description: General audit events not included in the other log types.
 referenceURL: https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema
 version: 0
 fields:
@@ -15,7 +18,7 @@ fields:
     required: true
     description: The date and time in Coordinated Universal Time (UTC) when the user performed the activity.
     type: timestamp
-    timeFormat: "%Y-%m-%dT%H:%M:%S"
+    timeFormat: layout=2006-01-02T15:04:05
     isEventTime: true
   - name: Operation
     required: true
@@ -58,68 +61,6 @@ fields:
   - name: Scope
     description: Was this event created by a hosted M365 service or an on-premises server? Possible values are online and onprem. Note that SharePoint is the only workload currently sending events from on-premises to M365.
     type: string
-  - name: Site
-    description: The GUID of the site where the file or folder accessed by the user is located.
-    type: string
-  - name: ItemType
-    description: The type of object that was accessed or modified.
-    type: string
-  - name: EventSource
-    description: Identifies that an event occurred in SharePoint. Possible values are SharePoint or ObjectModel.
-    type: string
-  - name: SourceName
-    description: The entity that triggered the audited operation. Possible values are SharePoint or ObjectModel.
-    type: string
-  - name: UserAgent
-    description: Information about the user's client or browser. This information is provided by the client or browser.
-    type: string
-  - name: MachineDomainInfo
-    description: Information about device sync operations. This information is reported only if it's present in the request.
-    type: string
-  - name: MachineId
-    description: Information about device sync operations. This information is reported only if it's present in the request.
-    type: string
-  - name: SiteUrl
-    description: The URL of the site where the file or folder accessed by the user is located.
-    type: string
-  - name: SourceRelativeUrl
-    description: The URL of the folder that contains the file accessed by the user. The combination of the values for the SiteURL, SourceRelativeURL, and SourceFileName parameters is the same as the value for the ObjectID property, which is the full path name for the file accessed by the user.
-    type: string
-  - name: SourceFileName
-    description: The name of the file or folder accessed by the user.
-    type: string
-  - name: SourceFileExtension
-    description: The file extension of the file that was accessed by the user. This property is blank if the object that was accessed is a folder.
-    type: string
-  - name: DestinationRelativeUrl
-    description: The URL of the destination folder where a file is copied or moved. The combination of the values for SiteURL, DestinationRelativeURL, and DestinationFileName parameters is the same as the value for the ObjectID property, which is the full path name for the file that was copied. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: DestinationFileName
-    description: The name of the file that is copied or moved. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: DestinationFileExtension
-    description: The file extension of a file that is copied or moved. This property is displayed only for FileCopied and FileMoved events.
-    type: string
-  - name: UserSharedWith
-    description: The user that a resource was shared with.
-    type: string
-  - name: SharingType
-    description: The type of sharing permissions that were assigned to the user that the resource was shared with. This user is identified by the UserSharedWith parameter.
-    type: string
-  - name: TargetUserOrGroupName
-    description: Stores the UPN or name of the target user or group that a resource was shared with.
-    type: string
-  - name: TargetUserOrGroupType
-    description: Identifies whether the target user or group is a Member, Guest, Group, or Partner.
-    type: string
-  - name: EventData
-    description: Conveys follow-up information about the sharing action that has occurred, such as adding a user to a group or granting edit permissions.
-    type: string
-  - name: CustomEvent
-    description: Optional string for custom events.
-    type: string
-  - name: ModifiedProperties
-    description: The property is included for admin events, such as adding a user as a member of a site or a site collection admin group. The property includes the name of the property that was modified (for example, the Site Admin group), the new value of the modified property (such the user who was added as a site admin), and the previous value of the modified object.
-    type: array
-    element:
-      type: string
+  - name: payload
+    description: The full JSON payload of the event.
+    type: json
