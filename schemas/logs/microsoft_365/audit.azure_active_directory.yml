@@ -1,7 +1,4 @@
 schema: Microsoft365.Audit.AzureActiveDirectory
-parser:
-  native:
-    name: Microsoft365.Audit.AzureActiveDirectory
 description: Azure Active Directory audit events.
 referenceURL: https://docs.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-schema
 version: 0
@@ -18,7 +15,7 @@ fields:
     required: true
     description: The date and time in Coordinated Universal Time (UTC) when the user performed the activity.
     type: timestamp
-    timeFormat: layout=2006-01-02T15:04:05
+    timeFormat: '%Y-%m-%dT%H:%M:%S'
     isEventTime: true
   - name: Operation
     required: true
