@@ -1,18 +1,25 @@
-AnalysisType: scheduled_rule
-Filename: example_scheduled_rule.py 
+AnalysisType: rule
+Filename: example_rule.py 
 RuleID: A.Scheduled.Rule
-DisplayName: A More Friendly Name
-Enabled: true
-ScheduledQueries:
-  - My Query Name
-Tags:
-  - Tag
-Severity: Medium
 Description: >
   An optional Description
+DedupPeriodMinutes: 60
+DisplayName: A More Friendly Name
+Enabled: true
+OutputIds:
+  - OutputId
+  - anotherOutputId
+Reference: An optional reference.link 
 Runbook: >
   An optional Runbook 
-Reference: An optional reference.link 
+ScheduledQueries:
+  - My Query Name
+Severity: Medium
+Tags:
+  - Tag
+Suppressions:
+  - supression1
+  - supression2
 Tests:
   -
     Name: Name 
