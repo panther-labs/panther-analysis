@@ -1,0 +1,37 @@
+---
+name: ApacheCommon
+logType: Apache.AccessCommon
+input: 127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
+result: |
+  {
+    "remote_host_ip_address": "127.0.0.1",
+    "request_user": "frank",
+    "request_time": "10/Oct/2000:13:55:36 -0700",
+    "request_method": "GET",
+    "request_uri": "/apache_pb.gif",
+    "request_protocol": "HTTP/1.0",
+    "response_status": 200,
+    "response_size": 2326,
+    "p_log_type": "Apache.AccessCommon",
+    "p_event_time": "2000-10-10T13:55:36-07:00",
+    "p_any_ip_addresses": ["127.0.0.1"],
+    "p_any_usernames": ["frank"]
+  }
+---
+name: ApacheCommonEmptySize
+logType: Apache.AccessCommon
+input: 127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 -
+result: |
+  {
+    "remote_host_ip_address": "127.0.0.1",
+    "request_user": "frank",
+    "request_time": "10/Oct/2000:13:55:36 -0700",
+    "request_method": "GET",
+    "request_uri": "/apache_pb.gif",
+    "request_protocol": "HTTP/1.0",
+    "response_status": 200,
+    "p_log_type": "Apache.AccessCommon",
+    "p_event_time": "2000-10-10T13:55:36-07:00",
+    "p_any_ip_addresses": ["127.0.0.1"],
+    "p_any_usernames": ["frank"]
+  }
