@@ -22,6 +22,7 @@ def dedup(event):
         if detail.get("type") == "acl_change":
             if param_lookup(detail.get("parameters", {}), "doc_title"):
                 doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+                break
     return doc_title
 
 def title(event):
