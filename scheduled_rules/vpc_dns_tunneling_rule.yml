@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: vpc_dns_tunneling_rule.py 
+RuleID: VPC.DNS.Tunneling
+Description: >
+  Detect dns tunneling traffic using a scheduled query
+DisplayName: VPC DNS Tunneling
+Enabled: true
+ScheduledQueries:
+  - VPC DNS Tunneling
+Severity: Medium
+Tests:
+  -
+    Name: Name 
+    ExpectedResult: true
+    Log:
+      {
+        "anything": "any value"
+      }
