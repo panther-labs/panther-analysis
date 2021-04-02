@@ -1,5 +1,4 @@
 from panther_base_helpers import deep_get
-from panther_base_helpers import gsuite_details_lookup as details_lookup
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 
@@ -18,10 +17,12 @@ def rule(event):
 
 
 def dedup(event):
-    details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
-    if param_lookup(details.get("parameters", {}), "doc_title"):
-        return param_lookup(details.get("parameters", {}), "doc_title")
-    return "<UNKNOWN_DOC_TITLE>"
+    doc_title = "<UNKNOWN_DOC_TITLE>"
+    for detail in event.get("events", [{}]):
+        if detail.get("type") == "acl_change":
+            if param_lookup(detail.get("parameters", {}), "doc_title"):
+                doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+    return doc_title
 
 def title(event):
     target_user_email = "<EMAIL_UNKNOWN>"
