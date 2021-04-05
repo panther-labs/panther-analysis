@@ -53,6 +53,17 @@ jobs:
       - run:
           name: Run unit tests
           command: pipenv run -- make test
+	schema_tests:
+	  docker:
+	    - image: 'circleci/golang'
+	  steps:
+	    - checkout
+		- run:
+		    name: Install panthelrog binary
+		    command: curl -sSO https://panther-community-us-east-1.s3.amazonaws.com/v1.17.0-RC/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog
+		- run:
+		    name: Run schema tests
+			command: ./pantherlog test ./schemas
 
 workflows:
   version: 2
@@ -60,3 +71,4 @@ workflows:
     jobs:
       - lint
       - unit_tests
+	  - schema_tests
