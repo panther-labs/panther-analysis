@@ -1,29 +1,34 @@
-AnalysisType: rule
-Filename: file_name.py 
-RuleID: File.Name
-DisplayName: A More Friendly Name
-Enabled: true
-ResourceTypes:
+AnalysisType: rule # "rule" or "scheduled rule": str
+Filename: file_name.py # str
+RuleID: File.Name # str, NAME_ID_VALIDATION_REGEX),Or("LogTypes", "ScheduledQueries"): [str]
+DisplayName: A More Friendly Name # str, NAME_ID_VALIDATION_REGEX
+OutputIds: # [str] (Optional)
+  - outputId
+  - anotherOutputId
+Enabled: true # bool
+LogTypes:
   - Log.Type 
-Tags:
+Tags: # [str] (Optional)
   - Tag
-Reports: 
+Reports: # {str: list} (Optional)
   Report Type:
     - Report Name
-Severity: Medium
-Description: >
+Severity: Medium # "Info", "Low", "Medium", "High", "Critical": str
+Description: > # str (Optional)
   An optional Description
-Runbook: >
+Runbook: > # str (Optional)
   An optional Runbook 
-Reference: An optional reference.link
-SummaryAttributes:
+Reference: An optional reference.link # str (Optional)
+DedupPeriodMinutes: 15 # int (Optional)
+Threshold: # # int (Optional)
+SummaryAttributes: # [str](Optional)
   - name
   - action 
-Tests:
+Tests: # Optional
   -
-    Name: Name 
-    ExpectedResult: false
-    Resource:
+    Name: Name # str
+    ExpectedResult: false # bool
+    Log: # object
       {
         "JSON": "string"
       }

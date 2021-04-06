@@ -10,12 +10,14 @@ def title(event): # User can set custom alert titles in string format
 
 def dedup(event): # by default if not defined the deduplication period string is based off the alert title 
     return 'DedupString'
+
 def alert_context(event): # additional information that the user may find useful that is passed in with the alert as a dictionary
     return dict(event)
 
 ## Override Functions
 def severity(event): # change the severity of the events based which can be used if a special condition is met  (str = "INFO", "LOW", "MEDIUM', "HIGH", "CRITICAL")
     return 'INFO'
+
 def description(event): # customize the description to the specific event (str)
     return 'Some Alert Description'
 
