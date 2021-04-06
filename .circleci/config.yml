@@ -1,7 +1,7 @@
 version: 2.1
 
 commands:
-  run_schema_tests:
+  download_pantherlog_tool:
     parameters:
       version:
         type: string
@@ -9,10 +9,7 @@ commands:
     steps:
         - run:
             name: Download pantherlog tool
-            command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog"
-        - run:
-            name: Run schema tests
-            command: ./pantherlog -v && ./pantherlog test ./schemas
+            command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64" && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog
 
 jobs:
   lint:
@@ -72,8 +69,11 @@ jobs:
         - image: 'circleci/python:3.7'
       steps:
         - checkout
-        - run_schema_tests:
+        - download_pantherlog_tool:
             version: v1.17.0-RC
+        - run:
+            name: Run schema tests
+            command: ./pantherlog -v && ./pantherlog test ./schemas
 
 workflows:
   version: 2
