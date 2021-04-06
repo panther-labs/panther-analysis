@@ -1,0 +1,34 @@
+AnalysisType: rule # "rule" or "scheduled rule": str
+Filename: file_name.py # str
+RuleID: File.Name # str
+DisplayName: A More Friendly Name # str
+OutputIds: # [str] (Optional)
+  - outputId
+  - anotherOutputId
+Enabled: true # bool
+LogTypes:
+  - Log.Type 
+Tags: # [str] (Optional)
+  - Tag
+Reports: # {str: list} (Optional)
+  Report Type:
+    - Report Name
+Severity: Medium # "Info", "Low", "Medium", "High", "Critical": str
+Description: > # str (Optional)
+  An optional Description
+Runbook: > # str (Optional)
+  An optional Runbook 
+Reference: An optional reference.link # str (Optional)
+DedupPeriodMinutes: 15 # int (Optional, defaults to 60)
+Threshold:  5 # int (Optional, defaults to 1)
+SummaryAttributes: # [str](Optional)
+  - name
+  - action 
+Tests: # (Optional)
+  -
+    Name: Name # str
+    ExpectedResult: false # bool
+    Log: # object
+      {
+        "JSON": "string"
+      }
