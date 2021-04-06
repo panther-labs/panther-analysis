@@ -1,3 +1,5 @@
+# NOTE: Both "Optional" and "Override" functions will override YAML settings in the rule for a particular alert.
+
 ## Required Functions
 def rule(event): # the logic for setting off an alert, return True = Alert, False = Do not Alert
     if event.get('Something'):
