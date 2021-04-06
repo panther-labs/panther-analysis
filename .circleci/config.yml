@@ -9,7 +9,7 @@ commands:
     steps:
         - run:
             name: Download pantherlog tool
-		    command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog"
+            command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog"
         - run:
             name: Run schema tests
             command: ./pantherlog -v && ./pantherlog test ./schemas
