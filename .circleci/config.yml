@@ -5,10 +5,9 @@ commands:
     parameters:
       version:
         type: string
+        description: The version tag to download
     steps:
-        - run:
-            name: Download pantherlog binary
-            command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog"
+        - run: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64 && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog"
 
 jobs:
   lint:
