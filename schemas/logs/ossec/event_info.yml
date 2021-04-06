@@ -23,11 +23,11 @@ fields:
       - name: level
         required: true
         description: The level of the rule (0 to 16). Alerts and responses use this value.
-        type: int
+        type: bigint
       - name: sidid
         required: true
         description: The ID of the rule (100 to 99999).
-        type: int
+        type: bigint
       - name: CIS
         description: A list of Center for Internet Security (CIS) checks relevant to the rule.
         type: array
@@ -38,10 +38,10 @@ fields:
         type: string
       - name: firedtimes
         description: The number of times the rule fired.
-        type: int
+        type: bigint
       - name: frequency
         description: Specifies the number of times the rule must have matched before firing.
-        type: int
+        type: bigint
       - name: groups
         description: Groups are optional tags added to alerts.
         type: array
@@ -99,10 +99,10 @@ fields:
     fields:
       - name: accumulate
         description: True if OSSEC tracks events over multiple log messages based on decoded id.
-        type: int
+        type: bigint
       - name: fts
         description: The First Time Seen option inside of analysisd.
-        type: int
+        type: bigint
       - name: ftscomment
         description: Unused at this time.
         type: string
@@ -193,10 +193,10 @@ fields:
         type: string
       - name: perm_after
         description: The permissions of the file after modification.
-        type: int
+        type: bigint
       - name: perm_before
         description: The permissions of the file before modification.
-        type: int
+        type: bigint
       - name: sha1_after
         description: SHA1 hash of the file after modification.
         type: string
