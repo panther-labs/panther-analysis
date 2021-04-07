@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://docs.runpanther.io/quick-start">Panther Deployment</a> |
   <a href="https://docs.runpanther.io/writing-detections/panther-analysis-tool">CLI Documentation</a> |
-  <a href="https://slack.runpanther.io/">Community Slack Channel</a>
+  <a href="https://slack.runpanther.io/">Communitfey Slack Channel</a>
 </p>
 
 <p align="center">
