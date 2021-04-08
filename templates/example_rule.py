@@ -30,7 +30,7 @@ def runbook(event): # customize the runbook to the specific event (str)
     return 'If this happens, do this'
 
 def destinations(event): # Override all destinations and route to specific destination list[str]
-    if event.get('Something') in BAD_THINGS:
+    if event.get('Something') in ["BAD", "THINGS"]:
         return ['01234567-1edf-4edb-8f5b-0123456789a']
     # Suppress the alert
     else:
