@@ -1,30 +1,34 @@
-AnalysisType: rule
-Filename: example_rule.py 
-RuleID: A.Scheduled.Rule
-Description: >
-  An optional Description
-DedupPeriodMinutes: 60
-DisplayName: A More Friendly Name
-Enabled: true
-OutputIds:
-  - OutputId
+AnalysisType: rule # "rule" or "scheduled rule": str
+Filename: file_name.py # str
+RuleID: File.Name # str
+DisplayName: A More Friendly Name # str
+OutputIds: # [str] (Optional)
+  - outputId
   - anotherOutputId
-Reference: An optional reference.link 
-Runbook: >
-  An optional Runbook 
-ScheduledQueries:
-  - My Query Name
-Severity: Medium
-Tags:
+Enabled: true # bool
+LogTypes:
+  - Log.Type 
+Tags: # [str] (Optional)
   - Tag
-Suppressions:
-  - supression1
-  - supression2
-Tests:
+Reports: # {str: list} (Optional)
+  Report Type:
+    - Report Name
+Severity: Medium # "Info", "Low", "Medium", "High", "Critical": str
+Description: > # str (Optional)
+  An optional Description
+Runbook: > # str (Optional)
+  An optional Runbook 
+Reference: An optional reference.link # str (Optional)
+DedupPeriodMinutes: 15 # int (Optional, defaults to 60)
+Threshold:  5 # int (Optional, defaults to 1)
+SummaryAttributes: # [str](Optional)
+  - name
+  - action 
+Tests: # (Optional)
   -
-    Name: Name 
-    ExpectedResult: false
-    Resource:
+    Name: Name # str
+    ExpectedResult: false # bool
+    Log: # object
       {
         "JSON": "string"
       }
