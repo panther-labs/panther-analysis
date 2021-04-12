@@ -72,6 +72,7 @@ fields:
   description: The timestamp when the event was generated.
   type: timestamp
   timeFormat: rfc3339
+  isEventTime: true
 - name: UserID
   required: true
   description: The security descriptor of the user whose context is used to publish the event.
@@ -304,7 +305,12 @@ fields:
   type: string
 - name: cryptographic_parameters.provider_name
   type: string
-- name: subject.read_operation
+- name: user.account_domain
+  type: string
+- name: user.account_name
+  type: string
+  indicators: [ username ]
+- name: user.security_id
   type: string
 - name: authentication_package
   type: string
@@ -316,6 +322,7 @@ fields:
   type: string
 - name: network_information.network_address
   type: string
+  indicators: [ ip ]
 - name: network_information.port
   type: string
 - name: subject.logon_guid
@@ -323,6 +330,10 @@ fields:
 - name: target_server.additional_information
   type: string
 - name: target_server.target_server_name
+  type: string
+- name: logon_type
+  type: bigint
+- name: subject.read_operation
   type: string
 - name: impersonation_level
   type: string
@@ -338,6 +349,7 @@ fields:
   type: string
 - name: new_logon.account_name
   type: string
+  indicators: [ username ]
 - name: new_logon.linked_logon_id
   type: string
 - name: new_logon.logon_guid
@@ -366,22 +378,14 @@ fields:
   type: string
 - name: network_information.workstation_name
   type: string
-- name: privileges
-  type: array
-  element:
-    type: string
-- name: logon_type
-  type: bigint
-- name: user.account_domain
-  type: string
-- name: user.account_name
-  type: string
-- name: user.security_id
-  type: string
 - name: process_information.process_name
   type: string
 - name: process_information.process_id
   type: string
+- name: privileges
+  type: array
+  element:
+    type: string
 - name: subject.account_domain
   type: string
 - name: subject.account_name
