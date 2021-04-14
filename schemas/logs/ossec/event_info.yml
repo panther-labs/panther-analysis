@@ -1,4 +1,7 @@
 schema: OSSEC.EventInfo
+parser:
+  native:
+    name: OSSEC.EventInfo
 description: OSSEC EventInfo alert parser. Currently only JSON output is supported.
 referenceURL: https://www.ossec.net/docs/docs/formats/alerts.html
 version: 0
@@ -15,10 +18,6 @@ fields:
       - name: comment
         required: true
         description: The rule description.
-        type: string
-      - name: group
-        required: true
-        description: Groups are optional tags added to alerts.
         type: string
       - name: level
         required: true
@@ -42,6 +41,9 @@ fields:
       - name: frequency
         description: Specifies the number of times the rule must have matched before firing.
         type: bigint
+      - name: group
+        description: Groups are optional tags added to alerts.
+        type: string
       - name: groups
         description: Groups are optional tags added to alerts.
         type: array

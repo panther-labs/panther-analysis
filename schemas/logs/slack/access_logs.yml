@@ -1,4 +1,7 @@
 schema: Slack.AccessLogs
+parser:
+  native:
+    name: Slack.AccessLogs
 description: "Access logs for users on a Slack workspace. Note: Due to Slack's rate limits, Panther pulls only the events where the user or the access location or the access device is new. Panther will not update the `date_last`, `count` fields of an event."
 referenceURL: https://api.slack.com/methods/team.accessLogs
 version: 0
