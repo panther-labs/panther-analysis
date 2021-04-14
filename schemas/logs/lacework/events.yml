@@ -1,4 +1,7 @@
 schema: Lacework.Events
+parser:
+  native:
+    name: Lacework.Events
 description: Lacework.Events represents the content of an exported Lacework Alert S3 Object.
 referenceURL: https://www.lacework.com/platform-overview/
 version: 0
@@ -65,13 +68,13 @@ fields:
                         type: string
                       - name: HAS_EXTERNAL_CONNS
                         description: HasExternalConns field
-                        type: int
+                        type: bigint
                       - name: IS_CLIENT
                         description: IsClient field
-                        type: int
+                        type: bigint
                       - name: IS_SERVER
                         description: IsServer field
-                        type: int
+                        type: bigint
                       - name: EARLIEST_KNOWN_TIME
                         description: EarliestKnownTime field
                         type: timestamp
@@ -102,7 +105,7 @@ fields:
                         type: string
                       - name: IS_EXTERNAL
                         description: IsExternal field
-                        type: int
+                        type: bigint
                 - name: Container
                   description: Any container based info involved in an alert.
                   type: array
@@ -117,13 +120,13 @@ fields:
                         type: string
                       - name: HAS_EXTERNAL_CONNS
                         description: HasExternalConns field
-                        type: int
+                        type: bigint
                       - name: IS_CLIENT
                         description: IsClient field
-                        type: int
+                        type: bigint
                       - name: IS_SERVER
                         description: IsServer field
-                        type: int
+                        type: bigint
                       - name: FIRST_SEEN_TIME
                         description: FirstSeenTime field
                         type: timestamp
@@ -204,7 +207,7 @@ fields:
                         type: string
                       - name: PROCESS_ID
                         description: ProcessID field
-                        type: int
+                        type: bigint
                       - name: PROCESS_START_TIME
                         description: ProcessStartTime field
                         type: timestamp
@@ -226,7 +229,7 @@ fields:
                         type: string
                       - name: MACHINE_COUNT
                         description: MachineCount field
-                        type: int
+                        type: bigint
                       - name: EXE_PATH_LIST
                         description: EXEPathList field
                         type: array
@@ -238,7 +241,7 @@ fields:
                         timeFormat: rfc3339
                       - name: IS_KNOWN_BAD
                         description: ISKnownBad field
-                        type: int
+                        type: bigint
                 - name: FileExePath
                   description: Any executable filepath information.
                   type: array
@@ -321,7 +324,7 @@ fields:
                         type: string
                       - name: MFA
                         description: MFA field
-                        type: int
+                        type: bigint
                       - name: API_LIST
                         description: APIList field
                         type: array
@@ -423,7 +426,7 @@ fields:
   - name: SEVERITY
     required: true
     description: The severity level of the alert
-    type: int
+    type: bigint
   - name: START_TIME
     required: true
     description: The event start time.
@@ -449,7 +452,7 @@ fields:
   - name: EVENT_ID
     required: true
     description: The eventID reference
-    type: int
+    type: bigint
   - name: ACCOUNT
     required: true
     description: The Lacework tenent that created the event
