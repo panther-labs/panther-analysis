@@ -47,16 +47,149 @@ fields:
   required: true
   description: The name of the user that is logged in when the event is created.
   type: string
-- name: detailed_authentication_information.authentication_package
+- name: previous_time
   type: string
-- name: detailed_authentication_information.key_length
+- name: process_information.name
+  type: string
+- name: new_token_information.account_domain
+  type: string
+- name: new_token_information.account_name
+  type: string
+- name: new_token_information.logon_id
+  type: string
+- name: new_token_information.security_id
+  type: string
+- name: target_process.target_process_id
+  type: string
+- name: target_process.target_process_name
+  type: string
+- name: general_settings.advanced_options
+  type: string
+- name: general_settings.configuration_access_policy
+  type: string
+- name: general_settings.kernel_debugging
+  type: string
+- name: general_settings.load_options
+  type: string
+- name: general_settings.system_event_logging
+  type: string
+- name: general_settings.vsm_launch_type
+  type: string
+- name: hypervisor_settings.hypervisor_debugging
+  type: string
+- name: hypervisor_settings.hypervisor_launch_type
+  type: string
+- name: hypervisor_settings.hypervisor_load_options
+  type: string
+- name: signature_settings.disable_integrity_checks
+  type: string
+- name: signature_settings.flight_signing
+  type: string
+- name: signature_settings.test_signing
+  type: string
+- name: creator_subject.account_domain
+  type: string
+- name: creator_subject.account_name
+  type: string
+- name: creator_subject.logon_id
+  type: string
+- name: creator_subject.security_id
+  type: string
+- name: process_information.creator_process_id
+  type: string
+- name: process_information.creator_process_name
+  type: string
+- name: process_information.mandatory_label
+  type: string
+- name: process_information.new_process_id
+  type: string
+- name: process_information.new_process_name
+  type: string
+- name: process_information.process_command_line
+  type: string
+- name: process_information.token_elevation_type
+  type: string
+- name: target_subject.account_domain
+  type: string
+- name: target_subject.account_name
+  type: string
+- name: target_subject.logon_id
+  type: string
+- name: target_subject.security_id
+  type: string
+- name: number_of_elements
+  type: string
+- name: key_file_operation_information.file_path
+  type: string
+- name: key_file_operation_information.operation
+  type: string
+- name: key_file_operation_information.return_code
+  type: string
+- name: cryptographic_operation.operation
+  type: string
+- name: cryptographic_operation.return_code
+  type: string
+- name: additional_information.operation
+  type: string
+- name: additional_information.return_code
+  type: string
+- name: process_information.process_creation_time
+  type: timestamp
+  timeFormat: rfc3339
+- name: cryptographic_parameters.algorithm_name
+  type: string
+- name: cryptographic_parameters.key_name
+  type: string
+- name: cryptographic_parameters.key_type
+  type: string
+- name: cryptographic_parameters.provider_name
+  type: string
+- name: subject.read_operation
+  type: string
+- name: authentication_package
+  type: string
+- name: account_whose_credentials_were_used.account_domain
+  type: string
+- name: account_whose_credentials_were_used.account_name
+  type: string
+- name: account_whose_credentials_were_used.logon_guid
+  type: string
+- name: network_information.network_address
+  type: string
+  indicators: [ ip ]
+- name: network_information.port
+  type: string
+- name: subject.logon_guid
+  type: string
+- name: target_server.additional_information
+  type: string
+- name: target_server.target_server_name
+  type: string
+- name: user.account_domain
+  type: string
+- name: user.account_name
+  type: string
+  indicators: [ username ]
+- name: user.security_id
+  type: string
+- name: account_for_which_logon_failed.account_domain
+  type: string
+- name: account_for_which_logon_failed.account_name
+  type: string
+- name: account_for_which_logon_failed.security_id
+  type: string
+- name: failure_information.failure_reason
+  type: string
+- name: failure_information.status
+  type: string
+- name: failure_information.sub_status
+  type: string
+- name: process_information.caller_process_id
+  type: string
+- name: process_information.caller_process_name
+  type: string
+- name: logon_type
   type: bigint
-- name: detailed_authentication_information.logon_process
-  type: string
-- name: detailed_authentication_information.package_name_(ntlm_only)
-  type: string
-- name: detailed_authentication_information.transited_services
-  type: string
 - name: impersonation_level
   type: string
 - name: logon_information.elevated_token
@@ -67,16 +200,11 @@ fields:
   type: string
 - name: logon_information.virtual_account
   type: string
-- name: network_information.source_network_address
-  type: string
-- name: network_information.source_port
-  type: string
-- name: network_information.workstation_name
-  type: string
 - name: new_logon.account_domain
   type: string
 - name: new_logon.account_name
   type: string
+  indicators: [ username ]
 - name: new_logon.linked_logon_id
   type: string
 - name: new_logon.logon_guid
@@ -89,9 +217,31 @@ fields:
   type: string
 - name: new_logon.security_id
   type: string
-- name: process_information.process_id
+- name: detailed_authentication_information.authentication_package
+  type: string
+- name: detailed_authentication_information.key_length
+  type: bigint
+- name: detailed_authentication_information.logon_process
+  type: string
+- name: detailed_authentication_information.package_name_(ntlm_only)
+  type: string
+- name: detailed_authentication_information.transited_services
+  type: string
+- name: network_information.source_network_address
+  type: string
+- name: network_information.source_port
+  type: string
+- name: network_information.workstation_name
+  type: string
+- name: group.group_domain
+  type: string
+- name: group.group_name
+  type: string
+- name: group.security_id
   type: string
 - name: process_information.process_name
+  type: string
+- name: process_information.process_id
   type: string
 - name: subject.account_domain
   type: string
@@ -100,4 +250,6 @@ fields:
 - name: subject.logon_id
   type: string
 - name: subject.security_id
-  type: string 
+  type: string
+- name: privileges
+  type: string
