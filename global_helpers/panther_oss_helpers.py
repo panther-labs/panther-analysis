@@ -1,13 +1,75 @@
 """Utility functions provided to policies and rules during execution."""
+import re
 import os
 import time
-from typing import Any, Dict, Sequence, Set, Union
+from datetime import datetime
+from typing import Any, Dict, Sequence, Set, Union, Optional
 
 import boto3
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
 FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
+
+# Auto Time Resolution Parameters
+EPOCH_REGEX = r"[^0-9\-]+([-]?[0-9]{,12})"
+TIME_FORMATS = {
+    "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
+    "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
+    "%Y-%m-%dT%H:%M:%S*%f%z",
+    "%Y %b %d %H:%M:%S.%f %Z",
+    "%b %d %H:%M:%S %z %Y",
+    "%d/%b/%Y:%H:%M:%S %z",
+    "%b %d, %Y %I:%M:%S %p",
+    "%b %d %Y %H:%M:%S",
+    "%b %d %H:%M:%S %Y",
+    "%b %d %H:%M:%S %z",
+    "%b %d %H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f%z",
+    "%Y-%m-%d %H:%M:%S %z",
+    "%Y-%m-%d %H:%M:%S%z",
+    "%Y-%m-%d %H:%M:%S,%f",
+    "%Y/%m/%d*%H:%M:%S",
+    "%Y %b %d %H:%M:%S.%f*%Z",
+    "%Y %b %d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S,%f%z",
+    "%Y-%m-%d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S.%f%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d*%H:%M:%S:%f",
+    "%Y-%m-%d*%H:%M:%S",
+    "%y-%m-%d %H:%M:%S,%f %z",
+    "%y-%m-%d %H:%M:%S,%f",
+    "%y-%m-%d %H:%M:%S",
+    "%y/%m/%d %H:%M:%S",
+    "%y%m%d %H:%M:%S",
+    "%Y%m%d %H:%M:%S.%f",
+    "%m/%d/%y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S*%f",
+    "%m/%d/%y %H:%M:%S %z",
+    "%m/%d/%Y %H:%M:%S %z",
+    "%H:%M:%S",
+    "%H:%M:%S.%f",
+    "%H:%M:%S,%f",
+    "%d/%b %H:%M:%S,%f",
+    "%d/%b/%Y:%H:%M:%S",
+    "%d/%b/%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S.%f",
+    "%d %b %Y %H:%M:%S",
+    "%d %b %Y %H:%M:%S*%f",
+    "%m%d_%H:%M:%S",
+    "%m%d_%H:%M:%S.%f",
+    "%m/%d/%Y %I:%M:%S %p:%f",
+    "%m/%d/%Y %I:%M:%S %p",
+}
+
 
 
 class BadLookup(Exception):
@@ -16,6 +78,28 @@ class BadLookup(Exception):
 
 class PantherBadInput(Exception):
     """Error returned when a Panther helper function is provided bad input."""
+
+
+def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
+    """Auto Time Resolution"""
+    if not timestamp:
+        return None
+    # Attempt to resolve timestamp format
+    for each_format in TIME_FORMATS:
+        try:
+            return datetime.strptime(timestamp.replace("\'", ""), each_format).replace(tzinfo=None)
+        except Exception:  # pylint: disable=broad-except
+            continue
+
+    # Attempt to resolve epoch format
+    # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps, we only want the first 12 digits.
+    match = re.match(EPOCH_REGEX, timestamp)
+    if match.group(1) != "":
+        try:
+            return datetime.utcfromtimestamp(int(match))
+        except Exception:  # pylint: disable=broad-except
+            return None
+    return None
 
 
 def get_s3_arn_by_name(name: str) -> str:
