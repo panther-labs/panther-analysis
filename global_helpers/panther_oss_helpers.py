@@ -88,7 +88,7 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     for each_format in TIME_FORMATS:
         try:
             return datetime.strptime(timestamp.replace("\'", ""), each_format).replace(tzinfo=None)
-        except Exception:  # pylint: disable=broad-except
+        except (ValueError, TypeError):
             continue
 
     # Attempt to resolve epoch format
@@ -97,7 +97,7 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     if match.group(1) != "":
         try:
             return datetime.utcfromtimestamp(int(match))
-        except Exception:  # pylint: disable=broad-except
+        except (ValueError, TypeError):
             return None
     return None
 
