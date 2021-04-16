@@ -87,12 +87,13 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     # Attempt to resolve timestamp format
     for each_format in TIME_FORMATS:
         try:
-            return datetime.strptime(timestamp.replace("\'", ""), each_format).replace(tzinfo=None)
+            return datetime.strptime(timestamp.replace("\'", ""), each_format)
         except (ValueError, TypeError):
             continue
 
     # Attempt to resolve epoch format
-    # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps, we only want the first 12 digits.
+    # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
+    # and we only want the first 12 digits.
     match = re.match(EPOCH_REGEX, timestamp)
     if match.group(1) != "":
         try:

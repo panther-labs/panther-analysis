@@ -15,7 +15,9 @@ def policy(resource):
         return False
 
     # Check if the last log sent is within the allowable timeframe
-    last_log_time = resolve_timestamp_string(deep_get(resource, "Status", "LatestCloudWatchLogsDeliveryTime"))
+    last_log_time = resolve_timestamp_string(
+        deep_get(resource, "Status", "LatestCloudWatchLogsDeliveryTime")
+    )
 
     if not last_log_time:
         return True

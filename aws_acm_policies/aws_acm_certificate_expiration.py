@@ -10,11 +10,11 @@ def policy(resource):
     if not resource.get("NotAfter"):
         return False
 
-    ts = resolve_timestamp_string(resource.get("NotAfter"))
+    timestamp = resolve_timestamp_string(resource.get("NotAfter"))
 
-    if not ts:
+    if not timestamp:
         return True
 
-    time_to_expiration = ts - datetime.datetime.now()
+    time_to_expiration = timestamp - datetime.datetime.now()
 
     return time_to_expiration >= EXPIRATION_BUFFER
