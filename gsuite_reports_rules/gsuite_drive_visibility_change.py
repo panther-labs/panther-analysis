@@ -25,6 +25,7 @@ def dedup(event):
                 break
     return doc_title
 
+
 def title(event):
     target_user_email = "<EMAIL_UNKNOWN>"
     doc_title = "<UNKNOWN_DOC_TITLE>"
