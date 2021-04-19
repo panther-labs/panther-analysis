@@ -13,7 +13,7 @@ FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 
 # Auto Time Resolution Parameters
 EPOCH_REGEX = r"[^0-9\-]+([-]?[0-9]{,12})"
-TIME_FORMATS = {
+TIME_FORMATS = [
     "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
     "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
     "%Y-%m-%dT%H:%M:%S*%f%z",
@@ -68,7 +68,7 @@ TIME_FORMATS = {
     "%m%d_%H:%M:%S.%f",
     "%m/%d/%Y %I:%M:%S %p:%f",
     "%m/%d/%Y %I:%M:%S %p",
-}
+]
 
 
 
