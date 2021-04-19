@@ -71,7 +71,6 @@ TIME_FORMATS = [
 ]
 
 
-
 class BadLookup(Exception):
     """Error returned when a resource lookup fails."""
 
