@@ -83,7 +83,9 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     """Auto Time Resolution"""
     if not timestamp:
         return None
-    ts_format = timestamp.replace("\'", "")  # Removes weird single-quotes used in some timestamp formats
+
+    # Removes weird single-quotes used in some timestamp formats
+    ts_format = timestamp.replace("\'", "")
     # Attempt to resolve timestamp format
     for each_format in TIME_FORMATS:
         try:
