@@ -12,7 +12,7 @@ FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
 FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 
 # Auto Time Resolution Parameters
-EPOCH_REGEX = r"[^0-9\-]+([-]?[0-9]{,12})"
+EPOCH_REGEX = r"([0-9]{9,12}(\.\d+)?)"
 TIME_FORMATS = [
     "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
     "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
@@ -84,10 +84,11 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     """Auto Time Resolution"""
     if not timestamp:
         return None
+    ts_format = timestamp.replace("\'", "")  # Removes weird single-quotes used in some timestamp formats
     # Attempt to resolve timestamp format
     for each_format in TIME_FORMATS:
         try:
-            return datetime.strptime(timestamp.replace("\'", ""), each_format)
+            return datetime.strptime(ts_format, each_format)
         except (ValueError, TypeError):
             continue
 
@@ -95,9 +96,9 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
     # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
     # and we only want the first 12 digits.
     match = re.match(EPOCH_REGEX, timestamp)
-    if match.group(1) != "":
+    if match.group(0) != "":
         try:
-            return datetime.utcfromtimestamp(int(match))
+            return datetime.utcfromtimestamp(float(match.group(0)))
         except (ValueError, TypeError):
             return None
     return None
