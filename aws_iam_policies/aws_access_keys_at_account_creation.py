@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from panther_base_helpers import deep_get
 from panther_oss_helpers import resolve_timestamp_string
