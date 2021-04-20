@@ -12,9 +12,9 @@ def policy(resource):
         if lifecycle_rule.get("Status") != "Enabled":
             continue
 
-        rule_retention_period_days = deep_get(lifecycle_rule, "Expiration", "Days", default=0)
+        rule_retention_period_days = deep_get(lifecycle_rule, "Expiration", "Days")
 
-        if rule_retention_period_days is None:
+        if not rule_retention_period_days:
             continue
 
         if MIN_RETENTION_PERIOD <= rule_retention_period_days <= MAX_RETENTION_PERIOD:

@@ -20,7 +20,7 @@ def policy(resource):
         return True
 
     create = resource.get("TimeCreated", "")
-    key_rot_date = datetime.strptime(key_rot, AWS_TIME_FORMAT)
+    key_rot_date = resolve_timestamp_string(key_rot)
     create_date = resolve_timestamp_string(create)
 
     if not key_rot_date or not create_date:
