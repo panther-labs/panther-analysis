@@ -9,7 +9,7 @@ def policy(resource):
         return False
 
     for lifecycle_rule in resource.get("LifecycleRules", []):
-        if lifecycle_rule.get("Expiration") is None or lifecycle_rule.get("Status") != "Enabled":
+        if lifecycle_rule.get("Status") != "Enabled":
             continue
 
         rule_retention_period_days = deep_get(lifecycle_rule, "Expiration", "Days", default=0)
