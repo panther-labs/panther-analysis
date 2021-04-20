@@ -1,0 +1,19 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_brute_force.py 
+RuleID: Snowflake.BruteForce
+Description: >
+  Detect brute force attacks by monitoring for failed logins
+DisplayName: Snowflake Brute Force Attacks
+Enabled: false
+ScheduledQueries:
+  - Snowflake.BruteForceByIp
+  - Snowflake.BruteForceByUsername
+Severity: Medium
+Tests:
+  -
+    Name: Name 
+    ExpectedResult: true
+    Log:
+      {
+        "anything": "any value"
+      }

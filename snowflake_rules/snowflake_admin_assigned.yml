@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_admin_assigned.py 
+RuleID: Snowflake.AdminAssigned
+Description: >
+  Detect brute force attacks by monitoring for failed logins
+DisplayName: Snowflake Account Admin Granted
+Enabled: false
+ScheduledQueries:
+  - Snowflake.AccountAdminGranted
+Severity: Medium
+Tests:
+  -
+    Name: Name 
+    ExpectedResult: true
+    Log:
+      {
+        "anything": "any value"
+      }

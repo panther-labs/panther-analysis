@@ -1,0 +1,25 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_login_without_mfa.py 
+RuleID: Snowflake.LoginWithoutMFA
+Description: >
+  Detect brute force attacks by monitoring for failed logins
+DisplayName: Snowflake Account Admin Granted
+Enabled: false
+ScheduledQueries:
+  - Snowflake.MFALogin
+Severity: Medium
+Tests:
+  -
+    Name: ReturnTrue 
+    ExpectedResult: true
+    Log:
+      {
+        "anything": "any value"
+      }
+  - 
+    Name: True Exception
+    ExpectedResult: false
+    Log: 
+      {
+        "user_name": "PANTHER_READONLY"
+      }

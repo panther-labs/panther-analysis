@@ -1,0 +1,24 @@
+AnalysisType: scheduled_query
+QueryName: Snowflake.MFALogin
+Enabled: false
+Description: >
+  Monitor logins that are not using MFA
+SnowflakeQuery: >
+  --return instances where a user logs in without MFA
+  --this was adapted from a Security Feature Checklist query
+  SELECT 
+    event_timestamp,
+    user_name,
+    client_ip,
+    reported_client_type,
+    reported_client_version,
+    first_authentication_factor,
+    second_authentication_factor
+  FROM snowflake.account_usage.login_history
+    WHERE 
+      first_authentication_factor = 'PASSWORD' 
+      AND second_authentication_factor IS null
+  ORDER BY event_timestamp desc
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 1
