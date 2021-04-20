@@ -12,7 +12,8 @@ SnowflakeQuery: >
     query_text
   FROM snowflake.account_usage.query_history
     WHERE 
-      execution_status = 'SUCCESS' 
+      DATEDIFF(HOUR,  start_time, CURRENT_TIMESTAMP) < 1
+      AND execution_status = 'SUCCESS' 
       AND query_type = 'GRANT' 
       AND query_text ILIKE '%grant%accountadmin%to%'
   ORDER BY end_time desc

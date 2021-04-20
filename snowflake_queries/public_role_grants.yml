@@ -13,7 +13,8 @@ SnowflakeQuery: >
     end_time
   FROM snowflake.account_usage.query_history
     WHERE 
-      execution_status = 'SUCCESS' 
+      DATEDIFF(HOUR,  start_time, CURRENT_TIMESTAMP) < 1
+      AND execution_status = 'SUCCESS' 
       AND query_type = 'GRANT' 
       AND query_text ILIKE '%to%public%'
   ORDER BY end_time desc
