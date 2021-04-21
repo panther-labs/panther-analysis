@@ -1,6 +1,6 @@
 import datetime
-from panther_oss_helpers import resolve_timestamp_string
 
+from panther_oss_helpers import resolve_timestamp_string
 
 AWS_TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 EXPIRATION_BUFFER = datetime.timedelta(days=60)

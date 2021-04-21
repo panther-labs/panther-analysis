@@ -1,4 +1,5 @@
 import datetime
+
 from panther_oss_helpers import resolve_timestamp_string
 
 TIMEOUT_DAYS = datetime.timedelta(days=90)
@@ -21,11 +22,13 @@ def policy(resource):
         return True
 
     if report.get("PasswordEnabled"):
-        if report.get("PasswordLastUsed") != DEFAULT_TIME \
-                and aged_out(report.get("PasswordLastUsed")):
+        if report.get("PasswordLastUsed") != DEFAULT_TIME and aged_out(
+            report.get("PasswordLastUsed")
+        ):
             return False
-        if report.get("PasswordLastUsed") == DEFAULT_TIME\
-                and aged_out(report.get("PasswordLastChanged")):
+        if report.get("PasswordLastUsed") == DEFAULT_TIME and aged_out(
+            report.get("PasswordLastChanged")
+        ):
             return False
 
     return True

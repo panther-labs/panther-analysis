@@ -1,37 +1,61 @@
-# NOTE: Both "Optional" and "Override" functions will override YAML settings in the rule for a particular alert.
+# NOTE: Both "Optional" and "Override" functions will override YAML settings in the rule for a
+# particular alert.
 
-## Required Functions
-def rule(event): # the logic for setting off an alert, return True = Alert, False = Do not Alert
-    if event.get('Something'):
+## Required Function
+# The logic for sending an alert, return True = Alert, False = Do not Alert
+def rule(event):
+    if event.get("Something"):
         return True
     return False
 
+
 ## Optional Functions
-def title(event): # User can set custom alert titles in string format
-    return 'This is my title'
+# Set custom alert titles, must return a string
+# If not defined, defaults to the rule display name or ID
+def title(event):
+    return "This is my title " + event.get("Something")
 
-def dedup(event): # by default if not defined the deduplication period string is based off the alert title 
-    return 'DedupString'
 
-def alert_context(event): # additional information that the user may find useful that is passed in with the alert as a dictionary
+# Set custom deduplication strings, must return a string
+# If not defined, defaults to the alert title
+def dedup(event):
+    return "DedupString:" + event.get("Something")
+
+
+# Additional information append to an alert, must return a dictionary
+def alert_context(event):
     return dict(event)
 
+
 ## Override Functions
-def severity(event): # change the severity of the events based which can be used if a special condition is met  (str = "INFO", "LOW", "MEDIUM', "HIGH", "CRITICAL")
-    return 'INFO'
+# Override the severity of an alert based on the contents of the events,
+# must return one of the following strings "INFO", "LOW", "MEDIUM', "HIGH", "CRITICAL"
+def severity(event):
+    if event.get("Something"):
+        return "INFO"
+    return "HIGH"
 
-def description(event): # customize the description to the specific event (str)
-    return 'Some Alert Description'
 
-def reference(event): # customize the reference to the specific event (str)
-    return 'https://some.com/reference/url'
+# Override the description of the alert, must return a string
+def description(event):
+    return "Some Alert Description " + event.get("Something")
 
-def runbook(event): # customize the runbook to the specific event (str)
-    return 'If this happens, do this'
 
-def destinations(event): # Override all destinations and route to specific destination list[str]
-    if event.get('Something') in BAD_THINGS:
-        return ['01234567-1edf-4edb-8f5b-0123456789a']
+# Override the reference in the alert, must return a string
+def reference(event):
+    return "https://some.com/reference/" + event.get("Something")
+
+
+# Override the runbook in the alert, must return a string
+def runbook(event):
+    return "If this happens, do " + event.get("Something")
+
+
+# Override the destination(s) the alert is sent to, must return a list of strings corresponding to
+# panther destinations
+BAD_THINGS = []
+def destinations(event):
+    if event.get("Something") in BAD_THINGS:
+        return ["01234567-1edf-4edb-8f5b-0123456789a"]
     # Suppress the alert
-    else:
-        return []
+    return []
