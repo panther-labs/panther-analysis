@@ -1,87 +1,72 @@
-name: eventinfo.basic
-logType: OSSEC.EventInfo
-input: |
-  {
-    "rule":
-    {
-      "level":5,
-      "comment":"Syslogd restarted.",
-      "sidid":1005,
-      "group":"syslog,errors,"
-    },
-    "id":"1510376401.0",
-    "TimeStamp":1510376401000,
-    "location":"/var/log/messages",
-    "full_log":"Nov 11 00:00:01 ix syslogd[72090]: restart",
-    "hostname":"ix",
-    "program_name":"syslogd"
-  }
-result: |
-  {
-    "rule":
-    {
-      "level":5,
-      "comment":"Syslogd restarted.",
-      "sidid":1005,
-      "group":"syslog,errors,"
-    },
-    "id":"1510376401.0",
-    "TimeStamp":1510376401000,
-    "location":"/var/log/messages",
-    "full_log":"Nov 11 00:00:01 ix syslogd[72090]: restart",
-    "hostname":"ix",
-    "program_name":"syslogd",
-    "p_log_type": "OSSEC.EventInfo",
-    "p_event_time": "2017-11-11T05:00:01Z"
-  }
 ---
-name: eventinfo.withfilecontext
+# Copyright (C) 2020 Panther Labs Inc
+#
+# Panther Enterprise is licensed under the terms of a commercial license available from
+# Panther Labs Inc ("Panther Commercial License") by contacting contact@runpanther.com.
+# All use, distribution, and/or modification of this software, whether commercial or non-commercial,
+# falls under the Panther Commercial License to the extent it is permitted.
+name: OSSEC.EventInfo.3.6.0
 logType: OSSEC.EventInfo
 input: |
   {
-    "rule":{
-      "level":7,
-      "comment":"Integrity checksum changed.",
-      "sidid":550,
-      "group":"ossec,syscheck,"
+    "rule": {
+      "level": 3,
+      "comment": "Successful sudo to ROOT executed",
+      "sidid": 5402,
+      "firedtimes": 33,
+      "groups": [
+          "syslog",
+          "sudo"
+      ]
     },
-    "id":"1540845340.16991",
-    "TimeStamp":1540845340000,
-    "decoder":"syscheck_integrity_changed",
-    "location":"syscheck",
-    "full_log":"Integrity checksum changed for:'/usr/bin/ssm-cli'\nOld md5sum was:'22271cce0732d887e3980e5a6868e459'\nNew md5sum is :'220a8f105af5e711f99e52583209a871'\nOld sha1sum was:'4df65340f366c18f85be228c26817e20391f32c4'\nNew sha1sum is :'c7414fd048c81361720e2d9c8d2f82faf33748b6'\n",
-    "SyscheckFile":{
-      "path":"/usr/bin/ssm-cli",
-      "md5_before":"22271cce0732d887e3980e5a6868e459",
-      "md5_after":"220a8f105af5e711f99e52583209a871",
-      "sha1_before":"4df65340f366c18f85be228c26817e20391f32c4",
-      "sha1_after":"c7414fd048c81361720e2d9c8d2f82faf33748b6"
+    "id": "1616694073.100223",
+    "TimeStamp": 1616694073000,
+    "decoder": "sudo",
+    "srcuser": "root",
+    "dstuser": "ssm-user",
+    "location": "/var/log/secure",
+    "full_log": "Mar 25 17:41:11 ip-1-1-4-1 sudo: ssm-user : TTY=pts/2 ; PWD=/home/ssm-user ; USER=root ; COMMAND=/bin/tail /var/ossec/logs/alerts/alerts.json",
+    "hostname": "ip-1-1-4-1",
+    "program_name": "sudo",
+    "status": "/bin/tail /var/ossec/logs/alerts/alerts.json",
+    "url": "/home/ssm-user",
+    "decoder_desc": {
+      "fts": 2816,
+      "name": "sudo"
     },
-    "hostname":"ip-172-16-2-16"
+    "agent_name": "ip-1-1-4-1",
+    "timestamp": "2021 Mar 25 17:41:13",
+    "logfile": "/var/log/secure"
   }
 result: |
   {
-    "rule":{
-      "level":7,
-      "comment":"Integrity checksum changed.",
-      "sidid":550,
-      "group":"ossec,syscheck,"
+    "rule": {
+      "level": 3,
+      "comment": "Successful sudo to ROOT executed",
+      "sidid": 5402,
+      "firedtimes": 33,
+      "groups": [
+          "syslog",
+          "sudo"
+      ]
     },
-    "id":"1540845340.16991",
-    "TimeStamp":1540845340000,
-    "decoder":"syscheck_integrity_changed",
-    "location":"syscheck",
-    "full_log":"Integrity checksum changed for:'/usr/bin/ssm-cli'\nOld md5sum was:'22271cce0732d887e3980e5a6868e459'\nNew md5sum is :'220a8f105af5e711f99e52583209a871'\nOld sha1sum was:'4df65340f366c18f85be228c26817e20391f32c4'\nNew sha1sum is :'c7414fd048c81361720e2d9c8d2f82faf33748b6'\n",
-    "SyscheckFile":{
-      "path":"/usr/bin/ssm-cli",
-      "md5_before":"22271cce0732d887e3980e5a6868e459",
-      "md5_after":"220a8f105af5e711f99e52583209a871",
-      "sha1_before":"4df65340f366c18f85be228c26817e20391f32c4",
-      "sha1_after":"c7414fd048c81361720e2d9c8d2f82faf33748b6"
+    "id": "1616694073.100223",
+    "TimeStamp": "2021-03-25 17:41:13.000000000",
+    "decoder": "sudo",
+    "srcuser": "root",
+    "dstuser": "ssm-user",
+    "location": "/var/log/secure",
+    "full_log": "Mar 25 17:41:11 ip-1-1-4-1 sudo: ssm-user : TTY=pts/2 ; PWD=/home/ssm-user ; USER=root ; COMMAND=/bin/tail /var/ossec/logs/alerts/alerts.json",
+    "hostname": "ip-1-1-4-1",
+    "program_name": "sudo",
+    "status": "/bin/tail /var/ossec/logs/alerts/alerts.json",
+    "url": "/home/ssm-user",
+    "decoder_desc": {
+      "fts": 2816,
+      "name": "sudo"
     },
-    "hostname":"ip-172-16-2-16",
-    "p_log_type": "OSSEC.EventInfo",
-    "p_event_time": "2018-10-29T20:35:40Z",
-    "p_any_md5_hashes": ["220a8f105af5e711f99e52583209a871", "22271cce0732d887e3980e5a6868e459"],
-    "p_any_sha1_hashes": ["4df65340f366c18f85be228c26817e20391f32c4", "c7414fd048c81361720e2d9c8d2f82faf33748b6"]
+    "agent_name": "ip-1-1-4-1",
+    "logfile": "/var/log/secure",
+    "p_event_time": "2021-03-25T17:41:13Z",
+    "p_log_type": "OSSEC.EventInfo"
   }
