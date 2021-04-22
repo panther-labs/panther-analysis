@@ -1,4 +1,5 @@
 import datetime
+
 from panther_oss_helpers import resolve_timestamp_string
 
 TIMEOUT_DAYS = datetime.timedelta(days=90)

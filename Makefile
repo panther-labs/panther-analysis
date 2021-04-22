@@ -7,7 +7,7 @@ rev := $(shell git rev-parse HEAD)
 # Release tag for current commit
 release := $(shell git tag --points-at=$(rev) --sort=version:refname --list 'v*' | tail -n1)
 
-dirs := $(shell ls | egrep 'policies|rules|helpers|models' | xargs)
+dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
 
 ci:
 	pipenv run $(MAKE) lint test

@@ -1,9 +1,9 @@
 """Utility functions provided to policies and rules during execution."""
-import re
 import os
+import re
 import time
 from datetime import datetime
-from typing import Any, Dict, Sequence, Set, Union, Optional
+from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
 
@@ -85,7 +85,7 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
         return None
 
     # Removes weird single-quotes used in some timestamp formats
-    ts_format = timestamp.replace("\'", "")
+    ts_format = timestamp.replace("'", "")
     # Attempt to resolve timestamp format
     for each_format in TIME_FORMATS:
         try:
