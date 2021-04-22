@@ -10,6 +10,8 @@ Query: 'SELECT * FROM panther_logs.aws_cloudtrail LIMIT 10'
 SnowflakeQuery: 'SELECT * FROM panther_logs.public.aws_cloudtrail LIMIT 10'
 AthenaQuery: 'SELECT * FROM panther_logs.aws_cloudtrail LIMIT 10'
 Schedule:
+  # Note: CronExpression and RateMinutes are mutually exclusive, only
+  # configure one or the other
   CronExpression: '0 * * * *'
   RateMinutes: 1
   TimeoutMinutes: 1
