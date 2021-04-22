@@ -13,13 +13,13 @@ def rule(event):
 # Set custom alert titles, must return a string
 # If not defined, defaults to the rule display name or ID
 def title(event):
-    return "This is my title " + event.get("Something")
+    return f"This is my title {event.get('Something')}"
 
 
 # Set custom deduplication strings, must return a string
 # If not defined, defaults to the alert title
 def dedup(event):
-    return "DedupString:" + event.get("Something")
+    return f"DedupString: {event.get('Something')}"
 
 
 # Additional information append to an alert, must return a dictionary
@@ -38,17 +38,17 @@ def severity(event):
 
 # Override the description of the alert, must return a string
 def description(event):
-    return "Some Alert Description " + event.get("Something")
+    return f"Some Alert Description {event.get('Something')}"
 
 
 # Override the reference in the alert, must return a string
 def reference(event):
-    return "https://some.com/reference/" + event.get("Something")
+    return f"https://some.com/reference/{event.get('Something')}"
 
 
 # Override the runbook in the alert, must return a string
 def runbook(event):
-    return "If this happens, do " + event.get("Something")
+    return f"If this happens, do {event.get('Something')}"
 
 
 # Override the destination(s) the alert is sent to, must return a list of strings corresponding to
