@@ -1,15 +1,23 @@
+from panther_base_helpers import deep_get
+
 MAX_RETENTION_PERIOD = 365
 MIN_RETENTION_PERIOD = 90
 
 
 def policy(resource):
-    if resource["LifecycleRules"] is None:
+    if resource.get("LifecycleRules") is None:
         return False
 
-    for lifecycle_rule in resource["LifecycleRules"]:
-        if lifecycle_rule["Expiration"] is None or lifecycle_rule["Status"] != "Enabled":
+    for lifecycle_rule in resource.get("LifecycleRules", []):
+        if lifecycle_rule.get("Status") != "Enabled":
             continue
-        if MIN_RETENTION_PERIOD <= lifecycle_rule["Expiration"]["Days"] <= MAX_RETENTION_PERIOD:
+
+        rule_retention_period_days = deep_get(lifecycle_rule, "Expiration", "Days")
+
+        if not rule_retention_period_days:
+            continue
+
+        if MIN_RETENTION_PERIOD <= rule_retention_period_days <= MAX_RETENTION_PERIOD:
             return True
 
     return False

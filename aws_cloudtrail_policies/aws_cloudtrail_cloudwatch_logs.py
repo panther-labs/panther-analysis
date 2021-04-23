@@ -1,9 +1,9 @@
 import datetime
 
 from panther_base_helpers import deep_get
+from panther_oss_helpers import resolve_timestamp_string
 
 MAX_TIME_BETWEEN_LOGS = datetime.timedelta(hours=24)
-AWS_TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 
 def policy(resource):
@@ -15,7 +15,10 @@ def policy(resource):
         return False
 
     # Check if the last log sent is within the allowable timeframe
-    last_log_time = datetime.datetime.strptime(
-        deep_get(resource, "Status", "LatestCloudWatchLogsDeliveryTime"), AWS_TIMESTAMP_FORMAT
+    last_log_time = resolve_timestamp_string(
+        deep_get(resource, "Status", "LatestCloudWatchLogsDeliveryTime")
     )
+
+    if not last_log_time:
+        return True
     return (datetime.datetime.utcnow() - last_log_time) <= MAX_TIME_BETWEEN_LOGS
