@@ -1,2 +1,2 @@
-def rule(event):
+def rule(_):
     return True
