@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_user_created.py 
+RuleID: Snowflake.UserCreated
+Description: >
+  Detect new users created in snowflake
+DisplayName: Snowflake User Created
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.UserCreated
+Severity: Info
+Tests:
+  -
+    Name: Return True 
+    ExpectedResult: true
+    Log:
+      query_text: "create USER testuser password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺' default_role = 'READONLY' must_change_password = true;"
+      user_name: admin

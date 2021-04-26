@@ -1,0 +1,16 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_user_enabled.py 
+RuleID: Snowflake.UserEnabled
+Description: >
+  Detect users being re-enabled in your environment
+DisplayName: Snowflake User Enabled
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.UserEnabled
+Severity: Info
+Tests:
+  -
+    Name: Return True 
+    ExpectedResult: true
+    Log:
+      query_text: 'alter user TESTUSER set disabled=false;'
