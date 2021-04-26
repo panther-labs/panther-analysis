@@ -1,4 +1,4 @@
-def rule(event):  # pylint: disable=unused-argument
+def rule(_):
     return True
 
 
