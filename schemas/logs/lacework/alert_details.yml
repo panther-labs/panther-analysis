@@ -1,0 +1,116 @@
+schema: Lacework.AlertDetails
+description: Lacework.AlertDetails represents the content of an exported Lacework Alert Details
+referenceURL: https://www.lacework.com/platform-overview/
+version: 0
+fields:
+  - name: END_TIME
+    required: true
+    type: timestamp
+    timeFormat: "%a, %d %b %Y %H:%M:%S %z"
+    isEventTime: true
+  - name: ENTITY_MAP
+    required: true
+    type: object
+    fields:
+      - name: NewViolation
+        required: true
+        type: array
+        element:
+          type: object
+          fields:
+            - name: KEY
+              required: true
+              type: object
+              fields:
+                - name: reason
+                  required: true
+                  type: string
+                - name: reason_id
+                  required: true
+                  type: string
+                - name: rec_id
+                  required: true
+                  type: string
+                - name: resource
+                  required: true
+                  type: string
+                  indicators:
+                    - aws_arn
+            - name: PROPS
+              required: true
+              type: json
+      - name: RecId
+        required: true
+        type: array
+        element:
+          type: object
+          fields:
+            - name: KEY
+              required: true
+              type: object
+              fields:
+                - name: eval_guid
+                  required: true
+                  type: string
+                - name: rec_id
+                  required: true
+                  type: string
+            - name: PROPS
+              required: true
+              type: json
+      - name: Resource
+        required: true
+        type: array
+        element:
+          type: object
+          fields:
+            - name: KEY
+              required: true
+              type: object
+              fields:
+                - name: name
+                  required: true
+                  type: string
+                - name: value
+                  required: true
+                  type: string
+                  indicators:
+                    - aws_arn
+      - name: ViolationReason
+        required: true
+        type: array
+        element:
+          type: object
+          fields:
+            - name: KEY
+              required: true
+              type: object
+              fields:
+                - name: reason
+                  required: true
+                  type: string
+                - name: reason_id
+                  required: true
+                  type: string
+                - name: rec_id
+                  required: true
+                  type: string
+            - name: PROPS
+              required: true
+              type: json
+  - name: EVENT_ACTOR
+    required: true
+    type: string
+  - name: EVENT_ID
+    required: true
+    type: bigint
+  - name: EVENT_MODEL
+    required: true
+    type: string
+  - name: EVENT_TYPE
+    required: true
+    type: string
+  - name: START_TIME
+    required: true
+    type: timestamp
+    timeFormat: "%a, %d %b %Y %H:%M:%S %z"
