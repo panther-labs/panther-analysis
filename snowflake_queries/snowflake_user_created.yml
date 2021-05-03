@@ -15,3 +15,9 @@ Tests:
     Log:
       query_text: "create USER testuser password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺' default_role = 'READONLY' must_change_password = true;"
       user_name: admin
+  -
+    Name: Unknown User
+    ExpectedResult: true
+    Log:
+      query_text: "create"
+      user_name: admin
