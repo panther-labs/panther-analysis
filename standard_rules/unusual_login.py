@@ -43,7 +43,7 @@ def rule(event):
     # Lookup & store persistent data
     event_key = get_key(event)
     last_login_info = get_string_set(event_key)
-    fingerprint_timestamp = datetime.datetime.now()
+    fingerprint_timestamp = str(datetime.datetime.now())
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
         put_string_set(event_key, [json.dumps({login_tuple: fingerprint_timestamp})])
