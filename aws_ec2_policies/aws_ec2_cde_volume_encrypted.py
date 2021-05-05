@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 
 def policy(resource):
@@ -6,4 +6,4 @@ def policy(resource):
     if not IN_PCI_SCOPE(resource):
         return True
 
-    return bool(resource['Encrypted'])
+    return bool(resource["Encrypted"])

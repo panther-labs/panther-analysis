@@ -1,0 +1,200 @@
+schema: Salesforce.Login
+version: 0
+referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_login.htm
+description: "Login events contain details about your org’s user login history."
+parser:
+  csv:
+    delimiter: ","
+    hasHeader: true
+    columns:
+      - EVENT_TYPE
+      - TIMESTAMP
+      - REQUEST_ID
+      - ORGANIZATION_ID
+      - USER_ID
+      - RUN_TIME
+      - CPU_TIME
+      - URI
+      - SESSION_KEY
+      - LOGIN_KEY
+      - REQUEST_STATUS
+      - DB_TOTAL_TIME
+      - BROWSER_TYPE
+      - API_TYPE
+      - API_VERSION
+      - USER_NAME
+      - TLS_PROTOCOL
+      - CIPHER_SUITE
+      - AUTHENTICATION_METHOD_REFERENCE
+      - TIMESTAMP_DERIVED
+      - USER_ID_DERIVED
+      - CLIENT_IP
+      - URI_ID_DERIVED
+      - LOGIN_STATUS
+      - SOURCE_IP
+fields:
+  - name: EVENT_TYPE
+    type: string
+    required: true
+    validate:
+      allow: ["Login"]
+    description: The type of event. The value is always Login.
+  - name: TIMESTAMP
+    required: false
+    type: timestamp
+    timeFormat: "%Y%m%d%H%M%S.%f"
+    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
+  - name: REQUEST_ID
+    required: false
+    type: string
+    indicators:
+      - trace_id
+    description: >-
+      The unique ID of a single transaction. A transaction can contain one or more events.
+      Each event in a given transaction has the same REQUEST_ID.
+      For example: 3nWgxWbDKWWDIk0FKfF5DV.
+  - name: ORGANIZATION_ID
+    required: true
+    type: string
+    description: "The 15-character ID of the organization. For example: 00D000000000123."
+  - name: USER_ID
+    required: false
+    type: string
+    description: >-
+      The 15-character ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00530000009M943
+  - name: RUN_TIME
+    required: false
+    type: bigint
+    description: The amount of time that the request took in milliseconds.
+  - name: CPU_TIME
+    required: false
+    type: bigint
+    description: >-
+      The CPU time in milliseconds used to complete the request.
+      This field indicates the amount of activity taking place in the app server layer.
+  - name: URI
+    required: false
+    type: string
+    description: "The URI of the page that’s receiving the request. For example: /home/home.jsp."
+  - name: SESSION_KEY
+    required: false
+    type: string
+    description: >-
+      The user’s unique session ID. You can use this value to identify all user events within a session.
+      When a user logs out and logs in again, a new session is started. For Login Event Type,
+      this field is usually null because the event is captured before a session is created.
+      Example d7DEq/ANa7nNZZVD
+  - name: LOGIN_KEY
+    required: false
+    type: string
+    description: >-
+      The string that ties together all events in a given user’s login session. It starts with a login event and
+      ends with either a logout event or the user session expiring. For example: GeJCsym5eyvtEK2I.
+  - name: REQUEST_STATUS
+    required: false
+    type: string
+    description: >-
+      The status of the request for a page view or user interface action.
+      Possible values are:
+        S—Success. Salesforce handled the request successfully. If an Apex controller throws an exception, this status is also returned.
+        F—Failure. Typically 4xx or 5xx HTTP codes, such as no permission to view page, page took too long to render, page is read-only.
+        U—Undefined
+        A—Authorization Error
+        R—Redirect. Typically a 3xx HTTP code, possibly initiated by an Apex controller in a Visualforce page.
+        N—Not Found. 404 error.
+  - name: DB_TOTAL_TIME
+    required: false
+    type: bigint
+    description: >-
+      The time in nanoseconds for a database round trip. Includes time spent in the JDBC driver,
+      network to the database, and DB_CPU_TIME. Compare this field to CPU_TIME to determine whether
+      performance issues are occurring in the database layer or in your own code.
+  - name: BROWSER_TYPE
+    required: false
+    type: string
+    description: >-
+      The identifier string returned by the browser used at login.
+      Example values are:
+          Go-http-client/1.1
+          Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv%3A50.0) Gecko/20100101 Firefox/50.0
+          Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+  - name: API_TYPE
+    required: false
+    type: string
+    description: >-
+      The type of API request.
+      Possible values are:
+          D—Apex Class
+          E—SOAP Enterprise
+          I—SOAP Cross Instance
+          M—SOAP Metadata
+          O—Old SOAP
+          P—SOAP Partner
+          S—SOAP Apex
+          T—SOAP Tooling
+          X—XmlRPC
+          f—Feed
+          l—Live Agent
+          p—SOAP ClientSync
+  - name: API_VERSION
+    required: false
+    type: string
+    description: "The version of the API that’s being used. For example: 36.0."
+  - name: USER_NAME
+    required: false
+    type: string
+    description: The username that’s used for login.
+    indicators:
+      - username
+  - name: TLS_PROTOCOL
+    required: false
+    type: string
+    description: "The TLS protocol used for the login. There are 3 possible values: 1.0, 1.1, 1.2"
+  - name: CIPHER_SUITE
+    required: false
+    type: string
+    description: >-
+      The TLS cipher suite used for the login. Values are OpenSSL-style cipher suite names,
+      with hyphen delimiters. For more information, see OpenSSL Cryptography and SSL/TLS Toolkit.
+  - name: TIMESTAMP_DERIVED
+    required: true
+    type: timestamp
+    timeFormat: rfc3339
+    isEventTime: true
+    description: >-
+      The access time of Salesforce services in ISO8601-compatible format (YYYY-MM-DDTHH:MM:SS.sssZ).
+      For example: 2015-07-27T11:32:59.555Z. Timezone is GMT.
+  - name: USER_ID_DERIVED
+    required: false
+    type: string
+    description: >-
+      The 18-character case insensitive ID of the user who’s using Salesforce services through the UI or the API.
+      For example: 00590000000I1SNIA0.
+  - name: CLIENT_IP
+    required: false
+    type: string
+    indicators:
+      - ip
+    description: >-
+      The IP address of the client that’s using Salesforce services.
+      A Salesforce internal IP (such as a login from Salesforce Workbench
+      or AppExchange) is shown as "Salesforce.com IP".
+      For example: 10.0.0.1.
+  - name: URI_ID_DERIVED
+    required: false
+    type: string
+    description: The 18-character case insensitive ID of the URI of the page that’s receiving the request.
+  - name: LOGIN_STATUS
+    required: false
+    type: string
+    description: >-
+      The status of the login attempt. For successful logins, the value is LOGIN_NO_ERROR.
+      All other values indicate errors or authentication issues.
+      For details, see https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_login_status.htm
+  - name: SOURCE_IP
+    required: false
+    type: string
+    indicators:
+      - ip
+    description: The source IP of the login request.

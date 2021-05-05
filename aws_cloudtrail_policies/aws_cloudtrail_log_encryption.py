@@ -1,2 +1,2 @@
 def policy(resource):
-    return bool(resource['KmsKeyId'])
+    return bool(resource["KmsKeyId"])

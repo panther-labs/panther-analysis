@@ -1,6 +1,13 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
-    return ('SoftwareUpdate' in event['name'] and event['action'] == 'added' and
-            event['columns'].get('domain') == 'com.apple.SoftwareUpdate' and
-            event['columns'].get('key') == 'AutomaticCheckEnabled' and
-            # Send an alert if not set to "true"
-            event['columns'].get('value') == 'false')
+    return (
+        "SoftwareUpdate" in event.get("name", [])
+        and event.get("action") == "added"
+        and deep_get(event, "columns", "domain") == "com.apple.SoftwareUpdate"
+        and deep_get(event, "columns", "key") == "AutomaticCheckEnabled"
+        and
+        # Send an alert if not set to "true"
+        deep_get(event, "columns", "value") == "false"
+    )

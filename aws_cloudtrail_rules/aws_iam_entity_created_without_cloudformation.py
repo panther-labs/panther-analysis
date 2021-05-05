@@ -1,4 +1,5 @@
 import re
+
 from panther_base_helpers import deep_get
 
 # The role dedicated for IAM administration
@@ -24,24 +25,28 @@ IAM_ENTITY_CREATION_EVENTS = {
 
 def rule(event):
     # Check if this event is in scope
-    if event["eventName"] not in IAM_ENTITY_CREATION_EVENTS:
+    if event.get("eventName") not in IAM_ENTITY_CREATION_EVENTS:
         return False
 
     # All IAM changes MUST go through CloudFormation
-    if deep_get(event, "userIdentity",
-                "invokedBy") != "cloudformation.amazonaws.com":
+    if deep_get(event, "userIdentity", "invokedBy") != "cloudformation.amazonaws.com":
         return True
 
     # Only approved IAM Roles can make IAM Changes
     for admin_role_pattern in IAM_ADMIN_ROLE_PATTERNS:
         # Check if the arn matches any role patterns, return False if there is a match
-        if (len(
+        if (
+            len(
                 re.findall(
                     admin_role_pattern,
-                    deep_get(event, "userIdentity", "sessionContext",
-                             "sessionIssuer", "arn"),
-                )) > 0):
+                    deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "arn"),
+                )
+            )
+            > 0
+        ):
             return False
 
-    return (deep_get(event, "userIdentity", "sessionContext", "sessionIssuer",
-                     "arn") not in IAM_ADMIN_ROLES)
+    return (
+        deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "arn")
+        not in IAM_ADMIN_ROLES
+    )

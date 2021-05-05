@@ -5,12 +5,12 @@
 #
 # GROUP_CONFLICTS is formatted as a list of sets. Each inner set contains mutually exclusive groups.
 GROUP_CONFLICTS = [
-    {'PROD_ADMIN', 'DEV'},
+    {"PROD_ADMIN", "DEV"},
 ]
 
 
 def policy(resource):
-    group_names = {group['GroupName'] for group in resource['Groups'] or []}
+    group_names = {group["GroupName"] for group in resource["Groups"] or []}
 
     # If the user is in more than one group in a mutually exclusive set, return False
     for conflict_set in GROUP_CONFLICTS:

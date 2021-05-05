@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE  # pylint: disable=import-error
+from panther_base_helpers import IN_PCI_SCOPE
 
 
 def policy(resource):
@@ -6,4 +6,4 @@ def policy(resource):
         return True
 
     # Casting to Bool as this may be None and we cannot return a NoneType
-    return bool(resource['SSLPolicies'])
+    return bool(resource["SSLPolicies"])

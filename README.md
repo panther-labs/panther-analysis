@@ -101,7 +101,7 @@ Example detection rule: `okta_brute_force_logins.py`
 ```python
 def rule(event):
     return (event.get('outcome', {}).get('result', '') == 'FAILURE' and
-            event['eventType'] == 'user.session.start')
+            event.get('eventType') == 'user.session.start')
 
 
 def title(event):

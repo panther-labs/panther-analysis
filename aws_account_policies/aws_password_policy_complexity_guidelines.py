@@ -2,23 +2,30 @@ IGNORED = {}
 
 
 def policy(resource):
-    if not resource[
-            'RequireUppercaseCharacters'] and 'RequireUppercaseCharacters' not in IGNORED:
+    if (
+        not resource.get("RequireUppercaseCharacters")
+        and "RequireUppercaseCharacters" not in IGNORED
+    ):
         return False
 
-    if not resource[
-            'RequireLowercaseCharacters'] and 'RequireLowercaseCharacters' not in IGNORED:
+    if (
+        not resource.get("RequireLowercaseCharacters")
+        and "RequireLowercaseCharacters" not in IGNORED
+    ):
         return False
 
-    if not resource['RequireSymbols'] and 'RequireSymbols' not in IGNORED:
+    if not resource.get("RequireSymbols") and "RequireSymbols" not in IGNORED:
         return False
 
-    if not resource['RequireNumbers'] and 'RequireNumbers' not in IGNORED:
+    if not resource.get("RequireNumbers") and "RequireNumbers" not in IGNORED:
         return False
 
-    if not (resource['MinimumPasswordLength'] and
-            resource['MinimumPasswordLength'] >= 14
-           ) and 'MinimumPasswordLength' not in IGNORED:
+    if (
+        not (
+            resource.get("MinimumPasswordLength") and resource.get("MinimumPasswordLength", 0) >= 14
+        )
+        and "MinimumPasswordLength" not in IGNORED
+    ):
         return False
 
     return True

@@ -33,9 +33,15 @@ WHERE
 """
 
 import datetime
-from panther_base_helpers import deep_get, PantherUnexpectedAlert, pattern_match, pattern_match_list
 
-COMPANY_DOMAIN = 'your-company-name.com'
+from panther_base_helpers import (
+    PantherUnexpectedAlert,
+    deep_get,
+    pattern_match,
+    pattern_match_list,
+)
+
+COMPANY_DOMAIN = "your-company-name.com"
 EXCEPTION_PATTERNS = {
     # The glob pattern for the document title (lowercased)
     "document title p*": {
@@ -68,19 +74,22 @@ def _check_acl_change_event(actor_email, acl_change_event):
     target_user = parameters.get("target_user", "USER_UNKNOWN")
     current_time = datetime.datetime.now()
 
-    if (new_visibility == "shared_externally" and
-            old_visibility == "private" and
-            not target_user.endswith(f"@{COMPANY_DOMAIN}")):
+    if (
+        new_visibility == "shared_externally"
+        and old_visibility == "private"
+        and not target_user.endswith(f"@{COMPANY_DOMAIN}")
+    ):
         # This is a dangerous share, check exceptions:
         for pattern, details in EXCEPTION_PATTERNS.items():
             doc_title_match = pattern_match(doc_title.lower(), pattern)
-            allowed_for_match = pattern_match_list(actor_email,
-                                                   details.get("allowed_for"))
+            allowed_for_match = pattern_match_list(actor_email, details.get("allowed_for"))
             allowed_for_all_match = details.get("allowed_for") == {"all"}
 
-            if (doc_title_match and
-                (allowed_for_match or allowed_for_all_match) and
-                    current_time < details.get("allowed_until")):
+            if (
+                doc_title_match
+                and (allowed_for_match or allowed_for_all_match)
+                and current_time < details.get("allowed_until")
+            ):
                 return False
             # No exceptions match.
             # Return the event summary (which is True) to alert & use in title.
@@ -93,22 +102,21 @@ def _check_acl_change_event(actor_email, acl_change_event):
 
 
 def rule(event):
-    application_name = deep_get(event, 'id', 'applicationName')
+    application_name = deep_get(event, "id", "applicationName")
     events = event.get("events")
-    actor_email = deep_get(event, 'actor', 'email', default="EMAIL_UNKNOWN")
+    actor_email = deep_get(event, "actor", "email", default="EMAIL_UNKNOWN")
 
-    if (application_name == "drive" and events and
-            "acl_change" in set(e["type"] for e in events)):
+    if application_name == "drive" and events and "acl_change" in set(e["type"] for e in events):
         # If any of the events in this record are a dangerous file share, alert:
         return any(
-            _check_acl_change_event(actor_email, acl_change_event)
-            for acl_change_event in events)
+            _check_acl_change_event(actor_email, acl_change_event) for acl_change_event in events
+        )
     return False
 
 
 def title(event):
     events = event.get("events", [])
-    actor_email = deep_get(event, 'actor', 'email', default='EMAIL_UNKNOWN')
+    actor_email = deep_get(event, "actor", "email", default="EMAIL_UNKNOWN")
     matching_events = [
         _check_acl_change_event(actor_email, acl_change_event)
         for acl_change_event in events
@@ -124,5 +132,4 @@ def title(event):
         if len(matching_events) > 1:
             return f'Multiple dangerous shares ({len_events}) by [{actor}], including "{doc_title}" to {target_user}'
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
-    raise PantherUnexpectedAlert(
-        "No matching events, but DangerousShares still fired")
+    raise PantherUnexpectedAlert("No matching events, but DangerousShares still fired")

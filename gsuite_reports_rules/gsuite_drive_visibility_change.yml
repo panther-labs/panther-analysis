@@ -7,7 +7,7 @@ LogTypes:
   - GSuite.Reports
 Tags:
   - GSuite
-Severity: Medium
+Severity: Low
 Description: >
   A Google drive resource became externally accessible.
 Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/drive#acl_change
@@ -59,7 +59,8 @@ Tests:
             'type': 'acl_change',
             'parameters': [
               {'name': 'visibility_change', 'value': 'external'},
-              {'name':'doc_title', 'value':'my shared document'}
+              {'name':'doc_title', 'value':'my shared document'},
+              {'name':'target_user', 'value':'user@external.com'}
               ]
           }
         ]

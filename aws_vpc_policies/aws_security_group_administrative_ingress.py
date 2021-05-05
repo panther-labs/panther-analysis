@@ -14,20 +14,21 @@ def port_checker(check_ports, from_port, to_port):
 
 
 def policy(resource):
-    if resource['IpPermissions'] is None:
+    if resource["IpPermissions"] is None:
         return True
 
-    for permission in resource['IpPermissions']:
+    for permission in resource["IpPermissions"]:
         src_open = False
-        for ip_range in permission['IpRanges'] or []:
-            if ip_range['CidrIp'] == '0.0.0.0/0':
+        for ip_range in permission["IpRanges"] or []:
+            if ip_range["CidrIp"] == "0.0.0.0/0":
                 src_open = True
                 break
-        for ipv6_range in permission['Ipv6Ranges'] or []:
-            if src_open or ipv6_range['CidrIpv6'] == '::/0':
+        for ipv6_range in permission["Ipv6Ranges"] or []:
+            if src_open or ipv6_range["CidrIpv6"] == "::/0":
                 src_open = True
                 break
-        if src_open and port_checker(RESTRICTED_PORTS, permission['FromPort'],
-                                     permission['ToPort']):
+        if src_open and port_checker(
+            RESTRICTED_PORTS, permission["FromPort"], permission["ToPort"]
+        ):
             return False
     return True
