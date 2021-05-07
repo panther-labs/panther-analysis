@@ -54,6 +54,8 @@ def runbook(event):
 # Override the destination(s) the alert is sent to, must return a list of strings corresponding to
 # panther destinations
 BAD_THINGS = []
+
+
 def destinations(event):
     if event.get("Something") in BAD_THINGS:
         return ["01234567-1edf-4edb-8f5b-0123456789a"]
