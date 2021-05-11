@@ -1,0 +1,71 @@
+name: cloudcompliance.withrecomendation
+logType: Lacework.CloudCompliance
+input: |
+  {
+    "ACCOUNT":{
+      "AccountId":"012345678912",
+      "Account_Alias":"test"
+    },
+  "EVAL_TYPE":"LW_SA",
+  "ID":"LW_AWS_NETWORKING_9",
+  "RECOMMENDATION":"Unrestricted Security Group should not be attached to Network Interface",
+  "REGION":"us-west-2",
+  "REPORT_TIME":"Fri, 05 Feb 2021 05:42:02 -0800",
+  "RESOURCE":"arn:aws:ec2:us-west-2:012345678912:network-interface/eni-xxxxx",
+  "SECTION":"Networking",
+  "SEVERITY":"Critical",
+  "STATUS":"NonCompliant"
+  }
+result: |
+  {
+    "ACCOUNT":{
+      "AccountId":"012345678912",
+      "Account_Alias":"test"
+    },
+  "EVAL_TYPE":"LW_SA",
+  "ID":"LW_AWS_NETWORKING_9",
+  "RECOMMENDATION":"Unrestricted Security Group should not be attached to Network Interface",
+  "REGION":"us-west-2",
+  "REPORT_TIME":"Fri, 05 Feb 2021 05:42:02 -0800",
+  "RESOURCE":"arn:aws:ec2:us-west-2:012345678912:network-interface/eni-xxxxx",
+  "SECTION":"Networking",
+  "SEVERITY":"Critical",
+  "STATUS":"NonCompliant",
+  "p_log_type":"Lacework.CloudCompliance",
+  "p_event_time":"2021-02-05T13:42:02Z"
+  }
+---
+name: cloudcompliance.withoutrecomendation
+logType: Lacework.CloudCompliance
+input: |
+  {
+    "ACCOUNT":{
+      "AccountId":"012345678912",
+      "Account_Alias":"test"
+    },
+  "EVAL_TYPE":"LW_SA",
+  "ID":"AWS_CIS_1_10",
+  "REASON":"Account does not have password policy",
+  "RECOMMENDATION":"Ensure IAM password policy prevents password reuse",
+  "REPORT_TIME":"Fri, 05 Feb 2021 05:42:02 -0800",
+  "SECTION":"Identity and Access Management",
+  "SEVERITY":"High",
+  "STATUS":"NonCompliant"
+  }
+result: |
+  {
+    "ACCOUNT":{
+      "AccountId":"012345678912",
+      "Account_Alias":"test"
+    },
+  "EVAL_TYPE":"LW_SA",
+  "ID":"AWS_CIS_1_10",
+  "REASON":"Account does not have password policy",
+  "RECOMMENDATION":"Ensure IAM password policy prevents password reuse",
+  "REPORT_TIME":"Fri, 05 Feb 2021 05:42:02 -0800",
+  "SECTION":"Identity and Access Management",
+  "SEVERITY":"High",
+  "STATUS":"NonCompliant",
+  "p_log_type":"Lacework.CloudCompliance",
+  "p_event_time":"2021-02-05T13:42:02Z"
+  }

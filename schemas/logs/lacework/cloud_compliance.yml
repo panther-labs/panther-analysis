@@ -1,0 +1,40 @@
+schema: Lacework.CloudCompliance
+description: Lacework.Compliance represents the content of an exported Lacework CloudCompliance report
+referenceURL: https://www.lacework.com/platform-overview/
+version: 0
+fields:
+  - name: REASON
+    type: string
+  - name: REGION
+    type: string
+  - name: RESOURCE
+    type: string
+  - name: ACCOUNT
+    required: true
+    type: object
+    fields:
+      - name: AccountId
+        type: string
+      - name: Account_Alias
+        type: string
+  - name: EVAL_TYPE
+    required: true
+    type: string
+  - name: ID
+    required: true
+    type: string
+  - name: RECOMMENDATION
+    type: string
+  - name: REPORT_TIME
+    required: true
+    type: timestamp
+    timeFormat: "%a, %d %b %Y %H:%M:%S %z"
+    isEventTime: true
+  - name: SECTION
+    type: string
+  - name: SEVERITY
+    required: true
+    type: string
+  - name: STATUS
+    required: true
+    type: string

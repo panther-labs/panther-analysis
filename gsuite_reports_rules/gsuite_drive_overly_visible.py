@@ -27,11 +27,13 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
+    details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
+    if param_lookup(details.get("parameters", {}), "doc_title"):
+        return param_lookup(details.get("parameters", {}), "doc_title")
+    return "<UNKNOWN_DOC_TITLE>"
 
 
 def title(event):
-    doc_title = "UNKNOWN_TITLE"
     details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
     doc_title = param_lookup(details.get("parameters", {}), "doc_title")
     share_settings = param_lookup(details.get("parameters", {}), "visibility")

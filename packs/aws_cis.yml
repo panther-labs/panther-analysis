@@ -1,0 +1,37 @@
+AnalysisType: pack
+PackID: PantherManaged.AWS.CIS
+Description: Group of all AWS detections for CIS compliance
+PackDefinition:
+  IDs:
+    - AWS.ACM.HasSecureAlgorithms
+    - AWS.DynamoDB.TableTTLEnabled
+    - AWS.EC2.CDEVolumeEncrypted
+    - AWS.ELBV2.LoadBalancer.HasSSLPolicy
+    - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
+    - AWS.IAM.Policy.DoesNotGrantAdminAccess
+    - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
+    - AWS.IAM.Resource.DoesNotHaveInlinePolicy
+    - AWS.IAM.Role.RestrictsUsage
+    - AWS.IAM.User.NotInConflictingGroups
+    - AWS.KMS.RestrictsUsage
+    - AWS.NetworkACL.RestrictsInboundTraffic
+    - AWS.NetworkACL.RestrictsInsecureProtocols
+    - AWS.NetworkACL.RestrictsOutboundTraffic
+    - AWS.RDS.Instance.AutoMinorVersionUpgradeEnabled
+    - AWS.RDS.InstanceBackupRetentionAcceptable
+    - AWS.Redshift.Cluster.SnapshotRetentionAcceptable
+    - AWS.S3.BucketObjectLockConfigured
+    - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
+    - AWS.SecurityGroup.RestrictsAccessToCDE
+    - AWS.SecurityGroup.RestrictsInboundTraffic
+    - AWS.SecurityGroup.RestrictsInterSecurityGroupTraffic
+    - AWS.SecurityGroup.RestrictsOutboundTraffic
+    - AWS.SecurityGroup.RestrictsTrafficLeavingCDE
+    - AWS.SecurityGroup.TightlyRestrictsInboundTraffic
+    - AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
+    - AWS.VPC.DefaultNetworkACLRestrictsAllTraffic
+    - AWS.WAF.HasXSSPredicate
+    # Globals used in these detections
+    - panther_base_helpers
+    - panther_oss_helpers
+DisplayName: Panther AWS CIS Pack
