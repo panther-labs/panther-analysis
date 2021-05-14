@@ -1,3 +1,4 @@
+# Usage jq -f generate_tests.jq sample_file.jsonl
 # Fix timestamp trailing zeros to match Go formatting
 def timestamp: sub("0+Z"; "Z");
 
