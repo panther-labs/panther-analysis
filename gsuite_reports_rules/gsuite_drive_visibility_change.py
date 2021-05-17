@@ -17,12 +17,18 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, "actor", "email", default="<UNKNOWN_EMAIL>")
+    doc_title = "<UNKNOWN_DOC_TITLE>"
+    for detail in event.get("events", [{}]):
+        if detail.get("type") == "acl_change":
+            if param_lookup(detail.get("parameters", {}), "doc_title"):
+                doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
+                break
+    return doc_title
 
 
 def title(event):
     target_user_email = "<EMAIL_UNKNOWN>"
-    doc_title = "<UNKNOWN_TITLE>"
+    doc_title = "<UNKNOWN_DOC_TITLE>"
     for detail in event.get("events", [{}]):
         if detail.get("type") == "acl_change":
             if param_lookup(detail.get("parameters", {}), "doc_title"):

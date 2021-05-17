@@ -1,7 +1,11 @@
+# Copyright (C) 2020 Panther Labs Inc
+#
+# Panther Enterprise is licensed under the terms of a commercial license available from
+# Panther Labs Inc ("Panther Commercial License") by contacting contact@runpanther.com.
+# All use, distribution, and/or modification of this software, whether commercial or non-commercial,
+# falls under the Panther Commercial License to the extent it is permitted.
+
 schema: Okta.SystemLog
-parser:
-  native:
-    name: Okta.SystemLog
 description: |
   The Okta System Log records system events related to your organization in order to provide an audit trail that can be used to understand platform activity and to diagnose problems.
 
@@ -18,6 +22,7 @@ fields:
     description: Timestamp when event was published
     type: timestamp
     timeFormat: rfc3339
+    isEventTime: true
   - name: eventType
     required: true
     description: Type of event that was published
@@ -28,7 +33,7 @@ fields:
     type: string
   - name: severity
     required: true
-    description: "Indicates how severe the event is: DEBUG, INFO, WARN, ERROR"
+    description: 'Indicates how severe the event is: DEBUG, INFO, WARN, ERROR'
     type: string
   - name: legacyEventType
     description: Associated Events API Action objectType attribute value
@@ -51,11 +56,16 @@ fields:
       - name: alternateId
         description: Alternative id of the actor
         type: string
+        indicators:
+          - email
       - name: displayName
         description: Display name of the actor
         type: string
       - name: details
         description: Details about the actor
+        type: json
+      - name: detailEntry
+        description: Detail entry
         type: json
   - name: client
     description: The client that requested an action
@@ -109,6 +119,8 @@ fields:
       - name: ipAddress
         description: Ip address that the client made its request from
         type: string
+        indicators:
+          - ip
       - name: device
         description: Type of device that the client operated from (e.g. Computer)
         type: string
@@ -125,6 +137,8 @@ fields:
             - name: ip
               description: IP address
               type: string
+              indicators:
+                - ip
             - name: geographicalContext
               description: Geographical context of the IP address
               type: object
@@ -162,7 +176,7 @@ fields:
     type: object
     fields:
       - name: result
-        description: "Result of the action: SUCCESS, FAILURE, SKIPPED, ALLOW, DENY, CHALLENGE, UNKNOWN"
+        description: 'Result of the action: SUCCESS, FAILURE, SKIPPED, ALLOW, DENY, CHALLENGE, UNKNOWN'
         type: string
       - name: reason
         description: Reason for the result, for example INVALID_CREDENTIALS
@@ -190,6 +204,9 @@ fields:
         - name: details
           description: Details about the target
           type: json
+        - name: detailEntry
+          description: Detail entry
+          type: json
   - name: transaction
     description: The transaction details of an action
     type: object
@@ -214,7 +231,7 @@ fields:
     description: The authentication data of an action
     type: object
     fields:
-      - name: authenticatorProvider
+      - name: authenticationProvider
         description: The system that proves the identity of an actor using the credentials provided to it
         type: string
       - name: authenticationStep
@@ -242,6 +259,9 @@ fields:
       - name: interface
         description: The third party user interface that the actor authenticates through, if any.
         type: string
+      - name: authenticatorProvider
+        description: 'DEPRECATED: This field is kept here for backwards compatibility.'
+        type: string
   - name: securityContext
     description: The security data of an action
     type: object
@@ -258,6 +278,8 @@ fields:
       - name: domain
         description: The domain name associated with the IP address of the inbound event request
         type: string
+        indicators:
+          - domain
       - name: isProxy
         description: Specifies whether an event's request is from a known proxy
         type: boolean
