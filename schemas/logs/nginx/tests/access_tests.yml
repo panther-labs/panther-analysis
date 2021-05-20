@@ -1,0 +1,40 @@
+# Copyright (C) 2020 Panther Labs Inc
+#
+# Panther Enterprise is licensed under the terms of a commercial license available from
+# Panther Labs Inc ("Panther Commercial License") by contacting contact@runpanther.com.
+# All use, distribution, and/or modification of this software, whether commercial or non-commercial,
+# falls under the Panther Commercial License to the extent it is permitted.
+
+---
+name: TestAccessLog
+logType: Nginx.Access
+input: 180.76.15.143 - - [06/Feb/2019:00:00:38 +0000] "GET / HTTP/1.1" 301 193 "https://domain1.com/?p=1" "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.htm$"
+result: |
+  {
+    "remoteAddr": "180.76.15.143",
+    "time": "06/Feb/2019:00:00:38 +0000",
+    "request": "GET / HTTP/1.1",
+    "status": 301,
+    "bodyBytesSent": 193,
+    "httpUserAgent": "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.htm$",
+    "httpReferer": "https://domain1.com/?p=1",
+    "p_log_type": "Nginx.Access",
+    "p_event_time": "2019-02-06T00:00:38Z",
+    "p_any_ip_addresses": ["180.76.15.143"]
+  }
+---
+name: TestAccessLogWithoutReferer
+logType: Nginx.Access
+input: 180.76.15.143 - - [06/Feb/2019:00:00:38 +0000] "GET / HTTP/1.1" 301 193 "-" "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.htm$"
+result: |
+  {
+    "remoteAddr": "180.76.15.143",
+    "time": "06/Feb/2019:00:00:38 +0000",
+    "request": "GET / HTTP/1.1",
+    "status": 301,
+    "bodyBytesSent": 193,
+    "httpUserAgent": "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.htm$",
+    "p_log_type": "Nginx.Access",
+    "p_event_time": "2019-02-06T00:00:38Z",
+    "p_any_ip_addresses": ["180.76.15.143"]
+  }
