@@ -1,3 +1,5 @@
+from panther import aws_cloudtrail_success
+
 # API calls that are indicative of an AWS Config Service change
 CONFIG_SERVICE_DISABLE_DELETE_EVENTS = {
     "StopConfigurationRecorder",
@@ -6,4 +8,7 @@ CONFIG_SERVICE_DISABLE_DELETE_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in CONFIG_SERVICE_DISABLE_DELETE_EVENTS
+    return (
+        aws_cloudtrail_success(event)
+        and event.get("eventName") in CONFIG_SERVICE_DISABLE_DELETE_EVENTS
+    )

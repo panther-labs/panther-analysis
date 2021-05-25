@@ -1,3 +1,4 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 # This is a list of role ARNs that should not be assumed by users in normal operations
@@ -7,8 +8,8 @@ ASSUME_ROLE_BLACKLIST = [
 
 
 def rule(event):
-    # Only considering the AssumeRole action
-    if event.get("eventName") != "AssumeRole":
+    # Only considering successful AssumeRole action
+    if not aws_cloudtrail_success(event) or event.get("eventName") != "AssumeRole":
         return False
 
     # Only considering user actions

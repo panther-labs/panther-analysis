@@ -1,3 +1,5 @@
+from panther import aws_cloudtrail_success
+
 # API calls that are indicative of IAM Policy changes
 POLICY_CHANGE_EVENTS = {
     "DeleteGroupPolicy",
@@ -22,7 +24,7 @@ POLICY_CHANGE_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in POLICY_CHANGE_EVENTS
+    return aws_cloudtrail_success(event) and event.get("eventName") in POLICY_CHANGE_EVENTS
 
 
 def dedup(event):
