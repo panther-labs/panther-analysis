@@ -1,6 +1,6 @@
+from ast import literal_eval
 from panther_base_helpers import deep_get
 from panther_oss_helpers import resource_lookup
-from ast import literal_eval
 
 # TODO: Once Detection Pipelines are merged, implement downgraded (INFO) case for multiple
 #       global resource recorders.
