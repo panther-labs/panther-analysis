@@ -15,6 +15,8 @@ def policy(resource):
 
     for recorder_name in resource.get("Recorders", []):
         recorder = resource_lookup(recorder_name)
+        if isinstance(recorder, str):
+            return eval(recorder)
         resource_records_global_resources = bool(
             deep_get(recorder, "RecordingGroup", "IncludeGlobalResourceTypes")
             and deep_get(recorder, "Status", "Recording")
