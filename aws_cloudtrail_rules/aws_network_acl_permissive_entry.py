@@ -1,9 +1,10 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 
 def rule(event):
-    # Only check actions creating a new Network ACL entry
-    if event.get("eventName") != "CreateNetworkAclEntry":
+    # Only check successful actions creating a new Network ACL entry
+    if not aws_cloudtrail_success(event) or event.get("eventName") != "CreateNetworkAclEntry":
         return False
 
     # Check if this new NACL entry is allowing traffic from anywhere

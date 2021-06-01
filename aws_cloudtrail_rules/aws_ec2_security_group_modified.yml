@@ -146,3 +146,69 @@ Tests:
           "eventType": "AwsApiCall",
           "recipientAccountId": "123456789012"
       }
+  -
+    Name: Error Mofidying Security Group
+    ExpectedResult: false
+    Log:
+      {
+          "errorCode": "RequestExpired",
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:role/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  },
+                  "webIdFederationData": {},
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "ec2.amazonaws.com",
+          "eventName": "AuthorizeSecurityGroupIngress",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "console.ec2.amazonaws.com",
+          "requestParameters": {
+              "groupId": "sg-1",
+              "ipPermissions": {
+                  "items": [
+                      {
+                          "ipProtocol": "tcp",
+                          "fromPort": 22,
+                          "toPort": 22,
+                          "groups": {},
+                          "ipRanges": {
+                              "items": [
+                                  {
+                                      "cidrIp": "127.0.0.1/32",
+                                      "description": "SSH for me"
+                                  }
+                              ]
+                          },
+                          "ipv6Ranges": {},
+                          "prefixListIds": {}
+                      }
+                  ]
+              }
+          },
+          "responseElements": {
+              "requestID": "1",
+              "_return": true
+          },
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }

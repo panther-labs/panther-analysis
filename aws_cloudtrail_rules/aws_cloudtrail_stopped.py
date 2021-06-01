@@ -1,4 +1,4 @@
-from panther import lookup_aws_account_name
+from panther import aws_cloudtrail_success, lookup_aws_account_name
 from panther_base_helpers import deep_get
 
 # API calls that are indicative of CloudTrail changes
@@ -9,7 +9,7 @@ CLOUDTRAIL_STOP_DELETE = {
 
 
 def rule(event):
-    return event.get("eventName") in CLOUDTRAIL_STOP_DELETE
+    return aws_cloudtrail_success(event) and event.get("eventName") in CLOUDTRAIL_STOP_DELETE
 
 
 def dedup(event):

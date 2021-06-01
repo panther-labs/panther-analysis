@@ -1,5 +1,6 @@
 import re
 
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 # The role dedicated for IAM administration
@@ -25,7 +26,10 @@ IAM_ENTITY_CREATION_EVENTS = {
 
 def rule(event):
     # Check if this event is in scope
-    if event.get("eventName") not in IAM_ENTITY_CREATION_EVENTS:
+    if (
+        not aws_cloudtrail_success(event)
+        or event.get("eventName") not in IAM_ENTITY_CREATION_EVENTS
+    ):
         return False
 
     # All IAM changes MUST go through CloudFormation
