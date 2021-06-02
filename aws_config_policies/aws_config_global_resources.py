@@ -1,4 +1,5 @@
-from ast import literal_eval
+import json
+
 from panther_base_helpers import deep_get
 from panther_oss_helpers import resource_lookup
 
@@ -17,7 +18,7 @@ def policy(resource):
     for recorder_name in resource.get("Recorders", []):
         recorder = resource_lookup(recorder_name)
         if isinstance(recorder, str):
-            return literal_eval(recorder)
+            recorder = json.loads(recorder)
         resource_records_global_resources = bool(
             deep_get(recorder, "RecordingGroup", "IncludeGlobalResourceTypes")
             and deep_get(recorder, "Status", "Recording")
