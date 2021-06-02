@@ -1,5 +1,6 @@
 import json
 
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 
@@ -28,7 +29,7 @@ def policy_is_internet_accessible(json_policy):
 # Any solution that avoids too many return statements only increases the complexity of this rule.
 # pylint: disable=too-many-return-statements
 def rule(event):
-    if event.get("errorCode", "") == "AccessDenied":
+    if not aws_cloudtrail_success(event):
         return False
 
     parameters = event.get("requestParameters", {})

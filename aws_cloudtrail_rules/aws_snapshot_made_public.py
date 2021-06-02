@@ -1,9 +1,13 @@
 from collections.abc import Mapping
 
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 
 def rule(event):
+    if not aws_cloudtrail_success(event):
+        return False
+
     # EC2 Volume snapshot made public
     if event.get("eventName") == "ModifySnapshotAttribute":
         parameters = event.get("requestParameters", {})

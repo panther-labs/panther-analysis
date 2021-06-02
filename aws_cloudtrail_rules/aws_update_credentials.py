@@ -1,10 +1,11 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 UPDATE_EVENTS = {"ChangePassword", "CreateAccessKey", "CreateLoginProfile", "CreateUser"}
 
 
 def rule(event):
-    return event.get("eventName") in UPDATE_EVENTS and not event.get("errorCode")
+    return event.get("eventName") in UPDATE_EVENTS and aws_cloudtrail_success(event)
 
 
 def dedup(event):

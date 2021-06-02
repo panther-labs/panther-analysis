@@ -1,3 +1,5 @@
+from panther import aws_cloudtrail_success
+
 # API calls that are indicative of an EC2 Route Table modification
 EC2_RT_MODIFIED_EVENTS = {
     "CreateRoute",
@@ -11,7 +13,7 @@ EC2_RT_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in EC2_RT_MODIFIED_EVENTS
+    return aws_cloudtrail_success(event) and event.get("eventName") in EC2_RT_MODIFIED_EVENTS
 
 
 def dedup(event):

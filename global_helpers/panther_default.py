@@ -30,6 +30,12 @@ def lookup_aws_account_name(account_id):
     return AWS_ACCOUNTS.get(account_id, account_id)
 
 
+def aws_cloudtrail_success(event):
+    if event.get("errorCode", "") or event.get("errorMessage", ""):
+        return False
+    return True
+
+
 def aws_event_tense(event_name):
     """Convert an AWS CloudTrail eventName to be interpolated in alert titles
 
