@@ -23,31 +23,23 @@ Tests:
     Name: AWS.CloudTrail - Successful Login - Exceeds Threshold
     ExpectedResult: true
     Mocks:
-      -
-        {
-          "objectName": "geoinfo_from_ip",
-          "returnValue": (
-                          "{ "
-                          "\"region\": \"UnitTestRegion\", "
-                          "\"city\": \"UnitTestCity\", "
-                          "\"country\": \"UnitTestCountry\""
-                          "}"
-                         )
-        }
-      -
-        {
-          "objectName": "get_string_set",
-          "returnValue": (
-                          "{"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650801\"}',"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650802\"}',"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650804\"}',"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650805\"}',"
-                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650806\"}',"
-                          "}"
-                         )
-        }
+      - objectName: geoinfo_from_ip
+        returnValue: >
+                          {
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCity",
+                          "country": "UnitTestCountry"
+                          }
+      - objectName: get_string_set
+        returnValue: >
+                          {
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"},
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650802"},
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650803"},
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650804"},
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650805"},
+                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650806"}
+                          }
     Log:
       {
           "userIdentity": {
@@ -57,7 +49,6 @@ Tests:
           "sourceIPAddress": "111.111.111.111",
           "responseElements": {
               "ConsoleLogin": "Success"
-          },
           },
           "p_log_type": "AWS.CloudTrail"
       }  
@@ -65,16 +56,10 @@ Tests:
     Name: AWS.CloudTrail - Successful Login - Does Not Exceed Threshold
     ExpectedResult: false
     Mocks:
-      -
-        {
-          "objectName": "geoinfo_from_ip",
-          "returnValue": "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
-        }
-      -
-        {
-          "objectName": "get_string_set",
-          "returnValue": "{ \"somekey\": \"somevalue_that_does_not_exceed_threshold\"}"
-        }
+      - objectName: geoinfo_from_ip
+        returnValue: "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
+      - objectName: get_string_set
+        returnValue: "{ \"somekey\": \"somevalue_that_does_not_exceed_threshold\"}"
     Log:
       {
           "userIdentity": {
@@ -84,7 +69,6 @@ Tests:
           "sourceIPAddress": "111.111.111.111",
           "responseElements": {
               "ConsoleLogin": "Success"
-          },
           },
           "p_log_type": "AWS.CloudTrail"
       }  
