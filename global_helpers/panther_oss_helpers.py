@@ -6,6 +6,9 @@ import time
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
+from ipaddress import ip_address
+import json
+import requests
 
 import boto3
 import requests
@@ -355,12 +358,21 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     return geoinfo
 
 
+<<<<<<< HEAD
 def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(ip)
     geoinfo_string = (
         f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
         f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+=======
+def geoinfo_from_ip_formatted(ip: str) -> str:
+    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
+    geoinfo = geoinfo_from_ip(ip)
+    geoinfo_string = (
+       f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+       f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+>>>>>>> cd625e4 (Geolocation helper and two rules using it)
     )
     return geoinfo_string
 
