@@ -3,7 +3,7 @@ Filename: unusual_login.py
 RuleID: Standard.UnusualLogin
 DisplayName: Unusual Login
 # This rule is disabled by default because it makes API calls out to the internet. At high volumes
-# of activity, this could get throttled unless you buy a subscription to ipinfo.
+# of activity, this could get throttled unless you buy a subscription to the geolocation service.
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
@@ -19,6 +19,60 @@ Runbook: Determine if this login was triggered by legitimate user access.
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
+  -
+    Name: AWS.CloudTrail - Successful Login - Exceeds Threshold
+    ExpectedResult: true
+    Mocks:
+      -
+        {
+          "objectName": "geoinfo_from_ip",
+          "returnValue": "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
+        }
+      -
+        {
+          "objectName": "get_string_set",
+          "returnValue": "{ \"somekey\": \"somevalue_that_exceeds_threshold\"}"
+        }
+    Log:
+      {
+          "userIdentity": {
+              "type": "IAMUser",
+          },
+          "eventName": "ConsoleLogin",
+          "sourceIPAddress": "111.111.111.111",
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          },
+          "p_log_type": "AWS.CloudTrail"
+      }  
+  -
+    Name: AWS.CloudTrail - Successful Login - Does Not Exceed Threshold
+    ExpectedResult: false
+    Mocks:
+      -
+        {
+          "objectName": "geoinfo_from_ip",
+          "returnValue": "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
+        }
+      -
+        {
+          "objectName": "get_string_set",
+          "returnValue": "{ \"somekey\": \"somevalue_that_does_not_exceed_threshold\"}"
+        }
+    Log:
+      {
+          "userIdentity": {
+              "type": "IAMUser",
+          },
+          "eventName": "ConsoleLogin",
+          "sourceIPAddress": "111.111.111.111",
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          },
+          "p_log_type": "AWS.CloudTrail"
+      }  
   -
     Name: AWS.CloudTrail - Failed Login
     ExpectedResult: false

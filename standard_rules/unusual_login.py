@@ -2,11 +2,11 @@ import datetime
 import json
 
 import panther_event_type_helpers as event_type
-import requests
-from panther_oss_helpers import get_string_set, put_string_set
+from panther_oss_helpers import get_string_set, put_string_set, geoinfo_from_ip
 
 FINGERPRINT_THRESHOLD = 5
-EVENT_LOGIN_INFO = {}
+FINGERPRINT = {}
+GEO_INFO = {}
 
 
 def rule(event):
@@ -19,30 +19,23 @@ def rule(event):
         return False
 
     # Lookup geo-ip data via API call
-    url = "https://ipinfo.io/" + event.udm("source_ip") + "/geo"
+    GEO_INFO = geoinfo_from_ip(event.udm("source_ip"))
 
-    # Skip API call if this is a unit test
-    if "panther_api_data" in event:
-        resp = lambda: None
-        setattr(resp, "status_code", 200)
-        setattr(resp, "text", event.get("panther_api_data"))
-    else:
-        # This response looks like the following:
-        # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
-        # 'loc': '37.4056,-122.0775', 'postal': '94043', 'timezone': 'America/Los_Angeles'}
-        resp = requests.get(url)
+    # Unit tests with defined mocks for geoinfo_from_ip
+    if isinstance(GEO_INFO, str):
+        GEO_INFO = json.loads(GEO_INFO)
 
-    if resp.status_code != 200:
-        raise Exception(f"API call failed: GET {url} returned {resp.status_code}")
-    login_info = json.loads(resp.text)
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
-    login_tuple = login_info.get("region", "<REGION>") + ":" + login_info.get("city", "<CITY>")
-    EVENT_LOGIN_INFO[event.get("p_row_id")] = login_tuple
+    login_tuple = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
+    FINGERPRINT[event.get("p_row_id")] = login_tuple
 
     # Lookup & store persistent data
     event_key = get_key(event)
     last_login_info = get_string_set(event_key)
+    # Unit tests with defined mocks for get_string_set
+    if isinstance(last_login_info, str):
+        last_login_info = {last_login_info}
     fingerprint_timestamp = str(datetime.datetime.now())
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
@@ -76,5 +69,5 @@ def title(event):
     return (
         f"{event.get('p_log_type')}: Unusual access for user"
         f" [{event.get('user_name', '<UNKNOWN_USER>')}]"
-        f" from {EVENT_LOGIN_INFO[event.get('p_row_id')]}"
+        f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
     )
