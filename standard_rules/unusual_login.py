@@ -27,8 +27,8 @@ def rule(event):
 
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
-    login_tuple = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
-    FINGERPRINT[event.get("p_row_id")] = login_tuple
+    login_geo = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
+    FINGERPRINT[event.get("p_row_id")] = login_geo
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -36,26 +36,30 @@ def rule(event):
     # Unit tests with defined mocks for get_string_set
     if isinstance(last_login_info, str):
         last_login_info = {last_login_info}
-    fingerprint_timestamp = str(datetime.datetime.now())
+    login_timestamp = str(datetime.datetime.now())
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
-        put_string_set(event_key, [json.dumps({login_tuple: fingerprint_timestamp})])
+        put_string_set(event_key, [json.dumps({login_geo: login_timestamp})])
         return False
     last_login_info = json.loads(last_login_info.pop())
 
     # update the timestamp associated with this fingerprint
-    last_login_info[login_tuple] = fingerprint_timestamp
-    put_string_set(event_key, [json.dumps(last_login_info)])
+    last_login_info[login_geo] = login_timestamp
+    # exclude from unit test
+    if "mock" not in event:
+        put_string_set(event_key, [json.dumps(last_login_info)])
 
     # fire an alert when number of unique, recent fingerprints is greater than a threshold
     if len(last_login_info) > FINGERPRINT_THRESHOLD:
-        oldest = login_tuple
-        for fp_tuple, fp_time in last_login_info.items():
+        oldest = login_timestamp
+        for fp_geo, fp_time in last_login_info.items():
             if fp_time < oldest:
-                oldest = fp_tuple
+                oldest = fp_geo
         # remove oldest login tuple
         last_login_info.pop(oldest)
-        put_string_set(event_key, [json.dumps(last_login_info)])
+        # exclude from unit test
+        if "mock" not in event:
+            put_string_set(event_key, [json.dumps(last_login_info)])
         return True
     return False
 

@@ -26,12 +26,27 @@ Tests:
       -
         {
           "objectName": "geoinfo_from_ip",
-          "returnValue": "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
+          "returnValue": (
+                          "{ "
+                          "\"region\": \"UnitTestRegion\", "
+                          "\"city\": \"UnitTestCity\", "
+                          "\"country\": \"UnitTestCountry\""
+                          "}"
+                         )
         }
       -
         {
           "objectName": "get_string_set",
-          "returnValue": "{ \"somekey\": \"somevalue_that_exceeds_threshold\"}"
+          "returnValue": (
+                          "{"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "'{\"UnitTestRegion:UnitTestCity\": \"2021-06-04 09:59:53.650803\"}',"
+                          "}"
+                         )
         }
     Log:
       {
