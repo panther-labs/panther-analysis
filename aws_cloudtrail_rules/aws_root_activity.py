@@ -5,6 +5,12 @@ EVENT_ALLOW_LIST = {"CreateServiceLinkedRole", "ConsoleLogin"}
 
 
 def rule(event):
+    if (
+        event.get("eventName") == "ConsoleLogin"
+        and deep_get(event, "userIdentity", "type") == "Root"
+        and deep_get(event, "responseElements", "ConsoleLogin") == "Success"
+    ):
+        return True
     return (
         deep_get(event, "userIdentity", "type") == "Root"
         and aws_cloudtrail_success(event)
