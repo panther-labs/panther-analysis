@@ -2,11 +2,7 @@ import datetime
 import json
 
 import panther_event_type_helpers as event_type
-<<<<<<< HEAD
-from panther_oss_helpers import geoinfo_from_ip, get_string_set, put_string_set
-=======
 from panther_oss_helpers import get_string_set, put_string_set, geoinfo_from_ip
->>>>>>> cd625e4 (Geolocation helper and two rules using it)
 
 FINGERPRINT_THRESHOLD = 5
 FINGERPRINT = {}
@@ -32,13 +28,8 @@ def rule(event):
 
     # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
     # for a given user's logins. In this way, we can detect unusual logins.
-<<<<<<< HEAD
     login_geo = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
     FINGERPRINT[event.get("p_row_id")] = login_geo
-=======
-    login_tuple = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
-    FINGERPRINT[event.get("p_row_id")] = login_tuple
->>>>>>> cd625e4 (Geolocation helper and two rules using it)
 
     # Lookup & store persistent data
     event_key = get_key(event)
@@ -46,11 +37,7 @@ def rule(event):
     # Unit tests with defined mocks for get_string_set
     if isinstance(last_login_info, str):
         last_login_info = {last_login_info}
-<<<<<<< HEAD
     login_timestamp = str(datetime.datetime.now())
-=======
-    fingerprint_timestamp = str(datetime.datetime.now())
->>>>>>> cd625e4 (Geolocation helper and two rules using it)
     if not last_login_info:
         # Store this as the first login if we've never seen this user login before
         put_string_set(event_key, [json.dumps({login_geo: login_timestamp})])
