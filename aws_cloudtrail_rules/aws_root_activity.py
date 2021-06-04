@@ -1,16 +1,10 @@
 from panther import aws_cloudtrail_success, lookup_aws_account_name
 from panther_base_helpers import deep_get
 
-EVENT_ALLOW_LIST = {"CreateServiceLinkedRole", "ConsoleLogin"}
+EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
 
 
 def rule(event):
-    if (
-        event.get("eventName") == "ConsoleLogin"
-        and deep_get(event, "userIdentity", "type") == "Root"
-        and deep_get(event, "responseElements", "ConsoleLogin") == "Success"
-    ):
-        return True
     return (
         deep_get(event, "userIdentity", "type") == "Root"
         and aws_cloudtrail_success(event)
