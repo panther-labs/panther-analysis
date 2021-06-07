@@ -1,7 +1,10 @@
 from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
-#
+EXCLUDED_DOMAINS = [
+    "runpanther.io"
+]
+
 VISIBILITY = [
     "people_with_link",
     "public_on_the_web",
@@ -9,50 +12,119 @@ VISIBILITY = [
     "unknown"
     ]
 
+DOC_TITLE = "<UNKNOWN_TITLE>"
+TARGET_USER_EMAIL = "<UNKNOWN_USER>"
+TARGET_DOMAIN = "<UNKNOWN_DOMAIN>"
+ACCESS_SCOPE = "<UNKNOWN_ACCESS_SCOPE>"
+NEW_VISIBILITY = "<UNKNOWN_VISIBILITY>"
+
 def rule(event):
     if deep_get(event, "id", "applicationName") != "drive":
         return False
 
+    #########
+    # for target_domain
+    change_document_visibility = False
+
     for details in event.get("events", [{}]):
         if (
             details.get("type") == "acl_change"
-            and param_lookup(details.get("parameters", {}), "visibility_change") == "external"
+            and details.get("name") == "change_document_visibility"
+            and param_lookup(details.get("parameters", {}), "new_value") != ["private"]
+            and param_lookup(details.get("parameters", {}), "target_domain") not in EXCLUDED_DOMAINS
             and param_lookup(details.get("parameters", {}), "visibility") in VISIBILITY
         ):
-            return True
+            global TARGET_DOMAIN
+            TARGET_DOMAIN = param_lookup(details.get("parameters", {}), "target_domain")
+            global NEW_VISIBILITY
+            NEW_VISIBILITY = param_lookup(details.get("parameters", {}), "visibility")
+            global DOC_TITLE
+            DOC_TITLE = param_lookup(details.get("parameters", {}), "doc_title")
 
+            change_document_visibility = True
+            break
+
+    # "change_document_access_scope" events are always paired with "change_document_visibility" events
+    # the "target_domain" and "visibility" attributes are the same
+    # the set of a "change_document_access_scope" and a "change_document_visibility" is paired with a
+    # second set of these events
+    # the first pair of events represents the "old" domain and visibility, and the second pair
+    # represents the "new" domain and visibility
+    if change_document_visibility:
+        for details in event.get("events", [{}]):
+            if (
+                details.get("type") == "acl_change"
+                and details.get("name") == "change_document_access_scope"
+                and param_lookup(details.get("parameters", {}), "new_value") != ["none"]
+            ):
+                global ACCESS_SCOPE
+                ACCESS_SCOPE = param_lookup(details.get("parameters", {}), "new_value")
+        return True
+
+    # TODO: confirm that change_user_access events are mutually exclusive with the above events
+    # split this out
+    #########
+    # for target_user
+    change_user_access = False
+
+    for details in event.get("events", [{}]):
+        if (
+            details.get("type") == "acl_change"
+            and details.get("name") == "change_user_access"
+            and param_lookup(details.get("parameters", {}), "new_value") != ["none"]
+        ):
+            global TARGET_USER_EMAIL
+            TARGET_USER_EMAIL = param_lookup(details.get("parameters", {}), "target_user")
+            DOC_TITLE = param_lookup(details.get("parameters", {}), "doc_title")
+            ACCESS_SCOPE = param_lookup(details.get("parameters", {}), "new_value")
+
+            change_user_access = True
+            break
+
+    if change_user_access:
+        return True
+        
     return False
 
 
 def dedup(event):
-    doc_title = "<UNKNOWN_DOC_TITLE>"
-    for detail in event.get("events", [{}]):
-        if detail.get("type") == "acl_change":
-            if param_lookup(detail.get("parameters", {}), "doc_title"):
-                doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
-                break
-    return doc_title
+    return DOC_TITLE
 
 
 def title(event):
-    target_user_email = "<EMAIL_UNKNOWN>"
-    doc_title = "<UNKNOWN_DOC_TITLE>"
-    for detail in event.get("events", [{}]):
-        if detail.get("type") == "acl_change":
-            if param_lookup(detail.get("parameters", {}), "doc_title"):
-                doc_title = param_lookup(detail.get("parameters", {}), "doc_title")
-            if param_lookup(detail.get("parameters", {}), "target_user"):
-                target_user_email = param_lookup(detail.get("parameters", {}), "target_user")
-            if param_lookup(detail.get("parameters", {}), "target_domain"):
-                target_domain = param_lookup(detail.get("parameters", {}), "target_domain")
-            break
-    if target_user_email != "<EMAIL_UNKNOWN>":
-        sharing_scope = target_user_email
-    elif target_domain == "all":
-        sharing_scope = f"all domains"
+
+    if TARGET_USER_EMAIL != "<UNKNOWN_USER>":
+        sharing_scope = TARGET_USER_EMAIL
+        # TODO: make sure this options only appears if a target_user is specified
+        if NEW_VISIBILITY == "shared_externally":
+            sharing_scope = sharing_scope + " (outside the document's current domain)"
+    # TODO: make sure there is no target_domain if there is a target_user
+    elif TARGET_DOMAIN == "all":
+        sharing_scope = "the entire internet"
+        # TODO: make sure these options only appear with the "all" target_domain
+        if NEW_VISIBILITY == "people_with_link":
+            sharing_scope = sharing_scope + " (anyone with the link)"
+        elif NEW_VISIBILITY == "public_on_the_web":
+            sharing_scope = sharing_scope + " (link not required)"
     else:
-        sharing_scope = target_domain
+        sharing_scope = f"the {TARGET_DOMAIN} domain"
+        # TODO: make sure these options only appear with a specific target_domain (not "all")
+        if NEW_VISIBILITY == "people_within_domain_with_link":
+            sharing_scope = sharing_scope + f" (anyone in {TARGET_DOMAIN} with the link)"
+        elif NEW_VISIBILITY == "public_in_the_domain":
+            sharing_scope = sharing_scope + f" (anyone in {TARGET_DOMAIN})"
+
+
+    global ACCESS_SCOPE
+    # TODO: confirm multiValue always has one element
+    if ACCESS_SCOPE == ["can_view"]:
+        ACCESS_SCOPE = "view"
+    elif ACCESS_SCOPE == ["can_comment"]:
+        ACCESS_SCOPE = "comment"
+    elif ACCESS_SCOPE == ["can_edit"]:
+        ACCESS_SCOPE = "edit"
+
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}] made a document "
-        f"[{doc_title}] externally visible to [{sharing_scope}]"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] made the document "
+        f"[{DOC_TITLE}] externally visible to [{sharing_scope}] with [{ACCESS_SCOPE}] access"
     )
