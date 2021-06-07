@@ -19,13 +19,11 @@ def dedup(event):
 
 
 def title(event):
+    action = "activity"
     if event.get("eventName") == "ConsoleLogin":
-        return (
-            f"AWS root login detected from [{event.get('sourceIPAddress')}] in account "
-            f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
-        )
+        action = "login"
     return (
-        f"AWS root activity detected from [{event.get('sourceIPAddress')}] in account "
+        f"AWS root {action} detected from [{event.get('sourceIPAddress')}] in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 
