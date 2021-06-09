@@ -1,7 +1,7 @@
 from panther import aws_cloudtrail_success, lookup_aws_account_name
 from panther_base_helpers import deep_get
 
-EVENT_ALLOW_LIST = {"CreateServiceLinkedRole", "ConsoleLogin"}
+EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
 
 
 def rule(event):
@@ -14,9 +14,20 @@ def rule(event):
     )
 
 
-def title(event):
+def dedup(event):
     return (
-        f"AWS root activity detected from [{event.get('sourceIPAddress')}] in account "
+        event.get("sourceIPAddress", "<UNKNOWN_IP>")
+        + ":"
+        + lookup_aws_account_name(event.get("recipientAccountId"))
+    )
+
+
+def title(event):
+    action = "activity"
+    if event.get("eventName") == "ConsoleLogin":
+        action = "login"
+    return (
+        f"AWS root {action} detected from [{event.get('sourceIPAddress')}] in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 
