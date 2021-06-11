@@ -1,3 +1,4 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 # API calls that are indicative of CloudTrail changes
@@ -9,7 +10,7 @@ CLOUDTRAIL_CREATE_UPDATE = {
 
 
 def rule(event):
-    return event.get("eventName") in CLOUDTRAIL_CREATE_UPDATE
+    return aws_cloudtrail_success(event) and event.get("eventName") in CLOUDTRAIL_CREATE_UPDATE
 
 
 def title(event):

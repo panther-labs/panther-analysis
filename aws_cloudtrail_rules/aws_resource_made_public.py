@@ -1,19 +1,8 @@
 import json
 
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
-
-try:
-    # This is a temporary workaround so that the rule doesn't break in Panther 1.15.x.
-    # It can be removed either by using the deep-copy methods
-    # defined in https://github.com/panther-labs/panther/pull/2630
-    # or by upgrading to a new policyuniverse release.
-    # For details see: https://github.com/panther-labs/panther/issues/2550
-    from src.enriched_event import PantherEvent
-
-    PANTHER_JSON_ENCODER = PantherEvent.json_encoder
-except ImportError:
-    PANTHER_JSON_ENCODER = None
 
 
 # Check that the IAM policy allows resource accessibility via the Internet
@@ -28,7 +17,7 @@ def policy_is_internet_accessible(json_policy):
 # Any solution that avoids too many return statements only increases the complexity of this rule.
 # pylint: disable=too-many-return-statements
 def rule(event):
-    if event.get("errorCode", "") == "AccessDenied":
+    if not aws_cloudtrail_success(event):
         return False
 
     parameters = event.get("requestParameters", {})
@@ -40,9 +29,7 @@ def rule(event):
 
     # S3
     if event["eventName"] == "PutBucketPolicy":
-        return policy_is_internet_accessible(
-            json.loads(json.dumps(parameters.get("bucketPolicy"), default=PANTHER_JSON_ENCODER))
-        )
+        return policy_is_internet_accessible(parameters.get("bucketPolicy"))
 
     # ECR
     if event["eventName"] == "SetRepositoryPolicy":

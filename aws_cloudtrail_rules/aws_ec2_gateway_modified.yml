@@ -123,3 +123,49 @@ Tests:
           "eventType": "AwsApiCall",
           "recipientAccountId": "123456789012"
       }
+  -
+    Name: Error Modifying Network Gateway
+    ExpectedResult: false
+    Log:
+      {
+          "errorCode": "RequestExpired",
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "AssumedRole",
+              "principalId": "1111:tester",
+              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  },
+                  "sessionIssuer": {
+                      "type": "Role",
+                      "principalId": "1111",
+                      "arn": "arn:aws:iam::123456789012:role/tester",
+                      "accountId": "123456789012",
+                      "userName": "tester"
+                  }
+              }
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "ec2.amazonaws.com",
+          "eventName": "AttachInternetGateway",
+          "awsRegion": "us-west-2",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "console.ec2.amazonaws.com",
+          "requestParameters": {
+              "internetGatewayId": "igw-1",
+              "vpcId": "vpc-1"
+          },
+          "responseElements": {
+              "requestID": "1",
+              "_return": true
+          },
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }

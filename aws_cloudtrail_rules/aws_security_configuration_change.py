@@ -1,3 +1,4 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 SECURITY_CONFIG_ACTIONS = {
@@ -15,6 +16,9 @@ SECURITY_CONFIG_ACTIONS = {
 
 
 def rule(event):
+    if not aws_cloudtrail_success(event):
+        return False
+
     if event.get("eventName") == "UpdateDetector":
         return not deep_get(event, "requestParameters", "enable", default=True)
 

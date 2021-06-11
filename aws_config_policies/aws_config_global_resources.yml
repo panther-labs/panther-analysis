@@ -31,42 +31,52 @@ Tests:
         "Name": "AWS.Config.Recorder.Meta",
         "GlobalRecorderCount": 0
       }
-#  -
-#    Name: __REPLACE_ACCOUNT_ID_TO_SUPPORT_TESTING__ Global Resources Are Enabled
-#    ExpectedResult: true
-#    Resource:
-#      {
-#          "TimeCreated": null,
-#          "AccountId": "123456789012",
-#          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
-#          "ResourceType": "AWS.Config.Recorder.Meta",
-#          "Tags": null,
-#          "Region": "global",
-#          "Recorders": [
-#              "123456789012:us-east-1:AWS.Config.Recorder",
-#              "123456789012:us-east-2:AWS.Config.Recorder",
-#              "123456789012:us-west-1:AWS.Config.Recorder",
-#              "123456789012:us-west-2:AWS.Config.Recorder"
-#        ],
-#          "Name": "AWS.Config.Recorder.Meta",
-#          "GlobalRecorderCount": 4
-#      }
-#
-#
-# Requires unit test mocking to properly support this unit test
-#  - Name: Global Recorders Present - None Recording Global Resources
-#    ExpectedResult: false
-#    Resource:
-#      {
-#        "TimeCreated": null,
-#        "Recorders": [
-#          "123456789012:us-west-2:AWS.Config.Recorder"
-#        ],
-#        "AccountId": "123456789012",
-#        "Name": "AWS.Config.Recorder.Meta",
-#        "GlobalRecorderCount": 1,
-#        "Tags": null,
-#        "Region": "global",
-#        "ResourceType": "AWS.Config.Recorder.Meta",
-#        "ResourceId": "123456789012::AWS.Config.Recorder.Meta"
-#      }
+  -
+    Name: Global Resources Are Enabled
+    ExpectedResult: true
+    Mocks:
+      -
+        {
+          "objectName": "resource_lookup",
+          "returnValue": "{ \"AccountId\": \"012345678910\", \"Name\": \"Default\", \"RecordingGroup\": { \"AllSupported\": true, \"IncludeGlobalResourceTypes\": true, \"ResourceTypes\": null }, \"Region\": \"us-east-1\", \"ResourceId\": \"012345678910:us-east-1:AWS.Config.Recorder\", \"ResourceType\": \"AWS.Config.Recorder\", \"RoleARN\": \"arn:aws:iam::012345678910:role/PantherAWSConfig\", \"Status\": { \"LastErrorCode\": null, \"LastErrorMessage\": null, \"LastStartTime\": \"2018-10-05T22:45:01.838Z\", \"LastStatus\": \"SUCCESS\", \"LastStatusChangeTime\": \"2021-05-28T17:45:14.916Z\", \"LastStopTime\": null, \"Name\": \"Default\", \"Recording\": true }, \"Tags\": null, \"TimeCreated\": null }"
+        }
+    Resource:
+      {
+          "TimeCreated": null,
+          "AccountId": "123456789012",
+          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+          "ResourceType": "AWS.Config.Recorder.Meta",
+          "Tags": null,
+          "Region": "global",
+          "Recorders": [
+              "123456789012:us-east-1:AWS.Config.Recorder",
+              "123456789012:us-east-2:AWS.Config.Recorder",
+              "123456789012:us-west-1:AWS.Config.Recorder",
+              "123456789012:us-west-2:AWS.Config.Recorder"
+          ],
+          "Name": "AWS.Config.Recorder.Meta",
+          "GlobalRecorderCount": 4
+      }
+  -
+    Name: Global Recorders Present - None Recording Global Resources
+    ExpectedResult: false
+    Mocks:
+      -
+        {
+          "objectName": "resource_lookup",
+          "returnValue": "{\"AccountId\":\"012345678910\",\"Name\":\"Default\",\"RecordingGroup\":{\"AllSupported\":true,\"IncludeGlobalResourceTypes\":true,\"ResourceTypes\":null},\"Region\":\"us-east-1\",\"ResourceId\":\"012345678910:us-east-1:AWS.Config.Recorder\",\"ResourceType\":\"AWS.Config.Recorder\",\"RoleARN\":\"arn:aws:iam::012345678910:role/PantherAWSConfig\",\"Status\":{\"LastErrorCode\":null,\"LastErrorMessage\":null,\"LastStartTime\":\"2018-10-05T22:45:01.838Z\",\"LastStatus\":\"SUCCESS\",\"LastStatusChangeTime\":\"2021-05-28T17:45:14.916Z\",\"LastStopTime\":null,\"Name\":\"Default\",\"Recording\":false},\"Tags\":null,\"TimeCreated\":null}"
+        }
+    Resource:
+      {
+        "TimeCreated": null,
+        "Recorders": [
+          "123456789012:us-west-2:AWS.Config.Recorder"
+        ],
+        "AccountId": "123456789012",
+        "Name": "AWS.Config.Recorder.Meta",
+        "GlobalRecorderCount": 1,
+        "Tags": null,
+        "Region": "global",
+        "ResourceType": "AWS.Config.Recorder.Meta",
+        "ResourceId": "123456789012::AWS.Config.Recorder.Meta"
+      }
