@@ -61,33 +61,20 @@ def check_account(resource):
     content_assumerole = resource.get('AssumeRolePolicyDocument')
     if isinstance(content_assumerole, str):
         content_assumerole = json.loads(content_assumerole)
-    print('json loaded content_assumerole is:\n\n',
-          json.dumps(content_assumerole, indent=2),
-          '\n',
-          sep='')
     principal = content_assumerole['Statement'][0]['Principal']
-    print('Principal is', principal, '\n')
     if 'AWS' in principal.keys():
-        print('There\'s an AWS trust principal\n')
         if isinstance(principal['AWS'], list):
-            print('The AWS trust principal is a list (multiple principals)\n')
             for principal_aws in principal['AWS']:
                 if not check_account_number(principal_aws):
                     return False
         else:
-            print('The AWS trust principal is a string (single principal)\n')
             return check_account_number(principal['AWS'])
-    else:
-        print('There is no AWS trust principal (must be an AWS service)\n')
     return True
 
 
 def check_account_number(principal_aws):
-    print('principal_aws is', principal_aws, '\n')
     if principal_aws.split(':')[4] not in accounts:
-        print('The account of the principal is not an internal account\n')
         return False
-    print('The account of the principal is an internal account\n')
     return True
 
 
@@ -96,26 +83,18 @@ def check_policy(policy_text):
         policy_text = json.loads(policy_text)
     for statement in policy_text.get('Statement', []):
         if PERMISSION in statement.get('Action', []):
-            print('permission matches:', PERMISSION, '\n')
-            print('Checking account...\n')
             return False
     return True
 
 
 def policy(resource):
-    print('\n----New Test Case----\n')
     if not check_account(resource):
-        print('External account can assume role\n')
         for policy_text in (resource.get('InlinePolicies') or {}).values():
-            print('Inline policy_text is', policy_text, '\n')
             if not check_policy(policy_text):
-                print('Result: Inline permission found for external account\n')
                 return False
-            print('Result: Inline permission not found\n')
 
         for managed_policy_name in resource.get('ManagedPolicyNames') or []:
             managed_policy_id = f"arn:aws:iam::{resource['AccountId']}:policy/{managed_policy_name}"
-            print('managed_policy_id is', managed_policy_id, '\n')
             try:
                 # CONFIGURATION REQUIRED
                 # to mock a Managed Policy
@@ -128,36 +107,21 @@ def policy(resource):
                 if not resource.get('IsUnitTest'):
                     managed_policy = resource_lookup(managed_policy_id)
                 else:
-                    print(
-                        "Running unit test for managed policy (mock lookup)\n")
                     if resource.get('HasPermission'):
-                        print("Using mock policy with specified permission\n")
                         managed_policy = mock_policy_has_permission
                     elif resource.get('DoesNotHavePermission'):
-                        print(
-                            "Using mock policy without specified permission\n")
                         managed_policy = mock_policy_no_permission
                     else:
-                        print("Mock policy does not specify type (required)\n")
                         return True
                 # uncomment next line to optimize for production use
                 # managed_policy = resource_lookup(managed_policy_id)
             except BadLookup:
-                print(
-                    'Managed policy does not exist or DynamoDB lookup failure\n'
-                )
                 return True
             except NoCredentialsError:
-                print('Lookup failure (no credentials)\n')
                 return True
 
             policy_text = managed_policy.get('PolicyDocument')
-            print('policy_text is', policy_text, '\n')
             if not check_policy(policy_text):
-                print('Permission found for external account\n')
                 return False
-            print('Permission not found\n')
-
-    print('Result: Role only assumable by internal account or AWS service\n')
 
     return True
