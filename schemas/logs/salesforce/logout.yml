@@ -4,7 +4,7 @@ referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sfo
 description: Logout events contain details of user logouts.
 parser:
   csv:
-    delimiter: ","
+    delimiter: ','
     hasHeader: true
     columns:
       - EVENT_TYPE
@@ -33,38 +33,36 @@ fields:
     required: true
     type: string
     validate:
-      allow: ["Logout"]
+      allow: ['Logout']
     description: The type of event. The value is always Logout.
   - name: TIMESTAMP
     required: false
     type: timestamp
-    timeFormat: "%Y%m%d%H%M%S.%f"
-    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
+    timeFormat: '%Y%m%d%H%M%S.%f'
+    description: 'The access time of Salesforce services in GMT. For example: 20130715233322.670.'
   - name: REQUEST_ID
     required: false
     type: string
     indicators:
       - trace_id
     description: >-
-      The unique ID of a single transaction. A transaction can contain one or more events.
-      Each event in a given transaction has the same REQUEST_ID.
-      For example: 3nWgxWbDKWWDIk0FKfF5DV.
+      The unique ID of a single transaction. A transaction can contain one or more events. Each event in a given transaction has the same REQUEST_ID. For example: 3nWgxWbDKWWDIk0FKfF5DV.
   - name: ORGANIZATION_ID
     required: true
     type: string
-    description: "The 15-character ID of the organization. For example: 00D000000000123."
+    description: 'The 15-character ID of the organization. For example: 00D000000000123.'
   - name: USER_ID
     required: true
     type: string
     description: >-
-      The 15-character ID of the user who’s using Salesforce services through the UI or the API.
-      For example: 00530000009M943
+      The 15-character ID of the user who’s using Salesforce services through the UI or the API. For example: 00530000009M943
   - name: USER_TYPE
     required: false
     type: string
     description: >-
-      The category of user license of the user that logged out.
-      Possible Values:
+      The category of user license of the user that logged out. Possible Values:
+
+
         A: Automated Process
         b: High Volume Portal
         C: Customer Portal User
@@ -85,6 +83,8 @@ fields:
     type: string
     description: >-
       The session type that was used when logging out. Possible Values:
+
+
         A: API
         I: APIOnlyUser
         N: ChatterNetworks
@@ -107,14 +107,14 @@ fields:
     required: false
     type: string
     description: >-
-      The security level of the session that was used when logging out.
-      Possible Values: 1: Standard Session, 2: High-Assurance Session
+      The security level of the session that was used when logging out. Possible Values: 1: Standard Session, 2: High-Assurance Session
   - name: BROWSER_TYPE
     required: false
     type: string
     description: >-
-      The identifier string returned by the browser used at login.
-      Example values are:
+      The identifier string returned by the browser used at login. Example values are:
+
+
           Go-http-client/1.1
           Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv%3A50.0) Gecko/20100101 Firefox/50.0
           Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
@@ -122,8 +122,9 @@ fields:
     required: false
     type: bigint
     description: >-
-      The code for the client platform. If a timeout caused the logout, this field is null.
-      Example Values:
+      The code for the client platform. If a timeout caused the logout, this field is null. Example Values:
+
+
         1000: Windows
         2003: Macintosh/Apple OSX
         5005: Android
@@ -137,8 +138,9 @@ fields:
     required: false
     type: string
     description: >-
-      The application type that was in use upon logging out.
-      Example Values:
+      The application type that was in use upon logging out. Example Values:
+
+
         1007: SFDC Application
         1014: Chat
         2501: CTI
@@ -152,8 +154,9 @@ fields:
     required: false
     type: string
     description: >-
-      The type of API request.
-      Possible values are:
+      The type of API request. Possible values are:
+
+
           D—Apex Class
           E—SOAP Enterprise
           I—SOAP Cross Instance
@@ -169,48 +172,38 @@ fields:
   - name: API_VERSION
     required: false
     type: string
-    description: "The version of the API that’s being used. For example: 36.0."
+    description: 'The version of the API that’s being used. For example: 36.0.'
   - name: USER_INITIATED_LOGOUT
     required: false
     type: boolean
     description: >-
-      The value is 1 if the user intentionally logged out of the organization by clicking the Logout button.
-      If the user’s session timed out due to inactivity or another implicit logout action, the value is 0.
+      The value is 1 if the user intentionally logged out of the organization by clicking the Logout button. If the user’s session timed out due to inactivity or another implicit logout action, the value is 0.
   - name: SESSION_KEY
     required: false
     type: string
     description: >-
-      The user’s unique session ID. You can use this value to identify all user events
-      within a session. When a user logs out and logs in again, a new session is started.
-      For example: d7DEq/ANa7nNZZVD.
+      The user’s unique session ID. You can use this value to identify all user events within a session. When a user logs out and logs in again, a new session is started. For example: d7DEq/ANa7nNZZVD.
   - name: LOGIN_KEY
     required: false
     type: string
     description: >-
-      The string that ties together all events in a given user’s login session.
-      It starts with a login event and ends with either a logout event or the user session expiring.
-      For example: GeJCsym5eyvtEK2I.
+      The string that ties together all events in a given user’s login session. It starts with a login event and ends with either a logout event or the user session expiring. For example: GeJCsym5eyvtEK2I.
   - name: TIMESTAMP_DERIVED
     required: true
     type: timestamp
     isEventTime: true
     timeFormat: rfc3339
     description: >-
-      The access time of Salesforce services in ISO8601-compatible format (YYYY-MM-DDTHH:MM:SS.sssZ).
-      For example: 2015-07-27T11:32:59.555Z. Timezone is GMT.
+      The access time of Salesforce services in ISO8601-compatible format (YYYY-MM-DDTHH:MM:SS.sssZ). For example: 2015-07-27T11:32:59.555Z. Timezone is GMT.
   - name: USER_ID_DERIVED
     required: false
     type: string
     description: >-
-      The 18-character case insensitive ID of the user who’s using Salesforce services through the UI or the API.
-      For example: 00590000000I1SNIA0.
+      The 18-character case insensitive ID of the user who’s using Salesforce services through the UI or the API. For example: 00590000000I1SNIA0.
   - name: CLIENT_IP
     required: false
     type: string
     indicators:
       - ip
     description: >-
-      The IP address of the client that’s using Salesforce services.
-      A Salesforce internal IP (such as a login from Salesforce Workbench
-      or AppExchange) is shown as "Salesforce.com IP".
-      For example: 10.0.0.1.
+      The IP address of the client that’s using Salesforce services. A Salesforce internal IP (such as a login from Salesforce Workbench or AppExchange) is shown as "Salesforce.com IP". For example: 10.0.0.1.
