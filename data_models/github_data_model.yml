@@ -1,0 +1,18 @@
+AnalysisType: datamodel
+LogTypes: 
+  - GitHub.Audit
+DataModelID: Standard.Github.Audit
+DisplayName: Github Audit
+Filename: github_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: actor
+  - Name: assigned_admin_role
+    Path: privilege_name
+  - Name: event_type
+    Method: get_event_type
+  - Name: source_ip
+    Path: ip_addr  
+  - Name: user
+    Path: user
