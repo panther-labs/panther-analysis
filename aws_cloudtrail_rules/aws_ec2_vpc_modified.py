@@ -1,3 +1,5 @@
+from panther import aws_cloudtrail_success
+
 # API calls that are indicative of an EC2 VPC modification
 EC2_VPC_MODIFIED_EVENTS = {
     "CreateVpc",
@@ -15,7 +17,7 @@ EC2_VPC_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in EC2_VPC_MODIFIED_EVENTS
+    return aws_cloudtrail_success(event) and event.get("eventName") in EC2_VPC_MODIFIED_EVENTS
 
 
 def dedup(event):

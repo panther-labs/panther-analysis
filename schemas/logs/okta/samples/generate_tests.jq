@@ -9,7 +9,7 @@ def omitempty:
     walk(
       if type == "object" then
         with_entries(
-           select( (.value != null or .key == "detailEntry") and ( .value | empty_array | not ) )
+           select(  (.value != null) and ( .value | empty_array | not ) )
         )
       else
         .

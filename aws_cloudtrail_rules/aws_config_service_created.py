@@ -1,3 +1,5 @@
+from panther import aws_cloudtrail_success
+
 # API calls that are indicative of an AWS Config Service change
 CONFIG_SERVICE_CREATE_EVENTS = {
     "PutDeliveryChannel",
@@ -7,4 +9,4 @@ CONFIG_SERVICE_CREATE_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in CONFIG_SERVICE_CREATE_EVENTS
+    return aws_cloudtrail_success(event) and event.get("eventName") in CONFIG_SERVICE_CREATE_EVENTS

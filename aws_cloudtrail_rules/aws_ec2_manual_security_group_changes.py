@@ -1,3 +1,4 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get, pattern_match_list
 
 PROD_ACCOUNT_IDS = {"11111111111111", "112233445566"}
@@ -27,7 +28,7 @@ ALLOWED_ROLE_NAMES = {
 
 
 def rule(event):
-    return (
+    return aws_cloudtrail_success(event) and (
         event.get("eventName") in SG_CHANGE_EVENTS.keys()
         and event.get("recipientAccountId") in PROD_ACCOUNT_IDS
         and

@@ -1,9 +1,10 @@
+from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 
 def rule(event):
     # Capture DeleteBucket, DeleteBucketPolicy, DeleteBucketWebsite
-    return event.get("eventName").startswith("DeleteBucket") and not event.get("errorCode")
+    return event.get("eventName").startswith("DeleteBucket") and aws_cloudtrail_success(event)
 
 
 def helper_strip_role_session_id(user_identity_arn):

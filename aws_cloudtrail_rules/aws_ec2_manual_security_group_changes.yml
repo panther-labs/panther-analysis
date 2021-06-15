@@ -292,3 +292,86 @@ Tests:
          "eventType":"AwsApiCall",
          "recipientAccountId":"112233445566"
       }
+  -
+    Name: AWS Console - Ingress SG Authorization Error
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "errorCode": "UnauthorizedOperation",
+        "eventID": "504b492f-7832-406b-a4fd-45a13e48adc4",
+        "eventName": "AuthorizeSecurityGroupIngress",
+        "eventSource": "ec2.amazonaws.com",
+        "eventTime": "2021-01-24 04:55:45.000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "112233445566",
+        "requestID": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2",
+        "requestParameters": {
+          "groupId": "sg-04f0b44316f7d2471",
+          "ipPermissions": {
+            "items": [
+              {
+                "ipRanges": {
+                  "items": [
+                    {
+                      "cidrIp": "0.0.0.0/16"
+                    }
+                  ]
+                },
+                "prefixListIds": {},
+                "fromPort": "443",
+                "toPort": "443",
+                "groups": {},
+                "ipProtocol": "tcp",
+                "ipv6Ranges": {}
+              }
+            ]
+          }
+        },
+        "responseElements": {
+          "_return": true,
+          "requestId": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2"
+        },
+        "sourceIPAddress": "136.25.37.134",
+        "userAgent": "console.ec2.amazonaws.com",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalid": "ARORJ4ULULLE0EEJAAKDO:alan",
+          "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/alan",
+          "accountid": "112233445566",
+          "accesskeyid": "ASIASWJRT64Z7ZLFLJNI",
+          "sessioncontext": {
+            "attributes": {
+              "mfaauthenticated": "true",
+              "creationdate": "2021-01-24T04:55:10Z"
+            },
+            "sessionissuer": {
+              "type": "Role",
+              "principalid": "ARORJ4ULULLE0EEJAAKDO",
+              "arn": "arn:aws:iam::112233445566:role/TestAdmin",
+              "accountid": "112233445566",
+              "username": "TestAdmin"
+            }
+          }
+        },
+        "p_event_time": "2021-01-24 04:55:45.000",
+        "p_parse_time": "2021-01-24 05:02:58.358",
+        "p_log_type": "AWS.CloudTrail",
+        "p_row_id": "1a57ff7ade26aaf5a1a4d7d20775",
+        "p_source_id": "e55677c6-7ef5-4541-a443-0d0f17eec19f",
+        "p_source_label": "CloudTrail Test",
+        "p_any_ip_addresses": [
+          "136.25.37.134"
+        ],
+        "p_any_aws_account_ids": [
+          "112233445566"
+        ],
+        "p_any_aws_arns": [
+          "arn:aws:iam::112233445566:role/TestAdmin",
+          " arn:aws:sts::112233445566:assumed-role/TestAdmin/alan"
+        ]
+      }
