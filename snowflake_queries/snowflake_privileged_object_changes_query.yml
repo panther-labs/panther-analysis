@@ -9,7 +9,8 @@ SnowflakeQuery: >
   SELECT 
     query_text,
     user_name,
-    role_name
+    role_name,
+    end_time
   FROM snowflake.account_usage.query_history
     WHERE 
       DATEDIFF(HOUR,  start_time, CURRENT_TIMESTAMP) < 24
