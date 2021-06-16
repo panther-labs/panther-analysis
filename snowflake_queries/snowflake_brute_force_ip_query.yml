@@ -2,13 +2,11 @@ AnalysisType: scheduled_query
 QueryName: Query.Snowflake.BruteForceByIp
 Enabled: false
 Description: >
-  Detect brute force attempts by monitoring for failed logins to snowflake.
+  Detect brute force attempts by monitoring for failed logins to snowflake. This was adapted from a SnowAlert query.
 AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
-  --return IPs with more than 5 failed logins in the previous 24 hours
-  --this was adapted from a SnowAlert query
   SELECT 
     client_ip,
     reported_client_type,

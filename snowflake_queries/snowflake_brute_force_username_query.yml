@@ -2,13 +2,11 @@ AnalysisType: scheduled_query
 QueryName: Query.Snowflake.BruteForceByUsername
 Enabled: false
 Description: >
-  Detect brute force attempts by monitoring for failed logins to snowflake.
+  Detect brute force attempts by monitoring for failed logins to snowflake. This was adapted from a SnowAlert query.
 AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
-  --return users with more than 5 failed logins in the previous 24 hours
-  --this was adapted from a SnowAlert query
   SELECT 
     user_name,
     reported_client_type,
