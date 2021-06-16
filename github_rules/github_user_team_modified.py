@@ -14,8 +14,8 @@ def title(event):
     if event.get("action").startswith("team"):
         return (
             # TODO: add team info
-            f"User [{event.get('actor_user', '<UNKNOWN_ACTOR_USER>')}] {action} from team [{event.get('team')}]"
+            f"User [{event.udm('actor_user')}] {action} from team [{event.get('team')}]"
         )
     return (
-        f"User [{event.get('actor_user', '<UNKNOWN_ACTOR_USER>')}] {action}"
+        f"User [{event.udm('actor_user')}] {action}"
     )

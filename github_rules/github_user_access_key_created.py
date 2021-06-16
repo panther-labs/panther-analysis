@@ -3,5 +3,5 @@ def rule(event):
 
 def title(event):
     return (
-      f"User [{event.get('actor_user', '<UNKNOWN_ACTOR_USER>')}] created a new ssh key"
+      f"User [{event.udm('actor_user')}] created a new ssh key"
     )

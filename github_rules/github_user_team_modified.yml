@@ -1,6 +1,6 @@
 AnalysisType: rule
-Filename: github_user_mfa_disabled.py
-RuleID: github.user.mfadisabled
+Filename: github_user_team_modified.py
+RuleID: github.user.modified
 DisplayName: GitHub User MFA Disabled
 Enabled: true
 LogTypes:
@@ -46,12 +46,12 @@ Tests:
         "user": "cat"
       }
   -
-    Name: GitHub - User Added
+    Name: GitHub - User Deleted
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
-        "action": "user.create",
+        "action": "user.delete",
         "p_log_type": "GitHub.Audit",
         "repository": "my-org/my-repo",
         "user": "cat"

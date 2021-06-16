@@ -1,5 +1,5 @@
 def rule(event):
-    return event.get("action") == "repo.access" or event.get("action") == "repo.remove_member"
+    return event.get("action") == "repo.add_member" or event.get("action") == "repo.remove_member"
 
 def title(event):
     action = "added"
