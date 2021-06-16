@@ -1,0 +1,36 @@
+AnalysisType: rule
+Filename: github_repo_visibility_change.py
+RuleID: Github.Repo.VisibilityChange
+DisplayName: GitHub Repository Visibility Change
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: High
+Description: Detects when a repository visibility changes from private or internal to public.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Repo Visibility Public
+    ExpectedResult: true
+    Log:
+      { # TODO: add visibility change
+        "actor": "cat",
+        "action": "repo.access",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }
+  -
+    Name: GitHub - Repo Visibility Internal
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "repo.access",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }

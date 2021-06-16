@@ -1,0 +1,26 @@
+AnalysisType: rule
+Filename: github_branch_policy_override.py
+RuleID: github.branch.policy.override
+DisplayName: GitHub Branch Protection Policy Override
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: High
+Description: Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+Runbook: Verify that the GitHub admin performed this activity and validate its use.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Branch Protection Policy Override
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.policy_override",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }

@@ -1,0 +1,25 @@
+AnalysisType: rule
+Filename: github_repo_created.py
+RuleID: Github.Repo.Created
+DisplayName: GitHub Repository Created
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a repository is created.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Repo Created
+    ExpectedResult: true
+    Log:
+      { # TODO: add visibility change
+        "actor": "cat",
+        "action": "repo.created",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }

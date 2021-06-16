@@ -1,0 +1,25 @@
+AnalysisType: rule
+Filename: github_user_mfa_disabled.py
+RuleID: github.user.mfadisabled
+DisplayName: GitHub User MFA Disabled
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Medium
+Description: Detects when Multi-Factor Authentication (MFA) is disabled for a user.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - User MFA Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "two_factor_authentication.disabled",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }

@@ -5,6 +5,7 @@ DisplayName: Admin Role Assigned
 Enabled: true
 LogTypes:
   - GCP.AuditLog
+  - GitHub.Audit
   - GSuite.Reports
   - OneLogin.Events
 Tags:
@@ -115,4 +116,14 @@ Tests:
         "user_name": "Evil Bob",
         "actor_user_name": "Bobert O'Bobly",
         "p_log_type": "OneLogin.Events",
+      }
+  -
+    Name: Github - User Promoted
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "user.promote",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
       }

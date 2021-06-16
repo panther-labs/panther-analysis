@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: github_user_mfa_disabled.py
+RuleID: github.user.mfadisabled
+DisplayName: GitHub User MFA Disabled
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a user is added or deleted, or when a user is added or removed from a team
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - User / Repo Removed From Team
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "team.delete",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }
+  -
+    Name: GitHub - User / Repo Added To Team
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "team.create",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }
+  -
+    Name: GitHub - User Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "user.create",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }
+  -
+    Name: GitHub - User Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "user.create",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo",
+        "user": "cat"
+      }
