@@ -3,7 +3,7 @@ from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 EXCLUDED_DOMAINS = {"example.com"}
 
-VISIBILITY = ["people_with_link", "public_on_the_web", "shared_externally", "unknown"]
+VISIBILITY = {"people_with_link", "public_on_the_web", "shared_externally", "unknown"}
 
 DOC_TITLE = "<UNKNOWN_TITLE>"
 TARGET_USER_EMAIL = "<UNKNOWN_USER>"
