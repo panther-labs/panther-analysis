@@ -6,6 +6,7 @@ DisplayName: MFA Disabled
 Enabled: false
 LogTypes:
   - GitHub.Audit
+  - Zendesk.AuditLog
 Severity: High
 Description: Detects when Multi-Factor Authentication (MFA) is disabled
 SummaryAttributes:
@@ -22,4 +23,22 @@ Tests:
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
         "repository": "my-org/my-repo"
+      }
+  -
+    Name: Zendesk - Two-factor auth change
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "account_setting",
+        "source_label": "Two-Factor authentication for all admins and agents",
+        "action": "create",
+        "change_description": "Disabled",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.AuditLog"
       }
