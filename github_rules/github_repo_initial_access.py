@@ -1,5 +1,3 @@
-import json
-
 from panther_oss_helpers import get_string_set, put_string_set
 
 
@@ -9,7 +7,7 @@ def rule(event):
         key = get_key(event)
         previous_access = get_string_set(key)
         if not previous_access:
-            put_string_set(key)
+            put_string_set(key, key)
             return True
     return False
 

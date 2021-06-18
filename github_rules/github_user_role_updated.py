@@ -3,4 +3,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{event.udm('actor_user')}] updated user's [{event.get('user')}] role ('admin' or 'member')"
+    return (
+        f"Org owner [{event.udm('actor_user')}] updated user's "
+        f"[{event.get('user')}] role ('admin' or 'member')"
+    )

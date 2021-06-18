@@ -27,5 +27,8 @@ def title(event):
     elif action.endswith(".remove_repository"):
         action = f"removed repository {event.get('repo')} from team"
     elif action.endswith(".change_parent_team"):
-        action = f"changed parent team for team"
-    return f"GitHub.Audit: User [{event.udm('actor_user')}] {action} [{event.get('data', {}).get('team', '<UNKNOWN_TEAM>')}]"
+        action = "changed parent team for team"
+    return (
+        f"GitHub.Audit: User [{event.udm('actor_user')}] {action} "
+        f"[{event.get('data', {}).get('team', '<UNKNOWN_TEAM>')}]"
+    )

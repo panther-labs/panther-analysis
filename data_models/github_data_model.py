@@ -1,7 +1,7 @@
 import panther_event_type_helpers as event_type
 
 
-def get_admin_role(event):
+def get_admin_role(_):
     # github doesn't record the admin role in the event
     return "<UNKNOWN_ROLE>"
 
