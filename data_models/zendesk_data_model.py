@@ -1,20 +1,56 @@
-import panther_event_type_helpers as event_type
 import re
 
-successful_login = "Successful sign-in using .+ from .*"
-admin_role_assigned = "Role changed from .+ to (Administrator|Account Owner)"
+import panther_event_type_helpers as event_type
+
+ADMIN_ROLE_ASSIGNED = r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)"
+LOGIN_EVENT = (
+    r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from (?P<authentication_location>[^$]+)"
+)
+
+## key names
+CHANGE_DESCRIPTION = "changes_description"
 
 def get_event_type(event):
     # user item being audited
     if event.get("source_type") == "user":
         # check for login events
         if event.get("action") == "login":
-            if bool(re.match(event.get("changes_description"), successful_login)):
-                return event_type.SUCCESSFUL_LOGIN
+            matches = re.match(LOGIN_EVENT, event.get(CHANGE_DESCRIPTION, ""), re.IGNORECASE)
+            if matches:
+                if matches.group("login_result").lower().startswith("success"):
+                    return event_type.SUCCESSFUL_LOGIN
+            return event_type.FAILED_LOGIN
         # check for admin assignment
         if event.get("action") == "update":
-            if bool(re.match(event.get("changes_description"), admin_role_assigned, re.IGNORECASE)):
+            if bool(re.match(ADMIN_ROLE_ASSIGNED, event.get(CHANGE_DESCRIPTION, ""), re.IGNORECASE)):
                 return event_type.ADMIN_ROLE_ASSIGNED
     return None
 
+
 def get_assigned_admin_role(event):
+    matches = re.search(ADMIN_ROLE_ASSIGNED, event.get(CHANGE_DESCRIPTION,""), re.IGNORECASE)
+    if matches:
+        return matches.group("new_role")
+    return None
+
+
+def get_authentication_method(event):
+    matches = re.search(LOGIN_EVENT, event.get(CHANGE_DESCRIPTION, ""), re.IGNORECASE)
+    if matches:
+        return matches.group("authentication_method")
+    return None
+
+
+def get_original_admin_role(event):
+    matches = re.search(ADMIN_ROLE_ASSIGNED, event.get(CHANGE_DESCRIPTION, ""), re.IGNORECASE)
+    if matches:
+        return matches.group("old_role")
+    return None
+
+
+def get_user(event):
+    # some events will have the user in the source_label field,
+    # otherwise we might not konw who the user is
+    if event.get("source_type", "").lower() == "user":
+        return event.get("source_label")
+    return "<UNKNOWN_USER>"
