@@ -1,22 +1,16 @@
 from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
-EXCLUDED_DOMAINS = [
-    "runpanther.io"
-]
+EXCLUDED_DOMAINS = ["runpanther.io"]
 
-VISIBILITY = [
-    "people_with_link",
-    "public_on_the_web",
-    "shared_externally",
-    "unknown"
-    ]
+VISIBILITY = ["people_with_link", "public_on_the_web", "shared_externally", "unknown"]
 
 DOC_TITLE = "<UNKNOWN_TITLE>"
 TARGET_USER_EMAIL = "<UNKNOWN_USER>"
 TARGET_DOMAIN = "<UNKNOWN_DOMAIN>"
 ACCESS_SCOPE = "<UNKNOWN_ACCESS_SCOPE>"
 NEW_VISIBILITY = "<UNKNOWN_VISIBILITY>"
+
 
 def rule(event):
     if deep_get(event, "id", "applicationName") != "drive":
@@ -83,7 +77,7 @@ def rule(event):
 
     if change_user_access:
         return True
-        
+
     return False
 
 
@@ -113,7 +107,6 @@ def title(event):
             sharing_scope = sharing_scope + f" (anyone in {TARGET_DOMAIN} with the link)"
         elif NEW_VISIBILITY == "public_in_the_domain":
             sharing_scope = sharing_scope + f" (anyone in {TARGET_DOMAIN})"
-
 
     global ACCESS_SCOPE
     # TODO: confirm multiValue always has one element
