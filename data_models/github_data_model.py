@@ -9,8 +9,4 @@ def get_admin_role(_):
 def get_event_type(event):
     if event.get("action") == "team.promote_maintainer":
         return event_type.ADMIN_ROLE_ASSIGNED
-    if event.get("action") == "user.failed_login":
-        return event_type.FAILED_LOGIN
-    if event.get("action") == "user.login":
-        return event_type.SUCCESSFUL_LOGIN
     return None

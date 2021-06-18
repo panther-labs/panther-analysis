@@ -20,4 +20,4 @@ def title(event):
 
 
 def get_key(event):
-    return __name__ + ":" + str(event.udm("actor_user")) + ":" + str(event.get("repo"))
+    return str(event.udm("actor_user")) + ":" + str(event.get("repo"))
