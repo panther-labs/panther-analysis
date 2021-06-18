@@ -1,0 +1,21 @@
+AnalysisType: pack
+PackID: PantherManaged.GitHub.Audit
+Description: Group of all GitHub Audit detections
+PackDefinition:
+  IDs:
+    - GitHub.Branch.PolicyOverride
+    - GitHub.Branch.ProtectionDisabled
+    - GitHub.Org.MFADisabled
+    - Github.Repo.CollaboratorChange
+    - Github.Repo.Created
+    - GitHub.Repo.HookModified
+    - GitHub.Repo.InitialAccess
+    - Github.Repo.VisibilityChange
+    - GitHub.Team.Modified
+    - GitHub.User.AccessKeyCreated
+    - GitHub.User.RoleUpdated
+    # data model
+    - Standard.Github.Audit
+    # globals
+    - panther_event_type_helpers
+DisplayName: Panther GitHub Audit Pack
