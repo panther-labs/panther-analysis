@@ -9,4 +9,6 @@ def get_admin_role(_):
 def get_event_type(event):
     if event.get("action") == "team.promote_maintainer":
         return event_type.ADMIN_ROLE_ASSIGNED
+    if event.get("action") == "org.disable_two_factor_requirement":
+        return event_type.MFA_DISABLED
     return None

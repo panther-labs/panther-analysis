@@ -1,14 +1,13 @@
 AnalysisType: rule
-Filename: github_org_mfa_disabled.py
-RuleID: GitHub.Org.MFADisabled
-DisplayName: GitHub Org Disabled MFA Requirement
+Filename: mfa_disabled.py
+RuleID: Standard.MFADisabled
+DedupPeriodMinutes: 60
+DisplayName: MFA Disabled
 Enabled: true
 LogTypes:
   - GitHub.Audit
-Tags:
-  - GitHub
 Severity: High
-Description: Detects when Multi-Factor Authentication (MFA) is disabled for the organization.
+Description: Detects when Multi-Factor Authentication (MFA) is disabled
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
