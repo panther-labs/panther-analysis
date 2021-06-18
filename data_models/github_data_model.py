@@ -1,8 +1,13 @@
 import panther_event_type_helpers as event_type
 
 
+def get_admin_role(event):
+    # github doesn't record the admin role in the event
+    return "<UNKNOWN_ROLE>"
+
+
 def get_event_type(event):
-    if event.get("action") == "user.promote":
+    if event.get("action") == "team.promote_maintainer":
         return event_type.ADMIN_ROLE_ASSIGNED
     if event.get("action") == "user.failed_login":
         return event_type.FAILED_LOGIN

@@ -8,7 +8,7 @@ LogTypes:
 Tags:
   - GitHub
 Severity: High
-Description: Detects when a repository visibility changes from private or internal to public.
+Description: Detects when an organization repository visibility changes.
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -16,12 +16,13 @@ Tests:
     Name: GitHub - Repo Visibility Public
     ExpectedResult: true
     Log:
-      { # TODO: add visibility change
-        "actor": "cat",
-        "action": "repo.access",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-        "user": "cat"
+      {
+          "actor": "cat",
+          "action": "repo.access",        
+          "created_at": 1621305118553,
+          "org": "my-org",
+          "p_log_type": "GitHub.Audit",
+          "repo": "my-org/my-repo"
       }
   -
     Name: GitHub - Repo Visibility Internal
@@ -30,7 +31,8 @@ Tests:
       {
         "actor": "cat",
         "action": "repo.access",
+        "created_at": 1621305118553,
+        "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-        "user": "cat"
+        "repo": "my-org/my-repo"
       }
