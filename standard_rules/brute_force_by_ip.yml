@@ -7,7 +7,6 @@ Enabled: true
 LogTypes:
   - AWS.CloudTrail
   - Box.Event
-  - GitHub.Audit
   - GSuite.Reports
   - Okta.SystemLog
   - OneLogin.Events
@@ -258,13 +257,4 @@ Tests:
           }
         },
         "p_log_type": "GCP.AuditLog"
-      }
-  -
-    Name: Github - Failed Login Event
-    ExpectedResult: true
-    Log:
-      {
-        "actor": "cat",
-        "action": "user.failed_login",
-        "p_log_type": "GitHub.Audit"
       }

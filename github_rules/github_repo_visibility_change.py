@@ -1,6 +1,5 @@
 def rule(event):
     if event.get("action") == "repo.access":
-        # TODO: find out what the new access it
         return True
     return False
 
