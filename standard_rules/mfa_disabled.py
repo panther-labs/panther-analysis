@@ -7,7 +7,4 @@ def rule(event):
 
 def title(event):
     # use unified data model field in title
-    return (
-        f"{event.get('p_log_type')}: User [{event.udm('actor_user')}] "
-        f"disabled MFA"
-    )
+    return f"{event.get('p_log_type')}: User [{event.udm('actor_user')}] " f"disabled MFA"

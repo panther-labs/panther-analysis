@@ -1,4 +1,5 @@
 import json
+import re
 from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
@@ -137,6 +138,34 @@ def gsuite_details_lookup(detail_type, detail_names, event):
             return details
     # not found, return empty dict
     return {}
+
+
+# # # # # # # # # # # # # #
+#      Zendesk Helpers     #
+# # # # # # # # # # # # # #
+ZENDESK_ROLE_ASSIGNED = r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)"
+ZENDESK_LOGIN_EVENT = r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from (?P<authentication_location>[^$]+)"
+ZENDESK_TWO_FACTOR_SOURCE = "Two-Factor authentication for all admins and agents"
+
+## key names
+ZENDESK_CHANGE_DESCRIPTION = "change_description"
+
+
+def zendesk_get_roles(event):
+    matches = re.search(
+        ZENDESK_ROLE_ASSIGNED, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
+    )
+    if matches:
+        return matches.group("old_role"), matches.group("new_role")
+
+
+def zendesk_get_authentication_method(event):
+    matches = re.search(
+        ZENDESK_LOGIN_EVENT, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
+    )
+    if matches:
+        return matches.group("authentication_method")
+    return None
 
 
 # # # # # # # # # # # # # #
