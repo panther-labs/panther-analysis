@@ -1,7 +1,7 @@
 from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
-EXCLUDED_DOMAINS = ["runpanther.io"]
+EXCLUDED_DOMAINS = {"example.com"}
 
 VISIBILITY = ["people_with_link", "public_on_the_web", "shared_externally", "unknown"]
 
