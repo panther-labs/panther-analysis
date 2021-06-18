@@ -1,0 +1,27 @@
+AnalysisType: rule
+Filename: github_branch_protection_disabled.py
+RuleID: GitHub.Branch.ProtectionDisabled
+DisplayName: GitHub Branch Protection Disabled
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: High
+Description: Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+Runbook: Verify that branch protection should be disabled on the repository and re-enable as necessary.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Branch Protection Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.destroy",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }

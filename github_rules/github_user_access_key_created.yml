@@ -1,0 +1,25 @@
+AnalysisType: rule
+Filename: github_user_access_key_created.py
+RuleID: GitHub.User.AccessKeyCreated
+DisplayName: GitHub User Access Key Created
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a GitHub user access key is created.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - User Access Key Created
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "public_key.create",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }

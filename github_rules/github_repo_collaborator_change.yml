@@ -1,0 +1,41 @@
+AnalysisType: rule
+Filename: github_repo_collaborator_change.py
+RuleID: Github.Repo.CollaboratorChange
+DisplayName: GitHub Repository Visibility Change
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Medium
+Description: Detects when a repository collaborator is added or removed.
+Runbook: Determine if the new collaborator is authorized to access the repository. 
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Collaborator Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "bob",
+        "action": "repo.add_member",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "user": "cat"
+      }
+  -
+    Name: GitHub - Collaborator Removed
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "bob",
+        "action": "repo.remove_member",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "user": "cat"
+      }
