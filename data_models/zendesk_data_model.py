@@ -6,12 +6,13 @@ ADMIN_ROLE_ASSIGNED = r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+
 LOGIN_EVENT = (
     r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from (?P<authentication_location>[^$]+)"
 )
+TWO_FACTOR_SOURCE = f"Two-Factor authentication for all admins and agents"
 
 ## key names
 CHANGE_DESCRIPTION = "changes_description"
 
 def get_event_type(event):
-    # user item being audited
+    # user related events
     if event.get("source_type") == "user":
         # check for login events
         if event.get("action") == "login":
@@ -24,6 +25,14 @@ def get_event_type(event):
         if event.get("action") == "update":
             if bool(re.match(ADMIN_ROLE_ASSIGNED, event.get(CHANGE_DESCRIPTION, ""), re.IGNORECASE)):
                 return event_type.ADMIN_ROLE_ASSIGNED
+    
+    # account related events
+    if event.get("source_type", "") == "account_setting":
+        matches = re.match(TWO_FACTOR_SOURCE, event.get("source_label", ""))
+        if matches:
+            if event.get(CHANGE_DESCRIPTION, "").lower() == "disabled":
+                return event_type.MFA_DISABLED
+    
     return None
 
 
