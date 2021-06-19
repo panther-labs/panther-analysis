@@ -1,10 +1,10 @@
 schema: Salesforce.Login
 version: 0
 referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_login.htm
-description: 'Login events contain details about your org’s user login history.'
+description: "Login events contain details about your org’s user login history."
 parser:
   csv:
-    delimiter: ','
+    delimiter: ","
     hasHeader: true
     columns:
       - EVENT_TYPE
@@ -39,13 +39,13 @@ fields:
     type: string
     required: true
     validate:
-      allow: ['Login']
+      allow: ["Login"]
     description: The type of event. The value is always Login.
   - name: TIMESTAMP
     required: false
     type: timestamp
-    timeFormat: '%Y%m%d%H%M%S.%f'
-    description: 'The access time of Salesforce services in GMT. For example: 20130715233322.670.'
+    timeFormat: "%Y%m%d%H%M%S.%f"
+    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
   - name: REQUEST_ID
     required: false
     type: string
@@ -56,7 +56,7 @@ fields:
   - name: ORGANIZATION_ID
     required: true
     type: string
-    description: 'The 15-character ID of the organization. For example: 00D000000000123.'
+    description: "The 15-character ID of the organization. For example: 00D000000000123."
   - name: USER_ID
     required: false
     type: string
@@ -74,7 +74,7 @@ fields:
   - name: URI
     required: false
     type: string
-    description: 'The URI of the page that’s receiving the request. For example: /home/home.jsp.'
+    description: "The URI of the page that’s receiving the request. For example: /home/home.jsp."
   - name: SESSION_KEY
     required: false
     type: string
@@ -135,7 +135,7 @@ fields:
   - name: API_VERSION
     required: false
     type: string
-    description: 'The version of the API that’s being used. For example: 36.0.'
+    description: "The version of the API that’s being used. For example: 36.0."
   - name: USER_NAME
     required: false
     type: string
@@ -145,7 +145,7 @@ fields:
   - name: TLS_PROTOCOL
     required: false
     type: string
-    description: 'The TLS protocol used for the login. There are 3 possible values: 1.0, 1.1, 1.2'
+    description: "The TLS protocol used for the login. There are 3 possible values: 1.0, 1.1, 1.2"
   - name: CIPHER_SUITE
     required: false
     type: string

@@ -1,14 +1,14 @@
 """Utility functions provided to policies and rules during execution."""
+import json
 import os
 import re
 import time
 from datetime import datetime
-from typing import Any, Dict, Optional, Sequence, Set, Union
 from ipaddress import ip_address
-import json
-import requests
+from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
+import requests
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -331,7 +331,7 @@ def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600
     return False
 
 
-def geoinfo_from_ip(ip: str) -> dict:
+def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     """Looks up the geolocation of an IP address using ipinfo.io
 
     Example ipinfo output:
@@ -355,12 +355,12 @@ def geoinfo_from_ip(ip: str) -> dict:
     return geoinfo
 
 
-def geoinfo_from_ip_formatted(ip: str) -> str:
+def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(ip)
     geoinfo_string = (
-       f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
-       f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
     )
     return geoinfo_string
 

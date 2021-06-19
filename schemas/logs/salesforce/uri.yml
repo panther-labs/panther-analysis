@@ -1,10 +1,10 @@
 schema: Salesforce.URI
 version: 0
 referenceURL: https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_eventlogfile_uri.htm
-description: 'URI events contain details about user interaction with the web browser UI.'
+description: "URI events contain details about user interaction with the web browser UI."
 parser:
   csv:
-    delimiter: ','
+    delimiter: ","
     hasHeader: true
     columns:
       - EVENT_TYPE
@@ -32,13 +32,13 @@ fields:
     required: true
     type: string
     validate:
-      allow: ['URI']
+      allow: ["URI"]
     description: The type of event. The value is always URI.
   - name: TIMESTAMP
     required: false
     type: timestamp
-    timeFormat: '%Y%m%d%H%M%S.%f'
-    description: 'The access time of Salesforce services in GMT. For example: 20130715233322.670.'
+    timeFormat: "%Y%m%d%H%M%S.%f"
+    description: "The access time of Salesforce services in GMT. For example: 20130715233322.670."
   - name: REQUEST_ID
     required: false
     type: string
@@ -49,7 +49,7 @@ fields:
   - name: ORGANIZATION_ID
     required: true
     type: string
-    description: 'The 15-character ID of the organization. For example: 00D000000000123.'
+    description: "The 15-character ID of the organization. For example: 00D000000000123."
   - name: USER_ID
     required: false
     type: string
@@ -58,7 +58,7 @@ fields:
   - name: RUN_TIME
     required: false
     type: bigint
-    description: 'The amount of time that the request took in milliseconds.'
+    description: "The amount of time that the request took in milliseconds."
   - name: CPU_TIME
     required: false
     type: bigint

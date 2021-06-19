@@ -2,7 +2,7 @@ import datetime
 import json
 
 import panther_event_type_helpers as event_type
-from panther_oss_helpers import get_string_set, put_string_set, geoinfo_from_ip
+from panther_oss_helpers import geoinfo_from_ip, get_string_set, put_string_set
 
 FINGERPRINT_THRESHOLD = 5
 FINGERPRINT = {}
@@ -10,6 +10,7 @@ GEO_INFO = {}
 
 
 def rule(event):
+    global GEO_INFO  # pylint: disable=global-statement
     # Pre-filter to save compute time where possible.
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
         return False
