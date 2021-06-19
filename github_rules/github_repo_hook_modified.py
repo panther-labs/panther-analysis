@@ -10,6 +10,7 @@ def title(event):
         action = "created"
     return f"web hook {action} in repository [{event.get('repo','<UNKNOWN_REPO>')}]"
 
+
 def severity(event):
     if event.get("action").endswith("create"):
         return "MEDIUM"
