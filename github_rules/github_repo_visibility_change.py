@@ -1,7 +1,5 @@
 def rule(event):
-    if event.get("action") == "repo.access":
-        return True
-    return False
+    return event.get("action") == "repo.access"
 
 
 def title(event):

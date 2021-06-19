@@ -10,8 +10,6 @@ Tags:
 Severity: High
 Description: Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
 Runbook: Verify that branch protection should be disabled on the repository and re-enable as necessary.
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
   -
     Name: GitHub - Branch Protection Disabled
@@ -20,6 +18,18 @@ Tests:
       {
         "actor": "cat",
         "action": "protected_branch.destroy",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Protected Branch Name Updated
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.update_name",
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",

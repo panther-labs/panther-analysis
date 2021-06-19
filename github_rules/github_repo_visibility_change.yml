@@ -9,9 +9,19 @@ Tags:
   - GitHub
 Severity: High
 Description: Detects when an organization repository visibility changes.
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
+  -
+    Name: GitHub - Repo Visibility Change
+    ExpectedResult: true
+    Log:
+      {
+          "actor": "cat",
+          "action": "repo.access",        
+          "created_at": 1621305118553,
+          "org": "my-org",
+          "p_log_type": "GitHub.Audit",
+          "repo": "my-org/my-repo"
+      }
   -
     Name: GitHub - Repo Visibility Change
     ExpectedResult: true

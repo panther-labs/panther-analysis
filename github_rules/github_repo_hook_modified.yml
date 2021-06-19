@@ -9,8 +9,6 @@ Tags:
   - GitHub
 Severity: Info
 Description: Detects when a web hook is added, modified, or deleted in an org repository. 
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
   -
     Name: GitHub - Webhook Created
@@ -29,6 +27,38 @@ Tests:
                 "repository"
             ]
         },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Webhook Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "hook.destroy",
+        "data": {
+            "hook_id": 111222333444555,
+            "events": [
+                "fork",
+                "public",
+                "pull_request",
+                "push",
+                "repository"
+            ]
+        },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Non Webhook Event
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.invite_member",
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
         "repository": "my-org/my-repo"

@@ -7,10 +7,8 @@ LogTypes:
   - GitHub.Audit
 Tags:
   - GitHub
-Severity: Info
+Severity: Low
 Description: Detects when a user intially access a private organization repository.
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
   -
     Name: GitHub - Initial Access
@@ -39,7 +37,8 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: get_string_set
-        returnValue: "{\"cat\":\"my-repo\"}"
+        returnValue: >
+          {"cat":"my-repo"}
     Log:
       {
         "@timestamp": 1623971719091,
