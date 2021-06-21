@@ -33,17 +33,19 @@ Tests:
       - objectName: get_string_set
         returnValue: >
                           {
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"},
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650802"},
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650803"},
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650804"},
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650805"},
-                            {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650806"}
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}',
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650802"}',
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650803"}',
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650804"}',
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650805"}',
+                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650806"}'
                           }
     Log:
       {
+          "mock": true,
           "userIdentity": {
               "type": "IAMUser",
+              "userName": "some_user"
           },
           "eventName": "ConsoleLogin",
           "sourceIPAddress": "111.111.111.111",
@@ -57,13 +59,23 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
-        returnValue: "{ \"region\": \"UnitTest\", \"city\": \"UnitTest\", \"country\": \"UnitTest\"}"
+        returnValue: >
+                          {
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCity",
+                          "country": "UnitTestCountry"
+                          }
       - objectName: get_string_set
-        returnValue: "{ \"somekey\": \"somevalue_that_does_not_exceed_threshold\"}"
+        returnValue: >
+                      {
+                       '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}'
+                      }
     Log:
       {
+          "mock": true,
           "userIdentity": {
               "type": "IAMUser",
+              "userName": "some_user"
           },
           "eventName": "ConsoleLogin",
           "sourceIPAddress": "111.111.111.111",

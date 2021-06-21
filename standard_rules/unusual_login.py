@@ -1,8 +1,9 @@
+import ast
 import datetime
 import json
 
 import panther_event_type_helpers as event_type
-from panther_oss_helpers import get_string_set, put_string_set, geoinfo_from_ip
+from panther_oss_helpers import geoinfo_from_ip, get_string_set, put_string_set
 
 FINGERPRINT_THRESHOLD = 5
 FINGERPRINT = {}
@@ -22,57 +23,57 @@ def rule(event):
     # Lookup geo-ip data via API call
     GEO_INFO = geoinfo_from_ip(event.udm("source_ip"))
 
-    # Unit tests with defined mocks for geoinfo_from_ip
+    # Note: as of Panther 1.19, mocking returns all mocked objects in a string
+    # previous_logins must be converted back to a dict to mimic the API call
     if isinstance(GEO_INFO, str):
         GEO_INFO = json.loads(GEO_INFO)
 
-    # The idea is to create a fingerprint of this login, and then keep track of all the fingerprints
-    # for a given user's logins. In this way, we can detect unusual logins.
-    login_geo = GEO_INFO.get("region", "<REGION>") + ":" + GEO_INFO.get("city", "<CITY>")
-    FINGERPRINT[event.get("p_row_id")] = login_geo
-
     # Lookup & store persistent data
-    event_key = get_key(event)
-    last_login_info = get_string_set(event_key)
-    # Unit tests with defined mocks for get_string_set
-    if isinstance(last_login_info, str):
-        last_login_info = {last_login_info}
-    login_timestamp = str(datetime.datetime.now())
-    if not last_login_info:
-        # Store this as the first login if we've never seen this user login before
-        put_string_set(event_key, [json.dumps({login_geo: login_timestamp})])
-        return False
-    last_login_info = json.loads(last_login_info.pop())
+    event_key = str(event.udm("actor_user"))
+    previous_logins = get_string_set(event_key)
+    # Note: as of Panther 1.19, mocking returns all mocked objects in a string
+    # previous_logins must be converted back to a set to mimic the API call
+    if isinstance(previous_logins, str):
+        print("previous_logins is a mocked string:")
+        print(previous_logins)
+        previous_logins = ast.literal_eval(previous_logins)
+        print("new type of previous_logins is:", type(previous_logins))
+    new_login_geo = (
+        f"{GEO_INFO.get('region', '<UNKNOWN_REGION>')}"
+        ":"
+        f"{GEO_INFO.get('city', '<UNKNOWN_CITY>')}"
+    )
+    new_login_fingerprint = json.dumps({new_login_geo: str(datetime.datetime.now())})
 
-    # update the timestamp associated with this fingerprint
-    last_login_info[login_geo] = login_timestamp
-    # exclude from unit test
+    previous_logins.add(new_login_fingerprint)
+    # exclude Dynamo API call from unit test
     if "mock" not in event:
-        put_string_set(event_key, [json.dumps(last_login_info)])
+        put_string_set(event_key, list(previous_logins))
 
     # fire an alert when number of unique, recent fingerprints is greater than a threshold
-    if len(last_login_info) > FINGERPRINT_THRESHOLD:
-        oldest = login_timestamp
-        for fp_geo, fp_time in last_login_info.items():
-            if fp_time < oldest:
-                oldest = fp_geo
-        # remove oldest login tuple
-        last_login_info.pop(oldest)
-        # exclude from unit test
+    if len(previous_logins) > FINGERPRINT_THRESHOLD:
+        oldest = json.loads(new_login_fingerprint)[new_login_geo]
+        for login in previous_logins:
+            for fp_time in json.loads(login).values():
+                print(fp_time)
+                if fp_time < oldest:  # this would always be true, as every timestamp of
+                    # every login except the newest one would be less than
+                    # the newest one
+                    oldest = fp_time
+                    oldest_login = login
+        previous_logins.remove(oldest_login)
+        print("Updated previous_logins:")
+        print(previous_logins)
+        # exclude Dynamo API call from unit test
         if "mock" not in event:
-            put_string_set(event_key, [json.dumps(last_login_info)])
+            put_string_set(event_key, list(previous_logins))
         return True
     return False
-
-
-def get_key(event):
-    # Use the name so that test data doesn't interfere with live data
-    return __name__ + ":" + str(event.udm("actor_user"))
 
 
 def title(event):
     return (
         f"{event.get('p_log_type')}: Unusual access for user"
-        f" [{event.get('user_name', '<UNKNOWN_USER>')}]"
+        f" [{event.udm('actor_user')}]"
         f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
     )

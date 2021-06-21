@@ -6,9 +6,6 @@ import time
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
-from ipaddress import ip_address
-import json
-import requests
 
 import boto3
 import requests
