@@ -144,7 +144,10 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 #      Zendesk Helpers     #
 # # # # # # # # # # # # # #
 ZENDESK_ROLE_ASSIGNED = r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)"
-ZENDESK_LOGIN_EVENT = r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from (?P<authentication_location>[^$]+)"
+ZENDESK_LOGIN_EVENT = (
+    r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from "
+    r"(?P<authentication_location>[^$]+)"
+)
 ZENDESK_TWO_FACTOR_SOURCE = "Two-Factor authentication for all admins and agents"
 
 ## key names
@@ -157,6 +160,7 @@ def zendesk_get_roles(event):
     )
     if matches:
         return matches.group("old_role"), matches.group("new_role")
+    return None, None
 
 
 def zendesk_get_authentication_method(event):

@@ -14,6 +14,6 @@ def rule(event):
 def title(event):
     old_role, new_role = zendesk_get_roles(event)
     return (
-        f"Actor user [{event.get('actor_user')}] changed {event.udm('user')} role from "
+        f"Actor user [{event.udm('actor_user')}] changed {event.udm('user')} role from "
         f"{old_role} to {new_role}"
     )
