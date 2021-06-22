@@ -23,7 +23,7 @@ Tests:
         },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
+        "repo": "my-org/my-repo"
       }
   -
     Name: GitHub - Team Created
@@ -38,5 +38,20 @@ Tests:
         },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Team Add repository
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "team.add_repository",
+        "created_at": 1621305118553,
+        "data": {
+          "team": "my-org/my-team"
+        },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
       }
