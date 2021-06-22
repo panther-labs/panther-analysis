@@ -12,7 +12,7 @@ from panther_base_helpers import (
 
 def get_event_type(event):
     # user related events
-    if event.get("source_type") == "user":
+    if event.get("source_type", "") == "user":
         # check for login events
         if event.get("action") == "login":
             matches = re.match(
@@ -50,7 +50,7 @@ def get_assigned_admin_role(event):
 
 def get_user(event):
     # some events will have the user in the source_label field,
-    # otherwise we might not konw who the user is
+    # otherwise the user field may not be relevant
     if event.get("source_type", "").lower() == "user":
         return event.get("source_label")
     return "<UNKNOWN_USER>"
