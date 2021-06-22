@@ -9,8 +9,6 @@ Tags:
   - GitHub
 Severity: High
 Description: Detects when a GitHub user role is upgraded to an admin or downgraded to a member
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
   -
     Name: GitHub - Member Updated
@@ -19,6 +17,18 @@ Tests:
       {
         "actor": "cat",
         "action": "org.update_member",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "user": "bob"
+      }
+  -
+    Name: GitHub - Member Updated
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.invite_member",
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",

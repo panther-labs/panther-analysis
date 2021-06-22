@@ -1,3 +1,6 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
     if not event.get("action").startswith("team"):
         return False
@@ -13,22 +16,18 @@ def rule(event):
 
 
 def title(event):
-    action = event.get("action")
-    if action.endswith(".create"):
-        action = "created team"
-    elif action.endswith(".destroy"):
-        action = "deleted team"
-    elif action.endswith(".add_member"):
-        action = f"added member {event.get('user')} to team"
-    elif action.endswith(".remove_member"):
-        action = f"removed member {event.get('user')} from team"
-    elif action.endswith(".add_repository"):
-        action = f"added repository {event.get('repo')} to team"
-    elif action.endswith(".remove_repository"):
-        action = f"removed repository {event.get('repo')} from team"
-    elif action.endswith(".change_parent_team"):
-        action = "changed parent team for team"
+    action_mappings = {
+        "create": "created team",
+        "destroy": "deleted team",
+        "add_member": f"added member [{event.get('user')}] to team",
+        "remove_member": f"removed member [{event.get('user')}] from team",
+        "add_repository": f"added repository [{event.get('repo')}] to team",
+        "removed_repository": f"removed repository [{event.get('repo')}] from team",
+        "change_parent_team": "changed parent team for team"
+    }
+    action_key = event.get("action").split(".")[1]
+    action = action_mappings.get(action_key, event.get("action"))
     return (
         f"GitHub.Audit: User [{event.udm('actor_user')}] {action} "
-        f"[{event.get('data', {}).get('team', '<UNKNOWN_TEAM>')}]"
+        f"[{deep_get(event, 'data', 'team')}]"
     )

@@ -10,8 +10,6 @@ Tags:
 Severity: High
 Description: Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
 Runbook: Verify that the GitHub admin performed this activity and validate its use.
-SummaryAttributes:
-  - p_any_ip_addresses
 Tests:
   -
     Name: GitHub - Branch Protection Policy Override
@@ -23,5 +21,17 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Protected Branch Name Updated
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.update_name",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo"
       }
