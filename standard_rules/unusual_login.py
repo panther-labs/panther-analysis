@@ -69,7 +69,8 @@ def rule(event):
     updated_geo_logins = previous_geo_logins
     updated_geo_logins[new_login_geo] = new_login_timestamp
 
-    # remove the oldest geo from the history
+    # remove the oldest geo from the history if the updated dict exceeds the 
+    # specified history length
     if len(updated_geo_logins) > GEO_HISTORY_LENGTH:
         oldest = updated_geo_logins[new_login_geo]
         for geo, time in updated_geo_logins.items():
