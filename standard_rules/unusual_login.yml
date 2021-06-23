@@ -2,8 +2,9 @@ AnalysisType: rule
 Filename: unusual_login.py
 RuleID: Standard.UnusualLogin
 DisplayName: Unusual Login
-# This rule is disabled by default because it makes API calls out to the internet. At high volumes
-# of activity, this could get throttled unless you buy a subscription to the geolocation service.
+# This rule is disabled by default because it makes API calls to a third party geolocation
+# service. At high rates of log processing, the third party service may throttle requests 
+# unless you buy a subscription to it.
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
@@ -14,32 +15,31 @@ Tags:
   - DataModel
   - Identity & Access Management
 Severity: Medium
-Description: An actor user logged in from a new ip address, exceeding the threshold for unique login locations.
-Runbook: Determine if this login was triggered by legitimate user access.
+Description: A user logged in from a new geolocation.
+Runbook: Determine if this login was triggered by legitimate user access. Unique geolocation history length can be specified to silence alerts for locations contained in the history.
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
   -
-    Name: AWS.CloudTrail - Successful Login - Exceeds Threshold
+    Name: AWS.CloudTrail - Successful Login - New Geo - Exceeds History Length of 5
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >
                           {
                           "region": "UnitTestRegion",
-                          "city": "UnitTestCity",
+                          "city": "UnitTestCityNew",
                           "country": "UnitTestCountry"
                           }
       - objectName: get_string_set
         returnValue: >
-                          {
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}',
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650802"}',
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650803"}',
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650804"}',
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650805"}',
-                           '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650806"}'
-                          }
+                          {'{
+                          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+                          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+                          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+                          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+                          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+                          }'}
     Log:
       {
           "mock": true,
@@ -52,24 +52,58 @@ Tests:
           "responseElements": {
               "ConsoleLogin": "Success"
           },
+          "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
       }  
   -
-    Name: AWS.CloudTrail - Successful Login - Does Not Exceed Threshold
+    Name: AWS.CloudTrail - Successful Login - New Geo - Does Not Exceed History Length of 5
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >
+                          {
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry"
+                          }
+      - objectName: get_string_set
+        returnValue: >
+                       {'{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}'}
+    Log:
+      {
+          "mock": true,
+          "userIdentity": {
+              "type": "IAMUser",
+              "userName": "some_user"
+          },
+          "eventName": "ConsoleLogin",
+          "sourceIPAddress": "111.111.111.111",
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "p_event_time": "2021-06-04 09:59:53.650807",
+          "p_log_type": "AWS.CloudTrail"
+      }  
+  -
+    Name: AWS.CloudTrail - Successful Login - Existing Geo
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >
                           {
                           "region": "UnitTestRegion",
-                          "city": "UnitTestCity",
+                          "city": "UnitTestCity1",
                           "country": "UnitTestCountry"
                           }
       - objectName: get_string_set
-        returnValue: >
-                      {
-                       '{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}'
-                      }
+        returnValue: >-
+                          {'{
+                          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+                          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+                          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+                          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+                          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+                          }'}
     Log:
       {
           "mock": true,
@@ -82,6 +116,7 @@ Tests:
           "responseElements": {
               "ConsoleLogin": "Success"
           },
+          "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
       }  
   -
@@ -115,6 +150,7 @@ Tests:
           "eventID": "1",
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012",
+          "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
       }  
   - 
