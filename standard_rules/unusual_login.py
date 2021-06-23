@@ -98,4 +98,5 @@ def title(event):
         f"{event.get('p_log_type')}: New access location for user"
         f" [{event.udm('actor_user')}]"
         f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
+        f" (not in last [{GEO_HISTORY_LENGTH}] login locations)"
     )
