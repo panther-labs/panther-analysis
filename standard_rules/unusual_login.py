@@ -42,7 +42,10 @@ def rule(event):
     if isinstance(previous_geo_logins, str):
         logging.debug("previous_geo_logins is a mocked string:")
         logging.debug(previous_geo_logins)
-        previous_geo_logins = ast.literal_eval(previous_geo_logins)
+        if previous_geo_logins:
+            previous_geo_logins = ast.literal_eval(previous_geo_logins)
+        else:
+            previous_geo_logins = set()
         logging.debug("new type of previous_geo_logins should be 'set':")
         logging.debug(type(previous_geo_logins))
 
@@ -54,7 +57,10 @@ def rule(event):
     new_login_timestamp = event.get("p_event_time", "")
 
     # convert set of single string to dictionary
-    previous_geo_logins = json.loads(previous_geo_logins.pop())
+    if previous_geo_logins:
+        previous_geo_logins = json.loads(previous_geo_logins.pop())
+    else:
+        previous_geo_logins = dict()
     logging.debug("new type of previous_geo_logins should be 'dict':")
     logging.debug(type(previous_geo_logins))
 
