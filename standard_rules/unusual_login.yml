@@ -25,14 +25,14 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
-        returnValue: >
+        returnValue: >-
                           {
                           "region": "UnitTestRegion",
                           "city": "UnitTestCityNew",
                           "country": "UnitTestCountry"
                           }
       - objectName: get_string_set
-        returnValue: >
+        returnValue: >-
                           {'{
                           "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
                           "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
@@ -40,6 +40,8 @@ Tests:
                           "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
                           "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
                           }'}
+      - objectName: put_string_set
+        returnValue: >-
     Log:
       {
           "mock": true,
@@ -60,15 +62,17 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
-        returnValue: >
+        returnValue: >-
                           {
                           "region": "UnitTestRegion",
                           "city": "UnitTestCityNew",
                           "country": "UnitTestCountry"
                           }
       - objectName: get_string_set
-        returnValue: >
+        returnValue: >-
                        {'{"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}'}
+      - objectName: put_string_set
+        returnValue: >-
     Log:
       {
           "mock": true,
@@ -89,7 +93,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
-        returnValue: >
+        returnValue: >-
                           {
                           "region": "UnitTestRegion",
                           "city": "UnitTestCity1",
@@ -104,6 +108,8 @@ Tests:
                           "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
                           "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
                           }'}
+      - objectName: put_string_set
+        returnValue: >-
     Log:
       {
           "mock": true,
@@ -124,7 +130,6 @@ Tests:
     ExpectedResult: false
     Log:
       {
-          "eventVersion": "1.05",
           "userIdentity": {
               "type": "IAMUser",
               "principalId": "1111",

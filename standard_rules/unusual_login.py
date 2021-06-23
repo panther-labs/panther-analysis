@@ -1,5 +1,6 @@
 import ast
 import json
+import logging
 
 import panther_event_type_helpers as event_type
 from panther_oss_helpers import geoinfo_from_ip, get_string_set, put_string_set
@@ -39,10 +40,11 @@ def rule(event):
     # As of Panther 1.19, mocking returns all mocked objects in a string
     # previous_geo_logins must be converted back to a set to mimic the API call
     if isinstance(previous_geo_logins, str):
-        print("previous_geo_logins is a mocked string:")
-        print(previous_geo_logins)
+        logging.debug("previous_geo_logins is a mocked string:")
+        logging.debug(previous_geo_logins)
         previous_geo_logins = ast.literal_eval(previous_geo_logins)
-        print("new type of previous_geo_logins is:", type(previous_geo_logins))
+        logging.debug("new type of previous_geo_logins should be 'set':")
+        logging.debug(type(previous_geo_logins))
 
     new_login_geo = (
         f"{GEO_INFO.get('region', '<UNKNOWN_REGION>')}"
@@ -53,15 +55,17 @@ def rule(event):
 
     # convert set of single string to dictionary
     previous_geo_logins = json.loads(previous_geo_logins.pop())
+    logging.debug("new type of previous_geo_logins should be 'dict':")
+    logging.debug(type(previous_geo_logins))
 
     # don't alert if the geo is already in the history
     if previous_geo_logins.get(new_login_geo):
         # update timestamp of the existing geo in the history
         previous_geo_logins[new_login_geo] = new_login_timestamp
-        # exclude Dynamo API call from unit test
-        if "mock" not in event:
-            # write the dictionary of geolocs:timestamps back to Dynamo
-            put_string_set(event_key, [json.dumps(previous_geo_logins)])
+
+        # write the dictionary of geolocs:timestamps back to Dynamo
+        # Mocked during unit testing
+        put_string_set(event_key, [json.dumps(previous_geo_logins)])
         return False
 
     # fire an alert when there are more unique geolocs:timestamps in the login history
@@ -77,13 +81,14 @@ def rule(event):
             if time < oldest:
                 oldest = time
                 oldest_login = geo
+        logging.debug("updated_geo_logins before removing oldest entry:")
+        logging.debug(updated_geo_logins)
         updated_geo_logins.pop(oldest_login)
-        print("updated_geo_logins:")
-        print(updated_geo_logins)
+        logging.debug("updated_geo_logins after removing oldest entry:")
+        logging.debug(updated_geo_logins)
 
-    # exclude Dynamo API call from unit test
-    if "mock" not in event:
-        put_string_set(event_key, [json.dumps(updated_geo_logins)])
+    # Mocked during unit testing
+    put_string_set(event_key, [json.dumps(updated_geo_logins)])
 
     return True
 
