@@ -188,6 +188,37 @@ Tests:
           "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
       }  
+  -
+    Name: GSuite - New Geo - No History
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCity1",
+                          "country": "UnitTestCountry"
+                          }
+      - objectName: get_string_set
+        returnValue: >-
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        'actor': {
+          'email': 'nick@acme.io',
+          'profileId': '11949494222400014922'
+        },
+        'id': {'applicationName': 'login'},
+        'ipAddress': '111.111.111.111',
+        'events': [
+          {
+            'type': 'login',
+            'name': 'login_success'
+          }
+        ],
+        'p_log_type': 'GSuite.Reports'
+      }
   - 
     Name: Okta - Non Login
     ExpectedResult: false

@@ -10,7 +10,7 @@ from panther_oss_helpers import geoinfo_from_ip, get_string_set, put_string_set
 GEO_HISTORY_LENGTH = 5
 FINGERPRINT = {}
 GEO_INFO = {}
-
+UPDATED_GEO_INFO = 
 
 def rule(event):
     # GEO_INFO is mocked as a string in unit tests and redeclared as a dict
@@ -89,6 +89,7 @@ def rule(event):
                 oldest_login = geo
         logging.debug("updated_geo_logins before removing oldest entry:")
         logging.debug(updated_geo_logins)
+        GEO_HISTORY = updated_geo_logins
         updated_geo_logins.pop(oldest_login)
         logging.debug("updated_geo_logins after removing oldest entry:")
         logging.debug(updated_geo_logins)
@@ -111,3 +112,25 @@ def title(event):
         f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
         f" (not in last [{GEO_HISTORY_LENGTH}] login locations)"
     )
+
+'''
+def alert_context(event):
+    # round to days:hours:minutes
+    # need to truncate p_event_time to microseconds for strptime
+    # not sure how resolve_timestamp_string() in oss helpers would work
+    # with the current p_event_time in nanoseconds
+    parts_event_time = p_event_time.split('.')
+    # next line doesn't work but it should
+    event_seconds_truncated = '{:06d}'.format(int(parts_event_time[-1])) 
+    event_time_truncated = '.'.join(parts[:-1],event_seconds_truncated)
+
+    parts_parse_time = p_parse_time.split('.')
+    # next line doesn't work but it should
+    parse_seconds_truncated = '{:06d}'.format(int(parts_parse_time[-1])) 
+    parse_time_truncated = '.'.join(parts[:-1],parse_seconds_truncated)
+    time_delta = resolve_timestamp_string(parse_time_truncated') - resolve_timestamp_string(event_time_truncated')
+    return ({
+        "loginHistory": f"{json.dumps(GEO_HISTORY)}",
+        "logEventParsingDelay": f"{time_delta.strftime('%d:%H:%M')}"
+})
+'''
