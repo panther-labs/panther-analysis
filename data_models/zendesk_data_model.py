@@ -30,11 +30,10 @@ def get_event_type(event):
             if matches:
                 if matches.group("new_role").lower() in ["administrator", "account owner"]:
                     return event_type.ADMIN_ROLE_ASSIGNED
-
+        return None
     # account related events
     if event.get("source_type", "") == "account_setting":
-        matches = re.match(ZENDESK_TWO_FACTOR_SOURCE, event.get("source_label", ""))
-        if matches:
+        if event.get("source_label", "") == ZENDESK_TWO_FACTOR_SOURCE:
             if event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower() == "disabled":
                 return event_type.MFA_DISABLED
 
