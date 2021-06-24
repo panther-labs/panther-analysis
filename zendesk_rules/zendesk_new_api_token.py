@@ -1,6 +1,13 @@
 def rule(event):
-    return event.get("action", "") == "create" and event.get("source_type") == "api_token"
+    return event.get("source_type") == "api_token" and event.get("action", "") in {"create","destroy"}
 
 
 def title(event):
-    return f"[{event.get('p_log_type')}]: User [{event.udm('actor_user')}] created a new api token"
+    action = event.get("action", "<UNKNOWN_ACTION>")
+    return f"[{event.get('p_log_type')}]: User [{event.udm('actor_user')}] {action} an api token"
+
+
+def severity(event):
+    if event.get("action","") == "destroy":
+        return "INFO"
+    return "HIGH"

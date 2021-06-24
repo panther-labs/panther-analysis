@@ -143,11 +143,12 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 # # # # # # # # # # # # # #
 #      Zendesk Helpers     #
 # # # # # # # # # # # # # #
-ZENDESK_ROLE_ASSIGNED = r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)"
-ZENDESK_LOGIN_EVENT = (
+ZENDESK_ROLE_ASSIGNED = re.compile(r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)", re.IGNORECASE)
+ZENDESK_LOGIN_EVENT = re.compile(
     r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from "
-    r"(?P<authentication_location>[^$]+)"
+    r"(?P<authentication_location>[^$]+)", re.IGNORECASE
 )
+ZENDESK_OWNER_CHANGED = re.compile(r"Owner changed from (?P<old_owner>.+) to (?P<new_owner>[^$]+)", re.IGNORECASE)
 ZENDESK_TWO_FACTOR_SOURCE = "Two-Factor authentication for all admins and agents"
 
 ## key names
@@ -155,18 +156,14 @@ ZENDESK_CHANGE_DESCRIPTION = "change_description"
 
 
 def zendesk_get_roles(event):
-    matches = re.search(
-        ZENDESK_ROLE_ASSIGNED, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
-    )
+    matches = ZENDESK_ROLE_ASSIGNED.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
     if matches:
         return matches.group("old_role"), matches.group("new_role")
     return None, None
 
 
 def zendesk_get_authentication_method(event):
-    matches = re.search(
-        ZENDESK_LOGIN_EVENT, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
-    )
+    matches = ZENDESK_LOGIN_EVENT.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
     if matches:
         return matches.group("authentication_method")
     return None

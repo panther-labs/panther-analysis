@@ -15,18 +15,14 @@ def get_event_type(event):
     if event.get("source_type", "") == "user":
         # check for login events
         if event.get("action") == "login":
-            matches = re.match(
-                ZENDESK_LOGIN_EVENT, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
-            )
+            matches = ZENDESK_LOGIN_EVENT.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
             if matches:
                 if matches.group("login_result").lower().startswith("success"):
                     return event_type.SUCCESSFUL_LOGIN
             return event_type.FAILED_LOGIN
         # check for admin assignment
         if event.get("action") == "update":
-            matches = re.match(
-                ZENDESK_ROLE_ASSIGNED, event.get(ZENDESK_CHANGE_DESCRIPTION, ""), re.IGNORECASE
-            )
+            matches = ZENDESK_ROLE_ASSIGNED.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
             if matches:
                 if matches.group("new_role").lower() in ["administrator", "account owner"]:
                     return event_type.ADMIN_ROLE_ASSIGNED
