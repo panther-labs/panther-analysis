@@ -143,12 +143,17 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 # # # # # # # # # # # # # #
 #      Zendesk Helpers     #
 # # # # # # # # # # # # # #
-ZENDESK_ROLE_ASSIGNED = re.compile(r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)", re.IGNORECASE)
+ZENDESK_ROLE_ASSIGNED = re.compile(
+    r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)", re.IGNORECASE
+)
 ZENDESK_LOGIN_EVENT = re.compile(
     r"(?P<login_result>[\S]+) sign-in using (?P<authentication_method>.+) from "
-    r"(?P<authentication_location>[^$]+)", re.IGNORECASE
+    r"(?P<authentication_location>[^$]+)",
+    re.IGNORECASE,
 )
-ZENDESK_OWNER_CHANGED = re.compile(r"Owner changed from (?P<old_owner>.+) to (?P<new_owner>[^$]+)", re.IGNORECASE)
+ZENDESK_OWNER_CHANGED = re.compile(
+    r"Owner changed from (?P<old_owner>.+) to (?P<new_owner>[^$]+)", re.IGNORECASE
+)
 ZENDESK_TWO_FACTOR_SOURCE = "Two-Factor authentication for all admins and agents"
 
 ## key names

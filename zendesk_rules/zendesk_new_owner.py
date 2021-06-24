@@ -1,15 +1,14 @@
 import re
-from panther_base_helpers import (
-    ZENDESK_CHANGE_DESCRIPTION,
-    ZENDESK_OWNER_CHANGED,
-)
+
+from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION, ZENDESK_OWNER_CHANGED
 
 
 def rule(event):
-    if event.get("action","") == "update" and event.get("source_type","") == "account":
+    if event.get("action", "") == "update" and event.get("source_type", "") == "account":
         matches = ZENDESK_OWNER_CHANGED.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
         return bool(matches)
     return False
+
 
 def title(event):
     old_owner = "<UNKNOWN_USER>"

@@ -1,5 +1,8 @@
 def rule(event):
-    return event.get("source_type") == "api_token" and event.get("action", "") in {"create","destroy"}
+    return event.get("source_type") == "api_token" and event.get("action", "") in {
+        "create",
+        "destroy",
+    }
 
 
 def title(event):
@@ -8,6 +11,6 @@ def title(event):
 
 
 def severity(event):
-    if event.get("action","") == "destroy":
+    if event.get("action", "") == "destroy":
         return "INFO"
     return "HIGH"
