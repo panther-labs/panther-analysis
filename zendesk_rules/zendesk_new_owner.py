@@ -3,8 +3,7 @@ from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION, ZENDESK_OWNER_CHANG
 
 def rule(event):
     if event.get("action", "") == "update" and event.get("source_type", "") == "account":
-        matches = ZENDESK_OWNER_CHANGED.match(event.get(ZENDESK_CHANGE_DESCRIPTION, ""))
-        return bool(matches)
+        return event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower().startswith("Owner changed from ")
     return False
 
 
