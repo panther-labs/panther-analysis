@@ -37,3 +37,16 @@ Tests:
         "repo": "my-org/my-repo",
         "user": "cat"
       }
+  -
+    Name: GitHub - Non member action
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "bob",
+        "action": "repo.enable",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "user": "cat"
+      }

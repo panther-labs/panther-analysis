@@ -23,7 +23,7 @@ def title(event):
         "remove_member": f"removed member [{event.get('user')}] from team",
         "add_repository": f"added repository [{event.get('repo')}] to team",
         "removed_repository": f"removed repository [{event.get('repo')}] from team",
-        "change_parent_team": "changed parent team for team"
+        "change_parent_team": "changed parent team for team",
     }
     action_key = event.get("action").split(".")[1]
     action = action_mappings.get(action_key, event.get("action"))
