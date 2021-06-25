@@ -1,8 +1,6 @@
 import panther_event_type_helpers as event_type
 from panther_base_helpers import (
-    ZENDESK_APP_ROLE_ASSIGNED,
     ZENDESK_CHANGE_DESCRIPTION,
-    ZENDESK_ROLE_ASSIGNED,
     ZENDESK_TWO_FACTOR_SOURCES,
     zendesk_get_roles,
 )
