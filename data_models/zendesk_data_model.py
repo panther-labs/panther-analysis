@@ -1,10 +1,13 @@
 import panther_event_type_helpers as event_type
 from panther_base_helpers import (
     ZENDESK_CHANGE_DESCRIPTION,
-    ZENDESK_TWO_FACTOR_SOURCES,
-    zendesk_get_roles,
+    zendesk_get_roles
 )
 
+ZENDESK_TWO_FACTOR_SOURCES = {
+    "Two-Factor authentication for all admins and agents",
+    "Require Two Factor",
+}
 
 def get_event_type(event):
     # user related events
@@ -21,7 +24,6 @@ def get_user_event_type(event):
     if event.get("action") == "login":
         if event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower().startswith("successful sign-in"):
             return event_type.SUCCESSFUL_LOGIN
-        return event_type.FAILED_LOGIN
     # check for admin assignment
     if event.get("action") == "update":
         _, new_role = zendesk_get_roles(event)

@@ -10,7 +10,6 @@ LogTypes:
   - GSuite.Reports
   - Okta.SystemLog
   - OneLogin.Events
-  - Zendesk.AuditLog
 Severity: Medium
 Tags:
   - DataModel
@@ -258,40 +257,4 @@ Tests:
           }
         },
         "p_log_type": "GCP.AuditLog"
-      }
-  -
-    Name: Zendesk - Failed Login
-    ExpectedResult: true
-    Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Sign in",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "user",
-        "source_label": "Bob Cat",
-        "action": "login",
-        "change_description": "Failed sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
-      }
-  -
-    Name: Zendesk - Successful Login
-    ExpectedResult: false
-    Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Sign in",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "user",
-        "source_label": "Bob Cat",
-        "action": "login",
-        "change_description": "Successful sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
       }

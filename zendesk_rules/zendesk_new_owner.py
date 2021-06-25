@@ -1,4 +1,10 @@
-from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION, ZENDESK_OWNER_CHANGED
+import re
+from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
+
+
+ZENDESK_OWNER_CHANGED = re.compile(
+    r"Owner changed from (?P<old_owner>.+) to (?P<new_owner>[^$]+)", re.IGNORECASE
+)
 
 
 def rule(event):
