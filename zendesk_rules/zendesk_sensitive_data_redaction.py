@@ -5,11 +5,12 @@ REDACTION_ACTIONS = {
     "destroy",
 }
 
+
 def rule(event):
     return (
-        event.get("source_type") == "account_setting" and
-        event.get("action", "") in REDACTION_ACTIONS and
-        event.get("source_label", "") == "Credit Card Redaction"
+        event.get("source_type") == "account_setting"
+        and event.get("action", "") in REDACTION_ACTIONS
+        and event.get("source_label", "") == "Credit Card Redaction"
     )
 
 

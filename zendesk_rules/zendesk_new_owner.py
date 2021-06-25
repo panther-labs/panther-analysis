@@ -1,6 +1,6 @@
 import re
-from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
 
+from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
 
 ZENDESK_OWNER_CHANGED = re.compile(
     r"Owner changed from (?P<old_owner>.+) to (?P<new_owner>[^$]+)", re.IGNORECASE

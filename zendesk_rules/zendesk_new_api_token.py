@@ -1,14 +1,11 @@
-
 API_TOKEN_ACTIONS = {
     "create",
     "destroy",
 }
 
+
 def rule(event):
-    return (
-        event.get("source_type") == "api_token" and
-        event.get("action", "") in API_TOKEN_ACTIONS
-    )
+    return event.get("source_type") == "api_token" and event.get("action", "") in API_TOKEN_ACTIONS
 
 
 def title(event):

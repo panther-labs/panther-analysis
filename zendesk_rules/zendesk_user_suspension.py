@@ -1,14 +1,15 @@
 from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
 
+USER_SUSPENSION_ACTIONS = {
+    "create",
+    "update",
+}
+
 
 def rule(event):
     return (
         event.get("source_type") == "user_setting"
-        and event.get("action", "")
-        in {
-            "create",
-            "update",
-        }
+        and event.get("action", "") in USER_SUSPENSION_ACTIONS
         and "suspended" in event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower()
     )
 

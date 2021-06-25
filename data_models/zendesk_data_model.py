@@ -1,13 +1,11 @@
 import panther_event_type_helpers as event_type
-from panther_base_helpers import (
-    ZENDESK_CHANGE_DESCRIPTION,
-    zendesk_get_roles
-)
+from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION, zendesk_get_roles
 
 ZENDESK_TWO_FACTOR_SOURCES = {
     "Two-Factor authentication for all admins and agents",
     "Require Two Factor",
 }
+
 
 def get_event_type(event):
     # user related events
