@@ -1,18 +1,18 @@
 AnalysisType: rule
-Filename: github_team_modified.py
-RuleID: GitHub.Team.Modified
-DisplayName: GitHub Team Modified
+Filename: github_org_modified.py
+RuleID: GitHub.Org.Modified
+DisplayName: GitHub User Added or Removed from Org
 Enabled: false
 LogTypes:
   - GitHub.Audit
 Tags:
   - GitHub
 Severity: Info
-Description: Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.
+Description: Detects when a user is added or removed from a GitHub Org.
 Tests:
   -
     Name: GitHub - Team Deleted
-    ExpectedResult: true
+    ExpectedResult: false
     Log:
       {
         "actor": "cat",
@@ -26,32 +26,26 @@ Tests:
         "repo": "my-org/my-repo"
       }
   -
-    Name: GitHub - Team Created
+    Name: GitHub - Org - User Added
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
-        "action": "team.create",
+        "action": "org.add_member",
         "created_at": 1621305118553,
-        "data": {
-          "team": "my-org/my-team"
-        },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "user":"cat"
       }
   -
-    Name: GitHub - Team Add repository
+    Name: GitHub - Org - User Removed
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
-        "action": "team.add_repository",
+        "action": "org.remove_member",
         "created_at": 1621305118553,
-        "data": {
-          "team": "my-org/my-team"
-        },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "user":"bob"
       }
