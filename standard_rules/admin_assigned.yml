@@ -153,6 +153,24 @@ Tests:
         "created_at": "2021-05-28T18:39:50Z",
         "p_log_type": "Zendesk.AuditLog"
       }
+  -
+    Name: Zendesk - App Admin Role Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Explore role changed from not set to Admin\nGuide role changed from not set to Admin\nSupport role changed from not set to Admin\nTalk role changed from not set to Admin",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.AuditLog"
+      }
   - 
     Name: Github - User Promoted
     ExpectedResult: true
