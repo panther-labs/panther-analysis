@@ -11,6 +11,4 @@ def rule(event):
 
 
 def title(event):
-    return (
-        f"A user [{event.udm('actor_user')}] updated zendesk support user assumption settings"
-    )
+    return f"A user [{event.udm('actor_user')}] updated zendesk support user assumption settings"
