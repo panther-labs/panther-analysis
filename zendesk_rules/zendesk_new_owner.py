@@ -1,5 +1,3 @@
-import re
-
 from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION, ZENDESK_OWNER_CHANGED
 
 
