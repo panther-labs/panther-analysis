@@ -1,7 +1,6 @@
 import ast
 import json
 import logging
-from datetime import datetime
 
 import panther_event_type_helpers as event_type
 from panther_oss_helpers import (
@@ -15,7 +14,7 @@ from panther_oss_helpers import (
 # panther-kv-table in Dynamo to suppress alerts
 GEO_HISTORY_LENGTH = 5
 GEO_INFO = {}
-GEO_HISTORY = set()
+GEO_HISTORY = {}
 
 
 def rule(event):
@@ -101,37 +100,50 @@ def rule(event):
 
     # Mocked during unit testing
     put_string_set(event_key, [json.dumps(updated_geo_logins)])
+
     global GEO_HISTORY  # pylint: disable=global-statement
     GEO_HISTORY = updated_geo_logins
-
+    logging.debug("GEO_HISTORY in main rule:\n%s", json.dumps(GEO_HISTORY))
     return True
 
 
-def get_key(event):
+def get_key(event) -> str:
     # Use the name to deconflict with other rules that may also use actor_user
     return __name__ + ":" + str(event.udm("actor_user"))
 
 
 def title(event):
-    return (
-        f"{event.get('p_log_type')}: New access location for user"
-        f" [{event.udm('actor_user')}]"
-        f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
-        f" (not in last [{GEO_HISTORY_LENGTH}] login locations)"
-    )
-
-
-def alert_context(event):
-    # round to days:hours:minutes
     event_time_truncated = nano_to_micro(event.get("p_event_time"))
     parse_time_truncated = nano_to_micro(event.get("p_parse_time"))
     time_delta = resolve_timestamp_string(parse_time_truncated) - resolve_timestamp_string(
         event_time_truncated
     )
-    return {
-        "loginHistory": f"{json.dumps(GEO_HISTORY)}",
-        "logEventParsingDelay": f"{datetime.strftime(time_delta, '%d:%H:%M')}",
-    }
+    days = time_delta.days
+    hours, remainder = divmod(time_delta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    parsing_delay = ""
+    if days > 0:
+        parsing_delay = f"{days} day(s) "
+    if hours > 0:
+        parsing_delay = "".join([parsing_delay, f"{hours} hour(s) "])
+    if minutes > 0:
+        parsing_delay = "".join([parsing_delay, f"{minutes} minute(s) "])
+    if seconds > 0:
+        parsing_delay = "".join([parsing_delay, f"{seconds} second(s)"])
+
+    return (
+        f"{event.get('p_log_type')}: New access location for user"
+        f" [{event.udm('actor_user')}]"
+        f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
+        f" (not in last [{GEO_HISTORY_LENGTH}] login locations)\n"
+        f"Parsing delay: {parsing_delay}"
+    )
+
+
+def alert_context(_):
+    if GEO_HISTORY:
+        return {"loginHistory": f"{json.dumps(GEO_HISTORY)}"}
+    return {}
 
 
 def nano_to_micro(time_str: str) -> str:
