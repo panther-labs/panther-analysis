@@ -14,7 +14,7 @@ parser:
     match:
       - '%{remoteAddr} - %{remoteUser} [%{time}] "%{request}" %{status} %{bodyBytesSent} "%{httpReferer}" "%{httpUserAgent}"'
     emptyValues:
-      - '-'
+      - "-"
 fields:
   - name: remoteAddr
     type: string
@@ -31,7 +31,7 @@ fields:
     required: true
     type: timestamp
     isEventTime: true
-    timeFormat: '%d/%b/%Y:%H:%M:%S %z'
+    timeFormat: "%d/%b/%Y:%H:%M:%S %z"
   - name: request
     description: The request line from the client. It includes the HTTP method, the resource requested, and the HTTP protocol.
     type: string

@@ -1,5 +1,6 @@
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
+from panther_oss_helpers import geoinfo_from_ip_formatted
 
 
 def rule(event):
@@ -11,8 +12,11 @@ def rule(event):
 
 
 def title(event):
+    ip_address = event.get("sourceIPAddress")
     return (
-        f"AWS root login detected from [{event.get('sourceIPAddress')}] in account "
+        f"AWS root login detected from [{ip_address}] "
+        f"({geoinfo_from_ip_formatted(ip_address)}) "
+        f"in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 
