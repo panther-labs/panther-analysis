@@ -1,0 +1,36 @@
+AnalysisType: rule
+Filename: github_repo_visibility_change.py
+RuleID: Github.Repo.VisibilityChange
+DisplayName: GitHub Repository Visibility Change
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: High
+Description: Detects when an organization repository visibility changes.
+Tests:
+  -
+    Name: GitHub - Repo Visibility Change
+    ExpectedResult: true
+    Log:
+      {
+          "actor": "cat",
+          "action": "repo.access",        
+          "created_at": 1621305118553,
+          "org": "my-org",
+          "p_log_type": "GitHub.Audit",
+          "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Repo disabled
+    ExpectedResult: false
+    Log:
+      {
+          "actor": "cat",
+          "action": "repo.disable",        
+          "created_at": 1621305118553,
+          "org": "my-org",
+          "p_log_type": "GitHub.Audit",
+          "repo": "my-org/my-repo"
+      }
