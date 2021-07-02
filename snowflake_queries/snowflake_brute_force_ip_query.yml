@@ -14,8 +14,8 @@ SnowflakeQuery: >
   SELECT 
     client_ip,
     reported_client_type,
-    ARRAY_AGG(DISTINCT error_code),
-    ARRAY_AGG(DISTINCT error_message),
+    ARRAY_AGG(DISTINCT error_code) as error_codes,
+    ARRAY_AGG(DISTINCT error_message) as error_messages,
     COUNT(event_id) AS counts
   FROM snowflake.account_usage.login_history
   WHERE 1=1
