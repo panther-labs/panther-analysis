@@ -2,11 +2,15 @@ AnalysisType: scheduled_query
 QueryName: Query.Snowflake.MFALogin
 Enabled: false
 Description: >
-  Monitor logins that are not using MFA. This was adapted from a Security Feature Checklist query
+  Monitor logins that are not using MFA.
 AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
+  --return instances where a user logs in without MFA
+
+  --this was adapted from a Security Feature Checklist query
+
   SELECT 
     event_timestamp,
     user_name,

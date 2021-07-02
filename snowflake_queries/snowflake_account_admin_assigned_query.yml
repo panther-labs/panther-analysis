@@ -2,11 +2,15 @@ AnalysisType: scheduled_query
 QueryName: Query.Snowflake.AccountAdminGranted
 Enabled: false
 Description: >
-  Monitor and detect granting account admin role. This was adapted from a Security Feature Checklist query.
+  Monitor and detect granting account admin role.
 AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
+  --return instances where account admin role is granted
+
+  --this was adapted from a Security Feature Checklist query
+
   SELECT 
     user_name,
     role_name,
