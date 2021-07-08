@@ -16,7 +16,7 @@
 </p>
 
 ---
-
+some minor change
 Panther is a security analytics platform built for cloud-focused security teams.
 
 Panther enables teams to define detections as code and programmatically upload them to your Panther deployment.
