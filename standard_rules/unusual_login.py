@@ -113,23 +113,7 @@ def get_key(event) -> str:
 
 
 def title(event):
-    event_time_truncated = nano_to_micro(event.get("p_event_time"))
-    parse_time_truncated = nano_to_micro(event.get("p_parse_time"))
-    time_delta = resolve_timestamp_string(parse_time_truncated) - resolve_timestamp_string(
-        event_time_truncated
-    )
-    days = time_delta.days
-    hours, remainder = divmod(time_delta.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    parsing_delay = ""
-    if days > 0:
-        parsing_delay = f"{days} day(s) "
-    if hours > 0:
-        parsing_delay = "".join([parsing_delay, f"{hours} hour(s) "])
-    if minutes > 0:
-        parsing_delay = "".join([parsing_delay, f"{minutes} minute(s) "])
-    if seconds > 0:
-        parsing_delay = "".join([parsing_delay, f"{seconds} second(s)"])
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
 
     return (
         f"{event.get('p_log_type')}: New access location for user"
@@ -144,9 +128,3 @@ def alert_context(_):
     if GEO_HISTORY:
         return {"loginHistory": f"{json.dumps(GEO_HISTORY)}"}
     return {}
-
-
-def nano_to_micro(time_str: str) -> str:
-    parts = time_str.split(":")
-    parts[-1] = "{:06f}".format(float(parts[-1]))
-    return ":".join(parts)
