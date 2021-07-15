@@ -15,19 +15,14 @@ def rule(event):
 
 
 def dedup(event):
-    return (
-        event.get("sourceIPAddress", "<UNKNOWN_IP>")
-        + ":"
-        + lookup_aws_account_name(event.get("recipientAccountId"))
-    )
+    return event.get("eventName") + ":" + lookup_aws_account_name(event.get("recipientAccountId"))
 
 
 def title(event):
-    action = "activity"
-    if event.get("eventName") == "ConsoleLogin":
-        action = "login"
     return (
-        f"AWS root {action} detected from [{event.get('sourceIPAddress')}] in account "
+        "AWS root user activity "
+        f"[{event.get('eventName')}] "
+        "in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 

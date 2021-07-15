@@ -1,6 +1,7 @@
 from fnmatch import fnmatch
 from ipaddress import ip_address
 
+from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 
 # service/event patterns to monitor
@@ -40,5 +41,17 @@ def dedup(event):
 
 
 def title(event):
-    user_identity = event.get("userIdentity", {})
-    return f"Reconnaissance activity denied to {user_identity.get('type')} [{dedup(event)}]"
+    user_type = deep_get(event, "userIdentity", "type")
+    if user_type == "IAMUser":
+        user = deep_get(event, "userIdentity", "userName")
+    # root user
+    elif user_type == "Root":
+        user = user_type
+    else:
+        user = "<UNKNOWN_USER>"
+    return (
+        "Reconnaissance activity denied to user "
+        f"[{user}] "
+        "in account "
+        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+    )

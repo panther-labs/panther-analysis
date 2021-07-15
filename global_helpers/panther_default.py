@@ -26,8 +26,10 @@ def lookup_aws_account_name(account_id):
 
     Returns:
         str: The name of the AWS account ID
+        or
+        str: The AWS account ID (unnamed account)
     """
-    return AWS_ACCOUNTS.get(account_id, account_id)
+    return AWS_ACCOUNTS.get(account_id, f"{account_id} (unnamed account)")
 
 
 def aws_cloudtrail_success(event):

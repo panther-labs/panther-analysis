@@ -27,9 +27,17 @@ def rule(event):
 
 
 def title(event):
+    user_type = deep_get(event, "userIdentity", "type")
+    if user_type == "IAMUser":
+        user = deep_get(event, "userIdentity", "userName")
+    # root user
+    elif user_type == "Root":
+        user = user_type
+    else:
+        user = "<UNKNOWN_USER>"
     return (
         "AWS login detected without MFA for user "
-        f"[{deep_get(event, 'userIdentity', 'userName')}] "
+        f"[{user}] "
         "in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )

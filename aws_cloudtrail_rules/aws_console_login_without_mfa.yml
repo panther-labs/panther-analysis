@@ -24,7 +24,7 @@ SummaryAttributes:
   - p_any_aws_arns
 Tests:
   -
-    Name: No MFA Login
+    Name: No MFA Login - IAM User
     ExpectedResult: true
     Log:
       {
@@ -54,6 +54,36 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012"
+      }
+  -
+    Name: No MFA Login - Root User
+    ExpectedResult: true
+    Log:
+      {
+	      "additionalEventData": {
+		      "LoginTo": "https://console.aws.amazon.com/console/home",
+		      "MFAUsed": "No",
+		      "MobileVersion": "No"
+	      },
+	      "awsRegion": "us-east-1",
+	      "eventName": "ConsoleLogin",
+	      "eventSource": "signin.amazonaws.com",
+	      "eventTime": "2021-07-15 16:39:48.000000000",
+	      "eventType": "AwsConsoleSignIn",
+	      "managementEvent": true,
+	      "readOnly": false,
+	      "recipientAccountId": "123456789012",
+	      "responseElements": {
+		      "ConsoleLogin": "Success"
+	      },
+	      "sourceIPAddress": "1.1.1.1",
+	      "userIdentity": {
+		      "accessKeyId": "",
+		      "accountId": "123456789012",
+		      "arn": "arn:aws:iam::123456789012:root",
+		      "principalId": "123456789012",
+		      "type": "Root"
+	      }
       }
   -
     Name: MFA Login but with SAML
