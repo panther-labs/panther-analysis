@@ -1,0 +1,51 @@
+AnalysisType: rule
+Filename: github_org_modified.py
+RuleID: GitHub.Org.Modified
+DisplayName: GitHub User Added or Removed from Org
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a user is added or removed from a GitHub Org.
+Tests:
+  -
+    Name: GitHub - Team Deleted
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "team.destroy",
+        "created_at": 1621305118553,
+        "data": {
+          "team": "my-org/my-team"
+        },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Org - User Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.add_member",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "user":"cat"
+      }
+  -
+    Name: GitHub - Org - User Removed
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.remove_member",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "user":"bob"
+      }
