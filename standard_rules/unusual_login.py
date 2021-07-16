@@ -8,6 +8,7 @@ from panther_oss_helpers import (
     get_string_set,
     put_string_set,
     resolve_timestamp_string,
+    time_delta
 )
 
 # number of unique geolocation city:region combinations retained in the
@@ -113,18 +114,20 @@ def get_key(event) -> str:
 
 
 def title(event):
-    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
-
     return (
         f"{event.get('p_log_type')}: New access location for user"
         f" [{event.udm('actor_user')}]"
         f" from {GEO_INFO.get('city')}, {GEO_INFO.get('region')} in {GEO_INFO.get('country')}"
-        f" (not in last [{GEO_HISTORY_LENGTH}] login locations)\n"
-        f"Parsing delay: {parsing_delay}"
+        f" (not in last [{GEO_HISTORY_LENGTH}] login locations)"
     )
 
 
 def alert_context(_):
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
+    logging.debug(parsing_delay)
+    context = {"parseDelay": f"{parsing_delay}"}
+
     if GEO_HISTORY:
-        return {"loginHistory": f"{json.dumps(GEO_HISTORY)}"}
-    return {}
+        context["geoHistory"] = f"{json.dumps(GEO_HISTORY)}"
+
+    return context
