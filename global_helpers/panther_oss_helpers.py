@@ -336,16 +336,20 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
 
     Example ipinfo output:
     {
-        "ip": "108.28.166.251",
-        "city": "Arlington",
-        "region": "Virginia",
-        "country": "US",
-        "loc": "38.8810,-77.1043",
-        "postal": "22226",
-        "timezone": "America/New_York",
-        "readme": "https://ipinfo.io/missingauth"
+      "ip": "1.1.1.1",
+      "hostname": "one.one.one.one",
+      "anycast": true,
+      "city": "Miami",
+      "region": "Florida",
+      "country": "US",
+      "loc": "25.7867,-80.1800",
+      "org": "AS13335 Cloudflare, Inc.",
+      "postal": "33132",
+      "timezone": "America/New_York",
+      "readme": "https://ipinfo.io/missingauth"
     }
     """
+
     valid_ip = ip_address(ip)
     url = f"https://ipinfo.io/{valid_ip}/json"
     resp = requests.get(url)

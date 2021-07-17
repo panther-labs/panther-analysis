@@ -123,6 +123,9 @@ def title(event):
 
 def alert_context(event):
     context = {}
+    context["ip"] = event.udm("source_ip")
+    context["reverse_lookup"] = GEO_INFO.get("hostname", "No reverse lookup hostname")
+    context["ip_org"] = GEO_INFO.get("org", "No organization listed")
     if GEO_HISTORY:
         context["geoHistory"] = f"{json.dumps(GEO_HISTORY)}"
     context = add_parse_delay(event, context)
