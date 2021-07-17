@@ -364,32 +364,40 @@ def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     )
     return geoinfo_string
 
-def time_delta(event_time, parse_time: str) -> str:
-    event_time_truncated = nano_to_micro(event_time)
-    parse_time_truncated = nano_to_micro(parse_time)
-    time_delta = resolve_timestamp_string(parse_time_truncated) - resolve_timestamp_string(
-        event_time_truncated
-    )
-    days = time_delta.days
-    hours, remainder = divmod(time_delta.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    parsing_delay = ""
-    if days > 0:
-        parsing_delay = f"{days} day(s) "
-    if hours > 0:
-        parsing_delay = "".join([parsing_delay, f"{hours} hour(s) "])
-    if minutes > 0:
-        parsing_delay = "".join([parsing_delay, f"{minutes} minute(s) "])
-    if seconds > 0:
-        parsing_delay = "".join([parsing_delay, f"{seconds} second(s)"])
 
-    return parsing_delay
+# returns the difference between time1 and later time 2 in human-readable time period string
+def time_delta(time1, time2: str) -> str:
+    time1_truncated = nano_to_micro(time1)
+    time2_truncated = nano_to_micro(time2)
+    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
+        time1_truncated
+    )
+    days = delta_timedelta.days
+    hours, remainder = divmod(delta_timedelta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    delta = ""
+    if days > 0:
+        delta = f"{days} day(s) "
+    if hours > 0:
+        delta = "".join([delta, f"{hours} hour(s) "])
+    if minutes > 0:
+        delta = "".join([delta, f"{minutes} minute(s) "])
+    if seconds > 0:
+        delta = "".join([delta, f"{seconds} second(s)"])
+    return delta
 
 
 def nano_to_micro(time_str: str) -> str:
     parts = time_str.split(":")
     parts[-1] = "{:06f}".format(float(parts[-1]))
     return ":".join(parts)
+
+
+# adds parsing delay to an alert_context
+def add_parse_delay(event, context: dict) -> dict:
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
+    context["parseDelay"] = f"{parsing_delay}"
+    return context
 
 
 def _test_kv_store():

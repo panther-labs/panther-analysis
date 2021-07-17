@@ -4,11 +4,10 @@ import logging
 
 import panther_event_type_helpers as event_type
 from panther_oss_helpers import (
+    add_parse_delay,
     geoinfo_from_ip,
     get_string_set,
     put_string_set,
-    resolve_timestamp_string,
-    time_delta
 )
 
 # number of unique geolocation city:region combinations retained in the
@@ -122,12 +121,9 @@ def title(event):
     )
 
 
-def alert_context(_):
-    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
-    logging.debug(parsing_delay)
-    context = {"parseDelay": f"{parsing_delay}"}
-
+def alert_context(event):
+    context = {}
     if GEO_HISTORY:
         context["geoHistory"] = f"{json.dumps(GEO_HISTORY)}"
-
+    context = add_parse_delay(event, context)
     return context
