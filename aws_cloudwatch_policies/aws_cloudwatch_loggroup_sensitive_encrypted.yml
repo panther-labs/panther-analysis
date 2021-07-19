@@ -1,5 +1,5 @@
 AnalysisType: policy
-Filename: aws_cloudwatch_sensitive_loggroup_encrypted.py
+Filename: aws_cloudwatch_loggroup_sensitive_encrypted.py
 PolicyID: AWS.CloudWatchLogs.SensitiveLogGroup.Encryption
 DisplayName: Sensitive AWS CloudWatch Log Encryption
 Enabled: false
@@ -20,6 +20,12 @@ Tests:
   -
     Name: Logs Are Encrypted
     ExpectedResult: true
+    Mocks:
+      -
+        {
+          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
+          "returnValue": "{*LogGroup-2*}"
+        }
     Resource:
       {
         "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
@@ -43,6 +49,12 @@ Tests:
   -
     Name: Sensitive Logs Are Not Encrypted
     ExpectedResult: false
+    Mocks:
+      -
+        {
+          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
+          "returnValue": "{*LogGroup-2*}"
+        }
     Resource:
       {
         "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
@@ -66,18 +78,24 @@ Tests:
   -
     Name: Non-sensitive Logs Are Not Encrypted
     ExpectedResult: true
+    Mocks:
+      -
+        {
+          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
+          "returnValue": "{*LogGroup-2*}"
+        }
     Resource:
       {
-        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-3",
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
         "AccountID": "123456789012",
-        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-3",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
         "CreationTime": 1234567890123,
         "KmsKeyId": null,
-        "LogGroupName": "LogGroup-3",
+        "LogGroupName": "SomeNoneEncryptedLog",
         "MetricFilterCount": 0,
-        "Name": "LogGroup-3",
+        "Name": "SomeNoneEncryptedLog",
         "Region": "us-west-2",
-        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-3",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": null,
         "StoredBytes": 0,
