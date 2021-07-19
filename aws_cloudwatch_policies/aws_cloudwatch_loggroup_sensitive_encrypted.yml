@@ -14,18 +14,12 @@ Description: >
   AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK
   to protect extra sensitive log data.
 Runbook: >
-  Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list.
+  Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list (SENSITIVE_LOG_GROUP_ARN_REGEXS).
 Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
 Tests:
   -
     Name: Logs Are Encrypted
     ExpectedResult: true
-    Mocks:
-      -
-        {
-          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
-          "returnValue": "{\"*LogGroup-2*\"}"
-        }
     Resource:
       {
         "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
@@ -49,12 +43,6 @@ Tests:
   -
     Name: Sensitive Logs Are Not Encrypted
     ExpectedResult: false
-    Mocks:
-      -
-        {
-          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
-          "returnValue": "{\"*LogGroup-2*\"}"
-        }
     Resource:
       {
         "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
@@ -78,12 +66,6 @@ Tests:
   -
     Name: Non-sensitive Logs Are Not Encrypted
     ExpectedResult: true
-    Mocks:
-      -
-        {
-          "objectName": "SENSITIVE_LOG_GROUP_ARN_REGEXS",
-          "returnValue": "{\"*LogGroup-2*\"}"
-        }
     Resource:
       {
         "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
