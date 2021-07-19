@@ -1,14 +1,15 @@
 AnalysisType: policy
-Filename: aws_cloudwatch_loggroup_encrypted.py
-PolicyID: AWS.CloudWatchLogs.Encrypted
-DisplayName: AWS CloudWatch Log Encryption
-Enabled: true
+Filename: aws_cloudwatch_sensitive_loggroup_encrypted.py
+PolicyID: AWS.CloudWatchLogs.SensitiveLogGroup.Encryption
+DisplayName: Sensitive AWS CloudWatch Log Encryption
+Enabled: false
 ResourceTypes:
   - AWS.CloudWatch.LogGroup
 Tags:
   - AWS
+  - Configuration Required
   - Panther
-Severity: Info
+Severity: High
 Description: >
   AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK
   to protect extra sensitive log data.
@@ -40,7 +41,7 @@ Tests:
         "TimeCreated": "2009-02-13T15:31:30.000-08:00"
       }
   -
-    Name: Logs Are Not Encrypted
+    Name: Sensitive Logs Are Not Encrypted
     ExpectedResult: false
     Resource:
       {
@@ -52,6 +53,29 @@ Tests:
         "LogGroupName": "LogGroup-2",
         "MetricFilterCount": 0,
         "Name": "LogGroup-2",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": null,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }
+  -
+    Name: Non-sensitive Logs Are Not Encrypted
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": null,
+        "LogGroupName": "LogGroup-3",
+        "MetricFilterCount": 0,
+        "Name": "LogGroup-3",
         "Region": "us-west-2",
         "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
         "ResourceType": "AWS.CloudWatch.LogGroup",
