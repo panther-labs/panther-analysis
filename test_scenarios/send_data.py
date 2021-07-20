@@ -11,7 +11,7 @@ import boto3
 import yaml
 
 # FIXME: refactor and generalize this to more log types for more scenarios
-
+# Note: Timeshift works by adding the diff in days between the compromise time and now to the log time
 # example:
 #  python send_data.py
 #   --account-id 050603629922
@@ -201,6 +201,8 @@ def get_event_time(log_type):
         return {"attrs": ["published"], "format": "%Y-%m-%dT%H:%M:%S.%fZ"}
     if log_type == "AWS.S3ServerAccess":  # [03/Nov/2020:04:43:07 +0000]
         return {"index": 2, "format": "[%d/%b/%Y:%H:%M:%S"}
+    if log_type == 'Slack.AccessLogs': # 2021-06-12 21:30:47.000Z
+        return {'attrs': ['date_first'], 'format': '%Y-%m-%d %H:%M:%S.%fZ'}
     raise Exception("unknown logType: " + log_type)
 
 
@@ -215,23 +217,21 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--compromise-datetime",
-        help="the datetime of the compromise UTC in iso format",
+        help="the datetime of the compromise UTC in ISO format",
         type=datetime.fromisoformat,
         required=True,
     )
     parser.add_argument(
         "--panther-compromise-datetime",
-        help="the datetime to shift all events from the compromise date UTC in iso format (defaults to now)",
+        help="the datetime to shift all events from the compromise date UTC in ISO format (defaults to now)",
         type=datetime.fromisoformat,
         default=datetime.now(timezone.utc),
         required=False,
     )
     args = parser.parse_args()
-
     logging.basicConfig(
         format="[%(asctime)s %(levelname)-8s] %(message)s",
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-
     main(args)
