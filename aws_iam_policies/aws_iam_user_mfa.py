@@ -7,4 +7,4 @@ def policy(resource):
         return True
 
     # Explicit True check to avoid returning NoneType
-    return deep_get(resource, "CredentialReport", "MfaActive") is True
+    return resource.get("VirtualMFA") is not None

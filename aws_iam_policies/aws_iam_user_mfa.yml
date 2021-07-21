@@ -97,7 +97,7 @@ Tests:
           "Cert2Active": false,
           "Cert2LastRotated": "0001-01-01T00:00:00Z",
           "MfaActive": true,
-          "PasswordEnabled": true,
+          "PasswordEnabled": false,
           "PasswordLastChanged": "2019-05-21T22:10:11Z",
           "PasswordLastUsed": "0001-01-01T00:00:00Z",
           "PasswordNextRotation": "2019-08-14T22:10:11Z",
@@ -123,7 +123,10 @@ Tests:
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": {
+	    "EnableDate": "2021-07-20T21:31:43Z",
+	    "SerialNumber": "arn:aws:iam::123456789012:mfa/bobert"
+          }
       }
   -
     Name: Password Enabled, MFA Disabled
@@ -227,5 +230,8 @@ Tests:
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": {
+	    "EnableDate": "2021-07-20T21:31:43Z",
+	    "SerialNumber": "arn:aws:iam::123456789012:mfa/bobert"
+          }
       }
