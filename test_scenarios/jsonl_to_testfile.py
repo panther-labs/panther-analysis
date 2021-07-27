@@ -11,15 +11,12 @@ def load_csv_logs(filename):
     p_fields = set()
     with open(filename, 'r' ) as fi:
         reader = csv.DictReader(fi)
-        for line_num, line in enumerate(reader):
-            # Get the full list of p_ fields in this particular log type
-            if line_num == 0:
-                for key in line:
-                    if key.startswith('p_'):
-                        p_fields.add(key)
-            # Pop the p_any fields off the record so the reclassify
+        # Get the full list of p_ fields in this particular log type
+        p_fields = set([x for x in reader.fieldnames if x.startswith('p_')])
+        for line in reader:
+            # Pop the p_any fields off the record so they are recalculated
             for p_field in p_fields:
-                line.pop(p_field)
+                _ = line.pop(p_field)
             logs.append(line)
     return json.loads(json.dumps(logs))
 
