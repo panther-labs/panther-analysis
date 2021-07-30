@@ -1,19 +1,20 @@
 AnalysisType: policy
-Filename: aws_cloudwatch_loggroup_encrypted.py
-PolicyID: AWS.CloudWatchLogs.Encrypted
-DisplayName: AWS CloudWatch Log Encryption
-Enabled: true
+Filename: aws_cloudwatch_loggroup_sensitive_encrypted.py
+PolicyID: AWS.CloudWatchLogs.SensitiveLogGroup.Encryption
+DisplayName: Sensitive AWS CloudWatch Log Encryption
+Enabled: false
 ResourceTypes:
   - AWS.CloudWatch.LogGroup
 Tags:
   - AWS
+  - Configuration Required
   - Panther
-Severity: Info
+Severity: High
 Description: >
   AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK
   to protect extra sensitive log data.
 Runbook: >
-  Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list.
+  Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list (SENSITIVE_LOG_GROUP_ARN_REGEXS).
 Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
 Tests:
   -
@@ -21,7 +22,7 @@ Tests:
     ExpectedResult: true
     Resource:
       {
-        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ARN": "arn:aws:logs:us-west-2:1234456789011:log-group:LogGroup-2",
         "AccountID": "123456789012",
         "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
         "CreationTime": 1234567890123,
@@ -40,7 +41,7 @@ Tests:
         "TimeCreated": "2009-02-13T15:31:30.000-08:00"
       }
   -
-    Name: Logs Are Not Encrypted
+    Name: Sensitive Logs Are Not Encrypted
     ExpectedResult: false
     Resource:
       {
@@ -54,6 +55,29 @@ Tests:
         "Name": "LogGroup-2",
         "Region": "us-west-2",
         "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:LogGroup-2",
+        "ResourceType": "AWS.CloudWatch.LogGroup",
+        "RetentionInDays": null,
+        "StoredBytes": 0,
+        "Tags": {
+          "Key1Name": "Value1"
+        },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+      }
+  -
+    Name: Non-sensitive Logs Are Not Encrypted
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
+        "AccountID": "123456789012",
+        "Arn": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
+        "CreationTime": 1234567890123,
+        "KmsKeyId": null,
+        "LogGroupName": "SomeNoneEncryptedLog",
+        "MetricFilterCount": 0,
+        "Name": "SomeNonEncryptedLog",
+        "Region": "us-west-2",
+        "ResourceID": "arn:aws:logs:us-west-2:1234456789012:log-group:SomeNoneEncryptedLog",
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": null,
         "StoredBytes": 0,
