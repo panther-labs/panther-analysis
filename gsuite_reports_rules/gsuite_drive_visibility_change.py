@@ -13,10 +13,21 @@ ALERT_DETAILS = {
     "TARGET_DOMAIN": "<UNKNOWN_DOMAIN>",
 }
 
+def reset_alert_details():
+    ALERT_DETAILS = {
+        "ACCESS_SCOPE": "<UNKNOWN_ACCESS_SCOPE>",
+        "DOC_TITLE": "<UNKNOWN_TITLE>",
+        "NEW_VISIBILITY": "<UNKNOWN_VISIBILITY>",
+        "TARGET_USER_EMAIL": "<UNKNOWN_USER>",
+        "TARGET_DOMAIN": "<UNKNOWN_DOMAIN>",
+    }
+
 
 def rule(event):
     if deep_get(event, "id", "applicationName") != "drive":
         return False
+
+    reset_alert_details()
 
     #########
     # for visibility changes that apply to a domain
