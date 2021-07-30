@@ -14,6 +14,7 @@ ALERT_DETAILS = {
 }
 
 def reset_alert_details():
+    global ALERT_DETAILS # pylint: disable=global-statement
     ALERT_DETAILS = {
         "ACCESS_SCOPE": "<UNKNOWN_ACCESS_SCOPE>",
         "DOC_TITLE": "<UNKNOWN_TITLE>",
