@@ -58,8 +58,8 @@ def lookup_box_file(user_id: str, file_id: str) -> dict:
         user = client.user(user_id=user_id)
         file_info = client.as_user(user).file(file_id=file_id).get()
         return file_info
-    except BoxAPIException as err:
-        raise BadBoxLookup("Exception looking up file info.") from err
+    except BoxAPIException as box_err:
+        raise BadBoxLookup("Exception looking up file info.") from box_err
 
 
 def lookup_box_folder(user_id: str, folder_id: str) -> dict:
@@ -68,8 +68,8 @@ def lookup_box_folder(user_id: str, folder_id: str) -> dict:
         user = client.user(user_id=user_id)
         folder = client.as_user(user).folder(folder_id=folder_id).get()
         return folder
-    except BoxAPIException as err:
-        raise BadBoxLookup("Exception looking up folder info.") from err
+    except BoxAPIException as box_err:
+        raise BadBoxLookup("Exception looking up folder info.") from box_err
 
 
 def get_box_client() -> Client:

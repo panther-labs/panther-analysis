@@ -1,11 +1,14 @@
 """Utility functions provided to policies and rules during execution."""
+import json
 import os
 import re
 import time
 from datetime import datetime
+from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
+import requests
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -326,6 +329,40 @@ def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600
         reset_counter(key)
         return True
     return False
+
+
+def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
+    """Looks up the geolocation of an IP address using ipinfo.io
+
+    Example ipinfo output:
+    {
+        "ip": "108.28.166.251",
+        "city": "Arlington",
+        "region": "Virginia",
+        "country": "US",
+        "loc": "38.8810,-77.1043",
+        "postal": "22226",
+        "timezone": "America/New_York",
+        "readme": "https://ipinfo.io/missingauth"
+    }
+    """
+    valid_ip = ip_address(ip)
+    url = f"https://ipinfo.io/{valid_ip}/json"
+    resp = requests.get(url)
+    if resp.status_code != 200:
+        raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
+    geoinfo = json.loads(resp.text)
+    return geoinfo
+
+
+def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
+    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
+    geoinfo = geoinfo_from_ip(ip)
+    geoinfo_string = (
+        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+    )
+    return geoinfo_string
 
 
 def _test_kv_store():
