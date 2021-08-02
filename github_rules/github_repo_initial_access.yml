@@ -1,13 +1,13 @@
 AnalysisType: rule
 Filename: github_repo_initial_access.py
 RuleID: GitHub.Repo.InitialAccess
-DisplayName: GitHub Branch Protection Policy Override
+DisplayName: GitHub User Initial Access to Private Repo
 Enabled: true
 LogTypes:
   - GitHub.Audit
 Tags:
   - GitHub
-Severity: Low
+Severity: Info
 Description: Detects when a user intially access a private organization repository.
 Tests:
   -
@@ -73,5 +73,26 @@ Tests:
         "repository": "my-org/my-repo",
         "repository_public": true,
         "actor": "cat",
+        "user": ""
+      }
+  -
+    Name: GitHub - Clone without Actor
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: >
+          "cat":"my-repo"
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": false,
+        "actor": "",
         "user": ""
       }
