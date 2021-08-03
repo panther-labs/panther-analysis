@@ -5,9 +5,8 @@ def rule(event):
     if event.get("action").startswith("git.") and not event.get("repository_public"):
         
         # if the actor field is empty, short circuit the rule
-        actor = event.get("actor")
-        if actor == '' or actor == None:
-            return True
+        if not event.udm("actor_user"):
+            return False
 
         # otherwise trigger on any of the git actions, http or ssh
         key = get_key(event)
