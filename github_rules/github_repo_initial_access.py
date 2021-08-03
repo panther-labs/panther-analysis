@@ -2,12 +2,11 @@ from panther_oss_helpers import get_string_set, put_string_set
 
 
 def rule(event):
-    if event.get("action").startswith("git.") and not event.get("repository_public"):
-        
+    if event.get("action").startswith("git.") and not event.get("repository_public"):  
         # if the actor field is empty, short circuit the rule
         if not event.udm("actor_user"):
             return False
-
+        
         # otherwise trigger on any of the git actions, http or ssh
         key = get_key(event)
         previous_access = get_string_set(key)
