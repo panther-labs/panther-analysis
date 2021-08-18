@@ -1,4 +1,4 @@
-# Panther Github Actions
+# Panther GitHub Actions
 
 This folder holds the publicly defined GitHub actions for Panther OSS. Currently, it's home to:
 
