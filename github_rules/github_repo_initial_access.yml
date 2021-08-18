@@ -75,3 +75,20 @@ Tests:
         "actor": "cat",
         "user": ""
       }
+  -
+    Name: GitHub - Clone without Actor
+    ExpectedResult: false
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": false,
+        "actor": "",
+        "user": ""
+      }
