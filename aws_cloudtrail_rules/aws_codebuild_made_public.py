@@ -3,7 +3,8 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    return (event['eventName'] == 'UpdateProjectVisibility' and deep_get(event, 'requestParameters', 'projectVisibility') == 'PUBLIC_READ')
+    return event['eventName'] == 'UpdateProjectVisibility' and\
+        deep_get(event, 'requestParameters', 'projectVisibility') == 'PUBLIC_READ'
 
 
 def title(event):
