@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_account_admin_assigned.py 
+RuleID: Snowflake.AccountAdminGranted
+Description: >
+  Detect when account admin is granted.
+DisplayName: Snowflake Account Admin Granted
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.AccountAdminGranted
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      query_text: "grant role accountadmin to user testuser;"
+
