@@ -1,0 +1,35 @@
+AnalysisType: scheduled_query
+QueryName: Query.Snowflake.PrivilegedObjectUpdate
+Enabled: false
+Description: >
+  Monitor for users that are being re-enabled.
+AthenaQuery: >
+  /* athena query not supported */ 
+  SELECT count(1)
+SnowflakeQuery: >
+  --return enable user events
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT 
+    query_text,
+    user_name,
+    role_name,
+    end_time
+  FROM snowflake.account_usage.query_history
+    WHERE 
+      DATEDIFF(HOUR,  start_time, CURRENT_TIMESTAMP) < 24
+      AND execution_status = 'SUCCESS' 
+      AND (
+          query_text ILIKE '%create role%'
+          OR query_text ILIKE '%manage grants%'
+          OR query_text ILIKE '%create integration%'
+          OR query_text ILIKE '%create share%'
+          OR query_text ILIKE '%create account%'
+          OR query_text ILIKE '%monitor usage%'
+          OR query_text ILIKE '%ownership%'
+          )
+  ORDER BY end_time desc
+Schedule:
+  CronExpression: '0 6 * * *'
+  TimeoutMinutes: 1
