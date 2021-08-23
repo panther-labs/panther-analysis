@@ -3,7 +3,15 @@ from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 
 def rule(event):
+    # This set refers to events where documents have changed perms due to parent folder perm change
+    inheritance_events = {
+        "change_user_access_hierarchy_reconciled", "change_document_access_scope_hierarchy_reconciled"
+    }
+
     if deep_get(event, "id", "applicationName") != "drive":
+        return False
+
+    if deep_get(event, "events", "name") in inheritance_events:
         return False
 
     for details in event.get("events", [{}]):
