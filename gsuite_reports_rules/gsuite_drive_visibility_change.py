@@ -83,15 +83,22 @@ def rule(event):
     #########
     # for visibility changes that apply to a user
     # there is a change_user_access event for each user
+    change_user_access = False
+
     for details in event.get("events", [{}]):
         if (
             details.get("type") == "acl_change"
             and details.get("name") == "change_user_access"
             and param_lookup(details.get("parameters", {}), "new_value") != ["none"]
         ):
-            ALERT_DETAILS[log]["TARGET_USER_EMAILS"].add(
-                param_lookup(details.get("parameters", {}), "target_user")
-            )
+            if ALERT_DETAILS[log]["TARGET_USER_EMAILS"] != {"<UNKNOWN_USER>"}:
+                ALERT_DETAILS[log]["TARGET_USER_EMAILS"].add(
+                    param_lookup(details.get("parameters", {}), "target_user")
+                )
+            else:
+                ALERT_DETAILS[log]["TARGET_USER_EMAILS"] = {
+                    param_lookup(details.get("parameters", {}), "target_user")
+                }
             ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(
                 details.get("parameters", {}), "doc_title"
             )
@@ -99,9 +106,17 @@ def rule(event):
                 details.get("parameters", {}), "new_value"
             )
 
-            return True
+            change_user_access = True
+
+    if change_user_access:
+        return True
 
     return False
+
+
+def alert_context(event):
+    log = event.get("p_row_id")
+    return {"target users": list(ALERT_DETAILS[log]["TARGET_USER_EMAILS"])}
 
 
 def dedup(event):
