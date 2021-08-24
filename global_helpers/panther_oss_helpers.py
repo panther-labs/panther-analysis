@@ -1,11 +1,14 @@
 """Utility functions provided to policies and rules during execution."""
+import json
 import os
 import re
 import time
 from datetime import datetime
+from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
+import requests
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -326,6 +329,79 @@ def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600
         reset_counter(key)
         return True
     return False
+
+
+def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
+    """Looks up the geolocation of an IP address using ipinfo.io
+
+    Example ipinfo output:
+    {
+      "ip": "1.1.1.1",
+      "hostname": "one.one.one.one",
+      "anycast": true,
+      "city": "Miami",
+      "region": "Florida",
+      "country": "US",
+      "loc": "25.7867,-80.1800",
+      "org": "AS13335 Cloudflare, Inc.",
+      "postal": "33132",
+      "timezone": "America/New_York",
+      "readme": "https://ipinfo.io/missingauth"
+    }
+    """
+
+    valid_ip = ip_address(ip)
+    url = f"https://ipinfo.io/{valid_ip}/json"
+    resp = requests.get(url)
+    if resp.status_code != 200:
+        raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
+    geoinfo = json.loads(resp.text)
+    return geoinfo
+
+
+def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
+    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
+    geoinfo = geoinfo_from_ip(ip)
+    geoinfo_string = (
+        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+    )
+    return geoinfo_string
+
+
+# returns the difference between time1 and later time 2 in human-readable time period string
+def time_delta(time1, time2: str) -> str:
+    time1_truncated = nano_to_micro(time1)
+    time2_truncated = nano_to_micro(time2)
+    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
+        time1_truncated
+    )
+    days = delta_timedelta.days
+    hours, remainder = divmod(delta_timedelta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    delta = ""
+    if days > 0:
+        delta = f"{days} day(s) "
+    if hours > 0:
+        delta = "".join([delta, f"{hours} hour(s) "])
+    if minutes > 0:
+        delta = "".join([delta, f"{minutes} minute(s) "])
+    if seconds > 0:
+        delta = "".join([delta, f"{seconds} second(s)"])
+    return delta
+
+
+def nano_to_micro(time_str: str) -> str:
+    parts = time_str.split(":")
+    parts[-1] = "{:06f}".format(float(parts[-1]))
+    return ":".join(parts)
+
+
+# adds parsing delay to an alert_context
+def add_parse_delay(event, context: dict) -> dict:
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
+    context["parseDelay"] = f"{parsing_delay}"
+    return context
 
 
 def _test_kv_store():

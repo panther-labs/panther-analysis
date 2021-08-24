@@ -28,6 +28,8 @@ def rule(event):
 
 def title(event):
     return (
-        f"AWS logins detected without MFA in account "
+        "AWS login detected without MFA for user "
+        f"[{deep_get(event, 'userIdentity', 'userName')}] "
+        "in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )

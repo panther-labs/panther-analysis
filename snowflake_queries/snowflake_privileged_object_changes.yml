@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_privileged_object_changes.py 
+RuleID: Snowflake.PrivilegedObjectUpdate
+Description: >
+  Monitor changes to database objects that require highly privileged roles
+DisplayName: Privileged Object Changes
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.PrivilegedObjectUpdate
+Severity: Info
+Tests:
+  -
+    Name: Return True 
+    ExpectedResult: true
+    Log:
+      user_name: admin
+      query_text: "create USER lindseytest password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺' default_role = 'PANTHER_READONLY_ROLE' must_change_password = true;"
