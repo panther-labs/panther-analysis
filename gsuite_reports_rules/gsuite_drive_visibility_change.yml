@@ -56,6 +56,7 @@ Tests:
         'id': {'applicationName': 'drive'},
         'events': [
           {
+            'name': "change_user_access",
             'type': 'acl_change',
             'parameters': [
               {'name': 'visibility_change', 'value': 'external'},
@@ -75,6 +76,38 @@ Tests:
         'id': {'applicationName': 'drive'},
         'events': [
           {
+            'type': 'acl_change',
+            'parameters': [{'name': 'visibility_change', 'value': 'internal'}]
+          }
+        ]
+      }
+  -
+    Name: Doc Inherits Folder Permissions
+    ExpectedResult: false
+    Log:
+      {
+        'p_row_id': '111222',
+        'actor': { 'email': 'bobert@example.com' },
+        'id': { 'applicationName': 'drive' },
+        "events": [
+          {
+            'name': "change_user_access_hierarchy_reconciled",
+            'type': 'acl_change',
+            'parameters': [{'name': 'visibility_change', 'value': 'internal'}]
+          }
+        ]
+      }
+  -
+    Name: Doc Inherits Folder Permissions - Sharing Link
+    ExpectedResult: false
+    Log:
+      {
+      'p_row_id': '111222',
+      'actor': { 'email': 'bobert@example.com' },
+      'id': { 'applicationName': 'drive' },
+        "events": [
+          {
+            'name': "change_document_access_scope_hierarchy_reconciled",
             'type': 'acl_change',
             'parameters': [{'name': 'visibility_change', 'value': 'internal'}]
           }
