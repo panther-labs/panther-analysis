@@ -1,17 +1,20 @@
 from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
+# This set refers to events where documents have changed perms due to parent folder change
+inheritance_events = {
+    "change_user_access_hierarchy_reconciled",
+    "change_document_access_scope_hierarchy_reconciled",
+}
 
 def rule(event):
-    # This Tuple refers to events where documents have changed perms due to parent folder change
-    inheritance_events = (
-        "change_user_access_hierarchy_reconciled",
-        "change_document_access_scope_hierarchy_reconciled",
-    )
-
     if deep_get(event, "id", "applicationName") != "drive":
         return False
-
+    # Events that have the types in inheritance_events are
+    # changes to documents and folders that occur due to
+    # a change in the parent folder's permission. We ignore
+    # these events to prevent every folder change from
+    # generating multiple alerts.
     if deep_get(event, "events", "name") in inheritance_events:
         return False
 
