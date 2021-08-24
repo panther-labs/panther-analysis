@@ -7,6 +7,12 @@ VISIBILITY = {"people_with_link", "public_on_the_web", "shared_externally", "unk
 
 ALERT_DETAILS = {}
 
+# Events where documents have changed perms due to parent folder change
+INHERITANCE_EVENTS = {
+    "change_user_access_hierarchy_reconciled",
+    "change_document_access_scope_hierarchy_reconciled",
+}
+
 
 def init_alert_details(log):
     global ALERT_DETAILS  # pylint: disable=global-statement
@@ -21,6 +27,14 @@ def init_alert_details(log):
 
 def rule(event):
     if deep_get(event, "id", "applicationName") != "drive":
+        return False
+
+    # Events that have the types in INHERITANCE_EVENTS are
+    # changes to documents and folders that occur due to
+    # a change in the parent folder's permission. We ignore
+    # these events to prevent every folder change from
+    # generating multiple alerts.
+    if deep_get(event, "events", "name") in INHERITANCE_EVENTS:
         return False
 
     log = event.get("p_row_id")
