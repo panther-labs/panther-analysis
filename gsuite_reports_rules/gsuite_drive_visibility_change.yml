@@ -47,7 +47,7 @@ Tests:
         ]
       }
   -
-    Name: Doc Became Public - Link
+    Name: Doc Became Public - Link (Unrestricted)
     ExpectedResult: true
     Log:
       {
@@ -72,6 +72,61 @@ Tests:
               {
                 "name": "visibility",
                 "value": "people_with_link"
+              },
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "people_with_link"
+                ]
+              }
+            ],
+            "name": "change_document_visibility",
+            "type": "acl_change"
+          },
+          {
+            "parameters": [
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "can_view"
+                ]
+              }
+            ],
+            "name": "change_document_access_scope",
+            "type": "acl_change"
+          }
+        ],
+        "id": {
+          "applicationName": "drive"
+        },
+        "p_row_id": "111222"
+      }
+  -
+    Name: Doc Became Public - Link (Whitelisted Domain)
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "email": "bobert@notexample.com"
+        },
+        "events": [
+          {
+            "parameters": [
+              {
+                "name": "visibility_change",
+                "value": "external"
+              },
+              {
+                "name": "doc_title",
+                "value": "my shared document"
+              },
+              {
+                "name": "target_domain",
+                "value": "example.com"
+              },
+              {
+                "name": "visibility",
+                "value": "people_within_domain_with_link"
               },
               {
                 "name": "new_value",
@@ -153,7 +208,7 @@ Tests:
           "applicationName": "drive"
         },
         "actor": {
-          "email": "some.user@runpanther.io"
+          "email": "bobert@example.com"
         },
         "kind": "admin#reports#activity",
         "ipAddress": "1.1.1.1",
@@ -189,7 +244,7 @@ Tests:
               },
               {
                 "name": "target_user",
-                "value": "bobert@example.com"
+                "value": "someone@random.com"
               },
               {
                 "name": "old_value",
@@ -228,7 +283,7 @@ Tests:
           "applicationName": "drive"
         },
         "actor": {
-          "email": "some.user@runpanther.io"
+          "email": "bobert@example.com"
         },
         "kind": "admin#reports#activity",
         "ipAddress": "1.1.1.1",
@@ -264,7 +319,7 @@ Tests:
               },
               {
                 "name": "target_user",
-                "value": "bobert@example.com"
+                "value": "someone@random.com"
               },
               {
                 "name": "old_value",
@@ -306,7 +361,49 @@ Tests:
               },
               {
                 "name": "target_user",
-                "value": "second_user@example.com"
+                "value": "someoneelse@random.com"
+              },
+              {
+                "name": "old_value",
+                "multiValue": [
+                  "none"
+                ]
+              },
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "can_view"
+                ]
+              },
+              {
+                "name": "old_visibility",
+                "value": "people_within_domain_with_link"
+              },
+              {
+                "name": "doc_title",
+                "value": "Hosted Accounts"
+              },
+              {
+                "name": "visibility",
+                "value": "shared_externally"
+              }
+            ]
+          },
+          {
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": [
+              {
+                "name": "primary_event",
+                "boolValue": true
+              },
+              {
+                "name": "visibility_change",
+                "value": "external"
+              },
+              {
+                "name": "target_user",
+                "value": "notbobert@example.com"
               },
               {
                 "name": "old_value",
