@@ -4,3 +4,4 @@ FAILED_LOGIN = "failed_login"
 MFA_DISABLED = "mfa_disabled"
 SUCCESSFUL_LOGIN = "successful_login"
 ACCOUNT_CREATED = "account_created"
+
