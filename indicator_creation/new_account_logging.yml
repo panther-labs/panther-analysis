@@ -1,0 +1,46 @@
+AnalysisType: rule
+Filename: new_account_logging.py
+RuleID: Standard.NewAccountCreated
+DisplayName: New User Account Created
+Enabled: true
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - DataModel
+  - IndicatorCollection
+Severity: Info
+Reports:
+  MITRE ATT&CK:
+    - Persistence:Create Account (T1136)
+Description: A new account was created
+Runbook: A new user account was created, ensure it was created through standard practice and is for a valid purpose.
+SummaryAttributes:
+  - account_id
+  - user_name
+  - user_id
+Tests:
+  -
+    Name: User Creation Event
+    ExpectedResult: true
+    Log:
+      {
+        'event_type_id': 13,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat,'
+        'event_type': 'ACCOUNT_CREATED'
+      }
+  -
+    Name: Standard Login Event
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 5,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_id': 123456,
+        'user_name': 'Bob Cat',
+        'ipaddr': '192.168.1.1',
+        'event_type': 'SUCCESSFUL_LOGIN'
+      }
