@@ -1,8 +1,3 @@
-'''
-Monitors for account creation and adds an entry to the KVStore for the user. This depends on the
-event_type of ACCOUNT_CREATED to be in the data model for the log source and will work in tandem
-with a helper function that checks for the the userid in the KV store.
-'''
 from datetime import (
     datetime,
     timedelta,
@@ -11,6 +6,7 @@ from panther_oss_helpers import (
     put_string_set,
     set_key_expiration,
 )
+import panther_event_type_helpers as event_type
 
 # Days an account is considered new
 TTL = timedelta(days=3)
@@ -23,18 +19,18 @@ def rule(event):
         return False
 
     event_id = f'new_user_{event.get("p_row_id")}'
-    new_user = event.get("user_name")
+    new_user = event.udm("user_name")
     event_time = datetime.strptime(event.get("p_event_time"), PANTHER_TIME_FORMAT)
     expiry_time = event_time + TTL
 
     put_string_set(new_user, event_id)
 
-    set_key_expiration(keyid, expiry_time.strftime("%s"))
+    set_key_expiration(new_user, expiry_time.strftime("%s"))
     return True
 
 def severity(_):
     return "INFO"
 
-def title():
-    return f"A new user account was created - (event.get(user_name))"
+def title(event):
+    return f"A new user account was created - [{event.udm('user_name')}]"
 

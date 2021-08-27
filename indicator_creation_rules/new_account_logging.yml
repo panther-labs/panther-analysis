@@ -1,3 +1,7 @@
+# Monitors for account creation and adds an entry to the KVStore for the user. This depends on the
+# event_type of ACCOUNT_CREATED to be in the data model for the log source and will work in tandem
+# with a helper function that checks for the userid in the KV store.
+
 AnalysisType: rule
 Filename: new_account_logging.py
 RuleID: Standard.NewAccountCreated
@@ -29,7 +33,7 @@ Tests:
         'actor_user_name': 'Bob Cat',
         'user_id': 123456,
         'user_name': 'Bob Cat,'
-        'event_type': 'ACCOUNT_CREATED'
+        'p_log_event': 'OneLogin.Events'
       }
   -
     Name: Standard Login Event
@@ -42,5 +46,5 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat',
         'ipaddr': '192.168.1.1',
-        'event_type': 'SUCCESSFUL_LOGIN'
+        'p_log_event': 'OneLogin.Events'
       }
