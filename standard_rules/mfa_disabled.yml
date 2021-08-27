@@ -1,0 +1,38 @@
+AnalysisType: rule
+Filename: mfa_disabled.py
+RuleID: Standard.MFADisabled
+DedupPeriodMinutes: 60
+DisplayName: MFA Disabled
+Enabled: false
+LogTypes:
+  - GitHub.Audit
+Severity: High
+Description: Detects when Multi-Factor Authentication (MFA) is disabled
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: GitHub - Org MFA Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.disable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Org MFA Enabled
+    ExpectedResult: False
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.enable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+

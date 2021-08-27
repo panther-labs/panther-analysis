@@ -1,0 +1,36 @@
+AnalysisType: rule
+Filename: github_repo_created.py
+RuleID: Github.Repo.Created
+DisplayName: GitHub Repository Created
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a repository is created.
+Tests:
+  -
+    Name: GitHub - Repo Created
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "repo.created",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Repo Archived
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "repo.archived",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }

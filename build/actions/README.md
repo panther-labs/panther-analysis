@@ -1,10 +1,10 @@
-# Panther Github Actions
+# Panther GitHub Actions
 
-This folder holds the publicly defined github actions for Panther OSS. Currently, it's home to:
+This folder holds the publicly defined GitHub actions for Panther OSS. Currently, it's home to:
 
 - [pr_sync](./pr_sync/index.js)
 
-Defines an action that allows to sync PRs accross different repos. Specifically, when the source
+Defines an action that allows to sync PRs across different repos. Specifically, when the source
 repo has a PR merged, an automatic PR for the same changes is created in the dest repo. This action
 is useful for repos that extend one another, allowing you to quickly send any changes from upstream
 to all downstream repos.
