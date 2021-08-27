@@ -28,9 +28,6 @@ def rule(event):
     set_key_expiration(new_user, expiry_time.strftime("%s"))
     return True
 
-def severity(_):
-    return "INFO"
-
 def title(event):
     return f"A new user account was created - [{event.udm('user_name')}]"
 
