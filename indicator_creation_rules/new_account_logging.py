@@ -30,4 +30,3 @@ def rule(event):
 
 def title(event):
     return f"A new user account was created - [{event.udm('user_name')}]"
-
