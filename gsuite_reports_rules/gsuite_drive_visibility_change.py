@@ -32,11 +32,10 @@ def init_alert_details(log):
 
 
 def user_is_external(target_user):
-    external = True
     for domain in EXCLUDED_DOMAINS:
         if domain in target_user:
-            external = False
-    return external
+            return False
+    return True
 
 
 def rule(event):
