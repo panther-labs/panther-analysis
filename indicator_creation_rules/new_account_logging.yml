@@ -9,6 +9,7 @@ DisplayName: New User Account Created
 Enabled: true
 LogTypes:
   - OneLogin.Events
+  - AWS.CloudTrail
 Tags:
   - DataModel
   - IndicatorCollection
@@ -24,7 +25,7 @@ SummaryAttributes:
   - user_id
 Tests:
   -
-    Name: User Creation Event
+    Name: User Creation Event - OneLogin
     ExpectedResult: true
     Mocks:
       - objectName: put_string_set
@@ -43,7 +44,7 @@ Tests:
         'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
       }
   -
-    Name: Standard Login Event
+    Name: Standard Login Event - OneLogin
     ExpectedResult: false
     Log:
       {
@@ -56,4 +57,41 @@ Tests:
         'p_event_time': '2021-06-27 00:08:28.792Z',
         'p_log_type': 'OneLogin.Events',
         'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
+      }
+  -
+    Name: User Account Created - CloudTrail
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: >-
+      - objectName: set_key_expiration
+        returnValue: >-
+    Log:
+      {
+        eventName: 'CreateUser',
+        responseElements: {
+                user: {
+                  userName: 'Bob Cat'
+                },
+          },
+        'p_event_time': '2021-06-27 00:08:28.792Z',
+        'p_log_type': 'AWS.CloudTrail',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
+      }
+  -
+    Name: Normal Console Login - CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "some_user"
+        },
+        "eventName": "ConsoleLogin",
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc',
+        "p_log_type": "AWS.CloudTrail"
       }
