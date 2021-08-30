@@ -12,6 +12,7 @@ LogTypes:
 Tags:
   - DataModel
   - IndicatorCollection
+  - OneLogin
 Severity: Info
 Reports:
   MITRE ATT&CK:
@@ -26,14 +27,19 @@ Tests:
   -
     Name: User Creation Event
     ExpectedResult: true
+    Mocks:
+      - objectName: put_string_Set
+        returnValue: >-
+      - objectName: set_key_expiration
+        returnValue: >-
     Log:
       {
         'event_type_id': 13,
         'actor_user_id': 123456,
         'actor_user_name': 'Bob Cat',
         'user_id': 123456,
-        'user_name': 'Bob Cat,'
-        'p_log_event': 'OneLogin.Events'
+        'user_name': 'Bob Cat',
+        'p_log_type': 'OneLogin.Events'
       }
   -
     Name: Standard Login Event
@@ -46,5 +52,5 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat',
         'ipaddr': '192.168.1.1',
-        'p_log_event': 'OneLogin.Events'
+        'p_log_type': 'OneLogin.Events'
       }

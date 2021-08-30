@@ -19,7 +19,7 @@ def rule(event):
         return False
 
     event_id = f'new_user_{event.get("p_row_id")}'
-    new_user = event.udm("user_name")
+    new_user = event.udm("user")
     event_time = datetime.strptime(event.get("p_event_time"), PANTHER_TIME_FORMAT)
     expiry_time = event_time + TTL
 
@@ -28,5 +28,6 @@ def rule(event):
     set_key_expiration(new_user, expiry_time.strftime("%s"))
     return True
 
+
 def title(event):
-    return f"A new user account was created - [{event.udm('user_name')}]"
+    return f"A new user account was created - [{event.udm('user')}]"
