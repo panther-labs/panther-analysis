@@ -20,7 +20,6 @@ Reports:
 Description: A new account was created
 Runbook: A new user account was created, ensure it was created through standard practice and is for a valid purpose.
 SummaryAttributes:
-  - account_id
   - user_name
   - user_id
 Tests:
@@ -39,7 +38,9 @@ Tests:
         'actor_user_name': 'Bob Cat',
         'user_id': 123456,
         'user_name': 'Bob Cat',
-        'p_log_type': 'OneLogin.Events'
+        'p_event_time': '2021-06-27 00:08:28.792Z',
+        'p_log_type': 'OneLogin.Events',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
       }
   -
     Name: Standard Login Event
@@ -52,5 +53,7 @@ Tests:
         'user_id': 123456,
         'user_name': 'Bob Cat',
         'ipaddr': '192.168.1.1',
-        'p_log_type': 'OneLogin.Events'
+        'p_event_time': '2021-06-27 00:08:28.792Z',
+        'p_log_type': 'OneLogin.Events',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
       }
