@@ -5,6 +5,7 @@ from datetime import (
 from panther_oss_helpers import (
     put_string_set,
     set_key_expiration,
+    check_new_user,
 )
 import panther_event_type_helpers as event_type
 
