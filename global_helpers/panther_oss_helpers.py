@@ -4,6 +4,7 @@ import os
 import re
 import time
 from datetime import datetime
+from dateutil import parser
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
@@ -95,6 +96,10 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
             return datetime.strptime(ts_format, each_format)
         except (ValueError, TypeError):
             continue
+    try:
+        return parser.parse(timestamp)
+    except(ValueError, TypeError, parser.ParserError):
+        pass
 
     # Attempt to resolve epoch format
     # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
