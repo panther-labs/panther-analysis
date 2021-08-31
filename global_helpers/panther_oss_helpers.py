@@ -4,9 +4,9 @@ import os
 import re
 import time
 from datetime import datetime
-from dateutil import parser
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
+from dateutil import parser
 
 import boto3
 import requests
