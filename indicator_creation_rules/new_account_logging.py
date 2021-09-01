@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from panther_oss_helpers import (
     put_string_set,
-    set_key_expiration,
     resolve_timestamp_string,
 )
 import panther_event_type_helpers as event_type
@@ -21,9 +20,8 @@ def rule(event):
     expiry_time = event_time + TTL
 
     put_string_set(new_user, [
-        event_id])
+        event_id], expiry_time.strftime("%s"))
 
-    set_key_expiration(new_user, expiry_time.strftime("%s"))
     return True
 
 

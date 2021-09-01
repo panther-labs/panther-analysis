@@ -243,7 +243,7 @@ def get_string_set(key: str) -> Set[str]:
     return response.get("Item", {}).get(_STRING_SET_COL, set())
 
 
-def put_string_set(key: str, val: Sequence[str]) -> None:
+def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
     """Overwrite a string set under the given key.
 
     This is faster than (reset_string_set + add_string_set) if you know exactly what the contents
@@ -252,13 +252,15 @@ def put_string_set(key: str, val: Sequence[str]) -> None:
     Args:
         key: The name of the string set
         val: A list/set/tuple of strings to store
+        epoch_seconds: (Optional) Set string expiration time
     """
     if not val:
         # Can't put an empty string set - remove it instead
         reset_string_set(key)
     else:
         kv_table().put_item(Item={"key": key, _STRING_SET_COL: set(val)})
-
+    if epoch_seconds:
+        set_key_expiration(key, epoch_seconds)
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Add one or more strings to a set.
