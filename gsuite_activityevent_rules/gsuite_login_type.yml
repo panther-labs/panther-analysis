@@ -1,0 +1,70 @@
+AnalysisType: rule
+Filename: gsuite_login_type.py
+RuleID: GSuite.LoginType
+DisplayName: GSuite Login Type
+Enabled: false
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Configuration Required
+Severity: Medium
+Description: >
+  A login of a non-approved type was detected for this user.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login
+Runbook: >
+  Correct the user account settings so that only logins of approved types are available.
+SummaryAttributes:
+  - actor
+Tests:
+  -
+    Name: Login With Approved Type
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "type": "login",
+        "name": "login_success",
+        "parameters": {
+          "login_type": "saml"
+        },
+      }
+  -
+    Name: Login With Unapproved Type
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "type": "login",
+        "name": "login_success",
+        "parameters": {
+          "login_type": "turbo-snail"
+        },
+      }
+  -
+    Name: Non-Login event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "logout",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "type": "login",
+        "name": "login_success",
+        "parameters": {
+          "login_type": "saml"
+        },
+      }
