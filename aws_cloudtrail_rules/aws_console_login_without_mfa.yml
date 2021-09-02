@@ -26,6 +26,9 @@ Tests:
   -
     Name: No MFA Login
     ExpectedResult: true
+    Mocks:
+      - objectName: check_new_user
+        returnValue: False
     Log:
       {
         "eventVersion": "1.05",
@@ -58,6 +61,9 @@ Tests:
   -
     Name: MFA Login but with SAML
     ExpectedResult: false
+    Mocks:
+      - objectName: check_new_user
+        returnValue: False
     Log:
       {
         "additionalEventData": {
@@ -91,6 +97,9 @@ Tests:
   -
     Name: Yes MFA Login
     ExpectedResult: false
+    Mocks:
+      - objectName: check_new_user
+        returnValue: False
     Log:
       {
           "eventVersion": "1.05",
@@ -123,6 +132,9 @@ Tests:
   -
     Name: No MFA but Login Failed
     ExpectedResult: false
+    Mocks:
+      - objectName: check_new_user
+        returnValue: False
     Log:
       {
           "eventVersion": "1.05",
@@ -155,6 +167,9 @@ Tests:
   -
     Name: No MFA but was authenticated from session with MFA
     ExpectedResult: false
+    Mocks:
+      - objectName: check_new_user
+        returnValue: False
     Log:
       {
           "eventVersion": "1.05",
@@ -196,4 +211,39 @@ Tests:
           "eventID": "1",
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012"
+      }
+  -
+    Name: No MFA Login - New User
+    ExpectedResult: false
+    Mocks:
+      - objectName: check_new_user
+        returnValue: True
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "1111",
+          "arn": "arn:aws:iam::123456789012:user/tester",
+          "accountId": "123456789012",
+          "userName": "tester"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "additionalEventData": {
+          "LoginTo": "https://console.aws.amazon.com/console/",
+          "MobileVersion": "No",
+          "MFAUsed": "No"
+        },
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012"
       }

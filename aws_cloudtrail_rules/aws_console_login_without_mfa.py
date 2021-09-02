@@ -1,9 +1,13 @@
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
+from panther_oss_helpers import check_new_user
 
 
 def rule(event):
     if event.get("eventName") != "ConsoleLogin":
+        return False
+    # If Account is less than 3 days old do not alert
+    if check_new_user(lookup_aws_account_name(event.get('recipientAccountId'))):
         return False
 
     additional_event_data = event.get("additionalEventData", {})
