@@ -416,6 +416,7 @@ def add_parse_delay(event, context: dict) -> dict:
 def check_new_user(user_id):
     if bool(get_string_set(user_id)):
         return "new_user"
+    return ""
 
 
 def _test_kv_store():
