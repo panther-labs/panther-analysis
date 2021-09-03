@@ -7,7 +7,7 @@ def rule(event):
     if event.get("eventName") != "ConsoleLogin":
         return False
     # If Account is less than 3 days old do not alert
-    if check_new_user(lookup_aws_account_name(event.get('recipientAccountId'))):
+    if check_new_user(lookup_aws_account_name(event.get('recipientAccountId'))) == "new_user":
         return False
 
     additional_event_data = event.get("additionalEventData", {})
