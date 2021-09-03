@@ -416,9 +416,7 @@ def add_parse_delay(event, context: dict) -> dict:
 def check_new_user(user_id):
     if bool(get_string_set(user_id)):
         return "new_user"
-    return ""
-
-
+    return None
 def _test_kv_store():
     """Integration tests which validate the functions which interact with the key-value store.
 
