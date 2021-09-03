@@ -4,7 +4,7 @@ RuleID: GSuite.LowSeverityRule
 DisplayName: GSuite Low Severity Rule Triggered
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,41 +21,55 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'rules'},
-        'events': [
-          {
-            'type': 'action_complete_type',
-          }
-        ]
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "LOW",
+          "triggered_actions": null
+        },
       }
   -
     Name: Low Severity Rule
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'rules'},
-        'events': [
-          {
-            'type': 'rule_trigger_type',
-            'name': 'rule_trigger',
-            'parameters': [{'name': 'severity', 'value': 'LOW'}]
-          }
-        ]
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "data_source": "DRIVE",
+          "severity": "LOW",
+          "triggered_actions": [
+            {
+              "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        },
       }
   -
-    Name: Medium Severity Rule
+    Name: High Severity Rule
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'rules'},
-        'events': [
-          {
-            'type': 'rule_trigger_type',
-            'name': 'rule_trigger',
-            'parameters': [{'name': 'severity', 'value': 'MEDIUM'}]
-          }
-        ]
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "High",
+          "triggered_actions": [
+            {
+              "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        },
       }
