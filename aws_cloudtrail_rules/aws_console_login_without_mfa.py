@@ -38,4 +38,4 @@ def title(event):
     else:
         account_string = f"{account_name} account ({account_id})"
 
-    return "AWS login detected without MFA for " f"[{user_string}] in [{account_string}]"
+    return f"AWS login detected without MFA for [{user_string}] in [{account_string}]"
