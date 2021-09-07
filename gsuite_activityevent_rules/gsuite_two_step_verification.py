@@ -5,9 +5,8 @@ def rule(event):
     if deep_get(event, "id", "applicationName") != "user_accounts":
         return False
 
-    for details in event.get("events", []):
-        if details.get("type") == "2sv_change" and details.get("name") == "2sv_disable":
-            return True
+    if event.get("type") == "2sv_change" and event.get("name") == "2sv_disable":
+        return True
 
     return False
 

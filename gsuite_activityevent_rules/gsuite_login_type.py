@@ -1,5 +1,4 @@
 from panther_base_helpers import deep_get
-from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 # Remove any unapproved login methods
 APPROVED_LOGIN_TYPES = {
@@ -12,17 +11,15 @@ APPROVED_LOGIN_TYPES = {
 
 
 def rule(event):
-    if deep_get(event, "id", "applicationName") != "login":
+    if event.get("type") != "login":
         return False
 
-    for details in event.get("events", [{}]):
-        if (
-            details.get("type") == "login"
-            and details.get("name") != "logout"
-            and param_lookup(details.get("parameters", {}), "login_type")
-            not in APPROVED_LOGIN_TYPES
-        ):
-            return True
+    if (
+        event.get("type") == "login"
+        and event.get("name") != "logout"
+        and deep_get(event, "parameters", "login_type") not in APPROVED_LOGIN_TYPES
+    ):
+        return True
 
     return False
 

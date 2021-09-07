@@ -4,7 +4,7 @@ RuleID: GSuite.TwoStepVerification
 DisplayName: GSuite User Two Step Verification Change
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,26 +21,30 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'user_accounts'},
-        'events': [
-          {
-            'type': '2sv_change',
-            'name': '2sv_enroll'
-          }
-        ]
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "some.user@somedomain.com",
+        },
+        "kind": "admin#reports#activity",
+        "type": "2sv_change",
+        "name": "2sv_enroll",
       }
   -
     Name: Two Step Verification Disabled
-    ExpectedResult: true
+    ExpectedResult: True
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'user_accounts'},
-        'events': [
-          {
-            'type': '2sv_change',
-            'name': '2sv_disable'
-          }
-        ]
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "some.user@somedomain.com",
+        },
+        "kind": "admin#reports#activity",
+        "type": "2sv_change",
+        "name": "2sv_disable",
       }
