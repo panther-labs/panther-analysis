@@ -1,10 +1,7 @@
 from datetime import timedelta
 
-from panther_oss_helpers import (
-    put_string_set,
-    resolve_timestamp_string,
-)
 import panther_event_type_helpers as event_type
+from panther_oss_helpers import put_string_set, resolve_timestamp_string
 
 # Days an account is considered new
 TTL = timedelta(days=3)
@@ -19,8 +16,7 @@ def rule(event):
     event_time = resolve_timestamp_string(event.get("p_event_time"))
     expiry_time = event_time + TTL
 
-    put_string_set(new_user, [
-        event_id], expiry_time.strftime("%s"))
+    put_string_set(new_user, [event_id], expiry_time.strftime("%s"))
 
     return True
 
