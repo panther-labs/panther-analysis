@@ -8,7 +8,7 @@ def rule(event):
 
     if not (
         deep_get(event, "parameters", "triggered_actions")
-        and deep_get(event, "parameters", "severity") == "LOW"
+        and deep_get(event, "parameters", "severity") == "HIGH"
     ):
         return False
     return True

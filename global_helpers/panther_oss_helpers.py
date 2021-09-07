@@ -6,10 +6,10 @@ import time
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
-from dateutil import parser
 
 import boto3
 import requests
+from dateutil import parser
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -98,7 +98,7 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
             continue
     try:
         return parser.parse(timestamp)
-    except(ValueError, TypeError, parser.ParserError):
+    except (ValueError, TypeError, parser.ParserError):
         pass
 
     # Attempt to resolve epoch format
@@ -262,6 +262,7 @@ def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> N
     if epoch_seconds:
         set_key_expiration(key, epoch_seconds)
 
+
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Add one or more strings to a set.
 
@@ -369,11 +370,10 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
 def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(ip)
-    geoinfo_string = (
+    return (
         f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
         f"{geoinfo.get('region')} in {geoinfo.get('country')}"
     )
-    return geoinfo_string
 
 
 # returns the difference between time1 and later time 2 in human-readable time period string
@@ -409,6 +409,7 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
+
 
 # check for presence of user id in KV store for the purpose of modifying severity or suppressing
 # alerts based on expected actions for a new user

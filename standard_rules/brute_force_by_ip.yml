@@ -53,11 +53,18 @@ Tests:
           "eventID": "1",
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012",
-          "p_log_type": "AWS.CloudTrail"
+          "p_log_type": "AWS.CloudTrail",
+          "p_parse_time": "2021-06-04 10:02:33.650807",
+          "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: AWS.CloudTrail - Failed Login
     ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip_formatted
+        returnValue: >-
+                          111.111.111.111 in UnitTestCity, UnitTestRegion
+                          in UnitTestCountry
     Log:
       {
           "eventVersion": "1.05",
@@ -86,7 +93,9 @@ Tests:
           "eventID": "1",
           "eventType": "AwsConsoleSignIn",
           "recipientAccountId": "123456789012",
-          "p_log_type": "AWS.CloudTrail"
+          "p_log_type": "AWS.CloudTrail",
+          "p_parse_time": "2021-06-04 10:02:33.650807",
+          "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: Box - Regular Event
@@ -101,13 +110,20 @@ Tests:
           "login": "cat@example",
           "name": "Bob Cat"
         },
-        "ip_address": "2.2.2.2",
+        "ip_address": "111.111.111.111",
         "event_type": "DELETE",
         "p_log_type": "Box.Event",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: Box - Login Failed
     ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip_formatted
+        returnValue: >-
+                          111.111.111.111 in UnitTestCity, UnitTestRegion
+                          in UnitTestCountry
     Log:
       {
         "type": "event",
@@ -124,8 +140,10 @@ Tests:
           "type": "user",
           "name": "Bob Cat",
         },
-        "ip_address": "2.2.2.2",
+        "ip_address": "111.111.111.111",
         "p_log_type": "Box.Event",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: GSuite - Normal Login Event
@@ -133,7 +151,7 @@ Tests:
     Log:
       {
         "id": {"applicationName": "login"},
-        "ipAddress": "4.3.2.1",
+        "ipAddress": "111.111.111.111",
         "events": [
           {
             "type": "login",
@@ -141,17 +159,24 @@ Tests:
           }
         ],
         "p_log_type": "GSuite.Reports",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: GSuite - Failed Login Event
     ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip_formatted
+        returnValue: >-
+                          111.111.111.111 in UnitTestCity, UnitTestRegion
+                          in UnitTestCountry
     Log:
       {
         "actor" : {
           "email": "bob@example.com"
         },
         "id": {"applicationName": "login"},
-        "ipAddress": "4.3.2.1",
+        "ipAddress": "111.111.111.111",
         "events": [
           {
             "type": "login",
@@ -159,6 +184,8 @@ Tests:
           }
         ],
         "p_log_type": "GSuite.Reports",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: Okta - Successful Login
@@ -172,18 +199,25 @@ Tests:
             "type": "User"
         },
         "client": {
-            "ipAddress": "redacted",
+            "ipAddress": "111.111.111.111",
         },
         "eventType": "user.session.start",
         "outcome": {
             "reason": "VERIFICATION_ERROR",
-            "result": "SUCCES"
+            "result": "SUCCESS"
         },
         "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: Okta - Failed Login
     ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip_formatted
+        returnValue: >-
+                          111.111.111.111 in UnitTestCity, UnitTestRegion
+                          in UnitTestCountry
     Log:
       {
         "actor": {
@@ -193,7 +227,7 @@ Tests:
             "type": "User"
         },
         "client": {
-            "ipAddress": "redacted",
+            "ipAddress": "111.111.111.111",
         },
         "eventType": "user.session.start",
         "outcome": {
@@ -201,6 +235,8 @@ Tests:
             "result": "FAILURE"
         },
         "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: OneLogin - Normal Login Event
@@ -212,12 +248,19 @@ Tests:
         "actor_user_name": "Bob Cat",
         "user_id": 123456,
         "user_name": "Bob Cat",
-        "ipaddr": "1.2.3.4",
+        "ipaddr": "111.111.111.111",
         "p_log_type": "OneLogin.Events",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: OneLogin - Failed Login Event
     ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip_formatted
+        returnValue: >-
+                          111.111.111.111 in UnitTestCity, UnitTestRegion
+                          in UnitTestCountry
     Log:
       {
         "event_type_id": 6,
@@ -225,8 +268,10 @@ Tests:
         "actor_user_name": "Bob Cat",
         "user_id": 123456,
         "user_name": "Bob Cat",
-        "ipaddr": "1.2.3.4",
-        "p_log_type": "OneLogin.Events"
+        "ipaddr": "111.111.111.111",
+        "p_log_type": "OneLogin.Events",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }
   -
     Name: GCP - Non Login Event
@@ -241,7 +286,7 @@ Tests:
             "principalEmail": "bob@example.com"
           },
           "requestMetadata": {
-            "callerIP": "4.4.4.4"
+            "callerIP": "111.111.111.111"
           },
           "serviceData": {
             "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -256,5 +301,7 @@ Tests:
             }
           }
         },
-        "p_log_type": "GCP.AuditLog"
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
       }

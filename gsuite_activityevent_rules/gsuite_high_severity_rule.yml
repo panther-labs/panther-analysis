@@ -1,15 +1,15 @@
 AnalysisType: rule
-Filename: gsuite_low_severity_rule.py
-RuleID: GSuite.LowSeverityRule
-DisplayName: GSuite Low Severity Rule Triggered
+Filename: gsuite_high_severity_rule.py
+RuleID: GSuite.HighSeverityRule
+DisplayName: GSuite High Severity Rule Triggered
 Enabled: true
 LogTypes:
   - GSuite.ActivityEvent
 Tags:
   - GSuite
-Severity: Low
+Severity: High
 Description: >
-  A low severity GSuite rule was triggered.
+  A high severity GSuite rule was triggered.
 Reference: https://support.google.com/a/answer/9420866
 Runbook: >
   Investigate what triggered the rule.
@@ -28,12 +28,12 @@ Tests:
           "email": "some.user@somedomain.com"
         },
         "parameters": {
-          "severity": "LOW",
+          "severity": "HIGH",
           "triggered_actions": null
         },
       }
   -
-    Name: Low Severity Rule
+    Name: High Severity Rule
     ExpectedResult: true
     Log:
       {
@@ -45,7 +45,7 @@ Tests:
         },
         "parameters": {
           "data_source": "DRIVE",
-          "severity": "LOW",
+          "severity": "HIGH",
           "triggered_actions": [
             {
               "action_type": "DRIVE_UNFLAG_DOCUMENT"
@@ -54,7 +54,7 @@ Tests:
         },
       }
   -
-    Name: High Severity Rule
+    Name: Low Severity Rule
     ExpectedResult: false
     Log:
       {
@@ -65,7 +65,7 @@ Tests:
           "email": "some.user@somedomain.com"
         },
         "parameters": {
-          "severity": "High",
+          "severity": "LOW",
           "triggered_actions": [
             {
               "action_type": "DRIVE_UNFLAG_DOCUMENT"
