@@ -1,5 +1,9 @@
+import ast
+import logging
+
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
+from panther_oss_helpers import check_new_user
 
 
 def rule(event):
@@ -9,6 +13,14 @@ def rule(event):
     additional_event_data = event.get("additionalEventData", {})
     session_context = deep_get(event, "userIdentity", "sessionContext", default={})
     response_elements = event.get("responseElements", {})
+
+    # If Account is less than 3 days old do not alert
+    is_new_user = check_new_user(deep_get(event, "userIdentity", "userName"))
+    if isinstance(is_new_user, str):
+        logging.debug("check_new_user is a mocked string for unit testing")
+        is_new_user = ast.literal_eval(is_new_user)
+    if is_new_user:
+        return False
 
     return (
         # Only alert on successful logins
