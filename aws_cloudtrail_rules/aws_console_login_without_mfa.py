@@ -1,4 +1,5 @@
 import ast
+import logging
 
 from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
@@ -18,6 +19,7 @@ def rule(event):
         if ast.literal_eval(
             check_new_user(deep_get(event, "userIdentity", "userName"))
         ):
+            logging.debug("check_new_user is a mocked string for unit testing")
             return False
 
     return (
