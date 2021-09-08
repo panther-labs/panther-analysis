@@ -27,7 +27,7 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: check_new_user
-        returnValue: ""
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -60,6 +60,9 @@ Tests:
   -
     Name: No MFA Login - IAM User Unknown Account
     ExpectedResult: true
+    Mocks:
+      - objectName: check_new_user
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -92,6 +95,9 @@ Tests:
   -
     Name: No MFA Login - Root User
     ExpectedResult: true
+    Mocks:
+      - objectName: check_new_user
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -126,7 +132,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: check_new_user
-        returnValue: ""
+        returnValue: "False"
     Log:
       {
         "additionalEventData": {
@@ -162,7 +168,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: check_new_user
-        returnValue: ""
+        returnValue: "False"
     Log:
       {
           "eventVersion": "1.05",
@@ -197,7 +203,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: check_new_user
-        returnValue: ""
+        returnValue: "False"
     Log:
       {
           "eventVersion": "1.05",
@@ -232,7 +238,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: check_new_user
-        returnValue: ""
+        returnValue: "False"
     Log:
       {
         "p_event_time": "2019-01-01 00:20:04.000Z",
@@ -265,7 +271,7 @@ Tests:
     ExpectedResult: false
     Mocks:
       - objectName: check_new_user
-        returnValue: "new_user"
+        returnValue: "True"
     Log:
       {
         "eventVersion": "1.05",
