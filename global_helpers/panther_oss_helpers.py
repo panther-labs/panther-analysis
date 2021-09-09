@@ -414,9 +414,8 @@ def add_parse_delay(event, context: dict) -> dict:
 # check for presence of user id in KV store for the purpose of modifying severity or suppressing
 # alerts based on expected actions for a new user
 def check_new_user(user_id):
-    if user_id in get_string_set(user_id):
-        return True
-    return False
+    return bool(get_string_set(user_id))
+
 
 def _test_kv_store():
     """Integration tests which validate the functions which interact with the key-value store.
