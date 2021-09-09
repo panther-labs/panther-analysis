@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: aws_s3_access_ip_whitelist.py
-RuleID: AWS.S3.ServerAccess.IPWhitelist
-DisplayName: AWS S3 Access IP Whitelist
+Filename: aws_s3_access_ip_allowlist.py
+RuleID: AWS.S3.ServerAccess.IPAllowlist
+DisplayName: AWS S3 Access IP Allowlist
 DedupPeriodMinutes: 60 # 1 hour
 Enabled: false
 LogTypes:
@@ -12,7 +12,7 @@ Tags:
   - Identity & Access Management
 Severity: Medium
 Description: >
-  Checks that the remote IP accessing the S3 bucket is in the IP whitelist.
+  Checks that the remote IP accessing the S3 bucket is in the IP allowlist.
 Runbook: >
   Verify whether unapproved access of S3 objects occurred, and take appropriate steps to remediate damage (for example, informing related parties of unapproved access and potentially invalidating data that was accessed). Consider updating the access policies of the S3 bucket to prevent future unapproved access.
 Reference:

@@ -1,18 +1,16 @@
 from ipaddress import ip_network
 
-APPROVED_PORTS = {
-    80,
-    443,
+CONTROLLED_PORTS = {
+    22,
+    3389,
 }
 
 
 def rule(event):
-    # Can't perform this check without a destination port
-    if "dstport" not in event:
-        return False
-
-    # Only monitor for non whitelisted ports
-    if event.get("dstport") in APPROVED_PORTS:
+    # Only monitor for blocklisted ports
+    #
+    # Defaults to True (no alert) if 'dstport' is not present
+    if event.get("dstport") not in CONTROLLED_PORTS:
         return False
 
     # Only monitor for traffic coming from non-private IP space
@@ -23,5 +21,5 @@ def rule(event):
 
     # Alert if the traffic is destined for internal IP addresses
     #
-    # Defaults to False (no alert) if 'dstaddr' key is not present
+    # Defaults to False(no alert) if 'dstaddr' key is not present
     return ip_network(event.get("dstaddr", "1.0.0.0/32")).is_private
