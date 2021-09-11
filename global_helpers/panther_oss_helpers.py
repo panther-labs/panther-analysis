@@ -370,11 +370,10 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
 def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(ip)
-    geoinfo_string = (
+    return (
         f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
         f"{geoinfo.get('region')} in {geoinfo.get('country')}"
     )
-    return geoinfo_string
 
 
 # returns the difference between time1 and later time 2 in human-readable time period string
