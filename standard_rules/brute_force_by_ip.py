@@ -7,8 +7,11 @@ WHERE id:applicationName = 'login'
 AND events[0]:name = 'login_failure' LIMIT 10;
 """
 
+from json import loads
+
 import panther_event_type_helpers as event_type
-from panther_oss_helpers import add_parse_delay, geoinfo_from_ip_formatted
+from panther import lookup_aws_account_name
+from panther_oss_helpers import add_parse_delay, geoinfo_from_ip
 
 
 def rule(event):
@@ -18,12 +21,25 @@ def rule(event):
 
 def title(event):
     # use unified data model field in title
-    return (
-        f"{event.get('p_log_type')}: User [{event.udm('actor_user')}] "
-        f"from IP [{geoinfo_from_ip_formatted(event.udm('source_ip'))}] "
-        f"has exceeded the failed logins threshold"
+    log_type = event.get("p_log_type")
+    title_str = (
+        f"{log_type}: User [{event.udm('actor_user')}] has exceeded the failed logins threshold"
     )
+    if log_type == "AWS.CloudTrail":
+        title_str += f" in [{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+    return title_str
 
 
 def alert_context(event):
-    return add_parse_delay(event, {})
+    geoinfo = geoinfo_from_ip(event.udm("source_ip"))
+    if isinstance(geoinfo, str):
+        geoinfo = loads(geoinfo)
+    context = {}
+    context["geolocation"] = (
+        f"{geoinfo.get('city')}, {geoinfo.get('region')} in " f"{geoinfo.get('country')}"
+    )
+    context["ip"] = geoinfo.get("ip")
+    context["reverse_lookup"] = geoinfo.get("hostname", "No reverse lookup hostname")
+    context["ip_org"] = geoinfo.get("org", "No organization listed")
+    context = add_parse_delay(event, context)
+    return context
