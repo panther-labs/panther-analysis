@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: aws_iam_assume_role_blacklist_ignored.py
+Filename: aws_iam_assume_role_blocklist_ignored.py
 RuleID: AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored
-DisplayName: IAM Assume Role Blacklist Ignored
+DisplayName: IAM Assume Role Blocklist Ignored
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
@@ -11,7 +11,7 @@ Tags:
   - Identity and Access Management
 Severity: High
 Description: >
-  A user assumed a role that was explicitly blacklisted for manual user assumption.
+  A user assumed a role that was explicitly blocklisted for manual user assumption.
 Runbook: >
   Verify that this was an approved assume role action. If not, consider revoking the access immediately and updating the AssumeRolePolicyDocument to prevent this from happening again.
 Reference: reference.link
@@ -22,7 +22,7 @@ SummaryAttributes:
   - p_any_aws_arns
 Tests:
   -
-    Name: IAM Blacklisted Role Assumed
+    Name: IAM Blocklisted Role Assumed
     ExpectedResult: true
     Log:
       {
@@ -78,7 +78,7 @@ Tests:
           }
       }
   -
-    Name: IAM Non Blacklisted Role Assumed
+    Name: IAM Non Blocklisted Role Assumed
     ExpectedResult: false
     Log:
       {
