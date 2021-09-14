@@ -4,7 +4,7 @@ RuleID: GSuite.UserSuspended
 DisplayName: GSuite User Suspended
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: High
@@ -21,41 +21,43 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'login'},
-        'events': [{'type': 'login'}]
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "login_success",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
       }
   -
     Name: Account Warning Not For User Suspended
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'login'},
-        'events': [
-          {
-            'type': 'account_warning',
-            'name': 'suspicious_login'
-          }
-        ]
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "suspicious_login ",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
       }
   -
     Name: Account Warning For Suspended User
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'login'},
-        'events': [
-          {
-            'type': 'account_warning',
-            'name': 'account_disabled_spamming',
-            'parameters': [
-              {
-                'name': 'affected_email_address',
-                'value': 'bob@example.com',
-              },
-            ],
-          },
-        ]
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "account_disabled_spamming",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
       }

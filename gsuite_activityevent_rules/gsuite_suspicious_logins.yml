@@ -1,0 +1,63 @@
+AnalysisType: rule
+Filename: gsuite_suspicious_logins.py
+RuleID: GSuite.SuspiciousLogins
+DisplayName: Suspicious GSuite Login
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  GSuite reported a suspicious login for this user.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#suspicious_login
+Runbook: >
+  Checkout the details of the login and verify this behavior with the user to ensure the account wasn't compromised.
+SummaryAttributes:
+  - actor
+Tests:
+  -
+    Name: Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "login_success",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
+      }
+  -
+    Name: Account Warning Not For Suspicious Login
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "account_disabled_spamming",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
+      }
+  -
+    Name: Account Warning For Suspicious Login
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "suspicious_login",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io"
+        },
+      }
