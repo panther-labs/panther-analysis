@@ -4,7 +4,7 @@ RuleID: GSuite.GoogleAccess
 DisplayName: Google Accessed a GSuite Reource
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,20 +21,18 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'login'},
-        'events': [{'type': 'login'}]
+        "id": {
+          "applicationName": "login",
+        },
+        "type": "login",
       }
   -
     Name: Resource Accessed by Google
     ExpectedResult: true
     Log:
       {
-        'id': {'applicationName': 'access_transparency'},
-        'events': [
-          {
-            'type': 'GSUITE_RESOURCE',
-            'name': 'ACCESS'
-          }
-        ]
+        "id": {
+          "applicationName": "access_transparency",
+        },
+        "type": "GSUITE_RESOURCE",
       }
