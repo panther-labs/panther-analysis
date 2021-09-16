@@ -2,7 +2,7 @@ from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
 # This is a list of role ARNs that should not be assumed by users in normal operations
-ASSUME_ROLE_BLACKLIST = [
+ASSUME_ROLE_BLOCKLIST = [
     "arn:aws:iam::123456789012:role/FullAdminRole",
 ]
 
@@ -16,4 +16,4 @@ def rule(event):
     if deep_get(event, "userIdentity", "type") not in ["IAMUser", "FederatedUser"]:
         return False
 
-    return deep_get(event, "requestParameters", "roleArn") in ASSUME_ROLE_BLACKLIST
+    return deep_get(event, "requestParameters", "roleArn") in ASSUME_ROLE_BLOCKLIST
