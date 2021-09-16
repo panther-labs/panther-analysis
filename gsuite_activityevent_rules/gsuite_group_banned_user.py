@@ -1,12 +1,14 @@
 from panther_base_helpers import deep_get
-from panther_base_helpers import gsuite_details_lookup as details_lookup
 
 
 def rule(event):
     if deep_get(event, "id", "applicationName") != "groups_enterprise":
         return False
 
-    return bool(details_lookup("moderator_action", ["ban_user_with_moderation"], event))
+    if event.get("type") == "moderator_action":
+        return bool(event.get("name") == "ban_user_with_moderation")
+
+    return False
 
 
 def title(event):

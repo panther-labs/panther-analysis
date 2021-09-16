@@ -4,7 +4,7 @@ RuleID: GSuite.GroupBannedUser
 DisplayName: GSuite User Banned from Group
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,26 +21,26 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'groups_enterprise'},
-        'events': [
-          {
-            'type': 'moderator_action',
-            'name': 'add_user'
-          }
-        ]
+        "id": {
+          "applicationName": "groups_enterprise",
+        },
+        "actor": {
+          "email": "homer.simpson@example.com"
+        },
+        "type": "moderator_action",
+        "name": "add_member",
       }
   -
     Name: User Banned from Group
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'groups_enterprise'},
-        'events': [
-          {
-            'type': 'moderator_action',
-            'name': 'ban_user_with_moderation'
-          }
-        ]
+        "id": {
+          "applicationName": "groups_enterprise",
+        },
+        "actor": {
+          "email": "homer.simpson@example.com"
+        },
+        "type": "moderator_action",
+        "name": "ban_user_with_moderation",
       }
