@@ -4,7 +4,7 @@ RuleID: GSuite.AdvancedProtection
 DisplayName: GSuite User Advanced Protection Change
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,26 +21,29 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'user_accounts'},
-        'events': [
-          {
-            'type': 'titanium_change',
-            'name': 'titanium_enroll'
-          }
-        ]
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.com"
+        },
+        "type": "titanium_change",
+        "name": "titanium_enroll",
       }
   -
     Name: Advanced Protection Disabled
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'user_accounts'},
-        'events': [
-          {
-            'type': 'titanium_change',
-            'name': 'titanium_unenroll'
-          }
-        ]
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.com"
+        },
+        "type": "titanium_change",
+        "name": "titanium_unenroll",
       }
+
