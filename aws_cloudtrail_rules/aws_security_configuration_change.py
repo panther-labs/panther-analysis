@@ -1,3 +1,5 @@
+from fnmatch import fnmatch
+
 from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get
 
@@ -14,10 +16,30 @@ SECURITY_CONFIG_ACTIONS = {
     "StopLogging",
 }
 
+ALLOW_LIST = [
+    # Add expected events and users here to suppress alerts
+    {"userName": "ExampleUser", "eventName": "ExampleEvent"},
+]
+
 
 def rule(event):
     if not aws_cloudtrail_success(event):
         return False
+
+    for entry in ALLOW_LIST:
+        if fnmatch(
+            deep_get(
+                event,
+                "userIdentity",
+                "sessionContext",
+                "sessionIssuer",
+                "userName",
+                default="",
+            ),
+            entry["userName"],
+        ):
+            if fnmatch(event.get("eventName"), entry["eventName"]):
+                return False
 
     if event.get("eventName") == "UpdateDetector":
         return not deep_get(event, "requestParameters", "enable", default=True)
