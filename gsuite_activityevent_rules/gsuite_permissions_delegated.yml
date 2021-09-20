@@ -4,7 +4,7 @@ RuleID: GSuite.PermisssionsDelegated
 DisplayName: --DEPRECATED-- GSuite User Delegated Admin Permissions
 Enabled: false
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
 Severity: Low
@@ -21,36 +21,29 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'admin'},
-        'events': [
-          {
-            'type': 'DELEGATED_ADMIN_SETTINGS',
-            'name': 'RENAME_ROLE'
-          }
-        ]
+        "id": {
+          "applicationName": "admin",
+        },
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "RENAME_ROLE",
+        "parameters": {
+          "ROLE_NAME": "Vault Admins",
+          "USER_EMAIL": "homer.simpson@example.com"
+        },
       }
   -
     Name: Privileges Assigned
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'admin'},
-        'events': [
-          {
-            'type': 'DELEGATED_ADMIN_SETTINGS',
-            'name': 'ASSIGN_ROLE',
-            'parameters': [
-              {
-                'name': 'ROLE_NAME',
-                'value': 'Some Admin Role',
-              },
-              {
-                'name':'USER_EMAIL',
-                'value':'bob@example.com',
-              },
-            ]
-          }
-        ]
+        "id": {
+          "applicationName": "admin",
+        },
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "ASSIGN_ROLE",
+        "parameters": {
+          "ROLE_NAME": "Vault Admins",
+          "USER_EMAIL": "homer.simpson@example.com"
+        },
       }
+

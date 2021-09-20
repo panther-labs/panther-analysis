@@ -4,7 +4,7 @@ RuleID: GSuite.DocOwnershipTransfer
 DisplayName: GSuite Document External Ownership Transfer
 Enabled: false
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
   - Configuration Required
@@ -22,28 +22,24 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'admin'},
-        'events': [
-          {
-            'type': 'DOCS_SETTINGS',
-            'name': 'TRANSFER_DOCUMENT_OWNERSHIP',
-            'parameters': [{'name': 'NEW_VALUE', 'value': 'user@example.com'}]
-          }
-        ]
+          "id": {
+              "applicationName": "admin",
+          },
+          "name": "TRANSFER_DOCUMENT_OWNERSHIP",
+          "parameters": {
+              "NEW_VALUE": "homer.simpson@example.com",
+          },
       }
   -
     Name: Document Transferred to External User
     ExpectedResult: true
     Log:
       {
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'admin'},
-        'events': [
-          {
-            'type': 'DOCS_SETTINGS',
-            'name': 'TRANSFER_DOCUMENT_OWNERSHIP',
-            'parameters': [{'name': 'NEW_VALUE', 'value': 'user@badguy.com'}]
-          }
-        ]
+        "id": {
+          "applicationName": "admin",
+        },
+        "name": "TRANSFER_DOCUMENT_OWNERSHIP",
+        "parameters": {
+          "NEW_VALUE": "monty.burns@badguy.com",
+        },
       }
