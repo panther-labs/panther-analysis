@@ -11,7 +11,7 @@ def rule(event):
     if deep_get(event, "id", "applicationName") != "login":
         return False
 
-    return bool(event.get("name") in SUSPICIOUS_LOGIN_TYPES )
+    return bool(event.get("name") in SUSPICIOUS_LOGIN_TYPES)
 
 
 def title(event):
