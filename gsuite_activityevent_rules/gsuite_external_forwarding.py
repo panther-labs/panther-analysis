@@ -8,7 +8,9 @@ def rule(event):
         return False
 
     if event.get("name") == "email_forwarding_out_of_domain":
-        domain = deep_get(event, "parameters", "email_forwarding_destination_address").split("@")[-1]
+        domain = deep_get(event, "parameters", "email_forwarding_destination_address").split("@")[
+            -1
+        ]
         if domain not in ALLOWED_DOMAINS:
             return True
 
