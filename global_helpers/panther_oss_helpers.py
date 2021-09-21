@@ -3,6 +3,7 @@ import json
 import os
 import re
 import time
+from collections.abc import Sequence as sequence
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
@@ -415,6 +416,14 @@ def add_parse_delay(event, context: dict) -> dict:
 # alerts based on expected actions for a new user
 def check_new_user(user_id):
     return bool(get_string_set(user_id))
+
+
+# When a single item is loaded from json, it is loaded as a single item
+# When a list of items is loaded from json, it is loaded as a list of that item
+# When we want to iterate over something that could be a single item or a list
+# of items we can use listify and just continue as if it's always a list
+def listify(maybe_list):
+    return [maybe_list] if not isinstance(maybe_list, sequence) else maybe_list
 
 
 def _test_kv_store():
