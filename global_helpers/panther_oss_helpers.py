@@ -3,7 +3,6 @@ import json
 import os
 import re
 import time
-from collections.abc import Sequence as sequence
 from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
@@ -11,6 +10,7 @@ from typing import Any, Dict, Optional, Sequence, Set, Union
 import boto3
 import requests
 from dateutil import parser
+from panther_analysis_tool.immutable import ImmutableList
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -423,7 +423,7 @@ def check_new_user(user_id):
 # When we want to iterate over something that could be a single item or a list
 # of items we can use listify and just continue as if it's always a list
 def listify(maybe_list):
-    return [maybe_list] if not isinstance(maybe_list, sequence) else maybe_list
+    return [maybe_list] if not isinstance(maybe_list, (list, ImmutableList)) else maybe_list
 
 
 def _test_kv_store():
