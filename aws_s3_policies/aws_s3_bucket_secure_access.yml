@@ -20,7 +20,7 @@ Runbook: >
 Reference: https://aws.amazon.com/premiumsupport/knowledge-center/secure-s3-resources/
 Tests:
   -
-    Name: Bucket Uses Allow With Condition
+    Name: Bucket Uses Implicit Allow
     ExpectedResult: true
     Resource:
       {
@@ -119,7 +119,7 @@ Tests:
         "Versioning": null
       }
   -
-    Name: Bucket Has No Access Policy 
+    Name: Bucket Has No Access Policy
     ExpectedResult: false
     Resource:
       {
@@ -143,6 +143,39 @@ Tests:
           "ID": "11112223334445556667778899aaabbbcccdddeeee"
         },
         "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Uses Explicit Deny
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "test-bucket",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Principal\": \"*\",\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"], \"Condition\":{\"Bool\":{\"aws:SecureTransport\": \"false\"}}},{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:Get*\",\"s3:List*\"],\"Condition\":{\"Bool\":{\"aws:SecureTransport\": \"true\"}},\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": false,
           "BlockPublicPolicy": false,
