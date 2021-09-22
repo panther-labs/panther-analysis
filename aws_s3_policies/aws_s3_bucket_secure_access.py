@@ -9,12 +9,15 @@ from policyuniverse.policy import Policy
 # This policy returns a LOW severity alert if the bucket policy is using an implicit deny
 # of secure transport or a HIGH severity if secure transport is not enforced.
 
+EXPLICIT_DENY = False
 IMPLICIT_DENY = False
 
 
 def policy(resource):
     if resource["Policy"] is None:
         return False
+
+    global EXPLICIT_DENY, IMPLICIT_DENY  # pylint: disable=global-statement
 
     iam_policy = Policy(json.loads(resource["Policy"]))
 
@@ -23,16 +26,16 @@ def policy(resource):
             statement.effect == "Deny"
             and deep_get(statement.statement, "Condition", "Bool", "aws:SecureTransport") == "false"
         ):
-            return True
+            EXPLICIT_DENY = True
 
         if (
             statement.effect == "Allow"
             and deep_get(statement.statement, "Condition", "Bool", "aws:SecureTransport") == "true"
         ):
-            global IMPLICIT_DENY  # pylint: disable=global-statement
             IMPLICIT_DENY = True
-            return True
 
+    if EXPLICIT_DENY:
+        return True
     return False
 
 
@@ -40,3 +43,9 @@ def severity(_):
     if IMPLICIT_DENY:
         return "LOW"
     return "HIGH"
+
+
+def title(resource):
+    if IMPLICIT_DENY:
+        return f"{resource.get('name')} lacks an explicit deny policiy for Secure Transport"
+    return f"{resource.get('name')} does not enforce Secure Transport"
