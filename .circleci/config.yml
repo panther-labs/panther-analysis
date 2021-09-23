@@ -18,52 +18,22 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install core utilities
-          command: make install
-      - run:
-          name: Setup the Virtual Environment
+          name: Setup the Virtual Environment and install dependencies
           command: make venv
-      - restore_cache:
-          name: Restore pip cache
-          keys:
-            - &pip_cache_key venv-x-{{ checksum "requirements.txt" }}
-      - run:
-          name: Install dependencies
-          command: pipenv run -- make deps
-      - save_cache:
-          name: Save pip cache
-          key: *pip_cache_key
-          paths:
-            - venv
       - run:
           name: Run linting
-          command: pipenv run -- make lint
+          command: make lint
   unit_tests:
     docker:
       - image: 'circleci/python:3.7'
     steps:
       - checkout
       - run:
-          name: Install core utilities
-          command: make install
-      - run:
-          name: Setup the Virtual Environment
+          name: Setup the Virtual Environment and install dependencies
           command: make venv
-      - restore_cache:
-          name: Restore pip cache
-          keys:
-            - *pip_cache_key
-      - run:
-          name: Install dependencies
-          command: pipenv run -- make deps
-      - save_cache:
-          name: Save pip cache
-          key: *pip_cache_key
-          paths:
-            - venv
       - run:
           name: Run unit tests
-          command: pipenv run -- make test
+          command: make test
   schema_tests:
       docker:
         - image: 'circleci/python:3.7'
@@ -82,3 +52,4 @@ workflows:
       - lint
       - unit_tests
       - schema_tests
+

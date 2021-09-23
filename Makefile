@@ -13,19 +13,17 @@ ci:
 	pipenv run $(MAKE) lint test
 
 deps:
-	pip3 install -r requirements.txt
+	pipenv install --dev
 
 deps-update:
-	pip3 install -r requirements-top-level.txt --upgrade
-	pip3 freeze -r requirements-top-level.txt > requirements.txt
+	pipenv update
 
 lint:
-	bandit -r $(dirs) --skip B101  # allow assert statements in tests
-	pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme --max-line-length=100
+	pipenv run bandit -r $(dirs) --skip B101  # allow assert statements in tests
+	pipenv run pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme --max-line-length=100
 
 venv:
-	pipenv install
-	virtualenv -p python3.7 venv
+	pipenv install --dev
 
 fmt:
 	pipenv run isort --profile=black $(dirs)
@@ -33,11 +31,10 @@ fmt:
 	prettier -w schemas schemas/**/*.yml
 
 install:
-	pip3 install --upgrade pip
-	pip3 install pipenv --upgrade
+	pipenv install --dev
 
 test:
-	panther_analysis_tool test
+	pipenv run panther_analysis_tool test
 
 managed-schemas:
 	mkdir -p dist/managed-schemas; \
