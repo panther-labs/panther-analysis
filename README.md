@@ -35,11 +35,11 @@ cd panther-analysis
 # Configure your Python environment
 make install
 make venv
-source venv/bin/activate
+pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 
 # Install dependencies and run your first test!
 make deps
-panther_analysis_tool test --path aws_cloudtrail_rules/
+pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
 ```
 
 # Getting Started
@@ -48,34 +48,34 @@ The examples below demonstrate the local Panther workflow:
 
 ```
 # Run detection tests
-panther_analysis_tool test [-h] [--path PATH]
+pipenv run panther_analysis_tool test [-h] [--path PATH]
                                 [--filter KEY=VALUE [KEY=VALUE ...]]
                                 [--debug]
 
 # Test with a specific path
-panther_analysis_tool test --path cisco_umbrella_dns_rules
+pipenv run panther_analysis_tool test --path cisco_umbrella_dns_rules
 
 # Test by severity
-panther_analysis_tool test --filter Severity=Critical
+pipenv run panther_analysis_tool test --filter Severity=Critical
 
 # Test by log type
-panther_analysis_tool test --filter LogTypes=AWS.GuardDuty
+pipenv run panther_analysis_tool test --filter LogTypes=AWS.GuardDuty
 
 # Create a zip file of detections
-panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
+pipenv run panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
                                [--filter KEY=VALUE [KEY=VALUE ...]]
                                [--debug]
 
 # Zip all Critical severity detections
-panther_analysis_tool zip --filter Severity=Critical
+pipenv run panther_analysis_tool zip --filter Severity=Critical
 
 # Upload detections to your Panther instance
-panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
+pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
                                   [--filter KEY=VALUE [KEY=VALUE ...]]
                                   [--debug]
 
 # Important: Make sure you have access keys and region settings set for the AWS account running Panther
-panther_analysis_tool upload --filter LogTypes=AWS.GuardDuty
+pipenv run panther_analysis_tool upload --filter LogTypes=AWS.GuardDuty
 ```
 
 # Repo Structure
