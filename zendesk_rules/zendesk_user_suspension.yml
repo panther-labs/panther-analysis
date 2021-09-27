@@ -5,7 +5,7 @@ DedupPeriodMinutes: 60
 DisplayName: Zendesk User Suspension Status Changed
 Enabled: true
 LogTypes:
-  - Zendesk.AuditLog
+  - Zendesk.Audit
 Severity: High
 Description: A user's Zendesk suspension status was changed.
 Runbook: Ensure the user's suspension status is appropriate.
@@ -28,7 +28,7 @@ Tests:
         "change_description": "Suspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
   -
     Name: Zendesk - Suspension Disabled
@@ -46,7 +46,7 @@ Tests:
         "change_description": "Unsuspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
   -
     Name: Zendesk - Admin Role Assigned
@@ -64,5 +64,5 @@ Tests:
         "change_description": "Role changed from End User to Administrator",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
