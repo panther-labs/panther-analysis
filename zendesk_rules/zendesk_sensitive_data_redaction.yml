@@ -5,7 +5,7 @@ DedupPeriodMinutes: 60
 DisplayName: Zendesk Credit Card Redaction Off
 Enabled: true
 LogTypes:
-  - Zendesk.AuditLog
+  - Zendesk.Audit
 Severity: High
 Description: A user updated account setting that disabled credit card redaction.
 Runbook: Re-enable credit card redaction.
@@ -28,7 +28,7 @@ Tests:
         "change_description": "Disabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
   -
     Name: Zendesk - Credit Card Redaction On
@@ -46,7 +46,7 @@ Tests:
         "change_description": "Enabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
   - 
     Name: User assumption settings changed
@@ -64,5 +64,5 @@ Tests:
         "change_description": "Changed",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.AuditLog"
+        "p_log_type": "Zendesk.Audit"
       }
