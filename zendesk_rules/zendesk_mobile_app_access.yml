@@ -1,43 +1,18 @@
 AnalysisType: rule
-Filename: mfa_disabled.py
-RuleID: Standard.MFADisabled
+Filename: zendesk_mobile_app_access.py
+RuleID: Zendesk.MobileAppAccessUpdated
 DedupPeriodMinutes: 60
-DisplayName: MFA Disabled
-Enabled: false
+DisplayName: Zendesk Mobile App Access Modified
+Enabled: true
 LogTypes:
-  - GitHub.Audit
   - Zendesk.Audit
-Severity: High
-Description: Detects when Multi-Factor Authentication (MFA) is disabled
+Severity: Medium
+Description: A user updated account setting that enabled or disabled mobile app access.
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
   -
-    Name: GitHub - Org MFA Disabled
-    ExpectedResult: true
-    Log:
-      {
-        "actor": "cat",
-        "action": "org.disable_two_factor_requirement",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
-      }
-  -
-    Name: GitHub - Org MFA Enabled
-    ExpectedResult: False
-    Log:
-      {
-        "actor": "cat",
-        "action": "org.enable_two_factor_requirement",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
-      }  
-  -
-    Name: Zendesk - Two-factor disabled
+    Name: Zendesk - Mobile App Access Off
     ExpectedResult: true
     Log:
       {
@@ -47,15 +22,15 @@ Tests:
         "actor_id": 123,
         "source_id": 123,
         "source_type": "account_setting",
-        "source_label": "Two-Factor authentication for all admins and agents",
+        "source_label": "Zendesk Support Mobile App Access",
         "action": "create",
         "change_description": "Disabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
         "p_log_type": "Zendesk.Audit"
-    }
+      }
   -
-    Name: Zendesk - Alternate Two-factor disabled
+    Name: Zendesk - Mobile App Access On
     ExpectedResult: true
     Log:
       {
@@ -65,15 +40,15 @@ Tests:
         "actor_id": 123,
         "source_id": 123,
         "source_type": "account_setting",
-        "source_label": "Require Two Factor",
-        "action": "update",
-        "change_description": "Disabled",
+        "source_label": "Zendesk Support Mobile App Access",
+        "action": "create",
+        "change_description": "Enabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
         "p_log_type": "Zendesk.Audit"
-    }
+      }
   -
-    Name: Zendesk - Two-factor Enabled
+    Name: Zendesk - Credit Card Redaction
     ExpectedResult: false
     Log:
       {
@@ -83,10 +58,10 @@ Tests:
         "actor_id": 123,
         "source_id": 123,
         "source_type": "account_setting",
-        "source_label": "Require Two Factor",
+        "source_label": "Credit Card Redaction",
         "action": "create",
         "change_description": "Enabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
         "p_log_type": "Zendesk.Audit"
-    }
+      }
