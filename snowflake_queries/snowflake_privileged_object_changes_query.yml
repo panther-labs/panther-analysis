@@ -20,6 +20,7 @@ SnowflakeQuery: >
     WHERE
       p_occurs_since('24 h',, start_time)
       AND execution_status = 'SUCCESS'
+      AND query_type NOT in ('SELECT')
       AND (
           query_text ILIKE '%create role%'
           OR query_text ILIKE '%manage grants%'
