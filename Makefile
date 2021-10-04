@@ -35,6 +35,7 @@ install:
 
 test:
 	pipenv run panther_analysis_tool test
+	python -m unittest discover -p '*.py' -s .tests -v
 
 managed-schemas:
 	mkdir -p dist/managed-schemas; \
