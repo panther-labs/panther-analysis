@@ -25,6 +25,9 @@ Tests:
   -
     Name: No MFA Login - IAM User
     ExpectedResult: true
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -57,6 +60,9 @@ Tests:
   -
     Name: No MFA Login - IAM User Unknown Account
     ExpectedResult: true
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -89,6 +95,9 @@ Tests:
   -
     Name: No MFA Login - Root User
     ExpectedResult: true
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
         "eventVersion": "1.05",
@@ -121,6 +130,9 @@ Tests:
   -
     Name: MFA Login - SAML
     ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
         "additionalEventData": {
@@ -154,6 +166,9 @@ Tests:
   -
     Name: MFA Login
     ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
           "eventVersion": "1.05",
@@ -186,6 +201,9 @@ Tests:
   -
     Name: No MFA - Login Failed
     ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
           "eventVersion": "1.05",
@@ -218,6 +236,9 @@ Tests:
   -
     Name: No MFA - authenticated from session with MFA
     ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
     Log:
       {
         "p_event_time": "2019-01-01 00:20:04.000Z",
@@ -243,5 +264,41 @@ Tests:
           },
           "type": "AssumedRole"
         }
+      }
+
+  -
+    Name: No MFA Login - New User
+    ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "True"
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "1111",
+          "arn": "arn:aws:iam::123456789012:user/tester",
+          "accountId": "123456789012",
+          "userName": "tester"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "additionalEventData": {
+          "LoginTo": "https://console.aws.amazon.com/console/",
+          "MobileVersion": "No",
+          "MFAUsed": "No"
+        },
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012"
       }
 
