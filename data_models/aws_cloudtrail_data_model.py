@@ -15,7 +15,7 @@ def get_event_type(event):
         if deep_get(event, "responseElements", "ConsoleLogin") == "Success":
             return event_type.SUCCESSFUL_LOGIN
     if event.get("eventName") == "CreateUser":
-        return event_type.ACCOUNT_CREATED
+        return event_type.USER_ACCOUNT_CREATED
     return None
 
 
