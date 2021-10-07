@@ -1,0 +1,16 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_network_policy_modified.py 
+RuleID: Snowflake.NetworkPolicyModified
+Description: >
+  Detect snowflake network policy modifications
+DisplayName: Snowflake network policy modified
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.NetworkPolicyModified
+Severity: Medium
+Tests:
+  -
+    Name: Return True 
+    ExpectedResult: true
+    Log:
+      Anything: any value

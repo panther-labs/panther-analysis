@@ -5,8 +5,10 @@ DisplayName: Admin Role Assigned
 Enabled: true
 LogTypes:
   - GCP.AuditLog
+  - GitHub.Audit
   - GSuite.Reports
   - OneLogin.Events
+  - Zendesk.Audit
 Tags:
   - DataModel
 Severity: Medium
@@ -14,7 +16,7 @@ Reports:
   MITRE ATT&CK:
     - Privilege Escalation:Valid Accounts
 Description: Attaching an audit role manually could be a sign of privilege escalation
-Runbook: Verify with the user who attached the role or add to a whitelist
+Runbook: Verify with the user who attached the role or add to a allowlist
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -115,4 +117,68 @@ Tests:
         "user_name": "Evil Bob",
         "actor_user_name": "Bobert O'Bobly",
         "p_log_type": "OneLogin.Events",
+      }
+  - 
+    Name: Github - User Promoted
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "team.promote_maintainer",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  -
+    Name: Zendesk - Admin Role Downgraded
+    ExpectedResult: false
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Role changed from Administrator to End User",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Zendesk - Admin Role Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Role changed from End User to Administrator",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Zendesk - App Admin Role Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Explore role changed from not set to Admin\nGuide role changed from not set to Admin\nSupport role changed from not set to Admin\nTalk role changed from not set to Admin",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
       }
