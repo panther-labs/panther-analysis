@@ -44,6 +44,6 @@ def alert_context(event):
 
 
 def severity(event):
-    if event.get("readOnly") == True:
+    if event.get("readOnly"):
         return "LOW"
     return "HIGH"
