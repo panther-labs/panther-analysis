@@ -19,15 +19,16 @@ def dedup(event):
         event.get("sourceIPAddress", "<UNKNOWN_IP>")
         + ":"
         + lookup_aws_account_name(event.get("recipientAccountId"))
+        + ":"
+        + str(event.get("readOnly"))
     )
 
 
 def title(event):
-    action = "activity"
-    if event.get("eventName") == "ConsoleLogin":
-        action = "login"
     return (
-        f"AWS root {action} detected from [{event.get('sourceIPAddress')}] in account "
+        "AWS root user activity "
+        f"[{event.get('eventName')}] "
+        "in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
 
@@ -40,3 +41,9 @@ def alert_context(event):
         "eventTime": event.get("eventTime"),
         "mfaUsed": deep_get(event, "additionalEventData", "MFAUsed"),
     }
+
+
+def severity(event):
+    if event.get("readOnly"):
+        return "LOW"
+    return "HIGH"
