@@ -33,7 +33,3 @@ def rule(event):
 
 def title(event):
     return f"A new AWS account has been created. Account ID - [{parse_new_account_id(event)}]"
-
-
-def severity(_):
-    return "INFO"
