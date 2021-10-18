@@ -16,6 +16,8 @@ def get_event_type(event):
             return event_type.SUCCESSFUL_LOGIN
     if event.get("eventName") == "CreateUser":
         return event_type.USER_ACCOUNT_CREATED
+    if event.get("eventName") == "CreateAccountResult":
+        return event_type.ACCOUNT_CREATED
     return None
 
 
