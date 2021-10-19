@@ -11,7 +11,7 @@ TTL = timedelta(days=3)
 def parse_new_account_id(event):
     if event.get("serviceEventDetails"):
         details = json.loads(event.get("serviceEventDetails"))
-        return str(details.get("createAccountStatus").get("accountId"))
+        return str(details.get("createAccountStatus", {}).get("accountId", "<UNKNOWN_ACCOUNT_ID>"))
     return "<UNKNOWN ACCOUNT ID>"
 
 
