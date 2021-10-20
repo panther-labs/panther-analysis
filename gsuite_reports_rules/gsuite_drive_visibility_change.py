@@ -3,6 +3,24 @@ from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 EXCLUDED_DOMAINS = {"example.com"}
 
+PUBLIC_PROVIDERS = {
+    "gmail.com",
+    "yahoo.com",
+    "outlook.com",
+    "aol.com",
+    "yandex.com",
+    "protonmail.com",
+    "pm.me",
+    "icloud.com",
+    "yandex.com",
+    "tutamail.com",
+    "tuta.io",
+    "keemail.me",
+    "mail.com",
+    "zohomail.com",
+    "hotmail.com",
+    "msn.com",
+}
 VISIBILITY = {
     "people_with_link",
     "people_within_domain_with_link",
@@ -168,3 +186,10 @@ def title(event):
         f"[{ALERT_DETAILS[log]['DOC_TITLE']}] externally visible to [{sharing_scope}] with "
         f"[{alert_access_scope}] access"
     )
+
+
+def severtiy(event):
+    log = event.get("p_row_id")
+    if ALERT_DETAILS[log]["TARGET_DOMAIN"] in PUBLIC_PROVIDERS:
+        return "LOW"
+    return "INFO"
