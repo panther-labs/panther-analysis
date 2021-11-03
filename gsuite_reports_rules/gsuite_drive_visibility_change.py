@@ -188,7 +188,7 @@ def title(event):
     )
 
 
-def severtiy(event):
+def severity(event):
     log = event.get("p_row_id")
     if ALERT_DETAILS[log]["TARGET_DOMAIN"] in PUBLIC_PROVIDERS:
         return "LOW"
