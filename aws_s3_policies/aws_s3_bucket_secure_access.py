@@ -48,5 +48,5 @@ def severity(_):
 
 def title(resource):
     if IMPLICIT_DENY:
-        return f"{resource.get('name')} lacks an explicit deny policy for Secure Transport"
-    return f"{resource.get('name')} does not enforce Secure Transport"
+        return f"{resource.get('Name')} lacks an explicit deny policy for Secure Transport"
+    return f"{resource.get('Name')} does not enforce Secure Transport"
