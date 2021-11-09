@@ -21,6 +21,7 @@ PUBLIC_PROVIDERS = {
     "hotmail.com",
     "msn.com",
 }
+
 VISIBILITY = {
     "people_with_link",
     "people_within_domain_with_link",
