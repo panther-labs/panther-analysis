@@ -1,0 +1,16 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_unusual_logins.py
+RuleID: Snowflake.UnusualLogins
+Description: >
+  Alerts when the number of logins to Snowflake exceeds a baselined threshold
+DisplayName: Unusual Volume of Snowflake Logins Detected
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.Unusual.Logins
+Severity: Low
+Tests:
+  -
+    Name: Unusual Login Volume
+    ExpectedResult: true
+    Log:
+      query_text: "testuser 100"
