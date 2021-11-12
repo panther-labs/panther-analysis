@@ -18,6 +18,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "Debug build"
+          command: ls -la /proc
+      - run:
           name: Setup the Virtual Environment and install dependencies
           command: make venv
       - run:
