@@ -11,6 +11,11 @@ APPROVED_ACTIVE_REGIONS = {
 
 
 def _resource_in_active_region(location):
+    # return False if location is None, meaning the event did not have a location attribute
+    # in any of the places we would expect to find one.
+    if location is False:
+        return False
+
     return not any(
         (location.startswith(active_region) for active_region in APPROVED_ACTIVE_REGIONS)
     )

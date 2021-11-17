@@ -195,3 +195,80 @@ Tests:
         "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T17:25:09.393448555Z"
       }
+  -
+    Name: "BigQuery access log (does not have standard attribute: resource.labels.location)"
+    ExpectedResult: false
+    Log:
+      {
+        "insertId": "v3a96bedw1us",
+        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "user.name@runpanther.io"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "bigquery.jobs.create",
+              "resource": "projects/western-verve-123456",
+              "resourceAttributes": {}
+            }
+          ],
+          "methodName": "jobservice.insert",
+          "requestMetadata": {
+            "callerIP": "192.0.2.0",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:92.0) Gecko/20100101 Firefox/92.0,gzip(gfe),gzip(gfe)",
+            "destinationAttributes": {},
+            "requestAttributes": {}
+          },
+          "resourceName": "projects/western-verve-123456/jobs",
+          "serviceData": {
+            "@type": "type.googleapis.com/google.cloud.bigquery.logging.v1.AuditData",
+            "jobInsertRequest": {
+              "resource": {
+                "jobConfiguration": {
+                  "dryRun": true,
+                  "query": {
+                    "createDisposition": "CREATE_IF_NEEDED",
+                    "defaultDataset": {},
+                    "destinationTable": {},
+                    "query": "select * from no_such_table",
+                    "queryPriority": "QUERY_INTERACTIVE",
+                    "writeDisposition": "WRITE_EMPTY"
+                  }
+                },
+                "jobName": {
+                  "location": "US",
+                  "projectId": "western-verve-123456"
+                }
+              }
+            },
+            "jobInsertResponse": {
+              "resource": {
+                "jobConfiguration": {},
+                "jobName": {},
+                "jobStatistics": {},
+                "jobStatus": {
+                  "error": {},
+                  "state": "PENDING"
+                }
+              }
+            }
+          },
+          "serviceName": "bigquery.googleapis.com",
+          "status": {
+            "code": 11,
+            "message": "Syntax error: Unexpected end of script at [17:7]"
+          }
+        },
+        "receiveTimestamp": "2021-10-19 16:09:26.351861539",
+        "resource": {
+          "labels": {
+            "project_id": "western-verve-123456"
+          },
+          "type": "bigquery_resource"
+        },
+        "severity": "ERROR",
+        "timestamp": "2021-10-19 16:09:26.013200000"
+      }
