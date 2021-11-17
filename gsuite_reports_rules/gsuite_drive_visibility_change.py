@@ -191,6 +191,9 @@ def title(event):
 
 def severity(event):
     log = event.get("p_row_id")
-    if ALERT_DETAILS[log]["TARGET_DOMAIN"] in PUBLIC_PROVIDERS:
-        return "LOW"
+    if ALERT_DETAILS[log]["TARGET_USER_EMAILS"] != ["<UNKNOWN_USER>"]:
+        for address in ALERT_DETAILS[log]["TARGET_USER_EMAILS"]:
+            domain = address.split("@")[1]
+            if domain in PUBLIC_PROVIDERS:
+                return "LOW"
     return "INFO"
