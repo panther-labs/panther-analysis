@@ -2,7 +2,7 @@ AnalysisType: rule
 Filename: sunburst_ip_iocs.py
 RuleID: IOC.SunburstIPIOCs
 DisplayName: Sunburst Indicators of Compromise (IP)
-Enabled: true
+Enabled: false
 LogTypes:
   - AWS.ALB
   - AWS.CloudTrail
@@ -52,7 +52,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "srcaddr": "13.59.205.66",
+        "srcaddr": "0.0.0.1",
         "dstaddr": "10.0.0.1",
-        "p_any_ip_addresses": ["13.59.205.66"],
+        "p_any_ip_addresses": ["0.0.0.1"],
       }
