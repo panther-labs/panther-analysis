@@ -1,0 +1,16 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_scim_token_created.py
+RuleID: Snowflake.SCIMTokenCreated
+Description: Alerts when a SCIM token is created
+DisplayName: Snowflake SCIM Access Token Created
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.SCIMTokenCreated
+Severity: Info
+Tests:
+  -
+    Name: SCIM Token Created
+    ExpectedResult: true
+    Log:
+      query_text: "system$generate_scim_access_token"
+      user_name: "testuser"
