@@ -12,6 +12,7 @@ LogTypes:
   - Okta.SystemLog
   - OneLogin.Events
   - Zendesk.Audit
+  - Zoom.Activity
 Tags:
   - DataModel
   - Identity & Access Management
@@ -327,3 +328,29 @@ Tests:
         'p_parse_time': '2021-06-04 10:02:33.650807',
         'p_event_time': '2021-06-04 09:59:53.650807'
       }
+  -
+    Name: Zoom - Successful Login Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCity1",
+                          "country": "UnitTestCountry"
+                          }
+      - objectName: get_string_set
+        returnValue: >-
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+      "email": "homer.simpson@example.io",
+      "time": "2021-10-22 10:39:04Z",
+      "type": "Sign in",
+      "ip_address": "1.1.1.1",
+      "client_type": "Browser",
+      'p_log_type': 'Zoom.Activity',
+      'p_parse_time': '2021-06-04 10:02:33.650807',
+      'p_event_time': '2021-06-04 09:59:53.650807'
+    }
