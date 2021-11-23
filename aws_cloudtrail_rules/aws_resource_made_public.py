@@ -71,7 +71,12 @@ def rule(event):
 def title(event):
     # TODO(): Update this rule to use data models
     user = deep_get(event, "userIdentity", "userName") or deep_get(
-        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
+        event,
+        "userIdentity",
+        "sessionContext",
+        "sessionIssuer",
+        "userName",
+        default="<MISSING_USER>",
     )
 
     if event.get("Resources"):
