@@ -15,8 +15,8 @@ def get_zoom_user_context(event):
             operation_context["UserType"] = raw_string.split("-")[1].split(":")[1].strip()
 
         if action == "Update":
-            operation_context["User"] = raw_string.split()[4].strip()
-            operation_context["Change"] = raw_string.split("-").strip()
+            operation_context["User"] = raw_string.split()[2]
+            operation_context["Change"] = " ".join((raw_string.split("-"))).strip()
             operation_context["DisabledSetting"] = "On to Off" in operation_context["Change"]
             operation_context["EnabledSetting"] = "Off to On" in operation_context["Change"]
 
