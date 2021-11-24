@@ -8,6 +8,8 @@ def get_event_type(event):
             return event_type.USER_ACCOUNT_CREATED
         if event.get("action") == "Delete":
             return event_type.USER_ACCOUNT_DELETED
+        if event.get("action") == "Update" and "to Admin" in event.get("operation_detail"):
+            return event_type.ADMIN_ROLE_ASSIGNED
         if event.get("action") == "Update":
             return event_type.USER_ACCOUNT_MODIFIED
 
