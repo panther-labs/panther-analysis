@@ -2,7 +2,7 @@ from panther_zoom_helpers import get_zoom_user_context as get_context
 
 
 def rule(event):
-    if event.get("category_type") != "User" and event.get("Action") == "Update":
+    if event.get("Action") != "Update" or event.get("category_type") != "User":
         return False
 
     context = get_context(event)
