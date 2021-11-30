@@ -7,9 +7,7 @@ def rule(event):
 
     context = get_context(event)
 
-    if "Member to Admin" in context["Change"]:
-        return True
-    return False
+    return "Member to Admin" in context["Change"]:
 
 
 def title(event):
