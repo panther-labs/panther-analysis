@@ -1,0 +1,45 @@
+AnalysisType: rule
+Filename: zoom_operation_passcode_disabled.py
+RuleID: Zoom.PasscodeDisabled
+DisplayName: Zoom Meeting Passcode Disabled
+Enabled: true
+LogTypes:
+  - Zoom.Operation
+Tags:
+  - Zoom
+Severity: Low
+Description: >
+  Meeting passcode requirement has been disabled from usergroup
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Drive-by Compromise
+Reference: https://support.zoom.us/hc/en-us/articles/360033559832-Zoom-Meeting-and-Webinar-passcodes
+Runbook: >
+  Follow up with user or Zoom admin to ensure this meeting room's use case does not allow a passcode.
+SummaryAttributes:
+  - p_any_emails
+Tests:
+  -
+    Name: Meeting Passcode Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2021-11-17 00:37:24Z",
+        "operator": "homer@panther.io",
+        "category_type": "User Group",
+        "action": "Update",
+        "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from On to Off",
+        "p_log_type": "Zoom.Operation",
+        }
+  -
+    Name: Meeting Passcode Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2021-11-17 00:37:24Z",
+        "operator": "homer@panther.io",
+        "category_type": "User Group",
+        "action": "Update",
+        "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from Off to On",
+        "p_log_type": "Zoom.Operation",
+        }
