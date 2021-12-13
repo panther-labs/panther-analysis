@@ -105,7 +105,7 @@ def title(event):
         EVENT_CITY_TRACKING.get(event.get("p_row_id")), "new_city", default="<UNKNOWN_NEW_CITY>"
     )
     return (
-        f"Geographically improbably login for user [{deep_get(event, 'actor', 'alternateId')}] "
+        f"Geographically improbable login for user [{deep_get(event, 'actor', 'alternateId')}] "
         f"from [{old_city}]  to [{new_city}]"
     )
 
