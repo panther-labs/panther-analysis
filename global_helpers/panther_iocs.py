@@ -687,7 +687,7 @@ LOG4J_IP_IOCS = {
      }
 
 LOG4J_EXPLOIT_IOCS = {
-     'jndi:ldap:/', 'jndi:rmi:/', 'jndi:ldaps:/', 'jndi:dns:/', 'jndi:nis:/', 'jndi:nds:/', 'jndi:corba:/', 'jndi:iiop:/'
+     'jndi:ldap:/', 'jndi:rmi:/', 'jndi:ldaps:/', 'jndi:dns:/', 'jndi:nis:/', 'jndi:nds:/', 'jndi:corba:/', 'jndi:iiop:/',  "jndi:${", ":${lower:", "${env:"
      }
 
 # IOC Helper functions:
