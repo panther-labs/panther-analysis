@@ -1,0 +1,56 @@
+AnalysisType: rule
+Filename: log4j_ip_iocs.py
+RuleID: IOC.Log4JIPs
+DisplayName: LOG4J Indicators of Compromise (IP)
+Enabled: true
+LogTypes:
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.GuardDuty
+  - AWS.S3ServerAccess
+  - AWS.VPCFlow
+  - GCP.AuditLog
+  - Apache.AccessCombined
+  - Apache.AccessCommon
+  - Cloudflare.HttpRequest
+  - Juniper.Access
+  - Nginx.Access
+
+Tags:
+  - AWS
+  - DNS
+  - GCP
+  - Apache
+  - Cloudflare
+  - Nginx
+  - Juniper
+
+Severity: High
+Description: >
+    Detects when an IP address known to have engaged in Log4J exploit scanning has been seen in various log sources
+Reference: >
+    https://blog.cloudflare.com/actual-cve-2021-44228-payloads-captured-in-the-wild
+Runbook: >
+    Investigate traffic from these IP addresses and look for other IOCs associated with the LOG4J exploit CVE-2021-44228
+SummaryAttributes:
+  - p_any_domain_names
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Non-matching traffic
+    ExpectedResult: false
+    Log:
+      {
+        "dstport": 53,
+        "dstaddr": "1.1.1.1",
+        "srcaddr": "10.0.0.1"
+      }
+  -
+    Name: Sunburst Indicator of Compromise (IP) Detected
+    ExpectedResult: true
+    Log:
+      {
+        "srcaddr": "0.0.0.1",
+        "dstaddr": "159.89.122.19",
+        "p_any_ip_addresses": ["159.89.122.19"],
+      }
