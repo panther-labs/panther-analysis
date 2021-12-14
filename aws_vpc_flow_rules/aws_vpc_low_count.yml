@@ -1,0 +1,56 @@
+AnalysisType: rule
+Filename: aws_vpc_low_count.py
+RuleID: AWS.VPC.LowBytePacketCount
+DisplayName: AWS VPC Low Byte / Packet Count Traffic
+Enabled: false
+Threshold: 10
+DedupPeriodMinutes: 60
+LogTypes:
+  - AWS.VPCFlow
+Tags:
+  - AWS
+  - VPC
+  - Log4j
+
+Severity: Medium
+Description: >
+  Alerts on low packet count or low byte count traffic, a possible indicator of Log4j exploit attempt
+Runbook: >
+  Investigate traffic from listed IP to determine if malicious activity is underway.
+Tests:
+  -
+    Name: Normal Traffic
+    ExpectedResult: false
+    Log: {
+      "srcAddr": "10.0.0.72",
+      "packets": 15,
+      "bytes": 1186,
+      "action": "ACCEPT",
+      }
+  -
+    Name: Low Packet Count Traffic
+    ExpectedResult: true
+    Log: {
+      "srcAddr": "10.0.0.72",
+      "packets": 1,
+      "bytes": 1186,
+      "action": "ACCEPT",
+      }
+  -
+    Name: Low Byte Count Traffic
+    ExpectedResult: true
+    Log: {
+      "srcAddr": "10.0.0.72",
+      "packets": 2,
+      "bytes": 10,
+      "action": "ACCEPT",
+      }
+  -
+    Name: Low Packet Count Traffic but Rejected
+    ExpectedResult: false
+    Log: {
+      "srcAddr": "10.0.0.72",
+      "packets": 1,
+      "bytes": 1186,
+      "action": "REJECTED",
+      }
