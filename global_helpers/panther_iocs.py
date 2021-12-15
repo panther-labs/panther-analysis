@@ -783,6 +783,7 @@ LOG4J_EXPLOIT_IOCS = {
     "${env:",
     "${sys:",
     "${java:",
+    "${date:",
 }
 
 # IOC Helper functions:
