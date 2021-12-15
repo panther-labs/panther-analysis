@@ -782,7 +782,7 @@ LOG4J_EXPLOIT_IOCS = {
     ":${lower:",
     "${env:",
     "${sys:",
-    "${java:}",
+    "${java:",
 }
 
 # IOC Helper functions:
