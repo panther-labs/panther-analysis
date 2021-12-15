@@ -781,6 +781,15 @@ LOG4J_EXPLOIT_IOCS = {
     "jndi:${",
     ":${lower:",
     "${env:",
+    "${env:PATH}",
+    "${env:AWS_SECRET_ACCESS_KEY}",
+    "${env:AWS_SESSION_TOKEN}",
+    "${env:AWS_ACCESS_KEY_ID}",
+    "${sys:user.name}",
+    "${sys:java.version}",
+    "${sys:os.version}",
+    "${env:USER}",
+    "${java:os}",
 }
 
 # IOC Helper functions:
