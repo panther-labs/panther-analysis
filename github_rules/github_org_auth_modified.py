@@ -16,4 +16,4 @@ def rule(event):
 
 
 def title(event):
-    return f"GitHub auth configuration was changed by {event.get('actor', '<UNKNOWN USER')}"
+    return f"GitHub auth configuration was changed by {event.get('actor', '<UNKNOWN USER>')}"
