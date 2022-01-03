@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: github_org_auth_modified.py
+RuleID: GitHub.Org.AuthChange
+DisplayName: GitHub Org Authentication Method Changed
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Critical
+SummaryAttributes:
+  - actor
+  - action
+Description: Detects changes to GitHub org authentication changes.
+Runbook: Verify that the GitHub admin performed this activity and validate its use.
+Tests:
+  -
+    Name: GitHub - Authentication Method Changed
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.saml_disabled",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Non Auth Related Org Change
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "invite_member",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
