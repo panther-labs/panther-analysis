@@ -1,7 +1,4 @@
 def rule(event):
-    if not event.get("action").startswith("ip_allow_list"):
-        return False
-
     allowlist_actions = [
         "ip_allow_list.enable",
         "ip_allow_list.disable",
@@ -11,7 +8,7 @@ def rule(event):
         "ip_allow_list_entry.update",
         "ip_allow_list_entry.destroy",
     ]
-    return event.get("action") in allowlist_actions
+    return event.get("action").startswith("ip_allow_list") and event.get("action") in allowlist_actions
 
 
 def title(event):
