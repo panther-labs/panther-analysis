@@ -20,6 +20,11 @@ def rule(event):
     if deep_get(event, "userIdentity", "type") != "IAMUser":
         return False
 
+    # Console Activity can easily result in false positives as some pages contain a mix of
+    # items that a user may or may not have access to.
+    if event.get("userAgent").startswith("aws-internal/3"):
+        return False
+
     # Validate the request came from outside of AWS
     try:
         ip_address(event.get("sourceIPAddress"))
