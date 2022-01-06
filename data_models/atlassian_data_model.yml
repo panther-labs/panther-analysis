@@ -1,0 +1,15 @@
+AnalysisType: datamodel
+LogTypes:
+  - Atlassian.Audit
+DataModelID: Standard.Atlassian.Audit
+DisplayName: Atlassian Audit Logs
+Filename: atlassian_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.EventActor.Name
+  - Name: event_type
+    Path: get_event_type
+  - Name: source_ip
+    Path: $.EventLocation.IP
+
