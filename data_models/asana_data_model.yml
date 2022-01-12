@@ -1,0 +1,14 @@
+AnalysisType: datamodel
+LogTypes:
+  - Asana.Audit
+DataModelID: Standard.Asana.Audit
+DisplayName: Asana Audit Logs
+Filename: asana_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.name
+  - Name: event_type
+    Path: get_event_type
+  - Name: source_ip
+    Path: $.context.client_ip_address

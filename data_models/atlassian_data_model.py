@@ -9,8 +9,9 @@ audit_log_type_map = {
     "group_created": event_type.USER_GROUP_CREATED,
     "group_deleted": event_type.USER_GROUP_DELETED,
     "user_granted_role": event_type.USER_ROLE_MODIFIED,
-    "user_revoked_role": event_type.USER_ROLE_DELETED
+    "user_revoked_role": event_type.USER_ROLE_DELETED,
 }
+
 
 def get_event_type(event):
     audit_log_type = deep_get(event, "AuditLog", "Type")
