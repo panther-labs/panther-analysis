@@ -25,6 +25,9 @@ lint:
 venv:
 	pipenv install --dev
 
+pat-update:
+	pipenv update panther-analysis-tool
+
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
