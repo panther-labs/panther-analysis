@@ -5,6 +5,7 @@ DedupPeriodMinutes: 60
 DisplayName: Brute Force By IP
 Enabled: true
 LogTypes:
+  - Asana.Audit
   - Atlassian.Audit
   - AWS.CloudTrail
   - Box.Event
@@ -333,6 +334,82 @@ Tests:
           }
         },
         "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+
+  -
+    Name: Asana - Failed Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "Homer"
+        },
+        "context": {
+          "client_ip_address": "8.8.8.8",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:10.364Z",
+        "details": {
+          "method": [ "ONE_TIME_KEY" ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_failed",
+        "gid": "222222222",
+        "resource": {
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "homer",
+          "resource_type": "user",
+        },
+        "p_log_type": "Asana.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Asana - Normal Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "Homer"
+        },
+        "context": {
+          "client_ip_address": "8.8.8.8",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:10.364Z",
+        "details": {
+          "method": [ "ONE_TIME_KEY" ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_succeeded",
+        "gid": "222222222",
+        "resource": {
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "homer",
+          "resource_type": "user",
+        },
+        "p_log_type": "Asana.Audit",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
       }
