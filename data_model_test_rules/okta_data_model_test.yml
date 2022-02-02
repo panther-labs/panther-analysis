@@ -1,0 +1,237 @@
+AnalysisType: rule
+LogTypes:
+  - Okta.SystemLog
+RuleID: Okta.Datamodel.Test
+DisplayName: Okta DataModel Extraction Test
+Severity: Low
+Description: This rule alerts if Okta DataModel fields are not being extracted properly
+DedupPeriodMinutes: 1440
+Enabled: false
+Filename: okta_data_model_test.py
+
+Tests:
+  -
+    Name: Test Event Type "SUCCESSFUL_LOGIN"
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "1234",
+        "published": "2021-11-01 21:22:28.54",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "legacyEventType": "app.auth.sso",
+        "displayMessage": "User single sign on to app",
+        "actor": {
+          "alternateId": "homer.simpson@springfield.gov",
+          "displayName": "Homer Simpson",
+          "id": "1111111111111111",
+          "type": "User"
+        },
+        "client": {
+          "device": "Computer",
+          "geographicalContext": {
+            "city": "Springfield",
+            "country": "United States",
+            "geolocation": {
+              "lat": 39.9242,
+              "lon": 83.8088
+            },
+            "postalCode": "11111",
+            "state": "Ohio"
+          },
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "NetscapeNavigator",
+            "os": "Mac OS X",
+            "rawUserAgent": "NetScape Navigator 7, BeOS"
+          },
+          "zone": "null"
+        },
+        "request": {
+          "ipChain": [
+            {
+              "geographicalContext": {
+                "city": "Springfield",
+                "country": "United States",
+                "geolocation": {
+                  "lat": 39.9242,
+                  "lon": 83.8088
+                },
+                "postalCode": "111111",
+                "state": "Ohio"
+              },
+              "ip": "1.1.1.1",
+              "version": "V4"
+            }
+          ]
+        },
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "target": [
+          {
+            "alternateId": "Panther (Release Testing)",
+            "detailEntry": {
+              "signOnModeType": "SAML_2_0"
+            },
+            "displayName": "DonutFactory",
+            "id": "1111111",
+            "type": "AppInstance"
+          },
+          {
+            "alternateId": "homer.simpson@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "0ua4rmx4qsZRWjEZK696",
+            "type": "AppUser"
+          }
+        ],
+        "transaction": {
+          "detail": { },
+          "id": "222222222",
+          "type": "WEB"
+        },
+        "debugContext": {
+          "debugData": {
+            "audience": "Live Studio",
+            "authTime": "2021-11-01T21:17:35.764Z",
+            "authenticationClassRef": "Santas:Little:Helper",
+            "authnRequestId": "1111111",
+            "expiryTime": "2021-11-01T21:27:28.532Z",
+            "initiationType": "Fancy",
+            "issuedAt": "2021-11-01T21:22:28.532Z",
+            "issuer": "http://www.okta.com/shelbyville",
+            "jti": "1111111111",
+            "requestId": "1111111",
+            "requestUri": "/donut/sprinkes",
+            "signOnMode": "SAML 2077",
+            "subject": "homer.simpson@springfield.gov",
+            "url": "/duff/lite"
+          }
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "1111111"
+        },
+        "securityContext": {
+          "asNumber": 1,
+          "asOrg": "foo.",
+          "domain": ".",
+          "isProxy": false,
+          "isp": "Starlink"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: Test Event Type "FAILED_LOGIN"
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "1234",
+        "published": "2021-11-01 21:22:28.54",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "legacyEventType": "app.auth.sso",
+        "displayMessage": "User single sign on to app",
+        "actor": {
+          "alternateId": "homer.simpson@springfield.gov",
+          "displayName": "Homer Simpson",
+          "id": "1111111111111111",
+          "type": "User"
+        },
+        "client": {
+          "device": "Computer",
+          "geographicalContext": {
+            "city": "Springfield",
+            "country": "United States",
+            "geolocation": {
+              "lat": 39.9242,
+              "lon": 83.8088
+            },
+            "postalCode": "11111",
+            "state": "Ohio"
+          },
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "NetscapeNavigator",
+            "os": "Mac OS X",
+            "rawUserAgent": "NetScape Navigator 7, BeOS"
+          },
+          "zone": "null"
+        },
+        "request": {
+          "ipChain": [
+            {
+              "geographicalContext": {
+                "city": "Springfield",
+                "country": "United States",
+                "geolocation": {
+                  "lat": 39.9242,
+                  "lon": 83.8088
+                },
+                "postalCode": "111111",
+                "state": "Ohio"
+              },
+              "ip": "1.1.1.1",
+              "version": "V4"
+            }
+          ]
+        },
+        "outcome": {
+          "reason": "INVALID_CREDENTIALS",
+          "result": "FAILURE"
+        },
+        "target": [
+          {
+            "alternateId": "Panther (Release Testing)",
+            "detailEntry": {
+              "signOnModeType": "SAML_2_0"
+            },
+            "displayName": "DonutFactory",
+            "id": "1111111",
+            "type": "AppInstance"
+          },
+          {
+            "alternateId": "homer.simpson@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "0ua4rmx4qsZRWjEZK696",
+            "type": "AppUser"
+          }
+        ],
+        "transaction": {
+          "detail": { },
+          "id": "222222222",
+          "type": "WEB"
+        },
+        "debugContext": {
+          "debugData": {
+            "audience": "Live Studio",
+            "authTime": "2021-11-01T21:17:35.764Z",
+            "authenticationClassRef": "Santas:Little:Helper",
+            "authnRequestId": "1111111",
+            "expiryTime": "2021-11-01T21:27:28.532Z",
+            "initiationType": "Fancy",
+            "issuedAt": "2021-11-01T21:22:28.532Z",
+            "issuer": "http://www.okta.com/shelbyville",
+            "jti": "111111111",
+            "requestId": "1111111",
+            "requestUri": "/donut/sprinkes",
+            "signOnMode": "SAML 2077",
+            "subject": "homer.simpson@springfield.gov",
+            "url": "/duff/lite"
+          }
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "1111111"
+        },
+        "securityContext": {
+          "asNumber": 1,
+          "asOrg": "foo.",
+          "domain": ".",
+          "isProxy": false,
+          "isp": "Starlink"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
