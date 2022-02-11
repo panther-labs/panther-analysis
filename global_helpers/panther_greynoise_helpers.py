@@ -1,104 +1,98 @@
 import ast
 import datetime
-from typing import Union
 
 from dateutil import parser
 from panther_base_helpers import deep_get
 
 
-class GreyNoise:
+class GreyNoiseBasic:
     def __init__(self, event):
-        self.noise = deep_get(event, "p_enrichment", "greynoise")
+        self.noise = deep_get(event, "p_enrichment", "greynoise_noise_basic")
 
-    # Fields available for all users
-    @property
-    def ip_address(self) -> str:
-        return self.noise.get("ip")
+    def ip_address(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "ip")
 
-    @property
-    def classification(self) -> str:
-        return self.noise.get("classification")
+    def classification(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "classification")
 
-    @property
-    def actor(self) -> str:
-        return self.noise.get("actor")
+    def actor(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "actor")
 
-    @property
-    def url(self) -> str:
-        return f"www.greynoise.io/viz/ip/{self.noise.get('ip')}"
+    def url(self, match_field) -> str:
+        return f"www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
-    # Advanced features
-    # GreyNoise Advanced Subscription
-    def _check_advanced(self, field) -> bool:
-        if self.noise.get(field) is None:
-            return False
-        return True
 
-    @property
-    def is_bot(self) -> Union[bool, str]:
-        if self._check_advanced("bot") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return ast.literal_eval(self.noise.get("bot"))
+class GreyNoiseAdvanced:
+    def __init__(self, event):
+        self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
 
-    @property
-    def cve_string(self) -> str:
-        if self._check_advanced("cve") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        cve_raw = self.noise.get("cve")
+    def ip_address(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "classification")
+
+    def classification(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "classification")
+
+    def actor(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "actor")
+
+    def url(self, match_field) -> str:
+        return f"www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
+
+    def is_bot(self, match_field) -> bool:
+        return ast.literal_eval(deep_get(self.noise, match_field, "bot"))
+
+    def cve_string(self, match_field, limit: int = 10) -> str:
+        cve_raw = deep_get(self.noise, match_field, "cve")
         if isinstance(cve_raw, list):
-            return " ".join(cve_raw)
+            return " ".join(cve_raw[:limit])
         return cve_raw
 
-    @property
-    def cve_list(self) -> Union[list, str]:
-        if self._check_advanced("cve") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        cve_raw = self.noise.get("cve")
+    def cve_list(self, match_field) -> list:
+        cve_raw = deep_get(self.noise.get, match_field, "cve")
         if isinstance(cve_raw, str):
             return [cve_raw]
         return cve_raw
 
-    @property
-    def first_seen(self) -> Union[datetime, str]:
-        if self._check_advanced("first_seen") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return parser.parse(self.noise.get("first_seen"))
+    def first_seen(self, match_field) -> datetime.date:
+        return parser.parse(deep_get(self.noise, match_field, "first_seen"))
 
-    @property
-    def last_seen(self):
-        if self._check_advanced("last_seen_timestamp") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return parser.parse(self.noise.get("last_seen_timestamp"))
+    def last_seen(self, match_field) -> datetime.date:
+        return parser.parse(deep_get(self.noise, match_field, "last_seen_timestamp"))
 
-    @property
-    def metadata(self) -> Union[dict, str]:
-        if self._check_advanced("metadata") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return self.noise.get("metadata")
+    def metadata(self, match_field) -> dict:
+        return deep_get(self.noise, match_field, "metadata")
 
-    @property
-    def is_spoofable(self) -> Union[bool, str]:
-        if self._check_advanced("spoofable") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return ast.literal_eval(self.noise.get("spoofable"))
+    def is_spoofable(self, match_field) -> str:
+        return ast.literal_eval(deep_get(self.noise, match_field, "spoofable"))
 
-    @property
-    def tags(self) -> Union[list, str]:
-        if self._check_advanced("tags") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        tags = self.noise.get("tags")
+    def tags_list(self, match_field) -> list:
+        tags = deep_get(self.noise, match_field, "tags")
         if isinstance(tags, str):
             return [tags]
         return tags
 
-    @property
-    def is_vpn(self) -> Union[bool, str]:
-        if self._check_advanced("vpn") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return ast.literal_eval(self.noise.get("vpn"))
+    def tags_string(self, match_field, limit: int = 10) -> str:
+        tags_raw = deep_get(self.noise, match_field, "tags")
+        if isinstance(tags_raw, list):
+            return " ".join(tags_raw[:limit])
+        return tags_raw
 
-    @property
-    def vpn_service(self) -> str:
-        if self._check_advanced("vpn_service") is False:
-            return "GreyNoise Advanced Subscription required for this field"
-        return self.noise.get("vpn_service")
+    def is_vpn(self, match_field) -> bool:
+        return ast.literal_eval(deep_get(self.noise, match_field, "vpn"))
+
+    def vpn_service(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "vpn_service")
+
+
+class GreyNoiseRIOT:
+    def __init__(self, event):
+        self.riot = deep_get(event, "p_enrichment", "greynoise_riot_basic")
+
+    def ip_range(self, match_field) -> str:
+        return deep_get(self.riot, match_field, "ip_cidr")
+
+    def ip_info(self, match_field) -> object:
+        return deep_get(self.riot, match_field, "provider")
+
+    def scan_time(self, match_field) -> datetime.date:
+        return parser.parse(deep_get(self.riot, match_field, "scan_time"))
