@@ -1,0 +1,89 @@
+AnalysisType: rule
+LogTypes:
+  - AWS.VPCFlow
+RuleID: GreyNoise.Advanced.Test
+DisplayName: DO NOT ENABLE. Unit test for Greynoise Helper functions
+Severity: Low
+Description:  Unit test for Greynoise Helper functions
+DedupPeriodMinutes: 1440
+Enabled: false
+Filename: greynoise_noise_test.py
+
+Tests:
+  -
+    Name: Noise Helper Extractions
+    ExpectedResult: true
+    Log: {
+	"flowDirection": "ingress",
+	"interfaceId": "eth0",
+	"p_enrichment": {
+		"greynoise_noise_advanced": {
+			"srcAddr": {
+				"actor": "unknown",
+				"bot": false,
+				"classification": "malicious",
+				"cve": [
+					"CVE-2018-13379"
+				],
+				"first_seen": "2021-05-26 00:00:00.000000000",
+				"ip": "4.4.4.4",
+				"last_seen_timestamp": "2022-02-07 21:07:58.000000000",
+				"metadata": {
+					"asn": "AS39351",
+					"category": "isp",
+					"city": "Copenhagen",
+					"country": "Denmark",
+					"country_code": "DK",
+					"organization": "EvilCorp",
+					"os": "Linux 2.2-3.x",
+					"region": "Capital Region",
+					"tor": true
+                  },
+				"spoofable": false,
+				"tags": [
+					"Carries HTTP Referer",
+					"CGI Script Scanner",
+					"Cobalt Strike SSH Client",
+					"Follows HTTP Redirects",
+					"FortiOS Info Disclosure CVE-2018-13379",
+					"JRMI Scanner",
+					"Kubernetes Crawler",
+					"Nmap",
+					"Open Proxy Scanner",
+					"RDP Alternative Port Crawler",
+					"RDP Crawler",
+					"SIP OPTIONS Scanner",
+					"SMBv2 Crawler",
+					"SSH Alternative Port Crawler",
+					"SSH Bruteforcer",
+					"Stores HTTP Cookies",
+					"Telnet Bruteforcer",
+					"TLS/SSL Crawler",
+					"Web Crawler"
+				],
+				"vpn": true,
+				"vpn_service": "MULLVAD_VPN"
+			}
+		},
+		"greynoise_noise_basic": {
+			"srcAddr": {
+				"actor": "unknown",
+				"classification": "malicious",
+				"ip": "4.4.4.4"
+			}
+		}
+	},
+	"pktDstAddr": "10.0.0.91",
+	"pktSrcAddr": "4.4.4.4",
+	"protocol": 6,
+	"region": "us-east-2",
+	"srcAddr": "4.4.4.4",
+	"srcPort": 44512,
+	"start": "2022-02-14 00:58:57.000000000",
+	"status": "OK",
+	"subNetId": "subnet-1111",
+	"tcpFlags": 3,
+	"trafficType": "IPv4",
+	"version": 5,
+	"vpcId": "vpc-11111111"
+}
