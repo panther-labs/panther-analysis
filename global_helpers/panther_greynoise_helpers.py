@@ -91,15 +91,11 @@ class GreyNoiseRIOTBasic:
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
 
-    def classification(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "classification")
-
     def name(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        ip_addr = deep_get(self.riot, match_field, "provider", "ip")
-        return f"https://viz.greynoise.io/riot/{ip_addr}"
+        return f"www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
     def last_seen(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "provider", "last_seen"))
@@ -112,15 +108,11 @@ class GreyNoiseRIOTAdvanced:
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
 
-    def classification(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "classification")
-
     def name(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        ip_addr = deep_get(self.riot, match_field, "provider", "ip")
-        return f"https://viz.greynoise.io/riot/{ip_addr}"
+        return f"www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
     def last_updated(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "provider", "last_updated"))
