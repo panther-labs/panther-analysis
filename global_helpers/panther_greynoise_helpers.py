@@ -2,7 +2,24 @@ import ast
 import datetime
 
 from dateutil import parser
-from panther_base_helpers import PantherUnexpectedAlert, deep_get
+from panther_base_helpers import deep_get
+
+
+class PantherGreyNoiseException(Exception):
+    def __init__(self, sublevel):
+        if sublevel == "advanced":
+            message = (
+                "This account is configured with an advanced GreyNoise Subscription. Please "
+                "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced "
+            )
+        elif sublevel == "basic":
+            message = (
+                "This account is configured with a basic GreyNoise Subscription. Please use "
+                "GreyNoiseBasic and GreyNoiseRIOTBasic "
+            )
+        else:
+            message = "Unknown Error Reading GreyNoise Data"
+        super().__init__(message)
 
 
 class GreyNoiseBasic:
@@ -11,10 +28,7 @@ class GreyNoiseBasic:
         if self.noise is None:
             self.advanced_enabled = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
             if self.advanced_enabled is not None:
-                raise PantherUnexpectedAlert(
-                    "This account is configured with an Advanced GreyNoise Subscription.\
-                     Please use GreyNoiseAdvanced"
-                )
+                raise PantherGreyNoiseException("advanced")
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.noise, match_field, "ip")
@@ -35,10 +49,7 @@ class GreyNoiseAdvanced:
         if self.noise is None:
             self.basic_enabled = deep_get(event, "p_enrichment", "greynoise_noise_basic")
             if self.basic_enabled is not None:
-                raise PantherUnexpectedAlert(
-                    "This account is configured with an Advanced GreyNoise Subscription.\
-                     Please use GreyNoiseAdvanced"
-                )
+                raise PantherGreyNoiseException("basic")
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.noise, match_field, "ip")
@@ -104,10 +115,7 @@ class GreyNoiseRIOTBasic:
         if self.riot is None:
             self.advanced_enabled = deep_get(event, "p_enrichment", "greynoise_riot_advanced")
             if self.advanced_enabled is not None:
-                raise PantherUnexpectedAlert(
-                    "This account is configured with an Advanced GreyNoise RIOT Subscription.\
-                     Please use GreyNoiseRIOTAdvanced"
-                )
+                raise PantherGreyNoiseException("advanced")
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
@@ -128,10 +136,7 @@ class GreyNoiseRIOTAdvanced:
         if self.riot is None:
             self.basic_enabled = deep_get(event, "p_enrichment", "greynoise_riot_basic")
             if self.basic_enabled is not None:
-                raise PantherUnexpectedAlert(
-                    "This account is configured with an Advanced GreyNoise RIOT Subscription.\
-                     Please use GreyNoiseRIOTBasic"
-                )
+                raise PantherGreyNoiseException("basic")
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
