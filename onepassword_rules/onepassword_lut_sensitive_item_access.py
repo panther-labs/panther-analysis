@@ -5,7 +5,7 @@ lookup table to do this translation can be found at :
 
  https://docs.runpanther.io/guides/using-lookup-tables-1password-uuids
 
-The steps detailed in that document are requrired for this rule to function as intended.
+The steps detailed in that document are required for this rule to function as intended.
 """
 from panther_base_helpers import deep_get
 
