@@ -40,7 +40,7 @@ class GreyNoiseBasic:
         return deep_get(self.noise, match_field, "actor")
 
     def url(self, match_field) -> str:
-        return f"www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
+        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
 
 class GreyNoiseAdvanced:
@@ -61,7 +61,7 @@ class GreyNoiseAdvanced:
         return deep_get(self.noise, match_field, "actor")
 
     def url(self, match_field) -> str:
-        return f"www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
+        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def is_bot(self, match_field) -> bool:
         return ast.literal_eval(deep_get(self.noise, match_field, "bot"))
@@ -124,7 +124,7 @@ class GreyNoiseRIOTBasic:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        return f"www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
+        return f"https://www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
     def last_seen(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "provider", "last_seen"))
@@ -145,7 +145,7 @@ class GreyNoiseRIOTAdvanced:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        return f"www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
+        return f"https://www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
     def last_updated(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "provider", "last_updated"))
