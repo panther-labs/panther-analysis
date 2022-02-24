@@ -18,7 +18,7 @@ def rule(event):
 
 
 def title(event):
-    return f"A Sensitive 1Password Item was Accessed by user {deep_get(event,'user', 'name')}"
+    return f"A Sensitive 1Password Item was Accessed by user {deep_get(event, 'user', 'name')}"
 
 
 def alert_context(event):
