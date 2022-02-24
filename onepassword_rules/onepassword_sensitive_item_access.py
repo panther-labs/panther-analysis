@@ -2,6 +2,10 @@
 This rule detects access to high sensitivity items in your 1Password account. 1Password references
 these items by their UUID so the SENSITIVE_ITEM_WATCHLIST below allows for the mapping of UUID to
 meaningful name.
+
+There is an alternative method for creating this rule that uses Panther's lookup table feature,
+(currently in beta). That rule can be found in the 1Password detection pack with the name
+BETA - Sensitive 1Password Item Accessed (onepassword_lut_sensitive_item_access.py)
 """
 
 from panther_base_helpers import deep_get
