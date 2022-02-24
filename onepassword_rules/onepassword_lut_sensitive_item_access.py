@@ -9,12 +9,14 @@ The steps detailed in that document are required for this rule to function as in
 """
 from panther_base_helpers import deep_get
 
+# Add the human-readable names of 1Password items you want to monitor
+SENSITIVE_ITEM_WATCHLIST = ["demo_item"]
+
 
 def rule(event):
-    sensitive_item_watchlist = ["demo_item"]
     return (
         deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title")
-        in sensitive_item_watchlist
+        in SENSITIVE_ITEM_WATCHLIST
     )
 
 
@@ -23,13 +25,12 @@ def title(event):
 
 
 def alert_context(event):
-    context = {}
-    context["user"] = deep_get(event, "user", "name")
-    context["item_name"] = deep_get(
-        event, "p_enrichment", "1Password Translation", "item_uuid", "title"
-    )
-    context["client"] = deep_get(event, "client", "app_name")
-    context["ip_address"] = event.udm("source_ip")
-    context["event_time"] = event.get("timestamp")
+    context = {
+        "user": deep_get(event, "user", "name"),
+        "item_name": deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title"),
+        "client": deep_get(event, "client", "app_name"),
+        "ip_address": event.udm("source_ip"),
+        "event_time": event.get("timestamp"),
+    }
 
     return context

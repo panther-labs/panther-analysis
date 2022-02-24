@@ -22,11 +22,12 @@ def title(event):
 
 
 def alert_context(event):
-    context = {}
-    context["user"] = deep_get(event, "user", "name")
-    context["item_name"] = SENSITIVE_ITEM_WATCHLIST.get(event.get("item_uuid"))
-    context["client"] = deep_get(event, "client", "app_name")
-    context["ip_address"] = event.udm("source_ip")
-    context["event_time"] = event.get("timestamp")
+    context = {
+        "user": deep_get(event, "user", "name"),
+        "item_name": deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title"),
+        "client": deep_get(event, "client", "app_name"),
+        "ip_address": event.udm("source_ip"),
+        "event_time": event.get("timestamp"),
+    }
 
     return context
