@@ -15,6 +15,7 @@ LogTypes:
   - OneLogin.Events
   - Zendesk.Audit
   - Zoom.Activity
+  - OnePassword.SignInAttempt
 Tags:
   - DataModel
   - Identity & Access Management
@@ -355,4 +356,97 @@ Tests:
       'p_log_type': 'Zoom.Activity',
       'p_parse_time': '2021-06-04 10:02:33.650807',
       'p_event_time': '2021-06-04 09:59:53.650807'
+    }
+  -
+    Name: 1Password - Regular Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                        {
+                        "ip": "111.111.111.111",
+                        "region": "UnitTestRegion",
+                        "city": "UnitTestCityNew",
+                        "country": "UnitTestCountry",
+                        "hostname": "somedomain.com",
+                        "org": "Some Org"
+                        }
+      - objectName: get_string_set
+        returnValue: >-
+                        {'{
+                        "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+                        "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+                        "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+                        "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+                        "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+                        }'}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "uuid": "1234",
+        "session_uuid": "5678",
+        "timestamp": "2021-12-03 19:52:52",
+        "category": "success",
+        "type": "credentials_ok",
+        "country": "US",
+        "target_user": {
+          "email": "homer@springfield.gov",
+          "name": "Homer Simpson",
+          "uuid": "1234"
+        },
+        "client": {
+          "app_name": "1Password Browser Extension",
+          "app_version": "20184",
+          "ip_address": "1.1.1.1",
+          "os_name": "Solaris",
+          "os_version": "10",
+          "platform_name": "Chrome",
+          "platform_version": "96.0.4664.55"
+        },
+        "p_log_type": "OnePassword.SignInAttempt",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807"
+
+      }
+  -
+    Name: 1Password - Failed Login
+    ExpectedResult: false
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+      "uuid": "1234",
+      "session_uuid": "5678",
+      "timestamp": "2021-12-03 19:52:52",
+      "category": "credentials_failed",
+      "type": "password_secret_bad",
+      "country": "US",
+      "target_user": {
+        "email": "homer@springfield.gov",
+        "name": "Homer Simpson",
+        "uuid": "1234"
+      },
+      "client": {
+        "app_name": "1Password Browser Extension",
+        "app_version": "20184",
+        "ip_address": "111.111.111.111",
+        "os_name": "Solaris",
+        "os_version": "10",
+        "platform_name": "Chrome",
+        "platform_version": "96.0.4664.55"
+      },
+      "p_log_type": "OnePassword.SignInAttempt",
+      "p_parse_time": "2021-06-04 10:02:33.650807",
+      "p_event_time": "2021-06-04 09:59:53.650807"
+
     }
