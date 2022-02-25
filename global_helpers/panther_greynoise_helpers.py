@@ -1,3 +1,4 @@
+# pylint: disable=too-many-public-methods
 import ast
 import datetime
 
@@ -84,8 +85,35 @@ class GreyNoiseAdvanced:
     def last_seen(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.noise, match_field, "last_seen_timestamp"))
 
-    def metadata(self, match_field) -> dict:
-        return deep_get(self.noise, match_field, "metadata")
+    def asn(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "asn")
+
+    def category(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "category")
+
+    def city(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "city")
+
+    def country(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "country")
+
+    def country_code(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "country_code")
+
+    def organization(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "organization")
+
+    def operating_system(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "os")
+
+    def region(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "region")
+
+    def is_tor(self, match_field) -> bool:
+        return ast.literal_eval(deep_get(self.noise, match_field, "metadata", "tor"))
+
+    def rev_dns(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "metadata", "rdns")
 
     def is_spoofable(self, match_field) -> str:
         return ast.literal_eval(deep_get(self.noise, match_field, "spoofable"))
@@ -117,6 +145,9 @@ class GreyNoiseRIOTBasic:
             if self.advanced_enabled is not None:
                 raise PantherGreyNoiseException("advanced")
 
+    def is_riot(self, match_field) -> bool:
+        return ast.literal_eval(deep_get(self.riot, match_field, "provider", "riot"))
+
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
 
@@ -126,8 +157,8 @@ class GreyNoiseRIOTBasic:
     def url(self, match_field) -> str:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
-    def last_seen(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.riot, match_field, "provider", "last_seen"))
+    def last_updated(self, match_field) -> datetime.date:
+        return parser.parse(deep_get(self.riot, match_field, "scan_time"))
 
 
 class GreyNoiseRIOTAdvanced:
@@ -148,7 +179,7 @@ class GreyNoiseRIOTAdvanced:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.riot, match_field, 'ip')}"
 
     def last_updated(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.riot, match_field, "provider", "last_updated"))
+        return parser.parse(deep_get(self.riot, match_field, "scan_time"))
 
     def description(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "description")
@@ -158,3 +189,6 @@ class GreyNoiseRIOTAdvanced:
 
     def reference(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "reference")
+
+    def trust_level(self, match_field) -> int:
+        return deep_get(self.riot, match_field, "provider", "trust_level")
