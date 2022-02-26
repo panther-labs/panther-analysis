@@ -9,15 +9,11 @@ from panther_base_helpers import deep_get
 class PantherGreyNoiseException(Exception):
     def __init__(self, sublevel):
         if sublevel == "advanced":
-            message = (
-                "This account is configured with an advanced GreyNoise Subscription. Please "
-                "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced "
-            )
+            message = ("This account is configured with an advanced GreyNoise Subscription. Please "
+                       "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced ")
         elif sublevel == "basic":
-            message = (
-                "This account is configured with a basic GreyNoise Subscription. Please use "
-                "GreyNoiseBasic and GreyNoiseRIOTBasic "
-            )
+            message = ("This account is configured with a basic GreyNoise Subscription. Please use "
+                       "GreyNoiseBasic and GreyNoiseRIOTBasic ")
         else:
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
@@ -26,10 +22,14 @@ class PantherGreyNoiseException(Exception):
 class GreyNoiseBasic:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_basic")
-        if self.noise is None:
-            self.advanced_enabled = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
-            if self.advanced_enabled is not None:
-                raise PantherGreyNoiseException("advanced")
+        self.sublevel = "basic"
+
+    def __getattr__(self, name):
+        def advanced_only():
+            advanced_methods = [method for method in dir(GreyNoiseAdvanced) if method.startswith('__') is False and method not in dir(self)]
+            if name in advanced_methods:
+                raise PantherGreyNoiseException(self.sublevel)
+        return advanced_only()
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.noise, match_field, "ip")
@@ -47,10 +47,7 @@ class GreyNoiseBasic:
 class GreyNoiseAdvanced:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
-        if self.noise is None:
-            self.basic_enabled = deep_get(event, "p_enrichment", "greynoise_noise_basic")
-            if self.basic_enabled is not None:
-                raise PantherGreyNoiseException("basic")
+        self.sublevel = "advanced"
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.noise, match_field, "ip")
@@ -140,10 +137,14 @@ class GreyNoiseAdvanced:
 class GreyNoiseRIOTBasic:
     def __init__(self, event):
         self.riot = deep_get(event, "p_enrichment", "greynoise_riot_basic")
-        if self.riot is None:
-            self.advanced_enabled = deep_get(event, "p_enrichment", "greynoise_riot_advanced")
-            if self.advanced_enabled is not None:
-                raise PantherGreyNoiseException("advanced")
+        self.sublevel ="basic"
+
+    def __getattr__(self, name):
+        def advanced_only():
+            advanced_methods = [method for method in dir(GreyNoiseRIOTAdvanced) if method.startswith('__') is False and method not in dir(self)]
+            if name in advanced_methods:
+                raise PantherGreyNoiseException(self.sublevel)
+        return advanced_only()
 
     def is_riot(self, match_field) -> bool:
         return ast.literal_eval(deep_get(self.riot, match_field, "provider", "riot"))
@@ -192,3 +193,17 @@ class GreyNoiseRIOTAdvanced:
 
     def trust_level(self, match_field) -> int:
         return deep_get(self.riot, match_field, "provider", "trust_level")
+
+
+def GetGreyNoiseObject(event):
+    if deep_get(event, "p_enrichment", "greynoise_noise_advanced"):
+        return GreyNoiseAdvanced(event)
+    elif deep_get(event, "p_enrichment", "grey_noise_basic"):
+        return GreyNoiseBasic(event)
+
+
+def GetGreyNoiseRiotObject(event):
+    if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
+        return GreyNoiseRIOTAdvanced(event)
+    elif deep_get(event, "p_enrichment", "greynoise_riot_basic"):
+        return GreyNoiseRIOTBasic(event)
