@@ -1,5 +1,4 @@
 # pylint: disable=too-many-public-methods
-import ast
 import datetime
 
 from dateutil import parser
@@ -9,11 +8,15 @@ from panther_base_helpers import deep_get
 class PantherGreyNoiseException(Exception):
     def __init__(self, sublevel):
         if sublevel == "advanced":
-            message = ("This account is configured with an advanced GreyNoise Subscription. Please "
-                       "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced ")
+            message = (
+                "This account is configured with an advanced GreyNoise Subscription. Please "
+                "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced "
+            )
         elif sublevel == "basic":
-            message = ("This account is configured with a basic GreyNoise Subscription. Please use "
-                       "GreyNoiseBasic and GreyNoiseRIOTBasic ")
+            message = (
+                "This account is configured with a basic GreyNoise Subscription. Please use "
+                "GreyNoiseBasic and GreyNoiseRIOTBasic "
+            )
         else:
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
@@ -26,9 +29,14 @@ class GreyNoiseBasic:
 
     def __getattr__(self, name):
         def advanced_only():
-            advanced_methods = [method for method in dir(GreyNoiseAdvanced) if method.startswith('__') is False and method not in dir(self)]
+            advanced_methods = [
+                method
+                for method in dir(GreyNoiseAdvanced)
+                if method.startswith("__") is False and method not in dir(self)
+            ]
             if name in advanced_methods:
                 raise PantherGreyNoiseException(self.sublevel)
+
         return advanced_only()
 
     def ip_address(self, match_field) -> str:
@@ -62,7 +70,7 @@ class GreyNoiseAdvanced:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def is_bot(self, match_field) -> bool:
-        return ast.literal_eval(deep_get(self.noise, match_field, "bot"))
+        return deep_get(self.noise, match_field, "bot")
 
     def cve_string(self, match_field, limit: int = 10) -> str:
         cve_raw = deep_get(self.noise, match_field, "cve")
@@ -107,13 +115,13 @@ class GreyNoiseAdvanced:
         return deep_get(self.noise, match_field, "metadata", "region")
 
     def is_tor(self, match_field) -> bool:
-        return ast.literal_eval(deep_get(self.noise, match_field, "metadata", "tor"))
+        return deep_get(self.noise, match_field, "metadata", "tor")
 
     def rev_dns(self, match_field) -> str:
         return deep_get(self.noise, match_field, "metadata", "rdns")
 
     def is_spoofable(self, match_field) -> str:
-        return ast.literal_eval(deep_get(self.noise, match_field, "spoofable"))
+        return deep_get(self.noise, match_field, "spoofable")
 
     def tags_list(self, match_field) -> list:
         tags = deep_get(self.noise, match_field, "tags")
@@ -128,7 +136,7 @@ class GreyNoiseAdvanced:
         return tags_raw
 
     def is_vpn(self, match_field) -> bool:
-        return ast.literal_eval(deep_get(self.noise, match_field, "vpn"))
+        return deep_get(self.noise, match_field, "vpn")
 
     def vpn_service(self, match_field) -> str:
         return deep_get(self.noise, match_field, "vpn_service")
@@ -137,17 +145,22 @@ class GreyNoiseAdvanced:
 class GreyNoiseRIOTBasic:
     def __init__(self, event):
         self.riot = deep_get(event, "p_enrichment", "greynoise_riot_basic")
-        self.sublevel ="basic"
+        self.sublevel = "basic"
 
     def __getattr__(self, name):
         def advanced_only():
-            advanced_methods = [method for method in dir(GreyNoiseRIOTAdvanced) if method.startswith('__') is False and method not in dir(self)]
+            advanced_methods = [
+                method
+                for method in dir(GreyNoiseRIOTAdvanced)
+                if method.startswith("__") is False and method not in dir(self)
+            ]
             if name in advanced_methods:
                 raise PantherGreyNoiseException(self.sublevel)
+
         return advanced_only()
 
     def is_riot(self, match_field) -> bool:
-        return ast.literal_eval(deep_get(self.riot, match_field, "provider", "riot"))
+        return deep_get(self.riot, match_field, "provider", "riot")
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
@@ -165,10 +178,7 @@ class GreyNoiseRIOTBasic:
 class GreyNoiseRIOTAdvanced:
     def __init__(self, event):
         self.riot = deep_get(event, "p_enrichment", "greynoise_riot_advanced")
-        if self.riot is None:
-            self.basic_enabled = deep_get(event, "p_enrichment", "greynoise_riot_basic")
-            if self.basic_enabled is not None:
-                raise PantherGreyNoiseException("basic")
+        self.sublevel = "advanced"
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
@@ -195,15 +205,14 @@ class GreyNoiseRIOTAdvanced:
         return deep_get(self.riot, match_field, "provider", "trust_level")
 
 
+# pylint: disable=invalid-name
 def GetGreyNoiseObject(event):
     if deep_get(event, "p_enrichment", "greynoise_noise_advanced"):
         return GreyNoiseAdvanced(event)
-    elif deep_get(event, "p_enrichment", "grey_noise_basic"):
-        return GreyNoiseBasic(event)
+    return GreyNoiseBasic(event)
 
 
 def GetGreyNoiseRiotObject(event):
     if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
         return GreyNoiseRIOTAdvanced(event)
-    elif deep_get(event, "p_enrichment", "greynoise_riot_basic"):
-        return GreyNoiseRIOTBasic(event)
+    return GreyNoiseRIOTBasic(event)
