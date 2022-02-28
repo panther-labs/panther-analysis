@@ -1,10 +1,11 @@
-from panther_greynoise_helpers import GreyNoiseAdvanced, GreyNoiseBasic
+from panther_greynoise_helpers import GreyNoiseAdvanced, GreyNoiseBasic, GetGreyNoiseObject
 
 
 # This rule was created to test GreyNoise helper functionality and should not be enabled
 def rule(event):
-    advanced_noise = GreyNoiseAdvanced(event)
+    advanced_noise = GetGreyNoiseObject(event)
     basic_noise = GreyNoiseBasic(event)
+
     return (
         # Testing GreyNoise Advanced Extraction
         advanced_noise.ip_address("srcAddr") == "4.4.4.4"
