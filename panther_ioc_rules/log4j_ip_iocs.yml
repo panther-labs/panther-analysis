@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: log4j_ip_iocs.py
 RuleID: IOC.Log4JIPs
-DisplayName: LOG4J Indicators of Compromise (IP)
-Enabled: true
+DisplayName: DEPRECATED -  LOG4J Indicators of Compromise (IP)
+Enabled: false
 LogTypes:
   - AWS.ALB
   - AWS.CloudTrail
@@ -24,10 +24,10 @@ Tags:
   - Cloudflare
   - Nginx
   - Juniper
-
+  - Deprecated
 Severity: High
 Description: >
-    Detects when an IP address known to have engaged in Log4J exploit scanning has been seen in various log sources
+   Deprecated rule. IP addresses involved in LOG4j scanning have been largely recycled at this point, this generates a large amount of false alerts at this point
 Reference: >
     https://blog.cloudflare.com/actual-cve-2021-44228-payloads-captured-in-the-wild
 Runbook: >
@@ -52,6 +52,6 @@ Tests:
     Log:
       {
         "srcaddr": "0.0.0.1",
-        "dstaddr": "159.89.122.19",
-        "p_any_ip_addresses": ["159.89.122.19"],
+        "dstaddr": "0.0.0.1",
+        "p_any_ip_addresses": ["0.0.0.1"],
       }
