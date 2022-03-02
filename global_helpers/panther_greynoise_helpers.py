@@ -27,6 +27,9 @@ class GreyNoiseBasic:
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_basic")
         self.sublevel = "basic"
 
+    def subscription_level(self):
+        return self.sublevel
+
     def __getattr__(self, name):
         def advanced_only():
             advanced_methods = [
@@ -56,6 +59,9 @@ class GreyNoiseAdvanced:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
         self.sublevel = "advanced"
+
+    def subscription_level(self):
+        return self.sublevel
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.noise, match_field, "ip")
@@ -158,6 +164,9 @@ class GreyNoiseRIOTBasic:
                 raise PantherGreyNoiseException(self.sublevel)
 
         return advanced_only()
+
+    def subscription_level(self):
+        return self.sublevel
 
     def is_riot(self, match_field) -> bool:
         return deep_get(self.riot, match_field, "provider", "riot")

@@ -1,4 +1,8 @@
-from panther_greynoise_helpers import GreyNoiseAdvanced, GreyNoiseBasic, GetGreyNoiseObject
+from panther_greynoise_helpers import (
+    GetGreyNoiseObject,
+    GreyNoiseAdvanced,
+    GreyNoiseBasic,
+)
 
 
 # This rule was created to test GreyNoise helper functionality and should not be enabled
