@@ -73,8 +73,8 @@ DIRTYPIPE_POC_HASHES = {
     "b52350c819dfd5c14359fca92dfcfcafd7c2a36b273546b1c94f6804cdd6b9d3",
     "0e40d0944ac44647ab51cf928914456a92606da6ebea5a47d44ee07783c78ec4",
     "3946337d1edc09f71394716b18b1bbc77fc8beb2cd23fa430b922c357172b93b",
-    "092691d88c6dde0d8ad9a93f819657fec016e427e48a872faa6984af2202b529"
-    }
+    "092691d88c6dde0d8ad9a93f819657fec016e427e48a872faa6984af2202b529",
+}
 
 # IOC Helper functions:
 def ioc_match(indicators: list, known_iocs: set) -> list:
