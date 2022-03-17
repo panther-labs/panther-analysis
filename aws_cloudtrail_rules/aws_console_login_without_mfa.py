@@ -10,9 +10,21 @@ def rule(event):
     if event.get("eventName") != "ConsoleLogin":
         return False
 
+    # Extract some nested JSON structure
     additional_event_data = event.get("additionalEventData", {})
     session_context = deep_get(event, "userIdentity", "sessionContext", default={})
     response_elements = event.get("responseElements", {})
+
+    # Only alert on successful logins where MFA is not in use
+    if response_elements.get("ConsoleLogin") == "Success" and additional_event_data.get("MFAUsed") == "No":
+        # If using AWS SSOv2 return False
+        if "AWSReservedSSO" in deep_get(event, "userIdentity", "arn" ):
+            return False
+        
+        # if not AWS SSOv2 check for other SAML Provider
+        if additional_event_data.get("SamlProviderArn"):
+            return False
+        
 
     # If Account is less than 3 days old do not alert
     # This functionality is not enabled by default, in order to start logging new user creations
@@ -36,20 +48,9 @@ def rule(event):
     if is_new_account:
         return False
 
-    return (
-        # Only alert on successful logins
-        response_elements.get("ConsoleLogin") == "Success"
-        and
-        # Where MFA is not in use
-        additional_event_data.get("MFAUsed") == "No"
-        and
-        # Ignoring SSO login events
-        not additional_event_data.get("SamlProviderArn")
-        and
-        # And ignoring logins that were authenticated via a session that was itself
-        # authenticated with MFA
-        deep_get(session_context, "attributes", "mfaAuthenticated") != "true"
-    )
+    if response_elements.get("ConsoleLogin") == "Success" and additional_event_data.get("MFAUsed") == "No":
+        return True
+    return False
 
 
 def title(event):
