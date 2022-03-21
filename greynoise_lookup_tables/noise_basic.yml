@@ -16,122 +16,204 @@ logTypeMap:
       selectors:
         - "$.event.srcIP"
     - logType: Atlassian.Audit
-    			Selectors: []string{"$.attributes.location.ip"},
-    - logType:   "AWS.ALB",
-			Selectors: []string{"clientIp"},
-    - logType: "AWS.CloudTrail",
-			// add p_any_ip_addresses because we extract ip addresses from polymorphic events
-			Selectors: []string{"sourceIPAddress", "p_any_ip_addresses"},
-    - logType: "AWS.GuardDuty",
-			// use p_any_ip_addresses because we extract ip addresses from polymorphic events
-			Selectors: []string{"p_any_ip_addresses"},
-    - logType:   "AWS.S3ServerAccess",
-			Selectors: []string{"remoteip"},
-    - logType: "AWS.VPCDns",
-			// use p_any_ip_addresses because the answers are variable and not always ip addresses
-			Selectors: []string{"p_any_ip_addresses"},
-    - logType:   "AWS.VPCFlow",
-			Selectors: []string{"dstAddr", "srcAddr"},
-    - logType:   "AWS.WAFWebACL",
-			Selectors: []string{"$.httpRequest.clientIp"},
-    - logType:   "CiscoUmbrella.CloudFirewall",
-			Selectors: []string{"destinationIp", "sourceIp"},
-    - logType:   "CiscoUmbrella.DNS",
-			Selectors: []string{"externalIp", "internalIp"},
-    - logType:   "CiscoUmbrella.Proxy",
-			Selectors: []string{"destinationIp", "externalIp", "internalIp"},
-    - logType:   "Cloudflare.HttpRequest",
-			Selectors: []string{"ClientIP", "EdgeServerIP", "OriginIP"},
-    - logType:   "Cloudflare.Firewall",
-			Selectors: []string{"ClientIP"},
-    - logType:   "Cloudflare.Spectrum",
-			Selectors: []string{"ClientIP", "OriginIP"},
-    - logType:   "Crowdstrike.ActivityAudit",
-			Selectors: []string{"UserIp"},
-    - logType:   "Crowdstrike.DetectionSummary",
-			Selectors: []string{"LocalIP", "OriginSourceIpAddress"},
-    - logType:   "Crowdstrike.DNSRequest",
-			Selectors: []string{"IpAddress"},
-    - logType:   "Crowdstrike.AIDMaster",
-			Selectors: []string{"aip"},
-    - logType:   "Crowdstrike.ManagedAssets",
-			Selectors: []string{"GatewayIP"},
-    - logType:   "Crowdstrike.NetworkConnect",
-			Selectors: []string{"LocalAddressIP4", "LocalAddressIP6", "RemoteAddressIP4", "RemoteAddressIP6"},
-    - logType:   "Crowdstrike.NetworkListen",
-			Selectors: []string{"LocalAddressIP4", "LocalAddressIP6", "RemoteAddressIP4", "RemoteAddressIP6"},
-    - logType:   "Duo.Authentication",
-			Selectors: []string{"$.access_device.ip", "$.auth_device.ip"},
-    - logType:   "Box.Event",
-			Selectors: []string{"ip_address"},
-    - logType:   "GCP.AuditLog",
-			Selectors: []string{"$.protoPayload.requestMetadata.callerIP", "$.httpRequest.remoteIP", "$.httpRequest.serverIP"},
-    - logType:   "GitLab.API",
-			Selectors: []string{"remote_ip"},
-    - logType:   "GitLab.Production",
-			Selectors: []string{"remote_ip"},
-    - logType:   "Gravitational.TeleportAudit",
-			Selectors: []string{"dst_addr", "src_addr"},
-    - logType:   "GSuite.ActivityEvent",
-			Selectors: []string{"ipAddress"},
-    - logType:   "GSuite.Reports",
-			Selectors: []string{"ipAddress"},
-    - logType: "Juniper.Access",
-			// use p_any_ip_addresses because we extract ip addresses but have no fields
-			Selectors: []string{"p_any_ip_addresses"},
-    - logType:   "Juniper.Audit",
-			Selectors: []string{"login_ip"},
-    - logType:   "Juniper.Firewall",
-			Selectors: []string{"SRC", "DST"},
-    - logType:   "Juniper.Security",
-			Selectors: []string{"source_ip"},
-    - logType: "Lacework.Events",
-			// use p_any_ip_addresses because we extract ip addresses but fields are variable
-			Selectors: []string{"p_any_ip_addresses"},
-    - logType:   "Microsoft365.Audit.AzureActiveDirectory",
-			Selectors: []string{"ActorIpAddress", "ClientIP"},
-    - logType:   "Microsoft365.Audit.Exchange",
-			Selectors: []string{"ClientIP", "ClientIPAddress"},
-    - logType:   "Microsoft365.Audit.SharePoint",
-			Selectors: []string{"ClientIP"},
-    - logType:   "Microsoft365.Audit.General",
-			Selectors: []string{"ClientIP"},
-    - logType:   "Microsoft365.DLP.All",
-			Selectors: []string{"ClientIP"},
-    - logType:   "Nginx.Access",
-			Selectors: []string{"remoteAddr"},
-    - logType:   "Okta.SystemLog",
-			Selectors: []string{"$.client.ipAddress"},
-    - logType:   "OneLogin.Events",
-			Selectors: []string{"ipaddr"},
-    - logType:   "OnePassword.ItemUsage",
-			Selectors: []string{"$.client.ip_address"},
-    - logType:   "OnePassword.SignInAttempt",
-			Selectors: []string{"$.client.ip_address"},
-    - logType:   "Salesforce.Login",
-			Selectors: []string{"CLIENT_IP", "SOURCE_IP"},
-    - logType:   "Salesforce.LoginAs",
-			Selectors: []string{"CLIENT_IP"},
-    - logType:   "Salesforce.Logout",
-			Selectors: []string{"CLIENT_IP"},
-    - logType:   "Salesforce.URI",
-			Selectors: []string{"CLIENT_IP"},
-    - logType:   "Slack.AccessLogs",
-			Selectors: []string{"ip"},
-    - logType:   "Slack.AuditLogs",
-			Selectors: []string{"$.context.ip_address"},
-    - logType:   "Sophos.Central",
-			Selectors: []string{"$.source_info.ip"},
-    - logType:   "Suricata.Anomaly",
-			Selectors: []string{"dest_ip", "src_ip"},
-    - logType:   "Suricata.DNS",
-			Selectors: []string{"dest_ip", "src_ip"},
-    - logType:   "Zeek.DNS",
-			Selectors: []string{"id.orig_h", "id.resp_h"},
-    - logType:   "Zendesk.Audit",
-			Selectors: []string{"ip_address"},
-    - logType:   "Zoom.Activity",
-			Selectors: []string{"ip_address"},
+      selectors:
+        - "$.attributes.location.ip"
+    - logType: AWS.ALB
+      selectors:
+        - "clientIp"
+    - logType: AWS.CloudTrail
+      selectors:
+        # add p_any_ip_addresses because we extract ip addresses from polymorphic events
+        - "sourceIPAddress"
+	- "p_any_ip_addresses"
+    - logType: AWS.GuardDuty
+      selectors:
+        # use p_any_ip_addresses because we extract ip addresses from polymorphic events
+        - "p_any_ip_addresses"
+    - logType: AWS.S3ServerAccess
+      selectors:
+        - "remoteip"
+    - logType: AWS.VPCDns
+      selectors:
+        # use p_any_ip_addresses because the answers are variable and not always ip addresses
+        - "p_any_ip_addresses"
+    - logType: AWS.VPCFlow
+      selectors:
+        - "dstAddr"
+	- "srcAddr"
+    - logType: AWS.WAFWebACL
+      selectors:
+        - "$.httpRequest.clientIp"
+    - logType: CiscoUmbrella.CloudFirewall
+      selectors:
+        - "destinationIp"
+	- "sourceIp"
+    - logType: CiscoUmbrella.DNS
+      selectors:
+        - "externalIp"
+	- "internalIp"
+    - logType: CiscoUmbrella.Proxy
+      selectors:
+        - "destinationIp"
+	- "externalIp"
+	- "internalIp"
+    - logType: Cloudflare.HttpRequest
+      selectors:
+        - "ClientIP"
+	- "EdgeServerIP"
+	- "OriginIP"
+    - logType: Cloudflare.Firewall
+      selectors:
+        - "ClientIP"
+    - logType: Cloudflare.Spectrum
+      selectors:
+        - "ClientIP"
+	- "OriginIP"
+    - logType: Crowdstrike.ActivityAudit
+      selectors:
+        - "UserIp"
+    - logType: Crowdstrike.DetectionSummary
+      selectors:
+        - "LocalIP"
+	- "OriginSourceIpAddress"
+    - logType: Crowdstrike.DNSRequest
+      selectors:
+        - "IpAddress"
+    - logType: Crowdstrike.AIDMaster
+      selectors:
+        - "aip"
+    - logType: Crowdstrike.ManagedAssets
+      selectors:
+        - "GatewayIP"
+    - logType: Crowdstrike.NetworkConnect
+      selectors:
+        - "LocalAddressIP4"
+	- "LocalAddressIP6"
+	- "RemoteAddressIP4"
+	- "RemoteAddressIP6"
+    - logType: Crowdstrike.NetworkListen
+      selectors:
+        - "LocalAddressIP4"
+	- "LocalAddressIP6"
+	- "RemoteAddressIP4"
+	- "RemoteAddressIP6"
+    - logType: Duo.Authentication
+      selectors:
+        - "$.access_device.ip"
+	- "$.auth_device.ip"
+    - logType: Box.Event
+      selectors:
+        - "ip_address"
+    - logType: GCP.AuditLog
+      selectors:
+        - "$.protoPayload.requestMetadata.callerIP"
+	- "$.httpRequest.remoteIP"
+	- "$.httpRequest.serverIP"
+    - logType: GitLab.API
+      selectors:
+        - "remote_ip"
+    - logType: GitLab.Production
+      selectors:
+        - "remote_ip"
+    - logType: Gravitational.TeleportAudit
+      selectors:
+        - "dst_addr"
+	- "src_addr"
+    - logType: GSuite.ActivityEvent
+      selectors:
+        - "ipAddress"
+    - logType: GSuite.Reports
+      selectors:
+        - "ipAddress"
+    - logType: Juniper.Access
+      selectors:
+        # use p_any_ip_addresses because we extract ip addresses but have no fields
+        - "p_any_ip_addresses"
+    - logType: Juniper.Audit
+      selectors:
+        - "login_ip"
+    - logType: Juniper.Firewall
+      selectors:
+        - "SRC"
+	- "DST"
+    - logType: Juniper.Security
+      selectors:
+        - "source_ip"
+    - logType: Lacework.Events
+      selectors:
+        # use p_any_ip_addresses because we extract ip addresses but fields are variable
+        - "p_any_ip_addresses"
+    - logType: Microsoft365.Audit.AzureActiveDirectory
+      selectors:
+        - "ActorIpAddress"
+	- "ClientIP"
+    - logType: Microsoft365.Audit.Exchange
+      selectors:
+        - "ClientIP", "ClientIPAddress"
+    - logType: Microsoft365.Audit.SharePoint
+      selectors:
+        - "ClientIP"
+    - logType: Microsoft365.Audit.General
+      selectors:
+        - "ClientIP"
+    - logType: Microsoft365.DLP.All
+      selectors:
+        - "ClientIP"
+    - logType: Nginx.Access
+      selectors:
+        - "remoteAddr"
+    - logType: Okta.SystemLog
+      selectors:
+        - "$.client.ipAddress"
+    - logType: OneLogin.Events
+      selectors:
+        - "ipaddr"
+    - logType: OnePassword.ItemUsage
+      selectors:
+        - "$.client.ip_address"
+    - logType: OnePassword.SignInAttempt
+      selectors:
+        - "$.client.ip_address"
+    - logType: Salesforce.Login
+      selectors:
+        - "CLIENT_IP"
+	- "SOURCE_IP"
+    - logType: Salesforce.LoginAs
+      selectors:
+        - "CLIENT_IP"
+    - logType: Salesforce.Logout
+      selectors:
+        - "CLIENT_IP"
+    - logType: Salesforce.URI
+      selectors:
+        - "CLIENT_IP"
+    - logType: Slack.AccessLogs
+      selectors:
+        - "ip"
+    - logType: Slack.AuditLogs
+      selectors:
+        - "$.context.ip_address"
+    - logType: Sophos.Central
+      selectors:
+        - "$.source_info.ip"
+    - logType: Suricata.Anomaly
+      selectors:
+        - "dest_ip"
+	- "src_ip"
+    - logType: Suricata.DNS
+      selectors:
+        - "dest_ip"
+	- "src_ip"
+    - logType: Zeek.DNS
+      selectors:
+        - "id.orig_h"
+	- "id.resp_h"
+    - logType: Zendesk.Audit
+      selectors:
+        - "ip_address"
+    - logType: Zoom.Activity
+      selectors:
+        - "ip_address"
 lookupSchema:
   logType: GreyNoise.Noise
   indexType: simple
