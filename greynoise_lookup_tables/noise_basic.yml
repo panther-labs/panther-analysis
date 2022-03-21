@@ -25,7 +25,7 @@ logTypeMap:
       selectors:
         # add p_any_ip_addresses because we extract ip addresses from polymorphic events
         - "sourceIPAddress"
-	- "p_any_ip_addresses"
+        - "p_any_ip_addresses"
     - logType: AWS.GuardDuty
       selectors:
         # use p_any_ip_addresses because we extract ip addresses from polymorphic events
@@ -40,42 +40,42 @@ logTypeMap:
     - logType: AWS.VPCFlow
       selectors:
         - "dstAddr"
-	- "srcAddr"
+        - "srcAddr"
     - logType: AWS.WAFWebACL
       selectors:
         - "$.httpRequest.clientIp"
     - logType: CiscoUmbrella.CloudFirewall
       selectors:
         - "destinationIp"
-	- "sourceIp"
+        - "sourceIp"
     - logType: CiscoUmbrella.DNS
       selectors:
         - "externalIp"
-	- "internalIp"
+        - "internalIp"
     - logType: CiscoUmbrella.Proxy
       selectors:
         - "destinationIp"
-	- "externalIp"
-	- "internalIp"
+        - "externalIp"
+        - "internalIp"
     - logType: Cloudflare.HttpRequest
       selectors:
         - "ClientIP"
-	- "EdgeServerIP"
-	- "OriginIP"
+        - "EdgeServerIP"
+        - "OriginIP"
     - logType: Cloudflare.Firewall
       selectors:
         - "ClientIP"
     - logType: Cloudflare.Spectrum
       selectors:
         - "ClientIP"
-	- "OriginIP"
+        - "OriginIP"
     - logType: Crowdstrike.ActivityAudit
       selectors:
         - "UserIp"
     - logType: Crowdstrike.DetectionSummary
       selectors:
         - "LocalIP"
-	- "OriginSourceIpAddress"
+        - "OriginSourceIpAddress"
     - logType: Crowdstrike.DNSRequest
       selectors:
         - "IpAddress"
@@ -88,27 +88,27 @@ logTypeMap:
     - logType: Crowdstrike.NetworkConnect
       selectors:
         - "LocalAddressIP4"
-	- "LocalAddressIP6"
-	- "RemoteAddressIP4"
-	- "RemoteAddressIP6"
+        - "LocalAddressIP6"
+        - "RemoteAddressIP4"
+        - "RemoteAddressIP6"
     - logType: Crowdstrike.NetworkListen
       selectors:
         - "LocalAddressIP4"
-	- "LocalAddressIP6"
-	- "RemoteAddressIP4"
-	- "RemoteAddressIP6"
+        - "LocalAddressIP6"
+        - "RemoteAddressIP4"
+        - "RemoteAddressIP6"
     - logType: Duo.Authentication
       selectors:
         - "$.access_device.ip"
-	- "$.auth_device.ip"
+        - "$.auth_device.ip"
     - logType: Box.Event
       selectors:
         - "ip_address"
     - logType: GCP.AuditLog
       selectors:
         - "$.protoPayload.requestMetadata.callerIP"
-	- "$.httpRequest.remoteIP"
-	- "$.httpRequest.serverIP"
+        - "$.httpRequest.remoteIP"
+        - "$.httpRequest.serverIP"
     - logType: GitLab.API
       selectors:
         - "remote_ip"
@@ -118,7 +118,7 @@ logTypeMap:
     - logType: Gravitational.TeleportAudit
       selectors:
         - "dst_addr"
-	- "src_addr"
+        - "src_addr"
     - logType: GSuite.ActivityEvent
       selectors:
         - "ipAddress"
@@ -135,7 +135,7 @@ logTypeMap:
     - logType: Juniper.Firewall
       selectors:
         - "SRC"
-	- "DST"
+        - "DST"
     - logType: Juniper.Security
       selectors:
         - "source_ip"
@@ -146,10 +146,11 @@ logTypeMap:
     - logType: Microsoft365.Audit.AzureActiveDirectory
       selectors:
         - "ActorIpAddress"
-	- "ClientIP"
+        - "ClientIP"
     - logType: Microsoft365.Audit.Exchange
       selectors:
-        - "ClientIP", "ClientIPAddress"
+        - "ClientIP"
+        - "ClientIPAddress"
     - logType: Microsoft365.Audit.SharePoint
       selectors:
         - "ClientIP"
@@ -177,7 +178,7 @@ logTypeMap:
     - logType: Salesforce.Login
       selectors:
         - "CLIENT_IP"
-	- "SOURCE_IP"
+        - "SOURCE_IP"
     - logType: Salesforce.LoginAs
       selectors:
         - "CLIENT_IP"
@@ -199,15 +200,15 @@ logTypeMap:
     - logType: Suricata.Anomaly
       selectors:
         - "dest_ip"
-	- "src_ip"
+        - "src_ip"
     - logType: Suricata.DNS
       selectors:
         - "dest_ip"
-	- "src_ip"
+        - "src_ip"
     - logType: Zeek.DNS
       selectors:
         - "id.orig_h"
-	- "id.resp_h"
+        - "id.resp_h"
     - logType: Zendesk.Audit
       selectors:
         - "ip_address"
