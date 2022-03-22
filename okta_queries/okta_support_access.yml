@@ -3,7 +3,29 @@ QueryName: Okta Support Access
 Enabled: true
 Description: >
   Show instances that Okta support was granted to your account
-Query: >
+AthenaQuery: > 
+  SELECT 
+  p_event_time as event_time,
+  actor.alternateid as actor_email,
+  actor.displayName as actor_name,
+  displayMessage,
+  eventType,
+  json_extract(debugcontext.debugdata, '$.privilegeGranted') as priv_granted,
+  target as target_name,
+  client.ipAddress as src_ip,
+  client.geographicalContext.city as city,
+  client.geographicalContext.country as country,
+  client.useragent.rawUserAgent as user_agent
+  FROM okta_systemlog
+  WHERE 
+  (
+  eventType = 'user.session.impersonation.grant' OR 
+  eventType = 'user.session.impersonation.initiate'
+  ) and
+  p_occurs_between('2022-01-14','2022-03-22')
+  ORDER BY
+    event_time desc
+SnowflakeQuery: >
   SELECT 
   p_event_time as event_time,
   actor:alternateId as actor_email,
@@ -21,7 +43,7 @@ Query: >
     OR 
     eventType = 'user.session.impersonation.initiate'
    AND  
-      p_occurs_between('2021-01-14','2021-03-22')
+      p_occurs_between('2022-01-14','2022-03-22')
   ORDER BY
     event_time desc
 Schedule:
