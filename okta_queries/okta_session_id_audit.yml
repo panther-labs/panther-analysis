@@ -1,0 +1,41 @@
+AnalysisType: scheduled_query
+QueryName: Okta Investigate Session ID Activity
+Enabled: true
+Description: >
+ Search for activity releated to a specific SessionID in Okta panther_logs.okta_systemlog
+AthenaQuery: >
+  SELECT  
+    p_event_time as event_time,
+    actor.alternateId as actor_email,
+    actor.displayName as actor_name,
+    authenticationContext.externalSessionId as sessionId,
+    displayMessage,
+    eventType,
+    client.ipAddress as src_ip,
+    client.geographicalContext.city as city,
+    client.geographicalContext.country as country,
+    client.userAgent.rawUserAgent as user_agent
+  FROM panther_logs.okta_systemlog
+  WHERE p_event_time >= current_timestamp - interval '604800' second
+      and if(partition_time is NULL, true, partition_time >= to_unixtime(date_trunc('HOUR', current_timestamp - interval '604800' second)))
+  -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
+  -- and authenticationContext:externalSessionId = 'sessionId'
+  SnowflakeQuery: >
+    SELECT  
+      p_event_time as event_time,
+      actor:alternateId as actor_email,
+      actor:displayName as actor_name,
+      authenticationContext:externalSessionId as sessionId,
+      displayMessage,
+      eventType,
+      client:ipAddress as src_ip,
+      client:geographicalContext:city as city,
+      client:geographicalContext:country as country,
+      client:userAgent:rawUserAgent as user_agent
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_occurs_since('7 days')
+    -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
+    -- and authenticationContext:externalSessionId = 'sessionId'
+Schedule:
+  RateMinutes: 43200
+  TimeoutMinutes: 1
