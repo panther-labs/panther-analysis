@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: okta_account_support_access.py
+RuleID: Okta.Support.Access
+DisplayName: Okta Support Access Granted
+Enabled: true
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+Severity: Medium
+Description: An admin user has granted accesss to Okta Support to your account
+Reference: https://help.okta.com/en/prod/Content/Topics/Settings/settings-support-access.htm
+Runbook: Contact Admin to ensure this was sanctioned activity
+DedupPeriodMinutes: 15
+SummaryAttributes:
+  - eventType
+  - severity
+  - displayMessage
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Support Access Granted
+    ExpectedResult: true
+    Log:
+      {
+      "published": "2022-03-22 14:21:53.225",
+      "eventType": "user.session.impersonation.grant",
+      "version": "0",
+      "severity": "INFO",
+      "legacyEventType": "core.user.impersonation.grant.enabled",
+      "displayMessage": "Enable impersonation grant",
+      "actor": {
+        "alternateId": "homer@springfield.gov",
+        "displayName": "Homer Simpson",
+        "id": "111111",
+        "type": "User"
+	    },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "75.166.10.81",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
+            },
+            "zone": "null"
+          },
+        "p_log_type": "Okta.SystemLog"
+        }
+  -
+    Name: Login Event
+    ExpectedResult: False
+    Log:
+      {
+      "published": "2022-03-22 14:21:53.225",
+      "eventType": "user.session.start",
+      "version": "0",
+      "severity": "INFO",
+      "actor": {
+        "alternateId": "homer@springfield.gov",
+        "displayName": "Homer Simpson",
+        "id": "111111",
+        "type": "User"
+	    },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "75.166.10.81",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
+            },
+            "zone": "null"
+          },
+        "p_log_type": "Okta.SystemLog"
+        }

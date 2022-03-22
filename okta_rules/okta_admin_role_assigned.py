@@ -42,6 +42,7 @@ def title(event):
 def alert_context(event):
     return okta_alert_context(event)
 
+
 def severity(event):
     if deep_get(event, "debugContext", "debugData", "privilegeGranted") == "Super administrator":
         return "HIGH"

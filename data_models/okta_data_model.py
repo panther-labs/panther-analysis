@@ -12,10 +12,7 @@ def get_event_type(event):
         and event.get("outcome", {}).get("result") == "SUCCESS"
     ):
         return event_type.SUCCESSFUL_LOGIN
-    if (
-        event.get("eventType") in ["user.mfa.factor.deactivate", "user.mfa.factor.suspend"]
-    ):
+    if event.get("eventType") in ["user.mfa.factor.deactivate", "user.mfa.factor.suspend"]:
         return event_type.MFA_DISABLED
-    
-    
+
     return None
