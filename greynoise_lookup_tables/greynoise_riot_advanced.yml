@@ -4,14 +4,11 @@ refresh:
   objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/riot_full.jsonl.gz
   periodMinutes: 240
 description: GreyNoise Riot Full Enrichment Data
+reference: https://docs.panther.com/enrichment-beta/threat-intelligence/greynoise
 enabled: false
 logTypeMap:
   primaryKey: ip_cidr
   associatedLogTypes:
-    - logType: AWS.CloudTrail
-      selectors:
-        - "sourceIPAddress"
-        - "p_any_ip_addresses"
     - logType: AlphaSOC.Alert
       selectors:
         - "$.event.srcIP"
