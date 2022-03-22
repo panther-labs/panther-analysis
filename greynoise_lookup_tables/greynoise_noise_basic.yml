@@ -1,12 +1,12 @@
-name: GreyNoise Riot Basic
+name: greynoise_noise_basic
 refresh:
   roleARN: arn:aws:iam::347758056897:role/panther-greynoise-basic-access-role
-  objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/riot_basic.jsonl.gz
-  periodMinutes: 240
-description: GreyNoise Riot Basic Enrichment Data
+  objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/noise_basic.jsonl.gz
+  periodMinutes: 60
+description: GreyNoise Basic Enrichment Data
 enabled: true
 logTypeMap:
-  primaryKey: ip_cidr
+  primaryKey: ip
   associatedLogTypes:
     - logType: AWS.CloudTrail
       selectors:
@@ -216,5 +216,5 @@ logTypeMap:
       selectors:
         - "ip_address"
 lookupSchema:
-  logType: GreyNoise.RIOT
-  indexType: cidr
+  logType: GreyNoise.Noise
+  indexType: simple
