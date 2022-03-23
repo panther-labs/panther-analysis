@@ -16,8 +16,7 @@ AthenaQuery: >
     client.geographicalContext.country as country,
     client.userAgent.rawUserAgent as user_agent
   FROM panther_logs.okta_systemlog
-  WHERE p_event_time >= current_timestamp - interval '604800' second
-      and if(partition_time is NULL, true, partition_time >= to_unixtime(date_trunc('HOUR', current_timestamp - interval '604800' second)))
+  WHERE p_occurs_since('7 days')
   -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
   -- and authenticationContext:externalSessionId = 'sessionId'
   SnowflakeQuery: >

@@ -10,13 +10,11 @@ AthenaQuery: >
   actor.displayName as actor_name,
   displayMessage,
   eventType,
-  json_extract(debugcontext.debugdata, '$.privilegeGranted') as priv_granted,
-  target as target_name,
   client.ipAddress as src_ip,
   client.geographicalContext.city as city,
   client.geographicalContext.country as country,
   client.useragent.rawUserAgent as user_agent
-  FROM okta_systemlog
+  FROM panther_logs.okta_systemlog
   WHERE 
   (
   eventType = 'user.session.impersonation.grant' OR 
