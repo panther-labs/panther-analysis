@@ -8,6 +8,7 @@ LogTypes:
   - Atlassian.Audit
   - GitHub.Audit
   - Zendesk.Audit
+  - Okta.SystemLog
 Severity: High
 Description: Detects when Multi-Factor Authentication (MFA) is disabled
 SummaryAttributes:
@@ -91,3 +92,90 @@ Tests:
         "created_at": "2021-05-28T18:39:50Z",
         "p_log_type": "Zendesk.Audit"
     }
+  -
+    Name: Okta - MFA Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "eventtype": "user.mfa.factor.deactivate",
+        "version": "0",
+        "severity": "INFO",
+        "displaymessage": "Reset factor for user",
+        "actor": {
+          "alternateId": "homer@springfield.gov",
+          "displayName": "Homer Simpson",
+          "id": "11111111111",
+          "type": "User"
+        },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "outcome": {
+          "reason": "User reset FIDO_WEBAUTHN factor",
+          "result": "SUCCESS"
+        },
+        "target": [
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "1111111",
+            "type": "User"
+          }
+        ],
+        "authenticationcontext": {
+          "authenticationStep": 0,
+          "externalSessionId": "1111111"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+  -
+    Name: Okta - MFA Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "eventtype": "user.mfa.factor.update",
+        "version": "0",
+        "severity": "INFO",
+        "displaymessage": "Update factor for user",
+        "actor": {
+          "alternateId": "homer@springfield.gov",
+          "displayName": "Homer Simpson",
+          "id": "11111111111",
+          "type": "User"
+        },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "outcome": {
+          "reason": "User reset FIDO_WEBAUTHN factor",
+          "result": "SUCCESS"
+        },
+        "target": [
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "1111111",
+            "type": "User"
+          }
+        ],
+        "authenticationcontext": {
+          "authenticationStep": 0,
+          "externalSessionId": "1111111"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+
