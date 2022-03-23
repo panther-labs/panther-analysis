@@ -189,6 +189,9 @@ class GreyNoiseRIOTAdvanced:
         self.riot = deep_get(event, "p_enrichment", "greynoise_riot_advanced")
         self.sublevel = "advanced"
 
+    def subscription_level(self):
+        return self.sublevel
+
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
 
