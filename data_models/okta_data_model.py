@@ -21,4 +21,7 @@ def get_event_type(event):
         "user.mfa.factor.update ",
     ]:
         return event_type.MFA_ENABLED
+
+    if event.get("eventType") == "system.mfa.factor.deactivate":
+        return event_type.ADMIN_MFA_DISABLED
     return None
