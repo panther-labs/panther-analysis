@@ -18,9 +18,7 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(
-        event, "debugContext", "debugData", "requestId", default="<UNKNOWN_REQUEST_ID>"
-    )
+    return deep_get(event, "debugContext", "debugData", "requestId", default="<UNKNOWN_REQUEST_ID>")
 
 
 def title(event):

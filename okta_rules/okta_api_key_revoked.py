@@ -10,11 +10,11 @@ def rule(event):
 
 def title(event):
     target = event.get("target", [{}])
-    key_name = (
-        target[0].get("displayName", "MISSING DISPLAY NAME") if target else "MISSING TARGET"
-    )
+    key_name = target[0].get("displayName", "MISSING DISPLAY NAME") if target else "MISSING TARGET"
 
-    return f"{deep_get(event, 'actor', 'displayName')} <{deep_get(event, 'actor', 'alternateId')}> created a new API key - <{key_name}>"
+    return (f"{deep_get(event, 'actor', 'displayName')} <{deep_get(event, 'actor', 'alternateId')}>"
+           f"created a new API key - <{key_name}>")
+
 
 def alert_context(event):
     return okta_alert_context(event)
