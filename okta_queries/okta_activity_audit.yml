@@ -9,8 +9,8 @@ AthenaQuery: >
   WHERE p_occurs_since('7 days')
   AND actor.type = 'User'
   -- Uncomment lines below to filter by user email and/or eventType
-  -- and actor_email = 'email'
-  -- and eventType = 'eventType'
+  -- and actor_email = '<EMAIL_GOES_HERE>'
+  -- and eventType = '<EVENTTYPE_GOES_HERE>'
   GROUP BY actor.displayName, actor.alternateId, eventType
   ORDER BY  actor_name, activity_count DESC
 SnowflakeQuery: >

@@ -18,7 +18,7 @@ AthenaQuery: >
   FROM panther_logs.okta_systemlog
   WHERE p_occurs_since('7 days')
   -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
-  -- and authenticationContext:externalSessionId = 'sessionId'
+  -- and authenticationContext:externalSessionId = '<SESSIONID_GOES_HERE>'
     ORDER BY event_time DESC
 SnowflakeQuery: >
     SELECT  
@@ -35,7 +35,7 @@ SnowflakeQuery: >
     FROM panther_logs.public.okta_systemlog
     WHERE p_occurs_since('7 days')
     -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
-    -- and authenticationContext:externalSessionId = 'sessionId'
+    -- and authenticationContext:externalSessionId = '<SESSIONID_GOES_HERE>'
     ORDER BY event_time DESC
 Schedule:
   RateMinutes: 43200
