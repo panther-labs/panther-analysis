@@ -13,6 +13,7 @@ def rule(event):
         return False
     return (
         deep_get(event, "actor", "alternateId") == "system@okta.com"
+        and event.get("uuid") == "unknown"
         and deep_get(event, "userAgent", "rawUserAgent") is None
         and deep_get(event, "client", "geographicalContext", "country") is None
     )
