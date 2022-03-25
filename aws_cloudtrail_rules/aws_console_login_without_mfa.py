@@ -16,7 +16,7 @@ def rule(event):
 
     # If using AWS SSOv2 or other SAML provider return False
     if (
-        "AWSReservedSSO" in deep_get(event, "userIdentity", "arn")
+        "AWSReservedSSO" in deep_get(event, "userIdentity", "arn", default=" ")
         or additional_event_data.get("SamlProviderArn") is not None
     ):
         return False
