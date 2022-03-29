@@ -18,10 +18,7 @@ def rule(event):
 
 
 def dedup(event):
-    request_id = deep_get(
-        event, "debugContext", "debugData", "requestId", default="<UNKNOWN_REQUEST_ID>"
-    )
-    return f"{request_id}"
+    return deep_get(event, "debugContext", "debugData", "requestId", default="<UNKNOWN_REQUEST_ID>")
 
 
 def title(event):
@@ -34,7 +31,7 @@ def title(event):
 
     return (
         f"{deep_get(event, 'actor', 'displayName')} "
-        f"<{deep_get(event, 'actor', 'alternateId')}> was granted "
+        f"<{deep_get(event, 'actor', 'alternateId')}> granted "
         f"[{privilege}] privileges to {display_name} <{alternate_id}>"
     )
 
