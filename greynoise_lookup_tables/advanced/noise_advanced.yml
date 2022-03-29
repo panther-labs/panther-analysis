@@ -1,217 +1,215 @@
-name: greynoise_noise_advanced
-refresh:
-  roleARN: arn:aws:iam::347758056897:role/panther-greynoise-full-access-role
-  objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/noise_full.jsonl.gz
-  periodMinutes: 60
-description: GreyNoise NOISE Advanced classifies the intent of IPs seen scanning the internet, including tags, CVEs, geo-data and detailed context. This version of NOISE requires an additional license - please contact your Panther or GreyNoise representative for more information.
-reference: https://docs.panther.com/enrichment-beta/threat-intelligence/greynoise
-enabled: false
-logTypeMap:
-  primaryKey: ip
-  associatedLogTypes:
-    - logType: AlphaSOC.Alert
-      selectors:
+LookupName: greynoise_noise_advanced
+Schema: GreyNoise.Noise
+Refresh:
+  RoleARN: arn:aws:iam::347758056897:role/panther-greynoise-full-access-role
+  ObjectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/noise_full.jsonl.gz
+  PeriodMinutes: 60
+Description: GreyNoise NOISE Advanced classifies the intent of IPs seen scanning the internet, including tags, CVEs, geo-data and detailed context. This version of NOISE requires an additional license - please contact your Panther or GreyNoise representative for more information.
+Reference: https://docs.panther.com/enrichment-beta/threat-intelligence/greynoise
+Enabled: false
+LogTypeMap:
+  PrimaryKey: ip
+  AssociatedLogTypes:
+    - LogType: AlphaSOC.Alert
+      Selectors:
         - "$.event.srcIP"
-    - logType: Atlassian.Audit
-      selectors:
+    - LogType: Atlassian.Audit
+      Selectors:
         - "$.attributes.location.ip"
-    - logType: AWS.ALB
-      selectors:
+    - LogType: AWS.ALB
+      Selectors:
         - "clientIp"
-    - logType: AWS.CloudTrail
-      selectors:
+    - LogType: AWS.CloudTrail
+      Selectors:
         # add p_any_ip_addresses because we extract ip addresses from polymorphic events
         - "sourceIPAddress"
         - "p_any_ip_addresses"
-    - logType: AWS.GuardDuty
-      selectors:
+    - LogType: AWS.GuardDuty
+      Selectors:
         # use p_any_ip_addresses because we extract ip addresses from polymorphic events
         - "p_any_ip_addresses"
-    - logType: AWS.S3ServerAccess
-      selectors:
+    - LogType: AWS.S3ServerAccess
+      Selectors:
         - "remoteip"
-    - logType: AWS.VPCDns
-      selectors:
+    - LogType: AWS.VPCDns
+      Selectors:
         # use p_any_ip_addresses because the answers are variable and not always ip addresses
         - "p_any_ip_addresses"
-    - logType: AWS.VPCFlow
-      selectors:
+    - LogType: AWS.VPCFlow
+      Selectors:
         - "dstAddr"
         - "srcAddr"
-    - logType: AWS.WAFWebACL
-      selectors:
+    - LogType: AWS.WAFWebACL
+      Selectors:
         - "$.httpRequest.clientIp"
-    - logType: CiscoUmbrella.CloudFirewall
-      selectors:
+    - LogType: CiscoUmbrella.CloudFirewall
+      Selectors:
         - "destinationIp"
         - "sourceIp"
-    - logType: CiscoUmbrella.DNS
-      selectors:
+    - LogType: CiscoUmbrella.DNS
+      Selectors:
         - "externalIp"
         - "internalIp"
-    - logType: CiscoUmbrella.Proxy
-      selectors:
+    - LogType: CiscoUmbrella.Proxy
+      Selectors:
         - "destinationIp"
         - "externalIp"
         - "internalIp"
-    - logType: Cloudflare.HttpRequest
-      selectors:
+    - LogType: Cloudflare.HttpRequest
+      Selectors:
         - "ClientIP"
         - "EdgeServerIP"
         - "OriginIP"
-    - logType: Cloudflare.Firewall
-      selectors:
+    - LogType: Cloudflare.Firewall
+      Selectors:
         - "ClientIP"
-    - logType: Cloudflare.Spectrum
-      selectors:
+    - LogType: Cloudflare.Spectrum
+      Selectors:
         - "ClientIP"
         - "OriginIP"
-    - logType: Crowdstrike.ActivityAudit
-      selectors:
+    - LogType: Crowdstrike.ActivityAudit
+      Selectors:
         - "UserIp"
-    - logType: Crowdstrike.DetectionSummary
-      selectors:
+    - LogType: Crowdstrike.DetectionSummary
+      Selectors:
         - "LocalIP"
         - "OriginSourceIpAddress"
-    - logType: Crowdstrike.DNSRequest
-      selectors:
+    - LogType: Crowdstrike.DNSRequest
+      Selectors:
         - "IpAddress"
-    - logType: Crowdstrike.AIDMaster
-      selectors:
+    - LogType: Crowdstrike.AIDMaster
+      Selectors:
         - "aip"
-    - logType: Crowdstrike.ManagedAssets
-      selectors:
+    - LogType: Crowdstrike.ManagedAssets
+      Selectors:
         - "GatewayIP"
-    - logType: Crowdstrike.NetworkConnect
-      selectors:
+    - LogType: Crowdstrike.NetworkConnect
+      Selectors:
         - "LocalAddressIP4"
         - "LocalAddressIP6"
         - "RemoteAddressIP4"
         - "RemoteAddressIP6"
-    - logType: Crowdstrike.NetworkListen
-      selectors:
+    - LogType: Crowdstrike.NetworkListen
+      Selectors:
         - "LocalAddressIP4"
         - "LocalAddressIP6"
         - "RemoteAddressIP4"
         - "RemoteAddressIP6"
-    - logType: Duo.Authentication
-      selectors:
+    - LogType: Duo.Authentication
+      Selectors:
         - "$.access_device.ip"
         - "$.auth_device.ip"
-    - logType: Box.Event
-      selectors:
+    - LogType: Box.Event
+      Selectors:
         - "ip_address"
-    - logType: GCP.AuditLog
-      selectors:
+    - LogType: GCP.AuditLog
+      Selectors:
         - "$.protoPayload.requestMetadata.callerIP"
         - "$.httpRequest.remoteIP"
         - "$.httpRequest.serverIP"
-    - logType: GitLab.API
-      selectors:
+    - LogType: GitLab.API
+      Selectors:
         - "remote_ip"
-    - logType: GitLab.Production
-      selectors:
+    - LogType: GitLab.Production
+      Selectors:
         - "remote_ip"
-    - logType: Gravitational.TeleportAudit
-      selectors:
+    - LogType: Gravitational.TeleportAudit
+      Selectors:
         - "dst_addr"
         - "src_addr"
-    - logType: GSuite.ActivityEvent
-      selectors:
+    - LogType: GSuite.ActivityEvent
+      Selectors:
         - "ipAddress"
-    - logType: GSuite.Reports
-      selectors:
+    - LogType: GSuite.Reports
+      Selectors:
         - "ipAddress"
-    - logType: Juniper.Access
-      selectors:
+    - LogType: Juniper.Access
+      Selectors:
         # use p_any_ip_addresses because we extract ip addresses but have no fields
         - "p_any_ip_addresses"
-    - logType: Juniper.Audit
-      selectors:
+    - LogType: Juniper.Audit
+      Selectors:
         - "login_ip"
-    - logType: Juniper.Firewall
-      selectors:
+    - LogType: Juniper.Firewall
+      Selectors:
         - "SRC"
         - "DST"
-    - logType: Juniper.Security
-      selectors:
+    - LogType: Juniper.Security
+      Selectors:
         - "source_ip"
-    - logType: Lacework.Events
-      selectors:
+    - LogType: Lacework.Events
+      Selectors:
         # use p_any_ip_addresses because we extract ip addresses but fields are variable
         - "p_any_ip_addresses"
-    - logType: Microsoft365.Audit.AzureActiveDirectory
-      selectors:
+    - LogType: Microsoft365.Audit.AzureActiveDirectory
+      Selectors:
         - "ActorIpAddress"
         - "ClientIP"
-    - logType: Microsoft365.Audit.Exchange
-      selectors:
+    - LogType: Microsoft365.Audit.Exchange
+      Selectors:
         - "ClientIP"
         - "ClientIPAddress"
-    - logType: Microsoft365.Audit.SharePoint
-      selectors:
+    - LogType: Microsoft365.Audit.SharePoint
+      Selectors:
         - "ClientIP"
-    - logType: Microsoft365.Audit.General
-      selectors:
+    - LogType: Microsoft365.Audit.General
+      Selectors:
         - "ClientIP"
-    - logType: Microsoft365.DLP.All
-      selectors:
+    - LogType: Microsoft365.DLP.All
+      Selectors:
         - "ClientIP"
-    - logType: Nginx.Access
-      selectors:
+    - LogType: Nginx.Access
+      Selectors:
         - "remoteAddr"
-    - logType: Okta.SystemLog
-      selectors:
+    - LogType: Okta.SystemLog
+      Selectors:
         - "$.client.ipAddress"
-    - logType: OneLogin.Events
-      selectors:
+    - LogType: OneLogin.Events
+      Selectors:
         - "ipaddr"
-    - logType: OnePassword.ItemUsage
-      selectors:
+    - LogType: OnePassword.ItemUsage
+      Selectors:
         - "$.client.ip_address"
-    - logType: OnePassword.SignInAttempt
-      selectors:
+    - LogType: OnePassword.SignInAttempt
+      Selectors:
         - "$.client.ip_address"
-    - logType: Salesforce.Login
-      selectors:
+    - LogType: Salesforce.Login
+      Selectors:
         - "CLIENT_IP"
         - "SOURCE_IP"
-    - logType: Salesforce.LoginAs
-      selectors:
+    - LogType: Salesforce.LoginAs
+      Selectors:
         - "CLIENT_IP"
-    - logType: Salesforce.Logout
-      selectors:
+    - LogType: Salesforce.Logout
+      Selectors:
         - "CLIENT_IP"
-    - logType: Salesforce.URI
-      selectors:
+    - LogType: Salesforce.URI
+      Selectors:
         - "CLIENT_IP"
-    - logType: Slack.AccessLogs
-      selectors:
+    - LogType: Slack.AccessLogs
+      Selectors:
         - "ip"
-    - logType: Slack.AuditLogs
-      selectors:
+    - LogType: Slack.AuditLogs
+      Selectors:
         - "$.context.ip_address"
-    - logType: Sophos.Central
-      selectors:
+    - LogType: Sophos.Central
+      Selectors:
         - "$.source_info.ip"
-    - logType: Suricata.Anomaly
-      selectors:
+    - LogType: Suricata.Anomaly
+      Selectors:
         - "dest_ip"
         - "src_ip"
-    - logType: Suricata.DNS
-      selectors:
+    - LogType: Suricata.DNS
+      Selectors:
         - "dest_ip"
         - "src_ip"
-    - logType: Zeek.DNS
-      selectors:
+    - LogType: Zeek.DNS
+      Selectors:
         - "id.orig_h"
         - "id.resp_h"
-    - logType: Zendesk.Audit
-      selectors:
+    - LogType: Zendesk.Audit
+      Selectors:
         - "ip_address"
-    - logType: Zoom.Activity
-      selectors:
+    - LogType: Zoom.Activity
+      Selectors:
         - "ip_address"
-lookupSchema:
-  logType: GreyNoise.Noise
-  indexType: simple
