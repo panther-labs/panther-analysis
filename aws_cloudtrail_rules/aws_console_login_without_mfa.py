@@ -43,10 +43,16 @@ def rule(event):
     if is_new_account:
         return False
 
-    return (
-        response_elements.get("ConsoleLogin") == "Success"
-        and additional_event_data.get("MFAUsed") == "No"
-    )
+    if response_elements.get("ConsoleLogin") == "Success":
+        # This logic is inverted because at times the second condition is None.
+        # It is not recommended to remove this 'double negative"
+        if (
+            additional_event_data.get("MFAUsed") != "Yes"
+            and deep_get(event, "userIdentity", "sessionContext", "attributes", "mfaAuthenticated")
+            != "true"
+        ):
+            return True
+    return False
 
 
 def title(event):
