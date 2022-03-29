@@ -1,12 +1,11 @@
-analysisType: lookup_table
-name: greynoise_noise_basic
+name: greynoise_noise_advanced
 refresh:
-  roleARN: arn:aws:iam::347758056897:role/panther-greynoise-basic-access-role
-  objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/noise_basic.jsonl.gz
+  roleARN: arn:aws:iam::347758056897:role/panther-greynoise-full-access-role
+  objectPath: s3://panther-greynoise-1rwdj37boou9s9tqp8gs19jp9ju9nusw2a-s3alias/luts/data/greynoise/noise_full.jsonl.gz
   periodMinutes: 60
-description: GreyNoise NOISE Basic classifies IPs seen scanning the internet based on intent - benign, malicious, and unknown. This version of NOISE is free with Panther.
+description: GreyNoise NOISE Advanced classifies the intent of IPs seen scanning the internet, including tags, CVEs, geo-data and detailed context. This version of NOISE requires an additional license - please contact your Panther or GreyNoise representative for more information.
 reference: https://docs.panther.com/enrichment-beta/threat-intelligence/greynoise
-enabled: true
+enabled: false
 logTypeMap:
   primaryKey: ip
   associatedLogTypes:
