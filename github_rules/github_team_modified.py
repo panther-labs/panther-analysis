@@ -27,7 +27,8 @@ def title(event):
     }
     action_key = event.get("action").split(".")[1]
     action = action_mappings.get(action_key, event.get("action"))
+    team_name = event.get("team") if "team" in event else "None"
     return (
         f"GitHub.Audit: User [{event.udm('actor_user')}] {action} "
-        f"[{deep_get(event, 'data', 'team')}]"
+        f"[{team_name}]"
     )
