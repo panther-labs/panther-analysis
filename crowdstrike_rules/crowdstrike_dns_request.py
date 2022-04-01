@@ -14,4 +14,4 @@ def title(event):
 
 def dedup(event):
     #  Alert on every individual lookup of a bad domain, per machine
-    return f"{event.get('timestamp')} {event.get('DomainName')} {event.get('aid')}"
+    return f"{event.get('DomainName')}-{event.get('aid')}"
