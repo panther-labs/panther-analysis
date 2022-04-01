@@ -17,5 +17,6 @@ def alert_context(event):
 def severity(event):
     return event.get("SeverityName")
 
-def dedup (event):
+
+def dedup(event):
     return f"{event.get('EventUUID')} - {event.get('ComputerName')}"

@@ -206,6 +206,7 @@ def okta_alert_context(event: dict):
         "client": event.get("client", ""),
     }
 
+
 def crowdstrike_detection_alert_context(event: dict):
     """Returns common context for Crowstrike detections"""
     return {
