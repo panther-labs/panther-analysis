@@ -1,0 +1,101 @@
+AnalysisType: rule
+Filename: crowdstrike_dns_request.py
+RuleID: Crowdstrike.DNS.Request
+DisplayName: DNS request to denylisted domain
+Enabled: true
+LogTypes:
+  - Crowdstrike.DNSRequest
+Tags:
+  - Crowdstrike
+Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Phishing
+Description: A DNS request was made to a domain on an explicit denylist
+Reference: https://docs.runpanther.io/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
+Runbook: Filter for host ID in title in Crowdstrike Host Management console to identify the system that queried the domain.
+DedupPeriodMinutes: 15
+SummaryAttributes:
+  - DomainName
+  - aid
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Denylisted Domain
+    ExpectedResult: true
+    Log:
+      {
+          "event_simpleName": "DnsRequest",
+          "name": "DnsRequestMacV1",
+        "aid": "00000000000000000000000000000001",
+          "aip": "111.111.111.111",
+          "cid": "00000000000000000000000000000002",
+        "id": "11111111-0000-1111-0000-111111111111",
+          "event_platform": "Mac",
+          "timestamp": "2021-10-01 00:00:00.000Z",
+          "ConfigBuild": "1007.4.0014301.11",
+          "ConfigStateHash": "507116305",
+          "Entitlements": "15",
+          "ContextThreadId": "0",
+          "ContextTimeStamp": "2021-10-08 19:55:04.448Z",
+        "ContextProcessId": "111111111111111111",
+          "EffectiveTransmissionClass": 2,
+          "DomainName": "baddomain.com",
+          "RequestType": "1",
+          "p_event_time": "2021-10-08 19:55:04.448Z",
+          "p_parse_time": "2021-10-08 20:09:41.933Z",
+          "p_log_type": "Crowdstrike.DNSRequest",
+        "p_row_id": "2ed00000000000000000000000000001",
+        "p_source_id": "11111111-1111-1111-1111-111111111111",
+          "p_source_label": "Crowdstrike",
+          "p_any_ip_addresses": [
+              "111.111.111.111"
+          ],
+          "p_any_domain_names": [
+              "baddomain.com"
+          ],
+          "p_any_trace_ids": [
+              "00000000000000000000000000000001",
+              "00000000000000000000000000000002"
+          ]
+      }
+  -
+    Name: Non-denylisted Domain
+    ExpectedResult: false
+    Log:
+      {
+          "event_simpleName": "DnsRequest",
+          "name": "DnsRequestMacV1",
+        "aid": "00000000000000000000000000000001",
+          "aip": "111.111.111.111",
+          "cid": "00000000000000000000000000000002",
+        "id": "11111111-0000-1111-0000-111111111111",
+          "event_platform": "Mac",
+          "timestamp": "2021-10-01 00:00:00.000Z",
+          "ConfigBuild": "1007.4.0014301.11",
+          "ConfigStateHash": "507116305",
+          "Entitlements": "15",
+          "ContextThreadId": "0",
+          "ContextTimeStamp": "2021-10-08 19:55:04.448Z",
+        "ContextProcessId": "111111111111111111",
+          "EffectiveTransmissionClass": 2,
+          "DomainName": "gooddomain.com",
+          "RequestType": "1",
+          "p_event_time": "2021-10-08 19:55:04.448Z",
+          "p_parse_time": "2021-10-08 20:09:41.933Z",
+          "p_log_type": "Crowdstrike.DNSRequest",
+        "p_row_id": "2ed00000000000000000000000000001",
+        "p_source_id": "11111111-1111-1111-1111-111111111111",
+          "p_source_label": "Crowdstrike",
+          "p_any_ip_addresses": [
+              "111.111.111.111"
+          ],
+          "p_any_domain_names": [
+              "gooddomain.com"
+          ],
+          "p_any_trace_ids": [
+              "00000000000000000000000000000001",
+              "00000000000000000000000000000002"
+          ]
+      }
+
