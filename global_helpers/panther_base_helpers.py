@@ -206,6 +206,19 @@ def okta_alert_context(event: dict):
         "client": event.get("client", ""),
     }
 
+def crowdstrike_detection_alert_context(event: dict):
+    """Returns common context for Crowstrike detections"""
+    return {
+        "user": event.get("UserName", ""),
+        "console-link": event.get("FalconHostLink", ""),
+        "commandline": event.get("CommandLine", ""),
+        "parentcommandline": event.get("ParentCommandLine", ""),
+        "filename": event.get("FileName", ""),
+        "filepath": event.get("FilePath", ""),
+        "description": event.get("DetectDescription", ""),
+        "action": event.get("PatternDispositionDescription", ""),
+    }
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
