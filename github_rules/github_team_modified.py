@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if not event.get("action").startswith("team"):
         return False
