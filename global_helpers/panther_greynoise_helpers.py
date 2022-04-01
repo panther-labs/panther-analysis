@@ -169,7 +169,7 @@ class GreyNoiseRIOTBasic:
         return self.sublevel
 
     def is_riot(self, match_field) -> bool:
-        return deep_get(self.riot, match_field, "provider", "riot")
+        return deep_get(self.riot, match_field, "ip_cidr" ) is not None
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
@@ -191,6 +191,9 @@ class GreyNoiseRIOTAdvanced:
 
     def subscription_level(self):
         return self.sublevel
+
+    def is_riot(self, match_field) -> bool:
+        return deep_get(self.riot, match_field, "ip_cidr" ) is not None
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip")
