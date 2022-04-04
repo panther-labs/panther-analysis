@@ -14,6 +14,12 @@ LogTypeMap:
     - LogType: AlphaSOC.Alert
       Selectors:
         - "$.event.srcIP"
+    - LogType: Apache.AccessCombined
+      Selectors:
+        - "remote_host_ip_address"
+    - LogType: Apache.AccessCommon
+      Selectors:
+        - "remote_host_ip_address"
     - LogType: Atlassian.Audit
       Selectors:
         - "$.attributes.location.ip"
