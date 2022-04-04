@@ -188,7 +188,7 @@ class GreyNoiseRIOTBasic:
         return deep_get(self.riot, match_field, "ip_cidr") is not None
 
     def ip_address(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "ip_cidr")
+        return deep_get(self.riot, match_field, "ip_cidr")
 
     def name(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "name")
