@@ -55,12 +55,13 @@ class GreyNoiseBasic:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def context(self, match_field) -> dict:
-        return{
+        return {
             "IP": self.ip_address(match_field),
             "Classification": self.classification(match_field),
-            "actor": self.actor(match_field),
+            "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
+
 
 class GreyNoiseAdvanced:
     def __init__(self, event):
@@ -155,12 +156,13 @@ class GreyNoiseAdvanced:
         return deep_get(self.noise, match_field, "vpn_service")
 
     def context(self, match_field) -> dict:
-        return{
+        return {
             "IP": self.ip_address(match_field),
             "Classification": self.classification(match_field),
-            "actor": self.actor(match_field),
+            "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
+
 
 class GreyNoiseRIOTBasic:
     def __init__(self, event):
@@ -183,7 +185,7 @@ class GreyNoiseRIOTBasic:
         return self.sublevel
 
     def is_riot(self, match_field) -> bool:
-        return deep_get(self.riot, match_field, "ip_cidr" ) is not None
+        return deep_get(self.riot, match_field, "ip_cidr") is not None
 
     def ip_address(self, match_field) -> str:
         return deep_get(self.riot, match_field, "provider", "ip_cidr")
@@ -192,13 +194,13 @@ class GreyNoiseRIOTBasic:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default ="")
+        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default="")
         return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
 
     def last_updated(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "scan_time"))
 
-    def context(self,match_field) -> dict:
+    def context(self, match_field) -> dict:
         return {
             "Is_RIOT": self.is_riot(match_field),
             "IP": self.ip_address(match_field),
@@ -225,9 +227,8 @@ class GreyNoiseRIOTAdvanced:
         return deep_get(self.riot, match_field, "provider", "name")
 
     def url(self, match_field) -> str:
-        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default ="")
+        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default="")
         return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
-
 
     def last_updated(self, match_field) -> datetime.date:
         return parser.parse(deep_get(self.riot, match_field, "scan_time"))
@@ -251,6 +252,7 @@ class GreyNoiseRIOTAdvanced:
             "Name": self.name(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
+
 
 # pylint: disable=invalid-name
 def GetGreyNoiseObject(event):
