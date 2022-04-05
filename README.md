@@ -1,13 +1,12 @@
 <p align="center">
-  <a href="https://www.runpanther.io"><img src=".img/panther-logo-github-highres.png" width=75% alt="Panther Logo"/></a>
+  <a href="https://www.runpanther.io"><img src=".img/panther-logo-github-highres.png" width=40% alt="Panther Logo"/></a>
 </p>
 
 <h3 align="center">Built-in Panther Detections</h3>
 
 <p align="center">
   <a href="https://docs.runpanther.io/quick-start">Panther Deployment</a> |
-  <a href="https://docs.runpanther.io/writing-detections/panther-analysis-tool">CLI Documentation</a> |
-  <a href="https://slack.runpanther.io/">Community Slack Channel</a>
+  <a href="https://docs.runpanther.io/writing-detections/panther-analysis-tool">CLI Documentation</a>
 </p>
 
 <p align="center">
@@ -21,26 +20,52 @@ Panther is a security analytics platform built for cloud-focused security teams.
 
 Panther enables teams to define detections as code and programmatically upload them to your Panther deployment.
 
-This repository contains all of Panther's built-in detections  installed by default.
+This repository contains all of Panther created detections that can be added to your Panther instance.
 
 We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
 
 # Quick Start
 
-```bash
-# Clone the repository
+## Clone the repository
 git clone git@github.com:panther-labs/panther-analysis.git
 cd panther-analysis
 
-# Configure your Python environment
+### Repo Structure
+
+Each folder contains detections in the format of `<log/resource type>_<detecton_type>`:
+
+* **Rules** analyze [logs](https://docs.panther.com/data-onboarding/supported-logs) to detect malicious activity
+* **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
+* **Scheduled rules** analyze output of periodically executed [SQL queries](https://docs.panther.com/data-analytics/example-queries)
+
+### Available Detections by Platform/Service 
+[AWS](indexes/aws.md)
+
+[Google Cloud Platform](indexes/gcp.md)
+
+[G-Suite (Gmail,Drive,etc)](indexes/gsuite.md)
+
+[Okta](indexes/okta.md)
+
+[Osquery](indexes/osquery.md)
+
+[1Password](indexes/onepass.md)
+
+[Snowflake](indexes/snowflake.md)
+## Configure your Python environment
 make install
 make venv
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 
-# Install dependencies and run your first test!
+## Install dependencies and run your first test!
 make deps
 pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
 ```
+# Available Detections by Platform
+[AWS](indexes/aws.md)
+
+[GCP](indexes/gcp.md)
+
 
 # Getting Started
 
@@ -77,14 +102,6 @@ pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
 # Important: Make sure you have access keys and region settings set for the AWS account running Panther
 pipenv run panther_analysis_tool upload --filter LogTypes=AWS.GuardDuty
 ```
-
-# Repo Structure
-
-Each folder contains detections in the format of `<log/resource type>_<detecton_type>`:
-
-* **Rules** analyze [logs](https://docs.runpanther.io/log-analysis/supported-logs) to detect malicious activity
-* **Policies** represent the desired secure state of a [resource](https://docs.runpanther.io/cloud-security/resources) to detect security misconfigurations
-* **Scheduled rules** (coming soon) analyze output of periodically executed [SQL queries](https://docs.runpanther.io/data-analytics/example-queries)
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
 
@@ -177,10 +194,6 @@ git pull panther-upstream master
 # Push the latest changes up to your forked repo and merge them
 git push
 ```
-
-## Continuous Deployment
-
-(coming soon)
 
 # License
 
