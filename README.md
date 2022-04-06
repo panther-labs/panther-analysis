@@ -43,11 +43,11 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 
 [Google Cloud Platform](indexes/gcp.md)
 
-[G-Suite (Gmail,Drive,etc)](indexes/gsuite.md)
+[Google Workspace](indexes/gworkspace.md)
 
 [Okta](indexes/okta.md)
 
-[Osquery](indexes/osquery.md)
+[OSquery](indexes/osquery.md)
 
 [1Password](indexes/onepass.md)
 
