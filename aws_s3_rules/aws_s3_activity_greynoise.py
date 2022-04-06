@@ -41,8 +41,7 @@ def title(event):
     # Group by ip-arn combinations
     ip = deep_get(event, 'sourceIPAddress')
     arn = deep_get(event, 'userIdentity', 'arn')
-    aws_account = deep_get(event, 'recipientAccountId')
-    return f'GreyNoise malicious S3 events detected by {ip} in AWS Account {aws_account} from {arn}'
+    return f'GreyNoise malicious S3 events detected by {ip} from {arn}'
 
 
 def alert_context(event):
