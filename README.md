@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="https://www.runpanther.io"><img src=".img/panther-logo-github-highres.png" width=40% alt="Panther Logo"/></a>
+  <a href="https://panther.com"><img src=".img/panther-logo-github-highres.png" width=40% alt="Panther Logo"/></a>
 </p>
 
 <h3 align="center">Built-in Panther Detections</h3>
 
 <p align="center">
-  <a href="https://docs.runpanther.io/quick-start">Panther Deployment</a> |
-  <a href="https://docs.runpanther.io/writing-detections/panther-analysis-tool">CLI Documentation</a>
+  <a href="https://docs.panther.com/quick-start">Panther Deployment</a> |
+  <a href="https://docs.panther.com/writing-detections/panther-analysis-tool">CLI Documentation</a>
 </p>
 
 <p align="center">
@@ -20,7 +20,7 @@ Panther is a security analytics platform built for cloud-focused security teams.
 
 Panther enables teams to define detections as code and programmatically upload them to your Panther deployment.
 
-This repository contains all of Panther created detections that can be added to your Panther instance.
+This repository contains all the detections developed by Panther for use in your Panther deployment.
 
 We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
 

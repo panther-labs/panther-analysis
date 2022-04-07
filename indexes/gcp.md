@@ -2,8 +2,6 @@
 
 [ GCP Resource in Unused Region](../gcp_audit_rules/gcp_unused_regions.py)
 
-[ GCP Resource in Unused Region](../gcp_audit_rules/gcp_unused_regions.py)
-
 [ GCP SQL Config Changes](../gcp_audit_rules/gcp_sql_config_changes.py)
 
 [ GCP GCS IAM Permission Changes](../gcp_audit_rules/gcp_gcs_iam_changes.py)
