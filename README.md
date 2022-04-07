@@ -56,54 +56,53 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 [Panther Standard Detections](indexes/standard.md)
 
 ## Configure your Python environment
+```bash
 make install
 make venv
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
-
-## Install dependencies and run your first test!
+````
+### Install dependencies and run your first test!
+```bash 
 make deps
 pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
 ```
-# Available Detections by Platform
-[AWS](indexes/aws.md)
-
-[GCP](indexes/gcp.md)
-
-
-# Getting Started
-
-The examples below demonstrate the local Panther workflow:
-
-```
-# Run detection tests
+### Run detection tests
+```bash
 pipenv run panther_analysis_tool test [-h] [--path PATH]
-                                [--filter KEY=VALUE [KEY=VALUE ...]]
+                                [--filter KEY=VALUE [KEY=VALUE ...]
                                 [--debug]
-
-# Test with a specific path
-pipenv run panther_analysis_tool test --path cisco_umbrella_dns_rules
-
-# Test by severity
+````
+### Test with a specific path
+```bash
+pipenv run panther_analysis_tool test --path cisco_umbrella_dns_rules`
+```
+### Test by severity
+```bash
 pipenv run panther_analysis_tool test --filter Severity=Critical
+```
 
-# Test by log type
+### Test by log type
+```bash
 pipenv run panther_analysis_tool test --filter LogTypes=AWS.GuardDuty
+```
 
-# Create a zip file of detections
+### Create a zip file of detections
+```bash
 pipenv run panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
                                [--filter KEY=VALUE [KEY=VALUE ...]]
                                [--debug]
-
-# Zip all Critical severity detections
+```
+### Zip all Critical severity detections
+```bash
 pipenv run panther_analysis_tool zip --filter Severity=Critical
-
-# Upload detections to your Panther instance
+````
+### Upload detections to your Panther instance
+```bash
 pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
                                   [--filter KEY=VALUE [KEY=VALUE ...]]
                                   [--debug]
 
 # Important: Make sure you have access keys and region settings set for the AWS account running Panther
-pipenv run panther_analysis_tool upload --filter LogTypes=AWS.GuardDuty
 ```
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
