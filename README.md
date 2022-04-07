@@ -49,9 +49,12 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 
 [OSquery](indexes/osquery.md)
 
-[1Password](indexes/onepass.md)
-
 [Snowflake](indexes/snowflake.md)
+
+[Other SaaS Services](indexes/saas.md)
+
+[Panther Standard Detections](indexes/standard.md)
+
 ## Configure your Python environment
 make install
 make venv
