@@ -1,5 +1,5 @@
 AnalysisType: rule
-Description: S3 operations from known malicious GreyNoise classifications
+Description: S3 operations from known malicious GreyNoise classifications. Note that this rule will only work with S3 object-level logging enabled for a given bucket.
 DisplayName: GreyNoise Malicious AWS S3 events
 Enabled: true
 Filename: aws_s3_activity_greynoise.py
@@ -205,3 +205,5 @@ SummaryAttributes:
     - recipientAccountId
     - sourceIpAddress
     - userAgent
+    - p_alert_context
+    - p_enrichment

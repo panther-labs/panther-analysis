@@ -1,9 +1,11 @@
 from ipaddress import ip_address
 
 from panther import lookup_aws_account_name
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
+# We could just look for GetObject, but ListBucket would reveal object enumeration, too.
+_S3_EVENT_LIST = ('ListBucket*', 'GetObject*')
 
 def rule(event):
     # Filter: Non-S3 events
@@ -14,6 +16,9 @@ def rule(event):
         return False
     # Filter: Internal AWS
     if deep_get(event, 'userIdentity', 'type') in ('AWSAccount', 'AWSService'):
+        return False
+    # Filter: Non "Get" events
+    if not pattern_match_list(event.get('eventName'), _S3_EVENT_LIST):
         return False
 
     # Validate the IP is actually an IP (sometimes it's a string)
