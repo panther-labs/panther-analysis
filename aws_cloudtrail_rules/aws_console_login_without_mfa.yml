@@ -12,6 +12,8 @@ Tags:
 Reports:
   CIS:
     - 3.2
+  MITRE ATT&CK:
+    - Initial Access:Valid Accounts
 Severity: High
 Description: A console login was made without multi-factor authentication.
 Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-console-login-without-mfa
@@ -21,6 +23,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1078
 Tests:
   -
     Name: No MFA Login - IAM User

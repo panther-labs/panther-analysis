@@ -11,6 +11,8 @@ Tags:
 Reports:
   CIS:
     - 3.8
+  MITRE ATT&CK:
+    - Exfiltration:Exfiltration Over Web Service
 Severity: Info
 DedupPeriodMinutes: 720 # 12 hours
 Description: >
@@ -22,6 +24,7 @@ SummaryAttributes:
   - userAgent
   - sourceIpAddress
   - p_any_aws_arns
+  - T1567
 Tests:
   -
     Name: S3 Bucket Policy Modified

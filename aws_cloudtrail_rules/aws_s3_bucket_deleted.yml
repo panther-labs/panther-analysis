@@ -7,6 +7,9 @@ LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
+Reports:
+  MITRE ATT&CK:
+    - Impact:Data Destruction
 Severity: Info
 Description: A S3 Bucket, Policy, or Website was deleted
 Runbook: Explore if this bucket deletion was potentially destructive
@@ -16,6 +19,7 @@ SummaryAttributes:
   - userAgent
   - recipientAccountId
   - vpcEndpointId
+  - T1485
 Tests:
   -
     Name: An S3 Bucket was deleted

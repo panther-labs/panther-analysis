@@ -11,6 +11,8 @@ Tags:
 Reports:
   CIS:
     - 3.1
+  MITRE ATT&CK:
+    - Discovery:Cloud Service Discovery
 Severity: Info
 Description: An unauthorized AWS API call was made
 Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-unauthorized-api-call
@@ -21,6 +23,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1526
 Threshold: 10
 Tests:
   -

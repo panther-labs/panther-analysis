@@ -11,6 +11,8 @@ Tags:
 Reports:
   CIS:
     - 3.14
+  MITRE ATT&CK:
+    - Defense Evasion:Impair Defenses
 Severity: Info
 DedupPeriodMinutes: 720 # 12 hours
 Description: An EC2 VPC was modified.
@@ -22,6 +24,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1562
 Tests:
   -
     Name: VPC Modified

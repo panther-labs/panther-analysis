@@ -14,6 +14,8 @@ Tags:
 Reports:
   CIS:
     - 3.6
+  MITRE ATT&CK:
+    - Privlege Escalation:ValidAccounts
 Severity: High
 Description: The root account has been logged into.
 Runbook: >
@@ -24,6 +26,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1078
 Tests:
   -
     Name: Successful Root Login

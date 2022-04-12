@@ -9,6 +9,9 @@ Tags:
   - AWS
   - Configuration Required
   - Identity and Access Management
+Reports:
+    MITRE ATT&CK:
+      - Privilege Escalation:Abuse Elevation Control Mechanism
 Severity: High
 Description: >
   A user assumed a role that was explicitly blocklisted for manual user assumption.
@@ -20,6 +23,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1548
 Tests:
   -
     Name: IAM Blocklisted Role Assumed

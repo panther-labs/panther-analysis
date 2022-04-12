@@ -10,7 +10,7 @@ Tags:
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - Persistence:Valid Accounts
+    - Persistence:Account Manipulation
 Description: >
   A Network ACL entry that allows access from anywhere was added.
 Runbook: >
@@ -21,6 +21,7 @@ SummaryAttributes:
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+  - T1098
 Tests:
   -
     Name: Overly Permissive Entry Added
