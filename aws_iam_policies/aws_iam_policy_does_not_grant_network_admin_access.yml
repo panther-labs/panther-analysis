@@ -8,9 +8,12 @@ ResourceTypes:
 Tags:
   - AWS
   - PCI
+  - T1078
 Reports:
   PCI:
     - 1.1.5
+  MITRE ATT&CK:
+    - Privilege Escalation:Valid Accounts
 Severity: Medium
 Description: >
   This policy validates that no IAM policies grant admin privileges on network resources. This should be used in conjunction with suppressions for the legitimate network admin policies in your acccount.

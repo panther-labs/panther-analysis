@@ -8,9 +8,12 @@ ResourceTypes:
 Tags:
   - AWS
   - PCI
+  - T1552
 Reports:
   PCI:
     - 3.5.2
+  MITRE ATT&CK:
+    - Credential Access:Unsecured Credentials
 Severity: High
 Description: >
   This policy validates that KMS Keys restrict what entities can use them and how. This is to ensure that encryption keys are limited in who can use them in order to prevent unapproved decryption.
