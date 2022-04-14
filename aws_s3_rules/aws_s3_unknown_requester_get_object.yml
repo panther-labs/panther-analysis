@@ -10,9 +10,12 @@ Tags:
   - AWS
   - Configuration Required
   - Security Control
+  - T1530
 Reports:
   Panther:
     - Data Access
+  MITRE ATT&CK:
+    - Collection:Data from Cloud Storage Object
 Severity: Low
 Description: Validates that proper IAM entities are accessing sensitive data buckets.
 Runbook: If the S3 access is not expected for this bucket, investigate the requester's other traffic.
