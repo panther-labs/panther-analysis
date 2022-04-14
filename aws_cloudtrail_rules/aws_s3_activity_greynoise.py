@@ -4,7 +4,8 @@ from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
-# We could just look for GetObject, but ListBucket would reveal object enumeration, too.
+# Monitor for GetObject events from S3.
+# Also check ListBucket to reveal object enumeration.
 _S3_EVENT_LIST = ('ListBucket*', 'GetObject*')
 
 def rule(event):
