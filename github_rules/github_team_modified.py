@@ -24,8 +24,7 @@ def title(event):
     }
     action_key = event.get("action").split(".")[1]
     action = action_mappings.get(action_key, event.get("action"))
-    team_name = event.get("team") if "team" in event else "None"
+    team_name = event.get("team") if "team" in event else "<MISSING_TEAM>"
     return (
-        f"GitHub.Audit: User [{event.udm('actor_user')}] {action} "
-        f"[{team_name}]"
+        f"GitHub.Audit: User [{event.udm('actor_user')}] {action} [{team_name}]"
     )
