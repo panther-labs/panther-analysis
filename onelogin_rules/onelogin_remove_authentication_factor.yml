@@ -1,13 +1,17 @@
 AnalysisType: rule
 Filename: onelogin_remove_authentication_factor.py 
 RuleID: OneLogin.AuthFactorRemoved
-DisplayName: OneLogin Authenication Factor Removed
+DisplayName: OneLogin Authentication Factor Removed
 Enabled: true
 LogTypes:
   - OneLogin.Events
 Tags:
   - OneLogin
   - Identity & Access Management
+  - T1556
+Reports:
+  MITRE ATT&CK:
+    - Defense Evasion:Modify Authentication Process
 Severity: Low
 Description: >
   A user removed an authentication factor or otp device.

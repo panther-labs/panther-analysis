@@ -6,11 +6,15 @@ DedupPeriodMinutes: 60
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Valid Accounts
 Tags:
   - AWS
   - Configuration Required
   - Identity & Access Management
   - Authentication
+  - T1078
 Severity: High
 Description: An AWS console login was made without SAML/SSO.
 Runbook: Modify the AWS account configuration.

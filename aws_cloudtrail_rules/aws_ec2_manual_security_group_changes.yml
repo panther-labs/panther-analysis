@@ -5,10 +5,14 @@ DisplayName: AWS EC2 Manual Security Group Change
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - Defense Evasion:Impair Defenses
 Tags:
   - AWS
   - Security Control
   - Configuration Required
+  - T1562
 Severity: Medium
 Description: >
   An EC2 security group was manually updated without abiding by the organization's accepted processes. This rule expects organizations to either use the Console, CloudFormation, or Terraform, configurable in the rule's ALLOWED_USER_AGENTS.

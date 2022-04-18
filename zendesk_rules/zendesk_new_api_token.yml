@@ -7,6 +7,12 @@ Enabled: true
 LogTypes:
   - Zendesk.Audit
 Severity: High
+Tags:
+  - Zendesk
+  - T1528
+Reports:
+  MITRE ATT&CK:
+    - Credential Access:Steal Application Access Token
 Description: A user created a new API token to be used with Zendesk.
 Runbook: Validate the api token was created for valid use case, otherwise delete the token immediately.
 SummaryAttributes:
