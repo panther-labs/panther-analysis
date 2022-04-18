@@ -1,0 +1,42 @@
+AnalysisType: rule
+Filename: zoom_operation_user_granted_admin.py
+RuleID: Zoom.UserGrantedAdmin
+DisplayName: Zoom User Granted Admin Rights
+Enabled: True
+LogTypes:
+  - Zoom.Operation
+Tags:
+  - Zoom
+  - T1078
+Severity: Medium
+Description: >
+  A Zoom user has been granted admin access
+Reports:
+  MITRE AT&CK:
+    - Privilege Escalation:Valid Accounts
+Reference: https://support.zoom.us/hc/en-us/articles/115001078646-Using-role-management
+Runbook: >
+  Contact Zoom admin and ensure this access level is intended and appropriate
+SummaryAttributes:
+  - p_any_emails
+Tests:
+  -
+    Name: User Granted Admin
+    ExpectedResult: True
+    Log:
+      {
+         "operator": "homer@panther.io",
+         "category_type": "User",
+         "action": "Update",
+         "operation_detail": "Update User bart@panther.io  - User Role: from Member to Admin"
+      }
+  -
+    Name: Non-admin user update
+    ExpectedResult: False
+    Log:
+      {
+         "operator": "homer@panther.io",
+         "category_type": "User",
+         "action": "Update",
+         "operation_detail": "Update User lisa@panther.io  - Job Title: set to Contractor"
+      }

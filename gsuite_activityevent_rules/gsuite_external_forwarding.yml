@@ -7,12 +7,13 @@ LogTypes:
   - GSuite.ActivityEvent
 Tags:
   - GSuite
+  - T1020
+Reports:
+  MITRE ATT&CK:
+    - Collection:Email Collection
 Severity: High
 Description: >
   A user has configured mail forwarding to an external domain
-Reports:
-  MITRE ATT&CK:
-    - Email Collection:Email Forwarding Rule
 Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#email_forwarding_out_of_domain
 Runbook: >
   Follow up with user to remove this forwarding rule if not allowed.

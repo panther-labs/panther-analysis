@@ -4,6 +4,9 @@ DisplayName: Panther Universal Detections
 Description: This pack groups the standard rules that leverage unified data models
 PackDefinition:
   IDs:
+    # Data Models
+    - Standard.Asana.Audit
+    - Standard.Atlassian.Audit
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
     - Standard.AWS.S3ServerAccess
@@ -14,10 +17,17 @@ PackDefinition:
     - Standard.GSuite.Reports
     - Standard.Okta.SystemLog
     - Standard.OneLogin.Events
+    - Standard.OnePassword.ItemUsage
+    - Standard.OnePassword.SignInAttempt
     - Standard.Zendesk.AuditLog
+    - Standard.Zoom.Activity
+    - Standard.Zoom.Operation
+    # Standard Detections
     - Standard.AdminRoleAssigned
     - Standard.BruteForceByIP
     - Standard.MFADisabled
+    # Global Helpers
     - panther_event_type_helpers
     - panther_base_helpers
     - panther_oss_helpers
+    - panther_zoom_helpers

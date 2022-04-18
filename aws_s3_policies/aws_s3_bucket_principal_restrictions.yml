@@ -8,10 +8,13 @@ ResourceTypes:
 Tags:
   - AWS
   - Identity & Access Management
+  - T1530
 Reports:
   PCI:
     - 10.5.1
     - 10.5.2
+  MITRE ATT&CK:
+    - Collection:Data from Cloud Storage Object
 Severity: High
 Description: >
   This policy validates that S3 Bucket access policies do not allow all users (Principal:"*") for a given action on the bucket, in accordance with the principle of least privilege.

