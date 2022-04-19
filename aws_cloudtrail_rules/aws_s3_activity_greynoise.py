@@ -1,8 +1,9 @@
 from ipaddress import ip_address
 
-from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
+
+# pylint: disable=too-many-return-statements,invalid-name,unused-argument,global-at-module-level,global-variable-undefined
 
 # Monitor for GetObject events from S3.
 # Also check ListBucket to reveal object enumeration.
@@ -29,8 +30,8 @@ def rule(event):
         return False
 
     # Create GreyNoise Objects
-    global noise
-    noise = GetGreyNoiseObject(event)
+    global NOISE
+    NOISE = GetGreyNoiseObject(event)
     riot = GetGreyNoiseRiotObject(event)
 
     # If IP is in RIOT dataset we can assume safe, do not alert
@@ -38,7 +39,7 @@ def rule(event):
         return False
 
     # Check that the IP is classified as 'malicious'
-    if noise.classification('sourceIPAddress') == 'malicious':
+    if NOISE.classification('sourceIPAddress') == 'malicious':
         return True
     return False
 
@@ -51,5 +52,4 @@ def title(event):
 
 
 def alert_context(event):
-    return noise.context('sourceIPAddress')
-
+    return NOISE.context('sourceIPAddress')
