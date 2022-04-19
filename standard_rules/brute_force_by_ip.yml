@@ -16,10 +16,11 @@ LogTypes:
 Severity: Medium
 Tags:
   - DataModel
+  - T1110
 Threshold: 5
 Reports:
   MITRE ATT&CK:
-    - Brute Force:Password Spraying
+    - Credential Access:Brute Force
 Description: An actor user was denied login access more times than the configured threshold.
 Runbook: Analyze the IP they came from, and other actions taken before/after. Check if a user from this ip eventually authenticated successfully.
 SummaryAttributes:

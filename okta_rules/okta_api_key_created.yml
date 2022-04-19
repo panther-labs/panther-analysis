@@ -7,10 +7,15 @@ LogTypes:
   - Okta.SystemLog
 Tags:
   - Identity & Access Management
+  - Okta
+  - T1528
+Reports:
+  MITRE ATT&CK:
+    - Credential Access:Steal Application Access Token
 Severity: Info
 Description: A user created an API Key in Okta
 Reference: https://help.okta.com/en/prod/Content/Topics/Security/API.htm
-Runbook: Reach out to the user if needed to validate the activity. 
+Runbook: Reach out to the user if needed to validate the activity.
 SummaryAttributes:
   - eventType
   - severity
@@ -42,10 +47,10 @@ Tests:
         "debugContext": {},
         "target": [
           {
-            "id": "00Tpki36zlWjhjQ1u2p4", 
+            "id": "00Tpki36zlWjhjQ1u2p4",
             "type": "Token",
             "alternateId": "unknown",
-            "displayName": "test_key", 
+            "displayName": "test_key",
             "details": null
           }
         ]

@@ -4,7 +4,7 @@
 
 [ OneLogin Password Access](../onelogin_rules/onelogin_password_accessed.py)
 
-[ OneLogin Authenication Factor Removed](../onelogin_rules/onelogin_remove_authentication_factor.py)
+[ OneLogin Authentication Factor Removed](../onelogin_rules/onelogin_remove_authentication_factor.py)
 
 [ OneLogin Failed High Risk Login](../onelogin_rules/onelogin_high_risk_failed_login.py)
 
@@ -26,7 +26,7 @@
 
 [ OneLogin Password Access](../onelogin_rules/onelogin_password_accessed.py)
 
-[ OneLogin Authenication Factor Removed](../onelogin_rules/onelogin_remove_authentication_factor.py)
+[ OneLogin Authentication Factor Removed](../onelogin_rules/onelogin_remove_authentication_factor.py)
 
 [ OneLogin Failed High Risk Login](../onelogin_rules/onelogin_high_risk_failed_login.py)
 

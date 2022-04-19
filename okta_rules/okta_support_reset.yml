@@ -8,6 +8,11 @@ LogTypes:
 Tags:
   - Identity & Access Management
   - DataModel
+  - Okta
+  - T1199
+Reports:
+  MITRE ATT&CK:
+    - Initial Access:Trusted Relationship
 Severity: High
 Description: A Password or MFA factor was reset by Okta Support
 Reference: https://help.okta.com/en/prod/Content/Topics/Directory/get-support.htm#:~:text=Visit%20the%20Okta%20Help%20Center,1%2D800%2D219%2D0964
@@ -58,7 +63,7 @@ Tests:
         ],
         "p_log_type": "Okta.SystemLog",
     }
-  - 
+  -
     Name: Reset by Company Admin
     ExpectedResult: false
     Log:
