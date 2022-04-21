@@ -9,9 +9,12 @@ Tags:
   - AWS
   - Identity & Access Management
   - Authentication
+  - T1078
 Reports:
   CIS:
     - 3.2
+  MITRE ATT&CK:
+    - Initial Access:Valid Accounts
 Severity: High
 Description: A console login was made without multi-factor authentication.
 Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-console-login-without-mfa
@@ -301,4 +304,97 @@ Tests:
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012"
       }
+  -
+    Name: AWS SSOv2 Login
+    ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
+    Log:
+      {
+      "additionalEventData": {
+        "MFAUsed": "No",
+        "MobileVersion": "No"
+      },
+      "awsRegion": "us-east-2",
+      "eventID": "1111111111",
+      "eventName": "ConsoleLogin",
+      "eventSource": "signin.amazonaws.com",
+      "eventTime": "2022-03-16 19:17:41",
+      "eventType": "AwsConsoleSignIn",
+      "eventVersion": "1.08",
+      "managementEvent": true,
 
+      "readOnly": false,
+      "recipientAccountId": "xxx",
+      "responseElements": {
+        "ConsoleLogin": "Success"
+      },
+      "sourceIPAddress": "1.2.3.4",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
+      "userIdentity": {
+        "accountId": "xxx",
+        "arn": "arn:aws:sts::xxx:assumed-role/AWSReservedSSO_developer_admin_asdf/foo@bar.com",
+        "principalId": "xxx:foo@bar.com",
+        "sessionContext": {
+          "attributes": {
+            "creationDate": "2022-03-16T19:17:41Z",
+            "mfaAuthenticated": "false"
+          },
+          "sessionIssuer": {
+            "accountId": "xxx",
+            "arn": "arn:aws:iam::xxx:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_developer_admin_asdf",
+            "principalId": "xxx",
+            "type": "Role",
+            "userName": "AWSReservedSSO_developer_admin_asdf"
+          },
+          "webIdFederationData": {}
+        },
+        "type": "AssumedRole"
+      }
+    }
+
+  -
+    Name: AssumeRole from MFA User Session
+    ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
+    Log:
+      {
+        "additionalEventData": {
+          "MFAUsed": "No",
+          "MobileVersion": "No"
+        },
+        "awsRegion": "us-east-1",
+        "eventID": "sdsdsdsd",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2022-03-29 17:16:36.000000000",
+        "eventType": "AwsConsoleSignIn",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "111111111111111",
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "sourceIPAddress": "1.1.1.1",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
+        "userIdentity": {
+          "accountId": "11111",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2022-03-29T17:16:35Z",
+              "mfaAuthenticated": "true"
+            },
+            "sessionIssuer": {
+              "accountId": "2222",
+              "type": "Role",
+              "userName": "asdsda"
+            },
+            "webIdFederationData": { }
+          },
+          "type": "AssumedRole"
+        }
+      }

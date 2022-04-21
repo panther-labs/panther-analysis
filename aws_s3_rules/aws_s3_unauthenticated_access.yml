@@ -9,11 +9,15 @@ Tags:
   - AWS
   - Configuration Required
   - Security Control
+  - T1530
+Reports:
+  MITRE ATT&CK:
+    - Collection:Data from Cloud Storage Object
 Severity: Low
 Description: >
   Checks for S3 access attempts where the requester is not an authenticated AWS user.
 Runbook: >
-  If unathenticated S3 access is not expected for this bucket, update its access policies.
+  If unauthenticated S3 access is not expected for this bucket, update its access policies.
 SummaryAttributes:
   - bucket
   - key
