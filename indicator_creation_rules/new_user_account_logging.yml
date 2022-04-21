@@ -1,0 +1,108 @@
+# Monitors for useraccount creation and adds an entry to the KVStore for the user. This depends on the
+# event_type of USER_ACCOUNT_CREATED to be in the data model for the log source and will work in tandem
+# with a helper function that checks for the userid in the KV store.
+# This is rule is explicitly looking for accounts associated with a userid, not automation accounts that
+# May have no user associated
+
+AnalysisType: rule
+Filename: new_user_account_logging.py
+RuleID: Standard.NewUserAccountCreated
+DisplayName: New User Account Created
+Enabled: false
+LogTypes:
+  - OneLogin.Events
+  - AWS.CloudTrail
+  - Zoom.Operation
+Tags:
+  - DataModel
+  - Indicator Collection
+  - OneLogin
+Severity: Info
+Reports:
+  MITRE ATT&CK:
+    - Persistence:Create Account
+Description: A new account was created
+Runbook: A new user account was created, ensure it was created through standard practice and is for a valid purpose.
+SummaryAttributes:
+  - p_any_usernames
+Tests:
+  -
+    Name: User Creation Event - OneLogin
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        'event_type_id': 13,
+        'actor_user_id': 123456,
+        'user_id': 12345,
+        'actor_user_name': 'Bob Cat',
+        'user_name': 'Bob Cat',
+        'p_event_time': '2021-06-27 00:08:28.792Z',
+        'p_log_type': 'OneLogin.Events',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
+      }
+  -
+    Name: Standard Login Event - OneLogin
+    ExpectedResult: false
+    Log:
+      {
+        'event_type_id': 5,
+        'actor_user_id': 123456,
+        'actor_user_name': 'Bob Cat',
+        'user_name': 'Bob Cat',
+        'user_id': 12345,
+        'ipaddr': '192.168.1.1',
+        'p_event_time': '2021-06-27 00:08:28.792Z',
+        'p_log_type': 'OneLogin.Events',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
+      }
+  -
+    Name: User Account Created - CloudTrail
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        eventName: 'CreateUser',
+        responseElements: {
+                user: {
+                  userName: 'Bob Cat',
+                  userId: '12345'
+                },
+          },
+        'p_event_time': '2021-08-31 15:46:02.000000000',
+        'p_log_type': 'AWS.CloudTrail',
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc'
+      }
+  -
+    Name: Normal Console Login - CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "some_user"
+        },
+        "eventName": "ConsoleLogin",
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        'p_row_id': 'aaaaaaaabbbbbbbbbbbbccccccccc',
+        "p_log_type": "AWS.CloudTrail"
+      }
+  -
+    Name: User Creation Event - Zoom
+    ExpectedResult: true
+    Log:
+      {
+      "action": "Add",
+      "category_type": "User",
+      "operation_detail": "Add User homer@simpson.io  - User Type: Basic - Department: Foo",
+      "operator": "abe@simpson.io",
+      'p_log_type': 'Zoom.Operation',
+      'p_event_time': '2021-06-27 00:08:28.792Z',
+    }

@@ -1,0 +1,58 @@
+AnalysisType: rule
+Filename: gsuite_gov_attack.py
+RuleID: GSuite.GovernmentBackedAttack
+DisplayName: GSuite Government Backed Attack
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Critical
+Description: >
+  GSuite reported that it detected a government backed attack against your account.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#gov_attack_warning
+Runbook: >
+  Followup with GSuite support for more details.
+SummaryAttributes:
+  - actor
+Tests:
+  -
+    Name: Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "actor": {
+          "email": "homer.simpson@example.com",
+        },
+        "type": "login",
+        "name": "login_success",
+        "parameters": {
+          "is_suspicious": null,
+          "login_challenge_method": [
+              "none"
+          ],
+        },
+      }
+  -
+    Name: Government Backed Attack Warning
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "actor": {
+          "email": "homer.simpson@example.com",
+        },
+        "type": "login",
+        "name": "gov_attack_warning",
+        "parameters": {
+          "is_suspicious": null,
+          "login_challenge_method": [
+              "none"
+          ],
+        },
+      }

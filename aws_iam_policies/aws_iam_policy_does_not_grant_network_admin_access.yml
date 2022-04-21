@@ -1,15 +1,19 @@
 AnalysisType: policy
 Filename: aws_iam_policy_does_not_grant_network_admin_access.py
 PolicyID: AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
+DisplayName: AWS IAM Policy Does Not Grant Network Admin Access
 Enabled: true
 ResourceTypes:
   - AWS.IAM.Policy
 Tags:
   - AWS
   - PCI
+  - T1078
 Reports:
   PCI:
     - 1.1.5
+  MITRE ATT&CK:
+    - Privilege Escalation:Valid Accounts
 Severity: Medium
 Description: >
   This policy validates that no IAM policies grant admin privileges on network resources. This should be used in conjunction with suppressions for the legitimate network admin policies in your acccount.

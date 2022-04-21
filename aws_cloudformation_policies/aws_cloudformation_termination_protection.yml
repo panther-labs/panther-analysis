@@ -5,10 +5,14 @@ DisplayName: AWS CloudFormation Stack Termination Protection
 Enabled: true
 ResourceTypes:
   - AWS.CloudFormation.Stack
+Reports:
+  MITRE ATT&CK:
+    - Impact:Resource Hijacking
 Tags:
   - AWS
   - Operations
   - Panther
+  - T1496
 Severity: Info
 Description: >
   Protects a CloudFormation stack from accidentally being deleted. If you attempt to delete a stack

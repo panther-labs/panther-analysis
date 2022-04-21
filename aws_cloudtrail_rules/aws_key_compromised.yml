@@ -5,8 +5,12 @@ DisplayName: AWS Access Key Uploaded to Github
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+   - Credential Access:Unsecured Credentials
 Tags:
   - AWS
+  - T1552
 Severity: High
 Description: A users static AWS API key was uploaded to a public github repo.
 Runbook: Determine the key owner, disable/delete key, and delete the user to resolve the AWS case. If user needs a new IAM give them a stern talking to first.

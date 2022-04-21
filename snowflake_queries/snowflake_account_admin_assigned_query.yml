@@ -1,0 +1,27 @@
+AnalysisType: scheduled_query
+QueryName: Query.Snowflake.AccountAdminGranted
+Enabled: false
+Description: >
+  Monitor and detect granting account admin role.
+AthenaQuery: >
+  /* athena query not supported */
+  SELECT count(1)
+SnowflakeQuery: >
+  --return instances where account admin role is granted
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    user_name,
+    role_name,
+    query_text
+  FROM snowflake.account_usage.query_history
+    WHERE
+      p_occurs_since('1 h',, start_time)
+      AND execution_status = 'SUCCESS'
+      AND query_type = 'GRANT'
+      AND query_text ILIKE '%grant%accountadmin%to%'
+  ORDER BY end_time desc
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 1

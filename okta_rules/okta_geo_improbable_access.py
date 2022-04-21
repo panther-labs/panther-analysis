@@ -17,6 +17,15 @@ def rule(event):
     ):
         return False
 
+    new_login_stats = {
+        "city": deep_get(event, "client", "geographicalContext", "city"),
+        "lon": deep_get(event, "client", "geographicalContext", "geolocation", "lon"),
+        "lat": deep_get(event, "client", "geographicalContext", "geolocation", "lat"),
+    }
+    # Bail out if we have a None value in set as it causes false positives
+    if None in new_login_stats.values():
+        return False
+
     # Generate a unique cache key for each user
     login_key = gen_key(event)
     # Retrieve the prior login info from the cache, if any
@@ -25,14 +34,8 @@ def rule(event):
     if not last_login:
         store_login_info(login_key, event)
         return False
-
     # Load the last login from the cache into an object we can compare
     old_login_stats = loads(last_login.pop())
-    new_login_stats = {
-        "city": deep_get(event, "client", "geographicalContext", "city"),
-        "lon": deep_get(event, "client", "geographicalContext", "geolocation", "lon"),
-        "lat": deep_get(event, "client", "geographicalContext", "geolocation", "lat"),
-    }
 
     distance = haversine_distance(old_login_stats, new_login_stats)
     old_time = datetime.strptime(old_login_stats["time"][:26], PANTHER_TIME_FORMAT)
@@ -105,7 +108,7 @@ def title(event):
         EVENT_CITY_TRACKING.get(event.get("p_row_id")), "new_city", default="<UNKNOWN_NEW_CITY>"
     )
     return (
-        f"Geographically improbably login for user [{deep_get(event, 'actor', 'alternateId')}] "
+        f"Geographically improbable login for user [{deep_get(event, 'actor', 'alternateId')}] "
         f"from [{old_city}]  to [{new_city}]"
     )
 

@@ -1,0 +1,22 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_brute_force_ip.py 
+RuleID: Snowflake.BruteForceByIp
+Description: >
+  Detect brute force attacks by monitoring for failed logins
+DisplayName: Snowflake Brute Force Attacks
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.BruteForceByIp
+Tags:
+  - Snowflake
+  - T1110
+Reports:
+  MITRE ATT&CK:
+    - Credential Access:Brute Force
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      client_ip: 1.2.3.4

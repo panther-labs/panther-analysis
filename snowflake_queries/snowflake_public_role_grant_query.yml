@@ -1,0 +1,28 @@
+AnalysisType: scheduled_query
+QueryName: Query.Snowflake.PublicRoleGrant
+Enabled: false
+Description: >
+  Monitor and detect alterations or grants to public role, which should be kept at a minimum.
+AthenaQuery: >
+  /* athena query not supported */
+  SELECT count(1)
+SnowflakeQuery: >
+  --return instances of grants to the public role
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    user_name,
+    role_name,
+    query_text,
+    end_time
+  FROM snowflake.account_usage.query_history
+    WHERE
+      p_occurs_since('1 h',, start_time)
+      AND execution_status = 'SUCCESS'
+      AND query_type = 'GRANT'
+      AND query_text ILIKE '%to%public%'
+  ORDER BY end_time desc
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 1

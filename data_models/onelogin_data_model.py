@@ -9,4 +9,6 @@ def get_event_type(event):
         return event_type.FAILED_LOGIN
     if event.get("event_type_id") == 5:
         return event_type.SUCCESSFUL_LOGIN
+    if event.get("event_type_id") == 13:
+        return event_type.USER_ACCOUNT_CREATED
     return None

@@ -4,18 +4,22 @@ RuleID: Standard.AdminRoleAssigned
 DisplayName: Admin Role Assigned
 Enabled: true
 LogTypes:
+  - Asana.Audit
+  - Atlassian.Audit
   - GCP.AuditLog
   - GitHub.Audit
   - GSuite.Reports
   - OneLogin.Events
+  - Zendesk.Audit
 Tags:
   - DataModel
+  - T1078
 Severity: Medium
 Reports:
   MITRE ATT&CK:
     - Privilege Escalation:Valid Accounts
 Description: Attaching an audit role manually could be a sign of privilege escalation
-Runbook: Verify with the user who attached the role or add to a whitelist
+Runbook: Verify with the user who attached the role or add to a allowlist
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -117,7 +121,7 @@ Tests:
         "actor_user_name": "Bobert O'Bobly",
         "p_log_type": "OneLogin.Events",
       }
-  -
+  - 
     Name: Github - User Promoted
     ExpectedResult: true
     Log:
@@ -126,4 +130,125 @@ Tests:
         "action": "team.promote_maintainer",
         "p_log_type": "GitHub.Audit",
         "user": "bob"
+      }
+  -
+    Name: Zendesk - Admin Role Downgraded
+    ExpectedResult: false
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Role changed from Administrator to End User",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Zendesk - Admin Role Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Role changed from End User to Administrator",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Zendesk - App Admin Role Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "update",
+        "change_description": "Explore role changed from not set to Admin\nGuide role changed from not set to Admin\nSupport role changed from not set to Admin\nTalk role changed from not set to Admin",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Asana - Normal Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "Homer"
+        },
+        "context": {
+          "client_ip_address": "8.8.8.8",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:10.364Z",
+        "details": {
+          "method": [ "ONE_TIME_KEY" ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_succeeded",
+        "gid": "222222222",
+        "resource": {
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "homer",
+          "resource_type": "user",
+        },
+        "p_log_type": "Asana.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+
+  -
+    Name: Asana - Admin Added
+    ExpectedResult: True
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "name": Homer
+        },
+        "context": {
+          "client_ip_address": "1.1.1.1",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:18.319Z",
+        "details": {
+          "group": {
+            "gid": "11111",
+            "name": "1183399881404774.2lgxga.asanatest1.us",
+            "resource_type": "workspace"
+          },
+          "new_value": "member",
+          "old_value": "super_admin"
+        },
+        "event_category": "roles",
+        "event_type": "user_workspace_admin_role_changed",
+        "gid": "22222",
+        "resource": {
+          "email": "marge@springfield.com",
+          "gid": "222222",
+          "name": "Marge Simpson",
+          "resource_type": "user"
+        },
+        "p_log_type": "Asana.Audit"
       }

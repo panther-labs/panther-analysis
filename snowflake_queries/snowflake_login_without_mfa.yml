@@ -1,0 +1,27 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_login_without_mfa.py 
+RuleID: Snowflake.LoginWithoutMFA
+Description: >
+  Detect snowflake logins without multifactor authentication
+DisplayName: Snowflake Login Without MFA
+Enabled: false
+ScheduledQueries:
+  - Query.Snowflake.MFALogin
+Tags:
+  - Snowflake
+  - T1556
+Reports:
+  MITRE ATT&CK:
+    - Defense Evasion:Modify Authentication Process
+Severity: Medium
+Tests:
+  -
+    Name: Return True 
+    ExpectedResult: true
+    Log:
+      Anything: any value
+  - 
+    Name: True Exception
+    ExpectedResult: false
+    Log: 
+      user_name: PANTHER_READONLY
