@@ -1,0 +1,56 @@
+AnalysisType: rule
+Filename: zendesk_new_api_token.py
+RuleID: Zendesk.NewAPIToken
+DedupPeriodMinutes: 60
+DisplayName: Zendesk API Token Created
+Enabled: true
+LogTypes:
+  - Zendesk.Audit
+Severity: High
+Tags:
+  - Zendesk
+  - T1528
+Reports:
+  MITRE ATT&CK:
+    - Credential Access:Steal Application Access Token
+Description: A user created a new API token to be used with Zendesk.
+Runbook: Validate the api token was created for valid use case, otherwise delete the token immediately.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Zendesk - API Token Updated
+    ExpectedResult: false
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Updated",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "api_token",
+        "source_label": "API token: a new description",
+        "action": "update",
+        "change_description": "description changed from not set to a new description",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }
+  -
+    Name: Zendesk - API Token Created
+    ExpectedResult: true
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Created",
+        "actor_id": 123,
+        "source_id": 123,
+        "source_type": "api_token",
+        "source_label": "API token",
+        "action": "create",
+        "change_description": "",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit"
+      }

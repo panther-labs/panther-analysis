@@ -7,6 +7,7 @@ LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
+  - T1526
 Reports:
   MITRE ATT&CK:
     - Discovery:Cloud Service Discovery
@@ -124,6 +125,43 @@ Tests:
           "awsRegion": "us-east-1",
           "sourceIPAddress": "111.111.111.111",
           "userAgent": "signin.amazonaws.com",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Unauthorized API Call - From AWS console
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "GetRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "40.185.186.6",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:GetRole on resource: arn:aws:iam::123456789012:role/FooBar",
+          "userAgent": "aws-internal/3 aws-sdk-java/1.12.124 Linux/4.9.273-0.1.ac.226.84.332.metal1.x86_64 OpenJDK_64-Bit_Server_VM/25.312-b07 java/1.8.0_312 vendor/Oracle_Corporation cfg/retry-mode/standard",
           "requestParameters": null,
           "responseElements": null,
           "requestID": "1",

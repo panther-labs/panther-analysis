@@ -5,10 +5,14 @@ DisplayName: AWS ACM Certificate Status
 Enabled: true
 ResourceTypes:
   - AWS.ACM.Certificate
+Reports:
+  MITRE ATT&CK:
+  - Resource Development:Obtain Capabilities
 Tags:
   - AWS
   - Operations
   - Panther
+  - T1588
 Severity: High
 Description: >
   This policy checks if an ACM certificate renewal is pending or has failed and is in use

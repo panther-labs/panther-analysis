@@ -1,0 +1,75 @@
+AnalysisType: rule
+Filename: gsuite_high_severity_rule.py
+RuleID: GSuite.HighSeverityRule
+DisplayName: GSuite High Severity Rule Triggered
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: High
+Description: >
+  A high severity GSuite rule was triggered.
+Reference: https://support.google.com/a/answer/9420866
+Runbook: >
+  Investigate what triggered the rule.
+SummaryAttributes:
+  - actor
+Tests:
+  -
+    Name: Non Triggered Rule
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "HIGH",
+          "triggered_actions": null
+        },
+      }
+  -
+    Name: High Severity Rule
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "data_source": "DRIVE",
+          "severity": "HIGH",
+          "triggered_actions": [
+            {
+              "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        },
+      }
+  -
+    Name: Low Severity Rule
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "LOW",
+          "triggered_actions": [
+            {
+              "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        },
+      }

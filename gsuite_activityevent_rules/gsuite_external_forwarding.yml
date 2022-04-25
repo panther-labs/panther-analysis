@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: gsuite_external_forwarding.py
+RuleID: GSuite.ExternalMailForwarding
+DisplayName: Gsuite Mail forwarded to external domain
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - T1020
+Reports:
+  MITRE ATT&CK:
+    - Collection:Email Collection
+Severity: High
+Description: >
+  A user has configured mail forwarding to an external domain
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#email_forwarding_out_of_domain
+Runbook: >
+  Follow up with user to remove this forwarding rule if not allowed.
+SummaryAttributes:
+  - p_any_emails
+Tests:
+  -
+    Name: Forwarding to External Address
+    ExpectedResult: true
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "C045p8dnk",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "email_forwarding_change",
+        "name": "email_forwarding_out_of_domain",
+        "parameters": {
+          "email_forwarding_destination_address": "HSimpson@gmail.com"
+        },
+      }
+
+  -
+    Name: Forwarding to External Address - Allowed Domain
+    ExpectedResult: false
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "C045p8dnk",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "email_forwarding_change",
+        "name": "email_forwarding_out_of_domain",
+        "parameters": {
+          "email_forwarding_destination_address": "HSimpson@example.com"
+        },
+      }
+
+  -
+    Name: Non Forwarding Event
+    ExpectedResult: false
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "C045p8dnk",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "2sv_change",
+        "name": "2sv_enroll",
+      }
+

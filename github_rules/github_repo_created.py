@@ -1,5 +1,5 @@
 def rule(event):
-    return event.get("action") == "repo.created"
+    return event.get("action") == "repo.create"
 
 
 def title(event):

@@ -7,10 +7,11 @@ LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
+  - T1562
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - Defense Evasion:Stop Security Monitoring
+    - Defense Evasion:Impair Defenses
 Description: An account wide security configuration was changed.
 Runbook: >
   Verify that this change was planned. If not, revert the change and update the access control policies to ensure this doesn't happen again.
@@ -199,3 +200,48 @@ Tests:
               "type": "AssumedRole"
           }
       }
+  -
+    Name: Security Configuration Changed - Allowlisted User
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "ExampleEvent",
+          "eventSource": "cloudtrail.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "readOnly": false,
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "name": "example-trail"
+          },
+          "responseElements": null,
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "invokedBy": "cloudformation.amazonaws.com",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "ExampleUser"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+

@@ -4,22 +4,23 @@ Enabled: false
 Description: >
   Monitor for users that are being re-enabled.
 AthenaQuery: >
-  /* athena query not supported */ 
+  /* athena query not supported */
   SELECT count(1)
 SnowflakeQuery: >
   --return enable user events
 
   --this was adapted from a Security Feature Checklist query
 
-  SELECT 
+  SELECT
     query_text,
     user_name,
     role_name,
     end_time
   FROM snowflake.account_usage.query_history
-    WHERE 
-      DATEDIFF(HOUR,  start_time, CURRENT_TIMESTAMP) < 24
-      AND execution_status = 'SUCCESS' 
+    WHERE
+      p_occurs_since('24 h',, start_time)
+      AND execution_status = 'SUCCESS'
+      AND query_type NOT in ('SELECT')
       AND (
           query_text ILIKE '%create role%'
           OR query_text ILIKE '%manage grants%'

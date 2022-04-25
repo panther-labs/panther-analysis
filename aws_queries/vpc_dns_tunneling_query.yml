@@ -21,7 +21,7 @@ SnowflakeQuery: >
   WHERE
     p_occurs_since(3600) -- 1 hour in seconds
     AND
-    -- simple whitelisting
+    -- simple allowlisting
     query_name NOT LIKE '%amazonaws.com'
   GROUP BY
     1,2,3,4,5

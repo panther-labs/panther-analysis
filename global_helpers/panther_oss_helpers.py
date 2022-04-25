@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
 import requests
+from dateutil import parser
+from panther_analysis_tool.immutable import ImmutableList
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -95,6 +97,10 @@ def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
             return datetime.strptime(ts_format, each_format)
         except (ValueError, TypeError):
             continue
+    try:
+        return parser.parse(timestamp)
+    except (ValueError, TypeError, parser.ParserError):
+        pass
 
     # Attempt to resolve epoch format
     # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
@@ -238,7 +244,7 @@ def get_string_set(key: str) -> Set[str]:
     return response.get("Item", {}).get(_STRING_SET_COL, set())
 
 
-def put_string_set(key: str, val: Sequence[str]) -> None:
+def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
     """Overwrite a string set under the given key.
 
     This is faster than (reset_string_set + add_string_set) if you know exactly what the contents
@@ -247,12 +253,15 @@ def put_string_set(key: str, val: Sequence[str]) -> None:
     Args:
         key: The name of the string set
         val: A list/set/tuple of strings to store
+        epoch_seconds: (Optional) Set string expiration time
     """
     if not val:
         # Can't put an empty string set - remove it instead
         reset_string_set(key)
     else:
         kv_table().put_item(Item={"key": key, _STRING_SET_COL: set(val)})
+    if epoch_seconds:
+        set_key_expiration(key, epoch_seconds)
 
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
@@ -362,11 +371,10 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
 def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(ip)
-    geoinfo_string = (
+    return (
         f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
         f"{geoinfo.get('region')} in {geoinfo.get('country')}"
     )
-    return geoinfo_string
 
 
 # returns the difference between time1 and later time 2 in human-readable time period string
@@ -402,6 +410,24 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
+
+
+def check_account_age(key):
+    """
+    Searches DynamoDB for stored user_id or account_id string stored by indicator creation
+    rules for new user / account creation
+    """
+    if isinstance(key, str) and key != "":
+        return bool(get_string_set(key))
+    return False
+
+
+# When a single item is loaded from json, it is loaded as a single item
+# When a list of items is loaded from json, it is loaded as a list of that item
+# When we want to iterate over something that could be a single item or a list
+# of items we can use listify and just continue as if it's always a list
+def listify(maybe_list):
+    return [maybe_list] if not isinstance(maybe_list, (list, ImmutableList)) else maybe_list
 
 
 def _test_kv_store():

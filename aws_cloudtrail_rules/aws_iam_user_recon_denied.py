@@ -1,15 +1,15 @@
-from fnmatch import fnmatch
 from ipaddress import ip_address
 
+from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 
 # service/event patterns to monitor
 RECON_ACTIONS = {
-    "dynamodb": ["List*", "Describe*", "Get*"],
-    "ec2": ["Describe*", "Get*"],
-    "iam": ["List*", "Get*"],
-    "s3": ["List*", "Get*"],
-    "rds": ["Describe*", "List*"],
+    "dynamodb": ["List", "Describe", "Get"],
+    "ec2": ["Describe", "Get"],
+    "iam": ["List", "Get"],
+    "s3": ["List", "Get"],
+    "rds": ["Describe", "List"],
 }
 
 
@@ -18,6 +18,11 @@ def rule(event):
     if event.get("errorCode") != "AccessDenied":
         return False
     if deep_get(event, "userIdentity", "type") != "IAMUser":
+        return False
+
+    # Console Activity can easily result in false positives as some pages contain a mix of
+    # items that a user may or may not have access to.
+    if event.get("userAgent").startswith("aws-internal/3"):
         return False
 
     # Validate the request came from outside of AWS
@@ -29,7 +34,7 @@ def rule(event):
     # Pattern match this event to the recon actions
     for event_source, event_patterns in RECON_ACTIONS.items():
         if event.get("eventSource", "").startswith(event_source) and any(
-            fnmatch(event.get("eventName", ""), event_pattern) for event_pattern in event_patterns
+            event.get("eventName", "").startswith(event_pattern) for event_pattern in event_patterns
         ):
             return True
     return False
@@ -40,5 +45,17 @@ def dedup(event):
 
 
 def title(event):
-    user_identity = event.get("userIdentity", {})
-    return f"Reconnaissance activity denied to {user_identity.get('type')} [{dedup(event)}]"
+    user_type = deep_get(event, "userIdentity", "type")
+    if user_type == "IAMUser":
+        user = deep_get(event, "userIdentity", "userName")
+    # root user
+    elif user_type == "Root":
+        user = user_type
+    else:
+        user = "<UNKNOWN_USER>"
+    return (
+        "Reconnaissance activity denied to user "
+        f"[{user}] "
+        "in account "
+        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+    )

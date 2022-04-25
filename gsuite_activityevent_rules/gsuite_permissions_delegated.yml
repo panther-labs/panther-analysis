@@ -1,0 +1,49 @@
+AnalysisType: rule
+Filename: gsuite_permissions_delegated.py
+RuleID: GSuite.PermisssionsDelegated
+DisplayName: --DEPRECATED-- GSuite User Delegated Admin Permissions
+Enabled: false
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Low
+Description: >
+  A GSuite user was granted new admininstrator privileges.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/admin-delegated-admin-settings#ASSIGN_ROLE
+Runbook: >
+  Valdiate that this users should have these permissions and they are not the result of a privilege escalation attack.
+SummaryAttributes:
+  - actor
+Tests:
+  -
+    Name: Other Admin Action
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "admin",
+        },
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "RENAME_ROLE",
+        "parameters": {
+          "ROLE_NAME": "Vault Admins",
+          "USER_EMAIL": "homer.simpson@example.com"
+        },
+      }
+  -
+    Name: Privileges Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "admin",
+        },
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "ASSIGN_ROLE",
+        "parameters": {
+          "ROLE_NAME": "Vault Admins",
+          "USER_EMAIL": "homer.simpson@example.com"
+        },
+      }
+

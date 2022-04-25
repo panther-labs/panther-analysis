@@ -7,6 +7,10 @@ LogTypes:
   - GSuite.Reports
 Tags:
   - GSuite
+  - T1213
+Reports:
+   MITRE ATT&CK:
+      - Collection:Data from Information Repositories
 Severity: Low
 Description: >
   A Google drive resource became externally accessible.
@@ -52,7 +56,7 @@ Tests:
     Log:
       {
         "actor": {
-          "email": "bobert@example.com"
+          "email": "bobert@gmail.com"
         },
         "events": [
           {
@@ -102,7 +106,7 @@ Tests:
         "p_row_id": "111222"
       }
   -
-    Name: Doc Became Public - Link (Whitelisted Domain)
+    Name: Doc Became Public - Link (Allowlisted Domain)
     ExpectedResult: false
     Log:
       {
@@ -462,6 +466,81 @@ Tests:
             'name': "change_document_access_scope_hierarchy_reconciled",
             'type': 'acl_change',
             'parameters': [{'name': 'visibility_change', 'value': 'internal'}]
+          }
+        ]
+      }
+  -
+    Name: Doc Became Public - Public email provider
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "drive"
+        },
+        "actor": {
+          "email": "bobert@example.com"
+        },
+        "kind": "admin#reports#activity",
+        "ipAddress": "1.1.1.1",
+        "events": [
+          {
+            "type": "access",
+            "name": "edit",
+            "parameters": [
+              {
+                "name": "primary_event"
+              },
+              {
+                "name": "doc_title",
+                "value": "Hosted Accounts"
+              },
+              {
+                "name": "visibility",
+                "value": "shared_externally"
+              }
+            ]
+          },
+          {
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": [
+              {
+                "name": "primary_event",
+                "boolValue": true
+              },
+              {
+                "name": "visibility_change",
+                "value": "external"
+              },
+              {
+                "name": "target_user",
+                "value": "someone@yandex.com"
+              },
+              {
+                "name": "old_value",
+                "multiValue": [
+                  "none"
+                ]
+              },
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "can_view"
+                ]
+              },
+              {
+                "name": "old_visibility",
+                "value": "people_within_domain_with_link"
+              },
+              {
+                "name": "doc_title",
+                "value": "Hosted Accounts"
+              },
+              {
+                "name": "visibility",
+                "value": "shared_externally"
+              }
+            ]
           }
         ]
       }

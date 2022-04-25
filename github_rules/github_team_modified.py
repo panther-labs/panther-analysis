@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if not event.get("action").startswith("team"):
         return False
@@ -27,7 +24,7 @@ def title(event):
     }
     action_key = event.get("action").split(".")[1]
     action = action_mappings.get(action_key, event.get("action"))
+    team_name = event.get("team") if "team" in event else "<MISSING_TEAM>"
     return (
-        f"GitHub.Audit: User [{event.udm('actor_user')}] {action} "
-        f"[{deep_get(event, 'data', 'team')}]"
+        f"GitHub.Audit: User [{event.udm('actor_user')}] {action} [{team_name}]"
     )
