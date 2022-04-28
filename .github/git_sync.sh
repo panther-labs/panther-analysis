@@ -33,7 +33,9 @@ if [[ $OSTYPE == "darwin"* ]]; then
         echo "Setting up crontab for git_sync"
         cp ./.github/git_sync.sh /usr/local/bin/git_sync
         chmod a+x /usr/local/bin/git_sync
-        echo "0 13 * * *  && git_sync --local-only" >> /tmp/crontab
+        # Could add `git stash`` before and `git stash apply` after to avoid failed runs
+        # when working directory is dirty
+        echo "0 13 * * * cd `pwd` && .github/git_sync.sh --local-only" >> /tmp/crontab
         crontab</tmp/crontab
     else
         echo "git_sync already setup in crontab, updating /usr/local/bin/git_sync"
