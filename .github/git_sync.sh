@@ -11,7 +11,7 @@ or files in .github/ actions could have security implications.
 
 This script is used to sync the default branch of an OSS "upstream" repo
 to a branch called upstream/<default> in the active/current repo.
-If a file named PULL_REQUEST_BRANCHES is found in the current repo
+If a file named .github/PULL_REQUEST_BRANCHES is found
 then the branches listed in that file will be merged into the 
 upstream/<default>-fixup branch. The fixup branch will then be merged 
 into the local <default> branch.
@@ -20,7 +20,7 @@ The following branches are synced or created (assuming <default> = main):
 * upstream-main - this is identical to the upstream/main branch
 * main          - attempt to merge in upstream/main ignoring files in .gitattributes
 
-If there is a PUll_REQUEST_BRANCHES file in the current repo then these are synced or created:
+If there is a .github/PUll_REQUEST_BRANCHES file in the current repo then these are synced or created:
 * upstream-feature    - for each feature branch listed in the PULL_REQUEST_BRANCHES file
 * upstream-main-fixup - sunc upstream/main and PRs from upstream's PULL_REQUEST_BRANCHES
 * main-fixup          - attempt to merge in upstream main and PUll_REQUEST_BRANCHES ignoring files in .gitattributes
@@ -143,8 +143,8 @@ function merge_and_alert() {
 merge_and_alert upstream-master $UPSTREAM_BASE_BRANCH
 
 
-if [[ -s PULL_REQUEST_BRANCHES ]]; then
-    pull_request_branches=`cat PULL_REQUEST_BRANCHES`
+if [[ -s .github/PULL_REQUEST_BRANCHES ]]; then
+    pull_request_branches=`cat .github/PULL_REQUEST_BRANCHES`
     echo "Pull request branches: ${pull_request_branches[@]}"
     # If there are PULL_REQUEST_BRANCHES then prepare the pristine uspstream-master-fixup branch.
     # It starts off as upstream-master. Only bother if we have PRs to merge.
