@@ -54,6 +54,41 @@ Tests:
         "p_log_type": "GCP.AuditLog"
       }
   -
+    Name: GCP - Multiple Admin Roles Assigned
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "authenticationInfo": {
+            "principalEmail": "bob@example.com"
+          },
+          "requestMetadata": {
+            "callerIP": "4.4.4.4"
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "cat@example.com",
+                  "role": "roles/resourcemanager.organizationAdmin"
+                },
+                {
+                  "action": "ADD",
+                  "member": "dog@example.com",
+                  "role": "roles/owner"
+                }
+              ]
+            }
+          }
+        },
+        "p_log_type": "GCP.AuditLog"
+      }
+  -
     Name: GSuite - Other Admin Action
     ExpectedResult: false
     Log:
