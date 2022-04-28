@@ -1,0 +1,62 @@
+AnalysisType: rule
+Filename: panther_saml_modified.py
+RuleID: Panther.SAML.Modified
+DisplayName: Panther SAML configuration has been modified
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: High
+Tags:
+  - DataModel
+  - T1562
+Reports:
+  MITRE ATT&CK:
+    - Defense Evasion:Impair Defenses
+Description: An Admin has modified Panther's SAML configuration.
+Runbook: Ensure this change was approved and appropriate.
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_any_usernames
+Tests:
+  -
+    Name: SAML config modified
+    ExpectedResult: True
+    Log:
+      {
+      "actionName": "UPDATE_SAML_SETTINGS",
+      "actionParams": {},
+      "actionResult": "SUCCEEDED",
+      "actor": {
+        "attributes": {
+          "email": "homer@springfield.gov",
+          "emailVerified": true,
+          "roleId": "111111"
+        },
+        "id": "111111",
+        "name": "Homer Simpson",
+        "type": "USER"
+      },
+      "errors": null,
+      "p_log_type": "Panther.Audit",
+    }
+  -
+    Name: SAML config viewed
+    ExpectedResult: false
+    Log:
+      {
+      "actionName": "GET_SAML_SETTINGS",
+      "actionParams": {},
+      "actionResult": "SUCCEEDED",
+      "actor": {
+        "attributes": {
+          "email": "homer@springfield.gov",
+          "emailVerified": true,
+          "roleId": "111111"
+        },
+        "id": "111111",
+        "name": "Homer Simpson",
+        "type": "USER"
+      },
+      "errors": null,
+      "p_log_type": "Panther.Audit",
+    }
