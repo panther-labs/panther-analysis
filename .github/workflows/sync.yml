@@ -1,0 +1,23 @@
+name: Sync github remotes
+
+on:
+  push:
+  schedule: # minute/hour/day/month/day-of-week -> every day at 5am
+    - cron: '30 5 * * *'
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repo
+        uses: actions/checkout@v3
+        with:
+          # pulls all commits (needed for lerna / semantic release to correctly version)
+          fetch-depth: "0"
+      # Uncomment for testing
+      #- name: Debugging with ssh
+      #  uses: lhotari/action-upterm@v1
+      - name: Verify which branch we are on
+        run: git branch -v
+      - name: Sync upstream changes and merge automatically
+        run: ./.github/git_sync.sh
+    
