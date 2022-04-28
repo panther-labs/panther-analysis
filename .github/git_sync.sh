@@ -3,7 +3,7 @@
 set -ex
 
 cat<<EOF
-USAGE: ./git_sync.sh [--local-only] if --local-only do not push to remotes
+USAGE: ./.github/git_sync.sh [--local-only] if --local-only do not push to remotes
 
 This script is used to sync the default branch of an OSS `upstream` repo
 to a branch called upstream/<default> in the active/current repo.
@@ -110,7 +110,7 @@ function merge_and_alert() {
     fi
 
     # Only push if we are allowed and there is something to push
-    if [[ ${IS_LOCAL_ONLY} = false && x${cached}x != "xx" ]]; then \
+    if [[ ${IS_LOCAL_ONLY} = false ]]; then \
         git push --force --set-upstream origin ${LOCAL_MERGE_BRANCH}
     fi
 }
