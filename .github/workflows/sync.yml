@@ -14,8 +14,8 @@ jobs:
           # pulls all commits (needed for lerna / semantic release to correctly version)
           fetch-depth: "0"
       # Uncomment for testing
-      # - name: Debugging with ssh
-      #   uses: lhotari/action-upterm@v1
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
       - name: Verify which branch we are on
         run: git branch -v
       - name: Sync upstream changes and merge automatically

@@ -85,7 +85,7 @@ function merge_and_alert() {
     branch_commit=`git rev-parse -q --verify ${LOCAL_MERGE_BRANCH} || echo ""`
     if [[ x${branch_commit}x == "xx" ]]; then
         echo "Local branch ${LOCAL_MERGE_BRANCH} does not exist, creating"
-        git switch -c ${LOCAL_MERGE_BRANCH} origin/${REMOTE_BRANCH}
+        git switch -c ${LOCAL_MERGE_BRANCH} upstream/${REMOTE_BRANCH}
     else
         echo "Local branch ${LOCAL_MERGE_BRANCH} already exists, updating"
         git switch ${LOCAL_MERGE_BRANCH}
