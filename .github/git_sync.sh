@@ -5,7 +5,11 @@ set -ex
 cat<<EOF
 USAGE: ./.github/git_sync.sh [--local-only] if --local-only do not push to remotes
 
-This script is used to sync the default branch of an OSS `upstream` repo
+If run on a mac, it will set up a crontab job to run this script every day.
+BE SURE YOU TRUST THE REPO YOU ARE SYNCING WITH as modifications to git_sync.sh
+or files in .github/ actions could have security implications.
+
+This script is used to sync the default branch of an OSS "upstream" repo
 to a branch called upstream/<default> in the active/current repo.
 If a file named PULL_REQUEST_BRANCHES is found in the current repo
 then the branches listed in that file will be merged into the 
@@ -13,26 +17,43 @@ upstream/<default>-fixup branch. The fixup branch will then be merged
 into the local <default> branch.
 
 The following branches are synced or created (assuming <default> = main):
-upstream-main - this is identical to the upstream/main branch
-main          - attempt to merge in upstream/main ignoring files in .gitattributes
+* upstream-main - this is identical to the upstream/main branch
+* main          - attempt to merge in upstream/main ignoring files in .gitattributes
 
 If there is a PUll_REQUEST_BRANCHES file in the current repo then these are synced or created:
-upstream-feature    - for each feature branch listed in the PULL_REQUEST_BRANCHES file
-upstream-main-fixup - sunc upstream/main and PRs from upstream's PULL_REQUEST_BRANCHES
-main-fixup          - attempt to merge in upstream main and PUll_REQUEST_BRANCHES ignoring files in .gitattributes
-
+* upstream-feature    - for each feature branch listed in the PULL_REQUEST_BRANCHES file
+* upstream-main-fixup - sunc upstream/main and PRs from upstream's PULL_REQUEST_BRANCHES
+* main-fixup          - attempt to merge in upstream main and PUll_REQUEST_BRANCHES ignoring files in .gitattributes
 EOF
 
+if [[ $OSTYPE == "darwin"* ]]; then
+    # MacOS
+    crontab -l > /tmp/crontab || true
+    if [[ x`grep git_sync /tmp/crontab || true`x == "xx" ]]; then
+        echo "Setting up crontab for git_sync"
+        cp ./.github/git_sync.sh /usr/local/bin/git_sync
+        chmod a+x /usr/local/bin/git_sync
+        echo "0 13 * * *  && git_sync --local-only" >> /tmp/crontab
+        crontab</tmp/crontab
+    else
+        echo "git_sync already setup in crontab, updating /usr/local/bin/git_sync"
+        cp ./.github/git_sync.sh /usr/local/bin/git_sync
+        chmod a+x /usr/local/bin/git_sync
+    fi
+    rm /tmp/crontab 
+fi
 
-if [[ -f "./git_sync.config" ]]; then
+if [[ -f "./.github/git_sync.config" ]]; then
     echo "Using values in git_sync.config"
-    source ./git_sync.config
+    source ./.github/git_sync.config
 else
     echo "Using hard-coded values in git_sync.sh"
     COMPANY="CHANGE_ME"
+    # ORGs
     UPSTREAM_GIT_ORG="panther-labs"
     ACTIVE_GIT_ORG="CHANGE_ME"
     UPSTREAM_MIRROR_GIT_ORG="CHANGE_ME"
+    # REPOs
     REPO="panther-analysis"
     ACTIVE_REPO="$COMPANY-panther-analysis"
     # Branches
