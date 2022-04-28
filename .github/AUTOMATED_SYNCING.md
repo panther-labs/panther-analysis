@@ -39,14 +39,20 @@ The `upstream-main` branch is pristine replica of `upstream/main`.
 
 Branch off of upstream-master for features you intened to merge upstream.
 Make updates to `main` for things like using gitleaks to ensure that secrets 
-or corproate info does not get included in an upstream PR.
+or corporate info does not get included in an upstream PR.
 
 ## ACTIVE_GIT_ORG Repo
 The `main` branch will have the .github/ differences above and any commits related
 to the customization of your fork.
 
-If there are files in `PULL_REQUEST_BRANCHES`, a `main-fixup` 
+If there are files in `PULL_REQUEST_BRANCHES`, a `main-fixup` branch will
+be created. Currently git_sinc.sh allows `main` and `main-fixup` to diverge.
+You could modify it to initialize `main-fixup` from `origin/main` and then
+pull in `upstream-main-fixup`. 
+
 If there are files in .gitattributes these generate MERGE_CONFLICT_FILES.
+Check if these any files to be merged in are in MERGE_CONFLICT_FILES and
+send an alert if so.
 
 ## What git_sync.sh does
 
@@ -76,7 +82,7 @@ MERGE_CONFLICT_FILES  - if these files change in upstream there will be a merge
 
 The following branches are updated/created:
 
-* upstream-$feature         - pristine copy of each feature in PULL_REQUEST_BRANCHES
+* upstream-$feature         - pristine copy of each $feature in PULL_REQUEST_BRANCHES
 * upstream-main-fixup       - combined merge of all upstream-$feature branches
                               use this if creating a PR for upstream
 * main-fixup                - merge upstream-main-fixup into main-fixup. You can 
@@ -118,8 +124,8 @@ After creating an empty `REPO` in `ACTIVE_GIT_ORG`,
 # Clone the private_to_putlic repo which has sync.yml and git_sync.sh
 git clone https://github.com/kbroughton/private_to_public_repo.git
 git clone https://github.com/panther-labs/panther-analysis.git
-cp private_to_public_repo/git_sync.sh panther-analysis
-chmod a+x private_to_public_repo/git_sync.sh
+cp private_to_public_repo/git_sync.sh panther-analysis/.github/
+chmod a+x .github/git_sync.sh
 cp private_to_public_repo/.github/workflows/sync.yml panther-analysis/.github/workflow/sync.yml
 cd panther-analysis
 # Change origin to point to our new

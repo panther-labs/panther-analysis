@@ -29,7 +29,7 @@ EOF
 if [[ $OSTYPE == "darwin"* ]]; then
     # MacOS
     crontab -l > /tmp/crontab || true
-    if [[ x`grep git_sync /tmp/crontab || true`x == "xx" ]]; then
+    if [[ x`grep $PWD /tmp/crontab || true`x == "xx" ]]; then
         echo "Setting up crontab for git_sync"
         cp ./.github/git_sync.sh /usr/local/bin/git_sync
         chmod a+x /usr/local/bin/git_sync
@@ -105,15 +105,26 @@ function merge_and_alert() {
     LOCAL_MERGE_BRANCH=$1
     REMOTE_BRANCH=$2
 
+    # If our branch is ${UPSTREAM_BASE_BRANCH} or ${UPSTREAM_BASE_BRANCH}-fixup 
+    # then we need to init our branch from origin, otherwise, from upstream
+    if [[ ${LOCAL_MERGE_BRANCH} == upstream* ]]; then
+        echo "Initializing ${LOCAL_MERGE_BRANCH} from upstream"
+        CHECKOUT_REPO="upstream"
+    else
+        echo "Initializing ${LOCAL_MERGE_BRANCH} from origin"
+        CHECKOUT_REPO="origin"
+    fi
+    
     branch_commit=`git rev-parse -q --verify ${LOCAL_MERGE_BRANCH} || echo ""`
     if [[ x${branch_commit}x == "xx" ]]; then
         echo "Local branch ${LOCAL_MERGE_BRANCH} does not exist, creating"
-        git switch -c ${LOCAL_MERGE_BRANCH} upstream/${REMOTE_BRANCH}
+        git switch -c ${LOCAL_MERGE_BRANCH} $CHECKOUT_REPO/${REMOTE_BRANCH}
+        git merge --no-edit --no-commit upstream/$REMOTE_BRANCH
+
     else
         echo "Local branch ${LOCAL_MERGE_BRANCH} already exists, updating"
         git switch ${LOCAL_MERGE_BRANCH}
     fi
-    git merge --no-edit --no-commit upstream/$REMOTE_BRANCH
 
     # Check if there are any merge conflicts with files in .gitattributes
     git diff --cached --name-only | sort > /tmp/GIT_DIFF_CACHED
@@ -133,8 +144,15 @@ function merge_and_alert() {
     fi
 
     # Only push if we are allowed and there is something to push
-    if [[ ${IS_LOCAL_ONLY} = false ]]; then \
-        git push --force --set-upstream origin ${LOCAL_MERGE_BRANCH}
+    if [[ ${IS_LOCAL_ONLY} = false ]]; then 
+        if [[ ${CHECKOUT_REPO} == "origin" ]]; then
+            # Don't force push to local updates. Fail loudly.
+            git push origin ${LOCAL_MERGE_BRANCH}
+        else
+            # Force push is fine. We are not the record of truth.
+            git push --set-upstream origin ${LOCAL_MERGE_BRANCH}
+        fi
+        
     fi
 }
 
