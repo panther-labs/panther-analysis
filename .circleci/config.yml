@@ -1,16 +1,5 @@
 version: 2.1
 
-commands:
-  download_pantherlog_tool:
-    parameters:
-      version:
-        type: string
-        description: The version tag to download
-    steps:
-        - run:
-            name: Download pantherlog tool
-            command: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/<<parameters.version>>/tools/dev/pantherlog-linux-amd64" && mv pantherlog-linux-amd64 pantherlog && chmod +x pantherlog
-
 jobs:
   lint:
     docker:
@@ -34,16 +23,6 @@ jobs:
       - run:
           name: Run unit tests
           command: make test
-  schema_tests:
-      docker:
-        - image: 'circleci/python:3.7'
-      steps:
-        - checkout
-        - download_pantherlog_tool:
-            version: v1.17.0-RC
-        - run:
-            name: Run schema tests
-            command: ./pantherlog -v && ./pantherlog test ./schemas || true
 
 workflows:
   version: 2
@@ -51,5 +30,4 @@ workflows:
     jobs:
       - lint
       - unit_tests
-      - schema_tests
 
