@@ -14,7 +14,7 @@ commands:
 jobs:
   lint:
     docker:
-      - image: 'circleci/python:3.7'
+      - image: 'cimg/python:3.9'
     steps:
       - checkout
       - run:
@@ -25,7 +25,7 @@ jobs:
           command: make lint
   unit_tests:
     docker:
-      - image: 'circleci/python:3.7'
+      - image: 'cimg/python:3.9'
     steps:
       - checkout
       - run:
@@ -36,7 +36,7 @@ jobs:
           command: make test
   schema_tests:
       docker:
-        - image: 'circleci/python:3.7'
+        - image: 'cimg/python:3.9'
       steps:
         - checkout
         - download_pantherlog_tool:
