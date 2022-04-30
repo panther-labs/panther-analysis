@@ -1,4 +1,5 @@
 import panther_event_type_helpers as event_type
+from panther_base_helpers import deep_get
 
 
 def get_event_type(event):
@@ -25,3 +26,10 @@ def get_event_type(event):
     if event.get("eventType") == "system.mfa.factor.deactivate":
         return event_type.ADMIN_MFA_DISABLED
     return None
+
+
+def get_actor_user(event):
+    actor = deep_get(event, "actor", "displayName")
+    if actor == "unknown":
+        actor = deep_get(event, "actor", "alternateId")
+    return actor
