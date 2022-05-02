@@ -162,6 +162,10 @@ class GreyNoiseAdvanced:
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
+            "VPN": self.vpn_service(match_field),
+            "Metadata" : deep_get(self.noise, match_field, "metadata"),
+            "Tags": self.tags_list(match_field),
+            "CVE": self.cve_list(match_field),
         }
 
 
@@ -252,6 +256,7 @@ class GreyNoiseRIOTAdvanced:
             "IP": self.ip_address(match_field),
             "Name": self.name(match_field),
             "GreyNoise_URL": self.url(match_field),
+            "Provider Data": deep_get(self.riot, match_field, "provider"),
         }
 
 
