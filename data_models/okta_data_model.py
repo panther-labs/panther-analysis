@@ -31,5 +31,5 @@ def get_event_type(event):
 def get_actor_user(event):
     actor = deep_get(event, "actor", "displayName")
     if actor == "unknown":
-        actor = deep_get(event, "actor", "alternateId")
+        actor = deep_get(event, "actor", "alternateId", default="Unknown User")
     return actor
