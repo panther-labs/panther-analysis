@@ -284,7 +284,7 @@ def GreyNoiseSeverity(event, ip, default="MEDIUM"):
 
     if noise.classification(ip) == "malicious":
         return "CRITICAL"
-    elif noise.classification(ip) == "benign":
+    if noise.classification(ip) == "benign":
         return "LOW"
     # If classification is unknown default to medium
     return default
