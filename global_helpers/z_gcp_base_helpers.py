@@ -1,13 +1,17 @@
 import panther_base_helpers
 
 def get_info(event):
-    principal = panther_base_helpers.deep_get(event, 'protoPayload', 'authenticationInfo', 'principalEmail')
-    project_id = panther_base_helpers.deep_get(event, 'protoPayload', 'resource', 'labels', 'project_id')
-    caller_ip = panther_base_helpers.deep_get(event, 'protoPayload', 'requestMetadata', 'callerIP')
-    user_agent = panther_base_helpers.deep_get(event, 'protoPayload', 'requestMetadata', 'callerSuppliedUserAgent')
-    method_name = panther_base_helpers.deep_get(event, 'protoPayload', 'methodName')
-    return principal, project_id, caller_ip, user_agent, method_name
-
+    fields = {
+        'principal': 'protoPayload.authenticationInfo.principalEmail',
+        'project_id': 'protoPayload.resource.labels.project_id',
+        'caller_ip': 'protoPayload.requestMetadata.callerIP',
+        'user_agent': 'protoPayload.requestMetadata.callerSuppliedUserAgent',
+        'method_name': 'protoPayload.methodName',
+    }
+    return {
+        name: panther_base_helpers.deep_get(event, *(path.split('.')))
+        for name, path in fields
+    }
 
 def get_k8s_info(event):
     '''
@@ -16,18 +20,20 @@ def get_k8s_info(event):
     '''
     pod_slug = panther_base_helpers.deep_get(event, 'protoPayload', 'resourceName')
     # core/v1/namespaces/<namespace>/pods/<pod-id>/<action>
-    _, _, _, namespace, _, pod, _ = pod_slug.split('/') 
-    principal, project_id, caller_ip, user_agent, method_name = get_info(event)
-    
-    return principal, project_id, pod, caller_ip, user_agent, namespace
+    _, _, _, namespace, _, pod, _ = pod_slug.split('/')     
+    return get_info(event) | {'namespace': namespace, 'pod': pod}
 
-
-def gcp_flow_get_info(event):
-    src_ip = panther_base_helpers.deep_get(event, 'jsonPayload', 'connection', 'src_ip')
-    dest_ip = panther_base_helpers.deep_get(event, 'jsonPayload', 'connection', 'dest_ip')
-    src_port = panther_base_helpers.deep_get(event, 'jsonPayload', 'connection', 'src_port')
-    dest_port = panther_base_helpers.deep_get(event, 'jsonPayload', 'connection', 'dest_port')
-    protocol = panther_base_helpers.deep_get(event, 'jsonPayload', 'connection', 'protocol')
-    bytes_sent = panther_base_helpers.deep_get(event, 'jsonPayload', 'bytes_sent')
-    reporter = panther_base_helpers.deep_get(event, 'jsonPayload', 'reporter')
-    return src_ip, dest_ip, src_port, dest_port, protocol, bytes_sent, reporter
+def get_gcp_flow_info(event):
+    fields = {
+        'src_ip': 'jsonPayload.connection.src_ip',
+        'dest_ip': 'jsonPayload.connection.dest_ip',
+        'src_port': 'jsonPayload.connection.src_port',
+        'dest_port': 'jsonPayload.connection.dest_port',
+        'protocol': 'jsonPayload.connection.protocol',
+        'bytes_sent': 'jsonPayload.bytes_sent',
+        'reporter': 'jsonPayload.reporter'
+    }
+    return {
+        name: panther_base_helpers.deep_get(event, *(path.split('.')))
+        for name, path in fields
+    }
