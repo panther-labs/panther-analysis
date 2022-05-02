@@ -2,6 +2,7 @@
 import datetime
 
 from dateutil import parser
+from functools import wraps
 from panther_base_helpers import deep_get
 
 
@@ -265,3 +266,21 @@ def GetGreyNoiseRiotObject(event):
     if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
         return GreyNoiseRIOTAdvanced(event)
     return GreyNoiseRIOTBasic(event)
+
+
+def GreyNoiseSeverity(event, ip, default="MEDIUM"):
+    # Set Severity based on GreyNoise classification. If unknown to GreyNoise
+    # return default
+    noise = GetGreyNoiseObject(event)
+    riot = GetGreyNoiseRiotObject(event)
+
+    # If IP exists in RIOT Dataset it is known good, lower alert severity
+    if riot.is_riot(ip):
+        return "INFO"
+
+    if noise.classification(ip) == "malicious":
+        return "CRITICAL"
+    elif noise.classification(ip) == "benign":
+        return "LOW"
+    # If classification is unknown default to medium
+    return default
