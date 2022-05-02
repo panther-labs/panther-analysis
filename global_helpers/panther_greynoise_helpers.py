@@ -2,7 +2,6 @@
 import datetime
 
 from dateutil import parser
-from functools import wraps
 from panther_base_helpers import deep_get
 
 
@@ -163,7 +162,7 @@ class GreyNoiseAdvanced:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
             "VPN": self.vpn_service(match_field),
-            "Metadata" : deep_get(self.noise, match_field, "metadata"),
+            "Metadata": deep_get(self.noise, match_field, "metadata"),
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
