@@ -10,7 +10,7 @@ def get_info(event):
     }
     return {
         name: panther_base_helpers.deep_get(event, *(path.split('.')))
-        for name, path in fields
+        for name, path in fields.items()
     }
 
 def get_k8s_info(event):
@@ -23,7 +23,7 @@ def get_k8s_info(event):
     _, _, _, namespace, _, pod, _ = pod_slug.split('/')     
     return get_info(event) | {'namespace': namespace, 'pod': pod}
 
-def get_gcp_flow_info(event):
+def get_flow_log_info(event):
     fields = {
         'src_ip': 'jsonPayload.connection.src_ip',
         'dest_ip': 'jsonPayload.connection.dest_ip',
@@ -35,5 +35,5 @@ def get_gcp_flow_info(event):
     }
     return {
         name: panther_base_helpers.deep_get(event, *(path.split('.')))
-        for name, path in fields
+        for name, path in fields.items()
     }
