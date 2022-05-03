@@ -39,7 +39,7 @@ def get_account_setting_event_type(event):
 
 def is_admin_role(new_role):
     if new_role and isinstance(new_role, str):
-        for admin in {"admin", "account owner"}:
+        for admin in ("admin", "account owner"):
             if admin in new_role.lower():
                 return True
     return False
