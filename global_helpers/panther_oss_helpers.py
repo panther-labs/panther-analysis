@@ -401,6 +401,7 @@ def time_delta(time1, time2: str) -> str:
 
 def nano_to_micro(time_str: str) -> str:
     parts = time_str.split(":")
+    # pylint: disable=consider-using-f-string
     parts[-1] = "{:06f}".format(float(parts[-1]))
     return ":".join(parts)
 

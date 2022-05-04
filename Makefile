@@ -20,7 +20,7 @@ deps-update:
 
 lint:
 	pipenv run bandit -r $(dirs) --skip B101  # allow assert statements in tests
-	pipenv run pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme --max-line-length=100
+	pipenv run pylint $(dirs) --disable=missing-docstring,duplicate-code,import-error,fixme,consider-iterating-dictionary,global-variable-not-assigned --max-line-length=100
 
 venv:
 	pipenv install --dev
