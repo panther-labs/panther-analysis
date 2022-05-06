@@ -40,7 +40,7 @@ def get_admin_map(event):
 def get_modified_users(event):
     roles_assigned = get_admin_map(event)
 
-    return json.dumps( list(roles_assigned.values()), default=PantherEvent.json_encoder)
+    return json.dumps(list(roles_assigned.values()), default=PantherEvent.json_encoder)
 
 
 def get_iam_roles(event):

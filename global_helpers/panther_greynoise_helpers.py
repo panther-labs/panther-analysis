@@ -161,6 +161,10 @@ class GreyNoiseAdvanced:
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
+            "VPN": self.vpn_service(match_field),
+            "Metadata": deep_get(self.noise, match_field, "metadata"),
+            "Tags": self.tags_list(match_field),
+            "CVE": self.cve_list(match_field),
         }
 
 
@@ -251,6 +255,7 @@ class GreyNoiseRIOTAdvanced:
             "IP": self.ip_address(match_field),
             "Name": self.name(match_field),
             "GreyNoise_URL": self.url(match_field),
+            "Provider Data": deep_get(self.riot, match_field, "provider"),
         }
 
 
@@ -265,3 +270,21 @@ def GetGreyNoiseRiotObject(event):
     if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
         return GreyNoiseRIOTAdvanced(event)
     return GreyNoiseRIOTBasic(event)
+
+
+def GreyNoiseSeverity(event, ip, default="MEDIUM"):
+    # Set Severity based on GreyNoise classification. If unknown to GreyNoise
+    # return default
+    noise = GetGreyNoiseObject(event)
+    riot = GetGreyNoiseRiotObject(event)
+
+    # If IP exists in RIOT Dataset it is known good, lower alert severity
+    if riot.is_riot(ip):
+        return "INFO"
+
+    if noise.classification(ip) == "malicious":
+        return "CRITICAL"
+    if noise.classification(ip) == "benign":
+        return "LOW"
+    # If classification is unknown default to medium
+    return default
