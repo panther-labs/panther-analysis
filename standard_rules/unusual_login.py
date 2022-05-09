@@ -68,7 +68,7 @@ def rule(event):
     if previous_geo_logins:
         previous_geo_logins = json.loads(previous_geo_logins.pop())
     else:
-        previous_geo_logins = dict()
+        previous_geo_logins = {}
     logging.debug("new type of previous_geo_logins should be 'dict':")
     logging.debug(type(previous_geo_logins))
 
