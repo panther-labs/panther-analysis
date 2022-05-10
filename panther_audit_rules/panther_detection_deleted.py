@@ -18,12 +18,7 @@ def rule(event):
 
 
 def title(event):
-    detections_list = deep_get(event, "actionParams", "input", "detections")
-    deleted_detections_string = " ".join([x.get("id") for x in detections_list])
-    return (
-        f"Detection Content has been deleted by {event.udm('actor_user')}: "
-        f"{deleted_detections_string}"
-    )
+    return f"Detection Content has been deleted by {event.udm('actor_user')}"
 
 
 def alert_context(event):
