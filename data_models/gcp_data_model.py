@@ -2,7 +2,7 @@ import json
 from fnmatch import fnmatch
 
 import panther_event_type_helpers as event_type
-from panther_analysis_tool.enriched_event import PantherEvent
+from panther_core.enriched_event import PantherEvent
 from panther_base_helpers import get_binding_deltas
 
 ADMIN_ROLES = {
