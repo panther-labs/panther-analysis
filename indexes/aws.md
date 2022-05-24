@@ -139,7 +139,7 @@
 
 ## GuardDuty
 
-[ AWS GuardDuty Enabled](../aws_guardduty_policies/aws_guardduty_enabled.py)
+[ AWS GuardDuty Disabled](../aws_guardduty_policies/aws_guardduty_disabled.py)
 
 [ AWS GuardDuty High Severity Finding](../aws_guardduty_rules/aws_guardduty_high_sev_findings.py)
 
