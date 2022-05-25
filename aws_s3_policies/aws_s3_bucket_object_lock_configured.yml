@@ -9,12 +9,12 @@ Tags:
   - AWS
   - S3
   - PCI
-  - T1485
+  - Impact:Data Destruction
 Reports:
   PCI:
     - 10.5.3
-  MITRE ATT&CK:
-    - Impact:Data Destruction
+  MITRE ATTACK:
+    - TA0040:T1485
 Severity: Low
 Description: >
   This policy validates that S3 buckets have an Object Lock configuration enabled. This should be used with specific suppression lists to ensure it is applied only to appropriate S3 buckets, such as those containing CloudTrail or other auditable records.
