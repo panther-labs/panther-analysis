@@ -2,8 +2,8 @@ import json
 from fnmatch import fnmatch
 
 import panther_event_type_helpers as event_type
-from panther_core.enriched_event import PantherEvent
 from panther_base_helpers import get_binding_deltas
+from panther_core.enriched_event import PantherEvent
 
 ADMIN_ROLES = {
     # Primitive Rolesx

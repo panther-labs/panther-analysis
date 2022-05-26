@@ -10,5 +10,7 @@ def rule(event):
 
 
 def title(event):
-    return (f"AWS CodeBuild Project made Public by {deep_get(event, 'userIdentity', 'arn')} "
-           f"in account {lookup_aws_account_name(deep_get(event, 'recipientAccountId'))}")
+    return (
+        f"AWS CodeBuild Project made Public by {deep_get(event, 'userIdentity', 'arn')} "
+        f"in account {lookup_aws_account_name(deep_get(event, 'recipientAccountId'))}"
+    )
