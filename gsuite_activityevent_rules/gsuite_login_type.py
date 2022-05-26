@@ -16,6 +16,12 @@ def rule(event):
 
     if (
         event.get("type") == "login"
+        and deep_get(event, "id", "applicationName") == "saml"
+    ):
+        return False
+
+    if (
+        event.get("type") == "login"
         and event.get("name") != "logout"
         and deep_get(event, "parameters", "login_type") not in APPROVED_LOGIN_TYPES
     ):
