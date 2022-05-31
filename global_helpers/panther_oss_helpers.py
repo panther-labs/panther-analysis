@@ -10,7 +10,7 @@ from typing import Any, Dict, Optional, Sequence, Set, Union
 import boto3
 import requests
 from dateutil import parser
-from panther_core.immutable import ImmutableList
+from panther_analysis_tool.immutable import ImmutableList
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
