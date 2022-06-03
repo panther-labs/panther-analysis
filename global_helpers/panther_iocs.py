@@ -1,4 +1,25 @@
 # pylint: disable=line-too-long
+
+# 2022-06-02 Confluence 0-Day IOCs:
+# https://github.com/volexity/threat-intel/blob/main/2022/2022-06-02%20Active%20Exploitation%20Of%20Confluence%200-day/indicators/indicators.csv
+VOLEXITY_CONFLUENCE_IP_IOCS = {
+    "156.146.34.46",
+    "156.146.34.9",
+    "156.146.56.136",
+    "198.147.22.148",
+    "45.43.19.91",
+    "66.115.182.102",
+    "66.115.182.111",
+    "67.149.61.16",
+    "154.16.105.147",
+    "64.64.228.239",
+    "156.146.34.52",
+    "154.146.34.145",
+    "221.178.126.244",
+    "59.163.248.170",
+    "98.32.230.38",
+}
+
 # SUNBURST IOCs:
 # https://github.com/fireeye/sunburst_countermeasures/blob/main/indicator_release/Indicator_Release_NBIs.csv
 # Last accessed: 2021-11-17
