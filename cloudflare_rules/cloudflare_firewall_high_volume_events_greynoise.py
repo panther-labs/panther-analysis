@@ -15,7 +15,7 @@ def rule(event):
         return False
 
     # If IP is in the RIOT dataset, we can assume safe
-    global NOISE
+    global NOISE  # pylint: disable=global-variable-undefined
     NOISE = GetGreyNoiseObject(event)
     riot = GetGreyNoiseRiotObject(event)
     if riot.is_riot("ClientIP"):

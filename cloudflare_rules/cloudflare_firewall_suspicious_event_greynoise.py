@@ -14,7 +14,7 @@ def rule(event):
         return False
 
     # Setup GreyNoise variables
-    global NOISE
+    global NOISE  # pylint: disable=global-variable-undefined
     NOISE = GetGreyNoiseObject(event)
     riot = GetGreyNoiseRiotObject(event)
 

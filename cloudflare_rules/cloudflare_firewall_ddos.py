@@ -5,4 +5,4 @@ def rule(event):
 
 
 def title(_):
-    return f"Cloudflare Detected L7 DDoS"
+    return "Cloudflare Detected L7 DDoS"
