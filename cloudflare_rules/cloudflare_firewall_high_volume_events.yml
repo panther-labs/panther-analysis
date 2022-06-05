@@ -1,0 +1,97 @@
+AnalysisType: rule
+Filename: cloudflare_firewall_high_volume_events.py
+RuleID: Cloudflare.Firewall.HighVolumeEvents
+DisplayName: Cloudflare - High Volume Events
+Enabled: false
+LogTypes:
+  - Cloudflare.Firewall
+Tags:
+  - Cloudflare
+Severity: Low
+Description: Monitors high volume events blocked from the same IP
+Runbook: Inspect and monitor internet-facing services for potential outages
+DedupPeriodMinutes: 60 # 1 hour
+Threshold:  60
+SummaryAttributes:
+  - ClientRequestUserAgent
+  - ClientRequestPath
+  - Action
+  - EdgeResponseStatus
+  - OriginResponseStatus
+Tests:
+  -
+    Name: Blocked Event
+    ExpectedResult: true
+    Log:
+      {
+        "Action": "block",
+        "ClientASN": 14061,
+        "ClientASNDescription": "DIGITALOCEAN-ASN",
+        "ClientCountry": "nl",
+        "ClientIP": "127.0.0.1",
+        "ClientIPClass": "noRecord",
+        "ClientRefererHost": "www.example.com",
+        "ClientRefererPath": "/Visitor/bin/WebStrings.srf",
+        "ClientRefererQuery": "?file=..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/win.ini&obj_name=aaa",
+        "ClientRefererScheme": "https",
+        "ClientRequestHost": "example.com",
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/Visitor/bin/WebStrings.srf",
+        "ClientRequestProtocol": "HTTP/1.1",
+        "ClientRequestQuery": "?file=..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/win.ini&obj_name=aaa",
+        "ClientRequestScheme": "https",
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 6.4; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2225.0 Safari/537.36",
+        "Datetime": "2022-05-08 10:19:15",
+        "EdgeColoCode": "AMS",
+        "EdgeResponseStatus": 403,
+        "Kind": "firewall",
+        "MatchIndex": 0,
+        "Metadata": {
+          "ruleset_version": "65",
+          "type": "customer",
+          "version": "59"
+        },
+        "OriginResponseStatus": 0,
+        "OriginatorRayID": "00",
+        "RayID": "708174c00f61faa8",
+        "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
+        "Source": "firewallmanaged",
+      }
+  -
+    Name: Skip Event
+    ExpectedResult: false
+    Log:
+      {
+        "Action": "skip",
+        "ClientASN": 14061,
+        "ClientASNDescription": "DIGITALOCEAN-ASN",
+        "ClientCountry": "nl",
+        "ClientIP": "127.0.0.1",
+        "ClientIPClass": "noRecord",
+        "ClientRefererHost": "www.example.com",
+        "ClientRefererPath": "/Visitor/bin/WebStrings.srf",
+        "ClientRefererQuery": "?file=..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/win.ini&obj_name=aaa",
+        "ClientRefererScheme": "https",
+        "ClientRequestHost": "example.com",
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/Visitor/bin/WebStrings.srf",
+        "ClientRequestProtocol": "HTTP/1.1",
+        "ClientRequestQuery": "?file=..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/win.ini&obj_name=aaa",
+        "ClientRequestScheme": "https",
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 6.4; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2225.0 Safari/537.36",
+        "Datetime": "2022-05-08 10:19:15",
+        "EdgeColoCode": "AMS",
+        "EdgeResponseStatus": 403,
+        "Kind": "firewall",
+        "MatchIndex": 0,
+        "Metadata": {
+          "ruleset_version": "65",
+          "type": "customer",
+          "version": "59"
+        },
+        "OriginResponseStatus": 0,
+        "OriginatorRayID": "00",
+        "RayID": "708174c00f61faa8",
+        "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
+        "Source": "firewallmanaged",
+      }
