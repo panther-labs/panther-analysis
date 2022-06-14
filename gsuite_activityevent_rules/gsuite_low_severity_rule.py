@@ -16,5 +16,4 @@ def rule(event):
 def title(event):
     if deep_get(event, "parameters", "rule_name"):
         return "GSuite Low Severity Rule Triggered : " + deep_get(event, "parameters", "rule_name")
-    
     return "GSuite Low Severity Rule Triggered"
