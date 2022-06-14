@@ -73,3 +73,24 @@ Tests:
           ]
         },
       }
+  -
+    Name: High Severity Rule with Rule Name
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "HIGH",
+          "rule_name": "CEO Impersonation",
+          "triggered_actions": [
+            {
+              "action_type": "MAIL_MARK_AS_PHISHING"
+            }
+          ]
+        },
+      }
