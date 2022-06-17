@@ -29,7 +29,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"High Volume Events Blocked - "
+        f"High Volume Events Detected - "
         f"{map_source_to_name(event.get('Source'))}: {event.get('ClientIP')}"
     )
 
