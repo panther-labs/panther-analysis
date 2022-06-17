@@ -4,9 +4,6 @@ from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
 
 def rule(event):
-    if event.get("Action") == "block":
-        return False
-
     # Validate the IP is actually an IP
     try:
         ip_address(event.get("ClientIP"))
