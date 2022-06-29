@@ -1,12 +1,3 @@
-"""
-Searching logs in GSuite:
-
-SELECT *
-FROM panther_logs.public.gsuite_reports
-WHERE id:applicationName = 'login'
-AND events[0]:name = 'login_failure' LIMIT 10;
-"""
-
 from json import loads
 
 import panther_event_type_helpers as event_type
