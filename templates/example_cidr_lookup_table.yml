@@ -1,0 +1,17 @@
+AnalysisType: lookup_table # always lookup_table
+LookupName: simple_cidr_lookup # str
+Enabled: true # bool
+Description: Lookup table description # str (Optional)
+# FileName: ./relative/path/to/content.csv # str (Optional)
+DataFile: ./relative/path/to/content.csv # str (Optional)
+Reference: An optional reference link # str (Optional)
+Schema: Custom.Simple.Cidr # str (should already exist)
+LogTypeMap:
+  PrimaryKey: network # str
+  AssociatedLogTypes: # [...]
+    - LogType: Aws.CloudTrail # str
+      Selectors: # [str]
+        - 'p_any_ip_addresses'
+    - LogType: Aws.VPCFlow
+      Selectors:
+        - 'p_any_ip_addresses'
