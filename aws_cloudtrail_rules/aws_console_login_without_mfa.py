@@ -5,7 +5,12 @@ from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 from panther_oss_helpers import check_account_age
 
+# if you have an external IdP ( like Okta )
+# that permits direct role assumption, then
+# set this variable to True.
+ROLES_VIA_EXTERNAL_IDP = False
 
+# pylint: disable=R0911
 def rule(event):
     if event.get("eventName") != "ConsoleLogin":
         return False
@@ -13,6 +18,19 @@ def rule(event):
     # Extract some nested JSON structure
     additional_event_data = event.get("additionalEventData", {})
     response_elements = event.get("responseElements", {})
+    user_identity_type = deep_get(event, "userIdentity", "type", default="")
+
+    # When there is an external IdP setup and users directly assume roles
+    # the additionalData.MFAUsed attribute will be set to "no"
+    #  AND the userIdentity.sessionContext.mfaAuthenticated attribute will be "false"
+    #
+    # This will create a lack of visibility into the condition where
+    #  users are allowed to directly AssumeRole outside of the IdP and without MFA
+    #
+    # To date we have not identified data inside the log events that clearly
+    #  delinates AssumeRole backed by an external IdP vs not backed by external IdP
+    if ROLES_VIA_EXTERNAL_IDP and user_identity_type == "AssumedRole":
+        return False
 
     # If using AWS SSOv2 or other SAML provider return False
     if (
