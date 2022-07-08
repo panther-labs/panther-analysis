@@ -27,8 +27,10 @@ We welcome all contributions! Please read the [contributing guidelines](https://
 # Quick Start
 
 ## Clone the repository
+```bash
 git clone git@github.com:panther-labs/panther-analysis.git
 cd panther-analysis
+```
 
 ### Repo Structure
 
