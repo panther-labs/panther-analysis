@@ -5,9 +5,7 @@ from panther import lookup_aws_account_name
 from panther_base_helpers import deep_get
 from panther_oss_helpers import check_account_age
 
-# if you have an external IdP ( like Okta )
-# that permits direct role assumption, then
-# set this variable to True.
+# Set to True for environments that permit direct role assumption via external IDP
 ROLES_VIA_EXTERNAL_IDP = False
 
 # pylint: disable=R0911
