@@ -5,3 +5,4 @@ MFA_EXCEPTIONS = {
 
 def rule(event):
     return event.get("user_name", "") not in MFA_EXCEPTIONS
+ 

@@ -9,10 +9,10 @@ Tags:
   - Identity & Access Management
   - DataModel
   - Okta
-  - T1199
+  - Initial Access:Trusted Relationship
 Reports:
   MITRE ATT&CK:
-    - Initial Access:Trusted Relationship
+    - TA0001:T1199
 Severity: High
 Description: A Password or MFA factor was reset by Okta Support
 Reference: https://help.okta.com/en/prod/Content/Topics/Directory/get-support.htm#:~:text=Visit%20the%20Okta%20Help%20Center,1%2D800%2D219%2D0964
@@ -28,7 +28,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "uuid": "unknown",
+        "uuid": "12343",
         "published": "2021-11-29 18:56:40.014",
         "eventType": "user.account.reset_password",
         "version": "0",
@@ -61,7 +61,12 @@ Tests:
             "type": "User"
           }
         ],
-        "p_log_type": "Okta.SystemLog",
+      "transaction": {
+        "detail": {},
+        "id": "unknown",
+        "type": "WEB"
+      },
+      "p_log_type": "Okta.SystemLog",
     }
   -
     Name: Reset by Company Admin

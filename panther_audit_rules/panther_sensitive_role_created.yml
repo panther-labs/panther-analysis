@@ -1,0 +1,85 @@
+AnalysisType: rule
+Filename: panther_sensitive_role_created.py
+RuleID: Panther.Sensitive.Role
+DisplayName: A User Role with Sensitive Permissions has been Created
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: High
+Tags:
+  - DataModel
+  - Persistence:Account Manipulation
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Description: A Panther user role has been created that contains admin level permissions.
+Runbook: Contact the creator of this role to ensure its creation was appropriate.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Admin Role Created
+    ExpectedResult: true
+    Log:
+      {
+          "actionName": "CREATE_USER_ROLE",
+          "actionParams": {
+            "input": {
+              "logTypeAccessKind": "DENY_ALL",
+              "name": "New Admins",
+              "permissions": [
+                "GeneralSettingsModify",
+                "GeneralSettingsRead",
+                "SummaryRead"
+              ]
+            }
+          },
+          "actionResult": "SUCCEEDED",
+          "actor": {
+            "attributes": {
+              "email": "homer@springfield.gov",
+              "emailVerified": true,
+              "roleId": "1111111"
+            },
+            "id": "11111111",
+            "name": "Homer Simpson",
+            "type": "USER"
+          },
+          "errors": null,
+          "p_log_type": "Panther.Audit",
+          "pantherVersion": "1.2.3",
+          "sourceIP": "1.2.3.4",
+          "timestamp": "2022-04-27 20:47:09.425",
+        }
+  -
+    Name: Non-Admin Role Created
+    ExpectedResult: false
+    Log:
+      {
+          "actionName": "CREATE_USER_ROLE",
+          "actionParams": {
+            "input": {
+              "logTypeAccessKind": "DENY_ALL",
+              "name": "New Admins",
+              "permissions": [
+                "SummaryRead",
+              ]
+            }
+          },
+          "actionResult": "SUCCEEDED",
+          "actor": {
+            "attributes": {
+              "email": "homer@springfield.gov",
+              "emailVerified": true,
+              "roleId": "1111111"
+            },
+            "id": "11111111",
+            "name": "Homer Simpson",
+            "type": "USER"
+          },
+          "errors": null,
+          "p_log_type": "Panther.Audit",
+          "pantherVersion": "1.2.3",
+          "sourceIP": "1.2.3.4",
+          "timestamp": "2022-04-27 20:47:09.425",
+        }

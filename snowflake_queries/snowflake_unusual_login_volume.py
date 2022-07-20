@@ -3,3 +3,4 @@ def rule(_):
 
 def title(event):
     return f"{event.get('user_name')} has exceeded the normal amount of Snowflake logins"
+ 
