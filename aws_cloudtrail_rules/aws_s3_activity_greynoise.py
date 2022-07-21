@@ -9,11 +9,12 @@ from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 # Monitor for GetObject events from S3.
 # Also check ListBucket to reveal object enumeration.
 _S3_EVENT_LIST = (
-    "ListBucket*", 
+    "ListBucket*",
     "GetObject*",
 )
 
-# Some AWS IP addresses listed as "malicious" are stale, this allows for allowing specific roles where this may occur
+# Some AWS IP addresses listed as "malicious" are stale
+# This enables allowing specific roles where this may occur
 _ALLOWED_ROLES = (
     "*PantherAuditRole-*",
     "*PantherLogProcessingRole-*",
@@ -33,7 +34,7 @@ def rule(event):
     # Filter: Non "Get" events
     if not pattern_match_list(event.get("eventName"), _S3_EVENT_LIST):
         return False
-    
+
     # Validate the IP is actually an IP (sometimes it's a string)
     try:
         ip_address(event.get("sourceIPAddress"))
@@ -62,7 +63,7 @@ def rule(event):
             else:
                 return False
         return True
-    
+
     return False
 
 
