@@ -7,10 +7,10 @@ LogTypes:
   - GSuite.Reports
 Tags:
   - GSuite
-  - T1213
+  - Collection:Data from Information Repositories
 Reports:
    MITRE ATT&CK:
-      - Collection:Data from Information Repositories
+    - TA0009:T1213
 Severity: Low
 Description: >
   A Google drive resource became externally accessible.
@@ -18,7 +18,7 @@ Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/
 Runbook: >
   Investigate whether the drive document is appropriate to be publicly accessible.
 SummaryAttributes:
-  - actor
+  - actor:email
 Tests:
   -
     Name: Access Event

@@ -19,6 +19,7 @@ FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 # Auto Time Resolution Parameters
 EPOCH_REGEX = r"([0-9]{9,12}(\.\d+)?)"
 TIME_FORMATS = [
+    "%Y-%m-%d %H:%M:%S",  # Panther p_event_time Timestamp
     "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
     "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
     "%Y-%m-%dT%H:%M:%S*%f%z",
@@ -401,6 +402,7 @@ def time_delta(time1, time2: str) -> str:
 
 def nano_to_micro(time_str: str) -> str:
     parts = time_str.split(":")
+    # pylint: disable=consider-using-f-string
     parts[-1] = "{:06f}".format(float(parts[-1]))
     return ":".join(parts)
 

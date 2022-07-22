@@ -5,205 +5,206 @@ Enabled: true
 Filename: aws_s3_activity_greynoise.py
 Reference: https://attack.mitre.org/techniques/T1530/
 Reports:
-    MITRE ATT&CK:
-        - Collection:Data from Cloud Storage Object
+  MITRE ATT&CK:
+    - TA0009:T1530
 Runbook: Investigate all actions taken and validate that the ARN conducting the acitivty was not compromised
 Severity: High
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:
-    - awsRegion
-    - eventName
-    - p_any_aws_arns
-    - recipientAccountId
-    - sourceIpAddress
-    - userAgent
-    - p_alert_context
-    - p_enrichment
+  - awsRegion
+  - eventName
+  - p_any_aws_arns
+  - recipientAccountId
+  - sourceIpAddress
+  - userAgent
+  - p_alert_context
+  - p_enrichment
 LogTypes:
-    - AWS.CloudTrail
+  - AWS.CloudTrail
 RuleID: AWS.S3.GreyNoiseActivity
 Tags:
-    - AWS
-    - GreyNoise
+  - AWS
+  - GreyNoise
+  - Collection:Data From Cloud Storage Object
 Tests:
-    - 
-        ExpectedResult: true
-        Name: GetObject from Malicious GreyNoise finding
-        Log:
-            {
-                "additionalEventData": {
-                    "AuthenticationMethod": "AuthHeader",
-                    "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                    "SignatureVersion": "SigV4",
-                    "bytesTransferredIn": 0,
-                    "bytesTransferredOut": 2441
-                },
-                "awsRegion": "eu-central-1",
-                "eventID": "60858000-f093-465f-9d62-97655522ab1a",
-                "eventName": "GetObject",
-                "eventSource": "s3.amazonaws.com",
-                "eventTime": "2021-08-16 16:39:43",
-                "eventType": "AwsApiCall",
-                "eventVersion": "1.08",
-                "managementEvent": false,
-                "readOnly": true,
-                "recipientAccountId": "111122223333",
-                "requestID": "EFMWSVE492PYSCYN",
-                "requestParameters": {
-                    "bucketName": "panther"
-                },
-                "resources": [],
-                "sourceIPAddress": "142.93.204.250",
-                "userAgent": "[aws-sdk-go/1.40.21 (go1.16.3; linux; amd64) exec-env/AWS_Lambda_go1.x S3Manager]",
-                "userIdentity": {
-                    "accessKeyId": "AAAA22222XXXXXBBBBBBB",
-                    "accountId": "111122223333",
-                    "arn": "arn:aws:sts::111122223333:assumed-role/Panther/1629131846392631241",
-                    "principalId": "AAAA22222XXXXXBBBBBBB:1629131846392631241",
-                    "sessionContext": {
-                        "attributes": {
-                            "creationDate": "2021-08-16T16:37:26Z",
-                            "mfaAuthenticated": "false"
-                        },
-                        "sessionIssuer": {
-                            "accountId": "111122223333",
-                            "arn": "arn:aws:iam::111122223333:role/Panther",
-                            "principalId": "AAAA22222XXXXXBBBBBBB",
-                            "type": "Role",
-                            "userName": "Panther"
-                        }
+  -
+    ExpectedResult: true
+    Name: GetObject from Malicious GreyNoise finding
+    Log:
+        {
+            "additionalEventData": {
+                "AuthenticationMethod": "AuthHeader",
+                "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+                "SignatureVersion": "SigV4",
+                "bytesTransferredIn": 0,
+                "bytesTransferredOut": 2441
+            },
+            "awsRegion": "eu-central-1",
+            "eventID": "60858000-f093-465f-9d62-97655522ab1a",
+            "eventName": "GetObject",
+            "eventSource": "s3.amazonaws.com",
+            "eventTime": "2021-08-16 16:39:43",
+            "eventType": "AwsApiCall",
+            "eventVersion": "1.08",
+            "managementEvent": false,
+            "readOnly": true,
+            "recipientAccountId": "111122223333",
+            "requestID": "EFMWSVE492PYSCYN",
+            "requestParameters": {
+                "bucketName": "panther"
+            },
+            "resources": [],
+            "sourceIPAddress": "142.93.204.250",
+            "userAgent": "[aws-sdk-go/1.40.21 (go1.16.3; linux; amd64) exec-env/AWS_Lambda_go1.x S3Manager]",
+            "userIdentity": {
+                "accessKeyId": "AAAA22222XXXXXBBBBBBB",
+                "accountId": "111122223333",
+                "arn": "arn:aws:sts::111122223333:assumed-role/Panther/1629131846392631241",
+                "principalId": "AAAA22222XXXXXBBBBBBB:1629131846392631241",
+                "sessionContext": {
+                    "attributes": {
+                        "creationDate": "2021-08-16T16:37:26Z",
+                        "mfaAuthenticated": "false"
                     },
-                    "type": "AssumedRole"
-                },
-                "p_event_time": "2021-08-16 16:39:43",
-                "p_parse_time": "2021-08-16 16:44:29.47",
-                "p_log_type": "AWS.CloudTrail",
-                "p_enrichment": {
-                    "greynoise_noise_basic": {
-                        "sourceIPAddress": {
-                            "actor": "unknown",
-                            "bot": false,
-                            "classification": "malicious",
-                            "cve": [],
-                            "first_seen": "2022-03-19",
-                            "ip": "142.93.204.250",
-                            "last_seen": "2022-04-06",
-                            "metadata": {
-                                "asn": "AS14061",
-                                "category": "hosting",
-                                "city": "North Bergen",
-                                "country": "United States",
-                                "country_code": "US",
-                                "organization": "DigitalOcean, LLC",
-                                "os": "Linux 2.2-3.x",
-                                "rdns": "",
-                                "region": "New Jersey",
-                                "tor": false
-                            },
-                            "raw_data": {
-                                "hassh": [],
-                                "ja3": [],
-                                "scan": [
-                                    {
-                                        "port": 23,
-                                        "protocol": "TCP"
-                                    }
-                                ],
-                                "web": {}
-                            },
-                            "seen": true,
-                            "spoofable": false,
-                            "tags": [
-                                "Mirai",
-                                "ZMap Client"
-                            ],
-                            "vpn": false,
-                            "vpn_service": "N/A"
-                        }
-                    }
-                },
-                "p_any_ip_addresses": [
-                    "142.93.204.250"
-                ],
-                "p_any_aws_account_ids": [
-                    "111122223333"
-                ],
-                "p_any_aws_arns": [
-                    "arn:aws:iam::111122223333:role/Panther",
-                    "arn:aws:sts::111122223333:assumed-role/Panther/1629131846392631241"
-                ]
-            }
-    - 
-        ExpectedResult: false
-        Name: GetBucketLocation Not Malicious
-        Log:
-            {
-                "additionalEventData": {
-                    "AuthenticationMethod": "AuthHeader",
-                    "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-                    "SignatureVersion": "SigV4",
-                    "bytesTransferredIn": 0,
-                    "bytesTransferredOut": 108,
-                },
-                "awsRegion": "us-west-2",
-                "eventID": "dd79436a-fbe1-4f77-ad9d-7457801f0c08",
-                "eventName": "GetBucketLocation",
-                "eventSource": "s3.amazonaws.com",
-                "eventTime": "2021-05-29 14:59:57",
-                "eventType": "AwsApiCall",
-                "eventVersion": "1.08",
-                "managementEvent": true,
-                "readOnly": true,
-                "recipientAccountId": "111122223333",
-                "requestID": "109V6Z3EQ7VAPP76",
-                "requestParameters": {
-                    "Host": "s3.us-west-2.amazonaws.com",
-                    "bucketName": "panther",
-                    "location": ""
-                },
-                "resources": [
-                    {
+                    "sessionIssuer": {
                         "accountId": "111122223333",
-                        "arn": "arn:aws:s3:::panther",
-                        "type": "AWS::S3::Bucket"
+                        "arn": "arn:aws:iam::111122223333:role/Panther",
+                        "principalId": "AAAA22222XXXXXBBBBBBB",
+                        "type": "Role",
+                        "userName": "Panther"
                     }
-                ],
-                "sourceIPAddress": "34.221.72.137",
-                "userAgent": "[aws-sdk-go/1.37.8 (go1.16.3; linux; amd64) exec-env/AWS_Lambda_go1.x]",
-                "userIdentity": {
-                    "accessKeyId": "AAAASSSSTTTTTVVVVVVV",
-                    "accountId": "111122223333",
-                    "arn": "arn:aws:sts::111122223333:assumed-role/Panther/1622300396286133103",
-                    "principalId": "AAAASSSSTTTTTVVVVVVV",
-                    "sessionContext": {
-                        "attributes": {
-                            "creationDate": "2021-05-29T14:59:56Z",
-                            "mfaAuthenticated": "false"
-                        },
-                        "sessionIssuer": {
-                            "accountId": "111122223333",
-                            "arn": "arn:aws:iam::111122223333:role/Panther",
-                            "principalId": "AAAASSSSTTTTTVVVVVVV",
-                            "type": "Role",
-                            "userName": "Panther"
-                        },
-                        "webIdFederationData": {}
-                    },
-                    "type": "AssumedRole"
                 },
-                "p_event_time": "2021-05-29 14:59:57",
-                "p_parse_time": "2021-05-29 15:00:43.237",
-                "p_log_type": "AWS.CloudTrail",
-                "p_source_label": "CloudTrail Test",
-                "p_any_ip_addresses": [
-                    "34.221.72.137"
-                ],
-                "p_any_aws_account_ids": [
-                    "111122223333"
-                ],
-                "p_any_aws_arns": [
-                    "arn:aws:iam::111122223333:role/Panther",
-                    "arn:aws:s3:::panther"
-                ]
-            }
+                "type": "AssumedRole"
+            },
+            "p_event_time": "2021-08-16 16:39:43",
+            "p_parse_time": "2021-08-16 16:44:29.47",
+            "p_log_type": "AWS.CloudTrail",
+            "p_enrichment": {
+                "greynoise_noise_basic": {
+                    "sourceIPAddress": {
+                        "actor": "unknown",
+                        "bot": false,
+                        "classification": "malicious",
+                        "cve": [],
+                        "first_seen": "2022-03-19",
+                        "ip": "142.93.204.250",
+                        "last_seen": "2022-04-06",
+                        "metadata": {
+                            "asn": "AS14061",
+                            "category": "hosting",
+                            "city": "North Bergen",
+                            "country": "United States",
+                            "country_code": "US",
+                            "organization": "DigitalOcean, LLC",
+                            "os": "Linux 2.2-3.x",
+                            "rdns": "",
+                            "region": "New Jersey",
+                            "tor": false
+                        },
+                        "raw_data": {
+                            "hassh": [],
+                            "ja3": [],
+                            "scan": [
+                                {
+                                    "port": 23,
+                                    "protocol": "TCP"
+                                }
+                            ],
+                            "web": {}
+                        },
+                        "seen": true,
+                        "spoofable": false,
+                        "tags": [
+                            "Mirai",
+                            "ZMap Client"
+                        ],
+                        "vpn": false,
+                        "vpn_service": "N/A"
+                    }
+                }
+            },
+            "p_any_ip_addresses": [
+                "142.93.204.250"
+            ],
+            "p_any_aws_account_ids": [
+                "111122223333"
+            ],
+            "p_any_aws_arns": [
+                "arn:aws:iam::111122223333:role/Panther",
+                "arn:aws:sts::111122223333:assumed-role/Panther/1629131846392631241"
+            ]
+        }
+  -
+    ExpectedResult: false
+    Name: GetBucketLocation Not Malicious
+    Log:
+        {
+            "additionalEventData": {
+                "AuthenticationMethod": "AuthHeader",
+                "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+                "SignatureVersion": "SigV4",
+                "bytesTransferredIn": 0,
+                "bytesTransferredOut": 108,
+            },
+            "awsRegion": "us-west-2",
+            "eventID": "dd79436a-fbe1-4f77-ad9d-7457801f0c08",
+            "eventName": "GetBucketLocation",
+            "eventSource": "s3.amazonaws.com",
+            "eventTime": "2021-05-29 14:59:57",
+            "eventType": "AwsApiCall",
+            "eventVersion": "1.08",
+            "managementEvent": true,
+            "readOnly": true,
+            "recipientAccountId": "111122223333",
+            "requestID": "109V6Z3EQ7VAPP76",
+            "requestParameters": {
+                "Host": "s3.us-west-2.amazonaws.com",
+                "bucketName": "panther",
+                "location": ""
+            },
+            "resources": [
+                {
+                    "accountId": "111122223333",
+                    "arn": "arn:aws:s3:::panther",
+                    "type": "AWS::S3::Bucket"
+                }
+            ],
+            "sourceIPAddress": "34.221.72.137",
+            "userAgent": "[aws-sdk-go/1.37.8 (go1.16.3; linux; amd64) exec-env/AWS_Lambda_go1.x]",
+            "userIdentity": {
+                "accessKeyId": "AAAASSSSTTTTTVVVVVVV",
+                "accountId": "111122223333",
+                "arn": "arn:aws:sts::111122223333:assumed-role/Panther/1622300396286133103",
+                "principalId": "AAAASSSSTTTTTVVVVVVV",
+                "sessionContext": {
+                    "attributes": {
+                        "creationDate": "2021-05-29T14:59:56Z",
+                        "mfaAuthenticated": "false"
+                    },
+                    "sessionIssuer": {
+                        "accountId": "111122223333",
+                        "arn": "arn:aws:iam::111122223333:role/Panther",
+                        "principalId": "AAAASSSSTTTTTVVVVVVV",
+                        "type": "Role",
+                        "userName": "Panther"
+                    },
+                    "webIdFederationData": {}
+                },
+                "type": "AssumedRole"
+            },
+            "p_event_time": "2021-05-29 14:59:57",
+            "p_parse_time": "2021-05-29 15:00:43.237",
+            "p_log_type": "AWS.CloudTrail",
+            "p_source_label": "CloudTrail Test",
+            "p_any_ip_addresses": [
+                "34.221.72.137"
+            ],
+            "p_any_aws_account_ids": [
+                "111122223333"
+            ],
+            "p_any_aws_arns": [
+                "arn:aws:iam::111122223333:role/Panther",
+                "arn:aws:s3:::panther"
+            ]
+        }

@@ -1,0 +1,18 @@
+AnalysisType: datamodel
+LogTypes: 
+  - Panther.Audit
+DataModelID: Standard.Panther.Audit
+Filename: panther_audit_data_model.py
+DisplayName: Panther Audit Logs
+Enabled: true
+Mappings:
+  - Name: source_ip
+    Path: sourceIP
+  - Name: user_agent
+    Path: userAgent
+  - Name: actor_user
+    Path: $.actor.attributes.email
+  - Name: user
+    Path: $.actionParams.input.email
+  - Name: event_type
+    Method: get_event_type

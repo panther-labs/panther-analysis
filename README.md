@@ -27,8 +27,10 @@ We welcome all contributions! Please read the [contributing guidelines](https://
 # Quick Start
 
 ## Clone the repository
+```bash
 git clone git@github.com:panther-labs/panther-analysis.git
 cd panther-analysis
+```
 
 ### Repo Structure
 
@@ -182,7 +184,7 @@ Follow the instructions [here](https://docs.github.com/en/free-pro-team@latest/g
 
 ## Getting Updates
 
-When you want to pull in the latest changes from our this repository, perform the following steps from your private repo:
+When you want to pull in the latest changes from this repository, perform the following steps from your private repo:
 
 ```bash
 # add the public repository as a remote
