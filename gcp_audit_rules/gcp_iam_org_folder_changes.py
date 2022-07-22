@@ -3,14 +3,15 @@ from panther_base_helpers import deep_get
 def rule(event):
     # Return True to match the log event and trigger an alert.
     logname = deep_get(event, "logName")
-    if deep_get(event, "protoPayload", "methodName") == "SetIamPolicy" and \
-     (logname.startswith("organizations") or \
-         logname.startswith("folder") ) and \
-        logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity") and \
-     deep_get(event, "protoPayload", "requestMetadata", "callerSuppliedUserAgent").lower().find('terraform') == -1:
-        return True
-    else:
-        return False
+    return deep_get(event, "protoPayload", "methodName") == "SetIamPolicy" and \
+            (logname.startswith("organizations") or \
+            logname.startswith("folder") ) and \
+            logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity") and \
+            deep_get(event,
+                "protoPayload",
+                "requestMetadata",
+                "callerSuppliedUserAgent").lower().find('terraform') == -1
+
 
 def title(event):
     # use unified data model field in title
