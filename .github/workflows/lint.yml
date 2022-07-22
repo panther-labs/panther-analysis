@@ -33,10 +33,27 @@ jobs:
     steps:
       - name: Checkout Source Repo
         uses: actions/checkout@v2
+
+      - name: Check python
+        run: python --version
+
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
         with:
-          path: ${{ env.SOURCE_REPO_CHECKOUT_PATH }}
+          python-version: 3.9
+
+      - name: Check python
+        run: python --version
+        
+      - name: install pyenv
+        run: curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+      - name: install pip 
+        run: wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
+
+      - name: pip install requirements
+        run: pip install pipenv pylint bandit
 
       - name: make lint
-        working-directory: ${{ env.SRC_REPO_CHECKOUT_PATH }}
-        run: |
-          make lint
+        run: make lint
