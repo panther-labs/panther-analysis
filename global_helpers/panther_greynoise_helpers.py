@@ -23,8 +23,6 @@ class PantherGreyNoiseException(Exception):
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
 
-class PantherIncorrectMethodException(Exception):
-    
 
 class GreyNoiseBasic:
     def __init__(self, event):
