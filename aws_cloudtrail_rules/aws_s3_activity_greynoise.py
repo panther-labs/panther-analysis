@@ -3,11 +3,22 @@ from ipaddress import ip_address
 from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
+
 # pylint: disable=too-many-return-statements,invalid-name,unused-argument,global-at-module-level,global-variable-undefined
 
 # Monitor for GetObject events from S3.
 # Also check ListBucket to reveal object enumeration.
-_S3_EVENT_LIST = ("ListBucket*", "GetObject*")
+_S3_EVENT_LIST = (
+    "ListBucket*",
+    "GetObject*",
+)
+
+# Some AWS IP addresses listed as "malicious" are stale
+# This enables allowing specific roles where this may occur
+_ALLOWED_ROLES = (
+    "*PantherAuditRole-*",
+    "*PantherLogProcessingRole-*",
+)
 
 
 def rule(event):
@@ -41,7 +52,18 @@ def rule(event):
 
     # Check that the IP is classified as 'malicious'
     if NOISE.classification("sourceIPAddress") == "malicious":
+
+        # Filter: Roles that generate FP's if used from AWS IP Space
+        if pattern_match_list(deep_get(event, "userIdentity", "arn"), _ALLOWED_ROLES):
+            # Only Greynoise advanced provides AS organization info
+            if NOISE.subscription_level() == 'advanced':
+                if NOISE.organization == 'Amazon.com, Inc.':
+                    return False
+            # return false if the role is seen and we are not able to valide the AS organization
+            else:
+                return False
         return True
+
     return False
 
 
