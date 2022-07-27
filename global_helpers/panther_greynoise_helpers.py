@@ -1,7 +1,5 @@
 # pylint: disable=too-many-public-methods
 import datetime
-from distutils.log import error
-from webbrowser import get
 
 from dateutil import parser
 from panther_base_helpers import deep_get
@@ -24,10 +22,10 @@ class PantherGreyNoiseException(Exception):
         super().__init__(message)
 
 class PantherIncorrectMethodException(Exception):
-    def __init__(self, type):
-        if type is str:
+    def __init__(self, call_type):
+        if call_type is str:
             message = "~This is not the method you are looking for~ Try ip_address()"
-        elif type is list:
+        elif call_type is list:
             message = "~This is not the method you are looking for~ Try ip_addresses()"
         else:
             message = "Incorrect Method Exception"
@@ -55,13 +53,13 @@ class GreyNoiseBasic:
 
     def ip_address(self, match_field) -> str:
         deep_get_call = deep_get(self.noise, match_field, "ip")
-        if type(deep_get_call) is list:
+        if isinstance(deep_get_call, list):
             raise PantherIncorrectMethodException(type(deep_get_call))
         return deep_get_call
 
     def ip_addresses(self) -> list:
         deep_get_call = deep_get(self.noise)
-        if type(deep_get_call) is str:
+        if isinstance(deep_get_call, str):
             raise PantherIncorrectMethodException(type(deep_get_call))
         return deep_get_call
 
@@ -93,17 +91,15 @@ class GreyNoiseAdvanced:
 
     def ip_address(self, match_field) -> str:
         deep_get_call = deep_get(self.noise, match_field, "ip")
-        if type(deep_get_call) is list:
-            raise error("~This is not the method you are looking for~ Try ip_addresses()")
-        else:
-            return deep_get_call
+        if isinstance(deep_get_call, list):
+            raise PantherIncorrectMethodException(type(deep_get_call))
+        return deep_get_call
 
     def ip_addresses(self) -> list:
         deep_get_call = deep_get(self.noise)
-        if type(deep_get_call) is list:
-            return deep_get_call
-        else:
-            raise error("~This is not the method you are looking for~ Try ip_address()")
+        if isinstance(deep_get_call, str):
+            raise PantherIncorrectMethodException(type(deep_get_call))
+        return deep_get_call
 
     def classification(self, match_field) -> str:
         return deep_get(self.noise, match_field, "classification")
