@@ -1,5 +1,7 @@
 # pylint: disable=too-many-public-methods
 import datetime
+from distutils.log import error
+from webbrowser import get
 
 from dateutil import parser
 from panther_base_helpers import deep_get
@@ -43,7 +45,12 @@ class GreyNoiseBasic:
         return advanced_only()
 
     def ip_address(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "ip")
+        # check _type if 
+        x = deep_get(self.noise, match_field, "ip")
+        if type(x) is list:
+            return error("~This is not the method you are looking for~ Try ip_addresses()")
+        else:
+            return x
 
     def classification(self, match_field) -> str:
         return deep_get(self.noise, match_field, "classification")
