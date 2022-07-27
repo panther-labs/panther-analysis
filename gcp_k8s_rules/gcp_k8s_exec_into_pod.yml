@@ -1,0 +1,120 @@
+AnalysisType: rule
+Filename: gcp_k8s_exec_into_pod.py
+RuleID: GCP.K8s.ExecIntoPod
+DisplayName: Exec into Pod
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Security Control
+Severity: Medium
+Description: >
+  Alerts when users exec into pod. Possible to specify specific projects and allowed users.
+Runbook: >
+  Investigate the user and determine why. Advise that it is discouraged practice. Create ticket if appropriate. 
+SummaryAttributes:
+  - actor_user
+  - project_id
+  - pod
+SampleQuery: >
+  SELECT PROTOPAYLOAD:authenticationInfo:principalEmail,
+        PROTOPAYLOAD:resourceName,
+        resource:labels:project_id,
+        p_event_time
+  FROM PANTHER_RULE_MATCHES.PUBLIC.GCP_AUDITLOG
+  WHERE p_rule_id = 'GCP.K8s.ExecIntoPod'
+  AND DATE(p_event_time) > DATEADD(Day, -30, CURRENT_DATE)
+  LIMIT 100;
+Tests:
+  -
+    Name: Allowed User
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {
+            "principalEmail": "system:serviceaccount:example-namespace:example-namespace-service-account"
+          },
+          "authorizationInfo": [
+            {
+              "permission": "io.k8s.core.v1.pods.exec.create",
+              "resource": "core/v1/namespaces/opa/pods/opa-57998cf7c5-bjkfk/exec"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.exec.create",
+          "requestMetadata": {
+            "callerIp": "88.88.88.88",
+            "callerSuppliedUserAgent": "kubectl/v1.40.8 (darwin/amd64) kubernetes/6575935"
+          },
+          "resource": {
+            "type": "k8s_cluster",
+            "labels": {
+              "project_id": "rigup-production"
+            }
+          },
+          "resourceName": "core/v1/namespaces/example/pods/one-off-46666967280/exec",
+          "timestamp": "2022-03-04T16:01:49.978756Z"
+        }
+      }
+  -
+    Name: Disallowed User
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {
+            "principalEmail": "disallowed.user@example.com"
+          },
+          "authorizationInfo": [
+            {
+              "permission": "io.k8s.core.v1.pods.exec.create",
+              "resource": "core/v1/namespaces/example/pods/example-57998cf7c5-bjkfk/exec"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.exec.create",
+          "requestMetadata": {
+            "callerIp": "88.88.88.88",
+            "callerSuppliedUserAgent": "kubectl/v1.40.8 (darwin/amd64) kubernetes/6575935"
+          },
+          "resource": {
+            "type": "k8s_cluster",
+            "labels": {
+              "project_id": "example-production"
+            }
+          },
+          "resourceName": "core/v1/namespaces/example/pods/one-off-valerii-tovstyk-1646666967280/exec",
+          "timestamp": "2022-03-04T16:01:49.978756Z"
+        }
+      }
+  -
+    Name: Allowed User2
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {
+            "principalEmail": "example-allowed-user@example.com"
+          },
+          "authorizationInfo": [
+            {
+              "permission": "io.k8s.core.v1.pods.exec.create",
+              "resource": "core/v1/namespaces/istio-system/pods/opa-57998cf7c5-bjkfk/exec"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.exec.create",
+          "requestMetadata": {
+            "callerIp": "88.88.88.88",
+            "callerSuppliedUserAgent": "kubectl/v1.40.8 (darwin/amd64) kubernetes/6575935"
+          },
+          "resource": {
+            "type": "k8s_cluster",
+            "labels": {
+              "project_id": "example-production"
+            }
+          },
+          "resourceName": "core/v1/namespaces/istio-system/pods/one-off-valerii-tovstyk-1646666967280/exec",
+          "timestamp": "2022-03-04T16:01:49.978756Z"
+        }
+      }
+
