@@ -23,6 +23,15 @@ class PantherGreyNoiseException(Exception):
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
 
+class PantherIncorrectMethodException(Exception):
+    def __init__(self, type):
+        if type is str:
+            message = "~This is not the method you are looking for~ Try ip_address()"
+        elif type is list:
+            message = "~This is not the method you are looking for~ Try ip_addresses()"
+        else:
+            message = "Incorrect Method Exception"
+        super().__init__(message)
 
 class GreyNoiseBasic:
     def __init__(self, event):
@@ -47,16 +56,14 @@ class GreyNoiseBasic:
     def ip_address(self, match_field) -> str:
         deep_get_call = deep_get(self.noise, match_field, "ip")
         if type(deep_get_call) is list:
-            raise error("~This is not the method you are looking for~ Try ip_addresses()")
-        else:
-            return deep_get_call
+            raise PantherIncorrectMethodException(type(deep_get_call))
+        return deep_get_call
 
     def ip_addresses(self) -> list:
         deep_get_call = deep_get(self.noise)
-        if type(deep_get_call) is list:
-            return deep_get_call
-        else:
-            raise error("~This is not the method you are looking for~ Try ip_address()")
+        if type(deep_get_call) is str:
+            raise PantherIncorrectMethodException(type(deep_get_call))
+        return deep_get_call
 
     def classification(self, match_field) -> str:
         return deep_get(self.noise, match_field, "classification")
