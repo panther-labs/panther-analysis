@@ -1,0 +1,85 @@
+AnalysisType: rule
+Filename: slack_application_dos.py
+RuleID: Slack.AuditLogs.ApplicationDoS
+DisplayName: Slack Denial of Service
+Enabled: true
+LogTypes:
+  - Slack.AuditLogs
+Tags:
+  - Slack
+Severity: Critical
+Description: Detects when user sessions are constantly reset in a way that makes Slack unusable
+Reference: https://api.slack.com/admins/audit-logs
+DedupPeriodMinutes: 60
+Threshold:  60
+SummaryAttributes:
+  - action
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  -
+    Name: User Session Reset - First time
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: ""
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: set_key_expiration
+        returnValue: ""
+    Log:
+      {
+        "action": "user_session_reset_by_admin",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "user@example.com",
+            "id": "W012J3FEWAU",
+            "name": "primary-owner",
+            "team": "T01234N56GB"
+          }
+        },
+        "context": {
+          "ip_address": "100.36.66.49",
+          "location": {
+            "domain": "test-workspace-1",
+            "id": "T01234N56GB",
+            "name": "test-workspace-1",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        }
+      }
+  -
+    Name: User Session Reset - Multiple Times
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: "{\"time\":\"2021-06-08 22:24:43\"}"
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: set_key_expiration
+        returnValue: ""
+    Log:
+      {
+        "action": "user_session_reset_by_admin",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "user@example.com",
+            "id": "W012J3FEWAU",
+            "name": "primary-owner",
+            "team": "T01234N56GB"
+          }
+        },
+        "context": {
+          "ip_address": "100.36.66.49",
+          "location": {
+            "domain": "test-workspace-1",
+            "id": "T01234N56GB",
+            "name": "test-workspace-1",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        }
+      }
