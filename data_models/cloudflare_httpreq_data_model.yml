@@ -1,0 +1,15 @@
+AnalysisType: datamodel
+LogTypes:
+  - Cloudflare.HttpRequest
+DataModelID: Standard.Cloudflare.HttpReq
+DisplayName: Cloudflare Firewall
+Enabled: true
+Mappings:
+  - Name: source_ip
+    Path: ClientIP
+  - Name: user_agent
+    Path: ClientRequestUserAgent
+  - Name: http_status
+    Path: EdgeResponseStatus
+  - Name: source_port
+    Path: ClientSrcPort

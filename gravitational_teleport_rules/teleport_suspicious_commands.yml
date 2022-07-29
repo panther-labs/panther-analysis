@@ -7,13 +7,13 @@ LogTypes:
   - Gravitational.TeleportAudit
 Tags:
   - SSH
-  - T1059
+  - Execution:Command and Scripting Interpreter
 Severity: Medium
 Description: A user has invoked a suspicious command that could lead to a host compromise
 DedupPeriodMinutes: 60
 Reports:
   MITRE ATT&CK:
-    - Execution:Command and Scripting Interpreter
+    - TA0002:T1059
 Reference: https://gravitational.com/teleport/docs/admin-guide/
 Runbook: >
   Find related commands within the time window and determine if the command was invoked legitimately. Examine the arguments to determine how the command was used and reach out to the user to verify the intentions.

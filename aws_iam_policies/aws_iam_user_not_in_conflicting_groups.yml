@@ -10,12 +10,12 @@ Tags:
   - Configuration Required
   - Security, Identity & Compliance
   - PCI
-  - T1078
+  - Privilege Escalation:Valid Accounts
 Reports:
   PCI:
     - 7.2.2
   MITRE ATT&CK:
-    - Privilege Escalation:Valid Accounts
+    - TA0004:T1078
 Severity: Medium
 Description: >
   This policy validates that IAM users are not in IAM groups that are considered mutually exclusive. For example, in some workflows developers are responsible for dev environments and sysadmins are responsible for prod environments. In this situation no (or very few) users should be in both sysadmin and developer groups. This is in following with the principle of least privilege.
