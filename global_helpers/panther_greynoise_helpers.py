@@ -1,6 +1,5 @@
 # pylint: disable=too-many-public-methods
 import datetime
-import json
 
 from dateutil import parser
 from .panther_base_helpers import deep_get
@@ -82,10 +81,34 @@ class GreyNoiseBasic:
         }
 
 
-class GreyNoiseAdvanced(GreyNoiseBasic):
+class GreyNoiseAdvanced:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
         self.sublevel = "advanced"
+
+    def subscription_level(self):
+        return self.sublevel
+
+    def ip_address(self, match_field) -> str:
+        ip_get_call = deep_get(self.noise, match_field, "ip")
+        if not isinstance(ip_get_call, str):
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        return ip_get_call
+
+    def ip_addresses(self, match_field) -> list:
+        ip_get_call = deep_get(self.noise, match_field)
+        if not isinstance(ip_get_call, list):
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        return ip_get_call
+
+    def classification(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "classification")
+
+    def actor(self, match_field) -> str:
+        return deep_get(self.noise, match_field, "actor")
+
+    def url(self, match_field) -> str:
+        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def is_bot(self, match_field) -> bool:
         return deep_get(self.noise, match_field, "bot")
