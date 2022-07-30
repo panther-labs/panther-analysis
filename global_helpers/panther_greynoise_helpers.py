@@ -1,8 +1,9 @@
 # pylint: disable=too-many-public-methods
 import datetime
+import json
 
 from dateutil import parser
-from panther_base_helpers import deep_get
+from .panther_base_helpers import deep_get
 
 
 class PantherGreyNoiseException(Exception):
@@ -21,7 +22,7 @@ class PantherGreyNoiseException(Exception):
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
 
-class PantherIncorrectMethodException(Exception):
+class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type):
         if call_type is str:
             message = "~This is not the method you are looking for~ Try ip_address()"
@@ -52,16 +53,16 @@ class GreyNoiseBasic:
         return advanced_only()
 
     def ip_address(self, match_field) -> str:
-        deep_get_call = deep_get(self.noise, match_field, "ip")
-        if isinstance(deep_get_call, list):
-            raise PantherIncorrectMethodException(type(deep_get_call))
-        return deep_get_call
+        ip_get_call = deep_get(self.noise, match_field, "ip")
+        if not isinstance(ip_get_call, str):
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        return ip_get_call
 
-    def ip_addresses(self) -> list:
-        deep_get_call = deep_get(self.noise)
-        if isinstance(deep_get_call, str):
-            raise PantherIncorrectMethodException(type(deep_get_call))
-        return deep_get_call
+    def ip_addresses(self, match_field) -> list:
+        ip_get_call = deep_get(self.noise, match_field)
+        if not isinstance(ip_get_call, list):
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        return ip_get_call
 
     def classification(self, match_field) -> str:
         return deep_get(self.noise, match_field, "classification")
@@ -81,34 +82,10 @@ class GreyNoiseBasic:
         }
 
 
-class GreyNoiseAdvanced:
+class GreyNoiseAdvanced(GreyNoiseBasic):
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
         self.sublevel = "advanced"
-
-    def subscription_level(self):
-        return self.sublevel
-
-    def ip_address(self, match_field) -> str:
-        deep_get_call = deep_get(self.noise, match_field, "ip")
-        if isinstance(deep_get_call, list):
-            raise PantherIncorrectMethodException(type(deep_get_call))
-        return deep_get_call
-
-    def ip_addresses(self) -> list:
-        deep_get_call = deep_get(self.noise)
-        if isinstance(deep_get_call, str):
-            raise PantherIncorrectMethodException(type(deep_get_call))
-        return deep_get_call
-
-    def classification(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "classification")
-
-    def actor(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "actor")
-
-    def url(self, match_field) -> str:
-        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def is_bot(self, match_field) -> bool:
         return deep_get(self.noise, match_field, "bot")
