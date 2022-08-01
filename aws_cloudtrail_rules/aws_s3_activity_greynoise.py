@@ -3,7 +3,6 @@ from ipaddress import ip_address
 from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
-
 # pylint: disable=too-many-return-statements,invalid-name,unused-argument,global-at-module-level,global-variable-undefined
 
 # Monitor for GetObject events from S3.
