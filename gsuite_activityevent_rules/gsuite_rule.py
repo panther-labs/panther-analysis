@@ -11,12 +11,11 @@ def rule(event):
     return True
 
 def title(event):
-    severity = deep_get(event, "parameters", "severity")
+    rule_severity = deep_get(event, "parameters", "severity")
     if deep_get(event, "parameters", "rule_name"):
-        return "GSuite " + severity + " Severity Rule Triggered: " \
+        return "GSuite " + rule_severity + " Severity Rule Triggered: " \
             + deep_get(event, "parameters", "rule_name")
-    return "GSuite " + severity + " Severity Rule Triggered"
+    return "GSuite " + rule_severity + " Severity Rule Triggered"
 
 def severity(event):
     return deep_get(event, "parameters", "severity")
-    
