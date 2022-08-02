@@ -1,20 +1,21 @@
 from panther_base_helpers import deep_get
 
-
 def rule(event):
-
     if deep_get(event, "id", "applicationName") != "rules":
         return False
 
     if not (
         deep_get(event, "parameters", "triggered_actions")
-        and deep_get(event, "parameters", "severity") == "HIGH"
     ):
         return False
     return True
 
 def title(event):
+    severity = deep_get(event, "parameters", "severity")
     if deep_get(event, "parameters", "rule_name"):
-        return "GSuite High Severity Rule Triggered : " + deep_get(event, "parameters", "rule_name")
+        return "GSuite " + severity + " Severity Rule Triggered: " \
+            + deep_get(event, "parameters", "rule_name")
+    return "GSuite " + severity + " Severity Rule Triggered"
 
-    return "GSuite High Severity Rule Triggered"
+def severity(event):
+    return deep_get(event, "parameters", "severity")

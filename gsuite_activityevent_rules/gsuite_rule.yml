@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: gsuite_high_severity_rule.py
-RuleID: GSuite.HighSeverityRule
-DisplayName: GSuite High Severity Rule Triggered
+Filename: gsuite_rule.py
+RuleID: GSuite.Rule
+DisplayName: GSuite Rule Triggered
 Enabled: true
 LogTypes:
   - GSuite.ActivityEvent
@@ -9,7 +9,7 @@ Tags:
   - GSuite
 Severity: High
 Description: >
-  A high severity GSuite rule was triggered.
+  A GSuite rule was triggered.
 Reference: https://support.google.com/a/answer/9420866
 Runbook: >
   Investigate what triggered the rule.
@@ -22,7 +22,7 @@ Tests:
     Log:
       {
         "id": {
-          "applicationName": "rules",
+          "applicationName": "rules"
         },
         "actor": {
           "email": "some.user@somedomain.com"
@@ -38,7 +38,7 @@ Tests:
     Log:
       {
         "id": {
-          "applicationName": "rules",
+          "applicationName": "rules"
         },
         "actor": {
           "email": "some.user@somedomain.com"
@@ -51,15 +51,36 @@ Tests:
               "action_type": "DRIVE_UNFLAG_DOCUMENT"
             }
           ]
-        },
+        }
       }
   -
-    Name: Low Severity Rule
-    ExpectedResult: false
+    Name: Medium Severity Rule
+    ExpectedResult: true
     Log:
       {
         "id": {
-          "applicationName": "rules",
+          "applicationName": "rules"
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "data_source": "DRIVE",
+          "severity": "MEDIUM",
+          "triggered_actions": [
+            {
+              "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        }
+      }
+  -
+    Name: Low Severity Rule
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "rules"
         },
         "actor": {
           "email": "some.user@somedomain.com"
@@ -71,7 +92,7 @@ Tests:
               "action_type": "DRIVE_UNFLAG_DOCUMENT"
             }
           ]
-        },
+        }
       }
   -
     Name: High Severity Rule with Rule Name
@@ -79,7 +100,7 @@ Tests:
     Log:
       {
         "id": {
-          "applicationName": "rules",
+          "applicationName": "rules"
         },
         "actor": {
           "email": "some.user@somedomain.com"
@@ -92,5 +113,5 @@ Tests:
               "action_type": "MAIL_MARK_AS_PHISHING"
             }
           ]
-        },
+        }
       }
