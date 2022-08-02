@@ -19,3 +19,4 @@ def title(event):
 
 def severity(event):
     return deep_get(event, "parameters", "severity")
+    
