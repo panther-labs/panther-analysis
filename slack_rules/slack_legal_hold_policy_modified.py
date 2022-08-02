@@ -2,7 +2,7 @@ from panther_base_helpers import deep_get, slack_alert_context
 
 LEGAL_HOLD_POLICY_ACTIONS = {
     "legal_hold_policy_entities_deleted": "Slack Legal Hold Policy Entities Deleted",
-    "legal_hold_policy_exclusion_added": "Slack - Exclusions Added to Legal Hold Policy",
+    "legal_hold_policy_exclusion_added": "Slack Exclusions Added to Legal Hold Policy",
     "legal_hold_policy_released": "Slack Legal Hold Released",
     "legal_hold_policy_updated": "Slack Legal Hold Updated",
 }
