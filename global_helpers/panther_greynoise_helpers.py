@@ -80,13 +80,12 @@ class GreyNoiseBasic:
                 "Actor": self.actor(match_field),
                 "GreyNoise_URL": self.url(match_field),
             }
-        if isinstance(deep_get(self.noise, match_field, "ip"), str):
-            return {
-                "IP": self.ip_address(match_field),
-                "Classification": self.classification(match_field),
-                "Actor": self.actor(match_field),
-                "GreyNoise_URL": self.url(match_field),
-            }
+        return {
+            "IP": self.ip_address(match_field),
+            "Classification": self.classification(match_field),
+            "Actor": self.actor(match_field),
+            "GreyNoise_URL": self.url(match_field),
+        }
 
 
 class GreyNoiseAdvanced:
@@ -202,28 +201,16 @@ class GreyNoiseAdvanced:
                 "Tags": self.tags_list(match_field),
                 "CVE": self.cve_list(match_field),
             }
-        if isinstance(deep_get(self.noise, match_field), str):
-            return {
-                "IP": self.ip_address(match_field),
-                "Classification": self.classification(match_field),
-                "Actor": self.actor(match_field),
-                "GreyNoise_URL": self.url(match_field),
-                "VPN": self.vpn_service(match_field),
-                "Metadata": deep_get(self.noise, match_field, "metadata"),
-                "Tags": self.tags_list(match_field),
-                "CVE": self.cve_list(match_field),
-            }
-        else:
-            return {
-                "IP": self.ip_address(match_field),
-                "Classification": self.classification(match_field),
-                "Actor": self.actor(match_field),
-                "GreyNoise_URL": self.url(match_field),
-                "VPN": self.vpn_service(match_field),
-                "Metadata": deep_get(self.noise, match_field, "metadata"),
-                "Tags": self.tags_list(match_field),
-                "CVE": self.cve_list(match_field),
-            }
+        return {
+            "IP": self.ip_address(match_field),
+            "Classification": self.classification(match_field),
+            "Actor": self.actor(match_field),
+            "GreyNoise_URL": self.url(match_field),
+            "VPN": self.vpn_service(match_field),
+            "Metadata": deep_get(self.noise, match_field, "metadata"),
+            "Tags": self.tags_list(match_field),
+            "CVE": self.cve_list(match_field),
+        }
 
 
 
