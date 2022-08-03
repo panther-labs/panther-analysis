@@ -1,6 +1,10 @@
 import pytest
+#import test_utils
 
-from global_helpers.panther_greynoise_helpers import (
+
+#test_utils.setup_global_helpers()
+
+from panther_greynoise_helpers import (
     GreyNoiseAdvanced,
     GreyNoiseBasic,
     PantherIncorrectIPAddressMethodException
@@ -14,7 +18,10 @@ test_data_basic_list = [(
         "time","p_enrichment": {
             "greynoise_noise_basic": {
                 "p_any_ip_addresses": [
-                    {"actor": "unknown", "ip": "8.8.8.8","classification": "unknown"},
+                    "8.8.8.8",
+                    "1.1.1.1",
+                    "localhost",
+                    "0.0.0.0"
                 ],
             }
         }

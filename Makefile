@@ -38,6 +38,8 @@ install:
 
 test:
 	pipenv run panther_analysis_tool test
+	pytest global_helpers/test_panther_greynoise_helpers.py
+
 
 managed-schemas:
 	mkdir -p dist/managed-schemas; \
