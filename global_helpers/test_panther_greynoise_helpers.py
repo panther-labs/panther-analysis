@@ -1,8 +1,4 @@
 import pytest
-#import test_utils
-
-
-#test_utils.setup_global_helpers()
 
 from panther_greynoise_helpers import (
     GreyNoiseAdvanced,
@@ -21,7 +17,7 @@ test_data_basic_list = [(
                     "8.8.8.8",
                     "1.1.1.1",
                     "localhost",
-                    "0.0.0.0"
+                    "2.3.4.5",
                 ],
             }
         }
