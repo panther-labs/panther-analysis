@@ -73,14 +73,14 @@ class GreyNoiseBasic:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def context(self, match_field) -> dict:
-        if isinstance(self.ip_address(match_field), list):
+        if isinstance(deep_get(self.noise, match_field), list):
             return {
                 "IP": self.ip_addresses(match_field),
                 "Classification": self.classification(match_field),
                 "Actor": self.actor(match_field),
                 "GreyNoise_URL": self.url(match_field),
             }
-        else:
+        if isinstance(deep_get(self.noise, match_field, "ip"), str):
             return {
                 "IP": self.ip_address(match_field),
                 "Classification": self.classification(match_field),
@@ -191,7 +191,18 @@ class GreyNoiseAdvanced:
         return deep_get(self.noise, match_field, "vpn_service")
 
     def context(self, match_field) -> dict:
-        if isinstance(self.ip_address(match_field), str): 
+        if isinstance(deep_get(self.noise, match_field), list):
+            return {
+                "IP": self.ip_addresses(match_field),
+                "Classification": self.classification(match_field),
+                "Actor": self.actor(match_field),
+                "GreyNoise_URL": self.url(match_field),
+                "VPN": self.vpn_service(match_field),
+                "Metadata": deep_get(self.noise, match_field, "metadata"),
+                "Tags": self.tags_list(match_field),
+                "CVE": self.cve_list(match_field),
+            }
+        if isinstance(deep_get(self.noise, match_field), str):
             return {
                 "IP": self.ip_address(match_field),
                 "Classification": self.classification(match_field),
@@ -204,7 +215,7 @@ class GreyNoiseAdvanced:
             }
         else:
             return {
-                "IP": self.ip_addresses(match_field),
+                "IP": self.ip_address(match_field),
                 "Classification": self.classification(match_field),
                 "Actor": self.actor(match_field),
                 "GreyNoise_URL": self.url(match_field),
