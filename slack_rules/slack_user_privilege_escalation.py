@@ -20,10 +20,10 @@ def title(event):
 
 def severity(event):
     # Downgrade severity for users assigned permissions
-    # TODO: Add case to check for admin privileges
+    # TODO: Add case to check for admin privileges to escalate to Critical
     if event.get("action") == "permissions_assigned":
         return "Medium"
-    return "Critical"
+    return "High"
 
 
 def alert_context(event):
