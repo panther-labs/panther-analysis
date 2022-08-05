@@ -6,7 +6,7 @@ def rule(event):
     return deep_get(event, "protoPayload", "methodName") == "SetIamPolicy" and \
             (logname.startswith("organizations") or \
             logname.startswith("folder") ) and \
-            logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity") 
+            logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity")
 
 def title(event):
     # use unified data model field in title
