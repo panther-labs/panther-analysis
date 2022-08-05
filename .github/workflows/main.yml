@@ -24,7 +24,9 @@ on:
 jobs:
   sync_prs_from_community_to_dogfood:
     name: Syncs merged PRs from Panther-Analysis Community to Panther-Analysis-Dogfood
-    if: ${{ github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'dogfood-backport') }}
+    if: | 
+      github.repository_owner == 'panther-labs' && 
+      ( github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'dogfood-backport') )
     runs-on: ubuntu-latest
     env:
       SOURCE_REPO_CHECKOUT_PATH: src
