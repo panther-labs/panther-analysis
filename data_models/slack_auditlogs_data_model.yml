@@ -1,0 +1,15 @@
+AnalysisType: datamodel
+LogTypes:
+  - Slack.AuditLogs
+DataModelID: Standard.Slack.AuditLogs
+DisplayName: Slack Audit Logs
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.user.name
+  - Name: user_agent
+    Path: $.context.ua
+  - Name: source_ip
+    Path: $.context.ip_address
+  - Name: user
+    Path: $.entity.user.name
