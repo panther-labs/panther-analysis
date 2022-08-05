@@ -2,8 +2,8 @@ import json
 from fnmatch import fnmatch
 
 import panther_event_type_helpers as event_type
-from panther_analysis_tool.enriched_event import PantherEvent
 from panther_base_helpers import get_binding_deltas
+from panther_analysis_tool.enriched_event import PantherEvent
 
 ADMIN_ROLES = {
     # Primitive Rolesx
@@ -40,7 +40,7 @@ def get_admin_map(event):
 def get_modified_users(event):
     roles_assigned = get_admin_map(event)
 
-    return json.dumps( list(roles_assigned.values()), default=PantherEvent.json_encoder)
+    return json.dumps(list(roles_assigned.values()), default=PantherEvent.json_encoder)
 
 
 def get_iam_roles(event):

@@ -10,14 +10,14 @@ ResourceTypes:
 Tags:
   - AWS
   - PCI
-  - T1078
+  - Persistence:Valid Accounts
 Reports:
   PCI:
     - 1.1.5
     - 2.2.4
     - 7.1.2
   MITRE ATT&CK:
-    - Persistence:Valid Accounts
+    - TA0003:T1078
 Severity: Medium
 Description: >
   This policy validates that IAM entities (Groups, Roles, and Users) do not have inline policies attached that grant network admin priviliges. Inline policies are more difficult to track and audit than managed policies, and can lead to persistent unexpected access.

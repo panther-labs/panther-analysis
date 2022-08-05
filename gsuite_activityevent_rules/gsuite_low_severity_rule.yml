@@ -14,7 +14,7 @@ Reference: https://support.google.com/a/answer/9420866
 Runbook: >
   Investigate what triggered the rule.
 SummaryAttributes:
-  - actor
+  - actor:email
 Tests:
   -
     Name: Non Triggered Rule
@@ -69,6 +69,27 @@ Tests:
           "triggered_actions": [
             {
               "action_type": "DRIVE_UNFLAG_DOCUMENT"
+            }
+          ]
+        },
+      }
+  -
+    Name: Low Severity Rule with Rule Name
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "rules",
+        },
+        "actor": {
+          "email": "some.user@somedomain.com"
+        },
+        "parameters": {
+          "severity": "LOW",
+          "rule_name": "CEO Impersonation",
+          "triggered_actions": [
+            {
+              "action_type": "MAIL_MARK_AS_PHISHING"
             }
           ]
         },
