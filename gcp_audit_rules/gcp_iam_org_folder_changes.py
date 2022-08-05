@@ -6,12 +6,7 @@ def rule(event):
     return deep_get(event, "protoPayload", "methodName") == "SetIamPolicy" and \
             (logname.startswith("organizations") or \
             logname.startswith("folder") ) and \
-            logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity") and \
-            deep_get(event,
-                "protoPayload",
-                "requestMetadata",
-                "callerSuppliedUserAgent").lower().find('terraform') == -1
-
+            logname.endswith("/logs/cloudaudit.googleapis.com%2Factivity") 
 
 def title(event):
     # use unified data model field in title
@@ -26,3 +21,11 @@ def alert_context(event):
         "caller_ip": deep_get(event, "protoPayload", "requestMetadata", "callerIP"),
         "user_agent": deep_get(event, "protoPayload", "requestMetadata", "callerSuppliedUserAgent")
     }
+
+def severity(event):
+    if deep_get(event,
+                "protoPayload",
+                "requestMetadata",
+                "callerSuppliedUserAgent").lower().find('terraform') == -1:
+        return 'INFO'
+    return 'HIGH'
