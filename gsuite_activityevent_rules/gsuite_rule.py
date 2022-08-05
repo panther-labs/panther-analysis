@@ -18,4 +18,4 @@ def title(event):
     return "GSuite " + rule_severity + " Severity Rule Triggered"
 
 def severity(event):
-    return deep_get(event, "parameters", "severity")
+    return deep_get(event, "parameters", "severity", default="INFO")
