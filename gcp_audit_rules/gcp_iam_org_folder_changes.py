@@ -26,6 +26,6 @@ def severity(event):
     if deep_get(event,
                 "protoPayload",
                 "requestMetadata",
-                "callerSuppliedUserAgent").lower().find('terraform') == -1:
+                "callerSuppliedUserAgent").lower().find('terraform') != -1:
         return 'INFO'
     return 'HIGH'
