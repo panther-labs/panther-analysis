@@ -73,19 +73,17 @@ class GreyNoiseBasic:
         return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
 
     def context(self, match_field) -> dict:
-        if isinstance(deep_get(self.noise, match_field), list):
-            return {
-                "IP": self.ip_addresses(match_field),
-                "Classification": self.classification(match_field),
-                "Actor": self.actor(match_field),
-                "GreyNoise_URL": self.url(match_field),
-            }
-        return {
-            "IP": self.ip_address(match_field),
+        context = {
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
+        if isinstance(deep_get(self.noise, match_field), list):
+            context["IPs"] = self.ip_addresses(match_field)
+            return context
+
+        context["IP"] = self.ip_address(match_field)
+        return context
 
 
 class GreyNoiseAdvanced:
@@ -190,19 +188,7 @@ class GreyNoiseAdvanced:
         return deep_get(self.noise, match_field, "vpn_service")
 
     def context(self, match_field) -> dict:
-        if isinstance(deep_get(self.noise, match_field), list):
-            return {
-                "IP": self.ip_addresses(match_field),
-                "Classification": self.classification(match_field),
-                "Actor": self.actor(match_field),
-                "GreyNoise_URL": self.url(match_field),
-                "VPN": self.vpn_service(match_field),
-                "Metadata": deep_get(self.noise, match_field, "metadata"),
-                "Tags": self.tags_list(match_field),
-                "CVE": self.cve_list(match_field),
-            }
-        return {
-            "IP": self.ip_address(match_field),
+        context = {
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
@@ -211,6 +197,13 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
+        if isinstance(deep_get(self.noise, match_field), list):
+            context["IPs"] = self.ip_addresses(match_field)
+            return context
+
+        context["IP"] = self.ip_address(match_field)
+        return context
+
 
 
 
