@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://circleci.com/gh/panther-labs/panther-analysis"><img src="https://circleci.com/gh/panther-labs/panther-analysis.svg?style=svg" alt="CircleCI"/></a>
+  <a href="https://github.com/panther-labs/panther-analysis/actions/workflows/lint-test.yml"><img src="https://github.com/panther-labs/panther-analysis/actions/workflows/lint-test.yml/badge.svg" alt="GitHub Actions Link"/></a>
   <a href="https://cla-assistant.io/panther-labs/panther-analysis" alt="CLA Assistant"><img src="https://cla-assistant.io/readme/badge/panther-labs/panther-analysis"/></a>
 </p>
 
@@ -184,7 +184,7 @@ Follow the instructions [here](https://docs.github.com/en/free-pro-team@latest/g
 
 ## Getting Updates
 
-When you want to pull in the latest changes from our this repository, perform the following steps from your private repo:
+When you want to pull in the latest changes from this repository, perform the following steps from your private repo:
 
 ```bash
 # add the public repository as a remote
