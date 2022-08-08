@@ -22,6 +22,7 @@ _ALLOWED_ROLES = (
 
 
 def rule(event):
+    # pylint: disable=too-complex
     # Filter: Non-S3 events
     if event.get("eventSource") != "s3.amazonaws.com":
         return False
