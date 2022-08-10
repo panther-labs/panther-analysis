@@ -1,7 +1,7 @@
 import json
 
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 from policyuniverse.policy import Policy
 
 
@@ -83,3 +83,7 @@ def title(event):
         return f"Resource {event.get('Resources')[0].get('arn', 'MISSING')} made public by {user}"
 
     return f"{event.get('eventSource', 'MISSING SOURCE')} resource made public by {user}"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

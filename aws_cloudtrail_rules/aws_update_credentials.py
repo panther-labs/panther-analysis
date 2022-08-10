@@ -1,5 +1,5 @@
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 UPDATE_EVENTS = {"ChangePassword", "CreateAccessKey", "CreateLoginProfile", "CreateUser"}
 
@@ -17,3 +17,7 @@ def title(event):
         f"{deep_get(event, 'userIdentity', 'type')} [{deep_get(event, 'userIdentity', 'arn')}]"
         f" has updated their IAM credentials"
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

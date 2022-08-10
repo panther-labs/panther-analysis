@@ -1,5 +1,5 @@
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 # This is a list of role ARNs that should not be assumed by users in normal operations
 ASSUME_ROLE_BLOCKLIST = [
@@ -17,3 +17,7 @@ def rule(event):
         return False
 
     return deep_get(event, "requestParameters", "roleArn") in ASSUME_ROLE_BLOCKLIST
+
+
+def alert_context(event):
+    return aws_rule_context(event)
