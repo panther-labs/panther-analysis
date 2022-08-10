@@ -92,6 +92,7 @@ def check_policy(policy_text):
 
 
 def policy(resource):
+    # pylint: disable=too-complex
     if not check_account(resource):
         for policy_text in (resource.get("InlinePolicies") or {}).values():
             if not check_policy(policy_text):
