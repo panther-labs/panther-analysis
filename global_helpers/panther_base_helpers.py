@@ -250,11 +250,11 @@ def aws_strip_role_session_id(user_identity_arn):
 
 def aws_rule_context(event: dict):
     return {
-        "eventName": event.get("eventName", ""),
-        "recipientAccountId": event.get("recipientAccountId", ""),
-        "sourceIPAddress": event.get("sourceIPAddress", ""),
-        "userAgent": event.get("userAgent", ""),
-        "userIdentity": event.get("userIdentity", ""),
+        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
+        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
+        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
+        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
+        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
     }
 
 
