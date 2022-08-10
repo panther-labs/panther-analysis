@@ -1,4 +1,5 @@
 from ipaddress import ip_network
+from panther_base_helpers import aws_rule_context
 
 APPROVED_PORTS = {
     80,
@@ -25,3 +26,7 @@ def rule(event):
     #
     # Defaults to False (no alert) if 'dstaddr' key is not present
     return ip_network(event.get("dstaddr", "1.0.0.0/32")).is_private
+
+
+def alert_context(event):
+    return aws_rule_context(event)

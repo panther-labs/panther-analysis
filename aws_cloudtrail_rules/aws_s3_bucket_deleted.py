@@ -1,5 +1,5 @@
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 
 def rule(event):
@@ -24,3 +24,7 @@ def dedup(event):
 
 def title(event):
     return f"{deep_get(event, 'userIdentity', 'type')} [{dedup(event)}] destroyed a bucket"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

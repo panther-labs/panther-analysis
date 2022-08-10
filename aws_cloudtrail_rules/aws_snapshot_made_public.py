@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 
 def rule(event):
@@ -27,3 +27,7 @@ def rule(event):
         return "all" in deep_get(event, "requestParameters", "valuesToAdd", default=[])
 
     return False
+
+
+def alert_context(event):
+    return aws_rule_context(event)

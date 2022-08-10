@@ -1,7 +1,7 @@
 import re
 
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 # The role dedicated for IAM administration
 IAM_ADMIN_ROLES = {
@@ -54,3 +54,7 @@ def rule(event):
         deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "arn")
         not in IAM_ADMIN_ROLES
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

@@ -1,7 +1,7 @@
 from ipaddress import ip_address
 
 from panther import lookup_aws_account_name
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 # service/event patterns to monitor
 RECON_ACTIONS = {
@@ -59,3 +59,7 @@ def title(event):
         "in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

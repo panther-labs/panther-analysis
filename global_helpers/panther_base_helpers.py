@@ -239,6 +239,16 @@ def aws_strip_role_session_id(user_identity_arn):
     return user_identity_arn
 
 
+def aws_rule_context(event: dict):
+    return {
+        "eventName": event.get("eventName", ""),
+        "recipientAccountId": event.get("recipientAccountId", ""),
+        "sourceIPAddress": event.get("sourceIPAddress", ""),
+        "userAgent": event.get("userAgent", ""),
+        "userIdentity": event.get("userIdentity", ""),
+    }
+
+
 def is_ip_in_network(ip_addr, networks):
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)
