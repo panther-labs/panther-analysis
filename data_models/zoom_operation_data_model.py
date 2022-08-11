@@ -4,6 +4,7 @@ import panther_event_type_helpers as event_type
 def get_event_type(event):
     # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-branches
+    # pylint: disable=too-complex
     if event.get("category_type") == "User":
         if event.get("action") == "Add":
             return event_type.USER_ACCOUNT_CREATED

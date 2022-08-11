@@ -1,5 +1,5 @@
 from panther import aws_cloudtrail_success, lookup_aws_account_name
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 # API calls that are indicative of CloudTrail changes
 CLOUDTRAIL_STOP_DELETE = {
@@ -22,3 +22,7 @@ def title(event):
         f"CloudTrail [{dedup(event)}] in account "
         f"[{lookup_aws_account_name(event.get('recipientAccountId'))}] was stopped/deleted"
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

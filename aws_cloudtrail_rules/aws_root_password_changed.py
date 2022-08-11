@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 
 def rule(event):
@@ -12,3 +12,7 @@ def rule(event):
 
     # Only alert if the login was a success
     return deep_get(event, "responseElements", "PasswordUpdated") == "Success"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

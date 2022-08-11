@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_strip_role_session_id, deep_get
+from panther_base_helpers import aws_strip_role_session_id, deep_get, aws_rule_context
 
 # Do not alert on these access denied errors for these events.
 # Events could be exceptions because they are particularly noisy and provide little to no value,
@@ -31,3 +31,7 @@ def dedup(event):
 
 def title(event):
     return f"Access denied to {deep_get(event, 'userIdentity', 'type')} [{dedup(event)}]"
+
+
+def alert_context(event):
+    return aws_rule_context(event)
