@@ -192,7 +192,7 @@ class GreyNoiseAdvanced:
         context = {
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
-            "GreyNoise_UR   L": self.url(match_field),
+            "GreyNoise_URL": self.url(match_field),
             "VPN": self.vpn_service(match_field),
             "Metadata": deep_get(self.noise, match_field, "metadata"),
             "Tags": self.tags_list(match_field),
