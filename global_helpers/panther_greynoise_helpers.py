@@ -3,6 +3,7 @@ import datetime
 
 from dateutil import parser
 from panther_base_helpers import deep_get
+from panther_core.immutable import ImmutableList, ImmutableCaseInsensitiveDict
 
 
 class PantherGreyNoiseException(Exception):
@@ -23,9 +24,9 @@ class PantherGreyNoiseException(Exception):
 
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type):
-        if call_type is str:
+        if call_type is ImmutableCaseInsensitiveDict or call_type is str:
             message = "~This is not the method you are looking for~ Try ip_address()"
-        elif call_type is list:
+        elif call_type is ImmutableList or call_type is list:
             message = "~This is not the method you are looking for~ Try ip_addresses()"
         else:
             message = f"Incorrect Method Exception, call_type: {call_type}"
@@ -58,8 +59,8 @@ class GreyNoiseBasic:
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(dict(self.noise), match_field)
-        if not isinstance(ip_get_call, list):
+        ip_get_call = deep_get(self.noise, match_field)
+        if not isinstance(ip_get_call, ImmutableList):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
 
@@ -78,7 +79,7 @@ class GreyNoiseBasic:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
-        if isinstance(deep_get(dict(self.noise), match_field), list):
+        if isinstance(deep_get(self.noise, match_field), ImmutableList):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
@@ -101,8 +102,8 @@ class GreyNoiseAdvanced:
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(dict(self.noise), match_field)
-        if not isinstance(ip_get_call, list):
+        ip_get_call = deep_get(self.noise, match_field)
+        if not isinstance(ip_get_call, ImmutableList):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
 
@@ -191,13 +192,13 @@ class GreyNoiseAdvanced:
         context = {
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
-            "GreyNoise_URL": self.url(match_field),
+            "GreyNoise_UR   L": self.url(match_field),
             "VPN": self.vpn_service(match_field),
             "Metadata": deep_get(self.noise, match_field, "metadata"),
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if isinstance(deep_get(dict(self.noise), match_field), list):
+        if not isinstance(deep_get(self.noise, match_field), ImmutableList):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 

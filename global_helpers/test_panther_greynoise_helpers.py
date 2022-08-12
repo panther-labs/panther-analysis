@@ -6,6 +6,10 @@ from panther_greynoise_helpers import (
     PantherIncorrectIPAddressMethodException
 )
 
+from panther_core.immutable import ImmutableList, ImmutableCaseInsensitiveDict
+
+
+
 test_data_basic_list = [(
     {
         "ip_address": "2.2.2.2",
@@ -68,18 +72,23 @@ test_data_advanced_str = [(
     }
 )]
 
+def cast_test_data(data):
+    return ImmutableCaseInsensitiveDict(data)
+
 @pytest.mark.parametrize("data", test_data_basic_list)
 def test_greynoise_basic_addresses(data):
+    data = cast_test_data(data)
     noise = GreyNoiseBasic(data)
     try:
         noise.ip_address("p_any_ip_addresses")
     except PantherIncorrectIPAddressMethodException:
         pass
     ip_list = noise.ip_addresses("p_any_ip_addresses")
-    assert isinstance(ip_list, list)
+    assert isinstance(ip_list, ImmutableList)
 
 @pytest.mark.parametrize("data", test_data_basic_str)
 def test_greynoise_basic_address(data):
+    data = cast_test_data(data)
     noise = GreyNoiseBasic(data)
     try:
         noise.ip_addresses("p_any_ip_addresses")
@@ -91,6 +100,7 @@ def test_greynoise_basic_address(data):
 
 @pytest.mark.parametrize("data", test_data_advanced_list)
 def test_greynoise_advanced_addresses(data):
+    data = cast_test_data(data)
     noise = GreyNoiseAdvanced(data)
     try:
         noise.ip_address("p_any_ip_addresses")
@@ -98,10 +108,11 @@ def test_greynoise_advanced_addresses(data):
         pass
 
     ip_list = noise.ip_addresses("p_any_ip_addresses")
-    assert isinstance(ip_list, list)
+    assert isinstance(ip_list, ImmutableList)
 
 @pytest.mark.parametrize("data", test_data_advanced_str)
 def test_greynoise_advanced_address(data):
+    data = cast_test_data(data)
     noise = GreyNoiseAdvanced(data)
     try:
         noise.ip_addresses("p_any_ip_addresses")
