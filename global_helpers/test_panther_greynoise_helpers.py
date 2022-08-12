@@ -100,7 +100,7 @@ def test_greynoise_basic_address(data):
 
     ip_str = noise.ip_address("p_any_ip_addresses")
     assert isinstance(ip_str, str)
-    
+
     ctx = noise.context('p_any_ip_addresses')
     assert 'IP' in ctx.keys()
 
@@ -115,7 +115,7 @@ def test_greynoise_advanced_addresses(data):
 
     ip_list = noise.ip_addresses("p_any_ip_addresses")
     assert isinstance(ip_list, ImmutableList)
-    
+
     ctx = noise.context('p_any_ip_addresses')
     assert 'IPs' in ctx.keys()
 
