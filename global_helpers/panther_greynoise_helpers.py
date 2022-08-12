@@ -198,7 +198,7 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if not isinstance(deep_get(self.noise, match_field), ImmutableList):
+        if isinstance(deep_get(self.noise, match_field), ImmutableList):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
