@@ -1,6 +1,5 @@
 # pylint: disable=too-many-public-methods
 import datetime
-import json
 
 from dateutil import parser
 from panther_base_helpers import deep_get
@@ -59,8 +58,8 @@ class GreyNoiseBasic:
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(self.noise, match_field)
-        if isinstance(ip_get_call, str):
+        ip_get_call = deep_get(dict(self.noise), match_field)
+        if not isinstance(ip_get_call, list):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
 
@@ -79,7 +78,7 @@ class GreyNoiseBasic:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), list):
+        if isinstance(deep_get(dict(self.noise), match_field), list):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
@@ -102,7 +101,7 @@ class GreyNoiseAdvanced:
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(self.noise, match_field)
+        ip_get_call = deep_get(dict(self.noise), match_field)
         if not isinstance(ip_get_call, list):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
@@ -198,7 +197,7 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), list):
+        if isinstance(deep_get(dict(self.noise), match_field), list):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 

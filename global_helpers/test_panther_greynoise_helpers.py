@@ -5,7 +5,6 @@ from panther_greynoise_helpers import (
     GreyNoiseBasic,
     PantherIncorrectIPAddressMethodException
 )
-import json
 
 test_data_basic_list = [(
     {
