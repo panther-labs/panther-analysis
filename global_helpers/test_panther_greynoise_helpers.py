@@ -86,6 +86,9 @@ def test_greynoise_basic_addresses(data):
     ip_list = noise.ip_addresses("p_any_ip_addresses")
     assert isinstance(ip_list, ImmutableList)
 
+    ctx = noise.context('p_any_ip_addresses')
+    assert 'IPs' in ctx.keys()
+
 @pytest.mark.parametrize("data", test_data_basic_str)
 def test_greynoise_basic_address(data):
     data = cast_test_data(data)
@@ -97,6 +100,9 @@ def test_greynoise_basic_address(data):
 
     ip_str = noise.ip_address("p_any_ip_addresses")
     assert isinstance(ip_str, str)
+    
+    ctx = noise.context('p_any_ip_addresses')
+    assert 'IP' in ctx.keys()
 
 @pytest.mark.parametrize("data", test_data_advanced_list)
 def test_greynoise_advanced_addresses(data):
@@ -109,6 +115,9 @@ def test_greynoise_advanced_addresses(data):
 
     ip_list = noise.ip_addresses("p_any_ip_addresses")
     assert isinstance(ip_list, ImmutableList)
+    
+    ctx = noise.context('p_any_ip_addresses')
+    assert 'IPs' in ctx.keys()
 
 @pytest.mark.parametrize("data", test_data_advanced_str)
 def test_greynoise_advanced_address(data):
@@ -121,3 +130,6 @@ def test_greynoise_advanced_address(data):
 
     ip_str = noise.ip_address("p_any_ip_addresses")
     assert isinstance(ip_str, str)
+
+    ctx = noise.context('p_any_ip_addresses')
+    assert 'IP' in ctx.keys()
