@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 EXPOSED_CRED_POLICY = "AWSExposedCredentialPolicy_DO_NOT_REMOVE"
 
@@ -22,3 +22,7 @@ def title(event):
         f"{dedup(event)}'s access key ID [{deep_get(event, 'userIdentity', 'accessKeyId')}]"
         f" was uploaded to a public GitHub repo"
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

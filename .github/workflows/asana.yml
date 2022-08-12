@@ -8,7 +8,9 @@ on:
 
 jobs:
   update_task_on_pr_open:
-    if: ${{ github.event.pull_request.state == 'open' }}
+    if: | 
+      github.repository_owner == 'panther-labs' &&
+      github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
     steps:
       - uses: panther-labs/github-asana-action@v3.0.5
@@ -27,7 +29,9 @@ jobs:
           targets: '[{"projectNameRegex": "(S|s)print", "section": "In Review"}]'
 
   update_task_on_pr_close:
-    if: ${{ github.event.pull_request.state == 'closed' }}
+    if: | 
+      github.repository_owner == 'panther-labs' &&
+      github.event.pull_request.state == 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: panther-labs/github-asana-action@v3.0.5

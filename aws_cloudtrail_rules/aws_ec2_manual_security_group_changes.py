@@ -1,5 +1,5 @@
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get, pattern_match_list
+from panther_base_helpers import deep_get, pattern_match_list, aws_rule_context
 
 PROD_ACCOUNT_IDS = {"11111111111111", "112233445566"}
 SG_CHANGE_EVENTS = {
@@ -58,3 +58,7 @@ def title(event):
     title_template = SG_CHANGE_EVENTS[event.get("eventName")]["title"]
     title_fields["actor"] = user
     return title_template.format(**title_fields)
+
+
+def alert_context(event):
+    return aws_rule_context(event)

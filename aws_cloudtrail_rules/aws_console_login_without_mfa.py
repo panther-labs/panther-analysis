@@ -2,7 +2,7 @@ import ast
 import logging
 
 from panther import lookup_aws_account_name
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 from panther_oss_helpers import check_account_age
 
 # Set to True for environments that permit direct role assumption via external IDP
@@ -84,3 +84,7 @@ def title(event):
         account_string = f"{account_name} account ({account_id})"
 
     return f"AWS login detected without MFA for [{user_string}] in [{account_string}]"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

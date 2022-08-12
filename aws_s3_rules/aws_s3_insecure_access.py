@@ -1,4 +1,4 @@
-from panther_base_helpers import pattern_match
+from panther_base_helpers import pattern_match, aws_rule_context
 
 
 def rule(event):
@@ -9,3 +9,7 @@ def rule(event):
 
 def title(event):
     return f"Insecure access to S3 Bucket [{event.get('bucket', '<UNKNOWN_BUCKET>')}]"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

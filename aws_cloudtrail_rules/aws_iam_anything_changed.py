@@ -1,4 +1,5 @@
 from panther import aws_cloudtrail_success
+from panther_base_helpers import aws_rule_context
 
 IAM_CHANGE_ACTIONS = [
     "Add",
@@ -24,3 +25,7 @@ def rule(event):
         return False
 
     return any((event.get("eventName", "").startswith(action) for action in IAM_CHANGE_ACTIONS))
+
+
+def alert_context(event):
+    return aws_rule_context(event)
