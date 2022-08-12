@@ -5,6 +5,7 @@ from panther_greynoise_helpers import (
     GreyNoiseBasic,
     PantherIncorrectIPAddressMethodException
 )
+import json
 
 test_data_basic_list = [(
     {
@@ -75,7 +76,6 @@ def test_greynoise_basic_addresses(data):
         noise.ip_address("p_any_ip_addresses")
     except PantherIncorrectIPAddressMethodException:
         pass
-
     ip_list = noise.ip_addresses("p_any_ip_addresses")
     assert isinstance(ip_list, list)
 

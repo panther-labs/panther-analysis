@@ -1,5 +1,6 @@
 # pylint: disable=too-many-public-methods
 import datetime
+import json
 
 from dateutil import parser
 from panther_base_helpers import deep_get
@@ -28,7 +29,7 @@ class PantherIncorrectIPAddressMethodException(Exception):
         elif call_type is list:
             message = "~This is not the method you are looking for~ Try ip_addresses()"
         else:
-            message = "Incorrect Method Exception"
+            message = f"Incorrect Method Exception, call_type: {call_type}"
         super().__init__(message)
 
 class GreyNoiseBasic:
@@ -59,7 +60,7 @@ class GreyNoiseBasic:
 
     def ip_addresses(self, match_field) -> list:
         ip_get_call = deep_get(self.noise, match_field)
-        if not isinstance(ip_get_call, list):
+        if isinstance(ip_get_call, str):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
 
