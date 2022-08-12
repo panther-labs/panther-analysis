@@ -8,7 +8,23 @@ from panther_greynoise_helpers import (
 
 from panther_core.immutable import ImmutableList, ImmutableCaseInsensitiveDict
 
-
+# These are unit tests associated with the ip_addresses list handling change.
+# This functionality was also tested in the panther console, by creating a dectations
+# rule and creating data that looks like what is below. I ran two pieces of code in the
+# Rule Function, and created four test cases.
+#
+    # ip = noise.ip_address('p_any_ip_addresses')
+    # ctx = noise.context('p_any_ip_addresses')
+    # if isinstance(ip, str) and ip == "0.1.2.3.4" and 'IP' in ctx.keys():
+    #     return True
+    #
+    # ips = noise.ip_addresses('p_any_ip_addresses')
+    # ctx = noise.context('p_any_ip_addresses')
+    # if isinstance(ips, ImmutableList) and 'IPs' in ctx.keys():
+    #     return True
+#
+# I expected that when the ip_addresses passes which returns a list, the string test
+# should return the correct error message and visa versa.
 
 test_data_basic_list = [(
     {
