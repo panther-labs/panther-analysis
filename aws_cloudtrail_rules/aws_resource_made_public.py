@@ -1,7 +1,7 @@
 import json
 
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 from policyuniverse.policy import Policy
 
 
@@ -15,7 +15,7 @@ def policy_is_internet_accessible(json_policy):
 # Normally this check helps avoid overly complex functions that are doing too many things,
 # but in this case we explicitly want to handle 10 different cases in 10 different ways.
 # Any solution that avoids too many return statements only increases the complexity of this rule.
-# pylint: disable=too-many-return-statements
+# pylint: disable=too-many-return-statements, too-complex
 def rule(event):
     if not aws_cloudtrail_success(event):
         return False
@@ -83,3 +83,7 @@ def title(event):
         return f"Resource {event.get('Resources')[0].get('arn', 'MISSING')} made public by {user}"
 
     return f"{event.get('eventSource', 'MISSING SOURCE')} resource made public by {user}"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

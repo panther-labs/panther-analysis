@@ -18,6 +18,7 @@ GEO_HISTORY = {}
 
 
 def rule(event):
+    # pylint: disable=too-complex
     # unique key for global dictionary
     log = event.get("p_row_id")
 

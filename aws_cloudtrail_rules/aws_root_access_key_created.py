@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 
 def rule(event):
@@ -12,3 +12,7 @@ def rule(event):
 
     # Only alert if the root user is creating an access key for itself
     return event.get("requestParameters") is None
+
+
+def alert_context(event):
+    return aws_rule_context(event)
