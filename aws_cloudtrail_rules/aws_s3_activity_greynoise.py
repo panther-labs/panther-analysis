@@ -58,7 +58,7 @@ def rule(event):
         if pattern_match_list(deep_get(event, "userIdentity", "arn"), _ALLOWED_ROLES):
             # Only Greynoise advanced provides AS organization info
             if NOISE.subscription_level() == 'advanced':
-                if NOISE.organization == 'Amazon.com, Inc.':
+                if NOISE.organization() == 'Amazon.com, Inc.':
                     return False
             # return false if the role is seen and we are not able to valide the AS organization
             else:
