@@ -62,6 +62,8 @@ class GreyNoiseBasic:
 
     def ip_addresses(self, match_field) -> list:
         ip_get_call = deep_get(self.noise, match_field)
+        if ip_get_call is None:
+            return None
         if not isinstance(ip_get_call, ImmutableList):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
@@ -99,12 +101,16 @@ class GreyNoiseAdvanced:
 
     def ip_address(self, match_field) -> str:
         ip_get_call = deep_get(self.noise, match_field, "ip")
+        if ip_get_call is None:
+            return None
         if not isinstance(ip_get_call, str):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
         ip_get_call = deep_get(self.noise, match_field)
+        if ip_get_call is None:
+            return None
         if not isinstance(ip_get_call, ImmutableList):
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
         return ip_get_call
