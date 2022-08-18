@@ -164,12 +164,12 @@ def test_greynoise_advanced_address(data):
     assert 'IP' in ctx.keys()
 
 @pytest.mark.parametrize("data", test_data_basic_ip)
-def test_data_basic_ip(data):
+def test_greynoise_basic_ip(data):
     data = cast_test_data(data)
     noise = GreyNoiseBasic(data)
 
     ip_none = noise.ip_address("p_any_ip_address")
-    assert(isinstance(ip_none, str))
+    assert isinstance(ip_none, str)
 
 @pytest.mark.parametrize("data", test_data_basic_none)
 def test_greynoise_basic_none(data):
@@ -177,4 +177,4 @@ def test_greynoise_basic_none(data):
     noise = GreyNoiseBasic(data)
 
     ip_none = noise.ip_address("p_any_ip_address")
-    assert(ip_none is None)
+    assert ip_none is None
