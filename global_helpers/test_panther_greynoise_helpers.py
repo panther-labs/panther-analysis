@@ -71,6 +71,36 @@ test_data_advanced_str = [(
     }
 )]
 
+test_data_basic_ip = [(
+    {
+        "ip_address": "2.2.2.2",
+        "request_user": "test",
+        "request_time": "time",
+        "p_enrichment": {
+            "greynoise_noise_basic": {
+                "p_any_ip_address": {
+                    "ip": "1.2.3.4.5"
+                },
+            }
+        }
+    }
+)]
+
+test_data_basic_none = [(
+    {
+        "ip_address": "2.2.2.2",
+        "request_user": "test",
+        "request_time": "time",
+        "p_enrichment": {
+            "greynoise_noise_basic": {
+                "p_any_ip_address": {
+
+                },
+            }
+        }
+    }
+)]
+
 def cast_test_data(data):
     return ImmutableCaseInsensitiveDict(data)
 
@@ -132,3 +162,19 @@ def test_greynoise_advanced_address(data):
 
     ctx = noise.context('p_any_ip_addresses')
     assert 'IP' in ctx.keys()
+
+@pytest.mark.parametrize("data", test_data_basic_ip)
+def test_data_basic_ip(data):
+    data = cast_test_data(data)
+    noise = GreyNoiseBasic(data)
+
+    ip_none = noise.ip_address("p_any_ip_address")
+    assert(isinstance(ip_none, str))
+
+@pytest.mark.parametrize("data", test_data_basic_none)
+def test_greynoise_basic_none(data):
+    data = cast_test_data(data)
+    noise = GreyNoiseBasic(data)
+
+    ip_none = noise.ip_address("p_any_ip_address")
+    assert(ip_none is None)
