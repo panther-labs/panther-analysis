@@ -8,16 +8,15 @@ rule_exceptions = {
         "principals": ["system:serviceaccount:example-namespace:example-namespace-service-account"],
         # If empty, then all namespaces
         "namespaces": [],
-        "env": None,
-        "ttl": ""
+        # If projects empty then all projects 
+        "projects": []
         },
         {
         "principals": [
            "example-allowed-user@example.com"
             ],
         "namespaces": ["istio-system"],
-        "env": None,
-        'ttl': ""
+        "projects": []
         },
     ]
     }

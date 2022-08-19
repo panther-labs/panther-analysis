@@ -9,15 +9,20 @@ def rule(event):
         return False
 
     k8s_info = get_k8s_info(event)
+    print(k8s_info)
     principal = k8s_info["principal"]
     namespace = k8s_info["namespace"]
+    project_id = k8s_info["project_id"]
     # rule_exceptions that are allowed temporarily are defined in gcp_environment.py
     # Some execs have principal which is long numerical UUID, appears to be k8s internals
     for allowed_principal in rule_exceptions["gcp_k8s_exec_into_pod"]["allowed_principals"]:
         if (
             principal in allowed_principal["principals"] and
             (not allowed_principal["namespaces"] \
-              or namespace in allowed_principal["namespaces"])
+              or namespace in allowed_principal["namespaces"]
+              ) and (not allowed_principal["projects"] \
+                or project_id in allowed_principal["projects"]
+                )
             ) or (principal.find("@") == -1):
             return False
     return True
