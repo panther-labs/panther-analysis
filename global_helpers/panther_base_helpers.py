@@ -221,6 +221,15 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
+def slack_alert_context(event: dict):
+    return {
+        "actor-name": deep_get(event, "actor", "user", "name", default="<MISSING_NAME>"),
+        "actor-email": deep_get(event, "actor", "user", "email", default="<MISSING_EMAIL>"),
+        "actor-ip": deep_get(event, "context", "ip_address", default="<MISSING_IP>"),
+        "user-agent": deep_get(event, "context", "ua", default="<MISSING_UA>")
+    }
+
+
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
 
@@ -237,6 +246,16 @@ def aws_strip_role_session_id(user_identity_arn):
     if arn_parts:
         return "/".join(arn_parts[:2])
     return user_identity_arn
+
+
+def aws_rule_context(event: dict):
+    return {
+        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
+        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
+        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
+        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
+        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
+    }
 
 
 def is_ip_in_network(ip_addr, networks):

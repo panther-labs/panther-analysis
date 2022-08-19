@@ -1,7 +1,7 @@
 from fnmatch import fnmatch
 
 from panther import aws_cloudtrail_success
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, aws_rule_context
 
 SECURITY_CONFIG_ACTIONS = {
     "DeleteAccountPublicAccessBlock",
@@ -53,3 +53,7 @@ def title(event):
     )
 
     return f"Sensitive AWS API call {event.get('eventName')} made by {user}"
+
+
+def alert_context(event):
+    return aws_rule_context(event)

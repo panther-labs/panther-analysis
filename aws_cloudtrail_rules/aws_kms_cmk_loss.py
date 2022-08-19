@@ -1,4 +1,5 @@
 from panther import aws_cloudtrail_success
+from panther_base_helpers import aws_rule_context
 
 # API calls that are indicative of KMS CMK Deletion
 KMS_LOSS_EVENTS = {"DisableKey", "ScheduleKeyDeletion"}
@@ -14,3 +15,7 @@ def dedup(event):
         if resource.get("type", "") == KMS_KEY_TYPE:
             return resource.get("ARN")
     return event.get("eventName")
+
+
+def alert_context(event):
+    return aws_rule_context(event)
