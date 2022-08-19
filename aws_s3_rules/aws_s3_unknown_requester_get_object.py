@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+from panther_base_helpers import aws_rule_context
 
 # pylint: disable=line-too-long
 BUCKET_ROLE_MAPPING = {
@@ -36,3 +37,7 @@ def title(event):
         f"Unknown requester accessing data from S3 Bucket "
         f"[{event.get('bucket', '<UNKNOWN_BUCKET>')}]"
     )
+
+
+def alert_context(event):
+    return aws_rule_context(event)

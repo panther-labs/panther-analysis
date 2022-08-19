@@ -1,4 +1,5 @@
 from ipaddress import ip_network
+from panther_base_helpers import aws_rule_context
 
 APPROVED_DNS_SERVERS = {
     "1.1.1.1",  # CloudFlare DNS
@@ -22,3 +23,7 @@ def rule(event):
 
     # No clean way to default to False (no alert), so explicitly check for key
     return "dstaddr" in event and event.get("dstaddr") not in APPROVED_DNS_SERVERS
+
+
+def alert_context(event):
+    return aws_rule_context(event)

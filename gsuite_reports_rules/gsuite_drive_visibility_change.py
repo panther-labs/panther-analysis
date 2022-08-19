@@ -58,6 +58,7 @@ def user_is_external(target_user):
 
 
 def rule(event):
+    # pylint: disable=too-complex
     if deep_get(event, "id", "applicationName") != "drive":
         return False
 

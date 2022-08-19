@@ -1,4 +1,5 @@
 from ipaddress import ip_network
+from panther_base_helpers import aws_rule_context
 
 BUCKETS_TO_MONITOR = {
     # Example bucket names to watch go here
@@ -23,3 +24,7 @@ def rule(event):
 
 def title(event):
     return f"Non-Approved IP access to S3 Bucket [{event.get('bucket', '<UNKNOWN_BUCKET>')}]"
+
+
+def alert_context(event):
+    return aws_rule_context(event)
