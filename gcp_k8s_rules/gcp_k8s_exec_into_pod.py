@@ -23,8 +23,10 @@ def rule(event):
               ) and (not allowed_principal["projects"] \
                 or project_id in allowed_principal["projects"]
                 )
-            ) or (principal.find("@") == -1):
-            return False
+            ):
+            # nested if since without we get linting error R0916
+            if principal.find("@") == -1:
+                return False
     return True
 
 def severity(event):

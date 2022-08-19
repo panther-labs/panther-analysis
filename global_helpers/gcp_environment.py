@@ -8,7 +8,7 @@ rule_exceptions = {
         "principals": ["system:serviceaccount:example-namespace:example-namespace-service-account"],
         # If empty, then all namespaces
         "namespaces": [],
-        # If projects empty then all projects 
+        # If projects empty then all projects
         "projects": []
         },
         {
