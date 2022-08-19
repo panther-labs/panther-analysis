@@ -17,15 +17,6 @@ SummaryAttributes:
   - actor_user
   - project_id
   - pod
-SampleQuery: >
-  SELECT PROTOPAYLOAD:authenticationInfo:principalEmail,
-        PROTOPAYLOAD:resourceName,
-        resource:labels:project_id,
-        p_event_time
-  FROM PANTHER_RULE_MATCHES.PUBLIC.GCP_AUDITLOG
-  WHERE p_rule_id = 'GCP.K8s.ExecIntoPod'
-  AND DATE(p_event_time) > DATEADD(Day, -30, CURRENT_DATE)
-  LIMIT 100;
 Tests:
   -
     Name: Allowed User
