@@ -3,7 +3,6 @@ from ipaddress import ip_address
 from panther_base_helpers import deep_get, pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
-
 # pylint: disable=too-many-return-statements,invalid-name,unused-argument,global-at-module-level,global-variable-undefined
 
 # Monitor for GetObject events from S3.
@@ -57,8 +56,8 @@ def rule(event):
         # Filter: Roles that generate FP's if used from AWS IP Space
         if pattern_match_list(deep_get(event, "userIdentity", "arn"), _ALLOWED_ROLES):
             # Only Greynoise advanced provides AS organization info
-            if NOISE.subscription_level() == 'advanced':
-                if NOISE.organization() == 'Amazon.com, Inc.':
+            if NOISE.subscription_level() == "advanced":
+                if NOISE.organization() == "Amazon.com, Inc.":
                     return False
             # return false if the role is seen and we are not able to valide the AS organization
             else:

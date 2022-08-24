@@ -2,7 +2,7 @@ import ast
 import logging
 
 from panther import lookup_aws_account_name
-from panther_base_helpers import deep_get, aws_rule_context
+from panther_base_helpers import aws_rule_context, deep_get
 from panther_oss_helpers import check_account_age
 
 # Set to True for environments that permit direct role assumption via external IDP

@@ -18,7 +18,7 @@ FIREWALL_SOURCE_MAPPING = {
     "botManagement": "Bot Management",
     "dlp": "Data Loss Prevention",
     "firewallManaged": "Firewall Managed Rules",
-    "firewallCustom": "Firewall Custom Rulesets"
+    "firewallCustom": "Firewall Custom Rulesets",
 }
 
 

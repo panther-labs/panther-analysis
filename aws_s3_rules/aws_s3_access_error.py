@@ -1,4 +1,4 @@
-from panther_base_helpers import pattern_match, aws_rule_context
+from panther_base_helpers import aws_rule_context, pattern_match
 
 # https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
 HTTP_STATUS_CODES_TO_MONITOR = {

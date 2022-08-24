@@ -1,4 +1,6 @@
 from panther_base_helpers import aws_rule_context
+
+
 def rule(event):
     return 0.1 <= float(event.get("severity", 0)) <= 3.9
 
