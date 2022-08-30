@@ -5,7 +5,7 @@ def rule(event):
     if deep_get(event, "id", "applicationName") != "rules":
         return False
 
-    if not (deep_get(event, "parameters", "triggered_actions")):
+    if not deep_get(event, "parameters", "triggered_actions"):
         return False
     return True
 

@@ -9,12 +9,18 @@ deps:
 deps-update:
 	pipenv update
 
-lint:
+lint: lint-pylint lint-fmt
+
+lint-pylint:
 	pipenv run bandit -r $(dirs) --skip B101  # allow assert statements in tests
 	pipenv run pylint $(dirs) \
 	  --disable=missing-docstring,duplicate-code,import-error,fixme,consider-iterating-dictionary,global-variable-not-assigned \
 	  --load-plugins=pylint.extensions.mccabe \
 	  --max-line-length=100
+
+lint-fmt:
+	@echo Checking python file formatting with the black code style checker
+	pipenv run black --line-length=100 --check $(dirs)
 
 venv:
 	pipenv install --dev
