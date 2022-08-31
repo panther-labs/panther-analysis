@@ -13,8 +13,10 @@ def rule(event):
 
 
 def title(event):
-    return f"Slack App [{deep_get(event, 'entity', 'app', 'name')}] " \
-           f"Access Expanded by [{deep_get(event, 'actor', 'user', 'name')}]"
+    return (
+        f"Slack App [{deep_get(event, 'entity', 'app', 'name')}] "
+        f"Access Expanded by [{deep_get(event, 'actor', 'user', 'name')}]"
+    )
 
 
 def alert_context(event):

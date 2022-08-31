@@ -1,4 +1,5 @@
 from panther_base_helpers import aws_rule_context
+
 # A list of buckets where authenticated access is expected
 AUTH_BUCKETS = {"example-bucket"}
 
