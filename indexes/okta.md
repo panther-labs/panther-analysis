@@ -17,12 +17,12 @@
 
 ## Investigative Queries 
 
-[Session ID Audit ](../okta_queries/okta_session_id_audit.yml)
+[Session ID Audit ](../queries/okta_queries/okta_session_id_audit.yml)
 
-[MFA and Password Reset Audit ](../okta_queries/okta_mfa_password_reset_audit.yml)
+[MFA and Password Reset Audit ](../queries/okta_queries/okta_mfa_password_reset_audit.yml)
 
-[Admin Access Granted](../okta_queries/okta_admin_access_granted.yml)
+[Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
 
-[Support Access](../okta_queries/okta_support_access.yml)
+[Support Access](../queries/okta_queries/okta_support_access.yml)
 
-[User Activity Audit](../okta_queries/okta_activity_audit.yml)
+[User Activity Audit](../queries/okta_queries/okta_activity_audit.yml)
