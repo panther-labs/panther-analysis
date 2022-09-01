@@ -1,28 +1,28 @@
 ## Linux 
 
-[ A Login from Outside the Corporate Office](../osquery_rules/osquery_linux_logins_non_office.py)
+[ A Login from Outside the Corporate Office](../rules/osquery_rules/osquery_linux_logins_non_office.py)
 
-[ AWS command executed on the command line](../osquery_rules/osquery_linux_aws_commands.py)
+[ AWS command executed on the command line](../rules/osquery_rules/osquery_linux_aws_commands.py)
 
 ## MacOS 
-[ OSQuery Reports Application Firewall Disabled](../osquery_rules/osquery_mac_enable_auto_update.py)
+[ OSQuery Reports Application Firewall Disabled](../rules/osquery_rules/osquery_mac_enable_auto_update.py)
 
-[ Unsupported macOS version](../osquery_rules/osquery_outdated_macos.py)
+[ Unsupported macOS version](../rules/osquery_rules/osquery_outdated_macos.py)
 
-[ MacOS ALF is misconfigured](../osquery_rules/osquery_mac_application_firewall.py)
+[ MacOS ALF is misconfigured](../rules/osquery_rules/osquery_mac_application_firewall.py)
 
-[ MacOS Keyboard Events](../osquery_rules/osquery_mac_osx_attacks_keyboard_events.py)
+[ MacOS Keyboard Events](../rules/osquery_rules/osquery_mac_osx_attacks_keyboard_events.py)
 
-[ macOS Malware Detected with osquery](../osquery_rules/osquery_mac_osx_attacks.py)
+[ macOS Malware Detected with osquery](../rules/osquery_rules/osquery_mac_osx_attacks.py)
 
 ## OSQuery Config and Universal  
-[ OSQuery Detected SSH Listener](../osquery_rules/osquery_ssh_listener.py)
+[ OSQuery Detected SSH Listener](../rules/osquery_rules/osquery_ssh_listener.py)
 
-[ Suspicious cron detected](../osquery_rules/osquery_suspicious_cron.py)
+[ Suspicious cron detected](../rules/osquery_rules/osquery_suspicious_cron.py)
 
-[ OSQuery Detected Unwanted Chrome Extensions](../osquery_rules/osquery_mac_unwanted_chrome_extensions.py)
+[ OSQuery Detected Unwanted Chrome Extensions](../rules/osquery_rules/osquery_mac_unwanted_chrome_extensions.py)
 
-[ Osquery Agent Outdated](../osquery_rules/osquery_outdated.py)
+[ Osquery Agent Outdated](../rules/osquery_rules/osquery_outdated.py)
 
-[ OSSEC Rootkit Detected via Osquery](../osquery_rules/osquery_ossec.py)
+[ OSSEC Rootkit Detected via Osquery](../rules/osquery_rules/osquery_ossec.py)
 
