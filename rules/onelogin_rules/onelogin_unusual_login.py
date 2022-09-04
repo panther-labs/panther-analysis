@@ -17,14 +17,14 @@ def rule(event):
 
     # Skip API call if this is a unit test
     if "panther_api_data" in event:
-        resp = lambda: None
+        resp = lambda: None  # pylint: disable=C3001
         setattr(resp, "status_code", 200)
         setattr(resp, "text", event.get("panther_api_data"))
     else:
         # This response looks like the following:
         # {‘ip': '8.8.8.8', 'city': 'Mountain View', 'region': 'California', 'country': 'US',
         # 'loc': '37.4056,-122.0775', 'postal': '94043', 'timezone': 'America/Los_Angeles'}
-        resp = requests.get(url)
+        resp = requests.get(url, timeout=5)
 
     if resp.status_code != 200:
         # Could raise an exception here for ops team to look into
