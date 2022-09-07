@@ -12,7 +12,6 @@ PUBLIC_PROVIDERS = {
     "protonmail.com",
     "pm.me",
     "icloud.com",
-    "yandex.com",
     "tutamail.com",
     "tuta.io",
     "keemail.me",
