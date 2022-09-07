@@ -102,7 +102,7 @@ class GreyNoiseAdvanced:
         return parser.parse(deep_get(self.noise, match_field, "first_seen"))
 
     def last_seen(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.noise, match_field, "last_seen_timestamp"))
+        return parser.parse(deep_get(self.noise, match_field, "last_seen"))
 
     def asn(self, match_field) -> str:
         return deep_get(self.noise, match_field, "metadata", "asn")
