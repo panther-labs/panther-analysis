@@ -229,6 +229,7 @@ def slack_alert_context(event: dict):
         "user-agent": deep_get(event, "context", "ua", default="<MISSING_UA>"),
     }
 
+
 def github_alert_context(event: dict):
     return {
         "action": event.get("action", ""),
