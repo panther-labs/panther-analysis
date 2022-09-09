@@ -1,0 +1,146 @@
+AnalysisType: rule
+Filename: github_advanced_security_change.py
+RuleID: GitHub.Advanced.Security.Change
+DisplayName: GitHub 
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: Low
+Description: The rule alerts when GitHub Advanced Security tools (Depndabot or Secret Scanner) are disabled.
+Runbook: Confirm wit GitHub administrators and re-enable the tools as applicable. 
+Tests:
+  -
+    Name: Secret Scanning Disabled on a Repo
+    ExpectedResult: True
+    Log:
+      {
+        "action": "repository_secret_scanning_push_protection.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Secret Scanning Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "secret_scanning.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Secret Scanning Disabled for New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "secret_scanning_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Alerts Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_alerts.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Alerts Disabled on New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_alerts_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_security_updates.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Disabled on New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_security_updates_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Non-GitHub Adv Sec Action
+    ExpectedResult: False
+    Log:
+      {
+        "action": "enterprise.config.disable_anonymous_git_access",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+    
+    

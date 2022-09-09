@@ -229,6 +229,16 @@ def slack_alert_context(event: dict):
         "user-agent": deep_get(event, "context", "ua", default="<MISSING_UA>"),
     }
 
+def github_alert_context(event: dict):
+    return {
+        "action": event.get("action", ""),
+        "actor": event.get("actor", ""),
+        "actor_location": deep_get(event, "actor_location", "country_code"),
+        "org": event.get("org", ""),
+        "repo": event.get("repo", ""),
+        "user": event.get("user", ""),
+    }
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
