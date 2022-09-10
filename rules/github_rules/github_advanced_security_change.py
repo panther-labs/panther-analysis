@@ -1,6 +1,5 @@
 from panther_base_helpers import github_alert_context
 
-
 # {GitHub Action: Alert Severity}
 ADV_SEC_ACTIONS = {
     "dependabot_alerts.disable": "CRITICAL",
