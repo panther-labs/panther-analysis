@@ -1,7 +1,7 @@
 ## Panther Standard Detections
 ### Supported Log Types are listed below each detection
 
-[ Unusual Login](../standard_rules/unusual_login.py)
+[ Unusual Login](../rules/standard_rules/unusual_login.py)
   - Asana
   - Atlassian
   - AWS CloudTrail
@@ -12,13 +12,13 @@
   - Zoom
   - 1Password
 
-[ MFA Disabled](../standard_rules/mfa_disabled.py)
+[ MFA Disabled](../rules/standard_rules/mfa_disabled.py)
   - Atlassian
   - GitHub
   - Zendesk
   - Okta
 
-[ Brute Force By IP](../standard_rules/brute_force_by_ip.py)
+[ Brute Force By IP](../rules/standard_rules/brute_force_by_ip.py)
 
   - Asana
   - Atlassian
@@ -29,7 +29,7 @@
   - OneLogin
   - 1Password
 
-[ Admin Role Assigned](../standard_rules/admin_assigned.py)
+[ Admin Role Assigned](../rules/standard_rules/admin_assigned.py)
 
   - Asana
   - Atlassian
