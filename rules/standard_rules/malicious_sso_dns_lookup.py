@@ -31,8 +31,9 @@ ALLOWED_DOMAINS = [
     ".amazonaws.com",
     ".okta.com",
     ".oktapreview.com",
-#   "COMPANY.com",
+    #   "COMPANY.com",
 ]
+
 
 def rule(event):
     # filter out known good domains
@@ -40,16 +41,17 @@ def rule(event):
         for domain in event.get("p_any_domain_names", ""):
             if allow in domain.lower():
                 return False
-    
+
     # check domain for company name AND a fake keyword
     for domain in event.get("p_any_domain_names", ""):
         if COMPANY_NAME in domain.lower():
             for fake in FAKE_KEYWORDS:
                 if fake in domain:
                     return True
-    
+
     # The domain did not have a fake keyword and the company name
     return False
+
 
 def title(event):
     return f"Potential Malicious SSO Domain - {event.get('p_any_domain_names','')[0]}"
