@@ -1,7 +1,7 @@
 """
 We highly recommend running this logic over 30 days of historical data using data replay
-before enabling this in your Panther instance. If ALLOWED_DOMAINS is not fully populated with domains
-you own, that contain your company name, false positive alerts will be generated.
+before enabling this in your Panther instance. If ALLOWED_DOMAINS is not fully populated with
+domains you own, that contain your company name, false positive alerts will be generated.
 
 Recommended steps to enable:
     1. Change COMPANY_NAME to match your organization
