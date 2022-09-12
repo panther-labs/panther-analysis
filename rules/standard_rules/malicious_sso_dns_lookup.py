@@ -1,7 +1,7 @@
 """
-We HIGHLY recommend running this logic over 30 days of historical data using data replay
-before enabling this in your instance. If ALLOWED_DOMAINS is not fully populated with domains
-you own, that conain your company name, false positive alerts will be generated.
+We highly recommend running this logic over 30 days of historical data using data replay
+before enabling this in your Panther instance. If ALLOWED_DOMAINS is not fully populated with domains
+you own, that contain your company name, false positive alerts will be generated.
 
 Recommended steps to enable:
     1. Change COMPANY_NAME to match your organization
@@ -49,7 +49,7 @@ def rule(event):
                 if fake in domain:
                     return True
 
-    # The domain did not have a fake keyword and the company name
+    # The domain did not have a fake keyword or the company name
     return False
 
 
