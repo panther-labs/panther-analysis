@@ -36,20 +36,17 @@ ALLOWED_DOMAINS = [
 
 
 def rule(event):
-    # filter out known good domains
-    for allow in ALLOWED_DOMAINS:
-        for domain in event.get("p_any_domain_names", ""):
-            if allow in domain.lower():
-                return False
-
     # check domain for company name AND a fake keyword
-    for domain in event.get("p_any_domain_names", ""):
+    for domain in event.get("p_any_domain_names", []):
+        domain_was_allowed = [x for x in ALLOWED_DOMAINS if domain.lower().endswith(x)]
+        if domain_was_allowed:
+            continue
         if COMPANY_NAME in domain.lower():
-            for fake in FAKE_KEYWORDS:
-                if fake in domain:
-                    return True
+            fake_matches = [x for x in FAKE_KEYWORDS if x in domain.lower()]
+            if fake_matches:
+                return True
 
-    # The domain did not have a fake keyword or the company name
+    # The domain did not have a fake keyword and the company name
     return False
 
 
