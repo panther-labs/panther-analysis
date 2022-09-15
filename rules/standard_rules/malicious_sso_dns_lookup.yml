@@ -1,0 +1,99 @@
+AnalysisType: rule
+Filename: malicious_sso_dns_lookup.py
+RuleID: Standard.MaliciousSSODNSLookup
+DedupPeriodMinutes: 1440 # dedup & threshold is high to prevent alert storms from FPs
+DisplayName: Malicious SSO DNS Lookup
+Enabled: false
+LogTypes:
+  - CiscoUmbrella.DNS
+  - Crowdstrike.DNSRequest
+  - Suricata.DNS
+  - Zeek.DNS
+Severity: Medium
+Threshold: 1000 # dedup & threshold is high to prevent alert storms from FPs
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566
+Description: The rule looks for DNS requests to sites potentially posing as SSO domains.
+Runbook: Verify if the destination domain is owend by your organization. 
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: Known Good SSO Domain
+    ExpectedResult: False
+    Log:
+      {
+        "ContextProcessId": "440890253753908704",
+        "ContextThreadId": "0",
+        "ContextTimeStamp": "2022-08-31 07:03:48.879",
+        "DomainName": "company_name_here.okta.com",
+        "EffectiveTransmissionClass": 2,
+        "Entitlements": "15",
+        "RequestType": "1",
+        "event_platform": "Mac",
+        "event_simpleName": "DnsRequest",
+        "name": "DnsRequestMacV2",
+        "p_any_domain_names": [
+          "company_name_here.okta.com"
+        ],
+        "timestamp": "2022-08-31 07:03:49.195"
+      }
+  -
+    Name: Potentially Malicious SSO Domain
+    ExpectedResult: True
+    Log:
+      {
+        "ContextProcessId": "440890253753908704",
+        "ContextThreadId": "0",
+        "ContextTimeStamp": "2022-08-31 07:03:48.879",
+        "DomainName": "company_name_here-okta.com",
+        "EffectiveTransmissionClass": 2,
+        "Entitlements": "15",
+        "RequestType": "1",
+        "event_platform": "Mac",
+        "event_simpleName": "DnsRequest",
+        "name": "DnsRequestMacV2",
+        "p_any_domain_names": [
+          "company_name_here-okta.com"
+        ],
+        "timestamp": "2022-08-31 07:03:49.195"
+      }
+  -
+    Name: No Domain
+    ExpectedResult: False
+    Log:
+      {
+        "ContextProcessId": "440890253753908704",
+        "ContextThreadId": "0",
+        "ContextTimeStamp": "2022-08-31 07:03:48.879",
+        "EffectiveTransmissionClass": 2,
+        "Entitlements": "15",
+        "RequestType": "1",
+        "event_platform": "Mac",
+        "event_simpleName": "DnsRequest",
+        "name": "DnsRequestMacV2",
+        "p_any_domain_names": [
+        ],
+        "timestamp": "2022-08-31 07:03:49.195"
+      }
+  -
+    Name: Known good and malicious domain
+    ExpectedResult: True
+    Log:
+      {
+        "ContextProcessId": "440890253753908704",
+        "ContextThreadId": "0",
+        "ContextTimeStamp": "2022-08-31 07:03:48.879",
+        "EffectiveTransmissionClass": 2,
+        "Entitlements": "15",
+        "RequestType": "1",
+        "event_platform": "Mac",
+        "event_simpleName": "DnsRequest",
+        "name": "DnsRequestMacV2",
+        "p_any_domain_names": [
+          "company_name_here.okta.com",
+          "company_name_here-maokta.com"
+        ],
+        "timestamp": "2022-08-31 07:03:49.195"
+      }
