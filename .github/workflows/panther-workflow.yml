@@ -1,0 +1,76 @@
+name: Github Actions CI/CD workflow
+
+permissions:
+  id-token: write
+  contents: read
+
+on:  
+  push:
+    paths:
+      - 'detections/**'
+
+jobs: 
+  download_pantherlog_tool:
+    runs-on: ubuntu-latest
+    name: Downloading the pantherlog tool
+    steps: 
+      - name: Download pantherlog & unzip 
+        run: curl -sSO "https://panther-community-us-east-1.s3.amazonaws.com/v1.32.4/tools/linux-amd64-pantherlog.zip" && unzip linux-amd64-pantherlog.zip
+      - name: Create a pantherlog artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pantherlog
+          path: pantherlog
+          retention-days: 1
+  run_schema_tests:    
+    runs-on: ubuntu-latest
+    name: Run schema tests with pantherlog
+    needs: [download_pantherlog_tool]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Download Pantherlog tool from artifacts
+        uses: actions/download-artifact@v3
+        with: 
+          name: pantherlog
+      - name: Make pantherlog executable
+        run: sudo chmod +x pantherlog
+      - name: Perform schema tests with pantherlog
+        run: ./pantherlog test detections/schemas
+  run_unit_tests:    
+    runs-on: ubuntu-latest
+    name: Unit Testing with panther_analysis_tool
+    needs: [download_pantherlog_tool, run_schema_tests]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Download the panther_analysis_tool
+        run: pip3 install panther_analysis_tool
+      - name: Run unit tests within the Detections folder
+        run: |
+          for dir in detections/*; do
+            if [[ "$dir" =~ .*_rules.* ]]; then
+              panther_analysis_tool test
+            fi
+          done
+  panther_analysis_tool_upload:        
+    runs-on: ubuntu-latest
+    name: panther_analysis_tool upload to panther console
+    needs: [download_pantherlog_tool, run_schema_tests, run_unit_tests]
+    env: |
+      PANTHER_API_KEY:  ${{ secrets.PantherApiKey }}
+      PANTHER_API_HOST: "https://api.cisco.runpanther.net/public/graphql"
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Download panther_analysis_tool
+        run: pip3 install panther_analysis_tool
+      - name: Loop through folders ending in _rules and upload to your Panther instance 
+        run: |
+          for dir in detections/*; do
+            if [[ "$dir" =~ .*_rules.* ]]; then
+              panther_analysis_tool upload --path "$dir" --skip-tests
+            fi
+          done
+      - name: Upload custom schemas to Panther Console
+        run: panther_analysis_tool update-custom-schemas --path schemas/

@@ -1,0 +1,271 @@
+AnalysisType: rule
+Filename: gsuite_drive_external_share_cisco.py
+RuleID: GSuite.Drive.ExternalFileShare
+DisplayName: External GSuite File Share
+Enabled: false
+LogTypes:
+  - GSuite.Reports
+Tags:
+  - GSuite
+  - Security Control
+  - Configuration Required
+  - Collection:Data from Information Repositories
+Reports:
+   MITRE ATT&CK:
+    - TA0009:T1213
+Severity: High
+Description: An employee shared a sensitive file externally with another organization
+Runbook: >
+  Contact the employee who made the share and make sure they redact the access.
+  If the share was legitimate, add to the EXCEPTION_PATTERNS in the detection.
+Tests:
+  -
+    Name: Dangerous Share of Known Document with a Missing User
+    LogType: GSuite.Reports
+    ExpectedResult: true
+    Log:
+      {
+         "kind":"admin#reports#activity",
+         "id":{
+            "time":"2020-09-07T15:50:49.617Z",
+            "uniqueQualifier":"1111111111111111111",
+            "applicationName":"drive",
+            "customerId":"C010qxghg"
+         },
+         "actor":{
+            "email":"example@acme.com",
+            "profileId":"1111111111111111111"
+         },
+         "events":[
+            {
+               "type":"acl_change",
+               "name":"change_user_access",
+               "parameters":[
+                  {
+                     "name":"primary_event",
+                     "boolValue":true
+                  },
+                  {
+                     "name":"visibility_change",
+                     "value":"external"
+                  },
+                  {
+                     "name":"target_user",
+                     "value":"outside@acme.com"
+                  },
+                  {
+                     "name":"old_visibility",
+                     "value":"private"
+                  },
+                  {
+                     "name":"doc_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"doc_type",
+                     "value":"document"
+                  },
+                  {
+                     "name":"doc_title",
+                     "value":"Document Title Primary"
+                  },
+                  {
+                     "name":"visibility",
+                     "value":"shared_externally"
+                  },
+                  {
+                     "name":"originating_app_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"owner_is_shared_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"owner_is_team_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"old_value",
+                     "multiValue":[
+                        "none"
+                     ]
+                  },
+                  {
+                     "name":"new_value",
+                     "multiValue":[
+                        "can_edit"
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+  -
+    Name: Dangerous Share of Unknown Document
+    LogType: GSuite.Reports
+    ExpectedResult: true
+    Log:
+      {
+         "kind":"admin#reports#activity",
+         "id":{
+            "time":"2020-09-07T15:50:49.617Z",
+            "uniqueQualifier":"1111111111111111111",
+            "applicationName":"drive",
+            "customerId":"C010qxghg"
+         },
+         "actor":{
+            "email":"example@acme.com",
+            "profileId":"1111111111111111111"
+         },
+         "events":[
+            {
+               "type":"acl_change",
+               "name":"change_user_access",
+               "parameters":[
+                  {
+                     "name":"primary_event",
+                     "boolValue":true
+                  },
+                  {
+                     "name":"visibility_change",
+                     "value":"external"
+                  },
+                  {
+                     "name":"target_user",
+                     "value":"alice@external.com"
+                  },
+                  {
+                     "name":"old_visibility",
+                     "value":"private"
+                  },
+                  {
+                     "name":"doc_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"doc_type",
+                     "value":"document"
+                  },
+                  {
+                     "name":"doc_title",
+                     "value":"Untitled document"
+                  },
+                  {
+                     "name":"visibility",
+                     "value":"shared_externally"
+                  },
+                  {
+                     "name":"originating_app_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"owner_is_shared_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"owner_is_team_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"old_value",
+                     "multiValue":[
+                        "none"
+                     ]
+                  },
+                  {
+                     "name":"new_value",
+                     "multiValue":[
+                        "can_edit"
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+  -
+    Name: Share Allowed by Exception
+    LogType: GSuite.Reports
+    ExpectedResult: false
+    Log:
+      {
+         "kind":"admin#reports#activity",
+         "id":{
+            "time":"2020-07-07T15:50:49.617Z",
+            "uniqueQualifier":"1111111111111111111",
+            "applicationName":"drive",
+            "customerId":"C010qxghg"
+         },
+         "actor":{
+            "email":"alice@acme.com",
+            "profileId":"1111111111111111111"
+         },
+         "events":[
+            {
+               "type":"acl_change",
+               "name":"change_user_access",
+               "parameters":[
+                  {
+                     "name":"primary_event",
+                     "boolValue":true
+                  },
+                  {
+                     "name":"billable",
+                     "boolValue":true
+                  },
+                  {
+                     "name":"visibility_change",
+                     "value":"external"
+                  },
+                  {
+                     "name":"target_domain",
+                     "value":"acme.com"
+                  },
+                  {
+                     "name":"old_visibility",
+                     "value":"private"
+                  },
+                  {
+                     "name":"doc_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"doc_type",
+                     "value":"document"
+                  },
+                  {
+                     "name":"doc_title",
+                     "value":"Document Title Pattern"
+                  },
+                  {
+                     "name":"visibility",
+                     "value":"shared_externally"
+                  },
+                  {
+                     "name":"originating_app_id",
+                     "value":"1111111111111111111"
+                  },
+                  {
+                     "name":"owner_is_shared_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"owner_is_team_drive",
+                     "boolValue":false
+                  },
+                  {
+                     "name":"old_value",
+                     "multiValue":[
+                        "none"
+                     ]
+                  },
+                  {
+                     "name":"new_value",
+                     "multiValue":[
+                        "people_within_domain_with_link"
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
