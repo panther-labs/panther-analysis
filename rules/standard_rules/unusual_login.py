@@ -19,6 +19,7 @@ GEO_HISTORY = {}
 
 def rule(event):
     # pylint: disable=too-complex
+    # pylint: disable=too-many-branches
     # unique key for global dictionary
     log = event.get("p_row_id")
 
@@ -108,6 +109,11 @@ def rule(event):
     global GEO_HISTORY  # pylint: disable=global-statement
     GEO_HISTORY[log] = updated_geo_logins
     logging.debug("GEO_HISTORY in main rule:\n%s", json.dumps(GEO_HISTORY[log]))
+
+    # Don't alert on first seen logins
+    if len(updated_geo_logins) <= 1:
+        return False
+
     return True
 
 
