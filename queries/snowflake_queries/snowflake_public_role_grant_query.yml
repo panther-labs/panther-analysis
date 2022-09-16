@@ -18,7 +18,7 @@ SnowflakeQuery: >
     end_time
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('1 h',, start_time)
+      p_occurs_since('1 h', start_time)
       AND execution_status = 'SUCCESS'
       AND query_type = 'GRANT'
       AND query_text ILIKE '%to%public%'
