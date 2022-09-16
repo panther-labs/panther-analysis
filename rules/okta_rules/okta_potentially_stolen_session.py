@@ -38,9 +38,7 @@ def rule(event):
             # the user-agent is the longest string in the set
             prev_ua = next(x for x in PREVIOUS_SESSION if len(x) > 25)
             diff_ratio = SequenceMatcher(
-                None,
-                deep_get(event, "client", "userAgent", "rawUserAgent", default=""),
-                prev_ua
+                None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua
             ).ratio()
 
             # is this session being used from a new ASN and a different browser
