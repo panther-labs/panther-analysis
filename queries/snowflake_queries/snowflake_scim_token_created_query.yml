@@ -13,7 +13,7 @@ SnowflakeQuery: >
     *
   FROM snowflake.account_usage.query_history
     WHERE
-    p_occurs_since('1 h',, start_time)
+    p_occurs_since('1 h', start_time)
     AND execution_status = 'SUCCESS'
     AND query_text ilike '%system$generate_scim_access_token%'
   ORDER BY end_time desc
