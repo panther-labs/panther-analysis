@@ -19,7 +19,7 @@ SnowflakeQuery: >
     role_name
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('24 h',, start_time)
+      p_occurs_since('24 h', start_time)
       AND execution_status = 'SUCCESS'
       AND user_name != 'PANTHER_READONLY'
       AND (
@@ -29,5 +29,5 @@ SnowflakeQuery: >
         )
   ORDER BY end_time desc
 Schedule:
-  CronExpression: '0 6 * * *'
+  CronExpression: "0 6 * * *"
   TimeoutMinutes: 1

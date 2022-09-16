@@ -10,7 +10,7 @@ SnowflakeQuery: >
 
   SELECT DISTINCT user_name, count(user_name), first_authentication_factor
   FROM snowflake.account_usage.login_history
-  WHERE p_occurs_since('24 h' ,, event_timestamp)
+  WHERE p_occurs_since('24 h' , event_timestamp)
   AND is_success = 'YES'
   AND user_name NOT LIKE '%PANTHER%'
     GROUP BY user_name, first_authentication_factor
