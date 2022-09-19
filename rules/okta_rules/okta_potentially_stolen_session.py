@@ -1,4 +1,4 @@
-from ast import literal_eval
+import json
 from datetime import datetime, timedelta
 from difflib import SequenceMatcher
 
@@ -27,10 +27,10 @@ def rule(event):
 
         # For unit test mocks we need to eval the string to a set
         if isinstance(PREVIOUS_SESSION, str):
-            PREVIOUS_SESSION = literal_eval(PREVIOUS_SESSION)
+            PREVIOUS_SESSION = set(json.loads(PREVIOUS_SESSION))
 
         # if the session cookie was seen before
-        if PREVIOUS_SESSION is not None:
+        if PREVIOUS_SESSION:
             # we use a fuzz match to compare the current and prev user agent.
             # We cannot do a direct match since Okta can occasionally maintain
             # a session across browser upgrades.
