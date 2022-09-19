@@ -5,8 +5,9 @@ from difflib import SequenceMatcher
 from panther_base_helpers import deep_get, okta_alert_context
 from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
 
-PREVIOUS_SESSION = {}
 FUZZ_RATIO_MIN = 0.95
+PREVIOUS_SESSION = {}
+SESSION_TIMEOUT = 1 # the number of days an Okta session is valid for (configured in Okta)
 
 
 def rule(event):
@@ -29,30 +30,8 @@ def rule(event):
         if isinstance(PREVIOUS_SESSION, str):
             PREVIOUS_SESSION = literal_eval(PREVIOUS_SESSION)
 
-        # if the session cookie was seen before
-        if PREVIOUS_SESSION is not None:
-            # we use a fuzz match to compare the current and prev user agent.
-            # We cannot do a direct match since Okta can occasionally maintain
-            # a session across browser upgrades.
-
-            # the user-agent is the longest string in the set
-            prev_ua = [x for x in PREVIOUS_SESSION if len(x) > 25]
-            diff_ratio = SequenceMatcher(
-                None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua[0]
-            ).ratio()
-
-            # is this session being used from a new ASN and a different browser
-            if (
-                str(deep_get(event, "securityContext", "asNumber", default=""))
-                not in PREVIOUS_SESSION
-                and diff_ratio < FUZZ_RATIO_MIN
-            ):
-                # make the fuzz ratio available in the alert context
-                PREVIOUS_SESSION.add("Fuzz Ratio: " + str(diff_ratio))
-                return True
-
         # If the sessionID has not been seen before, store information about it
-        else:
+        if len(PREVIOUS_SESSION) == 0:
             key = deep_get(event, "authenticationContext", "externalSessionId")
             put_string_set(
                 key,
@@ -65,7 +44,30 @@ def rule(event):
                     event.get("p_event_time"),
                 ],
             )
-            set_key_expiration(key, str((datetime.now() + timedelta(days=2)).timestamp()))
+            # Expire the session from the KV store once it is no longer valid within Okta
+            set_key_expiration(key, str((datetime.now() + timedelta(days=SESSION_TIMEOUT)).timestamp()))
+
+        # if the session cookie was seen before
+        else:
+            # we use a fuzz match to compare the current and prev user agent.
+            # We cannot do a direct match since Okta can occasionally maintain
+            # a session across browser upgrades.
+
+            # the user-agent is the longest string in the set
+            [prev_ua] = [x for x in PREVIOUS_SESSION if len(x) > 25]
+            diff_ratio = SequenceMatcher(
+                None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua
+            ).ratio()
+
+            # is this session being used from a new ASN and a different browser
+            if (
+                str(deep_get(event, "securityContext", "asNumber", default=""))
+                not in PREVIOUS_SESSION
+                and diff_ratio < FUZZ_RATIO_MIN
+            ):
+                # make the fuzz ratio available in the alert context
+                PREVIOUS_SESSION.add("Fuzz Ratio: " + str(diff_ratio))
+                return True
 
     return False
 
