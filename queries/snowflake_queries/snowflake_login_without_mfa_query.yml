@@ -21,7 +21,7 @@ SnowflakeQuery: >
     second_authentication_factor
   FROM snowflake.account_usage.login_history
     WHERE
-      p_occurs_since('1 h',, event_timestamp)
+      p_occurs_since('1 h', event_timestamp)
       AND first_authentication_factor = 'PASSWORD'
       AND second_authentication_factor IS null
   ORDER BY event_timestamp desc
