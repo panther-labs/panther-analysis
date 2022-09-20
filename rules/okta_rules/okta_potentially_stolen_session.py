@@ -55,8 +55,9 @@ def rule(event):
             # We cannot do a direct match since Okta can occasionally maintain
             # a session across browser upgrades.
 
-            # the user-agent is the longest string in the set
-            [prev_ua] = [x for x in PREVIOUS_SESSION if len(x) > 25]
+            # the user-agent will always contain a paren and slash
+            # return an empty string if it does not
+            [prev_ua] = [x for x in PREVIOUS_SESSION if "(" in x and "/" in x] or ""
             diff_ratio = SequenceMatcher(
                 None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua
             ).ratio()
