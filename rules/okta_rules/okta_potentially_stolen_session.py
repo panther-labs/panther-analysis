@@ -17,8 +17,9 @@ def rule(event):
 
     # Filter only on app access and session start events
     if (
-        event.get("eventType") == "user.authentication.sso"  # user opened app
-        or event.get("eventType") == "user.session.start"  # user loged in
+        (event.get("eventType") == "user.authentication.sso"  # user opened app
+        or event.get("eventType") == "user.session.start") and   # user logged in
+        deep_get(event, "authenticationContext", "externalSessionId") != "unknown"
     ):
 
         # lookup if we've previously stored the session cookie
