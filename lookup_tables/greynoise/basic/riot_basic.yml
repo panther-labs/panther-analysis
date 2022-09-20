@@ -60,7 +60,7 @@ LogTypeMap:
       Selectors:
         - "externalIp"
         - "internalIp"
-    - LogType: CiscoUmbrealla.IP
+    - LogType: CiscoUmbrella.IP
       Selectors:
         - "destinationIp"
         - "sourceIp"
@@ -120,7 +120,7 @@ LogTypeMap:
         - "aip"
         - "CurrentLocalIP"
         - "LocalAddressIP4"
-    - LogType: Crowdstike.ProcessRollup2
+    - LogType: Crowdstrike.ProcessRollup2
       Selectors:
         - "aip"
     - LogType: Crowdstrike.ProcessRollup2Stats
@@ -161,9 +161,6 @@ LogTypeMap:
         - "$.httpRequest.remoteIP"
         - "$.httpRequest.serverIP"
     - LogType: GitLab.API
-      Selectors:
-        - "remote_ip"
-    - LogType: GitLab.Exceptions
       Selectors:
         - "remote_ip"
     - LogType: GitLab.Integrations
@@ -259,7 +256,7 @@ LogTypeMap:
         - "$.networkConnections[9].natDestinationAddress"
         - "$.networkConnections[11].natSourceAddress"
         - "$.networkConnections[15].sourceAddress"
-    - LogType: MongoDB.OrganizationalEvent
+    - LogType: MongoDB.OrganizationEvent
       Selectors:
         - "remoteAddress"
     - LogType: MongoDB.ProjectEvent
@@ -385,11 +382,7 @@ LogTypeMap:
     - LogType: Zeek.SSH
       Selectors:
         - "id.orig_h"
-        - "id.resp_h"
-    - LogType: Zeek.Stats
-      Selectors:
-        - "id.orig_h"
-        - "id.resp_h"        
+        - "id.resp_h"       
     - LogType: Zeek.Tunnel
       Selectors:
         - "id.orig_h"
