@@ -60,8 +60,6 @@ def rule(event):
             [prev_ua] = [x for x in PREVIOUS_SESSION if "user_agent:" in x] or ""
             prev_ua = prev_ua.split("_agent:")[1]
 
-            print(prev_ua)
-
             diff_ratio = SequenceMatcher(
                 None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua
             ).ratio()
