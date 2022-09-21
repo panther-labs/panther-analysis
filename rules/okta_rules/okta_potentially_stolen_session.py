@@ -15,7 +15,7 @@ def rule(event):
     # ensure previous session info is avaialable in the alert_context for investigation
     global PREVIOUS_SESSION
 
-    session_id = deep_get(event, "authenticationContext", "externalSessionId", default="")
+    session_id = deep_get(event, "authenticationContext", "externalSessionId", default="session_not_found")
 
     # Filter only on app access and session start events
     if (
@@ -57,16 +57,16 @@ def rule(event):
             # a session across browser upgrades.
 
             # the user-agent was tagged during storage so we can find it, remove that tag
-            [prev_ua] = [x for x in PREVIOUS_SESSION if "user_agent:" in x] or ""
+            [prev_ua] = [x for x in PREVIOUS_SESSION if "user_agent:" in x] or ["prev_ua_not_found"]
             prev_ua = prev_ua.split("_agent:")[1]
 
             diff_ratio = SequenceMatcher(
-                None, deep_get(event, "client", "userAgent", "rawUserAgent", default=""), prev_ua
+                None, deep_get(event, "client", "userAgent", "rawUserAgent", default="ua_not_found"), prev_ua
             ).ratio()
 
             # is this session being used from a new ASN and a different browser
             if (
-                str(deep_get(event, "securityContext", "asNumber", default=""))
+                str(deep_get(event, "securityContext", "asNumber", default="asn_not_found"))
                 not in PREVIOUS_SESSION
                 and diff_ratio < FUZZ_RATIO_MIN
             ):
@@ -80,7 +80,7 @@ def rule(event):
 def title(event):
     return (
         f"Potentially Stolen Okta Session - "
-        f"{deep_get(event, 'actor', 'displayName', default='Unknown')}"
+        f"{deep_get(event, 'actor', 'displayName', default='Unknown_user')}"
     )
 
 
