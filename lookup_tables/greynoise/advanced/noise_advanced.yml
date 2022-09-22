@@ -77,9 +77,6 @@ LogTypeMap:
     - LogType: Crowdstrike.ActivityAudit
       Selectors:
         - "UserIp"
-    - LogType: Crowdstrike.AIDMaster
-      Selectors:
-        - "aip"
     - LogType: Crowdstrike.DetectionSummary
       Selectors:
         - "LocalIP"
@@ -87,6 +84,9 @@ LogTypeMap:
     - LogType: Crowdstrike.DNSRequest
       Selectors:
         - "IpAddress"
+    - LogType: Crowdstrike.AIDMaster
+      Selectors:
+        - "aip"
     - LogType: Crowdstrike.ManagedAssets
       Selectors:
         - "GatewayIP"
@@ -114,6 +114,9 @@ LogTypeMap:
         - "$.protoPayload.requestMetadata.callerIP"
         - "$.httpRequest.remoteIP"
         - "$.httpRequest.serverIP"
+    - LogType: GitLab.API
+      Selectors:
+        - "remote_ip"
     - LogType: GitLab.Production
       Selectors:
         - "remote_ip"
@@ -210,7 +213,7 @@ LogTypeMap:
     - LogType: Zeek.DNS
       Selectors:
         - "id.orig_h"
-        - "id.resp_h"   
+        - "id.resp_h"
     - LogType: Zendesk.Audit
       Selectors:
         - "ip_address"
