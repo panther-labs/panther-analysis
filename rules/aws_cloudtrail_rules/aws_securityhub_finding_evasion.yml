@@ -1,0 +1,99 @@
+AnalysisType: rule
+Description: Detections modification of findings in SecurityHub
+DisplayName: AWS SecurityHub Finding Evasion
+Enabled: false
+Filename: aws_securityhub_finding_evasion.py
+Reports:
+    MITRE ATT&CK:
+        - TA0005:T1562
+Severity: High
+Tests:
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-west-2
+        eventID: 3dabcebf-35b0-443f-a1a2-26e186ce23bf
+        eventName: CreateInsight
+        eventSource: securityhub.amazonaws.com
+        eventTime: "2018-11-25T01:02:18Z"
+        eventType: AwsApiCall
+        eventVersion: "1.05"
+        readOnly: false
+        recipientAccountId: "012345678901"
+        requestID: c0fffccd-f04d-11e8-93fc-ddcd14710066
+        requestParameters:
+            Filters: {}
+            Name: Test Insight
+            ResultField: ResourceId
+        responseElements:
+            InsightArn: arn:aws:securityhub:us-west-2:0123456789010:insight/custom/f4c4890b-ac6b-4c26-95f9-e62cc46f3055
+        sourceIPAddress: 205.251.233.179
+        userAgent: aws-cli/1.11.76 Python/2.7.10 Darwin/17.7.0 botocore/1.5.39
+        userIdentity:
+            accessKeyId: AKIAIOSFODNN7EXAMPLE
+            accountId: "012345678901"
+            arn: arn:aws:iam::012345678901:user/TestUser
+            principalId: AIDAJK6U5DS22IAVUI7BW
+            type: IAMUser
+            userName: TestUser
+      Name: CreateInsight
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventID: 3dabcebf-35b0-443f-a1a2-26e186ce23bf
+        eventName: DeleteInsight
+        eventSource: securityhub.amazonaws.com
+        eventTime: "2018-11-25T01:02:18Z"
+        eventType: AwsApiCall
+        eventVersion: "1.05"
+        readOnly: false
+        recipientAccountId: "012345678901"
+        requestID: c0fffccd-f04d-11e8-93fc-ddcd14710066
+        requestParameters:
+            Filters: {}
+            Name: Test Insight
+            ResultField: ResourceId
+        responseElements:
+            InsightArn: arn:aws:securityhub:us-west-2:0123456789010:insight/custom/f4c4890b-ac6b-4c26-95f9-e62cc46f3055
+        sourceIPAddress: 205.251.233.179
+        userAgent: aws-cli/1.11.76 Python/2.7.10 Darwin/17.7.0 botocore/1.5.39
+        userIdentity:
+            accessKeyId: AKIAIOSFODNN7EXAMPLE
+            accountId: "012345678901"
+            arn: arn:aws:iam::012345678901:user/TestUser
+            principalId: AIDAJK6U5DS22IAVUI7BW
+            type: IAMUser
+            userName: TestUser
+      Name: DeleteInsight
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventID: 3dabcebf-35b0-443f-a1a2-26e186ce23bf
+        eventName: UpdateFindings
+        eventSource: securityhub.amazonaws.com
+        eventTime: "2018-11-25T01:02:18Z"
+        eventType: AwsApiCall
+        eventVersion: "1.05"
+        readOnly: false
+        recipientAccountId: "012345678901"
+        requestID: c0fffccd-f04d-11e8-93fc-ddcd14710066
+        requestParameters:
+            Filters: {}
+            Name: Test Insight
+            ResultField: ResourceId
+        responseElements:
+            InsightArn: arn:aws:securityhub:us-west-2:0123456789010:insight/custom/f4c4890b-ac6b-4c26-95f9-e62cc46f3055
+        sourceIPAddress: 205.251.233.179
+        userAgent: aws-cli/1.11.76 Python/2.7.10 Darwin/17.7.0 botocore/1.5.39
+        userIdentity:
+            accessKeyId: AKIAIOSFODNN7EXAMPLE
+            accountId: "012345678901"
+            arn: arn:aws:iam::012345678901:user/TestUser
+            principalId: AIDAJK6U5DS22IAVUI7BW
+            type: IAMUser
+            userName: TestUser
+      Name: UpdateFindings
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.SecurityHub.Finding.Evasion
+Threshold: 1
