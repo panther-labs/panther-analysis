@@ -1,5 +1,5 @@
 # This rule is disabled by default because it makes API calls to a third party geolocation
-# service. At high rates of log processing, the third party service may throttle requests 
+# service. At high rates of log processing, the third party service may throttle requests
 # unless you buy a subscription to it, which may cause this rule to no longer work.
 
 import ast
