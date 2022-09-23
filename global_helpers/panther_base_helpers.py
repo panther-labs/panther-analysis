@@ -251,6 +251,17 @@ def deep_get(dictionary: dict, *keys, default=None):
     )
 
 
+def get_val_from_list(lst, field_name, field_type_key, field_type_val):
+    # pylint: disable=invalid-name
+    """Return a specific field in a list of Python dictionaries"""
+    rv = set()
+    for x in lst:
+        if field_name in x:
+            if x[field_type_key] == field_type_val:
+                rv.add(x[field_name])
+    return rv
+
+
 def aws_strip_role_session_id(user_identity_arn):
     # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
     arn_parts = user_identity_arn.split("/")
