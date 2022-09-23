@@ -434,7 +434,7 @@ def listify(maybe_list):
         # not a list
         return [maybe_list]
     # either a list or string
-    return maybe_list if not isinstance(maybe_list, (str, bytes)) else [maybe_list]
+    return maybe_list if not isinstance(maybe_list, (str, bytes, dict)) else [maybe_list]
 
 
 def _test_kv_store():
