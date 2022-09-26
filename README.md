@@ -101,7 +101,7 @@ Additionally, groups of detections may be linked to multiple "Reports", which is
 
 # Writing Detections
 
-*For a full reference on writing detections, read our [docs](https://docs.runpanther.io/writing-detections/panther-analysis-tool)!*
+*For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
 
 Each detection has a Python file (`.py`) and a metadata file (`.yml`) of the same name (in the same location), for example:
 
