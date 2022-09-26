@@ -1,33 +1,32 @@
-AnalysisType: rule # "rule" or "scheduled rule": str
-Filename: file_name.py # str
-RuleID: File.Name # str
-DisplayName: A More Friendly Name # str
-OutputIds: # [str] (Optional)
-  - outputId
-  - anotherOutputId
-Enabled: true # bool
+AnalysisType: rule
+Filename: rule_filename.py
+RuleID: LogFamily.LogType.DetectionName
+DisplayName: Human Readable Detection Name
+Enabled: true
 LogTypes:
-  - Log.Type 
-Tags: # [str] (Optional)
+  - LogType.Name # https://docs.panther.com/data-onboarding/supported-logs
+Tags: 
   - Tag
-Reports: # {str: list} (Optional)
-  Report Type:
-    - Report Name
-Severity: Medium # "Info", "Low", "Medium", "High", "Critical": str
-Description: > # str (Optional)
-  An optional Description
-Runbook: > # str (Optional)
-  An optional Runbook 
-Reference: An optional reference.link # str (Optional)
-DedupPeriodMinutes: 15 # int (Optional, defaults to 60)
-Threshold:  5 # int (Optional, defaults to 1)
-SummaryAttributes: # [str](Optional)
-  - name
-  - action 
-Tests: # (Optional)
+Reports: # (Optional)
+  MITRE ATT&CK:
+    - 'TA0027:T1475' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
+  PCI:
+    - '1.2.3' # Check ID
+Severity: Medium # "Info", "Low", "Medium", "High", "Critical"
+Description: > # (Optional)
+  A description of the detection's impact and why it exists
+Runbook: > # (Optional)
+  How to handle this particular alert 
+Reference: A URL to an explanation of this type of detection or attack # (Optional)
+DedupPeriodMinutes: 15 # The amount of time in minutes for grouping alerts (Optional, defaults to 60)
+Threshold: 1 # The minimum number of event matches prior to an alert sending (Optional, defaults to 1)
+SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
+  - fieldName
+  - FieldName:nestedFieldName
+Tests: # Unit tests for the Detection. Best practice is to include a positive and negative case (Optional)
   -
-    Name: Name # str
-    ExpectedResult: false # bool
+    Name: Name # The title of the test
+    ExpectedResult: false # If the sample event should generate an alert or not
     Log: # object
       {
         "JSON": "string"
