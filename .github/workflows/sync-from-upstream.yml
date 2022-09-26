@@ -60,7 +60,7 @@ jobs:
       # Create a PR from this branch back to this fork's primary branch ( hardcoded to master ) 
       - uses: actions/github-script@v6
         id: create_pr
-        name: Create a PR from thsi branch to the primary
+        name: Create a PR from this branch to the local primary
         with:
           script: |
             const upstreamLatest = await github.rest.pulls.create({
