@@ -42,14 +42,13 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 
 ```bash
 make install
-make venv
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ````
 
 ### Install dependencies and run your first test!
 
 ```bash 
-make deps
+make install
 pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
 ```
 
