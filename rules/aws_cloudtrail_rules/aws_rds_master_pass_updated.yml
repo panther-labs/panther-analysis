@@ -20,6 +20,7 @@ RuleID: AWS.RDS.MasterPasswordUpdated
 Threshold: 1
 Tests:
     - ExpectedResult: false
+      Name: Allocated storage modified
       Log:
         awsRegion: us-west-1
         eventCategory: Management
@@ -152,8 +153,8 @@ Tests:
                     userName: Admin
                 webIdFederationData: {}
             type: AssumedRole
-      Name: Allocated storage modified
     - ExpectedResult: true
+      Name: Master pass modified
       Log:
         awsRegion: us-west-1
         eventCategory: Management
@@ -286,4 +287,3 @@ Tests:
                     userName: Admin
                 webIdFederationData: {}
             type: AssumedRole
-      Name: Master pass modified
