@@ -192,7 +192,7 @@ def box_parse_additional_details(event: dict):
     if event.get("additional_details", {}):
         try:
             return json.loads(event.get("additional_details", {}))
-        except TypeError as e:
+        except TypeError as e:  # pylint: disable=C0103
             # There are moments when box event's event["additional_details"]
             #  may be a panther custom ImmutableXXXX Type
             # Even though json.loads(json.dumps()) bends the mind a little, it seems safest
@@ -204,8 +204,7 @@ def box_parse_additional_details(event: dict):
                 # the ImmutableXXX Types all provide a `.copy()` method that turns them
                 #  back into their more base types
                 return event.get("additional_details").copy()
-            else:
-                raise
+            raise
         except ValueError:
             return {}
     return {}
