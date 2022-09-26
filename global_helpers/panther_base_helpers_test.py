@@ -11,7 +11,7 @@ from panther_analysis_tool.immutable import ImmutableCaseInsensitiveDict, Immuta
 #   so noting, we append this directory to sys.path
 sys.path.append(os.path.dirname(__file__))
 
-import panther_base_helpers as p_h_b
+import panther_base_helpers as p_b_h
 
 class TestBoxParseAdditionalDetails(unittest.TestCase):
     def setUp(self):
@@ -22,17 +22,17 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
     def test_additional_details_string(self):
         event = {'additional_details': '{\"string_encoded_json\": true}'}
-        returns = p_h_b.box_parse_additional_details(event)
+        returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(returns.get('string_encoded_json', None), True)
     
     def test_additional_details_immutabledict(self):
         event = {'additional_details': self.immutable_dict}
-        returns = p_h_b.box_parse_additional_details(event)
+        returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(returns.get('t', 0), 10)
 
     def test_additional_details_immutablelist(self):
         event = {'additional_details': self.immutable_list}
-        returns = p_h_b.box_parse_additional_details(event)
+        returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(returns[2], True)
 
 
