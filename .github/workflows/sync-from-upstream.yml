@@ -1,0 +1,73 @@
+name: sync-panther-analysis-from-upstream
+on:
+  schedule:
+    # 15:00Z, every Monday
+    - cron: "00 15 * * 1"
+  workflow_dispatch: # or on button click  
+
+jobs:
+  check_upstream:
+    ## Change the false in this if statement to true in order to run this workflow
+    if: | 
+      github.repository != 'panther-labs/panther-analysis' &&
+      false
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo stuff
+        run: |
+          echo "${{ github }}"
+          echo and also
+          echo "${{ context }}"
+      - uses: actions/github-script@v6
+        id: set_upstream
+        name: Check Upstream
+        with:
+          script: |
+            const upstreamLatest = await github.rest.repos.getLatestRelease({
+              owner: 'panther-labs',
+              repo: 'panther-analysis'
+            })
+            console.log("::set-output name=latest-release::" +  upstreamLatest.data.tag_name)
+      ## CREATE A BRANCH
+      - uses: peterjgrainger/action-create-branch@v2.2.0
+        id: create_a_branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+      # Checkout this repo into the branch
+      - name: Checkout your repo
+        uses: actions/checkout@v2
+        with:
+        #  # optional: set the branch to checkout,
+        #  # sync action checks out your 'target_sync_branch' anyway
+          ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+      # Sync this branch with upstream
+      - name: Sync upstream changes
+        id: sync
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.2
+        with:
+          # target_sync_branch == the branch in your fork that you want to sync to upstream
+          target_sync_branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          # REQUIRED 'target_repo_token' exactly like this!
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          #  NOTE NOTE NOTE NOTE
+          # If you want to run this job and sync to upstream's master instead of releases
+          #  change the usptream_sync_branch to master
+          upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
+          upstream_sync_repo: panther-labs/panther-analysis
+          #test_mode: true  
+      # Create a PR from this branch back to this fork's primary branch ( hardcoded to master ) 
+      - uses: actions/github-script@v6
+        id: create_pr
+        name: Create a PR from this branch to the local primary
+        with:
+          script: |
+            const upstreamLatest = await github.rest.pulls.create({
+              owner: '${{github.repository_owner}}',
+              repo: '${{  github.event.repository.name }}',
+              title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
+              head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
+              base: 'master',
+            })
+            console.log("::set-output name=latest-release::" +  upstreamLatest.data.tag_name)
