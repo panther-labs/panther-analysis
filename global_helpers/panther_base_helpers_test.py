@@ -7,7 +7,7 @@ import unittest
 
 ## NOTE: WE DO NOT WANT TO IMPORT panther_analysis_tool into any detection
 #  we need the types from panther_analysis_tool for unit testing sometimes, though
-from panther_analysis_tool.immutable import ImmutableCaseInsensitiveDict, ImmutableList
+from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
 
 # pipenv run does the right thing, but IDE based debuggers may fail to import
 #   so noting, we append this directory to sys.path

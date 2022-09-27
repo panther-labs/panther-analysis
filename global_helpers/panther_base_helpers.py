@@ -5,6 +5,7 @@ from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Sequence
+from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -185,26 +186,15 @@ def zendesk_get_roles(event):
 # # # # # # # # # # # # # #
 
 
-# 'additional_details' from box logs varies by event_type
-# but it should be a valid json string. This helper
-# wraps the process of extracting those details.
+# 'additional_details' from box logs varies by event_type.
+# This helper wraps the process of extracting those details.
 def box_parse_additional_details(event: dict):
-    if event.get("additional_details", {}):
+    additional_details = event.get("additional_details", {})
+    if isinstance(additional_details, (ImmutableCaseInsensitiveDict, ImmutableList)):
+        return event.get("additional_details").copy()
+    if additional_details:
         try:
-            return json.loads(event.get("additional_details", {}))
-        except TypeError as e:  # pylint: disable=C0103
-            # There are moments when box event's event["additional_details"]
-            #  may be a panther custom ImmutableXXXX Type
-            # Even though json.loads(json.dumps()) bends the mind a little, it seems safest
-            #  without having the specific details about where in additional_details the
-            #  ImmutableXXX Typed thing is
-            # This might be preferable as a type-check, though I'm unsure of namespacing on
-            #   the type.
-            if "the JSON object must be str, bytes or bytearray, not Immutable" in str(e):
-                # the ImmutableXXX Types all provide a `.copy()` method that turns them
-                #  back into their more base types
-                return event.get("additional_details").copy()
-            raise
+            return json.loads(additional_details)
         except ValueError:
             return {}
     return {}
