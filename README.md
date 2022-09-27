@@ -16,11 +16,9 @@
 
 ---
 
-Panther is a security analytics platform built for cloud-focused security teams.
+Panther is a modern SIEM built for security operations at scale.
 
-Panther enables teams to define detections as code and programmatically upload them to your Panther deployment.
-
-This repository contains all the detections developed by Panther for use in your Panther deployment.
+With Panther, teams can define detections as code and programmatically upload them to your Panther deployment. This repository contains all detections developed by the Panther Team and the Community.
 
 We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
 
@@ -40,43 +38,30 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 * **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
 * **Scheduled rules** analyze output of periodically executed [SQL queries](https://docs.panther.com/data-analytics/example-queries)
 
-### Available Detections by Platform/Service 
-[AWS](indexes/aws.md)
-
-[Google Cloud Platform](indexes/gcp.md)
-
-[Google Workspace](indexes/gworkspace.md)
-
-[Okta](indexes/okta.md)
-
-[OSquery](indexes/osquery.md)
-
-[Snowflake](indexes/snowflake.md)
-
-[Other SaaS Services](indexes/saas.md)
-
-[Panther Standard Detections](indexes/standard.md)
-
 ## Configure your Python environment
+
 ```bash
 make install
-make venv
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ````
+
 ### Install dependencies and run your first test!
+
 ```bash 
-make deps
+make install
 pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
 ```
+
 ### Run detection tests
 ```bash
 pipenv run panther_analysis_tool test [-h] [--path PATH]
                                 [--filter KEY=VALUE [KEY=VALUE ...]
                                 [--debug]
-````
+```
+
 ### Test with a specific path
 ```bash
-pipenv run panther_analysis_tool test --path cisco_umbrella_dns_rules`
+pipenv run panther_analysis_tool test --path rules/cisco_umbrella_dns_rules
 ```
 ### Test by severity
 ```bash
@@ -94,10 +79,12 @@ pipenv run panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
                                [--filter KEY=VALUE [KEY=VALUE ...]]
                                [--debug]
 ```
+
 ### Zip all Critical severity detections
 ```bash
 pipenv run panther_analysis_tool zip --filter Severity=Critical
 ````
+
 ### Upload detections to your Panther instance
 ```bash
 pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
@@ -113,7 +100,7 @@ Additionally, groups of detections may be linked to multiple "Reports", which is
 
 # Writing Detections
 
-*For a full reference on writing detections, read our [docs](https://docs.runpanther.io/writing-detections/panther-analysis-tool)!*
+*For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
 
 Each detection has a Python file (`.py`) and a metadata file (`.yml`) of the same name (in the same location), for example:
 
