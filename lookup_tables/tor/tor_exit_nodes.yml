@@ -14,6 +14,10 @@ LogTypeMap:
     - LogType: AlphaSOC.Alert
       Selectors:
         - "$.event.srcIP"
+    - LogType: Amazon.EKS.Audit
+      Selectors:
+        - "$.spec.clusterIP"
+	- "$.requestObject.spec.clusterIP"
     - LogType: Apache.AccessCombined
       Selectors:
         - "remote_host_ip_address"
@@ -23,6 +27,9 @@ LogTypeMap:
     - LogType: Atlassian.Audit
       Selectors:
         - "$.attributes.location.ip"
+    - LogType: Asana.Audit
+      Selectors:
+        - "$.context.client_ip_address"	
     - LogType: AWS.ALB
       Selectors:
         - "clientIp"
@@ -49,6 +56,9 @@ LogTypeMap:
     - LogType: AWS.WAFWebACL
       Selectors:
         - "$.httpRequest.clientIp"
+    - LogType: Box.Event
+      Selectors:
+        - "ip_address"
     - LogType: CiscoUmbrella.CloudFirewall
       Selectors:
         - "destinationIp"
@@ -57,6 +67,10 @@ LogTypeMap:
       Selectors:
         - "externalIp"
         - "internalIp"
+    - LogType: CiscoUmbrella.IP
+      Selectors:
+        - "destinationIp"
+        - "sourceIp"
     - LogType: CiscoUmbrella.Proxy
       Selectors:
         - "destinationIp"
@@ -102,18 +116,42 @@ LogTypeMap:
         - "LocalAddressIP6"
         - "RemoteAddressIP4"
         - "RemoteAddressIP6"
+    - LogType: Crowdstrike.NotManagedAssets
+      Selectors:
+        - "aip"
+	- "CurrentLocalIP"
+    - LogType: Crowdstrike.Crowdstrike.ProcessRollup2Stats
+      Selectors:
+        - "aip"
+    - LogType: Crowdstrike.Crowdstrike.SyntheticProcessRollup2
+      Selectors:
+        - "aip"
+    - LogType: Crowdstrike.Crowdstrike.Unknown
+      Selectors:
+        - "aip"
+    - LogType: Crowdstrike.Crowdstrike.UserIdentity
+      Selectors:
+        - "aip"
+    - LogType: Crowdstrike.Crowdstrike.UserLogonLogoff
+      Selectors:
+        - "aip"
+    - LogType: Dropbox.TeamEvent
+      Selectors:
+        - "$.origin.geo_location.ip_address"
     - LogType: Duo.Authentication
       Selectors:
         - "$.access_device.ip"
         - "$.auth_device.ip"
-    - LogType: Box.Event
-      Selectors:
-        - "ip_address"
     - LogType: GCP.AuditLog
       Selectors:
         - "$.protoPayload.requestMetadata.callerIP"
         - "$.httpRequest.remoteIP"
         - "$.httpRequest.serverIP"
+    - LogType: GCP.HTTPLoadBalancer
+      Selectors:
+        - "$.jsonPayload.removeIp"
+        - "$.httpRequest.remoteIp"
+        - "$.httpRequest.serverIp"
     - LogType: GitLab.API
       Selectors:
         - "remote_ip"
@@ -130,6 +168,9 @@ LogTypeMap:
     - LogType: GSuite.Reports
       Selectors:
         - "ipAddress"
+    - LogType: Jamfpro.Login
+      Selectors:
+        - "ipAddress"
     - LogType: Juniper.Access
       Selectors:
         # use p_any_ip_addresses because we extract ip addresses but have no fields
@@ -144,6 +185,13 @@ LogTypeMap:
     - LogType: Juniper.Security
       Selectors:
         - "source_ip"
+    - LogType: Lacework.AgentManagement
+      Selectors:
+        - "IP_ADDR"
+    - LogType: Lacework.DNSQuery
+      Selectors:
+        - "DNS_SERVER_IP"
+	- "HOST_IP_ADDR"
     - LogType: Lacework.Events
       Selectors:
         # use p_any_ip_addresses because we extract ip addresses but fields are variable
@@ -165,6 +213,13 @@ LogTypeMap:
     - LogType: Microsoft365.DLP.All
       Selectors:
         - "ClientIP"
+    - LogType: MicrosoftGraph.SecurityAlert
+      Selectors:
+        # use p_any_ip_addresses because we extract ip addresses but fields are variable
+        - "p_any_ip_addresses"
+    - LogType: MongoDB.ProjectEvent
+      Selectors:
+        - "remoteAddress"	
     - LogType: Nginx.Access
       Selectors:
         - "remoteAddr"
@@ -180,6 +235,14 @@ LogTypeMap:
     - LogType: OnePassword.SignInAttempt
       Selectors:
         - "$.client.ip_address"
+    - LogType: OSSEC.EventInfo
+      Selectors:
+        - "agentip"
+	- "dstip"
+	- "srcip"
+    - LogType: Panther.Audit
+      Selectors:
+        - "sourceIP"	
     - LogType: Salesforce.Login
       Selectors:
         - "CLIENT_IP"
@@ -210,6 +273,15 @@ LogTypeMap:
       Selectors:
         - "dest_ip"
         - "src_ip"
+    - LogType: Sysdig.Audit
+      Selectors:
+        - "$.content.userOriginIP"
+    - LogType: Workday.Activity
+      Selectors:
+        - "ipAddress"
+    - LogType: Workday.Workday.SignOnAttempt
+      Selectors:
+        - "Session_IP_Address"		
     - LogType: Zeek.DNS
       Selectors:
         - "id.orig_h"
