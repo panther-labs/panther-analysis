@@ -13,11 +13,6 @@ jobs:
       false
     runs-on: ubuntu-latest
     steps:
-      - name: echo stuff
-        run: |
-          echo "${{ github }}"
-          echo and also
-          echo "${{ context }}"
       - uses: actions/github-script@v6
         id: set_upstream
         name: Check Upstream
