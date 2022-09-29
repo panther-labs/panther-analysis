@@ -154,3 +154,66 @@ Tests:
           "type": "AssumedRole"
         }
       }
+  -
+    Name: UpdateSession (Macie v1 event) # The title of the test
+    ExpectedResult: true # If the sample event should generate an alert or not
+    Log:
+      {
+        "awsRegion": "us-east-2",
+        "eventCategory": "Management",
+        "eventID": "63033dfd-08c9-42f3-80ae-dca45e86ae84",
+        "eventName": "UpdateMacieSession",
+        "eventSource": "macie.amazonaws.com",
+        "eventTime": "2022-09-27 19:59:08",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_any_aws_account_ids": [
+          "123456789012"
+        ],
+        "p_any_aws_arns": [
+          "arn:aws:iam::123456789012:role/Admin",
+          "arn:aws:sts::123456789012:assumed-role/Admin/Jack"
+        ],
+        "p_any_ip_addresses": [
+          "46.91.25.204"
+        ],
+        "p_any_trace_ids": [
+          "ASIASWJRT64Z42HFV6QX"
+        ],
+        "p_event_time": "2022-09-27 19:59:08",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2022-09-27 20:02:43.816",
+        "p_row_id": "665d45a409cad7d68ff7bbd4138123",
+        "p_source_id": "b00eb354-da7a-49dd-9cc6-32535e32096a",
+        "p_source_label": "CloudTrail Test",
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "requestID": "1b9981dc-21d2-4f77-92b0-69e23c8a40de",
+        "requestParameters": {
+          "findingPublishingFrequency": "SIX_HOURS"
+        },
+        "sourceIPAddress": "46.91.25.204",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "accessKeyId": "ASIASWJRT64Z42HFV6QX",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+          "principalId": "AAAAA44444LE6DYFKKKKK:Jack",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2022-09-27T17:56:01Z",
+              "mfaAuthenticated": "true"
+            },
+            "sessionIssuer": {
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:role/Admin",
+              "principalId": "AAAAA44444LE6DYFKKKKK",
+              "type": "Role",
+              "userName": "Admin"
+            },
+            "webIdFederationData": {}
+          },
+          "type": "AssumedRole"
+        }
+      }

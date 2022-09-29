@@ -17,11 +17,11 @@ MACIE_EVENTS = {
 
 def rule(event):
     return event.get("eventName") in MACIE_EVENTS and pattern_match(
-        event.get("eventSource"), "macie?.amazonaws.com"
+        event.get("eventSource"), "macie*.amazonaws.com"
     )
 
 
 def title(event):
     account = event.get("recipientAccountId")
     user_arn = deep_get(event, "userIdentity", "arn")
-    return f"AWS Macie in AWS Account [{account}] Disabled or Updated by [{user_arn}]"
+    return f"AWS Macie in AWS Account [{account}] Disabled/Updated by [{user_arn}]"
