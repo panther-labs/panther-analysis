@@ -5,7 +5,6 @@ from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Sequence
-from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -190,14 +189,12 @@ def zendesk_get_roles(event):
 # This helper wraps the process of extracting those details.
 def box_parse_additional_details(event: dict):
     additional_details = event.get("additional_details", {})
-    if isinstance(additional_details, (ImmutableCaseInsensitiveDict, ImmutableList)):
-        return event.get("additional_details").copy()
-    if additional_details:
+    if isinstance(additional_details, (str, bytes)):
         try:
             return json.loads(additional_details)
         except ValueError:
             return {}
-    return {}
+    return additional_details
 
 
 def okta_alert_context(event: dict):
