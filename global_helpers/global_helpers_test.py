@@ -3,7 +3,6 @@
 
 import os
 import sys
-import json
 import unittest
 
 # pipenv run does the right thing, but IDE based debuggers may fail to import
