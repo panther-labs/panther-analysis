@@ -87,11 +87,12 @@ pipenv run panther_analysis_tool zip --filter Severity=Critical
 
 ### Upload detections to your Panther instance
 ```bash
+# Note: Set your AWS access keys and region env variables before running the `upload` command
+
+export AWS_REGION=us-east-1
 pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
                                   [--filter KEY=VALUE [KEY=VALUE ...]]
                                   [--debug]
-
-# Important: Make sure you have access keys and region settings set for the AWS account running Panther
 ```
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
