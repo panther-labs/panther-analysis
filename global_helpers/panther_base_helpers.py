@@ -185,16 +185,16 @@ def zendesk_get_roles(event):
 # # # # # # # # # # # # # #
 
 
-# 'additional_details' from box logs varies by event_type
-# but it should be a valid json string. This helper
-# wraps the process of extracting those details.
+# 'additional_details' from box logs varies by event_type.
+# This helper wraps the process of extracting those details.
 def box_parse_additional_details(event: dict):
-    if event.get("additional_details", {}):
+    additional_details = event.get("additional_details", {})
+    if isinstance(additional_details, (str, bytes)):
         try:
-            return json.loads(event.get("additional_details", {}))
+            return json.loads(additional_details)
         except ValueError:
             return {}
-    return {}
+    return additional_details
 
 
 def okta_alert_context(event: dict):

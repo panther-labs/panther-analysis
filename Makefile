@@ -9,6 +9,9 @@ deps:
 deps-update:
 	pipenv update
 
+global-helpers-unit-test:
+	pipenv run python global_helpers/*_test.py
+
 lint: lint-pylint lint-fmt
 
 lint-pylint:
@@ -35,6 +38,6 @@ fmt:
 install:
 	pipenv install --dev
 
-test:
+test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test
 
