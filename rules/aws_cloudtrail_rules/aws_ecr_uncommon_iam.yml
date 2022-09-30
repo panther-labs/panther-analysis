@@ -1,0 +1,135 @@
+AnalysisType: rule
+Filename: aws_ecr_uncommon_iam.py
+RuleID: AWS.ECR.IAM
+DisplayName: AWS ECR events performed by unauthorized IAM identities
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Security Control
+Reports:
+  CIS:
+    - 3.12
+  MITRE ATT&CK:
+    - TA0005:T1525
+Severity: High
+Description: An ECR event was executed by an unexpected IAM identity
+Runbook: https://docs.aws.amazon.com/AmazonECR/latest/userguide/logging-using-cloudtrail.html
+Reference: reference.link
+SummaryAttributes:
+  - eventSource
+  - readOnly
+  - userIdentity
+  - p_any_aws_arns
+Tests:
+  -
+    Name: Account Allowed
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "2bfd4ee2-2178-4a82-a27d-b12939923f0f",
+          "eventName": "InitiateLayerUpload",
+          "eventSource": "ecr.amazonaws.com",
+          "eventTime": "2021-10-26 21:59:39",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.08",
+          "managementEvent": true,
+          "readOnly": false,
+          "recipientAccountId": "123456789012",
+          "requestID": "9995daf0-7993-43c6-b98c-0227f31b1dda",
+          "requestParameters": {
+              "registryId": "123456789012",
+              "repositoryName": "panther-repo"
+          },
+          "resources": [
+              {
+                  "accountId": "123456789012",
+                  "arn": "arn:aws:ecr:us-west-2:123456789012:repository/panther-repo"
+              }
+          ],
+          "responseElements": {
+              "partSize": 10485960,
+              "uploadId": "2bfd4ee2-2178-4a82-a27d-b12939923f0f"
+          },
+          "sourceIPAddress": "AWS Internal",
+          "userAgent": "AWS Internal",
+          "userIdentity": {
+              "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/DeployRole/2534383895393407726",
+              "invokedBy": "AWS Internal",
+              "principalId": "AXOB6BGA5F7MMMWB0122N:1635284091172497000",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2021-10-26T21:34:51Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/DeployRole",
+                      "principalId": "AXOB6BGA5F7MMMWB0122N",
+                      "type": "Role",
+                      "userName": "DeployRole"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: Account Not Allowed
+    ExpectedResult: true
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "2bfd4ee2-2178-4a82-a27d-b12939923f0f",
+          "eventName": "InitiateLayerUpload",
+          "eventSource": "ecr.amazonaws.com",
+          "eventTime": "2021-10-26 21:59:39",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.08",
+          "managementEvent": true,
+          "readOnly": false,
+          "recipientAccountId": "123456789012",
+          "requestID": "9995daf0-7993-43c6-b98c-0227f31b1dda",
+          "requestParameters": {
+              "registryId": "123456789012",
+              "repositoryName": "panther-repo"
+          },
+          "resources": [
+              {
+                  "accountId": "123456789012",
+                  "arn": "arn:aws:ecr:us-west-2:123456789012:repository/panther-repo"
+              }
+          ],
+          "responseElements": {
+              "partSize": 10485960,
+              "uploadId": "2bfd4ee2-2178-4a82-a27d-b12939923f0f"
+          },
+          "sourceIPAddress": "AWS Internal",
+          "userAgent": "AWS Internal",
+          "userIdentity": {
+              "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/ReadOnlyRole/2534383895393407726",
+              "invokedBy": "AWS Internal",
+              "principalId": "AXOB6BGA5F7MMMWB0122N:1635284091172497000",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2021-10-26T21:34:51Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/ReadOnlyRole",
+                      "principalId": "AXOB6BGA5F7MMMWB0122N",
+                      "type": "Role",
+                      "userName": "ReadOnlyRole"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
