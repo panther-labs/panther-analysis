@@ -41,9 +41,7 @@ def rule(event):
 
         aws_account_id = deep_get(event, "userIdentity", "accountId")
         if aws_account_id in EXPECTED_AWS_ACCOUNTS_AND_REGIONS:
-            if event.get("awsRegion") not in EXPECTED_AWS_ACCOUNTS_AND_REGIONS.get(
-                aws_account_id
-            ):
+            if event.get("awsRegion") not in EXPECTED_AWS_ACCOUNTS_AND_REGIONS.get(aws_account_id):
                 return True
         else:
             return True

@@ -4,10 +4,7 @@ AWS_USERS_ALLOWED = {"DeployRole"}
 
 
 def rule(event):
-    if (
-        event.get("eventSource") == "ecr.amazonaws.com"
-        and event.get("readOnly") is False
-    ):
+    if event.get("eventSource") == "ecr.amazonaws.com" and event.get("readOnly") is False:
         aws_username = deep_get(
             event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
         )
