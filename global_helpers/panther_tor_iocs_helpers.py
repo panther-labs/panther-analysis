@@ -14,21 +14,13 @@ class TorExitNodes:
         return f"https://metrics.torproject.org/exonerator.html?ip={self.ip_address(match_field)}&timestamp={today}&lang=en"
 
     def context(self, match_field) -> dict:
-        return {
-            "IP": self.ip_address(match_field),
-            "ExoneraTorURL": self.url(match_field),
-        }
-
-if __name__ == "__main__":
-    torExitNodes = TorExitNodes({
-        "p_enrichment": {
-              "tor_exit_nodes":  {
-                    "some_ip_field": {
-                           "ip": "146.59.233.33"
-                        }
-                  }
+        ip = self.ip_address(match_field)
+        if ip:
+            return {
+                "IP": ip,
+                "ExoneraTorURL": self.url(match_field),
             }
-        })
-    print(torExitNodes.ip_address("some_ip_field"))
-    print(torExitNodes.url("some_ip_field"))
-    print(torExitNodes.context("some_ip_field"))
+        else:
+            return {}
+
+
