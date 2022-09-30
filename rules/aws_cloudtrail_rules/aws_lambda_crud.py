@@ -39,16 +39,17 @@ EXPECTED_AWS_ACCOUNTS_AND_REGIONS = {
 }
 
 def rule(event):
-    if event.get("eventSource") == "lambda.amazonaws.com":
-        if event.get("eventName") in LAMBDA_CRUD_EVENTS:
-            aws_account_id = deep_get(event, "userIdentity", "accountId")
-            if aws_account_id in EXPECTED_AWS_ACCOUNTS_AND_REGIONS:
-                if event.get("awsRegion") not in \
-                        EXPECTED_AWS_ACCOUNTS_AND_REGIONS.get(aws_account_id):
-                    return True
-            else:
+    if event.get("eventSource") == "lambda.amazonaws.com" and \
+            event.get("eventName") in LAMBDA_CRUD_EVENTS:
+
+        aws_account_id = deep_get(event, "userIdentity", "accountId")
+        if aws_account_id in EXPECTED_AWS_ACCOUNTS_AND_REGIONS:
+            if event.get("awsRegion") not in \
+                    EXPECTED_AWS_ACCOUNTS_AND_REGIONS.get(aws_account_id):
                 return True
-        return False
+        else:
+            return True
+    return False
 
 
 def dedup(event):
