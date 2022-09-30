@@ -2,7 +2,7 @@ AnalysisType: rule
 Filename: aws_resource_made_public.py
 RuleID: AWS.CloudTrail.ResourceMadePublic
 DisplayName: AWS Resource Made Public
-Enabled: true
+Enabled: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -11,7 +11,7 @@ Tags:
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - TA0010:T1537
+    - TA0005:T1525
 Description: >
   Some AWS resource was made publicly accessible over the internet.
   Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
