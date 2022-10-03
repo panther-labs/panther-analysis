@@ -11,14 +11,10 @@ def rule(event):
 
 def title(event):
     return (
-        "Startup script for instance"
-        f" [{deep_get(event, 'requestParameters', 'instanceId')}] "
-        "was modified."
+        f"[{deep_get(event,'userIdentity','arn')}] "
+        "modified the startup script for "
+        f" [{deep_get(event, 'requestParameters', 'instanceId')}]."
     )
-
-
-def dedup(event):
-    return deep_get(event, "requestParameters", "instanceId")
 
 
 def alert_context(event):
