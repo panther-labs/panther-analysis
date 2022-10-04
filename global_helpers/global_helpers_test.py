@@ -11,7 +11,8 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
-import panther_tor_iocs_helpers as p_tor_h
+import panther_tor_iocs_helpers as p_tor_h  # pylint: disable=C0413
+
 
 class TestBoxParseAdditionalDetails(unittest.TestCase):
     def setUp(self):
@@ -62,55 +63,46 @@ class TestTorExitNodes(unittest.TestCase):
     def test_ip_address_not_found(self):
         """Should not find anything"""
         tor_exit_nodes = p_tor_h.TorExitNodes({})
-        ip_address = tor_exit_nodes.ip_address('foo')
+        ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
 
     def test_ip_address__found(self):
         """Should find enrichmentg"""
-        tor_exit_nodes = p_tor_h.TorExitNodes({
-            'p_enrichment': {
-                'tor_exit_nodes': {
-                    'foo': {
-                        'ip': '1.2.3.4'
-                    }
-                }
-            }
-        })
-        ip_address = tor_exit_nodes.ip_address('foo')
-        self.assertEqual(ip_address, '1.2.3.4')
+        tor_exit_nodes = p_tor_h.TorExitNodes(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        )
+        ip_address = tor_exit_nodes.ip_address("foo")
+        self.assertEqual(ip_address, "1.2.3.4")
 
     def test_url(self):
         """url generation"""
-        tor_exit_nodes = p_tor_h.TorExitNodes({
-            'p_enrichment': {
-                'tor_exit_nodes': {
-                    'foo': {
-                        'ip': '1.2.3.4'
-                    }
-                }
-            }
-        })
-        url = tor_exit_nodes.url('foo')
-        today = datetime.datetime.today().strftime('%Y-%m-%d')
-        self.assertEqual(url, f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en")
-        
+        tor_exit_nodes = p_tor_h.TorExitNodes(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        )
+        url = tor_exit_nodes.url("foo")
+        today = datetime.datetime.today().strftime("%Y-%m-%d")
+        # pylint: disable=line-too-long
+        self.assertEqual(
+            url,
+            f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
+        )
+
     def test_context(self):
         """context generation"""
-        tor_exit_nodes = p_tor_h.TorExitNodes({
-            'p_enrichment': {
-                'tor_exit_nodes': {
-                    'foo': {
-                        'ip': '1.2.3.4'
-                    }
-                }
-            }
-        })
-        context = tor_exit_nodes.context('foo')
-        today = datetime.datetime.today().strftime('%Y-%m-%d')
-        self.assertEqual(context, {
-            "IP": '1.2.3.4',
-            "ExoneraTorURL":  f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en"
-         })
-        
+        tor_exit_nodes = p_tor_h.TorExitNodes(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        )
+        context = tor_exit_nodes.context("foo")
+        today = datetime.datetime.today().strftime("%Y-%m-%d")
+        self.assertEqual(
+            context,
+            {
+                "IP": "1.2.3.4",
+                # pylint: disable=line-too-long
+                "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
+            },
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
