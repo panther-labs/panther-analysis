@@ -1,6 +1,6 @@
 AnalysisType: lookup_table
 LookupName: tor_exit_nodes
-Schema: Tor.ExitNodes
+Schema: Tor.ExitNode
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-tor-exit-nodes-access-role
   ObjectPath: s3://panther-tor-exit-nod-pny8zdg9pbwse6nr9uxkpikqyyjnnusw2b-s3alias/luts/data/tor/exitnodes/tor_exit_nodes.csv
@@ -120,19 +120,19 @@ LogTypeMap:
       Selectors:
         - 'aip'
         - 'CurrentLocalIP'
-    - LogType: Crowdstrike.Crowdstrike.ProcessRollup2Stats
+    - LogType: Crowdstrike.ProcessRollup2Stats
       Selectors:
         - 'aip'
-    - LogType: Crowdstrike.Crowdstrike.SyntheticProcessRollup2
+    - LogType: Crowdstrike.SyntheticProcessRollup2
       Selectors:
         - 'aip'
-    - LogType: Crowdstrike.Crowdstrike.Unknown
+    - LogType: Crowdstrike.Unknown
       Selectors:
         - 'aip'
-    - LogType: Crowdstrike.Crowdstrike.UserIdentity
+    - LogType: Crowdstrike.UserIdentity
       Selectors:
         - 'aip'
-    - LogType: Crowdstrike.Crowdstrike.UserLogonLogoff
+    - LogType: Crowdstrike.UserLogonLogoff
       Selectors:
         - 'aip'
     - LogType: Dropbox.TeamEvent
@@ -279,7 +279,7 @@ LogTypeMap:
     - LogType: Workday.Activity
       Selectors:
         - 'ipAddress'
-    - LogType: Workday.Workday.SignOnAttempt
+    - LogType: Workday.SignOnAttempt
       Selectors:
         - 'Session_IP_Address'
     - LogType: Zeek.DNS
