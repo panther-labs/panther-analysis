@@ -7,6 +7,10 @@ class TorExitNodes:
     def __init__(self, event):
         self.exit_nodes = deep_get(event, "p_enrichment", "tor_exit_nodes")
 
+    def has_exit_nodes(self) -> bool:
+        """Return True if there are any exit node matches"""
+        return bool(self.exit_nodes)
+
     def ip_address(self, match_field) -> str:
         """Enrich an ip address"""
         return deep_get(self.exit_nodes, match_field, "ip")

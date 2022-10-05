@@ -11,7 +11,7 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
-import panther_tor_iocs_helpers as p_tor_h  # pylint: disable=C0413
+import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
 class TestBoxParseAdditionalDetails(unittest.TestCase):
@@ -66,8 +66,20 @@ class TestTorExitNodes(unittest.TestCase):
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
-        """Should find enrichmentg"""
+    def test_has_exit_nodes_found(self):
+        """Should find enrichment"""
+        tor_exit_nodes = p_tor_h.TorExitNodes(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        )
+        self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
+
+    def test_has_exit_nodes_not_found(self):
+        """Should NOT find enrichment"""
+        tor_exit_nodes = p_tor_h.TorExitNodes({"p_enrichment": {}})
+        self.assertEqual(tor_exit_nodes.has_exit_nodes(), False)
+
+    def test_ip_address_found(self):
+        """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(
             {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
         )
