@@ -1,0 +1,113 @@
+AnalysisType: rule
+Filename: aws_lambda_crud.py
+RuleID: AWS.LAMBDA.CRUD
+DisplayName: Lambda CRUD Actions
+Enabled: false
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Security Control
+Reports:
+  CIS:
+    - 3.12
+  MITRE ATT&CK:
+    - TA0005:T1525
+Severity: High
+Description: Unauthorized lambda Create, Read, Update, or Delete event occurred.
+Runbook: https://docs.aws.amazon.com/lambda/latest/dg/logging-using-cloudtrail.html
+Reference: reference.link
+SummaryAttributes:
+  - eventSource
+  - eventName
+  - accountId
+  - awsRegion
+  - p_any_aws_arns
+Tests:
+  -
+    Name: Lambda DeleteFunction Unauthorized Account
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.03",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "A1B2C3D4E5F6G7EXAMPLE",
+          "arn": "arn:aws:iam::999999999999:user/myUserName",
+          "accountId": "999999999999",
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "userName": "myUserName"
+        },
+        "eventTime": "2015-03-18T19:04:42Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "DeleteFunction",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "127.0.0.1",
+        "userAgent": "Python-httplib2/0.8 (gzip)",
+        "requestParameters": {
+          "functionName": "basic-node-task"
+        },
+        "responseElements": null,
+        "requestID": "a2198ecc-cda1-11e4-aaa2-e356da31e4ff",
+        "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "999999999999"
+      }
+  -
+    Name: Lambda DeleteFunction Unauthorized Region
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.03",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "A1B2C3D4E5F6G7EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/myUserName",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "userName": "myUserName"
+        },
+        "eventTime": "2015-03-18T19:04:42Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "DeleteFunction",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "127.0.0.1",
+        "userAgent": "Python-httplib2/0.8 (gzip)",
+        "requestParameters": {
+          "functionName": "basic-node-task"
+        },
+        "responseElements": null,
+        "requestID": "a2198ecc-cda1-11e4-aaa2-e356da31e4ff",
+        "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Lambda DeleteFunction Authorized Account
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.03",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "A1B2C3D4E5F6G7EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/myUserName",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "userName": "myUserName"
+        },
+        "eventTime": "2015-03-18T19:04:42Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "DeleteFunction",
+        "awsRegion": "us-west-1",
+        "sourceIPAddress": "127.0.0.1",
+        "userAgent": "Python-httplib2/0.8 (gzip)",
+        "requestParameters": {
+          "functionName": "basic-node-task"
+        },
+        "responseElements": null,
+        "requestID": "a2198ecc-cda1-11e4-aaa2-e356da31e4ff",
+        "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012"
+      }
