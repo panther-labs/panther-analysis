@@ -1,0 +1,141 @@
+AnalysisType: rule
+Description: Identifies clients that may be performing DNS lookups associated with common currency mining pools.
+DisplayName: AWS DNS Crypto Domain
+Enabled: true
+Filename: aws_dns_crypto_domain.py
+Reports:
+    MITRE ATT&CK:
+        - TA0040:T1496
+Severity: High
+Tests:
+    - ExpectedResult: false
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: dynamodb.us-west-2.amazonaws.com
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Non Crypto Query
+    - ExpectedResult: false
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: dynamodb.us-west-2.amazonaws.com.
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Non Crypto Query Trailing Period
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: moneropool.ru
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Crypto Query
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: abc.abc.moneropool.ru
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Crypto Query Subdomain
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: moneropool.ru.
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Crypto Query Trailing Period
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: abc.abc.moneropool.ru.
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Crypto Query Subdomain Trailing Period
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.VPCDns
+RuleID: AWS.DNS.Crypto.Domain
+Threshold: 1
