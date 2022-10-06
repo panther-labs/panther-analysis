@@ -1,0 +1,139 @@
+AnalysisType: rule
+Description: Detection when the cloud compute infrastructure is modified.
+DisplayName: AWS Modify Cloud Compute Infrastructure
+Enabled: true
+Filename: aws_modify_cloud_compute_infrastructure.py
+Reference: https://attack.mitre.org/techniques/T1578/
+Severity: High
+Tags:
+    - 'MITRE ATT&CK: T1578'
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventID: 59e8d6b8-de7b-43ca-961f-0c6f4531fcf0
+        eventName: TerminateInstances
+        eventSource: ec2.amazonaws.com
+        eventTime: "2021-10-29 23:50:09"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "111222333444"
+        p_any_aws_arns:
+            - arn:aws:iam::111222333444:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling
+            - arn:aws:sts::111222333444:assumed-role/AWSServiceRoleForAutoScaling/AutoScaling
+        p_any_aws_instance_ids:
+            - i-0d9853f67e40ab80b
+        p_any_domain_names:
+            - autoscaling.amazonaws.com
+        p_event_time: "2021-10-29 23:50:09"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2021-10-29 23:54:06.45"
+        p_row_id: e6f7bd65083bfeb7feced38f0da18a01
+        p_source_id: 5f9f0f60-9c56-4027-b93a-8bab3019f0f1
+        p_source_label: Hosted - Cloudtrail - KoS
+        readOnly: false
+        recipientAccountId: "111222333444"
+        requestID: a520eeaf-c258-4260-954e-b4a976e6c72b
+        requestParameters:
+            instancesSet:
+                items:
+                    - instanceId: i-0d9853f67e40ab80b
+        responseElements:
+            instancesSet:
+                items:
+                    - currentState:
+                        code: 32
+                        name: shutting-down
+                      instanceId: i-0d9853f67e40ab80b
+                      previousState:
+                        code: 16
+                        name: running
+            requestId: a520eeaf-c258-4260-954e-b4a976e6c72b
+        sourceIPAddress: autoscaling.amazonaws.com
+        userAgent: autoscaling.amazonaws.com
+        userIdentity:
+            accountId: "111222333444"
+            arn: arn:aws:sts::111222333444:assumed-role/AWSServiceRoleForAutoScaling/AutoScaling
+            invokedBy: autoscaling.amazonaws.com
+            principalId: AROATSZWD7TDLUEWEUXXI:AutoScaling
+            sessionContext:
+                attributes:
+                    creationDate: "2021-10-29T23:50:08Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "111222333444"
+                    arn: arn:aws:iam::111222333444:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling
+                    principalId: AROATSZWD7TDLUEWEUXXI
+                    type: Role
+                    userName: AWSServiceRoleForAutoScaling
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Terminate Instance
+    - ExpectedResult: false
+      Log:
+        additionalEventData:
+            insufficientLakeFormationPermissions:
+                - panther_rule_errors:gsuite_activityevent
+            lakeFormationPrincipal: arn:aws:iam::111222333444:role/panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S
+        awsRegion: us-east-1
+        errorCode: EntityNotFoundException
+        errorMessage: Cannot find partition.
+        eventID: 8780fc6b-7742-4a45-b757-c351a54c79b8
+        eventName: GetPartition
+        eventSource: glue.amazonaws.com
+        eventTime: "2021-10-14 14:21:22"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "111222333444"
+        p_any_aws_arns:
+            - arn:aws:iam::111222333444:role/panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S
+            - arn:aws:sts::111222333444:assumed-role/panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S/panther-datacatalog-compactor
+        p_any_ip_addresses:
+            - 54.90.94.136
+        p_event_time: "2021-10-14 14:21:22"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2021-10-14 14:27:06.54"
+        p_row_id: 7235e51c49e780a5a4e281e90c850c
+        p_source_id: 5f9f0f60-9c56-4027-b93a-8bab3019f0f1
+        p_source_label: Hosted - Cloudtrail - KoS
+        readOnly: true
+        recipientAccountId: "111222333444"
+        requestID: cdb450f7-1cd8-463b-8449-71274d95a5a3
+        requestParameters:
+            databaseName: panther_rule_errors
+            partitionValues:
+                - "2021"
+                - "10"
+                - "13"
+                - "19"
+                - "1634151600"
+            tableName: gsuite_activityevent
+        sourceIPAddress: 54.90.94.136
+        userAgent: aws-sdk-go/1.40.21 (go1.17; linux; amd64) exec-env/AWS_Lambda_go1.x
+        userIdentity:
+            accessKeyId: ASIAJMVY5WC5K4TDFNFA
+            accountId: "111222333444"
+            arn: arn:aws:sts::111222333444:assumed-role/panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S/panther-datacatalog-compactor
+            principalId: AROA4UN2W2PXWZMJ2L3PC:panther-datacatalog-compactor
+            sessionContext:
+                attributes:
+                    creationDate: "2021-10-14T14:20:28Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "111222333444"
+                    arn: arn:aws:iam::111222333444:role/panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S
+                    principalId: AROA4UN2W2PXWZMJ2L3PC
+                    type: Role
+                    userName: panther-Panther-4JL51Q6AU6SH-LogAnal-CompactorRole-W1WCIV3PHU0S
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Get Partition
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.Modify.Cloud.Compute.Infrastructure
+Threshold: 1
