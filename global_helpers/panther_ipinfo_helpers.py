@@ -60,7 +60,7 @@ def GetIpInfoASNObject(event):
     if deep_get(event, "p_enrichment", "ip-info-asn-cidr"):
         return IPInfoASN(event)
 
-def geoinfo_from_ip(event, match_field) -> dict:
+def geoinfo_from_ip(event, match_field):
     ipinfo_location = GetIpInfoLocationObject(event)
     ipinfo_asn = GetIpInfoASNObject(event)
     if ipinfo_location and ipinfo_asn:
@@ -77,4 +77,4 @@ def geoinfo_from_ip(event, match_field) -> dict:
             "timezone": ipinfo_location.timezone(match_field),
         }
     else:
-        Exception("Please enable both IPInfo Location and ASN Lookup Tables")
+        raise Exception("Please enable both IPInfo Location and ASN Lookup Tables")

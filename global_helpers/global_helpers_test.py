@@ -273,6 +273,28 @@ class TestIpInfoHelpers(unittest.TestCase):
         }
         context = p_i_h.geoinfo_from_ip(self.event, "match_field")
         self.assertEqual(context, expected)
+    
+    def test_geoinfo_from_ip_fail(self):
+        errorEvent = {
+            "match_field": "1.2.3.4.5",
+            "p_enrichment": {
+                "ip-info-location-cidr": {
+                    "match_field": {
+                        "city": "Constantinople",
+                        "country": "Byzantium",
+                        "lat": "41.008610",
+                        "lng": "28.971111",
+                        "postal_code": "",
+                        "region": "Asia Minor",
+                        "region_code": "123",
+                        "timezone": "GMT+03:00"
+                    }
+                }
+            }
+        }
+        expected = Exception("Please enable both IPInfo Location and ASN Lookup Tables")
+        with self.assertRaises(expected):
+            context = p_i_h.geoinfo_from_ip(errorEvent, "match_field")
 
 
 if __name__ == "__main__":
