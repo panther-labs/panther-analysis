@@ -65,7 +65,7 @@ def geoinfo_from_ip(event, match_field) -> dict:
     ipinfo_asn = GetIpInfoASNObject(event)
     if ipinfo_location and ipinfo_asn:
         return {
-            "ip": match_field,
+            "ip": event.get(match_field),
             #"hostname": "", TODO: Couldn't find this field in Location or ASN
             #"anycast": true, TODO: This field was listed in the example output, but not present in any requests
             "city": ipinfo_location.city(match_field),
