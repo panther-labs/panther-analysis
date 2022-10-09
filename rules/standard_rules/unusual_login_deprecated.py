@@ -1,3 +1,7 @@
+# This rule is disabled by default because it makes API calls to a third party geolocation
+# service. At high rates of log processing, the third party service may throttle requests
+# unless you buy a subscription to it, which may cause this rule to no longer work.
+
 import ast
 import json
 import logging
@@ -19,6 +23,7 @@ GEO_HISTORY = {}
 
 def rule(event):
     # pylint: disable=too-complex
+    # pylint: disable=too-many-branches
     # unique key for global dictionary
     log = event.get("p_row_id")
 
@@ -108,6 +113,11 @@ def rule(event):
     global GEO_HISTORY  # pylint: disable=global-statement
     GEO_HISTORY[log] = updated_geo_logins
     logging.debug("GEO_HISTORY in main rule:\n%s", json.dumps(GEO_HISTORY[log]))
+
+    # Don't alert on first seen logins
+    if len(updated_geo_logins) <= 1:
+        return False
+
     return True
 
 

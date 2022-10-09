@@ -185,16 +185,16 @@ def zendesk_get_roles(event):
 # # # # # # # # # # # # # #
 
 
-# 'additional_details' from box logs varies by event_type
-# but it should be a valid json string. This helper
-# wraps the process of extracting those details.
+# 'additional_details' from box logs varies by event_type.
+# This helper wraps the process of extracting those details.
 def box_parse_additional_details(event: dict):
-    if event.get("additional_details", {}):
+    additional_details = event.get("additional_details", {})
+    if isinstance(additional_details, (str, bytes)):
         try:
-            return json.loads(event.get("additional_details", {}))
+            return json.loads(additional_details)
         except ValueError:
             return {}
-    return {}
+    return additional_details
 
 
 def okta_alert_context(event: dict):
@@ -249,6 +249,17 @@ def deep_get(dictionary: dict, *keys, default=None):
     return reduce(
         lambda d, key: d.get(key, default) if isinstance(d, Mapping) else default, keys, dictionary
     )
+
+
+def get_val_from_list(lst, field_name, field_type_key, field_type_val):
+    # pylint: disable=invalid-name
+    """Return a specific field in a list of Python dictionaries"""
+    rv = set()
+    for x in lst:
+        if field_name in x:
+            if x[field_type_key] == field_type_val:
+                rv.add(x[field_name])
+    return rv
 
 
 def aws_strip_role_session_id(user_identity_arn):
