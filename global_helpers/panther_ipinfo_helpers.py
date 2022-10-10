@@ -1,4 +1,3 @@
-
 from panther_base_helpers import deep_get
 
 
@@ -50,15 +49,18 @@ class IPInfoASN:
     def asn_type(self, match_field) -> str:
         return deep_get(self.ipinfo_asn, match_field, "type")
 
+
 def get_ipinfo_location_object(event):
     if deep_get(event, "p_enrichment", "ip-info-location-cidr"):
         return IPInfoLocation(event)
     return None
 
+
 def get_ipinfo_asn_object(event):
     if deep_get(event, "p_enrichment", "ip-info-asn-cidr"):
         return IPInfoASN(event)
     return None
+
 
 def geoinfo_from_ip(event, match_field):
     location = get_ipinfo_location_object(event)
@@ -66,9 +68,9 @@ def geoinfo_from_ip(event, match_field):
     if location and asn:
         return {
             "ip": event.get(match_field),
-            #"hostname": "",
+            # "hostname": "",
             # TODO: Couldn't find this field in Location or ASN
-            #"anycast": true,
+            # "anycast": true,
             # TODO: This field was listed in the example output, but not present in any requests
             "city": location.city(match_field),
             "region": location.region(match_field),
