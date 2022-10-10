@@ -2,8 +2,8 @@ from panther_base_helpers import deep_get
 
 class PantherIPInfoException(Exception):
     def __init__(self):
-         message = "Please enable both IPInfo Location and ASN Lookup Tables"
-         super().__init__(message)
+        message = "Please enable both IPInfo Location and ASN Lookup Tables"
+        super().__init__(message)
 
 class IPInfoLocation:
     def __init__(self, event):
