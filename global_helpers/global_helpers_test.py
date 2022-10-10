@@ -157,24 +157,24 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                 }
             }
         }
-        self.ip_info = p_i_h.GetIpInfoLocationObject(self.event)
+        self.ip_info = p_i_h.get_ipinfo_location_object(self.event)
 
-    def test_city(self): 
+    def test_city(self):
         city = self.ip_info.city("match_field")
         self.assertEqual(city, "Constantinople")
-    
+
     def test_country(self):
         country = self.ip_info.country("match_field")
         self.assertEqual(country, "Byzantium")
-    
+
     def test_latitude(self):
         latitude = self.ip_info.latitude("match_field")
         self.assertEqual(latitude, "41.008610")
-    
+
     def test_longitude(self):
         longitude = self.ip_info.longitude("match_field")
         self.assertEqual(longitude, "28.971111")
-    
+
     def test_postal_code(self):
         postal_code = self.ip_info.postal_code("match_field")
         self.assertEqual(postal_code, "")
@@ -190,7 +190,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
     def test_timezone(self):
         timezone = self.ip_info.timezone("match_field")
         self.assertEqual(timezone, "GMT+03:00")
-    
+
 
 class TestIpInfoHelpersASN(unittest.TestCase):
     def setUp(self):
@@ -207,16 +207,16 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                 }
             }
         }
-        self.ip_info = p_i_h.GetIpInfoASNObject(self.event)
+        self.ip_info = p_i_h.get_ipinfo_asn_object(self.event)
 
     def test_asn(self):
         asn = self.ip_info.asn("match_field")
         self.assertEqual(asn, "AS00000")
-        
+
     def test_domain(self):
         domain = self.ip_info.domain("match_field")
         self.assertEqual(domain, "byzantineempire.com")
-    
+
     def test_name(self):
         name = self.ip_info.name("match_field")
         self.assertEqual(name, "Byzantine Empire")
@@ -224,9 +224,9 @@ class TestIpInfoHelpersASN(unittest.TestCase):
     def test_route(self):
         route = self.ip_info.route("match_field")
         self.assertEqual(route, "1.2.3.4/24")
-    
-    def test__type(self):
-        _type = self.ip_info._type("match_field")
+
+    def test_asn_type(self):
+        _type = self.ip_info.asn_type("match_field")
         self.assertEqual(_type, "isp")
 
 class TestIpInfoHelpers(unittest.TestCase):
@@ -257,9 +257,9 @@ class TestIpInfoHelpers(unittest.TestCase):
                 }
             }
         }
-        self.ipinfo_location = p_i_h.GetIpInfoLocationObject(self.event)
-        self.ipinfo_asn = p_i_h.GetIpInfoASNObject(self.event)
-    
+        self.ipinfo_location = p_i_h.get_ipinfo_location_object(self.event)
+        self.ipinfo_asn = p_i_h.get_ipinfo_asn_object(self.event)
+
     def test_geoinfo_from_ip(self):
         expected = {
             "ip": "1.2.3.4.5",
@@ -273,9 +273,9 @@ class TestIpInfoHelpers(unittest.TestCase):
         }
         context = p_i_h.geoinfo_from_ip(self.event, "match_field")
         self.assertEqual(context, expected)
-    
+
     def test_geoinfo_from_ip_fail(self):
-        errorEvent = {
+        error_event = {
             "match_field": "1.2.3.4.5",
             "p_enrichment": {
                 "ip-info-location-cidr": {
@@ -294,7 +294,8 @@ class TestIpInfoHelpers(unittest.TestCase):
         }
         expected = Exception("Please enable both IPInfo Location and ASN Lookup Tables")
         with self.assertRaises(expected):
-            context = p_i_h.geoinfo_from_ip(errorEvent, "match_field")
+            context = p_i_h.geoinfo_from_ip(error_event, "match_field")
+            self.assertEqual(context, expected)
 
 
 if __name__ == "__main__":
