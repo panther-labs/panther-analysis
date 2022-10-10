@@ -1,5 +1,9 @@
 from panther_base_helpers import deep_get
 
+class PantherIPInfoException(Exception):
+    def __init__(self):
+         message = "Please enable both IPInfo Location and ASN Lookup Tables"
+         super().__init__(message)
 
 class IPInfoLocation:
     def __init__(self, event):
@@ -76,8 +80,8 @@ def geoinfo_from_ip(event, match_field):
             "region": location.region(match_field),
             "country": location.country(match_field),
             "loc": f"{location.latitude(match_field)},{location.longitude(match_field)}",
-            "org": f"{asn.asn_type(match_field)} {asn.name(match_field)}",
+            "org": f"{asn.asn(match_field)} {asn.name(match_field)}",
             "postal": location.postal_code(match_field),
             "timezone": location.timezone(match_field),
         }
-    raise Exception("Please enable both IPInfo Location and ASN Lookup Tables")
+    raise PantherIPInfoException
