@@ -298,7 +298,7 @@ class TestIpInfoHelpers(unittest.TestCase):
         }
         with self.assertRaises(p_i_h.PantherIPInfoException):
             p_i_h.geoinfo_from_ip(error_event, "match_field")
-            #self.assertNotEqual(context, expected)
+            # self.assertNotEqual(context, expected)
 
 
 if __name__ == "__main__":
