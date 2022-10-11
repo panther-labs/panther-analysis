@@ -42,9 +42,7 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
     def setUp(self):
         self.initial_dict = {"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}
         self.initial_list = ["1", 2, True, False]
-        self.initial_bytes = (
-            b'{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}'
-        )
+        self.initial_bytes = b'{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}'
         self.initial_str = '{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": true}}}'
         self.initial_str_no_json = "this is a plain string"
         self.initial_str_list_json = "[1, 2, 3, 4]"
