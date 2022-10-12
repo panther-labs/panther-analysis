@@ -1,9 +1,10 @@
 # pylint: disable=too-many-public-methods
 import datetime
+from typing import Iterable
+from collections.abc import Sequence
 
 from dateutil import parser
 from panther_base_helpers import deep_get
-from panther_core.immutable import ImmutableList, ImmutableCaseInsensitiveDict
 
 
 class PantherGreyNoiseException(Exception):
@@ -23,11 +24,13 @@ class PantherGreyNoiseException(Exception):
         super().__init__(message)
 
 class PantherIncorrectIPAddressMethodException(Exception):
-    def __init__(self, call_type):
-        if call_type is ImmutableCaseInsensitiveDict or call_type is str:
-            message = "~This is not the method you are looking for~ Try ip_address()"
-        elif call_type is ImmutableList or call_type is list:
-            message = "~This is not the method you are looking for~ Try ip_addresses()"
+    def __init__(self, call_type, match_field):
+        if call_type is not Sequence or call_type is str:
+            message = "This is not the method you are looking for, try ip_address()"
+        elif call_type is Sequence or call_type is list:
+            message = "This is not the method you are looking for, try ip_addresses()"
+        elif call_type is None:
+            message = f"Could not find {match_field} in event, found {call_type}."
         else:
             message = f"Incorrect Method Exception, call_type: {call_type}"
         super().__init__(message)
@@ -54,18 +57,14 @@ class GreyNoiseBasic:
 
     def ip_address(self, match_field) -> str:
         ip_get_call = deep_get(self.noise, match_field, "ip")
-        if ip_get_call is None:
-            return None
-        if not isinstance(ip_get_call, str):
-            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        if not isinstance(ip_get_call, str) or ip_get_call is None:
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
         ip_get_call = deep_get(self.noise, match_field)
-        if ip_get_call is None:
-            return None
-        if not isinstance(ip_get_call, ImmutableList):
-            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        if not isinstance(ip_get_call, Sequence) or ip_get_call is None:
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def classification(self, match_field) -> str:
@@ -83,7 +82,7 @@ class GreyNoiseBasic:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), ImmutableList):
+        if isinstance(deep_get(self.noise, match_field), Iterable):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
@@ -101,18 +100,14 @@ class GreyNoiseAdvanced:
 
     def ip_address(self, match_field) -> str:
         ip_get_call = deep_get(self.noise, match_field, "ip")
-        if ip_get_call is None:
-            return None
-        if not isinstance(ip_get_call, str):
-            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        if not isinstance(ip_get_call, str) or ip_get_call is None:
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
         ip_get_call = deep_get(self.noise, match_field)
-        if ip_get_call is None:
-            return None
-        if not isinstance(ip_get_call, ImmutableList):
-            raise PantherIncorrectIPAddressMethodException(type(ip_get_call))
+        if not isinstance(ip_get_call, Sequence) or ip_get_call is None:
+            raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def classification(self, match_field) -> str:
@@ -206,7 +201,7 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), ImmutableList):
+        if isinstance(deep_get(self.noise, match_field), Iterable):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 

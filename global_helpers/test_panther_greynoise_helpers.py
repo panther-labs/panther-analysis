@@ -1,4 +1,4 @@
-import pytest
+from typing import Iterable
 
 from panther_greynoise_helpers import (
     GreyNoiseAdvanced,
@@ -6,7 +6,6 @@ from panther_greynoise_helpers import (
     PantherIncorrectIPAddressMethodException
 )
 
-from panther_core.immutable import ImmutableList, ImmutableCaseInsensitiveDict
 
 
 test_data_basic_list = [(
@@ -177,7 +176,7 @@ def test_greynoise_basic_addresses(data):
     except PantherIncorrectIPAddressMethodException:
         pass
     ip_list = noise.ip_addresses("p_any_ip_addresses")
-    assert isinstance(ip_list, ImmutableList)
+    assert isinstance(ip_list, Iterable)
 
     ctx = noise.context('p_any_ip_addresses')
     assert 'IPs' in ctx.keys()
