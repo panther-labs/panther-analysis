@@ -4,7 +4,6 @@
 import datetime
 import os
 import sys
-from typing import Iterable
 import unittest
 
 # pipenv run does the right thing, but IDE based debuggers may fail to import
@@ -20,9 +19,7 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
     def setUp(self):
         self.initial_dict = {"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}
         self.initial_list = ["1", 2, True, False]
-        self.initial_bytes = (
-            b'{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}'
-        )
+        self.initial_bytes = b'{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}'
         self.initial_str = '{"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": true}}}'
         self.initial_str_no_json = "this is a plain string"
         self.initial_str_list_json = "[1, 2, 3, 4]"
@@ -194,7 +191,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             noise.ip_addresses("p_any_ip_addresses")
 
         assert isinstance(noise.ip_address("p_any_ip_addresses"), str)
-    
+
     def test_addresses(self):
         noise = p_g_h.GetGreyNoiseObject(self.test_data_list_basic)
         exception = p_g_h.PantherIncorrectIPAddressMethodException

@@ -23,6 +23,7 @@ class PantherGreyNoiseException(Exception):
             message = "Unknown Error Reading GreyNoise Data"
         super().__init__(message)
 
+
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type, match_field):
         if call_type is not Sequence or call_type is str:
@@ -34,6 +35,7 @@ class PantherIncorrectIPAddressMethodException(Exception):
         else:
             message = f"Incorrect Method Exception, call_type: {call_type}"
         super().__init__(message)
+
 
 class GreyNoiseBasic:
     def __init__(self, event):
@@ -207,8 +209,6 @@ class GreyNoiseAdvanced:
 
         context["IP"] = self.ip_address(match_field)
         return context
-
-
 
 
 class GreyNoiseRIOTBasic:

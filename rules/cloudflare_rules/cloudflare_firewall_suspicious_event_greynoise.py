@@ -2,6 +2,7 @@ from ipaddress import ip_address
 
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
+
 def rule(event):
     if event.get("Action") == "block":
         return False
