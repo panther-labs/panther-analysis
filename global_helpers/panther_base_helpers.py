@@ -144,7 +144,7 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 #      Zendesk Helpers     #
 # # # # # # # # # # # # # #
 
-## key names
+# key names
 ZENDESK_CHANGE_DESCRIPTION = "change_description"
 ZENDESK_APP_ROLE_ASSIGNED = re.compile(
     r"(?P<app>.*) role changed from (?P<old_role>.+) to (?P<new_role>.*)", re.IGNORECASE
@@ -273,6 +273,8 @@ def aws_strip_role_session_id(user_identity_arn):
 def aws_rule_context(event: dict):
     return {
         "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
+        "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
+        "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
         "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
         "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
         "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
