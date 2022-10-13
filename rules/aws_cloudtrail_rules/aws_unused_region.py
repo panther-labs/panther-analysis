@@ -16,7 +16,10 @@ def rule(event):
 
 def title(event):
     aws_username = deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "userName")
-    return f"Non-read-only API call in unused region {event.get('awsRegion', '<UNKNOWN_AWS_REGION>')} by user {aws_username}"
+    return (
+        "Non-read-only API call in unused region"
+        f" {event.get('awsRegion', '<UNKNOWN_AWS_REGION>')} by user {aws_username}"
+    )
 
 
 def alert_context(event):
