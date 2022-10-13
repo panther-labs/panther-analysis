@@ -1,0 +1,33 @@
+AnalysisType: scheduled_query
+QueryName: Query.Snowflake.NetworkPolicyModified
+Enabled: false
+Description: >
+  Monitor and detect alterations to network policies.
+AthenaQuery: >
+  /* athena query not supported */
+  SELECT count(1)
+SnowflakeQuery: >
+  --return create, alter, or drop of network policies
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    end_time,
+    query_type,
+    query_text,
+    user_name,
+    role_name
+  FROM snowflake.account_usage.query_history
+    WHERE
+      p_occurs_since('24 h', start_time)
+      AND execution_status = 'SUCCESS'
+      AND user_name != 'PANTHER_READONLY'
+      AND (
+          query_type in ('CREATE_NETWORK_POLICY', 'ALTER_NETWORK_POLICY', 'DROP_NETWORK_POLICY')
+          OR (query_text ILIKE '% set network_policy%'
+          OR query_text ILIKE '% unset network_policy%')
+        )
+  ORDER BY end_time desc
+Schedule:
+  CronExpression: "0 6 * * *"
+  TimeoutMinutes: 1

@@ -10,7 +10,6 @@ from typing import Any, Dict, Optional, Sequence, Set, Union
 import boto3
 import requests
 from dateutil import parser
-from panther_analysis_tool.immutable import ImmutableList
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -362,7 +361,7 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
 
     valid_ip = ip_address(ip)
     url = f"https://ipinfo.io/{valid_ip}/json"
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=5)
     if resp.status_code != 200:
         raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
     geoinfo = json.loads(resp.text)
@@ -429,7 +428,13 @@ def check_account_age(key):
 # When we want to iterate over something that could be a single item or a list
 # of items we can use listify and just continue as if it's always a list
 def listify(maybe_list):
-    return [maybe_list] if not isinstance(maybe_list, (list, ImmutableList)) else maybe_list
+    try:
+        iter(maybe_list)
+    except TypeError:
+        # not a list
+        return [maybe_list]
+    # either a list or string
+    return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list
 
 
 def _test_kv_store():

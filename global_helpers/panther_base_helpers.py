@@ -185,16 +185,16 @@ def zendesk_get_roles(event):
 # # # # # # # # # # # # # #
 
 
-# 'additional_details' from box logs varies by event_type
-# but it should be a valid json string. This helper
-# wraps the process of extracting those details.
+# 'additional_details' from box logs varies by event_type.
+# This helper wraps the process of extracting those details.
 def box_parse_additional_details(event: dict):
-    if event.get("additional_details", {}):
+    additional_details = event.get("additional_details", {})
+    if isinstance(additional_details, (str, bytes)):
         try:
-            return json.loads(event.get("additional_details", {}))
+            return json.loads(additional_details)
         except ValueError:
             return {}
-    return {}
+    return additional_details
 
 
 def okta_alert_context(event: dict):
@@ -221,6 +221,26 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
+def slack_alert_context(event: dict):
+    return {
+        "actor-name": deep_get(event, "actor", "user", "name", default="<MISSING_NAME>"),
+        "actor-email": deep_get(event, "actor", "user", "email", default="<MISSING_EMAIL>"),
+        "actor-ip": deep_get(event, "context", "ip_address", default="<MISSING_IP>"),
+        "user-agent": deep_get(event, "context", "ua", default="<MISSING_UA>"),
+    }
+
+
+def github_alert_context(event: dict):
+    return {
+        "action": event.get("action", ""),
+        "actor": event.get("actor", ""),
+        "actor_location": deep_get(event, "actor_location", "country_code"),
+        "org": event.get("org", ""),
+        "repo": event.get("repo", ""),
+        "user": event.get("user", ""),
+    }
+
+
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
 
@@ -231,12 +251,33 @@ def deep_get(dictionary: dict, *keys, default=None):
     )
 
 
+def get_val_from_list(lst, field_name, field_type_key, field_type_val):
+    # pylint: disable=invalid-name
+    """Return a specific field in a list of Python dictionaries"""
+    rv = set()
+    for x in lst:
+        if field_name in x:
+            if x[field_type_key] == field_type_val:
+                rv.add(x[field_name])
+    return rv
+
+
 def aws_strip_role_session_id(user_identity_arn):
     # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
     arn_parts = user_identity_arn.split("/")
     if arn_parts:
         return "/".join(arn_parts[:2])
     return user_identity_arn
+
+
+def aws_rule_context(event: dict):
+    return {
+        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
+        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
+        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
+        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
+        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
+    }
 
 
 def is_ip_in_network(ip_addr, networks):
