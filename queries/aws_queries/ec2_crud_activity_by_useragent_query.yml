@@ -1,0 +1,21 @@
+AnalysisType: scheduled_query
+QueryName: Query.EC2.CRUD.Activity.Useragent
+Enabled: false
+Description: >
+  This query searches for CRUD activity in EC2 by userAgent. A low count or previously unseen useragent may indicate that the action was not performed by an automated process. 
+AthenaQuery: >
+  /* athena query not supported */ 
+  SELECT count(1)
+SnowflakeQuery: >
+  SELECT count(*),recipientAccountId, userAgent, eventName, eventSource
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE 
+    eventSource = 'ec2.amazonaws.com' 
+    AND eventName LIKE '%Image%'
+    AND eventName NOT LIKE '%Describe%'
+    AND p_occurs_since('3 day')
+  GROUP BY recipientAccountId, userAgent, eventName, eventSource
+  ORDER BY recipientAccountId, count(*), userAgent
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 20
