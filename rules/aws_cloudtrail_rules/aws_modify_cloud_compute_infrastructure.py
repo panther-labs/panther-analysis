@@ -41,8 +41,11 @@ def rule(event):
         return False
     # Disqualify AWS Service-Service operations, which can appear in a variety of forms
     if (
-        # Web-Console initiated EC2:* events have a sourceIPAddress of 'AWS Internal'
-        # event.get("sourceIPAddress", "") == "AWS Internal"
+        # FYI there is a weird quirk in the sourceIPAddress field of CloudTrail
+        #  events with ec2.amazonaws.com as the source name where users of the
+        #  web-console will have their sourceIPAddress recorded as "AWS Internal"
+        #  though their userIdentity will be more normal.
+        #  Example cloudtrail event in the "Terminate instance From WebUI with assumedRole" test
         event.get("sourceIPAddress", "").endswith(".amazonaws.com")
         or deep_get(event, "userIdentity", "type", default="") == "AWSService"
         or deep_get("userIdentity", "invokedBy", default="") == "AWS Internal"
