@@ -11,9 +11,10 @@ def rule(event):
 
 def title(event):
     return (
-        "Startup script for instance"
+        f"[{deep_get(event,'userIdentity','arn')}] "
+        "modified the startup script for "
         f" [{deep_get(event, 'requestParameters', 'instanceId')}] "
-        "was modified."
+        f"in [{event.get('recipientAccountId')}] - [{event.get('awsRegion')}]"
     )
 
 
