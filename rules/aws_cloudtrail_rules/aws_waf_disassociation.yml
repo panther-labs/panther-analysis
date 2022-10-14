@@ -1,0 +1,124 @@
+AnalysisType: rule
+Description: Detection to alert when a WAF disassociates from a source.
+DisplayName: AWS WAF Disassociation
+Enabled: true
+Filename: aws_waf_disassociation.py
+Reference: https://attack.mitre.org/techniques/T1078/
+Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078
+Tests:
+    - ExpectedResult: true
+      Log:
+        apiVersion: "2019-04-23"
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 94678efc-2176-462c-b0c9-a612881a39ed
+        eventName: DisassociateWebACL
+        eventSource: wafv2.amazonaws.com
+        eventTime: "2022-09-29 23:04:35"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678910"
+        p_any_aws_arns:
+            - arn:aws:elasticloadbalancing:us-west-2:012345678910:loadbalancer/app/web/84dc5457e450dba5
+            - arn:aws:iam::012345678910:role/DevAdministrator
+            - arn:aws:sts::012345678910:assumed-role/DevAdministrator/example_user
+        p_any_domain_names:
+            - AWS Internal
+        p_any_trace_ids:
+            - ASIARLIVEKVNJNSTUSF6
+        p_event_time: "2022-09-29 23:04:35"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-09-29 23:08:26.172"
+        p_row_id: 5ad3a83ca88f938cbff8fdd913d1ce1d
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Panther Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678910"
+        requestID: e4d47992-90f1-47f0-bff7-de18a8277005
+        requestParameters:
+            resourceArn: arn:aws:elasticloadbalancing:us-west-2:012345678910:loadbalancer/app/web/84dc5457e450dba5
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ASIARLIVEKVNJNSTUSF6
+            accountId: "012345678910"
+            arn: arn:aws:sts::012345678910:assumed-role/DevAdministrator/example_user
+            principalId: AROARLIVEKVNIRVGDLJWJ:example_user
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:51:13Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "012345678910"
+                    arn: arn:aws:iam::012345678910:role/DevAdministrator
+                    principalId: AROARLIVEKVNIRVGDLJWJ
+                    type: Role
+                    userName: DevAdministrator
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: WAF-Disassociate
+    - ExpectedResult: false
+      Log:
+        apiVersion: "2019-04-23"
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 94678efc-2176-462c-b0c9-a612881a39ed
+        eventName: ListWebACLs
+        eventSource: wafv2.amazonaws.com
+        eventTime: "2022-09-29 23:04:35"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678910"
+        p_any_aws_arns:
+            - arn:aws:elasticloadbalancing:us-west-2:012345678910:loadbalancer/app/web/84dc5457e450dba5
+            - arn:aws:iam::012345678910:role/DevAdministrator
+            - arn:aws:sts::012345678910:assumed-role/DevAdministrator/example_user
+        p_any_domain_names:
+            - AWS Internal
+        p_any_trace_ids:
+            - ASIARLIVEKVNJNSTUSF6
+        p_event_time: "2022-09-29 23:04:35"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-09-29 23:08:26.172"
+        p_row_id: 5ad3a83ca88f938cbff8fdd913d1ce1d
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Panther Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678910"
+        requestID: e4d47992-90f1-47f0-bff7-de18a8277005
+        requestParameters:
+            resourceArn: arn:aws:elasticloadbalancing:us-west-2:012345678910:loadbalancer/app/web/84dc5457e450dba5
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ASIARLIVEKVNJNSTUSF6
+            accountId: "012345678910"
+            arn: arn:aws:sts::012345678910:assumed-role/DevAdministrator/example_user
+            principalId: AROARLIVEKVNIRVGDLJWJ:example_user
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:51:13Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "012345678910"
+                    arn: arn:aws:iam::012345678910:role/DevAdministrator
+                    principalId: AROARLIVEKVNIRVGDLJWJ
+                    type: Role
+                    userName: DevAdministrator
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: WAF - List WebACLs
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.WAF.Disassociation
+Threshold: 1
