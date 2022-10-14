@@ -1,0 +1,91 @@
+AnalysisType: rule
+Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
+DisplayName: AWS User API Key Created
+Enabled: true
+Filename: aws_iam_user_key_created.py
+Reports:
+    MITRE ATT&CK:
+        - TA0003:T1098
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: "12345"
+        eventName: CreateAccessKey
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-09-27 17:09:18"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789"
+        requestParameters:
+            userName: user1
+        responseElements:
+            accessKey:
+                accessKeyId: ABCDEFG
+                createDate: Sep 27, 2022 5:09:18 PM
+                status: Active
+                userName: user1
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ABCDEFGH
+            accountId: "123456789"
+            arn: arn:aws:iam::123456789:user/user1
+            invokedBy: cloudformation.amazonaws.com
+            principalId: ABCDEFGH
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-27T17:08:35Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer: {}
+                webIdFederationData: {}
+            type: IAMUser
+            userName: user1
+      Name: user1 create keys for user1
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: "12345"
+        eventName: CreateAccessKey
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-09-27 17:09:18"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789"
+        requestParameters:
+            userName: user2
+        responseElements:
+            accessKey:
+                accessKeyId: ABCDEFG
+                createDate: Sep 27, 2022 5:09:18 PM
+                status: Active
+                userName: user2
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ABCDEFGH
+            accountId: "123456789"
+            arn: arn:aws:iam::123456789:user/user1
+            invokedBy: cloudformation.amazonaws.com
+            principalId: ABCDEFGH
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-27T17:08:35Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer: {}
+                webIdFederationData: {}
+            type: IAMUser
+            userName: user1
+      Name: user1 create keys for user2
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.IAM.Backdoor.User.Keys
+Threshold: 1
