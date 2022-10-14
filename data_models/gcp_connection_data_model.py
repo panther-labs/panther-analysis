@@ -9,17 +9,17 @@ def get_resource_tags(event):
     """
     resource_tags = {}
     for path in [
-        ['resource', 'labels', 'subnetwork_name'],
-        ['resource', 'labels', 'subnetwork_id'],
-        ['resource', 'labels', 'gateway_name'],
-        ['resource', 'labels', 'router_id'],
-        ['resource', 'labels', 'project_id'],
-        ['resource', 'labels', 'region'],
-        ['resource', 'labels', 'location'],
-        ['resource', 'type']
-        ]:
+        ["resource", "labels", "subnetwork_name"],
+        ["resource", "labels", "subnetwork_id"],
+        ["resource", "labels", "gateway_name"],
+        ["resource", "labels", "router_id"],
+        ["resource", "labels", "project_id"],
+        ["resource", "labels", "region"],
+        ["resource", "labels", "location"],
+        ["resource", "type"],
+    ]:
         value = deep_get(event, *path)
         if value:
             resource_tags[".".join(path)] = value
-    
+
     return resource_tags
