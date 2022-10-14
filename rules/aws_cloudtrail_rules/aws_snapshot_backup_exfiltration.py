@@ -12,7 +12,8 @@ def title(event):
     return (
         f"[{deep_get(event,'userIdentity','arn')}] "
         "modified snapshot attributes for "
-        f"[{deep_get(event,'requestParameters','snapshotId')}]"
+        f"[{deep_get(event,'requestParameters','snapshotId')}] "
+        f"in [{event.get('recipientAccountId')}] - [{event.get('awsRegion')}]."
     )
 
 

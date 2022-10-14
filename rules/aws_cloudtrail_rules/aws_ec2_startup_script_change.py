@@ -13,8 +13,13 @@ def title(event):
     return (
         f"[{deep_get(event,'userIdentity','arn')}] "
         "modified the startup script for "
-        f" [{deep_get(event, 'requestParameters', 'instanceId')}]."
+        f" [{deep_get(event, 'requestParameters', 'instanceId')}] "
+        f"in [{event.get('recipientAccountId')}] - [{event.get('awsRegion')}]"
     )
+
+
+def dedup(event):
+    return deep_get(event, "requestParameters", "instanceId")
 
 
 def alert_context(event):

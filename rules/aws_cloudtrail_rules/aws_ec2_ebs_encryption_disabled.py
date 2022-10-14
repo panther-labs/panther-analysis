@@ -9,7 +9,11 @@ def rule(event):
 
 
 def title(event):
-    return "EC2 EBS Default Encryption was disabled in " f"[{event.get('recipientAccountId')}]"
+    return (
+        "EC2 EBS Default Encryption was disabled in "
+        f"[{event.get('recipientAccountId')}] - "
+        f"[{event.get('awsRegion')}]"
+    )
 
 
 def alert_context(event):
