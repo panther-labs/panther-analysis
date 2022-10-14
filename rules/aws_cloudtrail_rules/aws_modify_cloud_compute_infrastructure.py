@@ -42,10 +42,10 @@ def rule(event):
     # Disqualify AWS Service-Service operations, which can appear in a variety of forms
     if (
         # Web-Console initiated EC2:* events have a sourceIPAddress of 'AWS Internal'
-        #event.get("sourceIPAddress", "") == "AWS Internal"
+        # event.get("sourceIPAddress", "") == "AWS Internal"
         event.get("sourceIPAddress", "").endswith(".amazonaws.com")
         or deep_get(event, "userIdentity", "type", default="") == "AWSService"
-        or deep_get("userIdentity", "invokedBy", default="") == 'AWS Internal'
+        or deep_get("userIdentity", "invokedBy", default="") == "AWS Internal"
         or deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
     ):
         return False
