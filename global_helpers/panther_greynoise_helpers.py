@@ -25,7 +25,6 @@ class PantherGreyNoiseException(Exception):
 
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type, match_field):
-        print(f"call_type: {call_type}")
         if call_type is not Iterable:# or call_type is str:
             message = "This is not the method you are looking for, try ip_address()"
         elif call_type is Iterable:#or call_type is list:
@@ -84,7 +83,7 @@ class GreyNoiseBasic:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), Iterable):
+        if isinstance(deep_get(self.noise, match_field), Sequence):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
@@ -203,7 +202,7 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), Iterable):
+        if isinstance(deep_get(self.noise, match_field), Sequence):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
