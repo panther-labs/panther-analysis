@@ -144,7 +144,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
     def setUp(self):
         self.event = {
             "p_enrichment": {
-                "ip-info-location-cidr": {
+                "ipinfo_location_detections_engine": {
                     "match_field": {
                         "city": "Constantinople",
                         "country": "Byzantium",
@@ -156,7 +156,10 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                         "timezone": "GMT+03:00",
                     }
                 }
-            }
+            },
+            "p_any_ip_addresses": {
+                "ip" : "1.2.3.4.5",
+            },
         }
         self.ip_info = p_i_h.get_ipinfo_location_object(self.event)
 
@@ -191,13 +194,31 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
     def test_timezone(self):
         timezone = self.ip_info.timezone("match_field")
         self.assertEqual(timezone, "GMT+03:00")
+    
+    def test_ip_address(self):
+        ip_address = self.ip_info.ip_address("p_any_ip_addresses")
+        self.assertEqual(ip_address, "1.2.3.4.5")
+    
+    def test_ip_address_str(self):
+        print("running ip_address_str test")
+        self.event["p_any_ip_addresses"] = "4.5.6.7"
+        ip_address = self.ip_info.ip_address("p_any_ip_addresses")
+        self.assertEqual(ip_address, "4.5.6.7")
+    
+    def test_ip_address_none(self):
+        print("running ip_address_none test")
+        del self.event["p_any_ip_addresses"]
+        with self.assertRaises(p_i_h.PantherIPInfoNoneException):
+            self.ip_info.ip_address("p_any_ip_addresses")
+
 
 
 class TestIpInfoHelpersASN(unittest.TestCase):
     def setUp(self):
         self.event = {
+            "match_field": "1.2.3.4.5",
             "p_enrichment": {
-                "ip-info-asn-cidr": {
+                "ipinfo_asn_detections_engine": {
                     "match_field": {
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
@@ -206,7 +227,8 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                         "type": "isp",
                     }
                 }
-            }
+            },
+            "p_any_ip_addresses": ["1.2.3.4.5", "3.4.5.6.7"]
         }
         self.ip_info = p_i_h.get_ipinfo_asn_object(self.event)
 
@@ -229,6 +251,22 @@ class TestIpInfoHelpersASN(unittest.TestCase):
     def test_asn_type(self):
         _type = self.ip_info.asn_type("match_field")
         self.assertEqual(_type, "isp")
+    
+    def test_ip_address(self):
+        ip_address = self.ip_info.ip_address("p_any_ip_addresses")
+        self.assertEqual(ip_address, ["1.2.3.4.5", "3.4.5.6.7"])
+    
+    def test_ip_address_str(self):
+        print("running ip_address_str test")
+        self.event["p_any_ip_addresses"] = "4.5.6.7"
+        ip_address = self.ip_info.ip_address("p_any_ip_addresses")
+        self.assertEqual(ip_address, "4.5.6.7")
+    
+    def test_ip_address_none(self):
+        print("running ip_address_none test")
+        del self.event["p_any_ip_addresses"]
+        with self.assertRaises(p_i_h.PantherIPInfoNoneException):
+            self.ip_info.ip_address("p_any_ip_addresses")
 
 
 class TestIpInfoHelpers(unittest.TestCase):
@@ -236,7 +274,7 @@ class TestIpInfoHelpers(unittest.TestCase):
         self.event = {
             "match_field": "1.2.3.4.5",
             "p_enrichment": {
-                "ip-info-location-cidr": {
+                "ipinfo_location_detections_engine": {
                     "match_field": {
                         "city": "Constantinople",
                         "country": "Byzantium",
@@ -248,7 +286,7 @@ class TestIpInfoHelpers(unittest.TestCase):
                         "timezone": "GMT+03:00",
                     }
                 },
-                "ip-info-asn-cidr": {
+                "ipinfo_asn_detections_engine": {
                     "match_field": {
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
