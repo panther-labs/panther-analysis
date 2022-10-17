@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from dateutil import parser
 from panther_base_helpers import deep_get
 
+
 class PantherGreyNoiseException(Exception):
     def __init__(self, sublevel):
         if sublevel == "advanced":
@@ -25,9 +26,9 @@ class PantherGreyNoiseException(Exception):
 
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type, match_field):
-        if call_type is not Iterable:# or call_type is str:
+        if call_type is not Iterable:  # or call_type is str:
             message = "This is not the method you are looking for, try ip_address()"
-        elif call_type is Iterable:#or call_type is list:
+        elif call_type is Iterable:  # or call_type is list:
             message = "This is not the method you are looking for, try ip_addresses()"
         elif call_type is None:
             message = f"Could not find {match_field} in event, found {call_type}."
