@@ -27,6 +27,7 @@ class GreyNoiseBasic:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_basic")
         self.sublevel = "basic"
+        self.event = event
 
     def subscription_level(self):
         return self.sublevel
@@ -44,13 +45,13 @@ class GreyNoiseBasic:
         return advanced_only()
 
     def ip_address(self, match_field) -> str:
-        ip_get_call = deep_get(self.noise, match_field, "ip")
+        ip_get_call = deep_get(self.event, match_field, "ip")
         if not isinstance(ip_get_call, str) or ip_get_call is None:
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(self.noise, match_field)
+        ip_get_call = deep_get(self.event, match_field)
         if not isinstance(ip_get_call, Sequence) or ip_get_call is None:
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
@@ -70,7 +71,7 @@ class GreyNoiseBasic:
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), Sequence):
+        if isinstance(deep_get(self.event, match_field), Sequence):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 
@@ -82,18 +83,19 @@ class GreyNoiseAdvanced:
     def __init__(self, event):
         self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
         self.sublevel = "advanced"
+        self.event = event
 
     def subscription_level(self):
         return self.sublevel
 
     def ip_address(self, match_field) -> str:
-        ip_get_call = deep_get(self.noise, match_field, "ip")
+        ip_get_call = deep_get(self.event, match_field, "ip")
         if not isinstance(ip_get_call, str) or ip_get_call is None:
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
 
     def ip_addresses(self, match_field) -> list:
-        ip_get_call = deep_get(self.noise, match_field)
+        ip_get_call = deep_get(self.event, match_field)
         if not isinstance(ip_get_call, Sequence) or ip_get_call is None:
             raise PantherIncorrectIPAddressMethodException(type(ip_get_call), match_field)
         return ip_get_call
@@ -189,7 +191,7 @@ class GreyNoiseAdvanced:
             "Tags": self.tags_list(match_field),
             "CVE": self.cve_list(match_field),
         }
-        if isinstance(deep_get(self.noise, match_field), Sequence):
+        if isinstance(deep_get(self.event, match_field), Sequence):
             context["IPs"] = self.ip_addresses(match_field)
             return context
 

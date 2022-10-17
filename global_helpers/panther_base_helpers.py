@@ -14,6 +14,7 @@ from typing import Sequence
 class PantherUnexpectedAlert(Exception):
     """Error returned when a Panther detection encounters an unexpected situation."""
 
+
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type, match_field):
         if call_type is not Sequence:  # or call_type is str:

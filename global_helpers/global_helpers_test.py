@@ -125,12 +125,13 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_time": "time",
             "p_enrichment": {
                 "greynoise_noise_advanced": {
-                    "p_any_ip_addresses": {
-                        "actor": "unknown",
-                        "ip": "8.8.8.8",
-                        "classification": "unknown",
-                    },
-                }
+                    "classification": "malicious"
+                },
+            },
+            "p_any_ip_addresses": {
+                "actor": "unknown",
+                "ip": "8.8.8.8",
+                "classification": "unknown",
             },
         }
         self.test_data_list_advanced = {
@@ -139,13 +140,14 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_time": "time",
             "p_enrichment": {
                 "greynoise_noise_advanced": {
-                    "p_any_ip_addresses": [
-                        "1.2.3.4",
-                        "0.6.5.4",
-                        "9.8.7.6",
-                    ]
-                }
+                    "classification": "malicious"
+                },
             },
+            "p_any_ip_addresses": [
+                "1.2.3.4",
+                "0.6.5.4",
+                "9.8.7.6",
+            ],
         }
         self.test_data_str_basic = {
             "ip_address": "2.2.2.2",
@@ -153,12 +155,13 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_time": "time",
             "p_enrichment": {
                 "greynoise_noise_basic": {
-                    "p_any_ip_addresses": {
-                        "actor": "unknown",
-                        "ip": "8.8.8.8",
-                        "classification": "unknown",
-                    },
-                }
+                    "classification": "malicious"
+                },
+            },
+            "p_any_ip_addresses": {
+                "actor": "unknown",
+                "ip": "8.8.8.8",
+                "classification": "unknown",
             },
         }
         self.test_data_list_basic = {
@@ -167,13 +170,14 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_time": "time",
             "p_enrichment": {
                 "greynoise_noise_basic": {
-                    "p_any_ip_addresses": [
-                        "1.2.3.4",
-                        "0.6.5.4",
-                        "9.8.7.6",
-                    ]
-                }
+                    "classification": "malicious"
+                },
             },
+            "p_any_ip_addresses": [
+                "1.2.3.4",
+                "0.6.5.4",
+                "9.8.7.6",
+            ],
         }
 
     def test_addresses_adv(self):
