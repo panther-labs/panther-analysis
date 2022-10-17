@@ -124,9 +124,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_user": "test",
             "request_time": "time",
             "p_enrichment": {
-                "greynoise_noise_advanced": {
-                    "classification": "malicious"
-                },
+                "greynoise_noise_advanced": {"classification": "malicious"},
             },
             "p_any_ip_addresses": {
                 "actor": "unknown",
@@ -139,9 +137,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_user": "test",
             "request_time": "time",
             "p_enrichment": {
-                "greynoise_noise_advanced": {
-                    "classification": "malicious"
-                },
+                "greynoise_noise_advanced": {"classification": "malicious"},
             },
             "p_any_ip_addresses": [
                 "1.2.3.4",
@@ -154,9 +150,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_user": "test",
             "request_time": "time",
             "p_enrichment": {
-                "greynoise_noise_basic": {
-                    "classification": "malicious"
-                },
+                "greynoise_noise_basic": {"classification": "malicious"},
             },
             "p_any_ip_addresses": {
                 "actor": "unknown",
@@ -169,9 +163,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "request_user": "test",
             "request_time": "time",
             "p_enrichment": {
-                "greynoise_noise_basic": {
-                    "classification": "malicious"
-                },
+                "greynoise_noise_basic": {"classification": "malicious"},
             },
             "p_any_ip_addresses": [
                 "1.2.3.4",
