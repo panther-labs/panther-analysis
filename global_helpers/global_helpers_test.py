@@ -200,13 +200,11 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
         self.assertEqual(ip_address, "1.2.3.4.5")
     
     def test_ip_address_str(self):
-        print("running ip_address_str test")
         self.event["p_any_ip_addresses"] = "4.5.6.7"
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, "4.5.6.7")
     
     def test_ip_address_none(self):
-        print("running ip_address_none test")
         del self.event["p_any_ip_addresses"]
         with self.assertRaises(p_i_h.PantherIPInfoNoneException):
             self.ip_info.ip_address("p_any_ip_addresses")
@@ -257,13 +255,11 @@ class TestIpInfoHelpersASN(unittest.TestCase):
         self.assertEqual(ip_address, ["1.2.3.4.5", "3.4.5.6.7"])
     
     def test_ip_address_str(self):
-        print("running ip_address_str test")
         self.event["p_any_ip_addresses"] = "4.5.6.7"
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, "4.5.6.7")
     
     def test_ip_address_none(self):
-        print("running ip_address_none test")
         del self.event["p_any_ip_addresses"]
         with self.assertRaises(p_i_h.PantherIPInfoNoneException):
             self.ip_info.ip_address("p_any_ip_addresses")
