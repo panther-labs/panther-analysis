@@ -1,10 +1,9 @@
 # pylint: disable=too-many-public-methods
 import datetime
-from typing import Iterable
 from collections.abc import Sequence
 
 from dateutil import parser
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, PantherIncorrectIPAddressMethodException
 
 
 class PantherGreyNoiseException(Exception):
@@ -21,19 +20,6 @@ class PantherGreyNoiseException(Exception):
             )
         else:
             message = "Unknown Error Reading GreyNoise Data"
-        super().__init__(message)
-
-
-class PantherIncorrectIPAddressMethodException(Exception):
-    def __init__(self, call_type, match_field):
-        if call_type is not Iterable:  # or call_type is str:
-            message = "This is not the method you are looking for, try ip_address()"
-        elif call_type is Iterable:  # or call_type is list:
-            message = "This is not the method you are looking for, try ip_addresses()"
-        elif call_type is None:
-            message = f"Could not find {match_field} in event, found {call_type}."
-        else:
-            message = f"Incorrect Method Exception, call_type: {call_type}"
         super().__init__(message)
 
 

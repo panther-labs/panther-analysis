@@ -40,6 +40,6 @@ install:
 
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test
-	pipenv run pytest global_helpers/test_panther_greynoise_helpers.py
+
 
 

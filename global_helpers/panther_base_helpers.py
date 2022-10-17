@@ -14,6 +14,18 @@ from typing import Sequence
 class PantherUnexpectedAlert(Exception):
     """Error returned when a Panther detection encounters an unexpected situation."""
 
+class PantherIncorrectIPAddressMethodException(Exception):
+    def __init__(self, call_type, match_field):
+        if call_type is not Sequence:  # or call_type is str:
+            message = "This is not the method you are looking for, try ip_address()"
+        elif call_type is Sequence:  # or call_type is list:
+            message = "This is not the method you are looking for, try ip_addresses()"
+        elif call_type is None:
+            message = f"Could not find {match_field} in event, found {call_type}."
+        else:
+            message = f"Incorrect Method Exception, call_type: {call_type}"
+        super().__init__(message)
+
 
 # # # # # # # # # # # # # #
 #   Compliance Helpers    #

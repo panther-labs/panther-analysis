@@ -178,7 +178,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
 
     def test_addresses_adv(self):
         noise = p_g_h.GetGreyNoiseObject(self.test_data_list_advanced)
-        exception = p_g_h.PantherIncorrectIPAddressMethodException
+        exception = p_b_h.PantherIncorrectIPAddressMethodException
         with self.assertRaises(exception):
             noise.ip_address("p_any_ip_addresses")
 
@@ -186,7 +186,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
 
     def test_address_adv(self):
         noise = p_g_h.GetGreyNoiseObject(self.test_data_str_advanced)
-        exception = p_g_h.PantherIncorrectIPAddressMethodException
+        exception = p_b_h.PantherIncorrectIPAddressMethodException
         with self.assertRaises(exception):
             noise.ip_addresses("p_any_ip_addresses")
 
@@ -194,7 +194,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
 
     def test_addresses(self):
         noise = p_g_h.GetGreyNoiseObject(self.test_data_list_basic)
-        exception = p_g_h.PantherIncorrectIPAddressMethodException
+        exception = p_b_h.PantherIncorrectIPAddressMethodException
         with self.assertRaises(exception):
             noise.ip_address("p_any_ip_addresses")
 
@@ -202,7 +202,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
 
     def test_address(self):
         noise = p_g_h.GetGreyNoiseObject(self.test_data_str_basic)
-        exception = p_g_h.PantherIncorrectIPAddressMethodException
+        exception = p_b_h.PantherIncorrectIPAddressMethodException
         with self.assertRaises(exception):
             noise.ip_addresses("p_any_ip_addresses")
 
