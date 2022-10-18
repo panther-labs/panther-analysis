@@ -11,7 +11,6 @@ def rule(event):
         return False
 
     k8s_info = get_k8s_info(event)
-    print(k8s_info)
     principal = k8s_info["principal"]
     namespace = k8s_info["namespace"]
     project_id = k8s_info["project_id"]
