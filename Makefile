@@ -41,5 +41,3 @@ install:
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test
 
-
-
