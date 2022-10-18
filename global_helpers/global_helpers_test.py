@@ -194,16 +194,16 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
     def test_timezone(self):
         timezone = self.ip_info.timezone("match_field")
         self.assertEqual(timezone, "GMT+03:00")
-    
+
     def test_ip_address(self):
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, "1.2.3.4.5")
-    
+
     def test_ip_address_str(self):
         self.event["p_any_ip_addresses"] = "4.5.6.7"
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, "4.5.6.7")
-    
+
     def test_ip_address_none(self):
         del self.event["p_any_ip_addresses"]
         with self.assertRaises(p_i_h.PantherIPInfoNoneException):
@@ -249,16 +249,16 @@ class TestIpInfoHelpersASN(unittest.TestCase):
     def test_asn_type(self):
         _type = self.ip_info.asn_type("match_field")
         self.assertEqual(_type, "isp")
-    
+
     def test_ip_address(self):
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, ["1.2.3.4.5", "3.4.5.6.7"])
-    
+
     def test_ip_address_str(self):
         self.event["p_any_ip_addresses"] = "4.5.6.7"
         ip_address = self.ip_info.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address, "4.5.6.7")
-    
+
     def test_ip_address_none(self):
         del self.event["p_any_ip_addresses"]
         with self.assertRaises(p_i_h.PantherIPInfoNoneException):

@@ -42,9 +42,9 @@ class IPInfoLocation:
     def ip_address(self, match_field):
         if isinstance(deep_get(self.event, match_field), (list, str)):
             return deep_get(self.event, match_field)
-        elif isinstance(deep_get(self.event, match_field), dict):
+        if isinstance(deep_get(self.event, match_field), dict):
             return deep_get(self.event, match_field, "ip")
-        elif deep_get(self.event, match_field) is None:
+        if deep_get(self.event, match_field) is None:
             raise PantherIPInfoNoneException(f"{match_field} is returns None")
 
 
@@ -71,9 +71,9 @@ class IPInfoASN:
     def ip_address(self, match_field):
         if isinstance(deep_get(self.event, match_field), (list, str)):
             return deep_get(self.event, match_field)
-        elif isinstance(deep_get(self.event, match_field), dict):
+        if isinstance(deep_get(self.event, match_field), dict):
             return deep_get(self.event, match_field, "ip")
-        elif deep_get(self.event, match_field) is None:
+        if deep_get(self.event, match_field) is None:
             raise PantherIPInfoNoneException(f"{match_field} is returns None")
 
 
