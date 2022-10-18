@@ -126,11 +126,7 @@ class TestGreyNoiseHelpers(unittest.TestCase):
             "p_enrichment": {
                 "greynoise_noise_advanced": {"classification": "malicious"},
             },
-            "p_any_ip_addresses": {
-                "actor": "unknown",
-                "ip": "8.8.8.8",
-                "classification": "unknown",
-            },
+            "p_any_ip_addresses": "8.8.8.8",
         }
         self.test_data_list_advanced = {
             "ip_address": "2.2.2.2",

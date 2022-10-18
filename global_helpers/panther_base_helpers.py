@@ -17,9 +17,9 @@ class PantherUnexpectedAlert(Exception):
 
 class PantherIncorrectIPAddressMethodException(Exception):
     def __init__(self, call_type, match_field):
-        if call_type is not Sequence:  # or call_type is str:
+        if call_type is Sequence and call_type is str:
             message = "This is not the method you are looking for, try ip_address()"
-        elif call_type is Sequence:  # or call_type is list:
+        elif call_type is not Sequence and call_type is not str:
             message = "This is not the method you are looking for, try ip_addresses()"
         elif call_type is None:
             message = f"Could not find {match_field} in event, found {call_type}."
