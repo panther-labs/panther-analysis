@@ -6,9 +6,6 @@ class PantherIPInfoException(Exception):
         message = "Please enable both IPInfo Location and ASN Lookup Tables"
         super().__init__(message)
 
-class PantherIPInfoNoneException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
 
 class IPInfoLocation:
     def __init__(self, event):
@@ -39,14 +36,6 @@ class IPInfoLocation:
     def timezone(self, match_field) -> str:
         return deep_get(self.ipinfo_location, match_field, "timezone")
 
-    def ip_address(self, match_field):
-        if isinstance(deep_get(self.event, match_field), (list, str)):
-            return deep_get(self.event, match_field)
-        if isinstance(deep_get(self.event, match_field), dict):
-            return deep_get(self.event, match_field, "ip")
-        if deep_get(self.event, match_field) is None:
-            raise PantherIPInfoNoneException(f"{match_field} is returns None")
-
 
 class IPInfoASN:
     def __init__(self, event):
@@ -67,14 +56,6 @@ class IPInfoASN:
 
     def asn_type(self, match_field) -> str:
         return deep_get(self.ipinfo_asn, match_field, "type")
-
-    def ip_address(self, match_field):
-        if isinstance(deep_get(self.event, match_field), (list, str)):
-            return deep_get(self.event, match_field)
-        if isinstance(deep_get(self.event, match_field), dict):
-            return deep_get(self.event, match_field, "ip")
-        if deep_get(self.event, match_field) is None:
-            raise PantherIPInfoNoneException(f"{match_field} is returns None")
 
 
 def get_ipinfo_location_object(event):
