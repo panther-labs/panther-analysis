@@ -317,7 +317,7 @@ def get_binding_deltas(event):
 
 def msft_graph_alert_context(event):
     return {
-        "category": event.get("category"),
-        "description": event.get("description"),
+        "category": event.get("category", ""),
+        "description": event.get("description", ""),
         "userstates": event.get("userstates", []),
     }
