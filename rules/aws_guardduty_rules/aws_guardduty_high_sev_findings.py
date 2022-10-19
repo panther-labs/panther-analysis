@@ -1,3 +1,6 @@
+from panther_base_helpers import aws_guardduty_context
+
+
 def rule(event):
     return 7.0 <= float(event.get("severity", 0)) <= 8.9
 
@@ -11,11 +14,4 @@ def title(event):
 
 
 def alert_context(event):
-    return {
-        "description": event.get("description", "<MISSING DESCRIPTION>"),
-        "severity": event.get("severity", "<MISSING SEVERITY>"),
-        "id": event.get("id", "<MISSING ID>"),
-        "type": event.get("type", "<MISSING TYPE>"),
-        "resource": event.get("resource", {}),
-        "service": event.get("service", {}),
-    }
+    return aws_guardduty_context(event)
