@@ -282,6 +282,17 @@ def aws_rule_context(event: dict):
     }
 
 
+def aws_guardduty_context(event: dict):
+    return {
+        "description": event.get("description", "<MISSING DESCRIPTION>"),
+        "severity": event.get("severity", "<MISSING SEVERITY>"),
+        "id": event.get("id", "<MISSING ID>"),
+        "type": event.get("type", "<MISSING TYPE>"),
+        "resource": event.get("resource", {}),
+        "service": event.get("service", {}),
+    }
+
+
 def is_ip_in_network(ip_addr, networks):
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)
