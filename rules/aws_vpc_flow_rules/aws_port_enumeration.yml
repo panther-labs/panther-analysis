@@ -1,0 +1,102 @@
+AnalysisType: rule
+Description: Looks for service enumeration via port scanning.
+DisplayName: AWS Port Enumeration
+Enabled: true
+Filename: aws_port_enumeration.py
+Reports:
+    MITRE ATT&CK:
+        - TA0007:T1046
+Severity: Info
+Tests:
+    - ExpectedResult: false
+      Log:
+        action: ACCEPT
+        azid: use2-az1
+        bytes: 68083
+        dstaddr: 7.8.9.0
+        dstport: 3456
+        end: "2022-10-19 13:55:08"
+        flowdirection: ingress
+        interfaceid: eni-012345
+        packets: 104
+        pktsrcawsservice: S3
+        protocol: 6
+        region: us-east-2
+        srcaddr: 1.2.3.4
+        srcport: 22
+        start: "2022-10-19 13:54:38"
+        status: OK
+        subnetid: subnet-12345
+        tcpflags: 1
+        traffictype: IPv4
+        version: 5
+        vpcid: vpc-12345
+      Mocks:
+        - objectName: get_string_set
+          returnValue: '{''{"7.8.9.0": [1,2,3]}''}'
+        - objectName: put_string_set
+          returnValue: "0"
+      Name: 3 ports scanned
+    - ExpectedResult: true
+      Log:
+        action: ACCEPT
+        azid: use2-az1
+        bytes: 68083
+        dstaddr: 7.8.9.0
+        dstport: 3456
+        end: "2022-10-19 13:55:08"
+        flowdirection: ingress
+        interfaceid: eni-012345
+        packets: 104
+        pktsrcawsservice: S3
+        protocol: 6
+        region: us-east-2
+        srcaddr: 1.2.3.4
+        srcport: 22
+        start: "2022-10-19 13:54:38"
+        status: OK
+        subnetid: subnet-12345
+        tcpflags: 1
+        traffictype: IPv4
+        version: 5
+        vpcid: vpc-12345
+      Mocks:
+        - objectName: get_string_set
+          returnValue: '{''{"7.8.9.0": [1,2,3,4,5]}''}'
+        - objectName: put_string_set
+          returnValue: ""
+      Name: 5 ports scanned
+    - ExpectedResult: false
+      Log:
+        action: ACCEPT
+        azid: use2-az1
+        bytes: 68083
+        dstaddr: 5.6.7.8
+        dstport: 3456
+        end: "2022-10-19 13:55:08"
+        flowdirection: ingress
+        interfaceid: eni-012345
+        packets: 104
+        pktsrcawsservice: S3
+        protocol: 6
+        region: us-east-2
+        srcaddr: 1.2.3.4
+        srcport: 22
+        start: "2022-10-19 13:54:38"
+        status: OK
+        subnetid: subnet-12345
+        tcpflags: 1
+        traffictype: IPv4
+        version: 5
+        vpcid: vpc-12345
+      Mocks:
+        - objectName: get_string_set
+          returnValue: '{''{"7.8.9.0": [1]}''}'
+        - objectName: put_string_set
+          returnValue: "0"
+      Name: New DstAddr
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.VPCFlow
+RuleID: AWS.Port.Enumeration
+Threshold: 1
