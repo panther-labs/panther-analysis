@@ -99,6 +99,15 @@ Global helper functions are defined in the `global_helpers` folder. This is a ha
 
 Additionally, groups of detections may be linked to multiple "Reports", which is a system for tracking frameworks like CIS, PCI, MITRE ATT&CK, or more.
 
+### Using Docker
+
+If you are on a Windows machine, or prefer to use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run different command, follow the pattern in the Makefile.
+```
+make docker-build
+make docker-test
+make docker-lint
+```
+
 # Writing Detections
 
 *For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
