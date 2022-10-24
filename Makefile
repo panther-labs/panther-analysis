@@ -1,4 +1,5 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
+target_mount_dir := "/home/panther-analysis" # /$(shell basename $(CURDIR))"
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -45,7 +46,7 @@ docker-build:
 	docker build -t panther-analysis .
 
 docker-test:
-	docker run panther-analysis make test
+	docker run --mount "type=bind,source=$(PWD),target=/home/panther-analysis" panther-analysis make test
 
 docker-lint:
-	docker run panther-analysis make lint
+	docker run --mount "type=bind,source=$(PWD),target=/home/panther-analysis" panther-analysis make lint

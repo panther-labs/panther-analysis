@@ -9,12 +9,14 @@ RUN pip install --upgrade pip
 RUN pip install pipenv
 
 # Swithc working directories
-WORKDIR /home/panther-user
+WORKDIR /home/panther-analysis
 
 # Install requirements
 COPY Pipfile .
-RUN pipenv uninstall --all --skip-lock
-RUN pipenv install --dev --skip-lock
+COPY Pipfile.lock .
+RUN pipenv uninstall --all
+RUN pipenv sync --dev
 
-# Copy current repository into container
-COPY . . 
+# Remove pipfile so it doesn't interfere with local files after install
+RUN rm Pipfile 
+RUN rm Pipfile.lock
