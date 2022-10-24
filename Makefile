@@ -46,7 +46,7 @@ docker-build:
 	docker build -t panther-analysis .
 
 docker-test:
-	docker run --mount "type=bind,source=$(PWD),target=/home/panther-analysis" panther-analysis make test
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test
 
 docker-lint:
-	docker run --mount "type=bind,source=$(PWD),target=/home/panther-analysis" panther-analysis make lint
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make lint
