@@ -1,5 +1,4 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
-target_mount_dir := "/home/panther-analysis" # /$(shell basename $(CURDIR))"
 
 ci:
 	pipenv run $(MAKE) lint test
