@@ -84,6 +84,83 @@ Tests:
             type: IAMUser
             userName: user1
       Name: user1 create keys for user2
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: "12345"
+        eventName: CreateAccessKey
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-09-27 17:09:18"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789"
+        requestParameters:
+            userName: jack
+        responseElements:
+            accessKey:
+                accessKeyId: ABCDEFG
+                createDate: Sep 27, 2022 5:09:18 PM
+                status: Active
+                userName: jack
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ABCDEFGH
+            accountId: "123456789"
+            arn: arn:aws:iam::123456789:user/jackson
+            invokedBy: cloudformation.amazonaws.com
+            principalId: ABCDEFGH
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-27T17:08:35Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer: {}
+                webIdFederationData: {}
+            type: IAMUser
+            userName: user1
+      Name: jackson create keys for jack
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: "12345"
+        eventName: CreateAccessKey
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-09-27 17:09:18"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789"
+        requestParameters:
+            userName: jackson
+        responseElements:
+            accessKey:
+                accessKeyId: ABCDEFG
+                createDate: Sep 27, 2022 5:09:18 PM
+                status: Active
+                userName: jackson
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ABCDEFGH
+            accountId: "123456789"
+            arn: arn:aws:iam::123456789:user/jack
+            invokedBy: cloudformation.amazonaws.com
+            principalId: ABCDEFGH
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-27T17:08:35Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer: {}
+                webIdFederationData: {}
+            type: IAMUser
+            userName: user1
+      Name: jack create keys for jackson
+      
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
