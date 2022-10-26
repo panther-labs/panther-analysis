@@ -4,7 +4,7 @@ ci:
 	pipenv run $(MAKE) lint test
 
 deps:
-	pipenv install --dev
+	pipenv sync --dev
 
 deps-update:
 	pipenv update
@@ -26,7 +26,7 @@ lint-fmt:
 	pipenv run black --line-length=100 --check $(dirs)
 
 venv:
-	pipenv install --dev
+	pipenv sync --dev
 
 pat-update:
 	pipenv update panther-analysis-tool
@@ -36,7 +36,7 @@ fmt:
 	pipenv run black --line-length=100 $(dirs)
 
 install:
-	pipenv install --dev
+	pipenv sync --dev
 
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test

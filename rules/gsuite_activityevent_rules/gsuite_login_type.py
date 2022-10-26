@@ -1,6 +1,6 @@
 from panther_base_helpers import deep_get
 
-# Remove any unapproved login methods
+# allow-list of approved login types
 APPROVED_LOGIN_TYPES = {
     "exchange",
     "google_password",
@@ -9,19 +9,24 @@ APPROVED_LOGIN_TYPES = {
     "unknown",
 }
 
+# allow-list any application names here
+APPROVED_APPLICATION_NAMES = {"saml"}
+
 
 def rule(event):
     if event.get("type") != "login":
         return False
 
-    if (
-        event.get("type") == "login"
-        and event.get("name") != "logout"
-        and deep_get(event, "parameters", "login_type") not in APPROVED_LOGIN_TYPES
-    ):
-        return True
+    if event.get("name") == "logout":
+        return False
 
-    return False
+    if (
+        deep_get(event, "parameters", "login_type") in APPROVED_LOGIN_TYPES
+        or deep_get(event, "id", "applicationName") in APPROVED_APPLICATION_NAMES
+    ):
+        return False
+
+    return True
 
 
 def title(event):
