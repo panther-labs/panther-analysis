@@ -176,9 +176,9 @@ def title(event):
     else:
         sharing_scope = f"the {ALERT_DETAILS[log]['TARGET_DOMAIN']} domain"
         if ALERT_DETAILS[log]["NEW_VISIBILITY"] == "people_within_domain_with_link":
-            sharing_scope += f" (anyone in {ALERT_DETAILS['TARGET_DOMAIN']} with the link)"
+            sharing_scope += f" (anyone in {ALERT_DETAILS[log]['TARGET_DOMAIN']} with the link)"
         elif ALERT_DETAILS[log]["NEW_VISIBILITY"] == "public_in_the_domain":
-            sharing_scope += f" (anyone in {ALERT_DETAILS['TARGET_DOMAIN']})"
+            sharing_scope += f" (anyone in {ALERT_DETAILS[log]['TARGET_DOMAIN']})"
 
     alert_access_scope = ALERT_DETAILS[log]["ACCESS_SCOPE"][0].replace("can_", "")
 
