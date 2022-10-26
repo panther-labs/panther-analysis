@@ -1,3 +1,6 @@
+from panther_base_helpers import msft_graph_alert_context
+
+
 def rule(event):
     return event.get("status") == "newAlert"
 
@@ -15,8 +18,4 @@ def severity(event):
 
 
 def alert_context(event):
-    return {
-        "category": event.get("category"),
-        "description": event.get("description"),
-        "userstates": event.get("userstates", []),
-    }
+    return msft_graph_alert_context(event)
