@@ -32,6 +32,12 @@ def rule(event):
     if event.get("eventName") in ec2_image:
         return True
 
+    return False
+
 
 def title(event):
-    return f"{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')} triggered a [{event.get('eventName')}] event within AWS Account ID: [{event.get('recipientAccountId')}]"
+    return (
+        f"{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')} "
+        f"triggered a [{event.get('eventName')}] event within AWS Account ID: "
+        f"[{event.get('recipientAccountId')}]"
+    )
