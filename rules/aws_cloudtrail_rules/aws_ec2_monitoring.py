@@ -4,7 +4,7 @@ from panther_base_helpers import deep_get
 ec2_instance = ["RunInstances", "RunScheduledInstances", "StartInstances"]
 
 # AWS CloudTrail API eventNames for EC2 Image Creation
-ec2_image = [
+ec2_image = {
     "CopyFpgaImage",
     "CopyImage",
     "CreateFpgaImage",
@@ -12,7 +12,7 @@ ec2_image = [
     "CreateRestoreImageTask",
     "CreateStoreImageTask",
     "ImportImage",
-]
+}
 
 
 def rule(event):
