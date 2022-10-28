@@ -99,6 +99,30 @@ Global helper functions are defined in the `global_helpers` folder. This is a ha
 
 Additionally, groups of detections may be linked to multiple "Reports", which is a system for tracking frameworks like CIS, PCI, MITRE ATT&CK, or more.
 
+### Using Docker
+
+To use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run a different command, follow the pattern in the Makefile.
+```
+make docker-build
+make docker-test
+make docker-lint
+```
+
+Please note that you only need to rebuild the container if you update your `Pipfile.lock` changes, because the dependencies are install when the image is built. The subsequent test and lint commands are run in the image by mounting the current file system directory, so it is using your local file system. 
+
+### Using Windows
+
+If you are on a Windows machine, you can use the following instructions to perform the standard panther-analysis workflow. 
+
+1. Install [docker desktop](https://docs.docker.com/desktop/install/windows-install/) for Windows.
+2. Using `make` is recommended. If you would like to use `make`, first install [chocolately](https://chocolatey.org/install), a standard Windows packaging manager.
+3. With chocolately, install the make command:
+```shell
+choco install make
+```
+4. `make` should now be installed and added to your PATH. Try running a `make docker-build` to get started. 
+
+
 # Writing Detections
 
 *For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
