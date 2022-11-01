@@ -5,7 +5,7 @@ def rule(event):
     return (
         event.get("eventSource", "") == "iam.amazonaws.com"
         and event.get("eventName", "") == "UpdateLoginProfile"
-        and (deep_get(event, "requestParameters", "passwordResetRequired", default="") is False)
+        and not deep_get(event, "requestParameters", "passwordResetRequired", default=False)
         and not deep_get(event, "userIdentity", "arn", default="").endswith(
             f"/{deep_get(event, 'requestParameters', 'userName', default='')}"
         )
