@@ -14,6 +14,21 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
+class TestGetValFromList(unittest.TestCase):
+    def test_input_dict(self):
+        input = [{"actor": 1, "two": 2, "select": "me" }, {"actor": 3, "four": 4, "select": "notme"}]
+        response = p_b_h.get_val_from_list(input, "actor", "select", "me")
+        should_be = set()
+        should_be.add(1)
+        self.assertCountEqual(response, should_be)
+
+    # This test case validate that get_val_from_list will return the empty set when the comparison key is not found
+    def test_input_notdict(self):
+        input = [{"actor": 1, "two": 2, "select": "me" }, {"actor": 3, "four": 4, "select": "notme"}]
+        response = p_b_h.get_val_from_list(input, "actor", "doesnotexist", "noExceptionRaised")
+        should_be = set()
+        self.assertCountEqual(response, should_be)
+
 class TestBoxParseAdditionalDetails(unittest.TestCase):
     def setUp(self):
         self.initial_dict = {"t": 10, "a": [{"b": 1, "c": 2}], "d": {"e": {"f": True}}}
