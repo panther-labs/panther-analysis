@@ -43,4 +43,8 @@ def rule(event):
 
 
 def title(event):
-    return f"[{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')}] triggered a CloudTrail action [{event.get('eventName')}] within AWS Account ID: [{event.get('recipientAccountId')}]"
+    return (
+        f"[{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')}] "
+        f"triggered a CloudTrail action [{event.get('eventName')}] "
+        f"within AWS Account ID: [{event.get('recipientAccountId')}]"
+    )
