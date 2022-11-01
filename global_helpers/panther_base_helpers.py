@@ -252,13 +252,13 @@ def deep_get(dictionary: dict, *keys, default=None):
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
-    # pylint: disable=invalid-name
-    """Return a specific field in a list of Python dictionaries. We return the empty set if the comparison key is not found"""
-    rv = set()
+    """Return a specific field in a list of Python dictionaries.
+    We return the empty set if the comparison key is not found"""
+    values_of_return_field = set()
     for item in list_of_dicts:
         if item.get(field_cmp_key) == field_cmp_val:
-            rv.add(item.get(return_field_key))
-    return rv
+            values_of_return_field.add(item.get(return_field_key))
+    return values_of_return_field
 
 
 def aws_strip_role_session_id(user_identity_arn):
