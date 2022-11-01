@@ -2,14 +2,15 @@ from panther_base_helpers import deep_get
 
 # AWS CloudTrail API eventNames for EC2 Image Actions
 EC2_IMAGE_ACTIONS = [
-    'CopyFpgaImage',
-    'CopyImage',
-    'CreateFpgaImage',
-    'CreateImage',
-    'CreateRestoreImageTask',
-    'CreateStoreImageTask',
-    'ImportImage'
+    "CopyFpgaImage",
+    "CopyImage",
+    "CreateFpgaImage",
+    "CreateImage",
+    "CreateRestoreImageTask",
+    "CreateStoreImageTask",
+    "ImportImage",
 ]
+
 
 def rule(event):
 
@@ -39,6 +40,7 @@ def rule(event):
         return True
 
     return False
+
 
 def title(event):
     return f"[{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')}] triggered a CloudTrail action [{event.get('eventName')}] within AWS Account ID: [{event.get('recipientAccountId')}]"
