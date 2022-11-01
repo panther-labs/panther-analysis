@@ -1,16 +1,82 @@
 AnalysisType: rule
-Description: Checks for occurrences of EC2 Instance Creation, EC2 Instance Start or EC2 Image Creation within CloudTrail
-DisplayName: AWS EC2 Monitoring
+Description: Checks CloudTrail for occurrences of EC2 Image Actions.
+DisplayName: AWS EC2 Image Monitoring
 Enabled: true
 Filename: aws_ec2_monitoring.py
 Reports:
     MITRE ATT&CK:
         - TA0002:T1204
+Runbook: Verify that the action was not taken by a malicious actor.
 Severity: Info
 Tags:
     - ec2
 Tests:
     - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 0ea3f05a-066c-43f9-8869-393ba67e7936
+        eventName: CreateImage
+        eventSource: ec2.amazonaws.com
+        eventTime: "2022-09-29 22:25:17"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "123456789101"
+        p_any_aws_arns:
+            - arn:aws:iam::123456789101:role/DevAdministrator
+            - arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
+        p_any_aws_instance_ids:
+            - i-0381a3817f72a949d
+        p_any_domain_names:
+            - AWS Internal
+        p_any_trace_ids:
+            - ASIA5PZQZ5QHE2FUNXHR
+        p_event_time: "2022-09-29 22:25:17"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-09-29 22:27:25.748"
+        p_row_id: 66011977ec1fd0cf9dacf7d913f08d06
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: CloudTrail Logs
+        readOnly: false
+        recipientAccountId: "123456789101"
+        requestID: e686939a-a08a-4fd6-abf5-9ea34793cf25
+        requestParameters:
+            blockDeviceMapping:
+                items:
+                    - deviceName: /dev/xvda
+                      ebs:
+                        deleteOnTermination: true
+                        volumeSize: 8
+            instanceId: i-0381a3817f72a949d
+            name: testimage
+            noReboot: false
+        responseElements:
+            imageId: ami-06aaf5e4b77161786
+            requestId: e686939a-a08a-4fd6-abf5-9ea34793cf25
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ASIA5PZQZ5QHE2FUNXHR
+            accountId: "123456789101"
+            arn: arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
+            principalId: AROA5PZQZ5QHBULW27VAC:test_user
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:22:46Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "123456789101"
+                    arn: arn:aws:iam::123456789101:role/DevAdministrator
+                    principalId: AROA5PZQZ5QHBULW27VAC
+                    type: Role
+                    userName: DevAdministrator
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: CopyImage
+    - ExpectedResult: false
       Log:
         awsRegion: us-east-1
         eventCategory: Management
@@ -266,75 +332,6 @@ Tests:
                 webIdFederationData: {}
             type: AssumedRole
       Name: 'RunInstance - Dry Run '
-    - ExpectedResult: true
-      Log:
-        awsRegion: us-east-2
-        eventCategory: Management
-        eventID: 3678bac3-d038-40bb-99a1-887573195b69
-        eventName: StartInstances
-        eventSource: ec2.amazonaws.com
-        eventTime: "2022-10-23 12:48:32"
-        eventType: AwsApiCall
-        eventVersion: "1.08"
-        managementEvent: true
-        p_any_aws_account_ids:
-            - "123123123123"
-        p_any_aws_arns:
-            - arn:aws:iam::123123123123:role/DevAdministrator
-            - arn:aws:sts::123123123123:assumed-role/DevAdministrator/temp_user
-        p_any_aws_instance_ids:
-            - i-063f5ef40b8a8c141
-        p_any_domain_names:
-            - AWS Internal
-        p_any_trace_ids:
-            - ASIASHKFUXZMKQOQLZRU
-        p_any_usernames:
-            - DevAdministrator
-        p_event_time: "2022-10-23 12:48:32"
-        p_log_type: AWS.CloudTrail
-        p_parse_time: "2022-10-23 12:53:45.313"
-        p_row_id: ae73e3778e2dbdccf7bca39514e0ca04
-        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
-        p_source_label: Panther Identity Org CloudTrail
-        readOnly: false
-        recipientAccountId: "123123123123"
-        requestID: 4b2fff64-aebe-40d3-b8f2-d1740bf6f15a
-        requestParameters:
-            instancesSet:
-                items:
-                    - instanceId: i-063f5ef40b8a8c141
-        responseElements:
-            instancesSet:
-                items:
-                    - currentState:
-                        code: 0
-                        name: pending
-                      instanceId: i-063f5ef40b8a8c141
-                      previousState:
-                        code: 80
-                        name: stopped
-            requestId: 4b2fff64-aebe-40d3-b8f2-d1740bf6f15a
-        sessionCredentialFromConsole: true
-        sourceIPAddress: AWS Internal
-        userAgent: AWS Internal
-        userIdentity:
-            accessKeyId: ASIASHKFUXZMKQOQLZRU
-            accountId: "123123123123"
-            arn: arn:aws:sts::123123123123:assumed-role/DevAdministrator/temp_user
-            principalId: AROASHKFUXZMN3V536B3V:temp_user
-            sessionContext:
-                attributes:
-                    creationDate: "2022-10-23T12:48:12Z"
-                    mfaAuthenticated: "true"
-                sessionIssuer:
-                    accountId: "123123123123"
-                    arn: arn:aws:iam::123123123123:role/DevAdministrator
-                    principalId: AROASHKFUXZMN3V536B3V
-                    type: Role
-                    userName: DevAdministrator
-                webIdFederationData: {}
-            type: AssumedRole
-      Name: StartInstance
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
