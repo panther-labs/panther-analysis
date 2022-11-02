@@ -308,6 +308,20 @@ class TestGeoInfoFromIP(unittest.TestCase):
         }
         self.assertEqual(expected, geoinfo)
 
+    def test_ipinfo_not_enabled_exception(self):
+        event = {"p_enrichment": {}}
+        with self.assertRaises(p_i_h.PantherIPInfoException) as e:
+            p_i_h.geoinfo_from_ip(event, "fake_field")
+        
+        self.assertEqual(e.exception.args[0], "Please enable both IPInfo Location and ASN Enrichment Providers")
+
+    def test_ipinfo_missing_match_exception(self):
+        with self.assertRaises(p_i_h.PantherIPInfoException) as e:
+            p_i_h.geoinfo_from_ip(self.event, "fake_field")
+        
+        self.assertEqual(e.exception.args[0], "IPInfo is not configured on the provided match_field: fake_field")
+
+
 
 if __name__ == "__main__":
     unittest.main()

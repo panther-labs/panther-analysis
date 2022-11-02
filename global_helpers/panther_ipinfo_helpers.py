@@ -101,19 +101,24 @@ def geoinfo_from_ip(event, match_field):
     """Returns a dictionary with geolocation information that is the same format as 
     panther_oss_helper.geoinfo_from_ip() with the following differences:
 
-    - the fields "hostname" and "anycast" are not included
+    - instead of poviding the ip, you must provide the event and the match_field
+    - the fields "hostname" and "anycast" are not included in the return object
     """
     location = get_ipinfo_location_object(event)
     asn = get_ipinfo_asn_object(event)
-    if location and asn:
-        return {
-            "ip": event.get(match_field),
-            "city": location.city(match_field),
-            "region": location.region(match_field),
-            "country": location.country(match_field),
-            "loc": f"{location.latitude(match_field)},{location.longitude(match_field)}",
-            "org": f"{asn.asn(match_field)} {asn.name(match_field)}",
-            "postal": location.postal_code(match_field),
-            "timezone": location.timezone(match_field),
-        }
-    raise PantherIPInfoException("Please enable both IPInfo Location and ASN Lookup Tables")
+    if location is None or asn is None:
+        raise PantherIPInfoException("Please enable both IPInfo Location and ASN Enrichment Providers")
+
+    if deep_get(asn.ipinfo_asn, match_field) is None or deep_get(location.ipinfo_location, match_field) is None:
+        raise PantherIPInfoException(f"IPInfo is not configured on the provided match_field: {match_field}")
+
+    return {
+        "ip": event.get(match_field),
+        "city": location.city(match_field),
+        "region": location.region(match_field),
+        "country": location.country(match_field),
+        "loc": f"{location.latitude(match_field)},{location.longitude(match_field)}",
+        "org": f"{asn.asn(match_field)} {asn.name(match_field)}",
+        "postal": location.postal_code(match_field),
+        "timezone": location.timezone(match_field),
+    }
