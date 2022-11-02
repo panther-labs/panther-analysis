@@ -1,15 +1,18 @@
+from nis import match
 from panther_base_helpers import deep_get
+
+IPINFO_LOCATION_LUT_NAME = "ipinfo_location_detections_engine"
+IPINFO_ASN_LUT_NAME = "ipinfo_asn_detections_engine"
 
 
 class PantherIPInfoException(Exception):
-    def __init__(self):
-        message = "Please enable both IPInfo Location and ASN Lookup Tables"
-        super().__init__(message)
+    ...
 
 
 class IPInfoLocation:
+    """Helper to get IPInfo location information for enriched fields"""
     def __init__(self, event):
-        self.ipinfo_location = deep_get(event, "p_enrichment", "ipinfo_location_detections_engine")
+        self.ipinfo_location = deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME)
         self.event = event
 
     def city(self, match_field) -> str:
@@ -36,10 +39,23 @@ class IPInfoLocation:
     def timezone(self, match_field) -> str:
         return deep_get(self.ipinfo_location, match_field, "timezone")
 
+    def context(self, match_field) -> object:
+        return {
+            "City": self.city(match_field),
+            "Country": self.country(match_field),
+            "Latitude": self.latitude(match_field),
+            "Longitude": self.longitude(match_field),
+            "PostalCode": self.postal_code(match_field),
+            "Region": self.region(match_field),
+            "RegionCode": self.region_code(match_field),
+            "Timezone": self.timezone(match_field),
+        }
+
 
 class IPInfoASN:
+    """Helper to get IPInfo ASN information for enriched fields"""
     def __init__(self, event):
-        self.ipinfo_asn = deep_get(event, "p_enrichment", "ipinfo_asn_detections_engine")
+        self.ipinfo_asn = deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME)
         self.event = event
 
     def asn(self, match_field) -> str:
@@ -54,32 +70,44 @@ class IPInfoASN:
     def route(self, match_field) -> str:
         return deep_get(self.ipinfo_asn, match_field, "route")
 
-    def asn_type(self, match_field) -> str:
+    def type(self, match_field) -> str:
         return deep_get(self.ipinfo_asn, match_field, "type")
+
+    def context(self, match_field) -> object: 
+        return {
+            "ASN": self.asn(match_field),
+            "Domain": self.domain(match_field),
+            "Name": self.name(match_field),
+            "Route": self.route(match_field),
+            "Type": self.type(match_field),
+        }
 
 
 def get_ipinfo_location_object(event):
-    if deep_get(event, "p_enrichment", "ipinfo_location_detections_engine"):
+    """Returns an IPInfoLocation object for the event or None if it is not available"""
+    if deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME):
         return IPInfoLocation(event)
     return None
 
 
 def get_ipinfo_asn_object(event):
-    if deep_get(event, "p_enrichment", "ipinfo_asn_detections_engine"):
+    """Returns an IPInfoASN object for the event or None if it is not available"""
+    if deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME):
         return IPInfoASN(event)
     return None
 
 
 def geoinfo_from_ip(event, match_field):
+    """Returns a dictionary with geolocation information that is the same format as 
+    panther_oss_helper.geoinfo_from_ip() with the following differences:
+
+    - the fields "hostname" and "anycast" are not included
+    """
     location = get_ipinfo_location_object(event)
     asn = get_ipinfo_asn_object(event)
     if location and asn:
         return {
             "ip": event.get(match_field),
-            # "hostname": "",
-            # TODO: Couldn't find this field in Location or ASN
-            # "anycast": true,
-            # TODO: This field was listed in the example output, but not present in any requests
             "city": location.city(match_field),
             "region": location.region(match_field),
             "country": location.country(match_field),
@@ -88,4 +116,4 @@ def geoinfo_from_ip(event, match_field):
             "postal": location.postal_code(match_field),
             "timezone": location.timezone(match_field),
         }
-    raise PantherIPInfoException
+    raise PantherIPInfoException("Please enable both IPInfo Location and ASN Lookup Tables")
