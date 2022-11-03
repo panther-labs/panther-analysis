@@ -1,8 +1,8 @@
 from nis import match
 from panther_base_helpers import deep_get
 
-IPINFO_LOCATION_LUT_NAME = "ipinfo_location_detections_engine"
-IPINFO_ASN_LUT_NAME = "ipinfo_asn_detections_engine"
+IPINFO_LOCATION_LUT_NAME = "ipinfo_location"
+IPINFO_ASN_LUT_NAME = "ipinfo_asn"
 
 
 class PantherIPInfoException(Exception):
