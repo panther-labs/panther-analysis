@@ -159,7 +159,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                 }
             }
         }
-        self.ip_info = p_i_h.get_ipinfo_location_object(self.event)
+        self.ip_info = p_i_h.get_ipinfo_location(self.event)
 
     def test_city(self):
         city = self.ip_info.city(self.match_field)
@@ -228,7 +228,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                 }
             }
         }
-        self.ip_info = p_i_h.get_ipinfo_asn_object(self.event)
+        self.ip_info = p_i_h.get_ipinfo_asn(self.event)
 
     def test_asn(self):
         asn = self.ip_info.asn(self.match_field)

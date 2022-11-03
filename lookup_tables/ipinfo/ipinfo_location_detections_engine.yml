@@ -35,9 +35,7 @@ LogTypeMap:
         - 'clientIp'
     - LogType: AWS.CloudTrail
       Selectors:
-        # add p_any_ip_addresses because we extract ip addresses from polymorphic events
         - 'sourceIPAddress'
-        - 'p_any_ip_addresses'
     - LogType: AWS.GuardDuty
       Selectors:
         # use p_any_ip_addresses because we extract ip addresses from polymorphic events

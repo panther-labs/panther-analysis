@@ -83,14 +83,14 @@ class IPInfoASN:
         }
 
 
-def get_ipinfo_location_object(event):
+def get_ipinfo_location(event):
     """Returns an IPInfoLocation object for the event or None if it is not available"""
     if deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME):
         return IPInfoLocation(event)
     return None
 
 
-def get_ipinfo_asn_object(event):
+def get_ipinfo_asn(event):
     """Returns an IPInfoASN object for the event or None if it is not available"""
     if deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME):
         return IPInfoASN(event)
@@ -104,8 +104,8 @@ def geoinfo_from_ip(event, match_field):
     - instead of poviding the ip, you must provide the event and the match_field
     - the fields "hostname" and "anycast" are not included in the return object
     """
-    location = get_ipinfo_location_object(event)
-    asn = get_ipinfo_asn_object(event)
+    location = get_ipinfo_location(event)
+    asn = get_ipinfo_asn(event)
     if location is None or asn is None:
         raise PantherIPInfoException("Please enable both IPInfo Location and ASN Enrichment Providers")
 
