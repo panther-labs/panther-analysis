@@ -4,7 +4,7 @@ Enabled: false
 Filename: google_workspace_new_login_ip.py
 Severity: Low
 Tests:
-    - ExpectedResult: true
+    - ExpectedResult: false
       Log:
         actor:
             email: test@email.com
@@ -17,7 +17,7 @@ Tests:
           returnValue: None
         - objectName: get_string_set
           returnValue: ""
-      Name: First-Login-Alert
+      Name: First-IP-Entry-No-Alert
     - ExpectedResult: false
       Log:
         actor:
@@ -31,7 +31,7 @@ Tests:
           returnValue: ""
         - objectName: get_string_set
           returnValue: '{"127.0.0.1"}'
-      Name: Subsequent-Existing-Login-No-Alert
+      Name: Subsequent-Existing-IP-No-Alert
     - ExpectedResult: true
       Log:
         actor:
@@ -45,7 +45,7 @@ Tests:
           returnValue: ""
         - objectName: get_string_set
           returnValue: '{"Some-New-IP-Address"}'
-      Name: Subsequent-New-Login-Alert
+      Name: Subsequent-New-IP-Alert
 DedupPeriodMinutes: 15
 LogTypes:
     - GSuite.ActivityEvent

@@ -1,4 +1,3 @@
-import ast
 import json
 from datetime import datetime, timedelta
 
@@ -11,6 +10,7 @@ ALERT_CONTEXT_DICTIONARY = {}
 # If the user does not log in within this period, the record will expire, and the next login will alert
 DYNAMO_CACHE_DAYS = 30
 
+class a;sdklfja;lw23kjt513``` aabnananana
 
 def rule(event):
     # see: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login
@@ -33,13 +33,14 @@ def rule(event):
 
     ALERT_CONTEXT_DICTIONARY["previous_ips"] = user_ip_history.copy()
 
-    # If no previous login record exists, store the current login and alert
-    no_previous_logins_for_user = not user_ip_history
+    # If no previous login record exists, store the current login and exit to prevent a false positive
+    if not user_ip_history:
+        user_ip_history.append(ip_address)
+        save_to_dynamo(event_key, user_ip_history)
+        return False
 
     # This IP has not logged in before - alert, and then store the IP to prevent subsequent alerts
-    new_ip_detected = ip_address not in user_ip_history
-
-    if no_previous_logins_for_user or new_ip_detected:
+    if ip_address not in user_ip_history:
         ALERT_CONTEXT_DICTIONARY["current_ip"] = ip_address
 
         user_ip_history.append(ip_address)
@@ -74,7 +75,7 @@ def get_dynamo_key(user_identifier):
 
 
 def get_user_identifier(event):
-    return deep_get(event, "actor", "email", default="<Unknown User>")
+    return deep_get(event, "actor", "email")
 
 
 def get_ip_address(event):
@@ -89,7 +90,7 @@ def load_from_dynamo(event_key):
         # mocking returns all mocked objects in a string
         # so we must convert the unit test object into the type dynamo sends (a set)
         if dynamo_result_raw:
-            rv = ast.literal_eval(dynamo_result_raw)
+            rv = json.loads(dynamo_result_raw)
         else:
             rv = set()
     else:
