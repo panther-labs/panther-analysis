@@ -1,0 +1,53 @@
+AnalysisType: rule
+DisplayName: Google Workspace New Login IP
+Enabled: false
+Filename: google_workspace_new_login_ip.py
+Severity: Low
+Tests:
+    - ExpectedResult: true
+      Log:
+        actor:
+            email: test@email.com
+            profileId: "12345"
+        ipAddress: 127.0.0.1
+        name: login_success
+        type: login
+      Mocks:
+        - objectName: put_string_set
+          returnValue: None
+        - objectName: get_string_set
+          returnValue: ""
+      Name: First-Login-Alert
+    - ExpectedResult: false
+      Log:
+        actor:
+            email: test@email.com
+            profileId: "12345"
+        ipAddress: 127.0.0.1
+        name: login_success
+        type: login
+      Mocks:
+        - objectName: put_string_set
+          returnValue: ""
+        - objectName: get_string_set
+          returnValue: '{"127.0.0.1"}'
+      Name: Subsequent-Existing-Login-No-Alert
+    - ExpectedResult: true
+      Log:
+        actor:
+            email: test@email.com
+            profileId: "12345"
+        ipAddress: 127.0.0.1
+        name: login_success
+        type: login
+      Mocks:
+        - objectName: put_string_set
+          returnValue: ""
+        - objectName: get_string_set
+          returnValue: '{"Some-New-IP-Address"}'
+      Name: Subsequent-New-Login-Alert
+DedupPeriodMinutes: 15
+LogTypes:
+    - GSuite.ActivityEvent
+RuleID: Google.Workspace.New.Login.IP
+Threshold: 1
