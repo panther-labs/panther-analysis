@@ -2,7 +2,6 @@
 # service. At high rates of log processing, the third party service may throttle requests
 # unless you buy a subscription to it, which may cause this rule to no longer work.
 
-import ast
 import json
 import logging
 
@@ -57,7 +56,7 @@ def rule(event):
         logging.debug("previous_geo_logins is a mocked string:")
         logging.debug(previous_geo_logins)
         if previous_geo_logins:
-            previous_geo_logins = ast.literal_eval(previous_geo_logins)
+            previous_geo_logins = set([previous_geo_logins])
         else:
             previous_geo_logins = set()
         logging.debug("new type of previous_geo_logins should be 'set':")
