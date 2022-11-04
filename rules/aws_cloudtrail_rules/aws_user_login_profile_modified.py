@@ -2,15 +2,14 @@ from panther_base_helpers import aws_rule_context, deep_get
 
 
 def rule(event):
-    if (
+    return (
         event.get("eventSource", "") == "iam.amazonaws.com"
         and event.get("eventName", "") == "UpdateLoginProfile"
-    ):
-        return (
-            deep_get(event, "requestParameters", "userName")
-            != deep_get(event, "userIdentity", "arn").split("/")[-1]
+        and not deep_get(event, "requestParameters", "passwordResetRequired", default=False)
+        and not deep_get(event, "userIdentity", "arn", default="").endswith(
+            f"/{deep_get(event, 'requestParameters', 'userName', default='')}"
         )
-    return False
+    )
 
 
 def title(event):
