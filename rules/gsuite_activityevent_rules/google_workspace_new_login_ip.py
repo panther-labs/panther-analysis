@@ -1,5 +1,5 @@
-import json
 import ast
+import json
 from datetime import datetime, timedelta
 
 from panther_base_helpers import deep_get
@@ -14,7 +14,7 @@ DYNAMO_CACHE_DAYS = 30
 
 def rule(event):
     # see: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login
-    is_login_event = event.get("type") == 'login' and event.get("name") == 'login_success'
+    is_login_event = event.get("type") == "login" and event.get("name") == "login_success"
     if not is_login_event:
         return False
 
@@ -29,9 +29,9 @@ def rule(event):
 
     # name|user_identifier : set(ip_address)
     user_ip_history_raw = load_from_dynamo(event_key)
-    user_ip_history = list(user_ip_history_raw) # cannot append to a set() or serialize it to json
+    user_ip_history = list(user_ip_history_raw)  # cannot append to a set() or serialize it to json
 
-    ALERT_CONTEXT_DICTIONARY['previous_ips'] = user_ip_history.copy()
+    ALERT_CONTEXT_DICTIONARY["previous_ips"] = user_ip_history.copy()
 
     # If no previous login record exists, store the current login and alert
     no_previous_logins_for_user = not user_ip_history
@@ -40,7 +40,7 @@ def rule(event):
     new_ip_detected = ip_address not in user_ip_history
 
     if no_previous_logins_for_user or new_ip_detected:
-        ALERT_CONTEXT_DICTIONARY['current_ip'] = ip_address
+        ALERT_CONTEXT_DICTIONARY["current_ip"] = ip_address
 
         user_ip_history.append(ip_address)
         save_to_dynamo(event_key, user_ip_history)
@@ -53,13 +53,12 @@ def rule(event):
 def title(event):
     user_identifier = get_user_identifier(event)
     ip_address = get_ip_address(event)
-    return (
-        f"New Google Workspace login IP for user '{user_identifier}' from '{ip_address}'"
-    )
+    return f"New Google Workspace login IP for user '{user_identifier}' from '{ip_address}'"
 
 
 def alert_context(event):
     return ALERT_CONTEXT_DICTIONARY
+
 
 ##### End Panther Override Functions #####
 
@@ -67,7 +66,7 @@ def alert_context(event):
 def get_dynamo_key(user_identifier):
     # The key to store the data in Dynamo.
     # '__name__' results in it being unique to this detection, and 'user_identifier' results in 1 record per user
-    
+
     # If you want to do some debugging, add characters to the end of this string to cause temporary cache invalidation.
     # Don't forget to remove it when done, though!
 
@@ -75,11 +74,11 @@ def get_dynamo_key(user_identifier):
 
 
 def get_user_identifier(event):
-    return deep_get(event, 'actor', 'email', default="<Unknown User>")
+    return deep_get(event, "actor", "email", default="<Unknown User>")
 
 
 def get_ip_address(event):
-    return event.get('ipAddress')
+    return event.get("ipAddress")
 
 
 def load_from_dynamo(event_key):
@@ -90,7 +89,7 @@ def load_from_dynamo(event_key):
         # mocking returns all mocked objects in a string
         # so we must convert the unit test object into the type dynamo sends (a set)
         if dynamo_result_raw:
-           rv = ast.literal_eval(dynamo_result_raw)
+            rv = ast.literal_eval(dynamo_result_raw)
         else:
             rv = set()
     else:
@@ -99,8 +98,9 @@ def load_from_dynamo(event_key):
     if not isinstance(rv, set):
         raise Exception(
             f"Expected dynamo result to be a set, was '{type(rv)}',",
-            f" value: '{rv}', raw value: '{dynamo_result_raw}'")
-    
+            f" value: '{rv}', raw value: '{dynamo_result_raw}'",
+        )
+
     return rv
 
 
