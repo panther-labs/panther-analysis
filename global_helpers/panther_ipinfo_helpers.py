@@ -1,4 +1,3 @@
-from nis import match
 from panther_base_helpers import deep_get
 
 IPINFO_LOCATION_LUT_NAME = "ipinfo_location"
@@ -11,6 +10,7 @@ class PantherIPInfoException(Exception):
 
 class IPInfoLocation:
     """Helper to get IPInfo location information for enriched fields"""
+
     def __init__(self, event):
         self.ipinfo_location = deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME)
         self.event = event
@@ -54,6 +54,7 @@ class IPInfoLocation:
 
 class IPInfoASN:
     """Helper to get IPInfo ASN information for enriched fields"""
+
     def __init__(self, event):
         self.ipinfo_asn = deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME)
         self.event = event
@@ -73,7 +74,7 @@ class IPInfoASN:
     def type(self, match_field) -> str:
         return deep_get(self.ipinfo_asn, match_field, "type")
 
-    def context(self, match_field) -> object: 
+    def context(self, match_field) -> object:
         return {
             "ASN": self.asn(match_field),
             "Domain": self.domain(match_field),
@@ -98,7 +99,7 @@ def get_ipinfo_asn(event):
 
 
 def geoinfo_from_ip(event, match_field):
-    """Returns a dictionary with geolocation information that is the same format as 
+    """Returns a dictionary with geolocation information that is the same format as
     panther_oss_helper.geoinfo_from_ip() with the following differences:
 
     - instead of poviding the ip, you must provide the event and the match_field
@@ -107,10 +108,17 @@ def geoinfo_from_ip(event, match_field):
     location = get_ipinfo_location(event)
     asn = get_ipinfo_asn(event)
     if location is None or asn is None:
-        raise PantherIPInfoException("Please enable both IPInfo Location and ASN Enrichment Providers")
+        raise PantherIPInfoException(
+            "Please enable both IPInfo Location and ASN Enrichment Providers"
+        )
 
-    if deep_get(asn.ipinfo_asn, match_field) is None or deep_get(location.ipinfo_location, match_field) is None:
-        raise PantherIPInfoException(f"IPInfo is not configured on the provided match_field: {match_field}")
+    if (
+        deep_get(asn.ipinfo_asn, match_field) is None
+        or deep_get(location.ipinfo_location, match_field) is None
+    ):
+        raise PantherIPInfoException(
+            f"IPInfo is not configured on the provided match_field: {match_field}"
+        )
 
     return {
         "ip": event.get(match_field),

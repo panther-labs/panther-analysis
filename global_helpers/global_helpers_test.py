@@ -11,8 +11,8 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
-import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
 class TestGetValFromList(unittest.TestCase):
@@ -154,8 +154,8 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                         "postal_code": "NA",
                         "region": "Asia Minor",
                         "region_code": "123",
-                        "timezone": "GMT+03:00"
-                    }   
+                        "timezone": "GMT+03:00",
+                    }
                 }
             }
         }
@@ -207,9 +207,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
             "RegionCode": "123",
             "Timezone": "GMT+03:00",
         }
-        self.assertEqual(
-            expected, self.ip_info.context(self.match_field)
-        )
+        self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
 class TestIpInfoHelpersASN(unittest.TestCase):
@@ -223,7 +221,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
                         "route": "1.2.3.4/24",
-                        "type": "isp"
+                        "type": "isp",
                     }
                 }
             }
@@ -259,7 +257,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
             "Domain": "byzantineempire.com",
             "Name": "Byzantine Empire",
             "Route": "1.2.3.4/24",
-            "Type": "isp"
+            "Type": "isp",
         }
         self.assertEqual(expected, self.ip_info.context(self.match_field))
 
@@ -275,7 +273,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
                         "route": "1.2.3.4/24",
-                        "type": "isp"
+                        "type": "isp",
                     }
                 },
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
@@ -287,9 +285,9 @@ class TestGeoInfoFromIP(unittest.TestCase):
                         "postal_code": "NA",
                         "region": "Asia Minor",
                         "region_code": "123",
-                        "timezone": "GMT+03:00"
-                    }   
-                }
+                        "timezone": "GMT+03:00",
+                    }
+                },
             },
             self.match_field: "1.2.3.4",
         }
@@ -304,23 +302,27 @@ class TestGeoInfoFromIP(unittest.TestCase):
             "org": "AS00000 Byzantine Empire",
             "postal": "NA",
             "region": "Asia Minor",
-            "timezone": "GMT+03:00"
+            "timezone": "GMT+03:00",
         }
         self.assertEqual(expected, geoinfo)
 
     def test_ipinfo_not_enabled_exception(self):
         event = {"p_enrichment": {}}
-        with self.assertRaises(p_i_h.PantherIPInfoException) as e:
+        with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
             p_i_h.geoinfo_from_ip(event, "fake_field")
-        
-        self.assertEqual(e.exception.args[0], "Please enable both IPInfo Location and ASN Enrichment Providers")
+
+        self.assertEqual(
+            exc.exception.args[0], "Please enable both IPInfo Location and ASN Enrichment Providers"
+        )
 
     def test_ipinfo_missing_match_exception(self):
-        with self.assertRaises(p_i_h.PantherIPInfoException) as e:
+        with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
             p_i_h.geoinfo_from_ip(self.event, "fake_field")
-        
-        self.assertEqual(e.exception.args[0], "IPInfo is not configured on the provided match_field: fake_field")
 
+        self.assertEqual(
+            exc.exception.args[0],
+            "IPInfo is not configured on the provided match_field: fake_field",
+        )
 
 
 if __name__ == "__main__":
