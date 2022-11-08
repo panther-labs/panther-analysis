@@ -1,37 +1,3 @@
-# pylint: disable=line-too-long
-"""
-Panther rule focused on detecting G Suite users who have shared a file with
-an external user.
-
-This SQL, when run in the Panther data explorer console (https://panther-internal.com/data-analytics/explorer/?selectedDatabase=panther_logs),
-will find some example events:
-
-```sql
-WITH share_summary AS (select p_event_time,actor.email,
-        element_at(filter(report_event.parameters,x->(x.name='visibility')),1).value as new_visibility,
-        element_at(filter(report_event.parameters,x->(x.name='old_visibility')),1).value as old_visibility,
-        element_at(filter(report_event.parameters,x->(x.name='target_user')),1).value as target_user,
-        element_at(filter(report_event.parameters,x->(x.name='doc_title')),1).value as doc_title,
-        element_at(filter(report_event.parameters,x->(x.name='owner')),1).value as owner,
-        report_event
-FROM gsuite_reports
-CROSS JOIN UNNEST(events) as t(report_event)
-WHERE id.applicationName = 'drive'
-    and report_event.type='acl_change'
-    and (report_event.name='change_user_access'
-        or report_event.name='change_document_visibility'
-        or report_event.name='change_document_access_scope')
-    and year = 2021
-    and month = 1
-)
-SELECT * from share_summary
-WHERE
-    old_visibility='private'
-    and new_visibility='shared_externally'
-    and target_user not like '%@acme.com'```
-
-"""
-
 import datetime
 
 from panther_base_helpers import (
