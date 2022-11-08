@@ -96,6 +96,7 @@ def title(event):
         doc_title = first_event.get("doc_title", "DOC_TITLE_UNKNOWN")
         target_user = first_event.get("target_user", "USER_UNKNOWN")
         if len(matching_events) > 1:
-            return f'Multiple dangerous shares ({len_events}) by [{actor}], including "{doc_title}" to {target_user}'
+            return f'Multiple dangerous shares ({len_events}) by [{actor}], including ' \
+                   f'"{doc_title}" to {target_user}'
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
     raise PantherUnexpectedAlert("No matching events, but DangerousShares still fired")
