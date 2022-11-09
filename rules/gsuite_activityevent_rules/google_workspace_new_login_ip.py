@@ -89,24 +89,24 @@ def get_ip_address(event):
 def load_from_dynamo(event_key):
     dynamo_result_raw = get_string_set(event_key)
 
-    r_v = None
+    result = None
     if isinstance(dynamo_result_raw, str):
         # mocking returns all mocked objects in a string
         # so we must convert the unit test object into the type dynamo sends (a set)
         if dynamo_result_raw:
-            r_v = json.loads(dynamo_result_raw)
+            result = json.loads(dynamo_result_raw)
         else:
-            r_v = set()
+            result = set()
     else:
-        r_v = dynamo_result_raw
+        result = dynamo_result_raw
 
-    if not isinstance(r_v, set):
+    if not isinstance(result, set):
         raise Exception(
-            f"Expected dynamo result to be a set, was '{type(r_v)}',",
-            f" value: '{r_v}', raw value: '{dynamo_result_raw}'",
+            f"Expected dynamo result to be a set, was '{type(result)}',",
+            f" value: '{result}', raw value: '{dynamo_result_raw}'",
         )
 
-    return r_v
+    return result
 
 
 def save_to_dynamo(event_key, dynamo_data):
