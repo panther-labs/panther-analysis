@@ -1,4 +1,4 @@
-import json
+import ast
 from datetime import datetime, timedelta
 
 from panther_base_helpers import deep_get
@@ -59,7 +59,7 @@ def title(event):
     return f"New Google Workspace login IP for user '{user_identifier}' from '{ip_address}'"
 
 
-def alert_context():
+def alert_context(event):
     return ALERT_CONTEXT_DICTIONARY
 
 
@@ -94,7 +94,8 @@ def load_from_dynamo(event_key):
         # mocking returns all mocked objects in a string
         # so we must convert the unit test object into the type dynamo sends (a set)
         if dynamo_result_raw:
-            result = json.loads(dynamo_result_raw)
+            #result = json.loads(dynamo_result_raw)
+            result = ast.literal_eval(dynamo_result_raw)
         else:
             result = set()
     else:
