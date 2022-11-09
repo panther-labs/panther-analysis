@@ -59,7 +59,7 @@ def title(event):
     return f"New Google Workspace login IP for user '{user_identifier}' from '{ip_address}'"
 
 
-def alert_context(event):
+def alert_context():
     return ALERT_CONTEXT_DICTIONARY
 
 
