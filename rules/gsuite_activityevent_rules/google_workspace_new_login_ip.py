@@ -10,8 +10,6 @@ ALERT_CONTEXT_DICTIONARY = {}
 # If the user does not log in within this period, the record will expire, and the next login will alert
 DYNAMO_CACHE_DAYS = 30
 
-class a;sdklfja;lw23kjt513``` aabnananana
-
 def rule(event):
     # see: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#login
     is_login_event = event.get("type") == "login" and event.get("name") == "login_success"
