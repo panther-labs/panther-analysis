@@ -59,6 +59,7 @@ def title(event):
     return f"New Google Workspace login IP for user '{user_identifier}' from '{ip_address}'"
 
 
+# pylint: disable=unused-argument
 def alert_context(event):
     return ALERT_CONTEXT_DICTIONARY
 
@@ -91,10 +92,9 @@ def load_from_dynamo(event_key):
 
     result = None
     if isinstance(dynamo_result_raw, str):
-        # mocking returns all mocked objects in a string
-        # so we must convert the unit test object into the type dynamo sends (a set)
+        # mocking returns all mocked objects in a string,
+        #   so we must convert the unit test object into the type dynamo sends (a set)
         if dynamo_result_raw:
-            #result = json.loads(dynamo_result_raw)
             result = ast.literal_eval(dynamo_result_raw)
         else:
             result = set()
