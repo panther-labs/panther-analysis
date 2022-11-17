@@ -1,0 +1,68 @@
+name: Panther Analysis CI/CD workflow
+
+permissions:
+  id-token: write
+  contents: read
+
+on:  
+  push:
+    paths:
+      - 'data_models/**'
+      - 'lookup_tables/**'
+      - 'policies/**'
+      - 'queries/**'
+      - 'rules/**'
+      - '.github/workflows/**'
+
+jobs: 
+  run_unit_tests:    
+    runs-on: ubuntu-latest
+    name: Run unit tests on detections using the panther_analysis_tool
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Set python version  
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install pipenv
+        run: pip install pipenv
+      
+      - name: Install python dependencies and panther_analysis_tool
+        run: make install
+      
+      - name: Run unit tests for all rule detections
+        run: pipenv run panther_analysis_tool test --filter AnalysisType=rule
+      
+      - name: Run unit tests for all scheduled rule detections
+        run: pipenv run panther_analysis_tool test --filter AnalysisType=scheduled_rule
+      
+      - name: Run unit tests for all policy detections
+        run: pipenv run panther_analysis_tool test --filter AnalysisType=policy
+  
+  panther_analysis_tool_upload:        
+    runs-on: ubuntu-latest
+    name: Upload detections to panther console using panther_analysis_tool
+    needs: [run_unit_tests]
+    env:
+      PANTHER_API_TOKEN: ${{ secrets.PANTHER_API_TOKEN }}
+      PANTHER_API_HOST: "https://api.psnther-tse.runpanther.net/public/graphql"
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+      
+      - name: Set python version  
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install pipenv
+        run: pip install pipenv
+      
+      - name: Install python dependencies and panther_analysis_tool
+        run: make install
+      
+      - name: Upload detections to your Panther instance
+        run: pipenv run panther_analysis_tool upload --skip-tests
