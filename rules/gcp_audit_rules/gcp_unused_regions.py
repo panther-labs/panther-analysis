@@ -38,8 +38,8 @@ def _get_location_or_zone(event):
 
 
 def rule(event):
-    method_name = deep_get(event, "protoPayload", "methodName")
-    if not (method_name.endswith(".insert") or method_name.endswith(".create")):
+    method_name = deep_get(event, "protoPayload", "methodName", default="<UNKNOWN_METHOD>")
+    if not method_name.endswith(("insert", "create")):
         return False
     return _resource_in_active_region(_get_location_or_zone(event))
 
