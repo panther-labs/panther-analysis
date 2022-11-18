@@ -30,7 +30,7 @@ def title(event):
     # If no 'dedup' function is defined, the return value of this method will
     # act as deduplication string.
     return (
-        f"{event.get('userIdentity',{}).get('type','no-type')} ec2 activity found for "
+        f"{event.get('userIdentity',{}).get('arn','no-type')} ec2 activity found for "
         f"{event.get('eventName')} in account {event.get('recipientAccountId')} "
         f"in region {event.get('awsRegion')}."
     )
