@@ -1,0 +1,18 @@
+AnalysisType: scheduled_query
+Description: ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
+Enabled: false
+Query: |
+    SELECT
+      userIdentity:arn,
+      count(DISTINCT eventName)
+    FROM
+      panther_logs.public.aws_cloudtrail
+    WHERE
+      errorCode = 'AccessDenied'
+      and p_occurs_since('1 day')
+    GROUP BY userIdentity:arn
+    HAVING count(DISTINCT eventName) > 10
+QueryName: Anomalous Access Denied
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 1
