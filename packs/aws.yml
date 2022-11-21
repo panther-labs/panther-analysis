@@ -29,6 +29,7 @@ PackDefinition:
     - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
     - AWS.SecurityGroup.RestrictsInboundTraffic
     # Root Activity
+    - AWS.Console.RootLogin
     - AWS.Console.RootLoginFailed
     - AWS.Root.Activity
     - AWS.CloudTrail.RootAccessKeyCreated
@@ -37,6 +38,7 @@ PackDefinition:
     - AWS.RootAccount.MFA
     # User and Account Policies and Rules
     - AWS.Console.LoginWithoutMFA
+    - AWS.Console.LoginWithoutSAML
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.User.MFA
     - AWS.Password.Unused
@@ -44,7 +46,12 @@ PackDefinition:
     - AWS.PasswordPolicy.PasswordAgeLimit
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
+    - AWS.CloudTrail.Created
     - AWS.CloudTrail.Enabled
+    - AWS.CloudTrail.Stopped
+    - AWS.CloudTrail.CodebuildProjectMadePublic
+    - AWS.ConfigService.Created
+    - AWS.ConfigService.DisabledDeleted
     - AWS.Config.RecordingEnabled
     - AWS.Config.RecordingNoErrors
     - AWS.IAM.Policy.AdministrativePrivileges
