@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-Description: Look for suspected port scanning activity
+Description: Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
 Enabled: false
 Query: |
     SELECT
@@ -13,7 +13,7 @@ Query: |
     GROUP BY srcAddr, dstAddr
     HAVING COUNT(DISTINCT dstPort) >=  2
     ORDER BY COUNT(DISTINCT dstPort) DESC
-QueryName: Anomalous VPC Port Activity
+QueryName: VPC Flow Port Scanning
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 1
