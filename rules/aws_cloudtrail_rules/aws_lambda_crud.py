@@ -1,4 +1,5 @@
 from panther_base_helpers import aws_rule_context, deep_get
+from fnmatch import fnmatch
 
 LAMBDA_CRUD_EVENTS = {
     "AddPermission",
@@ -8,17 +9,6 @@ LAMBDA_CRUD_EVENTS = {
     "DeleteAlias",
     "DeleteEventSourceMapping",
     "DeleteFunction",
-    "GetAlias",
-    "GetEventSourceMapping",
-    "GetFunction",
-    "GetFunctionConfiguration",
-    "GetPolicy",
-    "InvokeFunction",
-    "InvokeAsync",
-    "ListAliases",
-    "ListEventSourceMappings",
-    "ListFunctions",
-    "ListVersionsByFunction",
     "PublishVersion",
     "RemovePermission",
     "UpdateAlias",
@@ -27,10 +17,9 @@ LAMBDA_CRUD_EVENTS = {
     "UpdateFunctionConfiguration",
 }
 
-EXPECTED_AWS_ACCOUNTS_AND_REGIONS = {
-    "123456789012": {"us-west-1", "us-west-2"},
-    "103456789012": {"us-east-1", "us-east-2"},
-}
+ALLOWED_ROLES = [
+    "*DeployRole",
+]
 
 
 def rule(event):
@@ -38,18 +27,22 @@ def rule(event):
         event.get("eventSource") == "lambda.amazonaws.com"
         and event.get("eventName") in LAMBDA_CRUD_EVENTS
     ):
-
-        aws_account_id = deep_get(event, "userIdentity", "accountId")
-        if aws_account_id in EXPECTED_AWS_ACCOUNTS_AND_REGIONS:
-            if event.get("awsRegion") not in EXPECTED_AWS_ACCOUNTS_AND_REGIONS.get(aws_account_id):
-                return True
-        else:
-            return True
+        for role in ALLOWED_ROLES:
+            if fnmatch(deep_get(event, "userIdentity", "arn", default="unknown-arn"), role):
+                return False
+        return True
     return False
 
 
+def title(event):
+    return (
+        f"[{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}] "
+        f"performed Lambda CRUD Actions in [{event.get('recipientAccountId')}]."
+    )
+
+
 def dedup(event):
-    return event.get("recipientAccountId")
+    return f"{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}"
 
 
 def alert_context(event):
