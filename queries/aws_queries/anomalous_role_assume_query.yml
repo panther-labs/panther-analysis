@@ -11,7 +11,7 @@ Query: |
     WHERE
       eventSource = 'sts.amazonaws.com'
       and eventName = 'AssumeRole'
-      and p_occurs_since('2 days')
+      and p_occurs_since('1 days')
       and userIdentity:principalId != 'null'
       and userAgent != 'AWS Internal'
       and requestParameters:roleArn != 'null'
@@ -20,5 +20,5 @@ Query: |
     ORDER BY count(DISTINCT userAgent) DESC
 QueryName: RoleAssumes by Multiple Useragents
 Schedule:
-  RateMinutes: 60
-  TimeoutMinutes: 1
+  RateMinutes: 1440
+  TimeoutMinutes: 5
