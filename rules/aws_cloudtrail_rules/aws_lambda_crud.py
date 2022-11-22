@@ -1,5 +1,6 @@
-from panther_base_helpers import aws_rule_context, deep_get
 from fnmatch import fnmatch
+
+from panther_base_helpers import aws_rule_context, deep_get
 
 LAMBDA_CRUD_EVENTS = {
     "AddPermission",
