@@ -20,6 +20,7 @@ PackDefinition:
     - AWS.DynamoDB.TableEncryption
     - AWS.EC2.Volume.Encryption
     - AWS.EC2.Volume.Snapshot.Encrypted
+    - AWS.EC2.EBS.Encryption.Disabled
     - AWS.Redshift.Cluster.Encryption
     - AWS.RDS.Instance.Encryption
     - AWS.S3.Bucket.Encryption
@@ -28,7 +29,13 @@ PackDefinition:
     - AWS.SecurityGroup.AdministrativeIngress
     - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
     - AWS.SecurityGroup.RestrictsInboundTraffic
+    - AWS.EC2.GatewayModified
+    - AWS.EC2.Monitoring
+    - AWS.EC2.NetworkACLModified
+    - AWS.EC2.RouteTableModified
+    - AWS.EC2.VPCModified
     # Root Activity
+    - AWS.Console.RootLogin
     - AWS.Console.RootLoginFailed
     - AWS.Root.Activity
     - AWS.CloudTrail.RootAccessKeyCreated
@@ -42,9 +49,16 @@ PackDefinition:
     - AWS.Password.Unused
     - AWS.PasswordPolicy.ComplexityGuidelines
     - AWS.PasswordPolicy.PasswordAgeLimit
+    - AWS.EC2.SecurityGroupModified
+    - AWS.CloudTrail.IAMAnythingChanged
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
+    - AWS.CloudTrail.Created
     - AWS.CloudTrail.Enabled
+    - AWS.CloudTrail.Stopped
+    - AWS.CloudTrail.CodebuildProjectMadePublic
+    - AWS.ConfigService.Created
+    - AWS.ConfigService.DisabledDeleted
     - AWS.Config.RecordingEnabled
     - AWS.Config.RecordingNoErrors
     - AWS.IAM.Policy.AdministrativePrivileges
@@ -52,6 +66,7 @@ PackDefinition:
     - AWS.GuardDuty.HighSeverityFinding
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.WAF.HasXSSPredicate
+    - AWS.EC2.Startup.Script.Change
     # Standard Rules applicable to AWS
     - Standard.BruteForceByIP
     # AWS DataModels
