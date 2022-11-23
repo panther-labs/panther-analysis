@@ -1,0 +1,49 @@
+AnalysisType: rule
+Description: Adversaries may modify visual content available internally or externally to an enterprise network, thus affecting the integrity of the original content. Reasons for Defacement include delivering messaging, intimidation, or claiming (possibly false) credit for an intrusion. Disturbing or offensive images may be used as a part of Defacement in order to cause user discomfort, or to pressure compliance with accompanying messages.
+DisplayName: S3 Bucket Defacement Attempt
+Enabled: false
+Filename: aws_s3_bucket_defacement_attempt.py
+Reference: https://attack.mitre.org/techniques/T1491/
+Reports:
+    MITRE ATT&CK:
+        - TA0040:T1491
+Severity: Low
+Tests:
+    - ExpectedResult: true
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        p_any_aws_arns:
+            - arn:aws:sts::12345678910:assumed-role/sample-role
+        p_any_ip_addresses:
+            - 10.0.18.38
+        p_event_time: "2022-11-01 18:45:45"
+        p_log_type: AWS.S3ServerAccess
+        p_parse_time: "2022-11-01 19:17:50.353"
+        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
+        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
+        p_source_label: s3-sensitive-data
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::12345678910:assumed-role/test-role
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Name: Defacement
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.S3ServerAccess
+RuleID: T1491.Defacement.-.GAP.-.[TA0040:Impact]
+Threshold: 1
