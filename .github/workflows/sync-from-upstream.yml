@@ -56,13 +56,31 @@ jobs:
       - uses: actions/github-script@v6
         id: create_pr
         name: Create a PR from this branch to the local primary
+        if: steps.sync.outputs.has_new_commits == 'true'
         with:
+          result-encoding: string
           script: |
-            const upstreamLatest = await github.rest.pulls.create({
-              owner: '${{github.repository_owner}}',
-              repo: '${{  github.event.repository.name }}',
-              title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
-              head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
-              base: 'master',
-            })
-            console.log("::set-output name=latest-release::" +  upstreamLatest.data.tag_name)
+            try {
+              const response = await github.rest.pulls.create({
+                owner: '${{github.repository_owner}}',
+                repo: '${{  github.event.repository.name }}',
+                title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
+                head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
+                base: 'master',
+              });
+            } catch(e) {
+              if (e.response.data.errors[0].message.includes('No commits between')) {
+                return 'no-updates';
+              } else if (e.response.data.errors[0].message.includes('A pull request already exists for')) {
+                return 'update-pr-already-exists';
+              } else {
+                console.log(e);
+                return 'false';
+              }
+            }
+      - id: pr_outputs
+        name: Show create PR output
+        if: ${{ steps.run_test.outputs.result == 'false' }}
+        run: |
+          echo "unhandled PR exception was raised. outputs is ${steps.run_tests.outputs.result}"
+      
