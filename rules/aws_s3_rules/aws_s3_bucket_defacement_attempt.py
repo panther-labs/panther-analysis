@@ -1,31 +1,42 @@
+from fnmatch import fnmatch
+
 # Ignore certain operations, users, user agents and specifc iam roles
-OPERATIONS = ["REST.GET.", "REST.HEAD.", "S3.EXPIRE.OBJECT"]
-REQUESTERS = ["svc:", "AmazonS3", ":assumed-role/AWSServiceRole", ""]
-USERAGENTS = ["aws-internal"]
-ASSUMED_ROLES = ["assumed-role/pan"]
+EXCLUDED_OPERATIONS = ["REST.GET.*", "REST.HEAD.*", "S3.EXPIRE.OBJECT"]
+EXCLUDED_REQUESTERS = ["svc:*", "AmazonS3", "*:assumed-role/AWSServiceRole*", ""]
+EXCLUDED_USERAGENTS = ["*aws-internal*"]
+EXCLUDED_ASSUMED_ROLES = ["*assumed-role/pan*"]
 
 # Optionally, explicitly monitor specific buckets and/or files
-BUCKET_NAMES = []
-S3_BUCKET_KEY = []
+INCLUDED_BUCKET_NAMES = []
+INCLUDED_S3_BUCKET_KEY = []
 
 
 def rule(event):
 
     # Quick exit if event contains ignored value
-    if event.get("operation") in OPERATIONS:
-        return False
+    for item in EXCLUDED_OPERATIONS:
+        if fnmatch(event.get("operation"), item):
+            return False
 
-    if event.get("requester") in REQUESTERS:
-        return False
+    for item in EXCLUDED_REQUESTERS:
+        if fnmatch(event.get("requester"), item):
+            return False
 
-    if event.get("useragent") in USERAGENTS:
-        return False
+    for item in EXCLUDED_USERAGENTS:
+        if fnmatch(event.get("useragent"), item):
+            return False
 
-    if event.get("requester") in ASSUMED_ROLES:
-        return False
+    for item in EXCLUDED_ASSUMED_ROLES:
+        if fnmatch(event.get("requester"), item):
+            return False
 
-    if event.get("bucket") in BUCKET_NAMES or event.get("key") in S3_BUCKET_KEY:
-        return True
+    for item in INCLUDED_BUCKET_NAMES:
+        if fnmatch(event.get("bucket"), item):
+            return True
+
+    for item in INCLUDED_S3_BUCKET_KEY:
+        if fnmatch(event.get("key"), item):
+            return True
 
     return True
 
