@@ -38,7 +38,10 @@ def rule(event):
 def title(event):
     return (
         f"[{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}] "
-        f"performed Lambda CRUD Actions in [{event.get('recipientAccountId')}]."
+        f"performed Lambda "
+        f"[{event.get('eventName')}] in ["
+        f"{event.get('recipientAccountId')} {event.get('awsRegion')}"
+        "]."
     )
 
 
