@@ -40,9 +40,8 @@ def rule(event):
 def title(event):
     return (
         f"[{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}] "
-        f"performed ECR {event.get('eventName')} in ["
-        f"{event.get('recipientAccountId')} {event.get('awsRegion')}
-        "]."
+        f"performed ECR {event.get('eventName')} in "
+        f"[{event.get('recipientAccountId')} {event.get('awsRegion')}]."
     )
 
 

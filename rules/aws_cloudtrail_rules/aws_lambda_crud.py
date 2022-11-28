@@ -39,9 +39,8 @@ def title(event):
     return (
         f"[{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}] "
         f"performed Lambda "
-        f"[{event.get('eventName')}] in ["
-        f"{event.get('recipientAccountId')} {event.get('awsRegion')}"
-        "]."
+        f"[{event.get('eventName')}] in "
+        f"[{event.get('recipientAccountId')} {event.get('awsRegion')}]."
     )
 
 
