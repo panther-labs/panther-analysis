@@ -37,6 +37,8 @@ def rule(event):
     for item in INCLUDED_S3_BUCKET_KEY:
         if fnmatch(event.get("key"), item):
             return True
+    
+    return True
 
 
 def title(event):
