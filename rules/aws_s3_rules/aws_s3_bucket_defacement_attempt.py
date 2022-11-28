@@ -38,8 +38,6 @@ def rule(event):
         if fnmatch(event.get("key"), item):
             return True
 
-    return True
-
 
 def title(event):
     return f"Unexpected requester put [{event.get('key')}] in [{event.get('bucket')}]"
