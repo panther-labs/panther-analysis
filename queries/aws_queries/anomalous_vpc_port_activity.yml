@@ -1,0 +1,23 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: VPCFlow.Port.Scanning
+DisplayName: VPC Flow Port Scanning
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1046
+Tags:
+  - Discovery:Network Service Discovery
+Description: >
+  Searches for potential port scanning activity in VPC Flow logs
+Enabled: false
+Runbook: >
+  Analyze VPC Flow logs of suspicious IPs and see what ports are being accessed. A sequence of ports may be suspicious
+ScheduledQueries:
+  - VPC Flow Port Scanning
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value
