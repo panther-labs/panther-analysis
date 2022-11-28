@@ -14,4 +14,8 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{deep_get(event, 'userIdentity', 'principalId')}] performed a [{event.get('eventName')}] action in AWS account [{event.get('recipientAccountId')}]."
+    return (
+        f"User [{deep_get(event, 'userIdentity', 'principalId')}]"
+        f"performed a [{event.get('eventName')}] "
+        f"action in AWS account [{event.get('recipientAccountId')}]."
+    )
