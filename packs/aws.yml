@@ -10,12 +10,14 @@ PackDefinition:
     - AWS.CloudTrail.S3Bucket.Public
     - AWS.IAM.AccessKeyCompromised
     - AWS.KMS.RestrictsUsage
+    - AWS.KMS.CustomerManagedKeyLoss
     - AWS.RDS.Instance.PublicAccess
     - AWS.RDS.Instance.SnapshotPublicAccess
     - AWS.S3.Bucket.PublicRead
     - AWS.S3.Bucket.PublicWrite
     - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
     - AWS.S3.Bucket.PrincipalRestrictions
+    - AWS.Macie.Evasion
     # Encryption Status
     - AWS.DynamoDB.TableEncryption
     - AWS.EC2.Volume.Encryption
@@ -34,6 +36,9 @@ PackDefinition:
     - AWS.EC2.NetworkACLModified
     - AWS.EC2.RouteTableModified
     - AWS.EC2.VPCModified
+    - AWS.IPSet.Modified
+    - AWS.Modify.Cloud.Compute.Infrastructure
+    - AWS.CloudTrail.NetworkACLPermissiveEntry
     # Root Activity
     - AWS.Console.RootLogin
     - AWS.Console.RootLoginFailed
@@ -52,6 +57,9 @@ PackDefinition:
     - AWS.PasswordPolicy.PasswordAgeLimit
     - AWS.EC2.SecurityGroupModified
     - AWS.CloudTrail.IAMAnythingChanged
+    - AWS.IAM.PolicyModified
+    - AWS.IAM.Backdoor.User.Keys
+    - AWS.IAMUser.ReconAccessDenied
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
     - AWS.CloudTrail.Created
@@ -68,6 +76,8 @@ PackDefinition:
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.WAF.HasXSSPredicate
     - AWS.EC2.Startup.Script.Change
+    - AWS.RDS.MasterPasswordUpdated
+    - AWS.RDS.PublicRestore
     # Standard Rules applicable to AWS
     - Standard.BruteForceByIP
     # AWS DataModels
