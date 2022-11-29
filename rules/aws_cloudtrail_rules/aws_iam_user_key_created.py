@@ -21,5 +21,9 @@ def title(event):
     )
 
 
+def dedup(event):
+    return f"{deep_get(event,'userIdentity','arn')}"
+
+
 def alert_context(event):
     return aws_rule_context(event)

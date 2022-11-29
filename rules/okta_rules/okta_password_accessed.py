@@ -11,9 +11,9 @@ def rule(event):
         return False
 
     # event['target'] = [{...}, {...}, {...}]
-    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "Type", "AppUser")
+    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "type", "AppUser")
     TARGET_APP_NAMES = get_val_from_list(
-        event.get("target", [{}]), "alternateId", "Type", "AppInstance"
+        event.get("target", [{}]), "alternateId", "type", "AppInstance"
     )
 
     if deep_get(event, "actor", "alternateId") not in TARGET_USERS:

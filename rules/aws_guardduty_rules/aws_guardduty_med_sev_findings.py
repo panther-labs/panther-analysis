@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context
+from panther_base_helpers import aws_guardduty_context
 
 
 def rule(event):
@@ -14,4 +14,4 @@ def title(event):
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    return aws_guardduty_context(event)
