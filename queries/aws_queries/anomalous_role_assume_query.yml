@@ -1,0 +1,24 @@
+AnalysisType: scheduled_query
+Description: RoleAssumes with multiple Useragents could indicate compromised credentials.
+Enabled: false
+Query: |
+    SELECT
+      requestParameters:roleArn,
+      userIdentity:principalId,
+      count(DISTINCT userAgent)
+    FROM
+      panther_logs.public.aws_cloudtrail
+    WHERE
+      eventSource = 'sts.amazonaws.com'
+      and eventName = 'AssumeRole'
+      and p_occurs_since('1 days')
+      and userIdentity:principalId != 'null'
+      and userAgent != 'AWS Internal'
+      and requestParameters:roleArn != 'null'
+    GROUP BY requestParameters:roleArn, userIdentity:principalId
+    HAVING count(DISTINCT userAgent) > 1
+    ORDER BY count(DISTINCT userAgent) DESC
+QueryName: RoleAssumes by Multiple Useragents
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5
