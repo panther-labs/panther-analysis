@@ -18,6 +18,9 @@ PackDefinition:
     - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
     - AWS.S3.Bucket.PrincipalRestrictions
     - AWS.Macie.Evasion
+    - AWS.CloudTrail.ResourceMadePublic
+    - AWS.Snapshot.Backup.Exfiltration
+    - AWS.CloudTrail.SnapshotMadePublic
     # Encryption Status
     - AWS.DynamoDB.TableEncryption
     - AWS.EC2.Volume.Encryption
@@ -50,6 +53,7 @@ PackDefinition:
     # User and Account Policies and Rules
     - AWS.Console.LoginWithoutMFA
     - AWS.Console.LoginWithoutSAML
+    - AWS.Suspicious.SAML.Activity
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.User.MFA
     - AWS.Password.Unused
@@ -60,6 +64,9 @@ PackDefinition:
     - AWS.IAM.PolicyModified
     - AWS.IAM.Backdoor.User.Keys
     - AWS.IAMUser.ReconAccessDenied
+    - AWS.IAM.CredentialsUpdated
+    - AWS.User.Login.Profile.Modified
+
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
     - AWS.CloudTrail.Created
@@ -75,9 +82,16 @@ PackDefinition:
     - AWS.GuardDuty.HighSeverityFinding
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.WAF.HasXSSPredicate
+    - AWS.WAF.Disassociation
     - AWS.EC2.Startup.Script.Change
     - AWS.RDS.MasterPasswordUpdated
     - AWS.RDS.PublicRestore
+    - AWS.S3.GreyNoiseActivity
+    - AWS.S3.BucketDeleted
+    - AWS.S3.BucketPolicyModified
+    - AWS.CloudTrail.SecurityConfigurationChange
+    - AWS.SecurityHub.Finding.Evasion
+    - AWS.CloudTrail.UnauthorizedAPICall
     # Standard Rules applicable to AWS
     - Standard.BruteForceByIP
     # AWS DataModels
