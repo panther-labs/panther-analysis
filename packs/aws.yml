@@ -1,7 +1,7 @@
 AnalysisType: pack
 PackID: PantherManaged.AWS.Core
 DisplayName: Panther Core AWS Pack
-Description: Group of the most critical and high value detections pertinent to the aws environment
+Description: This is a group of detections that act on data sourced from AWS.
 PackDefinition:
   IDs:
     # Data Exposure
@@ -92,6 +92,8 @@ PackDefinition:
     - AWS.CloudTrail.SecurityConfigurationChange
     - AWS.SecurityHub.Finding.Evasion
     - AWS.CloudTrail.UnauthorizedAPICall
+    - Amazon.EKS.Audit.Multiple403
+    - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
     # Standard Rules applicable to AWS
     - Standard.BruteForceByIP
     # AWS DataModels
