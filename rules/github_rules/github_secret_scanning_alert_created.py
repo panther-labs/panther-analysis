@@ -10,5 +10,6 @@ def alert_context(event):
     return {
         'repo': event.get('repo'),
         'alert #': event.get('number'),
-        'url': f"https://github.com/{event.get('repo')}/security/secret-scanning/{event.get('number')}",
+        'url': f"https://github.com/{event.get('repo')}/security/secret-scanning/"
+               f"{event.get('number')}",
     }
