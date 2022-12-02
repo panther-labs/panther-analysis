@@ -1,5 +1,3 @@
-from panther_base_helpers import github_alert_context
-
 def rule(event):
     return event.get('action') == 'secret_scanning_alert.create'
 
