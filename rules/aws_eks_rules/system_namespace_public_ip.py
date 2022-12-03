@@ -2,7 +2,6 @@ from ipaddress import ip_address
 
 from panther_base_helpers import deep_get, eks_panther_obj_ref
 
-
 # Explicitly ignore eks:node-manager and eks:addon-manager
 #  which are run as Lamdas and originate from public IPs
 AMZ_PUBLICS = {"eks:addon-manager", "eks:node-manager"}
