@@ -76,15 +76,15 @@ Tests:
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012"
       }
-  - Name: Unauthorized account
-    ExpectedResult: true
+  - Name: Authorized account
+    ExpectedResult: false
     Log:
       {
         "eventVersion": "1.04",
         "userIdentity": {
           "type": "IAMUser",
           "principalId": "AIDACKCEVSQ6C2EXAMPLE:account_name",
-          "arn": "arn:aws:sts::123456789000:user/Mary_Major",
+          "arn": "arn:aws:sts::123456789000:user/DeployRole",
           "accountId": "123456789000",
           "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
           "userName": "Mary_Major",
@@ -128,8 +128,8 @@ Tests:
         "recipientAccountId": "123456789000"
       }
   -
-    Name: Authorized Account
-    ExpectedResult: false
+    Name: Unauthorized Account
+    ExpectedResult: true
     Log:
       {
         "eventVersion": "1.04",
