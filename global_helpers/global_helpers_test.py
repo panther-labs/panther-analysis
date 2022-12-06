@@ -14,6 +14,94 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
+class TestEksPantherObjRef(unittest.TestCase):
+    def setUp(self):
+        # pylint: disable=C0301
+        self.event = {
+            "annotations": {
+                "authorization.k8s.io/decision": "allow",
+                "authorization.k8s.io/reason": "",
+            },
+            "apiVersion": "audit.k8s.io/v1",
+            "auditID": "35506555-dffc-4337-b2b1-c4af52b88e18",
+            "kind": "Event",
+            "level": "Request",
+            "objectRef": {
+                "apiVersion": "v1",
+                "name": "some-job-xxx1y",
+                "namespace": "default",
+                "resource": "pods",
+                "subresource": "log",
+            },
+            "p_any_aws_account_ids": ["123412341234"],
+            "p_any_aws_arns": [
+                "arn:aws:iam::123412341234:role/KubeAdministrator",
+                "arn:aws:sts::123412341234:assumed-role/KubeAdministrator/1669660343296132000",
+            ],
+            "p_any_ip_addresses": ["5.5.5.5"],
+            "p_any_usernames": ["kubernetes-admin"],
+            "p_event_time": "2022-11-29 00:09:04.38",
+            "p_log_type": "Amazon.EKS.Audit",
+            "p_parse_time": "2022-11-29 00:10:25.067",
+            "p_row_id": "2e4ab474b0f0f7a4a8fff4f014aab32a",
+            "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+            "p_source_label": "example-cluster-eks-logs",
+            "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
+            "requestURI": "/api/v1/namespaces/default/pods/kube-bench-drn4j/log?container=kube-bench",
+            "responseStatus": {"code": 200},
+            "sourceIPs": ["5.5.5.5"],
+            "stage": "ResponseComplete",
+            "stageTimestamp": "2022-11-29 00:09:04.394",
+            "user": {
+                "extra": {
+                    "accessKeyId": ["ASIARLIVEKVNNXXXXXXX"],
+                    "arn": [
+                        "arn:aws:sts::123412341234:assumed-role/KubeAdministrator/1669660343296132000"
+                    ],
+                    "canonicalArn": ["arn:aws:iam::123412341234:role/KubeAdministrator"],
+                    "sessionName": ["1669660343296132000"],
+                },
+                "groups": ["system:masters", "system:authenticated"],
+                "uid": "aws-iam-authenticator:123412341234:AROARLIVEXXXXXXXXXXXX",
+                "username": "kubernetes-admin",
+            },
+            "userAgent": "kubectl/v1.25.4 (darwin/arm64) kubernetes/872a965",
+            "verb": "get",
+        }
+
+    def test_complete_event(self):
+        response = p_b_h.eks_panther_obj_ref(self.event)
+        self.assertEqual(response.get("actor", ""), "kubernetes-admin")
+        self.assertEqual(response.get("object", ""), "some-job-xxx1y")
+        self.assertEqual(response.get("ns", ""), "default")
+        self.assertEqual(len(response.get("sourceIPs", [])), 1)
+        self.assertEqual(response.get("sourceIPs", [])[0], "5.5.5.5")
+        self.assertEqual(response.get("resource", ""), "pods/log")
+        self.assertEqual(response.get("verb", ""), "get")
+        self.assertEqual(response.get("p_source_label", ""), "example-cluster-eks-logs")
+
+    def test_all_missing_event(self):
+        del self.event["user"]["username"]
+        del self.event["objectRef"]
+        del self.event["sourceIPs"]
+        del self.event["verb"]
+        del self.event["p_source_label"]
+        response = p_b_h.eks_panther_obj_ref(self.event)
+        self.assertEqual(response.get("actor", ""), "<NO_USERNAME>")
+        self.assertEqual(response.get("object", ""), "<NO_OBJECT_NAME>")
+        self.assertEqual(response.get("ns", ""), "<NO_OBJECT_NAMESPACE>")
+        self.assertEqual(len(response.get("sourceIPs", [])), 1)
+        self.assertEqual(response.get("sourceIPs", [])[0], "0.0.0.0")  # nosec
+        self.assertEqual(response.get("resource", ""), "<NO_OBJECT_RESOURCE>")
+        self.assertEqual(response.get("verb", ""), "<NO_VERB>")
+        self.assertEqual(response.get("p_source_label", ""), "<NO_P_SOURCE_LABEL>")
+
+    def test_missing_subresource_event(self):
+        del self.event["objectRef"]["subresource"]
+        response = p_b_h.eks_panther_obj_ref(self.event)
+        self.assertEqual(response.get("resource", ""), "pods")
+
+
 class TestGetValFromList(unittest.TestCase):
     def setUp(self):
         self.input = [
