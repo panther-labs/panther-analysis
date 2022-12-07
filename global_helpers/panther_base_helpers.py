@@ -292,6 +292,28 @@ def aws_guardduty_context(event: dict):
     }
 
 
+def eks_panther_obj_ref(event: dict):
+    user = deep_get(event, "user", "username", default="<NO_USERNAME>")
+    source_ips = event.get("sourceIPs", ["0.0.0.0"])  # nosec
+    verb = event.get("verb", "<NO_VERB>")
+    obj_name = deep_get(event, "objectRef", "name", default="<NO_OBJECT_NAME>")
+    obj_ns = deep_get(event, "objectRef", "namespace", default="<NO_OBJECT_NAMESPACE>")
+    obj_res = deep_get(event, "objectRef", "resource", default="<NO_OBJECT_RESOURCE>")
+    obj_subres = deep_get(event, "objectRef", "subresource", default="")
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL>")
+    if obj_subres:
+        obj_res = "/".join([obj_res, obj_subres])
+    return {
+        "actor": user,
+        "ns": obj_ns,
+        "object": obj_name,
+        "resource": obj_res,
+        "sourceIPs": source_ips,
+        "verb": verb,
+        "p_source_label": p_source_label,
+    }
+
+
 def is_ip_in_network(ip_addr, networks):
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)

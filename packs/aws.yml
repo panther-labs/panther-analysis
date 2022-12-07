@@ -1,7 +1,7 @@
 AnalysisType: pack
 PackID: PantherManaged.AWS.Core
 DisplayName: Panther Core AWS Pack
-Description: Group of the most critical and high value detections pertinent to the aws environment
+Description: This is a group of detections that act on data sourced from AWS.
 PackDefinition:
   IDs:
     # Data Exposure
@@ -10,12 +10,18 @@ PackDefinition:
     - AWS.CloudTrail.S3Bucket.Public
     - AWS.IAM.AccessKeyCompromised
     - AWS.KMS.RestrictsUsage
+    - AWS.KMS.CustomerManagedKeyLoss
     - AWS.RDS.Instance.PublicAccess
     - AWS.RDS.Instance.SnapshotPublicAccess
     - AWS.S3.Bucket.PublicRead
     - AWS.S3.Bucket.PublicWrite
     - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
     - AWS.S3.Bucket.PrincipalRestrictions
+    - AWS.EC2.Traffic.Mirroring
+    - AWS.Macie.Evasion
+    - AWS.CloudTrail.ResourceMadePublic
+    - AWS.Snapshot.Backup.Exfiltration
+    - AWS.CloudTrail.SnapshotMadePublic
     # Encryption Status
     - AWS.DynamoDB.TableEncryption
     - AWS.EC2.Volume.Encryption
@@ -34,6 +40,9 @@ PackDefinition:
     - AWS.EC2.NetworkACLModified
     - AWS.EC2.RouteTableModified
     - AWS.EC2.VPCModified
+    - AWS.IPSet.Modified
+    - AWS.Modify.Cloud.Compute.Infrastructure
+    - AWS.CloudTrail.NetworkACLPermissiveEntry
     # Root Activity
     - AWS.Console.RootLogin
     - AWS.Console.RootLoginFailed
@@ -45,6 +54,7 @@ PackDefinition:
     # User and Account Policies and Rules
     - AWS.Console.LoginWithoutMFA
     - AWS.Console.LoginWithoutSAML
+    - AWS.Suspicious.SAML.Activity
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.User.MFA
     - AWS.Password.Unused
@@ -52,6 +62,12 @@ PackDefinition:
     - AWS.PasswordPolicy.PasswordAgeLimit
     - AWS.EC2.SecurityGroupModified
     - AWS.CloudTrail.IAMAnythingChanged
+    - AWS.IAM.PolicyModified
+    - AWS.IAM.Backdoor.User.Keys
+    - AWS.IAMUser.ReconAccessDenied
+    - AWS.IAM.CredentialsUpdated
+    - AWS.User.Login.Profile.Modified
+
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
     - AWS.CloudTrail.Created
@@ -65,9 +81,22 @@ PackDefinition:
     - AWS.IAM.Policy.AdministrativePrivileges
     - AWS.GuardDuty.Enabled
     - AWS.GuardDuty.HighSeverityFinding
+    - AWS.GuardDuty.MediumSeverityFinding
+    - AWS.GuardDuty.LowSeverityFinding
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.WAF.HasXSSPredicate
+    - AWS.WAF.Disassociation
     - AWS.EC2.Startup.Script.Change
+    - AWS.RDS.MasterPasswordUpdated
+    - AWS.RDS.PublicRestore
+    - AWS.S3.GreyNoiseActivity
+    - AWS.S3.BucketDeleted
+    - AWS.S3.BucketPolicyModified
+    - AWS.CloudTrail.SecurityConfigurationChange
+    - AWS.SecurityHub.Finding.Evasion
+    - AWS.CloudTrail.UnauthorizedAPICall
+    - Amazon.EKS.Audit.Multiple403
+    - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
     # Standard Rules applicable to AWS
     - Standard.BruteForceByIP
     # AWS DataModels
