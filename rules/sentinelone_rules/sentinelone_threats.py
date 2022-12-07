@@ -27,8 +27,7 @@ def dedup(event):
 def severity(event):
     if deep_get(event, "data", "confidencelevel", default="") == "malicious":
         return "CRITICAL"
-    else:
-        return "HIGH"
+    return "HIGH"
 
 
 def alert_context(event):

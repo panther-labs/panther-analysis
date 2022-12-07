@@ -15,13 +15,14 @@ def rule(event):
 
 def title(event):
     return (
-        f"SentinelOne [{SENTINELONE_SEVERITY.get(deep_get(event,'data', 'severity', default=''))}] Alert - "
-        f"[{deep_get(event, 'data', 'rulename')}]"
+        "SentinelOne "
+        f"[{SENTINELONE_SEVERITY.get(deep_get(event,'data', 'severity', default=''))}] "
+        f"Alert - [{deep_get(event, 'data', 'rulename')}]"
     )
 
 
 def dedup(event):
-    return f"s1alerts:event.get('id')"
+    return f"s1alerts:{event.get('id')}"
 
 
 def severity(event):
@@ -29,7 +30,7 @@ def severity(event):
 
 
 def alert_context(event):
-    data_cleaned = {k: v for k, v in event.get("data", {}).items() if v is not ""}
+    data_cleaned = {k: v for k, v in event.get("data", {}).items() if v != ""}
     return {
         "primarydescription": event.get("primarydescription", ""),
         "accountname": event.get("accountname", ""),
