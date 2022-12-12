@@ -1,0 +1,42 @@
+AnalysisType: rule
+DedupPeriodMinutes: 60 # 1 hour
+DisplayName: Crowdstrike Real Time Response (RTS) Session
+Enabled: true
+Filename: crowdstrike_real_time_response_session.py
+RuleID: Crowdstrike.RealTimeResponse.Session
+Severity: Medium
+LogTypes:
+  - Crowdstrike # STUCK
+Reports:
+  ReportName (like CIS, MITRE ATT&CK):
+    - The specific report section relevant to this rule
+Tags:
+  - Crowdstrike
+Description: >
+  Alert when someone uses Crowdstrike’s RTR (real-time response) capability to access a machine remotely to run commands.
+Runbook: >
+  First, find out who wrote this the spec format, then notify them with feedback.
+Reference: https://falcon.us-2.crowdstrike.com/documentation/71/real-time-response-and-network-containment#reviewing-real-time-response-audit-logs
+Tests:
+  -
+    Name: RTS Session detected # come up with a better name
+    ExpectedResult: true
+    Log:
+        {
+          "cid": "12345abcdef",
+          "unknown_payload": {
+            "AgentIdString": "12ab56cd",
+            "CustomerIdString": "1234",
+            "EventType": "Event_ExternalApiEvent",
+            "ExternalApiType": "Event_RemoteResponseSessionStartEvent",
+            "HostnameField": "John Macbook Pro",
+            "Nonce": -4714046577736361000,
+            "SessionId": "6e1181e4-4924-4761-az3d-666851jdb950",
+            "StartTimestamp": 1670460538,
+            "UTCTimestamp": 1670460538000,
+            "UserName": "example@example.io",
+            "cid": "12345abcdef",
+            "eid": 118,
+            "timestamp": "2022-12-08T00:48:58Z"
+          }
+        }
