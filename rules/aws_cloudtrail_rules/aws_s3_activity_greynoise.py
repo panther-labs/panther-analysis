@@ -59,7 +59,7 @@ def rule(event):
             if NOISE.subscription_level() == "advanced":
                 if NOISE.organization("sourceIPAddress") == "Amazon.com, Inc.":
                     return False
-            # return false if the role is seen and we are not able to valid the AS organization
+            # return false if the role is seen and we are not able to validate the AS organization
             else:
                 return False
         return True
