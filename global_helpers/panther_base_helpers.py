@@ -63,7 +63,7 @@ DMZ_TAG_VALUE = "dmz"
 
 # Defaults to False to assume something is not a DMZ if it is not tagged
 def is_dmz_tags(resource):
-    """This function determines whether a given resource is tagged as exisitng in a DMZ."""
+    """This function determines whether a given resource is tagged as existing in a DMZ."""
     if resource["Tags"] is None:
         return False
     return resource["Tags"].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
@@ -126,7 +126,7 @@ def gsuite_parameter_lookup(parameters, key):
     return None
 
 
-# GSuite event details are fomatted as a list of dictionaries. Each entry has a 'type' and 'name'.
+# GSuite event details are formatted as a list of dictionaries. Each entry has a 'type' and 'name'.
 #
 # In order to find the event details of interest, you must loop through
 # the list searching for a particular type and name.

@@ -20,7 +20,7 @@ Reports:
     - TA0003:T1078
 Severity: Medium
 Description: >
-  This policy validates that IAM entities (Groups, Roles, and Users) do not have inline policies attached that grant network admin priviliges. Inline policies are more difficult to track and audit than managed policies, and can lead to persistent unexpected access.
+  This policy validates that IAM entities (Groups, Roles, and Users) do not have inline policies attached that grant network admin privileges. Inline policies are more difficult to track and audit than managed policies, and can lead to persistent unexpected access.
 Runbook: >
   Remove the inline policy, and if the IAM entity needs the provided permissions create an IAM managed policy with those permissions and apply it to the entity.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html

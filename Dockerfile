@@ -8,7 +8,7 @@ RUN apt-get install -y --no-install-recommends make
 RUN pip install --upgrade pip
 RUN pip install pipenv
 
-# Swithc working directories
+# Switch working directories
 WORKDIR /home/panther-analysis
 
 # Install requirements
