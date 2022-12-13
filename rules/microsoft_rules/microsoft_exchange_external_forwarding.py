@@ -1,6 +1,6 @@
-ALLOWED_DOMAINS = ["company.com"]
+ALLOWED_FORWARDING_DESTINATION_DOMAINS = ["company.com"]
 
-EMAIL_EXCEPTIONS = ["exception@example.com"]
+ALLOWED_FORWARDING_DESTINATION_EMAILS = ["exception@example.com"]
 
 
 def rule(event):
@@ -8,9 +8,9 @@ def rule(event):
         for param in event.get("parameters", []):
             if param.get("Name", "") in ("ForwardingSmtpAddress", "ForwardTo"):
                 to_email = param.get("Value", "")
-                if to_email.lower().replace("smtp:", "") in EMAIL_EXCEPTIONS:
+                if to_email.lower().replace("smtp:", "") in ALLOWED_FORWARDING_DESTINATION_EMAILS:
                     return False
-                for domain in ALLOWED_DOMAINS:
+                for domain in ALLOWED_FORWARDING_DESTINATION_DOMAIN:
                     if to_email.lower().replace("smtp:", "").endswith(domain):
                         return False
                 return True
@@ -18,7 +18,7 @@ def rule(event):
 
 
 def title(event):
-    to_email = ""
+    to_email = "<no-recipient-found>"
     for param in event.get("parameters", []):
         if param.get("Name", "") in ("ForwardingSmtpAddress", "ForwardTo"):
             to_email = param.get("Value", "")
