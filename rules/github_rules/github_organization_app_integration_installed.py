@@ -12,8 +12,8 @@ def title(event):
     # If no 'dedup' function is defined, the return value of this method
     # will act as deduplication string.
     return (
-        f" Github User '{event.get('actor',{})}' in '{event.get('org')}' "
-        f"installed the following integration: '{event.get('name')}'."
+        f" Github User [{event.get('actor',{})}] in [{event.get('org')}] "
+        f"installed the following integration: [{event.get('name')}]."
     )
 
 
