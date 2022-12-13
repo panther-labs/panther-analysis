@@ -11,7 +11,7 @@ def rule(event):
 def title(event):
     user_name = deep_get(event, "unknown_payload", "UserName", default="<unknown-UserName>")
     hostname_field = deep_get(
-        event, "unknown_payload", "HostnameField", default="<unknown-HostNameField"
+        event, "unknown_payload", "HostnameField", default="<unknown-HostNameField>"
     )
     return f"{user_name} started a Crowdstrike Real-Time Response (RTR) shell on {hostname_field}"
 
