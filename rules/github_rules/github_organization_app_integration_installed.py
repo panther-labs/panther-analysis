@@ -9,7 +9,7 @@ def rule(event):
 
 def title(event):
     # (Optional) Return a string which will be shown as the alert title.
-    # If no 'dedup' function is defined, the return value of this method 
+    # If no 'dedup' function is defined, the return value of this method
     # will act as deduplication string.
     return (
         f" Github User {event.get('actor',{})} in {event.get('org')} "
