@@ -36,6 +36,15 @@ Tests:
         name: Datadog CI
         org: example-io
       Name: App Integration Installation-2
+    - ExpectedResult: false
+      Log:
+        action: repo.archived
+        actor: cat
+        created_at: 1.621305118553e+12
+        org: my-org
+        p_log_type: GitHub.Audit
+        repo: my-org/my-repo
+      Name: Repository Archived
 DedupPeriodMinutes: 60
 LogTypes:
     - GitHub.Audit
