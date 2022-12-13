@@ -355,3 +355,18 @@ def msft_graph_alert_context(event):
         "description": event.get("description", ""),
         "userstates": event.get("userstates", []),
     }
+
+
+def okta_alert_context(event):
+    return {
+        "event_type": event.get("eventType", ""),
+        "severity": event.get("severity", ""),
+        "actor": event.get("actor", {}),
+        "client": event.get("client", {}),
+        "request": event.get("request", {}),
+        "outcome": event.get("outcome", {}),
+        "target": event.get("target", []),
+        "debug_context": event.get("debugContext", {}),
+        "authentication_context": event.get("authenticationContext", {}),
+        "security_context": event.get("securityContext", {}),
+    }
