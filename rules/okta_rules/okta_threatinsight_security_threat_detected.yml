@@ -1,0 +1,92 @@
+AnalysisType: rule
+Description: https://help.okta.com/en-us/Content/Topics/Security/threat-insight/configure-threatinsight-system-log.htm
+DisplayName: Okta ThreatInsight Security Threat Detected
+Enabled: true
+Filename: okta_threatinsight_security_threat_detected.py
+Severity: High
+Tests:
+    - ExpectedResult: false
+      Log:
+        actor:
+            alternateId: homer.simpson@duff.com
+            displayName: Homer Simpson
+            id: 00abc456
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: abc12345
+        client:
+            device: Unknown
+            ipAddress: 1.2.3.4
+            userAgent:
+                browser: UNKNOWN
+                os: Unknown
+                rawUserAgent: Chrome
+            zone: "null"
+        debugcontext:
+            debugData: {}
+        eventtype: application.integration.rate_limit_exceeded
+        legacyeventtype: app.api.error.rate.limit.exceeded
+        outcome:
+            result: SUCCESS
+        published: "2022-06-10 17:19:58.423"
+        request: {}
+        securitycontext: {}
+        severity: INFO
+        target:
+            - alternateId: 'App '
+              displayName: App
+              id: "12345"
+              type: AppInstance
+        transaction:
+            detail: {}
+            id: sdfg
+            type: JOB
+        uuid: aaa-bb-ccc
+        version: "0"
+      Name: Other Event
+    - ExpectedResult: true
+      Log:
+        actor:
+            alternateId: homer.simpson@duff.com
+            displayName: Homer Simpson
+            id: 00abc456
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: abc12345
+        client:
+            device: Unknown
+            ipAddress: 1.2.3.4
+            userAgent:
+                browser: UNKNOWN
+                os: Unknown
+                rawUserAgent: Chrome
+            zone: "null"
+        debugcontext:
+            debugData: {}
+        eventtype: security.threat.detected
+        legacyeventtype: security.threat.detected
+        outcome:
+            result: SUCCESS
+        published: "2022-06-10 17:19:58.423"
+        request: {}
+        securitycontext: {}
+        severity: INFO
+        target:
+            - alternateId: 'App '
+              displayName: App
+              id: "12345"
+              type: AppInstance
+        transaction:
+            detail: {}
+            id: sdfg
+            type: JOB
+        uuid: aaa-bb-ccc
+        version: "0"
+      Name: Security Threat Event
+DedupPeriodMinutes: 60
+LogTypes:
+    - Okta.SystemLog
+RuleID: Okta.ThreatInsight.Security.Threat.Detected
+Threshold: 1
