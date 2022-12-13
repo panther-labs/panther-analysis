@@ -359,7 +359,7 @@ def msft_graph_alert_context(event):
 
 def m365_alert_context(event):
     return {
-        "operation": event.get("operation", ""),
+        "operation": event.get("Operation", ""),
         "organization_id": event.get("OrganizationId", ""),
         "client_ip": event.get("ClientIp", ""),
         "extended_properties": event.get("ExtendedProperties", []),

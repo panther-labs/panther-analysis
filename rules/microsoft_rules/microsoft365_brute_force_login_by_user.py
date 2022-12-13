@@ -6,7 +6,10 @@ def rule(event):
 
 
 def title(event):
-    return "Microsoft365 Brute Force Login Attempt " f"[{event.get('UserId')}]"
+    return (
+        f"Microsoft365: [{event.get('UserId', '<user-not-found>')}] "
+        "may be undergoing a Brute Force Attack."
+    )
 
 
 def alert_context(event):

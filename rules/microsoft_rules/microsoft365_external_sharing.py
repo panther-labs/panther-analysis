@@ -5,9 +5,9 @@ from panther_base_helpers import m365_alert_context
 
 email_regex = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
-ALLOWED_DOMAINS = ["mycompany.com", "alloweddomain.com"]
+ALLOWED_DOMAINS = ["mycompany.com", "alloweddomain.com"] #should be in lowercase
 
-ALLOWED_USERS = ["exception@outsider.com"]
+ALLOWED_USERS = ["exception@outsider.com"] #should be in lowercase
 
 ALLOWED_PATHS = ["*/External/*", "External/*"]
 
@@ -36,7 +36,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"Microsoft365: [{event.get('SourceRelativeUrl')}] " "has been shared with external users."
+        f"Microsoft365: [{event.get('SourceRelativeUrl')}] "
+        "has been shared with external users by "
+        f"[{event.get('UserId', '<user-not-found>')}]"
     )
 
 
