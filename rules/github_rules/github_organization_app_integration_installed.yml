@@ -1,0 +1,47 @@
+AnalysisType: rule
+Description: An application integration was installed to your organization's Github account by someone in your organization.
+DisplayName: Github Organization App Integration Installed
+Enabled: false
+Filename: github_organization_app_integration_installed.py
+Reference: https://docs.github.com/en/enterprise-server@3.4/developers/apps/managing-github-apps/installing-github-apps
+Runbook: Confirm that the app integration installation was a desired behavior.
+Severity: Low
+Tags:
+    - Application Installation
+    - Github
+Tests:
+    - ExpectedResult: true
+      Log:
+        _document_id: A-2345
+        action: integration_installation.create
+        actor: user_name
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-11 05:28:05.542"
+        created_at: "2022-12-11 05:28:05.542"
+        name: Microsoft Teams for GitHub
+        org: your-organization
+        p_any_usernames:
+            - user_name
+      Name: App Integration Installation
+    - ExpectedResult: true
+      Log:
+        _document_id: A-1234
+        action: integration_installation.create
+        actor: leetboy
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-02 17:40:08.671"
+        created_at: "2022-12-02 17:40:08.671"
+        name: Datadog CI
+        org: example-io
+      Name: App Integration Installation-2
+DedupPeriodMinutes: 60
+LogTypes:
+    - GitHub.Audit
+RuleID: Github.Organization.App.Integration.Installed
+SummaryAttributes:
+    - actor
+    - name
+    - org
+Threshold: 1
