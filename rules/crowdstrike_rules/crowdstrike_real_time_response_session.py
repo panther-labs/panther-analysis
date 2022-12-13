@@ -1,22 +1,20 @@
-from panther_base_helpers import crowdstrike_detections_alert_context # Don't know if I need this
+from panther_base_helpers import deep_get
 
 
 def rule(event):
-    return event.get("ExternalApiType") in "Event_RemoteResponseSessionStartEvent"
+    return deep_get(event, "unknown_payload", "ExternalApiType") == "Event_RemoteResponseSessionStartEvent"
 
 
 def title(event):
-    return f"{UserName} started a Crowdstrike Real-Time Response (RTR) shell on {HostnameField}"
+    user_name = deep_get(event, "unknown_payload", "UserName")
+    hostname_field = deep_get(event, "unknown_payload", "HostnameField")
+    return f"{user_name} started a Crowdstrike Real-Time Response (RTR) shell on {hostname_field}"
 
 
 def alert_context(event):
     return {
-        "StartTimestamp": event.get("StartTimestamp"),
-        "SessionId": event.get("sessionId"),
-        "UserName": event.get("UserName"),
-        "HostnameField": event.get("HostnameField"),
+        "Start Time": deep_get(event, "unknown_payload", "StartTimestamp"),
+        "SessionId": deep_get(event, "unknown_payload", "SessionId"),
+        "Actor": deep_get(event, "unknown_payload", "UserName"),
+        "Target Host": deep_get(event, "unknown_payload", "HostnameField"),
     }
-
-
-def severity(event):
-    return event.get("SeverityName")
