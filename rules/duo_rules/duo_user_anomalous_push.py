@@ -7,7 +7,7 @@ def rule(event):
 
 def title(event):
     # pylint: disable=line-too-long
-    return f"DUO Auth denied due to an anomalous 2FA push for {deep_get(event, 'user', 'name', default='<Unknown>')}"
+    return f"Duo Auth denied due to an anomalous 2FA push for {deep_get(event, 'user', 'name', default='<Unknown>')}"
 
 
 def alert_context(event):

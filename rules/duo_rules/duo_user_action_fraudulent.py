@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    return f"A DUO action was marked as fraudulent by {deep_get(event, 'user', 'name')}"
+    return f"A Duo action was marked as fraudulent by {deep_get(event, 'user', 'name')}"
 
 
 def alert_context(event):
