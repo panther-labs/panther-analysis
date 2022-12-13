@@ -3,7 +3,7 @@ from panther_base_helpers import deep_get
 
 def rule(event):
     return (
-        deep_get(event, "unknown_payload", "ExternalApiType", default="<unknown-ExternalApiType")
+        deep_get(event, "unknown_payload", "ExternalApiType", default="<unknown-ExternalApiType>")
         == "Event_RemoteResponseSessionStartEvent"
     )
 
