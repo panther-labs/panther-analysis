@@ -1,0 +1,21 @@
+from panther_base_helpers import deep_get
+
+
+def rule(event):
+    return event.get("reason") == "anomalous_push" and event.get("result") == "denied"
+
+
+def title(event):
+    return f"A DUO authentication was denied due to an anomalous 2nd factor push for user: {deep_get(event, 'user', 'name')}"
+
+
+def alert_context(event):
+    return {
+        "factor": event.get("factor"),
+        "reason": event.get("reason"),
+        "user": deep_get(event, "user", "name"),
+        "os": deep_get(event, "access_device", "os"),
+        "ip_access": deep_get(event, "access_device", "ip"),
+        "ip_auth": deep_get(event, "auth_device", "ip"),
+        "application": deep_get(event, "application", "name"),
+    }
