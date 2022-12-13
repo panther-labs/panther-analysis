@@ -22,7 +22,7 @@ def rule(event):
 def title(event):
     return (
         f"Okta Rate Limit Event: [{event.get('eventtype','')}] "
-        f"by [{event.get('actor', {}).get('alternateId', '<id-not-found>')}]"    
+        f"by [{event.get('actor', {}).get('alternateId', '<id-not-found>')}]"
     )
 
 
