@@ -1,6 +1,8 @@
 import re
 from fnmatch import fnmatch
 
+from panther_base_helpers import m365_alert_context
+
 email_regex = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
 ALLOWED_DOMAINS = ["mycompany.com", "alloweddomain.com"]
@@ -36,3 +38,7 @@ def title(event):
     return (
         f"Microsoft365: [{event.get('SourceRelativeUrl')}] " "has been shared with external users."
     )
+
+
+def alert_context(event):
+    return m365_alert_context(event)

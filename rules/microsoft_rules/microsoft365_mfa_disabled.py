@@ -1,5 +1,7 @@
 import json
 
+from panther_base_helpers import m365_alert_context
+
 
 def rule(event):
     if event.get("Operation", "") == "Update user.":
@@ -21,3 +23,7 @@ def rule(event):
 
 def title(event):
     return "Microsoft365: MFA Removed on " f"[{event.get('ObjectId', '')}]"
+
+
+def alert_context(event):
+    return m365_alert_context(event)

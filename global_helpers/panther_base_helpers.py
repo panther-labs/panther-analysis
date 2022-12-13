@@ -355,3 +355,15 @@ def msft_graph_alert_context(event):
         "description": event.get("description", ""),
         "userstates": event.get("userstates", []),
     }
+
+
+def m365_alert_context(event):
+    return {
+        "operation": event.get("operation", ""),
+        "organization_id": event.get("OrganizationId", ""),
+        "client_ip": event.get("ClientIp", ""),
+        "extended_properties": event.get("ExtendedProperties", []),
+        "modified_properties": event.get("ModifiedProperties", []),
+        "application": event.get("Application", ""),
+        "actor": event.get("Actor", []),
+    }
