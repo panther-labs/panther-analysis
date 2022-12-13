@@ -1,0 +1,174 @@
+AnalysisType: rule
+Description: Detects creation of forwarding rule to external domains
+DisplayName: Microsoft Exchange External Forwarding
+Enabled: true
+Filename: microsoft_exchange_external_forwarding.py
+Severity: High
+Tests:
+    - ExpectedResult: true
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: Set-Mailbox
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: Identity
+              Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
+            - Name: ForwardingSmtpAddress
+              Value: smtp:hello@familyguy.com
+            - Name: DeliverToMailboxAndForward
+              Value: "False"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding Enabled
+    - ExpectedResult: true
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: New-InboxRule
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: AlwaysDeleteOutlookRulesBlob
+              Value: "False"
+            - Name: Force
+              Value: "False"
+            - Name: ForwardTo
+              Value: hello@familyguy.com
+            - Name: Name
+              Value: test forwarding
+            - Name: StopProcessingRules
+              Value: "True"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding Rule
+    - ExpectedResult: false
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: New-InboxRule
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: AlwaysDeleteOutlookRulesBlob
+              Value: "False"
+            - Name: Force
+              Value: "False"
+            - Name: ForwardTo
+              Value: hello@company.com
+            - Name: Name
+              Value: test forwarding
+            - Name: StopProcessingRules
+              Value: "True"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding Rule to Allowed Domain
+    - ExpectedResult: false
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: New-InboxRule
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: AlwaysDeleteOutlookRulesBlob
+              Value: "False"
+            - Name: Force
+              Value: "False"
+            - Name: ForwardTo
+              Value: exception@example.com
+            - Name: Name
+              Value: test forwarding
+            - Name: StopProcessingRules
+              Value: "True"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding Rule to Exception
+    - ExpectedResult: false
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: Set-Mailbox
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: Identity
+              Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
+            - Name: ForwardingSmtpAddress
+              Value: smtp:hello@company.com
+            - Name: DeliverToMailboxAndForward
+              Value: "False"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding To Allowed Domain
+    - ExpectedResult: false
+      Log:
+        clientip: 1.2.3.4
+        creationtime: "2022-12-12 22:19:00"
+        externalaccess: false
+        id: 111-22-33
+        objectid: homer.simpson
+        operation: Set-Mailbox
+        organizationid: 11-aa-bb
+        organizationname: simpsons.onmicrosoft.com
+        originatingserver: QWERTY (1.2.3.4)
+        parameters:
+            - Name: Identity
+              Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
+            - Name: ForwardingSmtpAddress
+              Value: smtp:exception@example.com
+            - Name: DeliverToMailboxAndForward
+              Value: "False"
+        recordtype: 1
+        resultstatus: "True"
+        userid: homer.simpson@simpsons.onmicrosoft.com
+        userkey: "12345"
+        usertype: 2
+        workload: Exchange
+      Name: Forwarding to Exception
+DedupPeriodMinutes: 60
+LogTypes:
+    - Microsoft365.Audit.Exchange
+RuleID: Microsoft365.Exchange.External.Forwarding
+Threshold: 1
