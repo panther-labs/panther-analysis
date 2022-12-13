@@ -15,7 +15,7 @@ def rule(event):
                 if isinstance(old_value, str):
                     old_value = json.loads(old_value)
 
-                if new_value == [] and old_value != []:
+                if old_value and not new_value:
                     return True
                 break
     return False
