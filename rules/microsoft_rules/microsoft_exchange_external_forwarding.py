@@ -10,7 +10,7 @@ def rule(event):
                 to_email = param.get("Value", "")
                 if to_email.lower().replace("smtp:", "") in ALLOWED_FORWARDING_DESTINATION_EMAILS:
                     return False
-                for domain in ALLOWED_FORWARDING_DESTINATION_DOMAIN:
+                for domain in ALLOWED_FORWARDING_DESTINATION_DOMAINS:
                     if to_email.lower().replace("smtp:", "").endswith(domain):
                         return False
                 return True
