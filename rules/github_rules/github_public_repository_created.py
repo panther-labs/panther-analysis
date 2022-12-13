@@ -11,7 +11,7 @@ def title(event):
     # If no 'dedup' function is defined, the return value of this method
     # will act as deduplication string.
     return (
-        f"Repository [{event.get('repo', '<UNKNOWN_REPO>')}]"
+        f"Repository [{event.get('repo', '<UNKNOWN_REPO>')}] "
         f"created with public status by Github user [{event.get('actor')}]."
     )
 
