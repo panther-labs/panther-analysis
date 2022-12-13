@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    return f"A DUO authentication was denied due to an anomalous 2nd factor push for user: {deep_get(event, 'user', 'name')}"
+    return f"DUO Auth denied due to an anomalous 2FA push for {deep_get(event, 'user', 'name')}"
 
 
 def alert_context(event):
