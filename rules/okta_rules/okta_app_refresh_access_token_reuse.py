@@ -9,8 +9,12 @@ def rule(event):
 
 
 def title(event):
-    return "Okta Access Token Reuse Attempted by " f"[{event.get('client', {}).get('ipAddress')}]"
+    return (
+        "Okta Access Token Reuse Attempted by " 
+        f"[{event.get('client', {}).get('ipAddress')}] "
+        f"[{event.get('actor', {}).get('displayName', '<no-displayname-found>')}]"
+    )
 
 
-def alert_context(event):
+def alert_context(event)
     return okta_alert_context(event)

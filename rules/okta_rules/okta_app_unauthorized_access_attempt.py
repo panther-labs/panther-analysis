@@ -7,9 +7,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event, 'actor', 'alternateId', default = 'id-not-found')}] "
+        f"[{deep_get(event, 'actor', 'alternateId', default = '<id-not-found>')}] "
         f"attempted unauthorized access to "
-        f"[{event.get('target', [{}])[0].get('alternateId','id-not-found')}]"
+        f"[{event.get('target', [{}])[0].get('alternateId','<id-not-found>')}]"
     )
 
 

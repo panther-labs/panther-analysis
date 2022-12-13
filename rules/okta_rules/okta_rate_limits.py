@@ -20,7 +20,10 @@ def rule(event):
 
 
 def title(event):
-    return f"Okta Rate Limit Event: [{event.get('eventtype','')}]"
+    return (
+        f"Okta Rate Limit Event: [{event.get('eventtype','')}] "
+        f"by [{event.get('actor', {}).get('alternateId', '<id-not-found>')}]"    
+    )
 
 
 def alert_context(event):

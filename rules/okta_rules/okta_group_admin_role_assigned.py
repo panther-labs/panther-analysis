@@ -7,7 +7,10 @@ def rule(event):
 
 def title(event):
     # pylint: disable=W0613
-    return "Okta Admin Privileges Assigned to Group"
+    return (
+        "Okta Admin Privileges Assigned to Group "
+        f"[{event.get('target', [{}])[0].get('alternateId', '<id-not-found>')}]"
+    )
 
 
 def alert_context(event):
