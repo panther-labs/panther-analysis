@@ -2,7 +2,7 @@ AnalysisType: scheduled_query
 QueryName: Okta Investigate User Activity
 Enabled: false
 Description: >
-  Audit user activity across your environment. Customize to filter on specfic users, time ranges, etc
+  Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
 AthenaQuery: >
   SELECT actor.displayName AS actor_name, actor.alternateId AS actor_email, eventType, COUNT(*) AS activity_count
   FROM panther_logs.okta_systemlog
