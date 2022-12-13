@@ -24,6 +24,6 @@ def alert_context(event):
         "SessionId": deep_get(event, "unknown_payload", "SessionId", default="<unknown-SessionId>"),
         "Actor": deep_get(event, "unknown_payload", "UserName", default="<unknown-UserName>"),
         "Target Host": deep_get(
-            event, "unknown_payload", "HostnameField", default="<unknown-HostnameField"
+            event, "unknown_payload", "HostnameField", default="<unknown-HostnameField>"
         ),
     }
