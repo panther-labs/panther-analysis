@@ -200,10 +200,17 @@ def box_parse_additional_details(event: dict):
 def okta_alert_context(event: dict):
     """Returns common context for automation of Okta alerts"""
     return {
+        "event_type": event.get("eventType", ""),
+        "severity": event.get("severity", ""),
+        "actor": event.get("actor", {}),
+        "client": event.get("client", {}),
+        "request": event.get("request", {}),
+        "outcome": event.get("outcome", {}),
+        "target": event.get("target", []),
+        "debug_context": event.get("debugContext", {}),
+        "authentication_context": event.get("authenticationContext", {}),
+        "security_context": event.get("securityContext", {}),
         "ips": event.get("p_any_ip_addresses", []),
-        "actor": event.get("actor", ""),
-        "target": event.get("target", ""),
-        "client": event.get("client", ""),
     }
 
 
@@ -354,19 +361,4 @@ def msft_graph_alert_context(event):
         "category": event.get("category", ""),
         "description": event.get("description", ""),
         "userstates": event.get("userstates", []),
-    }
-
-
-def okta_alert_context(event):
-    return {
-        "event_type": event.get("eventType", ""),
-        "severity": event.get("severity", ""),
-        "actor": event.get("actor", {}),
-        "client": event.get("client", {}),
-        "request": event.get("request", {}),
-        "outcome": event.get("outcome", {}),
-        "target": event.get("target", []),
-        "debug_context": event.get("debugContext", {}),
-        "authentication_context": event.get("authenticationContext", {}),
-        "security_context": event.get("securityContext", {}),
     }
