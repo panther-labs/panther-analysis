@@ -11,6 +11,6 @@ def title(event):
     return (
         f"GSuite Workspace Trusted Domains Modified "
         f"[{event.get('name', '<NO_EVENT_NAME>')}] "
-        f"with [{deep_get(event, 'parameters', 'DOMAIN_NAME', default='<NO_DOMAIN_NAME>')} "
+        f"with [{deep_get(event, 'parameters', 'DOMAIN_NAME', default='<NO_DOMAIN_NAME>')}] "
         f"performed by [{deep_get(event, 'actor', 'email', default='<NO_ACTOR_FOUND>')}]"
     )
