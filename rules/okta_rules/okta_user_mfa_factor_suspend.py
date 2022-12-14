@@ -7,9 +7,9 @@ def rule(event):
 
 def title(event):
     return (
-        "Okta MFA Factor Suspended for "
+        "Okta: Authentication Factor for "
         f"[{event.get('target',[{}])[0].get('alternateId', '<id-not-found>')}] "
-        f"by [{event.get('actor',{}).get('alternateId','<id-not-found>')}]"
+        f"has been disabled for suspicious activity."
     )
 
 

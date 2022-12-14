@@ -48,43 +48,69 @@ Tests:
     - ExpectedResult: true
       Log:
         actor:
-            alternateId: homer.simpson@duff.com
-            displayName: Homer Simpson
-            id: 00abc456
-            type: User
+            alternateId: unknown
+            displayName: 1.2.3.4
+            id: 1.2.3.4
+            type: IP address
         authenticationcontext:
             authenticationStep: 0
-            externalSessionId: abc12345
         client:
-            device: Unknown
+            device: Computer
+            geographicalContext:
+                city: Dallas
+                country: United States
+                geolocation:
+                    lat: 32.7908
+                    lon: -96.8336
+                postalCode: "75207"
+                state: Texas
             ipAddress: 1.2.3.4
             userAgent:
-                browser: UNKNOWN
-                os: Unknown
-                rawUserAgent: Chrome
+                browser: CHROME
+                os: Windows 10
+                rawUserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
             zone: "null"
         debugcontext:
-            debugData: {}
+            debugData:
+                dtHash: abcsadfjsald
+                requestId: alsdjflasf
+                requestUri: /oauth2/v1/authorize
+                threatDetections: '{"Login failures with high unknown users count":"HIGH","Password Spray":"HIGH","Login Failures":"MEDIUM"}'
+                threatSuspected: "true"
+                url: /oauth2/v1/authorize
+        displaymessage: Request from suspicious actor
         eventtype: security.threat.detected
         legacyeventtype: security.threat.detected
         outcome:
-            result: SUCCESS
-        published: "2022-06-10 17:19:58.423"
-        request: {}
-        securitycontext: {}
-        severity: INFO
-        target:
-            - alternateId: 'App '
-              displayName: App
-              id: "12345"
-              type: AppInstance
+            reason: Password Spray, Login failures with high unknown users count, Login Failures
+            result: DENY
+        published: "2022-12-14 19:16:32.015"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: Dallas
+                    country: United States
+                    geolocation:
+                        lat: 32.7908
+                        lon: -96.8336
+                    postalCode: "75207"
+                    state: Texas
+                    ip: 1.2.3.4
+                    version: V4
+        securitycontext:
+            asNumber: 62240
+            asOrg: packethub s.a.
+            domain: .
+            isProxy: false
+            isp: clouvider limited
+        severity: WARN
         transaction:
             detail: {}
-            id: sdfg
-            type: JOB
-        uuid: aaa-bb-ccc
+            id: asdfjaslf
+            type: WEB
+        uuid: asdfa-1234-asdfdas
         version: "0"
-      Name: Security Threat Event
+      Name: Threat Detected Event
 DedupPeriodMinutes: 60
 LogTypes:
     - Okta.SystemLog

@@ -12,8 +12,8 @@ def title(event):
         .get("suspiciousActivityEventType", "<event-type-not-found>")
     )
     return (
-        f"Okta [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
-        f"reported suspicious account activity [{reported_event_type}] "
+        f"Okta: [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
+        f"reported suspicious account activity [{reported_event_type}]."
     )
 
 

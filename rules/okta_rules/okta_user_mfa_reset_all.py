@@ -7,7 +7,7 @@ def rule(event):
 
 def title(event):
     return (
-        "Okta all authentication factors were reset for "
+        "Okta: All MFA factors were reset for "
         f"[{event.get('target',[{}])[0].get('alternateId', '<id-not-found>')}] "
         f"by [{event.get('actor',{}).get('alternateId','<id-not-found>')}]"
     )

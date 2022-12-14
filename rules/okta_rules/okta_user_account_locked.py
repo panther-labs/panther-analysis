@@ -7,8 +7,8 @@ def rule(event):
 
 def title(event):
     return (
-        f"Okta user [{event.get('actor', {}).get('alternateId', '<id-not-found>')}] "
-        "has been locked"
+        f"Okta: [{event.get('actor', {}).get('alternateId', '<id-not-found>')}] "
+        "has had their account locked."
     )
 
 
