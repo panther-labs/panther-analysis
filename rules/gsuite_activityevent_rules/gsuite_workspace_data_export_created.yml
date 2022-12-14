@@ -1,0 +1,94 @@
+AnalysisType: rule
+Filename: gsuite_workspace_data_export_created.py
+RuleID: GSuite.Workspace.DataExportCreated
+DisplayName: GSuite Workspace Data Export Has Been Created
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  A Workspace Admin Has Created a DataExport
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/data-studio#DATA_EXPORT
+Runbook: >
+  Verify the intent of this DataExport. If intent cannot be verified, then
+  an indicator search on the actor is advised.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Workspace Admin Data Export Created
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "admin@example.io",
+          "profileId": "11011111111111111111111"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-10 22:21:40.079000000",
+          "uniqueQualifier": "-2833899999999999999"
+        },
+        "kind": "admin#reports#activity",
+        "name": "CUSTOMER_TAKEOUT_CREATED",
+        "parameters": {
+          "OBFUSCATED_CUSTOMER_TAKEOUT_REQUEST_ID": "00mmmmmmmmmmmmm"
+        },
+        "type": "CUSTOMER_TAKEOUT"
+      }
+  -
+    Name: Workspace Admin Data Export Succeeded
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "admin@example.io",
+          "profileId": "11011111111111111111111"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-12 22:21:40.106000000",
+          "uniqueQualifier": "3005999999999999999"
+        },
+        "kind": "admin#reports#activity",
+        "name": "CUSTOMER_TAKEOUT_SUCCEEDED",
+        "parameters": {
+          "OBFUSCATED_CUSTOMER_TAKEOUT_REQUEST_ID": "00mmmmmmmmmmmmm"
+        },
+        "type": "CUSTOMER_TAKEOUT"
+      }
+  - 
+    Name: Admin Set Default Calendar SHARING_OUTSIDE_DOMAIN Setting to MANAGE_ACCESS
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "example@example.io",
+          "profileId": "12345"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 01:06:26.303000000",
+          "uniqueQualifier": "-12345"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "CHANGE_CALENDAR_SETTING",
+        "parameters": {
+          "DOMAIN_NAME": "example.io",
+          "NEW_VALUE": "MANAGE_ACCESS",
+          "OLD_VALUE": "READ_WRITE_ACCESS",
+          "ORG_UNIT_NAME": "Example IO",
+          "SETTING_NAME": "SHARING_OUTSIDE_DOMAIN"
+        },
+        "type": "CALENDAR_SETTINGS"
+      }
+ 
