@@ -38,3 +38,51 @@ Tests:
           "name": "example@example.io"
         }
       }
+  -
+    Name: good_auth
+    ExpectedResult: false
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "user_approved",
+        "result": "success",
+        "user": {
+          "name": "example@example.io"
+        }
+      }
+  -
+    Name: denied_old_creds
+    ExpectedResult: false
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "out_of_date",
+        "result": "denied",
+        "user": {
+          "name": "example@example.io"
+        }
+      }
