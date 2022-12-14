@@ -1,0 +1,60 @@
+AnalysisType: rule
+Description: A google workspace administrator provisioned a custom role to another user.
+DisplayName: Google Workspace Admin Custom Role
+Enabled: true
+Filename: google_workspace_admin_custom_role.py
+Runbook: Please review this activity with the administrator and ensure this behavior was authorized.
+Severity: Medium
+Tags:
+    - admin
+    - administrator
+    - google workspace
+    - role
+Tests:
+    - ExpectedResult: false
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "123456"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 02:57:48.693000000"
+            uniqueQualifier: "-12456"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: DELETE_ROLE
+        parameters:
+            ROLE_ID: "567890"
+            ROLE_NAME: CustomAdminRoleName
+        type: DELEGATED_ADMIN_SETTINGS
+      Name: Delete Role
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "123456"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 02:57:48.693000000"
+            uniqueQualifier: "-12456"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CREATE_ROLE
+        parameters:
+            ROLE_ID: "567890"
+            ROLE_NAME: CustomAdminRoleName
+        type: DELEGATED_ADMIN_SETTINGS
+      Name: New Custom Role Created
+DedupPeriodMinutes: 60
+LogTypes:
+    - GSuite.ActivityEvent
+RuleID: Google.Workspace.Admin.Custom.Role
+SummaryAttributes:
+    - actor.email
+    - name
+    - type
+Threshold: 1
