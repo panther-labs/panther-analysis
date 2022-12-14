@@ -14,7 +14,6 @@ def title(event):
     return (
         f"Google Workspace Administrator "
         f"[{event.get('actor',{}).get('email','no-email-provided')}] "
-        f"provisioned the role "
-        f"[{event.get('parameters',{}).get('ROLE_NAME','no-role-name-provided')}] "
-        f" from ip address [{event.get('ipAddress')}]."
+        f"created a new admin role "
+        f"[{event.get('parameters',{}).get('ROLE_NAME','no-role-name-provided')}]."
     )
