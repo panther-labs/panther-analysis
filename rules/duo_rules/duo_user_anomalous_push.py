@@ -6,17 +6,17 @@ def rule(event):
 
 
 def title(event):
-    # pylint: disable=line-too-long
-    return f"Duo Auth denied due to an anomalous 2FA push for {deep_get(event, 'user', 'name', default='<Unknown>')}"
+    user = deep_get(event, "user", "name", default="<Unknown>")
+    return f"Duo Auth denied due to an anomalous 2FA push for {user}"
 
 
 def alert_context(event):
     return {
         "factor": event.get("factor"),
         "reason": event.get("reason"),
-        "user": deep_get(event, "user", "name"),
-        "os": deep_get(event, "access_device", "os"),
-        "ip_access": deep_get(event, "access_device", "ip"),
-        "ip_auth": deep_get(event, "auth_device", "ip"),
-        "application": deep_get(event, "application", "name"),
+        "user": deep_get(event, "user", "name", default=""),
+        "os": deep_get(event, "access_device", "os", default=""),
+        "ip_access": deep_get(event, "access_device", "ip", default=""),
+        "ip_auth": deep_get(event, "auth_device", "ip", default=""),
+        "application": deep_get(event, "application", "name", default=""),
     }
