@@ -1,0 +1,88 @@
+AnalysisType: rule
+Filename: duo_user_anomalous_push.py
+RuleID: DUO.User.Denied.AnomalousPush
+DisplayName: Duo User Auth Denied For Anomalous Push
+Enabled: true
+DedupPeriodMinutes: 15
+LogTypes:
+  - Duo.Authentication
+Tags:
+  - Duo
+Severity: Medium
+Description: >
+  A Duo authentication was denied due to an anomalous 2FA push.
+Reference: https://duo.com/docs/adminapi#authentication-logs
+Runbook: Follow up with the user to confirm they intended several pushes in quick succession.
+Tests:
+  -
+    Name: anomalous_push_occurred
+    ExpectedResult: true
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "anomalous_push",
+        "result": "denied",
+        "user": {
+          "name": "example@example.io"
+        }
+      }
+  -
+    Name: good_auth
+    ExpectedResult: false
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "user_approved",
+        "result": "success",
+        "user": {
+          "name": "example@example.io"
+        }
+      }
+  -
+    Name: denied_old_creds
+    ExpectedResult: false
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "out_of_date",
+        "result": "denied",
+        "user": {
+          "name": "example@example.io"
+        }
+      }
