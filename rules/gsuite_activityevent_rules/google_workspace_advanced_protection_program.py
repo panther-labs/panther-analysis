@@ -14,5 +14,6 @@ def title(event):
     setting_name = setting.split("-")[-1].strip()
     return (
         f"Google Workspace Advanced Protection Program settings have been updated to "
-        f"[{setting_name}]"
+        f"[{setting_name}] by Google Workspace User "
+        f"[{event.get('actor',{}).get('email','<NO_EMAIL_FOUND>')}]."
     )
