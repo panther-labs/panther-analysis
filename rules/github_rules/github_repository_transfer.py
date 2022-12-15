@@ -3,10 +3,10 @@ from panther_base_helpers import github_alert_context
 
 def rule(event):
     # Return True to match the log event and trigger an alert.
-    return (
-        event.get("action", "") == "repo.transfer"
-        or event.get("action", "") == "repo.transfer_outgoing"
-        or event.get("action", "") == "repo.transfer_start"
+    return event.get("action", "") in (
+        "repo.transfer",
+        "repo.transfer_outgoing",
+        "repo.transfer_start",
     )
 
 
