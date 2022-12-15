@@ -11,7 +11,7 @@ def title(event):
     )
     return (
         f"Google Workspace User [{event.get('actor',{}).get('email','<NO_EMAIL_FOUND>')}] "
-        f"added a new mobile application "
+        f"added application "
         f"[{mobile_app_pkg_id}] "
         f"to your organization's mobile application whitelist for the device type "
         f"[{event.get('parameters',{}).get('DEVICE_TYPE','<NO_DEVICE_TYPE_FOUND>')}]."
