@@ -13,6 +13,6 @@ def title(event):
         f"Google Workspace User [{event.get('actor',{}).get('email','<NO_EMAIL_FOUND>')}] "
         f"added application "
         f"[{mobile_app_pkg_id}] "
-        f"to your organization's mobile application whitelist for the device type "
+        f"to your org's mobile application allowlist for "
         f"[{event.get('parameters',{}).get('DEVICE_TYPE','<NO_DEVICE_TYPE_FOUND>')}]."
     )
