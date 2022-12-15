@@ -13,7 +13,7 @@ def title(event):
     # will act as deduplication string.
     return (
         f"Google Workspace Administrator "
-        f"[{event.get('actor',{}).get('email','no-email-provided')}] "
+        f"[{event.get('actor',{}).get('email','NO_EMAIL_FOUND')}] "
         f"created a new admin role "
-        f"[{event.get('parameters',{}).get('ROLE_NAME','no-role-name-provided')}]."
+        f"[{event.get('parameters',{}).get('ROLE_NAME','NO_ROLE_NAME_FOUND')}]."
     )
