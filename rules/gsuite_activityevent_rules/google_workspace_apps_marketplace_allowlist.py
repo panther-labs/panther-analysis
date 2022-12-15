@@ -19,7 +19,7 @@ def title(event):
     old_val = event.get("parameters", {}).get("OLD_VALUE", "NO_OLD_VALUE_FOUND")
     new_val = event.get("parameters", {}).get("NEW_VALUE", "NO_NEW_VALUE_FOUND")
     return (
-        f"Google Workspace User [{event.get('actor',{}).get('email','no-email-provided')}] "
+        f"Google Workspace User [{event.get('actor',{}).get('email','NO_EMAIL_FOUND')}] "
         f"made an application allowlist setting change from [{value_dict.get(old_val)}] "
         f"to [{value_dict.get(new_val)}]"
     )
