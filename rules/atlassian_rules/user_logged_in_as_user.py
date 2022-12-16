@@ -10,9 +10,9 @@ def rule(event):
 
 def title(event):
     actor = deep_get(event, "attributes", "actor", "email", default="<unknown-email>")
-    impersonated_user = deep_get(
-        event, "attributes", "context", default="<unknown-user-attributes>"
-    )[0]["attributes"].get("email")
+    context = deep_get(
+        event, "attributes", "context", default=[{}])
+    impersonated_user = context[0].get('attributes',{}).get('email', '<unknown-email>')
     return f"{actor} logged in as {impersonated_user}."
 
 
