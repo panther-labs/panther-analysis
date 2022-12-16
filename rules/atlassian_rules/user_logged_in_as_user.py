@@ -2,7 +2,11 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    return deep_get(event, "attributes", "action", default="<unknown-action>") == "user_logged_in_as_user"
+    return deep_get(
+        event,
+        "attributes",
+        "action",
+        default="<unknown-action>") == "user_logged_in_as_user"
 
 
 def title(event):
