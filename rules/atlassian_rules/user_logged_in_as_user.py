@@ -10,9 +10,8 @@ def rule(event):
 
 def title(event):
     actor = deep_get(event, "attributes", "actor", "email", default="<unknown-email>")
-    context = deep_get(
-        event, "attributes", "context", default=[{}])
-    impersonated_user = context[0].get('attributes',{}).get('email', '<unknown-email>')
+    context = deep_get(event, "attributes", "context", default=[{}])
+    impersonated_user = context[0].get("attributes", {}).get("email", "<unknown-email>")
     return f"{actor} logged in as {impersonated_user}."
 
 
@@ -20,7 +19,8 @@ def alert_context(event):
     return {
         "Timestamp": deep_get(event, "attributes", "time", default="<unknown-time>"),
         "Actor": deep_get(event, "attributes", "actor", "email", default="<unknown-actor-email>"),
-        "Impersonated user": deep_get(
-        event, "attributes", "context", default=[{}])[0].get('attributes',{}).get('email', '<unknown-email>'),
+        "Impersonated user": deep_get(event, "attributes", "context", default=[{}])[0]
+        .get("attributes", {})
+        .get("email", "<unknown-email>"),
         "Event ID": event.get("id"),
     }
