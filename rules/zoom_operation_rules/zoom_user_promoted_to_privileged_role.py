@@ -7,7 +7,7 @@ def extract_values(event):
     operator = event.get("operator", "<operator-not-found>")
     operation_detail = event.get("operation_detail", "")
     email = re.search(r"[\w.+-c]+@[\w-]+\.[\w.-]+", operation_detail)[0] or "<email-not-found>"
-    fromto = re.findall(r"from ([-\w]+) to ([-\w]+)", operation_detail) or [
+    fromto = re.findall(r"from ([-\s\w]+) to ([-\s\w]+)", operation_detail) or [
         ("<from-role-not-found>", "<to-role-not-found>")
     ]
     from_role, to_role = fromto[0] or ("<role-not-found>", "<role-not-found>")

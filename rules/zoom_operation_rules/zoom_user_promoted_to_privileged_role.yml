@@ -25,6 +25,22 @@ Tests:
       Log:
         action: Batch Update
         category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Admin to Billing Admin'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Admin to Billing Admin
+    - ExpectedResult: true
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Member to Billing Admin'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Member to Billing Admin Event
+    - ExpectedResult: false
+      Log:
+        action: Batch Update
+        category_type: User
         operation_detail: 'Change Role  - homer.simpson@duff.io: from Co-Owner to User'
         operator: admin@duff.io
         time: "2022-07-05 20:28:48"
