@@ -1,0 +1,76 @@
+AnalysisType: rule
+Description: Your organization's Google Workspace Advanced Protection Program settings were modified.
+DisplayName: Google Workspace Advanced Protection Program
+Enabled: true
+Filename: google_workspace_advanced_protection_program.py
+Runbook: Confirm the changes made were authorized for your organization.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 01:35:29.906000000"
+            uniqueQualifier: "-12345"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CREATE_APPLICATION_SETTING
+        parameters:
+            APPLICATION_EDITION: standard
+            APPLICATION_NAME: Security
+            NEW_VALUE: ALLOWED_WITH_REMOTE_ACCESS
+            ORG_UNIT_NAME: Example IO
+            SETTING_NAME: Advanced Protection Program Settings - Allow security codes
+        type: APPLICATION_SETTINGS
+      Name: Allow Security Codes
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 01:35:29.906000000"
+            uniqueQualifier: "-12345"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CREATE_APPLICATION_SETTING
+        parameters:
+            APPLICATION_EDITION: standard
+            APPLICATION_NAME: Security
+            NEW_VALUE: "true"
+            ORG_UNIT_NAME: Example IO
+            SETTING_NAME: Advanced Protection Program Settings - Enable user enrollment
+        type: APPLICATION_SETTINGS
+      Name: Enable User Enrollment
+    - ExpectedResult: false
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "123456"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 02:57:48.693000000"
+            uniqueQualifier: "-12456"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CREATE_ROLE
+        parameters:
+            ROLE_ID: "567890"
+            ROLE_NAME: CustomAdminRoleName
+        type: DELEGATED_ADMIN_SETTINGS
+      Name: New Custom Role Created
+DedupPeriodMinutes: 60
+LogTypes:
+    - GSuite.ActivityEvent
+RuleID: Google.Workspace.Advanced.Protection.Program
+Threshold: 1

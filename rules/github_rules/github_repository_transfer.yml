@@ -1,0 +1,76 @@
+AnalysisType: rule
+Description: A user accepted a request to receive a transferred Github repository, a  Github repository was transferred to another repository network, or a user sent a request to transfer a repository to another user or organization.
+DisplayName: Github Repository Transfer
+Enabled: true
+Filename: github_repository_transfer.py
+Reference: |-
+    https://docs.github.com/en/enterprise-server@3.3/repositories/creating-and-managing-repositories/transferring-a-repository
+
+    https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/audit-log-events-for-your-enterprise#repo-category-actions
+Runbook: Please check with the referenced users or their supervisors to ensure the transferring of this repository is expected and allowed.
+Severity: Medium
+Tags:
+    - Github Repository
+    - Github Repository Transfer
+    - Repository
+    - Transfer
+Tests:
+    - ExpectedResult: false
+      Log:
+        _document_id: abCD
+        action: repo.create
+        actor: example-actor
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-11 22:40:20.268"
+        created_at: "2022-12-11 22:40:20.268"
+        org: example-io
+        repo: example-io/oops
+        visibility: public
+      Name: Public Repo Created
+    - ExpectedResult: true
+      Log:
+        _document_id: BodJtQIrT3kWMIQpm1ANew
+        action: repo.transfer_outgoing
+        actor: user-name
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-14 19:16:31.299"
+        created_at: "2022-12-14 19:16:31.299"
+        org: your-organization
+        repo: your-organizatoin/project_repo
+        visibility: private
+      Name: Repo Transfer Outgoing
+    - ExpectedResult: true
+      Log:
+        _document_id: BodJtQIrT3kWMIQpm1ANew
+        action: repo.transfer_start
+        actor: user-name
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-14 19:16:31.299"
+        created_at: "2022-12-14 19:16:31.299"
+        org: your-organization
+        repo: your-organizatoin/project_repo
+        visibility: private
+      Name: Repo Transfer Start
+    - ExpectedResult: true
+      Log:
+        _document_id: CFyS8UJsQjJfCgsmTLI6mQ
+        action: repo.transfer
+        actor: org-user
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-14 19:21:01.035"
+        created_at: "2022-12-14 19:21:01.035"
+        org: your-organization
+        repo: your-organization/project_repo
+        visibility: private
+      Name: Repository Transfer
+DedupPeriodMinutes: 60
+LogTypes:
+    - GitHub.Audit
+RuleID: Github.Repository.Transfer
+SummaryAttributes:
+    - action
+Threshold: 1

@@ -1,0 +1,97 @@
+AnalysisType: rule
+Filename: gsuite_workspace_trusted_domains_allowlist.py
+RuleID: GSuite.Workspace.TrustedDomainsAllowlist
+DisplayName: GSuite Workspace Trusted Domain Allowlist Modified
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Medium
+Description: >
+  A Workspace Admin Has Modified The Trusted Domains List
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/admin-domain-settings#ADD_TRUSTED_DOMAINS
+Runbook: >
+  Verify the intent of this modification. If intent cannot be verified, then
+  an indicator search on the actor is advised.
+SummaryAttributes:
+  - actor:email
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Tests:
+  -
+    Name: Workspace Admin Remove Trusted Domain
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "user@example.io",
+          "profileId": "110506209185950390992"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 00:01:34.643000000",
+          "uniqueQualifier": "-2972206985263071668"
+        },
+        "kind": "admin#reports#activity",
+        "name": "REMOVE_TRUSTED_DOMAINS",
+        "p_source_label": "Staging",
+        "parameters": {
+          "DOMAIN_NAME": "evilexample.com"
+        },
+        "type": "DOMAIN_SETTINGS"
+      }
+  -
+    Name: Workspace Admin Add Trusted Domain
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "user@example.io",
+          "profileId": "110506209185950390992"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-10 23:59:24.470000000",
+          "uniqueQualifier": "-334478670839567761"
+        },
+        "kind": "admin#reports#activity",
+        "name": "ADD_TRUSTED_DOMAINS",
+        "parameters": {
+          "DOMAIN_NAME": "evilexample.com"
+        },
+        "type": "DOMAIN_SETTINGS"
+      }
+  -
+    Name: Admin Set Default Calendar SHARING_OUTSIDE_DOMAIN Setting to MANAGE_ACCESS
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "example@example.io",
+          "profileId": "12345"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 01:06:26.303000000",
+          "uniqueQualifier": "-12345"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "CHANGE_CALENDAR_SETTING",
+        "parameters": {
+          "DOMAIN_NAME": "example.io",
+          "NEW_VALUE": "MANAGE_ACCESS",
+          "OLD_VALUE": "READ_WRITE_ACCESS",
+          "ORG_UNIT_NAME": "Example IO",
+          "SETTING_NAME": "SHARING_OUTSIDE_DOMAIN"
+        },
+        "type": "CALENDAR_SETTINGS"
+      }

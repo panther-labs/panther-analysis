@@ -2,12 +2,12 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    return event.get("result") == "fraud"
+    return event.get("reason") == "anomalous_push" and event.get("result") == "denied"
 
 
 def title(event):
     user = deep_get(event, "user", "name", default="Unknown")
-    return f"A Duo action was marked as fraudulent by [{user}]"
+    return f"Duo Auth denied due to an anomalous 2FA push for [{user}]"
 
 
 def alert_context(event):
