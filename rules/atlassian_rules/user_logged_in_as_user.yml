@@ -1,0 +1,105 @@
+AnalysisType: rule
+DedupPeriodMinutes: 60 # 1 hour
+DisplayName: Atlassian user logged in as user
+Enabled: true
+Filename: user_logged_in_as_user.py
+RuleID: Atlassian.User.LoggedInAsUser
+Severity: High
+LogTypes:
+  - Atlassian.Audit
+Tags:
+  - Atlassian
+  - User impersonation
+Description: >
+  Reports when an Atlassian user logs in (impersonates) another user.
+Runbook: >
+  Validate that the Atlassian admin did log in (impersonate) as another user.
+Reference: https://support.atlassian.com/user-management/docs/log-in-as-another-user/
+Tests:
+  -
+    Name: Admin impersonated user successfully
+    ExpectedResult: true
+    Log:
+        {
+          "attributes": {
+            "action": "user_logged_in_as_user",
+            "actor": {
+              "email": "example.admin@example.com",
+              "id": "1234567890abcdefghijklmn",
+              "name": "Example Admin"
+            },
+            "container": [
+              {
+                "attributes": {
+                  "siteHostName": "https://example.atlassian.net",
+                  "siteName": "example"
+                },
+                "id": "12345678-abcd-9012-efgh-1234567890abcd",
+                "links": {
+                  "alt": "https://example.atlassian.net"
+                },
+                "type": "sites"
+              }
+            ],
+            "context": [
+              {
+                "attributes": {
+                  "accountType": "atlassian",
+                  "email": "example.user@example.io",
+                  "name": "example.user@example.io"
+                },
+                "type": "users"
+              }
+            ],
+            "time": "2022-12-15T00:35:15.890Z"
+          },
+          "id": "2508d209-3336-4763-89a0-aceaf1322fcf", #event ID
+          "message": {
+            "content": "Logged in as example.user@example.io",
+            "format": "simple"
+          },
+        }
+  -
+    Name: user_logged_in_as_user not in log
+    ExpectedResult: false
+    Log:
+        {
+          "attributes": {
+            "action": "user_login",
+            "actor": {
+              "email": "example.admin@example.com",
+              "id": "1234567890abcdefghijklmn",
+              "name": "Example Admin"
+            },
+            "container": [
+              {
+                "attributes": {
+                  "siteHostName": "https://example.atlassian.net",
+                  "siteName": "example"
+                },
+                "id": "12345678-abcd-9012-efgh-1234567890abcd",
+                "links": {
+                  "alt": "https://example.atlassian.net"
+                },
+                "type": "sites"
+              }
+            ],
+            "context": [
+              {
+                "attributes": {
+                  "accountType": "atlassian",
+                  "email": "example.user@example.io",
+                  "name": "example.user@example.io"
+                },
+                "type": "users"
+              }
+            ],
+            "time": "2022-12-15T00:35:15.890Z"
+          },
+          "id": "2508d209-3336-4763-89a0-aceaf1322fcf", #event ID
+          "message": {
+            "content": "Logged in as example.user@example.io",
+            "format": "simple"
+          },
+        }
+
