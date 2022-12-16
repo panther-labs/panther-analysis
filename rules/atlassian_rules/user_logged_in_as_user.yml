@@ -3,18 +3,59 @@ DedupPeriodMinutes: 60 # 1 hour
 DisplayName: Atlassian user logged in as user
 Enabled: true
 Filename: user_logged_in_as_user.py
-RuleID: Atlassian.User.LoggedInAs.User
+RuleID: Atlassian.User.LoggedInAsUser
 Severity: High
 LogTypes:
   - Atlassian.Audit
-Reports:
-  ReportName (like CIS, MITRE ATT&CK):
-    - The specific report section relevant to this rule
 Tags:
   - Atlassian
   - User impersonation
 Description: >
-  This rule exists to validate the CLI workflows of the Panther CLI
+  Reports when an Atlassian user logs in (impersonates) another user.
 Runbook: >
-  First, find out who wrote this the spec format, then notify them with feedback.
-Reference: https://www.a-clickable-link-to-more-info.com
+  Validate that the Atlassian admin did log in (impersonate) as another user.
+Reference: https://support.atlassian.com/user-management/docs/log-in-as-another-user/
+Tests:
+  -
+    Name: Admin impersonated user successfully
+    ExpectedResult: true
+    Log:
+        {
+          "attributes": {
+            "action": "user_logged_in_as_user",
+            "actor": {
+              "email": "example.admin@example.com",
+              "id": "1234567890abcdefghijklmn",
+              "name": "Example Admin"
+            },
+            "container": [
+              {
+                "attributes": {
+                  "siteHostName": "https://example.atlassian.net",
+                  "siteName": "example"
+                },
+                "id": "12345678-abcd-9012-efgh-1234567890abcd",
+                "links": {
+                  "alt": "https://example.atlassian.net"
+                },
+                "type": "sites"
+              }
+            ],
+            "context": [
+              {
+                "attributes": {
+                  "accountType": "atlassian",
+                  "email": "example.user@example.io",
+                  "name": "example.user@example.io"
+                },
+                "type": "users"
+              }
+            ],
+            "time": "2022-12-15T00:35:15.890Z"
+          },
+          "id": "2508d209-3336-4763-89a0-aceaf1322fcf", #event ID
+          "message": {
+            "content": "Logged in as example.user@example.io",
+            "format": "simple"
+          },
+        }
