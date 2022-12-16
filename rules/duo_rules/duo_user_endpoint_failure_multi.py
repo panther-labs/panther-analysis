@@ -7,7 +7,7 @@ def rule(event):
         "endpoint_failed_google_verification",
         "endpoint_is_not_trusted",
         "could_not_determine_if_endpoint_was_trusted",
-        "invalid_device"
+        "invalid_device",
     ]
     return event.get("reason", "") in endpoint_reasons
 
