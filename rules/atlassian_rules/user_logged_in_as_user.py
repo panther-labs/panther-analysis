@@ -21,6 +21,6 @@ def alert_context(event):
         "Timestamp": deep_get(event, "attributes", "time", default="<unknown-time>"),
         "Actor": deep_get(event, "attributes", "actor", "email", default="<unknown-actor-email>"),
         "Impersonated user": deep_get(
-        event, "attributes", "context", default=[{}])[0].get('attributes',{}).get('email', '<unknown-email>')
+        event, "attributes", "context", default=[{}])[0].get('attributes',{}).get('email', '<unknown-email>'),
         "Event ID": event.get("id"),
     }
