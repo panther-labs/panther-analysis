@@ -11,7 +11,7 @@ def title(event):
     # of this method will act as deduplication string.
     try:
         desc = json.loads(event.get("description", {}))
-        message = desc.get("message", "<NO_MESSAGE_FOUND>")
+        message = desc.get("message", "<NO_MESSAGE_FOUND>")[:-1]
     except ValueError:
         message = "Invalid Json"
     return (
