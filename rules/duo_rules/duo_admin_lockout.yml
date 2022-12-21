@@ -9,11 +9,19 @@ Tests:
     - ExpectedResult: true
       Log:
         action: admin_lockout
+        description: '"message": "Admin temporarily locked out due to too many passcode attempts."'
+        isotimestamp: "2022-12-14 21:02:03"
+        timestamp: "2022-12-14 21:02:03"
+        username: Homer Simpson
+      Name: Admin lockout- invalid json
+    - ExpectedResult: true
+      Log:
+        action: admin_lockout
         description: '{"message": "Admin temporarily locked out due to too many passcode attempts."}'
         isotimestamp: "2022-12-14 21:02:03"
         timestamp: "2022-12-14 21:02:03"
         username: Homer Simpson
-      Name: Admin lockout
+      Name: Admin lockout- valid json
     - ExpectedResult: false
       Log:
         action: bypass_create
