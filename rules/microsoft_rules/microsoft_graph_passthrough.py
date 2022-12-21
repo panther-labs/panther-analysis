@@ -14,7 +14,7 @@ def dedup(event):
 
 
 def severity(event):
-    if event.get("severity") == "informational":
+    if event.get("severity", "").lower() == "informational":
         return "INFO"
     return event.get("severity")
 
