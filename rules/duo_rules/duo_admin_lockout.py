@@ -8,6 +8,5 @@ def title(event):
     # of this method will act as deduplication string.
     return (
         f"Duo User [{event.get('username', '<NO_USER_FOUND>')}] is "
-        f"locked out. Reason: "
-        f"[{event.get('description', {}).get('message','<NO_MESSAGE_FOUND>')}]."
+        f"temporarily locked out due to too many passcode attempts."
     )
