@@ -1,0 +1,248 @@
+AnalysisType: rule
+Description: This rule captures multiple read/list events related to IAM group management in AWS Cloudtrail.
+DisplayName: AWS IAM Group Read Only Events
+Enabled: false
+Filename: aws_iam_group_read_only_events.py
+Reference: https://attack.mitre.org/techniques/T1069/
+Runbook: Examine other activities done by this user to determine whether or not activity is suspicious.
+Severity: Info
+Tags:
+    - AWS
+    - Cloudtrail
+    - Configuration Required
+    - IAM
+    - MITRE
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: GetGroup
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Get Group
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: GetGroupPolicy
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Get Group Policy
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: ListAttachedGroupPolicies
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: List Attached Group Policies
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: ListGroups
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: List Groups
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: ListGroupsForUser
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: List Groups for User
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 883efb94-aa58-4512-beb7-10a5fffa33e4
+        eventName: DetachUserGroup
+        eventSource: iam.amazonaws.com
+        eventTime: "2022-12-11 19:42:55"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: true
+        recipientAccountId: "1231231234"
+        requestID: f92dd1a7-ad07-4fef-9511-1081d2dd3585
+        requestParameters:
+            maxItems: 1000
+            userName: user-name
+        sourceIPAddress: cloudformation.amazonaws.com
+        userAgent: cloudformation.amazonaws.com
+        userIdentity:
+            accessKeyId: ASIAVKVYIOO7BDL4T5NG
+            accountId: "1231231234"
+            arn: arn:aws:sts::1231231234:assumed-role/AssumedRole-us-east-2/123123123456
+            invokedBy: cloudformation.amazonaws.com
+            principalId: AROAVKVYIOO7JN7TN7NSA:123123123456
+            sessionContext:
+                attributes:
+                    creationDate: "2022-12-11T19:42:54Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "1231231234"
+                    arn: arn:aws:iam::1231231234:role/PAssumedRole-us-east-2
+                    principalId: AROAVKVYIOO7JN7TN7NSA
+                    type: Role
+                    userName: AssumedRole-us-east-2
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Detach User Group
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.IAM.Group.Read.Only.Events
+Threshold: 1
