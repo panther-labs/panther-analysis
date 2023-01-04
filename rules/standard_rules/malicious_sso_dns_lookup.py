@@ -5,7 +5,7 @@ domains you own, that contain your company name, false positive alerts will be g
 
 Recommended steps to enable:
     1. Change COMPANY_NAME to match your organization
-    2. Update the occurences of "company_name_here" in malicious_sso_dns_lookup.yml
+    2. Update the occurrences of "company_name_here" in malicious_sso_dns_lookup.yml
     3. Add known domains containing COMPANY_NAME to ALLOWED_DOMAINS
     4. Run local tests
     5. Run a Data Replay test to identify unknown domains that should be in ALLOWED_DOMAINS

@@ -1,0 +1,115 @@
+AnalysisType: rule
+Filename: gsuite_calendar_made_public.py
+RuleID: GSuite.CalendarMadePublic
+DisplayName: GSuite Calendar Has Been Made Public
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1087
+Severity: Medium
+Description: >
+  A User or Admin Has Modified A Calendar To Be Public
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/calendar#change_calendar_acls
+Runbook: >
+  Follow up with user about this calendar share. 
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: User Publically Shared a Calendar
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "email": "user@example.io",
+          "profileId": "110111111111111111111"
+        },
+        "id": {
+          "applicationName": "calendar",
+          "customerId": "D12345",
+          "time": "2022-12-10 22:33:31.852000000",
+          "uniqueQualifier": "-2888888888888888888"
+        },
+        "ipAddress": "1.2.3.4",
+        "kind": "admin#reports#activity",
+        "name": "change_calendar_acls",
+        "ownerDomain": "example.io",
+        "parameters": {
+          "access_level": "freebusy",
+          "api_kind": "web",
+          "calendar_id": "user@example.io",
+          "grantee_email": "__public_principal__@public.calendar.google.com",
+          "user_agent": "Mozilla/5.0"
+        },
+        "type": "calendar_change"
+      }
+  -
+    Name: Admin Set Default Calendar SHARING_OUTSIDE_DOMAIN Setting to READ_WRITE_ACCESS
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "example@example.io",
+          "profileId": "12345"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 01:06:26.303000000",
+          "uniqueQualifier": "-12345"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "CHANGE_CALENDAR_SETTING",
+        "parameters": {
+          "DOMAIN_NAME": "example.io",
+          "NEW_VALUE": "READ_WRITE_ACCESS",
+          "OLD_VALUE": "READ_ONLY_ACCESS",
+          "ORG_UNIT_NAME": "Example IO",
+          "SETTING_NAME": "SHARING_OUTSIDE_DOMAIN"
+        },
+        "type": "CALENDAR_SETTINGS"
+      }
+  - Name: ListObject Type
+    ExpectedResult: false
+    Log:
+      {
+          "actor": {
+          "email": "user@example.io",
+          "profileId": "118111111111111111111"
+          },
+          "id": {
+          "applicationName": "drive",
+          "customerId": "D12345",
+          "time": "2022-12-20 17:27:47.080000000",
+          "uniqueQualifier": "-7312729053723258069"
+          },
+          "ipAddress": "12.12.12.12",
+          "kind": "admin#reports#activity",
+          "name": "rename",
+          "parameters": {
+          "actor_is_collaborator_account": null,
+          "billable": true,
+          "doc_id": "1GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+          "doc_title": "Document Title- Found Here",
+          "doc_type": "presentation",
+          "is_encrypted": null,
+          "new_value": [
+              "Document Title- Found Here"
+          ],
+          "old_value": [
+              "Document Title- Old"
+          ],
+          "owner": "user@example.io",
+          "owner_is_shared_drive": null,
+          "owner_is_team_drive": null,
+          "primary_event": true,
+          "visibility": "private"
+          },
+          "type": "access"
+      }

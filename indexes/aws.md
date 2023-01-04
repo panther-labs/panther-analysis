@@ -154,7 +154,7 @@
 
 [ AWS IAM Group Users](../policies/aws_iam_policies/aws_iam_group_users.py)
 
-[ Detect Reconnaisance from IAM Users](../rules/aws_cloudtrail_rules/aws_iam_user_recon_denied.py)
+[ Detect Reconnaissance from IAM Users](../rules/aws_cloudtrail_rules/aws_iam_user_recon_denied.py)
 
 [ AWS IAM Password Unused](../policies/aws_iam_policies/aws_password_unused.py)
 
@@ -216,7 +216,7 @@
 
 [ Logins Without SAML](../rules/aws_cloudtrail_rules/aws_console_login_without_saml.py)
 
-[ Detect Reconnaisance from IAM Users](../rules/aws_cloudtrail_rules/aws_iam_user_recon_denied.py)
+[ Detect Reconnaissance from IAM Users](../rules/aws_cloudtrail_rules/aws_iam_user_recon_denied.py)
 
 [ Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.py)
 
