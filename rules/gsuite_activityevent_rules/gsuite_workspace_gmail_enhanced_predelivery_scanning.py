@@ -2,6 +2,10 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
+    # the shape of the items in parameters can change a bit ( like NEW_VALUE can be an array )
+    #  when the applicationName is something other than admin
+    if not deep_get(event, "id", "applicationName", default="").lower() == "admin":
+        return False
     if all(
         [
             (event.get("name", "") == "CHANGE_APPLICATION_SETTING"),
