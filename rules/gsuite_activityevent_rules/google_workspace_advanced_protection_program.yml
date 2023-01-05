@@ -6,6 +6,27 @@ Filename: google_workspace_advanced_protection_program.py
 Runbook: Confirm the changes made were authorized for your organization.
 Severity: Medium
 Tests:
+    - ExpectedResult: false
+      Name: parameters json key set to null value
+      Log:
+        {
+          "actor": {
+            "callerType": "USER",
+            "email": "user@example.io",
+            "profileId": "111111111111111111111"
+          },
+          "id": {
+            "applicationName": "user_accounts",
+            "customerId": "C00000000",
+            "time": "2022-12-29 22:42:44.467000000",
+            "uniqueQualifier": "517500000000000000"
+          },
+          "parameters": null,
+          "ipAddress": "2600:2600:2600:2600:2600:2600:2600:2600",
+          "kind": "admin#reports#activity",
+          "name": "recovery_email_edit",
+          "type": "recovery_info_change"
+        }
     - ExpectedResult: true
       Log:
         actor:

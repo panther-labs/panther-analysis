@@ -1,7 +1,12 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
     # Return True to match the log event and trigger an alert.
     setting_name = (
-        event.get("parameters", {}).get("SETTING_NAME", "NO_SETTING_NAME").split("-")[0].strip()
+        deep_get(event, "parameters", "SETTING_NAME", default="NO_SETTING_NAME")
+        .split("-")[0]
+        .strip()
     )
     setting_alert_flag = "Advanced Protection Program Settings"
     return event.get("name") == "CREATE_APPLICATION_SETTING" and setting_name == setting_alert_flag
