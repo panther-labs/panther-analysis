@@ -1,23 +1,26 @@
 from panther_base_helpers import aws_rule_context
 
+# arn allow list to suppress alerts
+ARN_ALLOW_LIST = []
+
+GROUP_ACTIONS = [
+    "GetGroup",
+    "GetGroupPolicy",
+    "ListAttachedGroupPolicies",
+    "ListGroupPolicies",
+    "ListGroups",
+    "ListGroupsForUser",
+]
+
 
 def rule(event):
-    arn_whitelist = []
-    arn = event.get("userIdentity", {}).get("arn", "<NO_ARN_FOUND>")
+    event_arn = event.get("userIdentity", {}).get("arn", "<NO_ARN_FOUND>")
     # Return True if arn not in whitelist and event source is iam and event name is
     # present in read/list event_name list.
-    event_names = [
-        "GetGroup",
-        "GetGroupPolicy",
-        "ListAttachedGroupPolicies",
-        "ListGroupPolicies",
-        "ListGroups",
-        "ListGroupsForUser",
-    ]
     if (
-        arn not in arn_whitelist
+        event_arn not in ARN_ALLOW_LIST
         and event.get("eventSource", "<NO_EVENT_SOURCE_FOUND>") == "iam.amazonaws.com"
-        and event.get("eventName", "<NO_EVENT_NAME_FOUND>") in event_names
+        and event.get("eventName", "<NO_EVENT_NAME_FOUND>") in GROUP_ACTIONS
     ):
         # continue on with analysis
         return True
