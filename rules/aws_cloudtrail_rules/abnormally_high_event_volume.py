@@ -10,6 +10,8 @@ ANOMALY_THRESHOLD = 10
 # If len(COUNT_LEDGER) == MAX_LEDGER_COUNT, the oldest list item is purged
 MAX_LEDGER_COUNT = 15
 
+COUNT_LEDGER = None
+AVERAGE_COUNT = None
 
 def rule(event):
     global COUNT_LEDGER
