@@ -37,7 +37,7 @@ jobs:
           branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
       # Sync this branch with upstream
