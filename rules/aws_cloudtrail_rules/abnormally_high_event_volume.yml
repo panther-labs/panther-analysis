@@ -13,7 +13,7 @@ Tests:
         num_logs: 5
         p_log_type: AWS.CloudTrail
       Mocks:
-        - objectName: get_count_ledger
+        - objectName: get_string_set
           returnValue: "True"
       Name: Abnormal = False
     - ExpectedResult: true
@@ -21,7 +21,7 @@ Tests:
         num_logs: 5e+06
         p_log_type: AWS.CloudTrail
       Mocks:
-        - objectName: get_count_ledger
+        - objectName: get_string_set
           returnValue: "True"
       Name: Abnormal = True
 DedupPeriodMinutes: 30
