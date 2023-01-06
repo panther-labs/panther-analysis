@@ -3,17 +3,17 @@ from datetime import datetime, timedelta
 from statistics import mean
 from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
 
-# If event.get('num_logs') / average_count > ANOMALY_THRESHOLD, detection fires
+# If event.get('num_logs') / AVERAGE_COUNT > ANOMALY_THRESHOLD, detection fires
 ANOMALY_THRESHOLD = 10
 
 # MAX_LEDGER_COUNT enforces a cap on list items for the rolling ledger
-# If len(count_ledger) == MAX_LEDGER_COUNT, the oldest list item is purged
+# If len(COUNT_LEDGER) == MAX_LEDGER_COUNT, the oldest list item is purged
 MAX_LEDGER_COUNT = 15
 
 
 def rule(event):
-    global count_ledger
-    global average_count
+    global COUNT_LEDGER
+    global AVERAGE_COUNT
 
     # Generate the DynamoDB key
     key = get_key(event)
@@ -22,39 +22,39 @@ def rule(event):
 
     # Get the count ledger from DynamoDB (if there is one)
     # Example: [10, 15, 200, 20, 10....]
-    count_ledger = get_count_ledger(key)
+    COUNT_LEDGER = get_count_ledger(key)
 
     # Handle Unit Tests with mock overrides
-    if isinstance(count_ledger, str):
-        count_ledger = {'[40, 10, 20]'}
+    if isinstance(COUNT_LEDGER, str):
+        COUNT_LEDGER = {'[40, 10, 20]'}
 
     # If there is no count ledger, we start one and store it in DynamoDB
     # Example:
     #       num_logs = 10
-    #       Therefore, count_ledger = [10]
-    if not count_ledger:
+    #       Therefore, COUNT_LEDGER = [10]
+    if not COUNT_LEDGER:
         new_ledger = [num_logs]
         put_string_set(key, [str(new_ledger)])
         set_key_expiration(key, str((datetime.now() + timedelta(minutes=30)).timestamp()))
         return False
-    
+
     # Since DynamoDB returns a string set, we need to deserialize into a list using ast.literal
-    count_ledger = ast.literal_eval(count_ledger.pop())
+    COUNT_LEDGER = ast.literal_eval(COUNT_LEDGER.pop())
 
     # Calculate an average of all previous log counts
-    average_count = mean(count_ledger)
+    AVERAGE_COUNT = mean(COUNT_LEDGER)
 
     # If list length exceeds MAX_LEDGER_COUNT, then prune first item on the list
-    if len(count_ledger) == MAX_LEDGER_COUNT:
-        count_ledger.pop(0)
+    if len(COUNT_LEDGER) == MAX_LEDGER_COUNT:
+        COUNT_LEDGER.pop(0)
 
     # Append the current count to the list (after the average is calculated)
-    count_ledger.append(num_logs)
+    COUNT_LEDGER.append(num_logs)
 
     # Store the updated count ledger in DynamoDB
-    put_string_set(key, [str(count_ledger)])
-    
-    return num_logs / average_count >= ANOMALY_THRESHOLD
+    put_string_set(key, [str(COUNT_LEDGER)])
+
+    return num_logs / AVERAGE_COUNT >= ANOMALY_THRESHOLD
 
 
 def get_count_ledger(key):
@@ -66,12 +66,14 @@ def get_key(event):
 
 
 def title(event):
-    return f"Anomoly detected in [{event.get('p_log_type')}] - Event volume average has exceeded threshold"
+    return (f"Anomoly detected in [{event.get('p_log_type')}] - "
+        "Event volume average has exceeded threshold")
 
 
 def alert_context(event):
     context = {}
-    context['Count Ledger'] = count_ledger
-    context['Average'] = average_count
+    context['Log Type'] = event.get('p_log_type')
+    context['Count Ledger'] = COUNT_LEDGER
+    context['Average'] = AVERAGE_COUNT
 
     return context
