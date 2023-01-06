@@ -10,6 +10,7 @@ ANOMALY_THRESHOLD = 10
 # If len(count_ledger) == MAX_LEDGER_COUNT, the oldest list item is purged
 MAX_LEDGER_COUNT = 15
 
+
 def rule(event):
     # Generate the DynamoDB key
     key = get_key(event)
@@ -48,8 +49,10 @@ def rule(event):
 
 
 def title(event):
-    return (f"Anomoly detected in [{event.get('p_log_type')}] - "
-        "Event volume average has exceeded threshold")
+    return (
+        f"Anomoly detected in [{event.get('p_log_type')}] - "
+        "Event volume average has exceeded threshold"
+    )
 
 
 def alert_context(event):
@@ -58,9 +61,9 @@ def alert_context(event):
     average_count = get_average_count(count_ledger)
 
     context = {}
-    context['Log Type'] = event.get('p_log_type')
-    context['Count Ledger'] = count_ledger
-    context['Average'] = average_count
+    context["Log Type"] = event.get("p_log_type")
+    context["Count Ledger"] = count_ledger
+    context["Average"] = average_count
 
     return context
 
