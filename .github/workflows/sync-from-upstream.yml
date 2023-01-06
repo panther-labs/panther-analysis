@@ -37,13 +37,13 @@ jobs:
           branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
       # Sync this branch with upstream
       - name: Sync upstream changes into PR branch
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.2
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
           # target_sync_branch == the branch in your fork that you want to sync to upstream
           target_sync_branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
