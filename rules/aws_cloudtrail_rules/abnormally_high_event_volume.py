@@ -73,8 +73,7 @@ def get_count_ledger(key):
         return [40, 10, 20]
 
     # Since DynamoDB returns a string set, we need to deserialize into a list
-    else:
-        return ast.literal_eval(count_ledger.pop())
+    return ast.literal_eval(count_ledger.pop())
 
 
 def get_average_count(count_ledger):
