@@ -16,8 +16,7 @@ LogTypeMap:
         - '$.event.srcIP'
     - LogType: Amazon.EKS.Audit
       Selectors:
-        - '$.spec.clusterIP'
-        - '$.requestObject.spec.clusterIP'
+        - '$.sourceIPs'
     - LogType: Apache.AccessCombined
       Selectors:
         - 'remote_host_ip_address'
