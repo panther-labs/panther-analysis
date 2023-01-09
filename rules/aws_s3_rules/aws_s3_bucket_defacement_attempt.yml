@@ -7,6 +7,8 @@ Reference: https://attack.mitre.org/techniques/T1491/
 Reports:
     MITRE ATT&CK:
         - TA0040:T1491
+Tags:
+  - Configuration Required
 Severity: Low
 Tests:
     - ExpectedResult: false
@@ -20,19 +22,9 @@ Tests:
         httpstatus: 200
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
-        operation: REST.GET.ACL
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
+        operation: REST.PUT.OBJECT
         remoteip: 10.0.18.38
-        requester: arn:aws:sts::732337452730:assumed-role/PantherLogProcessingRole
+        requester: arn:aws:sts::732337452730:assumed-role/AWSServiceRoleForSomething
         requestid: 6NBZJ3SRYX5MPDX8
         requesturi: PUT /layers/sample-file.zip HTTP/1.1
         signatureversion: SigV4
@@ -54,16 +46,6 @@ Tests:
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
         operation: S3.EXPIRE.OBJECT
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
         remoteip: 10.0.18.38
         requester: arn:aws:sts::12345678910:assumed-role/test-role
         requestid: 6NBZJ3SRYX5MPDX8
@@ -86,17 +68,7 @@ Tests:
         httpstatus: 200
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
-        operation: REST.GET.ACL
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
+        operation: REST.PUT.OBJECT
         remoteip: 10.0.18.38
         requester: AmazonS3
         requestid: 6NBZJ3SRYX5MPDX8
@@ -119,19 +91,9 @@ Tests:
         httpstatus: 200
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
-        operation: REST.GET.ACL
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
+        operation: REST.PUT.OBJECT
         remoteip: 10.0.18.38
-        requester: svc:s3.amazonaws.com
+        requester: arn:aws:sts::123456789012:assumed-role/SomeRole/some_role_assumer
         requestid: 6NBZJ3SRYX5MPDX8
         requesturi: PUT /layers/sample-file.zip HTTP/1.1
         signatureversion: SigV4
@@ -139,9 +101,9 @@ Tests:
         tlsVersion: TLSv1.2
         totaltime: 197
         turnaroundtime: 96
-        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+        useragent: aws-internal/3 aws-sdk-java/1.12.302 Linux/4.14.294-150.533.amzn1.x86_64 OpenJDK_64-Bit_Server_VM/25.342-b07 java/1.8.0_342 scala/2.12.7 kotlin/1.3.72 vendor/Oracle_Corporation cfg/retry-mode/standard
       Name: EXCLUDED USERAGENTS - False
-    - ExpectedResult: false
+    - ExpectedResult: true
       Log:
         authenticationtype: AuthHeader
         bucket: sample-bucket-name
@@ -152,19 +114,9 @@ Tests:
         httpstatus: 200
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
-        operation: REST.GET.ACL
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
+        operation: REST.PUT.OBJECT
         remoteip: 10.0.18.38
-        requester: arn:aws:sts::12345678910:assumed-role/test-role
+        requester: arn:aws:sts::123456789012:assumed-role/SomeRole/some_role_assumer
         requestid: 6NBZJ3SRYX5MPDX8
         requesturi: PUT /layers/sample-file.zip HTTP/1.1
         signatureversion: SigV4
@@ -172,12 +124,18 @@ Tests:
         tlsVersion: TLSv1.2
         totaltime: 197
         turnaroundtime: 96
-        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
-      Name: S3 GET - False
+        useragent: S3Console/0.4, aws-internal/3 aws-sdk-java/1.11.1030 Linux/5.10.157-122.673.amzn2int.x86_64 OpenJDK_64-Bit_Server_VM/25.352-b08 java/1.8.0_352 vendor/Oracle_Corporation cfg/retry-mode/standard
+      Mocks:
+        - objectName: ALERT_SETTINGS
+          returnValue: >-
+                  {
+                    "bucket": ["sample-bucket-name"]
+                  }
+      Name: aws-internal UserAgent for S3 Console - True
     - ExpectedResult: true
       Log:
         authenticationtype: AuthHeader
-        bucket: sample
+        bucket: sample-bucket-name
         bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
         ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
         hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
@@ -186,16 +144,6 @@ Tests:
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
         operation: REST.PUT.OBJECT
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
         remoteip: 10.0.18.38
         requester: arn:aws:sts::12345678910:assumed-role/test-role
         requestid: 6NBZJ3SRYX5MPDX8
@@ -207,8 +155,8 @@ Tests:
         turnaroundtime: 96
         useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
       Mocks:
-        - objectName: get_included_bucket_names
-          returnValue: '[''sample'', ''test'', ''bucket''] '
+        - objectName: ALERT_SETTINGS
+          returnValue: '{"bucket": ["sample-bucket-name"]}'
       Name: S3 PUT - Included Bucket Names
     - ExpectedResult: true
       Log:
@@ -222,16 +170,6 @@ Tests:
         key: layers/sample-file.zip
         objectsize: 6.022694e+06
         operation: REST.PUT.OBJECT
-        p_any_aws_arns:
-            - arn:aws:sts::12345678910:assumed-role/sample-role
-        p_any_ip_addresses:
-            - 10.0.18.38
-        p_event_time: "2022-11-01 18:45:45"
-        p_log_type: AWS.S3ServerAccess
-        p_parse_time: "2022-11-01 19:17:50.353"
-        p_row_id: ea9400dbc7b99c88a9b6ccac14d39201
-        p_source_id: 4a42e408-9e2d-4a55-9830-708b8286bc32
-        p_source_label: s3-sensitive-data
         remoteip: 10.0.18.38
         requester: arn:aws:sts::12345678910:assumed-role/test-role
         requestid: 6NBZJ3SRYX5MPDX8
@@ -243,8 +181,8 @@ Tests:
         turnaroundtime: 96
         useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
       Mocks:
-        - objectName: get_included_s3_bucket_keys
-          returnValue: '[''layers/sample-file.zip'', ''sample/file.zip''] '
+        - objectName: ALERT_SETTINGS
+          returnValue: '{"key": ["layers/sample-file.zip"]}'
       Name: S3 PUT - Included S3 Bucket Key
 DedupPeriodMinutes: 60
 LogTypes:
