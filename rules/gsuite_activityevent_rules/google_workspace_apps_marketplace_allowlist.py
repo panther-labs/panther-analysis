@@ -1,8 +1,11 @@
+from panther_base_helpers import deep_get
+
+
 def rule(event):
     # Return True to match the log event and trigger an alert.
-    setting_name = event.get("parameters", {}).get("SETTING_NAME", "<NO_SETTING_NAME>")
-    old_val = event.get("parameters", {}).get("OLD_VALUE", "<NO_OLD_VALUE_FOUND>")
-    new_val = event.get("parameters", {}).get("NEW_VALUE", "<NO_NEW_VALUE_FOUND>")
+    setting_name = deep_get(event, "parameters", "SETTING_NAME", default="<NO_SETTING_NAME>")
+    old_val = deep_get(event, "parameters", "OLD_VALUE", default="<NO_OLD_VALUE_FOUND>")
+    new_val = deep_get(event, "parameters", "NEW_VALUE", default="<NO_NEW_VALUE_FOUND>")
     return setting_name == "ENABLE_G_SUITE_MARKETPLACE" and old_val != new_val
 
 
@@ -16,10 +19,11 @@ def title(event):
         "2": "Allow users to install and run any app from the Marketplace",
         "3": "Allow users to install and run only selected apps from the Marketplace",
     }
-    old_val = event.get("parameters", {}).get("OLD_VALUE", "<NO_OLD_VALUE_FOUND>")
-    new_val = event.get("parameters", {}).get("NEW_VALUE", "<NO_NEW_VALUE_FOUND>")
+    old_val = deep_get(event, "parameters", "OLD_VALUE", default="<NO_OLD_VALUE_FOUND>")
+    new_val = deep_get(event, "parameters", "NEW_VALUE", default="<NO_NEW_VALUE_FOUND>")
+    actor = deep_get(event, "actor", "email", default="<NO_EMAIL_FOUND>")
     return (
-        f"Google Workspace User [{event.get('actor',{}).get('email','<NO_EMAIL_FOUND>')}] "
+        f"Google Workspace User [{actor}] "
         f"made an application allowlist setting change from [{value_dict.get(old_val)}] "
         f"to [{value_dict.get(new_val)}]"
     )
