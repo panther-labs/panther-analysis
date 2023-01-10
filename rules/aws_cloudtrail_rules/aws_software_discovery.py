@@ -7,7 +7,7 @@ DISCOVERY_EVENTS = [
     'DescribeStandards',
     'DescribeStandardsControls',
     'DescribeInstanceInformation',
-    'DescribeSecurityGroups', 
+    'DescribeSecurityGroups',
     'DescribeSecurityGroupRules',
     'DescribeSecurityGroupReferences',
     'DescribeSubnets',
