@@ -1,7 +1,9 @@
 from panther_base_helpers import deep_get
 
-def rule(event):
+
+def rule(_):
     return True
+
 
 def title(event):
     return (
