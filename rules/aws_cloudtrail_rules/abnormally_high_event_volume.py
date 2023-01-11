@@ -102,4 +102,4 @@ def get_count_ledger(key):
 
 
 def get_key(event):
-    return str(event.get("p_log_type")) + __name__ + "n8asdf"
+    return str(event.get("p_log_type")) + __name__
