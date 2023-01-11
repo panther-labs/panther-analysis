@@ -1,0 +1,163 @@
+AnalysisType: scheduled_rule
+Description: Detects Okta Logins from IP addresses not found in CrowdStrike''s AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+DisplayName: Okta Login From CrowdStrike Unmanaged Device
+Enabled: false
+Filename: okta_login_from_crowdstrike_unmanaged_device.py
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        actor:
+            alternateId: homer.simpson@springfield.com
+            displayName: Homer Simpson
+            id: AbcdEfghIjklmno
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: AbcDefgiH
+        client:
+            device: Computer
+            geographicalContext:
+                city: San Francisco
+                country: United States
+                geolocation:
+                    lat: 30
+                    lon: -100
+                postalCode: "9000"
+                state: California
+            ipAddress: 1.2.3.4
+            userAgent:
+                browser: CHROME
+                os: Mac OS X
+                rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+            zone: "null"
+        debugcontext:
+            debugData:
+                authnRequestId: abcdefg
+                deviceFingerprint: abcdefg
+                dtHash: abcdefgc
+                logOnlySecurityData: '{"risk":{"level":"LOW"},"behaviors":{"New Geo-Location":"NEGATIVE","New Device":"NEGATIVE","New IP":"NEGATIVE","New State":"NEGATIVE","New Country":"NEGATIVE","Velocity":"NEGATIVE","New City":"NEGATIVE"}}'
+                origin: https://springfield.okta.com
+                requestId: abcdefg
+                requestUri: /idp/idx/identify
+                threatSuspected: "false"
+                url: /idp/idx/identify?
+        displaymessage: User login to Okta
+        eventtype: user.session.start
+        legacyeventtype: core.user_auth.login_success
+        outcome:
+            result: SUCCESS
+        published: "2023-01-10 17:39:40.526"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: San Francisco
+                    country: United States
+                    geolocation:
+                        lat: 30
+                        lon: -100
+                    postalCode: "90000"
+                    state: California
+                  ip: 1.2.3.4
+                  version: V4
+        securitycontext:
+            asNumber: 1337
+            asOrg: springfield
+            domain: .
+            isProxy: false
+            isp: duff inc
+        severity: INFO
+        target:
+            - alternateId: unknown
+              displayName: Password
+              id: abcdefg
+              type: AuthenticatorEnrollment
+            - alternateId: Okta Dashboard
+              displayName: Okta Dashboard
+              id: abcdefg
+              type: AppInstance
+        transaction:
+            detail: {}
+            id: abcdefg
+            type: WEB
+        uuid: abcdefg
+        version: "0"
+      Name: Event
+    - ExpectedResult: true
+      Log:
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: AbcDefgiH
+        client:
+            device: Computer
+            geographicalContext:
+                city: San Francisco
+                country: United States
+                geolocation:
+                    lat: 30
+                    lon: -100
+                postalCode: "9000"
+                state: California
+            ipAddress: 1.2.3.4
+            userAgent:
+                browser: CHROME
+                os: Mac OS X
+                rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+            zone: "null"
+        debugcontext:
+            debugData:
+                authnRequestId: abcdefg
+                deviceFingerprint: abcdefg
+                dtHash: abcdefgc
+                logOnlySecurityData: '{"risk":{"level":"LOW"},"behaviors":{"New Geo-Location":"NEGATIVE","New Device":"NEGATIVE","New IP":"NEGATIVE","New State":"NEGATIVE","New Country":"NEGATIVE","Velocity":"NEGATIVE","New City":"NEGATIVE"}}'
+                origin: https://springfield.okta.com
+                requestId: abcdefg
+                requestUri: /idp/idx/identify
+                threatSuspected: "false"
+                url: /idp/idx/identify?
+        displaymessage: User login to Okta
+        eventtype: user.session.start
+        legacyeventtype: core.user_auth.login_success
+        outcome:
+            result: SUCCESS
+        published: "2023-01-10 17:39:40.526"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: San Francisco
+                    country: United States
+                    geolocation:
+                        lat: 30
+                        lon: -100
+                    postalCode: "90000"
+                    state: California
+                  ip: 1.2.3.4
+                  version: V4
+        securitycontext:
+            asNumber: 1337
+            asOrg: springfield
+            domain: .
+            isProxy: false
+            isp: duff inc
+        severity: INFO
+        target:
+            - alternateId: unknown
+              displayName: Password
+              id: abcdefg
+              type: AuthenticatorEnrollment
+            - alternateId: Okta Dashboard
+              displayName: Okta Dashboard
+              id: abcdefg
+              type: AppInstance
+        transaction:
+            detail: {}
+            id: abcdefg
+            type: WEB
+        uuid: abcdefg
+        version: "0"
+      Name: No Email
+DedupPeriodMinutes: 60
+RuleID: Okta.Login.From.CrowdStrike.Unmanaged.Device
+Threshold: 1
+ScheduledQueries:
+    - Okta Login From CrowdStrike Unmanaged Device
