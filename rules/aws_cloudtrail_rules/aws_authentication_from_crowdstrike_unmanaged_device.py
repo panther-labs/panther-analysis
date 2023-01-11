@@ -9,7 +9,7 @@ def title(event):
     return (
         f"AWS [{event.get('eventName')}] for "
         f"[{deep_get(event, 'userIdentity', 'arn', default = '<arn_not_found>')}]"
-        " from unmanaged device."
+        " from unmanaged IP Address."
     )
 
 
