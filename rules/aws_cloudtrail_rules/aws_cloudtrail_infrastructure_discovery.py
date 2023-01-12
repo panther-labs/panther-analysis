@@ -36,7 +36,7 @@ DISCOVERY_EVENTS = [
     "ListSubnets",
     "ListTables",
     "ListVolumes",
-    "ListVpcs"
+    "ListVpcs",
 ]
 
 
