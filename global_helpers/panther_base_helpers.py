@@ -63,7 +63,7 @@ DMZ_TAG_VALUE = "dmz"
 
 # Defaults to False to assume something is not a DMZ if it is not tagged
 def is_dmz_tags(resource):
-    """This function determines whether a given resource is tagged as exisitng in a DMZ."""
+    """This function determines whether a given resource is tagged as existing in a DMZ."""
     if resource["Tags"] is None:
         return False
     return resource["Tags"].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
@@ -126,7 +126,7 @@ def gsuite_parameter_lookup(parameters, key):
     return None
 
 
-# GSuite event details are fomatted as a list of dictionaries. Each entry has a 'type' and 'name'.
+# GSuite event details are formatted as a list of dictionaries. Each entry has a 'type' and 'name'.
 #
 # In order to find the event details of interest, you must loop through
 # the list searching for a particular type and name.
@@ -200,10 +200,17 @@ def box_parse_additional_details(event: dict):
 def okta_alert_context(event: dict):
     """Returns common context for automation of Okta alerts"""
     return {
+        "event_type": event.get("eventtype", ""),
+        "severity": event.get("severity", ""),
+        "actor": event.get("actor", {}),
+        "client": event.get("client", {}),
+        "request": event.get("request", {}),
+        "outcome": event.get("outcome", {}),
+        "target": event.get("target", []),
+        "debug_context": event.get("debugcontext", {}),
+        "authentication_context": event.get("authenticationcontext", {}),
+        "security_context": event.get("securitycontext", {}),
         "ips": event.get("p_any_ip_addresses", []),
-        "actor": event.get("actor", ""),
-        "target": event.get("target", ""),
-        "client": event.get("client", ""),
     }
 
 
@@ -354,4 +361,16 @@ def msft_graph_alert_context(event):
         "category": event.get("category", ""),
         "description": event.get("description", ""),
         "userstates": event.get("userstates", []),
+    }
+
+
+def m365_alert_context(event):
+    return {
+        "operation": event.get("Operation", ""),
+        "organization_id": event.get("OrganizationId", ""),
+        "client_ip": event.get("ClientIp", ""),
+        "extended_properties": event.get("ExtendedProperties", []),
+        "modified_properties": event.get("ModifiedProperties", []),
+        "application": event.get("Application", ""),
+        "actor": event.get("Actor", []),
     }

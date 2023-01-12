@@ -176,7 +176,7 @@ def ioc_match(indicators: list, known_iocs: set) -> list:
 
 
 def sanitize_domain(domain: str) -> str:
-    """Makes a potential malicous domain not render as a domain in most systems
+    """Makes a potential malicious domain not render as a domain in most systems
 
     :param domain: Original domain
     :return: Sanitized domain

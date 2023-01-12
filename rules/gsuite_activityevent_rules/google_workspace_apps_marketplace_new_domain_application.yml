@@ -1,0 +1,110 @@
+AnalysisType: rule
+Description: A Google Workspace User configured a new domain application from the Google Workspace Apps Marketplace.
+DisplayName: Google Workspace Apps Marketplace New Domain Application
+Enabled: true
+Filename: google_workspace_apps_marketplace_new_domain_application.py
+Runbook: Confirm this was the intended behavior.
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D1234
+            time: "2022-12-10 23:33:04.667000000"
+            uniqueQualifier: "-12345"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CHANGE_EMAIL_SETTING
+        parameters:
+            NEW_VALUE: "1"
+            OLD_VALUE: DEFAULT
+            ORG_UNIT_NAME: EXAMPLE IO
+            SETTING_NAME: ENABLE_G_SUITE_MARKETPLACE
+        type: EMAIL_SETTINGS
+      Name: Change Email Setting Default
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-10 23:05:39.508000000"
+            uniqueQualifier: "-12345"
+        kind: admin#reports#activity
+        name: ADD_APPLICATION
+        parameters:
+            APP_ID: "469176070494"
+            APPLICATION_ENABLED: "true"
+            APPLICATION_NAME: DocuSign eSignature for Google
+        type: DOMAIN_SETTINGS
+      Name: DocuSign for Google
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-10 23:05:39.508000000"
+            uniqueQualifier: "-12345"
+        kind: admin#reports#activity
+        name: ADD_APPLICATION
+        parameters:
+            APP_ID: "469176070494"
+            APPLICATION_ENABLED: "true"
+            APPLICATION_NAME: Microsoft Applications for Google
+        type: DOMAIN_SETTINGS
+      Name: Microsoft Apps for Google
+    - Name: ListObject Type
+      ExpectedResult: false
+      Log:
+        {
+            "actor": {
+            "email": "user@example.io",
+            "profileId": "118111111111111111111"
+            },
+            "id": {
+            "applicationName": "drive",
+            "customerId": "D12345",
+            "time": "2022-12-20 17:27:47.080000000",
+            "uniqueQualifier": "-7312729053723258069"
+            },
+            "ipAddress": "12.12.12.12",
+            "kind": "admin#reports#activity",
+            "name": "rename",
+            "parameters": {
+            "actor_is_collaborator_account": null,
+            "billable": true,
+            "doc_id": "1GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+            "doc_title": "Document Title- Found Here",
+            "doc_type": "presentation",
+            "is_encrypted": null,
+            "new_value": [
+                "Document Title- Found Here"
+            ],
+            "old_value": [
+                "Document Title- Old"
+            ],
+            "owner": "user@example.io",
+            "owner_is_shared_drive": null,
+            "owner_is_team_drive": null,
+            "primary_event": true,
+            "visibility": "private"
+            },
+            "type": "access"
+        }
+DedupPeriodMinutes: 60
+LogTypes:
+    - GSuite.ActivityEvent
+RuleID: Google.Workspace.Apps.Marketplace.New.Domain.Application
+Threshold: 1
