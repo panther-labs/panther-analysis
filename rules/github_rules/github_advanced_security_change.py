@@ -70,14 +70,16 @@ ADV_SEC_ACTIONS = {
 
 
 def rule(event):
-    return event.get("action") in ADV_SEC_ACTIONS
+    return event.get("action", "") in ADV_SEC_ACTIONS
 
 
 def title(event):
     advanced_sec_text = ""
-    if event.get("action").startswith("business") or "advanced_security" in event.get("action", ""):
+    if event.get("action", "").startswith("business") or "advanced_security" in event.get(
+        "action", ""
+    ):
         advanced_sec_text = "Advanced "
-    return f"Change detected to GitHub {advanced_sec_text}Security - {event.get('action')}"
+    return f"Change detected to GitHub {advanced_sec_text}Security - {event.get('action', '')}"
 
 
 def alert_context(event):
@@ -93,7 +95,7 @@ def dedup(event):
     # Dedup on
     # 1. Actor
     # 2. Action
-    # 3. Extra things. These are ok to return None
+    # 3. Extra things. Ignored if absent
     #    3a. business ( aka enterprise )
     #    3a. org
     #    3c. repo
