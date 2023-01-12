@@ -20,7 +20,8 @@ DISCOVERY_EVENTS = [
     "DescribeVolumes",
     "DescribeVpcs",
     "ListAutoScalingGroups",
-    "ListCloudFormationStacks" "ListDBInstances",
+    "ListCloudFormationStacks",
+    "ListDBInstances",
     "ListImages",
     "ListInstances",
     "ListInternetGateways",
@@ -35,7 +36,7 @@ DISCOVERY_EVENTS = [
     "ListSubnets",
     "ListTables",
     "ListVolumes",
-    "ListVpcs",
+    "ListVpcs"
 ]
 
 
