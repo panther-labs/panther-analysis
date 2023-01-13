@@ -94,7 +94,7 @@ def rule(event):
             details.get("type") == "acl_change"
             and details.get("name") == "change_document_visibility"
             and param_lookup(details.get("parameters", {}), "new_value") != ["private"]
-            and param_lookup(details.get("parameters", {}), "target_domain") not in ALLOWED_DOMAINS
+            and not param_lookup(details.get("parameters", {}), "target_domain") in ALLOWED_DOMAINS
             and param_lookup(details.get("parameters", {}), "visibility") in VISIBILITY
         ):
             ALERT_DETAILS[log]["TARGET_DOMAIN"] = param_lookup(
