@@ -92,21 +92,9 @@ def severity(event):
 
 
 def dedup(event):
-    # Dedup on
     # 1. Actor
     # 2. Action
-    # 3. Extra things. Ignored if absent
-    #    3a. business ( aka enterprise )
-    #    3a. org
-    #    3c. repo
-    # We should dedup on actor - action - <repo_if_exists>
+    # We should dedup on actor - action
     actor = event.get("actor", "<NO_ACTOR>")
     action = event.get("action", "<NO_ACTION>")
-    suffixes = []
-    if "business" in event:
-        suffixes.append(event.get("business"))  # aka enterprise
-    if "org" in event:
-        suffixes.append(event.get("org"))
-    if "repo" in event:
-        suffixes.append(event.get("repo"))
-    return "_".join([actor, action] + suffixes).replace("/", "__")
+    return "_".join([actor, action])
