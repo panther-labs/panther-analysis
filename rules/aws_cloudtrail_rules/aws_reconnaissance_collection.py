@@ -1,5 +1,3 @@
-from ipaddress import ip_address
-
 from panther_base_helpers import deep_get, pattern_match_list, aws_rule_context
 
 events = {
@@ -30,7 +28,6 @@ events = {
 #Monitor for events associated with user creation, deletion, & modification
     'CreateUser',
     'CreateLoginProfile',
-    'AddUserToGroup',
     'DeleteUser',
     'DeleteLoginProfile',
     'RemoveUserFromGroup',
@@ -77,10 +74,12 @@ def rule(event):
 
 
 def title(event):
-    # Group by ip-arn combinations
-    ip = deep_get(event, "sourceIPAddress")
-    arn = deep_get(event, "userIdentity", "arn")
-    return f"Suspicious reconnaissance events detected by {ip} from {arn}"
+    return (
+        f"IP Address [{event.get('sourceIPAddress')}]"
+        f"User [{deep_get(event, 'userIdentity', 'arn')}]"
+        f"Suspicious events detected by [{deep_get(event, 'sourceIPAddress')}]"
+        f"From [{deep_get(event, 'userIdentity', 'arn')}]"
+    )
 
 def alert(event):
     return aws_rule_context(event)
