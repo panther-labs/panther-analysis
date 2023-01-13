@@ -107,8 +107,70 @@ Tests:
         "p_row_id": "111222"
       }
   -
-    Name: Doc Became Public - Link (Allowlisted Domain)
+    Name: Doc Became Public - Link (Allowlisted Domain Not Set)
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "email": "bobert@example.com"
+        },
+        "events": [
+          {
+            "parameters": [
+              {
+                "name": "visibility_change",
+                "value": "external"
+              },
+              {
+                "name": "doc_title",
+                "value": "my shared document"
+              },
+              {
+                "name": "target_domain",
+                "value": "example.com"
+              },
+              {
+                "name": "visibility",
+                "value": "people_within_domain_with_link"
+              },
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "people_with_link"
+                ]
+              }
+            ],
+            "name": "change_document_visibility",
+            "type": "acl_change"
+          },
+          {
+            "parameters": [
+              {
+                "name": "new_value",
+                "multiValue": [
+                  "can_view"
+                ]
+              }
+            ],
+            "name": "change_document_access_scope",
+            "type": "acl_change"
+          }
+        ],
+        "id": {
+          "applicationName": "drive"
+        },
+        "p_row_id": "111222"
+      }
+ 
+  -
+    Name: Doc Became Public - Link (Allowlisted Domain Is Configured)
     ExpectedResult: false
+    Mocks:
+      - objectName: ALLOWED_DOMAINS
+        returnValue: >-
+           [
+             "example.com"
+           ]
     Log:
       {
         "actor": {
