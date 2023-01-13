@@ -74,10 +74,10 @@ def rule(event):
 
 
 def title(event):
+    action = event.get("action", "")
     advanced_sec_text = ""
-    if event.get("action", "").startswith("business") or "advanced_security" in event.get(
-        "action", ""
-    ):
+    # https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security#about-advanced-security-features
+    if "advanced_security" in action or "secret_scanning" in action:
         advanced_sec_text = "Advanced "
     return f"Change detected to GitHub {advanced_sec_text}Security - {event.get('action', '')}"
 
