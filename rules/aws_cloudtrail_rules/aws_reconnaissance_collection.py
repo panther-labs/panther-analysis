@@ -44,6 +44,7 @@ events = {
     "StopAutomationExecution",
 }
 
+
 def rule(event):
     # Filter: Non-S3 events
     if event.get("eventSource") != "s3.amazonaws.com":
