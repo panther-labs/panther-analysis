@@ -1,4 +1,5 @@
 from panther_base_helpers import deep_get
+from fnmatch import fnmatch
 
 EC2_CRUD_ACTIONS = {
     "AssociateIamInstanceProfile",
@@ -34,6 +35,7 @@ EC2_CRUD_ACTIONS = {
     "UnmonitorInstances",
 }
 
+ALLOWED_ARNS = ["*ExampleArn*"]
 
 def rule(event):
     # Disqualify any eventSource that is not ec2
@@ -59,15 +61,20 @@ def rule(event):
     # Disqualify any eventNames that do not Include instance
     # and events that have readOnly set to false
     if event.get("eventName", "") in EC2_CRUD_ACTIONS:
+        for ALLOWED_ARN in ALLOWED_ARNS:
+            useridentity_arn = deep_get(event,'userIdentity', 'arn', default = '<arn_not_found>')
+            if fnmatch( useridentity_arn,ALLOWED_ARN):
+                return False
         return True
     return False
 
 
 def title(event):
-    items = deep_get(event, "requestParameters", "instancesSet", "items")
+    items = deep_get(event, "requestParameters", "instancesSet", "items", default=[{}])
     return (
         f"AWS Event [{event.get('eventName')}] Instance ID "
-        f"[{items[0].get('instanceId')}] AWS Account ID [{event.get('recipientAccountId')}]"
+        f"[{items[0].get('instanceId', '<instance_id_not_found>')}] "
+        f"mAWS Account ID [{event.get('recipientAccountId', '<account_id_not_found>')}]"
     )
 
 
