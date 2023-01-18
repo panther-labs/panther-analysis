@@ -2,7 +2,7 @@ from fnmatch import fnmatch
 
 from panther_base_helpers import aws_rule_context, deep_get
 
-ALLOWED_ARNS = ["*ExampleRole*"]
+ALLOWED_ARNS = {"*ExampleRole*"}
 
 
 def rule(event):
@@ -10,8 +10,8 @@ def rule(event):
         event, "requestParameters", "userData"
     ):
         identity_arn = deep_get(event, "userIdentity", "arn", default="<arn_not_found>")
-        for ALLOWED_ARN in ALLOWED_ARNS:
-            if fnmatch(identity_arn, ALLOWED_ARN):
+        for allowed_arn in ALLOWED_ARNS:
+            if fnmatch(identity_arn, allowed_arn):
                 return False
         return True
     return False
