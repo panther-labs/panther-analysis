@@ -2,6 +2,7 @@ from panther_base_helpers import deep_get
 
 IPINFO_LOCATION_LUT_NAME = "ipinfo_location"
 IPINFO_ASN_LUT_NAME = "ipinfo_asn"
+IPINFO_PRIVACY_LUT_NAME = "ipinfo_privacy"
 
 
 class PantherIPInfoException(Exception):
@@ -84,6 +85,42 @@ class IPInfoASN:
         }
 
 
+class IPInfoPrivacy:
+    """Helper to get IPInfo Privacy information for enriched fields"""
+
+    def __init__(self, event):
+        self.ipinfo_privacy = deep_get(event, "p_enrichment", IPINFO_PRIVACY_LUT_NAME)
+        self.event = event
+
+    def hosting(self, match_field) -> bool:
+        return deep_get(self.ipinfo_privacy, match_field, "hosting")
+
+    def proxy(self, match_field) -> bool:
+        return deep_get(self.ipinfo_privacy, match_field, "proxy")
+
+    def tor(self, match_field) -> bool:
+        return deep_get(self.ipinfo_privacy, match_field, "tor")
+
+    def vpn(self, match_field) -> bool:
+        return deep_get(self.ipinfo_privacy, match_field, "vpn")
+
+    def relay(self, match_field) -> bool:
+        return deep_get(self.ipinfo_privacy, match_field, "relay")
+    
+    def service(self, match_field) -> str:
+        return deep_get(self.ipinfo_privacy, match_field, "service")
+
+    def context(self, match_field) -> object:
+        return {
+            "Hosting": self.hosting(match_field),
+            "Proxy": self.proxy(match_field),
+            "Tor": self.tor(match_field),
+            "VPN": self.vpn(match_field),
+            "Relay": self.relay(match_field),
+            "Service": self.service(match_field),
+        }
+
+
 def get_ipinfo_location(event):
     """Returns an IPInfoLocation object for the event or None if it is not available"""
     if deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME):
@@ -98,11 +135,18 @@ def get_ipinfo_asn(event):
     return None
 
 
+def get_ipinfo_privacy(event):
+    """Returns an IPInfoPrivacy object for the event or None if it is not available"""
+    if deep_get(event, "p_enrichment", IPINFO_PRIVACY_LUT_NAME):
+        return IPInfoPrivacy(event)
+    return None
+
+
 def geoinfo_from_ip(event, match_field):
     """Returns a dictionary with geolocation information that is the same format as
     panther_oss_helper.geoinfo_from_ip() with the following differences:
 
-    - instead of poviding the ip, you must provide the event and the match_field
+    - instead of providing the ip, you must provide the event and the match_field
     - the fields "hostname" and "anycast" are not included in the return object
     """
     location = get_ipinfo_location(event)
