@@ -44,14 +44,6 @@ events = {
     "StopAutomationExecution",
 }
 
-# Some AWS IP addresses listed as 'malicious' are stale
-# This enables allowing specific roles where this may occur
-_ALLOWED_ROLES = {
-    "*PantherAuditRole-*",
-    "*PantherLogProcessingRole-*",
-}
-
-
 def rule(event):
     # Filter: Non-S3 events
     if event.get("eventSource") != "s3.amazonaws.com":
@@ -61,8 +53,6 @@ def rule(event):
         return False
     # Filter: Internal AWS
     if deep_get(event, "userIdentity", "type") in ("AWSAccount", "AWSService"):
-        return False
-    if pattern_match_list(deep_get(event, "userIdentity", "arn", default=""), _ALLOWED_ROLES):
         return False
     # Filter: Non "Get" events
     if not pattern_match_list(event.get("eventName", ""), events):
