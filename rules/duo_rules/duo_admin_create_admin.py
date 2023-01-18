@@ -12,7 +12,7 @@ def title(event):
     event_description = deserialize_administrator_log_event_description(event)
     return (
         f"Duo: [{event.get('username', '<username_not_found>')}] "
-        "created a new admin account for "
+        "created a new admin account: "
         f"[{event_description.get('name', '<name_not_found>')}] "
         f"[{event_description.get('email', '<email_not_found>')}]."
     )
