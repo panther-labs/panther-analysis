@@ -8,7 +8,7 @@ PERMISSIONS = {"READ"}
 
 
 def policy(resource):
-    if 'IsPublic' in resource and resource['IsPublic']:
+    if "IsPublic" in resource and resource["IsPublic"]:
         return False
 
     for grant in resource["Grants"] or []:
