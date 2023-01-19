@@ -15,7 +15,7 @@ def rule(event):
         return False
     # And we only want things that might naively be kubernetes api endpoints
     # we do not want to alert on scanners casting non-kubernetes requests.
-    if not event.get('requestURI', '').startswith(('/api/', '/apis/')):
+    if not event.get("requestURI", "").startswith(("/api/", "/apis/")):
         return False
     p_eks = eks_panther_obj_ref(event)
     if ip_address(p_eks.get("sourceIPs")[0]).is_private:
