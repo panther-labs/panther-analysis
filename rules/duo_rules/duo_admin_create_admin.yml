@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'A new Duo Administrator was created. '
+DisplayName: Duo Admin Create Admin
+Enabled: true
+Filename: duo_admin_create_admin.py
+Severity: High
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: admin_create
+        description: '{"name": "Homer Simpson", "phone": null, "is_temporary_password": false, "email": "homer.simpson@simpsons.com", "hardtoken": null, "role": "Owner", "status": "Pending Activation", "restricted_by_admin_units": false, "administrative_units": ""}'
+        isotimestamp: "2023-01-17 16:47:54"
+        object: Homer Simpson
+        timestamp: "2023-01-17 16:47:54"
+        username: Bart Simpson
+      Name: Admin Create
+    - ExpectedResult: false
+      Log:
+        action: admin_login
+        description: '{"ip_address": "1.2.3.4", "device": "123-456-123", "factor": "sms", "saml_idp": "OneLogin", "primary_auth_method": "Single Sign-On"}'
+        isotimestamp: "2021-07-02 18:31:25"
+        timestamp: "2021-07-02 18:31:25"
+        username: Homer Simpson
+      Name: Other Event
+DedupPeriodMinutes: 60
+LogTypes:
+    - Duo.Administrator
+RuleID: Duo.Admin.Create.Admin
+Threshold: 1
