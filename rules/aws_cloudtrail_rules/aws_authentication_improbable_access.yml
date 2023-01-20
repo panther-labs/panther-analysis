@@ -1,0 +1,382 @@
+AnalysisType: rule
+Description: Monitor for creation of access tokens
+DisplayName: AWS Authentication Improbable Access
+Enabled: false
+Filename: aws_authentication_improbable_access.py
+Reference: https://attack.mitre.org/techniques/T1606/
+Reports:
+    MITRE ATT&CK:
+        - TA0006:T1606
+Runbook: Administrators should perform an audit of all access lists and the permissions they have been granted to access web applications and services. This should be done extensively on all resources in order to establish a baseline, followed up on with periodic audits of new or updated resources. Suspicious accounts/credentials should be investigated and removed.
+Severity: Info
+Tags:
+    - T1606
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 8c4806de-099d-42f7-81dd-92542947fef6
+        eventName: Authenticate
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 15:14:49"
+        eventType: AwsServiceEvent
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - user.name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 15:14:49"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 15:16:54.391"
+        p_row_id: e634cd2acde190bdcec58cf514cdd305
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: fb70fb76-991b-4772-8bde-9f956fffee1c
+        sourceIPAddress: 1.1.1.1
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36
+        userIdentity:
+            accountId: "012345678912"
+            principalId: h8472364-3021-9852-6y53-hb8f8gj789f0
+            type: Unknown
+            userName: user.name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Authenticate - Improbable Location
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: b19068e3-e4b9-4494-8a89-ffaf73417948
+        eventName: CreateToken
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 15:37:28"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - User Name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 15:37:28"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 15:43:14.266"
+        p_row_id: 6ab1f919399388a9e19092f5148a23
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: 7480cd98-9247-42d2-b487-8cdea343cc06
+        requestParameters:
+            clientId: 440XSxkdfjNN00987mmfjdhfdKKH4MMMNY
+            clientSecret: HIDDEN_DUE_TO_SECURITY_REASONS
+            deviceCode: rwRhSFQXoLSdFWPUaP24_OCbQpa64_A8LnhE24TUueEcyeMdMB3qbqT5LSudakMltLcHYn--W4ti15Z2IZAV6g
+            grantType: urn:ietf:params:oauth:grant-type:device_code
+            platformSessionExpiryRequired: false
+        resources:
+            - accountId: "012345678912"
+              arn: d-1111111111
+              type: IdentityStoreId
+        responseElements:
+            accessToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            expiresIn: 27581
+            idToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            refreshToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            tokenType: Bearer
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: oidc.us-west-2.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: aws-sdk-go-v2/1.14.0 os/macos lang/go/1.19.2 md/GOOS/darwin md/GOARCH/arm64 api/ssooidc/1.10.0
+        userIdentity:
+            accountId: "012345678912"
+            principalId: c5256862-8521-5032-85d2-zqf255451g15
+            type: Unknown
+            userName: User Name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Create Token - Improbable Location
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 28f3d07c-db43-4bf3-8f20-036890d96cc0
+        eventName: Federate
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 16:34:49"
+        eventType: AwsServiceEvent
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - user.name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 16:34:49"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 16:39:14.472"
+        p_row_id: ea11078fe57babe6acd19cf514e89817
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: 04f7d486-0b10-40d8-a99b-6d46eaaa43c4
+        serviceEventDetails:
+            account_id: "012345678912"
+            role_name: ReadOnlyCodeBuild-us-east-2
+        sourceIPAddress: 1.1.1.1
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36
+        userIdentity:
+            accountId: "012345678912"
+            principalId: tg984466-k548-9632-f8h5-r155e24h44h4
+            type: Unknown
+            userName: user.name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Federate - Improbable Location
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: b19068e3-e4b9-4494-8a89-ffaf73417948
+        eventName: RegisterClient
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 15:37:28"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - User Name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 15:37:28"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 15:43:14.266"
+        p_row_id: 6ab1f919399388a9e19092f5148a23
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: 7480cd98-9247-42d2-b487-8cdea343cc06
+        requestParameters:
+            clientId: 76MNxdtrINLHJ56yh756alQWkck84lCkm8
+            clientSecret: HIDDEN_DUE_TO_SECURITY_REASONS
+            deviceCode: rwRhSFQXoLSdFWPUaP24_OCbQpa64_A8LnhE24TUueEcyeMdMB3qbqT5LSudakMltLcHYn--W4ti15Z2IZAV6g
+            grantType: urn:ietf:params:oauth:grant-type:device_code
+            platformSessionExpiryRequired: false
+        resources:
+            - accountId: "012345678912"
+              arn: d-11111111t1
+              type: IdentityStoreId
+        responseElements:
+            accessToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            expiresIn: 27581
+            idToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            refreshToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            tokenType: Bearer
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: oidc.us-west-2.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: aws-sdk-go-v2/1.14.0 os/macos lang/go/1.19.2 md/GOOS/darwin md/GOARCH/arm64 api/ssooidc/1.10.0
+        userIdentity:
+            accountId: "012345678912"
+            principalId: t9348569-3025-8456-5g7e-hnj541654f25
+            type: Unknown
+            userName: User Name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Register Client - Improbable Location
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 8c4806de-099d-42f7-81dd-92542947fef6
+        eventName: Authenticate
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 15:14:49"
+        eventType: AwsServiceEvent
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - user.name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 15:14:49"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 15:16:54.391"
+        p_row_id: e634cd2acde190bdcec58cf514cdd305
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: fb70fb76-991b-4772-8bde-9f956fffee1c
+        sourceIPAddress: 1.1.1.1
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36
+        userIdentity:
+            accountId: "012345678912"
+            principalId: h8472364-3021-9852-6y53-hb8f8gj789f0
+            type: Unknown
+            userName: user.name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "34.0522", "lng": "-118.2437", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Same Location
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: b19068e3-e4b9-4494-8a89-ffaf73417948
+        eventName: StartDeviceAuthorization
+        eventSource: sso.amazonaws.com
+        eventTime: "2022-11-30 15:37:28"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_usernames:
+            - User Name
+        p_enrichment:
+            ipinfo_location:
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-11-30 15:37:28"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-11-30 15:43:14.266"
+        p_row_id: 6ab1f919399388a9e19092f5148a23
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: 7480cd98-9247-42d2-b487-8cdea343cc06
+        requestParameters:
+            clientId: 02XBxcZNhUMVmVOSr7q8tXVzLXdlc3QtMg
+            clientSecret: HIDDEN_DUE_TO_SECURITY_REASONS
+            deviceCode: rwRhSFQXoLSdFWPUaP24_OCbQpa64_A8LnhE24TUueEcyeMdMB3qbqT5LSudakMltLcHYn--W4ti15Z2IZAV6g
+            grantType: urn:ietf:params:oauth:grant-type:device_code
+            platformSessionExpiryRequired: false
+        resources:
+            - accountId: "012345678912"
+              arn: d-11111e1111
+              type: IdentityStoreId
+        responseElements:
+            accessToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            expiresIn: 27581
+            idToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            refreshToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            tokenType: Bearer
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: oidc.us-west-2.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: aws-sdk-go-v2/1.14.0 os/macos lang/go/1.19.2 md/GOOS/darwin md/GOARCH/arm64 api/ssooidc/1.10.0
+        userIdentity:
+            accountId: "012345678912"
+            principalId: b8919360-4071-7093-82d3-abf42806f010
+            type: Unknown
+            userName: User Name
+      Mocks:
+        - objectName: load_dict_from_dynamodb
+          returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
+        - objectName: store_dict_in_dynamodb
+          returnValue: None
+      Name: Start Device Authorization - Improbable Location
+DedupPeriodMinutes: 15
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.Authentication.Improbable.Access
+Threshold: 1
