@@ -23,3 +23,12 @@ def deserialize_administrator_log_event_description(event: dict) -> dict:
             pass
 
     return {"value": desc_string}
+
+
+def duo_alert_context(event):
+    return {
+        "action": event.get("action", "<action_not_found>"),
+        "description": event.get("description", "<description_not_found>"),
+        "username": event.get("username", "<username_not_found>"),
+        "timestamp": event.get("timestamp", "<timestamp_not_found>"),
+    }
