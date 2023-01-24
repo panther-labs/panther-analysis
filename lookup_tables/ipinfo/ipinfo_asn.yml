@@ -90,8 +90,6 @@ LogTypeMap:
         - 'UserIp'
     - LogType: Crowdstrike.DetectionSummary
       Selectors:
-        - 'LocalIP'
-        - 'OriginSourceIpAddress'
     - LogType: Crowdstrike.DNSRequest
       Selectors:
         - 'IpAddress'
@@ -132,6 +130,19 @@ LogTypeMap:
     - LogType: Crowdstrike.UserLogonLogoff
       Selectors:
         - 'aip'
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - 'p_any_ip_addresses'
+        - '$.event.CurrentLocalIP'
+        - '$.event.LocalAddressIP4'
+        - '$.event.LocalAddressIP6'
+        - '$.event.RemoteAddressIP4'
+        - '$.event.RemoteAddressIP6'
+        - '$.event.LocalIP'
+        - '$.event.UserIp'
+        - '$.event.OriginSourceIpAddress'
+        - '$.event.IpAddress'
+        - '$.event.GatewayIP'
     - LogType: Dropbox.TeamEvent
       Selectors:
         - '$.origin.geo_location.ip_address'
