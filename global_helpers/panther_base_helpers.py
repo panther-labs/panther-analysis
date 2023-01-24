@@ -19,7 +19,7 @@ class PantherUnexpectedAlert(Exception):
 #   Compliance Helpers    #
 # # # # # # # # # # # # # #
 
-# Expects a map with the a Key 'Tags' that maps to a map of key/value string pairs, or None if no
+# Expects a map with a Key 'Tags' that maps to a map of key/value string pairs, or None if no
 # tags are present.
 # All Panther defined resources meet this requirement.
 CDE_TAG_KEY = "environment"
@@ -215,17 +215,24 @@ def okta_alert_context(event: dict):
 
 
 def crowdstrike_detection_alert_context(event: dict):
-    """Returns common context for Crowstrike detections"""
+    """Returns common context for Crowdstrike detections"""
     return {
-        "user": event.get("UserName", ""),
-        "console-link": event.get("FalconHostLink", ""),
-        "commandline": event.get("CommandLine", ""),
-        "parentcommandline": event.get("ParentCommandLine", ""),
-        "filename": event.get("FileName", ""),
-        "filepath": event.get("FilePath", ""),
-        "description": event.get("DetectDescription", ""),
-        "action": event.get("PatternDispositionDescription", ""),
+        "user": get_crowdstrike_field(event, "UserName", default=""),
+        "console-link": get_crowdstrike_field(event, "FalconHostLink", default=""),
+        "commandline": get_crowdstrike_field(event, "CommandLine", default=""),
+        "parentcommandline": get_crowdstrike_field(event, "ParentCommandLine", default=""),
+        "filename": get_crowdstrike_field(event, "FileName", default=""),
+        "filepath": get_crowdstrike_field(event, "FilePath", default=""),
+        "description": get_crowdstrike_field(event, "DetectDescription", default=""),
+        "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
     }
+
+
+def get_crowdstrike_field(event, field, default=None):
+    return deep_get(event, field) or \
+           deep_get(event, "event", field) or \
+           deep_get(event, "unknown_payload", field) or \
+           default
 
 
 def slack_alert_context(event: dict):

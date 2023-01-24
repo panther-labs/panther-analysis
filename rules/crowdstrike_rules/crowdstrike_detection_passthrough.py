@@ -1,13 +1,13 @@
-from panther_base_helpers import crowdstrike_detection_alert_context
+from panther_base_helpers import crowdstrike_detection_alert_context, get_crowdstrike_field
 
 
 def rule(event):
-    return event.get("ExternalApiType") in "Event_DetectionSummaryEvent"
+    return get_crowdstrike_field(event, "ExternalApiType") in "Event_DetectionSummaryEvent"
 
 
 def title(event):
     # pylint: disable=line-too-long
-    return f"Crowdstrike Alert ({event.get('Technique')}) - {event.get('ComputerName')}({event.get('UserName')})"
+    return f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - {get_crowdstrike_field(event, 'ComputerName')}({get_crowdstrike_field(event, 'UserName')})"
 
 
 def alert_context(event):
@@ -15,8 +15,8 @@ def alert_context(event):
 
 
 def severity(event):
-    return event.get("SeverityName")
+    return get_crowdstrike_field(event, "SeverityName")
 
 
 def dedup(event):
-    return f"{event.get('EventUUID')} - {event.get('ComputerName')}"
+    return f"{get_crowdstrike_field(event, 'EventUUID')} - {get_crowdstrike_field(event, 'ComputerName')}"
