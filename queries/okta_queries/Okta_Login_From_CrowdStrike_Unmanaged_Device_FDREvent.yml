@@ -1,0 +1,21 @@
+AnalysisType: scheduled_query
+Description: Okta Logins from an IP Address not found in CrowdStrike's AIP List (FDREvent flavor)
+Enabled: false
+Query: |
+    SELECT *
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_occurs_since('1 days')
+      AND eventtype = 'user.session.start'
+      AND outcome:result = 'SUCCESS'
+      AND client:device = 'Computer'
+      AND client:ipAddress LIKE '%.%.%.%'
+      AND client:ipAddress NOT IN
+        (
+          SELECT DISTINCT aip
+          FROM crowdstrike_fdr_event
+          WHERE p_occurs_since('3 days')
+        )
+QueryName: Okta Login From CrowdStrike Unmanaged Device (FDREvent flavor)
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 1

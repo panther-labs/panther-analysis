@@ -1,0 +1,64 @@
+AnalysisType: scheduled_query
+Description: Detects creation of large zip files, which can indicate attempts of exfiltration (FDREvent flavor)
+Enabled: false
+Query: |
+  select
+    ppr.commandline as parent_commandline,
+    zip_proc.*
+  from 
+    (
+    select 
+      zips.*,
+      pr2.event.targetprocessid as process_targetpid,
+      pr2.event.parentprocessid as process_parentpid,
+      pr2.event.commandline as process_commandline
+    from
+      (
+        select
+          *
+        from
+          panther_logs.public.crowdstrike_fdr_event
+        where 
+          event_simpleName IN (
+            'GzipFileWritten',
+            'SevenZipFileWritten',
+            'ZipFileWritten',
+            'BZip2FileWritten'
+          )
+          and p_occurs_since('1 day')
+          and CAST(unknown_payload:Size as integer) > 10000000
+      ) zips
+      left join panther_logs.public.crowdstrike_fdr_event pr2
+      on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
+      
+      where 
+      pr2.event.commandline like any(
+        '%zip%'
+      )
+      
+      and not (
+        pr2.event.commandline like any (
+          '%curl%',
+          '/Application%',
+          '%install%'
+        )
+      )
+  
+    ) zip_proc
+    LEFT JOIN panther_logs.public.crowdstrike_fdr_event ppr
+    on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
+  where 
+    (
+      (parent_commandline is null) or 
+      not (parent_commandline like any (
+        '%homebrew%',
+        '%Homebrew%',
+        '/Application%',
+        '%install%'
+        )
+      )
+    )
+QueryName: CrowdStrike Large Zip Creation (FDREvent flavor)
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5
