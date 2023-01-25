@@ -1,0 +1,87 @@
+AnalysisType: rule
+Description: 'Adversaries may gather information in an attempt to calculate the geographical location of a victim host. '
+DisplayName: AWS System Discovery Location
+Enabled: false
+Filename: aws_system_discovery_location.py
+Reference: https://attack.mitre.org/techniques/T1614/
+Reports:
+    MITRE ATT&CK:
+        - T1614:T1614.001
+Severity: Info
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 9c1f1f07-67df-4460-ad3e-131dc961d767
+        eventName: DescribeRegions
+        eventSource: ec2.amazonaws.com
+        eventTime: "2023-01-08 16:19:47"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678910"
+        p_any_aws_arns:
+            - arn:aws:iam::012345678910:role/panther-integration-role
+            - arn:aws:sts::012345678910:assumed-role/panther-integration-role/DDAWSIntegration
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_trace_ids:
+            - YTIVRO694VL94LJP945M
+        p_any_usernames:
+            - panther-integration-role
+        p_event_time: "2023-01-08 16:19:47"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2023-01-08 16:21:14.185"
+        p_row_id: de24d6a54c97ccd8bff3a0d715cfec08
+        p_source_id: 5f9f0f60-9c56-4027-b93a-8bab3019f0f1
+        p_source_label: Hosted - Cloudtrail - KoS
+        readOnly: true
+        recipientAccountId: "012345678910"
+        requestID: aa80ce82-e174-4763-925a-2093bbe7ba5c
+        requestParameters:
+            regionSet: {}
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: ec2.us-east-1.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: DD
+        userIdentity:
+            accessKeyId: YTIVRO694VL94LJP945M
+            accountId: "012345678910"
+            arn: arn:aws:sts::012345678910:assumed-role/panther-integration-role/DDAWSIntegration
+            principalId: BMNI6904NKNO767MKM5I0:DDAWSIntegration
+            sessionContext:
+                attributes:
+                    creationDate: "2023-01-08T15:51:46Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "012345678910"
+                    arn: arn:aws:iam::012345678910:role/panther-integration-role
+                    principalId: BMNI6904NKNO767MKM5I0
+                    type: Role
+                    userName: panther-integration-role
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Location Discovery Event
+    - ExpectedResult: false
+      Log:
+        awsRegion: ap-northeast-3
+        eventCategory: Management
+        eventID: f45cb2b7-c32d-4a49-9caa-e6f4c3a5b27a
+        eventName: ListTopics
+        eventSource: sns.amazonaws.com
+        eventTime: "2023-01-10 16:00:22"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "548688929292"
+      Name: Non Discovery Event
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.System.Discovery.Location
+Threshold: 3
