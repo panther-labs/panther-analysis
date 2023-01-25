@@ -7,7 +7,7 @@ def rule(event):
 
 
 def title(event):
-    which_factor = event.get("outcome", {}).get("reason", "").split()[3]
+    which_factor = event.get("outcome", {}).get("reason", "").split()[2]
     return (
         f"Okta: User reset their MFA factor [{which_factor}] "
         f"[{event.get('target',[{}])[0].get('alternateId', '<id-not-found>')}] "
