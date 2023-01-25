@@ -1,0 +1,35 @@
+AnalysisType: scheduled_rule
+Description: This detection works with a Scheduled Query to store a rolling count of events for given Log Types. A count average is calculated from the list and then compared with the most recent count. If that count exceeds a given threshold, the volume is considered abnormally high. This could represent a DoS attack.
+DisplayName: Abnormally High Event Volume
+Enabled: false
+Filename: abnormally_high_event_volume.py
+Reports:
+    MITRE ATT&CK:
+        - TA0040:T1499
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        num_logs: 5
+        p_log_type: AWS.CloudTrail
+      Mocks:
+        - objectName: get_string_set
+          returnValue: "True"
+        - objectName: put_string_set
+          returnValue: "True"
+      Name: Abnormal = False
+    - ExpectedResult: true
+      Log:
+        num_logs: 5e+06
+        p_log_type: AWS.CloudTrail
+      Mocks:
+        - objectName: get_string_set
+          returnValue: "True"
+        - objectName: put_string_set
+          returnValue: "True"
+      Name: Abnormal = True
+DedupPeriodMinutes: 30
+RuleID: Abnormally.High.Event.Volume
+Threshold: 1
+ScheduledQueries:
+    - AWS CloudTrail 2-minute count
