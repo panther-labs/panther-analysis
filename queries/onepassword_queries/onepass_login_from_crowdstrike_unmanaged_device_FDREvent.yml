@@ -13,7 +13,7 @@ Query: |
       AND client:ip_address NOT IN 
         (
             SELECT distinct aip
-            FROM crowdstrike_fdr_event
+            FROM crowdstrike_fdrevent
             WHERE p_occurs_since('3 days')
         )
 QueryName: 1Password Login From CrowdStrike Unmanaged Device Query (FDREvent flavor)

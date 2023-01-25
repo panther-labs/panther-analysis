@@ -19,4 +19,5 @@ def severity(event):
 
 
 def dedup(event):
+    # pylint: disable=line-too-long
     return f"{get_crowdstrike_field(event, 'EventUUID')} - {get_crowdstrike_field(event, 'ComputerName')}"

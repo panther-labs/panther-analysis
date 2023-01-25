@@ -65,7 +65,7 @@ Tests:
           "PatternDispositionFlags": "{\n  \"BlockingUnsupportedOrDisabled\": false,\n  \"BootupSafeguardEnabled\": false,\n  \"CriticalProcessDisabled\": false,\n  \"Detect\": false,\n  \"FsOperationBlocked\": false,\n  \"HandleOperationDowngraded\": false,\n  \"InddetMask\": false,\n  \"Indicator\": false,\n  \"KillActionFailed\": false,\n  \"KillParent\": false,\n  \"KillProcess\": false,\n  \"KillSubProcess\": false,\n  \"OperationBlocked\": false,\n  \"PolicyDisabled\": false,\n  \"ProcessBlocked\": true,\n  \"QuarantineFile\": true,\n  \"QuarantineMachine\": false,\n  \"RegistryOperationBlocked\": false,\n  \"Rooting\": false,\n  \"SensorOnly\": false,\n  \"SuspendParent\": false,\n  \"SuspendProcess\": false\n}",
         }
   -
-    Name: Low Severity Finding
+    Name: Low Severity Finding (FDREvent)
     ExpectedResult: true
     Log:
       {
@@ -116,19 +116,11 @@ Tests:
         "PatternDispositionFlags": "{\n  \"BlockingUnsupportedOrDisabled\": false,\n  \"BootupSafeguardEnabled\": false,\n  \"CriticalProcessDisabled\": false,\n  \"Detect\": false,\n  \"FsOperationBlocked\": false,\n  \"HandleOperationDowngraded\": false,\n  \"InddetMask\": false,\n  \"Indicator\": false,\n  \"KillActionFailed\": false,\n  \"KillParent\": false,\n  \"KillProcess\": false,\n  \"KillSubProcess\": false,\n  \"OperationBlocked\": false,\n  \"PolicyDisabled\": false,\n  \"ProcessBlocked\": true,\n  \"QuarantineFile\": true,\n  \"QuarantineMachine\": false,\n  \"RegistryOperationBlocked\": false,\n  \"Rooting\": false,\n  \"SensorOnly\": false,\n  \"SuspendParent\": false,\n  \"SuspendProcess\": false\n}",
       }
   -
-    Name: Low Severity Finding
+    Name: Non-match (FDREvent)
     ExpectedResult: false
     Log:
       {
         "cid": "11111111111111111111111111111111",
-        "Technique": "PUP",
-        "ProcessId": 377077835340488700,
-        "AgentIdString": "00000000000000000000000000000000",
-        "DetectName": "NGAV",
-        "ComputerName": "macbook",
-        "ProcessStartTime": "2021-09-18 20:38:51Z",
-        "GrandparentCommandLine": "/sbin/launchd",
-        "MACAddress": "aa-00-00-00-00-00",
         "CommandLine": "/Applications/app.app/Contents/MacOS/pup app",
         "Objective": "Falcon Detection Method",
         "Nonce": 1,
@@ -137,32 +129,9 @@ Tests:
           "ExternalApiType": "something else"
         },
         "PatternDispositionValue": 2176,
-        "DetectId": "ldt:00000000000000000000000000000000:222222222222222222",
         "Severity": 2,
         "PatternDispositionDescription": "Prevention/Quarantine, process was blocked from execution and quarantine was attempted.",
         "SeverityName": "Low",
         "MD5String": "33333333333333333333333333333333",
-        "EventUUID": "33333333333333333333333333333333",
-        "UserName": "bobert",
-        "FilePath": "/Applications/app.app/Contents/MacOS/",
-        "timestamp": "2021-09-18 20:38:52Z",
-        "ParentCommandLine": "/usr/libexec/runningboardd",
-        "DetectDescription": "This file is classified as Adware/PUP based on its SHA256 hash.",
-        "LocalIP": "192.168.1.1",
-        "ProcessEndTime": "1970-01-01 00:00:00Z",
-        "SHA1String": "0000000000000000000000000000000000000000",
-        "OriginSourceIpAddress": "",
-        "GrandparentImageFileName": "/sbin/launchd",
-        "MachineDomain": "",
-        "ParentImageFileName": "/usr/libexec/runningboardd",
-        "FalconHostLink": "https://falcon.us-2.crowdstrike.com/activity/detections/detail/00000000000000000000000000000000/222222222222222222?",
-        "UTCTimestamp": "2021-09-18 20:38:52Z",
-        "FileName": "pup app",
-        "ParentProcessId": 376330001421757630,
-        "EventType": "Event_ExternalApiEvent",
-        "CustomerIdString": "11111111111111111111111111111111",
-        "Tactic": "Malware",
-        "SensorId": "00000000000000000000000000000000",
         "eid": 118,
-        "PatternDispositionFlags": "{\n  \"BlockingUnsupportedOrDisabled\": false,\n  \"BootupSafeguardEnabled\": false,\n  \"CriticalProcessDisabled\": false,\n  \"Detect\": false,\n  \"FsOperationBlocked\": false,\n  \"HandleOperationDowngraded\": false,\n  \"InddetMask\": false,\n  \"Indicator\": false,\n  \"KillActionFailed\": false,\n  \"KillParent\": false,\n  \"KillProcess\": false,\n  \"KillSubProcess\": false,\n  \"OperationBlocked\": false,\n  \"PolicyDisabled\": false,\n  \"ProcessBlocked\": true,\n  \"QuarantineFile\": true,\n  \"QuarantineMachine\": false,\n  \"RegistryOperationBlocked\": false,\n  \"Rooting\": false,\n  \"SensorOnly\": false,\n  \"SuspendParent\": false,\n  \"SuspendProcess\": false\n}",
       }

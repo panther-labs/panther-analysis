@@ -1,3 +1,6 @@
+# This file is the part of the Crowdstrike FDREvent migration, and it's the equivalent of
+# 'AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml'
+#
 AnalysisType: scheduled_query
 Description: Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 Enabled: false
@@ -13,7 +16,7 @@ Query: |
           FROM crowdstrike_fdrevent
           WHERE p_occurs_since('3 days')
         )
-QueryName: AWS Authentication from CrowdStrike Unmanaged Device (FDREvent flavor)
+QueryName: AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)
 Schedule:
     RateMinutes: 1440
     TimeoutMinutes: 3

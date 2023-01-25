@@ -60,3 +60,47 @@ Tests:
             "timestamp": "2022-12-08T00:48:58Z"
           }
         }
+  -
+    Name: RTS session start event (FDREvent)
+    ExpectedResult: true
+    Log:
+      {
+        "cid": "12345abcdef",
+        "event": {
+          "AgentIdString": "12ab56cd",
+          "CustomerIdString": "1234",
+          "EventType": "Event_ExternalApiEvent",
+          "ExternalApiType": "Event_RemoteResponseSessionStartEvent",
+          "HostnameField": "John Macbook Pro",
+          "Nonce": -4714046577736361000,
+          "SessionId": "6e1181e4-4924-4761-az3d-666851jdb950",
+          "StartTimestamp": 1670460538,
+          "UTCTimestamp": 1670460538000,
+          "UserName": "example@example.io",
+          "cid": "12345abcdef",
+          "eid": 118,
+          "timestamp": "2022-12-08T00:48:58Z"
+        }
+      }
+  -
+    Name: RTS session not started (FDREvent)
+    ExpectedResult: false
+    Log:
+      {
+        "cid": "12345abcdef",
+        "event": {
+          "AgentIdString": "12ab56cd",
+          "CustomerIdString": "1234",
+          "EventType": "Event_ExternalApiEvent",
+          "ExternalApiType": "Event_RemoteResponseSessionEndEvent",
+          "HostnameField": "John Macbook Pro",
+          "Nonce": -4714046577736361000,
+          "SessionId": "6e1181e4-4924-4761-az3d-666851jdb950",
+          "StartTimestamp": 1670460538,
+          "UTCTimestamp": 1670460538000,
+          "UserName": "example@example.io",
+          "cid": "12345abcdef",
+          "eid": 118,
+          "timestamp": "2022-12-08T00:48:58Z"
+        }
+      }

@@ -12,7 +12,7 @@ Query: |
       AND client:ipAddress NOT IN
         (
           SELECT DISTINCT aip
-          FROM crowdstrike_fdr_event
+          FROM crowdstrike_fdrevent
           WHERE p_occurs_since('3 days')
         )
 QueryName: Okta Login From CrowdStrike Unmanaged Device (FDREvent flavor)
