@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-Description: Detects creation of large zip files, which can indicate attempts of exfiltration (FDREvent flavor)
+Description: Detects creation of large zip files, which can indicate attempts of exfiltration (crowdstrike_fdrevent table)
 Enabled: false
 Query: |
   select
@@ -58,7 +58,7 @@ Query: |
         )
       )
     )
-QueryName: CrowdStrike Large Zip Creation (FDREvent flavor)
+QueryName: CrowdStrike Large Zip Creation (crowdstrike_fdrevent table)
 Schedule:
   RateMinutes: 1440
   TimeoutMinutes: 5

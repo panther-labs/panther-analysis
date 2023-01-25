@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-Description: Okta Logins from an IP Address not found in CrowdStrike's AIP List (FDREvent flavor)
+Description: Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
 Enabled: false
 Query: |
     SELECT *
@@ -13,9 +13,9 @@ Query: |
         (
           SELECT DISTINCT aip
           FROM crowdstrike_fdrevent
-          WHERE p_occurs_since('3 days')
+          WHERE p_occurs_since('3 days') AND crowdstrike_fdrevent.fdr_event_type = 'aid_master'
         )
-QueryName: Okta Login From CrowdStrike Unmanaged Device (FDREvent flavor)
+QueryName: Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)
 Schedule:
     RateMinutes: 1440
     TimeoutMinutes: 1

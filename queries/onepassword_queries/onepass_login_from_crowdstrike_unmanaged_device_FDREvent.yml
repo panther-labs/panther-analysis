@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-Description: Looks for OnePassword Logins from IP Addresses that aren''t seen in CrowdStrike''s AIP List. (FDREvent flavor)
+Description: Looks for OnePassword Logins from IP Addresses that aren''t seen in CrowdStrike''s AIP List. (crowdstrike_fdrevent table)
 Enabled: false
 Query: |
     SELECT * 
@@ -14,9 +14,9 @@ Query: |
         (
             SELECT distinct aip
             FROM crowdstrike_fdrevent
-            WHERE p_occurs_since('3 days')
+            WHERE p_occurs_since('3 days') AND crowdstrike_fdrevent.fdr_event_type = 'aid_master'
         )
-QueryName: 1Password Login From CrowdStrike Unmanaged Device Query (FDREvent flavor)
+QueryName: 1Password Login From CrowdStrike Unmanaged Device Query (crowdstrike_fdrevent table)
 Schedule:
     RateMinutes: 1440
     TimeoutMinutes: 1
