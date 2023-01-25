@@ -14,7 +14,7 @@ Query: |
         (
           SELECT DISTINCT aip
           FROM crowdstrike_fdrevent
-          WHERE p_occurs_since('3 days')
+          WHERE p_occurs_since('3 days') AND crowdstrike_fdrevent.fdr_event_type = 'aid_master'
         )
 QueryName: AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)
 Schedule:

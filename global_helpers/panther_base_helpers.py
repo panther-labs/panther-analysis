@@ -229,10 +229,12 @@ def crowdstrike_detection_alert_context(event: dict):
 
 
 def get_crowdstrike_field(event, field, default=None):
-    return deep_get(event, field) or \
-           deep_get(event, "event", field) or \
-           deep_get(event, "unknown_payload", field) or \
-           default
+    return (
+        deep_get(event, field)
+        or deep_get(event, "event", field)
+        or deep_get(event, "unknown_payload", field)
+        or default
+    )
 
 
 def slack_alert_context(event: dict):

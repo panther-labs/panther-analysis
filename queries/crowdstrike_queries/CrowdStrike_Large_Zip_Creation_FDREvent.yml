@@ -3,7 +3,7 @@ Description: Detects creation of large zip files, which can indicate attempts of
 Enabled: false
 Query: |
   select
-    ppr.commandline as parent_commandline,
+    ppr.event:commandline as parent_commandline,
     zip_proc.*
   from 
     (
