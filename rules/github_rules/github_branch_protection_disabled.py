@@ -5,5 +5,5 @@ def rule(event):
 def title(event):
     return (
         f"A branch protection was removed from the "
-        f"repository [{event.get('repo', '<UNKNOWN_REPO>')}]"
+        f"repository [{event.get('repo', '<UNKNOWN_REPO>')}], actor [{event.get('actor', '<UNKNOWN_ACTOR>')}]"
     )
