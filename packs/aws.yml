@@ -20,7 +20,6 @@ PackDefinition:
     - AWS.EC2.Traffic.Mirroring
     - AWS.Macie.Evasion
     - AWS.CloudTrail.ResourceMadePublic
-    - AWS.Snapshot.Backup.Exfiltration
     - AWS.CloudTrail.SnapshotMadePublic
     # Encryption Status
     - AWS.DynamoDB.TableEncryption
@@ -41,7 +40,6 @@ PackDefinition:
     - AWS.EC2.RouteTableModified
     - AWS.EC2.VPCModified
     - AWS.IPSet.Modified
-    - AWS.Modify.Cloud.Compute.Infrastructure
     - AWS.CloudTrail.NetworkACLPermissiveEntry
     - AWS.DNS.Crypto.Domain
     - AWS.VPC.HealthyLogStatus
@@ -56,6 +54,7 @@ PackDefinition:
     # User and Account Policies and Rules
     - AWS.Console.LoginWithoutMFA
     - AWS.Console.LoginWithoutSAML
+    - AWS.PasswordPolicy.PasswordReuse
     - AWS.Suspicious.SAML.Activity
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.User.MFA
@@ -71,6 +70,7 @@ PackDefinition:
     - AWS.User.Login.Profile.Modified
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
+    - AWS.ACM.Certificate.Expiration
     - AWS.CloudTrail.Created
     - AWS.CloudTrail.Enabled
     - AWS.CloudTrail.Stopped
@@ -100,8 +100,14 @@ PackDefinition:
     - AWS.CloudTrail.UnauthorizedAPICall
     - Amazon.EKS.Audit.Multiple403
     - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
-    # Standard Rules applicable to AWS
-    - Standard.BruteForceByIP
+    - AWS.CloudFormation.Stack.Drifted
+    - AWS.CloudFormation.Stack.UsesIAMServiceRole
+    - AWS.CloudFormation.Stack.TerminationProtection
+    - AWS.CloudWatchLogs.DataRetention1Year
+    - AWS.CloudWatchLogs.Encrypted
+    - AWS.Config.RecordAllResourceTypes
+    - AWS.Config.GlobalResources
+    - AWS.DynamoDB.Autoscaling
     # AWS DataModels
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail

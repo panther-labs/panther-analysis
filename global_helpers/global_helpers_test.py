@@ -11,6 +11,7 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
+import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
@@ -224,6 +225,191 @@ class TestTorExitNodes(unittest.TestCase):
                 # pylint: disable=line-too-long
                 "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
             },
+        )
+
+
+class TestIpInfoHelpersLocation(unittest.TestCase):
+    def setUp(self):
+        self.match_field = "clientIp"
+        self.event = {
+            "p_enrichment": {
+                p_i_h.IPINFO_LOCATION_LUT_NAME: {
+                    self.match_field: {
+                        "city": "Constantinople",
+                        "country": "Byzantium",
+                        "lat": "41.008610",
+                        "lng": "28.971111",
+                        "postal_code": "NA",
+                        "region": "Asia Minor",
+                        "region_code": "123",
+                        "timezone": "GMT+03:00",
+                    }
+                }
+            }
+        }
+        self.ip_info = p_i_h.get_ipinfo_location(self.event)
+
+    def test_city(self):
+        city = self.ip_info.city(self.match_field)
+        self.assertEqual(city, "Constantinople")
+
+    def test_country(self):
+        country = self.ip_info.country(self.match_field)
+        self.assertEqual(country, "Byzantium")
+
+    def test_latitude(self):
+        latitude = self.ip_info.latitude(self.match_field)
+        self.assertEqual(latitude, "41.008610")
+
+    def test_longitude(self):
+        longitude = self.ip_info.longitude(self.match_field)
+        self.assertEqual(longitude, "28.971111")
+
+    def test_postal_code(self):
+        postal_code = self.ip_info.postal_code(self.match_field)
+        self.assertEqual(postal_code, "NA")
+
+    def test_region(self):
+        region = self.ip_info.region(self.match_field)
+        self.assertEqual(region, "Asia Minor")
+
+    def test_region_code(self):
+        region_code = self.ip_info.region_code(self.match_field)
+        self.assertEqual(region_code, "123")
+
+    def test_timezone(self):
+        timezone = self.ip_info.timezone(self.match_field)
+        self.assertEqual(timezone, "GMT+03:00")
+
+    def test_not_found(self):
+        self.assertEqual(self.ip_info.timezone("not_found"), None)
+
+    def test_context(self):
+        expected = {
+            "City": "Constantinople",
+            "Country": "Byzantium",
+            "Latitude": "41.008610",
+            "Longitude": "28.971111",
+            "PostalCode": "NA",
+            "Region": "Asia Minor",
+            "RegionCode": "123",
+            "Timezone": "GMT+03:00",
+        }
+        self.assertEqual(expected, self.ip_info.context(self.match_field))
+
+
+class TestIpInfoHelpersASN(unittest.TestCase):
+    def setUp(self):
+        self.match_field = "clientIp"
+        self.event = {
+            "p_enrichment": {
+                p_i_h.IPINFO_ASN_LUT_NAME: {
+                    self.match_field: {
+                        "asn": "AS00000",
+                        "domain": "byzantineempire.com",
+                        "name": "Byzantine Empire",
+                        "route": "1.2.3.4/24",
+                        "type": "isp",
+                    }
+                }
+            }
+        }
+        self.ip_info = p_i_h.get_ipinfo_asn(self.event)
+
+    def test_asn(self):
+        asn = self.ip_info.asn(self.match_field)
+        self.assertEqual(asn, "AS00000")
+
+    def test_domain(self):
+        domain = self.ip_info.domain(self.match_field)
+        self.assertEqual(domain, "byzantineempire.com")
+
+    def test_name(self):
+        name = self.ip_info.name(self.match_field)
+        self.assertEqual(name, "Byzantine Empire")
+
+    def test_route(self):
+        route = self.ip_info.route(self.match_field)
+        self.assertEqual(route, "1.2.3.4/24")
+
+    def test_type(self):
+        _type = self.ip_info.type(self.match_field)
+        self.assertEqual(_type, "isp")
+
+    def test_not_found(self):
+        self.assertEqual(self.ip_info.type("not_found"), None)
+
+    def test_context(self):
+        expected = {
+            "ASN": "AS00000",
+            "Domain": "byzantineempire.com",
+            "Name": "Byzantine Empire",
+            "Route": "1.2.3.4/24",
+            "Type": "isp",
+        }
+        self.assertEqual(expected, self.ip_info.context(self.match_field))
+
+
+class TestGeoInfoFromIP(unittest.TestCase):
+    def setUp(self):
+        self.match_field = "clientIp"
+        self.event = {
+            "p_enrichment": {
+                p_i_h.IPINFO_ASN_LUT_NAME: {
+                    self.match_field: {
+                        "asn": "AS00000",
+                        "domain": "byzantineempire.com",
+                        "name": "Byzantine Empire",
+                        "route": "1.2.3.4/24",
+                        "type": "isp",
+                    }
+                },
+                p_i_h.IPINFO_LOCATION_LUT_NAME: {
+                    self.match_field: {
+                        "city": "Constantinople",
+                        "country": "Byzantium",
+                        "lat": "41.008610",
+                        "lng": "28.971111",
+                        "postal_code": "NA",
+                        "region": "Asia Minor",
+                        "region_code": "123",
+                        "timezone": "GMT+03:00",
+                    }
+                },
+            },
+            self.match_field: "1.2.3.4",
+        }
+
+    def test_geoinfo(self):
+        geoinfo = p_i_h.geoinfo_from_ip(self.event, self.match_field)
+        expected = {
+            "city": "Constantinople",
+            "country": "Byzantium",
+            "ip": "1.2.3.4",
+            "loc": "41.008610,28.971111",
+            "org": "AS00000 Byzantine Empire",
+            "postal": "NA",
+            "region": "Asia Minor",
+            "timezone": "GMT+03:00",
+        }
+        self.assertEqual(expected, geoinfo)
+
+    def test_ipinfo_not_enabled_exception(self):
+        event = {"p_enrichment": {}}
+        with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
+            p_i_h.geoinfo_from_ip(event, "fake_field")
+
+        self.assertEqual(
+            exc.exception.args[0], "Please enable both IPInfo Location and ASN Enrichment Providers"
+        )
+
+    def test_ipinfo_missing_match_exception(self):
+        with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
+            p_i_h.geoinfo_from_ip(self.event, "fake_field")
+
+        self.assertEqual(
+            exc.exception.args[0],
+            "IPInfo is not configured on the provided match_field: fake_field",
         )
 
 
