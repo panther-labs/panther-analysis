@@ -63,8 +63,8 @@ def rule(event):
     # Disqualify any eventNames that do not Include instance
     # and events that have readOnly set to false
     if event.get("eventName", "") in EC2_CRUD_ACTIONS:
+        useridentity_arn = deep_get(event, "userIdentity", "arn", default="<arn_not_found>")
         for allowed_arn in ALLOWED_ARNS:
-            useridentity_arn = deep_get(event, "userIdentity", "arn", default="<arn_not_found>")
             if fnmatch(useridentity_arn, allowed_arn):
                 return False
         return True
