@@ -73,10 +73,12 @@ def rule(event):
 
 def title(event):
     items = deep_get(event, "requestParameters", "instancesSet", "items", default=[{}])
+    actor = deep_get(event, "usersIdentity", "arn", default="<arn_not_found>")
     return (
-        f"AWS Event [{event.get('eventName')}] Instance ID "
-        f"[{items[0].get('instanceId', '<instance_id_not_found>')}] "
-        f"mAWS Account ID [{event.get('recipientAccountId', '<account_id_not_found>')}]"
+        f"AWS: [{actor}] "
+        f"performed [{event.get('eventName', '<event_not_found>')}] "
+        f"on Instance [{items[0].get('instanceId', '<instance_id_not_found>')}] "
+        f"in AWS Account [{event.get('recipientAccountId', '<account_id_not_found>')}]"
     )
 
 
