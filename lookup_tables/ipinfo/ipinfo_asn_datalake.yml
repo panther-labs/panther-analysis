@@ -1,15 +1,15 @@
 AnalysisType: lookup_table
-LookupName: ipinfo_asn
-Schema: IPInfo.ASNCIDR
+LookupName: ipinfo_asn_datalake
+Schema: IPInfo.ASNRanges
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-ipinfo-access-role
-  ObjectPath: s3://panther-ipinfo-ha771dhqm13j11czzb6kcpuy6ueccusw2a-s3alias/luts/data/ipinfo/asn.mmdb
+  ObjectPath: s3://panther-ipinfo-ha771dhqm13j11czzb6kcpuy6ueccusw2a-s3alias/luts/data/ipinfo/asn.csv.gz
   PeriodMinutes: 60
-Description: IpInfo Owner (ASN) includes ASN details for every IP address and every ASNs related domains, allocation date, registry name, total number of IP addresses, and assigned prefixes. This dataset is for detection engine. For the datalake, also enable ipinfo_asn_datalake.
+Description: IpInfo Owner (ASN) includes ASN details for every IP address and every ASNs related domains, allocation date, registry name, total number of IP addresses, and assigned prefixes. This dataset is for the datalake. For the detection engine, also enable ipinfo_asn.
 Reference: https://docs.panther.com/enrichment/ipinfo
 Enabled: false
 LogTypeMap:
-  PrimaryKey: cidrblock
+  PrimaryKey: id
   AssociatedLogTypes:
     - LogType: AlphaSOC.Alert
       Selectors:
