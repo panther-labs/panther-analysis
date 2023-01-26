@@ -228,11 +228,11 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
-def get_crowdstrike_field(event, field, default=None):
+def get_crowdstrike_field(event, field_name, default=None):
     return (
-        deep_get(event, field)
-        or deep_get(event, "event", field)
-        or deep_get(event, "unknown_payload", field)
+        deep_get(event, field_name)
+        or deep_get(event, "event", field_name)
+        or deep_get(event, "unknown_payload", field_name)
         or default
     )
 

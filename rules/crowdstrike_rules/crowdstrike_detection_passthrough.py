@@ -2,7 +2,10 @@ from panther_base_helpers import crowdstrike_detection_alert_context, get_crowds
 
 
 def rule(event):
-    return get_crowdstrike_field(event, "ExternalApiType") in "Event_DetectionSummaryEvent"
+    return (
+        get_crowdstrike_field(event, "ExternalApiType", default="none")
+        == "Event_DetectionSummaryEvent"
+    )
 
 
 def title(event):
