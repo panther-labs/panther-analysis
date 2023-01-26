@@ -12,9 +12,9 @@ Query: |
     (
     select 
       zips.*,
-      pr2.event.targetprocessid as process_targetpid,
-      pr2.event.parentprocessid as process_parentpid,
-      pr2.event.commandline as process_commandline
+      pr2.event:targetprocessid as process_targetpid,
+      pr2.event:parentprocessid as process_parentpid,
+      pr2.event:commandline as process_commandline
     from
       (
         select
@@ -29,18 +29,18 @@ Query: |
             'BZip2FileWritten'
           )
           and p_occurs_since('1 day')
-          and CAST(unknown_payload:Size as integer) > 10000000
+          and CAST(event:Size as integer) > 10000000
       ) zips
       left join panther_logs.public.crowdstrike_fdrevent pr2
       on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
       
       where 
-      pr2.event.commandline like any(
+      pr2.event:commandline like any(
         '%zip%'
       )
       
       and not (
-        pr2.event.commandline like any (
+        pr2.event:commandline like any (
           '%curl%',
           '/Application%',
           '%install%'
@@ -52,8 +52,8 @@ Query: |
     on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
   where 
     (
-      (parent_commandline is null) or 
-      not (parent_commandline like any (
+      (event:parent_commandline is null) or
+      not (event:parent_commandline like any (
         '%homebrew%',
         '%Homebrew%',
         '/Application%',
