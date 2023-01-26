@@ -6,7 +6,7 @@ Description: Okta Logins from an IP Address not found in CrowdStrike's AIP List 
 Enabled: false
 Query: |
     SELECT *
-    FROM panther_logs.public.okta_systemlog
+    FROM okta_systemlog
     WHERE p_occurs_since('1 days')
       AND eventtype = 'user.session.start'
       AND outcome:result = 'SUCCESS'

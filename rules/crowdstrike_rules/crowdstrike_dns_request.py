@@ -5,11 +5,11 @@ DENYLIST = ["baddomain.com"]
 
 
 def rule(event):
-    # We need to run either for Crowdstrike.DnsRequest or
-    # for DnsRequest.FDREvent of 'DnsRequest' type
+    # We need to run either for Crowdstrike.DnsRequest or for DnsRequest.FDREvent of 'DnsRequest'
+    # type. Crowdstrike.DnsRequest is covered because of the association with the type
     if (
-        event.get("p_event_tyoe") == "Crowdstrike.FDREvent"
-        and event.get("fdr_event_type", "") == "DnsRequest"
+        event.get("p_log_type") == "Crowdstrike.FDREvent"
+        and event.get("fdr_event_type", "") != "DnsRequest"
     ):
         return False
 
