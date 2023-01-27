@@ -1,7 +1,5 @@
 from panther_base_helpers import get_crowdstrike_field
 
-MATCHES = []
-
 
 def rule(event):
     return (
