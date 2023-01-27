@@ -133,7 +133,8 @@ def resource_table() -> boto3.resource:
     if not _RESOURCE_TABLE:
         # pylint: disable=no-member
         _RESOURCE_TABLE = boto3.resource(
-            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
+            "dynamodb",
+            endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None,
         ).Table("panther-resources")
     return _RESOURCE_TABLE
 
@@ -178,7 +179,8 @@ def kv_table() -> boto3.resource:
     if not _KV_TABLE:
         # pylint: disable=no-member
         _KV_TABLE = boto3.resource(
-            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
+            "dynamodb",
+            endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None,
         ).Table("panther-kv-store")
     return _KV_TABLE
 
@@ -240,7 +242,7 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
     data = json.dumps(val)
 
     # Store the item in DynamoDB
-    kv_table().put_item(Item={'key': key, 'data': {'S': data}})
+    kv_table().put_item(Item={"key": key, "data": {"S": data}})
 
     if epoch_seconds:
         set_key_expiration(key, epoch_seconds)
@@ -248,18 +250,17 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
 
 def get_dictionary(key: str) -> dict:
     # Retrieve the item from DynamoDB
-    response = kv_table().get_item(Key={'key': key})
+    response = kv_table().get_item(Key={"key": key})
 
     # Check if the item was found
-    if 'Item' in response:
-        item = response.get('Item', {})
+    if "Item" in response:
+        item = response.get("Item", {})
 
         # Deserialize the 'data' attribute back to a Python dictionary
-        data = json.loads(item.get('data', {}).get('S', {}))
+        data = json.loads(item.get("data", {}).get("S", {}))
         return data
 
     return {}
-
 
 
 def get_string_set(key: str) -> Set[str]:
@@ -356,7 +357,9 @@ def reset_string_set(key: str) -> None:
     )
 
 
-def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
+def evaluate_threshold(
+    key: str, threshold: int = 10, expiry_seconds: int = 3600
+) -> bool:
     hourly_error_count = increment_counter(key)
     if hourly_error_count == 1:
         set_key_expiration(key, int(time.time()) + expiry_seconds)
@@ -408,9 +411,9 @@ def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
 def time_delta(time1, time2: str) -> str:
     time1_truncated = nano_to_micro(time1)
     time2_truncated = nano_to_micro(time2)
-    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
-        time1_truncated
-    )
+    delta_timedelta = resolve_timestamp_string(
+        time2_truncated
+    ) - resolve_timestamp_string(time1_truncated)
     days = delta_timedelta.days
     hours, remainder = divmod(delta_timedelta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
