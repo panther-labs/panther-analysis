@@ -257,8 +257,8 @@ def get_dictionary(key: str) -> dict:
         # Deserialize the 'data' attribute back to a Python dictionary
         data = json.loads(item.get('data', {}).get('S', {}))
         return data
-    
-    return dict()
+
+    return {}
 
 
 
