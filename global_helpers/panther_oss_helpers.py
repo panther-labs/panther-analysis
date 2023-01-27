@@ -357,9 +357,7 @@ def reset_string_set(key: str) -> None:
     )
 
 
-def evaluate_threshold(
-    key: str, threshold: int = 10, expiry_seconds: int = 3600
-) -> bool:
+def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
     hourly_error_count = increment_counter(key)
     if hourly_error_count == 1:
         set_key_expiration(key, int(time.time()) + expiry_seconds)
@@ -411,9 +409,9 @@ def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
 def time_delta(time1, time2: str) -> str:
     time1_truncated = nano_to_micro(time1)
     time2_truncated = nano_to_micro(time2)
-    delta_timedelta = resolve_timestamp_string(
-        time2_truncated
-    ) - resolve_timestamp_string(time1_truncated)
+    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
+        time1_truncated
+    )
     days = delta_timedelta.days
     hours, remainder = divmod(delta_timedelta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
