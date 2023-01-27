@@ -19,7 +19,6 @@ def title(event):
 
 
 def alert_context(event):
-    # pylint: disable=line-too-long
     return {
         "Start Time": get_crowdstrike_field(
             event, "StartTimestamp", default="<unknown-StartTimestamp>"

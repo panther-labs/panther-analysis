@@ -9,8 +9,9 @@ def rule(event):
 
 
 def title(event):
-    # pylint: disable=line-too-long
-    return f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - {get_crowdstrike_field(event, 'ComputerName')}({get_crowdstrike_field(event, 'UserName')})"
+    return f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - " +\
+           f"{get_crowdstrike_field(event, 'ComputerName')}" +\
+           f"({get_crowdstrike_field(event, 'UserName')})"
 
 
 def alert_context(event):

@@ -19,8 +19,8 @@ def rule(event):
 
 
 def title(event):
-    # pylint: disable=line-too-long
-    return f"A denylisted domain [{get_crowdstrike_field(event, 'DomainName')}] was queried by host {event.get('aid')}"
+    return f"A denylisted domain [{get_crowdstrike_field(event, 'DomainName')}] was " +\
+           f"queried by host {event.get('aid')}"
 
 
 def dedup(event):
