@@ -235,6 +235,33 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
     )
 
 
+def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
+    # Convert the data dictionary to a JSON string
+    data = json.dumps(val)
+
+    # Store the item in DynamoDB
+    kv_table().put_item(Item={'key': key, 'data': {'S': data}})
+
+    if epoch_seconds:
+        set_key_expiration(key, epoch_seconds)
+
+
+def get_dictionary(key: str) -> dict:
+    # Retrieve the item from DynamoDB
+    response = kv_table().get_item(Key={'key': key})
+
+    # Check if the item was found
+    if 'Item' in response:
+        item = response.get('Item', {})
+
+        # Deserialize the 'data' attribute back to a Python dictionary
+        data = json.loads(item.get('data', {}).get('S', {}))
+        return data
+    
+    return dict()
+
+
+
 def get_string_set(key: str) -> Set[str]:
     """Get a string set's current value (defaulting to empty set if key does not exit)."""
     response = kv_table().get_item(
