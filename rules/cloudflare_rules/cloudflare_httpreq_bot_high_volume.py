@@ -10,12 +10,6 @@ def rule(event):
             event.get("BotScore", 100) >= 1,
         ]
     )
-    # if not all([
-    #    event.get("BotScore", 100) <= 30,
-    #    event.get("BotScore", 100) >= 1,
-    # ]):
-    #    return False
-    # return True
 
 
 def title(event):
