@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_cloudflare_helpers import map_source_to_name
+from panther_cloudflare_helpers import cloudflare_fw_alert_context
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
 
@@ -29,14 +29,21 @@ def rule(event):
 
 def title(event):
     return (
-        f"High Volume Events Blocked - "
-        f"{map_source_to_name(event.get('Source'))}: {event.get('ClientIP')}"
+        f"Cloudflare: High Volume of Block Actions - "
+        f"from [{event.get('ClientIP', '<NO_CLIENTIP>')}] "
+        f"to [{event.get('ClientRequestHost', '<NO_REQ_HOST>')}] "
+        f" - GreyNoise identified IP as malicious"
     )
 
 
 def dedup(event):
-    return f"{event.get('ClientIP')}:{event.get('Source')}"
+    return (
+        f"{event.get('ClientIP', '<NO_CLIENTIP>')}:"
+        f"{event.get('ClientRequestHost', '<NO_REQ_HOST>')}"
+    )
 
 
-def alert_context(_):
-    return NOISE.context("ClientIP")
+def alert_context(event):
+    ctx = cloudflare_fw_alert_context(event)
+    ctx["GreyNoise"] = NOISE.context("ClientIP")
+    return ctx
