@@ -9,9 +9,11 @@ def rule(event):
 
 
 def title(event):
-    return f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - " +\
-           f"{get_crowdstrike_field(event, 'ComputerName')}" +\
-           f"({get_crowdstrike_field(event, 'UserName')})"
+    return (
+        f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - "
+        + f"{get_crowdstrike_field(event, 'ComputerName')}"
+        + f"({get_crowdstrike_field(event, 'UserName')})"
+    )
 
 
 def alert_context(event):
@@ -23,5 +25,7 @@ def severity(event):
 
 
 def dedup(event):
-    # pylint: disable=line-too-long
-    return f"{get_crowdstrike_field(event, 'EventUUID')} - {get_crowdstrike_field(event, 'ComputerName')}"
+    return (
+        f"{get_crowdstrike_field(event, 'EventUUID')} "
+        + f"- {get_crowdstrike_field(event, 'ComputerName')}"
+    )

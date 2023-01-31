@@ -356,12 +356,8 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         self.input = {
             "cid": "something",
             "aid": "else",
-            "event": {
-                "foo": "bar"
-            },
-            "unknown_payload": {
-                "field": "is"
-            }
+            "event": {"foo": "bar"},
+            "unknown_payload": {"field": "is"},
         }
 
     def test_input_key_default_works(self):
@@ -388,6 +384,7 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         self.input["event"]["field"] = "found"
         response = p_b_h.get_crowdstrike_field(self.input, "field")
         self.assertEqual(response, "found")
+
 
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):

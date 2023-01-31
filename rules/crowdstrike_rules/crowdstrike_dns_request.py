@@ -19,8 +19,10 @@ def rule(event):
 
 
 def title(event):
-    return f"A denylisted domain [{get_crowdstrike_field(event, 'DomainName')}] was " +\
-           f"queried by host {event.get('aid')}"
+    return (
+        f"A denylisted domain [{get_crowdstrike_field(event, 'DomainName')}] was "
+        + f"queried by host {event.get('aid')}"
+    )
 
 
 def dedup(event):
