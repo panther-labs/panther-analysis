@@ -274,18 +274,17 @@ def get_dictionary(key: str) -> dict:
     # Retrieve the item from DynamoDB
     response = kv_table().get_item(Key={"key": key})
 
-    # Check if the item was found
-    if "Item" in response:
-        item = response.get("Item", {}).get(_DICT_COL, {})
+    item = response.get("Item", {}).get(_DICT_COL, {})
 
-        if item:
-            try:
-                # Deserialize from JSON to a Python dictionary
-                return json.loads(item)
-            except json.decoder.JSONDecodeError as exc:
-                raise Exception(
-                    "get_dictionary(): Data found in DynamoDB could not be decoded into JSON"
-                ) from exc
+    # Check if the item was found
+    if item:
+        try:
+            # Deserialize from JSON to a Python dictionary
+            return json.loads(item)
+        except json.decoder.JSONDecodeError as exc:
+            raise Exception(
+                "get_dictionary(): Data found in DynamoDB could not be decoded into JSON"
+            ) from exc
 
     return {}
 
