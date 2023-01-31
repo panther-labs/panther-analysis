@@ -170,6 +170,7 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 _KV_TABLE = None
 _COUNT_COL = "intCount"
 _STRING_SET_COL = "stringSet"
+_DICT_COL = "dictionary"
 
 
 def kv_table() -> boto3.resource:
@@ -238,11 +239,32 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
 
 
 def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
-    # Convert the data dictionary to a JSON string
-    data = json.dumps(val)
+    """Overwrite a dictionary under the given key.
+
+    The value must be JSON serializable, and therefore cannot contain:
+        - Sets
+        - Complex numbers or formulas
+        - Custom objects
+        - Keys that are not strings
+
+    Args:
+        key: The name of the dictionary
+        val: A Python dictionary
+        epoch_seconds: (Optional) Set string expiration time
+    """
+    if isinstance(val, dict):
+        try:
+            # Serialize 'val' to a JSON string
+            data = json.dumps(val)
+        except TypeError as exc:
+            raise Exception(
+                "put_dictionary(): value is a dictionary, but it is not JSON serializable"
+            ) from exc
+    else:
+        raise Exception("put_dictionary(): value is not a dictionary")
 
     # Store the item in DynamoDB
-    kv_table().put_item(Item={"key": key, "data": {"S": data}})
+    kv_table().put_item(Item={"key": key, _DICT_COL: data})
 
     if epoch_seconds:
         set_key_expiration(key, epoch_seconds)
@@ -254,11 +276,16 @@ def get_dictionary(key: str) -> dict:
 
     # Check if the item was found
     if "Item" in response:
-        item = response.get("Item", {})
+        item = response.get("Item", {}).get(_DICT_COL, {})
 
-        # Deserialize the 'data' attribute back to a Python dictionary
-        data = json.loads(item.get("data", {}).get("S", {}))
-        return data
+        if item:
+            try:
+                # Deserialize from JSON to a Python dictionary
+                return json.loads(item)
+            except json.decoder.JSONDecodeError as exc:
+                raise Exception(
+                    "get_dictionary(): Data found in DynamoDB could not be decoded into JSON"
+                ) from exc
 
     return {}
 
