@@ -7,6 +7,7 @@ RuleID: Crowdstrike.RealTimeResponse.Session
 Severity: Medium
 LogTypes:
   - Crowdstrike.Unknown
+  - Crowdstrike.FDREvent
 Tags:
   - Crowdstrike
 Description: >
@@ -59,3 +60,67 @@ Tests:
             "timestamp": "2022-12-08T00:48:58Z"
           }
         }
+  -
+    Name: RTS session start event (FDREvent)
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "AgentIdString": "42db160eec7948658374a28a4088f297",
+          "CustomerIdString": "712bcd164963442ea43d52917cecdecc",
+          "EventType": "Event_ExternalApiEvent",
+          "ExternalApiType": "Event_RemoteResponseSessionStartEvent",
+          "HostnameField": "US-C02TEST",
+          "Nonce": "13732697495973190000",
+          "SessionId": "6e1081e4-4914-4761-af3d-666851adb950",
+          "StartTimestamp": "1670460538",
+          "UTCTimestamp": "1670460538000",
+          "UserName": "someone@runpanther.io",
+          "cid": "",
+          "eid": "118",
+          "timestamp": "2022-12-08T00:48:58Z"
+        },
+        "timestamp": "2022-12-08 00:48:58.000000000",
+        "aid": "42db160eec7948658374a28a4088f297",
+        "cid": "712bcd164963442ea43d52917cecdecc",
+        "fdr_event_type": "Event_RemoteResponseSessionStartEvent",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_event_time": "2022-12-08T00:48:58Z",
+        "p_any_domain_names": ["US-C02TEST"],
+        "p_any_md5_hashes": ["42db160eec7948658374a28a4088f297", "712bcd164963442ea43d52917cecdecc"],
+        "p_any_trace_ids": ["42db160eec7948658374a28a4088f297", "712bcd164963442ea43d52917cecdecc"],
+        "p_any_usernames": ["someone@runpanther.io"],
+        "p_any_emails": ["someone@runpanther.io"]
+      }
+  -
+    Name: RTS session not started (FDREvent)
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "AgentIdString": "42db160eec7948658374a28a4088f297",
+          "CustomerIdString": "712bcd164963442ea43d52917cecdecc",
+          "EventType": "Event_ExternalApiEvent",
+          "ExternalApiType": "Event_RemoteResponseSessionEndEvent",
+          "HostnameField": "US-C02TEST",
+          "Nonce": "13732697495973190000",
+          "SessionId": "6e1081e4-4914-4761-af3d-666851adb950",
+          "StartTimestamp": "1670460538",
+          "UTCTimestamp": "1670460538000",
+          "UserName": "someone@runpanther.io",
+          "cid": "",
+          "eid": "118",
+          "timestamp": "2022-12-08T00:48:58Z"
+        },
+        "timestamp": "2022-12-08 00:48:58.000000000",
+        "aid": "42db160eec7948658374a28a4088f297",
+        "cid": "712bcd164963442ea43d52917cecdecc",
+        "fdr_event_type": "Event_RemoteResponseSessionEndEvent",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_event_time": "2022-12-08T00:48:58Z",
+        "p_any_domain_names": ["US-C02TEST"],
+        "p_any_md5_hashes": ["42db160eec7948658374a28a4088f297", "712bcd164963442ea43d52917cecdecc"],
+        "p_any_trace_ids": ["42db160eec7948658374a28a4088f297", "712bcd164963442ea43d52917cecdecc"],
+        "p_any_usernames": ["someone@runpanther.io"],
+        "p_any_emails": ["someone@runpanther.io"]
+      }
