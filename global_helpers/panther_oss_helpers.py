@@ -260,7 +260,8 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
         data = json.dumps(val)
     except TypeError as exc:
         raise Exception(
-            "panther_oss_helpers.put_dictionary: value is a dictionary, but it is not JSON serializable"
+            "panther_oss_helpers.put_dictionary: "
+            "value is a dictionary, but it is not JSON serializable"
         ) from exc
 
     # Store the item in DynamoDB
@@ -285,7 +286,8 @@ def get_dictionary(key: str) -> dict:
         return json.loads(item)
     except json.decoder.JSONDecodeError as exc:
         raise Exception(
-            "panther_oss_helpers.get_dictionary: Data found in DynamoDB could not be decoded into JSON"
+            "panther_oss_helpers.get_dictionary: "
+            "Data found in DynamoDB could not be decoded into JSON"
         ) from exc
 
 
