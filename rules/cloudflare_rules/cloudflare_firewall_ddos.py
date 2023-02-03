@@ -1,8 +1,24 @@
+from panther_cloudflare_helpers import cloudflare_fw_alert_context
+
+
 def rule(event):
-    if event.get("Source") != "l7ddos" or event.get("Action") == "block":
-        return False
-    return True
+    return event.get("Source", "") == "l7ddos"
 
 
-def title(_):
-    return "Cloudflare Detected L7 DDoS"
+def title(event):
+    return (
+        "Cloudflare: Detected L7 DDoS"
+        f"from [{event.get('ClientIP', '<NO_CLIENTIP>')}] "
+        f"to [{event.get('ClientRequestHost', '<NO_REQ_HOST>')}] "
+        f"and took action [{event.get('Action', '<NO_ACTION>')}]"
+    )
+
+
+def alert_context(event):
+    return cloudflare_fw_alert_context(event)
+
+
+def severity(event):
+    if event.get("Action", "") == "block":
+        return "Info"
+    return "Medium"

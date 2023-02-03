@@ -1,0 +1,67 @@
+# This file is the part of the Crowdstrike FDREvent migration, and it's the equivalent of
+# https://github.com/panther-labs/panther-analysis/blob/b61db1ecf3967c5f6a44c1782f8891fd5f54384d/queries/crowdstrike_queries/CrowdStrike_Large_Zip_Creation.yml
+#
+AnalysisType: scheduled_query
+Description: Detects creation of large zip files, which can indicate attempts of exfiltration (crowdstrike_fdrevent table)
+Enabled: false
+Query: |
+  select
+    ppr.event:CommandLine as parent_commandline,
+    zip_proc.*
+  from 
+    (
+    select 
+      zips.*,
+      pr2.event:TargetProcessId as process_targetpid,
+      pr2.event:ParentProcessId as process_parentpid,
+      pr2.event:CommandLine as process_commandline
+    from
+      (
+        select
+          *
+        from
+          crowdstrike_fdrevent
+        where 
+          event_simpleName IN (
+            'GzipFileWritten',
+            'SevenZipFileWritten',
+            'ZipFileWritten',
+            'BZip2FileWritten'
+          )
+          and p_occurs_since('1 day')
+          and CAST(event:Size as integer) > 10000000
+      ) zips
+      left join crowdstrike_fdrevent pr2
+      on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
+      
+      where 
+      pr2.event:CommandLine like any(
+        '%zip%'
+      )
+      
+      and not (
+        pr2.event:CommandLine like any (
+          '%curl%',
+          '/Application%',
+          '%install%'
+        )
+      )
+  
+    ) zip_proc
+    LEFT JOIN crowdstrike_fdrevent ppr
+    on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
+  where 
+    (
+      (parent_commandline is null) or
+      not (parent_commandline like any (
+        '%homebrew%',
+        '%Homebrew%',
+        '/Application%',
+        '%install%'
+        )
+      )
+    )
+QueryName: CrowdStrike Large Zip Creation (crowdstrike_fdrevent table)
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5

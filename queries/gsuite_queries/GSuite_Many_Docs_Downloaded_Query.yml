@@ -1,0 +1,19 @@
+AnalysisType: scheduled_query
+Description: Query to search high document download counts by users.
+Enabled: false
+Query: |
+    SELECT
+        actor:email AS user,
+        ARRAY_AGG( DISTINCT parameters:doc_title) AS downloaded_files,
+        ARRAY_SIZE(downloaded_files) as download_count,
+        TIME_SLICE(p_event_time, 60, 'minute') as t_s
+    FROM gsuite_activityevent
+    WHERE p_occurs_since('1 day')
+        AND name = 'download'
+    GROUP BY actor:email, t_s
+    HAVING download_count > 10
+    ORDER BY download_count DESC
+QueryName: GSuite Many Docs Downloaded Query
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 2
