@@ -252,16 +252,16 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
         val: A Python dictionary
         epoch_seconds: (Optional) Set string expiration time
     """
-    if isinstance(val, dict):
-        try:
-            # Serialize 'val' to a JSON string
-            data = json.dumps(val)
-        except TypeError as exc:
-            raise Exception(
-                "put_dictionary(): value is a dictionary, but it is not JSON serializable"
-            ) from exc
-    else:
-        raise Exception("put_dictionary(): value is not a dictionary")
+    if not isinstance(val, dict):
+        raise Exception("panther_oss_helpers.put_dictionary: value is not a dictionary")
+
+    try:
+        # Serialize 'val' to a JSON string
+        data = json.dumps(val)
+    except TypeError as exc:
+        raise Exception(
+            "panther_oss_helpers.put_dictionary: value is a dictionary, but it is not JSON serializable"
+        ) from exc
 
     # Store the item in DynamoDB
     kv_table().put_item(Item={"key": key, _DICT_COL: data})
@@ -276,17 +276,17 @@ def get_dictionary(key: str) -> dict:
 
     item = response.get("Item", {}).get(_DICT_COL, {})
 
-    # Check if the item was found
-    if item:
-        try:
-            # Deserialize from JSON to a Python dictionary
-            return json.loads(item)
-        except json.decoder.JSONDecodeError as exc:
-            raise Exception(
-                "get_dictionary(): Data found in DynamoDB could not be decoded into JSON"
-            ) from exc
+    # Check if the item was not found, if so return empty dictionary
+    if not item:
+        return {}
 
-    return {}
+    try:
+        # Deserialize from JSON to a Python dictionary
+        return json.loads(item)
+    except json.decoder.JSONDecodeError as exc:
+        raise Exception(
+            "panther_oss_helpers.get_dictionary: Data found in DynamoDB could not be decoded into JSON"
+        ) from exc
 
 
 def get_string_set(key: str) -> Set[str]:
