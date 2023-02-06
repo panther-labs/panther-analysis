@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_enabled.py
 PolicyID: AWS.CloudTrail.Enabled
-DisplayName: AWS CloudTrail Enabled
+DisplayName: AWS CloudTrail Management Events Enabled
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail.Meta
@@ -18,7 +18,7 @@ Reports:
     - TA0005:T1562
 Severity: High
 Description: >
-  This policy ensures that CloudTrail is enabled in all regions and at least one of them has
+  This policy ensures that at least one CloudTrail has
   management (control plane) operations logged.
 Runbook: >
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-cloudtrail-enabled-in-all-regions
@@ -73,3 +73,130 @@ Tests:
         "GlobalEventSelectors": null,
         "Trails": []
       }
+  - 
+    Name: Advanced Selector With Management
+    ExpectedResult: true
+    Resource:
+      {
+        "TrailARN": "arn:aws:cloudtrail:us-east-1:412345:trail/write_to_bucket",
+        "GlobalAdvancedEventSelectors": [
+          {
+            "Name": "Management events selector",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Management"
+                    ]
+                }
+            ]
+          },
+          {
+            "Name": "LambdaDataEvents",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Data"
+                    ]
+                },
+                {
+                    "Field": "resources.type",
+                    "Equals": [
+                        "AWS::Lambda::Function"
+                    ]
+                }
+            ]
+          },
+          {
+            "Name": "S3DataEvents",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Data"
+                    ]
+                },
+                {
+                    "Field": "eventName",
+                    "NotEquals": [
+                        "HeadObject",
+                        "UploadPart"
+                    ]
+                },
+                {
+                    "Field": "resources.type",
+                    "Equals": [
+                        "AWS::S3::Object"
+                    ]
+                }
+            ]
+          }]
+      }
+  -
+    Name: Advanced Selector With Management and readOnly
+    ExpectedResult: false
+    Resource:
+      {
+        "TrailARN": "arn:aws:cloudtrail:us-east-1:412345:trail/write_to_bucket",
+        "GlobalAdvancedEventSelectors": [
+          {
+            "Name": "Management events selector",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Management"
+                    ]
+                },
+                {
+                    "Field": "readOnly",
+                    "Equals": [
+                        "true"
+                    ]
+                }
+            ]
+          },
+          {
+            "Name": "LambdaDataEvents",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Data"
+                    ]
+                },
+                {
+                    "Field": "resources.type",
+                    "Equals": [
+                        "AWS::Lambda::Function"
+                    ]
+                }
+            ]
+          },
+          {
+            "Name": "S3DataEvents",
+            "FieldSelectors": [
+                {
+                    "Field": "eventCategory",
+                    "Equals": [
+                        "Data"
+                    ]
+                },
+                {
+                    "Field": "eventName",
+                    "NotEquals": [
+                        "HeadObject",
+                        "UploadPart"
+                    ]
+                },
+                {
+                    "Field": "resources.type",
+                    "Equals": [
+                        "AWS::S3::Object"
+                    ]
+                }
+            ]
+          }]
+      }
+
