@@ -1,5 +1,5 @@
 def policy(resource):
-    #pylint: disable=R1260
+    # pylint: disable=R1260
     if not (resource.get("Trails") or resource.get("TrailARN")):
         return False
 
