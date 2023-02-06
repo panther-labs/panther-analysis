@@ -102,6 +102,9 @@ LogTypeMap:
         - "LocalAddressIP6"
         - "RemoteAddressIP4"
         - "RemoteAddressIP6"
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - 'p_any_ip_addresses'
     - LogType: Duo.Authentication
       Selectors:
         - "$.access_device.ip"

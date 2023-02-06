@@ -1,29 +1,29 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import get_crowdstrike_field
 
 
 def rule(event):
     return (
-        deep_get(event, "unknown_payload", "ExternalApiType", default="<unknown-ExternalApiType>")
+        get_crowdstrike_field(event, "ExternalApiType", default="<unknown-ExternalApiType>")
         == "Event_RemoteResponseSessionStartEvent"
     )
 
 
 def title(event):
-    user_name = deep_get(event, "unknown_payload", "UserName", default="<unknown-UserName>")
-    hostname_field = deep_get(
-        event, "unknown_payload", "HostnameField", default="<unknown-HostNameField>"
+    user_name = get_crowdstrike_field(event, "UserName", default="<unknown-UserName>")
+    hostname_field = get_crowdstrike_field(
+        event, "HostnameField", default="<unknown-HostNameField>"
     )
     return f"{user_name} started a Crowdstrike Real-Time Response (RTR) shell on {hostname_field}"
 
 
 def alert_context(event):
     return {
-        "Start Time": deep_get(
-            event, "unknown_payload", "StartTimestamp", default="<unknown-StartTimestamp>"
+        "Start Time": get_crowdstrike_field(
+            event, "StartTimestamp", default="<unknown-StartTimestamp>"
         ),
-        "SessionId": deep_get(event, "unknown_payload", "SessionId", default="<unknown-SessionId>"),
-        "Actor": deep_get(event, "unknown_payload", "UserName", default="<unknown-UserName>"),
-        "Target Host": deep_get(
-            event, "unknown_payload", "HostnameField", default="<unknown-HostnameField>"
+        "SessionId": get_crowdstrike_field(event, "SessionId", default="<unknown-SessionId>"),
+        "Actor": get_crowdstrike_field(event, "UserName", default="<unknown-UserName>"),
+        "Target Host": get_crowdstrike_field(
+            event, "HostnameField", default="<unknown-HostnameField>"
         ),
     }
