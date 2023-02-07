@@ -1,0 +1,22 @@
+# This file is the part of the Crowdstrike FDREvent migration, and it's the equivalent of
+# https://github.com/panther-labs/panther-analysis/blob/b61db1ecf3967c5f6a44c1782f8891fd5f54384d/queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml
+#
+AnalysisType: scheduled_query
+Description: Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
+Enabled: false
+Query: |
+    SELECT *
+    FROM aws_cloudtrail
+    WHERE p_occurs_since('1 days')
+      AND eventName IN ('ConsoleLogin', 'SignIn', 'GetSessionToken')
+      AND eventSource IN ('sts.amazonaws.com', 'signin.amazonaws.com')
+      AND sourceIPAddress NOT IN
+        (
+          SELECT DISTINCT aip
+          FROM crowdstrike_fdrevent
+          WHERE p_occurs_since('3 days') AND crowdstrike_fdrevent.fdr_event_type = 'aid_master'
+        )
+QueryName: AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 3

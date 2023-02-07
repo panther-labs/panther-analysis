@@ -36,6 +36,14 @@ ALLOWED_DOMAINS = [
 
 
 def rule(event):
+    # We need to run either for Crowdstrike.DnsRequest or for DnsRequest.FDREvent of 'DnsRequest'
+    # type. Crowdstrike.DnsRequest is covered because of the association with the type
+    if (
+        event.get("p_log_type") == "Crowdstrike.FDREvent"
+        and event.get("fdr_event_type", "") != "DnsRequest"
+    ):
+        return False
+
     # check domain for company name AND a fake keyword
     for domain in event.get("p_any_domain_names", []):
         domain_was_allowed = [x for x in ALLOWED_DOMAINS if domain.lower().endswith(x)]

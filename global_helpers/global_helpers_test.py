@@ -351,6 +351,41 @@ class TestIpInfoHelpersASN(unittest.TestCase):
         self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
+class TestGetCrowdstrikeField(unittest.TestCase):
+    def setUp(self):
+        self.input = {
+            "cid": "something",
+            "aid": "else",
+            "event": {"foo": "bar"},
+            "unknown_payload": {"field": "is"},
+        }
+
+    def test_input_key_default_works(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "zee", default="hello")
+        self.assertEqual(response, "hello")
+
+    def test_input_key_does_not_exist(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "zee")
+        self.assertEqual(response, None)
+
+    def test_input_key_exists(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "cid")
+        self.assertEqual(response, "something")
+
+    def test_input_key_can_be_found_in_event(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "foo")
+        self.assertEqual(response, "bar")
+
+    def test_input_key_can_be_found_in_unknown(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        self.assertEqual(response, "is")
+
+    def test_precedence(self):
+        self.input["event"]["field"] = "found"
+        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        self.assertEqual(response, "found")
+
+
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
