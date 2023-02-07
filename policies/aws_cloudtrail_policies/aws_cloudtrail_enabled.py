@@ -1,6 +1,6 @@
 def policy(resource):
     # pylint: disable=R1260
-    if not (resource.get("Trails") or resource.get("TrailARN")):
+    if not resource.get("Trails"):
         return False
 
     if not (resource.get("GlobalEventSelectors") or resource.get("GlobalAdvancedEventSelectors")):
