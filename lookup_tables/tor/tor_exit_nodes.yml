@@ -135,6 +135,9 @@ LogTypeMap:
     - LogType: Crowdstrike.UserLogonLogoff
       Selectors:
         - 'aip'
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - 'p_any_ip_addresses'
     - LogType: Dropbox.TeamEvent
       Selectors:
         - '$.origin.geo_location.ip_address'

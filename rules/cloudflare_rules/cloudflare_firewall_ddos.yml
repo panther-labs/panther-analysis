@@ -7,7 +7,7 @@ LogTypes:
   - Cloudflare.Firewall
 Tags:
   - Cloudflare
-  - Configuration Required
+  - Variable Severity
 Severity: Medium
 Description: Layer 7 Distributed Denial of Service (DDoS) detected
 Runbook: Inspect and monitor internet-facing services for potential outages
@@ -51,8 +51,8 @@ Tests:
         "Source": "l7ddos",
       }
   -
-    Name: Traffic Marked as L7DDoS but blocked
-    ExpectedResult: false
+    Name: Traffic Marked as L7DDoS but blocked ( INFO level alert )
+    ExpectedResult: true
     Log:
       {
         "Action": "block",

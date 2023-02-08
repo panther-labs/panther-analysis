@@ -7,12 +7,11 @@ LogTypes:
   - Cloudflare.Firewall
 Tags:
   - Cloudflare
-  - Configuration Required
 Severity: Low
 Description: Monitors high volume events blocked from the same IP
 Runbook: Inspect and monitor internet-facing services for potential outages
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  60
+Threshold:  200
 SummaryAttributes:
   - ClientRequestUserAgent
   - ClientRequestPath

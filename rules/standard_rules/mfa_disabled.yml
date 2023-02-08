@@ -3,7 +3,7 @@ Filename: mfa_disabled.py
 RuleID: Standard.MFADisabled
 DedupPeriodMinutes: 60
 DisplayName: MFA Disabled
-Enabled: false
+Enabled: true
 LogTypes:
   - Atlassian.Audit
   - GitHub.Audit
@@ -99,8 +99,8 @@ Tests:
         "p_log_type": "Zendesk.Audit"
     }
   -
-    Name: Okta - MFA Disabled
-    ExpectedResult: true
+    Name: Okta - User resets own MFA ( INFO severity detection for this in Okta rules )
+    ExpectedResult: false
     Log:
       {
         "eventtype": "user.mfa.factor.deactivate",
@@ -141,6 +141,49 @@ Tests:
         },
         "p_log_type": "Okta.SystemLog",
       }
+  -
+    Name: Okta - User disables MFA
+    ExpectedResult: true
+    Log:
+      {
+        "eventtype": "user.mfa.factor.deactivate",
+        "version": "0",
+        "severity": "INFO",
+        "displaymessage": "Reset factor for user",
+        "actor": {
+          "alternateId": "homer@springfield.gov",
+          "displayName": "Homer Simpson",
+          "id": "11111111111",
+          "type": "User"
+        },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "target": [
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "1111111",
+            "type": "User"
+          }
+        ],
+        "authenticationcontext": {
+          "authenticationStep": 0,
+          "externalSessionId": "1111111"
+        },
+        "p_log_type": "Okta.SystemLog",
+      }
+ 
   -
     Name: Okta - MFA Enabled
     ExpectedResult: false
