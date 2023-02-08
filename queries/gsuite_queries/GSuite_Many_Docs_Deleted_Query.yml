@@ -1,0 +1,19 @@
+AnalysisType: scheduled_query
+Description: Query to search for a user deleting many documents.
+Enabled: false
+Query: |
+    SELECT
+        actor:email AS user,
+        ARRAY_AGG( DISTINCT parameters:doc_title) AS deleted_files,
+        ARRAY_SIZE(deleted_files) as delete_count,
+        TIME_SLICE(p_event_time, 60, 'minute') as t_s
+    FROM gsuite_activityevent
+    WHERE p_occurs_since('1 day')
+        AND name = 'trash'
+    GROUP BY actor:email, t_s
+    HAVING delete_count > 10
+    ORDER BY delete_count DESC
+QueryName: GSuite Many Docs Deleted Query
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 1

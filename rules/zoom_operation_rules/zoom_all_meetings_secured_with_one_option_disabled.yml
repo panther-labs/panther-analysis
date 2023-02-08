@@ -1,0 +1,36 @@
+AnalysisType: rule
+Description: A Zoom User turned off your organization's requirement that all meetings are secured with one security option.
+DisplayName: Zoom All Meetings Secured With One Option Disabled
+Enabled: true
+Filename: zoom_all_meetings_secured_with_one_option_disabled.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Require that all meetings are secured with one security option: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:15:38"
+      Name: Turn off
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Require that all meetings are secured with one security option: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:15:38"
+      Name: Turn on
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: User
+        operation_detail: 'Update User example@example.io  - Job Title: set to Contractor'
+        operator: homer@example.io
+      Name: Non admin user update
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: Zoom.All.Meetings.Secured.With.One.Option.Disabled
+Threshold: 1

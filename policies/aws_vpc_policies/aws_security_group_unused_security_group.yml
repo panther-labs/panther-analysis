@@ -1,15 +1,16 @@
 AnalysisType: policy
 Filename: aws_security_group_unused_security_group.py
 PolicyID: AWS.SecurityGroup.UnusedSecurityGroup
-DisplayName: AWS Security Group Used
+DisplayName: --DEPRECATED-- AWS Security Group Used
 Enabled: false
 ResourceTypes:
   - AWS.EC2.SecurityGroup
 Tags:
   - AWS
+  - Deprecated
 Severity: Low
 Description: >
-  This policy validates that all Security Groups are in use. Test needs live resource information to make second call.
+  [DEPRECATED] This policy validates that all Security Groups are in use. Test needs live resource information to make second call.
 Runbook: >
   Delete unused Security Groups.
 Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
