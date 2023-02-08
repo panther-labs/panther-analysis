@@ -5,7 +5,7 @@ SAML_ACTIONS = ["UpdateSAMLProvider", "CreateSAMLProvider", "DeleteSAMLProvider"
 
 def rule(event):
     # Allow AWSSSO to manage
-    if deep_get(event, "userIdentity", "arn", default="").endswith(
+    if str(deep_get(event, "userIdentity", "arn", default="")).endswith(
         ":assumed-role/AWSServiceRoleForSSO/AWS-SSO"
     ):
         return False

@@ -8,7 +8,7 @@ def rule(event):
         and event.get("eventSource") == "iam.amazonaws.com"
         and event.get("eventName") == "CreateAccessKey"
         and (
-            not deep_get(event, "userIdentity", "arn", default="").endswith(
+            not str(deep_get(event, "userIdentity", "arn", default="")).endswith(
                 f"user/{deep_get(event, 'responseElements', 'accessKey', 'userName', default='')}"
             )
         )

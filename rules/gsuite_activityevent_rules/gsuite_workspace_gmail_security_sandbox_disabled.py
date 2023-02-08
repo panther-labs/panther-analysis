@@ -2,13 +2,13 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if not deep_get(event, "id", "applicationName", default="").lower() == "admin":
+    if not str(deep_get(event, "id", "applicationName", default="")).lower() == "admin":
         return False
     if all(
         [
             (event.get("name", "") == "CHANGE_APPLICATION_SETTING"),
-            (deep_get(event, "parameters", "APPLICATION_NAME", default="").lower() == "gmail"),
-            (deep_get(event, "parameters", "NEW_VALUE", default="").lower() == "false"),
+            (str(deep_get(event, "parameters", "APPLICATION_NAME", default="")).lower() == "gmail"),
+            (str(deep_get(event, "parameters", "NEW_VALUE", default="")).lower() == "false"),
             (
                 deep_get(event, "parameters", "SETTING_NAME", default="")
                 == "AttachmentDeepScanningSettingsProto deep_scanning_enabled"

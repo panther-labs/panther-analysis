@@ -2,13 +2,13 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if not deep_get(event, "id", "applicationName", default="").lower() == "admin":
+    if not str(deep_get(event, "id", "applicationName", default="")).lower() == "admin":
         return False
     if all(
         [
             (event.get("name", "") == "CHANGE_APPLICATION_SETTING"),
             (event.get("type", "") == "APPLICATION_SETTINGS"),
-            (deep_get(event, "parameters", "NEW_VALUE", default="").lower() == "off"),
+            (str(deep_get(event, "parameters", "NEW_VALUE", default="")).lower() == "off"),
             (
                 deep_get(event, "parameters", "SETTING_NAME", default="")
                 == "Password Management - Enforce strong password"

@@ -27,7 +27,7 @@ def rule(event):
         event.get("sourceIPAddress", "").endswith(".amazonaws.com")
         or deep_get(event, "userIdentity", "type", default="") == "AWSService"
         or deep_get("userIdentity", "invokedBy", default="") == "AWS Internal"
-        or deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
+        or str(deep_get("userIdentity", "invokedBy", default="")).endswith(".amazonaws.com")
     ):
         return False
     # Dry run operations get logged as SES Internal in the sourceIPAddress
