@@ -1,6 +1,31 @@
+from panther_cloudflare_helpers import cloudflare_http_alert_context
+
+
 def rule(event):
-    # Bot scores are [1, 99] where scores < 30 indicating likely automated
+    # Bot scores are [0, 99] where scores >0 && <30 indicating likely automated
     # https://developers.cloudflare.com/bots/concepts/bot-score/
-    if event.get("BotScore", 100) >= 30:
-        return False
-    return True
+    return all(
+        [
+            event.get("BotScore", 100) <= 30,
+            event.get("BotScore", 100) >= 1,
+        ]
+    )
+
+
+def title(event):
+    return (
+        f"Cloudflare: High Volume of Bot Requests - "
+        f"from [{event.get('ClientIP', '<NO_CLIENTIP>')}] "
+        f"to [{event.get('ClientRequestHost', '<NO_REQ_HOST>')}]"
+    )
+
+
+def dedup(event):
+    return (
+        f"{event.get('ClientIP', '<NO_CLIENTIP>')}:"
+        f"{event.get('ClientRequestHost', '<NO_REQ_HOST>')}"
+    )
+
+
+def alert_context(event):
+    return cloudflare_http_alert_context(event)

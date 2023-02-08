@@ -11,6 +11,7 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
+import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
@@ -350,6 +351,41 @@ class TestIpInfoHelpersASN(unittest.TestCase):
         self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
+class TestGetCrowdstrikeField(unittest.TestCase):
+    def setUp(self):
+        self.input = {
+            "cid": "something",
+            "aid": "else",
+            "event": {"foo": "bar"},
+            "unknown_payload": {"field": "is"},
+        }
+
+    def test_input_key_default_works(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "zee", default="hello")
+        self.assertEqual(response, "hello")
+
+    def test_input_key_does_not_exist(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "zee")
+        self.assertEqual(response, None)
+
+    def test_input_key_exists(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "cid")
+        self.assertEqual(response, "something")
+
+    def test_input_key_can_be_found_in_event(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "foo")
+        self.assertEqual(response, "bar")
+
+    def test_input_key_can_be_found_in_unknown(self):
+        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        self.assertEqual(response, "is")
+
+    def test_precedence(self):
+        self.input["event"]["field"] = "found"
+        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        self.assertEqual(response, "found")
+
+
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
@@ -411,6 +447,112 @@ class TestGeoInfoFromIP(unittest.TestCase):
             exc.exception.args[0],
             "IPInfo is not configured on the provided match_field: fake_field",
         )
+
+
+class TestCloudflareHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "Source": "firewallrules",
+            "ClientIP": "12.12.12.12",
+            "BotScore": 0,
+            "Action": "block",
+        }
+        self.possible_sources = p_cf_h.FIREWALL_SOURCE_MAPPING.keys()
+        self.http_event = {
+            # pylint: disable=line-too-long
+            # ClientUserAgent line is too long
+            "CacheCacheStatus": "hit",
+            "CacheResponseBytes": 21213,
+            "CacheResponseStatus": 200,
+            "CacheTieredFill": True,
+            "ClientASN": 15169,
+            "ClientCountry": "us",
+            "ClientDeviceType": "desktop",
+            "ClientIP": "12.12.12.12",
+            "ClientIPClass": "searchEngine",
+            "ClientMTLSAuthCertFingerprint": "",
+            "ClientMTLSAuthStatus": "unknown",
+            "ClientRequestBytes": 5460,
+            "ClientRequestHost": "panther.com",
+            "ClientRequestMethod": "GET",
+            "ClientRequestPath": "/blog/",
+            "ClientRequestProtocol": "HTTP/1.1",
+            "ClientRequestReferer": "",
+            "ClientRequestScheme": "https",
+            "ClientRequestSource": "edgeWorkerFetch",
+            "ClientRequestURI": "/blog/",
+            "ClientRequestUserAgent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "ClientSSLCipher": "NONE",
+            "ClientSSLProtocol": "none",
+            "ClientSrcPort": 0,
+            "ClientTCPRTTMs": 0,
+            "ClientXRequestedWith": "",
+            "EdgeCFConnectingO2O": False,
+            "EdgeColoCode": "ABC",
+            "EdgeColoID": 111,
+            "EdgeEndTimestamp": "2022-08-27 22:00:10",
+            "EdgePathingOp": "wl",
+            "EdgePathingSrc": "macro",
+            "EdgePathingStatus": "se",
+            "EdgeRateLimitAction": "",
+            "EdgeRateLimitID": "0",
+            "EdgeRequestHost": "panther.com",
+            "EdgeResponseBodyBytes": 76074,
+            "EdgeResponseBytes": 77454,
+            "EdgeResponseCompressionRatio": 1,
+            "EdgeResponseContentType": "text/html",
+            "EdgeResponseStatus": 200,
+            "EdgeServerIP": "",
+            "EdgeStartTimestamp": "2022-08-27 22:00:10",
+            "EdgeTimeToFirstByteMs": 82,
+            "OriginDNSResponseTimeMs": 0,
+            "OriginIP": "",
+            "OriginRequestHeaderSendDurationMs": 0,
+            "OriginResponseBytes": 0,
+            "OriginResponseDurationMs": 70,
+            "OriginResponseStatus": 0,
+            "OriginResponseTime": 0,
+            "OriginSSLProtocol": "unknown",
+            "ParentRayID": "7000000000000000",
+            "RayID": "7000000000000001",
+            "SecurityLevel": "off",
+            "SmartRouteColoID": 0,
+            "UpperTierColoID": 1,
+            "WAFAction": "unknown",
+            "WAFFlags": "0",
+            "WAFMatchedVar": "xx",
+            "WAFProfile": "unknown",
+            "WAFRuleID": "xx",
+            "WAFRuleMessage": "xx",
+            "WorkerCPUTime": 0,
+            "WorkerStatus": "unknown",
+            "WorkerSubrequest": True,
+            "WorkerSubrequestCount": 0,
+            "ZoneID": 500000000,
+            "ZoneName": "panther.com",
+        }
+
+    def test_map_source_to_name(self):
+        self.assertEqual(p_cf_h.map_source_to_name(self.event.get("Source")), "Firewall Rules")
+        self.assertEqual(p_cf_h.map_source_to_name(self.event), "Firewall Rules")
+        self.assertEqual(p_cf_h.map_source_to_name("Does Not Exist"), "Does Not Exist")
+        self.assertEqual(p_cf_h.map_source_to_name({}), "<NO_SOURCE>")
+
+    def test_fw_context_helper(self):
+        context = p_cf_h.cloudflare_fw_alert_context(self.event)
+        self.assertEqual("Firewall Rules", context.get("pan_cf_source"))
+        self.event.pop("Source")
+        context = p_cf_h.cloudflare_fw_alert_context(self.event)
+        self.assertEqual("<Source_NOT_IN_EVENT>", context.get("Source"))
+        self.assertEqual("block", context.get("Action"))
+        self.assertEqual("12.12.12.12", context.get("ClientIP"))
+
+    def test_http_context_helper(self):
+        context = p_cf_h.cloudflare_http_alert_context(self.http_event)
+        # We have only 10 keeper keys in http alert context
+        self.assertLessEqual(len(context), 10)
+        self.assertIsNone(context.get("BotScore"))
+        self.assertEqual("12.12.12.12", context.get("ClientIP"))
 
 
 if __name__ == "__main__":
