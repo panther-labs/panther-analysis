@@ -3,10 +3,9 @@ def policy(resource):
     if not resource.get("Trails"):
         return False
 
-    if not any([
-        resource.get("GlobalEventSelectors"),
-        resource.get("GlobalAdvancedEventSelectors")
-        ]):
+    if not any(
+        [resource.get("GlobalEventSelectors"), resource.get("GlobalAdvancedEventSelectors")]
+    ):
         return False
 
     for selector in resource.get("GlobalEventSelectors", [{}]):
