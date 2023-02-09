@@ -456,6 +456,8 @@ class TestDeepGet(unittest.TestCase):
         self.assertEqual(p_b_h.deep_get(event, "thing", "not_exist", default="ok"), "ok")
         event["thing"]["none_val"] = None
         self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default="ok"), "ok")
+        # If the value and the default kwarg are both None, then return None
+        self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default=None), None)
 
 
 class TestCloudflareHelpers(unittest.TestCase):
