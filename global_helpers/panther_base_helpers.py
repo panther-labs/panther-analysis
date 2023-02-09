@@ -262,9 +262,12 @@ def deep_get(dictionary: dict, *keys, default=None):
 
     Inspired by https://bit.ly/3a0hq9E
     """
-    return reduce(
+    out = reduce(
         lambda d, key: d.get(key, default) if isinstance(d, Mapping) else default, keys, dictionary
     )
+    if out is None:
+        return default
+    return out
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
