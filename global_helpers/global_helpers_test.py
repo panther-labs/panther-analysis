@@ -449,6 +449,19 @@ class TestGeoInfoFromIP(unittest.TestCase):
         )
 
 
+class TestDeepGet(unittest.TestCase):
+    def test_deep_get(self):
+        event = {"thing": {"value": "one"}}
+        self.assertEqual(p_b_h.deep_get(event, "thing", "value"), "one")
+        self.assertEqual(p_b_h.deep_get(event, "thing", "not_exist", default="ok"), "ok")
+        event["thing"]["none_val"] = None
+        self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default="ok"), "ok")
+        # If the value and the default kwarg are both None, then return None
+        self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default=None), None)
+        # If the searched key is not found, and no default kwarg is provided, return None
+        self.assertEqual(p_b_h.deep_get(event, "key_does_not_exist"), None)
+
+
 class TestCloudflareHelpers(unittest.TestCase):
     def setUp(self):
         self.event = {
