@@ -17,7 +17,7 @@ PANTHER_ROLE_ACTIONS = [
 def rule(event):
     if event.udm("event_type") not in PANTHER_ROLE_ACTIONS:
         return False
-    role_permissions = set(deep_get(event, "actionParams", "input", "permissions", default=''))
+    role_permissions = set(deep_get(event, "actionParams", "input", "permissions", default=""))
 
     return (
         len(set(PANTHER_ADMIN_PERMISSIONS).intersection(role_permissions)) > 0
