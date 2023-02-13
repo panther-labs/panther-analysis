@@ -19,7 +19,7 @@ def rule(event):
         "ModifyTrafficMirrorFilterRule",
         "ModifyTrafficMirrorSession",
     ]
-    if deep_get(event, "userIdentity", "invokedBy", default="") == "config.amazonaws.com":
+    if deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com"):
         return False
     return (
         event.get("eventSource", "") == "ec2.amazonaws.com"
