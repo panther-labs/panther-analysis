@@ -1,0 +1,37 @@
+AnalysisType: rule
+Description: A Zoom User disabled your organization's setting to sign in with Two-Factor Authentication.
+DisplayName: Zoom Two Factor Authentication Disabled
+Enabled: true
+Filename: zoom_two_factor_authentication_disabled.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Sign in with Two-Factor Authentication: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:20:35"
+      Name: 2FA Disabled
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Sign in with Two-Factor Authentication: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:20:35"
+      Name: 2FA Enabled
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-in Methods  - Allow users to sign in with Apple ID: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:19:57"
+      Name: 'Sign In Apple ID '
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: Zoom.Two.Factor.Authentication.Disabled
+Threshold: 1
