@@ -351,7 +351,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
         self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
-class TestOnlyCrowdStrikeFdrEventType(unittest.TestCase):
+class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
     def setUp(self):
         self.input = {
             "p_log_type": "Crowdstrike.FDREvent",
@@ -361,22 +361,21 @@ class TestOnlyCrowdStrikeFdrEventType(unittest.TestCase):
         }
 
     def test_is_different_with_fdr_event_type_provided(self):
-        response = p_b_h.contains_crowdstrike_fdr_event_type(self.input, "SomethingElse")
-        self.assertEqual(response, False)
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
+        self.assertEqual(response, True)
 
     def test_is_same_with_the_fdr_event_type_provided(self):
-        response = p_b_h.contains_crowdstrike_fdr_event_type(self.input, "DnsRequest")
-        self.assertEqual(response, True)
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        self.assertEqual(response, False)
 
     def test_is_entirely_different_type(self):
         self.input = {
             "p_log_type": "Crowdstrike.DnsRequest",
             "aid": "else",
             "event": {"foo": "bar"},
-            "fdr_event_type": "DnsRequest",
         }
-        response = p_b_h.contains_crowdstrike_fdr_event_type(self.input, "DnsRequest")
-        self.assertEqual(response, True)
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        self.assertEqual(response, False)
 
 
 class TestGetCrowdstrikeField(unittest.TestCase):
