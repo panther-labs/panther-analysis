@@ -424,7 +424,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
     def test_relay(self):
         relay = self.ip_info.relay(self.match_field)
         self.assertEqual(relay, False)
-    
+
     def test_service(self):
         service = self.ip_info.service(self.match_field)
         self.assertEqual(service, "VPN Gate")

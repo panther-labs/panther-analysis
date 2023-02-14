@@ -106,7 +106,7 @@ class IPInfoPrivacy:
 
     def relay(self, match_field) -> bool:
         return deep_get(self.ipinfo_privacy, match_field, "relay")
-    
+
     def service(self, match_field) -> str:
         return deep_get(self.ipinfo_privacy, match_field, "service")
 
