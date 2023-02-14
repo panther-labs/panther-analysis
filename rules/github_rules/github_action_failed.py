@@ -25,8 +25,8 @@ def rule(event):
 
 
 def title(event):
-    repo = deep_get(event, "repo", default="")
-    action_name = deep_get(event, "name", default="")
+    repo = deep_get(event, "repo", default="<NO_REPO>")
+    action_name = deep_get(event, "name", default="<NO_ACTION_NAME>")
     return f"The GitHub Action [{action_name}] in [{repo}] has failed"
 
 
