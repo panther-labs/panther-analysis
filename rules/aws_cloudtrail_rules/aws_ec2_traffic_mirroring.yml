@@ -507,6 +507,51 @@ Tests:
                 webIdFederationData: {}
             type: AssumedRole
       Name: UnrelatedEvent
+    - Name: AWS Config Runs DescribeTrafficMirrorTargets
+      ExpectedResult: false
+      Log:
+        {
+            "awsRegion": "us-west-2",
+            "eventCategory": "Management",
+            "eventID": "c98e81a7-15ee-4888-bbbb-cccccccccccc",
+            "eventName": "DescribeTrafficMirrorTargets",
+            "eventSource": "ec2.amazonaws.com",
+            "eventTime": "2023-02-10 18:08:33",
+            "eventType": "AwsApiCall",
+            "eventVersion": "1.08",
+            "managementEvent": true,
+            "readOnly": true,
+            "recipientAccountId": "123456789012",
+            "requestID": "1531eeee-5ddd-4fff-8111-844444444444",
+            "requestParameters": {
+                "DescribeTrafficMirrorTargetsRequest": {
+                    "MaxResults": 1000
+                }
+            },
+            "sourceIPAddress": "config.amazonaws.com",
+            "userAgent": "config.amazonaws.com",
+            "userIdentity": {
+                "accountId": "123456789012",
+                "arn": "arn:aws:sts::123456789012:assumed-role/SomeAWSConfig/ConfigResourceCompositionSession",
+                "invokedBy": "config.amazonaws.com",
+                "principalId": "AROAAAAAAAAAAAAAAAAAA:ConfigResourceCompositionSession",
+                "sessionContext": {
+                    "attributes": {
+                        "creationDate": "2023-02-13T18:08:33Z",
+                        "mfaAuthenticated": "false"
+                    },
+                    "sessionIssuer": {
+                        "accountId": "123456789012",
+                        "arn": "arn:aws:iam::123456789012:role/PantherAWSConfig",
+                        "principalId": "AROAAAAAAAAAAAAAAAAAA",
+                        "type": "Role",
+                        "userName": "PantherAWSConfig"
+                    },
+                    "webIdFederationData": {}
+                },
+                "type": "AssumedRole"
+            }
+        }
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
