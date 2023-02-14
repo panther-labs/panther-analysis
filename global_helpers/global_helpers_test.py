@@ -10,6 +10,7 @@ import unittest
 #   so noting, we append this directory to sys.path
 sys.path.append(os.path.dirname(__file__))
 
+import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
@@ -593,6 +594,90 @@ class TestCloudflareHelpers(unittest.TestCase):
         self.assertLessEqual(len(context), 10)
         self.assertIsNone(context.get("BotScore"))
         self.assertEqual("12.12.12.12", context.get("ClientIP"))
+
+
+class TestAsanaHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "actor": {
+                "actor_type": "user",
+                "email": "user@domain.com",
+                "gid": "11111111111111111111",
+                "name": "Users Name",
+            },
+            "context": {
+                "client_ip_address": "209.6.224.22",
+                "context_type": "web",
+                "user_agent": "AsanaDesktopOfficial darwin_arm64/1.12.0 Chrome/108.0.5359.62",
+            },
+            "created_at": "2023-02-08 19:00:14.355",
+            "details": {},
+            "event_category": "deletion",
+            "event_type": "task_deleted",
+            "gid": "1222222222222222",
+            "p_event_time": "2023-02-08 19:00:14.355",
+            "resource": {
+                "gid": "133333333333333",
+                "name": "Task Name Goes Here",
+                "resource_subtype": "task",
+                "resource_type": "task",
+            },
+        }
+
+    def test_alert_context(self):
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "user@domain.com")
+        self.assertEqual(returns.get("event_type", ""), "task_deleted")
+        # Remove the user's email attribute
+        self.event["actor"].pop("email")
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_EMAIL>")
+        self.assertEqual(returns.get("resource_type", ""), "task")
+        self.event["resource"] = {"resource_type": "story", "resource_subtype": "added_to_project"}
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type", ""), "story__added_to_project")
+        # resource with no resource subtype
+        self.event["resource"] = {
+            "email": "user@email.com",
+            "gid": "1111111111111111",
+            "name": "Users Name",
+            "resource_type": "user",
+        }
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type", ""), "user")
+        self.assertEqual(returns.get("resource_name", ""), "Users Name")
+        self.assertEqual(returns.get("resource_gid", ""), "1111111111111111")
+
+    def test_safe_ac_missing_entries(self):
+        returns = p_a_h.asana_alert_context({})
+        self.assertEqual(returns.get("actor"), "<NO_ACTOR>")
+        self.assertEqual(returns.get("event_type"), "<NO_EVENT_TYPE>")
+        self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
+        self.assertEqual(returns.get("resource_name"), "<NO_RESOURCE_NAME>")
+        self.assertEqual(returns.get("resource_gid"), "<NO_RESOURCE_GID>")
+        self.event["resource"]["resource_type"] = None
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
+
+    def test_external_admin(self):
+        event = {
+            "actor": {"actor_type": "external_administrator"},
+            "context": {"context_type": "api"},
+            "created_at": "2023-02-13 18:41:02.759",
+            "details": {},
+            "event_category": "logins",
+            "event_type": "user_logged_out",
+            "gid": "1222222222222222",
+            "resource": {
+                "email": "user@email.com",
+                "gid": "1201201201201201",
+                "name": "User Name",
+                "resource_type": "user",
+            },
+        }
+        returns = p_a_h.asana_alert_context(event)
+        self.assertEqual(returns.get("context"), "api")
+        self.assertEqual(returns.get("actor"), "external_administrator")
 
 
 if __name__ == "__main__":
