@@ -19,7 +19,7 @@ def title(event):
     w_s = deep_get(event, "details", "group", "name", default="<WS_NAME_NOT_FOUND>")
     return (
         f"Asana user [{a_c.get('resource_name')}] was made an admin "
-        f"in workspace [{w_s}] by {a_c.get('actor')}."
+        f"in workspace [{w_s}] by [{a_c.get('actor')}]."
     )
 
 
