@@ -3,7 +3,7 @@ from json import dumps, loads
 from math import asin, cos, sin, sqrt
 from panther_base_helpers import deep_get, aws_rule_context
 from panther_ipinfo_helpers import get_ipinfo_location
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_oss_helpers import get_dictionary, put_dictionary
 
 PANTHER_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -17,17 +17,21 @@ AUTH_EVENTS = [
 
 
 def rule(event):
-    global PREVIOUS_EVENT_DATA, CURRENT_EVENT_DATA  # pylint: disable=global-variable-undefined
+    global PREVIOUS_EVENT_DATA, CURRENT_EVENT_DATA # pylint: disable=global-statement
+
+    if event.get("eventName") not in AUTH_EVENTS:
+        return False
 
     key = get_key(event)
+    key_exp_time = int((datetime.now() + timedelta(days=7)).timestamp())
 
     CURRENT_EVENT_DATA = get_source_ip_location(event)
     CURRENT_EVENT_DATA["time"] = event.get("p_event_time")
 
-    PREVIOUS_EVENT_DATA = load_dict_from_dynamodb(key)
+    PREVIOUS_EVENT_DATA = get_dictionary(key)
 
     if not PREVIOUS_EVENT_DATA:
-        store_dict_in_dynamodb(key, CURRENT_EVENT_DATA)
+        put_dictionary(key, CURRENT_EVENT_DATA, key_exp_time)
         return False
 
     # Handle Unit Test Mocks
@@ -58,9 +62,9 @@ def rule(event):
     # Calculate speed in Kilometers / Hour
     speed = distance / time_delta
 
-    store_dict_in_dynamodb(key, CURRENT_EVENT_DATA)
+    put_dictionary(key, CURRENT_EVENT_DATA, key_exp_time)
 
-    return event.get("eventName") in AUTH_EVENTS and speed > 125
+    return speed > 125
 
 
 def title(event):
@@ -97,20 +101,6 @@ def haversine_distance(previous_lat, current_lat, previous_long, current_long):
 
 def get_source_ip_location(event):
     return dict(get_ipinfo_location(event).ipinfo_location["sourceIPAddress"])
-
-
-def load_dict_from_dynamodb(key):
-    string_set = get_string_set(key)
-
-    if string_set:
-        return loads(string_set.pop())
-
-    return None
-
-
-def store_dict_in_dynamodb(key, dictionary):
-    put_string_set(key, [dumps(dictionary)])
-    set_key_expiration(key, str((datetime.now() + timedelta(days=7)).timestamp()))
 
 
 def get_key(event) -> str:

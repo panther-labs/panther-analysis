@@ -57,9 +57,9 @@ Tests:
             type: Unknown
             userName: user.name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Authenticate - Improbable Location
     - ExpectedResult: true
@@ -127,9 +127,9 @@ Tests:
             type: Unknown
             userName: User Name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Create Token - Improbable Location
     - ExpectedResult: true
@@ -180,9 +180,9 @@ Tests:
             type: Unknown
             userName: user.name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Federate - Improbable Location
     - ExpectedResult: true
@@ -250,9 +250,9 @@ Tests:
             type: Unknown
             userName: User Name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Register Client - Improbable Location
     - ExpectedResult: false
@@ -300,9 +300,9 @@ Tests:
             type: Unknown
             userName: user.name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "34.0522", "lng": "-118.2437", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Same Location
     - ExpectedResult: true
@@ -370,9 +370,9 @@ Tests:
             type: Unknown
             userName: User Name
       Mocks:
-        - objectName: load_dict_from_dynamodb
+        - objectName: get_dictionary
           returnValue: '{"lat": "55.779737", "lng": "37.145107", "time": "2022-11-30 15:14:49"}'
-        - objectName: store_dict_in_dynamodb
+        - objectName: put_dictionary
           returnValue: None
       Name: Start Device Authorization - Improbable Location
 DedupPeriodMinutes: 15
