@@ -414,6 +414,64 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         self.assertEqual(response, "found")
 
 
+class TestIpInfoHelpersPrivacy(unittest.TestCase):
+    def setUp(self):
+        self.match_field = "clientIp"
+        self.event = {
+            "p_enrichment": {
+                p_i_h.IPINFO_PRIVACY_LUT_NAME: {
+                    self.match_field: {
+                        "hosting": False,
+                        "proxy": False,
+                        "tor": False,
+                        "vpn": True,
+                        "relay": False,
+                        "service": "VPN Gate",
+                    }
+                }
+            }
+        }
+        self.ip_info = p_i_h.get_ipinfo_privacy(self.event)
+
+    def test_hosting(self):
+        hosting = self.ip_info.hosting(self.match_field)
+        self.assertEqual(hosting, False)
+
+    def test_proxy(self):
+        proxy = self.ip_info.proxy(self.match_field)
+        self.assertEqual(proxy, False)
+
+    def test_tor(self):
+        tor = self.ip_info.tor(self.match_field)
+        self.assertEqual(tor, False)
+
+    def test_vpn(self):
+        vpn = self.ip_info.vpn(self.match_field)
+        self.assertEqual(vpn, True)
+
+    def test_relay(self):
+        relay = self.ip_info.relay(self.match_field)
+        self.assertEqual(relay, False)
+
+    def test_service(self):
+        service = self.ip_info.service(self.match_field)
+        self.assertEqual(service, "VPN Gate")
+
+    def test_not_found(self):
+        self.assertEqual(self.ip_info.service("not_found"), None)
+
+    def test_context(self):
+        expected = {
+            "Hosting": False,
+            "Proxy": False,
+            "Tor": False,
+            "VPN": True,
+            "Relay": False,
+            "Service": "VPN Gate",
+        }
+        self.assertEqual(expected, self.ip_info.context(self.match_field))
+
+
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
