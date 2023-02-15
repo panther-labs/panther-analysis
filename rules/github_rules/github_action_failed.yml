@@ -1,0 +1,88 @@
+AnalysisType: rule
+Filename: github_action_failed.py
+RuleID: GitHub.Action.Failed
+DisplayName: GitHub Action Failed
+Enabled: False
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - Configuration Required
+Severity: High
+Description: A monitored github action has failed. 
+Runbook: >
+  Inspect the action failure link and take appropriate response.
+  There are no general plans of response for this activity.
+Tests:
+  -
+    Name: GitHub - Branch Protection Disabled
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.destroy",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
+  - Name: GitHub Action Failed - No Configuration
+    ExpectedResult: false
+    Log:
+      {
+        "_document_id": "pWWWWWWWWWWWWWWWWWWWWW",
+        "action": "workflows.completed_workflow_run",
+        "actor": "github_handle",
+        "at_sign_timestamp": "2023-01-31 18:58:27.638",
+        "business": "github-business-only-if-enterprise-audit-log",
+        "completed_at": "2023-01-31T18:58:27.000Z",
+        "conclusion": "failure",
+        "created_at": "2023-01-31 18:58:27.638",
+        "event": "schedule",
+        "head_branch": "master",
+        "head_sha": "66dddddddddddddddddddddddddddddddddddddd",
+        "name": "sync-panther-analysis-from-upstream",
+        "operation_type": "modify",
+        "org": "panther-labs",
+        "p_log_type": "GitHub.Audit",
+        "public_repo": false,
+        "repo": "your-org/panther-analysis-copy",
+        "run_attempt": 3,
+        "run_number": 99,
+        "started_at": "2023-01-31 18:58:04",
+        "workflow_id": 44444444,
+        "workflow_run_id": 5555555555
+      }
+  - Name: GitHub Action Failed - Monitored Action Configured
+    ExpectedResult: true
+    Mocks:
+      - objectName: MONITORED_ACTIONS
+        returnValue: >-
+          {
+            "your-org/panther-analysis-copy": [ "sync-panther-analysis-from-upstream"]
+          }
+    Log:
+      {
+        "_document_id": "pWWWWWWWWWWWWWWWWWWWWW",
+        "action": "workflows.completed_workflow_run",
+        "actor": "github_handle",
+        "at_sign_timestamp": "2023-01-31 18:58:27.638",
+        "business": "github-business-only-if-enterprise-audit-log",
+        "completed_at": "2023-01-31T18:58:27.000Z",
+        "conclusion": "failure",
+        "created_at": "2023-01-31 18:58:27.638",
+        "event": "schedule",
+        "head_branch": "master",
+        "head_sha": "66dddddddddddddddddddddddddddddddddddddd",
+        "name": "sync-panther-analysis-from-upstream",
+        "operation_type": "modify",
+        "org": "panther-labs",
+        "p_log_type": "GitHub.Audit",
+        "public_repo": false,
+        "repo": "your-org/panther-analysis-copy",
+        "run_attempt": 3,
+        "run_number": 99,
+        "started_at": "2023-01-31 18:58:04",
+        "workflow_id": 44444444,
+        "workflow_run_id": 5555555555
+      }
