@@ -1,0 +1,101 @@
+AnalysisType: rule
+Description: The adversary is trying to gather data of interest to their goal.
+DisplayName: 'AWS S3 Reconnaissance '
+Enabled: false
+Filename: aws_s3_reconnaissance.py
+Reference: https://attack.mitre.org/tactics/TA0009/
+Reports:
+    MITRE ATT&CK:
+        - TA0009:T1530
+Severity: Info
+Tests:
+    - ExpectedResult: true
+      Log:
+        additionalEventData:
+            AuthenticationMethod: AuthHeader
+            CipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            SignatureVersion: SigV4
+            bytesTransferredIn: 0
+            bytesTransferredOut: 0
+            x-amz-id-2: fYjvkrdwr/6EhulO2nsbX+EAjcJnkoM9fkSd601GJDSGVjt1vQCVqDPHZBu2UrLLm2emGqRPZiM=
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 95fdbc27-27b9-459f-8498-6a4ade6e86bf
+        eventName: PutBucketAcl
+        eventSource: s3.amazonaws.com
+        eventTime: "2023-01-11 16:01:20"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_aws_arns:
+            - arn:aws:iam::012345678912:role/PantherTeardownRole
+            - arn:aws:s3:::analysis-versions-637fab4
+            - arn:aws:sts::012345678912:assumed-role/PantherTeardownRole/ephemeral-teardown-codebuild-session
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_trace_ids:
+            - YU76POLK098REF5432HJ
+        p_any_usernames:
+            - PantherTeardownRole
+        p_event_time: "2023-01-11 16:01:20"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2023-01-11 16:07:26.025"
+        p_row_id: b240cca1b4a2a9dedf9bdcde1591a31c
+        p_schema_version: 0
+        p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+        p_source_label: Panther Identity Org CloudTrail
+        readOnly: false
+        recipientAccountId: "012345678912"
+        requestID: 7W2VBZANTSF52TBS
+        requestParameters:
+            Host: analysis-versions-637fab4.s3.us-east-1.amazonaws.com
+            acl: ""
+            bucketName: analysis-versions-637fab4
+            x-amz-acl: private
+        resources:
+            - accountId: "0123456789123"
+              arn: arn:aws:s3:::analysis-versions-637fab4
+              type: AWS::S3::Bucket
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: analysis-versions-637fab4.s3.us-east-1.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: '[aws-sdk-go-v2/1.16.16 os/linux lang/go/1.19.5 md/GOOS/linux md/GOARCH/amd64 exec-env/AWS_ECS_EC2 api/s3/1.27.11]'
+        userIdentity:
+            accessKeyId: YU76POLK098REF5432HJ
+            accountId: "012345678912"
+            arn: arn:aws:sts::012345678912:assumed-role/PantherTeardownRole/ephemeral-teardown-codebuild-session
+            principalId: BBU&TH988JMHILLO9877K:ephemeral-teardown-codebuild-session
+            sessionContext:
+                attributes:
+                    creationDate: "2023-01-11T15:34:53Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "012345678912"
+                    arn: arn:aws:iam::012345678912:role/PantherTeardownRole
+                    principalId: BBU&TH988JMHILLO9877K
+                    type: Role
+                    userName: PantherTeardownRole
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Collection Events
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 02697e2a-31bc-4962-856d-4e7009e47d16
+        eventName: ListStateMachines
+        eventSource: states.amazonaws.com
+        eventTime: "2023-01-12 16:10:01"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+      Name: Non Collection Event
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.S3.Reconnaissance
+Threshold: 5
