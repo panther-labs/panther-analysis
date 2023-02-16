@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from json import dumps, loads
+from json import loads
 from math import asin, cos, sin, sqrt
 from panther_base_helpers import deep_get, aws_rule_context
 from panther_ipinfo_helpers import get_ipinfo_location
@@ -17,7 +17,8 @@ AUTH_EVENTS = [
 
 
 def rule(event):
-    global PREVIOUS_EVENT_DATA, CURRENT_EVENT_DATA # pylint: disable=global-statement
+    # pylint: disable=global-variable-undefined
+    global PREVIOUS_EVENT_DATA, CURRENT_EVENT_DATA
 
     if event.get("eventName") not in AUTH_EVENTS:
         return False
