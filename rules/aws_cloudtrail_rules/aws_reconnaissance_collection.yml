@@ -1,12 +1,12 @@
 AnalysisType: rule
-Description: The adversary is trying to gather data of interest to their goal.
-DisplayName: AWS Reconnaissance Collection
+Description: Potential reconnaissance collection in AWS Account
+DisplayName: 'AWS S3 Reconnaissance '
 Enabled: false
 Filename: aws_reconnaissance_collection.py
 Reference: https://attack.mitre.org/tactics/TA0009/
 Reports:
     MITRE ATT&CK:
-        - TA0009
+        - TA0009:T1530
 Severity: Info
 Tests:
     - ExpectedResult: true
@@ -30,22 +30,22 @@ Tests:
         p_any_aws_account_ids:
             - "012345678912"
         p_any_aws_arns:
-            - arn:aws:iam::012345678912:role/TeardownRole
+            - arn:aws:iam::012345678912:role/PantherTeardownRole
             - arn:aws:s3:::analysis-versions-637fab4
-            - arn:aws:sts::012345678912:assumed-role/TeardownRole/ephemeral-teardown-codebuild-session
+            - arn:aws:sts::012345678912:assumed-role/PantherTeardownRole/ephemeral-teardown-codebuild-session
         p_any_ip_addresses:
             - 1.1.1.1
         p_any_trace_ids:
             - YU76POLK098REF5432HJ
         p_any_usernames:
-            - TeardownRole
+            - PantherTeardownRole
         p_event_time: "2023-01-11 16:01:20"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2023-01-11 16:07:26.025"
         p_row_id: b240cca1b4a2a9dedf9bdcde1591a31c
         p_schema_version: 0
         p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
-        p_source_label: Identity Org CloudTrail
+        p_source_label: Panther Identity Org CloudTrail
         readOnly: false
         recipientAccountId: "012345678912"
         requestID: 7W2VBZANTSF52TBS
@@ -65,9 +65,9 @@ Tests:
             tlsVersion: TLSv1.2
         userAgent: '[aws-sdk-go-v2/1.16.16 os/linux lang/go/1.19.5 md/GOOS/linux md/GOARCH/amd64 exec-env/AWS_ECS_EC2 api/s3/1.27.11]'
         userIdentity:
-            accessKeyId: YU76POLK098REF5432HB
+            accessKeyId: YU76POLK098REF5432HJ
             accountId: "012345678912"
-            arn: arn:aws:sts::012345678912:assumed-role/TeardownRole/ephemeral-teardown-codebuild-session
+            arn: arn:aws:sts::012345678912:assumed-role/PantherTeardownRole/ephemeral-teardown-codebuild-session
             principalId: BBU&TH988JMHILLO9877K:ephemeral-teardown-codebuild-session
             sessionContext:
                 attributes:
@@ -75,10 +75,10 @@ Tests:
                     mfaAuthenticated: "false"
                 sessionIssuer:
                     accountId: "012345678912"
-                    arn: arn:aws:iam::012345678912:role/TeardownRole
+                    arn: arn:aws:iam::012345678912:role/PantherTeardownRole
                     principalId: BBU&TH988JMHILLO9877K
                     type: Role
-                    userName: TeardownRole
+                    userName: PantherTeardownRole
                 webIdFederationData: {}
             type: AssumedRole
       Name: Collection Events
