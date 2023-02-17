@@ -23,25 +23,19 @@ def title(event):
         return f"Slack User, {username} ({email}), assigned permissions"
 
     if event.get("action") == "role_change_to_admin":
-        return f"{username} ({email}) promoted to admin"
+        return f"Slack User {username} ({email}) promoted to admin"
 
     if event.get("action") == "role_change_to_owner":
-        return f"{username} ({email}) promoted to Owner"
+        return f"Slack User {username} ({email}) promoted to Owner"
 
-    return "Slack User Privilege Escalation"
+    return "Slack User Privilege Escalation event {event.get('action')} on {username} ({email})"
 
 
 def severity(event):
     # Downgrade severity for users assigned permissions
     if event.get("action") == "permissions_assigned":
         return "Medium"
-    if event.get("action") == "role_change_to_admin":
-        return "Critical"
-    if event.get("action") == "role_change_to_owner":
-        return "Critical"
-    if event.get("action") == "owner_transferred":
-        return "Critical"
-    return "High"
+    return "Critical"
 
 
 def alert_context(event):
