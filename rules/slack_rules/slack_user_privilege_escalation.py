@@ -28,7 +28,7 @@ def title(event):
     if event.get("action") == "role_change_to_owner":
         return f"Slack User, {username} ({email}), promoted to Owner"
 
-    return "Slack User Privilege Escalation event {event.get('action')} on {username} ({email})"
+    return f"Slack User Privilege Escalation event {event.get('action')} on {username} ({email})"
 
 
 def severity(event):
