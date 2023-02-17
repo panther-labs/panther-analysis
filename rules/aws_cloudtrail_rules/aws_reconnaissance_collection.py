@@ -1,4 +1,3 @@
-from ipaddress import ip_address
 from panther import aws_cloudtrail_success
 from panther_base_helpers import deep_get, aws_rule_context
 
