@@ -34,12 +34,8 @@ def title(event):
 def severity(event):
     # Downgrade severity for users assigned permissions
     if event.get("action") == "permissions_assigned":
-       return "Medium"
-    if (
-        event.get("action") == "role_change_to_admin"
-        or "role_change_to_owner"
-        or "owner_transferred"
-    ):
+        return "Medium"
+    if event.get("action") == "role_change_to_admin" or "role_change_to_owner":
         return "Critical"
     return "High"
 
