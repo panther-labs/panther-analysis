@@ -1,5 +1,3 @@
-from ipaddress import ip_address
-
 from panther_base_helpers import deep_get, pattern_match_list, aws_rule_context
 
 events = {
