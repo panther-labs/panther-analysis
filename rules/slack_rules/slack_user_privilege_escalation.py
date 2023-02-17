@@ -23,10 +23,10 @@ def title(event):
         return f"Slack User, {username} ({email}), assigned permissions"
 
     if event.get("action") == "role_change_to_admin":
-        return f"Slack User {username} ({email}) promoted to admin"
+        return f"Slack User, {username} ({email}), promoted to admin"
 
     if event.get("action") == "role_change_to_owner":
-        return f"Slack User {username} ({email}) promoted to Owner"
+        return f"Slack User, {username} ({email}), promoted to Owner"
 
     return "Slack User Privilege Escalation event {event.get('action')} on {username} ({email})"
 
