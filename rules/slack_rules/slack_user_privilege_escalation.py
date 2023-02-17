@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_base_helpers import deep_get, slack_alert_context
 
 USER_PRIV_ESC_ACTIONS = {
     "owner_transferred": "Slack Owner Transferred",
@@ -13,16 +13,34 @@ def rule(event):
 
 
 def title(event):
-    if event.get("action") in USER_PRIV_ESC_ACTIONS:
-        return USER_PRIV_ESC_ACTIONS.get(event.get("action"))
+    username = deep_get(event, "actor", "user", "name", default="<unknown-actor>")
+    email = deep_get(event, "actor", "user", "email", default="<unknown-email>")
+
+    if event.get("action") == "owner_transferred":
+        return f"Slack Owner Transferred from {username} ({email})"
+
+    if event.get("action") == "permissions_assigned":
+        return f"Slack User, {username} ({email}), assigned permissions"
+
+    if event.get("action") == "role_change_to_admin":
+        return f"{username} ({email}) promoted to admin"
+
+    if event.get("action") == "role_change_to_owner":
+        return f"{username} ({email}) promoted to Owner"
+
     return "Slack User Privilege Escalation"
 
 
 def severity(event):
     # Downgrade severity for users assigned permissions
-    # TODO: Add case to check for admin privileges to escalate to Critical
     if event.get("action") == "permissions_assigned":
-        return "Medium"
+       return "Medium"
+    if (
+        event.get("action") == "role_change_to_admin"
+        or "role_change_to_owner"
+        or "owner_transferred"
+    ):
+        return "Critical"
     return "High"
 
 
