@@ -47,7 +47,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"AWS Identity [{deep_get(event, 'userIdentity', 'arn')}] " 
+        f"AWS Identity [{deep_get(event, 'userIdentity', 'arn')}] "
         f"executed possible reconnaissance command [event.get('eventName', '')] "
         f"in AWS Account [event.get('recipientAccountId', '')]"
     )
