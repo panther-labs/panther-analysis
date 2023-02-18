@@ -21,7 +21,8 @@ def title(event):
     # This will either be "user" or "admin"; find the intersection and use that for the key
     actor_key = set(tuple(event.get("actor", {}).keys())).intersection(("user", "admin"))
     if len(actor_key) == 1:
-        display_name = deep_get(event, "actor", tuple(actor_key)[0], "display_name", default="<Unknown>")
+        display_name = deep_get(event, "actor", tuple(actor_key)[0],
+                                "display_name", default="<Unknown>")
     # Explicitly use "<Unknown>" if we find any length of keys != 1
     else:
         display_name = "<Unknown>"
