@@ -17,9 +17,27 @@ def severity(event):
     return "Low"
 
 
+def get_actor_type():
+    return (
+        # Admin who performed the action
+        "admin",
+        # Anonymous actor
+        "anonymous",
+        # Application that performed the action
+        "app"
+        # Action performed by Dropbox
+        "dropbox",
+        # Action performed by reseller
+        "reseller",
+        # User who performed the action
+        "user",
+    )
+
+
 def title(event):
-    # This will either be "user" or "admin"; find the intersection and use that for the key
-    actor_key = set(tuple(event.get("actor", {}).keys())).intersection(("user", "admin"))
+    # This will be one of the types returned by get_actor_type;
+    # find the intersection and use that for the key
+    actor_key = set(tuple(event.get("actor", {}).keys())).intersection(get_actor_type())
     if len(actor_key) == 1:
         display_name = deep_get(
             event, "actor", tuple(actor_key)[0], "display_name", default="<Unknown>"
