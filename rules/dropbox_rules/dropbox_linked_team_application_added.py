@@ -24,7 +24,7 @@ def get_actor_type():
         # Anonymous actor
         "anonymous",
         # Application that performed the action
-        "app"
+        "app",
         # Action performed by Dropbox
         "dropbox",
         # Action performed by reseller
