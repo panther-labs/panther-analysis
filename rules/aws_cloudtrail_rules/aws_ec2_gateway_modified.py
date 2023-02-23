@@ -1,4 +1,4 @@
-from panther import aws_cloudtrail_success
+from panther_default import aws_cloudtrail_success
 from panther_base_helpers import aws_rule_context
 
 # API calls that are indicative of an EC2 Network Gateway modification
