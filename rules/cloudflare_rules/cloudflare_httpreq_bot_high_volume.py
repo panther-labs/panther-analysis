@@ -1,7 +1,14 @@
+from unittest.mock import MagicMock
+
+from global_filter_cloudflare import filter_include_event
 from panther_cloudflare_helpers import cloudflare_http_alert_context
 
 
 def rule(event):
+    if isinstance(filter_include_event, MagicMock):
+        pass
+    if not filter_include_event(event):
+        return False
     # Bot scores are [0, 99] where scores >0 && <30 indicating likely automated
     # https://developers.cloudflare.com/bots/concepts/bot-score/
     return all(
