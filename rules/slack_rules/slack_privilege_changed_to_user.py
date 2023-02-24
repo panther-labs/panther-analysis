@@ -17,7 +17,7 @@ def title(event):
 
 def severity(event):
     if event.get("action") != "role_change_to_user":
-        return "Low"
+        return "High"
     return "Medium"
 
 
