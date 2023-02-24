@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    username = deep_get(event, "entity", "user", "name", default="<unknown-actor>")
+    username = deep_get(event, "entity", "user", "name", default="<unknown-entity>")
     email = deep_get(event, "entity", "user", "email", default="<unknown-email>")
 
     if event.get("action") == "role_change_to_user":
