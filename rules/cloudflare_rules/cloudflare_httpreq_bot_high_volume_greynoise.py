@@ -1,10 +1,13 @@
 from ipaddress import ip_address
 
+from global_filter_cloudflare import filter_include_event
 from panther_cloudflare_helpers import cloudflare_http_alert_context
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
 
 def rule(event):
+    if not filter_include_event(event):
+        return False
     # Bot scores are [0, 99] where scores >=1 && <30 indicating likely automated
     # https://developers.cloudflare.com/bots/concepts/bot-score/
     if not all(

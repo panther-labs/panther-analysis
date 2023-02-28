@@ -1,4 +1,4 @@
-from panther import lookup_aws_account_name
+from panther_default import lookup_aws_account_name
 from panther_base_helpers import deep_get
 from panther_oss_helpers import geoinfo_from_ip_formatted
 
