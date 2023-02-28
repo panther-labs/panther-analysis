@@ -10,6 +10,7 @@ import unittest
 #   so noting, we append this directory to sys.path
 sys.path.append(os.path.dirname(__file__))
 
+import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
@@ -351,6 +352,33 @@ class TestIpInfoHelpersASN(unittest.TestCase):
         self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
+class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
+    def setUp(self):
+        self.input = {
+            "p_log_type": "Crowdstrike.FDREvent",
+            "aid": "else",
+            "event": {"foo": "bar"},
+            "fdr_event_type": "DnsRequest",
+        }
+
+    def test_is_different_with_fdr_event_type_provided(self):
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
+        self.assertEqual(response, True)
+
+    def test_is_same_with_the_fdr_event_type_provided(self):
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        self.assertEqual(response, False)
+
+    def test_is_entirely_different_type(self):
+        self.input = {
+            "p_log_type": "Crowdstrike.DnsRequest",
+            "aid": "else",
+            "event": {"foo": "bar"},
+        }
+        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        self.assertEqual(response, False)
+
+
 class TestGetCrowdstrikeField(unittest.TestCase):
     def setUp(self):
         self.input = {
@@ -384,6 +412,64 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         self.input["event"]["field"] = "found"
         response = p_b_h.get_crowdstrike_field(self.input, "field")
         self.assertEqual(response, "found")
+
+
+class TestIpInfoHelpersPrivacy(unittest.TestCase):
+    def setUp(self):
+        self.match_field = "clientIp"
+        self.event = {
+            "p_enrichment": {
+                p_i_h.IPINFO_PRIVACY_LUT_NAME: {
+                    self.match_field: {
+                        "hosting": False,
+                        "proxy": False,
+                        "tor": False,
+                        "vpn": True,
+                        "relay": False,
+                        "service": "VPN Gate",
+                    }
+                }
+            }
+        }
+        self.ip_info = p_i_h.get_ipinfo_privacy(self.event)
+
+    def test_hosting(self):
+        hosting = self.ip_info.hosting(self.match_field)
+        self.assertEqual(hosting, False)
+
+    def test_proxy(self):
+        proxy = self.ip_info.proxy(self.match_field)
+        self.assertEqual(proxy, False)
+
+    def test_tor(self):
+        tor = self.ip_info.tor(self.match_field)
+        self.assertEqual(tor, False)
+
+    def test_vpn(self):
+        vpn = self.ip_info.vpn(self.match_field)
+        self.assertEqual(vpn, True)
+
+    def test_relay(self):
+        relay = self.ip_info.relay(self.match_field)
+        self.assertEqual(relay, False)
+
+    def test_service(self):
+        service = self.ip_info.service(self.match_field)
+        self.assertEqual(service, "VPN Gate")
+
+    def test_not_found(self):
+        self.assertEqual(self.ip_info.service("not_found"), None)
+
+    def test_context(self):
+        expected = {
+            "Hosting": False,
+            "Proxy": False,
+            "Tor": False,
+            "VPN": True,
+            "Relay": False,
+            "Service": "VPN Gate",
+        }
+        self.assertEqual(expected, self.ip_info.context(self.match_field))
 
 
 class TestGeoInfoFromIP(unittest.TestCase):
@@ -447,6 +533,19 @@ class TestGeoInfoFromIP(unittest.TestCase):
             exc.exception.args[0],
             "IPInfo is not configured on the provided match_field: fake_field",
         )
+
+
+class TestDeepGet(unittest.TestCase):
+    def test_deep_get(self):
+        event = {"thing": {"value": "one"}}
+        self.assertEqual(p_b_h.deep_get(event, "thing", "value"), "one")
+        self.assertEqual(p_b_h.deep_get(event, "thing", "not_exist", default="ok"), "ok")
+        event["thing"]["none_val"] = None
+        self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default="ok"), "ok")
+        # If the value and the default kwarg are both None, then return None
+        self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default=None), None)
+        # If the searched key is not found, and no default kwarg is provided, return None
+        self.assertEqual(p_b_h.deep_get(event, "key_does_not_exist"), None)
 
 
 class TestCloudflareHelpers(unittest.TestCase):
@@ -553,6 +652,90 @@ class TestCloudflareHelpers(unittest.TestCase):
         self.assertLessEqual(len(context), 10)
         self.assertIsNone(context.get("BotScore"))
         self.assertEqual("12.12.12.12", context.get("ClientIP"))
+
+
+class TestAsanaHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "actor": {
+                "actor_type": "user",
+                "email": "user@domain.com",
+                "gid": "11111111111111111111",
+                "name": "Users Name",
+            },
+            "context": {
+                "client_ip_address": "209.6.224.22",
+                "context_type": "web",
+                "user_agent": "AsanaDesktopOfficial darwin_arm64/1.12.0 Chrome/108.0.5359.62",
+            },
+            "created_at": "2023-02-08 19:00:14.355",
+            "details": {},
+            "event_category": "deletion",
+            "event_type": "task_deleted",
+            "gid": "1222222222222222",
+            "p_event_time": "2023-02-08 19:00:14.355",
+            "resource": {
+                "gid": "133333333333333",
+                "name": "Task Name Goes Here",
+                "resource_subtype": "task",
+                "resource_type": "task",
+            },
+        }
+
+    def test_alert_context(self):
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "user@domain.com")
+        self.assertEqual(returns.get("event_type", ""), "task_deleted")
+        # Remove the user's email attribute
+        self.event["actor"].pop("email")
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_EMAIL>")
+        self.assertEqual(returns.get("resource_type", ""), "task")
+        self.event["resource"] = {"resource_type": "story", "resource_subtype": "added_to_project"}
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type", ""), "story__added_to_project")
+        # resource with no resource subtype
+        self.event["resource"] = {
+            "email": "user@email.com",
+            "gid": "1111111111111111",
+            "name": "Users Name",
+            "resource_type": "user",
+        }
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type", ""), "user")
+        self.assertEqual(returns.get("resource_name", ""), "Users Name")
+        self.assertEqual(returns.get("resource_gid", ""), "1111111111111111")
+
+    def test_safe_ac_missing_entries(self):
+        returns = p_a_h.asana_alert_context({})
+        self.assertEqual(returns.get("actor"), "<NO_ACTOR>")
+        self.assertEqual(returns.get("event_type"), "<NO_EVENT_TYPE>")
+        self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
+        self.assertEqual(returns.get("resource_name"), "<NO_RESOURCE_NAME>")
+        self.assertEqual(returns.get("resource_gid"), "<NO_RESOURCE_GID>")
+        self.event["resource"]["resource_type"] = None
+        returns = p_a_h.asana_alert_context(self.event)
+        self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
+
+    def test_external_admin(self):
+        event = {
+            "actor": {"actor_type": "external_administrator"},
+            "context": {"context_type": "api"},
+            "created_at": "2023-02-13 18:41:02.759",
+            "details": {},
+            "event_category": "logins",
+            "event_type": "user_logged_out",
+            "gid": "1222222222222222",
+            "resource": {
+                "email": "user@email.com",
+                "gid": "1201201201201201",
+                "name": "User Name",
+                "resource_type": "user",
+            },
+        }
+        returns = p_a_h.asana_alert_context(event)
+        self.assertEqual(returns.get("context"), "api")
+        self.assertEqual(returns.get("actor"), "external_administrator")
 
 
 if __name__ == "__main__":

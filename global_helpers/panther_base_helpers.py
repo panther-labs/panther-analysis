@@ -228,6 +228,16 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
+def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
+    """
+    Checks if the event belongs to the Crowdstrike.FDREvent log type
+    and the event type is not the name parameter.
+    """
+    if event.get("p_log_type") != "Crowdstrike.FDREvent":
+        return False
+    return event.get("fdr_event_type", "") != name
+
+
 def get_crowdstrike_field(event, field_name, default=None):
     return (
         deep_get(event, field_name)
@@ -262,9 +272,12 @@ def deep_get(dictionary: dict, *keys, default=None):
 
     Inspired by https://bit.ly/3a0hq9E
     """
-    return reduce(
+    out = reduce(
         lambda d, key: d.get(key, default) if isinstance(d, Mapping) else default, keys, dictionary
     )
+    if out is None:
+        return default
+    return out
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):

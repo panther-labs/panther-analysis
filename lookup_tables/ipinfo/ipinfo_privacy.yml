@@ -1,15 +1,15 @@
 AnalysisType: lookup_table
-LookupName: ipinfo_asn
-Schema: IPInfo.ASNCIDR
+LookupName: ipinfo_privacy
+Schema: IPInfo.PrivacyCIDR
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-ipinfo-access-role
-  ObjectPath: s3://panther-ipinfo-ha771dhqm13j11czzb6kcpuy6ueccusw2a-s3alias/luts/data/ipinfo/asn.mmdb
+  ObjectPath: s3://panther-ipinfo-ha771dhqm13j11czzb6kcpuy6ueccusw2a-s3alias/luts/data/ipinfo/privacy.mmdb
   PeriodMinutes: 1400
-Description: IpInfo Owner (ASN) includes ASN details for every IP address and every ASNs related domains, allocation date, registry name, total number of IP addresses, and assigned prefixes. This dataset is for detection engine. For the datalake, also enable ipinfo_asn_datalake.
+Description: IpInfo Privacy data contains information about an IP address such as whether it is being used as a proxy, relay or VPN. This dataset is for detection engine. For the datalake, also enable ipinfo_privacy_datalake.
 Reference: https://docs.panther.com/enrichment/ipinfo
 Enabled: false
 LogTypeMap:
-  PrimaryKey: cidrblock
+  PrimaryKey: range
   AssociatedLogTypes:
     - LogType: AlphaSOC.Alert
       Selectors:
