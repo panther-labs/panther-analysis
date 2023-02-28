@@ -1,4 +1,4 @@
-from panther import aws_cloudtrail_success, lookup_aws_account_name
+from panther_default import aws_cloudtrail_success, lookup_aws_account_name
 from panther_base_helpers import deep_get
 
 EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
