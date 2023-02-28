@@ -1,10 +1,13 @@
 from ipaddress import ip_address
 
+from global_filter_cloudflare import filter_include_event
 from panther_cloudflare_helpers import cloudflare_fw_alert_context
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
 
 def rule(event):
+    if not filter_include_event(event):
+        return False
     if event.get("Action") != "block":
         return False
 
