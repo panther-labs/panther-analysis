@@ -22,6 +22,12 @@ Tests:
    -
      Name: EC2 Instance Has No Required Tags
      ExpectedResult: false
+     Mocks:
+       - objectName: REQUIRED_TAGS_MAPPINGS
+         returnValue: >-
+          {
+             "AWS.EC2.Instance": {"Owner", "CreatedBy"} 
+          }
      Resource:
        {
          "AmiLaunchIndex": 0,
@@ -189,6 +195,12 @@ Tests:
    -
      Name: EC2 Instance Has No Tags
      ExpectedResult: false
+     Mocks:
+       - objectName: REQUIRED_TAGS_MAPPINGS
+         returnValue: >-
+          {
+             "AWS.EC2.Instance": {"Owner", "CreatedBy"} 
+          }
      Resource:
        {
          "AmiLaunchIndex": 0,
@@ -347,6 +359,12 @@ Tests:
    -
      Name: IAM User Has No Tags
      ExpectedResult: true
+     Mocks:
+       - objectName: REQUIRED_TAGS_MAPPINGS
+         returnValue: >-
+          {
+             "AWS.EC2.Instance": {"Owner", "CreatedBy"} 
+          }
      Resource:
        {
          "Arn": "arn:aws:iam::123456789012:user/Bobert",
@@ -402,6 +420,12 @@ Tests:
    -
      Name: EC2 Instance Has One Required Tag
      ExpectedResult: false
+     Mocks:
+       - objectName: REQUIRED_TAGS_MAPPINGS
+         returnValue: >-
+          {
+             "AWS.EC2.Instance": {"Owner", "CreatedBy"} 
+          }
      Resource:
        {
          "AmiLaunchIndex": 0,
@@ -569,6 +593,12 @@ Tests:
    -
      Name: EC2 Instance Has all Required Tags
      ExpectedResult: true
+     Mocks:
+       - objectName: REQUIRED_TAGS_MAPPINGS
+         returnValue: >-
+          {
+             "AWS.EC2.Instance": {"Owner", "CreatedBy"} 
+          }
      Resource:
        {
          "AmiLaunchIndex": 0,
