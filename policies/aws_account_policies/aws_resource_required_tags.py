@@ -2,7 +2,7 @@
 # Example: REQUIRED_TAGS_MAPPINGS = {'AWS.EC2.Instance.Snapshot': {'Owner', 'CreatedBy'}}
 # The above example would check all EC2 instances for the presence of tags keyed TagOne and TagTwo
 REQUIRED_TAGS_MAPPINGS = {
-    'AWS.EC2.Instance': {'Owner', 'CreatedBy'} #Example. Do not use in production
+    "AWS.EC2.Instance": {"Owner", "CreatedBy"}  # Example. Do not use in production
 }
 
 
