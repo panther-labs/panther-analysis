@@ -1,4 +1,4 @@
-from panther import aws_cloudtrail_success
+from panther_default import aws_cloudtrail_success
 from panther_base_helpers import aws_rule_context, deep_get
 
 # This is a list of role ARNs that should not be assumed by users in normal operations
