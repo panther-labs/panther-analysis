@@ -1,0 +1,41 @@
+# This file controls how the automagically generated
+# release notes get represented in the release-notes
+# template
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+# .github/release.yml
+changelog:
+  exclude:
+    labels:
+      - updatebot
+  categories:
+    - title: 🕵️ New Detections
+      labels:
+        - rules
+      exclude:
+        labels:
+          - tuning
+    - title: ⛅️️ New Policies
+      labels:
+        - policies
+      exclude:
+        labels:
+          - tuning
+    - title:  🔍️️ New Queries
+      labels:
+        - queries
+      exclude:
+        labels:
+          - tuning
+    - title:  🗓️️ Scheduled Rules
+      labels:
+        - queries
+      exclude:
+        labels:
+          - tuning
+    - title: 🐛 Bug Fixes and Tunes
+      labels:
+        - tuning
+        - bug
+    - title: 🏡 Miscellaneous
+      labels:
+        - '*'
