@@ -1,5 +1,5 @@
-from panther_default import lookup_aws_account_name
 from panther_base_helpers import aws_rule_context, deep_get
+from panther_default import lookup_aws_account_name
 
 
 def rule(event):
