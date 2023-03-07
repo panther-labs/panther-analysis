@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "p_a_t: Run All Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "panther_analysis_tool.main",
+            "justMyCode": true,
+            "args": ["test"]
+        },
+        {
+            "name": "p_a_t: Single Detection or Policy",
+            "type": "python",
+            "request": "launch",
+            "module": "panther_analysis_tool.main",
+            "justMyCode": true,
+            "args": ["test", "--filter", "${input:filterArg}"]
+        }
+   ],
+    "inputs": [
+        {
+            "id": "filterArg",
+            "type": "promptString",
+            "description": "Provide a RuleID=XXX ( or other filter )",
+            "default": "RuleID=AWS.CloudTrail.Stopped"
+        }
+    ]
+}
