@@ -1,8 +1,8 @@
 AnalysisType: rule
-Description: 'An access attempt violating VPC service controls (such as Perimeter controls) has been made. '
-DisplayName: GCP Access Attempt Violating VPC Service Controls
+Description: An access attempt violating VPC service controls (such as Perimeter controls) has been made.
+DisplayName: GCP Access Attempts Violating VPC Service Controls
 Enabled: true
-Filename: gcp_access_attempt_violating_vpc_service_controls.py
+Filename: gcp_access_attempts_violating_vpc_service_controls.py
 Severity: Medium
 Tests:
     - ExpectedResult: false
@@ -98,7 +98,7 @@ Tests:
                 at_type: type.googleapis.com/google.cloud.audit.VpcServiceControlAuditMetadata
                 deviceState: Unknown
                 ingressViolations:
-                    - servicePerimeter: accessPolicies/631602380425/servicePerimeters/test_perimeter
+                    - servicePerimeter: accessPolicies/123456789012/servicePerimeters/test_perimeter
                       targetResource: projects/197946410614
                       targetResourcePermissions:
                         - NO_PERMISSIONS
@@ -106,7 +106,7 @@ Tests:
                     - projects/_/buckets/test-restricted-bucket/objects/test1.txt
                 securityPolicyInfo:
                     organizationId: "645568414902"
-                    servicePerimeterName: accessPolicies/631602380425/servicePerimeters/test_perimeter
+                    servicePerimeterName: accessPolicies/123456789012/servicePerimeters/test_perimeter
                 violationReason: NO_MATCHING_ACCESS_LEVEL
                 vpcServiceControlsUniqueId: gBc-wuGVCapNMnTUePoHos_VyJmr3CsMKlr48kVa4b6XpsT_OWKRng
             methodName: google.storage.objects.get
@@ -137,5 +137,5 @@ Tests:
 DedupPeriodMinutes: 60
 LogTypes:
     - GCP.AuditLog
-RuleID: GCP.Access.Attempt.Violating.VPC.Service.Controls
+RuleID: GCP.Access.Attempts.Violating.VPC.Service.Controls
 Threshold: 1
