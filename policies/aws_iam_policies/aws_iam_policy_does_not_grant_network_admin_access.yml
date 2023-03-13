@@ -121,7 +121,7 @@ Tests:
         "UpdateDate": "2019-01-01T00:00:00Z"
       }
   - 
-    Name: AWS Service-Linked Policy
+    Name: AWS Service-Linked Policy Network Admin
     ExpectedResult: true
     Resource:
       {
@@ -150,5 +150,36 @@ Tests:
         "ResourceType": "AWS.IAM.Policy",
         "TimeCreated": "2017-11-28T20:12:59Z",
         "UpdateDate": "2023-03-05T19:19:19Z"
+      }
+  - 
+    Name: AWS Service Linked Role Policy Admin
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
+        "AttachmentCount": 1,
+        "DefaultVersionId": "v4",
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+              "RoleName": "AWSServiceRoleForAmazonElasticFileSystem"
+            }
+          ],
+          "PolicyUsers": null
+        },
+        "Id": "ANPPPPPPPPPPPPPPPPPPP",
+        "IsAttachable": true,
+        "Name": "AmazonElasticFileSystemServiceRolePolicy",
+        "Path": "/aws-service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "{\n\t\"Version\": \"2012-10-17\",\n\t\"Statement\": [\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"backup-storage:MountCapsule\",\n\t\t\t\t\"ec2:CreateNetworkInterface\",\n\t\t\t\t\"ec2:DeleteNetworkInterface\",\n\t\t\t\t\"ec2:DescribeSecurityGroups\",\n\t\t\t\t\"ec2:DescribeSubnets\",\n\t\t\t\t\"ec2:DescribeNetworkInterfaceAttribute\",\n\t\t\t\t\"ec2:ModifyNetworkInterfaceAttribute\",\n\t\t\t\t\"tag:GetResources\"\n\t\t\t],\n\t\t\t\"Resource\": \"*\"\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"kms:DescribeKey\"\n\t\t\t],\n\t\t\t\"Resource\": \"arn:aws:kms:*:*:key/*\"\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"backup:CreateBackupVault\",\n\t\t\t\t\"backup:PutBackupVaultAccessPolicy\"\n\t\t\t],\n\t\t\t\"Resource\": [\n\t\t\t\t\"arn:aws:backup:*:*:backup-vault:aws/efs/automatic-backup-vault\"\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"backup:CreateBackupPlan\",\n\t\t\t\t\"backup:CreateBackupSelection\"\n\t\t\t],\n\t\t\t\"Resource\": [\n\t\t\t\t\"arn:aws:backup:*:*:backup-plan:*\"\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"iam:CreateServiceLinkedRole\"\n\t\t\t],\n\t\t\t\"Resource\": \"*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringEquals\": {\n\t\t\t\t\t\"iam:AWSServiceName\": [\n\t\t\t\t\t\t\"backup.amazonaws.com\"\n\t\t\t\t\t]\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"iam:PassRole\"\n\t\t\t],\n\t\t\t\"Resource\": [\n\t\t\t\t\"arn:aws:iam::*:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup\"\n\t\t\t],\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringLike\": {\n\t\t\t\t\t\"iam:PassedToService\": \"backup.amazonaws.com\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"elasticfilesystem:DescribeFileSystems\",\n\t\t\t\t\"elasticfilesystem:CreateReplicationConfiguration\",\n\t\t\t\t\"elasticfilesystem:DescribeReplicationConfigurations\",\n\t\t\t\t\"elasticfilesystem:DeleteReplicationConfiguration\"\n\t\t\t],\n\t\t\t\"Resource\": \"*\"\n\t\t}\n\t]\n}",
+        "Region": "global",
+        "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
+        "ResourceType": "AWS.IAM.Policy",
+        "TimeCreated": "2019-11-05T16:52:41Z",
+        "UpdateDate": "2023-03-10T19:19:19Z"
       }
 
