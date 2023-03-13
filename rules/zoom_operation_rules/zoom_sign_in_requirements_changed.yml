@@ -30,6 +30,14 @@ Tests:
         operator: example@example.io
         time: "2022-12-16 18:20:35"
       Name: 2FA disabled
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-In Password Requirement  - Have at least specified length of characters: from 8 to 14 - Include at least 1 letter: from Off to On - Include at least 1 number: from Off to On - Include both uppercase and lowercase characters: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:21:23"
+      Name: Setting Change Off to On
 DedupPeriodMinutes: 60
 LogTypes:
     - Zoom.Operation

@@ -1,7 +1,7 @@
 def rule(event):
     operation_detail = event.get("operation_detail", "<NO_OPS_DETAIL>")
     operation_flag_one = "Sign-In Password Requirement"
-    operation_flag_two = "Off"
+    operation_flag_two = "On to Off"
     return all(
         [
             event.get("action", "<NO_ACTION>") == "Update",
