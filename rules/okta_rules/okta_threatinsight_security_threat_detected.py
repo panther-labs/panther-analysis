@@ -1,4 +1,4 @@
-from panther_base_helpers import okta_alert_context, deep_get
+from panther_base_helpers import deep_get, okta_alert_context
 
 
 def severity_from_threat_string(threat_detection):
