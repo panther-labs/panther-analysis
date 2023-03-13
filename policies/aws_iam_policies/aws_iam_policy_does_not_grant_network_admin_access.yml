@@ -120,3 +120,35 @@ Tests:
         "PolicyName": "Example-Policy",
         "UpdateDate": "2019-01-01T00:00:00Z"
       }
+  - 
+    Name: AWS Service-Linked Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
+        "AttachmentCount": 1,
+        "DefaultVersionId": "v6",
+        "Entities": {
+          "PolicyGroups": null,
+          "PolicyRoles": [
+            {
+              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+              "RoleName": "AWSServiceRoleForAmazonGuardDuty"
+            }
+          ],
+          "PolicyUsers": null
+        },
+        "Id": "ANPPPPPPPPPPPPPPPPPPP",
+        "IsAttachable": true,
+        "Name": "AmazonGuardDutyServiceRolePolicy",
+        "Path": "/aws-service-role/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": "{\n\t\"Version\": \"2012-10-17\",\n\t\"Statement\": [\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"ec2:DescribeInstances\",\n\t\t\t\t\"ec2:DescribeImages\",\n\t\t\t\t\"ec2:DescribeVpcEndpoints\",\n\t\t\t\t\"ec2:DescribeSubnets\",\n\t\t\t\t\"ec2:DescribeVpcPeeringConnections\",\n\t\t\t\t\"ec2:DescribeTransitGatewayAttachments\",\n\t\t\t\t\"organizations:ListAccounts\",\n\t\t\t\t\"organizations:DescribeAccount\",\n\t\t\t\t\"s3:GetBucketPublicAccessBlock\",\n\t\t\t\t\"s3:GetEncryptionConfiguration\",\n\t\t\t\t\"s3:GetBucketTagging\",\n\t\t\t\t\"s3:GetAccountPublicAccessBlock\",\n\t\t\t\t\"s3:ListAllMyBuckets\",\n\t\t\t\t\"s3:GetBucketAcl\",\n\t\t\t\t\"s3:GetBucketPolicy\",\n\t\t\t\t\"s3:GetBucketPolicyStatus\",\n\t\t\t\t\"lambda:GetFunctionConfiguration\",\n\t\t\t\t\"lambda:ListTags\",\n\t\t\t\t\"eks:ListClusters\",\n\t\t\t\t\"eks:DescribeCluster\",\n\t\t\t\t\"ec2:DescribeVpcEndpointServices\",\n\t\t\t\t\"ec2:DescribeSecurityGroups\"\n\t\t\t],\n\t\t\t\"Resource\": \"*\"\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"iam:CreateServiceLinkedRole\",\n\t\t\t\"Resource\": \"*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringEquals\": {\n\t\t\t\t\t\"iam:AWSServiceName\": \"malware-protection.guardduty.amazonaws.com\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"ec2:CreateVpcEndpoint\",\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:vpc-endpoint/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"ForAnyValue:StringEquals\": {\n\t\t\t\t\t\"aws:TagKeys\": \"GuardDutyManaged\"\n\t\t\t\t},\n\t\t\t\t\"StringLike\": {\n\t\t\t\t\t\"ec2:VpceServiceName\": [\n\t\t\t\t\t\t\"com.amazonaws.*.guardduty-data\",\n\t\t\t\t\t\t\"com.amazonaws.*.guardduty-data-fips\"\n\t\t\t\t\t]\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"ec2:ModifyVpcEndpoint\",\n\t\t\t\t\"ec2:DeleteVpcEndpoints\"\n\t\t\t],\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:vpc-endpoint/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"Null\": {\n\t\t\t\t\t\"aws:ResourceTag/GuardDutyManaged\": false\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"ec2:CreateVpcEndpoint\",\n\t\t\t\t\"ec2:ModifyVpcEndpoint\"\n\t\t\t],\n\t\t\t\"Resource\": [\n\t\t\t\t\"arn:aws:ec2:*:*:vpc/*\",\n\t\t\t\t\"arn:aws:ec2:*:*:security-group/*\",\n\t\t\t\t\"arn:aws:ec2:*:*:subnet/*\"\n\t\t\t]\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"ec2:CreateTags\",\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:vpc-endpoint/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringEquals\": {\n\t\t\t\t\t\"ec2:CreateAction\": \"CreateVpcEndpoint\"\n\t\t\t\t},\n\t\t\t\t\"ForAnyValue:StringEquals\": {\n\t\t\t\t\t\"aws:TagKeys\": \"GuardDutyManaged\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"ec2:AuthorizeSecurityGroupIngress\",\n\t\t\t\t\"ec2:AuthorizeSecurityGroupEgress\",\n\t\t\t\t\"ec2:RevokeSecurityGroupIngress\",\n\t\t\t\t\"ec2:RevokeSecurityGroupEgress\",\n\t\t\t\t\"ec2:DeleteSecurityGroup\"\n\t\t\t],\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:security-group/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"Null\": {\n\t\t\t\t\t\"aws:ResourceTag/GuardDutyManaged\": false\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"ec2:CreateSecurityGroup\",\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:security-group/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringLike\": {\n\t\t\t\t\t\"aws:RequestTag/GuardDutyManaged\": \"*\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"ec2:CreateSecurityGroup\",\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:vpc/*\"\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"ec2:CreateTags\",\n\t\t\t\"Resource\": \"arn:aws:ec2:*:*:security-group/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"StringEquals\": {\n\t\t\t\t\t\"ec2:CreateAction\": \"CreateSecurityGroup\"\n\t\t\t\t},\n\t\t\t\t\"ForAnyValue:StringEquals\": {\n\t\t\t\t\t\"aws:TagKeys\": \"GuardDutyManaged\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"eks:CreateAddon\",\n\t\t\t\"Resource\": \"arn:aws:eks:*:*:cluster/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"ForAnyValue:StringEquals\": {\n\t\t\t\t\t\"aws:TagKeys\": \"GuardDutyManaged\"\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": [\n\t\t\t\t\"eks:DeleteAddon\",\n\t\t\t\t\"eks:UpdateAddon\",\n\t\t\t\t\"eks:DescribeAddon\"\n\t\t\t],\n\t\t\t\"Resource\": \"arn:aws:eks:*:*:addon/*/aws-guardduty-agent/*\"\n\t\t},\n\t\t{\n\t\t\t\"Effect\": \"Allow\",\n\t\t\t\"Action\": \"eks:TagResource\",\n\t\t\t\"Resource\": \"arn:aws:eks:*:*:cluster/*\",\n\t\t\t\"Condition\": {\n\t\t\t\t\"ForAnyValue:StringEquals\": {\n\t\t\t\t\t\"aws:TagKeys\": \"GuardDutyManaged\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t]\n}",
+        "Region": "global",
+        "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
+        "ResourceType": "AWS.IAM.Policy",
+        "TimeCreated": "2017-11-28T20:12:59Z",
+        "UpdateDate": "2023-03-05T19:19:19Z"
+      }
+
