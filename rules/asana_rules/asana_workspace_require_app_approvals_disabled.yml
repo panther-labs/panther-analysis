@@ -1,0 +1,59 @@
+AnalysisType: rule
+Description: An Asana user turned off app approval requirements for an application type for your organization.
+DisplayName: 'Asana Workspace Require App Approvals Disabled '
+Enabled: true
+Filename: asana_workspace_require_app_approvals_disabled.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        actor:
+            actor_type: user
+            email: homer.simpson@example.io
+            gid: "1234"
+            name: Homer Simpson
+        context:
+            client_ip_address: 12.12.12.12
+            context_type: web
+            user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        created_at: "2022-12-16 19:29:34.968"
+        details:
+            new_value: all_apps
+            old_value: "off"
+        event_category: admin_settings
+        event_type: workspace_require_app_approvals_of_type_changed
+        gid: "1234"
+        resource:
+            gid: "1234"
+            name: Panther Labs
+            resource_type: workspace
+      Name: Web Reqs On
+    - ExpectedResult: true
+      Log:
+        actor:
+            actor_type: user
+            email: homer.simpson@example.io
+            gid: "1234"
+            name: Homer Simpson
+        context:
+            client_ip_address: 12.12.12.12
+            context_type: web
+            user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        created_at: "2022-12-16 19:29:34.968"
+        details:
+            new_value: "off"
+            old_value: all_apps
+        event_category: admin_settings
+        event_type: workspace_require_app_approvals_of_type_changed
+        gid: "1234"
+        resource:
+            gid: "1234"
+            name: Panther Labs
+            resource_type: workspace
+      Name: Web Reqs Off
+DedupPeriodMinutes: 60
+LogTypes:
+    - Asana.Audit
+RuleID: Asana.Workspace.Require.App.Approvals.Disabled
+Threshold: 1

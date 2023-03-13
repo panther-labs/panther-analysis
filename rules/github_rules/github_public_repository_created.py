@@ -1,7 +1,10 @@
+from global_filter_github import filter_include_event
 from panther_base_helpers import github_alert_context
 
 
 def rule(event):
+    if not filter_include_event(event):
+        return False
     # Return True if a public repository was created
     return event.get("action", "") == "repo.create" and event.get("visibility", "") == "public"
 
