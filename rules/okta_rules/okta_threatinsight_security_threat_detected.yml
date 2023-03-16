@@ -110,7 +110,64 @@ Tests:
             type: WEB
         uuid: asdfa-1234-asdfdas
         version: "0"
-      Name: Threat Detected Event
+      Name: Threat Detected Event - Deny
+    - ExpectedResult: true
+      Log:
+        actor:
+            alternateId: unknown
+            displayName: 1.2.3.4
+            id: 1.2.3.4
+            type: IP address
+        authenticationcontext:
+            authenticationStep: 0
+        client:
+            device: Computer
+            userAgent:
+                browser: CHROME
+                os: Windows 10
+                rawUserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+            zone: "null"
+        debugcontext:
+            debugData:
+                dtHash: abcsadfjsald
+                requestId: alsdjflasf
+                requestUri: /oauth2/v1/authorize
+                threatDetections: '{"Login failures with high unknown users count":"HIGH","Password Spray":"HIGH","Login Failures":"MEDIUM"}'
+                threatSuspected: "true"
+                url: /oauth2/v1/authorize
+        displaymessage: Request from suspicious actor
+        eventtype: security.threat.detected
+        legacyeventtype: security.threat.detected
+        outcome:
+            reason: Password Spray, Login failures with high unknown users count, Login Failures
+            result: SUCCESS
+        published: "2022-12-14 19:16:32.015"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: Dallas
+                    country: United States
+                    geolocation:
+                        lat: 32.7908
+                        lon: -96.8336
+                    postalCode: "75207"
+                    state: Texas
+                    ip: 1.2.3.4
+                    version: V4
+        securitycontext:
+            asNumber: 62240
+            asOrg: packethub s.a.
+            domain: .
+            isProxy: false
+            isp: clouvider limited
+        severity: WARN
+        transaction:
+            detail: {}
+            id: asdfjaslf
+            type: WEB
+        uuid: asdfa-1234-asdfdas
+        version: "0"
+      Name: Threat Detected Event - Success
 DedupPeriodMinutes: 60
 LogTypes:
     - Okta.SystemLog
