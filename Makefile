@@ -1,5 +1,8 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
 
+spellcheck:
+	pipenv run codespell -L marge $(dirs)
+
 ci:
 	pipenv run $(MAKE) lint test
 
@@ -38,7 +41,7 @@ fmt:
 install:
 	pipenv sync --dev
 
-test: global-helpers-unit-test
+test: global-helpers-unit-test lint spellcheck
 	pipenv run panther_analysis_tool test
 
 docker-build:
