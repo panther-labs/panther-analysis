@@ -1,0 +1,70 @@
+AnalysisType: rule
+Filename: snyk_system_sso.py
+RuleID: Snyk.System.SSO
+DisplayName: Snyk System SSO Settings Changed
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+Tags:
+  - Snyk
+Severity: High
+Description: >
+  Detects Snyk SSO Settings have been changed.
+  The reference URL from Snyk indicates that these events are likely to 
+  originate exclusively from Snyk Support. 
+Reference: https://docs.snyk.io/user-and-group-management/setting-up-sso-for-authentication/set-up-snyk-single-sign-on-sso
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  -
+    Name: Snyk System SSO Setting event happened
+    ExpectedResult: true
+    Log:
+      {
+        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "event": "group.sso.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "content": {
+          "unknown": "contents"
+        }
+      }
+  -
+    Name: Snyk System SSO Setting event happened, excluded by filter
+    ExpectedResult: false
+    Mocks:
+      - objectName: filter_include_event
+        returnValue: false
+    Log:
+      {
+        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "event": "group.sso.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "content": {
+          "unknown": "contents"
+        }
+      }
+  -
+    Name: Snyk Group SSO Membership sync
+    ExpectedResult: false
+    Log:
+      {
+        "content": {
+          "addAsOrgAdmin": [],
+          "addAsOrgCollaborator": [
+            "group.name"
+          ],
+          "addAsOrgCustomRole": [],
+          "addAsOrgRestrictedCollaborator": [],
+          "removedOrgMemberships": [],
+          "userPublicId": "05555555-3333-4ddd-8ccc-755555555555"
+        },
+        "created": "2023-03-15 13:13:13.133",
+        "event": "group.sso.membership.sync",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+      }
