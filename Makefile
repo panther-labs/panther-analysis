@@ -10,8 +10,10 @@ install-pipenv:
 
 vscode-config: install-pipenv install
 	@echo "backing up existing vscode configs"
-	test -f .vscode/settings.json && cp .vscode/settings.json .vscode/settings_bak.json
-	test -f .vscode/launch.json && cp .vscode/launch.json .vscode/launch_bak.json
+	test -f .vscode/settings.json && cp .vscode/settings.json .vscode/settings_bak.json \
+	   || echo "no existing vscode settings.json file found. continuing"
+	test -f .vscode/launch.json && cp .vscode/launch.json .vscode/launch_bak.json \
+	   || echo "no existing vscode launch.json file found. continuing"
 	@echo "Creating new vscode config files"
 	cp .vscode/example_launch.json  .vscode/launch.json
 	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
