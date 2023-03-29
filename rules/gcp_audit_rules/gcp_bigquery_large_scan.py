@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
 
+# 1.07 GB
 QUERY_THRESHOLD_BYTES = 1073741824
 
 
@@ -69,5 +70,23 @@ def alert_context(event):
             "queryConfig",
             "query",
             default="<QUERY_NOT_FOUND>",
-        )
+        ),
+        "actor": deep_get(
+            event,
+            "protopayload",
+            "authenticationInfo",
+            "principalEmail",
+            default="<ACTOR_NOT_FOUND>",
+        ),
+        "query_size": deep_get(
+            event,
+            "protopayload",
+            "metadata",
+            "jobChange",
+            "job",
+            "jobStats",
+            "queryStats",
+            "totalBilledBytes",
+            default=0,
+        ),
     }
