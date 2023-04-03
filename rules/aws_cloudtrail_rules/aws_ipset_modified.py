@@ -14,7 +14,7 @@ def rule(event):
 
 
 def title(event):
-    return "IPSet was modified in " f"[{event.get('recepientAccountId','')}]"
+    return "IPSet was modified in " f"[{event.get('recipientAccountId','')}]"
 
 
 def alert_context(event):
