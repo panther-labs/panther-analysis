@@ -20,10 +20,10 @@ SnowflakeQuery: >
   WHERE
     created_on is NOT NULL
     AND grantee_name is NOT NULL
-    AND granted_by is NOT NULL
+    AND granted_to is NOT NULL
     AND role ILIKE '%admin%'
     AND deleted_on is NULL
-		AND DATEDIFF(HOUR, event_timestamp, CURRENT_TIMESTAMP) < 24
+    AND DATEDIFF(HOUR, created_on, CURRENT_TIMESTAMP) < 24
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 1
