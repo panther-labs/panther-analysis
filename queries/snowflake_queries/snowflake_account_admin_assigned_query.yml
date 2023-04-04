@@ -7,21 +7,23 @@ AthenaQuery: >
   /* athena query not supported */
   SELECT count(1)
 SnowflakeQuery: >
-  --return instances where account admin role is granted
+  --return instances where active (not deleted) roles are granted within the last 24 hours 
 
   --this was adapted from a Security Feature Checklist query
 
   SELECT
-    user_name,
-    role_name,
-    query_text
-  FROM snowflake.account_usage.query_history
-    WHERE
-      p_occurs_since('1 h',, start_time)
-      AND execution_status = 'SUCCESS'
-      AND query_type = 'GRANT'
-      AND query_text ILIKE '%grant%accountadmin%to%'
-  ORDER BY end_time desc
+    created_on,
+    role,
+    grantee_name as granted_to,
+    granted_by
+  FROM snowflake.account_usage.grants_to_users
+  WHERE
+    created_on is NOT NULL
+    AND grantee_name is NOT NULL
+    AND granted_to is NOT NULL
+    AND role ILIKE '%admin%'
+    AND deleted_on is NULL
+    AND DATEDIFF(HOUR, created_on, CURRENT_TIMESTAMP) < 24
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 1
