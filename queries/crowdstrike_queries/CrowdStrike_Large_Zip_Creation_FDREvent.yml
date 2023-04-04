@@ -31,7 +31,7 @@ Query: |
           and p_occurs_since('1 day')
           and CAST(event:Size as integer) > 10000000
       ) zips
-      left join crowdstrike_fdrevent pr2
+      left join panther_logs.public.crowdstrike_fdrevent pr2
       on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
       
       where 
