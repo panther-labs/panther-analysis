@@ -10,7 +10,7 @@ Query: |
       AND sourceIPAddress NOT IN
         (
           SELECT DISTINCT aip
-          FROM crowdstrike_aidmaster
+          FROM panther_logs.public.crowdstrike_aidmaster
           WHERE p_occurs_since('3 days')
         )
 QueryName: AWS Authentication from CrowdStrike Unmanaged Device

@@ -6,15 +6,15 @@ Description: Detects AWS Authentication events with IP Addresses not found in Cr
 Enabled: false
 Query: |
     SELECT *
-    FROM aws_cloudtrail
+    FROM panther_logs.public.aws_cloudtrail
     WHERE p_occurs_since('1 days')
       AND eventName IN ('ConsoleLogin', 'SignIn', 'GetSessionToken')
       AND eventSource IN ('sts.amazonaws.com', 'signin.amazonaws.com')
       AND sourceIPAddress NOT IN
         (
           SELECT DISTINCT aip
-          FROM crowdstrike_fdrevent
-          WHERE p_occurs_since('3 days') AND crowdstrike_fdrevent.fdr_event_type = 'aid_master'
+          FROM panther_logs.public.crowdstrike_fdrevent
+          WHERE p_occurs_since('3 days') AND panther_logs.public.crowdstrike_fdrevent.fdr_event_type = 'aid_master'
         )
 QueryName: AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)
 Schedule:

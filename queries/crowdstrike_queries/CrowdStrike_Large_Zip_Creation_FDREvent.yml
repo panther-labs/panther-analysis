@@ -20,7 +20,7 @@ Query: |
         select
           *
         from
-          crowdstrike_fdrevent
+          panther_logs.public.crowdstrike_fdrevent
         where 
           event_simpleName IN (
             'GzipFileWritten',
@@ -48,7 +48,7 @@ Query: |
       )
   
     ) zip_proc
-    LEFT JOIN crowdstrike_fdrevent ppr
+    LEFT JOIN panther_logs.public.crowdstrike_fdrevent ppr
     on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
   where 
     (
