@@ -2,7 +2,7 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if not deep_get(event, "id", "applicationName", default="").lower() == "admin":
+    if deep_get(event, "id", "applicationName", default="").lower() != "admin":
         return False
 
     new_value = (deep_get(event, "parameters", "NEW_VALUE", default="") or "").lower()
