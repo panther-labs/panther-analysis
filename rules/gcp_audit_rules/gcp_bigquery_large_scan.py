@@ -9,11 +9,11 @@ def rule(event):
         [
             deep_get(event, "resource", "type", default="<type not found>").startswith("bigquery"),
             deep_get(event, "operation", "last") is True,
-            deep_get(event, "protopayload", "metadata", "jobChange", "job", "jobConfig", "type")
+            deep_get(event, "protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
             == "QUERY",
             deep_get(
                 event,
-                "protopayload",
+                "protoPayload",
                 "metadata",
                 "jobChange",
                 "job",
@@ -25,7 +25,7 @@ def rule(event):
             int(
                 deep_get(
                     event,
-                    "protopayload",
+                    "protoPayload",
                     "metadata",
                     "jobChange",
                     "job",
@@ -42,11 +42,11 @@ def rule(event):
 
 def title(event):
     actor = deep_get(
-        event, "protopayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
     query_size = deep_get(
         event,
-        "protopayload",
+        "protoPayload",
         "metadata",
         "jobChange",
         "job",
@@ -62,7 +62,7 @@ def alert_context(event):
     return {
         "query": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "metadata",
             "jobChange",
             "job",
@@ -73,14 +73,14 @@ def alert_context(event):
         ),
         "actor": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "authenticationInfo",
             "principalEmail",
             default="<ACTOR_NOT_FOUND>",
         ),
         "query_size": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "metadata",
             "jobChange",
             "job",

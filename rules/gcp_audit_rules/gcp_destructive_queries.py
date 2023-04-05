@@ -9,11 +9,11 @@ def rule(event):
             deep_get(event, "resource", "type", default="<RESOURCE_NOT_FOUND>").startswith(
                 "bigquery"
             ),
-            deep_get(event, "protopayload", "metadata", "jobChange", "job", "jobConfig", "type")
+            deep_get(event, "protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
             == "QUERY",
             deep_get(
                 event,
-                "protopayload",
+                "protoPayload",
                 "metadata",
                 "jobChange",
                 "job",
@@ -27,10 +27,10 @@ def rule(event):
     ):
         return True
 
-    if deep_get(event, "protopayload", "metadata", "tableDeletion"):
+    if deep_get(event, "protoPayload", "metadata", "tableDeletion"):
         return True
 
-    if deep_get(event, "protopayload", "metadata", "datasetDeletion"):
+    if deep_get(event, "protoPayload", "metadata", "datasetDeletion"):
         return True
 
     return False
@@ -38,11 +38,11 @@ def rule(event):
 
 def title(event):
     actor = deep_get(
-        event, "protopayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
     statement = deep_get(
         event,
-        "protopayload",
+        "protoPayload",
         "metadata",
         "jobChange",
         "job",
@@ -53,14 +53,14 @@ def title(event):
     )
     table = deep_get(
         event,
-        "protopayload",
+        "protoPayload",
         "metadata",
         "jobChange",
         "job",
         "jobConfig",
         "queryConfig",
         "destinationTable",
-    ) or deep_get(event, "protopayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>")
+    ) or deep_get(event, "protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>")
     return f"GCP: [{actor}] performed a destructive BigQuery [{statement}] query on [{table}]."
 
 
@@ -68,7 +68,7 @@ def alert_context(event):
     return {
         "query": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "metadata",
             "jobChange",
             "job",
@@ -79,14 +79,14 @@ def alert_context(event):
         ),
         "actor": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "authenticationInfo",
             "principalEmail",
             default="<ACTOR_NOT_FOUND>",
         ),
         "statement": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "metadata",
             "jobChange",
             "job",
@@ -97,7 +97,7 @@ def alert_context(event):
         ),
         "table": deep_get(
             event,
-            "protopayload",
+            "protoPayload",
             "metadata",
             "jobChange",
             "job",
@@ -105,5 +105,5 @@ def alert_context(event):
             "queryConfig",
             "destinationTable",
         )
-        or deep_get(event, "protopayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>"),
+        or deep_get(event, "protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>"),
     }
