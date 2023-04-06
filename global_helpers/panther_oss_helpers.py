@@ -190,9 +190,7 @@ def ttl_expired(response: dict) -> bool:
     """Checks whether a response from the panther-kv table has passed it's TTL date"""
     # This can be used when the TTL timing is very exacting and DDB's cleanup is too slow
     expiration = response.get("Item", {}).get("expiresAt", 0)
-    if expiration and float(expiration) <= (datetime.now()).timestamp():
-        return True
-    return False
+    return expiration and float(expiration) <= (datetime.now()).timestamp()
 
 
 def get_counter(key: str, force_ttl_check: bool = False) -> int:
