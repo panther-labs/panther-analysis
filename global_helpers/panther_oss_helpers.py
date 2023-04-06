@@ -3,7 +3,7 @@ import json
 import os
 import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from ipaddress import ip_address
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
@@ -185,13 +185,15 @@ def kv_table() -> boto3.resource:
         ).Table("panther-kv-store")
     return _KV_TABLE
 
+
 def ttl_expired(response: dict) -> bool:
-    """Checks whether a response from our panther-kv table has passed it's TTL date"""
-    """This can be used when the TTL is very exacting and trusting to DDB's cleanup cycle is insufficient"""
+    """Checks whether a response from the panther-kv table has passed it's TTL date"""
+    # This can be used when the TTL timing is very exacting and DDB's cleanup is too slow
     expiration = response.get("Item", {}).get("expiresAt", 0)
     if expiration and float(expiration) <= (datetime.now()).timestamp():
         return True
     return False
+
 
 def get_counter(key: str, force_ttl_check: bool = False) -> int:
     """Get a counter's current value (defaulting to 0 if key does not exist)."""
