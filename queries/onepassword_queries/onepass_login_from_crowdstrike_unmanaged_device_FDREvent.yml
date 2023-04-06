@@ -19,7 +19,7 @@ Query: |
             FROM panther_logs.public.crowdstrike_fdrevent
             WHERE p_occurs_since('3 days') AND panther_logs.public.crowdstrike_fdrevent.fdr_event_type = 'aid_master'
         )
-QueryName: 1Password Login From CrowdStrike Unmanaged Device Query (crowdstrike_fdrevent table)
+QueryName: "1Password Login From CrowdStrike Unmanaged Device Query (crowdstrike_fdrevent table)"
 Schedule:
     RateMinutes: 1440
     TimeoutMinutes: 1
