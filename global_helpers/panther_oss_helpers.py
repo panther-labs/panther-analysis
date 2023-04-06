@@ -171,6 +171,7 @@ _KV_TABLE = None
 _COUNT_COL = "intCount"
 _STRING_SET_COL = "stringSet"
 _DICT_COL = "dictionary"
+_TTL_COL = "expiresAt"
 
 
 def kv_table() -> boto3.resource:
@@ -189,7 +190,7 @@ def kv_table() -> boto3.resource:
 def ttl_expired(response: dict) -> bool:
     """Checks whether a response from the panther-kv table has passed it's TTL date"""
     # This can be used when the TTL timing is very exacting and DDB's cleanup is too slow
-    expiration = response.get("Item", {}).get("expiresAt", 0)
+    expiration = response.get("Item", {}).get(_TTL_COL, 0)
     return expiration and float(expiration) <= (datetime.now()).timestamp()
 
 
@@ -197,7 +198,7 @@ def get_counter(key: str, force_ttl_check: bool = False) -> int:
     """Get a counter's current value (defaulting to 0 if key does not exist)."""
     response = kv_table().get_item(
         Key={"key": key},
-        ProjectionExpression=_COUNT_COL,
+        ProjectionExpression=f"{_COUNT_COL}, {_TTL_COL}",
     )
     if force_ttl_check and ttl_expired(response):
         return 0
@@ -307,7 +308,7 @@ def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
     """Get a string set's current value (defaulting to empty set if key does not exit)."""
     response = kv_table().get_item(
         Key={"key": key},
-        ProjectionExpression=_STRING_SET_COL,
+        ProjectionExpression=f"{_STRING_SET_COL}, {_TTL_COL}",
     )
     if force_ttl_check and ttl_expired(response):
         return set()
