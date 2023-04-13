@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: Monitor application logs for suspicious events including repeated MFA failures that may indicate user's primary credentials have been compromised.
-DisplayName: AWS Unsuccessful MFA attempt
+DisplayName: "AWS Unsuccessful MFA attempt"
 Enabled: false
 Filename: aws_cloudtrail_unsuccessful_mfa_attempt.py
 Reference: https://attack.mitre.org/techniques/T1621/
@@ -66,5 +66,5 @@ Tests:
 DedupPeriodMinutes: 15
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.Unsuccessful.MFA.attempt
+RuleID: "AWS.Unsuccessful.MFA.attempt"
 Threshold: 2
