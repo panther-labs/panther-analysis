@@ -19,7 +19,7 @@ SnowflakeQuery: >
     role_name
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('24 h', start_time)
+      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
       AND execution_status = 'SUCCESS'
       AND query_type = 'ALTER_USER'
       AND (query_text ILIKE '%alter user%set disabled = false%'
