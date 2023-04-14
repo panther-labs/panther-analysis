@@ -1,0 +1,92 @@
+AnalysisType: rule
+Filename: snyk_system_externalaccess.py
+RuleID: "Snyk.System.ExternalAccess"
+DisplayName: "Snyk System External Access Settings Changed"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: High
+Description: >
+  Detects when Snyk Settings that control access for external parties have been changed.
+Runbook: >
+  This action in the Snyk Audit logs indicate that the setting for allowing external
+  parties to request access to your Snyk installation have changed. 
+Reference: https://docs.snyk.io/snyk-admin/manage-users-and-permissions/organization-access-requests
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Snyk External Access Allowed By External Parties - Enabled
+    ExpectedResult: true
+    Log:
+       {
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "event": "group.request_access_settings.edit",
+        "content": {
+            "after": {
+                "isEnabled": true
+            },
+            "before": {}
+        },
+        "created": "2023-03-03T19:52:01.628Z",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk External Access Allowed By External Parties - Disabled
+    ExpectedResult: true
+    Log:
+       {
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "event": "group.request_access_settings.edit",
+        "content": {
+            "after": {},
+            "before": {
+                "isEnabled": true
+            }
+        },
+        "created": "2023-03-03T20:52:01.628Z",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk External Access Allowed By External Parties - Disabled - excluded by filter
+    ExpectedResult: false
+    Mocks:
+      - objectName: filter_include_event
+        returnValue: false
+    Log:
+       {
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "event": "group.request_access_settings.edit",
+        "content": {
+            "after": {},
+            "before": {
+                "isEnabled": true
+            }
+        },
+        "created": "2023-03-03T20:52:01.628Z",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk Group SSO Membership sync
+    ExpectedResult: false
+    Log:
+      {
+        "content": {
+          "addAsOrgAdmin": [],
+          "addAsOrgCollaborator": [
+            "group.name"
+          ],
+          "addAsOrgCustomRole": [],
+          "addAsOrgRestrictedCollaborator": [],
+          "removedOrgMemberships": [],
+          "userPublicId": "05555555-3333-4ddd-8ccc-755555555555"
+        },
+        "created": "2023-03-15 13:13:13.133",
+        "event": "group.sso.membership.sync",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+      }
