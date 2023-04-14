@@ -38,7 +38,7 @@ def title(event):
 def alert_context(event):
     a_c = snyk_alert_context(event)
     role = deep_get(event, "content", "after", "role", default=None)
-    if not role and 'afterRoleName' in deep_get(event, 'content', default={}):
+    if not role and "afterRoleName" in deep_get(event, "content", default={}):
         role = deep_get(event, "content", "afterRoleName", default=None)
     if role:
         a_c["role_permission"] = role
@@ -56,7 +56,7 @@ def dedup(event):
 
 def severity(event):
     role = deep_get(event, "content", "after", "role", default=None)
-    if not role and 'afterRoleName' in deep_get(event, 'content', default={}):
+    if not role and "afterRoleName" in deep_get(event, "content", default={}):
         role = deep_get(event, "content", "afterRoleName", default=None)
     if role == "ADMIN":
         return "CRITICAL"
