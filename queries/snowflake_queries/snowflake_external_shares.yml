@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_external_shares.py
+RuleID: "Snowflake.External.Shares"
+Description: >
+  Detect when an external share has been initiated from one source cloud to another target cloud.
+DisplayName: "Snowflake External Share"
+Enabled: false
+Runbook: Determine if this occurred as a result of a valid business request.
+ScheduledQueries:
+  - Query.Snowflake.External.Shares
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      Anything: any value

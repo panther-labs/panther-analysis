@@ -1,0 +1,26 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Snowflake.External.Shares"
+Enabled: false
+Description: >
+  Monitor for external shares from one cloud source to another.
+AthenaQuery: >
+  /* athena query not supported */
+  SELECT count(1)
+SnowflakeQuery: >
+  --return external shares
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    *
+  FROM snowflake.account_usage.data_transfer_history
+    WHERE
+      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
+      AND start_time IS NOT NULL
+      AND source_cloud IS NOT NULL
+      AND target_cloud IS NOT NULL
+      AND bytes_transferred > 0
+  ORDER BY start_time desc
+Schedule:
+  CronExpression: "0 6 * * *"
+  TimeoutMinutes: 1

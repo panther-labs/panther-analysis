@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_multiple_failed_logins_followed_by_success.py
+RuleID: "Snowflake.Multiple.Failed.Logins.Followed.By.Success"
+Description: >
+  Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+DisplayName: "Snowflake Multiple Failed Logins Followed By Success"
+Enabled: false
+Runbook: Determine if this was a simple mistake or if this is an active brute force attempt.
+ScheduledQueries:
+  - Query.Snowflake.Multiple.Logins.Followed.By.Success
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      Anything: any value
