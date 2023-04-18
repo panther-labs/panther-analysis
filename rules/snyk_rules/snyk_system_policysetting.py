@@ -47,7 +47,7 @@ def dedup(event):
     # Licenses can apply at org or group levels
     return (
         f"{deep_get(event, 'userId', default='<NO_USERID>')}"
-        f"{deep_get(event, 'orgId', default='<NO_GROUPID>')}"
-        f"{deep_get(event, 'groupId', default='<NO_ORGID>')}"
+        f"{deep_get(event, 'orgId', default='<NO_ORGID>')}"
+        f"{deep_get(event, 'groupId', default='<NO_GROUPID>')}"
         f"{deep_get(event, 'content', 'publicId', default='<NO_PUBLICID>')}"
     )
