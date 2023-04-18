@@ -6,6 +6,7 @@ TLS_1_2_POLICIES = {
     "ELBSecurityPolicy-FS-1-2-Res-2019-08",
     "ELBSecurityPolicy-FS-1-2-2019-08",
     "ELBSecurityPolicy-FS-1-2-Res-2020-10",
+    "ELBSecurityPolicy-TLS13-1-2-2021-06"
 }
 
 
