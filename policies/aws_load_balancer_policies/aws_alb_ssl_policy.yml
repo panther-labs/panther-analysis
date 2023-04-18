@@ -21,520 +21,520 @@ Runbook: >
   Update your load balancer's SSLPolicies to only support modern TLS versions
 Reference: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html
 Tests:
-  # -
-  #   Name: Strong Ciphers Internet Facing
-  #   ExpectedResult: true
-  #   Resource:
-  #     {
-  #       "IpAddressType": "ipv4",
-  #       "Type": "application",
-  #       "Tags": {
-  #         "Application": "Test"
-  #       },
-  #       "AvailabilityZones": [
-  #         {
-  #           "LoadBalancerAddresses": null,
-  #           "ZoneName": "us-east-1b",
-  #           "SubnetId": "subnet-05f7b81cc5d97e0e2"
-  #         },
-  #         {
-  #           "ZoneName": "us-east-1a",
-  #           "SubnetId": "subnet-07419606a40f4c414",
-  #           "LoadBalancerAddresses": null
-  #         }
-  #       ],
-  #       "AccountId": "123456789012",
-  #       "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
-  #       "Listeners": [
-  #         {
-  #           "DefaultActions": [
-  #             {
-  #               "RedirectConfig": null,
-  #               "ForwardConfig": {
-  #                 "TargetGroups": [
-  #                   {
-  #                     "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #                     "Weight": 1
-  #                   }
-  #                 ],
-  #                 "TargetGroupStickinessConfig": {
-  #                   "Enabled": false,
-  #                   "DurationSeconds": null
-  #                 }
-  #               },
-  #               "AuthenticateOidcConfig": null,
-  #               "Order": null,
-  #               "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #               "FixedResponseConfig": null,
-  #               "AuthenticateCognitoConfig": null,
-  #               "Type": "forward"
-  #             }
-  #           ],
-  #           "Port": 443,
-  #           "Certificates": [
-  #             {
-  #               "IsDefault": null,
-  #               "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
-  #             }
-  #           ],
-  #           "Protocol": "HTTPS",
-  #           "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
-  #           "SslPolicy": "ELBSecurityPolicy-2016-08",
-  #           "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
-  #         }
-  #       ],
-  #       "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Scheme": "internet-facing",
-  #       "VpcId": "vpc-0aa6688dd88484847",
-  #       "State": {
-  #         "Code": "active",
-  #         "Reason": null
-  #       },
-  #       "Name": "web",
-  #       "SSLPolicies": {
-  #         "ELBSecurityPolicy-TLS-1-2-Ext-2018-06": {
-  #           "SslProtocols": [
-  #               "TLSv1.2"
-  #           ],
-  #           "Ciphers": [
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES128-GCM-SHA256",
-  #                   "Priority": 1
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES128-GCM-SHA256",
-  #                   "Priority": 2
-  #               },
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES128-SHA256",
-  #                   "Priority": 3
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES128-SHA256",
-  #                   "Priority": 4
-  #               },
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES128-SHA",
-  #                   "Priority": 5
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES128-SHA",
-  #                   "Priority": 6
-  #               },
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES256-GCM-SHA384",
-  #                   "Priority": 7
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES256-GCM-SHA384",
-  #                   "Priority": 8
-  #               },
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES256-SHA384",
-  #                   "Priority": 9
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES256-SHA384",
-  #                   "Priority": 10
-  #               },
-  #               {
-  #                   "Name": "ECDHE-RSA-AES256-SHA",
-  #                   "Priority": 11
-  #               },
-  #               {
-  #                   "Name": "ECDHE-ECDSA-AES256-SHA",
-  #                   "Priority": 12
-  #               },
-  #               {
-  #                   "Name": "AES128-GCM-SHA256",
-  #                   "Priority": 13
-  #               },
-  #               {
-  #                   "Name": "AES128-SHA256",
-  #                   "Priority": 14
-  #               },
-  #               {
-  #                   "Name": "AES128-SHA",
-  #                   "Priority": 15
-  #               },
-  #               {
-  #                   "Name": "AES256-GCM-SHA384",
-  #                   "Priority": 16
-  #               },
-  #               {
-  #                   "Name": "AES256-SHA256",
-  #                   "Priority": 17
-  #               },
-  #               {
-  #                   "Name": "AES256-SHA",
-  #                   "Priority": 18
-  #               }
-  #           ],
-  #           "Name": "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
-  #         }
-  #       },
-  #       "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Region": "us-east-1",
-  #       "SecurityGroups": [
-  #         "sg-000bbcc377444490b"
-  #       ],
-  #       "TimeCreated": "2020-03-24T21:39:15.050Z",
-  #       "WebAcl": null,
-  #       "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
-  #       "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
-  #     }
-  # -
-  #   Name: Default Ciphers
-  #   ExpectedResult: false
-  #   Resource:
-  #     {
-  #       "IpAddressType": "ipv4",
-  #       "Type": "application",
-  #       "Tags": {
-  #         "Application": "Test"
-  #       },
-  #       "AvailabilityZones": [
-  #         {
-  #           "LoadBalancerAddresses": null,
-  #           "ZoneName": "us-east-1b",
-  #           "SubnetId": "subnet-05f7b81cc5d97e0e2"
-  #         },
-  #         {
-  #           "ZoneName": "us-east-1a",
-  #           "SubnetId": "subnet-07419606a40f4c414",
-  #           "LoadBalancerAddresses": null
-  #         }
-  #       ],
-  #       "AccountId": "123456789012",
-  #       "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
-  #       "Listeners": [
-  #         {
-  #           "DefaultActions": [
-  #             {
-  #               "RedirectConfig": null,
-  #               "ForwardConfig": {
-  #                 "TargetGroups": [
-  #                   {
-  #                     "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #                     "Weight": 1
-  #                   }
-  #                 ],
-  #                 "TargetGroupStickinessConfig": {
-  #                   "Enabled": false,
-  #                   "DurationSeconds": null
-  #                 }
-  #               },
-  #               "AuthenticateOidcConfig": null,
-  #               "Order": null,
-  #               "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #               "FixedResponseConfig": null,
-  #               "AuthenticateCognitoConfig": null,
-  #               "Type": "forward"
-  #             }
-  #           ],
-  #           "Port": 443,
-  #           "Certificates": [
-  #             {
-  #               "IsDefault": null,
-  #               "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
-  #             }
-  #           ],
-  #           "Protocol": "HTTPS",
-  #           "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
-  #           "SslPolicy": "ELBSecurityPolicy-2016-08",
-  #           "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
-  #         }
-  #       ],
-  #       "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Scheme": "internet-facing",
-  #       "VpcId": "vpc-0aa6688dd88484847",
-  #       "State": {
-  #         "Code": "active",
-  #         "Reason": null
-  #       },
-  #       "Name": "web",
-  #       "SSLPolicies": {
-  #         "ELBSecurityPolicy-2016-08": {
-  #           "Ciphers": [
-  #             {
-  #               "Priority": 1,
-  #               "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Priority": 2,
-  #               "Name": "ECDHE-RSA-AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Priority": 3,
-  #               "Name": "ECDHE-ECDSA-AES128-SHA256"
-  #             },
-  #             {
-  #               "Priority": 4,
-  #               "Name": "ECDHE-RSA-AES128-SHA256"
-  #             },
-  #             {
-  #               "Priority": 5,
-  #               "Name": "ECDHE-ECDSA-AES128-SHA"
-  #             },
-  #             {
-  #               "Priority": 6,
-  #               "Name": "ECDHE-RSA-AES128-SHA"
-  #             },
-  #             {
-  #               "Priority": 7,
-  #               "Name": "ECDHE-ECDSA-AES256-GCM-SHA384"
-  #             },
-  #             {
-  #               "Name": "ECDHE-RSA-AES256-GCM-SHA384",
-  #               "Priority": 8
-  #             },
-  #             {
-  #               "Name": "ECDHE-ECDSA-AES256-SHA384",
-  #               "Priority": 9
-  #             },
-  #             {
-  #               "Priority": 10,
-  #               "Name": "ECDHE-RSA-AES256-SHA384"
-  #             },
-  #             {
-  #               "Priority": 11,
-  #               "Name": "ECDHE-RSA-AES256-SHA"
-  #             },
-  #             {
-  #               "Name": "ECDHE-ECDSA-AES256-SHA",
-  #               "Priority": 12
-  #             },
-  #             {
-  #               "Priority": 13,
-  #               "Name": "AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Name": "AES128-SHA256",
-  #               "Priority": 14
-  #             },
-  #             {
-  #               "Priority": 15,
-  #               "Name": "AES128-SHA"
-  #             },
-  #             {
-  #               "Name": "AES256-GCM-SHA384",
-  #               "Priority": 16
-  #             },
-  #             {
-  #               "Priority": 17,
-  #               "Name": "AES256-SHA256"
-  #             },
-  #             {
-  #               "Priority": 18,
-  #               "Name": "AES256-SHA"
-  #             }
-  #           ],
-  #           "SslProtocols": [
-  #             "TLSv1",
-  #             "TLSv1.1",
-  #             "TLSv1.2"
-  #           ],
-  #           "Name": "ELBSecurityPolicy-2016-08"
-  #         }
-  #       },
-  #       "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Region": "us-east-1",
-  #       "SecurityGroups": [
-  #         "sg-000bbcc377444490b"
-  #       ],
-  #       "TimeCreated": "2020-03-24T21:39:15.050Z",
-  #       "WebAcl": null,
-  #       "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
-  #       "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
-  #     }
-  # -
-  #   Name: Default Ciphers Internal Load Balancer
-  #   ExpectedResult: true
-  #   Resource:
-  #     {
-  #       "IpAddressType": "ipv4",
-  #       "Type": "application",
-  #       "Tags": {
-  #         "Application": "Test"
-  #       },
-  #       "AvailabilityZones": [
-  #         {
-  #           "LoadBalancerAddresses": null,
-  #           "ZoneName": "us-east-1b",
-  #           "SubnetId": "subnet-05f7b81cc5d97e0e2"
-  #         },
-  #         {
-  #           "ZoneName": "us-east-1a",
-  #           "SubnetId": "subnet-07419606a40f4c414",
-  #           "LoadBalancerAddresses": null
-  #         }
-  #       ],
-  #       "AccountId": "123456789012",
-  #       "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
-  #       "Listeners": [
-  #         {
-  #           "DefaultActions": [
-  #             {
-  #               "RedirectConfig": null,
-  #               "ForwardConfig": {
-  #                 "TargetGroups": [
-  #                   {
-  #                     "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #                     "Weight": 1
-  #                   }
-  #                 ],
-  #                 "TargetGroupStickinessConfig": {
-  #                   "Enabled": false,
-  #                   "DurationSeconds": null
-  #                 }
-  #               },
-  #               "AuthenticateOidcConfig": null,
-  #               "Order": null,
-  #               "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
-  #               "FixedResponseConfig": null,
-  #               "AuthenticateCognitoConfig": null,
-  #               "Type": "forward"
-  #             }
-  #           ],
-  #           "Port": 443,
-  #           "Certificates": [
-  #             {
-  #               "IsDefault": null,
-  #               "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
-  #             }
-  #           ],
-  #           "Protocol": "HTTPS",
-  #           "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
-  #           "SslPolicy": "ELBSecurityPolicy-2016-08",
-  #           "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
-  #         }
-  #       ],
-  #       "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Scheme": "internal",
-  #       "VpcId": "vpc-0aa6688dd88484847",
-  #       "State": {
-  #         "Code": "active",
-  #         "Reason": null
-  #       },
-  #       "Name": "web",
-  #       "SSLPolicies": {
-  #         "ELBSecurityPolicy-2016-08": {
-  #           "Ciphers": [
-  #             {
-  #               "Priority": 1,
-  #               "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Priority": 2,
-  #               "Name": "ECDHE-RSA-AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Priority": 3,
-  #               "Name": "ECDHE-ECDSA-AES128-SHA256"
-  #             },
-  #             {
-  #               "Priority": 4,
-  #               "Name": "ECDHE-RSA-AES128-SHA256"
-  #             },
-  #             {
-  #               "Priority": 5,
-  #               "Name": "ECDHE-ECDSA-AES128-SHA"
-  #             },
-  #             {
-  #               "Priority": 6,
-  #               "Name": "ECDHE-RSA-AES128-SHA"
-  #             },
-  #             {
-  #               "Priority": 7,
-  #               "Name": "ECDHE-ECDSA-AES256-GCM-SHA384"
-  #             },
-  #             {
-  #               "Name": "ECDHE-RSA-AES256-GCM-SHA384",
-  #               "Priority": 8
-  #             },
-  #             {
-  #               "Name": "ECDHE-ECDSA-AES256-SHA384",
-  #               "Priority": 9
-  #             },
-  #             {
-  #               "Priority": 10,
-  #               "Name": "ECDHE-RSA-AES256-SHA384"
-  #             },
-  #             {
-  #               "Priority": 11,
-  #               "Name": "ECDHE-RSA-AES256-SHA"
-  #             },
-  #             {
-  #               "Name": "ECDHE-ECDSA-AES256-SHA",
-  #               "Priority": 12
-  #             },
-  #             {
-  #               "Priority": 13,
-  #               "Name": "AES128-GCM-SHA256"
-  #             },
-  #             {
-  #               "Name": "AES128-SHA256",
-  #               "Priority": 14
-  #             },
-  #             {
-  #               "Priority": 15,
-  #               "Name": "AES128-SHA"
-  #             },
-  #             {
-  #               "Name": "AES256-GCM-SHA384",
-  #               "Priority": 16
-  #             },
-  #             {
-  #               "Priority": 17,
-  #               "Name": "AES256-SHA256"
-  #             },
-  #             {
-  #               "Priority": 18,
-  #               "Name": "AES256-SHA"
-  #             }
-  #           ],
-  #           "SslProtocols": [
-  #             "TLSv1",
-  #             "TLSv1.1",
-  #             "TLSv1.2"
-  #           ],
-  #           "Name": "ELBSecurityPolicy-2016-08"
-  #         }
-  #       },
-  #       "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
-  #       "Region": "us-east-1",
-  #       "SecurityGroups": [
-  #         "sg-000bbcc377444490b"
-  #       ],
-  #       "TimeCreated": "2020-03-24T21:39:15.050Z",
-  #       "WebAcl": null,
-  #       "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
-  #       "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
-  #     }
-  # -
-  #   Name: Observed - No Listeners len() issue
-  #   ExpectedResult: false
-  #   Resource:
-  #     {
-  #       "Listeners": null,
-  #       "Scheme": "internet-facing",
-  #       "SSLPolicies": {
-  #         "ELBSecurityPolicy-2016-08": {
-  #           "Ciphers": [
-  #             {
-  #               "Priority": 1,
-  #               "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
-  #             }
-  #           ],
-  #           "SslProtocols": [
-  #               "TLSv1",
-  #               "TLSv1.1",
-  #               "TLSv1.2"
-  #           ],
-  #           "Name": "ELBSecurityPolicy-2016-08"
-  #         }
-  #       }
-  #     }
+  -
+    Name: Strong Ciphers Internet Facing
+    ExpectedResult: true
+    Resource:
+      {
+        "IpAddressType": "ipv4",
+        "Type": "application",
+        "Tags": {
+          "Application": "Test"
+        },
+        "AvailabilityZones": [
+          {
+            "LoadBalancerAddresses": null,
+            "ZoneName": "us-east-1b",
+            "SubnetId": "subnet-05f7b81cc5d97e0e2"
+          },
+          {
+            "ZoneName": "us-east-1a",
+            "SubnetId": "subnet-07419606a40f4c414",
+            "LoadBalancerAddresses": null
+          }
+        ],
+        "AccountId": "123456789012",
+        "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
+        "Listeners": [
+          {
+            "DefaultActions": [
+              {
+                "RedirectConfig": null,
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false,
+                    "DurationSeconds": null
+                  }
+                },
+                "AuthenticateOidcConfig": null,
+                "Order": null,
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                "FixedResponseConfig": null,
+                "AuthenticateCognitoConfig": null,
+                "Type": "forward"
+              }
+            ],
+            "Port": 443,
+            "Certificates": [
+              {
+                "IsDefault": null,
+                "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
+              }
+            ],
+            "Protocol": "HTTPS",
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
+            "SslPolicy": "ELBSecurityPolicy-2016-08",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
+          }
+        ],
+        "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Scheme": "internet-facing",
+        "VpcId": "vpc-0aa6688dd88484847",
+        "State": {
+          "Code": "active",
+          "Reason": null
+        },
+        "Name": "web",
+        "SSLPolicies": {
+          "ELBSecurityPolicy-TLS-1-2-Ext-2018-06": {
+            "SslProtocols": [
+                "TLSv1.2"
+            ],
+            "Ciphers": [
+                {
+                    "Name": "ECDHE-ECDSA-AES128-GCM-SHA256",
+                    "Priority": 1
+                },
+                {
+                    "Name": "ECDHE-RSA-AES128-GCM-SHA256",
+                    "Priority": 2
+                },
+                {
+                    "Name": "ECDHE-ECDSA-AES128-SHA256",
+                    "Priority": 3
+                },
+                {
+                    "Name": "ECDHE-RSA-AES128-SHA256",
+                    "Priority": 4
+                },
+                {
+                    "Name": "ECDHE-ECDSA-AES128-SHA",
+                    "Priority": 5
+                },
+                {
+                    "Name": "ECDHE-RSA-AES128-SHA",
+                    "Priority": 6
+                },
+                {
+                    "Name": "ECDHE-ECDSA-AES256-GCM-SHA384",
+                    "Priority": 7
+                },
+                {
+                    "Name": "ECDHE-RSA-AES256-GCM-SHA384",
+                    "Priority": 8
+                },
+                {
+                    "Name": "ECDHE-ECDSA-AES256-SHA384",
+                    "Priority": 9
+                },
+                {
+                    "Name": "ECDHE-RSA-AES256-SHA384",
+                    "Priority": 10
+                },
+                {
+                    "Name": "ECDHE-RSA-AES256-SHA",
+                    "Priority": 11
+                },
+                {
+                    "Name": "ECDHE-ECDSA-AES256-SHA",
+                    "Priority": 12
+                },
+                {
+                    "Name": "AES128-GCM-SHA256",
+                    "Priority": 13
+                },
+                {
+                    "Name": "AES128-SHA256",
+                    "Priority": 14
+                },
+                {
+                    "Name": "AES128-SHA",
+                    "Priority": 15
+                },
+                {
+                    "Name": "AES256-GCM-SHA384",
+                    "Priority": 16
+                },
+                {
+                    "Name": "AES256-SHA256",
+                    "Priority": 17
+                },
+                {
+                    "Name": "AES256-SHA",
+                    "Priority": 18
+                }
+            ],
+            "Name": "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+          }
+        },
+        "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Region": "us-east-1",
+        "SecurityGroups": [
+          "sg-000bbcc377444490b"
+        ],
+        "TimeCreated": "2020-03-24T21:39:15.050Z",
+        "WebAcl": null,
+        "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
+        "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
+      }
+  -
+    Name: Default Ciphers
+    ExpectedResult: false
+    Resource:
+      {
+        "IpAddressType": "ipv4",
+        "Type": "application",
+        "Tags": {
+          "Application": "Test"
+        },
+        "AvailabilityZones": [
+          {
+            "LoadBalancerAddresses": null,
+            "ZoneName": "us-east-1b",
+            "SubnetId": "subnet-05f7b81cc5d97e0e2"
+          },
+          {
+            "ZoneName": "us-east-1a",
+            "SubnetId": "subnet-07419606a40f4c414",
+            "LoadBalancerAddresses": null
+          }
+        ],
+        "AccountId": "123456789012",
+        "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
+        "Listeners": [
+          {
+            "DefaultActions": [
+              {
+                "RedirectConfig": null,
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false,
+                    "DurationSeconds": null
+                  }
+                },
+                "AuthenticateOidcConfig": null,
+                "Order": null,
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                "FixedResponseConfig": null,
+                "AuthenticateCognitoConfig": null,
+                "Type": "forward"
+              }
+            ],
+            "Port": 443,
+            "Certificates": [
+              {
+                "IsDefault": null,
+                "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
+              }
+            ],
+            "Protocol": "HTTPS",
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
+            "SslPolicy": "ELBSecurityPolicy-2016-08",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
+          }
+        ],
+        "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Scheme": "internet-facing",
+        "VpcId": "vpc-0aa6688dd88484847",
+        "State": {
+          "Code": "active",
+          "Reason": null
+        },
+        "Name": "web",
+        "SSLPolicies": {
+          "ELBSecurityPolicy-2016-08": {
+            "Ciphers": [
+              {
+                "Priority": 1,
+                "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
+              },
+              {
+                "Priority": 2,
+                "Name": "ECDHE-RSA-AES128-GCM-SHA256"
+              },
+              {
+                "Priority": 3,
+                "Name": "ECDHE-ECDSA-AES128-SHA256"
+              },
+              {
+                "Priority": 4,
+                "Name": "ECDHE-RSA-AES128-SHA256"
+              },
+              {
+                "Priority": 5,
+                "Name": "ECDHE-ECDSA-AES128-SHA"
+              },
+              {
+                "Priority": 6,
+                "Name": "ECDHE-RSA-AES128-SHA"
+              },
+              {
+                "Priority": 7,
+                "Name": "ECDHE-ECDSA-AES256-GCM-SHA384"
+              },
+              {
+                "Name": "ECDHE-RSA-AES256-GCM-SHA384",
+                "Priority": 8
+              },
+              {
+                "Name": "ECDHE-ECDSA-AES256-SHA384",
+                "Priority": 9
+              },
+              {
+                "Priority": 10,
+                "Name": "ECDHE-RSA-AES256-SHA384"
+              },
+              {
+                "Priority": 11,
+                "Name": "ECDHE-RSA-AES256-SHA"
+              },
+              {
+                "Name": "ECDHE-ECDSA-AES256-SHA",
+                "Priority": 12
+              },
+              {
+                "Priority": 13,
+                "Name": "AES128-GCM-SHA256"
+              },
+              {
+                "Name": "AES128-SHA256",
+                "Priority": 14
+              },
+              {
+                "Priority": 15,
+                "Name": "AES128-SHA"
+              },
+              {
+                "Name": "AES256-GCM-SHA384",
+                "Priority": 16
+              },
+              {
+                "Priority": 17,
+                "Name": "AES256-SHA256"
+              },
+              {
+                "Priority": 18,
+                "Name": "AES256-SHA"
+              }
+            ],
+            "SslProtocols": [
+              "TLSv1",
+              "TLSv1.1",
+              "TLSv1.2"
+            ],
+            "Name": "ELBSecurityPolicy-2016-08"
+          }
+        },
+        "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Region": "us-east-1",
+        "SecurityGroups": [
+          "sg-000bbcc377444490b"
+        ],
+        "TimeCreated": "2020-03-24T21:39:15.050Z",
+        "WebAcl": null,
+        "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
+        "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
+      }
+  -
+    Name: Default Ciphers Internal Load Balancer
+    ExpectedResult: true
+    Resource:
+      {
+        "IpAddressType": "ipv4",
+        "Type": "application",
+        "Tags": {
+          "Application": "Test"
+        },
+        "AvailabilityZones": [
+          {
+            "LoadBalancerAddresses": null,
+            "ZoneName": "us-east-1b",
+            "SubnetId": "subnet-05f7b81cc5d97e0e2"
+          },
+          {
+            "ZoneName": "us-east-1a",
+            "SubnetId": "subnet-07419606a40f4c414",
+            "LoadBalancerAddresses": null
+          }
+        ],
+        "AccountId": "123456789012",
+        "DNSName": "web-360787852.us-east-1.elb.amazonaws.com",
+        "Listeners": [
+          {
+            "DefaultActions": [
+              {
+                "RedirectConfig": null,
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false,
+                    "DurationSeconds": null
+                  }
+                },
+                "AuthenticateOidcConfig": null,
+                "Order": null,
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/web/54eedfcacc3949ef",
+                "FixedResponseConfig": null,
+                "AuthenticateCognitoConfig": null,
+                "Type": "forward"
+              }
+            ],
+            "Port": 443,
+            "Certificates": [
+              {
+                "IsDefault": null,
+                "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/10c4e713-9bb5-4ccf-aabc-1c9119370038"
+              }
+            ],
+            "Protocol": "HTTPS",
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/web/3ff2fab33a993e0c/995359b182328b77",
+            "SslPolicy": "ELBSecurityPolicy-2016-08",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c"
+          }
+        ],
+        "ResourceId": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Scheme": "internal",
+        "VpcId": "vpc-0aa6688dd88484847",
+        "State": {
+          "Code": "active",
+          "Reason": null
+        },
+        "Name": "web",
+        "SSLPolicies": {
+          "ELBSecurityPolicy-2016-08": {
+            "Ciphers": [
+              {
+                "Priority": 1,
+                "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
+              },
+              {
+                "Priority": 2,
+                "Name": "ECDHE-RSA-AES128-GCM-SHA256"
+              },
+              {
+                "Priority": 3,
+                "Name": "ECDHE-ECDSA-AES128-SHA256"
+              },
+              {
+                "Priority": 4,
+                "Name": "ECDHE-RSA-AES128-SHA256"
+              },
+              {
+                "Priority": 5,
+                "Name": "ECDHE-ECDSA-AES128-SHA"
+              },
+              {
+                "Priority": 6,
+                "Name": "ECDHE-RSA-AES128-SHA"
+              },
+              {
+                "Priority": 7,
+                "Name": "ECDHE-ECDSA-AES256-GCM-SHA384"
+              },
+              {
+                "Name": "ECDHE-RSA-AES256-GCM-SHA384",
+                "Priority": 8
+              },
+              {
+                "Name": "ECDHE-ECDSA-AES256-SHA384",
+                "Priority": 9
+              },
+              {
+                "Priority": 10,
+                "Name": "ECDHE-RSA-AES256-SHA384"
+              },
+              {
+                "Priority": 11,
+                "Name": "ECDHE-RSA-AES256-SHA"
+              },
+              {
+                "Name": "ECDHE-ECDSA-AES256-SHA",
+                "Priority": 12
+              },
+              {
+                "Priority": 13,
+                "Name": "AES128-GCM-SHA256"
+              },
+              {
+                "Name": "AES128-SHA256",
+                "Priority": 14
+              },
+              {
+                "Priority": 15,
+                "Name": "AES128-SHA"
+              },
+              {
+                "Name": "AES256-GCM-SHA384",
+                "Priority": 16
+              },
+              {
+                "Priority": 17,
+                "Name": "AES256-SHA256"
+              },
+              {
+                "Priority": 18,
+                "Name": "AES256-SHA"
+              }
+            ],
+            "SslProtocols": [
+              "TLSv1",
+              "TLSv1.1",
+              "TLSv1.2"
+            ],
+            "Name": "ELBSecurityPolicy-2016-08"
+          }
+        },
+        "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
+        "Region": "us-east-1",
+        "SecurityGroups": [
+          "sg-000bbcc377444490b"
+        ],
+        "TimeCreated": "2020-03-24T21:39:15.050Z",
+        "WebAcl": null,
+        "CanonicalHostedZonedId": "Z1H1FL5HABSF5",
+        "ResourceType": "AWS.ELBV2.ApplicationLoadBalancer"
+      }
+  -
+    Name: Observed - No Listeners len() issue
+    ExpectedResult: false
+    Resource:
+      {
+        "Listeners": null,
+        "Scheme": "internet-facing",
+        "SSLPolicies": {
+          "ELBSecurityPolicy-2016-08": {
+            "Ciphers": [
+              {
+                "Priority": 1,
+                "Name": "ECDHE-ECDSA-AES128-GCM-SHA256"
+              }
+            ],
+            "SslProtocols": [
+                "TLSv1",
+                "TLSv1.1",
+                "TLSv1.2"
+            ],
+            "Name": "ELBSecurityPolicy-2016-08"
+          }
+        }
+      }
   -
     Name: TLS 1.3 listeners
     ExpectedResult: true
