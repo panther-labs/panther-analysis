@@ -11,7 +11,16 @@ ScheduledQueries:
 Severity: Medium
 Tests:
   -
-    Name: Value Returned By Query 
+    Name: External Share Started
     ExpectedResult: true
     Log:
-      Anything: any value
+      {
+      "start_time": "2023-04-12 18:12:49Z",
+      "end_time": "2023-04-12 18:13:35Z",
+      "source_cloud": "Amazon Web Services (AWS)",
+      "source_region": "us-west-2",
+      "target_cloud": "Microsoft Azure",
+      "target_region": "East US 2",
+      "bytes_transferred": 555,
+      "transfer_type": "COPY"
+      }
