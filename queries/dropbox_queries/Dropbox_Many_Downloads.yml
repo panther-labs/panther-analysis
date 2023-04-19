@@ -2,7 +2,7 @@ AnalysisType: scheduled_query
 Description: Dropbox Many Downloads
 Enabled: false
 Query: |-
-     SELECT
+    SELECT
       actor:user:email AS user,
       ARRAY_AGG( DISTINCT assets[0]:path:contextual) AS downloaded_files,
       ARRAY_SIZE(downloaded_files) as download_count,
