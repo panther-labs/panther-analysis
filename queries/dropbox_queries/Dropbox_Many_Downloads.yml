@@ -11,7 +11,7 @@ Query: |-
     WHERE p_occurs_since('1 day')
       AND event_type:_tag = 'file_download'
     GROUP BY actor:user:email, t_s
-    HAVING download_count > 2
+    HAVING download_count > 10
     ORDER BY download_count DESC
 QueryName: "Dropbox Many Downloads"
 Schedule:
