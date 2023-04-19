@@ -13,4 +13,7 @@ def title(event):
     new_owner = deep_get(event, "details", "new_owner_email", default="<NEW_OWNER_NOT_FOUND>")
     assets = event.get("assets", [{}])
     asset = [a.get("display_name", "<ASSET_NOT_FOUND>") for a in assets]
-    return f"Dropbox: [{actor}] transferred ownership of [{asset}] from [{previous_owner}] to [{new_owner}]."
+    return (
+        f"Dropbox: [{actor}] transferred ownership of [{asset}]"
+        f"from [{previous_owner}] to [{new_owner}]."
+    )
