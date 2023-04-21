@@ -6,6 +6,12 @@ Filename: dropbox_external_share.py
 Severity: Medium
 Tests:
     - ExpectedResult: false
+      Mocks:
+        - objectName: ALLOWED_DOMAINS
+          returnValue: >-
+            [
+                "example.com"
+            ]
       Log:
         actor:
             _tag: user
@@ -53,7 +59,7 @@ Tests:
                 ip_address: 1.2.3.4
                 region: Texas
         p_any_emails:
-            - david.davidson@david.co
+            - david.davidson@example.com
             - alice.bob@company.com
         p_any_ip_addresses:
             - 1.2.3.4
@@ -74,7 +80,7 @@ Tests:
                 display_name: david davidson
                 email: david.davidson@example.com
         timestamp: "2023-04-18 22:31:03"
-      Name: Test-5a3236
+      Name: Domain in Allowlist
     - ExpectedResult: true
       Log:
         actor:
