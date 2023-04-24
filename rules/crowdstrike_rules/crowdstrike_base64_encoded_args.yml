@@ -1,0 +1,34 @@
+AnalysisType: rule
+Filename: crowdstrike_base64_encoded_args.py
+RuleID: Crowdstrike.Base64EncodedArgs
+DisplayName: Execution of Command Line Tool with Base64 Encoded Arguments
+Enabled: true
+LogTypes:
+  - Crowdstrike.FDREvent
+Tags:
+  - Execution
+  - Obfuscation
+Severity: Medium
+Description: Detects the execution of common command line tools (e.g., PowerShell, cmd.exe) with Base64 encoded arguments, which could indicate an attempt to obfuscate malicious commands.
+Runbook: Investigate the endpoint for signs of command line tool execution with Base64 encoded arguments. Review the executed command, decode the Base64 string, and analyze the original content.
+Reference: N/A
+DedupPeriodMinutes: 60
+Tests:
+  -
+    Name: Command Line Tool Execution with Base64 Argument (Positive)
+    ExpectedResult: true
+    Log:
+      {
+        "event_simpleName": "ProcessRollup2",
+        "FileName": "powershell.exe",
+        "CommandLine": "powershell.exe -EncodedCommand V3JpdGUtSG9zdCAnSGVsbG8gV29ybGQhJw=="
+      }
+  -
+    Name: Command Line Tool Execution without Base64 Argument (Negative)
+    ExpectedResult: false
+    Log:
+      {
+        "event_simpleName": "ProcessRollup2",
+        "FileName": "powershell.exe",
+        "CommandLine": "powershell.exe Write-Host 'Hello World!'"
+      }
