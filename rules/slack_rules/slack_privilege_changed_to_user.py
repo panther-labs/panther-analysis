@@ -9,7 +9,7 @@ def title(event):
     username = deep_get(event, "entity", "user", "name", default="<unknown-entity>")
     email = deep_get(event, "entity", "user", "email", default="<unknown-email>")
 
-    return f"{username}'s ({email}) role changed to User"
+    return f"Slack {username}'s ({email}) role changed to User"
 
 
 def alert_context(event):
