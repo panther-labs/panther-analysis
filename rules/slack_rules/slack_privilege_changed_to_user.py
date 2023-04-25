@@ -14,5 +14,6 @@ def title(event):
 
     return f"Slack account changed on {username} ({email}), event: {event.get('action')}"
 
+
 def alert_context(event):
     return slack_alert_context(event)
