@@ -18,7 +18,7 @@ Query: |
     GROUP BY srcAddr, dstAddr, vpcId, region, subNetId
     HAVING COUNT(DISTINCT dstPort) >=  10
     ORDER BY COUNT(DISTINCT dstPort) DESC
-QueryName: VPC Flow Port Scanning
+QueryName: "VPC Flow Port Scanning"
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 5

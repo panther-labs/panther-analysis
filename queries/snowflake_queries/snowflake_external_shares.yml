@@ -1,0 +1,26 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_external_shares.py
+RuleID: "Snowflake.External.Shares"
+Description: >
+  Detect when an external share has been initiated from one source cloud to another target cloud.
+DisplayName: "Snowflake External Share"
+Enabled: false
+Runbook: Determine if this occurred as a result of a valid business request.
+ScheduledQueries:
+  - Query.Snowflake.External.Shares
+Severity: Medium
+Tests:
+  -
+    Name: External Share Started
+    ExpectedResult: true
+    Log:
+      {
+      "start_time": "2023-04-12 18:12:49Z",
+      "end_time": "2023-04-12 18:13:35Z",
+      "source_cloud": "Amazon Web Services (AWS)",
+      "source_region": "us-west-2",
+      "target_cloud": "Microsoft Azure",
+      "target_region": "East US 2",
+      "bytes_transferred": 555,
+      "transfer_type": "COPY"
+      }

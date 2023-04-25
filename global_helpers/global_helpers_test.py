@@ -14,6 +14,7 @@ import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
@@ -736,6 +737,30 @@ class TestAsanaHelpers(unittest.TestCase):
         returns = p_a_h.asana_alert_context(event)
         self.assertEqual(returns.get("context"), "api")
         self.assertEqual(returns.get("actor"), "external_administrator")
+
+
+class TestSnykHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "content": {"url": "/api/v1/user/me"},
+            "created": "2022-12-27 16:50:46.959",
+            "event": "api.access",
+            "groupId": "8fffffff-1555-4444-b000-b55555555555",
+            "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+            "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        }
+
+    def test_alert_context(self):
+        returns = p_snyk_h.snyk_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "05555555-3333-4ddd-8ccc-755555555555")
+        self.assertEqual(returns.get("action", ""), "api.access")
+        self.assertEqual(returns.get("groupId", ""), "8fffffff-1555-4444-b000-b55555555555")
+        self.assertEqual(returns.get("orgId", ""), "21111111-a222-4eee-8ddd-a99999999999")
+        returns = p_snyk_h.snyk_alert_context({})
+        self.assertEqual(returns.get("actor", ""), "<NO_USERID>")
+        self.assertEqual(returns.get("action", ""), "<NO_EVENT>")
+        self.assertEqual(returns.get("groupId", ""), "<NO_GROUPID>")
+        self.assertEqual(returns.get("orgId", ""), "<NO_ORGID>")
 
 
 if __name__ == "__main__":

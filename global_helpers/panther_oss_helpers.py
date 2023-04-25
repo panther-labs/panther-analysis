@@ -171,6 +171,7 @@ _KV_TABLE = None
 _COUNT_COL = "intCount"
 _STRING_SET_COL = "stringSet"
 _DICT_COL = "dictionary"
+_TTL_COL = "expiresAt"
 
 
 def kv_table() -> boto3.resource:
@@ -186,12 +187,21 @@ def kv_table() -> boto3.resource:
     return _KV_TABLE
 
 
-def get_counter(key: str) -> int:
+def ttl_expired(response: dict) -> bool:
+    """Checks whether a response from the panther-kv table has passed it's TTL date"""
+    # This can be used when the TTL timing is very exacting and DDB's cleanup is too slow
+    expiration = response.get("Item", {}).get(_TTL_COL, 0)
+    return expiration and float(expiration) <= (datetime.now()).timestamp()
+
+
+def get_counter(key: str, force_ttl_check: bool = False) -> int:
     """Get a counter's current value (defaulting to 0 if key does not exist)."""
     response = kv_table().get_item(
         Key={"key": key},
-        ProjectionExpression=_COUNT_COL,
+        ProjectionExpression=f"{_COUNT_COL}, {_TTL_COL}",
     )
+    if force_ttl_check and ttl_expired(response):
+        return 0
     return response.get("Item", {}).get(_COUNT_COL, 0)
 
 
@@ -271,7 +281,7 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
         set_key_expiration(key, epoch_seconds)
 
 
-def get_dictionary(key: str) -> dict:
+def get_dictionary(key: str, force_ttl_check: bool = False) -> dict:
     # Retrieve the item from DynamoDB
     response = kv_table().get_item(Key={"key": key})
 
@@ -279,6 +289,9 @@ def get_dictionary(key: str) -> dict:
 
     # Check if the item was not found, if so return empty dictionary
     if not item:
+        return {}
+
+    if force_ttl_check and ttl_expired(response):
         return {}
 
     try:
@@ -291,12 +304,14 @@ def get_dictionary(key: str) -> dict:
         ) from exc
 
 
-def get_string_set(key: str) -> Set[str]:
+def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
     """Get a string set's current value (defaulting to empty set if key does not exit)."""
     response = kv_table().get_item(
         Key={"key": key},
-        ProjectionExpression=_STRING_SET_COL,
+        ProjectionExpression=f"{_STRING_SET_COL}, {_TTL_COL}",
     )
+    if force_ttl_check and ttl_expired(response):
+        return set()
     return response.get("Item", {}).get(_STRING_SET_COL, set())
 
 

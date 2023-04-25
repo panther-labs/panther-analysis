@@ -149,8 +149,8 @@ Example detection metadata: `okta_brute_force_logins.yml`
 ```yaml
 AnalysisType: rule
 Filename: okta_brute_force_logins.py
-RuleID: Okta.BruteForceLogins
-DisplayName: Okta Brute Force Logins
+RuleID: "Okta.BruteForceLogins"
+DisplayName: "Okta Brute Force Logins"
 Enabled: true
 LogTypes:
   - Okta.SystemLog

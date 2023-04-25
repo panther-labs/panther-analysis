@@ -1,5 +1,5 @@
 AnalysisType: lookup_table
-LookupName: greynoise_noise_basic
+LookupName: "greynoise_noise_basic"
 Schema: GreyNoise.Noise
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-greynoise-basic-access-role
@@ -183,6 +183,9 @@ LogTypeMap:
     - LogType: OnePassword.SignInAttempt
       Selectors:
         - "$.client.ip_address"
+    - LogType: Panther.Audit
+      Selectors:
+        - "sourceIP"
     - LogType: Salesforce.Login
       Selectors:
         - "CLIENT_IP"
