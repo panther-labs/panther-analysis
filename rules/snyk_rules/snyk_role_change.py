@@ -3,6 +3,8 @@ from panther_base_helpers import deep_get
 from panther_snyk_helpers import snyk_alert_context
 
 ACTIONS = [
+    "group.role.create",
+    "group.role.edit",
     "group.user.role.create",
     "group.user.role.delete",
     "group.user.role.edit",
