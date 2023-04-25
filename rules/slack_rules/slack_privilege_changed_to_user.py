@@ -14,12 +14,5 @@ def title(event):
 
     return f"Slack account changed on {username} ({email}), event: {event.get('action')}"
 
-
-def severity(event):
-    if event.get("action") != "role_change_to_user":
-        return "High"
-    return "Medium"
-
-
 def alert_context(event):
     return slack_alert_context(event)
