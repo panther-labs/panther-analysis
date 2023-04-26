@@ -1,0 +1,91 @@
+AnalysisType: rule
+Filename: snyk_org_settings.py
+RuleID: "Snyk.Org.Settings"
+DisplayName: "Snyk Org Settings"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: Medium
+Description: >
+  Detects when Snyk Organization settings, like Integrations and Webhooks, are changed
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  - 
+    Name: placeholder
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "after": {
+            "integrationSettings": {
+              "autoDepUpgradeIgnoredDependencies": [],
+              "autoDepUpgradeLimit": 5,
+              "autoRemediationPrs": {
+                "usePatchRemediation": true
+              },
+              "isMajorUpgradeEnabled": true,
+              "manualRemediationPrs": {
+                "useManualPatchRemediation": true
+              },
+              "pullRequestAssignment": {
+                "assignees": [
+                  "github_handle",
+                  "github_handle2"
+                ],
+                "enabled": true,
+                "type": "manual"
+              },
+              "pullRequestTestEnabled": true,
+              "reachableVulns": {}
+            }
+          },
+          "before": {
+            "integrationSettings": {
+              "autoDepUpgradeIgnoredDependencies": [],
+              "autoDepUpgradeLimit": 5,
+              "autoRemediationPrs": {
+                "usePatchRemediation": true
+              },
+              "isMajorUpgradeEnabled": true,
+              "manualRemediationPrs": {
+                "useManualPatchRemediation": true
+              },
+              "pullRequestAssignment": {
+                "assignees": [
+                  "github_handle",
+                  "github_handle2",
+                ],
+                "enabled": true,
+                "type": "manual"
+              },
+              "reachableVulns": {}
+            }
+          },
+          "integrationPublicId": "81111111-cccc-4eee-bfff-3ccccccccccc",
+          "interface": "ui"
+        },
+        "created": "2023-03-24 14:53:51.334",
+        "event": "org.integration.settings.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk System SSO Setting event happened
+    ExpectedResult: false
+    Log:
+      {
+        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "event": "group.sso.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "content": {
+          "unknown": "contents"
+        }
+      }
