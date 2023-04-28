@@ -1,0 +1,56 @@
+AnalysisType: rule
+Description: "Detection to alert when internal asset is communicating with an sanctioned destination. This detection leverages Panther UDM and IPInfo enrichment."
+Reference: "U.S. Sanctioned Destinations - https://www.bis.doc.gov/index.php/policy-guidance/country-guidance/sanctioned-destinations"
+DisplayName: "Connection to Embargoed Country"
+Enabled: true
+DedupPeriodMinutes: 60
+LogTypes:
+    - Crowdstrike.FDREvent
+RuleID: "Connection.to.Embargoed.Country"
+Threshold: 1
+Filename: crowdstrike_connection_to_embargoed_country.py
+Severity: Medium
+Tests:
+    - Name: Connection to Cuba
+      ExpectedResult: true
+      Log:
+        p_any_ip_addresses:
+            - 152.206.0.1
+            - 10.0.0.1
+        p_enrichment:
+            ipinfo_asn:
+                p_any_ip_addresses:
+                    - asn: AS27725
+                      domain: etecsa.cu
+                      name: Empresa de Telecomunicaciones de Cuba, S.A.
+                      route: 152.206.0.0/17
+                      type: isp
+            ipinfo_location:
+                p_any_ip_addresses:
+                    - city: Matanzas
+                      country: CU
+                      lat: "23.04111"
+                      lng: "-81.5775"
+                      postal_code: ""
+                      region: Matanzas Province
+                      region_code: "04"
+                      timezone: America/Havana
+        p_log_type: Crowdstrike.FDREvent
+    - Name: Google DNS
+      ExpectedResult: false
+      Log:
+        p_any_ip_addresses:
+            - 8.8.8.8
+        p_enrichment:
+            ipinfo_location:
+                p_any_ip_addresses:
+                    - city: Mountain View
+                      country: US
+                      lat: "37.4056"
+                      lng: "-122.0775"
+                      postal_code: "94043"
+                      region: California
+                      region_code: CA
+                      timezone: America/Los_Angeles
+        p_log_type: Crowdstrike.FDREvent
+
