@@ -3,16 +3,23 @@ from panther_base_helpers import deep_get
 from panther_snyk_helpers import snyk_alert_context
 
 ACTIONS = [
-    "group.role.create",
-    "group.role.edit",
-    "group.user.role.create",
-    "group.user.role.delete",
-    "group.user.role.edit",
-    "org.user.role.create",
-    "org.user.role.delete",
-    "org.user.role.details.edit",
-    "org.user.role.edit",
-    "org.user.role.permissions.edit",
+    "group.user.add",
+    "group.user.provision.accept",
+    "group.user.provision.create",
+    "group.user.provision.delete",
+    "group.user.remove",
+    "org.user.add",
+    "org.user.invite",
+    "org.user.invite.accept",
+    "org.user.invite.revoke",
+    "org.user.invite_link.accept",
+    "org.user.invite_link.create",
+    "org.user.invite_link.revoke",
+    "org.user.leave",
+    "org.user.provision.accept",
+    "org.user.provision.create",
+    "org.user.provision.delete",
+    "org.user.remove",
 ]
 
 
@@ -25,26 +32,20 @@ def rule(event):
 
 def title(event):
     group_or_org = "<GROUP_OR_ORG>"
-    crud_operation = "<NO_OPERATION>"
+    operation = "<NO_OPERATION>"
     action = deep_get(event, "event", default="<NO_EVENT>")
     if "." in action:
         group_or_org = action.split(".")[0].title()
-        crud_operation = action.split(".")[-1].title()
+        operation = ".".join(action.split(".")[2:]).title()
     return (
-        f"Snyk: [{group_or_org}] Role "
-        f"[{crud_operation}] "
+        f"Snyk: [{group_or_org}] User "
+        f"[{operation}] "
         f"performed by [{deep_get(event, 'userId', default='<NO_USERID>')}]"
     )
 
 
 def alert_context(event):
-    a_c = snyk_alert_context(event)
-    role = deep_get(event, "content", "after", "role", default=None)
-    if not role and "afterRoleName" in deep_get(event, "content", default={}):
-        role = deep_get(event, "content", "afterRoleName", default=None)
-    if role:
-        a_c["role_permission"] = role
-    return a_c
+    return snyk_alert_context(event)
 
 
 def dedup(event):

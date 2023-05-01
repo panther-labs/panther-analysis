@@ -242,6 +242,19 @@ def crowdstrike_process_alert_context(event: dict):
         "platform": get_crowdstrike_field(event, "event_platform", default=""),
     }
 
+def crowdstrike_network_detection_alert_context(event: dict):
+    """Returns common network context for Crowdstrike detections"""
+    return {
+        "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),
+        "LocalPort": get_crowdstrike_field(event, "LocalPort", default=""),
+        "RemoteAddressIP4": get_crowdstrike_field(event, "RemoteAddressIP4", default=""),
+        "RemotePort": get_crowdstrike_field(event, "RemotePort", default=""),
+        "Protocol": get_crowdstrike_field(event, "Protocol", default=""),
+        "event_simpleName": get_crowdstrike_field(event, "event_simpleName", default=""),
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "ContextProcessId": get_crowdstrike_field(event, "ContextProcessId", default=""),
+    }
+
 
 def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
     """
