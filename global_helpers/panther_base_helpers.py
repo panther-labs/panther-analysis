@@ -242,6 +242,7 @@ def crowdstrike_process_alert_context(event: dict):
         "platform": get_crowdstrike_field(event, "event_platform", default=""),
     }
 
+
 def crowdstrike_network_detection_alert_context(event: dict):
     """Returns common network context for Crowdstrike detections"""
     return {

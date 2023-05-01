@@ -1,5 +1,7 @@
-from panther_base_helpers import crowdstrike_process_alert_context
 import re
+
+from panther_base_helpers import crowdstrike_process_alert_context
+
 
 def rule(event):
     # List of command line tools to monitor for execution with Base64 encoded arguments
