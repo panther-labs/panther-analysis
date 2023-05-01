@@ -1,0 +1,24 @@
+AnalysisType: datamodel
+DataModelID: "Standard.Crowdstrike.FDR"
+DisplayName: "Crowdstrike FDR"
+Enabled: true
+Filename: crowdstrike_fdr_data_model.py
+LogTypes:
+    - Crowdstrike.FDREvent
+Mappings:
+    - Name: actor_user
+      Path: $.event.UserName
+    - Name: cmd
+      Path: $.event.CommandLine
+    - Name: destination_ip
+      Path: $.event.RemoteAddressIP4
+    - Name: destination_port
+      Path: $.event.RemotePort
+    - Name: dns_query
+      Method: get_dns_query
+    - Name: process_name
+      Path: $.event.ImageFileName
+    - Name: source_ip
+      Path: $.event.LocalAddressIP4
+    - Name: source_port
+      Path: $.event.LocalPort
