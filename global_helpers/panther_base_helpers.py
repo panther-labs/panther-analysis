@@ -227,6 +227,20 @@ def crowdstrike_detection_alert_context(event: dict):
         "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
     }
 
+def crowdstrike_process_alert_context(event: dict):
+    """Returns common process context for Crowdstrike detections"""
+    return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "CommandLine": get_crowdstrike_field(event, "CommandLine", default=""),
+        "TargetProcessId": get_crowdstrike_field(event, "TargetProcessId", default=""),
+        "RawProcessId": get_crowdstrike_field(event, "RawProcessId", default=""),
+        "ParentBaseFileName": get_crowdstrike_field(event, "ParentBaseFileName", default=""),
+        "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
+        "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
+        "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
+        "platform": get_crowdstrike_field(event, "event_platform", default="")
+    }
+
 
 def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
     """

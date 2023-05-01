@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
+from panther_base_helpers import crowdstrike_process_alert_context, deep_get
 
 LOLBAS_EXE = {
     "AppInstaller.exe",
@@ -132,9 +132,4 @@ def dedup(event):
 
 
 def alert_context(event):
-    return crowdstrike_detection_alert_context(event) | {
-        "MD5HashData": deep_get(event, "event", "MD5HashData"),
-        "aid": deep_get(event, "aid"),
-        "ParentBaseFileName": deep_get(event, "event", "ParentBaseFileName"),
-        "ParentProcessId": deep_get(event, "event", "ParentProcessId"),
-    }
+    return crowdstrike_process_alert_context(event) 

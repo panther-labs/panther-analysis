@@ -1,6 +1,6 @@
 import re
 
-from panther_base_helpers import crowdstrike_detection_alert_context
+from panther_base_helpers import crowdstrike_process_alert_context
 
 
 def rule(event):
@@ -36,4 +36,4 @@ def title(event):
 
 
 def alert_context(event):
-    return crowdstrike_detection_alert_context(event)
+    return crowdstrike_process_alert_context(event)
