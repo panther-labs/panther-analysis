@@ -1,5 +1,7 @@
-from panther_base_helpers import crowdstrike_detection_alert_context
 import re
+
+from panther_base_helpers import crowdstrike_detection_alert_context
+
 
 def rule(event):
     # List of command line tools to monitor for execution with Base64 encoded arguments
@@ -12,12 +14,12 @@ def rule(event):
     }
 
     # Define a regular expression pattern to match Base64 encoded strings
-    base64_pattern = re.compile(r'[A-Za-z0-9+/]{10,}[=]{0,2}')
+    base64_pattern = re.compile(r"[A-Za-z0-9+/]{10,}[=]{0,2}")
 
     # Normalize the process name to lower case for comparison
-    process_name = event.udm('process_name').lower()
+    process_name = event.udm("process_name").lower()
     # Split process path from arguments
-    command_line_args = ' '.join(event.udm("cmd").split(' ')[1:])
+    command_line_args = " ".join(event.udm("cmd").split(" ")[1:])
 
     # Check if the process name matches any of the command line tools
     # and if Base64 encoded arguments are present in the command line
@@ -27,10 +29,10 @@ def rule(event):
 
 
 def title(event):
-    process_name = event.udm('process_name').lower()
+    process_name = event.udm("process_name").lower()
     command_line = event.udm("cmd").lower()
 
-    return f"Execution of Command Line Tool with Base64 Encoded Arguments: {process_name} - {command_line} "
+    return f"Execution with base64 encoded args: {process_name} - {command_line} "
 
 
 def alert_context(event):

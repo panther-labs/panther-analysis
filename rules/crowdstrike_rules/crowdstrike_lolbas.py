@@ -1,6 +1,6 @@
 from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
 
-LOLBAS_EXE = { 
+LOLBAS_EXE = {
     "AppInstaller.exe",
     "At.exe",
     "Atbroker.exe",
@@ -106,36 +106,35 @@ LOLBAS_EXE = {
     "wuauclt.exe",
     "Xwizard.exe",
     "fsutil.exe",
-    "wt.exe"
-    }
+    "wt.exe",
+}
+
 
 def rule(event):
-    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2": 
+    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2":
         if deep_get(event, "event", "event_platform") == "Win":
-            exe = event.udm('process_name')
+            exe = event.udm("process_name")
 
-        if exe.lower() in [x.lower() for x in LOLBAS_EXE]:
-            return True
-        else:
-            return False
+        return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
     else:
         return False
 
+
 def title(event):
     exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
-    return (
-        f'LOLBAS execution - {exe} - {deep_get(event, "event", "CommandLine")}'
-    )
+    return f'LOLBAS execution - {exe} - {deep_get(event, "event", "CommandLine")}'
+
 
 def dedup(event):
-    #dedup string on "{aid}-{exe}" 
-    exe = event.udm('process_name')
+    # dedup string on "{aid}-{exe}"
+    exe = event.udm("process_name")
     return f'{deep_get(event, "event", "aid")}-{exe}'
+
 
 def alert_context(event):
     return crowdstrike_detection_alert_context(event) | {
-                "MD5HashData": deep_get(event, "event", "MD5HashData"),
-                "aid": deep_get(event, "aid"),
-                "ParentBaseFileName": deep_get(event, "event", "ParentBaseFileName"),
-                "ParentProcessId": deep_get(event, "event", "ParentProcessId")
-            }
+        "MD5HashData": deep_get(event, "event", "MD5HashData"),
+        "aid": deep_get(event, "aid"),
+        "ParentBaseFileName": deep_get(event, "event", "ParentBaseFileName"),
+        "ParentProcessId": deep_get(event, "event", "ParentProcessId"),
+    }
