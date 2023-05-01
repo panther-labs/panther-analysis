@@ -115,9 +115,7 @@ def rule(event):
         if deep_get(event, "event", "event_platform") == "Win":
             exe = event.udm("process_name")
 
-        return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
-    else:
-        return False
+    return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
 
 
 def title(event):
@@ -132,4 +130,4 @@ def dedup(event):
 
 
 def alert_context(event):
-    return crowdstrike_process_alert_context(event) 
+    return crowdstrike_process_alert_context(event)

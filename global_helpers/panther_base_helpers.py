@@ -227,6 +227,7 @@ def crowdstrike_detection_alert_context(event: dict):
         "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
     }
 
+
 def crowdstrike_process_alert_context(event: dict):
     """Returns common process context for Crowdstrike detections"""
     return {
@@ -238,7 +239,7 @@ def crowdstrike_process_alert_context(event: dict):
         "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
         "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
         "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
-        "platform": get_crowdstrike_field(event, "event_platform", default="")
+        "platform": get_crowdstrike_field(event, "event_platform", default=""),
     }
 
 

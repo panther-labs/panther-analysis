@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def get_dns_query(event):
     # Strip trailing period.
     # Domain Names from Cisco Umbrella end with a trailing period, such as google.com.
