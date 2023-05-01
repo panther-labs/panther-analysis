@@ -1,10 +1,7 @@
-from panther_base_helpers import (
-    filter_crowdstrike_fdr_event_type,
-    get_crowdstrike_field,
-)
-from panther_base_helpers import deep_get
+from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
 
-LOLBAS_EXE = { "AppInstaller.exe",
+LOLBAS_EXE = { 
+    "AppInstaller.exe",
     "At.exe",
     "Atbroker.exe",
     "Bash.exe",
@@ -38,16 +35,89 @@ LOLBAS_EXE = { "AppInstaller.exe",
     "Findstr.exe",
     "Finger.exe",
     "fltMC.exe",
+    "Forfiles.exe",
+    "Ftp.exe",
+    "Gpscript.exe",
+    "Hh.exe",
+    "IMEWDBLD.exe",
+    "Ie4uinit.exe",
+    "Ieexec.exe",
+    "Ilasm.exe",
+    "Infdefaultinstall.exe",
+    "Installutil.exe",
+    "Jsc.exe",
+    "Ldifde.exe",
+    "Makecab.exe",
+    "Mavinject.exe",
+    "Mmc.exe",
+    "MpCmdRun.exe",
+    "Msbuild.exe",
+    "Msconfig.exe",
+    "Msdt.exe",
+    "Msedge.exe",
+    "Mshta.exe",
+    "Msiexec.exe",
+    "Netsh.exe",
+    "Odbcconf.exe",
+    "OfflineScannerShell.exe",
+    "OneDriveStandaloneUpdater.exe",
+    "Pcalua.exe",
+    "Pcwrun.exe",
+    "Pktmon.exe",
+    "Pnputil.exe",
+    "Presentationhost.exe",
+    "Print.exe",
+    "PrintBrm.exe",
+    "Psr.exe",
+    "Rasautou.exe",
+    "rdrleakdiag.exe",
+    "Reg.exe",
+    "Regasm.exe",
+    "Regedit.exe",
+    "Regini.exe",
+    "Regsvcs.exe",
+    "Regsvr32.exe",
+    "Replace.exe",
+    "Rpcping.exe",
+    "Rundll32.exe",
+    "Runexehelper.exe",
+    "Runonce.exe",
+    "Runscripthelper.exe",
+    "Sc.exe",
+    "Schtasks.exe",
+    "Scriptrunner.exe",
+    "Setres.exe",
+    "SettingSyncHost.exe",
+    "ssh.exe",
+    "Stordiag.exe",
+    "SyncAppvPublishingServer.exe",
+    "Ttdinject.exe",
+    "Tttracer.exe",
+    "Unregmp2.exe",
+    "vbc.exe",
+    "Verclsid.exe",
+    "Wab.exe",
+    "winget.exe",
+    "Wlrmdr.exe",
+    "Wmic.exe",
+    "WorkFolders.exe",
+    "Wscript.exe",
+    "Wsreset.exe",
+    "wuauclt.exe",
+    "Xwizard.exe",
+    "fsutil.exe",
+    "wt.exe"
     }
 
 def rule(event):
-
-    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2" and deep_get(event, "event", "event_platform") == "Win":
-
-        exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
+    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2": 
+        if deep_get(event, "event", "event_platform") == "Win":
+            exe = event.udm('process_name')
 
         if exe.lower() in [x.lower() for x in LOLBAS_EXE]:
             return True
+        else:
+            return False
     else:
         return False
 
@@ -58,14 +128,14 @@ def title(event):
     )
 
 def dedup(event):
-    exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
-
+    #dedup string on "{aid}-{exe}" 
+    exe = event.udm('process_name')
     return f'{deep_get(event, "event", "aid")}-{exe}'
 
 def alert_context(event):
-    return {
-        "MD5HashData": deep_get(event, "event", "MD5HashData"),
-        "aid": deep_get(event, "aid"),
-        "ParentBaseFileName": deep_get(event, "event", "ParentBaseFileName"),
-        "ParentProcessId": deep_get(event, "event", "ParentProcessId")
-    }
+    return crowdstrike_detection_alert_context(event) | {
+                "MD5HashData": deep_get(event, "event", "MD5HashData"),
+                "aid": deep_get(event, "aid"),
+                "ParentBaseFileName": deep_get(event, "event", "ParentBaseFileName"),
+                "ParentProcessId": deep_get(event, "event", "ParentProcessId")
+            }

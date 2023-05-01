@@ -1,18 +1,26 @@
 AnalysisType: rule
+LogTypes:
+    - Crowdstrike.FDREvent
+RuleID: "Crowdstrike.FDR.LOLBAS"
 DisplayName: "Crowdstrike FDR LOLBAS"
-Enabled: false
+Description: "Living off the land binaries and script usage"
+Reference: "https://lolbas-project.github.io/"
+Threshold: 1
+DedupPeriodMinutes: 60
+Enabled: true
 Filename: crowdstrike_lolbas.py
 Severity: Medium
 Tests:
-    - ExpectedResult: true
+    - Name: At Usage (Positive)
+      ExpectedResult: true
       Log:
         ConfigBuild: 1007.3.0016606.11
         ConfigStateHash: "3799024366"
         Entitlements: "15"
         TreeId: "4295752857"
-        aid: 877761efa8db44d792ddc26bc2c71ce1
-        aip: 35.89.129.147
-        cid: cfe698690964434083fecdfe96e46b26
+        aid: 877761efa8db44d792ddc2redacted
+        aip: 1.1.1.1
+        cid: cfe698690964434083fecdredacted
         event:
             AuthenticationId: "293628"
             CommandLine: '"C:\Windows\System32\at.exe" at 09:00 /interactive /every:m,t,w,th,f,s,su'
@@ -43,9 +51,9 @@ Tests:
             TokenType: "1"
             TreeId: "4295752857"
             UserSid: S-1-5-21-239183934-720705223-383019856-500
-            aid: 877761efa8db44d792ddc26bc2c71ce1
-            aip: 35.89.129.147
-            cid: cfe698690964434083fecdfe96e46b26
+            aid: 877761efa8db44d792ddc2redacted
+            aip: 1.1.1.1
+            cid: cfe698690964434083fecdredacted
             event_platform: Win
             event_simpleName: ProcessRollup2
             id: 9a920968-f200-4dd8-8696-461217ece967
@@ -57,19 +65,19 @@ Tests:
         id: 9a920968-f200-4dd8-8696-461217ece967
         name: ProcessRollup2V19
         p_any_ip_addresses:
-            - 35.89.129.147
+            - 1.1.1.1
         p_any_md5_hashes:
             - 5fd22b915c232378e567160d641cc9f2
-            - 877761efa8db44d792ddc26bc2c71ce1
-            - cfe698690964434083fecdfe96e46b26
+            - 877761efa8db44d792ddc2redacted
+            - cfe698690964434083fecdredacted
         p_any_sha1_hashes:
             - "0000000000000000000000000000000000000000"
         p_any_sha256_hashes:
             - 488e74e2026d03f21b33f470c23b3de2f466643186c2e06ae7b4883cc2e59377
         p_any_trace_ids:
             - "4295752857"
-            - 877761efa8db44d792ddc26bc2c71ce1
-            - cfe698690964434083fecdfe96e46b26
+            - 877761efa8db44d792ddc2redacted
+            - cfe698690964434083fecdredacted
         p_event_time: "2023-04-21 19:48:28.97"
         p_log_type: Crowdstrike.FDREvent
         p_parse_time: "2023-04-21 20:00:53.148"
@@ -79,9 +87,80 @@ Tests:
         p_source_label: Crowdstrike-FDR-Dev
         p_timeline: "2023-04-21 19:48:28.97"
         timestamp: "2023-04-21 19:48:28.97"
-      Name: Win Server 2012
-DedupPeriodMinutes: 60
-LogTypes:
-    - Crowdstrike.FDREvent
-RuleID: "Crowdstrike.FDR.LOLBAS"
-Threshold: 1
+
+    - Name: Notepad Usage (Negative)
+      ExpectedResult: false
+      Log:
+        ConfigBuild: 1007.3.0016606.11
+        ConfigStateHash: "3799024366"
+        Entitlements: "15"
+        TreeId: "4295752857"
+        aid: 877761efa8db44d792ddc2redacted
+        aip: 1.1.1.1
+        cid: cfe698690964434083fecdredacted
+        event:
+            AuthenticationId: "293628"
+            CommandLine: '"C:\Windows\System32\notepad.exe" /A filename'
+            ConfigBuild: 1007.3.0016606.11
+            ConfigStateHash: "3799024366"
+            EffectiveTransmissionClass: "2"
+            Entitlements: "15"
+            ImageFileName: \Device\HarddiskVolume2\Windows\System32\notepad.exe
+            ImageSubsystem: "3"
+            IntegrityLevel: "12288"
+            MD5HashData: 5fd22b915c232378e567160d641cc9f2
+            ParentAuthenticationId: "293628"
+            ParentBaseFileName: pwsh.exe
+            ParentProcessId: "4370948876"
+            ProcessCreateFlags: "0"
+            ProcessEndTime: ""
+            ProcessParameterFlags: "24577"
+            ProcessStartTime: "1682106508.209"
+            ProcessSxsFlags: "64"
+            RawProcessId: "2696"
+            SHA1HashData: "0000000000000000000000000000000000000000"
+            SHA256HashData: 488e74e2026d03f21b33f470c23b3de2f466643186c2e06ae7b4883cc2e59377
+            SessionId: "2"
+            SourceProcessId: "4370948876"
+            SourceThreadId: "6364981533"
+            Tags: 25, 27, 151, 862, 874, 924, 12094627905582, 12094627906234, 237494511599633
+            TargetProcessId: "4389083225"
+            TokenType: "1"
+            TreeId: "4295752857"
+            UserSid: S-1-5-21-239183934-720705223-383019856-500
+            aid: 877761efa8db44d792ddc2redacted
+            aip: 1.1.1.1
+            cid: cfe698690964434083fecdredacted
+            event_platform: Win
+            event_simpleName: ProcessRollup2
+            id: 9a920968-f200-4dd8-8696-461217ece967
+            name: ProcessRollup2V19
+            timestamp: "1682106508970"
+        event_platform: Win
+        event_simpleName: ProcessRollup2
+        fdr_event_type: ProcessRollup2
+        id: 9a920968-f200-4dd8-8696-461217ece967
+        name: ProcessRollup2V19
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_md5_hashes:
+            - 5fd22b915c232378e567160d641cc9f2
+            - 877761efa8db44d792ddc2redacted
+            - cfe698690964434083fecdredacted
+        p_any_sha1_hashes:
+            - "0000000000000000000000000000000000000000"
+        p_any_sha256_hashes:
+            - 488e74e2026d03f21b33f470c23b3de2f466643186c2e06ae7b4883cc2e59377
+        p_any_trace_ids:
+            - "4295752857"
+            - 877761efa8db44d792ddc2redacted
+            - cfe698690964434083fecdredacted
+        p_event_time: "2023-04-21 19:48:28.97"
+        p_log_type: Crowdstrike.FDREvent
+        p_parse_time: "2023-04-21 20:00:53.148"
+        p_row_id: 7ac82dbb43a99bfec196bdda17ea7f
+        p_schema_version: 0
+        p_source_id: 1f33f64c-124d-413c-a9e3-d51ccedd8e77
+        p_source_label: Crowdstrike-FDR-Dev
+        p_timeline: "2023-04-21 19:48:28.97"
+        timestamp: "2023-04-21 19:48:28.97"
