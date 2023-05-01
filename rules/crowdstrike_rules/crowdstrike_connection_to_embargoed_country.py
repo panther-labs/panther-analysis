@@ -18,18 +18,19 @@ def rule(event):
     # enrichment_object returns a list.
     # Iterate over list and check if the "country" value matches the country codes.
     if enrichment_obj:
-        if [i for i in enrichment_obj if i["country"] in EMBARGO_COUNTRY_CODES]:
-            return True
+        for i in enrichment_obj:
+            if i.get('country') in EMBARGO_COUNTRY_CODES:
+                return True
     return False
 
 
 def title(event):
     enrichment_obj = get_enrichment_obj(event)
-    # return country code value if a match is found to craft the title
-    country_code = [
-        i.get("country") for i in enrichment_obj if i["country"] in EMBARGO_COUNTRY_CODES
-    ][0]
-    return f"Connection made to embargoed country: {country_code}."
+    country_codes = set(
+        i.get("country") for i in enrichment_obj if i.get("country") in EMBARGO_COUNTRY_CODES
+    )
+    
+    return f"Connection made to embargoed country: [{country_codes}]."
 
 
 def alert_context(event):
