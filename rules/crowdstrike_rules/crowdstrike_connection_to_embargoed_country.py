@@ -19,7 +19,7 @@ def rule(event):
     # Iterate over list and check if the "country" value matches the country codes.
     if enrichment_obj:
         for i in enrichment_obj:
-            if i.get('country') in EMBARGO_COUNTRY_CODES:
+            if i.get("country") in EMBARGO_COUNTRY_CODES:
                 return True
     return False
 
@@ -29,7 +29,7 @@ def title(event):
     country_codes = set(
         i.get("country") for i in enrichment_obj if i.get("country") in EMBARGO_COUNTRY_CODES
     )
-    
+
     return f"Connection made to embargoed country: [{country_codes}]."
 
 
