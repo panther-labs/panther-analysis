@@ -396,3 +396,7 @@ def m365_alert_context(event):
         "application": event.get("Application", ""),
         "actor": event.get("Actor", []),
     }
+
+def defang_ioc(ioc):
+    """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    return ioc.replace(".", "[.]")
