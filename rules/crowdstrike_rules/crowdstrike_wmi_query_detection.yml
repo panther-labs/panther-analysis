@@ -1,10 +1,10 @@
 AnalysisType: rule
-Description: Detects when WMI queries are executed, especially when the queries involve information gathering or actions on remote systems, which could indicate reconnaissance or lateral movement.
+Description: Detects execution of WMI queries involving information gathering or actions on remote systems, which could indicate reconnaissance or lateral movement.
 DisplayName: "Crowdstrike WMI Query Detection"
 Enabled: true
 Filename: crowdstrike_wmi_query_detection.py
 Runbook: Investigate the endpoint for signs of WMI query execution. Review the executed query and the associated user account.
-Severity: Medium
+Severity: Low
 Tests:
     - ExpectedResult: false
       Log:
