@@ -117,6 +117,7 @@ def rule(event):
             return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
     return False
 
+
 def title(event):
     exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
     return f'Crowdstrike: LOLBAS execution - [{exe}] - [{deep_get(event, "event", "CommandLine")}]'

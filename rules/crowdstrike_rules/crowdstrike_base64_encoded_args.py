@@ -17,7 +17,9 @@ def rule(event):
 
     if event.get("event_platform") == "Win":
 
-        base64_pattern = re.compile(r"^(\W|)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?(\W|)$")
+        base64_pattern = re.compile(
+            r"^(\W|)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?(\W|)$"
+        )
 
         # Normalize the process name to lower case for comparison
         process_name = event.udm("process_name").lower()
