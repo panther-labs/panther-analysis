@@ -228,6 +228,21 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
+def crowdstrike_process_alert_context(event: dict):
+    """Returns common process context for Crowdstrike detections"""
+    return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "CommandLine": get_crowdstrike_field(event, "CommandLine", default=""),
+        "TargetProcessId": get_crowdstrike_field(event, "TargetProcessId", default=""),
+        "RawProcessId": get_crowdstrike_field(event, "RawProcessId", default=""),
+        "ParentBaseFileName": get_crowdstrike_field(event, "ParentBaseFileName", default=""),
+        "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
+        "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
+        "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
+        "platform": get_crowdstrike_field(event, "event_platform", default=""),
+    }
+
+
 def crowdstrike_network_detection_alert_context(event: dict):
     """Returns common network context for Crowdstrike detections"""
     return {
@@ -410,3 +425,8 @@ def m365_alert_context(event):
         "application": event.get("Application", ""),
         "actor": event.get("Actor", []),
     }
+
+
+def defang_ioc(ioc):
+    """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    return ioc.replace(".", "[.]")
