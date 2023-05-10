@@ -23,4 +23,4 @@ def rule(event):
 
 def title(event):
     defang_query = defang_ioc(event.udm("dns_query"))
-    return f'Base64 encoded query detected from {event.udm("source_ip")}, {defang_query}'
+    return f'Base64 encoded query detected from [{event.udm("source_ip")}], [{defang_query}]'
