@@ -14,17 +14,22 @@ def rule(event):
     }
 
     # Define a regular expression pattern to match Base64 encoded strings
-    base64_pattern = re.compile(r"[A-Za-z0-9+/]{10,}[=]{0,2}")
 
-    # Normalize the process name to lower case for comparison
-    process_name = event.udm("process_name").lower()
-    # Split process path from arguments
-    command_line_args = " ".join(event.udm("cmd").split(" ")[1:])
+    if event.get("event_platform") == "Win":
 
-    # Check if the process name matches any of the command line tools
-    # and if Base64 encoded arguments are present in the command line
-    if process_name in command_line_tools and base64_pattern.search(command_line_args):
-        return True
+        base64_pattern = re.compile(r"^(\W|)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?(\W|)$")
+
+        # Normalize the process name to lower case for comparison
+        process_name = event.udm("process_name").lower()
+        # Split process path from arguments
+        command_line_args = event.udm("cmd").split(" ")[1:]
+
+        # Check if the process name matches any of the command line tools
+        # and if Base64 encoded arguments are present in the command line
+        if process_name in command_line_tools:
+            for arg in command_line_args:
+                if base64_pattern.search(arg):
+                    return True
     return False
 
 
@@ -32,7 +37,7 @@ def title(event):
     process_name = event.udm("process_name").lower()
     command_line = event.udm("cmd").lower()
 
-    return f"Execution with base64 encoded args: {process_name} - {command_line} "
+    return f"Crowdstrike: Execution with base64 encoded args: [{process_name}] - [{command_line}]"
 
 
 def alert_context(event):
