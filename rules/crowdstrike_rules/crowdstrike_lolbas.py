@@ -114,13 +114,12 @@ def rule(event):
     if deep_get(event, "event", "event_simpleName") == "ProcessRollup2":
         if deep_get(event, "event", "event_platform") == "Win":
             exe = event.udm("process_name")
-
-    return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
-
+            return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
+    return False
 
 def title(event):
     exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
-    return f'LOLBAS execution - {exe} - {deep_get(event, "event", "CommandLine")}'
+    return f'Crowdstrike: LOLBAS execution - [{exe}] - [{deep_get(event, "event", "CommandLine")}]'
 
 
 def dedup(event):
