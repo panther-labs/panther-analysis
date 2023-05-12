@@ -5,6 +5,7 @@ from panther_base_helpers import (
     deep_get,
     filter_crowdstrike_fdr_event_type,
     crowdstrike_detection_alert_context,
+    get_crowdstrike_field
 )
 
 SUSPICIOUS_CRON_CMD_ARGS = {
@@ -49,7 +50,7 @@ def rule(event):
 
 
 def title(event):
-    return f"Suspicious cron found on [{deep_get(event,'aid'), '<UNKNOWN_HOST>'}]"
+    return f"Suspicious cron found on aid [{get_crowdstrike_field(event, 'aid', default=''), '<UNKNOWN_HOST>'}]"
 
 
 def alert_context(event):
