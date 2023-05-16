@@ -15,6 +15,7 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
+import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
@@ -761,6 +762,31 @@ class TestSnykHelpers(unittest.TestCase):
         self.assertEqual(returns.get("action", ""), "<NO_EVENT>")
         self.assertEqual(returns.get("groupId", ""), "<NO_GROUPID>")
         self.assertEqual(returns.get("orgId", ""), "<NO_ORGID>")
+
+
+class TestTinesHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "created_at": "2023-05-01 01:02:03",
+            "id": 7206820,
+            "operation_name": "Login",
+            "request_ip": "12.12.12.12",
+            "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) UserAgent",
+            "tenant_id": "1234",
+            "user_email": "user@domain.com",
+            "user_id": "17171",
+            "user_name": "user at domain dot com",
+        }
+
+    def test_alert_context(self):
+        returns = p_tines_h.tines_alert_context(self.event)
+        self.assertEqual(returns.get("actor", ""), "user@domain.com")
+        self.assertEqual(returns.get("action", ""), "Login")
+        self.assertEqual(returns.get("tenant_id", ""), "1234")
+        returns = p_tines_h.tines_alert_context({})
+        self.assertEqual(returns.get("actor", ""), "<NO_USEREMAIL>")
+        self.assertEqual(returns.get("action", ""), "<NO_OPERATION>")
+        self.assertEqual(returns.get("tenant_id", ""), "<NO_TENANTID>")
 
 
 if __name__ == "__main__":
