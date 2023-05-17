@@ -16,6 +16,7 @@ import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
+import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
 
 
 class TestEksPantherObjRef(unittest.TestCase):
@@ -761,6 +762,73 @@ class TestSnykHelpers(unittest.TestCase):
         self.assertEqual(returns.get("action", ""), "<NO_EVENT>")
         self.assertEqual(returns.get("groupId", ""), "<NO_GROUPID>")
         self.assertEqual(returns.get("orgId", ""), "<NO_ORGID>")
+
+
+class TestAuth0Helpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "data": {
+                "client_id": "1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr",
+                "client_name": "",
+                "date": "2023-05-15 17:41:31.451000000",
+                "description": "Create a role",
+                "details": {
+                    "request": {
+                        "auth": {
+                            "credentials": {
+                                "jti": "949869e066205b5076e6df203fdd7b9b"
+                            },
+                            "strategy": "jwt",
+                            "user": {
+                                "email": "user.name@yourcompany.io",
+                                "name": "User Name",
+                                "user_id": "google-oauth2|20839745023748560278"
+                            }
+                        },
+                        "body": {
+                            "description": "custom_role",
+                            "name": "custom_role"
+                        },
+                        "channel": "https://manage.auth0.com/",
+                        "ip": "35.166.202.113",
+                        "method": "post",
+                        "path": "/api/v2/roles",
+                        "query": {},
+                        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+                    },
+                    "response": {
+                        "body": {
+                            "description": "custom_role",
+                            "id": "rol_AmvLkz7vhswmWJhJ",
+                            "name": "custom_role"
+                        },
+                        "statusCode": 200
+                    }
+                },
+                "ip": "35.166.202.113",
+                "log_id": "90020230515174135349782000000000000001223372037486042970",
+                "type": "sapi",
+                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+                "user_id": "google-oauth2|105261262156475850461"
+            },
+            "log_id": "90020230515174135349782000000000000001223372037486042970",
+        }
+
+    def test_alert_context(self):
+        returns = p_auth0_h.auth0_alert_context(self.event)
+        auth0_config_event = p_auth0_h.is_auth0_config_event(self.event)
+        self.assertEqual(returns.get("actor", ""), {
+                                "email": "user.name@yourcompany.io",
+                                "name": "User Name",
+                                "user_id": "google-oauth2|20839745023748560278"
+                            })
+        self.assertEqual(returns.get("action", ""), "Create a role")
+        self.assertEqual(auth0_config_event, True)
+        returns = p_auth0_h.auth0_alert_context({})
+        auth0_config_event = p_auth0_h.is_auth0_config_event({})
+        self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
+        self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+        self.assertEqual(auth0_config_event, False)
 
 
 if __name__ == "__main__":
