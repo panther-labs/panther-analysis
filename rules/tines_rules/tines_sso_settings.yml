@@ -1,0 +1,53 @@
+AnalysisType: rule
+Filename: tines_sso_settings.py
+RuleID: Tines.SSO.Settings
+DisplayName: Tines SSO Settings
+Enabled: true
+LogTypes:
+  - Tines.Audit
+Tags:
+  - Tines
+  - IAM - Credential Security
+Severity: High
+Description: >
+  Detects when Tines SSO settings are changed
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Tines SsoConfigurationSamlSet
+    ExpectedResult: true
+    Log:
+      {
+        "created_at": "2023-05-16 23:26:46",
+        "id": 1111111,
+        "inputs": {
+          "domainId": "REDACTED",
+          "fingerprint": "REDACTED",
+          "idpCertificate": "REDACTED",
+          "targetUrl": "REDACTED"
+        },
+        "operation_name": "SsoConfigurationSamlSet",
+        "request_ip": "12.12.12.12",
+        "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "tenant_id": "8888",
+        "user_email": "user@company.com",
+        "user_id": "17171",
+        "user_name": "user at company dot com"
+      }
+  - Name: Tines Login
+    ExpectedResult: false
+    Log:
+      {
+        "created_at": "2023-05-17 14:45:19",
+        "id": 7888888,
+        "operation_name": "Login",
+        "request_ip": "12.12.12.12",
+        "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "tenant_id": "8888",
+        "user_email": "user@company.com",
+        "user_id": "17171",
+        "user_name": "user at company dot com"
+      }

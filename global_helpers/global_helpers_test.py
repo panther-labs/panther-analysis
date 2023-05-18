@@ -780,13 +780,31 @@ class TestTinesHelpers(unittest.TestCase):
 
     def test_alert_context(self):
         returns = p_tines_h.tines_alert_context(self.event)
-        self.assertEqual(returns.get("actor", ""), "user@domain.com")
-        self.assertEqual(returns.get("action", ""), "Login")
-        self.assertEqual(returns.get("tenant_id", ""), "1234")
+        self.assertEqual(
+            returns,
+            {
+                "actor": "user@domain.com",
+                "action": "Login",
+                "tenant_id": "1234",
+                "user_email": "user@domain.com",
+                "user_id": "17171",
+                "operation_name": "Login",
+                "request_ip": "12.12.12.12",
+            },
+        )
         returns = p_tines_h.tines_alert_context({})
-        self.assertEqual(returns.get("actor", ""), "<NO_USEREMAIL>")
-        self.assertEqual(returns.get("action", ""), "<NO_OPERATION>")
-        self.assertEqual(returns.get("tenant_id", ""), "<NO_TENANTID>")
+        self.assertEqual(
+            returns,
+            {
+                "actor": "<NO_USEREMAIL>",
+                "action": "<NO_OPERATION>",
+                "tenant_id": "<NO_TENANTID>",
+                "user_email": "<NO_USEREMAIL>",
+                "user_id": "<NO_USERID>",
+                "operation_name": "<NO_OPERATION>",
+                "request_ip": "<NO_REQUESTIP>",
+            },
+        )
 
 
 if __name__ == "__main__":
