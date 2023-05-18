@@ -806,6 +806,8 @@ class TestTinesHelpers(unittest.TestCase):
                 "request_ip": "<NO_REQUESTIP>",
             },
         )
+
+
 class TestAuth0Helpers(unittest.TestCase):
     def setUp(self):
         self.event = {
