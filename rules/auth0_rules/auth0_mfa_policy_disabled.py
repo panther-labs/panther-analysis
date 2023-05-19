@@ -22,7 +22,7 @@ def rule(event):
 
 
 def title(event):
-    user = deep_get(event, "data", "details", "request", "user", "email", default="<NO_USER_FOUND>")
+    user = deep_get(event, "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>")
     p_source_label = deep_get(event, "p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
     return (
         f"Auth0 User [{user}] set mfa requirement settings to 'Never' for your "
