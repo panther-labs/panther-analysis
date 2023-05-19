@@ -1,0 +1,94 @@
+AnalysisType: policy
+Filename: aws_ami_private.py
+PolicyID: "AWS.AMI.Private"
+DisplayName: "AWS AMI Sharing"
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.AMI
+Tags:
+  - AWS
+  - Panther
+  - Panther Enterprise
+  - Exfiltration:Transfer Data to Cloud Account
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Severity: High
+Description: >
+  This policy ensures that AMIs you have created are not configured to allow public access, which could result in accidental data loss. AMI's that you use but do not own are not evaluated by this policy.
+Runbook: >
+  Immediately remove public access from the AMI until you can determine whether that setting is intentional
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sharing-amis.html
+Tests:
+  -
+    Name: Private AMI
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:ec2:us-west-2:123456789012:image/ami-abc234",
+        "ID": "ami-abc234",
+        "Name": "ubuntu/image",
+        "Tags": {},
+        "ResourceID": "arn:aws:ec2:us-west-2:123456789012:image/ami-abc234",
+        "ResourceType": "AWS.EC2.AMI",
+        "TimeCreated": "2011-11-04T12:34:17.000Z",
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [],
+        "Description": null,
+        "EnaSupport": null,
+        "Hypervisor": "xen",
+        "ImageId": "ami-abc234",
+        "ImageLocation": "ubuntu-us-west-2/kernels/ubuntu.xml",
+        "ImageOwnerAlias": null,
+        "ImageType": "ramdisk",
+        "KernelId": null,
+        "OwnerId": "123456789012",
+        "Platform": null,
+        "ProductCodes": null,
+        "Public": false,
+        "RamdiskId": null,
+        "RootDeviceName": null,
+        "RootDeviceType": "instance-store",
+        "SriovNetSupport": null,
+        "State": "available",
+        "StateReason": null,
+        "VirtualizationType": "paravirtual"
+      }
+  -
+    Name: Public AMI
+    ExpectedResult: false
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:ec2:us-west-2:123456789012:image/ami-abc234",
+        "ID": "ami-abc234",
+        "Name": "ubuntu/image",
+        "Tags": {},
+        "ResourceID": "arn:aws:ec2:us-west-2:123456789012:image/ami-abc234",
+        "ResourceType": "AWS.EC2.AMI",
+        "TimeCreated": "2011-11-04T12:34:17.000Z",
+        "Architecture": "x86_64",
+        "BlockDeviceMappings": [],
+        "Description": null,
+        "EnaSupport": null,
+        "Hypervisor": "xen",
+        "ImageId": "ami-abc234",
+        "ImageLocation": "ubuntu-us-west-2/kernels/ubuntu.xml",
+        "ImageOwnerAlias": null,
+        "ImageType": "ramdisk",
+        "KernelId": null,
+        "OwnerId": "123456789012",
+        "Platform": null,
+        "ProductCodes": null,
+        "Public": true,
+        "RamdiskId": null,
+        "RootDeviceName": null,
+        "RootDeviceType": "instance-store",
+        "SriovNetSupport": null,
+        "State": "available",
+        "StateReason": null,
+        "VirtualizationType": "paravirtual"
+      }

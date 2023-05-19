@@ -1,0 +1,82 @@
+AnalysisType: policy
+Filename: aws_config_global_resources.py
+PolicyID: "AWS.Config.GlobalResources"
+DisplayName: "AWS Config Global Resources"
+Enabled: true
+ResourceTypes:
+  - AWS.Config.Recorder.Meta
+Tags:
+  - AWS
+  - Security Control
+Severity: Low
+Description: >
+  You can have AWS Config record supported types of global resources, such as
+  IAM users, groups, roles, and customer managed policies.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-config-is-enabled-for-global-resources
+Reference: https://amzn.to/2MO8xXM
+Tests:
+  -
+    Name: No Global Recoders Present
+    ExpectedResult: false
+    Resource:
+      {
+        "TimeCreated": null,
+        "AccountId": "123456789012",
+        "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+        "ResourceType": "AWS.Config.Recorder.Meta",
+        "Tags": null,
+        "Region": "global",
+        "Recorders": null,
+        "Name": "AWS.Config.Recorder.Meta",
+        "GlobalRecorderCount": 0
+      }
+  -
+    Name: Global Resources Are Enabled
+    ExpectedResult: true
+    Mocks:
+      -
+        {
+          "objectName": "resource_lookup",
+          "returnValue": "{ \"AccountId\": \"012345678910\", \"Name\": \"Default\", \"RecordingGroup\": { \"AllSupported\": true, \"IncludeGlobalResourceTypes\": true, \"ResourceTypes\": null }, \"Region\": \"us-east-1\", \"ResourceId\": \"012345678910:us-east-1:AWS.Config.Recorder\", \"ResourceType\": \"AWS.Config.Recorder\", \"RoleARN\": \"arn:aws:iam::012345678910:role/PantherAWSConfig\", \"Status\": { \"LastErrorCode\": null, \"LastErrorMessage\": null, \"LastStartTime\": \"2018-10-05T22:45:01.838Z\", \"LastStatus\": \"SUCCESS\", \"LastStatusChangeTime\": \"2021-05-28T17:45:14.916Z\", \"LastStopTime\": null, \"Name\": \"Default\", \"Recording\": true }, \"Tags\": null, \"TimeCreated\": null }"
+        }
+    Resource:
+      {
+          "TimeCreated": null,
+          "AccountId": "123456789012",
+          "ResourceId": "123456789012::AWS.Config.Recorder.Meta",
+          "ResourceType": "AWS.Config.Recorder.Meta",
+          "Tags": null,
+          "Region": "global",
+          "Recorders": [
+              "123456789012:us-east-1:AWS.Config.Recorder",
+              "123456789012:us-east-2:AWS.Config.Recorder",
+              "123456789012:us-west-1:AWS.Config.Recorder",
+              "123456789012:us-west-2:AWS.Config.Recorder"
+          ],
+          "Name": "AWS.Config.Recorder.Meta",
+          "GlobalRecorderCount": 4
+      }
+  -
+    Name: Global Recorders Present - None Recording Global Resources
+    ExpectedResult: false
+    Mocks:
+      -
+        {
+          "objectName": "resource_lookup",
+          "returnValue": "{\"AccountId\":\"012345678910\",\"Name\":\"Default\",\"RecordingGroup\":{\"AllSupported\":true,\"IncludeGlobalResourceTypes\":true,\"ResourceTypes\":null},\"Region\":\"us-east-1\",\"ResourceId\":\"012345678910:us-east-1:AWS.Config.Recorder\",\"ResourceType\":\"AWS.Config.Recorder\",\"RoleARN\":\"arn:aws:iam::012345678910:role/PantherAWSConfig\",\"Status\":{\"LastErrorCode\":null,\"LastErrorMessage\":null,\"LastStartTime\":\"2018-10-05T22:45:01.838Z\",\"LastStatus\":\"SUCCESS\",\"LastStatusChangeTime\":\"2021-05-28T17:45:14.916Z\",\"LastStopTime\":null,\"Name\":\"Default\",\"Recording\":false},\"Tags\":null,\"TimeCreated\":null}"
+        }
+    Resource:
+      {
+        "TimeCreated": null,
+        "Recorders": [
+          "123456789012:us-west-2:AWS.Config.Recorder"
+        ],
+        "AccountId": "123456789012",
+        "Name": "AWS.Config.Recorder.Meta",
+        "GlobalRecorderCount": 1,
+        "Tags": null,
+        "Region": "global",
+        "ResourceType": "AWS.Config.Recorder.Meta",
+        "ResourceId": "123456789012::AWS.Config.Recorder.Meta"
+      }

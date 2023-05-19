@@ -1,0 +1,63 @@
+AnalysisType: rule
+Filename: box_event_triggered_externally.py
+RuleID: "Box.Event.Triggered.Externally"
+DisplayName: "Box event triggered by unknown or external user"
+Enabled: false
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+  - Exfiltration:Exfiltration Over Web Service
+  - Configuration Required
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567
+Severity: Medium
+Description: >
+  An external user has triggered a box enterprise event.
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Investigate whether this user's activity is expected. 
+SummaryAttributes:
+  - ip_address
+Threshold: 10
+DedupPeriodMinutes: 60
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example.com",
+          "name": "Bob Cat"
+        },
+        "event_type": "DELETE",
+      }
+  -
+    Name: Previewed Anonymously
+    ExpectedResult: true
+    Log:
+      {
+        "created_by": {
+          "id": "2",
+          "type": "user",
+          "name": "Unknown User"
+        },
+        "event_type": "PREVIEW",
+        "type": "event",
+        "ip_address": "1.2.3.4",
+      }
+  -
+    Name: Missing Created By
+    ExpectedResult: false
+    Log:
+      {
+        "event_type": "PREVIEW",
+        "type": "event",
+        "ip_address": "1.2.3.4",
+      }

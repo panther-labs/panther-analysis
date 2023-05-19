@@ -1,5 +1,5 @@
 AnalysisType: lookup_table
-LookupName: greynoise_noise_advanced
+LookupName: "greynoise_noise_advanced"
 Schema: GreyNoise.Noise
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-greynoise-full-access-role
@@ -102,6 +102,9 @@ LogTypeMap:
         - "LocalAddressIP6"
         - "RemoteAddressIP4"
         - "RemoteAddressIP6"
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - 'p_any_ip_addresses'
     - LogType: Duo.Authentication
       Selectors:
         - "$.access_device.ip"
@@ -180,6 +183,9 @@ LogTypeMap:
     - LogType: OnePassword.SignInAttempt
       Selectors:
         - "$.client.ip_address"
+    - LogType: Panther.Audit
+      Selectors:
+        - "sourceIP"
     - LogType: Salesforce.Login
       Selectors:
         - "CLIENT_IP"
@@ -210,10 +216,46 @@ LogTypeMap:
       Selectors:
         - "dest_ip"
         - "src_ip"
+    - LogType: Zeek.Conn
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
     - LogType: Zeek.DNS
       Selectors:
-        - "id.orig_h"
-        - "id.resp_h"
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.DPD
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.HTTP
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Notice
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.NTP
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Ssh
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Ssl
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Tunnel
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Weird
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
     - LogType: Zendesk.Audit
       Selectors:
         - "ip_address"

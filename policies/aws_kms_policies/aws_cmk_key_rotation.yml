@@ -1,0 +1,141 @@
+AnalysisType: policy
+Filename: aws_cmk_key_rotation.py
+PolicyID: "AWS.CMK.KeyRotation"
+DisplayName: "AWS KMS CMK Key Rotation"
+Enabled: true
+ResourceTypes:
+  - AWS.KMS.Key
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Credential Access:Unsecured Credentials
+Reports:
+  CIS:
+    - 2.8
+  PCI:
+    - 3.5.2
+  MITRE ATT&CK:
+    - TA0006:T1552
+Severity: Low
+Description: >
+  This policy validates that customer master keys (CMKs) have automatic key rotation enabled.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-customer-created-cmk-has-key-rotation-enabled
+Reference: >
+  https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html
+Tests:
+  -
+    Name: Key Managed By AWS
+    ExpectedResult: true
+    Resource:
+      {
+        "KeyRotationEnabled": true,
+        "AccountId": "1122334455",
+        "Arn": "arn:aws:kms:us-west-2:11223344:key/1122233-asdf-adsf-111222333",
+        "CloudHsmClusterId": null,
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "CustomKeyStoreId": null,
+        "DeletionDate": null,
+        "Description": "Default master key that protects my Secrets Manager data when no other key is defined",
+        "Enabled": false,
+        "ExpirationModel": null,
+        "KeyId": "1122233-asdf-adsf-111222333",
+        "KeyManager": "AWS",
+        "KeyState": "Enabled",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Origin": "AWS_KMS",
+        "ValidTo": null,
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+      }
+  -
+    Name: Key Rotation Enabled
+    ExpectedResult: true
+    Resource:
+      {
+        "KeyRotationEnabled": true,
+        "AccountId": "1122334455",
+        "Arn": "arn:aws:kms:us-west-2:11223344:key/1122233-asdf-adsf-111222333",
+        "CloudHsmClusterId": null,
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "CustomKeyStoreId": null,
+        "DeletionDate": null,
+        "Description": "Default master key that protects my Secrets Manager data when no other key is defined",
+        "Enabled": true,
+        "ExpirationModel": null,
+        "KeyId": "1122233-asdf-adsf-111222333",
+        "KeyManager": "CUSTOMER",
+        "KeyState": "Enabled",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Origin": "AWS_KMS",
+        "ValidTo": null,
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+      }
+  -
+    Name: Key Rotation Never Set
+    ExpectedResult: false
+    Resource:
+      {
+        "KeyRotationEnabled": null,
+        "AccountId": "1122334455",
+        "Arn": "arn:aws:kms:us-west-2:11223344:key/1122233-asdf-adsf-111222333",
+        "CloudHsmClusterId": null,
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "CustomKeyStoreId": null,
+        "DeletionDate": null,
+        "Description": "Default master key that protects my Secrets Manager data when no other key is defined",
+        "Enabled": false,
+        "ExpirationModel": null,
+        "KeyId": "1122233-asdf-adsf-111222333",
+        "KeyManager": "CUSTOMER",
+        "KeyState": "Enabled",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Origin": "AWS_KMS",
+        "ValidTo": null,
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+      }
+  -
+    Name: Key Rotation Not Enabled
+    ExpectedResult: false
+    Resource:
+      {
+        "KeyRotationEnabled": false,
+        "AccountId": "1122334455",
+        "Arn": "arn:aws:kms:us-west-2:11223344:key/1122233-asdf-adsf-111222333",
+        "CloudHsmClusterId": null,
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "CustomKeyStoreId": null,
+        "DeletionDate": null,
+        "Description": "Default master key that protects my Secrets Manager data when no other key is defined",
+        "Enabled": false,
+        "ExpirationModel": null,
+        "KeyId": "1122233-asdf-adsf-111222333",
+        "KeyManager": "CUSTOMER",
+        "KeyState": "Enabled",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Origin": "AWS_KMS",
+        "ValidTo": null,
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+      }
+  -
+    Name: Key Not Eligible for Rotation
+    ExpectedResult: true
+    Resource:
+      {
+        "KeyRotationEnabled": null,
+        "AccountId": "1122334455",
+        "Arn": "arn:aws:kms:us-west-2:11223344:key/1122233-asdf-adsf-111222333",
+        "CloudHsmClusterId": null,
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "CustomKeyStoreId": null,
+        "DeletionDate": null,
+        "Description": "Default master key that protects my Secrets Manager data when no other key is defined",
+        "Enabled": false,
+        "ExpirationModel": null,
+        "KeyId": "1122233-asdf-adsf-111222333",
+        "KeyManager": "AWS",
+        "KeyState": "Enabled",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Origin": "External",
+        "ValidTo": null,
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+      }

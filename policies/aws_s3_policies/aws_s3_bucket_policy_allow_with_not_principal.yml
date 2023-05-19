@@ -1,0 +1,87 @@
+AnalysisType: policy
+Filename: aws_s3_bucket_policy_allow_with_not_principal.py
+PolicyID: "AWS.S3.Bucket.PolicyAllowWithNotPrincipal"
+DisplayName: "AWS S3 Bucket Policy Allow With Not Principal"
+Enabled: true
+ResourceTypes:
+  - AWS.S3.Bucket
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Collection:Data From Cloud Storage Object
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: High
+Description: >
+  Prevents the use of a 'Not' principal in conjunction with an allow effect in an S3 bucket policy, which would allow global access for the resource besides the principals specified.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-policy-does-not-use-allow-with-not-principal
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_notprincipal.html
+Tests:
+  -
+    Name: Bucket Uses Allow With Principal
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::panther-internal-test/*\",\"arn:aws:s3:::panther-internal-test\"]},{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:Get*\",\"s3:List*\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Uses Allow With Not Principal
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"NotPrincipal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::panther-internal-test/*\",\"arn:aws:s3:::panther-internal-test\"]},{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":[\"s3:Get*\",\"s3:List*\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }

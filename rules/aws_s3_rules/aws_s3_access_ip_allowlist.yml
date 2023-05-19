@@ -1,0 +1,44 @@
+AnalysisType: rule
+Filename: aws_s3_access_ip_allowlist.py
+RuleID: "AWS.S3.ServerAccess.IPWhitelist"
+DisplayName: "AWS S3 Access IP Allowlist"
+DedupPeriodMinutes: 60 # 1 hour
+Enabled: false
+LogTypes:
+  - AWS.S3ServerAccess
+Tags:
+  - AWS
+  - Configuration Required
+  - Identity & Access Management
+  - Collection:Data From Cloud Storage Object
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: Medium
+Description: >
+  Checks that the remote IP accessing the S3 bucket is in the IP allowlist.
+Runbook: >
+  Verify whether unapproved access of S3 objects occurred, and take appropriate steps to remediate damage (for example, informing related parties of unapproved access and potentially invalidating data that was accessed). Consider updating the access policies of the S3 bucket to prevent future unapproved access.
+Reference:
+  https://aws.amazon.com/premiumsupport/knowledge-center/block-s3-traffic-vpc-ip/
+SummaryAttributes:
+  - bucket
+  - key
+  - remoteip
+Tests:
+  -
+    Name: Access From Approved IP
+    ExpectedResult: false
+    Log:
+      {
+        "remoteip": "10.0.0.1",
+        "bucket": "my-test-bucket"
+      }
+  -
+    Name: Access From Unapproved IP
+    ExpectedResult: true
+    Log:
+      {
+        "remoteip": "11.0.0.1",
+        "bucket": "my-test-bucket"
+      }

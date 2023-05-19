@@ -1,0 +1,188 @@
+AnalysisType: policy
+Filename: aws_dynamodb_table_encryption.py
+PolicyID: "AWS.DynamoDB.TableEncryption"
+DisplayName: "AWS DynamoDB Table Encryption"
+Enabled: true
+ResourceTypes:
+  - AWS.DynamoDB.Table
+Tags:
+  - AWS
+  - Data Protection
+  - Collection:Data From Cloud Storage Object
+Reports:
+  PCI:
+    - 3.4
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: High
+Description: >
+  Table encryption provides an additional layer of data protection by securing from
+  unauthorized access to the underlying storage
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-dynamodb-table-has-encryption-enabled
+Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/EncryptionAtRest.html
+Tests:
+  -
+    Name: Encryption Disabled
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PAY_PER_REQUEST",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": null,
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "DISABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: Encryption Enabled
+    ExpectedResult: true
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PAY_PER_REQUEST",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": null,
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: Encryption Not Set
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PAY_PER_REQUEST",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": null,
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": null,
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }

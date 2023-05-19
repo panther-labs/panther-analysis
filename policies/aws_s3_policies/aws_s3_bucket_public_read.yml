@@ -1,0 +1,219 @@
+AnalysisType: policy
+Filename: aws_s3_bucket_public_read.py
+PolicyID: "AWS.S3.Bucket.PublicRead"
+DisplayName: "AWS S3 Bucket Public Read"
+Enabled: true
+ResourceTypes:
+  - AWS.S3.Bucket
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Data Protection
+  - Collection:Data From Cloud Storage Object
+Reports:
+  PCI:
+    - 10.5.1
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: High
+Description: >
+  Ensures that the S3 bucket is not publicly readable.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-not-publicly-readable
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
+Tests:
+  -
+    Name: Bucket Allows READ Access For All Users
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Allows READ For All Authenticated Users
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+            },
+            "Permission": "READ"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Allows WRITE To All Users
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": [
+          {
+            "Grantee": {
+              "DisplayName": "user.name",
+              "EmailAddress": null,
+              "ID": "11112223334445556667778899aaabbbcccdddeeee",
+              "Type": "CanonicalUser",
+              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "WRITE"
+          },
+          {
+            "Grantee": {
+              "DisplayName": null,
+              "EmailAddress": null,
+              "ID": null,
+              "Type": "Group",
+              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+            },
+            "Permission": "WRITE"
+          }
+        ],
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": null,
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Null Configuration
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:s3:::something-prodsec",
+        "LoggingPolicy": null,
+        "Policy": null,
+        "MFADelete": null,
+        "ObjectLockConfiguration": null,
+        "LifecycleRules": null,
+        "Grants": null,
+        "Versioning": null,
+        "EncryptionRules": null,
+        "PublicAccessBlockConfiguration": null,
+        "AccountId": "123456789",
+        "Tags": {
+          "something": "ttd",
+          "user": "prodsec",
+          "service": "-",
+          "owner": "-",
+          "team": "-"
+        },
+        "Region": "us-west-2",
+        "ResourceType": "AWS.S3.Bucket",
+        "Name": "something-prodsec",
+        "ResourceId": "arn:aws:s3:::something-prodsec",
+        "TimeCreated": "2020-06-27T00:11:11Z",
+        "Owner": {
+          "DisplayName": "aws-corp",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        }
+      }

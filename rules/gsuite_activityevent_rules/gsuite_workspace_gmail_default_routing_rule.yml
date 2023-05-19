@@ -1,0 +1,141 @@
+AnalysisType: rule
+Filename: gsuite_workspace_gmail_default_routing_rule.py
+RuleID: "GSuite.Workspace.GmailDefaultRoutingRuleModified"
+DisplayName: "GSuite Workspace Gmail Default Routing Rule Modified"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Severity: High
+Description: >
+  A Workspace Admin Has Modified A Default Routing Rule In Gmail
+Reference: https://support.google.com/a/answer/2368153?hl=en
+Runbook: >
+  Administrators use Default Routing to set up how inbound email is
+  delivered within an organization. The configuration of the default routing
+  rule needs to be inspected in order to verify the intent of the rule is benign.
+  
+  If this change was not planned, inspect the other actions taken by this actor.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Workspace Admin Creates Default Routing Rule
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "user@example.io",
+          "profileId": "110555555555555555555"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 00:50:03.493000000",
+          "uniqueQualifier": "-6333333333333333333"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "CREATE_GMAIL_SETTING",
+        "parameters": {
+          "SETTING_NAME": "MESSAGE_SECURITY_RULE",
+          "USER_DEFINED_SETTING_NAME": "44444"
+        },
+        "type": "EMAIL_SETTINGS"
+      }
+  -
+    Name: Workspace Admin Deletes Default Routing Rule
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "user@example.io",
+          "profileId": "110555555555555555555"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 00:50:41.760000000",
+          "uniqueQualifier": "-5015136739334825037"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "DELETE_GMAIL_SETTING",
+        "parameters": {
+          "SETTING_NAME": "MESSAGE_SECURITY_RULE",
+          "USER_DEFINED_SETTING_NAME": "44444"
+        },
+        "type": "EMAIL_SETTINGS"
+      }
+  -
+    Name: Admin Set Default Calendar SHARING_OUTSIDE_DOMAIN Setting to READ_ONLY_ACCESS
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "callerType": "USER",
+          "email": "example@example.io",
+          "profileId": "12345"
+        },
+        "id": {
+          "applicationName": "admin",
+          "customerId": "D12345",
+          "time": "2022-12-11 01:06:26.303000000",
+          "uniqueQualifier": "-12345"
+        },
+        "ipAddress": "12.12.12.12",
+        "kind": "admin#reports#activity",
+        "name": "CHANGE_CALENDAR_SETTING",
+        "parameters": {
+          "DOMAIN_NAME": "example.io",
+          "NEW_VALUE": "READ_ONLY_ACCESS",
+          "OLD_VALUE": "DEFAULT",
+          "ORG_UNIT_NAME": "Example IO",
+          "SETTING_NAME": "SHARING_OUTSIDE_DOMAIN"
+        },
+        "type": "CALENDAR_SETTINGS"
+      }
+  - Name: ListObject Type
+    ExpectedResult: false
+    Log:
+      {
+          "actor": {
+          "email": "user@example.io",
+          "profileId": "118111111111111111111"
+          },
+          "id": {
+          "applicationName": "drive",
+          "customerId": "D12345",
+          "time": "2022-12-20 17:27:47.080000000",
+          "uniqueQualifier": "-7312729053723258069"
+          },
+          "ipAddress": "12.12.12.12",
+          "kind": "admin#reports#activity",
+          "name": "rename",
+          "parameters": {
+          "actor_is_collaborator_account": null,
+          "billable": true,
+          "doc_id": "1GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+          "doc_title": "Document Title- Found Here",
+          "doc_type": "presentation",
+          "is_encrypted": null,
+          "new_value": [
+              "Document Title- Found Here"
+          ],
+          "old_value": [
+              "Document Title- Old"
+          ],
+          "owner": "user@example.io",
+          "owner_is_shared_drive": null,
+          "owner_is_team_drive": null,
+          "primary_event": true,
+          "visibility": "private"
+          },
+          "type": "access"
+      }

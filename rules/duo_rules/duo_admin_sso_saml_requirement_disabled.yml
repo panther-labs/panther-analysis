@@ -1,0 +1,44 @@
+AnalysisType: rule
+Description: Detects when SAML Authentication for Administrators is marked as Disabled or Optional.
+DisplayName: "Duo Admin SSO SAML Requirement Disabled"
+Enabled: true
+Filename: duo_admin_sso_saml_requirement_disabled.py
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: admin_single_sign_on_update
+        description: '{"enforcement_status": "disabled"}'
+        isotimestamp: "2021-10-12 21:29:22"
+        timestamp: "2021-10-12 21:29:22"
+        username: Homer Simpson
+      Name: Enforcement Disabled
+    - ExpectedResult: true
+      Log:
+        action: admin_single_sign_on_update
+        description: '{"enforcement_status": "optional"}'
+        isotimestamp: "2021-10-12 21:29:22"
+        timestamp: "2021-10-12 21:29:22"
+        username: Homer Simpson
+      Name: Enforcement Optional
+    - ExpectedResult: false
+      Log:
+        action: admin_single_sign_on_update
+        description: '{"enforcement_status": "required"}'
+        isotimestamp: "2021-10-12 21:29:22"
+        timestamp: "2021-10-12 21:29:22"
+        username: Homer Simpson
+      Name: Enforcement Required
+    - ExpectedResult: false
+      Log:
+        action: admin_single_sign_on_update
+        description: '{"sso_url": "https://duff.okta.com/app/duoadminpanel/abcdefghijklm/sso/saml", "slo_url": null, "idp_type": "okta", "cert": "C=US/CN=duff/L=Springfield/O=Okta/OU=SSOProvider/ST=California/emailAddress=info@okta.com - 2031-08-10 13:39:00+00:00", "require_signed_response": true, "entity_id": "http://www.okta.com/abcdefghijk"}'
+        isotimestamp: "2021-10-12 21:33:40"
+        timestamp: "2021-10-12 21:33:40"
+        username: Homer Simpson
+      Name: SSO Update
+DedupPeriodMinutes: 60
+LogTypes:
+    - Duo.Administrator
+RuleID: "Duo.Admin.SSO.SAML.Requirement.Disabled"
+Threshold: 1

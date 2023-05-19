@@ -1,0 +1,164 @@
+AnalysisType: policy
+Filename: aws_dynamodb_table_ttl_enabled.py
+PolicyID: "AWS.DynamoDB.TableTTLEnabled"
+DisplayName: "AWS DynamoDB Table TTL"
+Enabled: true
+ResourceTypes:
+  - AWS.DynamoDB.Table
+Tags:
+  - AWS
+  - Database
+  - PCI
+  - Collection:Data From Cloud Storage Object
+Reports:
+  PCI:
+    - 3.1
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: Medium
+Description: >
+  This policy validates that all DynamoDB tables have a TTL field configured.
+Runbook: >
+  Enable table TTL.
+Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html
+Tests:
+  -
+    Name: TTL Enabled
+    ExpectedResult: true
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+          "AttributeDefinitions": [
+              {
+                  "AttributeName": "attr1",
+                  "AttributeType": "S"
+              },
+              {
+                  "AttributeName": "attr2",
+                  "AttributeType": "S"
+              }
+          ],
+          "AutoScalingDescriptions": null,
+          "BillingModeSummary": {
+              "BillingMode": "PAY_PER_REQUEST",
+              "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+          },
+          "GlobalSecondaryIndexes": null,
+          "Id": "1",
+          "ItemCount": 0,
+          "KeySchema": [
+              {
+                  "AttributeName": "attr1",
+                  "KeyType": "HASH"
+              },
+              {
+                  "AttributeName": "attr2",
+                  "KeyType": "RANGE"
+              }
+          ],
+          "LatestStreamArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table/stream/2019-01-01T00:00:00.000",
+          "LatestStreamLabel": "2019-01-01T00:00:00.000",
+          "LocalSecondaryIndexes": null,
+          "Name": "example-table",
+          "ProvisionedThroughput": {
+              "LastDecreaseDateTime": null,
+              "LastIncreaseDateTime": null,
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 0,
+              "WriteCapacityUnits": 0
+          },
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+          "ResourceType": "AWS.DynamoDB.Table",
+          "RestoreSummary": null,
+          "SSEDescription": {
+              "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/1",
+              "SSEType": "KMS",
+              "Status": "ENABLED"
+          },
+          "StreamSpecification": {
+              "StreamEnabled": true,
+              "StreamViewType": "NEW_IMAGE"
+          },
+          "TableSizeBytes": 0,
+          "TableStatus": "ACTIVE",
+          "Tags": {
+              "environment": "pci"
+          },
+          "TimeCreated": "2019-02-01T00:00:00.000Z",
+          "TimeToLiveDescription": {
+              "AttributeName": "expiresAt",
+              "TimeToLiveStatus": "ENABLED"
+          }
+      }
+  -
+    Name: TTL Disabled
+    ExpectedResult: false
+    Resource:
+      {
+          "AccountId": "123456789012",
+          "Arn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+          "AttributeDefinitions": [
+              {
+                  "AttributeName": "attr1",
+                  "AttributeType": "S"
+              },
+              {
+                  "AttributeName": "attr2",
+                  "AttributeType": "S"
+              }
+          ],
+          "AutoScalingDescriptions": null,
+          "BillingModeSummary": {
+              "BillingMode": "PAY_PER_REQUEST",
+              "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+          },
+          "GlobalSecondaryIndexes": null,
+          "Id": "1",
+          "ItemCount": 0,
+          "KeySchema": [
+              {
+                  "AttributeName": "attr1",
+                  "KeyType": "HASH"
+              },
+              {
+                  "AttributeName": "attr2",
+                  "KeyType": "RANGE"
+              }
+          ],
+          "LatestStreamArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table/stream/2019-01-01T00:00:00.000",
+          "LatestStreamLabel": "2019-01-01T00:00:00.000",
+          "LocalSecondaryIndexes": null,
+          "Name": "example-table",
+          "ProvisionedThroughput": {
+              "LastDecreaseDateTime": null,
+              "LastIncreaseDateTime": null,
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 0,
+              "WriteCapacityUnits": 0
+          },
+          "Region": "us-west-2",
+          "ResourceId": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+          "ResourceType": "AWS.DynamoDB.Table",
+          "RestoreSummary": null,
+          "SSEDescription": {
+              "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/1",
+              "SSEType": "KMS",
+              "Status": "ENABLED"
+          },
+          "StreamSpecification": {
+              "StreamEnabled": true,
+              "StreamViewType": "NEW_IMAGE"
+          },
+          "TableSizeBytes": 0,
+          "TableStatus": "ACTIVE",
+          "Tags": {
+              "environment": "pci"
+          },
+          "TimeCreated": "2019-02-01T00:00:00.000Z",
+          "TimeToLiveDescription": {
+              "AttributeName": null,
+              "TimeToLiveStatus": "DISABLED"
+          }
+      }

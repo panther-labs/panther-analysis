@@ -1,0 +1,687 @@
+AnalysisType: policy
+Filename: aws_dynamodb_autoscaling_configuration.py
+PolicyID: "AWS.DynamoDB.AutoscalingConfiguration"
+DisplayName: "AWS DynamoDB Table Autoscaling Configuration"
+Enabled: false
+ResourceTypes:
+  - AWS.DynamoDB.Table
+Tags:
+  - AWS
+  - Availability
+  - Configuration Required
+Severity: Low
+Description: >
+  DynamoDB Auto Scaling can dynamically adjust provisioned throughput capacity in response to
+  traffic patterns. This enables a table to increase its provisioned read and write capacity
+  to handle sudden increases in traffic
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-dynamodb-table-has-autoscaling-targets-configured
+Reference: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AutoScaling.html
+Tests:
+  -
+    Name: AutoScaling Correctly Provisioned
+    ExpectedResult: true
+    Resource:
+      {
+        "AutoScalingDescriptions": [
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 14,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 14,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 20000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PROVISIONED",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": [
+          {
+            "Backfilling": null,
+            "IndexArn": "arn:aws:dynamodb:us-west-2:123456789012:table/panther-internal-poller-test-table/index/high_score-index",
+            "IndexName": "example-index",
+            "IndexSizeBytes": 0,
+            "IndexStatus": "ACTIVE",
+            "ItemCount": 0,
+            "KeySchema": [
+              {
+                "AttributeName": "high_score",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": null,
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "LastDecreaseDateTime": "2019-01-01T00:00:00Z",
+              "LastIncreaseDateTime": "2019-01-01T00:00:00Z",
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ],
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example-table",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: AutoScaling Never Configured
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": null,
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": null,
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: AutoScaling Not Applicable
+    ExpectedResult: true
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PAY_PER_REQUEST",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": null,
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: AutoScaling Not Configured
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": null,
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PROVISIONED",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": [
+          {
+            "Backfilling": null,
+            "IndexArn": "arn:aws:dynamodb:us-west-2:123456789012:table/panther-internal-poller-test-table/index/high_score-index",
+            "IndexName": "example-index",
+            "IndexSizeBytes": 0,
+            "IndexStatus": "ACTIVE",
+            "ItemCount": 0,
+            "KeySchema": [
+              {
+                "AttributeName": "high_score",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": null,
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "LastDecreaseDateTime": "2019-01-01T00:00:00Z",
+              "LastIncreaseDateTime": "2019-01-01T00:00:00Z",
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ],
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example-table",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: Secondary Index Max Write Capacity Over Provisioned
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": [
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 15,
+            "MinCapacity": 5,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 5,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 15,
+            "MinCapacity": 5,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 600000,
+            "MinCapacity": 5,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PROVISIONED",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": [
+          {
+            "Backfilling": null,
+            "IndexArn": "arn:aws:dynamodb:us-west-2:123456789012:table/panther-internal-poller-test-table/index/high_score-index",
+            "IndexName": "example-index",
+            "IndexSizeBytes": 0,
+            "IndexStatus": "ACTIVE",
+            "ItemCount": 0,
+            "KeySchema": [
+              {
+                "AttributeName": "high_score",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": null,
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "LastDecreaseDateTime": "2019-01-01T00:00:00Z",
+              "LastIncreaseDateTime": "2019-01-01T00:00:00Z",
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ],
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example-table",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: Table Min Read Capacity Under Provisioned
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": [
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 15,
+            "MinCapacity": 2,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 15,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PROVISIONED",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": [
+          {
+            "Backfilling": null,
+            "IndexArn": "arn:aws:dynamodb:us-west-2:123456789012:table/panther-internal-poller-test-table/index/high_score-index",
+            "IndexName": "example-index",
+            "IndexSizeBytes": 0,
+            "IndexStatus": "ACTIVE",
+            "ItemCount": 0,
+            "KeySchema": [
+              {
+                "AttributeName": "high_score",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": null,
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "LastDecreaseDateTime": "2019-01-01T00:00:00Z",
+              "LastIncreaseDateTime": "2019-01-01T00:00:00Z",
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ],
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example-table",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }
+  -
+    Name: Table Min Write Capacity Under Provisioned
+    ExpectedResult: false
+    Resource:
+      {
+        "AutoScalingDescriptions": [
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 2,
+            "ResourceId": "table/example-table",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          },
+          {
+            "CreationTime": "2019-01-01T00:00:00Z",
+            "MaxCapacity": 40000,
+            "MinCapacity": 10,
+            "ResourceId": "table/example-table/index/example-index",
+            "RoleARN": "arn:aws:iam::123456789012:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable",
+            "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
+            "ServiceNamespace": "dynamodb"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "attribute_one",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingModeSummary": {
+          "BillingMode": "PROVISIONED",
+          "LastUpdateToPayPerRequestDateTime": "2019-01-01T00:00:00Z"
+        },
+        "CreationDateTime": "2019-01-01T100:00:00Z",
+        "GlobalSecondaryIndexes": [
+          {
+            "Backfilling": null,
+            "IndexArn": "arn:aws:dynamodb:us-west-2:123456789012:table/panther-internal-poller-test-table/index/high_score-index",
+            "IndexName": "example-index",
+            "IndexSizeBytes": 0,
+            "IndexStatus": "ACTIVE",
+            "ItemCount": 0,
+            "KeySchema": [
+              {
+                "AttributeName": "high_score",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "NonKeyAttributes": null,
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "LastDecreaseDateTime": "2019-01-01T00:00:00Z",
+              "LastIncreaseDateTime": "2019-01-01T00:00:00Z",
+              "NumberOfDecreasesToday": 0,
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ],
+        "ItemCount": 42,
+        "KeySchema": [
+          {
+            "AttributeName": "attribute_one",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "attribute_two",
+            "KeyType": "RANGE"
+          }
+        ],
+        "LatestStreamArn": null,
+        "LatestStreamLabel": null,
+        "LocalSecondaryIndexes": null,
+        "ProvisionedThroughput": {
+          "LastDecreaseDateTime": null,
+          "LastIncreaseDateTime": null,
+          "NumberOfDecreasesToday": 0,
+          "ReadCapacityUnits": 0,
+          "WriteCapacityUnits": 0
+        },
+        "RestoreSummary": null,
+        "SSEDescription": {
+          "KMSMasterKeyArn": "arn:aws:kms:us-west-2:123456789012:key/111222333",
+          "SSEType": "KMS",
+          "Status": "ENABLED"
+        },
+        "StreamSpecification": null,
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/example-table",
+        "TableId": "aaaaaaaa-bbbb-1111-2222-1111222233334444",
+        "Name": "example-table",
+        "TableSizeBytes": 20000,
+        "TableStatus": "ACTIVE"
+      }

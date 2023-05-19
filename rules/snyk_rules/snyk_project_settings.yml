@@ -1,0 +1,74 @@
+AnalysisType: rule
+Filename: snyk_project_settings.py
+RuleID: "Snyk.Project.Settings"
+DisplayName: "Snyk Project Settings"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: Medium
+Description: >
+  Detects when Snyk Project settings are changed
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Snyk Org Project Stop Monitor
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "origin": "github",
+          "target": {
+            "branch": "some-branch",
+            "id": 222222222,
+            "name": "repo-name",
+            "owner": "github-org"
+          },
+          "targetFile": "go.mod",
+          "type": "gomodules"
+        },
+        "created": "2023-03-30 15:38:18.58",
+        "event": "org.project.stop_monitor",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "projectId": "05555555-8555-2333-5aaa-600000000000",
+        "userId": "05555555-3333-4ddd-8ccc-75555555555"
+      }
+  - 
+    Name: Project Ignore Create 
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "created": "2023-03-20T12:23:06.356Z",
+          "ignorePath": "*",
+          "ignoredBy": {
+            "id": "05555555-3333-4ddd-8ccc-75555555555"
+          },
+          "issueId": "SNYK-JS-UNDICI-3323845",
+          "reason": "dev dependency",
+          "reasonType": "wont-fix"
+        },
+        "created": "2023-03-20 12:23:08.363",
+        "event": "org.project.ignore.create",
+
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "projectId": "05555555-8555-2333-5aaa-600000000000",
+        "userId": "05555555-3333-4ddd-8ccc-75555555555"
+      }
+  -
+    Name: Snyk Group SSO Membership sync
+    ExpectedResult: false
+    Log:
+      {
+        "content": {},
+        "created": "2023-03-15 13:13:13.133",
+        "event": "group.sso.membership.sync",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+      }

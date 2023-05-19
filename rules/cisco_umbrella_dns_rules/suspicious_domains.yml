@@ -1,0 +1,45 @@
+AnalysisType: rule
+Filename: suspicious_domains.py
+RuleID: "CiscoUmbrella.DNS.Suspicious"
+DisplayName: "Cisco Umbrella Suspicious Domains"
+Enabled: false
+DedupPeriodMinutes: 480 # 8 hours
+LogTypes:
+  - CiscoUmbrella.DNS
+Tags:
+  - DNS
+  - Configuration Required
+Severity: Low
+Description: Monitor suspicious or known malicious domains
+Runbook: Inspect the domain and check the host for other indicators of compromise
+SummaryAttributes:
+  - action
+  - internalIp
+  - externalIp
+  - domain
+  - responseCode
+Tests:
+  -
+    Name: Suspicious Domain
+    ExpectedResult: true
+    Log:
+      {
+        "action": "Allow",
+        "internalIp": "136.24.229.58",
+        "externalIp": "136.24.229.58",
+        "timestamp": "2020-05-21 19:20:25.000",
+        "responseCode": "NOERROR",
+        "domain": "cron.photoscape.ch."
+      }
+  -
+    Name: Safe Domain
+    ExpectedResult: false
+    Log:
+      {
+        "action": "Allowed",
+        "internalIp": "136.24.229.58",
+        "externalIp": "136.24.229.58",
+        "timestamp": "2020-05-21 19:20:25.000",
+        "responseCode": "NOERROR",
+        "domain": "google.com."
+      }

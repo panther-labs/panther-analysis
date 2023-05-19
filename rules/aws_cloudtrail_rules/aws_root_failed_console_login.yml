@@ -1,0 +1,155 @@
+AnalysisType: rule
+Filename: aws_root_failed_console_login.py
+RuleID: "AWS.CloudTrail.RootFailedConsoleLogin"
+DisplayName: "--DEPRECATED-- Root Account Failed Console Login"
+Enabled: false
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Identity and Access Management
+  - Initial Access:Valid Accounts
+Severity: High
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+Description: >
+  Deprecated. Please see AWS.Console.RootLoginFailed instead.
+Runbook: >
+  Verify that the root login attempt was authorized. If not, investigate the root account failed logins to see if there is a pattern.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+Tests:
+  -
+    Name: Root Console Login
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }
+  -
+    Name: Root Non Console Login
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "NonConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }
+  -
+    Name: Non Root Console Login
+    ExpectedResult: false
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:user/bob",
+              "principalId": "123456789012",
+              "type": "IAMUser"
+          }
+      }
+  -
+    Name: Root Failed Console Login
+    ExpectedResult: true
+    Log:
+      {
+          "additionalEventData": {
+              "LoginTo": "https://us-west-2.console.aws.amazon.com/console/home?region=us-west-2",
+              "MFAUsed": "Yes",
+              "MobileVersion": "No"
+          },
+          "awsRegion": "us-east-1",
+          "eventID": "111",
+          "eventName": "ConsoleLogin",
+          "eventSource": "signin.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsConsoleSignIn",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/5.0 Ti83",
+          "userIdentity": {
+              "accessKeyId": "",
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:root",
+              "principalId": "123456789012",
+              "type": "Root"
+          }
+      }

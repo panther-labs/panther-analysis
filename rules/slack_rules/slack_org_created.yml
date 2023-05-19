@@ -1,0 +1,70 @@
+AnalysisType: rule
+Filename: slack_org_created.py
+RuleID: "Slack.AuditLogs.OrgCreated"
+DisplayName: "Slack Organization Created"
+Enabled: true
+LogTypes:
+  - Slack.AuditLogs
+Tags:
+  - Slack
+Severity: Low
+Description: Detects when a Slack organization is created
+Reference: https://api.slack.com/admins/audit-logs
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  -
+    Name: Organization Created
+    ExpectedResult: true
+    Log:
+      {
+        "action": "organization_created",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "user@example.com",
+            "id": "A012B3CDEFG",
+            "name": "username",
+            "team": "T01234N56GB"
+          }
+        },
+        "context": {
+          "ip_address": "1.2.3.4",
+          "location": {
+            "domain": "test-workspace",
+            "id": "T01234N56GB",
+            "name": "test-workspace",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        }
+      }
+  -
+    Name: Organization Deleted
+    ExpectedResult: false
+    Log:
+      {
+        "action": "organization_deleted",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "user@example.com",
+            "id": "A012B3CDEFG",
+            "name": "username",
+            "team": "T01234N56GB"
+          }
+        },
+        "context": {
+          "ip_address": "1.2.3.4",
+          "location": {
+            "domain": "test-workspace",
+            "id": "T01234N56GB",
+            "name": "test-workspace",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        }
+      }

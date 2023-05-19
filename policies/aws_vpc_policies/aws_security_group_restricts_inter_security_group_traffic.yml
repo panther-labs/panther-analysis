@@ -1,0 +1,171 @@
+AnalysisType: policy
+Filename: aws_security_group_restricts_inter_security_group_traffic.py
+PolicyID: "AWS.SecurityGroup.RestrictsInterSecurityGroupTraffic"
+DisplayName: "AWS Security Group Restricts Inter-SG Traffic"
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+  - PCI
+  - Lateral Movement:Exploitation of Remote Services
+Reports:
+  PCI:
+    - 1.2.1
+  MITRE ATT&CK:
+    - TA0008:T1210
+Severity: Medium
+Description: >
+  This policy validates that Security Groups have restrictions on inter Security Group traffic. Administrators may assume there is an implicit level of trust between Security Groups in the same account, but this is not always a good assumption in cases one Security Group contains far more sensitive data that another.
+Runbook: >
+  Add appropriate restrictions to the Security Group peering connection.
+Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
+Tests:
+  -
+    Name: Security Group Restricts Inter Security Group Traffic
+    ExpectedResult: true
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": 80,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": 80,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Security Group Does Not Restrict Inter Security Group Traffic
+    ExpectedResult: false
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": null,
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": [
+              {
+                "Description": null,
+                "GroupId": "sg-def123",
+                "GroupName": null,
+                "PeeringStatus": null,
+                "UserId": "123456789012",
+                "VpcId": null,
+                "VpcPeeringConnectionId": null
+              }
+            ]
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }
+  -
+    Name: Security Group Does Not Restrict Internet Traffic
+    ExpectedResult: true
+    Resource:
+      {
+        "Description": "example VPC security group",
+        "GroupId": "sg-abc123",
+        "GroupName": "default",
+        "IpPermissions": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null,
+          }
+        ],
+        "IpPermissionsEgress": [
+          {
+            "FromPort": null,
+            "IpProtocol": "-1",
+            "IpRanges": [
+              {
+                "CidrIp": "0.0.0.0/0",
+                "Description": null
+              }
+            ],
+            "Ipv6Ranges": null,
+            "PrefixListIds": null,
+            "ToPort": null,
+            "UserIdGroupPairs": null
+          }
+        ],
+        "OwnerId": "123456789012",
+        "Tags": {
+          "environment": "pci",
+        },
+        "VpcId": "vpc-abc111222333"
+      }

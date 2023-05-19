@@ -1,0 +1,221 @@
+AnalysisType: policy
+Filename: aws_s3_bucket_lifecycle_configuration.py
+PolicyID: "AWS.S3.Bucket.LifecycleConfiguration"
+DisplayName: "AWS S3 Bucket Lifecycle Configuration"
+Enabled: true
+ResourceTypes:
+  - AWS.S3.Bucket
+Tags:
+  - AWS
+  - Configuration Required
+  - Security Control
+Reports:
+  PCI:
+    - 3.1
+    - 10.7
+Severity: Low
+Description: >
+  Verifies that the S3 Bucket Object Lifecycle configuration expires data within 90 and 365 days.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-lifecycle-configuration-expires-data
+Reference: https://amzn.to/2visoXr
+Tests:
+  -
+    Name: Bucket Has a Compliant 1-Year Lifecycle Configuration
+    ExpectedResult: true
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": [
+            {
+              "AbortIncompleteMultipartUpload": null,
+              "Expiration": {
+                "Date": null,
+                "Days": 365,
+                "ExpiredObjectDeleteMarker": null
+              },
+              "Filter": {
+                "And": null,
+                "Prefix": "",
+                "Tag": null
+              },
+              "ID": "ExpireAfter1Year",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 365
+              },
+              "NoncurrentVersionTransitions": null,
+              "Prefix": null,
+              "Status": "Enabled",
+              "Transitions": null
+            }
+          ],
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Does Not Have Lifecycle Configuration
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": null,
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Bucket Has Insufficient Lifecycle Configuration
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": [
+            {
+              "AbortIncompleteMultipartUpload": null,
+              "Expiration": {
+                "Date": null,
+                "Days": 30,
+                "ExpiredObjectDeleteMarker": null
+              },
+              "Filter": {
+                "And": null,
+                "Prefix": "",
+                "Tag": null
+              },
+              "ID": "ExpireAfter1Year",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30
+              },
+              "NoncurrentVersionTransitions": null,
+              "Prefix": null,
+              "Status": "Enabled",
+              "Transitions": null
+            }
+          ],
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+  -
+    Name: Lifecycle Configuration Null Test
+    ExpectedResult: false
+    Resource:
+      {
+        "CreationDate": "2019-01-01T00:00:00Z",
+        "EncryptionRules": [
+          {
+            "ApplyServerSideEncryptionByDefault": {
+              "KMSMasterKeyID": null,
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ],
+        "Grants": null,
+        "LifecycleRules": [
+          {
+            "AbortIncompleteMultipartUpload": null,
+            "Expiration": {
+              "Date": null,
+              "Days": null,
+              "ExpiredObjectDeleteMarker": null
+            },
+            "Filter": {
+              "And": null,
+              "Prefix": "",
+              "Tag": null
+            },
+            "ID": "ExpireAfter1Year",
+            "NoncurrentVersionExpiration": {
+              "NoncurrentDays": null
+            },
+            "NoncurrentVersionTransitions": null,
+            "Prefix": null,
+            "Status": "Enabled",
+            "Transitions": null
+          }
+        ],
+        "Location": "us-east-2",
+        "LoggingPolicy": null,
+        "MFADelete": null,
+        "Name": "bucket-name",
+        "Owner": {
+          "DisplayName": "user.name",
+          "ID": "11112223334445556667778899aaabbbcccdddeeee"
+        },
+        "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\",\"arn:aws:s3:::test-bucket\"]}]}",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "BlockPublicPolicy": false,
+          "IgnorePublicAcls": false,
+          "RestrictPublicBuckets": false
+        },
+        "Versioning": null
+      }
+

@@ -1,0 +1,29 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Snowflake.AccountAdminGranted"
+Enabled: false
+Description: >
+  Monitor and detect granting account admin role.
+AthenaQuery: >
+  /* athena query not supported */
+  SELECT count(1)
+SnowflakeQuery: >
+  --return instances where active (not deleted) roles are granted within the last 24 hours 
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    created_on,
+    role,
+    grantee_name as granted_to,
+    granted_by
+  FROM snowflake.account_usage.grants_to_users
+  WHERE
+    created_on is NOT NULL
+    AND grantee_name is NOT NULL
+    AND granted_to is NOT NULL
+    AND role ILIKE '%admin%'
+    AND deleted_on is NULL
+    AND DATEDIFF(HOUR, created_on, CURRENT_TIMESTAMP) < 24
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 3

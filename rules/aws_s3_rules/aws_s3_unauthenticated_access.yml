@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: aws_s3_unauthenticated_access.py
+RuleID: "AWS.S3.ServerAccess.Unauthenticated"
+DisplayName: "AWS S3 Unauthenticated Access"
+Enabled: false
+LogTypes:
+  - AWS.S3ServerAccess
+Tags:
+  - AWS
+  - Configuration Required
+  - Security Control
+  - Collection:Data From Cloud Storage Object
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1530
+Severity: Low
+Description: >
+  Checks for S3 access attempts where the requester is not an authenticated AWS user.
+Runbook: >
+  If unauthenticated S3 access is not expected for this bucket, update its access policies.
+SummaryAttributes:
+  - bucket
+  - key
+  - requester
+Tests:
+  -
+    Name: Authenticated Access
+    ExpectedResult: false
+    Log:
+      {
+        "bucket" : "example-bucket",
+        "requester": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be"
+      }
+  -
+    Name: Unauthenticated Access
+    ExpectedResult: true
+    Log:
+      {
+        "bucket" : "example-bucket",
+      }

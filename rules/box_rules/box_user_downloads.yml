@@ -1,0 +1,60 @@
+AnalysisType: rule
+Filename: box_user_downloads.py
+RuleID: "Box.Large.Number.Downloads"
+DisplayName: "Box Large Number of Downloads"
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+  - Exfiltration:Exfiltration Over Web Service
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567
+Severity: Low
+Description: >
+  A user has exceeded the threshold for number of downloads within a single time frame. 
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Investigate whether this user's download activity is expected.  Investigate the cause of this download activity. 
+SummaryAttributes:
+  - ip_address
+Threshold: 100
+DedupPeriodMinutes: 60
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "DELETE",
+      }
+  -
+    Name: User Download
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "DOWNLOAD",
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "login": "user@example",
+          "name": "Bob Cat",
+        }
+      }

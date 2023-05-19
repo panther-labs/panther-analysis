@@ -1,0 +1,26 @@
+AnalysisType: rule
+Filename: aws_vpc_healthy_log_status.py
+RuleID: "AWS.VPC.HealthyLogStatus"
+DisplayName: "AWS VPC Healthy Log Status"
+Enabled: true
+LogTypes:
+  - AWS.VPCFlow
+Tags:
+  - AWS
+  - Security Control
+Severity: Low
+Description: >
+  Checks for the log status `SKIP-DATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+Reference:
+  https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html#flow-log-records
+Runbook: >
+  Determine if the cause of the issue is capacity constraints, and consider adjusting VPC Flow Log configurations accordingly.
+Tests:
+  -
+    Name: Healthy Log Status
+    ExpectedResult: false
+    Log: {"log-status": "OK"}
+  -
+    Name: Unhealthy Log Status
+    ExpectedResult: true
+    Log: {"log-status": "SKIPDATA"}

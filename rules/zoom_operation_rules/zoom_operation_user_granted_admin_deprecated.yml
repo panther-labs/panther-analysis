@@ -1,0 +1,42 @@
+AnalysisType: rule
+Filename: zoom_operation_user_granted_admin_deprecated.py
+RuleID: "Zoom.UserGrantedAdmin"
+DisplayName: "--DEPRECATED -- Zoom User Granted Admin Rights"
+Enabled: False
+LogTypes:
+  - Zoom.Operation
+Tags:
+  - Zoom
+  - Privilege Escalation:Valid Accounts
+Severity: Medium
+Description: >
+  A Zoom user has been granted admin access
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078
+Reference: https://support.zoom.us/hc/en-us/articles/115001078646-Using-role-management
+Runbook: >
+  Contact Zoom admin and ensure this access level is intended and appropriate
+SummaryAttributes:
+  - p_any_emails
+Tests:
+  -
+    Name: User Granted Admin
+    ExpectedResult: True
+    Log:
+      {
+         "operator": "homer@panther.io",
+         "category_type": "User",
+         "action": "Update",
+         "operation_detail": "Update User bart@panther.io  - User Role: from Member to Admin"
+      }
+  -
+    Name: Non-admin user update
+    ExpectedResult: False
+    Log:
+      {
+         "operator": "homer@panther.io",
+         "category_type": "User",
+         "action": "Update",
+         "operation_detail": "Update User lisa@panther.io  - Job Title: set to Contractor"
+      }

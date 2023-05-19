@@ -1,11 +1,19 @@
 AnalysisType: pack
 PackID: PantherManaged.ZoomDetections
-DisplayName: Panther Zoom Pack
+DisplayName: "Panther Zoom Pack"
 Description: This pack includes Zoom detections
 PackDefinition:
   IDs:
     - Zoom.PasscodeDisabled
-    - Zoom.UserGrantedAdmin
+    - Zoom.User.Promoted.to.Privileged.Role
+    - Zoom.All.Meetings.Secured.With.One.Option.Disabled
+    - Zoom.Automatic.Sign.Out.Disabled
+    - Zoom.Sign.In.Method.Modified
+    - Zoom.New.Meeting.Passcode.Required.Disabled
+    - Zoom.Two.Factor.Authentication.Disabled
+    - Zoom.Sign.In.Requirements.Changed
+    # Data Models used in these detections
+    - Standard.Zoom.Operation
     # Globals used in these detections
     - panther_base_helpers
     - panther_oss_helpers

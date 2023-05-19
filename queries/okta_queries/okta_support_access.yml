@@ -1,0 +1,49 @@
+AnalysisType: scheduled_query
+QueryName: "Okta Support Access"
+Enabled: false
+Description: >
+  Show instances that Okta support was granted to your account
+AthenaQuery: > 
+  SELECT 
+  p_event_time as event_time,
+  actor.alternateid as actor_email,
+  actor.displayName as actor_name,
+  displayMessage,
+  eventType,
+  client.ipAddress as src_ip,
+  client.geographicalContext.city as city,
+  client.geographicalContext.country as country,
+  client.useragent.rawUserAgent as user_agent
+  FROM panther_logs.okta_systemlog
+  WHERE 
+  (
+  eventType = 'user.session.impersonation.grant' OR 
+  eventType = 'user.session.impersonation.initiate'
+  ) and
+  p_occurs_between('2022-01-14','2022-03-22')
+  ORDER BY
+    event_time desc
+SnowflakeQuery: >
+  SELECT 
+  p_event_time as event_time,
+  actor:alternateId as actor_email,
+  actor:displayName as actor_name,
+  client:ipAddress as src_ip,
+  client:geographicalContext:city as city,
+  client:geographicalContext:country as country,
+  client:userAgent:rawUserAgent as user_agent,
+  displayMessage,
+  eventType
+  FROM
+  panther_logs.public.okta_systemlog
+  WHERE 
+    eventType = 'user.session.impersonation.grant' 
+    OR 
+    eventType = 'user.session.impersonation.initiate'
+   AND  
+      p_occurs_between('2022-01-14','2022-03-22')
+  ORDER BY
+    event_time desc
+Schedule:
+  RateMinutes: 43200
+  TimeoutMinutes: 1

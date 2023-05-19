@@ -1,0 +1,37 @@
+AnalysisType: rule
+Filename: duo_admin_marked_push_fraudulent.py
+RuleID: "DUO.Admin.Action.MarkedFraudulent"
+DisplayName: "Duo Admin Marked Push Fraudulent"
+Enabled: true
+DedupPeriodMinutes: 15
+LogTypes:
+  - Duo.Administrator
+Tags:
+  - Duo
+Severity: Medium
+Description: A Duo push was marked fraudulent by an admin.
+Reference: https://duo.com/docs/adminapi#administrator-logs 
+Runbook: Follow up with the administrator to determine reasoning for marking fraud.
+Tests:
+  -
+    Name: marked_fraud
+    ExpectedResult: true
+    Log:
+      {
+      "action": "admin_2fa_error",
+      "description": "{\"ip_address\": \"12.12.12.12\", \"email\": \"example@example.io\", \"factor\": \"push\", \"error\": \"Login request reported as fraudulent.\"}",
+      "isotimestamp": "2022-12-14 20:11:53",
+      "timestamp": "2022-12-14 20:11:53",
+      "username": "John P. Admin"
+      } 
+  -
+    Name: different_admin_action 
+    ExpectedResult: false
+    Log:
+      {
+      "action": "admin_update",
+      "description": "{}",
+      "isotimestamp": "2022-12-14 20:11:53",
+      "timestamp": "2022-12-14 20:11:53",
+      "username": "John P. Admin"
+      } 

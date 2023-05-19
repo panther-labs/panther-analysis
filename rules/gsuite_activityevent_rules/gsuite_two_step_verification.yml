@@ -1,0 +1,54 @@
+AnalysisType: rule
+Filename: gsuite_two_step_verification.py
+RuleID: "GSuite.TwoStepVerification"
+DisplayName: "GSuite User Two Step Verification Change"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Defense Evasion:Modify Authentication Process
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1556
+Severity: Low
+Description: >
+  A user disabled two step verification for themselves.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/user-accounts
+Runbook: >
+  Depending on company policy, either suggest or require the user re-enable two step verification.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Two Step Verification Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "some.user@somedomain.com",
+        },
+        "kind": "admin#reports#activity",
+        "type": "2sv_change",
+        "name": "2sv_enroll",
+      }
+  -
+    Name: Two Step Verification Disabled
+    ExpectedResult: True
+    Log:
+      {
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "some.user@somedomain.com",
+        },
+        "kind": "admin#reports#activity",
+        "type": "2sv_change",
+        "name": "2sv_disable",
+      }

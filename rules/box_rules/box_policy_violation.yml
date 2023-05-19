@@ -1,0 +1,75 @@
+AnalysisType: rule
+Filename: box_policy_violation.py
+RuleID: "Box.Content.Workflow.Policy.Violation"
+DisplayName: "Box Content Workflow Policy Violation"
+Enabled: true
+LogTypes:
+  - Box.Event
+Tags:
+  - Box
+Severity: Low
+Description: >
+  A user violated the content workflow policy. 
+Reference: https://developer.box.com/reference/resources/event/
+Runbook: >
+  Investigate whether the user continues to violate the policy and take measure to ensure they understand policy. 
+SummaryAttributes:
+  - event_type
+Tests:
+  -
+    Name: Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "DELETE",
+      }
+  -
+    Name: Upload Policy Violation
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "CONTENT_WORKFLOW_UPLOAD_POLICY_VIOLATION",
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "login": "user@example",
+        }
+      }
+  -
+    Name: Sharing Policy Violation
+    ExpectedResult: true
+    Log:
+      {
+        "type": "event",
+        "additional_details": {
+          "key": "value"
+        },
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Mountain Lion"
+        },
+        "event_type": "CONTENT_WORKFLOW_SHARING_POLICY_VIOLATION",
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "login": "user@example",
+        }
+      }

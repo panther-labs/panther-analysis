@@ -1,0 +1,21 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: "VPC.DNS.Tunneling"
+DisplayName: "VPC DNS Tunneling"
+Description: >
+  Detect dns tunneling traffic using a scheduled query
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1599
+Tags:
+  - Defense Evasion:Network Boundary Bridging
+Enabled: false
+ScheduledQueries:
+  - Query.VPC.DNS.Tunneling
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      Anything: any value

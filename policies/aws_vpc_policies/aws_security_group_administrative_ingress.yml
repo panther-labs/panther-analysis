@@ -1,0 +1,290 @@
+AnalysisType: policy
+Filename: aws_security_group_administrative_ingress.py
+PolicyID: "AWS.SecurityGroup.AdministrativeIngress"
+DisplayName: "AWS Security Group Administrative Ingress"
+Enabled: true
+ResourceTypes:
+  - AWS.EC2.SecurityGroup
+Tags:
+  - AWS
+  - Security Control
+  - Initial Access:Exploit Public-Facing Application
+Reports:
+  CIS:
+    - 4.1
+    - 4.2
+  MITRE ATT&CK:
+    - TA0001:T1190
+Severity: High
+Description: >
+  This policy validates that AWS Security Groups don't allow unrestricted inbound traffic on
+  port 3389 or 22, ports commonly used for the remote access protocols RDP and SSH respectively.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-securitygroup-restricts-ingress-on-administrative-ports
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+Tests:
+  -
+    Name: Inbound IP Permission On All IPs On Acceptable Ports
+    ExpectedResult: true
+    Resource:
+      {
+          "Description": "default VPC security group",
+          "GroupId": "sg-abc123",
+          "GroupName": "default",
+          "IpPermissions": [
+              {
+                  "FromPort": 30,
+                  "IpProtocol": "-1",
+                  "IpRanges": [
+                      {
+                          "CidrIp": "0.0.0.0/0",
+                          "Description": null
+                      }
+                  ],
+                  "Ipv6Ranges": null,
+                  "PrefixListIds": null,
+                  "ToPort": 45,
+                  "UserIdGroupPairs": [
+                      {
+                          "Description": null,
+                          "GroupId": "sg-abc123",
+                          "GroupName": null,
+                          "PeeringStatus": null,
+                          "UserId": "1122334455",
+                          "VpcId": null,
+                          "VpcPeeringConnectionId": null
+                      }
+                  ]
+              }
+          ],
+          "IpPermissionsEgress": [
+              {
+                  "FromPort": null,
+                  "IpProtocol": "-1",
+                  "IpRanges": [
+                      {
+                          "CidrIp": "0.0.0.0/0",
+                          "Description": null
+                      }
+                  ],
+                  "Ipv6Ranges": null,
+                  "PrefixListIds": null,
+                  "ToPort": null,
+                  "UserIdGroupPairs": null
+              }
+          ],
+          "OwnerId": "112233445566",
+          "Tags": null,
+          "VpcId": "vpc-123454321"
+      }
+  -
+    Name: Inbound IP Permissions On All IPs On Restricted Ports
+    ExpectedResult: false
+    Resource:
+        {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": null,
+                            "GroupId": "sg-abc123",
+                            "GroupName": null,
+                            "PeeringStatus": null,
+                            "UserId": "1122334455",
+                            "VpcId": null,
+                            "VpcPeeringConnectionId": null
+                        }
+                    ]
+                }
+            ],
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": null,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": null,
+                    "UserIdGroupPairs": null
+                }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+        }
+  -
+    Name: Inbound IP Permission On All IPv6 On Restricted Ports
+    ExpectedResult: false
+    Resource:
+        {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "-1",
+                    "IpRanges": null,
+                    "Ipv6Ranges": [
+                        {
+                            "CidrIpv6": "::/0",
+                            "Description": null
+                        }
+                    ],
+                    "PrefixListIds": null,
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": null,
+                            "GroupId": "sg-abc123",
+                            "GroupName": null,
+                            "PeeringStatus": null,
+                            "UserId": "1122334455",
+                            "VpcId": null,
+                            "VpcPeeringConnectionId": null
+                        }
+                    ]
+                }
+            ],
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": null,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": null,
+                    "UserIdGroupPairs": null
+                }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+        }
+  -
+    Name: Inbound IP Permission On Specific IP On Restricted Port
+    ExpectedResult: true
+    Resource:
+        {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "1.1.1.1/32",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": null,
+                            "GroupId": "sg-abc123",
+                            "GroupName": null,
+                            "PeeringStatus": null,
+                            "UserId": "1122334455",
+                            "VpcId": null,
+                            "VpcPeeringConnectionId": null
+                        }
+                    ]
+                }
+            ],
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": null,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": null,
+                    "UserIdGroupPairs": null
+                }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+        }
+  -
+    Name: No Inbound IP Permissions
+    ExpectedResult: true
+    Resource:
+        {
+            "Description": "default VPC security group",
+            "GroupId": "sg-abc123",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "FromPort": null,
+                    "IpProtocol": "-1",
+                    "IpRanges": null,
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": null,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": null,
+                            "GroupId": "sg-abc123",
+                            "GroupName": null,
+                            "PeeringStatus": null,
+                            "UserId": "1122334455",
+                            "VpcId": null,
+                            "VpcPeeringConnectionId": null
+                        }
+                    ]
+                }
+            ],
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": null,
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0",
+                            "Description": null
+                        }
+                    ],
+                    "Ipv6Ranges": null,
+                    "PrefixListIds": null,
+                    "ToPort": null,
+                    "UserIdGroupPairs": null
+                }
+            ],
+            "OwnerId": "112233445566",
+            "Tags": null,
+            "VpcId": "vpc-123454321"
+        }

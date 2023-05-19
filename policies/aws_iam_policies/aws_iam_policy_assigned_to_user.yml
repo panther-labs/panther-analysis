@@ -1,0 +1,191 @@
+AnalysisType: policy
+Filename: aws_iam_policy_assigned_to_user.py
+PolicyID: "AWS.IAM.Policy.AssignedToUser"
+DisplayName: "AWS IAM Policy Assigned to User"
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.User
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Privilege Escalation:Valid Accounts
+Reports:
+  CIS:
+    - 1.16
+  PCI:
+    - 2.2.4
+    - 7.1.1
+  MITRE ATT&CK:
+    - TA0004:T1078
+Severity: Low
+Description: >
+  This policy validates that there are no IAM policies assigned directly to users.
+  Best practice suggests assigning to an IAM group and placing users within that group.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-iam-policy-not-assigned-directly-to-user
+Reference: https://amzn.to/2Pss7Ln
+Tests:
+  -
+    Name: Managed Policy Directly Assigned
+    ExpectedResult: false
+    Resource:
+      {
+        "Region": "global",
+        "AccountId": "123456789012",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "CredentialReport": {
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "AccessKey1Active": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "PasswordNextRotation": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert1Active": false,
+          "ARN": "arn:aws:iam::123456789012:user/tester",
+          "PasswordEnabled": true,
+          "AccessKey2LastUsedService": "N/A",
+          "MfaActive": false,
+          "UserName": "tester",
+          "AccessKey2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A"
+        },
+        "InlinePolicies": null,
+        "PasswordLastUsed": "2019-01-01T00:00:00Z",
+        "Arn": "arn:aws:iam::123456789012:user/tester",
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "ResourceType": "AWS.IAM.User",
+        "VirtualMFA": null,
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "Path": "/",
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/TestGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "111",
+            "GroupName": "TestGroup",
+            "Path": "/"
+          }
+        ],
+        "Id": "1111",
+        "Name": "tester",
+        "ResourceId": "arn:aws:iam::123456789012:user/tester"
+      }
+  -
+    Name: Inline Policy Directly Assigned
+    ExpectedResult: false
+    Resource:
+      {
+        "Region": "global",
+        "AccountId": "123456789012",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "CredentialReport": {
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "AccessKey1Active": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "PasswordNextRotation": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert1Active": false,
+          "ARN": "arn:aws:iam::123456789012:user/tester",
+          "PasswordEnabled": true,
+          "AccessKey2LastUsedService": "N/A",
+          "MfaActive": false,
+          "UserName": "tester",
+          "AccessKey2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A"
+        },
+        "InlinePolicies": {"inline-policy": "policy document"},
+        "PasswordLastUsed": "2019-01-01T00:00:00Z",
+        "Arn": "arn:aws:iam::123456789012:user/tester",
+        "ManagedPolicyNames": null,
+        "ResourceType": "AWS.IAM.User",
+        "VirtualMFA": null,
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "Path": "/",
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/TestGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "111",
+            "GroupName": "TestGroup",
+            "Path": "/"
+          }
+        ],
+        "Id": "1111",
+        "Name": "tester",
+        "ResourceId": "arn:aws:iam::123456789012:user/tester"
+      }
+  -
+    Name: No Policies Directly Assigned
+    ExpectedResult: true
+    Resource:
+      {
+        "Region": "global",
+        "AccountId": "123456789012",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "CredentialReport": {
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "AccessKey1Active": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "PasswordNextRotation": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "Cert1Active": false,
+          "ARN": "arn:aws:iam::123456789012:user/tester",
+          "PasswordEnabled": true,
+          "AccessKey2LastUsedService": "N/A",
+          "MfaActive": false,
+          "UserName": "tester",
+          "AccessKey2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A"
+        },
+        "InlinePolicies": null,
+        "PasswordLastUsed": "2019-01-01T00:00:00Z",
+        "Arn": "arn:aws:iam::123456789012:user/tester",
+        "ManagedPolicyNames": null,
+        "ResourceType": "AWS.IAM.User",
+        "VirtualMFA": null,
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "Path": "/",
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/TestGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "111",
+            "GroupName": "TestGroup",
+            "Path": "/"
+          }
+        ],
+        "Id": "1111",
+        "Name": "tester",
+        "ResourceId": "arn:aws:iam::123456789012:user/tester"
+      }

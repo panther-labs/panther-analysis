@@ -1,0 +1,61 @@
+AnalysisType: rule
+Filename: sunburst_sha256_iocs.py
+RuleID: "IOC.SunburstSHA256IOCs"
+DisplayName: "Sunburst Indicators of Compromise (SHA-256)"
+Enabled: true
+LogTypes:
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.GuardDuty
+  - AWS.S3ServerAccess
+  - Box.Event
+  - GCP.AuditLog
+  - Gravitational.TeleportAudit
+  - GSuite.Reports
+  - Okta.SystemLog
+  - OneLogin.Events
+  - Osquery.Differential
+Tags:
+  - AWS
+  - Box
+  - DNS
+  - GCP
+  - GSuite
+  - SSH
+  - OneLogin
+  - Osquery
+  - Initial Access:Trusted Relationship
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1199
+Severity: High
+Description: >
+  Monitors for hashes to known Sunburst Backdoor SHA256. These IOCs indicate a potential breach and have been associated with a sophisticated nation-state actor.
+Reference: >
+  https://www.fireeye.com/blog/threat-research/2020/12/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor.html
+Runbook: >
+  Investigate the resources communicating with the matched IOC for signs of compromise or other malicious activity. Consider rotating credentials on any systems observed communicating with these known malicious systems.
+SummaryAttributes:
+  - p_any_domain_names
+  - p_any_ip_addresses
+  - p_any_sha256_hashes
+Tests:
+  -
+    Name: Non-matching traffic
+    ExpectedResult: false
+    Log:
+      {
+        "dstport": 53,
+        "dstaddr": "1.1.1.1",
+        "srcaddr": "10.0.0.1",
+        "p_any_sha256_hashes": ["98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4"],
+      }
+  -
+    Name: Sunburst Indicator of Compromise (SHA-256) Detected
+    ExpectedResult: true
+    Log:
+      {
+        "srcaddr": "13.59.205.66",
+        "dstaddr": "10.0.0.1",
+        "p_any_sha256_hashes": ["019085a76ba7126fff22770d71bd901c325fc68ac55aa743327984e89f4b0134"],
+      }

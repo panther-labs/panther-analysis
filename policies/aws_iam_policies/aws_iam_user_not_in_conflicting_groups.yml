@@ -1,0 +1,135 @@
+AnalysisType: policy
+Filename: aws_iam_user_not_in_conflicting_groups.py
+PolicyID: "AWS.IAM.User.NotInConflictingGroups"
+DisplayName: "AWS IAM User Not In Conflicting Groups"
+Enabled: false
+ResourceTypes:
+  - AWS.IAM.User
+Tags:
+  - AWS
+  - Configuration Required
+  - Security, Identity & Compliance
+  - PCI
+  - Privilege Escalation:Valid Accounts
+Reports:
+  PCI:
+    - 7.2.2
+  MITRE ATT&CK:
+    - TA0004:T1078
+Severity: Medium
+Description: >
+  This policy validates that IAM users are not in IAM groups that are considered mutually exclusive. For example, in some workflows developers are responsible for dev environments and sysadmins are responsible for prod environments. In this situation no (or very few) users should be in both sysadmin and developer groups. This is in following with the principle of least privilege.
+Runbook: Remove the IAM user from one of the conflicting groups.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html
+Tests:
+  -
+    Name: User In Conflicting Groups
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-05-10T21:49:56Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "2019-05-21T22:10:11Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-08-14T22:10:11Z",
+          "UserCreationTime": "2019-05-10T21:49:56Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "PROD_ADMIN",
+            "Path": "/"
+          },
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "DEV",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: User Not In Conflicting Groups
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-05-10T21:49:56Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-05-21T22:10:11Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-08-14T22:10:11Z",
+          "UserCreationTime": "2019-05-10T21:49:56Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicyNames": null,
+        "ManagedPolicyNames": [
+          "IAMUserChangePassword"
+        ],
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }

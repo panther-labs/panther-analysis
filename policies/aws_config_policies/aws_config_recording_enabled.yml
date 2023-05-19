@@ -1,0 +1,71 @@
+AnalysisType: policy
+Filename: aws_config_recording_enabled.py
+PolicyID: "AWS.Config.RecordingEnabled"
+DisplayName: "AWS Config Status"
+Enabled: true
+ResourceTypes:
+  - AWS.Config.Recorder
+Tags:
+  - AWS
+  - Panther
+Severity: High
+Description: >
+  This policy ensures that the config recorder is operational and capturing changes to
+  your account.
+Runbook: Enable AWS Config recording
+Reference: https://docs.aws.amazon.com/config/latest/developerguide/stop-start-recorder.html
+Tests:
+  -
+    Name: Recording Enabled
+    ExpectedResult: true
+    Resource:
+      {
+        "Recorder": {
+          "Name": "default",
+          "RecordingGroup": {
+            "AllSupported": true,
+            "IncludeGlobalResourceTypes": true,
+            "ResourceTypes": [
+            ]
+          },
+          "RoleARN": "arn:aws:iam::112233445566:role/role-name"
+        },
+        "Region": "us-west-2",
+        "Status": {
+          "LastErrorCode": null,
+          "LastErrorMessage": null,
+          "LastStartTime": "2019-01-01T00:00:00Z",
+          "LastStatus": "SUCCESS",
+          "LastStatusChangeTime": "2019-01-01T00:00:00Z",
+          "LastStopTime": null,
+          "Name": "default",
+          "Recording": true
+        }
+      }
+  -
+    Name: Recording Disabled
+    ExpectedResult: false
+    Resource:
+      {
+        "Recorder": {
+          "Name": "default",
+          "RecordingGroup": {
+            "AllSupported": false,
+            "IncludeGlobalResourceTypes": true,
+            "ResourceTypes": [
+            ]
+          },
+          "RoleARN": "arn:aws:iam::112233445566:role/role-name"
+        },
+        "Region": "us-west-2",
+        "Status": {
+          "LastErrorCode": null,
+          "LastErrorMessage": null,
+          "LastStartTime": "2019-01-01T00:00:00Z",
+          "LastStatus": "SUCCESS",
+          "LastStatusChangeTime": "2019-01-01T00:00:00Z",
+          "LastStopTime": null,
+          "Name": "default",
+          "Recording": false
+        }
+      }

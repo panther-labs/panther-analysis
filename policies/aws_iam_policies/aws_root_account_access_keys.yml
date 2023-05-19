@@ -1,0 +1,166 @@
+AnalysisType: policy
+Filename: aws_root_account_access_keys.py
+PolicyID: "AWS.RootAccount.AccessKeys"
+DisplayName: "AWS Root Account Access Keys"
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.RootUser
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Persistence:Account Manipulation
+Reports:
+  CIS:
+    - 1.12
+  PCI:
+    - 7.1.2
+    - 8.5
+  MITRE ATT&CK:
+    - TA0003:T1098
+Severity: Critical
+Description: >
+  This policy validates that no programmatic access keys exist for the root account.
+Runbook: >
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-root-account-has-no-access-keys
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Tests:
+  -
+    Name: Access Key 1 Active
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: Access Key 2 Active
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": true,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: Access Keys 1 and 2 Active
+    ExpectedResult: false
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": true,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }
+  -
+    Name: No Access Keys Enabled
+    ExpectedResult: true
+    Resource:
+      {
+        "ARN": "arn:aws:iam::123456789012:root",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:root",
+          "AccessKey1Active": false,
+          "AccessKey1LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": true,
+          "PasswordEnabled": false,
+          "PasswordLastChanged": "0001-01-01T00:00:00Z",
+          "PasswordLastUsed": "2019-01-01T00:00:00Z",
+          "PasswordNextRotation": "0001-01-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "<root_account>"
+        },
+        "UserID": null,
+        "UserName": "root",
+        "VirtualMFA": null
+      }

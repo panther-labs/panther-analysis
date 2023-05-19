@@ -1,0 +1,123 @@
+AnalysisType: rule
+Description: An application was linked to your Dropbox Account
+DisplayName: "Dropbox Linked Team Application Added"
+Enabled: true
+Filename: dropbox_linked_team_application_added.py
+Reference: Ensure that the application is valid and not malicious
+Runbook: >
+  Verify that this is expected. If not, determine other actions taken by this user recently and reach out to the user.
+  If the event involved a non-team member, consider disabling the user's access while investigating.
+Severity: Low
+Tags:
+    - dropbox
+Tests:
+    - ExpectedResult: true
+      Log:
+        actor:
+            _tag: user
+            user:
+                _tag: team_member
+                account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: user_name
+                email: user@domain.com
+                team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        context:
+            _tag: team
+        details:
+            .tag: app_link_team_details
+            app_info:
+                .tag: team_linked_app
+                app_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: dropbox-app-name
+        event_category:
+            _tag: apps
+        event_type:
+            _tag: app_link_team
+            description: Linked app for team
+        involve_non_team_member: false
+        origin:
+            access_method:
+                .tag: api
+                request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            geo_location:
+                city: Los Angeles
+                country: US
+                ip_address: 1.2.3.4
+                region: California
+        timestamp: "2023-02-16 20:39:34"
+      Name: App linked for team is LOW severity
+    - ExpectedResult: false
+      Log:
+        actor:
+            _tag: user
+            user:
+                _tag: team_member
+                account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: user_name
+                email: user@domain.com
+                team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        context:
+            _tag: team
+        details:
+            .tag: app_link_member_details
+            app_info:
+                .tag: member_linked_app
+                app_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: personal-dropbox-app-name
+        event_category:
+            _tag: apps
+        event_type:
+            _tag: app_link_member
+            description: Linked app for member
+        involve_non_team_member: false
+        origin:
+            access_method:
+                .tag: api
+                request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            geo_location:
+                city: Los Angeles
+                country: US
+                ip_address: 1.2.3.4
+                region: California
+        timestamp: "2023-02-16 20:39:34"
+      Name: A non-team linked event does not alert
+    - ExpectedResult: true
+      Log:
+        actor:
+            _tag: user
+            user:
+                _tag: team_member
+                account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: user_name
+                email: user@domain.com
+                team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        context:
+            _tag: team
+        details:
+            .tag: app_link_team_details
+            app_info:
+                .tag: team_linked_app
+                app_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                display_name: dropbox-app-name
+        event_category:
+            _tag: apps
+        event_type:
+            _tag: app_link_team
+            description: Linked app for team
+        involve_non_team_member: true
+        origin:
+            access_method:
+                .tag: api
+                request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            geo_location:
+                city: Los Angeles
+                country: US
+                ip_address: 1.2.3.4
+                region: California
+        timestamp: "2023-02-16 20:39:34"
+      Name: App linked for team involving non-team member is HIGH severity
+DedupPeriodMinutes: 60
+LogTypes:
+    - Dropbox.TeamEvent
+RuleID: "Dropbox.Linked.Team.Application.Added"
+Threshold: 1

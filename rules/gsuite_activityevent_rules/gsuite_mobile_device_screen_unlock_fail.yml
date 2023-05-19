@@ -1,0 +1,97 @@
+AnalysisType: rule
+Filename: gsuite_mobile_device_screen_unlock_fail.py
+RuleID: "GSuite.DeviceUnlockFailure"
+DisplayName: "GSuite User Device Unlock Failures"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Credential Access:Brute Force
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110
+Severity: Medium
+Description: >
+  Someone failed to unlock a user's device multiple times in quick succession.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/mobile#FAILED_PASSWORD_ATTEMPTS_EVENT
+Runbook: >
+  Verify that these unlock attempts came from the user, and not a malicious actor which has acquired the user's device.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Normal Mobile Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "mobile",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.io",
+        },
+        "type": "device_updates",
+        "name": "DEVICE_SYNC_EVENT",
+        "parameters": {
+          "USER_EMAIL": "homer.simpson@example.io"
+        },
+      }
+  -
+    Name: Small Number of Failed Logins
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "mobile",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.io",
+        },
+        "type": "device_updates",
+        "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
+        "parameters": {
+          "USER_EMAIL": "homer.simpson@example.io",
+          "FAILED_PASSWD_ATTEMPTS": 2
+        },
+      }
+  -
+    Name: Multiple Failed Login Attempts with int Type
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "mobile",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.io",
+        },
+        "type": "device_updates",
+        "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
+        "parameters": {
+          "USER_EMAIL": "homer.simpson@example.io",
+          "FAILED_PASSWD_ATTEMPTS": 100
+        },
+      }
+  -
+    Name: Multiple Failed Login Attempts with String Type
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "mobile",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.io",
+        },
+        "type": "device_updates",
+        "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
+        "parameters": {
+          "USER_EMAIL": "homer.simpson@example.io",
+          "FAILED_PASSWD_ATTEMPTS": "100"
+        },
+      }

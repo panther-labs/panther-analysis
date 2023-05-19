@@ -1,0 +1,65 @@
+AnalysisType: rule
+Filename: osquery_mac_application_firewall.py
+RuleID: "Osquery.Mac.ApplicationFirewallSettings"
+DisplayName: "MacOS ALF is misconfigured"
+Enabled: true
+LogTypes:
+  - Osquery.Differential
+Tags:
+  - Osquery
+  - MacOS
+  - Security Control
+  - Defense Evasion:Impair Defenses
+Reports:
+  CIS:
+    - 2.6.3
+    - 2.6.4
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: High
+Description: >
+  The application level firewall blocks unwanted network connections made to your
+  computer from other computers on your network.
+Runbook: Re-enable the firewall manually or with configuration management
+Reference: https://support.apple.com/en-us/HT201642
+SummaryAttributes:
+  - name
+  - hostIdentifier
+  - action
+Tests:
+  -
+    Name: ALF Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "name": "pack_incident-response_alf",
+        "action": "added",
+        "hostIdentifier": "test-host",
+        "columns": {
+          "logging_enabled": "0",
+          "stealth_enabled": "0",
+          "firewall_unload": "0",
+          "allow_signed_enabled": "0",
+          "global_state": "0",
+          "logging_option": "0",
+          "version": "1.6"
+        }
+      }
+  -
+    Name: ALF Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "name": "pack_incident-response_alf",
+        "action": "added",
+        "hostIdentifier": "test-host",
+        "columns": {
+          "logging_enabled": "1",
+          "stealth_enabled": "1",
+          "firewall_unload": "0",
+          "allow_signed_enabled": "1",
+          "global_state": "1",
+          "logging_option": "0",
+          "version": "1.6"
+        }
+      }

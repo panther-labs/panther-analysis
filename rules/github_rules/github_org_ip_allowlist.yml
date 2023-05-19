@@ -1,0 +1,53 @@
+AnalysisType: rule
+Filename: github_org_ip_allowlist.py
+RuleID: "GitHub.Org.IpAllowlist"
+DisplayName: "GitHub Org IP Allow List modified"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - Persistence:Account Manipulation
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Severity: Medium
+SummaryAttributes:
+  - actor
+  - action
+Description: Detects changes to a GitHub Org IP Allow List
+Runbook: Verify that the change was authorized and appropriate.
+Tests:
+  -
+    Name: GitHub - IP Allow list modified
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "ip_allow_list_entry.create",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  -
+    Name: GitHub - IP Allow list disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "ip_allow_list.disable",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+      }
+  -
+    Name: GitHub - Non IP Allow list action
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.invite_user",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+      }

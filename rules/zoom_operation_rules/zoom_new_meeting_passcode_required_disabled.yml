@@ -1,0 +1,37 @@
+AnalysisType: rule
+Description: A Zoom User turned off your organization's setting to require passcodes for new meetings.
+DisplayName: "Zoom New Meeting Passcode Required Disabled"
+Enabled: true
+Filename: zoom_new_meeting_passcode_required_disabled.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Require a passcode when scheduling new meetings: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:22:17"
+      Name: Setting Turn Off
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Require a passcode when scheduling new meetings: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:22:17"
+      Name: Setting Turn On
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Automatically sign users out after a specified time: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:20:42"
+      Name: 'Automatic Sign Out Setting Disabled '
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: "Zoom.New.Meeting.Passcode.Required.Disabled"
+Threshold: 1

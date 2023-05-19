@@ -1,0 +1,486 @@
+AnalysisType: rule
+Filename: brute_force_by_ip.py
+RuleID: "Standard.BruteForceByIP"
+DedupPeriodMinutes: 60
+DisplayName: "Brute Force By IP"
+Enabled: true
+LogTypes:
+  - Asana.Audit
+  - Atlassian.Audit
+  - AWS.CloudTrail
+  - Box.Event
+  - GSuite.Reports
+  - Okta.SystemLog
+  - OneLogin.Events
+  - OnePassword.SignInAttempt
+Severity: Info
+Tags:
+  - DataModel
+  - Credential Access:Brute Force
+Threshold: 20
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110
+Description: An actor user was denied login access more times than the configured threshold.
+Runbook: Analyze the IP they came from, and other actions taken before/after. Check if a user from this ip eventually authenticated successfully.
+SummaryAttributes:
+  - p_any_ip_addresses
+Tests:
+  -
+    Name: AWS.CloudTrail - Successful Login
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "testuser"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Success"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012",
+          "p_log_type": "AWS.CloudTrail",
+          "p_parse_time": "2021-06-04 10:02:33.650807",
+          "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: AWS.CloudTrail - Failed Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "userName": "tester"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "signin.amazonaws.com",
+          "eventName": "ConsoleLogin",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla",
+          "requestParameters": null,
+          "responseElements": {
+              "ConsoleLogin": "Failure"
+          },
+          "additionalEventData": {
+              "LoginTo": "https://console.aws.amazon.com/console/",
+              "MobileVersion": "No",
+              "MFAUsed": "No"
+          },
+          "eventID": "1",
+          "eventType": "AwsConsoleSignIn",
+          "recipientAccountId": "123456789012",
+          "p_log_type": "AWS.CloudTrail",
+          "p_parse_time": "2021-06-04 10:02:33.650807",
+          "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Box - Regular Event
+    ExpectedResult: false
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "ip_address": "111.111.111.111",
+        "event_type": "DELETE",
+        "p_log_type": "Box.Event",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Box - Login Failed
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "type": "event",
+        "additional_details": '{"key": "value"}',
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
+        "event_type": "FAILED_LOGIN",
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "name": "Bob Cat",
+        },
+        "ip_address": "111.111.111.111",
+        "p_log_type": "Box.Event",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: GSuite - Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {"applicationName": "login"},
+        "ipAddress": "111.111.111.111",
+        "events": [
+          {
+            "type": "login",
+            "name": "login_success"
+          }
+        ],
+        "p_log_type": "GSuite.Reports",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: GSuite - Failed Login Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "actor" : {
+          "email": "bob@example.com"
+        },
+        "id": {"applicationName": "login"},
+        "ipAddress": "111.111.111.111",
+        "events": [
+          {
+            "type": "login",
+            "name": "login_failure"
+          }
+        ],
+        "p_log_type": "GSuite.Reports",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Okta - Successful Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "111.111.111.111",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "SUCCESS"
+        },
+        "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Okta - Failed Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "actor": {
+            "alternateId": "admin",
+            "displayName": "unknown",
+            "id": "unknown",
+            "type": "User"
+        },
+        "client": {
+            "ipAddress": "111.111.111.111",
+        },
+        "eventType": "user.session.start",
+        "outcome": {
+            "reason": "VERIFICATION_ERROR",
+            "result": "FAILURE"
+        },
+        "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: OneLogin - Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": 8,
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "ipaddr": "111.111.111.111",
+        "p_log_type": "OneLogin.Events",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: OneLogin - Failed Login Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "event_type_id": 6,
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "ipaddr": "1.2.3.4",
+        "p_log_type": "OneLogin.Events",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: GCP - Non Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "serviceName": "cloudresourcemanager.googleapis.com",
+          "methodName": "SetIamPolicy",
+          "authenticationInfo": {
+            "principalEmail": "bob@example.com"
+          },
+          "requestMetadata": {
+            "callerIP": "111.111.111.111"
+          },
+          "serviceData": {
+            "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+            "policyDelta": {
+              "bindingDeltas": [
+                {
+                  "action": "ADD",
+                  "member": "cat@example.com",
+                  "role": "roles/resourcemanager.organizationAdmin"
+                }
+              ]
+            }
+          }
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+
+  -
+    Name: Asana - Failed Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "Homer"
+        },
+        "context": {
+          "client_ip_address": "8.8.8.8",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:10.364Z",
+        "details": {
+          "method": [ "ONE_TIME_KEY" ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_failed",
+        "gid": "222222222",
+        "resource": {
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "homer",
+          "resource_type": "user",
+        },
+        "p_log_type": "Asana.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: Asana - Normal Login
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "Homer"
+        },
+        "context": {
+          "client_ip_address": "8.8.8.8",
+          "context_type": "web",
+        },
+        "created_at": "2021-10-21T23:38:10.364Z",
+        "details": {
+          "method": [ "ONE_TIME_KEY" ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_succeeded",
+        "gid": "222222222",
+        "resource": {
+          "email": "homer@springfield.com",
+          "gid": "2222222",
+          "name": "homer",
+          "resource_type": "user",
+        },
+        "p_log_type": "Asana.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  -
+    Name: 1Password - Regular Login
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "1234",
+        "session_uuid": "5678",
+        "timestamp": "2021-12-03 19:52:52",
+        "category": "success",
+        "type": "credentials_ok",
+        "country": "US",
+        "target_user": {
+          "email": "homer@springfield.gov",
+          "name": "Homer Simpson",
+          "uuid": "1234"
+        },
+        "client": {
+          "app_name": "1Password Browser Extension",
+          "app_version": "20184",
+          "ip_address": "1.1.1.1",
+          "os_name": "Solaris",
+          "os_version": "10",
+          "platform_name": "Chrome",
+          "platform_version": "96.0.4664.55"
+        },
+        p_log_type: "OnePassword.SignInAttempt"
+
+      }
+  -
+    Name: 1Password - Failed Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+                          {
+                          "ip": "111.111.111.111",
+                          "region": "UnitTestRegion",
+                          "city": "UnitTestCityNew",
+                          "country": "UnitTestCountry",
+                          "hostname": "somedomain.com",
+                          "org": "Some Org"
+                          }
+    Log:
+      {
+      "uuid": "1234",
+      "session_uuid": "5678",
+      "timestamp": "2021-12-03 19:52:52",
+      "category": "credentials_failed",
+      "type": "password_secret_bad",
+      "country": "US",
+      "target_user": {
+        "email": "homer@springfield.gov",
+        "name": "Homer Simpson",
+        "uuid": "1234"
+      },
+      "client": {
+        "app_name": "1Password Browser Extension",
+        "app_version": "20184",
+        "ip_address": "111.111.111.111",
+        "os_name": "Solaris",
+        "os_version": "10",
+        "platform_name": "Chrome",
+        "platform_version": "96.0.4664.55"
+      },
+      "p_log_type": "OnePassword.SignInAttempt",
+      "p_parse_time": "2021-06-04 10:02:33.650807",
+      "p_event_time": "2021-06-04 09:59:53.650807"
+
+    }

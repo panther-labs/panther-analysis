@@ -1,0 +1,53 @@
+AnalysisType: rule
+Filename: gsuite_advanced_protection.py
+RuleID: "GSuite.AdvancedProtection"
+DisplayName: "GSuite User Advanced Protection Change"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Defense Evasion:Impair Defenses
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: Low
+Description: >
+  A user disabled advanced protection for themselves.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/user-accounts#titanium_change
+Runbook: >
+  Have the user re-enable Google Advanced Protection
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Advanced Protection Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.com"
+        },
+        "type": "titanium_change",
+        "name": "titanium_enroll",
+      }
+  -
+    Name: Advanced Protection Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "user_accounts",
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "homer.simpson@example.com"
+        },
+        "type": "titanium_change",
+        "name": "titanium_unenroll",
+      }
+

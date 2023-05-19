@@ -1,0 +1,94 @@
+AnalysisType: rule
+Filename: github_repo_initial_access.py
+RuleID: "GitHub.Repo.InitialAccess"
+DisplayName: "GitHub User Initial Access to Private Repo"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Severity: Info
+Description: Detects when a user initially accesses a private organization repository.
+Tests:
+  -
+    Name: GitHub - Initial Access
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: ""
+      - objectName: put_string_set
+        returnValue: ""
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": false,
+        "actor": "cat",
+        "user": ""
+      }
+  -
+    Name: GitHub - Repeated Access
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: >
+          "cat":"my-repo"
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": false,
+        "actor": "cat",
+        "user": ""
+      }
+  -
+    Name: GitHub - Initial Access Public Repo
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: ""
+      - objectName: put_string_set
+        returnValue: ""
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": true,
+        "actor": "cat",
+        "user": ""
+      }
+  -
+    Name: GitHub - Clone without Actor
+    ExpectedResult: false
+    Log:
+      {
+        "@timestamp": 1623971719091,
+        "business": "",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "action": "git.push",
+        "p_log_type": "GitHub.Audit",
+        "protocol_name": "ssh",
+        "repository": "my-org/my-repo",
+        "repository_public": false,
+        "actor": "",
+        "user": ""
+      }

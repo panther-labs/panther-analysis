@@ -1,0 +1,49 @@
+AnalysisType: rule
+Filename: gsuite_doc_ownership_transfer.py
+RuleID: "GSuite.DocOwnershipTransfer"
+DisplayName: "GSuite Document External Ownership Transfer"
+Enabled: false
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Configuration Required
+  - Collection:Data from Information Repositories
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1213
+Severity: Low
+Description: >
+  A GSuite document's ownership was transferred to an external party.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/admin-docs-settings#TRANSFER_DOCUMENT_OWNERSHIP
+Runbook: >
+  Verify that this document did not contain sensitive or private company information.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Ownership Transferred Within Organization
+    ExpectedResult: false
+    Log:
+      {
+          "id": {
+              "applicationName": "admin",
+          },
+          "name": "TRANSFER_DOCUMENT_OWNERSHIP",
+          "parameters": {
+              "NEW_VALUE": "homer.simpson@example.com",
+          },
+      }
+  -
+    Name: Document Transferred to External User
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "admin",
+        },
+        "name": "TRANSFER_DOCUMENT_OWNERSHIP",
+        "parameters": {
+          "NEW_VALUE": "monty.burns@badguy.com",
+        },
+      }

@@ -1,0 +1,17 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_public_role_grant.py 
+RuleID: "Snowflake.PublicRoleGrant"
+Description: >
+  Detect additional grants to the public role
+DisplayName: "Snowflake Grant to Public Role"
+Enabled: false
+Runbook: Determine if this is a necessary grant for the public role, which should be kept to the fewest possible.
+ScheduledQueries:
+  - Query.Snowflake.PublicRoleGrant
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query 
+    ExpectedResult: true
+    Log:
+      Anything: any value

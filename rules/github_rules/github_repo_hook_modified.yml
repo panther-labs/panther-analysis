@@ -1,0 +1,69 @@
+AnalysisType: rule
+Filename: github_repo_hook_modified.py
+RuleID: "GitHub.Repo.HookModified"
+DisplayName: "GitHub Web Hook Modified"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - Exfiltration:Automated Exfiltration
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1020
+Severity: Info
+Description: Detects when a web hook is added, modified, or deleted in an org repository. 
+Tests:
+  -
+    Name: GitHub - Webhook Created
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "hook.create",
+        "data": {
+            "hook_id": 111222333444555,
+            "events": [
+                "fork",
+                "public",
+                "pull_request",
+                "push",
+                "repository"
+            ]
+        },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Webhook Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "hook.destroy",
+        "data": {
+            "hook_id": 111222333444555,
+            "events": [
+                "fork",
+                "public",
+                "pull_request",
+                "push",
+                "repository"
+            ]
+        },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Non Webhook Event
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.invite_member",
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repository": "my-org/my-repo"
+      }

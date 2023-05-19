@@ -1,0 +1,127 @@
+AnalysisType: policy
+Filename: aws_iam_resource_does_not_have_inline_policy.py
+PolicyID: "AWS.IAM.Resource.DoesNotHaveInlinePolicy"
+DisplayName: "AWS IAM Resource Does Not Have Inline Policy"
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.User
+  - AWS.IAM.Group
+Tags:
+  - AWS
+  - PCI
+  - Persistence:Valid Accounts
+Reports:
+  PCI:
+    - 2.2.4
+    - 7.1.1
+  MITRE ATT&CK:
+    - TA0003:T1078
+Severity: Medium
+Description: >
+  This policy validates that no IAM entities have inline policies assigned. Inline policies are more difficult to administer and audit, and may lead to access that lasts longer than intended.
+Runbook: >
+  Delete the inline policy, and if the permissions are required add an appropriate IAM managed policy to the entity.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html
+Tests:
+  -
+    Name: IAM User Has Inline Policy
+    ExpectedResult: false
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicies": {
+          "BobsInlinePolicy": "policy document"
+        },
+        "ManagedPolicyNames": null,
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }
+  -
+    Name: IAM User Has No Inline Policy
+    ExpectedResult: true
+    Resource:
+      {
+        "Arn": "arn:aws:iam::123456789012:user/Bobert",
+        "CreateDate": "2019-01-01T00:00:00Z",
+        "CredentialReport": {
+          "ARN": "arn:aws:iam::123456789012:user/Bobert",
+          "AccessKey1Active": true,
+          "AccessKey1LastRotated": "2019-01-01T00:00:00Z",
+          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey1LastUsedRegion": "N/A",
+          "AccessKey1LastUsedService": "N/A",
+          "AccessKey2Active": false,
+          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+          "AccessKey2LastUsedRegion": "N/A",
+          "AccessKey2LastUsedService": "N/A",
+          "Cert1Active": false,
+          "Cert1LastRotated": "0001-01-01T00:00:00Z",
+          "Cert2Active": false,
+          "Cert2LastRotated": "0001-01-01T00:00:00Z",
+          "MfaActive": false,
+          "PasswordEnabled": true,
+          "PasswordLastChanged": "2019-01-01T00:00:00Z",
+          "PasswordLastUsed": "0001-01-01T00:00:00Z",
+          "PasswordNextRotation": "2019-04-01T00:00:00Z",
+          "UserCreationTime": "2019-01-01T00:00:00Z",
+          "UserName": "Bobert"
+        },
+        "Groups": [
+          {
+            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+            "CreateDate": "2019-01-01T00:00:00Z",
+            "GroupId": "ABCDEFGHIJKLMNOP",
+            "GroupName": "ExampleGroup",
+            "Path": "/"
+          }
+        ],
+        "InlinePolicies": null,
+        "ManagedPolicyNames": null,
+        "PasswordLastUsed": null,
+        "Path": "/",
+        "PermissionsBoundary": null,
+        "Tags": null,
+        "UserId": "ASDFASDFASDFASDF",
+        "UserName": "Bobert",
+        "VirtualMFA": null
+      }

@@ -1,0 +1,198 @@
+AnalysisType: policy
+Filename: aws_cloudformation_stack_drifted.py
+PolicyID: "AWS.CloudFormation.Stack.Drifted"
+DisplayName: "AWS CloudFormation Stack Drift"
+Enabled: true
+ResourceTypes:
+  - AWS.CloudFormation.Stack
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496
+Tags:
+  - AWS
+  - Operations
+  - Panther
+  - Impact:Resource Hijacking
+Severity: Low
+Description: >
+  A stack has drifted from its defined configuration.
+Runbook: >
+  From the CloudFormation web console, look at the drifted resources for the failing stack.
+  If the drift is expected, update the policy ignore list to exclude this stack.
+  Otherwise, analyze CloudTrail logs to understand who changed the drifted resource(s) and ensure
+  it was legitimate access.
+Reference: https://amzn.to/2z8dDFW
+Tests:
+  -
+    Name: Stack Drifted
+    ExpectedResult: false
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "Name": "iam-roles",
+        "Tags": {},
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-04-02T17:16:30.000Z",
+        "Capabilities": [
+          "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM Admin role",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-04-02T17:16:30Z",
+          "StackDriftStatus": "DRIFTED"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-04-02T17:16:30Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "28800",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": "arn:aws:iam::123456789012:role/CFNServiceRole",
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }
+  -
+    Name: Stack Drifted but Ignored
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "Name": "panther-master-Panther-XXXXXXXXXXXXX-BootstrapGateway-XXXXXXXXXXXXX",
+        "Tags": {
+          "Application": "Panther",
+          "PantherEdition": "Community",
+          "PantherVersion": "v1.7.1",
+          "Stack": "panther-bootstrap-gateway"
+        },
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-04-02T17:16:30.000Z",
+        "Capabilities": [
+            "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM Admin role",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-04-02T17:16:30Z",
+          "StackDriftStatus": "DRIFTED"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-04-02T17:16:30Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "28800",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": "arn:aws:iam::123456789012:role/CFNServiceRole",
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }
+  -
+    Name: Stack In Sync
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountID": "123456789012",
+        "Region": "us-west-2",
+        "ARN": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "Name": "iam-roles",
+        "Tags": {},
+        "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "ResourceType": "AWS.CloudFormation.Stack",
+        "TimeCreated": "2019-04-02T17:16:30.000Z",
+        "Capabilities": [
+          "CAPABILITY_NAMED_IAM"
+        ],
+        "ChangeSetId": null,
+        "DeletionTime": null,
+        "Description": "IAM Admin role",
+        "DisableRollback": false,
+        "DriftInformation": {
+          "LastCheckTimestamp": "2019-04-02T17:16:30Z",
+          "StackDriftStatus": "IN_SYNC"
+        },
+        "EnableTerminationProtection": null,
+        "LastUpdatedTime": "2019-04-02T17:16:30Z",
+        "NotificationARNs": [],
+        "Outputs": null,
+        "Parameters": [
+          {
+            "ParameterKey": "MaxSessionDurationSec",
+            "ParameterValue": "28800",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          },
+          {
+            "ParameterKey": "Prefix",
+            "ParameterValue": "Dev",
+            "ResolvedValue": null,
+            "UsePreviousValue": null
+          }
+        ],
+        "ParentId": null,
+        "RoleARN": null,
+        "RollbackConfiguration": {
+          "MonitoringTimeInMinutes": null,
+          "RollbackTriggers": []
+        },
+        "RootId": null,
+        "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12345678901258f4c3a3-c67c-4f81-afe1-509a2065de91",
+        "StackStatus": "UPDATE_COMPLETE",
+        "StackStatusReason": null,
+        "TimeoutInMinutes": null,
+        "Drifts": []
+      }

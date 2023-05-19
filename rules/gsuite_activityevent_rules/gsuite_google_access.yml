@@ -1,0 +1,38 @@
+AnalysisType: rule
+Filename: gsuite_google_access.py
+RuleID: "GSuite.GoogleAccess"
+DisplayName: "Google Accessed a GSuite Resource"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Severity: Low
+Description: >
+  Google accessed one of your GSuite resources directly, most likely in response to a support incident.
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/access-transparency
+Runbook: >
+  Your GSuite Super Admin can visit the Access Transparency report in the GSuite Admin Dashboard to see more details about the access.
+SummaryAttributes:
+  - actor:email
+Tests:
+  -
+    Name: Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": {
+          "applicationName": "login",
+        },
+        "type": "login",
+      }
+  -
+    Name: Resource Accessed by Google
+    ExpectedResult: true
+    Log:
+      {
+        "id": {
+          "applicationName": "access_transparency",
+        },
+        "type": "GSUITE_RESOURCE",
+      }

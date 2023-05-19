@@ -1,0 +1,133 @@
+AnalysisType: rule
+Description: Google Workspace Marketplace application allowlist settings were modified.
+DisplayName: "Google Workspace Apps Marketplace Allowlist"
+Enabled: true
+Filename: google_workspace_apps_marketplace_allowlist.py
+Runbook: Confirm with the acting user that this change was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Name: parameters json key set to null value
+      Log:
+        {
+          "actor": {
+            "callerType": "USER",
+            "email": "user@example.io",
+            "profileId": "111111111111111111111"
+          },
+          "id": {
+            "applicationName": "user_accounts",
+            "customerId": "C00000000",
+            "time": "2022-12-29 22:42:44.467000000",
+            "uniqueQualifier": "517500000000000000"
+          },
+          "parameters": null,
+          "ipAddress": "2600:2600:2600:2600:2600:2600:2600:2600",
+          "kind": "admin#reports#activity",
+          "name": "recovery_email_edit",
+          "type": "recovery_info_change"
+        }
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-10 23:38:45.125000000"
+            uniqueQualifier: "-12345"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CHANGE_EMAIL_SETTING
+        parameters:
+            NEW_VALUE: "3"
+            OLD_VALUE: "2"
+            ORG_UNIT_NAME: EXAMPLE IO
+            SETTING_NAME: ENABLE_G_SUITE_MARKETPLACE
+        type: EMAIL_SETTINGS
+      Name: Change Email Setting
+    - ExpectedResult: true
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "12345"
+        id:
+            applicationName: admin
+            customerId: D1234
+            time: "2022-12-10 23:33:04.667000000"
+            uniqueQualifier: "-12345"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CHANGE_EMAIL_SETTING
+        parameters:
+            NEW_VALUE: "1"
+            OLD_VALUE: DEFAULT
+            ORG_UNIT_NAME: EXAMPLE IO
+            SETTING_NAME: ENABLE_G_SUITE_MARKETPLACE
+        type: EMAIL_SETTINGS
+      Name: Change Email Setting Default
+    - ExpectedResult: false
+      Log:
+        actor:
+            callerType: USER
+            email: example@example.io
+            profileId: "123456"
+        id:
+            applicationName: admin
+            customerId: D12345
+            time: "2022-12-11 02:57:48.693000000"
+            uniqueQualifier: "-12456"
+        ipAddress: 12.12.12.12
+        kind: admin#reports#activity
+        name: CREATE_ROLE
+        parameters:
+            ROLE_ID: "567890"
+            ROLE_NAME: CustomAdminRoleName
+        type: DELEGATED_ADMIN_SETTINGS
+      Name: New Custom Role Created
+    - Name: ListObject Type
+      ExpectedResult: false
+      Log:
+        {
+            "actor": {
+            "email": "user@example.io",
+            "profileId": "118111111111111111111"
+            },
+            "id": {
+            "applicationName": "drive",
+            "customerId": "D12345",
+            "time": "2022-12-20 17:27:47.080000000",
+            "uniqueQualifier": "-7312729053723258069"
+            },
+            "ipAddress": "12.12.12.12",
+            "kind": "admin#reports#activity",
+            "name": "rename",
+            "parameters": {
+            "actor_is_collaborator_account": null,
+            "billable": true,
+            "doc_id": "1GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+            "doc_title": "Document Title- Found Here",
+            "doc_type": "presentation",
+            "is_encrypted": null,
+            "new_value": [
+                "Document Title- Found Here"
+            ],
+            "old_value": [
+                "Document Title- Old"
+            ],
+            "owner": "user@example.io",
+            "owner_is_shared_drive": null,
+            "owner_is_team_drive": null,
+            "primary_event": true,
+            "visibility": "private"
+            },
+            "type": "access"
+        }
+DedupPeriodMinutes: 60
+LogTypes:
+    - GSuite.ActivityEvent
+RuleID: "Google.Workspace.Apps.Marketplace.Allowlist"
+Threshold: 1

@@ -1,0 +1,31 @@
+AnalysisType: rule
+Description: A Duo administrator created an MFA bypass code for an application.
+DisplayName: "Duo Admin Bypass Code Created"
+Enabled: true
+Filename: duo_admin_bypass_code_created.py
+Runbook: Confirm this was authorized and necessary behavior.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: bypass_create
+        description: '{"bypass": "", "count": 1, "valid_secs": 3600, "auto_generated": true, "remaining_uses": 1, "user_id": "D12345", "bypass_code_ids": ["A12345"]}'
+        isotimestamp: "2022-12-14 21:17:39"
+        object: target@example.io
+        timestamp: "2022-12-14 21:17:39"
+        username: Homer Simpson
+      Name: Bypass Create
+    - ExpectedResult: false
+      Log:
+        action: bypass_detele
+        description: '{"bypass": "", "count": 1, "valid_secs": 3600, "auto_generated": true, "remaining_uses": 1, "user_id": "D12345", "bypass_code_ids": ["A12345"]}'
+        isotimestamp: "2022-12-14 21:17:39"
+        object: target@example.io
+        timestamp: "2022-12-14 21:17:39"
+        username: Homer Simpson
+      Name: Bypass Delete
+DedupPeriodMinutes: 60
+LogTypes:
+    - Duo.Administrator
+RuleID: "Duo.Admin.Bypass.Code.Created"
+Threshold: 1

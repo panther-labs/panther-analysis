@@ -1,0 +1,180 @@
+AnalysisType: rule
+Filename: github_advanced_security_change.py
+RuleID: "GitHub.Advanced.Security.Change"
+DisplayName: "GitHub Security Change, includes GitHub Advanced Security"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: Low
+Description: The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
+Runbook: Confirm with GitHub administrators and re-enable the tools as applicable. 
+Tests:
+  -
+    Name: Secret Scanning Disabled on a Repo
+    ExpectedResult: True
+    Log:
+      {
+        "action": "repository_secret_scanning_push_protection.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Secret Scanning Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "secret_scanning.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Secret Scanning Disabled for New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "secret_scanning_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Alerts Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_alerts.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Alerts Disabled on New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_alerts_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Disabled Org Wide
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_security_updates.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Dependabot Disabled on New Repos
+    ExpectedResult: True
+    Log:
+      {
+        "action": "dependabot_security_updates_new_repos.disable",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Non-GitHub Adv Sec Action
+    ExpectedResult: False
+    Log:
+      {
+        "action": "enterprise.config.disable_anonymous_git_access",
+        "actor": "bobert",
+        "actor_location": {
+          "country_code": "US"
+        },
+        "at_sign_timestamp": "2022-08-16 16:56:49.309",
+        "created_at": "2022-08-16 16:56:49.309",
+        "org": "an-org",
+        "repo": "an-org/a-repo",
+        "user": "bobert"
+      }
+  -
+    Name: Enterprise Log - business_advanced_security.enabled
+    ExpectedResult: False
+    Log:
+      {
+        "@timestamp": 1671111111111,
+        "_document_id": "gAcccccccccccccccccccc",
+        "action": "business_advanced_security.enabled",
+        "actor": "bobert",
+        "actor_ip": "12.12.12.12",
+        "actor_location": {
+            "country_code": "US"
+        },
+        "business": "example-enterprise",
+        "created_at": 1671111111111,
+        "operation_type": "modify",
+        "user": "bobert"
+      }
+  -
+    Name: Enterprise Log - business_advanced_security.disabled
+    ExpectedResult: True
+    Log:
+      {
+        "@timestamp": 1671111111111,
+        "_document_id": "gAcccccccccccccccccccc",
+        "action": "business_advanced_security.disabled",
+        "actor": "bobert",
+        "actor_ip": "12.12.12.12",
+        "actor_location": {
+            "country_code": "US"
+        },
+        "business": "example-enterprise",
+        "created_at": 1671111111111,
+        "operation_type": "modify",
+        "user": "bobert"
+      }

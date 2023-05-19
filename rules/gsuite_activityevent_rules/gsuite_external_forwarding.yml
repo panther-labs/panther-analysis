@@ -1,0 +1,115 @@
+AnalysisType: rule
+Filename: gsuite_external_forwarding.py
+RuleID: "GSuite.ExternalMailForwarding"
+DisplayName: "Gsuite Mail forwarded to external domain"
+Enabled: false
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Collection:Email Collection
+  - Configuration Required
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1114
+Severity: High
+Description: >
+  A user has configured mail forwarding to an external domain
+Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/login#email_forwarding_out_of_domain
+Runbook: >
+  Follow up with user to remove this forwarding rule if not allowed.
+SummaryAttributes:
+  - p_any_emails
+Tests:
+  -
+    Name: Forwarding to External Address
+    ExpectedResult: true
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "D12345",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "email_forwarding_change",
+        "name": "email_forwarding_out_of_domain",
+        "parameters": {
+          "email_forwarding_destination_address": "HSimpson@gmail.com"
+        },
+      }
+
+  -
+    Name: Forwarding to External Address - Allowed Domain
+    ExpectedResult: false
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "D12345",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "email_forwarding_change",
+        "name": "email_forwarding_out_of_domain",
+        "parameters": {
+          "email_forwarding_destination_address": "HSimpson@example.com"
+        },
+      }
+
+  -
+    Name: Non Forwarding Event
+    ExpectedResult: false
+    Log:
+      {
+      "id": {
+          "applicationName": "user_accounts",
+          "customerId": "D12345",
+        },
+        "actor": {
+          "email": "homer.simpson@.springfield.io",
+        },
+        "type": "2sv_change",
+        "name": "2sv_enroll",
+      }
+  - Name: ListObject Type
+    ExpectedResult: false
+    Log:
+      {
+          "actor": {
+          "email": "user@example.io",
+          "profileId": "118111111111111111111"
+          },
+          "id": {
+          "applicationName": "drive",
+          "customerId": "D12345",
+          "time": "2022-12-20 17:27:47.080000000",
+          "uniqueQualifier": "-7312729053723258069"
+          },
+          "ipAddress": "12.12.12.12",
+          "kind": "admin#reports#activity",
+          "name": "rename",
+          "parameters": {
+          "actor_is_collaborator_account": null,
+          "billable": true,
+          "doc_id": "1GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+          "doc_title": "Document Title- Found Here",
+          "doc_type": "presentation",
+          "is_encrypted": null,
+          "new_value": [
+              "Document Title- Found Here"
+          ],
+          "old_value": [
+              "Document Title- Old"
+          ],
+          "owner": "user@example.io",
+          "owner_is_shared_drive": null,
+          "owner_is_team_drive": null,
+          "primary_event": true,
+          "visibility": "private"
+          },
+          "type": "access"
+      }
+
