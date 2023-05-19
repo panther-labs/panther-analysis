@@ -466,7 +466,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                     "ip_cidr": "142.93.204.250/32",
                     "provider": {
                         "name": "foo",
-                        "category": "cdn",
+                        "category": "cloud",
                         "description": "some cloud",
                         "explanation": "because",
                         "reference": "my brother",
@@ -474,6 +474,40 @@ class TestRIOTAdvanced(unittest.TestCase):
                     },
                     "scan_time": "2023-05-12 05:11:04.679962983",
                 }
+            }
+        }
+    }
+
+    # for testing array matches
+    event_list = {
+        "p_enrichment": {
+            "greynoise_riot_advanced": {
+                "p_any_ip_addresses": [
+                    {
+                        "ip_cidr": "142.93.204.250/32",
+                        "provider": {
+                            "name": "foo",
+                            "category": "cloud",
+                            "description": "some cloud",
+                            "explanation": "because",
+                            "reference": "my brother",
+                            "trust_level": "1",
+                        },
+                        "scan_time": "2023-05-12 05:11:04.679962983",
+                    },
+                    {
+                        "ip_cidr": "142.93.204.128/32",
+                        "provider": {
+                            "name": "bar",
+                            "category": "cdn",
+                            "description": "some some cdn",
+                            "explanation": "because",
+                            "reference": "my brother",
+                            "trust_level": "2",
+                        },
+                        "scan_time": "2023-05-11 05:11:04.679962983",
+                    },
+                ]
             }
         }
     }
@@ -513,6 +547,12 @@ class TestRIOTAdvanced(unittest.TestCase):
         last_udpated = riot.last_updated("ClientIP")
         self.assertEqual(last_udpated, datetime.datetime(2023, 5, 12, 5, 11, 4, 679962))
 
+    def test_last_updated_list(self):
+        """Should have last_updated (list)"""
+        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event_list)
+        last_udpated = riot.last_updated("p_any_ip_addresses")
+        self.assertEqual(last_udpated, datetime.datetime(2023, 5, 12, 5, 11, 4, 679962))
+
     def test_description(self):
         """Should have description"""
         riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
@@ -523,7 +563,7 @@ class TestRIOTAdvanced(unittest.TestCase):
         """Should have category"""
         riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
         cat = riot.category("ClientIP")
-        self.assertEqual(cat, "cdn")        
+        self.assertEqual(cat, "cloud")
 
     def test_explanation(self):
         """Should have explanation"""
@@ -543,6 +583,12 @@ class TestRIOTAdvanced(unittest.TestCase):
         tl = riot.trust_level("ClientIP")
         self.assertEqual(tl, "1")
 
+    def test_trust_level_list(self):
+        """Should have trust_level (list)"""
+        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event_list)
+        levels = riot.trust_level("p_any_ip_addresses")
+        self.assertEqual(levels, ["1", "2"])
+
     def test_context(self):
         """Should have context"""
         riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
@@ -556,7 +602,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                 "Name": "foo",
                 "Provider Data": {
                     "name": "foo",
-                    "category": "cdn",
+                    "category": "cloud",
                     "description": "some cloud",
                     "explanation": "because",
                     "reference": "my brother",

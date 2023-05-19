@@ -2,6 +2,7 @@
 import datetime
 
 from dateutil import parser
+from panther_base_helpers import deep_get
 from panther_lookuptable_helpers import LookupTableMatches
 
 
@@ -98,10 +99,11 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
                 return None
             if length == 1:
                 return parser.parse(t)
-            min_t = t[0]
-            for list_t in t:
-                if list_t < min_t:
-                    min_t = list_t
+            min_t = parser.parse(t[0])
+            for list_t in t[1:]:
+                list_t_parsed = parser.parse(list_t)
+                if list_t_parsed < min_t:
+                    min_t = list_t_parsed
             return min_t
         return parser.parse(t)
 
@@ -115,10 +117,11 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
                 return None
             if length == 1:
                 return parser.parse(t)
-            max_t = t[0]
-            for list_t in t:
-                if list_t > min_t:
-                    max_t = list_t
+            max_t = parser.parse(t[0])
+            for list_t in t[1:]:
+                list_t_parsed = parser.parse(list_t)
+                if list_t_parsed > max_t:
+                    max_t = list_t_parsed
             return max_t
         return parser.parse(t)
 
@@ -247,10 +250,11 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
                 return None
             if length == 1:
                 return parser.parse(t)
-            max_t = t[0]
-            for list_t in t:
-                if list_t > min_t:
-                    max_t = list_t
+            max_t = parser.parse(t[0])
+            for list_t in t[1:]:
+                list_t_parsed = parser.parse(list_t)
+                if list_t_parsed > max_t:
+                    max_t = list_t_parsed
             return max_t
         return parser.parse(t)
 
@@ -272,7 +276,7 @@ class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
         return self._lookup(match_field, "provider", "description")
 
     def category(self, match_field: str) -> list or str:
-        return self._lookup(match_field, "provider", "category")    
+        return self._lookup(match_field, "provider", "category")
 
     def explanation(self, match_field: str) -> list or str:
         return self._lookup(match_field, "provider", "explanation")
@@ -307,8 +311,8 @@ def GetGreyNoiseRiotObject(event):
 
 
 def GreyNoiseSeverity(event, ip, default="MEDIUM"):
-    # Set Severity based on GreyNoise classification. If unknown to GreyNoise
-    # return default
+    # Set Severity based on GreyNoise classification.
+    # If unknown to GreyNoise return default
     noise = GetGreyNoiseObject(event)
     riot = GetGreyNoiseRiotObject(event)
 
@@ -318,10 +322,12 @@ def GreyNoiseSeverity(event, ip, default="MEDIUM"):
 
     classification = noise.classification(ip)
     if isinstance(classification, list):
+        highest_severity = "INFO"
         for list_classification in classification:
             severity = GreyNoiseSeverityDecode(classification, default)
-            # FIXME: take highest
-            return severity
+            if SeverityGreaterThan(severity, highest_severtity):
+                highest_severity = severity
+        return hishest_severity
 
     # If classification is unknown default to medium
     return GreyNoiseSeverityDecode(classification, default)
@@ -333,3 +339,16 @@ def GreyNoiseSeverityDecode(classification: str, default: str) -> str:
     if classification == "benign":
         return "LOW"
     return default
+
+
+_SEVERITIES = {
+    "INFO": 0,
+    "LOW": 1,
+    "MEDIUM": 2,
+    "HIGH": 3,
+    "CRITICAL": 4,
+}
+
+
+def SeverityGreaterThan(sev1: str, sev2: str) -> bool:
+    return _SEVERITIES.get(sev1) > _SEVERITIES.get(sev2)
