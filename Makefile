@@ -36,7 +36,10 @@ fmt:
 install:
 	pipenv install --dev
 
-test:
+global-helpers-unit-test:
+	pipenv run python global_helpers/*_test.py
+
+test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test
 
 managed-schemas:
