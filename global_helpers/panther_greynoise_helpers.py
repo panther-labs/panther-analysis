@@ -310,24 +310,24 @@ def GetGreyNoiseRiotObject(event):
     return GreyNoiseRIOTBasic(event)
 
 
-def GreyNoiseSeverity(event, ip, default="MEDIUM"):
+def GreyNoiseSeverity(event, field, default="MEDIUM"):
     # Set Severity based on GreyNoise classification.
     # If unknown to GreyNoise return default
     noise = GetGreyNoiseObject(event)
     riot = GetGreyNoiseRiotObject(event)
 
     # If IP exists in RIOT Dataset it is known good, lower alert severity
-    if riot.is_riot(ip):
+    if riot.is_riot(field):
         return "INFO"
 
-    classification = noise.classification(ip)
+    classification = noise.classification(field)
     if isinstance(classification, list):
         highest_severity = "INFO"
         for list_classification in classification:
-            severity = GreyNoiseSeverityDecode(classification, default)
-            if SeverityGreaterThan(severity, highest_severtity):
+            severity = GreyNoiseSeverityDecode(list_classification, default)
+            if SeverityGreaterThan(severity, highest_severity):
                 highest_severity = severity
-        return hishest_severity
+        return highest_severity
 
     # If classification is unknown default to medium
     return GreyNoiseSeverityDecode(classification, default)

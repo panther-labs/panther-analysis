@@ -264,6 +264,16 @@ class TestGreyNoiseBasic(unittest.TestCase):
         }
     }
 
+    def test_greynoise_object(self):
+        """Should be basic"""
+        noise = p_greynoise_h.GetGreyNoiseObject(self.event)
+        self.assertEqual(noise.subscription_level(), "basic")
+
+    def test_greynoise_severity(self):
+        """Should be CRITICAL"""
+        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
+        self.assertEqual(sev, "CRITICAL")
+
     def test_subscription_level(self):
         """Should be basic"""
         noise = p_greynoise_h.GreyNoiseBasic({})
@@ -355,6 +365,86 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
         }
     }
 
+    event_list = {
+        "p_enrichment": {
+            "greynoise_noise_advanced": {
+                "p_any_ip_addresses": [
+                    {
+                        "actor": "unknown",
+                        "bot": False,
+                        "classification": "malicious",
+                        "cve": ["cve1244", "cve4567"],
+                        "first_seen": "2022-03-19",
+                        "ip": "142.93.204.250",
+                        "last_seen_timestamp": "2022-04-06",
+                        "metadata": {
+                            "asn": "AS14061",
+                            "category": "hosting",
+                            "city": "North Bergen",
+                            "country": "United States",
+                            "country_code": "US",
+                            "organization": "DigitalOcean, LLC",
+                            "os": "Linux 2.2-3.x",
+                            "rdns": "",
+                            "region": "New Jersey",
+                            "tor": False,
+                        },
+                        "raw_data": {
+                            "hassh": [],
+                            "ja3": [],
+                            "scan": [{"port": 23, "protocol": "TCP"}],
+                            "web": {},
+                        },
+                        "seen": True,
+                        "spoofable": False,
+                        "tags": ["Mirai", "ZMap Client"],
+                        "vpn": False,
+                        "vpn_service": "N/A",
+                    },
+                    {
+                        "actor": "stinky rat",
+                        "bot": True,
+                        "classification": "malicious",
+                        "cve": ["cve1244", "cve4567"],
+                        "first_seen": "2022-02-19",
+                        "ip": "100.93.204.250",
+                        "last_seen_timestamp": "2022-03-06",
+                        "metadata": {
+                            "asn": "AS14461",
+                            "category": "isp",
+                            "city": "South Bergen",
+                            "country": "United States",
+                            "country_code": "US",
+                            "organization": "DigitalOcean, LLC",
+                            "os": "Linux 2.2-3.x",
+                            "rdns": "",
+                            "region": "South Hampton",
+                            "tor": False,
+                        },
+                        "spoofable": False,
+                        "vpn": False,
+                        "vpn_service": "N/A",
+                    },
+                ]
+            }
+        }
+    }
+
+    def test_greynoise_object(self):
+        """Should be advanced"""
+        noise = p_greynoise_h.GetGreyNoiseObject(self.event)
+        self.assertEqual(noise.subscription_level(), "advanced")
+
+    def test_greynoise_severity(self):
+        """Should be CRITICAL"""
+        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_greynoise_severity_list(self):
+        """Should be CRITICAL (list)"""
+        sev = p_greynoise_h.GreyNoiseSeverity(self.event_list, "p_any_ip_addresses")
+        self.assertEqual(sev, "CRITICAL")
+
     def test_subscription_level(self):
         """Should be advanced"""
         noise = p_greynoise_h.GreyNoiseAdvanced({})
@@ -414,10 +504,22 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
         first_seen = noise.first_seen("ClientIP")
         self.assertEqual(first_seen, datetime.datetime(2022, 3, 19, 0, 0))
 
+    def test_first_seen_list(self):
+        """Should have first seen (list)"""
+        noise = p_greynoise_h.GreyNoiseAdvanced(self.event_list)
+        first_seen = noise.first_seen("p_any_ip_addresses")
+        self.assertEqual(first_seen, datetime.datetime(2022, 2, 19, 0, 0))
+
     def test_last_seen(self):
         """Should have last seen"""
         noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
         last_seen = noise.last_seen("ClientIP")
+        self.assertEqual(last_seen, datetime.datetime(2022, 4, 6, 0, 0))
+
+    def test_last_seen_list(self):
+        """Should have last seen (list)"""
+        noise = p_greynoise_h.GreyNoiseAdvanced(self.event_list)
+        last_seen = noise.last_seen("p_any_ip_addresses")
         self.assertEqual(last_seen, datetime.datetime(2022, 4, 6, 0, 0))
 
     def test_asn(self):
@@ -574,10 +676,20 @@ class TestRIOTBasic(unittest.TestCase):
         }
     }
 
+    def test_greynoise_object(self):
+        """Should be basic"""
+        riot = p_greynoise_h.GetGreyNoiseRiotObject(self.event)
+        self.assertEqual(riot.subscription_level(), "basic")
+
     def test_subscription_level(self):
         """Should be basic"""
         riot = p_greynoise_h.GreyNoiseRIOTBasic({})
         self.assertEqual(riot.subscription_level(), "basic")
+
+    def test_greynoise_severity(self):
+        """Should be INFO"""
+        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
+        self.assertEqual(sev, "INFO")
 
     def test_is_riot(self):
         """Should be riot"""
@@ -679,10 +791,20 @@ class TestRIOTAdvanced(unittest.TestCase):
         }
     }
 
+    def test_greynoise_object(self):
+        """Should be advanced"""
+        riot = p_greynoise_h.GetGreyNoiseRiotObject(self.event)
+        self.assertEqual(riot.subscription_level(), "advanced")
+
     def test_subscription_level(self):
         """Should be advanced"""
         riot = p_greynoise_h.GreyNoiseRIOTAdvanced({})
         self.assertEqual(riot.subscription_level(), "advanced")
+
+    def test_greynoise_severity(self):
+        """Should be INFO"""
+        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
+        self.assertEqual(sev, "INFO")
 
     def test_is_riot(self):
         """Should be riot"""
