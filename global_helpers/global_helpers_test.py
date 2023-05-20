@@ -209,10 +209,6 @@ class TestTorExitNodes(unittest.TestCase):
     def test_url(self):
         """url generation"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
-
-    def test_url(self):
-        """url generation"""
-        tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         url = tor_exit_nodes.url("foo")
         today = datetime.datetime.today().strftime("%Y-%m-%d")
         # pylint: disable=line-too-long
