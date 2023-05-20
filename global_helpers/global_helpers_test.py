@@ -322,8 +322,8 @@ class TestGreyNoiseBasic(unittest.TestCase):
         )
 
 
-# pylint disable=R0904 (too-many-public-methods)
 class TestGreyNoiseAdvanced(unittest.TestCase):
+    # pylint disable=R0904 (too-many-public-methods)
 
     event = {
         "p_enrichment": {

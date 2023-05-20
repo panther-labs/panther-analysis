@@ -17,7 +17,7 @@ class TorExitNodes(LookupTableMatches):
         ip_address = self.ip_address(match_field)
         if isinstance(ip_address, list):
             return [
-                # pylint: disable=0301 (line-too-long)
+                # pylint: disable=C0301 (line-too-long)
                 f"https://metrics.torproject.org/exonerator.html?ip={list_ip_address}&timestamp={today}&lang=en"
                 for list_ip_address in ip_address
             ]
