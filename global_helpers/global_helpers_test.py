@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Unit tests for functions inside global_helpers
 
+# pylint: disable=C0302 (too-many-lines)
+
 import datetime
 import os
 import sys
@@ -319,7 +321,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
             },
         )
 
-
+# pylint disable=R0904 (too-many-public-methods)
 class TestGreyNoiseAdvanced(unittest.TestCase):
 
     event = {
@@ -557,8 +559,8 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
     def test_operating_system(self):
         """Should have os"""
         noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        os = noise.operating_system("ClientIP")
-        self.assertEqual(os, "Linux 2.2-3.x")
+        operating_system = noise.operating_system("ClientIP")
+        self.assertEqual(operating_system, "Linux 2.2-3.x")
 
     def test_region(self):
         """Should have region"""
@@ -865,8 +867,8 @@ class TestRIOTAdvanced(unittest.TestCase):
     def test_trust_level(self):
         """Should have trust_level"""
         riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        tl = riot.trust_level("ClientIP")
-        self.assertEqual(tl, "1")
+        trust_level = riot.trust_level("ClientIP")
+        self.assertEqual(trust_level, "1")
 
     def test_trust_level_list(self):
         """Should have trust_level (list)"""

@@ -53,12 +53,12 @@ class GreyNoiseBasic(LookupTableMatches):
         return self._lookup(match_field, "actor")
 
     def url(self, match_field: str) -> list or str:
-        ip = self._lookup(match_field, "ip")
-        if not ip:
+        ip_address = self._lookup(match_field, "ip")
+        if not ip_address:
             return None
-        if isinstance(ip, list):
-            return [f"https://www.greynoise.io/viz/ip/{list_ip}" for list_ip in ip]
-        return f"https://www.greynoise.io/viz/ip/{ip}"
+        if isinstance(ip_address, list):
+            return [f"https://www.greynoise.io/viz/ip/{list_ip_address}" for list_ip_address in ip_address]
+        return f"https://www.greynoise.io/viz/ip/{ip_address}"
 
     def context(self, match_field: str) -> dict:
         return {
@@ -70,12 +70,13 @@ class GreyNoiseBasic(LookupTableMatches):
 
 
 class GreyNoiseAdvanced(GreyNoiseBasic):
+    # pylint: disable=W0231
     def __init__(self, event):
         super()._register(event, "greynoise_noise_advanced")
         self.sublevel = "advanced"
 
     def is_bot(self, match_field: str) -> bool:
-        return True if self._lookup(match_field, "bot") else False
+        return bool(self._lookup(match_field, "bot"))
 
     def cve_string(self, match_field: str, limit: int = 10) -> str:
         cve_raw = self._lookup(match_field, "cve")
@@ -90,40 +91,40 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         return cve_raw
 
     def first_seen(self, match_field: str) -> datetime.date:
-        t = self._lookup(match_field, "first_seen")
-        if not t:
+        time = self._lookup(match_field, "first_seen")
+        if not time:
             return None
-        if isinstance(t, list):
-            length = len(t)
+        if isinstance(time, list):
+            length = len(time)
             if length == 0:
                 return None
             if length == 1:
-                return parser.parse(t)
-            min_t = parser.parse(t[0])
-            for list_t in t[1:]:
+                return parser.parse(time)
+            min_t = parser.parse(time[0])
+            for list_t in time[1:]:
                 list_t_parsed = parser.parse(list_t)
                 if list_t_parsed < min_t:
                     min_t = list_t_parsed
             return min_t
-        return parser.parse(t)
+        return parser.parse(time)
 
     def last_seen(self, match_field: str) -> datetime.date:
-        t = self._lookup(match_field, "last_seen_timestamp")
-        if not t:
+        time = self._lookup(match_field, "last_seen_timestamp")
+        if not time:
             return None
-        if isinstance(t, list):
-            length = len(t)
+        if isinstance(time, list):
+            length = len(time)
             if length == 0:
                 return None
             if length == 1:
-                return parser.parse(t)
-            max_t = parser.parse(t[0])
-            for list_t in t[1:]:
+                return parser.parse(time)
+            max_t = parser.parse(time[0])
+            for list_t in time[1:]:
                 list_t_parsed = parser.parse(list_t)
                 if list_t_parsed > max_t:
                     max_t = list_t_parsed
             return max_t
-        return parser.parse(t)
+        return parser.parse(time)
 
     def asn(self, match_field: str) -> list or str:
         return self._lookup(match_field, "metadata", "asn")
@@ -150,13 +151,13 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         return self._lookup(match_field, "metadata", "region")
 
     def is_tor(self, match_field: str) -> bool:
-        return True if self._lookup(match_field, "metadata", "tor") else False
+        return bool(self._lookup(match_field, "metadata", "tor"))
 
     def rev_dns(self, match_field: str) -> list or str:
         return self._lookup(match_field, "metadata", "rdns")
 
     def is_spoofable(self, match_field: str) -> bool:
-        return True if self._lookup(match_field, "spoofable") else False
+        return bool(self._lookup(match_field, "spoofable"))
 
     def tags_list(self, match_field: str) -> list:
         tags = self._lookup(match_field, "tags")
@@ -171,7 +172,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         return tags_raw
 
     def is_vpn(self, match_field: str) -> bool:
-        return True if self._lookup(match_field, "vpn") else False
+        return bool(self._lookup(match_field, "vpn"))
 
     def vpn_service(self, match_field: str) -> list or str:
         return self._lookup(match_field, "vpn_service")
@@ -241,22 +242,22 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
         return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
 
     def last_updated(self, match_field: str) -> datetime.date:
-        t = self._lookup(match_field, "scan_time")
-        if not t:
+        time = self._lookup(match_field, "scan_time")
+        if not time:
             return None
-        if isinstance(t, list):
-            length = len(t)
+        if isinstance(time, list):
+            length = len(time)
             if length == 0:
                 return None
             if length == 1:
-                return parser.parse(t)
-            max_t = parser.parse(t[0])
-            for list_t in t[1:]:
+                return parser.parse(time)
+            max_t = parser.parse(time[0])
+            for list_t in time[1:]:
                 list_t_parsed = parser.parse(list_t)
                 if list_t_parsed > max_t:
                     max_t = list_t_parsed
             return max_t
-        return parser.parse(t)
+        return parser.parse(time)
 
     def context(self, match_field: str) -> dict:
         return {
@@ -268,6 +269,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
 
 
 class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
+    # pylint: disable=W0231
     def __init__(self, event):
         super()._register(event, "greynoise_riot_advanced")
         self.sublevel = "advanced"
