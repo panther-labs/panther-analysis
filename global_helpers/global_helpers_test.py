@@ -321,6 +321,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
             },
         )
 
+
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
 
