@@ -16,31 +16,31 @@ class IPInfoLocation(LookupTableMatches):
     def __init__(self, event):
         super()._register(event, IPINFO_LOCATION_LUT_NAME)
 
-    def city(self, match_field) -> str:
+    def city(self, match_field: str) -> list or str:
         return self._lookup(match_field, "city")
 
-    def country(self, match_field) -> str:
+    def country(self, match_field: str) -> list or str:
         return self._lookup(match_field, "country")
 
-    def latitude(self, match_field) -> str:
+    def latitude(self, match_field: str) -> list or str:
         return self._lookup(match_field, "lat")
 
-    def longitude(self, match_field) -> str:
+    def longitude(self, match_field: str) -> list or str:
         return self._lookup(match_field, "lng")
 
-    def postal_code(self, match_field) -> str:
+    def postal_code(self, match_field: str) -> list or str:
         return self._lookup(match_field, "postal_code")
 
-    def region(self, match_field) -> str:
+    def region(self, match_field: str) -> list or str:
         return self._lookup(match_field, "region")
 
-    def region_code(self, match_field) -> str:
+    def region_code(self, match_field: str) -> list or str:
         return self._lookup(match_field, "region_code")
 
-    def timezone(self, match_field) -> str:
+    def timezone(self, match_field: str) -> list or str:
         return self._lookup(match_field, "timezone")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "City": self.city(match_field),
             "Country": self.country(match_field),
@@ -59,22 +59,22 @@ class IPInfoASN(LookupTableMatches):
     def __init__(self, event):
         super()._register(event, IPINFO_ASN_LUT_NAME)
 
-    def asn(self, match_field) -> str:
+    def asn(self, match_field: str) -> list or str:
         return self._lookup(match_field, "asn")
 
-    def domain(self, match_field) -> str:
+    def domain(self, match_field: str) -> list or str:
         return self._lookup(match_field, "domain")
 
-    def name(self, match_field) -> str:
+    def name(self, match_field: str) -> list or str:
         return self._lookup(match_field, "name")
 
-    def route(self, match_field) -> str:
+    def route(self, match_field: str) -> list or str:
         return self._lookup(match_field, "route")
 
-    def type(self, match_field) -> str:
+    def type(self, match_field: str) -> list or str:
         return self._lookup(match_field, "type")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "ASN": self.asn(match_field),
             "Domain": self.domain(match_field),
@@ -90,25 +90,25 @@ class IPInfoPrivacy(LookupTableMatches):
     def __init__(self, event):
         super()._register(event, IPINFO_PRIVACY_LUT_NAME)
 
-    def hosting(self, match_field) -> bool:
+    def hosting(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "hosting")
 
-    def proxy(self, match_field) -> bool:
+    def proxy(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "proxy")
 
-    def tor(self, match_field) -> bool:
+    def tor(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "tor")
 
-    def vpn(self, match_field) -> bool:
+    def vpn(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "vpn")
 
-    def relay(self, match_field) -> bool:
+    def relay(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "relay")
 
-    def service(self, match_field) -> str:
+    def service(self, match_field: str) -> list or str:
         return self._lookup(match_field, "service")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "Hosting": self.hosting(match_field),
             "Proxy": self.proxy(match_field),
@@ -140,7 +140,7 @@ def get_ipinfo_privacy(event):
     return None
 
 
-def geoinfo_from_ip(event, match_field):
+def geoinfo_from_ip(event, match_field: str):
     """Returns a dictionary with geolocation information that is the same format as
     panther_oss_helper.geoinfo_from_ip() with the following differences:
 
