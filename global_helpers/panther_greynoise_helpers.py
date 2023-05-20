@@ -57,7 +57,10 @@ class GreyNoiseBasic(LookupTableMatches):
         if not ip_address:
             return None
         if isinstance(ip_address, list):
-            return [f"https://www.greynoise.io/viz/ip/{list_ip_address}" for list_ip_address in ip_address]
+            return [
+                f"https://www.greynoise.io/viz/ip/{list_ip_address}"
+                for list_ip_address in ip_address
+            ]
         return f"https://www.greynoise.io/viz/ip/{ip_address}"
 
     def context(self, match_field: str) -> dict:

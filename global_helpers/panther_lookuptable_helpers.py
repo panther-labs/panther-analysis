@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get
 
+
 # pylint: disable=R0903 (too-few-public-methods)
 class LookupTableMatches:
     def _register(self, event, lookuptable_name: str):
