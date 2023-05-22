@@ -754,15 +754,27 @@ class TestSnykHelpers(unittest.TestCase):
 
     def test_alert_context(self):
         returns = p_snyk_h.snyk_alert_context(self.event)
-        self.assertEqual(returns.get("actor", ""), "05555555-3333-4ddd-8ccc-755555555555")
-        self.assertEqual(returns.get("action", ""), "api.access")
-        self.assertEqual(returns.get("groupId", ""), "8fffffff-1555-4444-b000-b55555555555")
-        self.assertEqual(returns.get("orgId", ""), "21111111-a222-4eee-8ddd-a99999999999")
+        self.assertEqual(
+            returns,
+            {
+                # pylint: disable=line-too-long
+                "actor": "05555555-3333-4ddd-8ccc-755555555555",
+                "action": "api.access",
+                "groupId": "8fffffff-1555-4444-b000-b55555555555",
+                "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+                "actor_link": "https://app.snyk.io/group/8fffffff-1555-4444-b000-b55555555555/manage/member/05555555-3333-4ddd-8ccc-755555555555",
+            },
+        )
         returns = p_snyk_h.snyk_alert_context({})
-        self.assertEqual(returns.get("actor", ""), "<NO_USERID>")
-        self.assertEqual(returns.get("action", ""), "<NO_EVENT>")
-        self.assertEqual(returns.get("groupId", ""), "<NO_GROUPID>")
-        self.assertEqual(returns.get("orgId", ""), "<NO_ORGID>")
+        self.assertEqual(
+            returns,
+            {
+                "actor": "<NO_USERID>",
+                "action": "<NO_EVENT>",
+                "groupId": "<NO_GROUPID>",
+                "orgId": "<NO_ORGID>",
+            },
+        )
 
 
 class TestTinesHelpers(unittest.TestCase):
