@@ -11,10 +11,12 @@ import unittest
 sys.path.append(os.path.dirname(__file__))
 
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
+import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
+import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
 
@@ -761,6 +763,112 @@ class TestSnykHelpers(unittest.TestCase):
         self.assertEqual(returns.get("action", ""), "<NO_EVENT>")
         self.assertEqual(returns.get("groupId", ""), "<NO_GROUPID>")
         self.assertEqual(returns.get("orgId", ""), "<NO_ORGID>")
+
+
+class TestTinesHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "created_at": "2023-05-01 01:02:03",
+            "id": 7206820,
+            "operation_name": "Login",
+            "request_ip": "12.12.12.12",
+            "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) UserAgent",
+            "tenant_id": "1234",
+            "user_email": "user@domain.com",
+            "user_id": "17171",
+            "user_name": "user at domain dot com",
+        }
+
+    def test_alert_context(self):
+        returns = p_tines_h.tines_alert_context(self.event)
+        self.assertEqual(
+            returns,
+            {
+                "actor": "user@domain.com",
+                "action": "Login",
+                "tenant_id": "1234",
+                "user_email": "user@domain.com",
+                "user_id": "17171",
+                "operation_name": "Login",
+                "request_ip": "12.12.12.12",
+            },
+        )
+        returns = p_tines_h.tines_alert_context({})
+        self.assertEqual(
+            returns,
+            {
+                "actor": "<NO_USEREMAIL>",
+                "action": "<NO_OPERATION>",
+                "tenant_id": "<NO_TENANTID>",
+                "user_email": "<NO_USEREMAIL>",
+                "user_id": "<NO_USERID>",
+                "operation_name": "<NO_OPERATION>",
+                "request_ip": "<NO_REQUESTIP>",
+            },
+        )
+
+
+class TestAuth0Helpers(unittest.TestCase):
+    def setUp(self):
+        self.event = {
+            "data": {
+                "client_id": "1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr",
+                "client_name": "",
+                "date": "2023-05-15 17:41:31.451000000",
+                "description": "Create a role",
+                "details": {
+                    "request": {
+                        "auth": {
+                            "credentials": {"jti": "949869e066205b5076e6df203fdd7b9b"},
+                            "strategy": "jwt",
+                            "user": {
+                                "email": "user.name@yourcompany.io",
+                                "name": "User Name",
+                                "user_id": "google-oauth2|20839745023748560278",
+                            },
+                        },
+                        "body": {"description": "custom_role", "name": "custom_role"},
+                        "channel": "https://manage.auth0.com/",
+                        "ip": "12.12.12.12",
+                        "method": "post",
+                        "path": "/api/v2/roles",
+                        "query": {},
+                    },
+                    "response": {
+                        "body": {
+                            "description": "custom_role",
+                            "id": "rol_AmvLkz7vhswmWJhJ",
+                            "name": "custom_role",
+                        },
+                        "statusCode": 200,
+                    },
+                },
+                "ip": "12.12.12.12",
+                "log_id": "90020230515174135349782000000000000001223372037486042970",
+                "type": "sapi",
+                "user_id": "google-oauth2|105261262156475850461",
+            },
+            "log_id": "90020230515174135349782000000000000001223372037486042970",
+        }
+
+    def test_alert_context(self):
+        returns = p_auth0_h.auth0_alert_context(self.event)
+        auth0_config_event = p_auth0_h.is_auth0_config_event(self.event)
+        self.assertEqual(
+            returns.get("actor", ""),
+            {
+                "email": "user.name@yourcompany.io",
+                "name": "User Name",
+                "user_id": "google-oauth2|20839745023748560278",
+            },
+        )
+        self.assertEqual(returns.get("action", ""), "Create a role")
+        self.assertEqual(auth0_config_event, True)
+        returns = p_auth0_h.auth0_alert_context({})
+        auth0_config_event = p_auth0_h.is_auth0_config_event({})
+        self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
+        self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+        self.assertEqual(auth0_config_event, False)
 
 
 if __name__ == "__main__":
