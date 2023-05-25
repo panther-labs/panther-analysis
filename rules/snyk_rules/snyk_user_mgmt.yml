@@ -1,0 +1,81 @@
+AnalysisType: rule
+Filename: snyk_user_mgmt.py
+RuleID: "Snyk.User.Management"
+DisplayName: "Snyk User Management"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: Medium
+Description: >
+  Detects when Snyk Users are changed
+Runbook: >
+  These actions in the Snyk Audit logs indicate that a User
+  has been created/deleted/modified.
+
+Reference: https://docs.snyk.io/snyk-admin/manage-users-and-permissions/member-roles
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Snyk User Removed
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "email": "user@example.com",
+          "force": true,
+          "name": "user@example.com",
+          "userPublicId": "cccccccc-3333-4ddd-8ccc-755555555555",
+          "username": "user@example.com"
+        },
+        "created": "2023-04-11 23:32:14.173",
+        "event": "org.user.remove",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  - 
+    Name: Snyk User Invite Revoke
+    ExpectedResult: true
+    Log:
+      {
+        "content": {},
+        "created": "2023-04-11 23:32:13.248",
+        "event": "org.user.invite.revoke",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  - 
+    Name: Snyk Group User add
+    ExpectedResult: true
+    Log: 
+      {
+        "content": {
+          "role": "Group Member",
+          "rolePublicId": "65555555-c000-4ddd-2222-cfffffffffff",
+          "userPublicId": "cccccccc-3333-4ddd-8ccc-755555555555",
+        },
+        "created": "2023-04-11 23:14:55.572",
+        "event": "group.user.add",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk System SSO Setting event happened
+    ExpectedResult: false
+    Log:
+      {
+        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "event": "group.sso.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "content": {
+          "unknown": "contents"
+        }
+      }

@@ -228,6 +228,35 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
+def crowdstrike_process_alert_context(event: dict):
+    """Returns common process context for Crowdstrike detections"""
+    return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "CommandLine": get_crowdstrike_field(event, "CommandLine", default=""),
+        "TargetProcessId": get_crowdstrike_field(event, "TargetProcessId", default=""),
+        "RawProcessId": get_crowdstrike_field(event, "RawProcessId", default=""),
+        "ParentBaseFileName": get_crowdstrike_field(event, "ParentBaseFileName", default=""),
+        "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
+        "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
+        "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
+        "platform": get_crowdstrike_field(event, "event_platform", default=""),
+    }
+
+
+def crowdstrike_network_detection_alert_context(event: dict):
+    """Returns common network context for Crowdstrike detections"""
+    return {
+        "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),
+        "LocalPort": get_crowdstrike_field(event, "LocalPort", default=""),
+        "RemoteAddressIP4": get_crowdstrike_field(event, "RemoteAddressIP4", default=""),
+        "RemotePort": get_crowdstrike_field(event, "RemotePort", default=""),
+        "Protocol": get_crowdstrike_field(event, "Protocol", default=""),
+        "event_simpleName": get_crowdstrike_field(event, "event_simpleName", default=""),
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "ContextProcessId": get_crowdstrike_field(event, "ContextProcessId", default=""),
+    }
+
+
 def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
     """
     Checks if the event belongs to the Crowdstrike.FDREvent log type
@@ -396,3 +425,8 @@ def m365_alert_context(event):
         "application": event.get("Application", ""),
         "actor": event.get("Actor", []),
     }
+
+
+def defang_ioc(ioc):
+    """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    return ioc.replace(".", "[.]")

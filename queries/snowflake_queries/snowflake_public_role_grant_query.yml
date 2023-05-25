@@ -18,11 +18,11 @@ SnowflakeQuery: >
     end_time
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('1 h', start_time)
+      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
       AND execution_status = 'SUCCESS'
       AND query_type = 'GRANT'
       AND query_text ILIKE '%to%public%'
   ORDER BY end_time desc
 Schedule:
-  RateMinutes: 60
-  TimeoutMinutes: 1
+  RateMinutes: 1440
+  TimeoutMinutes: 3
