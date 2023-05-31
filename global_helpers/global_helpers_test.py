@@ -932,7 +932,7 @@ class TestOssHelpers(unittest.TestCase):
         self.assertEqual(p_o_h.get_counter("labs"), 0)
         self.assertEqual(p_o_h.get_counter("does-not-exist"), 0)
         # Set TTL
-        exp_time = datetime.datetime.strptime("2023-04-01T00:00Z", "%Y-%m-%dT%H:%MZ")
+        exp_time = datetime.datetime.strptime("2023-04-01T00:00GMT", "%Y-%m-%dT%H:%M%Z")
         p_o_h.set_key_expiration("panther", int(exp_time.timestamp()))
         panther_item = self._temp_table.get_item(
             Key={"key": "panther"}, ProjectionExpression=f"{p_o_h._COUNT_COL}, {p_o_h._TTL_COL}"
