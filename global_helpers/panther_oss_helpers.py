@@ -241,6 +241,17 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
         key: The name of the counter
         epoch_seconds: When you want the counter to expire (set to 0 to disable)
     """
+    if isinstance(epoch_seconds, str):
+        epoch_seconds = float(epoch_seconds)
+    if isinstance(epoch_seconds, float):
+        epoch_seconds = int(epoch_seconds)
+    if not isinstance(epoch_seconds, int):
+        return
+    # if we are given an epoch seconds that is less than
+    # 604800 ( aka seven days ), then add the epoch seconds to
+    # the timestamp of now
+    if epoch_seconds < 604801:
+        epoch_seconds = int(datetime.now().timestamp()) + epoch_seconds
     kv_table().update_item(
         Key={"key": key},
         UpdateExpression="SET expiresAt = :time",
