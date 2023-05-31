@@ -938,7 +938,7 @@ class TestOssHelpers(unittest.TestCase):
             Key={"key": "panther"}, ProjectionExpression=f"{p_o_h._COUNT_COL}, {p_o_h._TTL_COL}"
         )
         # Check TTL
-        self.assertEqual(panther_item["Item"]["expiresAt"], 1680332400)
+        self.assertEqual(panther_item["Item"]["expiresAt"], exp_time.timestamp())
 
     def test_stringset_ops(self):
         self.assertEqual(p_o_h.add_to_string_set("strs2", ["b", "a"]), {"a", "b"})
