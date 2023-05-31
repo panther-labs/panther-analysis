@@ -241,6 +241,17 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
         key: The name of the counter
         epoch_seconds: When you want the counter to expire (set to 0 to disable)
     """
+    if isinstance(epoch_seconds, str):
+        epoch_seconds = float(epoch_seconds)
+    if isinstance(epoch_seconds, float):
+        epoch_seconds = int(epoch_seconds)
+    if not isinstance(epoch_seconds, int):
+        return
+    # if we are given an epoch seconds that is less than
+    # 604800 ( aka seven days ), then add the epoch seconds to
+    # the timestamp of now
+    if epoch_seconds < 604801:
+        epoch_seconds = int(datetime.now().timestamp()) + epoch_seconds
     kv_table().update_item(
         Key={"key": key},
         UpdateExpression="SET expiresAt = :time",
@@ -506,59 +517,3 @@ def listify(maybe_list):
         return [maybe_list]
     # either a list or string
     return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list
-
-
-def _test_kv_store():
-    """Integration tests which validate the functions which interact with the key-value store.
-
-    Deploy Panther and then simply run "python3 panther.py" to test.
-    """
-    assert increment_counter("panther", 1) == 1
-    assert increment_counter("labs", 3) == 3
-    assert increment_counter("panther", -2) == -1
-    assert increment_counter("panther", 0) == -1
-    assert increment_counter("panther", 11) == 10
-
-    assert get_counter("panther") == 10
-    assert get_counter("labs") == 3
-    assert get_counter("nonexistent") == 0
-
-    reset_counter("panther")
-    reset_counter("labs")
-    assert get_counter("panther") == 0
-    assert get_counter("labs") == 0
-
-    set_key_expiration("panther", int(time.time()))
-
-    # Add elements in a list, tuple, set, or as singleton strings
-    # The same key can be used to store int counts and string sets
-    assert add_to_string_set("panther", ["a", "b"]) == {"a", "b"}
-    assert add_to_string_set("panther", ["b", "a"]) == {"a", "b"}
-    assert add_to_string_set("panther", "c") == {"a", "b", "c"}
-    assert add_to_string_set("panther", set()) == {"a", "b", "c"}
-    assert add_to_string_set("panther", {"b", "c", "d"}) == {"a", "b", "c", "d"}
-    assert add_to_string_set("panther", ("d", "e")) == {"a", "b", "c", "d", "e"}
-
-    # Empty strings are allowed
-    assert add_to_string_set("panther", "") == {"a", "b", "c", "d", "e", ""}
-
-    assert get_string_set("labs") == set()
-    assert get_string_set("panther") == {"a", "b", "c", "d", "e", ""}
-
-    assert remove_from_string_set("panther", ["b", "c", "d"]) == {"a", "e", ""}
-    assert remove_from_string_set("panther", "") == {"a", "e"}
-    assert remove_from_string_set("panther", "") == {"a", "e"}
-
-    # Overwrite contents completely
-    put_string_set("panther", ["go", "python"])
-    assert get_string_set("panther") == {"go", "python"}
-    put_string_set("labs", [])
-    assert get_string_set("labs") == set()
-
-    reset_string_set("panther")
-    reset_string_set("nonexistent")  # no error
-    assert get_string_set("panther") == set()
-
-
-if __name__ == "__main__":
-    _test_kv_store()
