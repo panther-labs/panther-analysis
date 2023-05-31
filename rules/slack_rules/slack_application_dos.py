@@ -53,4 +53,4 @@ def store_reset_info(key, event):
         ],
     )
     # Expire the entry after 24 hours
-    set_key_expiration(key, str((datetime.now() + timedelta(days=1)).timestamp()))
+    set_key_expiration(key, int((datetime.now() + timedelta(days=1)).timestamp()))
