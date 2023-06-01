@@ -1006,5 +1006,63 @@ class TestOssHelpers(unittest.TestCase):
         self.assertEqual(p_o_h.get_string_set("strs"), set())
 
 
+class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
+    def setUp(self):
+        self.loc_nyc = {
+            "city": "New York City",
+            "country": "US",
+            "lat": "40.71427",
+            "lng": "-74.00597",
+            "postal_code": "10004",
+            "region": "New York",
+            "region_code": "NY",
+            "timezone": "America/New_York",
+        }
+        self.loc_sfo = {
+            "city": "San Francisco",
+            "country": "US",
+            "lat": "37.77493",
+            "lng": "-122.41942",
+            "postal_code": "94102",
+            "region": "California",
+            "region_code": "CA",
+            "timezone": "America/Los_Angeles",
+        }
+        self.loc_athens = {
+            "city": "Athens",
+            "country": "GR",
+            "lat": "37.98376",
+            "lng": "23.72784",
+            "postal_code": "",
+            "region": "Attica",
+            "region_code": "I",
+            "timezone": "Europe/Athens",
+        }
+        self.loc_aukland = {
+            "city": "Auckland",
+            "country": "NZ",
+            "lat": "-36.84853",
+            "lng": "174.76349",
+            "postal_code": "1010",
+            "region": "Auckland",
+            "region_code": "AUK",
+            "timezone": "Pacific/Auckland",
+        }
+
+    def test_distances(self):
+        nyc_to_sfo = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_sfo)
+        nyc_to_athens = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_athens)
+        nyc_to_aukland = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_aukland)
+        aukland_to_nyc = p_o_h.km_between_ipinfo_loc(self.loc_aukland, self.loc_nyc)
+        # I used https://www.nhc.noaa.gov/gccalc.shtml to get test comparison distances
+        #
+        # delta is set to 0.5% of total computed distanc from gccalc
+        self.assertAlmostEqual(nyc_to_sfo, 4126, delta=20.63)
+        self.assertAlmostEqual(nyc_to_athens, 7920, delta=39.6)
+        self.assertAlmostEqual(nyc_to_aukland, 14184, delta=70.92)
+        # and NYC to Aukland should be ~= Aukland to NYC
+        self.assertEqual(nyc_to_aukland, aukland_to_nyc)
+
+
 if __name__ == "__main__":
     unittest.main()
