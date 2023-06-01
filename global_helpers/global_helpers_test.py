@@ -8,6 +8,10 @@ import os
 import sys
 import unittest
 
+# pipenv run does the right thing, but IDE based debuggers may fail to import
+#   so noting, we append this directory to sys.path
+sys.path.append(os.path.dirname(__file__))
+
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
@@ -17,10 +21,6 @@ import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
-
-# pipenv run does the right thing, but IDE based debuggers may fail to import
-#   so noting, we append this directory to sys.path
-sys.path.append(os.path.dirname(__file__))
 
 
 class TestEksPantherObjRef(unittest.TestCase):
@@ -180,15 +180,15 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
 
 class TestTorExitNodes(unittest.TestCase):
+    def setUp(self):
+        self.event = {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
 
-    event = {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
-
-    # match against array field
-    event_list = {
-        "p_enrichment": {
-            "tor_exit_nodes": {"p_any_ip_addresses": [{"ip": "1.2.3.4"}, {"ip": "1.2.3.5"}]}
+        # match against array field
+        self.event_list = {
+            "p_enrichment": {
+                "tor_exit_nodes": {"p_any_ip_addresses": [{"ip": "1.2.3.4"}, {"ip": "1.2.3.5"}]}
+            }
         }
-    }
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
@@ -196,13 +196,13 @@ class TestTorExitNodes(unittest.TestCase):
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, "1.2.3.4")
 
-    def test_ip_address__found_list(self):
+    def test_ip_address_found_list(self):
         """Should find enrichment list"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event_list)
         ip_address_list = tor_exit_nodes.ip_address("p_any_ip_addresses")
@@ -249,18 +249,18 @@ class TestTorExitNodes(unittest.TestCase):
 
 
 class TestGreyNoiseBasic(unittest.TestCase):
-
-    event = {
-        "p_enrichment": {
-            "greynoise_noise_basic": {
-                "ClientIP": {
-                    "actor": "unknown",
-                    "classification": "malicious",
-                    "ip": "142.93.204.250",
+    def setUp(self):
+        self.event = {
+            "p_enrichment": {
+                "greynoise_noise_basic": {
+                    "ClientIP": {
+                        "actor": "unknown",
+                        "classification": "malicious",
+                        "ip": "142.93.204.250",
+                    }
                 }
             }
         }
-    }
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -283,7 +283,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         noise = p_greynoise_h.GreyNoiseBasic(self.event)
         ip_address = noise.ip_address("ClientIP")
@@ -324,51 +324,11 @@ class TestGreyNoiseBasic(unittest.TestCase):
 
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
-
-    event = {
-        "p_enrichment": {
-            "greynoise_noise_advanced": {
-                "ClientIP": {
-                    "actor": "unknown",
-                    "bot": False,
-                    "classification": "malicious",
-                    "cve": ["cve1244", "cve4567"],
-                    "first_seen": "2022-03-19",
-                    "ip": "142.93.204.250",
-                    "last_seen_timestamp": "2022-04-06",
-                    "metadata": {
-                        "asn": "AS14061",
-                        "category": "hosting",
-                        "city": "North Bergen",
-                        "country": "United States",
-                        "country_code": "US",
-                        "organization": "DigitalOcean, LLC",
-                        "os": "Linux 2.2-3.x",
-                        "rdns": "",
-                        "region": "New Jersey",
-                        "tor": False,
-                    },
-                    "raw_data": {
-                        "hassh": [],
-                        "ja3": [],
-                        "scan": [{"port": 23, "protocol": "TCP"}],
-                        "web": {},
-                    },
-                    "seen": True,
-                    "spoofable": False,
-                    "tags": ["Mirai", "ZMap Client"],
-                    "vpn": False,
-                    "vpn_service": "N/A",
-                }
-            }
-        }
-    }
-
-    event_list = {
-        "p_enrichment": {
-            "greynoise_noise_advanced": {
-                "p_any_ip_addresses": [
-                    {
+    def setUp(self):
+        self.event = {
+            "p_enrichment": {
+                "greynoise_noise_advanced": {
+                    "ClientIP": {
                         "actor": "unknown",
                         "bot": False,
                         "classification": "malicious",
@@ -399,35 +359,74 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                         "tags": ["Mirai", "ZMap Client"],
                         "vpn": False,
                         "vpn_service": "N/A",
-                    },
-                    {
-                        "actor": "stinky rat",
-                        "bot": True,
-                        "classification": "malicious",
-                        "cve": ["cve1244", "cve4567"],
-                        "first_seen": "2022-02-19",
-                        "ip": "100.93.204.250",
-                        "last_seen_timestamp": "2022-03-06",
-                        "metadata": {
-                            "asn": "AS14461",
-                            "category": "isp",
-                            "city": "South Bergen",
-                            "country": "United States",
-                            "country_code": "US",
-                            "organization": "DigitalOcean, LLC",
-                            "os": "Linux 2.2-3.x",
-                            "rdns": "",
-                            "region": "South Hampton",
-                            "tor": False,
-                        },
-                        "spoofable": False,
-                        "vpn": False,
-                        "vpn_service": "N/A",
-                    },
-                ]
+                    }
+                }
             }
         }
-    }
+        self.event_list = {
+            "p_enrichment": {
+                "greynoise_noise_advanced": {
+                    "p_any_ip_addresses": [
+                        {
+                            "actor": "unknown",
+                            "bot": False,
+                            "classification": "malicious",
+                            "cve": ["cve1244", "cve4567"],
+                            "first_seen": "2022-03-19",
+                            "ip": "142.93.204.250",
+                            "last_seen_timestamp": "2022-04-06",
+                            "metadata": {
+                                "asn": "AS14061",
+                                "category": "hosting",
+                                "city": "North Bergen",
+                                "country": "United States",
+                                "country_code": "US",
+                                "organization": "DigitalOcean, LLC",
+                                "os": "Linux 2.2-3.x",
+                                "rdns": "",
+                                "region": "New Jersey",
+                                "tor": False,
+                            },
+                            "raw_data": {
+                                "hassh": [],
+                                "ja3": [],
+                                "scan": [{"port": 23, "protocol": "TCP"}],
+                                "web": {},
+                            },
+                            "seen": True,
+                            "spoofable": False,
+                            "tags": ["Mirai", "ZMap Client"],
+                            "vpn": False,
+                            "vpn_service": "N/A",
+                        },
+                        {
+                            "actor": "stinky rat",
+                            "bot": True,
+                            "classification": "malicious",
+                            "cve": ["cve1244", "cve4567"],
+                            "first_seen": "2022-02-19",
+                            "ip": "100.93.204.250",
+                            "last_seen_timestamp": "2022-03-06",
+                            "metadata": {
+                                "asn": "AS14461",
+                                "category": "isp",
+                                "city": "South Bergen",
+                                "country": "United States",
+                                "country_code": "US",
+                                "organization": "DigitalOcean, LLC",
+                                "os": "Linux 2.2-3.x",
+                                "rdns": "",
+                                "region": "South Hampton",
+                                "tor": False,
+                            },
+                            "spoofable": False,
+                            "vpn": False,
+                            "vpn_service": "N/A",
+                        },
+                    ]
+                }
+            }
+        }
 
     def test_greynoise_object(self):
         """Should be advanced"""
@@ -455,7 +454,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
         ip_address = noise.ip_address("ClientIP")
@@ -662,18 +661,18 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
 
 class TestRIOTBasic(unittest.TestCase):
-
-    event = {
-        "p_enrichment": {
-            "greynoise_riot_basic": {
-                "ClientIP": {
-                    "ip_cidr": "142.93.204.250/32",
-                    "provider": {"name": "foo"},
-                    "scan_time": "2023-05-12 05:11:04.679962983",
+    def setUp(self):
+        self.event = {
+            "p_enrichment": {
+                "greynoise_riot_basic": {
+                    "ClientIP": {
+                        "ip_cidr": "142.93.204.250/32",
+                        "provider": {"name": "foo"},
+                        "scan_time": "2023-05-12 05:11:04.679962983",
+                    }
                 }
             }
         }
-    }
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -736,32 +735,11 @@ class TestRIOTBasic(unittest.TestCase):
 
 
 class TestRIOTAdvanced(unittest.TestCase):
-
-    event = {
-        "p_enrichment": {
-            "greynoise_riot_advanced": {
-                "ClientIP": {
-                    "ip_cidr": "142.93.204.250/32",
-                    "provider": {
-                        "name": "foo",
-                        "category": "cloud",
-                        "description": "some cloud",
-                        "explanation": "because",
-                        "reference": "my brother",
-                        "trust_level": "1",
-                    },
-                    "scan_time": "2023-05-12 05:11:04.679962983",
-                }
-            }
-        }
-    }
-
-    # for testing array matches
-    event_list = {
-        "p_enrichment": {
-            "greynoise_riot_advanced": {
-                "p_any_ip_addresses": [
-                    {
+    def setUp(self):
+        self.event = {
+            "p_enrichment": {
+                "greynoise_riot_advanced": {
+                    "ClientIP": {
                         "ip_cidr": "142.93.204.250/32",
                         "provider": {
                             "name": "foo",
@@ -772,23 +750,44 @@ class TestRIOTAdvanced(unittest.TestCase):
                             "trust_level": "1",
                         },
                         "scan_time": "2023-05-12 05:11:04.679962983",
-                    },
-                    {
-                        "ip_cidr": "142.93.204.128/32",
-                        "provider": {
-                            "name": "bar",
-                            "category": "cdn",
-                            "description": "some some cdn",
-                            "explanation": "because",
-                            "reference": "my brother",
-                            "trust_level": "2",
-                        },
-                        "scan_time": "2023-05-11 05:11:04.679962983",
-                    },
-                ]
+                    }
+                }
             }
         }
-    }
+
+        # for testing array matches
+        self.event_list = {
+            "p_enrichment": {
+                "greynoise_riot_advanced": {
+                    "p_any_ip_addresses": [
+                        {
+                            "ip_cidr": "142.93.204.250/32",
+                            "provider": {
+                                "name": "foo",
+                                "category": "cloud",
+                                "description": "some cloud",
+                                "explanation": "because",
+                                "reference": "my brother",
+                                "trust_level": "1",
+                            },
+                            "scan_time": "2023-05-12 05:11:04.679962983",
+                        },
+                        {
+                            "ip_cidr": "142.93.204.128/32",
+                            "provider": {
+                                "name": "bar",
+                                "category": "cdn",
+                                "description": "some some cdn",
+                                "explanation": "because",
+                                "reference": "my brother",
+                                "trust_level": "2",
+                            },
+                            "scan_time": "2023-05-11 05:11:04.679962983",
+                        },
+                    ]
+                }
+            }
+        }
 
     def test_greynoise_object(self):
         """Should be advanced"""
