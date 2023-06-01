@@ -5,6 +5,7 @@ import re
 import time
 from datetime import datetime
 from ipaddress import ip_address
+from math import atan2, cos, radians, sin, sqrt
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
@@ -420,6 +421,37 @@ def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600
         reset_counter(key)
         return True
     return False
+
+
+def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
+    """
+    compute the number of kilometers between two ipinfo_location enrichments
+    This uses a haversine computation which is imperfect and holds the benefit
+    of being supportable via stdlib. At polar opposites, haversine might be
+    0.3-0.5% off
+    See also https://en.wikipedia.org/wiki/Haversine_formula
+    See also https://stackoverflow.com/a/19412565
+    See also https://www.sunearthtools.com/tools/distance.php
+    """
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_one.keys())):
+        # input ipinfo_loc_one doesn't have lat and lng keys
+        return None
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_two.keys())):
+        # input ipinfo_loc_two doesn't have lat and lng keys
+        return None
+    lat_1 = radians(float(ipinfo_loc_one.get("lat")))
+    lng_1 = radians(float(ipinfo_loc_one.get("lng")))
+    lat_2 = radians(float(ipinfo_loc_two.get("lat")))
+    lng_2 = radians(float(ipinfo_loc_two.get("lng")))
+    # radius of the earth in kms
+    radius = 6372.795477598
+    lng_diff = lng_2 - lng_1
+    lat_diff = lat_2 - lat_1
+
+    step_1 = sin(lat_diff / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(lng_diff / 2) ** 2
+    step_2 = 2 * atan2(sqrt(step_1), sqrt(1 - step_1))
+    distance = radius * step_2
+    return distance
 
 
 def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
