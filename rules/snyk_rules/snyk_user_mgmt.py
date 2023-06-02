@@ -27,6 +27,14 @@ def rule(event):
     if not filter_include_event(event):
         return False
     action = deep_get(event, "event", default="<NO_EVENT>")
+    # for org.user.add/group.user.add via SAML/SCIM 
+    # the attributes .userId and .content.publicUserId 
+    # have the same value
+    if action.endswith(".user.add"):
+        targetUser = deep_get(event, "content", "userPublicId", default="<NO_CONTENT_UID>")
+        actor = deep_get(event, "userId", default="<NO_USERID>")
+        if targetUser == actor:
+            return False
     return action in ACTIONS
 
 
