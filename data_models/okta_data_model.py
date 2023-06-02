@@ -36,3 +36,9 @@ def get_actor_user(event):
     if actor == "unknown":
         actor = deep_get(event, "actor", "alternateId", default="Unknown User")
     return actor
+
+
+def get_source_ip_field(event):  # pylint: disable=W0613
+    # get_source_ip_field is used when looking for
+    # source IP Address Enrichment info
+    return "client.ipAddress"
