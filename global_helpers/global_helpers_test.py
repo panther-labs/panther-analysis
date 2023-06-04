@@ -202,7 +202,7 @@ class TestTorExitNodes(unittest.TestCase):
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, "1.2.3.4")
 
-    def test_ip_address__found_list(self):
+    def test_ip_address_found_list(self):
         """Should find enrichment list"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event_list)
         ip_address_list = tor_exit_nodes.ip_address("p_any_ip_addresses")
@@ -283,7 +283,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         noise = p_greynoise_h.GreyNoiseBasic(self.event)
         ip_address = noise.ip_address("ClientIP")
@@ -455,7 +455,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
         ip_address = noise.ip_address("ClientIP")
