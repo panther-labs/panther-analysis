@@ -196,7 +196,7 @@ class TestTorExitNodes(unittest.TestCase):
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
 
-    def test_ip_address__found(self):
+    def test_ip_address_found(self):
         """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         ip_address = tor_exit_nodes.ip_address("foo")

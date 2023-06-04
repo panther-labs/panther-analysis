@@ -1,3 +1,5 @@
+from typing import Union
+
 from panther_base_helpers import deep_get
 from panther_lookuptable_helpers import LookupTableMatches
 
@@ -16,28 +18,28 @@ class IPInfoLocation(LookupTableMatches):
     def __init__(self, event):
         super()._register(event, IPINFO_LOCATION_LUT_NAME)
 
-    def city(self, match_field: str) -> list or str:
+    def city(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "city")
 
-    def country(self, match_field: str) -> list or str:
+    def country(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "country")
 
-    def latitude(self, match_field: str) -> list or str:
+    def latitude(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "lat")
 
-    def longitude(self, match_field: str) -> list or str:
+    def longitude(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "lng")
 
-    def postal_code(self, match_field: str) -> list or str:
+    def postal_code(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "postal_code")
 
-    def region(self, match_field: str) -> list or str:
+    def region(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "region")
 
-    def region_code(self, match_field: str) -> list or str:
+    def region_code(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "region_code")
 
-    def timezone(self, match_field: str) -> list or str:
+    def timezone(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "timezone")
 
     def context(self, match_field: str) -> object:
@@ -59,19 +61,19 @@ class IPInfoASN(LookupTableMatches):
     def __init__(self, event):
         super()._register(event, IPINFO_ASN_LUT_NAME)
 
-    def asn(self, match_field: str) -> list or str:
+    def asn(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "asn")
 
-    def domain(self, match_field: str) -> list or str:
+    def domain(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "domain")
 
-    def name(self, match_field: str) -> list or str:
+    def name(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "name")
 
-    def route(self, match_field: str) -> list or str:
+    def route(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "route")
 
-    def type(self, match_field: str) -> list or str:
+    def type(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "type")
 
     def context(self, match_field: str) -> object:
@@ -105,7 +107,7 @@ class IPInfoPrivacy(LookupTableMatches):
     def relay(self, match_field: str) -> bool or list:
         return self._lookup(match_field, "relay")
 
-    def service(self, match_field: str) -> list or str:
+    def service(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "service")
 
     def context(self, match_field: str) -> object:

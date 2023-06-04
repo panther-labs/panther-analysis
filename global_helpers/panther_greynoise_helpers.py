@@ -1,5 +1,6 @@
 # pylint: disable=too-many-public-methods
 import datetime
+from typing import Union
 
 from dateutil import parser
 from panther_base_helpers import deep_get
@@ -43,16 +44,16 @@ class GreyNoiseBasic(LookupTableMatches):
     def subscription_level(self):
         return self.sublevel
 
-    def ip_address(self, match_field: str) -> list or str:
+    def ip_address(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "ip")
 
-    def classification(self, match_field: str) -> list or str:
+    def classification(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "classification")
 
-    def actor(self, match_field: str) -> list or str:
+    def actor(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "actor")
 
-    def url(self, match_field: str) -> list or str:
+    def url(self, match_field: str) -> Union[list[str], str, None]:
         ip_address = self._lookup(match_field, "ip")
         if not ip_address:
             return None
@@ -129,34 +130,34 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
             return max_t
         return parser.parse(time)
 
-    def asn(self, match_field: str) -> list or str:
+    def asn(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "asn")
 
-    def category(self, match_field: str) -> list or str:
+    def category(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "category")
 
-    def city(self, match_field: str) -> list or str:
+    def city(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "city")
 
-    def country(self, match_field: str) -> list or str:
+    def country(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "country")
 
-    def country_code(self, match_field: str) -> list or str:
+    def country_code(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "country_code")
 
-    def organization(self, match_field: str) -> list or str:
+    def organization(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "organization")
 
-    def operating_system(self, match_field: str) -> list or str:
+    def operating_system(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "os")
 
-    def region(self, match_field: str) -> list or str:
+    def region(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "region")
 
     def is_tor(self, match_field: str) -> bool:
         return bool(self._lookup(match_field, "metadata", "tor"))
 
-    def rev_dns(self, match_field: str) -> list or str:
+    def rev_dns(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata", "rdns")
 
     def is_spoofable(self, match_field: str) -> bool:
@@ -177,10 +178,10 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
     def is_vpn(self, match_field: str) -> bool:
         return bool(self._lookup(match_field, "vpn"))
 
-    def vpn_service(self, match_field: str) -> list or str:
+    def vpn_service(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "vpn_service")
 
-    def metadata(self, match_field: str) -> list or str:
+    def metadata(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata")
 
     def context(self, match_field: str) -> dict:
@@ -227,13 +228,13 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
             return False
         return True
 
-    def ip_address(self, match_field: str) -> list or str:
+    def ip_address(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "ip_cidr")
 
-    def name(self, match_field: str) -> list or str:
+    def name(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "name")
 
-    def url(self, match_field: str) -> list or str:
+    def url(self, match_field: str) -> Union[list[str], str]:
         ip_stripped = self._lookup(match_field, "ip_cidr")
         if not ip_stripped:
             return None
@@ -277,19 +278,19 @@ class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
         super()._register(event, "greynoise_riot_advanced")
         self.sublevel = "advanced"
 
-    def description(self, match_field: str) -> list or str:
+    def description(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "description")
 
-    def category(self, match_field: str) -> list or str:
+    def category(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "category")
 
-    def explanation(self, match_field: str) -> list or str:
+    def explanation(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "explanation")
 
-    def reference(self, match_field: str) -> list or str:
+    def reference(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "reference")
 
-    def trust_level(self, match_field: str) -> int or list or str:
+    def trust_level(self, match_field: str) -> Union[int, list[str], str]:
         return self._lookup(match_field, "provider", "trust_level")
 
     def context(self, match_field: str) -> dict:
