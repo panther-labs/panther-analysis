@@ -15,10 +15,10 @@ sys.path.append(os.path.dirname(__file__))
 
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
-import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
@@ -1075,33 +1075,30 @@ class TestNotionHelpers(unittest.TestCase):
                 "id": "..",
                 "object": "user",
                 "type": "person",
-                "person": {
-                    "email": "user.name@yourcompany.io"
-                }
+                "person": {"email": "user.name@yourcompany.io"},
             },
             "ip_address": "...",
             "platform": "mac-desktop",
             "type": "workspace.content_exported",
-            "workspace.content_exported": {}
+            "workspace.content_exported": {},
         }
 
     def test_alert_context(self):
         returns = p_notion_h.notion_alert_context(self.event)
         self.assertEqual(
             returns.get("actor", ""),
-                {
-                    "id": "..",
-                    "object": "user",
-                    "type": "person",
-                    "person": {
-                        "email": "user.name@yourcompany.io"
-                    },
-                }
-        )       
+            {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": {"email": "user.name@yourcompany.io"},
+            },
+        )
         self.assertEqual(returns.get("action", ""), "workspace.content_exported")
         returns = p_notion_h.notion_alert_context({})
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+
 
 if __name__ == "__main__":
     unittest.main()
