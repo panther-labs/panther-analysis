@@ -96,7 +96,7 @@ def store_login_info(key, event):
         ],
     )
     # Expire the entry after a week so the table doesn't fill up with past users
-    set_key_expiration(key, str((datetime.now() + timedelta(days=7)).timestamp()))
+    set_key_expiration(key, int((datetime.now() + timedelta(days=7)).timestamp()))
 
 
 def title(event):

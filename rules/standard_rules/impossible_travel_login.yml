@@ -1,0 +1,260 @@
+AnalysisType: rule
+Filename: impossible_travel_login.py
+RuleID: "Standard.ImpossibleTravel.Login"
+DisplayName: "Impossible Travel for Login Action"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+  - Initial Access:Valid Accounts
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+Severity: High
+Description: A user has subsequent logins from two geographic locations that are very far apart
+Runbook: Reach out to the user if needed to validate the activity, then lock the account
+SummaryAttributes:
+  - p_any_user_names
+  - p_any_ip_addresses
+  - p_any_domain_names
+# All test cases for this detection will need to include:
+# * p_log_type ( for udm)
+# Alerting test cases for this detection will need to include: 
+# * p_source_label
+# * p_event_time
+# * p_enrichment.ipinfo_location.{UDM SOURCE_IP_FIELD}
+Tests:
+  - Name: CloudTrail not ConsoleLogin
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "logout",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: CloudTrail ConsoleLogin no history
+    ExpectedResult: false
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+    Log:
+      {
+        "additionalEventData": {
+          "MFAUsed": "No",
+          "MobileVersion": "No"
+        },
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2023-05-26 20:14:51",
+        "eventType": "AwsConsoleSignIn",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_event_time": "2023-05-26 20:14:51",
+        "p_enrichment":  {
+          "ipinfo_location": {
+            "sourceIPAddress": {
+              "city": "Auckland",
+              "country": "NZ",
+              "lat": "-36.84853",
+              "lng": "174.76349",
+              "postal_code": "1010",
+              "region": "Auckland",
+              "region_code": "AUK",
+              "timezone": "Pacific/Auckland"
+            }
+          }
+        },
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2023-05-26 20:19:14.002",
+        "p_source_label": "LogSource Name",
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "sourceIPAddress": "12.12.12.12",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "signin.aws.amazon.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "1111",
+          "arn": "arn:aws:iam::123456789012:user/tester",
+          "accountId": "123456789012",
+          "userName": "tester"
+        }
+      }
+  - Name: CloudTrail ConsoleLogin with history
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+          [
+           {
+            "p_event_time": "2023-05-26 18:14:51",
+            "city": "New York City",
+            "country": "US",
+            "lat": "40.71427",
+            "lng": "-74.00597",
+            "postal_code": "10004",
+            "region": "New York",
+            "region_code": "NY",
+            "timezone": "America/New_York"
+           }
+          ]
+    Log:
+      {
+        "additionalEventData": {
+          "MFAUsed": "No",
+          "MobileVersion": "No"
+        },
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2023-05-26 20:14:51",
+        "eventType": "AwsConsoleSignIn",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_event_time": "2023-05-26 20:14:51",
+        "p_enrichment":  {
+          "ipinfo_location": {
+            "sourceIPAddress": {
+              "city": "Auckland",
+              "country": "NZ",
+              "lat": "-36.84853",
+              "lng": "174.76349",
+              "postal_code": "1010",
+              "region": "Auckland",
+              "region_code": "AUK",
+              "timezone": "Pacific/Auckland"
+            }
+          }
+        },
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2023-05-26 20:19:14.002",
+        "p_source_label": "LogSource Name",
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+        "sourceIPAddress": "12.12.12.12",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "signin.aws.amazon.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "1111",
+          "arn": "arn:aws:iam::123456789012:user/tester",
+          "accountId": "123456789012",
+          "userName": "tester"
+        }
+      }
+  - Name: Okta Not sign-in
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "logout",
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Okta sign-in with history and impossible travel
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+          [
+           {
+            "p_event_time": "2023-05-26 18:14:51",
+            "city": "New York City",
+            "country": "US",
+            "lat": "40.71427",
+            "lng": "-74.00597",
+            "postal_code": "10004",
+            "region": "New York",
+            "region_code": "NY",
+            "timezone": "America/New_York"
+           }
+          ]
+    Log:
+      {
+        "actor": {
+          "alternateId": "homer.simpson@company.com",
+          "displayName": "Homer Simpson",
+          "id": "00uwuwuwuwuwuwuwuwuw",
+          "type": "User"
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "idx1234"
+        },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "12.12.12.12",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "debugContext": {
+          "debugData": {
+          }
+        },
+        "device": {
+        },
+        "displayMessage": "User login to Okta",
+        "eventType": "user.session.start",
+        "legacyEventType": "core.user_auth.login_success",
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "p_event_time": "2023-05-26 20:18:51",
+        "p_enrichment":  {
+          "ipinfo_location": {
+            "client.ipAddress": {
+              "city": "Auckland",
+              "country": "NZ",
+              "lat": "-36.84853",
+              "lng": "174.76349",
+              "postal_code": "1010",
+              "region": "Auckland",
+              "region_code": "AUK",
+              "timezone": "Pacific/Auckland"
+            }
+          }
+        },
+        "p_log_type": "Okta.SystemLog",
+        "p_source_label": "Okta Logs",
+        "p_parse_time": "2023-05-26 20:22:51.888",
+        "published": "2023-05-26 20:18:51.888",
+        "request": {
+          "ipChain": [
+          ]
+        },
+        "securityContext": {
+        },
+        "severity": "INFO",
+        "target": [
+        ],
+        "transaction": {
+        },
+        "uuid": "79999999-ffff-eeee-bbbb-222222222222",
+        "version": "0"
+      }
