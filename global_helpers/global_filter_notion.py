@@ -15,7 +15,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #    2. events where workspace_id is undefined.
     #
     #
-    # # example: workspcae_id
+    # # example: workspace_id
     # # if we don't know the workspace_id, we want default behavior to be to alert on this event.
     # workspace_id = deep_get(event, "workspace_id", default="")
     # return workspace_id in ["ea65b016-6abc-4dcf-808b-e000099999999", ""]
