@@ -99,17 +99,9 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         if not time:
             return None
         if isinstance(time, list):
-            length = len(time)
-            if length == 0:
+            if len(time) == 0:
                 return None
-            if length == 1:
-                return parser.parse(time)
-            min_t = parser.parse(time[0])
-            for list_t in time[1:]:
-                list_t_parsed = parser.parse(list_t)
-                if list_t_parsed < min_t:
-                    min_t = list_t_parsed
-            return min_t
+            return min(parser.parse(t) for t in time)
         return parser.parse(time)
 
     def last_seen(self, match_field: str) -> datetime.date:
@@ -117,17 +109,9 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         if not time:
             return None
         if isinstance(time, list):
-            length = len(time)
-            if length == 0:
+            if len(time) == 0:
                 return None
-            if length == 1:
-                return parser.parse(time)
-            max_t = parser.parse(time[0])
-            for list_t in time[1:]:
-                list_t_parsed = parser.parse(list_t)
-                if list_t_parsed > max_t:
-                    max_t = list_t_parsed
-            return max_t
+            return max(parser.parse(t) for t in time)
         return parser.parse(time)
 
     def asn(self, match_field: str) -> Union[list[str], str]:
@@ -250,17 +234,9 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
         if not time:
             return None
         if isinstance(time, list):
-            length = len(time)
-            if length == 0:
+            if len(time) == 0:
                 return None
-            if length == 1:
-                return parser.parse(time)
-            max_t = parser.parse(time[0])
-            for list_t in time[1:]:
-                list_t_parsed = parser.parse(list_t)
-                if list_t_parsed > max_t:
-                    max_t = list_t_parsed
-            return max_t
+            return max(parser.parse(t) for t in time)
         return parser.parse(time)
 
     def context(self, match_field: str) -> dict:
