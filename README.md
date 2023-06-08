@@ -99,6 +99,22 @@ Global helper functions are defined in the `global_helpers` folder. This is a ha
 
 Additionally, groups of detections may be linked to multiple "Reports", which is a system for tracking frameworks like CIS, PCI, MITRE ATT&CK, or more.
 
+### Using [Visual Studio Code](https://code.visualstudio.com/)
+If you are comfortable using the Visual Studio Code IDE, the `make vscode-config` command can configure VSCode to work with this repo. 
+
+`make vscode-config` will configure:
+1. Configure VSCode to use the python virtual environment for this repository.
+1. Resolve local imports like global_helpers, which permits code completion via Intellisense/Pylance
+1. Creates two debugging targets, which will give you single-button push support for running `panther_analysis_tool test` through the debugger.
+1. Installs JSONSchema support for your custom panther-analysis schemas in the `schemas/` directory. This brings IDE hints about which fields are necessary for schemas/custom-schema.yml files.
+1. Installs JSONSchema support for panther-analysis rules in the `rules/` directory. This brings IDE hints about which fields are necessary for rules/my-rule.yml files.
+
+
+```shell
+user@computer:panther-analysis: make vscode-config
+
+```
+
 ### Using Docker
 
 To use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run a different command, follow the pattern in the Makefile.

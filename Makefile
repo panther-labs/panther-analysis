@@ -1,4 +1,24 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+	install_pipenv_cmd = brew install pipenv
+endif
+
+install-pipenv:
+	which pipenv || $(install_pipenv_cmd)
+
+vscode-config: install-pipenv install
+	@echo "backing up existing vscode configs"
+	test -f .vscode/settings.json && cp .vscode/settings.json .vscode/settings_bak.json \
+	   || echo "no existing vscode settings.json file found. continuing"
+	test -f .vscode/launch.json && cp .vscode/launch.json .vscode/launch_bak.json \
+	   || echo "no existing vscode launch.json file found. continuing"
+	@echo "Creating new vscode config files"
+	cp .vscode/example_launch.json  .vscode/launch.json
+	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
+	which code && code . 
+
 
 ci:
 	pipenv run $(MAKE) lint test
