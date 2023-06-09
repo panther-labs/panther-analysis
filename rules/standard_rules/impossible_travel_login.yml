@@ -14,7 +14,11 @@ Reports:
     - TA0001:T1078
 Severity: High
 Description: A user has subsequent logins from two geographic locations that are very far apart
-Runbook: Reach out to the user if needed to validate the activity, then lock the account
+Runbook: >
+  Reach out to the user if needed to validate the activity, then lock the account. 
+
+  If the user responds that the geolocation on the new location is incorrect, you can directly
+  report the inaccuracy via  https://ipinfo.io/corrections
 SummaryAttributes:
   - p_any_user_names
   - p_any_ip_addresses

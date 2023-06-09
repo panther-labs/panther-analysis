@@ -109,7 +109,9 @@ def rule(event):
     EVENT_CITY_TRACKING["previous"] = last_login_stats
     EVENT_CITY_TRACKING["current"] = new_login_stats
     EVENT_CITY_TRACKING["speed"] = int(speed)
+    EVENT_CITY_TRACKING["speed_units"] = "km/h"
     EVENT_CITY_TRACKING["distance"] = int(distance)
+    EVENT_CITY_TRACKING["distance_units"] = "km"
 
     return speed > 900  # Boeing 747 cruising speed
 
