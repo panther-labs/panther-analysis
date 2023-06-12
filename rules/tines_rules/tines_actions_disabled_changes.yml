@@ -1,0 +1,46 @@
+AnalysisType: rule
+Filename: tines_actions_disabled_changes.py
+RuleID: Tines.Actions.DisabledChanges
+DisplayName: Tines Actions Disabled Change
+Enabled: true
+LogTypes:
+  - Tines.Audit
+Tags:
+  - Tines
+  - IAM - Credential Security
+Severity: Medium
+Description: >
+  Detections when Tines Actions are set to Disabled Change
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  - Name: Tines Actions Disabled Change
+    ExpectedResult: true
+    Log:
+      {
+        "created_at": "2023-05-23 23:16:41",
+        "id": 7111111,
+        "operation_name": "ActionsDisabledChange",
+        "request_ip": "12.12.12.12",
+        "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "tenant_id": "8888",
+        "user_email": "user@company.com",
+        "user_id": "17171",
+        "user_name": "user at company dot com"
+      }
+  - Name: Tines Login
+    ExpectedResult: false
+    Log:
+      {
+        "created_at": "2023-05-17 14:45:19",
+        "id": 7888888,
+        "operation_name": "Login",
+        "request_ip": "12.12.12.12",
+        "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "tenant_id": "8888",
+        "user_email": "user@company.com",
+        "user_id": "17171",
+        "user_name": "user at company dot com"
+      }
