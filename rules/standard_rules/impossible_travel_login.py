@@ -12,6 +12,8 @@ from panther_oss_helpers import (
 
 EVENT_CITY_TRACKING = {}
 CACHE_KEY = None
+IS_VPN = False
+IS_APPLE_PRIVATE_RELAY = False
 
 
 def gen_key(event):
@@ -30,9 +32,11 @@ def gen_key(event):
 
 def rule(event):
     # too-many-return-statements due to error checking
-    # pylint: disable=global-statement,too-many-return-statements
+    # pylint: disable=global-statement,too-many-return-statements,too-complex
     global EVENT_CITY_TRACKING
     global CACHE_KEY
+    global IS_VPN
+    global IS_APPLE_PRIVATE_RELAY
 
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
@@ -55,14 +59,46 @@ def rule(event):
     }
     # stuff everything from ipinfo_location into the new_login_stats
     # new_login_stats is the value that we will cache for this key
-    ipinfo_enrichment = deep_get(event, "p_enrichment", "ipinfo_location", ipinfo_location_key)
-    if ipinfo_enrichment is None:
+    ipinfo_location = deep_get(event, "p_enrichment", "ipinfo_location", ipinfo_location_key)
+    if ipinfo_location is None:
         return False
-    new_login_stats.update(ipinfo_enrichment)
+    new_login_stats.update(ipinfo_location)
 
     # Bail out if we have a None value in set as it causes false positives
     if None in new_login_stats.values():
         return False
+
+    ## Check for VPN or Apple Private Relay
+    ipinfo_privacy = deep_get(event, "p_enrichment", "ipinfo_privacy", ipinfo_location_key)
+    if ipinfo_privacy is not None:
+        ###  Do VPN/Apple private relay
+        IS_APPLE_PRIVATE_RELAY = all(
+            [
+                deep_get(ipinfo_privacy, "relay", default=False),
+                deep_get(ipinfo_privacy, "service", default="") == "Apple Private Relay",
+            ]
+        )
+        # We've found that some places, like WeWork locations,
+        #   have the VPN attribute set to true, but do not have a
+        #   service name entry.
+        # We have noticed VPN connections with commercial VPN
+        #   offerings have the VPN attribute set to true, and
+        #   do have a service name entry
+        IS_VPN = all(
+            [
+                deep_get(ipinfo_privacy, "vpn", default=False),
+                deep_get(ipinfo_privacy, "service", default="") != "",
+            ]
+        )
+    if IS_VPN or IS_APPLE_PRIVATE_RELAY:
+        new_login_stats.update(
+            {
+                "is_vpn": f"{IS_VPN}",
+                "is_apple_priv_relay": f"{IS_APPLE_PRIVATE_RELAY}",
+                "service_name": f"{deep_get(ipinfo_privacy, 'service', default='<NO_SERVICE>')}",
+                "NOTE": "APPLE PRIVATE RELAY AND VPN LOGINS ARE NOT CACHED FOR COMPARISON",
+            }
+        )
 
     # Generate a unique cache key for each user per log type
     CACHE_KEY = gen_key(event)
@@ -73,7 +109,7 @@ def rule(event):
     last_login = get_string_set(CACHE_KEY)
     # If we haven't seen this user login in the past 1 day,
     # store this login for future use and don't alert
-    if not last_login:
+    if not last_login and not IS_APPLE_PRIVATE_RELAY and not IS_VPN:
         put_string_set(
             key=CACHE_KEY,
             val=[dumps(new_login_stats)],
@@ -140,3 +176,9 @@ def alert_context(event):
     }
     context.update(EVENT_CITY_TRACKING)
     return context
+
+
+def severity(_):
+    if IS_VPN or IS_APPLE_PRIVATE_RELAY:
+        return "INFO"
+    return "HIGH"
