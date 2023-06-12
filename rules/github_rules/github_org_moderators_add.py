@@ -10,7 +10,8 @@ def rule(event):
 def title(event):
     return (
         f"GitHub.Audit: User [{event.get('actor', '<UNKNOWN_ACTOR>')}] added user "
-        f"[{event.get('user', '<UNKNOWN_USER>')}] to moderators in [{event.get('org','<UNKNOWN_ORG>')}]"
+        f"[{event.get('user', '<UNKNOWN_USER>')}] to moderators in "
+        f"[{event.get('org','<UNKNOWN_ORG>')}]"
     )
 
 
