@@ -1,6 +1,7 @@
 from panther_base_helpers import deep_get
 from panther_tines_helpers import tines_alert_context
 
+
 ACTIONS = [
     "ActionsDisabledChange"
 ]
