@@ -82,7 +82,7 @@ def rule(event):
         #   have the VPN attribute set to true, but do not have a
         #   service name entry.
         # We have noticed VPN connections with commercial VPN
-        #   offerings have the VPN attribute set to true, and 
+        #   offerings have the VPN attribute set to true, and
         #   do have a service name entry
         IS_VPN = all(
             [
