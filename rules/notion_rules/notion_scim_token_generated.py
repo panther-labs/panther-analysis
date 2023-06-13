@@ -11,5 +11,10 @@ def rule(event):
     )
 
 
+def title(event):
+    user = deep_get(event, "actor", "person", "email", default="<NO_USER_FOUND>")
+    return f"Notion User [{user}] generated a SCIM Token"
+
+
 def alert_context(event):
     return notion_alert_context(event)
