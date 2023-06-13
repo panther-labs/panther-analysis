@@ -1,0 +1,26 @@
+AnalysisType: rule
+DisplayName: "Tines Global Resource Destruction"
+Enabled: true
+Filename: tines_global_resource_destruction.py
+Severity: Low
+Tests:
+    - ExpectedResult: true
+      Log:
+        created_at: "2023-06-13 15:14:46"
+        id: 1234
+        inputs:
+            resourceId: 420
+        operation_name: GlobalResourceDestruction
+        p_source_label: tines-log-source-name
+        request_ip: 98.224.225.84
+        request_user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+        tenant_id: "1337"
+        user_email: user@email.com
+        user_id: "7331"
+        user_name: Tines User Person
+      Name: Detection Trigger
+DedupPeriodMinutes: 60
+LogTypes:
+    - Tines.Audit
+RuleID: "Tines.Global.Resource.Destruction"
+Threshold: 1
