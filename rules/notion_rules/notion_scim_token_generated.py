@@ -6,7 +6,9 @@ from panther_notion_helpers import notion_alert_context
 def rule(event):
     if not filter_include_event(event):
         return False
-    return deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>") == "workspace.scim_token_generated"
+    return (
+        deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>") == "workspace.scim_token_generated"
+    )
 
 
 def alert_context(event):
