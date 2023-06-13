@@ -11,10 +11,9 @@ def rule(event):
 
 
 def title(event):
-    actor = deep_get(event, "protoPayload", "authenticationInfo", "principalEmail", default="")
-    method = deep_get(event, "protoPayload", "methodName", default="")
-    resource = deep_get(event, "protoPayload", "resourceName", default="")
-    return f"[GCP] {actor} performed {method} on {resource}"
+    actor = deep_get(event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>")
+    resource = deep_get(event, "protoPayload", "resourceName", default="<RESOURCE_NOT_FOUND>")
+    return f"[GCP]: [{actor}] modified firewall rule on [{resource}]"
 
 
 def alert_context(event):
