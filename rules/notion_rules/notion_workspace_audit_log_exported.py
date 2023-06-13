@@ -20,7 +20,10 @@ def title(event):
         "duration_in_days",
         default="<NO_DURATION_IN_DAYS_FOUND>",
     )
-    return f"Notion User [{user}] exported audit logs for the last {duration_in_days} days for workspace id {workspace_id}"
+    return (
+        f"Notion User [{user}] exported audit logs for the last "
+        f"{duration_in_days} days for workspace id {workspace_id}"
+    )
 
 
 def alert_context(event):
