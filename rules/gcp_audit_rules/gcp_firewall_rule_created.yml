@@ -160,6 +160,13 @@ Tests:
       {
         "methodName": "v1.compute.firewalls.patch"
       }
+  - Name: appengine.compute.non-create.firewall.method-should-not-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "methodName": "appengine.compute.v1.Firewall.PatchIngressRule"
+      }
   - Name: randomservice.firewall-create.method-should-alert
     LogType: GCP.AuditLog
     ExpectedResult: true
