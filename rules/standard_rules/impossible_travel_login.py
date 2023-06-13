@@ -181,4 +181,13 @@ def alert_context(event):
 def severity(_):
     if IS_VPN or IS_APPLE_PRIVATE_RELAY:
         return "INFO"
+    # time = distance/speed
+    distance = deep_get(EVENT_CITY_TRACKING, "distance", default=None)
+    speed = deep_get(EVENT_CITY_TRACKING, "speed", default=None)
+    if speed and distance:
+        time = distance / speed
+        # time of 0.1666 is 10 minutes
+        if time < 0.1666 and distance < 50:
+            # This is likely a GEOIP inaccuracy
+            return "LOW"
     return "HIGH"
