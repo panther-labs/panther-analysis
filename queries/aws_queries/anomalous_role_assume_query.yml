@@ -3,9 +3,9 @@ Description: RoleAssumes with multiple Useragents could indicate compromised cre
 Enabled: false
 Query: |
     SELECT
-      requestParameters:roleArn,
-      userIdentity:principalId,
-      count(DISTINCT userAgent)
+      requestParameters:roleArn as roleArn,
+      userIdentity:principalId as principalId,
+      count(DISTINCT userAgent) as distinctUserAgents
     FROM
       panther_logs.public.aws_cloudtrail
     WHERE
