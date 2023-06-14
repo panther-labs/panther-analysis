@@ -4,17 +4,16 @@ from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get
 
 
-def _get_details(event) -> List[Any]:
-    return deep_get(event, "protoPayload", "status", "details", default=[{}])
-
-
 def rule(event):
-    details = _get_details(event)
-    if len(details) > 0:
-        reason = deep_get(details[0], "reason", default="")
-        if reason == "IAM_PERMISSION_DENIED":
-            return True
-    return False
+    reason = next(
+        (
+            deep_get(item, "reason", default="")
+            for item in deep_get(event, "protoPayload", "status", "details", default=[{}])
+            if len(item) > 0
+        ),
+        "",
+    )
+    return reason == "IAM_PERMISSION_DENIED"
 
 
 def title(event):
