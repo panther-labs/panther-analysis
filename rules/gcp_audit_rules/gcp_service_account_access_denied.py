@@ -18,19 +18,10 @@ def rule(event):
 
 
 def title(event):
-    details = _get_details(event)
     actor = deep_get(
         event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
-    permission = "<PERMISSION_NOT_FOUND>"
-    if len(details) > 0:
-        permission = deep_get(
-            details[0], "metadata", "permission", default="<PERMISSION_NOT_FOUND>"
-        )
-    return (
-        f"[GCP]: [{actor}] performed multiple [{permission}] requests "
-        "resulting in [IAM_PERMISSION_DENIED]"
-    )
+    return f"[GCP]: [{actor}] performed multiple requests resulting in [IAM_PERMISSION_DENIED]"
 
 
 def alert_context(event):
