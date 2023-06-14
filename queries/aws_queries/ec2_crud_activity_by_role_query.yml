@@ -7,7 +7,12 @@ AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
-  SELECT count(*),recipientAccountId, userIdentity:arn, eventName, eventSource
+  SELECT 
+    count(*) as num_logs,
+    recipientAccountId, 
+    userIdentity:arn as arn, 
+    eventName, 
+    eventSource
   FROM panther_logs.public.aws_cloudtrail
   WHERE 
     eventSource = 'ec2.amazonaws.com' 
