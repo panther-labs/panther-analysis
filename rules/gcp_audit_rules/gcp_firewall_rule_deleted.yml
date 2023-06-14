@@ -1,0 +1,151 @@
+---
+AnalysisType: rule
+DedupPeriodMinutes: 60
+DisplayName: GCP Firewall Rule Deleted
+Enabled: true
+Filename: gcp_firewall_rule_deleted.py
+RuleID: "GCP.Firewall.Rule.Deleted"
+Severity: Low
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Firewall
+  - Networking
+  - Infrastructure
+Description: >
+  This rule detects deletions of GCP firewall rules.
+Runbook: >
+  Ensure that the rule deletion was expected. Firewall rule deletions can cause service interruptions or outages.
+Reference: https://cloud.google.com/firewall/docs/about-firewalls
+Tests:
+  - Name: compute.firewalls-delete-should-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+        "insertid": "-xxxxxxxx",
+        "logname": "projects/test-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "id": "operation-1684869594486-5fc6145ac17b3-6f92b265-43256266",
+          "last": true,
+          "producer": "compute.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "user@domain.com"
+          },
+          "methodName": "v1.compute.firewalls.delete",
+          "request": {
+            "@type": "type.googleapis.com/compute.firewalls.delete"
+          },
+          "requestMetadata": {
+            "callerIP": "12.12.12.12",
+            "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)"
+          },
+          "resourceName": "projects/test-project-123456/global/firewalls/firewall-create",
+          "serviceName": "compute.googleapis.com"
+        },
+        "receivetimestamp": "2023-05-23 19:20:00.728",
+        "resource": {
+          "labels": {
+            "firewall_rule_id": "6563507997690081088",
+            "project_id": "test-project-123456"
+          },
+          "type": "gce_firewall_rule"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2023-05-23 19:20:00.396"
+      }
+  - Name: appengine.firewall.delete-should-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+      "insertid": "-xxxxxxxx",
+      "logname": "projects/test-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
+      "protoPayload": {
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+        "authenticationInfo": {
+          "principalEmail": "user@domain.com"
+        },
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "appengine.applications.update",
+            "resource": "apps/test-project-123456/firewall/ingressRules/1000",
+            "resourceAttributes": {}
+          }
+        ],
+        "methodName": "google.appengine.v1.Firewall.DeleteIngressRule",
+        "requestMetadata": {
+          "callerIP": "12.12.12.12",
+          "destinationAttributes": {},
+          "requestAttributes": {
+            "auth": {},
+            "time": "2023-05-23T19:28:48.805823Z"
+          }
+        },
+        "resourceName": "apps/test-project-123456/firewall/ingressRules/1000",
+        "serviceData": {
+          "@type": "type.googleapis.com/google.appengine.v1beta4.AuditData"
+        },
+        "serviceName": "appengine.googleapis.com",
+        "status": {}
+      },
+      "receivetimestamp": "2023-05-23 19:28:49.474",
+      "resource": {
+        "labels": {
+          "module_id": "",
+          "project_id": "test-project-123456",
+          "version_id": "",
+          "zone": ""
+        },
+        "type": "gae_app"
+      },
+      "severity": "NOTICE",
+      "timestamp": "2023-05-23 19:28:48.707"
+    }
+  - Name: compute.non-delete.firewall.method-should-not-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "methodName": "v1.compute.firewalls.insert"
+      }
+  - Name: appengine.non-delete.firewall.method-should-not-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "methodName": "appengine.compute.v1.Firewall.PatchIngressRule"
+      }
+  - Name: randomservice.firewall-delete.method-should-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log: 
+      {
+        "protoPayload": {
+          "authenticationInfo": {
+            "principalEmail": "user@domain.com"
+          },
+          "methodName": "randomservice.compute.v1.Firewall.DeleteIngressRule",
+          "resourceName": "randomservice/test-project-123456/firewall/ingressRules/1000",
+          "requestMetadata": {
+              "callerIP": "12.12.12.12",
+              "destinationAttributes": {},
+              "requestAttributes": {
+                "auth": {},
+                "time": "2023-05-23T19:28:44.663413Z"
+              },
+          },
+        },
+        "resource": {
+            "labels": {
+              "firewall_rule_id": "6563507997690081088",
+              "project_id": "test-project-123456"
+            },
+            "type": "gce_firewall_rule"
+        },
+      }
