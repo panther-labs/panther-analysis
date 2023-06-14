@@ -153,6 +153,13 @@ Tests:
       "severity": "NOTICE",
       "timestamp": "2023-05-23 19:28:44.562"
     }
+  - Name: compute.non-update.firewall.method-should-not-alert
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "methodName": "v1.compute.firewalls.insert"
+      }
   - Name: appengine.compute.non-update.firewall.method-should-not-alert
     LogType: GCP.AuditLog
     ExpectedResult: false
