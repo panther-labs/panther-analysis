@@ -1,8 +1,17 @@
 AnalysisType: rule
+Filename: tines_global_resource_destruction.py
+RuleID: Tines.Global.Resource.Destruction
 DisplayName: "Tines Global Resource Destruction"
 Enabled: true
-Filename: tines_global_resource_destruction.py
+LogTypes:
+    - Tines.Audit
+Tags:
+  - Tines
 Severity: Low
+Description: >
+  Detects when a global resource was deleted
+DedupPeriodMinutes: 60
+Threshold: 1
 Tests:
     - Name: Detection Trigger
       ExpectedResult: true
@@ -34,8 +43,3 @@ Tests:
               "user_id": "17171",
               "user_name": "user at company dot com"
           }
-DedupPeriodMinutes: 60
-LogTypes:
-    - Tines.Audit
-RuleID: "Tines.Global.Resource.Destruction"
-Threshold: 1
