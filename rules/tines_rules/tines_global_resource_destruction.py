@@ -16,7 +16,7 @@ def rule(event):
 def title(event):
     operation = deep_get(event, "operation_name", default="<NO_OPERATION_NAME>")
     user = deep_get(event, "user_email", default="<NO_USER_EMAIL>")
-    tines_instance = deep_get(event, "p_source_label", default="<NO_SOURCE_LABEL>ß")
+    tines_instance = deep_get(event, "p_source_label", default="<NO_SOURCE_LABEL>")
 
     return f"Tines [{operation}] performed by [{user}] on [{tines_instance}]"
 
