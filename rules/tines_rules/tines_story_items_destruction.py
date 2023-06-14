@@ -1,7 +1,11 @@
 from panther_base_helpers import deep_get
+from global_filter_tines import filter_include_event
 from panther_tines_helpers import tines_alert_context
 
 def rule(event):
+    if not filter_include_event(event):
+        return False
+    
     return event.get('operation_name') == 'StoryItemsDestruction'
 
 def title(event):
