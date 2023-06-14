@@ -5,7 +5,7 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    method_pattern = r"(?:\w+\.)*v1\.(?:Firewall\.Update)|(compute\.firewalls\.(patch|update))"
+    method_pattern = r"(?:\w+\.)*v\d\.(?:Firewall\.Update)|(compute\.firewalls\.(patch|update))"
     match = re.search(method_pattern, deep_get(event, "protoPayload", "methodName", default=""))
     return match is not None
 
