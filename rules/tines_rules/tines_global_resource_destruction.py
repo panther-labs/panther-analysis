@@ -7,13 +7,13 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    return deep_get(event, "operation_name") == "GlobalResourceDestruction"
+    return deep_get(event, "operation_name", default="NO_OPERATION_NAME") == "GlobalResourceDestruction"
 
 
 def title(event):
-    operation = deep_get(event, "operation_name", default="Unknown Operation")
-    user = deep_get(event, "user_email", default="Unknown User")
-    tines_instance = deep_get(event, "p_source_label", default="Unknown Tines Instance")
+    operation = deep_get(event, "operation_name", default="NO_OPERATION_NAME")
+    user = deep_get(event, "user_email", default="NO_USER_EMAIL")
+    tines_instance = deep_get(event, "p_source_label", default="NO_SOURCE_LABEL")
     return f"Tines [{operation}] by [{user}] on [{tines_instance}]"
 
 
