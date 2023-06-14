@@ -1,0 +1,43 @@
+AnalysisType: rule
+Description: A Notion page was set to public in your worksace.
+DisplayName: "Notion Workspace public page added"
+Enabled: true
+Filename: notion_workspace_settings_public_homepage_added.py
+Runbook: A Notion page was made public. Check with the author to determine why this page was made public.
+Severity: Info
+DedupPeriodMinutes: 60
+LogTypes:
+    - Notion.AuditLogs
+RuleID: "Notion.Workspace.Settings"
+Threshold: 1
+Tags:
+  - Data Security:Data Exfiltration
+  - Data Security:Public Data
+Tests:
+  - Name: Public page added
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "id": "eeeeeeee-dddd-4444-bbbb-4444444444444",
+          "timestamp": "2023-05-15T19:14:21.031Z",
+          "workspace_id": "vvvvvvvv-dddd-4444-bbbb-666666666666",
+          "actor": {
+            "object": "user",
+            "id": "44444444-cccc-7777-aaaa-666666666666",
+            "type": "person",
+            "person": {
+              "email": "example@personemail.com",
+            },
+          },
+          "ip_address": "00.000.00.000",
+          "platform": "web",
+          "type": "workspace.settings.public_homepage_added",
+          "workspace.settings.public_homepage_added": {
+            "new_public_page": {
+              "type": "database_id",
+              "database_id": "4b801dc7-d724-4fbb-afd0-9885cbc12405",
+            },
+          },
+        },
+      }
