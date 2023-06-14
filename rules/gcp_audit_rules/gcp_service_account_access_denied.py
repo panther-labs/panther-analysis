@@ -5,7 +5,7 @@ from panther_base_helpers import deep_get
 
 
 def _get_details(event) -> List[Any]:
-    return deep_get(event, "protoPayload", "status", "details", default=[])
+    return deep_get(event, "protoPayload", "status", "details", default=[{}])
 
 
 def rule(event):
