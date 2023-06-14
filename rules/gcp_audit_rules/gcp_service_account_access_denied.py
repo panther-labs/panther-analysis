@@ -27,7 +27,7 @@ def title(event):
         permission = deep_get(
             details[0], "metadata", "permission", default="<PERMISSION_NOT_FOUND>"
         )
-    return f"[GCP]: [{actor}] performed multiple requests resulting in [IAM_PERMISSION_DENIED]"
+    return f"[GCP]: [{actor}] performed multiple [{permission}] requests resulting in [IAM_PERMISSION_DENIED]"
 
 
 def alert_context(event):
