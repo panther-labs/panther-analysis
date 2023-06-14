@@ -6,7 +6,7 @@ from panther_base_helpers import deep_get
 
 def rule(event):
     authenticated = deep_get(
-        deep_get(event, "protoPayload", "authorizationInfo", default=[])[0],
+        deep_get(event, "protoPayload", "authorizationInfo", default=[{}])[0],
         "granted",
         default=False,
     )
