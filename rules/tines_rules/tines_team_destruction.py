@@ -7,7 +7,7 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    return event.get("operation_name") == "TeamDestruction"
+    return deep_get(event, "operation_name") == "TeamDestruction"
 
 
 def title(event):
