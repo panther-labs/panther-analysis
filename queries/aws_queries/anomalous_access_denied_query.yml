@@ -3,8 +3,8 @@ Description: ARNs with a high Access Denied error rate could indicate an error o
 Enabled: false
 Query: |
     SELECT
-      userIdentity:arn,
-      count(DISTINCT eventName)
+      userIdentity:arn as arn,
+      count(DISTINCT eventName) as distinctEventNames
     FROM
       panther_logs.public.aws_cloudtrail
     WHERE
