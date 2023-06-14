@@ -1,5 +1,3 @@
-from typing import Any, List
-
 from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get
 
