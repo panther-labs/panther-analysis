@@ -1,8 +1,17 @@
 AnalysisType: rule
+Filename: tines_enqueued_retrying_job_deletion.py
+RuleID: "Tines.Enqueued.Retrying.Job.Destruction"
 DisplayName: "Tines Enqueued/Retrying Job Deletion"
 Enabled: true
-Filename: tines_enqueued_retrying_job_deletion.py
+LogTypes:
+    - Tines.Audit
+Tags:
+  - Tines
 Severity: Low
+Description: "Currently enqueued or retrying jobs were cleared"
+Runbook: "Possible data destruction. Please reach out to the user and confirm this was done for valid business reasons."
+DedupPeriodMinutes: 60
+Threshold: 1
 Tests:
     - Name: Trigger - JobsQueuedDeletion
       ExpectedResult: true
@@ -49,8 +58,3 @@ Tests:
               "user_id": "17171",
               "user_name": "user at company dot com"
           }
-DedupPeriodMinutes: 60
-LogTypes:
-    - Tines.Audit
-RuleID: "Tines.Enqueued.Retrying.Job.Destruction"
-Threshold: 1
