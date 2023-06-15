@@ -1232,7 +1232,7 @@ class TestDeepGet(unittest.TestCase):
     def test_deep_get_lists(self):
         event = {
             "key": {
-                "inner_key": [{"nested_key": "value"}],
+                "inner_key": [{"nested_key": "nested_value"}, {"nested_key": "nested_value2"}],
                 "very_nested": [
                     {
                         "outer_key": [
@@ -1244,6 +1244,10 @@ class TestDeepGet(unittest.TestCase):
                         "outer_key2": [{"nested_key4": "value3"}],
                     }
                 ],
+                "requestParameters": [
+                    {"imageId": "ami1234", "other_key": None},
+                    {"imageId": "ami1234", "other_key": "Use Newer Key!"},
+                ],
                 "another_key": "value6",
                 "empty_list_key": [],
                 "nested_dict_key": {"nested_dict_value": "value7"},
@@ -1251,7 +1255,7 @@ class TestDeepGet(unittest.TestCase):
             }
         }
         self.assertEqual(
-            p_b_h.deep_get(event, "key", "inner_key", "nested_key", default=""), "value"
+            p_b_h.deep_get(event, "key", "inner_key", "nested_key", default=""), "nested_value2"
         )
         self.assertEqual(
             p_b_h.deep_get(event, "key", "very_nested", "outer_key", "nested_key", default=""),
@@ -1266,6 +1270,12 @@ class TestDeepGet(unittest.TestCase):
         self.assertEqual(
             p_b_h.deep_get(event, "key", "very_nested", "outer_key2", "nested_key4", default=""),
             "value3",
+        )
+        self.assertEqual(
+            p_b_h.deep_get(event, "key", "requestParameters", "imageId", default=""), "ami1234"
+        )
+        self.assertEqual(
+            p_b_h.deep_get(event, "key", "requestParameters", "other_key", default=""), "Use Newer Key!"
         )
         self.assertEqual(p_b_h.deep_get(event, "key", "another_key", default=""), "value6")
         self.assertEqual(p_b_h.deep_get(event, "key", "empty_list_key", default=""), "")

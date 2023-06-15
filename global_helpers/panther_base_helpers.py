@@ -331,10 +331,11 @@ def deep_get(dictionary: dict, *keys, default=None):
         if isinstance(obj, Mapping):
             return obj.get(key, default)
         if isinstance(obj, Sequence):
+            result = default
             for item in obj:
                 if isinstance(item, Mapping) and key in item:
-                    return item.get(key, default)
-            return default
+                    result = item.get(key, default)
+            return result
         return default
 
     out = reduce(_type, keys, dictionary) if keys else dictionary
