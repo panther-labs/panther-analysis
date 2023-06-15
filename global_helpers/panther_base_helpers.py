@@ -326,6 +326,7 @@ def deep_get(dictionary: dict, *keys, default=None):
 
     Inspired by https://bit.ly/3a0hq9E
     """
+
     def _type(obj, key):
         if isinstance(obj, Mapping):
             return obj.get(key, default)
@@ -335,6 +336,7 @@ def deep_get(dictionary: dict, *keys, default=None):
                     return item.get(key, default)
             return default
         return default
+
     out = reduce(_type, keys, dictionary) if keys else dictionary
     if out is None or out == []:
         return default
