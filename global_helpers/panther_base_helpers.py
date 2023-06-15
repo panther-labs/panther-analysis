@@ -314,12 +314,14 @@ def deep_get(dictionary: dict, *keys, default=None):
                 "nested_key": "value"
             }],
             "another_key": "value2",
+            "empty_list_key": [],
         }
     }
     value = deep_get(a_dict, "key", "inner_key", "nested_key", default="")
     value2 = deep_get(a_dict, "key", "another_key", default="")
-    print(value, value2)
-        value value2
+    value3 = deep_get(a_dict, "key", "empty_list_key", "nonexistent_key", default="")
+    print(value, value2, value3)
+        value value2 ''
     ```
     """
     def _type(obj, key):
