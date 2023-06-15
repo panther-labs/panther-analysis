@@ -1247,6 +1247,9 @@ class TestDeepGet(unittest.TestCase):
                 }],
                 "another_key": "value6",
                 "empty_list_key": [],
+                "nested_dict_key": {
+                    "nested_dict_value": "value7"
+                },
                 "none_value": None,
             }
         }
@@ -1257,6 +1260,7 @@ class TestDeepGet(unittest.TestCase):
         self.assertEqual(p_b_h.deep_get(event, "key", "another_key", default=""), "value6")
         self.assertEqual(p_b_h.deep_get(event, "key", "empty_list_key", default=""), "")
         self.assertEqual(p_b_h.deep_get(event, "key", "empty_list_key", "nonexistent_key", default=""), "")
+        self.assertEqual(p_b_h.deep_get(event, "key", "nested_dict_key", "nested_dict_value", default=""), "value7")
         self.assertEqual(p_b_h.deep_get(event, "key", "none_value", default=""), "")
 
 class TestCloudflareHelpers(unittest.TestCase):
