@@ -1,8 +1,17 @@
 AnalysisType: rule
+Filename: tines_team_destruction.py
+RuleID: Tines.Team.Destruction
 DisplayName: "Tines Team Destruction"
 Enabled: true
-Filename: tines_team_destruction.py
+LogTypes:
+    - Tines.Audit
+Tags:
+  - Tines
 Severity: Low
+Description: "A user has destroyed a team"
+Runbook: "Possible data destruction. Please reach out to the user and confirm this was done for valid business reasons."
+DedupPeriodMinutes: 60
+Threshold: 1
 Tests:
     - Name: Detection Trigger
       ExpectedResult: true
@@ -34,8 +43,3 @@ Tests:
               "user_id": "17171",
               "user_name": "user at company dot com"
           }
-DedupPeriodMinutes: 60
-LogTypes:
-    - Tines.Audit
-RuleID: "Tines.Team.Destruction"
-Threshold: 1
