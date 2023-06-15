@@ -1,8 +1,17 @@
 AnalysisType: rule
+Filename: tines_story_items_destruction.py
+RuleID: Tines.Story.Items.Destruction
 DisplayName: "Tines Story Items Destruction"
 Enabled: true
-Filename: tines_story_items_destruction.py
-Severity: Low
+LogTypes:
+    - Tines.Audit
+Tags:
+  - Tines
+Severity: Info
+Description: "A user has destroyed a story item"
+Runbook: "Possible data destruction. Please reach out to the user and confirm this was done for valid business reasons."
+DedupPeriodMinutes: 60
+Threshold: 1
 Tests:
     - Name: Detection Trigger
       ExpectedResult: true
@@ -34,8 +43,3 @@ Tests:
               "user_id": "17171",
               "user_name": "user at company dot com"
           }
-DedupPeriodMinutes: 60
-LogTypes:
-    - Tines.Audit
-RuleID: "Tines.Story.Items.Destruction"
-Threshold: 1
