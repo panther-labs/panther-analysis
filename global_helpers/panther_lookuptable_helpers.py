@@ -23,8 +23,8 @@ class LookupTableMatches:
                 if isinstance(en_values, list):
                     for val in en_values:
                         if deep_get(val, "p_match", default="") == p_match:
-                            matched_items[enrichment_type]= val
+                            matched_items[enrichment_type] = val
                 if isinstance(en_values, dict):
                     if deep_get(en_values, "p_match", default="") == p_match:
-                        matched_items[enrichment_type]= en_values
+                        matched_items[enrichment_type] = en_values
         return matched_items

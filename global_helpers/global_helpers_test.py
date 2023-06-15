@@ -1841,17 +1841,17 @@ class TestLookupTableHelpers(unittest.TestCase):
         matches = lut.enrichments_by_pmatch(self.simple_event, "1.2.3.4")
         self.assertEqual(
             matches,
-            { 
+            {
                 "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
                 "ipinfo_asn": {
-                        "asn": "AS99999",
-                        "domain": "verytrusty.com",
-                        "name": "Super Trustworthy, LLC",
-                        "p_match": "1.2.3.4",
-                        "route": "1.0.0.0/8",
-                        "type": "isp",
-                    }
-            }
+                    "asn": "AS99999",
+                    "domain": "verytrusty.com",
+                    "name": "Super Trustworthy, LLC",
+                    "p_match": "1.2.3.4",
+                    "route": "1.0.0.0/8",
+                    "type": "isp",
+                },
+            },
         )
         matches = lut.enrichments_by_pmatch(self.list_event, "1.2.3.4")
         self.assertEqual(matches, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
