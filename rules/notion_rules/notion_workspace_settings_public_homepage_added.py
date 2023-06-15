@@ -21,7 +21,7 @@ def title(event):
         "database_id",
         default="<NO_DATABASE_ID_FOUND>",
     )
-    return f"Notion User {[actor]} added a new public page {[db_id]} in workspace {[workspace_id]}"
+    return f"Notion User [{actor}] added a new public page [{db_id}] in workspace [{workspace_id}]"
 
 
 def alert_context(event):
