@@ -324,15 +324,19 @@ def deep_get(dictionary: dict, *keys, default=None):
         value value2 ''
     ```
     """
+
     def _type(obj, key):
         if isinstance(obj, Mapping):
             return obj.get(key, default)
-        if isinstance(obj, Sequence) and not isinstance(obj, str) and (obj is not None and len(obj) > 0):
+        if (
+            isinstance(obj, Sequence)
+            and not isinstance(obj, str)
+            and (obj is not None and len(obj) > 0)
+        ):
             return obj[0].get(key, default)
         return default
-    out = reduce(
-       _type, keys, dictionary
-    )
+
+    out = reduce(_type, keys, dictionary)
     if out is None:
         return default
     return out
