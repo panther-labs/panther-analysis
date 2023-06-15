@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Any, Sequence
+from typing import Sequence
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
