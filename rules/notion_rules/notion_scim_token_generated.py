@@ -17,7 +17,10 @@ def title(event):
     token_id = deep_get(
         event, "workspace.scim_token_generated", "id", default="<NO_TOKEN_ID_FOUND>"
     )
-    return f"Notion User [{user}] generated a SCIM token [{token_id}] for workspace id [{workspace_id}]."
+    return (
+        f"Notion User [{user}] generated a SCIM token "
+        f"[{token_id}] for workspace id [{workspace_id}]."
+    )
 
 
 def alert_context(event):
