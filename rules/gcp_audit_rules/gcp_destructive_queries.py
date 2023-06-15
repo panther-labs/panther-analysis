@@ -27,10 +27,10 @@ def rule(event):
     ):
         return True
 
-    if deep_get(event, "protoPayload", "metadata", "tableDeletion"):
+    if deep_get(event, "protoPayload", "metadata", "tableDeletion", default=""):
         return True
 
-    if deep_get(event, "protoPayload", "metadata", "datasetDeletion"):
+    if deep_get(event, "protoPayload", "metadata", "datasetDeletion", default=""):
         return True
 
     return False

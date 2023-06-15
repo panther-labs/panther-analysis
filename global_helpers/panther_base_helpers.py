@@ -297,12 +297,39 @@ def github_alert_context(event: dict):
 
 
 def deep_get(dictionary: dict, *keys, default=None):
-    """Safely return the value of an arbitrarily nested map
+    """Safely return a value in an arbitrarily nested map
 
-    Inspired by https://bit.ly/3a0hq9E
+    Also supports nested list elements containing nested dictionaries
+
+    Usage:
+    ```
+    deep_get(a_dict, "key", "another_key", "nth_key", default="")
+    ```
+
+    Example:
+    ```
+    a_dict = {
+        "key": {
+            "inner_key": [{
+                "nested_key": "value"
+            }],
+            "another_key": "value2",
+        }
+    }
+    value = deep_get(a_dict, "key", "inner_key", "nested_key", default="")
+    value2 = deep_get(a_dict, "key", "another_key", default="")
+    print(value, value2)
+        value value2
+    ```
     """
+    def _type(obj, key):
+        if isinstance(obj, Mapping):
+            return obj.get(key, default)
+        if isinstance(obj, Sequence) and not isinstance(obj, str) and (obj is not None and len(obj) > 0):
+            return obj[0].get(key, default)
+        return default
     out = reduce(
-        lambda d, key: d.get(key, default) if isinstance(d, Mapping) else default, keys, dictionary
+       _type, keys, dictionary
     )
     if out is None:
         return default

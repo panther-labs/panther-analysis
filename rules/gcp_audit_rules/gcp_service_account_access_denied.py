@@ -3,14 +3,7 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    reason = next(
-        (
-            deep_get(item, "reason", default="")
-            for item in deep_get(event, "protoPayload", "status", "details", default=[{}])
-            if len(item) > 0
-        ),
-        "",
-    )
+    reason = deep_get(event, "protoPayload", "status", "details", "reason", default="")
     return reason == "IAM_PERMISSION_DENIED"
 
 
