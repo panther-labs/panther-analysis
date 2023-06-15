@@ -21,6 +21,7 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
@@ -190,28 +191,16 @@ class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
 
         self.event = {
-            "p_enrichment": {
-                "tor_exit_nodes": {
-                    "foo": {"ip": "1.2.3.4"},
-                    "p_match": "1.2.3.4"
-                }
-            }
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}
         }
-
 
         # match against array field
         self.event_list = {
             "p_enrichment": {
                 "tor_exit_nodes": {
                     "p_any_ip_addresses": [
-                        {
-                            "ip": "1.2.3.4",
-                            "p_match": "1.2.3.4"
-                        }, 
-                        {
-                            "ip": "1.2.3.5",
-                            "p_match": "1.2.3.5"
-                        }
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
                     ]
                 }
             }
@@ -1802,6 +1791,72 @@ class TestNotionHelpers(unittest.TestCase):
         returns = p_notion_h.notion_alert_context({})
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+
+
+class TestLookupTableHelpers(unittest.TestCase):
+    # pylint: disable=protected-access
+    def setUp(self):
+        self.simple_event_no_pmatch = {
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}
+        }
+        self.simple_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {"foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+                "ipinfo_asn": {
+                    "foo": {
+                        "asn": "AS99999",
+                        "domain": "verytrusty.com",
+                        "name": "Super Trustworthy, LLC",
+                        "p_match": "1.2.3.4",
+                        "route": "1.0.0.0/8",
+                        "type": "isp",
+                    }
+                },
+            }
+        }
+        # match against array field
+        self.list_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {
+                    "p_any_ip_addresses": [
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    ]
+                }
+            }
+        }
+
+    def test_register(self):
+        lut = p_l_h.LookupTableMatches()
+        lut._register(self.simple_event, "tor_exit_nodes")
+        self.assertEqual(lut.lut_matches, {"foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
+        # call lut._register with non-extant key
+        lut._register(self.simple_event, "not_exists_enrichment")
+        self.assertEqual(lut.lut_matches, None)
+
+    def test_enrichments_by_pmatch(self):
+        lut = p_l_h.LookupTableMatches()
+        matches = lut.enrichments_by_pmatch(self.simple_event_no_pmatch, "1.2.3.4")
+        self.assertEqual(matches, [])
+        matches = lut.enrichments_by_pmatch(self.simple_event, "1.2.3.4")
+        self.assertEqual(
+            matches,
+            [
+                {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+                {
+                    "ipinfo_asn": {
+                        "asn": "AS99999",
+                        "domain": "verytrusty.com",
+                        "name": "Super Trustworthy, LLC",
+                        "p_match": "1.2.3.4",
+                        "route": "1.0.0.0/8",
+                        "type": "isp",
+                    }
+                },
+            ],
+        )
+        matches = lut.enrichments_by_pmatch(self.list_event, "1.2.3.4")
+        self.assertEqual(matches, [{"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}}])
 
 
 if __name__ == "__main__":
