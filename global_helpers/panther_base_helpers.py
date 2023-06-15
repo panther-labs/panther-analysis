@@ -299,7 +299,7 @@ def github_alert_context(event: dict):
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return a value in an arbitrarily nested map
 
-    Also supports nested list elements containing nested dictionaries
+    Also supports nested Sequence items containing nested dictionaries
 
     Usage:
     ```
@@ -323,6 +323,8 @@ def deep_get(dictionary: dict, *keys, default=None):
     print(value, value2, value3)
         value value2 ''
     ```
+
+    Inspired by https://bit.ly/3a0hq9E
     """
 
     def _type(obj, key):
