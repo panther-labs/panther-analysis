@@ -1837,14 +1837,13 @@ class TestLookupTableHelpers(unittest.TestCase):
     def test_enrichments_by_pmatch(self):
         lut = p_l_h.LookupTableMatches()
         matches = lut.enrichments_by_pmatch(self.simple_event_no_pmatch, "1.2.3.4")
-        self.assertEqual(matches, [])
+        self.assertEqual(matches, {})
         matches = lut.enrichments_by_pmatch(self.simple_event, "1.2.3.4")
         self.assertEqual(
             matches,
-            [
-                {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
-                {
-                    "ipinfo_asn": {
+            { 
+                "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "ipinfo_asn": {
                         "asn": "AS99999",
                         "domain": "verytrusty.com",
                         "name": "Super Trustworthy, LLC",
@@ -1852,11 +1851,10 @@ class TestLookupTableHelpers(unittest.TestCase):
                         "route": "1.0.0.0/8",
                         "type": "isp",
                     }
-                },
-            ],
+            }
         )
         matches = lut.enrichments_by_pmatch(self.list_event, "1.2.3.4")
-        self.assertEqual(matches, [{"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}}])
+        self.assertEqual(matches, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
 
 
 if __name__ == "__main__":
