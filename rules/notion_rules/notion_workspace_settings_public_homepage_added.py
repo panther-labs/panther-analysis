@@ -7,16 +7,15 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    event_type = deep_get(event, "event", "type", default="<NO_EVENT_TYPE_FOUND>")
+    event_type = deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>")
     return event_type == "workspace.settings.public_homepage_added"
 
 
 def title(event):
-    actor = deep_get(event, "event", "actor", "person", "email", default="<NO_EMAIL_FOUND>")
-    workspace_id = deep_get(event, "event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
+    actor = deep_get(event, "actor", "person", "email", default="<NO_EMAIL_FOUND>")
+    workspace_id = deep_get(event, "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
     public_workspace_database_id = deep_get(
         event,
-        "event",
         "workspace.settings.public_homepage_added",
         "new_public_page",
         "database_id",
