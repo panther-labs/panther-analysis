@@ -12,7 +12,7 @@ SnowflakeQuery: >
     region,
     vpc_id,
     srcAddr, -- outside
-    srcIds:instance, -- inside
+    srcIds:instance as instance, -- inside
 
     COUNT(1) as message_count,
     ARRAY_AGG(DISTINCT query_name) as query_names
