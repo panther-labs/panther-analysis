@@ -1275,7 +1275,8 @@ class TestDeepGet(unittest.TestCase):
             p_b_h.deep_get(event, "key", "requestParameters", "imageId", default=""), "ami1234"
         )
         self.assertEqual(
-            p_b_h.deep_get(event, "key", "requestParameters", "other_key", default=""), "Use Newer Key!"
+            p_b_h.deep_get(event, "key", "requestParameters", "other_key", default=""),
+            "Use Newer Key!",
         )
         self.assertEqual(p_b_h.deep_get(event, "key", "another_key", default=""), "value6")
         self.assertEqual(p_b_h.deep_get(event, "key", "empty_list_key", default=""), "")
