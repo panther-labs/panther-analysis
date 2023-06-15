@@ -14,8 +14,10 @@ def rule(event):
 def title(event):
     user = deep_get(event, "actor", "person", "email", default="<NO_USER_FOUND>")
     workspace_id = event.get("workspace_id", "<NO_WORKSPACE_ID_FOUND>")
-    id = deep_get(event,"workspace.scim_token_generated", "id", default="<NO_TOKEN_ID_FOUND>")
-    return f"Notion User [{user}] generated a SCIM token [{id}] for workspace id [{workspace_id}]."
+    token_id = deep_get(
+        event, "workspace.scim_token_generated", "id", default="<NO_TOKEN_ID_FOUND>"
+    )
+    return f"Notion User [{user}] generated a SCIM token [{token_id}] for workspace id [{workspace_id}]."
 
 
 def alert_context(event):
