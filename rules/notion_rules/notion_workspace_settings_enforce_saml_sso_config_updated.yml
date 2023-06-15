@@ -1,0 +1,79 @@
+AnalysisType: rule
+Description: A Notion User changed settings to enforce SAML SSO configurations for your organization.
+DisplayName: "Notion SAML SSO Configuration Changed"
+Enabled: true
+Filename: notion_workspace_settings_enforce_saml_sso_config_updated.py
+Runbook: Possible Data Exfiltration. Follow up with the Notion User to determine if this was done for a valid business reason.
+Severity: High
+Tags:
+  - Data Security:Data Exfiltration
+Tests:
+    - ExpectedResult: false
+      Log:
+          {
+            "id": "...",
+            "timestamp": "2023-05-15T19:14:21.031Z",
+            "workspace_id": "..",
+            "actor": {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": {
+                    "email": "homer.simpson@yourcompany.io"
+                }
+            },
+            "ip_address": "...",
+            "platform": "web",
+            "type": "workspace.content_exported",
+            "workspace.content_exported": {}
+         }
+      Name: Other Event
+    - ExpectedResult: true
+      Log:
+        {
+          "id": "...",
+          "timestamp": "2023-05-15T19:14:21.031Z",
+          "workspace_id": "..",
+          "actor": {
+            "id": "..",
+            "object": "user",
+            "type": "person",
+            "person": {
+                "email": "homer.simpson@yourcompany.io"
+            }
+          },
+            "ip_address": "...",
+            "platform": "web",
+            "type": "workspace.settings.enforce_saml_sso_config_updated",
+            "workspace.settings.enforce_saml_sso_config_updated": {
+              "state": "enabled"
+            },
+        }
+      Name: SAML SSO Enabled
+    - ExpectedResult: true
+      Log:
+        {
+          "id": "...",
+          "timestamp": "2023-05-15T19:14:21.031Z",
+          "workspace_id": "..",
+          "actor": {
+            "id": "..",
+            "object": "user",
+            "type": "person",
+            "person": {
+                "email": "homer.simpson@yourcompany.io"
+            }
+          },
+            "ip_address": "...",
+            "platform": "web",
+            "type": "workspace.settings.enforce_saml_sso_config_updated",
+            "workspace.settings.enforce_saml_sso_config_updated": {
+              "state": "disabled"
+            },
+        }
+      Name: SAML SSO Disabled
+DedupPeriodMinutes: 60
+LogTypes:
+    - Notion.AuditLogs
+RuleID: "Notion.SAML.SSO.Configuration.Changed"
+Threshold: 1
