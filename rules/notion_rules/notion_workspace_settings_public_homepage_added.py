@@ -14,14 +14,14 @@ def rule(event):
 def title(event):
     actor = deep_get(event, "actor", "person", "email", default="<NO_EMAIL_FOUND>")
     workspace_id = deep_get(event, "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
-    public_workspace_database_id = deep_get(
+    db_id = deep_get(
         event,
         "workspace.settings.public_homepage_added",
         "new_public_page",
         "database_id",
         default="<NO_DATABASE_ID_FOUND>",
     )
-    return f"Notion User {actor} added a new public page {public_workspace_database_id} in workspace with workspace id {workspace_id}"
+    return f"Notion User {actor} added a new public page {db_id} in workspace {workspace_id}"
 
 
 def alert_context(event):
