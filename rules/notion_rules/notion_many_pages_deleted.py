@@ -6,15 +6,13 @@ from panther_notion_helpers import notion_alert_context
 def rule(event):
     if not filter_include_event(event):
         return False
-    return (
-        deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>") == "workspace.scim_token_generated"
-    )
+    return deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>") == "page.deleted"
 
 
 def title(event):
     user = deep_get(event, "actor", "person", "email", default="<NO_USER_FOUND>")
-    workspace_id = event.get("workspace_id", "<NO_WORKSPACE_ID_FOUND>")
-    return f"Notion User [{user}] generated a SCIM token for workspace id [{workspace_id}]."
+    page_id = deep_get(event, "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
+    return f"Notion User [{user}] deleted multiple pages with page ids [{page_id}]."
 
 
 def alert_context(event):

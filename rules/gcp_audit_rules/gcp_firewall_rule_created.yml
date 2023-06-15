@@ -1,10 +1,10 @@
 ---
 AnalysisType: rule
 DedupPeriodMinutes: 60
-DisplayName: GCP Firewall Rule Modified
+DisplayName: GCP Firewall Rule Created
 Enabled: true
-Filename: gcp_firewall_rule_modified.py
-RuleID: "GCP.Firewall.Rule.Modified"
+Filename: gcp_firewall_rule_created.py
+RuleID: "GCP.Firewall.Rule.Created"
 Severity: Low
 LogTypes:
   - GCP.AuditLog
@@ -14,18 +14,18 @@ Tags:
   - Networking
   - Infrastructure
 Description: >
-  This rule detects modifications to GCP firewall rules.
+  This rule detects creations of GCP firewall rules.
 Runbook: >
-  Ensure that the rule modification was expected. Firewall rule changes can cause service interruptions or outages.
+  Ensure that the rule creation was expected. Firewall rule creations can expose [vulnerable] resoures to the internet.
 Reference: https://cloud.google.com/firewall/docs/about-firewalls
 Tests:
-  - Name: compute.firewalls.update-should-alert
+  - Name: compute.firewalls.create-should-alert
     LogType: GCP.AuditLog
     ExpectedResult: true
     Log:
       {
       "insertid": "-xxxxxxxxxxxx",
-      "logname": "projects/test-project-123456/cloudaudit.googleapis.com%2Factivity",
+      "logname": "projects/test-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
       "operation": {
         "first": true,
         "id": "operation-1684869580331-5fc6144d418a9-e1332ca3-59c615ac",
@@ -56,9 +56,9 @@ Tests:
             }
           }
         ],
-        "methodName": "v1.compute.firewalls.patch",
+        "methodName": "v1.compute.firewalls.insert",
         "request": {
-          "@type": "type.googleapis.com/compute.firewalls.patch",
+          "@type": "type.googleapis.com/compute.firewalls.insert",
           "denieds": [
             {
               "IPProtocol": "all"
@@ -104,7 +104,7 @@ Tests:
       "severity": "NOTICE",
       "timestamp": "2023-05-23 19:19:40.353"
     }
-  - Name: appengine.firewall.update-should-alert
+  - Name: appengine.firewall.create-should-alert
     LogType: GCP.AuditLog
     ExpectedResult: true
     Log:
@@ -120,27 +120,27 @@ Tests:
           {
             "granted": true,
             "permission": "appengine.applications.update",
-            "resource": "apps/test-project-123456/firewall/ingressRules/1000",
+            "resource": "apps/test-project-123456",
             "resourceAttributes": {}
           }
         ],
-        "methodName": "google.appengine.v1.Firewall.UpdateIngressRule",
+        "methodName": "google.appengine.v1.Firewall.CreateIngressRule",
         "requestMetadata": {
           "callerIP": "12.12.12.12",
           "destinationAttributes": {},
           "requestAttributes": {
             "auth": {},
-            "time": "2023-05-23T19:28:44.663413Z"
+            "time": "2023-05-23T19:28:35.172216Z"
           }
         },
-        "resourceName": "apps/test-project-123456/firewall/ingressRules/1000",
+        "resourceName": "apps/test-project-123456",
         "serviceData": {
           "@type": "type.googleapis.com/google.appengine.v1beta4.AuditData"
         },
         "serviceName": "appengine.googleapis.com",
         "status": {}
       },
-      "receivetimestamp": "2023-05-23 19:28:45.473",
+      "receivetimestamp": "2023-05-23 19:28:35.479",
       "resource": {
         "labels": {
           "module_id": "",
@@ -151,23 +151,23 @@ Tests:
         "type": "gae_app"
       },
       "severity": "NOTICE",
-      "timestamp": "2023-05-23 19:28:44.562"
+      "timestamp": "2023-05-23 19:28:35.049"
     }
-  - Name: compute.non-update.firewall.method-should-not-alert
+  - Name: compute.non-create.firewall.method-should-not-alert
     LogType: GCP.AuditLog
     ExpectedResult: false
     Log:
       {
-        "methodName": "v1.compute.firewalls.insert"
+        "methodName": "v1.compute.firewalls.patch"
       }
-  - Name: appengine.compute.non-update.firewall.method-should-not-alert
+  - Name: appengine.compute.non-create.firewall.method-should-not-alert
     LogType: GCP.AuditLog
     ExpectedResult: false
     Log:
       {
         "methodName": "appengine.compute.v1.Firewall.PatchIngressRule"
       }
-  - Name: randomservice.firewall-update.method-should-alert
+  - Name: randomservice.firewall-create.method-should-alert
     LogType: GCP.AuditLog
     ExpectedResult: true
     Log: 
@@ -176,7 +176,7 @@ Tests:
           "authenticationInfo": {
             "principalEmail": "user@domain.com"
           },
-          "methodName": "randomservice.compute.v1.Firewall.UpdateIngressRule",
+          "methodName": "randomservice.compute.v1.Firewall.CreateIngressRule",
           "resourceName": "randomservice/test-project-123456/firewall/ingressRules/1000",
           "requestMetadata": {
               "callerIP": "12.12.12.12",
