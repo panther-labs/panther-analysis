@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Sequence
+from typing import Any, Sequence
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -326,20 +326,17 @@ def deep_get(dictionary: dict, *keys, default=None):
 
     Inspired by https://bit.ly/3a0hq9E
     """
-
     def _type(obj, key):
         if isinstance(obj, Mapping):
             return obj.get(key, default)
-        if (
-            isinstance(obj, Sequence)
-            and not isinstance(obj, str)
-            and (obj is not None and len(obj) > 0)
-        ):
-            return obj[0].get(key, default)
+        if isinstance(obj, Sequence):
+            for item in obj:
+                if isinstance(item, Mapping) and key in item:
+                    return item.get(key, default)
+            return default
         return default
-
-    out = reduce(_type, keys, dictionary)
-    if out is None:
+    out = reduce(_type, keys, dictionary) if keys else dictionary
+    if out is None or out == []:
         return default
     return out
 

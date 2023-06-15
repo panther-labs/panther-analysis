@@ -10,7 +10,7 @@ def rule(event):
     request_path = deep_get(
         event, "data", "details", "request", "path", default="<NO_REQUEST_PATH_FOUND>"
     )
-    request_body = deep_get(event, "data", "details", "request", "body", default=[-1])
+    request_body = deep_get(event, "data", "details", "request", "body", default=[])
     return all(
         [
             data_description == "Set the Multi-factor Authentication policies",
