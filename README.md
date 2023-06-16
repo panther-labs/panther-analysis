@@ -49,7 +49,7 @@ pipenv shell # Optional, this will spawn a subshell containing pipenv environmen
 
 ```bash 
 make install
-pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
+pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/
 ```
 
 ### Run detection tests
