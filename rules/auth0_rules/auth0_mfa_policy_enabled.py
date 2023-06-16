@@ -21,7 +21,7 @@ def rule(event):
 
 def title(event):
 
-    userEmail = deep_get(
+    user_email = deep_get(
         event, "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
     request_body = deep_get(
@@ -34,7 +34,7 @@ def title(event):
         setting_change = "Use Adaptive MFA"
 
     return (
-        f"Auth0 user {userEmail} set the "
+        f"Auth0 user {user_email} set the "
         f"mfa policies in your organization to {setting_change}."
     )
 
