@@ -8,10 +8,7 @@ org_re = re.compile(r"^/api/v2/organizations/[^/\s]+/invitations$")
 
 
 def rule(event):
-    if not any([
-       filter_include_event(event),
-       is_auth0_config_event(event)
-       ]):
+    if not any([filter_include_event(event), is_auth0_config_event(event)]):
         return False
 
     return invitation_type(event) is not None
@@ -29,7 +26,9 @@ def title(event):
     else:
         invitee = "<NO_INVITEE>"
 
-    inviter = deep_get(event, "data", "details", "request", "auth", "user", "email", default="<NO_INVITER>")
+    inviter = deep_get(
+        event, "data", "details", "request", "auth", "user", "email", default="<NO_INVITER>"
+    )
     source = deep_get(event, "p_source_label", default="<NO_PSOURCE>")
     return f"Auth0 User [{inviter}] invited [{invitee}] to {inv_type.title()} [{source}]]"
 
