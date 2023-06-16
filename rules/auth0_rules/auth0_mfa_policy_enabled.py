@@ -34,7 +34,7 @@ def title(event):
 
     return (
         f"Auth0 user [{user_email}] set the "
-        f"mfa policies in your organization to {setting_change}."
+        f"mfa policies in your organization to [{setting_change}]."
     )
 
 
