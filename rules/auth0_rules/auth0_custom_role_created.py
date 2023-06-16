@@ -46,8 +46,7 @@ def severity(event):
     )
     if "admin" in request_body_description or "admin" in request_body_name:
         return "MEDIUM"
-    else:
-        return "LOW"
+    return "LOW"
 
 
 def alert_context(event):
