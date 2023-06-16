@@ -1801,7 +1801,10 @@ class TestLookupTableHelpers(unittest.TestCase):
         }
         self.simple_event = {
             "p_enrichment": {
-                "tor_exit_nodes": {"foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+                "tor_exit_nodes": {
+                   "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                   "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"}
+                  },
                 "ipinfo_asn": {
                     "foo": {
                         "asn": "AS99999",
