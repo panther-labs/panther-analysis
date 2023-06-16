@@ -20,11 +20,15 @@ def rule(event):
 def title(event):
     inv_type = invitation_type(event)
     if inv_type == "tenant":
-        invitee = deep_get(event, "data", "details", "request", "body", "owners")[0]
+        invitees = deep_get(event, "data", "details", "request", "body", "owners", default=[])
+        if not invitees:
+            invitee = "<NO_INVITEE>"
+        else:
+            invitee = invitees[0]
     elif inv_type == "organization":
         invitee = deep_get(event, "data", "details", "request", "body", "invitee", "email")
     else:
-        raise Exception(f"Unexpected invitation type {inv_type}")
+        invitee = "<NO_INVITEE>"
 
     inviter = deep_get(event, "data", "details", "request", "auth", "user", "email", default="<NO_INVITER>")
     source = deep_get(event, "p_source_label", default="<NO_PSOURCE>")
