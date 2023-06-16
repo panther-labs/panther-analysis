@@ -8,7 +8,6 @@ def rule(event):
         return False
     description = deep_get(event, "data", "description", default="<NO_DESCRIPTION_FOUND>")
     enabled = deep_get(event, "data", "details", "response", "body", "enabled")
-
     return all(
         [
             description == "Update a Multi-factor Authentication Factor",
