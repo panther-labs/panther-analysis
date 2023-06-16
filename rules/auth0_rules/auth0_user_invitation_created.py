@@ -20,11 +20,10 @@ def rule(event):
 def title(event):
     inv_type = invitation_type(event)
     if inv_type == "tenant":
-        invitees = deep_get(event, "data", "details", "request", "body", "owners", default=[])
-        if not invitees:
+        try:
+            invitee = deep_get(event, "data", "details", "request", "body", "owners", default=[])[0]
+        except IndexError:
             invitee = "<NO_INVITEE>"
-        else:
-            invitee = invitees[0]
     elif inv_type == "organization":
         invitee = deep_get(event, "data", "details", "request", "body", "invitee", "email")
     else:
