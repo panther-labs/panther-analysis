@@ -33,7 +33,7 @@ def title(event):
         setting_change = "Use Adaptive MFA"
 
     return (
-        f"Auth0 user {user_email} set the "
+        f"Auth0 user [{user_email}] set the "
         f"mfa policies in your organization to {setting_change}."
     )
 
