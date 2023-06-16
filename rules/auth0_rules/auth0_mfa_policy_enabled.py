@@ -19,14 +19,13 @@ def rule(event):
         ]
     )
 
+
 def title(event):
 
     user_email = deep_get(
         event, "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
-    request_body = deep_get(
-        event, "data", "details", "request", "body", default=[]
-    )
+    request_body = deep_get(event, "data", "details", "request", "body", default=[])
 
     if "all-applications" in request_body:
         setting_change = "Always Require"
@@ -37,6 +36,7 @@ def title(event):
         f"Auth0 user {user_email} set the "
         f"mfa policies in your organization to {setting_change}."
     )
+
 
 def alert_context(event):
 
