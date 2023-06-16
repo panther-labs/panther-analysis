@@ -18,7 +18,7 @@ class LookupTableMatches:
 
     def enrichments_by_pmatch(self, event, p_match: str) -> dict:
         matched_items = {}
-        for enrichment_type in deep_get(event, ENRICHMENT_KEY, default={}).keys():
+        for lut_name in deep_get(event, ENRICHMENT_KEY, default={}).keys():
             for en_values in deep_get(event, ENRICHMENT_KEY, enrichment_type, default={}).values():
                 if isinstance(en_values, list):
                     for val in en_values:
