@@ -25,7 +25,7 @@ def title(event):
     return (
         f"Auth0 User [{user}] enabled mfa factor settings for [[{path}] "
         f"in your organization’s tenant [{p_source_label}]."
-    ) 
+    )
 
 def alert_context(event):
     return auth0_alert_context(event)
