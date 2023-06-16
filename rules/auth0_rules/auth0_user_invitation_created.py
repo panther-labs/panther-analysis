@@ -6,11 +6,13 @@ from panther_base_helpers import deep_get
 
 org_re = re.compile(r"^/api/v2/organizations/[^/\s]+/invitations$")
 
+
 def rule(event):
     if not filter_include_event(event) or not is_auth0_config_event(event):
         return False
-    
+
     return invitation_type(event) is not None
+
 
 def title(event):
     inv_type = invitation_type(event)
@@ -25,15 +27,17 @@ def title(event):
     source = deep_get(event, "p_source_label", default="unknown")
     return f"Auth0 User [{inviter}] invited [{invitee}] to {inv_type.title()} [{source}]]"
 
+
 def invitation_type(event):
     path = deep_get(event, "data", "details", "request", "path")
 
     if path == "/api/v2/tenants/invitations":
         return "tenant"
-    elif org_re.match(path):
+    if org_re.match(path):
         return "organization"
-    
+
     return None
+
 
 def alert_context(event):
     return auth0_alert_context(event)
