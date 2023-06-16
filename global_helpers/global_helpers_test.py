@@ -1802,9 +1802,9 @@ class TestLookupTableHelpers(unittest.TestCase):
         self.simple_event = {
             "p_enrichment": {
                 "tor_exit_nodes": {
-                   "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                   "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"}
-                  },
+                    "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                    "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                },
                 "ipinfo_asn": {
                     "foo": {
                         "asn": "AS99999",
@@ -1832,18 +1832,26 @@ class TestLookupTableHelpers(unittest.TestCase):
     def test_register(self):
         lut = p_l_h.LookupTableMatches()
         lut._register(self.simple_event, "tor_exit_nodes")
-        self.assertEqual(lut.lut_matches, {"foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
+        self.assertEqual(
+            lut.lut_matches,
+            {
+                "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+            },
+        )
         # call lut._register with non-extant key
         lut._register(self.simple_event, "not_exists_enrichment")
         self.assertEqual(lut.lut_matches, None)
 
     def test_enrichments_by_pmatch(self):
         lut = p_l_h.LookupTableMatches()
-        matches = lut.enrichments_by_pmatch(self.simple_event_no_pmatch, "1.2.3.4")
-        self.assertEqual(matches, {})
-        matches = lut.enrichments_by_pmatch(self.simple_event, "1.2.3.4")
+        self.assertEqual(lut.p_matches(None, None), {})
+        self.assertEqual(lut.p_matches({}), {})
+        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "1.2.3.4"), {})
+        self.assertEqual(lut.p_matched, {})
+
         self.assertEqual(
-            matches,
+            lut.p_matches(self.simple_event, "1.2.3.4"),
             {
                 "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
                 "ipinfo_asn": {
@@ -1856,8 +1864,11 @@ class TestLookupTableHelpers(unittest.TestCase):
                 },
             },
         )
-        matches = lut.enrichments_by_pmatch(self.list_event, "1.2.3.4")
-        self.assertEqual(matches, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
+        self.assertEqual(
+            lut.p_matches(self.list_event, "1.2.3.4"),
+            {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+        )
+        self.assertEqual(lut.p_matched, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
 
 
 if __name__ == "__main__":

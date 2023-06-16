@@ -5,6 +5,7 @@ from panther_lookuptable_helpers import LookupTableMatches
 
 class TorExitNodes(LookupTableMatches):
     def __init__(self, event):
+        super().__init__()
         super()._register(event, "tor_exit_nodes")
 
     def ip_address(self, match_field) -> list or str:
