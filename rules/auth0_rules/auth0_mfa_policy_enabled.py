@@ -4,7 +4,6 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-
     if not filter_include_event(event):
         return False
     data_description = deep_get(event, "data", "description", default="<NO_DATA_DESCRIPTION_FOUND>")
@@ -21,7 +20,6 @@ def rule(event):
 
 
 def title(event):
-
     user_email = deep_get(
         event, "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
@@ -39,5 +37,4 @@ def title(event):
 
 
 def alert_context(event):
-
     return auth0_alert_context(event)
