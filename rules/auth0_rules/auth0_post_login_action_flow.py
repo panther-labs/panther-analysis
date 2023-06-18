@@ -42,12 +42,14 @@ def title(event):
     actions_remaining_list = []
     for binding in response_bindings:
         if deep_get(binding, "display_name"):
-            actions_remaining_list.append(deep_get(binding, "display_name", default="<NO_DISPLAYNAME>"))
+            actions_remaining_list.append(
+                deep_get(binding, "display_name", default="<NO_DISPLAYNAME>")
+            )
 
     if actions_added_list:
         return (
-            f"Auth0 User [{user}] added action(s) [{actions_added_list}] to a post-login action flow "
-            f"for your organization’s tenant [{p_source_label}]."
+            f"Auth0 User [{user}] added action(s) [{actions_added_list}] to a post-login action "
+            f"flow for your organization’s tenant [{p_source_label}]."
         )
 
     if actions_remaining_list:
