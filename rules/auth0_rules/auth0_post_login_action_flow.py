@@ -41,8 +41,8 @@ def title(event):
     # to grab what's still present in the flow
     actions_remaining_list = []
     for binding in response_bindings:
-        if binding.get("display_name", ""):
-            actions_remaining_list.append(binding.get("display_name", ""))
+        if deep_get(binding, "display_name"):
+            actions_remaining_list.append(deep_get(binding, "display_name", default="<NO_DISPLAYNAME>"))
 
     if actions_added_list:
         return (
