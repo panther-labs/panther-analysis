@@ -46,8 +46,8 @@ def title(event):
 
     if actions_added_list:
         return (
-            f"Auth0 User {user} added action(s) {actions_added_list} to a post-login action flow "
-            f"for your organization’s tenant {p_source_label}."
+            f"Auth0 User [{user}] added action(s) [{actions_added_list}] to a post-login action flow "
+            f"for your organization’s tenant [{p_source_label}]."
         )
 
     if actions_remaining_list:
