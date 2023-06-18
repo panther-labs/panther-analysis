@@ -33,7 +33,7 @@ def title(event):
 
     actions_added_list = []
     for binding in request_bindings:
-        if binding.get("display_name", ""):
+        if "display_name" in binding:
             # check to see if actions were added to the flow
             actions_added_list.append(binding.get("display_name", ""))
 
