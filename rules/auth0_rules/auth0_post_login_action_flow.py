@@ -59,8 +59,8 @@ def title(event):
 
     # no actions remain in the flow
     return (
-        f"Auth0 User {user} removed all actions "
-        f"from a post-login action flow for your organization’s tenant {p_source_label}."
+        f"Auth0 User [{user}] removed all actions "
+        f"from a post-login action flow for your organization’s tenant [{p_source_label}]."
     )
 
 
