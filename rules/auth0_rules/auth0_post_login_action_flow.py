@@ -52,9 +52,9 @@ def title(event):
 
     if actions_remaining_list:
         return (
-            f"Auth0 User {user} removed action(s) "
-            f"to a post-login action flow for your organization’s tenant {p_source_label}, "
-            f"remaining actions include {actions_remaining_list}."
+            f"Auth0 User [{user}] removed action(s) "
+            f"to a post-login action flow for your organization’s tenant [{p_source_label}], "
+            f"remaining actions include [{actions_remaining_list}]."
         )
 
     # no actions remain in the flow
