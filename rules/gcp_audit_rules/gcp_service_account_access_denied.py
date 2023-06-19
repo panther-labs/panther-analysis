@@ -1,7 +1,7 @@
 from typing import Any, List
 
 from gcp_base_helpers import gcp_alert_context
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, deep_walk
 
 
 def _get_details(event) -> List[Any]:
@@ -9,12 +9,8 @@ def _get_details(event) -> List[Any]:
 
 
 def rule(event):
-    details = _get_details(event)
-    if len(details) > 0:
-        reason = deep_get(details[0], "reason", default="")
-        if reason == "IAM_PERMISSION_DENIED":
-            return True
-    return False
+    reason = deep_walk(event, "protoPayload", "status", "details", "reason", default="")
+    return reason == "IAM_PERMISSION_DENIED"
 
 
 def title(event):
