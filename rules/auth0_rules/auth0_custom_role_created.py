@@ -22,7 +22,7 @@ def title(event):
     request_body_name = deep_get(
         event, "data", "details", "request", "body", "name", default="<NO_REQUEST_NAME_FOUND>"
     )
-    request_body_description = deep_get(event, "data", "details", "request", "body", default=[-1])
+    request_body_description = deep_get(event, "data", "details", "request", "body", default="<NO_REQUEST_BODY_FOUND>")
 
     if "admin" in request_body_description or "admin" in request_body_name:
         role_type = "admin"
