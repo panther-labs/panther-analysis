@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Sequence
+from typing import Any, Optional, Sequence
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -307,6 +307,46 @@ def deep_get(dictionary: dict, *keys, default=None):
     if out is None:
         return default
     return out
+
+
+def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
+    """Safely retrieve a value stored in complex dictionary structure
+
+    Similar to deep_get but supports accessing dictionary keys within nested lists as well
+
+    General notes:
+        - In the event of duplicate keys, `deep_walk` returns the last value found for a given key
+        - `deep_walk` returns `default` if a key does not exist in the structure or if the final value is an empty list
+    """
+
+    def _empty_list(sub_obj: Any):
+        if isinstance(sub_obj, list):
+            return all(_empty_list(next_obj) for next_obj in sub_obj)
+        return False
+
+    if not keys:
+        if _empty_list(obj):
+            return default
+        return obj
+
+    current_key = keys[0]
+    found = None
+
+    if isinstance(obj, Mapping):
+        next_key = obj.get(current_key, default)
+        if next_key is not None:
+            found = deep_walk(next_key, *keys[1:], default=default)
+        else:
+            return default
+    elif isinstance(obj, Sequence) and not isinstance(obj, str):
+        for item in obj:
+            value = deep_walk(item, *keys, default=default)
+            if value is not None:
+                found = value
+
+    if found is None:
+        return default
+    return found
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
