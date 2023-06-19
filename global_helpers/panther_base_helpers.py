@@ -309,6 +309,7 @@ def deep_get(dictionary: dict, *keys, default=None):
     return out
 
 
+# pylint: disable=R1260
 def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
     """Safely retrieve a value stored in complex dictionary structure
 
@@ -316,7 +317,8 @@ def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
 
     General notes:
         - In the event of duplicate keys, `deep_walk` returns the last value found for a given key
-        - `deep_walk` returns `default` if a key does not exist in the structure or if the final value is an empty list
+        - `deep_walk` returns `default` if a key does not exist in the structure
+           or if the final value is an empty list
     """
 
     def _empty_list(sub_obj: Any):
