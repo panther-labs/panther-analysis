@@ -1257,20 +1257,26 @@ class TestDeepWalk(unittest.TestCase):
 
         Value specs:
             - String containing `[1,5]` characters
-            - Integer between `0` and `2^32`
+            - Integer between `0` and `10` digits
 
         :return dict:
         """
         return {
-            "".join(secrets.choice(string.hexdigits) for _ in range(5)): "".join(
-                secrets.choice(string.hexdigits) for _ in range(5)
+            "".join(
+                secrets.choice(string.hexdigits)
+                for _ in range(secrets.SystemRandom().randrange(1, 5))
+            ): "".join(
+                secrets.choice(string.hexdigits)
+                for _ in range(secrets.SystemRandom().randrange(1, 5))
             )
             if secrets.choice([True, False])
-            else "".join(secrets.choice(string.digits) for _ in range(10))
-            for _ in [secrets.SystemRandom().randrange(1, 5)]
+            else "".join(
+                secrets.choice(string.digits)
+                for _ in range(secrets.SystemRandom().randrange(1, 10))
+            )
+            for _ in range(secrets.SystemRandom().randrange(1, 5))
         }
 
-    # nosec B311
     def generate_random_test_case_success(self, max_depth=10):
         """
         Generate data that will always pass
@@ -1293,7 +1299,7 @@ class TestDeepWalk(unittest.TestCase):
             nested, keys, expected = _generate(keys + [key], depth + 1)
             kv_pair[key] = nested
             if secrets.choice(["dict", "list"]) == "list":
-                kv_pair[key] = [nested for _ in [secrets.SystemRandom().randrange(1, 5)]]
+                kv_pair[key] = [nested for _ in range(secrets.SystemRandom().randrange(1, 5))]
             return kv_pair, keys, expected
 
         return _generate()
@@ -1330,7 +1336,7 @@ class TestDeepWalk(unittest.TestCase):
         # length greater than the longest key length in the generated structure
         nonexistent_keys = [
             "".join(secrets.choice(string.hexdigits) for _ in range(10))
-            for _ in [secrets.SystemRandom().randrange(1, max_depth)]
+            for _ in range(secrets.SystemRandom().randrange(1, max_depth))
         ]
         return _generate(), nonexistent_keys
 
