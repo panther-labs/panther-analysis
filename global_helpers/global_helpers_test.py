@@ -1242,7 +1242,6 @@ class TestDeepWalk(unittest.TestCase):
     and test iterations at <=10,000
     """
 
-    # nosec B311
     @staticmethod
     def random_kv_pair() -> dict:
         """
@@ -1304,7 +1303,6 @@ class TestDeepWalk(unittest.TestCase):
 
         return _generate()
 
-    # nosec B311
     def generate_random_test_case_default(self, depth=0, max_depth=10):
         """
         Generate data that will always return the default value
