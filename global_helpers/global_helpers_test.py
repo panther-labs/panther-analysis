@@ -1256,24 +1256,21 @@ class TestDeepWalk(unittest.TestCase):
 
         Value specs:
             - String containing `[1,5]` characters
-            - Integer between `0` and `10` digits
+            - Integer between `1` and `10` digits
 
         :return dict:
         """
         return {
             "".join(
                 secrets.choice(string.hexdigits)
-                for _ in range(secrets.SystemRandom().randrange(1, 5))
+                for _ in range(secrets.SystemRandom().randrange(1, 6))
             ): "".join(
                 secrets.choice(string.hexdigits)
-                for _ in range(secrets.SystemRandom().randrange(1, 5))
+                for _ in range(secrets.SystemRandom().randrange(1, 6))
             )
             if secrets.choice([True, False])
-            else "".join(
-                secrets.choice(string.digits)
-                for _ in range(secrets.SystemRandom().randrange(1, 10))
-            )
-            for _ in range(secrets.SystemRandom().randrange(1, 5))
+            else secrets.randbelow(secrets.SystemRandom().randrange(1, 11) ** 10)
+            for _ in range(secrets.SystemRandom().randrange(1, 6))
         }
 
     def generate_random_test_case_success(self, max_depth=10):
@@ -1298,7 +1295,7 @@ class TestDeepWalk(unittest.TestCase):
             nested, keys, expected = _generate(keys + [key], depth + 1)
             kv_pair[key] = nested
             if secrets.choice(["dict", "list"]) == "list":
-                kv_pair[key] = [nested for _ in range(secrets.SystemRandom().randrange(1, 5))]
+                kv_pair[key] = [nested for _ in range(secrets.SystemRandom().randrange(1, 6))]
             return kv_pair, keys, expected
 
         return _generate()
