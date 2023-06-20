@@ -16,6 +16,7 @@ class IPInfoLocation(LookupTableMatches):
     """Helper to get IPInfo location information for enriched fields"""
 
     def __init__(self, event):
+        super().__init__()
         super()._register(event, IPINFO_LOCATION_LUT_NAME)
 
     def city(self, match_field: str) -> Union[list[str], str]:
@@ -59,6 +60,7 @@ class IPInfoASN(LookupTableMatches):
     """Helper to get IPInfo ASN information for enriched fields"""
 
     def __init__(self, event):
+        super().__init__()
         super()._register(event, IPINFO_ASN_LUT_NAME)
 
     def asn(self, match_field: str) -> Union[list[str], str]:
@@ -90,6 +92,7 @@ class IPInfoPrivacy(LookupTableMatches):
     """Helper to get IPInfo Privacy information for enriched fields"""
 
     def __init__(self, event):
+        super().__init__()
         super()._register(event, IPINFO_PRIVACY_LUT_NAME)
 
     def hosting(self, match_field: str) -> bool or list:
