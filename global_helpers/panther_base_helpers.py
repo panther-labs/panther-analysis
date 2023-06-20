@@ -311,7 +311,7 @@ def deep_get(dictionary: dict, *keys, default=None):
 
 
 # pylint: disable=R1260,R0911
-def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all") -> Optional[str]:
+def deep_walk(obj: dict, *keys: str, default: str = None, return_val: str = "all") -> Optional[str]:
     """Safely retrieve a value stored in complex dictionary structure
 
     Similar to deep_get but supports accessing dictionary keys within nested lists as well
@@ -325,24 +325,26 @@ def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all"
     """
 
     def _empty_list(sub_obj: Any):
-        if isinstance(sub_obj, list):
-            return all(_empty_list(next_obj) for next_obj in sub_obj)
-        return False
+        return (
+            all(_empty_list(next_obj) for next_obj in sub_obj)
+            if isinstance(sub_obj, list)
+            else False
+        )
 
     if not keys:
-        if _empty_list(obj):
-            return default
-        return obj
+        return default if _empty_list(obj) else obj
 
     current_key = keys[0]
+    found = OrderedDict()
 
-    if isinstance(obj, dict):
+    if isinstance(obj, Mapping):
         next_key = obj.get(current_key, None)
-        if next_key is not None:
-            return deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
-        return default
+        return (
+            deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
+            if next_key is not None
+            else default
+        )
     if isinstance(obj, Sequence) and not isinstance(obj, str):
-        found = OrderedDict()
         for item in obj:
             value = deep_walk(item, *keys, default=default, return_val=return_val)
             if value is not None:
@@ -352,13 +354,14 @@ def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all"
                 else:
                     found[value] = None
 
-        found = list(found.keys())
-        if return_val == "first":
-            return found[0] if found else default
-        if return_val == "last":
-            return found[-1] if found else default
-        return found[0] if len(found) == 1 else found if found else default
-    return default
+    found = list(found.keys())
+    if not found:
+        return default
+    if return_val == "first" and found:
+        return found[0]
+    if return_val == "last" and found:
+        return found[-1]
+    return found[0] if len(found) == 1 else found
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
