@@ -1,0 +1,60 @@
+AnalysisType: rule
+Description: A MongoDB Atlas api key was created or deleted.
+DisplayName: "mongodb_atlas_api_key_created"
+Enabled: true
+Filename: mongodb_atlas_api_key_created.py
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        created: "2023-06-14 15:47:15"
+        currentvalue: {}
+        eventtypename: API_KEY_ACCESS_LIST_ENTRY_DELETED
+        id: 1234abcd13f2804962409423
+        isglobaladmin: false
+        links:
+            - href: https://cloud.mongodb.com/api/atlas/v1.0/orgs/9876xyz123lmnop0/events/1234abcd13f2804962409423
+              rel: self
+        orgid: 9876xyz123lmnop0
+        p_event_time: "2023-06-14 15:47:15"
+        p_log_type: MongoDB.OrganizationEvent
+        p_parse_time: "2023-06-14 15:53:42.415"
+        p_row_id: 5ad9c2df49e19aac98def9e118e236
+        p_schema_version: 0
+        p_source_id: a2e8f928-c6e5-4110-b6f9-1b741176041d
+        p_source_label: mongo-test-2
+        remoteaddress: 1.2.3.4
+        targetpublickey: xfvcfwtt
+        userid: abcd1234userid988
+        username: user@company.com
+        whitelistentry: 1.2.3.4
+      Name: API Key Deleted
+    - ExpectedResult: true
+      Log:
+        created: "2023-06-14 15:47:15"
+        currentvalue: {}
+        eventtypename: API_KEY_ACCESS_LIST_ENTRY_ADDED
+        id: 1234abcd13f2804962409423
+        isglobaladmin: false
+        links:
+            - href: https://cloud.mongodb.com/api/atlas/v1.0/orgs/9876xyz123lmnop0/events/1234abcd13f2804962409423
+              rel: self
+        orgid: 9876xyz123lmnop0
+        p_event_time: "2023-06-14 15:47:15"
+        p_log_type: MongoDB.OrganizationEvent
+        p_parse_time: "2023-06-14 15:53:42.415"
+        p_row_id: 5ad9c2df49e19aac98def9e118e236
+        p_schema_version: 0
+        p_source_id: a2e8f928-c6e5-4110-b6f9-1b741176041d
+        p_source_label: mongo-test-2
+        remoteaddress: 1.2.3.4
+        targetpublickey: xfvcfwtt
+        userid: abcd1234userid988
+        username: user@company.com
+        whitelistentry: 1.2.3.4
+      Name: API Key Created
+DedupPeriodMinutes: 60
+LogTypes:
+    - MongoDB.OrganizationEvent
+RuleID: "mongodb_atlas_api_key_created"
+Threshold: 1
