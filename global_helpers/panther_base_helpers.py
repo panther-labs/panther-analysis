@@ -1,6 +1,6 @@
 import json
 import re
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
