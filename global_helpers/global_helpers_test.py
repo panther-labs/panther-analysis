@@ -211,18 +211,21 @@ class TestTorExitNodes(unittest.TestCase):
         tor_exit_nodes = p_tor_h.TorExitNodes({})
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
+        self.assertEqual(tor_exit_nodes.has_exit_nodes(), False)
 
     def test_ip_address_found(self):
         """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, "1.2.3.4")
+        self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_ip_address_found_list(self):
         """Should find enrichment list"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event_list)
         ip_address_list = tor_exit_nodes.ip_address("p_any_ip_addresses")
         self.assertEqual(ip_address_list, ["1.2.3.4", "1.2.3.5"])
+        self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_url(self):
         """url generation"""

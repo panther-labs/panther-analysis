@@ -8,6 +8,9 @@ class TorExitNodes(LookupTableMatches):
         super().__init__()
         super()._register(event, "tor_exit_nodes")
 
+    def has_exit_nodes(self):
+        return bool(self.lut_matches)
+
     def ip_address(self, match_field) -> list or str:
         """Enrich an ip address"""
         return self._lookup(match_field, "ip")
