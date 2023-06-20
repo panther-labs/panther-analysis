@@ -310,7 +310,7 @@ def deep_get(dictionary: dict, *keys, default=None):
     return out
 
 
-# pylint: disable=R1260
+# pylint: disable=R1260,R0911
 def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all") -> Optional[str]:
     """Safely retrieve a value stored in complex dictionary structure
 
@@ -320,7 +320,8 @@ def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all"
         - In the event of duplicate keys, `deep_walk` returns the last value found for a given key
         - `deep_walk` returns `default` if a key does not exist in the structure
            or if the final value is an empty list
-        - Supports returning the first found value, the last found value, or all found values for a given key
+        - Supports returning the first found value, the last found value,
+          or all found values for a given key
     """
 
     def _empty_list(sub_obj: Any):
@@ -340,7 +341,7 @@ def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all"
         if next_key is not None:
             return deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
         return default
-    elif isinstance(obj, Sequence) and not isinstance(obj, str):
+    if isinstance(obj, Sequence) and not isinstance(obj, str):
         found = OrderedDict()
         for item in obj:
             value = deep_walk(item, *keys, default=default, return_val=return_val)
