@@ -1,5 +1,6 @@
 import json
 import re
+from collections import OrderedDict, defaultdict
 from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
@@ -310,7 +311,7 @@ def deep_get(dictionary: dict, *keys, default=None):
 
 
 # pylint: disable=R1260
-def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
+def deep_walk(obj: Any, *keys: str, default: str = None, return_val: str = "all") -> Optional[str]:
     """Safely retrieve a value stored in complex dictionary structure
 
     Similar to deep_get but supports accessing dictionary keys within nested lists as well
@@ -319,6 +320,7 @@ def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
         - In the event of duplicate keys, `deep_walk` returns the last value found for a given key
         - `deep_walk` returns `default` if a key does not exist in the structure
            or if the final value is an empty list
+        - Supports returning the first found value, the last found value, or all found values for a given key
     """
 
     def _empty_list(sub_obj: Any):
@@ -332,23 +334,30 @@ def deep_walk(obj: Any, *keys: str, default: str = None) -> Optional[str]:
         return obj
 
     current_key = keys[0]
-    found = None
 
-    if isinstance(obj, Mapping):
-        next_key = obj.get(current_key, default)
+    if isinstance(obj, dict):
+        next_key = obj.get(current_key, None)
         if next_key is not None:
-            found = deep_walk(next_key, *keys[1:], default=default)
-        else:
-            return default
-    elif isinstance(obj, Sequence) and not isinstance(obj, str):
-        for item in obj:
-            value = deep_walk(item, *keys, default=default)
-            if value is not None:
-                found = value
-
-    if found is None:
+            return deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
         return default
-    return found
+    elif isinstance(obj, Sequence) and not isinstance(obj, str):
+        found = OrderedDict()
+        for item in obj:
+            value = deep_walk(item, *keys, default=default, return_val=return_val)
+            if value is not None:
+                if isinstance(value, list):
+                    for sub_item in value:
+                        found[sub_item] = None
+                else:
+                    found[value] = None
+
+        found = list(found.keys())
+        if return_val == "first":
+            return found[0] if found else default
+        if return_val == "last":
+            return found[-1] if found else default
+        return found[0] if len(found) == 1 else found if found else default
+    return default
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):

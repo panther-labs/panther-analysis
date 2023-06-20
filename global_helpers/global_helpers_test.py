@@ -1377,7 +1377,11 @@ class TestDeepWalk(unittest.TestCase):
                             {
                                 "nested_key": "value",
                                 "nested_key2": [{"nested_key3": "value2"}],
-                            }
+                            },
+                            {
+                                "nested_key": "value4",
+                                "nested_key2": [{"nested_key3": "value2"}],
+                            },
                         ],
                         "outer_key2": [{"nested_key4": "value3"}],
                     }
@@ -1393,11 +1397,22 @@ class TestDeepWalk(unittest.TestCase):
             }
         }
         self.assertEqual(
-            p_b_h.deep_walk(event, "key", "inner_key", "nested_key", default=""), "nested_value2"
+            p_b_h.deep_walk(event, "key", "inner_key", "nested_key", default=""),
+            ["nested_value", "nested_value2"],
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "inner_key", "nested_key", default="", return_val="last"),
+            "nested_value2",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(
+                event, "key", "inner_key", "nested_key", default="", return_val="first"
+            ),
+            "nested_value",
         )
         self.assertEqual(
             p_b_h.deep_walk(event, "key", "very_nested", "outer_key", "nested_key", default=""),
-            "value",
+            ["value", "value4"],
         )
         self.assertEqual(
             p_b_h.deep_walk(
