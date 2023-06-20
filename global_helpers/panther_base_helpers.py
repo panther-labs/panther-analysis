@@ -361,7 +361,7 @@ def deep_walk(obj: dict, *keys: str, default: str = None, return_val: str = "all
         "first": found[0],
         "last": found[-1],
         "all": found[0] if len(found) == 1 else found,
-    }.get(return_val)
+    }.get(return_val, "all")
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
