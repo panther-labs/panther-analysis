@@ -23,6 +23,7 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
@@ -190,12 +191,20 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
-        self.event = {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+
+        self.event = {
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}
+        }
 
         # match against array field
         self.event_list = {
             "p_enrichment": {
-                "tor_exit_nodes": {"p_any_ip_addresses": [{"ip": "1.2.3.4"}, {"ip": "1.2.3.5"}]}
+                "tor_exit_nodes": {
+                    "p_any_ip_addresses": [
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    ]
+                }
             }
         }
 
@@ -269,6 +278,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
                         "actor": "unknown",
                         "classification": "malicious",
                         "ip": "142.93.204.250",
+                        "p_match": "142.93.204.250",
                     }
                 }
             }
@@ -341,6 +351,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
             "p_enrichment": {
                 "greynoise_noise_advanced": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "actor": "unknown",
                         "bot": False,
                         "classification": "malicious",
@@ -381,6 +392,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                 "greynoise_noise_advanced": {
                     "p_any_ip_addresses": [
                         {
+                            "p_match": "142.93.204.250",
                             "actor": "unknown",
                             "bot": False,
                             "classification": "malicious",
@@ -413,6 +425,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                             "vpn_service": "N/A",
                         },
                         {
+                            "p_match": "100.93.204.250",
                             "actor": "stinky rat",
                             "bot": True,
                             "classification": "malicious",
@@ -679,6 +692,7 @@ class TestRIOTBasic(unittest.TestCase):
             "p_enrichment": {
                 "greynoise_riot_basic": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "ip_cidr": "142.93.204.250/32",
                         "provider": {"name": "foo"},
                         "scan_time": "2023-05-12 05:11:04.679962983",
@@ -753,6 +767,7 @@ class TestRIOTAdvanced(unittest.TestCase):
             "p_enrichment": {
                 "greynoise_riot_advanced": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "ip_cidr": "142.93.204.250/32",
                         "provider": {
                             "name": "foo",
@@ -774,6 +789,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                 "greynoise_riot_advanced": {
                     "p_any_ip_addresses": [
                         {
+                            "p_match": "142.93.204.250",
                             "ip_cidr": "142.93.204.250/32",
                             "provider": {
                                 "name": "foo",
@@ -786,6 +802,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                             "scan_time": "2023-05-12 05:11:04.679962983",
                         },
                         {
+                            "p_match": "142.93.204.128",
                             "ip_cidr": "142.93.204.128/32",
                             "provider": {
                                 "name": "bar",
@@ -919,6 +936,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "12.12.12.12",
                         "city": "Constantinople",
                         "country": "Byzantium",
                         "lat": "41.008610",
@@ -989,6 +1007,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.15",
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
@@ -1103,6 +1122,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_PRIVACY_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.4",
                         "hosting": False,
                         "proxy": False,
                         "tor": False,
@@ -1161,6 +1181,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.12",
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
@@ -1170,6 +1191,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                 },
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "2.2.2.2",
                         "city": "Constantinople",
                         "country": "Byzantium",
                         "lat": "41.008610",
@@ -1985,6 +2007,84 @@ class TestNotionHelpers(unittest.TestCase):
         returns = p_notion_h.notion_alert_context({})
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+
+
+class TestLookupTableHelpers(unittest.TestCase):
+    # pylint: disable=protected-access
+    def setUp(self):
+        self.simple_event_no_pmatch = {
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}
+        }
+        self.simple_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {
+                    "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                    "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                },
+                "ipinfo_asn": {
+                    "foo": {
+                        "asn": "AS99999",
+                        "domain": "verytrusty.com",
+                        "name": "Super Trustworthy, LLC",
+                        "p_match": "1.2.3.4",
+                        "route": "1.0.0.0/8",
+                        "type": "isp",
+                    }
+                },
+            }
+        }
+        # match against array field
+        self.list_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {
+                    "p_any_ip_addresses": [
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    ]
+                }
+            }
+        }
+
+    def test_register(self):
+        lut = p_l_h.LookupTableMatches()
+        lut._register(self.simple_event, "tor_exit_nodes")
+        self.assertEqual(
+            lut.lut_matches,
+            {
+                "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+            },
+        )
+        # call lut._register with non-extant key
+        lut._register(self.simple_event, "not_exists_enrichment")
+        self.assertEqual(lut.lut_matches, None)
+
+    def test_enrichments_by_pmatch(self):
+        lut = p_l_h.LookupTableMatches()
+        self.assertEqual(lut.p_matches(None, None), {})
+        self.assertEqual(lut.p_matches({}), {})
+        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "1.2.3.4"), {})
+        self.assertEqual(lut.p_matched, {})
+
+        self.assertEqual(
+            lut.p_matches(self.simple_event, "1.2.3.4"),
+            {
+                "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "ipinfo_asn": {
+                    "asn": "AS99999",
+                    "domain": "verytrusty.com",
+                    "name": "Super Trustworthy, LLC",
+                    "p_match": "1.2.3.4",
+                    "route": "1.0.0.0/8",
+                    "type": "isp",
+                },
+            },
+        )
+        self.assertEqual(
+            lut.p_matches(self.list_event, "1.2.3.4"),
+            {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+        )
+        self.assertEqual(lut.p_matched, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
 
 
 if __name__ == "__main__":
