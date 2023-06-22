@@ -26,6 +26,7 @@ class PantherGreyNoiseException(Exception):
 
 class GreyNoiseBasic(LookupTableMatches):
     def __init__(self, event):
+        super().__init__()
         super()._register(event, "greynoise_noise_basic")
         self.sublevel = "basic"
 
@@ -76,6 +77,7 @@ class GreyNoiseBasic(LookupTableMatches):
 class GreyNoiseAdvanced(GreyNoiseBasic):
     # pylint: disable=W0231
     def __init__(self, event):
+        super().__init__(event)
         super()._register(event, "greynoise_noise_advanced")
         self.sublevel = "advanced"
 
@@ -183,6 +185,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
 
 class GreyNoiseRIOTBasic(LookupTableMatches):
     def __init__(self, event):
+        super().__init__()
         super()._register(event, "greynoise_riot_basic")
         self.sublevel = "basic"
 
