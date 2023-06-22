@@ -44,7 +44,7 @@ def severity(event):
         event, "data", "details", "request", "body", "name", default="<NO_REQUEST_NAME_FOUND>"
     )
     request_body_description = deep_get(
-        event, "data", "details", "request", "body", "description", default=[-1]
+        event, "data", "details", "request", "body", "description", default=""
     )
     if "admin" in request_body_description or "admin" in request_body_name:
         return "MEDIUM"
