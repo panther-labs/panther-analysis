@@ -1,0 +1,338 @@
+AnalysisType: rule
+DisplayName: CrowdStrike MacOS plutil Usage
+Description: Detects the usage of plutil to modify plist files. Plist files run on start up and are often used by attackers to maintain persistence.
+Enabled: true
+Filename: crowdstrike_macos_plutil_usage.py
+RuleID: Crowdstrike.Macos.Plutil.Usage
+Severity: Medium
+LogTypes:
+    - Crowdstrike.FDREvent
+Tests:
+  - Name: Plutil used
+    ExpectedResult: true
+    Log:
+      {
+        "aid": "1234abcdefghijklmnop",
+        "aip": "1.2.3.4",
+        "cid": "abcde098654321xyz",
+        "configbuild": "1007.4.0016804.11",
+        "configstatehash": "1260279761",
+        "entitlements": "15",
+        "event": {
+          "CodeSigningFlags": "570506001",
+          "CommandLine": "plutil -insert somekey -string somevalue test.app.plist",
+          "ConfigBuild": "1007.4.0016804.11",
+          "ConfigStateHash": "1260279761",
+          "EffectiveTransmissionClass": "2",
+          "Entitlements": "15",
+          "GID": "20",
+          "ImageFileName": "/usr/bin/plutil",
+          "MD5HashData": "5a29b1ee210395604829dafd744a8039",
+          "MachOSubType": "1",
+          "ParentBaseFileName": "zsh",
+          "ParentProcessId": "488592041865603507",
+          "ProcessEndTime": "",
+          "ProcessGroupId": "488638905187012012",
+          "ProcessStartTime": "1685123957.068",
+          "RGID": "501",
+          "RUID": "501",
+          "RawProcessId": "51673",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de",
+          "SVGID": "20",
+          "SVUID": "501",
+          "SessionProcessId": "488592041748162994",
+          "SigningId": "com.apple.Foundation.plutil",
+          "SourceProcessId": "488592041865603507",
+          "SourceThreadId": "0",
+          "Tags": "316",
+          "TargetProcessId": "488638905187012012",
+          "TeamId": "-",
+          "UID": "501",
+          "aid": "1234abcdefghijklmnop",
+          "aip": "1.2.3.4",
+          "cid": "abcde098654321xyz",
+          "event_platform": "Mac",
+          "event_simpleName": "ProcessRollup2",
+          "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+          "name": "ProcessRollup2MacV9",
+          "timestamp": "1685123957235"
+        },
+        "event_platform": "Mac",
+        "event_simplename": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+        "name": "ProcessRollup2MacV9",
+        "p_any_ip_addresses": [
+          "1.2.3.4"
+        ],
+        "p_any_md5_hashes": [
+          "1234abcdefghijklmnop",
+          "5a29b1ee210395604829dafd744a8039",
+          "abcde098654321xyz"
+        ],
+        "p_any_sha1_hashes": [
+          "0000000000000000000000000000000000000000"
+        ],
+        "p_any_sha256_hashes": [
+          "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de"
+        ],
+        "p_any_trace_ids": [
+          "1234abcdefghijklmnop",
+          "abcde098654321xyz"
+        ],
+        "p_event_time": "2023-05-26 17:59:17.235",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_parse_time": "2023-05-26 18:11:03.404",
+        "p_row_id": "d6ff1555b3f6e785b3e2bbb218abf524",
+        "p_schema_version": 0,
+        "p_source_id": "e4962678-a986-44af-a757-18163a2bc963",
+        "p_source_label": "Crowdstrike",
+        "timestamp": "2023-05-26 17:59:17.235"
+      }
+  - Name: Slack settings update
+    ExpectedResult: false
+    Log:
+      {
+        "aid": "1234abcdefghijklmnop",
+        "aip": "1.2.3.4",
+        "cid": "abcde098654321xyz",
+        "configbuild": "1007.4.0016804.11",
+        "configstatehash": "1260279761",
+        "entitlements": "15",
+        "event": {
+          "CodeSigningFlags": "570506001",
+          "CommandLine": "plutil -convert binary1 /Library/Preferences/com.tinyspeck.slackmacgap.plist",
+          "ConfigBuild": "1007.4.0016804.11",
+          "ConfigStateHash": "1260279761",
+          "EffectiveTransmissionClass": "2",
+          "Entitlements": "15",
+          "GID": "20",
+          "ImageFileName": "/usr/bin/plutil",
+          "MD5HashData": "5a29b1ee210395604829dafd744a8039",
+          "MachOSubType": "1",
+          "ParentBaseFileName": "zsh",
+          "ParentProcessId": "488592041865603507",
+          "ProcessEndTime": "",
+          "ProcessGroupId": "488638905187012012",
+          "ProcessStartTime": "1685123957.068",
+          "RGID": "501",
+          "RUID": "501",
+          "RawProcessId": "51673",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de",
+          "SVGID": "20",
+          "SVUID": "501",
+          "SessionProcessId": "488592041748162994",
+          "SigningId": "com.apple.Foundation.plutil",
+          "SourceProcessId": "488592041865603507",
+          "SourceThreadId": "0",
+          "Tags": "316",
+          "TargetProcessId": "488638905187012012",
+          "TeamId": "-",
+          "UID": "501",
+          "aid": "1234abcdefghijklmnop",
+          "aip": "1.2.3.4",
+          "cid": "abcde098654321xyz",
+          "event_platform": "Mac",
+          "event_simpleName": "ProcessRollup2",
+          "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+          "name": "ProcessRollup2MacV9",
+          "timestamp": "1685123957235"
+        },
+        "event_platform": "Mac",
+        "event_simplename": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+        "name": "ProcessRollup2MacV9",
+        "p_any_ip_addresses": [
+          "1.2.3.4"
+        ],
+        "p_any_md5_hashes": [
+          "1234abcdefghijklmnop",
+          "5a29b1ee210395604829dafd744a8039",
+          "abcde098654321xyz"
+        ],
+        "p_any_sha1_hashes": [
+          "0000000000000000000000000000000000000000"
+        ],
+        "p_any_sha256_hashes": [
+          "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de"
+        ],
+        "p_any_trace_ids": [
+          "1234abcdefghijklmnop",
+          "abcde098654321xyz"
+        ],
+        "p_event_time": "2023-05-26 17:59:17.235",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_parse_time": "2023-05-26 18:11:03.404",
+        "p_row_id": "d6ff1555b3f6e785b3e2bbb218abf524",
+        "p_schema_version": 0,
+        "p_source_id": "e4962678-a986-44af-a757-18163a2bc963",
+        "p_source_label": "Crowdstrike",
+        "timestamp": "2023-05-26 17:59:17.235"
+      }
+  - Name: Windows
+    ExpectedResult: false
+    Log:
+      {
+        "aid": "1234abcdefghijklmnop",
+        "aip": "1.2.3.4",
+        "cid": "abcde098654321xyz",
+        "configbuild": "1007.4.0016804.11",
+        "configstatehash": "1260279761",
+        "entitlements": "15",
+        "event": {
+          "CodeSigningFlags": "570506001",
+          "CommandLine": "plutil -insert somekey -string somevalue test.app.plist",
+          "ConfigBuild": "1007.4.0016804.11",
+          "ConfigStateHash": "1260279761",
+          "EffectiveTransmissionClass": "2",
+          "Entitlements": "15",
+          "GID": "20",
+          "ImageFileName": "/usr/bin/plutil",
+          "MD5HashData": "5a29b1ee210395604829dafd744a8039",
+          "MachOSubType": "1",
+          "ParentBaseFileName": "zsh",
+          "ParentProcessId": "488592041865603507",
+          "ProcessEndTime": "",
+          "ProcessGroupId": "488638905187012012",
+          "ProcessStartTime": "1685123957.068",
+          "RGID": "501",
+          "RUID": "501",
+          "RawProcessId": "51673",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de",
+          "SVGID": "20",
+          "SVUID": "501",
+          "SessionProcessId": "488592041748162994",
+          "SigningId": "com.apple.Foundation.plutil",
+          "SourceProcessId": "488592041865603507",
+          "SourceThreadId": "0",
+          "Tags": "316",
+          "TargetProcessId": "488638905187012012",
+          "TeamId": "-",
+          "UID": "501",
+          "aid": "1234abcdefghijklmnop",
+          "aip": "1.2.3.4",
+          "cid": "abcde098654321xyz",
+          "event_platform": "Mac",
+          "event_simpleName": "ProcessRollup2",
+          "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+          "name": "ProcessRollup2MacV9",
+          "timestamp": "1685123957235"
+        },
+        "event_platform": "Win",
+        "event_simplename": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+        "name": "ProcessRollup2MacV9",
+        "p_any_ip_addresses": [
+          "1.2.3.4"
+        ],
+        "p_any_md5_hashes": [
+          "1234abcdefghijklmnop",
+          "5a29b1ee210395604829dafd744a8039",
+          "abcde098654321xyz"
+        ],
+        "p_any_sha1_hashes": [
+          "0000000000000000000000000000000000000000"
+        ],
+        "p_any_sha256_hashes": [
+          "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de"
+        ],
+        "p_any_trace_ids": [
+          "1234abcdefghijklmnop",
+          "abcde098654321xyz"
+        ],
+        "p_event_time": "2023-05-26 17:59:17.235",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_parse_time": "2023-05-26 18:11:03.404",
+        "p_row_id": "d6ff1555b3f6e785b3e2bbb218abf524",
+        "p_schema_version": 0,
+        "p_source_id": "e4962678-a986-44af-a757-18163a2bc963",
+        "p_source_label": "Crowdstrike",
+        "timestamp": "2023-05-26 17:59:17.235"
+      }
+  - Name: Non process event
+    ExpectedResult: false
+    Log:
+      {
+        "aid": "1234abcdefghijklmnop",
+        "aip": "1.2.3.4",
+        "cid": "abcde098654321xyz",
+        "configbuild": "1007.4.0016804.11",
+        "configstatehash": "1260279761",
+        "entitlements": "15",
+        "event": {
+          "CodeSigningFlags": "570506001",
+          "CommandLine": "plutil -insert somekey -string somevalue test.app.plist",
+          "ConfigBuild": "1007.4.0016804.11",
+          "ConfigStateHash": "1260279761",
+          "EffectiveTransmissionClass": "2",
+          "Entitlements": "15",
+          "GID": "20",
+          "ImageFileName": "/usr/bin/plutil",
+          "MD5HashData": "5a29b1ee210395604829dafd744a8039",
+          "MachOSubType": "1",
+          "ParentBaseFileName": "zsh",
+          "ParentProcessId": "488592041865603507",
+          "ProcessEndTime": "",
+          "ProcessGroupId": "488638905187012012",
+          "ProcessStartTime": "1685123957.068",
+          "RGID": "501",
+          "RUID": "501",
+          "RawProcessId": "51673",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de",
+          "SVGID": "20",
+          "SVUID": "501",
+          "SessionProcessId": "488592041748162994",
+          "SigningId": "com.apple.Foundation.plutil",
+          "SourceProcessId": "488592041865603507",
+          "SourceThreadId": "0",
+          "Tags": "316",
+          "TargetProcessId": "488638905187012012",
+          "TeamId": "-",
+          "UID": "501",
+          "aid": "1234abcdefghijklmnop",
+          "aip": "1.2.3.4",
+          "cid": "abcde098654321xyz",
+          "event_platform": "Mac",
+          "event_simpleName": "ProcessRollup2",
+          "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+          "name": "ProcessRollup2MacV9",
+          "timestamp": "1685123957235"
+        },
+        "event_platform": "Mac",
+        "event_simplename": "DnsRequest",
+        "fdr_event_type": "DnsRequest",
+        "id": "59c9d5fb-b9b7-43a3-913f-6df72d9e1969",
+        "name": "ProcessRollup2MacV9",
+        "p_any_ip_addresses": [
+          "1.2.3.4"
+        ],
+        "p_any_md5_hashes": [
+          "1234abcdefghijklmnop",
+          "5a29b1ee210395604829dafd744a8039",
+          "abcde098654321xyz"
+        ],
+        "p_any_sha1_hashes": [
+          "0000000000000000000000000000000000000000"
+        ],
+        "p_any_sha256_hashes": [
+          "fc708414b7e7c0df8d7711d0362b4dbd79a45fba65bdc646848fa8f50e9035de"
+        ],
+        "p_any_trace_ids": [
+          "1234abcdefghijklmnop",
+          "abcde098654321xyz"
+        ],
+        "p_event_time": "2023-05-26 17:59:17.235",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "p_parse_time": "2023-05-26 18:11:03.404",
+        "p_row_id": "d6ff1555b3f6e785b3e2bbb218abf524",
+        "p_schema_version": 0,
+        "p_source_id": "e4962678-a986-44af-a757-18163a2bc963",
+        "p_source_label": "Crowdstrike",
+        "timestamp": "2023-05-26 17:59:17.235"
+      }
