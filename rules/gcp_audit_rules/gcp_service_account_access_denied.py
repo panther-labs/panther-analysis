@@ -1,24 +1,14 @@
-from typing import Any, List
-
 from gcp_base_helpers import gcp_alert_context
-from panther_base_helpers import deep_get
-
-
-def _get_details(event) -> List[Any]:
-    return deep_get(event, "protoPayload", "status", "details", default=[{}])
+from panther_base_helpers import deep_walk
 
 
 def rule(event):
-    details = _get_details(event)
-    if len(details) > 0:
-        reason = deep_get(details[0], "reason", default="")
-        if reason == "IAM_PERMISSION_DENIED":
-            return True
-    return False
+    reason = deep_walk(event, "protoPayload", "status", "details", "reason", default="")
+    return reason == "IAM_PERMISSION_DENIED"
 
 
 def title(event):
-    actor = deep_get(
+    actor = deep_walk(
         event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
     return f"[GCP]: [{actor}] performed multiple requests resulting in [IAM_PERMISSION_DENIED]"
