@@ -321,7 +321,7 @@ def deep_walk(obj: dict, *keys: str, default: str = None, return_val: str = "all
     keys (str): comma-separated list of keys used to traverse the event object
     default (str): the default value to return if the desired key's value is not present
     return_val (str): string specifying which value to return -- possible values are "first", "last" or, "all"
-        
+
     Returns:
     str | list[str]: A string value if return_val is "first", "last", or "all" returns a single value, otherwise a list of results
     """
