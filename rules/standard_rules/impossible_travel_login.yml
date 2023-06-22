@@ -4,6 +4,7 @@ RuleID: "Standard.ImpossibleTravel.Login"
 DisplayName: "Impossible Travel for Login Action"
 Enabled: true
 LogTypes:
+  - Asana.Audit
   - AWS.CloudTrail
   - Okta.SystemLog
 Tags:
@@ -28,7 +29,6 @@ SummaryAttributes:
 # Alerting test cases for this detection will need to include: 
 # * p_source_label
 # * p_event_time
-# * p_enrichment.ipinfo_location.{UDM SOURCE_IP_FIELD}
 Tests:
   - Name: CloudTrail not ConsoleLogin
     ExpectedResult: false
@@ -577,7 +577,6 @@ Tests:
               "postal_code": "90009",
               "region": "California",
               "region_code": "CA",
-              "source_ip": "12.12.12.12",
               "timezone": "America/Los_Angeles"
             }
           ]
@@ -595,7 +594,7 @@ Tests:
         },
         "client": {
           "device": "Computer",
-          "ipAddress": "12.12.12.12",
+          "ipAddress": "12.12.12.11",
           "userAgent": {
             "browser": "CHROME",
             "os": "Mac OS X",
@@ -619,7 +618,7 @@ Tests:
         "p_enrichment":  {
           "ipinfo_location": {
             "client.ipAddress": {
-              "p_match": "12.12.12.12",
+              "p_match": "12.12.12.11",
               "city": "Anaheim",
               "country": "US",
               "lat": "33.8085",
@@ -628,7 +627,6 @@ Tests:
               "postal_code": "92802",
               "region": "California",
               "region_code": "CA",
-              "source_ip": "12.12.12.11",
               "timezone": "America/Los_Angeles"
             }
           }
@@ -650,4 +648,79 @@ Tests:
         },
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
         "version": "0"
+      }
+  - Name: Asana ImpossibleTravel
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+          [
+           {
+            "p_event_time": "2023-06-12T21:26:01.951000",
+            "city": "New York City",
+            "country": "US",
+            "lat": "40.71427",
+            "lng": "-74.00597",
+            "postal_code": "10004",
+            "region": "New York",
+            "region_code": "NY",
+            "timezone": "America/New_York"
+           }
+          ]
+
+    Log:
+      {
+        "actor": {
+          "actor_type": "user",
+          "email": "homer.simpsons@simpsons.com",
+          "gid": "1234567890",
+          "name": "Homer Simpson"
+        },
+        "context": {
+          "client_ip_address": "1.2.3.4",
+          "context_type": "web",
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+        },
+        "created_at": "2023-05-26 18:24:51.413",
+        "details": {
+          "method": [
+            "SAML"
+          ]
+        },
+        "event_category": "logins",
+        "event_type": "user_login_succeeded",
+        "gid": "123456789",
+        "resource": {
+          "email": "homer.simpsons@simpsons.com",
+          "gid": "1234567890",
+          "name": "Homer Simpson",
+          "resource_type": "user"
+        },
+        "p_log_type": "Asana.Audit",
+        "p_source_label": "Asana Logs",
+        "p_enrichment":  {
+          # ipinfo privacy reset is needed for unit testing
+          "ipinfo_privacy": {
+            "context.client_ip_address": {
+              "p_match": "1.2.3.4"
+            }
+          },
+          "ipinfo_location": {
+            "context.client_ip_address": {
+              "p_match": "1.2.3.4",
+              "city": "Anaheim",
+              "country": "US",
+              "lat": "33.8085",
+              "lng": "-117.9228",
+              "p_event_time": "2023-06-12T22:26:01.951000",
+              "postal_code": "92802",
+              "region": "California",
+              "region_code": "CA",
+              "timezone": "America/Los_Angeles"
+            }
+          }
+        },
+        "p_event_time": "2023-06-12T22:26:01.951000",
       }
