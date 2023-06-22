@@ -5,7 +5,7 @@ from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Any, List, Optional, Sequence
+from typing import Any, List, Optional, Sequence, Union
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -313,7 +313,7 @@ def deep_get(dictionary: dict, *keys, default=None):
 # pylint: disable=too-complex,too-many-return-statements
 def deep_walk(
     obj: dict, *keys: str, default: str = None, return_val: str = "all"
-) -> tuple(Optional[str], Optional[List[str]]):
+) -> Union[Optional[str], Optional[List[str]]]:
     """Safely retrieve a value stored in complex dictionary structure
 
     Similar to deep_get but supports accessing dictionary keys within nested lists as well
