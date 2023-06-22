@@ -1,3 +1,6 @@
+from abc import ABC
+from collections.abc import Mapping, Sequence
+
 from panther_base_helpers import deep_get
 
 ENRICHMENT_KEY = "p_enrichment"
@@ -38,11 +41,11 @@ class LookupTableMatches:
         matched_items = {}
         for lut_name in deep_get(event, ENRICHMENT_KEY, default={}).keys():
             for en_values in deep_get(event, ENRICHMENT_KEY, lut_name, default={}).values():
-                if isinstance(en_values, list):
+                if isinstance(en_values, (list, Sequence)):
                     for val in en_values:
                         if deep_get(val, "p_match", default="") == p_match:
                             matched_items[lut_name] = val
-                if isinstance(en_values, dict):
+                if isinstance(en_values, (dict, ABC, Mapping)):
                     if deep_get(en_values, "p_match", default="") == p_match:
                         matched_items[lut_name] = en_values
         self._p_matched = matched_items
