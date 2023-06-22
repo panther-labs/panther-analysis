@@ -311,7 +311,9 @@ def deep_get(dictionary: dict, *keys, default=None):
 
 
 # pylint: disable=too-complex,too-many-return-statements
-def deep_walk(obj: dict, *keys: str, default: str = None, return_val: str = "all") -> tuple(Optional[str], Optional[List[str]]):
+def deep_walk(
+    obj: dict, *keys: str, default: str = None, return_val: str = "all"
+) -> tuple(Optional[str], Optional[List[str]]):
     """Safely retrieve a value stored in complex dictionary structure
 
     Similar to deep_get but supports accessing dictionary keys within nested lists as well
@@ -320,10 +322,12 @@ def deep_walk(obj: dict, *keys: str, default: str = None, return_val: str = "all
     obj (dict): the original log event, as passed to rule(event)
     keys (str): comma-separated list of keys used to traverse the event object
     default (str): the default value to return if the desired key's value is not present
-    return_val (str): string specifying which value to return -- possible values are "first", "last", or "all"
+    return_val (str): string specifying which value to return
+                      possible values are "first", "last", or "all"
 
     Returns:
-    str | list[str]: A string value if return_val is "first", "last", or "all" returns a single value, otherwise a list of results
+    str | list[str]: A string value if return_val is "first", "last",
+                     or if "all" returns a single value, otherwise a list of [string] values
     """
 
     def _empty_list(sub_obj: Any):
