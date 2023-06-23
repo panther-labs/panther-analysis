@@ -288,6 +288,10 @@ class TestGreyNoiseBasic(unittest.TestCase):
         """Should be basic"""
         noise = p_greynoise_h.GetGreyNoiseObject(self.event)
         self.assertEqual(noise.subscription_level(), "basic")
+        # Ensure that noise.lut_matches is None if there is no enrichment
+        # some users want to test if any greynoise enrichment exists
+        noise_none = p_greynoise_h.GetGreyNoiseObject({})
+        self.assertEqual(noise_none.lut_matches, None)
 
     def test_greynoise_severity(self):
         """Should be CRITICAL"""
