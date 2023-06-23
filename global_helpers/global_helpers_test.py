@@ -290,8 +290,9 @@ class TestGreyNoiseBasic(unittest.TestCase):
         self.assertEqual(noise.subscription_level(), "basic")
         # Ensure that noise.lut_matches is None if there is no enrichment
         # some users want to test if any greynoise enrichment exists
+        self.assertIsNotNone(noise.lut_matches)
         noise_none = p_greynoise_h.GetGreyNoiseObject({})
-        self.assertEqual(noise_none.lut_matches, None)
+        self.assertIsNone(noise_none.lut_matches)
 
     def test_greynoise_severity(self):
         """Should be CRITICAL"""
