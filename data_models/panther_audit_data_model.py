@@ -1,5 +1,5 @@
-from panther_base_helpers import deep_get
 import panther_event_type_helpers as event_type
+from panther_base_helpers import deep_get
 
 audit_log_type_map = {
     "CREATE_USER": event_type.USER_ACCOUNT_CREATED,
@@ -17,6 +17,7 @@ def get_event_type(event):
     if matched is not None:
         return matched
     return None
+
 
 def get_actor_user(event):
     # First prefer actor.attributes.email
