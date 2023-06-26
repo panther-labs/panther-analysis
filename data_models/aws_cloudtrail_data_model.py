@@ -37,9 +37,3 @@ def load_ip_address(event):
         except ipaddress.AddressValueError:
             return None
     return source_ip
-
-
-def get_source_ip_field(event):  # pylint: disable=W0613
-    # get_source_ip_field is used when looking for
-    # source IP Address Enrichment info
-    return "sourceIPAddress"
