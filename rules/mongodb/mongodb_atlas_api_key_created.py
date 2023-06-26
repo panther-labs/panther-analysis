@@ -12,7 +12,7 @@ def alert_context(event):
     return {
         "links": event.get("links", [{}])[0].get("href", "<LINKS_NOT_FOUND>"),
         "username": event.get("username", "<USER_NOT_FOUND>"),
-        "eventtypename": event.get("eventTypeName", "<EVENT_TYPE_NOT_FOUND>"),
-        "orgid": event.get("orgId", "<ORG_ID_NOT_FOUND>"),
-        "targetpublickey": event.get("targetPublicKey", "<PUBLIC_KEY_NOT_FOUND>"),
+        "eventTypeName": event.get("eventTypeName", "<EVENT_TYPE_NOT_FOUND>"),
+        "orgId": event.get("orgId", "<ORG_ID_NOT_FOUND>"),
+        "targetPublicKey": event.get("targetPublicKey", "<PUBLIC_KEY_NOT_FOUND>"),
     }
