@@ -19,13 +19,13 @@ def rule(event):
 def title(event):
     actor = event.get("username", "<USER_NOT_FOUND>")
     target = event.get("targetUsername", "<USER_NOT_FOUND>")
-    orgId = event.get("orgId", "<ORG_NOT_FOUND>")
-    return f"MongoDB Atlas: [{actor}] invited external user [{target}] to the org [{orgId}]"
+    org_id = event.get("orgId", "<ORG_NOT_FOUND>")
+    return f"MongoDB Atlas: [{actor}] invited external user [{target}] to the org [{org_id}]"
 
 
 def alert_context(event):
     return {
         "username": event.get("username", "<USER_NOT_FOUND>"),
-        "targetUsername": event.get("targetUsername", "<USER_NOT_FOUND>"),
-        "orgId": event.get("orgId", "<ORG_NOT_FOUND>"),
+        "target_username": event.get("targetUsername", "<USER_NOT_FOUND>"),
+        "org_id": event.get("orgId", "<ORG_NOT_FOUND>"),
     }
