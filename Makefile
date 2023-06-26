@@ -1,4 +1,4 @@
-dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates' | xargs)
+dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
