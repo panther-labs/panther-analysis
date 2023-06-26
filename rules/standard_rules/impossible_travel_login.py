@@ -3,6 +3,7 @@ from json import dumps, loads
 
 import panther_event_type_helpers as event_type
 from panther_base_helpers import deep_get
+from panther_lookuptable_helpers import LookupTableMatches
 from panther_oss_helpers import (
     get_string_set,
     km_between_ipinfo_loc,
@@ -42,11 +43,6 @@ def rule(event):
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
         return False
 
-    ipinfo_location_key = event.udm("source_ip_field")
-    # bail unless we know where to look in ip enrichment
-    if ipinfo_location_key is None or not isinstance(ipinfo_location_key, str):
-        return False
-
     p_event_datetime = resolve_timestamp_string(deep_get(event, "p_event_time"))
     if p_event_datetime is None:
         # we couldn't go from p_event_time to a datetime object
@@ -57,9 +53,12 @@ def rule(event):
         "p_event_time": p_event_datetime.isoformat(),
         "source_ip": event.udm("source_ip"),
     }
+    #
+    src_ip_enrichments = LookupTableMatches().p_matches(event, event.udm("source_ip"))
+
     # stuff everything from ipinfo_location into the new_login_stats
     # new_login_stats is the value that we will cache for this key
-    ipinfo_location = deep_get(event, "p_enrichment", "ipinfo_location", ipinfo_location_key)
+    ipinfo_location = deep_get(src_ip_enrichments, "ipinfo_location")
     if ipinfo_location is None:
         return False
     new_login_stats.update(ipinfo_location)
@@ -69,7 +68,7 @@ def rule(event):
         return False
 
     ## Check for VPN or Apple Private Relay
-    ipinfo_privacy = deep_get(event, "p_enrichment", "ipinfo_privacy", ipinfo_location_key)
+    ipinfo_privacy = deep_get(src_ip_enrichments, "ipinfo_privacy")
     if ipinfo_privacy is not None:
         ###  Do VPN/Apple private relay
         IS_APPLE_PRIVATE_RELAY = all(
