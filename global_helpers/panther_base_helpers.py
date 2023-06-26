@@ -328,7 +328,7 @@ def deep_walk(
 
     Returns:
     any | list[any]: A single value if return_val is "first", "last",
-                     or if "all" is a list containing one element, 
+                     or if "all" is a list containing one element,
                      otherwise a list of values
     """
 
