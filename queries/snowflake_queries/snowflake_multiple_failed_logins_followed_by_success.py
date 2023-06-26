@@ -1,7 +1,9 @@
 def rule(_):
     return True
 
+
 def title(event):
+    # pylint: disable=line-too-long
     return (
         f"Username [{event.get('user_name','<USER_NOT_FOUND>')}] from clientIP "
         f"[{event.get('client_ip','<CLIENT_IP_NOT_FOUND>')}] "
@@ -10,4 +12,3 @@ def title(event):
         f"followed by a successful login which occurred at "
         f"[{event.get('successful_login_time','<SUCCESS_LOGIN_TIME_NOT_FOUND>')}]."
     )
- 
