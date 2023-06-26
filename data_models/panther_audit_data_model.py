@@ -1,3 +1,4 @@
+from panther_base_helpers import deep_get
 import panther_event_type_helpers as event_type
 
 audit_log_type_map = {
@@ -16,3 +17,11 @@ def get_event_type(event):
     if matched is not None:
         return matched
     return None
+
+def get_actor_user(event):
+    # First prefer actor.attributes.email
+    #  automatons like SCIM won't have an actor.attributes.email
+    actor_user = deep_get(event, "actor", "attributes", "email")
+    if actor_user is None:
+        actor_user = deep_get(event, "actor", "id")
+    return actor_user
