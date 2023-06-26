@@ -1,6 +1,8 @@
 import json
 from unittest.mock import MagicMock
 
+from panther_base_helpers import deep_get
+
 # Set domains allowed to join the organization ie. company.com
 ALLOWED_DOMAINS = []
 
@@ -9,8 +11,8 @@ def rule(event):
     global ALLOWED_DOMAINS  # pylint: disable=global-statement
     if isinstance(ALLOWED_DOMAINS, MagicMock):
         ALLOWED_DOMAINS = json.loads(ALLOWED_DOMAINS())  # pylint: disable=not-callable
-    if event.get("eventTypeName", "") == "INVITED_TO_ORG":
-        target_user = event.get("targetUsername", "")
+    if deep_get(event, "eventTypeName", default="") == "INVITED_TO_ORG":
+        target_user = deep_get(event, "targetUsername", default="")
         target_domain = target_user.split("@")[-1]
         return target_domain not in ALLOWED_DOMAINS
     return False
