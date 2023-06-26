@@ -5,6 +5,8 @@
 
 import datetime
 import os
+import secrets
+import string
 import sys
 import unittest
 
@@ -21,6 +23,7 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
+import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
@@ -189,12 +192,19 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
 
-        self.event = {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        self.event = {
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}
+        }
 
         # match against array field
         self.event_list = {
             "p_enrichment": {
-                "tor_exit_nodes": {"p_any_ip_addresses": [{"ip": "1.2.3.4"}, {"ip": "1.2.3.5"}]}
+                "tor_exit_nodes": {
+                    "p_any_ip_addresses": [
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    ]
+                }
             }
         }
 
@@ -261,7 +271,6 @@ class TestTorExitNodes(unittest.TestCase):
 
 class TestGreyNoiseBasic(unittest.TestCase):
     def setUp(self):
-
         self.event = {
             "p_enrichment": {
                 "greynoise_noise_basic": {
@@ -269,6 +278,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
                         "actor": "unknown",
                         "classification": "malicious",
                         "ip": "142.93.204.250",
+                        "p_match": "142.93.204.250",
                     }
                 }
             }
@@ -278,6 +288,11 @@ class TestGreyNoiseBasic(unittest.TestCase):
         """Should be basic"""
         noise = p_greynoise_h.GetGreyNoiseObject(self.event)
         self.assertEqual(noise.subscription_level(), "basic")
+        # Ensure that noise.lut_matches is None if there is no enrichment
+        # some users want to test if any greynoise enrichment exists
+        self.assertIsNotNone(noise.lut_matches)
+        noise_none = p_greynoise_h.GetGreyNoiseObject({})
+        self.assertIsNone(noise_none.lut_matches)
 
     def test_greynoise_severity(self):
         """Should be CRITICAL"""
@@ -337,11 +352,11 @@ class TestGreyNoiseBasic(unittest.TestCase):
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
     def setUp(self):
-
         self.event = {
             "p_enrichment": {
                 "greynoise_noise_advanced": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "actor": "unknown",
                         "bot": False,
                         "classification": "malicious",
@@ -382,6 +397,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                 "greynoise_noise_advanced": {
                     "p_any_ip_addresses": [
                         {
+                            "p_match": "142.93.204.250",
                             "actor": "unknown",
                             "bot": False,
                             "classification": "malicious",
@@ -414,6 +430,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                             "vpn_service": "N/A",
                         },
                         {
+                            "p_match": "100.93.204.250",
                             "actor": "stinky rat",
                             "bot": True,
                             "classification": "malicious",
@@ -676,11 +693,11 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
 class TestRIOTBasic(unittest.TestCase):
     def setUp(self):
-
         self.event = {
             "p_enrichment": {
                 "greynoise_riot_basic": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "ip_cidr": "142.93.204.250/32",
                         "provider": {"name": "foo"},
                         "scan_time": "2023-05-12 05:11:04.679962983",
@@ -751,11 +768,11 @@ class TestRIOTBasic(unittest.TestCase):
 
 class TestRIOTAdvanced(unittest.TestCase):
     def setUp(self):
-
         self.event = {
             "p_enrichment": {
                 "greynoise_riot_advanced": {
                     "ClientIP": {
+                        "p_match": "142.93.204.250",
                         "ip_cidr": "142.93.204.250/32",
                         "provider": {
                             "name": "foo",
@@ -777,6 +794,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                 "greynoise_riot_advanced": {
                     "p_any_ip_addresses": [
                         {
+                            "p_match": "142.93.204.250",
                             "ip_cidr": "142.93.204.250/32",
                             "provider": {
                                 "name": "foo",
@@ -789,6 +807,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                             "scan_time": "2023-05-12 05:11:04.679962983",
                         },
                         {
+                            "p_match": "142.93.204.128",
                             "ip_cidr": "142.93.204.128/32",
                             "provider": {
                                 "name": "bar",
@@ -922,6 +941,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "12.12.12.12",
                         "city": "Constantinople",
                         "country": "Byzantium",
                         "lat": "41.008610",
@@ -992,6 +1012,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.15",
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
@@ -1106,6 +1127,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_PRIVACY_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.4",
                         "hosting": False,
                         "proxy": False,
                         "tor": False,
@@ -1164,6 +1186,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "1.2.3.12",
                         "asn": "AS00000",
                         "domain": "byzantineempire.com",
                         "name": "Byzantine Empire",
@@ -1173,6 +1196,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                 },
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
                     self.match_field: {
+                        "p_match": "2.2.2.2",
                         "city": "Constantinople",
                         "country": "Byzantium",
                         "lat": "41.008610",
@@ -1231,6 +1255,221 @@ class TestDeepGet(unittest.TestCase):
         self.assertEqual(p_b_h.deep_get(event, "thing", "none_val", default=None), None)
         # If the searched key is not found, and no default kwarg is provided, return None
         self.assertEqual(p_b_h.deep_get(event, "key_does_not_exist"), None)
+
+
+class TestDeepWalk(unittest.TestCase):
+    """
+    Test the functionality of the deep_walk function
+
+    This test case has been stress-tested on `max_depth` values of 100 and
+    with as many as 100-million iterations (though this is very slow
+    due to the complexity of the generated data)
+
+    To ensure relatively quick test runs, keep `max_depth` at <=10
+    and test iterations at <=10,000
+    """
+
+    @staticmethod
+    def random_kv_pair() -> dict:
+        """
+        Generate a random number (`[1,5]`) of key-value pairs for use in nested structures
+        generated by `generate_random_test_case_success` and `generate_random_test_case_default`
+
+        The pairs can contain both string and integer values to add another random element to the
+        data
+
+        Key specs:
+            - String containing `[1,5]` characters
+
+        Value specs:
+            - String containing `[1,5]` characters
+            - Integer between `1` and `10` digits
+
+        :return dict:
+        """
+        return {
+            "".join(
+                secrets.choice(string.hexdigits)
+                for _ in range(secrets.SystemRandom().randrange(1, 6))
+            ): "".join(
+                secrets.choice(string.hexdigits)
+                for _ in range(secrets.SystemRandom().randrange(1, 6))
+            )
+            if secrets.choice([True, False])
+            else secrets.randbelow(secrets.SystemRandom().randrange(1, 11) ** 10)
+            for _ in range(secrets.SystemRandom().randrange(1, 6))
+        }
+
+    def generate_random_test_case_success(self, max_depth=10):
+        """
+        Generate data that will always pass
+
+        This method will return a nested data structure of varying depth
+        and complexity along with the keys needed to traverse the structure and the expected
+        value to check for when calling deep_walk
+
+        :param max_depth:
+        :return:
+        """
+
+        def _generate(keys=None, depth=0):
+            if keys is None:
+                keys = []
+            kv_pair = self.random_kv_pair()
+            key = secrets.choice(list(kv_pair.keys()))
+            if depth == max_depth:
+                return kv_pair, keys + [key], kv_pair[key]
+            nested, keys, expected = _generate(keys + [key], depth + 1)
+            kv_pair[key] = nested
+            if secrets.choice(["dict", "list"]) == "list":
+                kv_pair[key] = [nested for _ in range(secrets.SystemRandom().randrange(1, 6))]
+            return kv_pair, keys, expected
+
+        return _generate()
+
+    def generate_random_test_case_default(self, depth=0, max_depth=10):
+        """
+        Generate data that will always return the default value
+
+        This method will return a nested data structure of varying depth
+        and complexity but will not return a list of keys used to traverse the structure
+
+        A list of nonexistent keys is returned instead which should not match any of the keys
+        in the structure when deep_walk is called
+
+        :param depth:
+        :param max_depth:
+        :return:
+        """
+
+        def _generate():
+            kv_pair = self.random_kv_pair()
+            key = secrets.choice(list(kv_pair.keys()))
+            if secrets.choice(["dict", "list"]) == "list":
+                if depth != max_depth:
+                    return [{key: self.generate_random_test_case_default(depth + 1, max_depth)}]
+                return [kv_pair]
+            if depth != max_depth:
+                return {key: self.generate_random_test_case_default(depth + 1, max_depth)}
+            return kv_pair
+
+        # These keys should not be able to collide with the keys in the generated KV pair
+        # To ensure that this is the case, generate [1,max_depth] keys with a lower-bound
+        # length greater than the longest key length in the generated structure
+        nonexistent_keys = [
+            "".join(secrets.choice(string.hexdigits) for _ in range(10))
+            for _ in range(secrets.SystemRandom().randrange(1, max_depth))
+        ]
+        return _generate(), nonexistent_keys
+
+    def test_deep_walk_success_random(self):
+        """
+        Run one-thousand iterations of the successful test generation code
+
+        The expected value should always be returned by deep_walk for this test case
+
+        :return:
+        """
+        for _ in range(1000):
+            data, keys, expected = self.generate_random_test_case_success()
+            self.assertEqual(p_b_h.deep_walk(data, *keys, default=""), expected)
+
+    def test_deep_walk_default_random(self):
+        """
+        Run one-thousand iterations of the default value test generation code
+
+        The default value should always be returned by deep_walk for this test case
+
+        :return:
+        """
+        for _ in range(1000):
+            data, keys = self.generate_random_test_case_default()
+            self.assertEqual(p_b_h.deep_walk(data, *keys, default="NOT FOUND"), "NOT FOUND")
+
+    def test_deep_walk_manual(self):
+        """
+        Manually test the deep_walk function with a static dictionary with
+        various mappings.
+
+        This test case contains expected value and default value cases
+
+        :return:
+        """
+        event = {
+            "key": {
+                "inner_key": [{"nested_key": "nested_value"}, {"nested_key": "nested_value2"}],
+                "very_nested": [
+                    {
+                        "outer_key": [
+                            {
+                                "nested_key": "value",
+                                "nested_key2": [{"nested_key3": "value2"}],
+                            },
+                            {
+                                "nested_key": "value4",
+                                "nested_key2": [{"nested_key3": "value2"}],
+                            },
+                        ],
+                        "outer_key2": [{"nested_key4": "value3"}],
+                    }
+                ],
+                "another_key": "value6",
+                "empty_list_key": [],
+                "multiple_empty_lists_key1": [[]],
+                "multiple_empty_lists_key2": [[[]]],
+                "multiple_empty_lists_key3": [[[[[[]]]]]],
+                "multiple_nested_lists_with_dict": [[[{"very_nested_key": "very_nested_value"}]]],
+                "nested_dict_key": {"nested_dict_value": "value7"},
+                "none_value": None,
+            }
+        }
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "inner_key", "nested_key", default=""),
+            ["nested_value", "nested_value2"],
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "inner_key", "nested_key", default="", return_val="last"),
+            "nested_value2",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(
+                event, "key", "inner_key", "nested_key", default="", return_val="first"
+            ),
+            "nested_value",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "very_nested", "outer_key", "nested_key", default=""),
+            ["value", "value4"],
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(
+                event, "key", "very_nested", "outer_key", "nested_key2", "nested_key3", default=""
+            ),
+            "value2",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "very_nested", "outer_key2", "nested_key4", default=""),
+            "value3",
+        )
+        self.assertEqual(p_b_h.deep_walk(event, "key", "another_key", default=""), "value6")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "empty_list_key", default=""), "")
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "empty_list_key", "nonexistent_key", default=""), ""
+        )
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key1", default=""), "")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key2", default=""), "")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key3", default=""), "")
+        self.assertEqual(
+            p_b_h.deep_walk(
+                event, "key", "multiple_nested_lists_with_dict", "very_nested_key", default=""
+            ),
+            "very_nested_value",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk(event, "key", "nested_dict_key", "nested_dict_value", default=""),
+            "value7",
+        )
+        self.assertEqual(p_b_h.deep_walk(event, "key", "none_value", default=""), "")
 
 
 class TestCloudflareHelpers(unittest.TestCase):
@@ -1773,6 +2012,84 @@ class TestNotionHelpers(unittest.TestCase):
         returns = p_notion_h.notion_alert_context({})
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+
+
+class TestLookupTableHelpers(unittest.TestCase):
+    # pylint: disable=protected-access
+    def setUp(self):
+        self.simple_event_no_pmatch = {
+            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}
+        }
+        self.simple_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {
+                    "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                    "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                },
+                "ipinfo_asn": {
+                    "foo": {
+                        "asn": "AS99999",
+                        "domain": "verytrusty.com",
+                        "name": "Super Trustworthy, LLC",
+                        "p_match": "1.2.3.4",
+                        "route": "1.0.0.0/8",
+                        "type": "isp",
+                    }
+                },
+            }
+        }
+        # match against array field
+        self.list_event = {
+            "p_enrichment": {
+                "tor_exit_nodes": {
+                    "p_any_ip_addresses": [
+                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    ]
+                }
+            }
+        }
+
+    def test_register(self):
+        lut = p_l_h.LookupTableMatches()
+        lut._register(self.simple_event, "tor_exit_nodes")
+        self.assertEqual(
+            lut.lut_matches,
+            {
+                "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+            },
+        )
+        # call lut._register with non-extant key
+        lut._register(self.simple_event, "not_exists_enrichment")
+        self.assertEqual(lut.lut_matches, None)
+
+    def test_enrichments_by_pmatch(self):
+        lut = p_l_h.LookupTableMatches()
+        self.assertEqual(lut.p_matches(None, None), {})
+        self.assertEqual(lut.p_matches({}), {})
+        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "1.2.3.4"), {})
+        self.assertEqual(lut.p_matched, {})
+
+        self.assertEqual(
+            lut.p_matches(self.simple_event, "1.2.3.4"),
+            {
+                "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "ipinfo_asn": {
+                    "asn": "AS99999",
+                    "domain": "verytrusty.com",
+                    "name": "Super Trustworthy, LLC",
+                    "p_match": "1.2.3.4",
+                    "route": "1.0.0.0/8",
+                    "type": "isp",
+                },
+            },
+        )
+        self.assertEqual(
+            lut.p_matches(self.list_event, "1.2.3.4"),
+            {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+        )
+        self.assertEqual(lut.p_matched, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
 
 
 if __name__ == "__main__":

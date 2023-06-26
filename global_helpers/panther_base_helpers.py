@@ -1,10 +1,11 @@
 import json
 import re
+from collections import OrderedDict
 from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Sequence
+from typing import Any, List, Optional, Sequence, Union
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -307,6 +308,66 @@ def deep_get(dictionary: dict, *keys, default=None):
     if out is None:
         return default
     return out
+
+
+# pylint: disable=too-complex,too-many-return-statements
+def deep_walk(
+    obj: dict, *keys: str, default: str = None, return_val: str = "all"
+) -> Union[Optional[str], Optional[List[str]]]:
+    """Safely retrieve a value stored in complex dictionary structure
+
+    Similar to deep_get but supports accessing dictionary keys within nested lists as well
+
+    Parameters:
+    obj (dict): the original log event, as passed to rule(event)
+    keys (str): comma-separated list of keys used to traverse the event object
+    default (str): the default value to return if the desired key's value is not present
+    return_val (str): string specifying which value to return
+                      possible values are "first", "last", or "all"
+
+    Returns:
+    str | list[str]: A string value if return_val is "first", "last",
+                     or if "all" returns a single value, otherwise a list of [string] values
+    """
+
+    def _empty_list(sub_obj: Any):
+        return (
+            all(_empty_list(next_obj) for next_obj in sub_obj)
+            if isinstance(sub_obj, list)
+            else False
+        )
+
+    if not keys:
+        return default if _empty_list(obj) else obj
+
+    current_key = keys[0]
+    found = OrderedDict()
+
+    if isinstance(obj, Mapping):
+        next_key = obj.get(current_key, None)
+        return (
+            deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
+            if next_key is not None
+            else default
+        )
+    if isinstance(obj, Sequence) and not isinstance(obj, str):
+        for item in obj:
+            value = deep_walk(item, *keys, default=default, return_val=return_val)
+            if value is not None:
+                if isinstance(value, list):
+                    for sub_item in value:
+                        found[sub_item] = None
+                else:
+                    found[value] = None
+
+    found = list(found.keys())
+    if not found:
+        return default
+    return {
+        "first": found[0],
+        "last": found[-1],
+        "all": found[0] if len(found) == 1 else found,
+    }.get(return_val, "all")
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
