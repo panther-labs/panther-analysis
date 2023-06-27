@@ -320,7 +320,7 @@ def deep_walk(
 
     Parameters:
     obj (any): the original log event passed to rule(event)
-                and nested objects retrieved recursively
+               and nested objects retrieved recursively
     keys (str): comma-separated list of keys used to traverse the event object
     default (str): the default value to return if the desired key's value is not present
     return_val (str): string specifying which value to return
