@@ -36,7 +36,7 @@ def rule(event):
 
 
 def severity(event):
-    project_id = deep_walk(get_k8s_info(event), "project_id", default="")
+    project_id = deep_walk(get_k8s_info(event), "project_id", default="", return_val="last")
     if project_id in PRODUCTION_PROJECT_IDS:
         return "high"
     return "info"
