@@ -11,10 +11,7 @@ from panther_oss_helpers import (
     resolve_timestamp_string,
 )
 
-EVENT_CITY_TRACKING = {}
-CACHE_KEY = None
-IS_VPN = False
-IS_APPLE_PRIVATE_RELAY = False
+# pylint: disable=global-variable-undefined
 
 
 def gen_key(event):
@@ -38,6 +35,11 @@ def rule(event):
     global CACHE_KEY
     global IS_VPN
     global IS_APPLE_PRIVATE_RELAY
+
+    EVENT_CITY_TRACKING = {}
+    CACHE_KEY = None
+    IS_VPN = False
+    IS_APPLE_PRIVATE_RELAY = False
 
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
