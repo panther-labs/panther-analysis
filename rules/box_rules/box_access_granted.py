@@ -2,6 +2,7 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
+    # Nick was here
     return event.get("event_type") == "ACCESS_GRANTED"
 
 

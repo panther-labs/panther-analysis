@@ -124,7 +124,11 @@ def rule(event):
         last_login = []
         for l_l in tmp_last_login:
             last_login.append(dumps(l_l))
-    last_login_stats = loads(last_login.pop())
+
+    if last_login:
+        last_login_stats = loads(last_login.pop())
+    else:        
+        return False
 
     distance = km_between_ipinfo_loc(last_login_stats, new_login_stats)
     old_time = resolve_timestamp_string(deep_get(last_login_stats, "p_event_time"))
