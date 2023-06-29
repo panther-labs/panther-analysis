@@ -127,7 +127,7 @@ def rule(event):
 
     if last_login:
         last_login_stats = loads(last_login.pop())
-    else:        
+    else:
         return False
 
     distance = km_between_ipinfo_loc(last_login_stats, new_login_stats)
