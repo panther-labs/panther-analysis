@@ -1472,6 +1472,128 @@ class TestDeepWalk(unittest.TestCase):
         self.assertEqual(p_b_h.deep_walk(event, "key", "none_value", default=""), "")
 
 
+class TestHashableHelpers(unittest.TestCase):
+    def test_hashable(self):
+        event = {
+            "key": {
+                "inner_key": [{"nested_key": "nested_value"}, {"nested_key": "nested_value2"}],
+                "very_nested": [
+                    {
+                        "outer_key": [
+                            {
+                                "nested_key": "value",
+                                "nested_key2": [{"nested_key3": "value2"}],
+                            },
+                            {
+                                "nested_key": "value4",
+                                "nested_key2": [{"nested_key3": "value2"}],
+                            },
+                        ],
+                        "outer_key2": [{"nested_key4": "value3"}],
+                    }
+                ],
+                "another_key": "value6",
+                "empty_list_key": [],
+                "multiple_empty_lists_key1": [[]],
+                "multiple_empty_lists_key2": [[[]]],
+                "multiple_empty_lists_key3": [[[[[[]]]]]],
+                "multiple_nested_lists_with_dict": [[[{"very_nested_key": "very_nested_value"}]]],
+                "nested_dict_key": {"nested_dict_value": "value7"},
+                "none_value": None,
+            }
+        }
+        hashable_event = p_b_h.to_hashable(event)
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(hashable_event, "key", "inner_key", "nested_key"),
+            ["nested_value", "nested_value2"],
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "inner_key", "nested_key", default="", return_val="last"
+            ),
+            "nested_value2",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "inner_key", "nested_key", default="", return_val="first"
+            ),
+            "nested_value",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "very_nested", "outer_key", "nested_key", default=""
+            ),
+            ["value", "value4"],
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event,
+                "key",
+                "very_nested",
+                "outer_key",
+                "nested_key2",
+                "nested_key3",
+                default="",
+            ),
+            "value2",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "very_nested", "outer_key2", "nested_key4", default=""
+            ),
+            "value3",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(hashable_event, "key", "another_key", default=""), "value6"
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(hashable_event, "key", "empty_list_key", default=""), ""
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "empty_list_key", "nonexistent_key", default=""
+            ),
+            "",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "multiple_empty_lists_key1", default=""
+            ),
+            "",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "multiple_empty_lists_key2", default=""
+            ),
+            "",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "multiple_empty_lists_key3", default=""
+            ),
+            "",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event,
+                "key",
+                "multiple_nested_lists_with_dict",
+                "very_nested_key",
+                default="",
+            ),
+            "very_nested_value",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(
+                hashable_event, "key", "nested_dict_key", "nested_dict_value", default=""
+            ),
+            "value7",
+        )
+        self.assertEqual(
+            p_b_h.deep_walk_hashable(hashable_event, "key", "none_value", default=""), ""
+        )
+
+
 class TestCloudflareHelpers(unittest.TestCase):
     def setUp(self):
         self.event = {

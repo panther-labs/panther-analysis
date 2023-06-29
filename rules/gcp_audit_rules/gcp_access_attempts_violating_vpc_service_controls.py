@@ -1,15 +1,10 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, to_hashable, deep_walk_hashable
 
 
 def rule(event):
     if event.get("severity", "") == "ERROR":
         if deep_get(event, "protoPayload", "status", "code") == 7:
-            details = deep_get(event, "protoPayload", "status", "details", default=[])
-            for detail in details:
-                violations = deep_get(detail, "violations", default=[])
-                for violation in violations:
-                    if violation.get("type", "") == "VPC_SERVICE_CONTROLS":
-                        return True
+            return "VPC_SERVICE_CONTROLS" in deep_walk_hashable(to_hashable(event), "protoPayload", "status", "details", "violations", "type", default="")
     return False
 
 

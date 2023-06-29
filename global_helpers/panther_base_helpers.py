@@ -372,6 +372,75 @@ def deep_walk(
     }.get(return_val, "all")
 
 
+def to_hashable(obj: Any) -> Optional[Any]:
+    """
+    Convert an unhashable object to a hashable object
+
+    This helper function is useful when dealing with
+    ImmutableList or ImmutableCaseInsensitiveDict types
+    """
+    if isinstance(obj, Mapping):
+        return tuple((obj_key, to_hashable(obj_value)) for obj_key, obj_value in obj.items())
+    if isinstance(obj, Sequence) and not isinstance(obj, str):
+        return tuple(to_hashable(item) for item in obj)
+    return obj
+
+
+def deep_walk_hashable(obj: Any, *keys: str, default=None, return_val="all") -> Optional[Any]:
+    """
+    Retrieve a value from a hashable object
+
+    Since a hashable object will be a tuple or tuple of tuples,
+    we cannot use the usual dictionary syntax
+
+    This function behaves much the same as deep_walk,
+    but expects a hashable object as input
+    """
+
+    def _empty_tuple(sub_obj: Any):
+        return (
+            all(_empty_tuple(next_obj) for next_obj in sub_obj)
+            if isinstance(sub_obj, tuple)
+            else False
+        )
+
+    if not keys:
+        return default if _empty_tuple(obj) else obj
+
+    current_key = keys[0]
+    found = OrderedDict()
+
+    if isinstance(obj, tuple):
+        for item in obj:
+            if isinstance(item, tuple) and len(item) == 2:
+                item_key, item_value = item
+                if item_key == current_key:
+                    if item_value in ((), None):
+                        return default
+                    return deep_walk_hashable(
+                        item_value, *keys[1:], default=default, return_val=return_val
+                    )
+                if not item or item == current_key:
+                    return default
+            next_obj = deep_walk_hashable(item, *keys, default=default, return_val=return_val)
+            if next_obj is not None:
+                next_obj = to_hashable(next_obj)
+                if isinstance(next_obj, tuple):
+                    for sub_obj in next_obj:
+                        found[sub_obj] = None
+                else:
+                    found[next_obj] = None
+
+    found = list(found.keys())
+    if not found:
+        return default
+    return {
+        "first": found[0],
+        "last": found[-1],
+        "all": found[0] if len(found) == 1 else found,
+    }.get(return_val, "all")
+
+
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
     """Return a specific field in a list of Python dictionaries.
     We return the empty set if the comparison key is not found"""
