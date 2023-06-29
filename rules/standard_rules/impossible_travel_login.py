@@ -128,7 +128,9 @@ def rule(event):
     if last_login:
         last_login_stats = loads(last_login.pop())
     else:
-        return False
+        last_login_stats = (
+            f"{deep_get(event, 'p_source_label').replace(' ', '')}..{event.udm('actor_user')}"
+        )
 
     distance = km_between_ipinfo_loc(last_login_stats, new_login_stats)
     old_time = resolve_timestamp_string(deep_get(last_login_stats, "p_event_time"))
