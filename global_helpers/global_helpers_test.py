@@ -202,21 +202,23 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}
-        })
+        self.event = ImmutableCaseInsensitiveDict(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}}
+        )
 
         # match against array field
-        self.event_list = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "tor_exit_nodes": {
-                    "p_any_ip_addresses": [
-                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
-                    ]
+        self.event_list = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "tor_exit_nodes": {
+                        "p_any_ip_addresses": [
+                            {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                            {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                        ]
+                    }
                 }
             }
-        })
+        )
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
@@ -281,18 +283,20 @@ class TestTorExitNodes(unittest.TestCase):
 
 class TestGreyNoiseBasic(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_noise_basic": {
-                    "ClientIP": {
-                        "actor": "unknown",
-                        "classification": "malicious",
-                        "ip": "142.93.204.250",
-                        "p_match": "142.93.204.250",
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_noise_basic": {
+                        "ClientIP": {
+                            "actor": "unknown",
+                            "classification": "malicious",
+                            "ip": "142.93.204.250",
+                            "p_match": "142.93.204.250",
+                        }
                     }
                 }
             }
-        })
+        )
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -362,51 +366,11 @@ class TestGreyNoiseBasic(unittest.TestCase):
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_noise_advanced": {
-                    "ClientIP": {
-                        "p_match": "142.93.204.250",
-                        "actor": "unknown",
-                        "bot": False,
-                        "classification": "malicious",
-                        "cve": ["cve1244", "cve4567"],
-                        "first_seen": "2022-03-19",
-                        "ip": "142.93.204.250",
-                        "last_seen_timestamp": "2022-04-06",
-                        "metadata": {
-                            "asn": "AS14061",
-                            "category": "hosting",
-                            "city": "North Bergen",
-                            "country": "United States",
-                            "country_code": "US",
-                            "organization": "DigitalOcean, LLC",
-                            "os": "Linux 2.2-3.x",
-                            "rdns": "",
-                            "region": "New Jersey",
-                            "tor": False,
-                        },
-                        "raw_data": {
-                            "hassh": [],
-                            "ja3": [],
-                            "scan": [{"port": 23, "protocol": "TCP"}],
-                            "web": {},
-                        },
-                        "seen": True,
-                        "spoofable": False,
-                        "tags": ["Mirai", "ZMap Client"],
-                        "vpn": False,
-                        "vpn_service": "N/A",
-                    }
-                }
-            }
-        })
-
-        self.event_list = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_noise_advanced": {
-                    "p_any_ip_addresses": [
-                        {
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_noise_advanced": {
+                        "ClientIP": {
                             "p_match": "142.93.204.250",
                             "actor": "unknown",
                             "bot": False,
@@ -438,36 +402,80 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                             "tags": ["Mirai", "ZMap Client"],
                             "vpn": False,
                             "vpn_service": "N/A",
-                        },
-                        {
-                            "p_match": "100.93.204.250",
-                            "actor": "stinky rat",
-                            "bot": True,
-                            "classification": "malicious",
-                            "cve": ["cve1244", "cve4567"],
-                            "first_seen": "2022-02-19",
-                            "ip": "100.93.204.250",
-                            "last_seen_timestamp": "2022-03-06",
-                            "metadata": {
-                                "asn": "AS14461",
-                                "category": "isp",
-                                "city": "South Bergen",
-                                "country": "United States",
-                                "country_code": "US",
-                                "organization": "DigitalOcean, LLC",
-                                "os": "Linux 2.2-3.x",
-                                "rdns": "",
-                                "region": "South Hampton",
-                                "tor": False,
-                            },
-                            "spoofable": False,
-                            "vpn": False,
-                            "vpn_service": "N/A",
-                        },
-                    ]
+                        }
+                    }
                 }
             }
-        })
+        )
+
+        self.event_list = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_noise_advanced": {
+                        "p_any_ip_addresses": [
+                            {
+                                "p_match": "142.93.204.250",
+                                "actor": "unknown",
+                                "bot": False,
+                                "classification": "malicious",
+                                "cve": ["cve1244", "cve4567"],
+                                "first_seen": "2022-03-19",
+                                "ip": "142.93.204.250",
+                                "last_seen_timestamp": "2022-04-06",
+                                "metadata": {
+                                    "asn": "AS14061",
+                                    "category": "hosting",
+                                    "city": "North Bergen",
+                                    "country": "United States",
+                                    "country_code": "US",
+                                    "organization": "DigitalOcean, LLC",
+                                    "os": "Linux 2.2-3.x",
+                                    "rdns": "",
+                                    "region": "New Jersey",
+                                    "tor": False,
+                                },
+                                "raw_data": {
+                                    "hassh": [],
+                                    "ja3": [],
+                                    "scan": [{"port": 23, "protocol": "TCP"}],
+                                    "web": {},
+                                },
+                                "seen": True,
+                                "spoofable": False,
+                                "tags": ["Mirai", "ZMap Client"],
+                                "vpn": False,
+                                "vpn_service": "N/A",
+                            },
+                            {
+                                "p_match": "100.93.204.250",
+                                "actor": "stinky rat",
+                                "bot": True,
+                                "classification": "malicious",
+                                "cve": ["cve1244", "cve4567"],
+                                "first_seen": "2022-02-19",
+                                "ip": "100.93.204.250",
+                                "last_seen_timestamp": "2022-03-06",
+                                "metadata": {
+                                    "asn": "AS14461",
+                                    "category": "isp",
+                                    "city": "South Bergen",
+                                    "country": "United States",
+                                    "country_code": "US",
+                                    "organization": "DigitalOcean, LLC",
+                                    "os": "Linux 2.2-3.x",
+                                    "rdns": "",
+                                    "region": "South Hampton",
+                                    "tor": False,
+                                },
+                                "spoofable": False,
+                                "vpn": False,
+                                "vpn_service": "N/A",
+                            },
+                        ]
+                    }
+                }
+            }
+        )
 
     def test_greynoise_object(self):
         """Should be advanced"""
@@ -703,18 +711,20 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
 class TestRIOTBasic(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_riot_basic": {
-                    "ClientIP": {
-                        "p_match": "142.93.204.250",
-                        "ip_cidr": "142.93.204.250/32",
-                        "provider": {"name": "foo"},
-                        "scan_time": "2023-05-12 05:11:04.679962983",
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_riot_basic": {
+                        "ClientIP": {
+                            "p_match": "142.93.204.250",
+                            "ip_cidr": "142.93.204.250/32",
+                            "provider": {"name": "foo"},
+                            "scan_time": "2023-05-12 05:11:04.679962983",
+                        }
                     }
                 }
             }
-        })
+        )
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -778,32 +788,11 @@ class TestRIOTBasic(unittest.TestCase):
 
 class TestRIOTAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_riot_advanced": {
-                    "ClientIP": {
-                        "p_match": "142.93.204.250",
-                        "ip_cidr": "142.93.204.250/32",
-                        "provider": {
-                            "name": "foo",
-                            "category": "cloud",
-                            "description": "some cloud",
-                            "explanation": "because",
-                            "reference": "my brother",
-                            "trust_level": "1",
-                        },
-                        "scan_time": "2023-05-12 05:11:04.679962983",
-                    }
-                }
-            }
-        })
-
-        # for testing array matches
-        self.event_list = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "greynoise_riot_advanced": {
-                    "p_any_ip_addresses": [
-                        {
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_riot_advanced": {
+                        "ClientIP": {
                             "p_match": "142.93.204.250",
                             "ip_cidr": "142.93.204.250/32",
                             "provider": {
@@ -815,24 +804,49 @@ class TestRIOTAdvanced(unittest.TestCase):
                                 "trust_level": "1",
                             },
                             "scan_time": "2023-05-12 05:11:04.679962983",
-                        },
-                        {
-                            "p_match": "142.93.204.128",
-                            "ip_cidr": "142.93.204.128/32",
-                            "provider": {
-                                "name": "bar",
-                                "category": "cdn",
-                                "description": "some some cdn",
-                                "explanation": "because",
-                                "reference": "my brother",
-                                "trust_level": "2",
-                            },
-                            "scan_time": "2023-05-11 05:11:04.679962983",
-                        },
-                    ]
+                        }
+                    }
                 }
             }
-        })
+        )
+
+        # for testing array matches
+        self.event_list = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "greynoise_riot_advanced": {
+                        "p_any_ip_addresses": [
+                            {
+                                "p_match": "142.93.204.250",
+                                "ip_cidr": "142.93.204.250/32",
+                                "provider": {
+                                    "name": "foo",
+                                    "category": "cloud",
+                                    "description": "some cloud",
+                                    "explanation": "because",
+                                    "reference": "my brother",
+                                    "trust_level": "1",
+                                },
+                                "scan_time": "2023-05-12 05:11:04.679962983",
+                            },
+                            {
+                                "p_match": "142.93.204.128",
+                                "ip_cidr": "142.93.204.128/32",
+                                "provider": {
+                                    "name": "bar",
+                                    "category": "cdn",
+                                    "description": "some some cdn",
+                                    "explanation": "because",
+                                    "reference": "my brother",
+                                    "trust_level": "2",
+                                },
+                                "scan_time": "2023-05-11 05:11:04.679962983",
+                            },
+                        ]
+                    }
+                }
+            }
+        )
 
     def test_greynoise_object(self):
         """Should be advanced"""
@@ -947,23 +961,25 @@ class TestRIOTAdvanced(unittest.TestCase):
 class TestIpInfoHelpersLocation(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                p_i_h.IPINFO_LOCATION_LUT_NAME: {
-                    self.match_field: {
-                        "p_match": "12.12.12.12",
-                        "city": "Constantinople",
-                        "country": "Byzantium",
-                        "lat": "41.008610",
-                        "lng": "28.971111",
-                        "postal_code": "NA",
-                        "region": "Asia Minor",
-                        "region_code": "123",
-                        "timezone": "GMT+03:00",
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    p_i_h.IPINFO_LOCATION_LUT_NAME: {
+                        self.match_field: {
+                            "p_match": "12.12.12.12",
+                            "city": "Constantinople",
+                            "country": "Byzantium",
+                            "lat": "41.008610",
+                            "lng": "28.971111",
+                            "postal_code": "NA",
+                            "region": "Asia Minor",
+                            "region_code": "123",
+                            "timezone": "GMT+03:00",
+                        }
                     }
                 }
             }
-        })
+        )
         self.ip_info = p_i_h.get_ipinfo_location(self.event)
 
     def test_city(self):
@@ -1018,20 +1034,22 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
 class TestIpInfoHelpersASN(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                p_i_h.IPINFO_ASN_LUT_NAME: {
-                    self.match_field: {
-                        "p_match": "1.2.3.15",
-                        "asn": "AS00000",
-                        "domain": "byzantineempire.com",
-                        "name": "Byzantine Empire",
-                        "route": "1.2.3.4/24",
-                        "type": "isp",
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    p_i_h.IPINFO_ASN_LUT_NAME: {
+                        self.match_field: {
+                            "p_match": "1.2.3.15",
+                            "asn": "AS00000",
+                            "domain": "byzantineempire.com",
+                            "name": "Byzantine Empire",
+                            "route": "1.2.3.4/24",
+                            "type": "isp",
+                        }
                     }
                 }
             }
-        })
+        )
         self.ip_info = p_i_h.get_ipinfo_asn(self.event)
 
     def test_asn(self):
@@ -1141,21 +1159,23 @@ class TestGetCrowdstrikeField(unittest.TestCase):
 class TestIpInfoHelpersPrivacy(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                p_i_h.IPINFO_PRIVACY_LUT_NAME: {
-                    self.match_field: {
-                        "p_match": "1.2.3.4",
-                        "hosting": False,
-                        "proxy": False,
-                        "tor": False,
-                        "vpn": True,
-                        "relay": False,
-                        "service": "VPN Gate",
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    p_i_h.IPINFO_PRIVACY_LUT_NAME: {
+                        self.match_field: {
+                            "p_match": "1.2.3.4",
+                            "hosting": False,
+                            "proxy": False,
+                            "tor": False,
+                            "vpn": True,
+                            "relay": False,
+                            "service": "VPN Gate",
+                        }
                     }
                 }
             }
-        })
+        )
         self.ip_info = p_i_h.get_ipinfo_privacy(self.event)
 
     def test_hosting(self):
@@ -1200,34 +1220,36 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                p_i_h.IPINFO_ASN_LUT_NAME: {
-                    self.match_field: {
-                        "p_match": "1.2.3.12",
-                        "asn": "AS00000",
-                        "domain": "byzantineempire.com",
-                        "name": "Byzantine Empire",
-                        "route": "1.2.3.4/24",
-                        "type": "isp",
-                    }
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    p_i_h.IPINFO_ASN_LUT_NAME: {
+                        self.match_field: {
+                            "p_match": "1.2.3.12",
+                            "asn": "AS00000",
+                            "domain": "byzantineempire.com",
+                            "name": "Byzantine Empire",
+                            "route": "1.2.3.4/24",
+                            "type": "isp",
+                        }
+                    },
+                    p_i_h.IPINFO_LOCATION_LUT_NAME: {
+                        self.match_field: {
+                            "p_match": "2.2.2.2",
+                            "city": "Constantinople",
+                            "country": "Byzantium",
+                            "lat": "41.008610",
+                            "lng": "28.971111",
+                            "postal_code": "NA",
+                            "region": "Asia Minor",
+                            "region_code": "123",
+                            "timezone": "GMT+03:00",
+                        }
+                    },
                 },
-                p_i_h.IPINFO_LOCATION_LUT_NAME: {
-                    self.match_field: {
-                        "p_match": "2.2.2.2",
-                        "city": "Constantinople",
-                        "country": "Byzantium",
-                        "lat": "41.008610",
-                        "lng": "28.971111",
-                        "postal_code": "NA",
-                        "region": "Asia Minor",
-                        "region_code": "123",
-                        "timezone": "GMT+03:00",
-                    }
-                },
-            },
-            self.match_field: "1.2.3.4",
-        })
+                self.match_field: "1.2.3.4",
+            }
+        )
 
     def test_geoinfo(self):
         geoinfo = p_i_h.geoinfo_from_ip(self.event, self.match_field)
@@ -2075,38 +2097,42 @@ class TestNotionHelpers(unittest.TestCase):
 class TestLookupTableHelpers(unittest.TestCase):
     # pylint: disable=protected-access
     def setUp(self):
-        self.simple_event_no_pmatch = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}
-        })
-        self.simple_event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "tor_exit_nodes": {
-                    "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                    "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
-                },
-                "ipinfo_asn": {
-                    "foo": {
-                        "asn": "AS99999",
-                        "domain": "verytrusty.com",
-                        "name": "Super Trustworthy, LLC",
-                        "p_match": "1.2.3.4",
-                        "route": "1.0.0.0/8",
-                        "type": "isp",
-                    }
-                },
-            }
-        })
-        # match against array field
-        self.list_event = ImmutableCaseInsensitiveDict({
-            "p_enrichment": {
-                "tor_exit_nodes": {
-                    "p_any_ip_addresses": [
-                        {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                        {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
-                    ]
+        self.simple_event_no_pmatch = ImmutableCaseInsensitiveDict(
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+        )
+        self.simple_event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "tor_exit_nodes": {
+                        "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                        "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                    },
+                    "ipinfo_asn": {
+                        "foo": {
+                            "asn": "AS99999",
+                            "domain": "verytrusty.com",
+                            "name": "Super Trustworthy, LLC",
+                            "p_match": "1.2.3.4",
+                            "route": "1.0.0.0/8",
+                            "type": "isp",
+                        }
+                    },
                 }
             }
-        })
+        )
+        # match against array field
+        self.list_event = ImmutableCaseInsensitiveDict(
+            {
+                "p_enrichment": {
+                    "tor_exit_nodes": {
+                        "p_any_ip_addresses": [
+                            {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                            {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                        ]
+                    }
+                }
+            }
+        )
 
     def test_register(self):
         lut = p_l_h.LookupTableMatches()
