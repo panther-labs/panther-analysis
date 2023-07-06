@@ -165,50 +165,49 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
         self.initial_str_list_json = "[1, 2, 3, 4]"
 
     def test_additional_details_string(self):
-        event = {"additional_details": self.initial_str}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # in the case of a byte array, we expect the empty dict
     def test_additional_details_bytes(self):
-        event = {"additional_details": self.initial_bytes}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_bytes})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # In the case of a list ( not a string or bytes array ), expect un-altered return
     def test_additional_details_list(self):
-        event = {"additional_details": self.initial_list}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_list})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
     # in the case of a dict or similar, we expect it to be returned un-altered
     def test_additional_details_dict(self):
-        event = {"additional_details": self.initial_dict}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_dict})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # If it's a string with no json object to be decoded, we expect an empty dict back
     def test_additional_details_plain_str(self):
-        event = {"additional_details": self.initial_str_no_json}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_no_json})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # If it's a string with a json list, we expect the list
     def test_additional_details_str_list_json(self):
-        event = {"additional_details": self.initial_str_list_json}
+        event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_list_json})
         returns = p_b_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
 
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
-
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}
-        }
+        })
 
         # match against array field
-        self.event_list = {
+        self.event_list = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "tor_exit_nodes": {
                     "p_any_ip_addresses": [
@@ -217,7 +216,7 @@ class TestTorExitNodes(unittest.TestCase):
                     ]
                 }
             }
-        }
+        })
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
@@ -282,7 +281,7 @@ class TestTorExitNodes(unittest.TestCase):
 
 class TestGreyNoiseBasic(unittest.TestCase):
     def setUp(self):
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_noise_basic": {
                     "ClientIP": {
@@ -293,7 +292,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -363,7 +362,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_noise_advanced": {
                     "ClientIP": {
@@ -401,9 +400,9 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
 
-        self.event_list = {
+        self.event_list = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_noise_advanced": {
                     "p_any_ip_addresses": [
@@ -468,7 +467,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
                     ]
                 }
             }
-        }
+        })
 
     def test_greynoise_object(self):
         """Should be advanced"""
@@ -704,7 +703,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
 class TestRIOTBasic(unittest.TestCase):
     def setUp(self):
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_riot_basic": {
                     "ClientIP": {
@@ -715,7 +714,7 @@ class TestRIOTBasic(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
 
     def test_greynoise_object(self):
         """Should be basic"""
@@ -779,7 +778,7 @@ class TestRIOTBasic(unittest.TestCase):
 
 class TestRIOTAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_riot_advanced": {
                     "ClientIP": {
@@ -797,10 +796,10 @@ class TestRIOTAdvanced(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
 
         # for testing array matches
-        self.event_list = {
+        self.event_list = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "greynoise_riot_advanced": {
                     "p_any_ip_addresses": [
@@ -833,7 +832,7 @@ class TestRIOTAdvanced(unittest.TestCase):
                     ]
                 }
             }
-        }
+        })
 
     def test_greynoise_object(self):
         """Should be advanced"""
@@ -948,7 +947,7 @@ class TestRIOTAdvanced(unittest.TestCase):
 class TestIpInfoHelpersLocation(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 p_i_h.IPINFO_LOCATION_LUT_NAME: {
                     self.match_field: {
@@ -964,7 +963,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
         self.ip_info = p_i_h.get_ipinfo_location(self.event)
 
     def test_city(self):
@@ -1019,7 +1018,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
 class TestIpInfoHelpersASN(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
@@ -1032,7 +1031,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
         self.ip_info = p_i_h.get_ipinfo_asn(self.event)
 
     def test_asn(self):
@@ -1142,7 +1141,7 @@ class TestGetCrowdstrikeField(unittest.TestCase):
 class TestIpInfoHelpersPrivacy(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 p_i_h.IPINFO_PRIVACY_LUT_NAME: {
                     self.match_field: {
@@ -1156,7 +1155,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
                     }
                 }
             }
-        }
+        })
         self.ip_info = p_i_h.get_ipinfo_privacy(self.event)
 
     def test_hosting(self):
@@ -1201,7 +1200,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = {
+        self.event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 p_i_h.IPINFO_ASN_LUT_NAME: {
                     self.match_field: {
@@ -1228,7 +1227,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                 },
             },
             self.match_field: "1.2.3.4",
-        }
+        })
 
     def test_geoinfo(self):
         geoinfo = p_i_h.geoinfo_from_ip(self.event, self.match_field)
@@ -1245,7 +1244,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
         self.assertEqual(expected, geoinfo)
 
     def test_ipinfo_not_enabled_exception(self):
-        event = {"p_enrichment": {}}
+        event = ImmutableCaseInsensitiveDict({"p_enrichment": {}})
         with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
             p_i_h.geoinfo_from_ip(event, "fake_field")
 
@@ -2078,10 +2077,10 @@ class TestNotionHelpers(unittest.TestCase):
 class TestLookupTableHelpers(unittest.TestCase):
     # pylint: disable=protected-access
     def setUp(self):
-        self.simple_event_no_pmatch = {
+        self.simple_event_no_pmatch = ImmutableCaseInsensitiveDict({
             "p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}
-        }
-        self.simple_event = {
+        })
+        self.simple_event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "tor_exit_nodes": {
                     "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
@@ -2098,9 +2097,9 @@ class TestLookupTableHelpers(unittest.TestCase):
                     }
                 },
             }
-        }
+        })
         # match against array field
-        self.list_event = {
+        self.list_event = ImmutableCaseInsensitiveDict({
             "p_enrichment": {
                 "tor_exit_nodes": {
                     "p_any_ip_addresses": [
@@ -2109,7 +2108,7 @@ class TestLookupTableHelpers(unittest.TestCase):
                     ]
                 }
             }
-        }
+        })
 
     def test_register(self):
         lut = p_l_h.LookupTableMatches()
