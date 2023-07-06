@@ -1476,15 +1476,13 @@ class TestDeepWalk(unittest.TestCase):
             "value3",
         )
         self.assertEqual(p_b_h.deep_walk(event, "key", "another_key", default=""), "value6")
-        # XXX self.assertEqual(p_b_h.deep_walk(event, "key", "empty_list_key", default=""), "")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "empty_list_key", default=""), "")
         self.assertEqual(
             p_b_h.deep_walk(event, "key", "empty_list_key", "nonexistent_key", default=""), ""
         )
-        # XXX Disabled due to failing test 
-        # self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key1", default=""), "")
-        # self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key2", default=""), "")
-        # self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key3", default=""), "")
-        # XXX /Disabled due to failing test 
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key1", default=""), "")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key2", default=""), "")
+        self.assertEqual(p_b_h.deep_walk(event, "key", "multiple_empty_lists_key3", default=""), "")
         self.assertEqual(
             p_b_h.deep_walk(
                 event, "key", "multiple_nested_lists_with_dict", "very_nested_key", default=""
