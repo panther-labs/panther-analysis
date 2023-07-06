@@ -1,4 +1,5 @@
 import json
+from collections.abc import Sequence
 
 from botocore.exceptions import NoCredentialsError
 from panther_oss_helpers import BadLookup, resource_lookup
@@ -67,7 +68,7 @@ def check_account(resource):
         content_assumerole = json.loads(content_assumerole)
     principal = content_assumerole["Statement"][0]["Principal"]
     if "AWS" in principal.keys():
-        if isinstance(principal["AWS"], list):
+        if isinstance(principal["AWS"], Sequence) and not isinstance(principal["AWS"], str):
             for principal_aws in principal["AWS"]:
                 if not check_account_number(principal_aws):
                     return False

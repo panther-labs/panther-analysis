@@ -17,7 +17,7 @@ class LookupTableMatches:
         match = deep_get(self.lut_matches, match_field)
         if not match:
             return None
-        if isinstance(match, list):
+        if isinstance(match, Sequence) and not isinstance(match, str):
             return [deep_get(match_value, *keys) if match_value else None for match_value in match]
         return deep_get(match, *keys)
 

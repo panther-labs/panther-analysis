@@ -1,4 +1,5 @@
 import datetime
+from collections.abc import Sequence
 
 from panther_lookuptable_helpers import LookupTableMatches
 
@@ -19,7 +20,7 @@ class TorExitNodes(LookupTableMatches):
         """Return link to Tor database"""
         today = datetime.datetime.today().strftime("%Y-%m-%d")
         ip_address = self.ip_address(match_field)
-        if isinstance(ip_address, list):
+        if isinstance(ip_address, Sequence) and not isinstance(ip_address, str):
             return [
                 # pylint: disable=C0301 (line-too-long)
                 f"https://metrics.torproject.org/exonerator.html?ip={list_ip_address}&timestamp={today}&lang=en"

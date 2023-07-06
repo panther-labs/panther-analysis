@@ -1,5 +1,6 @@
 # pylint: disable=too-many-public-methods
 import datetime
+from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
@@ -58,7 +59,7 @@ class GreyNoiseBasic(LookupTableMatches):
         ip_address = self._lookup(match_field, "ip")
         if not ip_address:
             return None
-        if isinstance(ip_address, list):
+        if isinstance(ip_address, Sequence) and not isinstance(ip_address, str):
             return [
                 f"https://www.greynoise.io/viz/ip/{list_ip_address}"
                 for list_ip_address in ip_address
@@ -86,7 +87,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
 
     def cve_string(self, match_field: str, limit: int = 10) -> str:
         cve_raw = self._lookup(match_field, "cve")
-        if isinstance(cve_raw, list):
+        if isinstance(cve_raw, Sequence) and not isinstance(cve_raw, str):
             return " ".join(cve_raw[:limit])
         return cve_raw
 
@@ -100,7 +101,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         time = self._lookup(match_field, "first_seen")
         if not time:
             return None
-        if isinstance(time, list):
+        if isinstance(time, Sequence) and not isinstance(time, str):
             if len(time) == 0:
                 return None
             return min(parser.parse(t) for t in time)
@@ -110,7 +111,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         time = self._lookup(match_field, "last_seen_timestamp")
         if not time:
             return None
-        if isinstance(time, list):
+        if isinstance(time, Sequence) and not isinstance(time, str):
             if len(time) == 0:
                 return None
             return max(parser.parse(t) for t in time)
@@ -157,7 +158,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
 
     def tags_string(self, match_field: str, limit: int = 10) -> str:
         tags_raw = self._lookup(match_field, "tags")
-        if isinstance(tags_raw, list):
+        if isinstance(tags_raw, Sequence) and not isinstance(tags_raw, str):
             return " ".join(tags_raw[:limit])
         return tags_raw
 
@@ -208,7 +209,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
         is_riot = self._lookup(match_field, "ip_cidr")
         if not is_riot:
             return False
-        if isinstance(is_riot, list):  # at least 1
+        if isinstance(is_riot, Sequence) and not isinstance(is_riot, str):  # at least 1
             for list_is_riot in is_riot:
                 if list_is_riot:
                     return True
@@ -225,7 +226,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
         ip_stripped = self._lookup(match_field, "ip_cidr")
         if not ip_stripped:
             return None
-        if isinstance(ip_stripped, list):
+        if isinstance(ip_stripped, Sequence) and not isinstance(ip_stripped, str):
             return [
                 f"https://www.greynoise.io/viz/ip/{list_ip_stripped}"
                 for list_ip_stripped in ip_stripped
@@ -236,7 +237,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
         time = self._lookup(match_field, "scan_time")
         if not time:
             return None
-        if isinstance(time, list):
+        if isinstance(time, Sequence) and not isinstance(time, str):
             if len(time) == 0:
                 return None
             return max(parser.parse(t) for t in time)
@@ -306,7 +307,7 @@ def GreyNoiseSeverity(event, field, default="MEDIUM"):
         return "INFO"
 
     classification = noise.classification(field)
-    if isinstance(classification, list):
+    if isinstance(classification, Sequence) and not isinstance(classification, str):
         highest_severity = "INFO"
         for list_classification in classification:
             severity = GreyNoiseSeverityDecode(list_classification, default)

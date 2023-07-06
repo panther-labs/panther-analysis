@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 # Tags: ['AWS Managed Rules - Compute']
 # This is a list of approved VPC IDs. All EC2 instances must exist in one of these VPCs.
 APPROVED_VPCS = {
@@ -21,7 +23,7 @@ def policy(resource):
                 if isinstance(IGNORED_INSTANCE_TAGS[tag], str):
                     if tags[tag] == IGNORED_INSTANCE_TAGS[tag]:
                         return True
-                elif isinstance(IGNORED_INSTANCE_TAGS[tag], list):
+                elif isinstance(IGNORED_INSTANCE_TAGS[tag], Sequence):
                     if tags[tag] in IGNORED_INSTANCE_TAGS[tag]:
                         return True
 
