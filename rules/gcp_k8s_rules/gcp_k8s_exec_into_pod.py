@@ -11,9 +11,9 @@ def rule(event):
         return False
 
     k8s_info = get_k8s_info(event)
-    principal = deep_walk(k8s_info, "principal", default="", return_val="last")
-    namespace = deep_walk(k8s_info, "namespace", default="", return_val="last")
-    project_id = deep_walk(k8s_info, "project_id", default="", return_val="last")
+    principal = deep_walk(k8s_info, "principal", default="")
+    namespace = deep_walk(k8s_info, "namespace", default="")
+    project_id = deep_walk(k8s_info, "project_id", default="")
     # rule_exceptions that are allowed temporarily are defined in gcp_environment.py
     # Some execs have principal which is long numerical UUID, appears to be k8s internals
     for allowed_principal in deep_walk(
@@ -36,7 +36,7 @@ def rule(event):
 
 
 def severity(event):
-    project_id = deep_walk(get_k8s_info(event), "project_id", default="", return_val="last")
+    project_id = deep_walk(get_k8s_info(event), "project_id", default="")
     if project_id in PRODUCTION_PROJECT_IDS:
         return "high"
     return "info"
@@ -45,10 +45,14 @@ def severity(event):
 def title(event):
     # TODO: use unified data model field in title for actor
     k8s_info = get_k8s_info(event)
-    principal = deep_walk(k8s_info, "principal", default="", return_val="last")
-    project_id = deep_walk(k8s_info, "project_id", default="", return_val="last")
-    pod = deep_walk(k8s_info, "pod", default="", return_val="last")
-    namespace = deep_walk(k8s_info, "namespace", default="", return_val="last")
+    principal = deep_walk(k8s_info, "principal", default="")
+    project_id = deep_walk(
+        k8s_info,
+        "project_id",
+        default="",
+    )
+    pod = deep_walk(k8s_info, "pod", default="")
+    namespace = deep_walk(k8s_info, "namespace", default="")
     return f"Exec into pod namespace/{namespace}/pod/{pod} by {principal} in {project_id}"
 
 
