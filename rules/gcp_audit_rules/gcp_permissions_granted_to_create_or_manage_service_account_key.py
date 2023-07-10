@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, deep_walk
 
 SERVICE_ACCOUNT_MANAGE_ROLES = [
     "roles/iam.serviceAccountTokenCreator",
@@ -8,17 +8,27 @@ SERVICE_ACCOUNT_MANAGE_ROLES = [
 
 def rule(event):
     if "SetIAMPolicy" in deep_get(event, "protoPayload", "methodName", default=""):
-        binding_deltas = deep_get(
-            event, "protoPayload", "serviceData", "policyDelta", "bindingDeltas", default=[{}]
+        role = deep_walk(
+            event,
+            "ProtoPayload",
+            "serviceData",
+            "policyDelta",
+            "bindingDeltas",
+            "role",
+            default="",
+            return_val="last",
         )
-        for binding_delta in binding_deltas:
-            if all(
-                [
-                    binding_delta.get("role", "") in SERVICE_ACCOUNT_MANAGE_ROLES,
-                    binding_delta.get("action", "") == "ADD",
-                ]
-            ):
-                return True
+        action = deep_walk(
+            event,
+            "ProtoPayload",
+            "serviceData",
+            "policyDelta",
+            "bindingDeltas",
+            "action",
+            default="",
+            return_val="last",
+        )
+        return role in SERVICE_ACCOUNT_MANAGE_ROLES and action == "ADD"
     return False
 
 
