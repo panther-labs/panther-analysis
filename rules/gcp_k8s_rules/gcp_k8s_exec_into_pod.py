@@ -27,10 +27,8 @@ def rule(event):
         allowed_project_ids = deep_walk(allowed_principal, "projects", default=[])
         if (
             principal in allowed_principals
-            and namespace in allowed_namespaces
-            or allowed_namespaces == []
-            and project_id in allowed_project_ids
-            or allowed_project_ids == []
+            and (namespace in allowed_namespaces or allowed_namespaces == [])
+            and (project_id in allowed_project_ids or allowed_project_ids == [])
         ):
             if "@" not in principal:
                 return False
