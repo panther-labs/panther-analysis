@@ -7,9 +7,14 @@ def rule(event):
     violation_types = deep_walk(
         event, "protoPayload", "status", "details", "violations", "type", default=""
     )
-    if severity == "ERROR" and status_code == 7:
-        if "VPC_SERVICE_CONTROLS" in violation_types:
-            return True
+    if all(
+        [
+            severity == "ERROR",
+            status_code == 7,
+            "VPC_SERVICE_CONTROLS" in violation_types,
+        ]
+    ):
+        return True
     return False
 
 

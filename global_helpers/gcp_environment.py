@@ -9,9 +9,9 @@ rule_exceptions = {
                     "system:serviceaccount:example-namespace:example-namespace-service-account"
                 ],
                 # If empty, then all namespaces
-                "namespaces": [],
+                "namespaces": ["example"],
                 # If projects empty then all projects
-                "projects": [],
+                "projects": ["rigup-production"],
             },
             {
                 "principals": ["example-allowed-user@example.com"],
