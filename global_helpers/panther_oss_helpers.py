@@ -3,6 +3,7 @@ import json
 import os
 import re
 import time
+from collections.abc import Mapping
 from datetime import datetime
 from ipaddress import ip_address
 from math import atan2, cos, radians, sin, sqrt
@@ -274,7 +275,7 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
         val: A Python dictionary
         epoch_seconds: (Optional) Set string expiration time
     """
-    if not isinstance(val, dict):
+    if not isinstance(val, (dict, Mapping)):
         raise Exception("panther_oss_helpers.put_dictionary: value is not a dictionary")
 
     try:

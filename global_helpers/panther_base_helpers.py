@@ -335,7 +335,7 @@ def deep_walk(
     def _empty_list(sub_obj: Any):
         return (
             all(_empty_list(next_obj) for next_obj in sub_obj)
-            if isinstance(sub_obj, list)
+            if isinstance(sub_obj, Sequence) and not isinstance(sub_obj, str)
             else False
         )
 
@@ -356,7 +356,7 @@ def deep_walk(
         for item in obj:
             value = deep_walk(item, *keys, default=default, return_val=return_val)
             if value is not None:
-                if isinstance(value, list):
+                if isinstance(value, Sequence) and not isinstance(value, str):
                     for sub_item in value:
                         found[sub_item] = None
                 else:
