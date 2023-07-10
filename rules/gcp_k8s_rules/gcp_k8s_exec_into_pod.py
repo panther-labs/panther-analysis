@@ -22,10 +22,15 @@ def rule(event):
     for allowed_principal in deep_walk(
         rule_exceptions, "gcp_k8s_exec_into_pod", "allowed_principals", default=[]
     ):
+        allowed_principals = deep_walk(allowed_principal, "principals", default=[])
+        allowed_namespaces = deep_walk(allowed_principal, "namespaces", default=[])
+        allowed_project_ids = deep_walk(allowed_principal, "projects", default=[])
         if (
-            principal in deep_walk(allowed_principal, "principals", default=[])
-            and namespace in deep_walk(allowed_principal, "namespaces", default=[])
-            and project_id in deep_walk(allowed_principal, "projects", default=[])
+            principal in allowed_principals
+            and namespace in allowed_namespaces
+            or allowed_namespaces == []
+            and project_id in allowed_project_ids
+            or allowed_project_ids == []
         ):
             if "@" not in principal:
                 return False
