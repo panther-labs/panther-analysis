@@ -5,7 +5,7 @@ def rule(event):
     severity = deep_get(event, "severity", default="")
     status_code = deep_get(event, "protoPayload", "status", "code", default="")
     violation_types = deep_walk(
-        event, "protoPayload", "status", "details", "violations", "type", default=""
+        event, "protoPayload", "status", "details", "violations", "type", default=[]
     )
     if all(
         [
