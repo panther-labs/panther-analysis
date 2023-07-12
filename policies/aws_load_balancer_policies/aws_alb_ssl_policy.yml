@@ -19,7 +19,7 @@ Severity: Medium
 Description: Ensures that deprecated TLS versions are not supported in internet-facing load balancers
 Runbook: >
   Update your load balancer's SSLPolicies to only support modern TLS versions
-Reference: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html
+Reference: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
 Tests:
   -
     Name: Strong Ciphers Internet Facing
@@ -92,7 +92,7 @@ Tests:
         },
         "Name": "web",
         "SSLPolicies": {
-          "ELBSecurityPolicy-TLS-1-2-Ext-2018-06": {
+          "ELBSecurityPolicy-FS-1-2-2019-08": {
             "SslProtocols": [
                 "TLSv1.2"
             ],
@@ -144,33 +144,9 @@ Tests:
                 {
                     "Name": "ECDHE-ECDSA-AES256-SHA",
                     "Priority": 12
-                },
-                {
-                    "Name": "AES128-GCM-SHA256",
-                    "Priority": 13
-                },
-                {
-                    "Name": "AES128-SHA256",
-                    "Priority": 14
-                },
-                {
-                    "Name": "AES128-SHA",
-                    "Priority": 15
-                },
-                {
-                    "Name": "AES256-GCM-SHA384",
-                    "Priority": 16
-                },
-                {
-                    "Name": "AES256-SHA256",
-                    "Priority": 17
-                },
-                {
-                    "Name": "AES256-SHA",
-                    "Priority": 18
                 }
             ],
-            "Name": "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+            "Name": "ELBSecurityPolicy-FS-1-2-2019-08"
           }
         },
         "Arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/3ff2fab33a993e0c",
