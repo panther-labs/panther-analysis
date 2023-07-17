@@ -3,6 +3,7 @@ from collections.abc import Mapping, Sequence
 from panther_base_helpers import deep_get
 
 ENRICHMENT_KEY = "p_enrichment"
+IGNORE_ENRICHMENTS = "p_any_"
 
 # pylint: disable=too-few-public-methods
 class LookupTableMatches:
@@ -39,6 +40,8 @@ class LookupTableMatches:
         event = event or {}
         matched_items = {}
         for lut_name in deep_get(event, ENRICHMENT_KEY, default={}).keys():
+            if lut_name.startswith(IGNORE_ENRICHMENTS):
+                continue
             for en_values in deep_get(event, ENRICHMENT_KEY, lut_name, default={}).values():
                 if isinstance(en_values, Sequence):
                     for val in en_values:
