@@ -18,7 +18,7 @@ def get_process_name(event):
     # Mac = /usr/libexec/xpcproxy
     image_fn = deep_get(event, "event", "ImageFileName")
     if not image_fn:
-        return None # Explicitly return None if the key DNE
+        return None  # Explicitly return None if the key DNE
     if platform == "Win":
         return image_fn.split("\\")[-1]
     return image_fn.split("/")[-1]
