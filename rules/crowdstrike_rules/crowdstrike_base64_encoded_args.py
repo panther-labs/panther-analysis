@@ -13,6 +13,10 @@ def rule(event):
         "rundll32.exe",
     }
 
+    # Filter by CS event type
+    if event.get("fdr_event_type") != "ProcessRollup2":
+        return False
+
     # Define a regular expression pattern to match Base64 encoded strings
 
     if event.get("event_platform") == "Win":
