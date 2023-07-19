@@ -28,6 +28,7 @@ import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
 import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
+import panther_tailscale_helpers as p_tscale_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
 
@@ -1872,6 +1873,45 @@ class TestAuth0Helpers(unittest.TestCase):
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
         self.assertEqual(auth0_config_event, False)
+
+
+class TestTailscaleHelpers(unittest.TestCase):
+    def setUp(self):
+        self.event = ImmutableCaseInsensitiveDict(
+            {
+                "action": "CREATE",
+                "actor": {
+                    "displayName": "Homer Simpson",
+                    "id": "uodc9f3CNTRL",
+                    "loginName": "homer.simpson@yourcompany.io",
+                    "type": "USER",
+                },
+                "eventGroupID": "9f880e02981e341447958344b7b4071f",
+                "new": {},
+                "origin": "ADMIN_CONSOLE",
+                "target": {"id": "k6r3fm3CNTRL", "name": "API key", "type": "API_KEY"},
+            }
+        )
+
+    def test_alert_context(self):
+        returns = p_tscale_h.tailscale_alert_context(self.event)
+        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event(self.event)
+        self.assertEqual(
+            returns.get("actor", ""),
+            {
+                "displayName": "Homer Simpson",
+                "id": "uodc9f3CNTRL",
+                "loginName": "homer.simpson@yourcompany.io",
+                "type": "USER",
+            },
+        )
+        self.assertEqual(returns.get("action", ""), "CREATE")
+        self.assertEqual(tailscale_admin_console_event, True)
+        returns = p_tscale_h.tailscale_alert_context(ImmutableCaseInsensitiveDict({}))
+        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event({})
+        self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
+        self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
+        self.assertEqual(tailscale_admin_console_event, False)
 
 
 @mock_dynamodb

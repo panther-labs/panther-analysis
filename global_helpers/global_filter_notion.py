@@ -3,7 +3,7 @@ from panther_base_helpers import deep_get  # pylint: disable=unused-import
 
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
-    filter_include_event provides a global include filter for all Auth0 detections
+    filter_include_event provides a global include filter for all Notion detections
     Panther will not update this filter, and you can edit it without creating
     merge conflicts in the future.
 
