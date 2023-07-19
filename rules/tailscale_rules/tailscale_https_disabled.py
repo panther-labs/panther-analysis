@@ -26,7 +26,7 @@ def title(event):
     user = deep_get(event, "event", "actor", "loginName", default="<NO_USER_FOUND>")
     target_id = deep_get(event, "event", "target", "id", default="<NO_TARGET_ID_FOUND>")
     return (
-        f"Tailscale user [{user}] disabled HTTPS for "
+        f"Tailscale user [{user}] disabled HTTPS Certificate settings for "
         f"[{target_id}] in your organization’s tenant."
     )
 
