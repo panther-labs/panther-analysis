@@ -9,8 +9,10 @@ from panther_tailscale_helpers import (
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = deep_get(event, "action", default="<NO_ACTION_FOUND>")
-    target_property = deep_get(event, "target", "property", default="<NO_TARGET_PROPERTY_FOUND>")
+    action = deep_get(event, "event", "action", default="<NO_ACTION_FOUND>")
+    target_property = deep_get(
+        event, "event", "target", "property", default="<NO_TARGET_PROPERTY_FOUND>"
+    )
     return all(
         [
             action == "DISABLE",
@@ -21,10 +23,10 @@ def rule(event):
 
 
 def title(event):
-    user = deep_get(event, "actor", "loginName", default="<NO_USER_FOUND>")
+    user = deep_get(event, "event", "actor", "loginName", default="<NO_USER_FOUND>")
     return (
         f"Tailscale user [{user}] disabled device approval requirements "
-        f"for new devices before accessing your organization’s network."
+        f"for new devices accessing your organization’s network."
     )
 
 
