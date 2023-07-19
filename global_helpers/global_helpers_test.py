@@ -1879,17 +1879,20 @@ class TestTailscaleHelpers(unittest.TestCase):
     def setUp(self):
         self.event = ImmutableCaseInsensitiveDict(
             {
-                "action": "CREATE",
-                "actor": {
-                    "displayName": "Homer Simpson",
-                    "id": "uodc9f3CNTRL",
-                    "loginName": "homer.simpson@yourcompany.io",
-                    "type": "USER",
+                "event": {
+                    "action": "CREATE",
+                    "actor": {
+                        "displayName": "Homer Simpson",
+                        "id": "uodc9f3CNTRL",
+                        "loginName": "homer.simpson@yourcompany.io",
+                        "type": "USER",
+                    },
+                    "eventGroupID": "9f880e02981e341447958344b7b4071f",
+                    "new": {},
+                    "origin": "ADMIN_CONSOLE",
+                    "target": {"id": "k6r3fm3CNTRL", "name": "API key", "type": "API_KEY"},
                 },
-                "eventGroupID": "9f880e02981e341447958344b7b4071f",
-                "new": {},
-                "origin": "ADMIN_CONSOLE",
-                "target": {"id": "k6r3fm3CNTRL", "name": "API key", "type": "API_KEY"},
+                "fields": {"recorded": "2023-07-19 16:10:48.385283827"},
             }
         )
 
