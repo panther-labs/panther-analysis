@@ -20,6 +20,7 @@ sys.path.append(os.path.dirname(__file__))
 
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
+import panther_azuresignin_helpers as p_asi_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
@@ -2217,6 +2218,260 @@ class TestLookupTableHelpers(unittest.TestCase):
             {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
         )
         self.assertEqual(lut.p_matched, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
+
+
+class TestAzureSigninHelpers(unittest.TestCase):
+    def setUp(self):
+        # pylint: disable=line-too-long
+        self.event_noninteractive = ImmutableCaseInsensitiveDict(
+            {
+                "Level": 4,
+                "callerIpAddress": "12.12.12.12",
+                "category": "NonInteractiveUserSignInLogs",
+                "correlationId": "ca0ce740-f84f-4c0b-b18e-4def0e947bca",
+                "durationMs": 0,
+                "identity": "Some Identity",
+                "location": "US",
+                "operationName": "Sign-in activity",
+                "operationVersion": 1,
+                "properties": {
+                    "appDisplayName": "app-name-here",
+                    "appId": "6a035cc9-e319-4031-b407-8324f5fbde95",
+                    "appliedConditionalAccessPolicies": [
+                        {
+                            "conditionsNotSatisfied": 0,
+                            "conditionsSatisfied": 3,
+                            "displayName": "Security Defaults",
+                            "enforcedGrantControls": [],
+                            "enforcedSessionControls": [],
+                            "id": "SecurityDefaults",
+                            "result": "success",
+                        }
+                    ],
+                    "authenticationContextClassReferences": [],
+                    "authenticationDetails": [],
+                    "authenticationProcessingDetails": [
+                        {"key": "Legacy TLS (TLS 1.0, 1.1, 3DES)", "value": "False"},
+                        {
+                            "key": "Oauth Scope Info",
+                            "value": '["email","openid","profile","SecurityEvents.Read.All","User.Read"]',
+                        },
+                        {"key": "Is CAE Token", "value": "False"},
+                    ],
+                    "authenticationProtocol": "none",
+                    "authenticationRequirement": "singleFactorAuthentication",
+                    "authenticationRequirementPolicies": [],
+                    "authenticationStrengths": [],
+                    "autonomousSystemNumber": 999,
+                    "clientAppUsed": "Browser",
+                    "clientCredentialType": "none",
+                    "conditionalAccessStatus": "notApplied",
+                    "correlationId": "b51210dc-ccb9-45e1-af8d-1d0ff7f00caa",
+                    "createdDateTime": "2023-07-24 07:11:51.987224200",
+                    "crossTenantAccessType": "b2bCollaboration",
+                    "deviceDetail": {"deviceId": "", "displayName": "", "operatingSystem": "MacOs"},
+                    "flaggedForReview": False,
+                    "homeTenantId": "d44a40ce-11c5-4be4-90d9-e61fbedb89f5",
+                    "id": "a1afa1a3-562f-4bef-9a65-4b35481f5478",
+                    "incomingTokenType": "primaryRefreshToken",
+                    "ipAddress": "12.12.12.12",
+                    "isInteractive": False,
+                    "isTenantRestricted": False,
+                    "location": {
+                        "city": "Township",
+                        "countryOrRegion": "US",
+                        "geoCoordinates": {
+                            "latitude": 38.55555555555555,
+                            "longitude": -74.4444444444444,
+                        },
+                        "state": "State",
+                    },
+                    "managedIdentityType": "none",
+                    "mfaDetail": {},
+                    "networkLocationDetails": [],
+                    "originalRequestId": "c18d8a2e-12b8-4d40-b593-6d561bbbe0c7",
+                    "privateLinkDetails": {},
+                    "processingTimeInMilliseconds": 149,
+                    "resourceDisplayName": "Microsoft Graph",
+                    "resourceId": "7bc6eca8-4773-4346-b1e9-2a3ee8d72bb7",
+                    "resourceServicePrincipalId": "b7060413-6f64-4a2a-a6a8-5cba11d2a7bf",
+                    "resourceTenantId": "fad4f1c7-844b-4298-880e-11a66fcccd7d",
+                    "riskDetail": "none",
+                    "riskEventTypes": [],
+                    "riskEventTypes_v2": [],
+                    "riskLevelAggregated": "none",
+                    "riskLevelDuringSignIn": "none",
+                    "riskState": "none",
+                    "rngcStatus": 0,
+                    "servicePrincipalId": "",
+                    "sessionLifetimePolicies": [],
+                    "ssoExtensionVersion": "",
+                    "status": {
+                        "additionalDetails": "MFA requirement satisfied by claim in the token",
+                        "errorCode": 0,
+                    },
+                    "tenantId": "0cf0ba68-28ce-4669-bc91-f8aca94fa428",
+                    "tokenIssuerName": "",
+                    "tokenIssuerType": "AzureAD",
+                    "uniqueTokenIdentifier": "_WWWWWWWWWWWWWWWWWW-AA",
+                    "userAgent": "Go-http-client/1.1",
+                    "userDisplayName": "Some DisplayName",
+                    "userId": "0086dbe1-f372-4269-b6c4-dae3cb1893e5",
+                    "userPrincipalName": "homer.simpson@springfield.org",
+                    "userType": "Member",
+                },
+                "resourceId": "/tenants/773a96b9-5c79-49cd-8a48-8d16881fc3b9/providers/Microsoft.aadiam",
+                "resultSignature": "None",
+                "resultType": 0,
+                "tenantId": "14d9d047-c52e-43c9-8081-91e92d3d4ab7",
+                "time": "2023-07-24 07:13:50.894",
+            }
+        )
+        self.event_signin = ImmutableCaseInsensitiveDict(
+            {
+                "Level": 4,
+                "callerIpAddress": "12.12.12.12",
+                "category": "SignInLogs",
+                "correlationId": "69ad836a-0382-4f36-9f5d-68d893074687",
+                "durationMs": 0,
+                "identity": "Some Identity",
+                "location": "US",
+                "operationName": "Sign-in activity",
+                "operationVersion": 1,
+                "properties": {
+                    "appDisplayName": "Azure Portal",
+                    "appId": "7e822bfa-8a8c-41f4-ac6c-fe8f6982f4d7",
+                    "appliedConditionalAccessPolicies": [
+                        {
+                            "conditionsNotSatisfied": 0,
+                            "conditionsSatisfied": 3,
+                            "displayName": "Security Defaults",
+                            "enforcedGrantControls": [],
+                            "enforcedSessionControls": [],
+                            "id": "SecurityDefaults",
+                            "result": "success",
+                        }
+                    ],
+                    "authenticationContextClassReferences": [],
+                    "authenticationDetails": [
+                        {
+                            "RequestSequence": 0,
+                            "StatusSequence": 0,
+                            "authenticationMethod": "Previously satisfied",
+                            "authenticationStepDateTime": "2023-07-21T16:57:26.8649231+00:00",
+                            "authenticationStepRequirement": "Primary authentication",
+                            "authenticationStepResultDetail": "First factor requirement satisfied by claim in the token",
+                            "succeeded": True,
+                        }
+                    ],
+                    "authenticationProcessingDetails": [
+                        {"key": "Login Hint Present", "value": "True"},
+                        {"key": "Legacy TLS (TLS 1.0, 1.1, 3DES)", "value": "False"},
+                        {"key": "Is CAE Token", "value": "False"},
+                    ],
+                    "authenticationProtocol": "none",
+                    "authenticationRequirement": "singleFactorAuthentication",
+                    "authenticationRequirementPolicies": [],
+                    "authenticationStrengths": [],
+                    "autonomousSystemNumber": 20055,
+                    "clientAppUsed": "Browser",
+                    "clientCredentialType": "none",
+                    "conditionalAccessStatus": "notApplied",
+                    "correlationId": "e20871a7-2981-4012-a331-03a2dbadf642",
+                    "createdDateTime": "2023-07-21 16:57:26.864923100",
+                    "crossTenantAccessType": "b2bCollaboration",
+                    "deviceDetail": {
+                        "browser": "Chrome 115.0.0",
+                        "deviceId": "",
+                        "displayName": "",
+                        "operatingSystem": "MacOs",
+                    },
+                    "flaggedForReview": False,
+                    "homeTenantId": "a24b2cc7-06ea-4605-a98c-403332dc6bb9",
+                    "id": "f6ea0697-bf57-4c02-a269-c2773796f083",
+                    "incomingTokenType": "none",
+                    "ipAddress": "12.12.12.12",
+                    "isInteractive": True,
+                    "isTenantRestricted": False,
+                    "location": {
+                        "city": "Springfield",
+                        "countryOrRegion": "US",
+                        "geoCoordinates": {
+                            "latitude": 46.88888888888888,
+                            "longitude": -118.22222222222222,
+                        },
+                        "state": "State",
+                    },
+                    "managedIdentityType": "none",
+                    "mfaDetail": {},
+                    "networkLocationDetails": [],
+                    "originalRequestId": "c32fe3a9-44a9-44dd-82cd-f7d279701d30",
+                    "privateLinkDetails": {},
+                    "processingTimeInMilliseconds": 339,
+                    "resourceDisplayName": "Windows Azure Service Management API",
+                    "resourceId": "b0d1813f-efb7-4d74-b573-50f2931a6837",
+                    "resourceServicePrincipalId": "c782313b-9d3c-4c7c-bed9-3a8ce7f7c613",
+                    "resourceTenantId": "f96ee678-4bb1-4a69-a9a7-666fea8e60bb",
+                    "riskDetail": "none",
+                    "riskEventTypes": [],
+                    "riskEventTypes_v2": [],
+                    "riskLevelAggregated": "none",
+                    "riskLevelDuringSignIn": "none",
+                    "riskState": "none",
+                    "rngcStatus": 0,
+                    "servicePrincipalId": "",
+                    "sessionLifetimePolicies": [],
+                    "ssoExtensionVersion": "",
+                    "status": {
+                        "additionalDetails": "MFA requirement satisfied by claim in the token",
+                        "errorCode": 0,
+                    },
+                    "tenantId": "21fd595c-e160-4736-a385-49516bd28442",
+                    "tokenIssuerName": "",
+                    "tokenIssuerType": "AzureAD",
+                    "uniqueTokenIdentifier": "P4ygygygygygygygygygyg",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                    "userDisplayName": "Some Username",
+                    "userId": "36a478d0-fe3b-4954-9d35-7aa072f5503b",
+                    "userPrincipalName": "marge.simpson@springfield.org",
+                    "userType": "Member",
+                },
+                "resourceId": "/tenants/c4fe447a-95b3-4765-9a1d-3c36b6a95747/providers/Microsoft.aadiam",
+                "resultSignature": "None",
+                "resultType": 0,
+                "tenantId": "d0417634-72d6-4509-ba5e-1484e7e7ef7e",
+                "time": "2023-07-21 16:59:35.718",
+            }
+        )
+
+    def test_alert_context(self):
+        returns = p_asi_h.azure_signin_alert_context(self.event_noninteractive)
+        self.assertEqual(
+            returns,
+            {
+                "actor_user": "homer.simpson@springfield.org",
+                "tenantId": "14d9d047-c52e-43c9-8081-91e92d3d4ab7",
+                "source_ip": "12.12.12.12",
+            },
+        )
+        returns = p_asi_h.azure_signin_alert_context(self.event_signin)
+        self.assertEqual(
+            returns,
+            {
+                "actor_user": "marge.simpson@springfield.org",
+                "tenantId": "d0417634-72d6-4509-ba5e-1484e7e7ef7e",
+                "source_ip": "12.12.12.12",
+            },
+        )
+        returns = p_asi_h.azure_signin_alert_context({})
+        self.assertEqual(
+            returns,
+            {
+                "actor_user": "<NO_ACTORUSER>",
+                "tenantId": "<NO_TENANTID>",
+                "source_ip": "<NO_SOURCEIP>",
+            },
+        )
 
 
 if __name__ == "__main__":
