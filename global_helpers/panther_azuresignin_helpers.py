@@ -19,8 +19,3 @@ def azure_signin_alert_context(event) -> dict:
     a_c["source_ip"] = deep_get(event, "properties", "ipAddress", default="<NO_SOURCEIP>")
     a_c["actor_user"] = ac_actor_user
     return a_c
-
-
-def is_tailscale_admin_console_event(event):
-    origin = deep_get(event, "event", "origin", default="")
-    return origin == "ADMIN_CONSOLE"
