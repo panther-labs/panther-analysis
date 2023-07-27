@@ -2452,6 +2452,8 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "actor_user": "homer.simpson@springfield.org",
                 "tenantId": "14d9d047-c52e-43c9-8081-91e92d3d4ab7",
                 "source_ip": "12.12.12.12",
+                "resourceDisplayName": "Microsoft Graph",
+                "resourceId": "7bc6eca8-4773-4346-b1e9-2a3ee8d72bb7",
             },
         )
         returns = p_asi_h.azure_signin_alert_context(self.event_signin)
@@ -2461,6 +2463,8 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "actor_user": "marge.simpson@springfield.org",
                 "tenantId": "d0417634-72d6-4509-ba5e-1484e7e7ef7e",
                 "source_ip": "12.12.12.12",
+                "resourceDisplayName": "Windows Azure Service Management API",
+                "resourceId": "b0d1813f-efb7-4d74-b573-50f2931a6837",
             },
         )
         returns = p_asi_h.azure_signin_alert_context({})
@@ -2470,6 +2474,8 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "actor_user": "<NO_ACTORUSER>",
                 "tenantId": "<NO_TENANTID>",
                 "source_ip": "<NO_SOURCEIP>",
+                "resourceDisplayName": "<NO_RESOURCEDISPLAYNAME>",
+                "resourceId": "<NO_RESOURCEID>",
             },
         )
 
