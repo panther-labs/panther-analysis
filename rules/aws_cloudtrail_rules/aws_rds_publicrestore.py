@@ -12,7 +12,7 @@ def rule(event):
 
 
 def title(event):
-    return f"Publicly Accessible RDS restore created in [{event.get('recepientAccountId','')}]"
+    return f"Publicly Accessible RDS restore created in [{event.get('recipientAccountId','')}]"
 
 
 def alert_context(event):

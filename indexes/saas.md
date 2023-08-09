@@ -69,7 +69,7 @@
 
 [ Box Content Workflow Policy Violation](../rules/box_rules/box_policy_violation.py)
 
-[ Box Large Number of Downlaods](../rules/box_rules/box_user_downloads.py)
+[ Box Large Number of Downloads](../rules/box_rules/box_user_downloads.py)
 
 [ Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.py)
 

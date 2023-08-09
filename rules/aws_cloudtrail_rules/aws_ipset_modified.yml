@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: 'Detects creation and updates of the list of trusted IPs used by GuardDuty and WAF. Potentially to disable security alerts against malicious IPs.'
-DisplayName: AWS Trusted IPSet Modified
+DisplayName: "AWS Trusted IPSet Modified"
 Enabled: true
 Filename: aws_ipset_modified.py
 Reports:
@@ -22,6 +22,7 @@ Tests:
         p_event_time: "2022-07-17 04:50:23"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2022-07-17 04:55:11.788"
+        recipientAccountId: "123456789012"
       Name: CreateIPSet Event
     - ExpectedResult: true
       Log:
@@ -37,6 +38,7 @@ Tests:
         p_event_time: "2022-07-17 04:50:23"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2022-07-17 04:55:11.788"
+        recipientAccountId: "123456789012"
       Name: UpdateIPSet
     - ExpectedResult: false
       Log:
@@ -52,9 +54,10 @@ Tests:
         p_event_time: "2022-07-17 04:50:23"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2022-07-17 04:55:11.788"
+        recipientAccountId: "123456789012"
       Name: NotIPSet
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.IPSet.Modified
+RuleID: "AWS.IPSet.Modified"
 Threshold: 1

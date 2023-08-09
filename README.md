@@ -49,7 +49,7 @@ pipenv shell # Optional, this will spawn a subshell containing pipenv environmen
 
 ```bash 
 make install
-pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
+pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/
 ```
 
 ### Run detection tests
@@ -99,7 +99,27 @@ Global helper functions are defined in the `global_helpers` folder. This is a ha
 
 Additionally, groups of detections may be linked to multiple "Reports", which is a system for tracking frameworks like CIS, PCI, MITRE ATT&CK, or more.
 
-### Using Docker
+## Using [Visual Studio Code](https://code.visualstudio.com/)
+If you are comfortable using the Visual Studio Code IDE, the `make vscode-config` command can configure VSCode to work with this repo. 
+
+In addition to this command, you will need to install these vscode add-ons:
+1. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+1. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+
+`make vscode-config` will configure:
+1. Configure VSCode to use the python virtual environment for this repository.
+1. Resolve local imports like global_helpers, which permits code completion via Intellisense/Pylance
+1. Creates two debugging targets, which will give you single-button push support for running `panther_analysis_tool test` through the debugger.
+1. Installs JSONSchema support for your custom panther-analysis schemas in the `schemas/` directory. This brings IDE hints about which fields are necessary for schemas/custom-schema.yml files.
+1. Installs JSONSchema support for panther-analysis rules in the `rules/` directory. This brings IDE hints about which fields are necessary for rules/my-rule.yml files.
+
+
+```shell
+user@computer:panther-analysis: make vscode-config
+
+```
+
+## Using Docker
 
 To use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run a different command, follow the pattern in the Makefile.
 ```
@@ -110,7 +130,7 @@ make docker-lint
 
 Please note that you only need to rebuild the container if you update your `Pipfile.lock` changes, because the dependencies are install when the image is built. The subsequent test and lint commands are run in the image by mounting the current file system directory, so it is using your local file system. 
 
-### Using Windows
+## Using Windows
 
 If you are on a Windows machine, you can use the following instructions to perform the standard panther-analysis workflow. 
 
@@ -149,8 +169,8 @@ Example detection metadata: `okta_brute_force_logins.yml`
 ```yaml
 AnalysisType: rule
 Filename: okta_brute_force_logins.py
-RuleID: Okta.BruteForceLogins
-DisplayName: Okta Brute Force Logins
+RuleID: "Okta.BruteForceLogins"
+DisplayName: "Okta Brute Force Logins"
 Enabled: true
 LogTypes:
   - Okta.SystemLog
@@ -192,11 +212,14 @@ Customizing detections-as-code is one of the most powerful capabilities Panther 
 
 Upon [tagged releases](https://github.com/panther-labs/panther-analysis/releases), you can pull upstream changes from this public repo.
 
-Follow the instructions [here](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to get started with forks.
+Follow the instructions [here](https://docs.panther.com/panther-developer-workflows/ci-cd/detections-repo) to get started with either a public fork or a private cloned repo to host your custom detection content.
+
 
 ## Getting Updates
 
-When you want to pull in the latest changes from this repository, perform the following steps from your private repo:
+When you want to pull in the latest changes from this repository, we recommend leveraging the [included GitHub Action](https://docs.panther.com/panther-developer-workflows/ci-cd/detections-repo/public-fork#keeping-in-sync-with-upstream).
+
+If you wish to sync manually, the process below can be run from a terminal.
 
 ```bash
 # add the public repository as a remote

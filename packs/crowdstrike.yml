@@ -4,9 +4,23 @@ Description: Group of all Crowdstrike detections
 PackDefinition:
   IDs:
     - Crowdstrike.Detection.passthrough
-    - Crowdstrike.DNS.Request
-    # Standard.MaliciousSSODNSLookup requires configuration and is disabled-by-default
-    - Standard.MaliciousSSODNSLookup
+    - Crowdstrike.RealTimeResponse.Session
+    - Crowdstrike.Unusual.Parent.Child.Processes
+    - Crowdstrike.Systemlog.Tampering
+    - Crowdstrike.Credential.Dumping.Tool
+    - Crowdstrike.Cryptomining.Tools
+    - Crowdstrike.Remote.Access.Tool.Execution
+    - Connection.to.Embargoed.Country
+    - Crowdstrike.Reverse.Shell.Tool.Executed
+    - Crowdstrike.WMI.Query.Detection
+    - Crowdstrike.Base64EncodedArgs
+    - Crowdstrike.FDR.LOLBAS
+    - Standard.DNSBase64
+    - Crowdstrike.Macos.Add.Trusted.Cert
+    - Crowdstrike.Macos.Plutil.Usage
+    - Crowdstrike.Macos.Osascript.Administrator
     # Globals used in these detections
     - panther_base_helpers
-DisplayName: Panther Crowdstrike Pack
+    # Data models
+    - Standard.Crowdstrike.FDR
+DisplayName: "Panther Crowdstrike Pack"

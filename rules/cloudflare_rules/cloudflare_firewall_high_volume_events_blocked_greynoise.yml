@@ -1,19 +1,18 @@
 AnalysisType: rule
 Filename: cloudflare_firewall_high_volume_events_blocked_greynoise.py
-RuleID: Cloudflare.Firewall.HighVolumeEventsBlockedGreyNoise
-DisplayName: Cloudflare High Volume Events Blocked - GreyNoise
+RuleID: "Cloudflare.Firewall.HighVolumeEventsBlockedGreyNoise"
+DisplayName: "--DEPRECATED-- Cloudflare High Volume Events Blocked - GreyNoise"
 Enabled: false
 LogTypes:
   - Cloudflare.Firewall
 Tags:
   - Cloudflare
   - GreyNoise
-  - Configuration Required
-Severity: Medium
+Severity: Info
 Description: Monitors high volume events blocked from the same IP enriched with GreyNoise
 Runbook: Inspect and monitor internet-facing services for potential outages
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  60
+Threshold:  200
 SummaryAttributes:
   - ClientRequestUserAgent
   - ClientRequestPath

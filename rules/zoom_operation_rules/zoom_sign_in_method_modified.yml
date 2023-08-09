@@ -1,0 +1,37 @@
+AnalysisType: rule
+Description: A Zoom User modified your organizations sign in method.
+DisplayName: "Zoom Sign In Method Modified"
+Enabled: true
+Filename: zoom_sign_in_method_modified.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-in Methods  - Allow users to sign in with Google: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:20:07"
+      Name: Google
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-in Methods  - Allow users to sign in with Apple ID: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:19:57"
+      Name: Apple ID
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Automatically sign users out after a specified time: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:20:42"
+      Name: Automatic Sign Out Disabled
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: "Zoom.Sign.In.Method.Modified"
+Threshold: 1

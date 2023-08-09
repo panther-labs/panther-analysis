@@ -1,0 +1,41 @@
+AnalysisType: rule
+Filename: snyk_misc_settings.py
+RuleID: "Snyk.Misc.Settings"
+DisplayName: "Snyk Miscellaneous Settings"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: Low
+Description: >
+  Detects when Snyk settings that lack a clear security impact are changed
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Snyk Feature Flags changed
+    ExpectedResult: true
+    Log:
+      {
+        "created": "2023-04-11 23:32:14.173",
+        "event": "group.feature_flags.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  - 
+    Name: Snyk User Invite Revoke
+    ExpectedResult: false
+    Log:
+      {
+        "content": {},
+        "created": "2023-04-11 23:32:13.248",
+        "event": "org.user.invite.revoke",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }

@@ -1,0 +1,68 @@
+AnalysisType: rule
+Description: A Zoom user was promoted to a privileged role.
+DisplayName: "Zoom User Promoted to Privileged Role"
+Enabled: true
+Filename: zoom_user_promoted_to_privileged_role.py
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from User to Co-Owner'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Admin Promotion Event
+    - ExpectedResult: false
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Admin to Co-Owner'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Admin to Admin
+    - ExpectedResult: false
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Admin to Billing Admin'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Admin to Billing Admin
+    - ExpectedResult: true
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Member to Billing Admin'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Member to Billing Admin Event
+    - ExpectedResult: false
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Co-Owner to User'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: Admin to User
+    - ExpectedResult: false
+      Log:
+        action: Batch Update
+        category_type: User
+        operation_detail: 'Change Role  - homer.simpson@duff.io: from Co-Owner to Admin'
+        operator: admin@duff.io
+        time: "2022-07-05 20:28:48"
+      Name: CoOwner to Admin
+    - ExpectedResult: false
+      Log:
+        action: SCIM API - Update
+        category_type: User
+        operation_detail: 'Edit User homer.simpson@duff.co  - Change Type: from Basic to Licensed'
+        operator: admin@duff.co
+        time: "2022-07-01 22:05:22"
+      Name: Other Event
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: "Zoom.User.Promoted.to.Privileged.Role"
+Threshold: 1

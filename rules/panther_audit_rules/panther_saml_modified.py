@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    return f"Panther SAML config has been modifed by {event.udm('actor_user')}"
+    return f"Panther SAML config has been modified by {event.udm('actor_user')}"
 
 
 def alert_context(event):

@@ -7,6 +7,23 @@ PackDefinition:
     - GCP.GCS.Public
     - GCP.IAM.CorporateEmail
     - GCP.IAM.CustomRoleChanges
+    - GCP.IAM.OrgFolderIAMChanges
     - GCP.SQL.ConfigChanges
-    - GCP.UnusedRegions
-DisplayName: Panther GCP Audit Pack
+    - GCP.Access.Attempts.Violating.VPC.Service.Controls
+    - GCP.Access.Attempts.Violating.IAP.Access.Controls
+    - GCP.VPC.Flow.Logs.Disabled
+    - GCP.BigQuery.Large.Scan
+    - GCP.Destructive.Queries
+    - GCP.Logging.Settings.Modified
+    - GCP.Cloud.Storage.Buckets.Modified.Or.Deleted
+    - GCP.Permissions.Granted.to.Create.or.Manage.Service.Account.Key
+    - GCP.User.Added.to.IAP.Protected.Service
+    - GCP.Service.Account.or.Keys.Created
+    # Data model
+    - Standard.GCP.AuditLog
+    # Globals used in these rules/policies
+    - panther_base_helpers
+    - panther_event_type_helpers
+    - gcp_base_helpers
+    - gcp_environment
+DisplayName: "Panther GCP Audit Pack"

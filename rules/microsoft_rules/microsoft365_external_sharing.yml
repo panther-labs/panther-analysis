@@ -1,0 +1,153 @@
+AnalysisType: rule
+Description: Document shared externally
+DisplayName: "Microsoft365 External Document Sharing"
+Enabled: true
+Filename: microsoft365_external_sharing.py
+Runbook: Check the document metadata to ensure it is not a sensitive document.
+Severity: Low
+Tests:
+    - ExpectedResult: false
+      Log:
+        AppAccessContext:
+            AADSessionId: aa-bb-cc
+            CorrelationId: dd-ee-ff
+        ClientIP: 1.2.3.4
+        CreationTime: "2022-12-12 19:31:41"
+        EventData: <Type>Edit</Type><MembersCanShareApplied>False</MembersCanShareApplied>
+        EventSource: SharePoint
+        Id: 111-aa-234
+        ItemType: File
+        ObjectId: https://yourorg.sharepoint.com/personal/user_yourorg/Documents/importantsecrets.docx
+        Operation: AddedToSecureLink
+        OrganizationId: 11-22-abc
+        RecordType: 14
+        Site: aa-bb-dd-ee-ff
+        SiteUrl: https://yourorg.sharepoint.com/personal/user_yourorg
+        SourceFileExtension: docx
+        SourceFileName: importantsecrets.docx
+        SourceRelativeUrl: Documents/importantsecrets.docx
+        TargetUserOrGroupName: OUTSIDER@ALLOWEDDOMAIN.COM
+        TargetUserOrGroupType: Guest
+        UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        UserId: my.user@yourorg.onmicrosoft.com
+        UserKey: i:0h.f|membership|12345@live.com
+        UserType: 0
+        Workload: OneDrive
+      Name: Allowed Domain
+    - ExpectedResult: false
+      Log:
+        AppAccessContext:
+            AADSessionId: aa-bb-cc
+            CorrelationId: dd-ee-ff
+        ClientIP: 1.2.3.4
+        CreationTime: "2022-12-12 19:31:41"
+        EventData: <Type>Edit</Type><MembersCanShareApplied>False</MembersCanShareApplied>
+        EventSource: SharePoint
+        Id: 111-aa-234
+        ItemType: File
+        ObjectId: https://yourorg.sharepoint.com/personal/user_yourorg/Documents/External/public.docx
+        Operation: AddedToSecureLink
+        OrganizationId: 11-22-abc
+        RecordType: 14
+        Site: aa-bb-dd-ee-ff
+        SiteUrl: https://yourorg.sharepoint.com/personal/user_yourorg
+        SourceFileExtension: docx
+        SourceFileName: public.docx
+        SourceRelativeUrl: Documents/External/public.docx
+        TargetUserOrGroupName: MARKETING@SAAS.COM
+        TargetUserOrGroupType: Guest
+        UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        UserId: my.user@yourorg.onmicrosoft.com
+        UserKey: i:0h.f|membership|12345@live.com
+        UserType: 0
+        Workload: OneDrive
+      Name: Allowed Folder
+    - ExpectedResult: false
+      Log:
+        AppAccessContext:
+            AADSessionId: aa-bb-cc
+            CorrelationId: dd-ee-ff
+        ClientIP: 1.2.3.4
+        CreationTime: "2022-12-12 19:31:41"
+        EventData: <Type>Edit</Type><MembersCanShareApplied>False</MembersCanShareApplied>
+        EventSource: SharePoint
+        Id: 111-aa-234
+        ItemType: File
+        ObjectId: https://yourorg.sharepoint.com/personal/user_yourorg/Documents/importantsecrets.docx
+        Operation: AddedToSecureLink
+        OrganizationId: 11-22-abc
+        RecordType: 14
+        Site: aa-bb-dd-ee-ff
+        SiteUrl: https://yourorg.sharepoint.com/personal/user_yourorg
+        SourceFileExtension: docx
+        SourceFileName: importantsecrets.docx
+        SourceRelativeUrl: Documents/importantsecrets.docx
+        TargetUserOrGroupName: EXCEPTION@OUTSIDER.COM
+        TargetUserOrGroupType: Guest
+        UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        UserId: my.user@yourorg.onmicrosoft.com
+        UserKey: i:0h.f|membership|12345@live.com
+        UserType: 0
+        Workload: OneDrive
+      Name: Allowed User
+    - ExpectedResult: true
+      Log:
+        AppAccessContext:
+            AADSessionId: aa-bb-cc
+            CorrelationId: dd-ee-ff
+        ClientIP: 1.2.3.4
+        CreationTime: "2022-12-12 19:31:41"
+        EventData: <Type>Edit</Type><MembersCanShareApplied>False</MembersCanShareApplied>
+        EventSource: SharePoint
+        Id: 111-aa-234
+        ItemType: File
+        ObjectId: https://yourorg.sharepoint.com/personal/user_yourorg/Documents/importantsecrets.docx
+        Operation: AddedToSecureLink
+        OrganizationId: 11-22-abc
+        RecordType: 14
+        Site: aa-bb-dd-ee-ff
+        SiteUrl: https://yourorg.sharepoint.com/personal/user_yourorg
+        SourceFileExtension: docx
+        SourceFileName: importantsecrets.docx
+        SourceRelativeUrl: Documents/importantsecrets.docx
+        TargetUserOrGroupName: OUTSIDER@EXTERNAL.IO
+        TargetUserOrGroupType: Guest
+        UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        UserId: my.user@yourorg.onmicrosoft.com
+        UserKey: i:0h.f|membership|12345@live.com
+        UserType: 0
+        Workload: OneDrive
+      Name: External user
+    - ExpectedResult: false
+      Log:
+        AppAccessContext:
+            AADSessionId: aa-bb-cc
+            CorrelationId: dd-ee-ff
+        ClientIP: 1.2.3.4
+        CreationTime: "2022-12-12 19:31:41"
+        EventData: <Type>Edit</Type><MembersCanShareApplied>False</MembersCanShareApplied>
+        EventSource: SharePoint
+        Id: 111-aa-234
+        ItemType: File
+        ObjectId: https://yourorg.sharepoint.com/personal/user_yourorg/Documents/importantsecrets.docx
+        Operation: AddedToSecureLink
+        OrganizationId: 11-22-abc
+        RecordType: 14
+        Site: aa-bb-dd-ee-ff
+        SiteUrl: https://yourorg.sharepoint.com/personal/user_yourorg
+        SourceFileExtension: docx
+        SourceFileName: importantsecrets.docx
+        SourceRelativeUrl: Documents/importantsecrets.docx
+        TargetUserOrGroupName: ANOTHERUSER@MYCOMPANY.COM
+        TargetUserOrGroupType: NotGuest
+        UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+        UserId: my.user@yourorg.onmicrosoft.com
+        UserKey: i:0h.f|membership|12345@live.com
+        UserType: 0
+        Workload: OneDrive
+      Name: Internal Share
+DedupPeriodMinutes: 60
+LogTypes:
+    - Microsoft365.Audit.SharePoint
+RuleID: "Microsoft365.External.Document.Sharing"
+Threshold: 1

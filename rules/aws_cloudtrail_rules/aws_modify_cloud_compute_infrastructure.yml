@@ -1,13 +1,24 @@
 AnalysisType: rule
-Description: Detection when the cloud compute infrastructure is modified.
-DisplayName: AWS Modify Cloud Compute Infrastructure
-Enabled: true
+Description: Detection when EC2 compute infrastructure is modified outside of expected automation methods.
+DisplayName: "AWS Modify Cloud Compute Infrastructure"
+Enabled: false
 Filename: aws_modify_cloud_compute_infrastructure.py
 Reference: https://attack.mitre.org/techniques/T1578/
-Severity: High
+Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0005:T1578
+Tags:
+  # Note: This detection doesn't require configuration. It carries the Configuration Required
+  # tag due to checks for Enabled:false and Pack content
+  - Configuration Required
+Runbook: >
+  This detection reports on eventSource ec2 Change events. This detection excludes Cross-Service
+  change events.  As such, this detection will perform well in environments where changes are 
+  expected to originate only from AWS service entities.
+
+  This detection will emit alerts frequently in environments where users are
+  making ec2 related changes.
 Tests:
     - ExpectedResult: true
       Log:
@@ -531,5 +542,5 @@ Tests:
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.Modify.Cloud.Compute.Infrastructure
+RuleID: "AWS.Modify.Cloud.Compute.Infrastructure"
 Threshold: 1

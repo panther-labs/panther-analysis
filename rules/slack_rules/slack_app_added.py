@@ -28,14 +28,14 @@ def alert_context(event):
 def severity(event):
     # Used to escalate to High/Critical if the app is granted admin privileges
     # May want to escalate to "Critical" depending on security posture
-    if "admin" in deep_get(event, "entity", "app", "scopes"):
+    if "admin" in deep_get(event, "entity", "app", "scopes", default=[]):
         return "High"
 
     # Fallback method in case the admin scope is not directly mentioned in entity for whatever
-    if "admin" in deep_get(event, "details", "new_scope"):
+    if "admin" in deep_get(event, "details", "new_scope", default=[]):
         return "High"
 
-    if "admin" in deep_get(event, "details", "bot_scopes"):
+    if "admin" in deep_get(event, "details", "bot_scopes", default=[]):
         return "High"
 
     return "Medium"
