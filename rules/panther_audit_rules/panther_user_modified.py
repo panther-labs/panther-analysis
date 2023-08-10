@@ -32,8 +32,6 @@ def alert_context(event):
 
 def severity(event):
     user = event.udm("actor_user")
-    if user is None:
-        user = "<NO_PANTHER_USER>"
     if user == "scim":
         return "INFO"
     return "HIGH"
