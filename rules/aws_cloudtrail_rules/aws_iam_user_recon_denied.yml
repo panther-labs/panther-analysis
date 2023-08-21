@@ -1,0 +1,171 @@
+AnalysisType: rule
+Filename: aws_iam_user_recon_denied.py
+RuleID: "AWS.IAMUser.ReconAccessDenied"
+DisplayName: "Detect Reconnaissance from IAM Users"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Discovery:Cloud Service Discovery
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1526
+Severity: Info
+Threshold: 15
+DedupPeriodMinutes: 10
+Description: An IAM user has a high volume of access denied API calls.
+Runbook: Analyze the IP they came from, and other actions taken before/after.
+Reference: https://runpanther.io
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - errorMessage
+  - p_any_aws_arns
+Tests:
+  -
+    Name: Unauthorized API Call
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "GetRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "40.185.186.6",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:GetRole on resource: arn:aws:iam::123456789012:role/FooBar",
+          "userAgent": "aws-sdk-go/1.32.7 (go1.14.6; linux; amd64) exec-env/AWS_Lambda_go1.x",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Unauthorized API Call from Within AWS (FQDN)
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "sqs.amazonaws.com",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+          "userAgent": "sqs.amazonaws.com",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Authorized API Call
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "CreateServiceLinkedRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "signin.amazonaws.com",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }
+  -
+    Name: Unauthorized API Call - From AWS console
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+          "eventVersion": "1.05",
+          "userIdentity": {
+              "type": "IAMUser",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:user/tester",
+              "accountId": "123456789012",
+              "accessKeyId": "1",
+              "userName": "tester",
+              "sessionContext": {
+                  "attributes": {
+                      "mfaAuthenticated": "true",
+                      "creationDate": "2019-01-01T00:00:00Z"
+                  }
+              },
+              "invokedBy": "signin.amazonaws.com"
+          },
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventSource": "iam.amazonaws.com",
+          "eventName": "GetRole",
+          "awsRegion": "us-east-1",
+          "sourceIPAddress": "40.185.186.6",
+          "errorCode": "AccessDenied",
+          "errorMessage": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:GetRole on resource: arn:aws:iam::123456789012:role/FooBar",
+          "userAgent": "aws-internal/3 aws-sdk-java/1.12.124 Linux/4.9.273-0.1.ac.226.84.332.metal1.x86_64 OpenJDK_64-Bit_Server_VM/25.312-b07 java/1.8.0_312 vendor/Oracle_Corporation cfg/retry-mode/standard",
+          "requestParameters": null,
+          "responseElements": null,
+          "requestID": "1",
+          "eventID": "1",
+          "eventType": "AwsApiCall",
+          "recipientAccountId": "123456789012"
+      }

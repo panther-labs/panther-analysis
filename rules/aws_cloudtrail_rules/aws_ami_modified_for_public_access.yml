@@ -1,0 +1,299 @@
+AnalysisType: rule
+Filename: aws_ami_modified_for_public_access.py
+RuleID: "AWS.CloudTrail.AMIModifiedForPublicAccess"
+DisplayName: "Amazon Machine Image (AMI) Modified to Allow Public Access"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Exfiltration:Transfer Data to Cloud Account
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Description: >
+  An Amazon Machine Image (AMI) was modified to allow it to be launched by anyone.
+  Any sensitive configuration or application data stored in the AMI's block devices is at risk.
+Runbook: >
+  Determine if the AMI is intended to be publicly accessible.
+  If not, first modify the AMI to not be publicly accessible then change any sensitive data stored
+  in the block devices associated to the AMI (as they may be compromised).
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sharingamis-intro.html
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+Tests:
+  -
+    Name: AMI Made Public
+    ExpectedResult: true
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "ModifyImageAttribute",
+          "eventSource": "ec2.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "attributeType": "launchPermission",
+              "imageId": "ami-1111",
+              "launchPermission": {
+                  "add": {
+                      "items": [
+                          {
+                              "group": "all"
+                          }
+                      ]
+                  }
+              }
+          },
+          "responseElements": {
+              "_return": true
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: AMI Not Made Public
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "ModifyImageAttribute",
+          "eventSource": "ec2.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "attributeType": "launchPermission",
+              "imageId": "ami-1111",
+              "launchPermission": {
+                  "add": {
+                      "items": [
+                          {
+                              "group": "not-all"
+                          }
+                      ]
+                  }
+              }
+          },
+          "responseElements": {
+              "_return": true
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: AMI Launch Permissions Not Modified
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "ModifyImageAttribute",
+          "eventSource": "ec2.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "attributeType": "someThing",
+              "imageId": "ami-1111",
+              "someThing": {
+                  "add": {
+                      "items": [
+                          {
+                              "group": "all"
+                          }
+                      ]
+                  }
+              }
+          },
+          "responseElements": {
+              "_return": true
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: AMI Added to User
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "eventID": "1111",
+          "eventName": "ModifyImageAttribute",
+          "eventSource": "ec2.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "attributeType": "launchPermission",
+              "imageId": "ami-1111",
+              "launchPermission": {
+                  "add": {
+                      "items": [
+                          {
+                              "userId": "bob"
+                          }
+                      ]
+                  }
+              }
+          },
+          "responseElements": {
+              "_return": true
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
+  -
+    Name: Error Making AMI Public
+    ExpectedResult: false
+    Log:
+      {
+          "awsRegion": "us-west-2",
+          "errorCode": "UnauthorizedOperation",
+          "eventID": "1111",
+          "eventName": "ModifyImageAttribute",
+          "eventSource": "ec2.amazonaws.com",
+          "eventTime": "2019-01-01T00:00:00Z",
+          "eventType": "AwsApiCall",
+          "eventVersion": "1.05",
+          "recipientAccountId": "123456789012",
+          "requestID": "1111",
+          "requestParameters": {
+              "attributeType": "launchPermission",
+              "imageId": "ami-1111",
+              "launchPermission": {
+                  "add": {
+                      "items": [
+                          {
+                              "group": "all"
+                          }
+                      ]
+                  }
+              }
+          },
+          "responseElements": {
+              "_return": true
+          },
+          "sourceIPAddress": "111.111.111.111",
+          "userAgent": "Mozilla/2.0 (compatible; NEWT ActiveX; Win32)",
+          "userIdentity": {
+              "accessKeyId": "1111",
+              "accountId": "123456789012",
+              "arn": "arn:aws:sts::123456789012:assumed-role/example-role/example-user",
+              "principalId": "1111",
+              "sessionContext": {
+                  "attributes": {
+                      "creationDate": "2019-01-01T00:00:00Z",
+                      "mfaAuthenticated": "true"
+                  },
+                  "sessionIssuer": {
+                      "accountId": "123456789012",
+                      "arn": "arn:aws:iam::123456789012:role/example-role",
+                      "principalId": "1111",
+                      "type": "Role",
+                      "userName": "example-role"
+                  },
+                  "webIdFederationData": {}
+              },
+              "type": "AssumedRole"
+          }
+      }
