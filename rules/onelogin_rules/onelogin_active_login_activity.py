@@ -24,7 +24,11 @@ SHARED_IP_SPACE = [
 
 def rule(event):
     # Pre-filter: event_type_id = 5 is login events.
-    if str(event.get("event_type_id")) != "5" or not event.get("ipaddr") or not event.get("user_id"):
+    if (
+        str(event.get("event_type_id")) != "5"
+        or not event.get("ipaddr")
+        or not event.get("user_id")
+    ):
         return False
     # We expect to see multiple user logins from these shared, common ip addresses
     if is_ip_in_network(event.get("ipaddr"), SHARED_IP_SPACE):
