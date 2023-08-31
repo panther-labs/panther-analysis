@@ -2,8 +2,10 @@ from panther_base_helpers import okta_alert_context
 
 
 def rule(event):
-    return (event.get("eventtype") == "user.mfa.factor.suspend" and
-            event.deep_get('outcome', 'result') == 'SUCCESS')
+    return (
+        event.get("eventtype") == "user.mfa.factor.suspend"
+        and event.deep_get("outcome", "result") == "SUCCESS"
+    )
 
 
 def title(event):
