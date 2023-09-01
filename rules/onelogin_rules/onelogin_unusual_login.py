@@ -9,7 +9,7 @@ EVENT_LOGIN_INFO = {}
 
 def rule(event):
     # Pre-filter to save compute time where possible. event_type_id = 5 is login events.
-    if event.get("event_type_id") != 5 or event.get("ipaddr") is None:
+    if str(event.get("event_type_id")) != "5" or event.get("ipaddr") is None:
         return False
 
     # Lookup geo-ip data via API call

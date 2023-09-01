@@ -2,7 +2,7 @@ def rule(event):
 
     # Filter events; event type 240 is actor_user revealed user's app password
     if (
-        event.get("event_type_id") != 240
+        str(event.get("event_type_id")) != "240"
         or not event.get("actor_user_id")
         or not event.get("user_id")
     ):
