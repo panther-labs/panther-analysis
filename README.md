@@ -42,6 +42,10 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 ## Configure your Python environment
 
 ```bash
+python3 -m pip install pipenv
+echo "PYTHON_BIN_PATH=\"$(python3 -m site --user-base)/bin\"" >> ~/.zprofile
+echo "export PATH=\"$PATH:$PYTHON_BIN_PATH\"" >> ~/.zprofile
+. ~/.zprofile
 make install
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ````
