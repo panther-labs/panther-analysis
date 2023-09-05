@@ -218,6 +218,7 @@ def okta_alert_context(event: dict):
 def crowdstrike_detection_alert_context(event: dict):
     """Returns common context for Crowdstrike detections"""
     return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
         "user": get_crowdstrike_field(event, "UserName", default=""),
         "console-link": get_crowdstrike_field(event, "FalconHostLink", default=""),
         "commandline": get_crowdstrike_field(event, "CommandLine", default=""),
