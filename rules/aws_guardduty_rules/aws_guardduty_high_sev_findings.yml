@@ -66,3 +66,48 @@ Tests:
         "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves that is highly permissive.",
         "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive policy to themselves."
       }
+   -
+    Name: High Sev Finding As Sample Data
+    ExpectedResult: false
+    Log:
+      {
+        "schemaVersion": "2.0",
+        "accountId": "123456789012",
+        "region": "us-east-1",
+        "partition": "aws",
+        "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a",
+        "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions",
+        "service": {
+          "serviceName": "guardduty",
+          "detectorId": "111111bbbbbbbbbb5555555551111111",
+          "action": {
+            "actionType": "AWS_API_CALL",
+            "awsApiCallAction": {
+              "api": "PutRolePolicy",
+              "serviceName": "iam.amazonaws.com",
+              "callerType": "Domain",
+              "domainDetails": {
+                "domain": "cloudformation.amazonaws.com"
+              },
+              "affectedResources": {
+                "AWS::IAM::Role": "arn:aws:iam::123456789012:role/IAMRole"
+              }
+            }
+          },
+          "resourceRole": "TARGET",
+          "additionalInfo": {
+            "sample": true
+          },
+          "evidence": null,
+          "eventFirstSeen": "2020-02-14T17:59:17Z",
+          "eventLastSeen": "2020-02-14T17:59:17Z",
+          "archived": false,
+          "count": 1
+        },
+        "severity": 8,
+        "id": "eeb88ab56556eb7771b266670dddee5a",
+        "createdAt": "2020-02-14T18:12:22.316Z",
+        "updatedAt": "2020-02-14T18:12:22.316Z",
+        "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves that is highly permissive.",
+        "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive policy to themselves."
+      }
