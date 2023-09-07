@@ -4,7 +4,7 @@ from panther_base_helpers import aws_guardduty_context
 def rule(event):
     if deep_get(event, "additionalInfo", "sample") == True:
         return False # in case of sample data https://docs.aws.amazon.com/guardduty/latest/ug/sample_findings.html
-    else return 4.0 <= float(event.get("severity", 0)) <= 6.9
+    else: return 4.0 <= float(event.get("severity", 0)) <= 6.9
 
 
 def dedup(event):
