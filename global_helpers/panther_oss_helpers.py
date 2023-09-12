@@ -276,14 +276,12 @@ def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
         epoch_seconds: (Optional) Set string expiration time
     """
     if not isinstance(val, (dict, Mapping)):
-        # pylint: disable=broad-exception-raised
         raise Exception("panther_oss_helpers.put_dictionary: value is not a dictionary")
 
     try:
         # Serialize 'val' to a JSON string
         data = json.dumps(val)
     except TypeError as exc:
-        # pylint: disable=broad-exception-raised
         raise Exception(
             "panther_oss_helpers.put_dictionary: "
             "value is a dictionary, but it is not JSON serializable"
@@ -313,7 +311,6 @@ def get_dictionary(key: str, force_ttl_check: bool = False) -> dict:
         # Deserialize from JSON to a Python dictionary
         return json.loads(item)
     except json.decoder.JSONDecodeError as exc:
-        # pylint: disable=broad-exception-raised
         raise Exception(
             "panther_oss_helpers.get_dictionary: "
             "Data found in DynamoDB could not be decoded into JSON"
@@ -481,7 +478,6 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     url = f"https://ipinfo.io/{valid_ip}/json"
     resp = requests.get(url, timeout=5)
     if resp.status_code != 200:
-        # pylint: disable=broad-exception-raised
         raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
     geoinfo = json.loads(resp.text)
     return geoinfo
