@@ -1,0 +1,32 @@
+AnalysisType: scheduled_rule
+Filename: russchangetest.py
+RuleID: "RussChangeTest"
+DisplayName: "RussChangeTest"
+Enabled: true
+Severity: Low
+DedupPeriodMinutes: 60
+Threshold: 1
+InlineFilters:
+    - All: []
+ScheduledQueries:
+    - CloudTrailAnomaly
+    - PantherAuditAnomaly
+Tests:
+    - Name: Test-19efd8
+      ExpectedResult: true
+      Log:
+        counts:
+            - 1585
+            - 1031
+            - 1243
+            - 11
+            - 452
+            - 11
+            - 652
+            - 1636
+            - 221
+            - 1565
+        stats:
+            avg: 840.7
+            stdev: 654.6145685309791
+        tableName: foo
