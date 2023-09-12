@@ -81,7 +81,6 @@ def get_box_client() -> Client:
     fips_suffix = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 
     if not Client or not JWTAuth:
-        # pylint: disable=broad-exception-raised
         raise Exception("Could not import necessary Box Library.")
     if (
         BOX_CLIENT is not None
