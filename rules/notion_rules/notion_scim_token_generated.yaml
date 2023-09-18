@@ -11,41 +11,45 @@ Tests:
     - ExpectedResult: false
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:16:41.217Z",
-            "workspace_id": "123",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.io"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:16:41.217Z",
+              "workspace_id": "123",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.io"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.content_exported",
+              "workspace.content_exported": {}
+            }
          }
       Name: other event
     - ExpectedResult: true
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:21:01.873Z",
-            "workspace_id": "123",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.com"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.scim_token_generated",
-            "workspace.scim_token_generated": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:21:01.873Z",
+              "workspace_id": "123",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.com"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.scim_token_generated",
+              "workspace.scim_token_generated": {}
+            }
           }
       Name: Token Generated
 DedupPeriodMinutes: 60

@@ -11,42 +11,46 @@ Tests:
     - ExpectedResult: false
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-05-15T19:14:21.031Z",
-            "workspace_id": "..",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.io"
-                }
-            },
-            "ip_address": "...",
-            "platform": "web",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-05-15T19:14:21.031Z",
+              "workspace_id": "..",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.io"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "web",
+              "type": "workspace.content_exported",
+              "workspace.content_exported": {}
+            }
          }
       Name: Other Event
     - ExpectedResult: true
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-05-15T19:14:21.031Z",
-            "workspace_id": "..",
-            "actor": {
-              "object": "user",
-              "id": "..",
-              "type": "person",
-              "person": {
-                "email": "homer.simpson@yourcompany.io"
+            "event": {
+              "id": "...",
+              "timestamp": "2023-05-15T19:14:21.031Z",
+              "workspace_id": "..",
+              "actor": {
+                "object": "user",
+                "id": "..",
+                "type": "person",
+                "person": {
+                  "email": "homer.simpson@yourcompany.io"
+                }
+              },
+              "ip_address": "...",
+              "platform": "web",
+              "type": "workspace.audit_log_exported",
+              "workspace.audit_log_exported": {
+                "duration_in_days": 30
               }
-            },
-            "ip_address": "...",
-            "platform": "web",
-            "type": "workspace.audit_log_exported",
-            "workspace.audit_log_exported": {
-              "duration_in_days": 30
             }
          }
 

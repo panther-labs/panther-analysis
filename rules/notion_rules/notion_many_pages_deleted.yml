@@ -11,50 +11,54 @@ Tests:
     - ExpectedResult: false
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:16:41.217Z",
-            "workspace_id": "..",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.io"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:16:41.217Z",
+              "workspace_id": "..",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.io"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.content_exported",
+              "workspace.content_exported": {}
+            }
          }
       Name: Other Event
     - ExpectedResult: true
       Log:
           {
-            "actor": {
-              "id": "af06b6ff-dd5e-4024-b9ef-78fe77f55884",
-              "object": "user",
-              "person": {
-                "email": "homer.simpson@yourcompany.io"
+            "event": {
+              "actor": {
+                "id": "af06b6ff-dd5e-4024-b9ef-78fe77f55884",
+                "object": "user",
+                "person": {
+                  "email": "homer.simpson@yourcompany.io"
+                },
+                "type": "person"
               },
-              "type": "person"
-            },
-            "details": {
-              "parent": {
-                "database_id": "543af759-3010-4355-a71e-4sdfs3566a",
-                "type": "database_id"
+              "details": {
+                "parent": {
+                  "database_id": "543af759-3010-4355-a71e-4sdfs3566a",
+                  "type": "database_id"
+                },
+                "target": {
+                  "page_id": "93cf05d3-6805-4ddc-abba-adsfjhnlkwje785",
+                  "type": "page_id"
+                }
               },
-              "target": {
-                "page_id": "93cf05d3-6805-4ddc-abba-adsfjhnlkwje785",
-                "type": "page_id"
-              }
-            },
-            "id": "768873bf-6b2c-40e8-b27c-1c199c4d6ae7",
-            "ip_address": "12.12.12.12",
-            "platform": "web",
-            "timestamp": "2023-05-24 20:17:41.905000000",
-            "type": "page.deleted",
-            "workspace_id": "ea65b016-6abc-4dcf-808b-sdfg445654"
+              "id": "768873bf-6b2c-40e8-b27c-1c199c4d6ae7",
+              "ip_address": "12.12.12.12",
+              "platform": "web",
+              "timestamp": "2023-05-24 20:17:41.905000000",
+              "type": "page.deleted",
+              "workspace_id": "ea65b016-6abc-4dcf-808b-sdfg445654"
+            }
           }
       Name: Many Pages Deleted
 DedupPeriodMinutes: 60

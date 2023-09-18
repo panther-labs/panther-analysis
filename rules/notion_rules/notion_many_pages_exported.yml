@@ -11,27 +11,30 @@ Tests:
     - ExpectedResult: false
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:16:41.217Z",
-            "workspace_id": "..",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.io"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {}
-         }
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:16:41.217Z",
+              "workspace_id": "..",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.io"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.content_exported",
+              "workspace.content_exported": {}
+            }
+          }
       Name: Other Event
     - ExpectedResult: true
       Log:
           {
-          "actor": {
+            "event": {
+              "actor": {
                 "id": "bd37477c-869d-418b-abdb-0fc727b38b5e",
                 "object": "user",
                 "person": {
@@ -55,6 +58,7 @@ Tests:
               "timestamp": "2023-06-01 18:57:07.486000000",
               "type": "page.exported",
               "workspace_id": "ea65b016-6abc-4dcf-808b-e119617b55d1"
+            }
          }
       Name: Many Pages Exported
 DedupPeriodMinutes: 60

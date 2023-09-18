@@ -22,15 +22,15 @@ def rule(event):
         "user.login",
         "user.settings.login_method.password_removed",
     }
-    if event.deep_walk("type") not in allowed_event_types:
+    if event.deep_walk("event", "type") not in allowed_event_types:
         return False
 
     # Extract user info
-    userid = event.deep_walk("actor", "id")
+    userid = event.deep_walk("event", "actor", "id")
     cache_key = f"{CACHE_PREFIX}-{userid}"
 
     # If this is a login event, record it
-    if event.deep_walk("type") == "user.login":
+    if event.deep_walk("event", "type") == "user.login":
         put_string_set(
             cache_key,
             [str(event.get("p_event_time"))],  # We'll save this for the alert context later
@@ -50,7 +50,7 @@ def rule(event):
 
 
 def title(event):
-    user_email = event.deep_walk("actor", "person", "email", default="UNKNOWN EMAIL")
+    user_email = event.deep_walk("event", "actor", "person", "email", default="UNKNOWN EMAIL")
     mins = DEFAULT_PASSWORD_REMOVE_WINDOW_MINUTES
     return f"User [{user_email}] removed their password within [{mins}] minutes of logging in."
 
