@@ -2,7 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from global_filter_azuresignin import filter_include_event
-from panther_azuresignin_helpers import actor_user, azure_signin_alert_context
+from panther_azuresignin_helpers import actor_user, azure_signin_alert_context, is_sign_in_event
 from panther_base_helpers import deep_get
 
 LEGACY_AUTH_USERAGENTS = ["BAV2ROPC", "CBAInPROD"]  # CBAInPROD is reported to be IMAP
@@ -13,6 +13,9 @@ KNOWN_EXCEPTIONS = []
 
 
 def rule(event):
+    if not is_sign_in_event(event):
+        return False
+
     global KNOWN_EXCEPTIONS  # pylint: disable=global-statement
     if isinstance(KNOWN_EXCEPTIONS, MagicMock):
         KNOWN_EXCEPTIONS = json.loads(KNOWN_EXCEPTIONS())  # pylint: disable=not-callable
