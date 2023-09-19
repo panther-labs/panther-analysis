@@ -1,10 +1,10 @@
 import panther_event_type_helpers as event_type
-from panther_azuresignin_helpers import actor_user, is_signin_event
+from panther_azuresignin_helpers import actor_user, is_sign_in_event
 from panther_base_helpers import deep_get
 
 
 def get_event_type(event):
-    if not is_signin_event(event):
+    if not is_sign_in_event(event):
         return None
 
     error_code = deep_get(event, "properties", "status", "errorCode", default=0)
