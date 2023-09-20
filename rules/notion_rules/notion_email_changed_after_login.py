@@ -4,7 +4,7 @@ from panther_notion_helpers import notion_alert_context
 from panther_oss_helpers import get_string_set, put_string_set
 
 
-# Length of time in seconds. If a user logs in, then changes their email within this many
+# Length of time in minutes. If a user logs in, then changes their email within this many
 # minutes, raise an alert.
 DEFAULT_EMAIL_CHANGE_WINDOW_MINUTES = 10
 
