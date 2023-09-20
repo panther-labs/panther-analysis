@@ -1,13 +1,13 @@
 AnalysisType: rule
 Filename: azure_failed_signins.py
-RuleID: "Azure.SignIn.ManyFailedSignIns"
+RuleID: "Azure.Audit.ManyFailedSignIns"
 DisplayName: "Azure Many Failed SignIns"
 Enabled: true
 # Ten Failed Sign-Ins(Threshold) in Ten Minutes(DedupPeriodMinutes)
 Threshold: 10
 DedupPeriodMinutes: 10
 LogTypes:
-  - Azure.SignIn
+  - Azure.Audit
 Severity: Medium
 Description: >
   This detection looks for a number of failed sign-ins for the same
