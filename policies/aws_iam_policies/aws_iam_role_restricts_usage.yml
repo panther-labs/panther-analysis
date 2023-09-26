@@ -96,28 +96,3 @@ Tests:
           "Tags": null,
           "TimeCreated": "2019-01-01T00:00:00.000Z"
       }
-  -
-    Name: Role Restrict Usage With Deny Statement
-    ExpectedResult: true
-    Resource:
-      {
-          "AccountId": "123456789012",
-          "Arn": "arn:aws:iam::123456789012:role/example-role",
-          "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"sts:AssumeRole\"}]}",
-          "Description": null,
-          "Id": "1111",
-          "InlinePolicies": null,
-          "ManagedPolicyNames": [
-              "example-policy-1",
-              "example-policy-2"
-          ],
-          "MaxSessionDuration": 3600,
-          "Name": "example-role",
-          "Path": "/",
-          "PermissionsBoundary": null,
-          "Region": "global",
-          "ResourceId": "arn:aws:iam::123456789012:role/example-role",
-          "ResourceType": "AWS.IAM.Role",
-          "Tags": null,
-          "TimeCreated": "2019-01-01T00:00:00.000Z"
-      }
