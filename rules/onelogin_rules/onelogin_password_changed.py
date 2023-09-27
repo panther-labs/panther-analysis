@@ -1,5 +1,4 @@
 def rule(event):
-
     # check that this is a password change event;
     # event id 11 is actor_user changed password for user
     # Normally, admin's may change a user's password (event id 211)

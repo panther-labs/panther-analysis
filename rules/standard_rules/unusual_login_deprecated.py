@@ -6,12 +6,8 @@ import json
 import logging
 
 import panther_event_type_helpers as event_type
-from panther_oss_helpers import (
-    add_parse_delay,
-    geoinfo_from_ip,
-    get_string_set,
-    put_string_set,
-)
+from panther_detection_helpers.caching import get_string_set, put_string_set
+from panther_oss_helpers import add_parse_delay, geoinfo_from_ip
 
 # number of unique geolocation city:region combinations retained in the
 # panther-kv-table in Dynamo to suppress alerts
