@@ -164,85 +164,85 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 
 def ttl_expired(response: dict) -> bool:
     """Global `ttl_expired` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.ttl_expired`."""
+    Instead, use `from panther_detection_helpers.caching import ttl_expired`."""
     return caching.ttl_expired(response)
 
 
 def get_counter(key: str, force_ttl_check: bool = False) -> int:
     """Global `get_counter` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.get_counter`."""
+    Instead, use `from panther_detection_helpers.caching import get_counter`."""
     return caching.get_counter(key=key, force_ttl_check=force_ttl_check)
 
 
 def increment_counter(key: str, val: int = 1) -> int:
     """Global `increment_counter` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.increment_counter`."""
+    Instead, use `from panther_detection_helpers.caching import increment_counter`."""
     return caching.increment_counter(key=key, val=val)
 
 
 def reset_counter(key: str) -> None:
     """Global `reset_counter` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.reset_counter`."""
+    Instead, use `from panther_detection_helpers.caching import reset_counter`."""
     return caching.reset_counter(key=key)
 
 
 def set_key_expiration(key: str, epoch_seconds: int) -> None:
     """Global `set_key_expiration` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.set_key_expiration`."""
+    Instead, use `from panther_detection_helpers.caching import set_key_expiration`."""
     return caching.set_key_expiration(key=key, epoch_seconds=epoch_seconds)
 
 
 def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
     """Global `put_dictionary` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.put_dictionary`."""
+    Instead, use `from panther_detection_helpers.caching import put_dictionary`."""
     return caching.put_dictionary(key=key, val=val, epoch_seconds=epoch_seconds)
 
 
 def get_dictionary(key: str, force_ttl_check: bool = False) -> dict:
     """Global `get_dictionary` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.get_dictionary`."""
+    Instead, use `from panther_detection_helpers.caching import get_dictionary`."""
     return caching.get_dictionary(key=key, force_ttl_check=force_ttl_check)
 
 
 def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
     """Global `get_string_set` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.get_string_set`."""
+    Instead, use `from panther_detection_helpers.caching import get_string_set`."""
     return caching.get_string_set(key=key, force_ttl_check=force_ttl_check)
 
 
 def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
     """Global `put_string_set` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.put_string_set`."""
+    Instead, use `from panther_detection_helpers.caching import put_string_set`."""
     return caching.put_string_set(key=key, val=val, epoch_seconds=epoch_seconds)
 
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Global `add_to_string_set` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.add_to_string_set`."""
+    Instead, use `from panther_detection_helpers.caching import add_to_string_set`."""
     return caching.add_to_string_set(key=key, val=val)
 
 
 def remove_from_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Global `remove_from_string_set` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.remove_from_string_set`."""
+    Instead, use `from panther_detection_helpers.caching import remove_from_string_set`."""
     return caching.remove_from_string_set(key=key, val=val)
 
 
 def reset_string_set(key: str) -> None:
     """Global `reset_string_set` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.reset_string_set`."""
+    Instead, use `from panther_detection_helpers.caching import reset_string_set`."""
     return caching.reset_string_set(key=key)
 
 
 def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
     """Global `evaluate_threshold` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.evaluate_threshold`."""
+    Instead, use `from panther_detection_helpers.caching import evaluate_threshold`."""
     return caching.evaluate_threshold(key=key, threshold=threshold, expiry_seconds=expiry_seconds)
 
 
 def check_account_age(key):
     """Global `check_account_age` is DEPRECATED.
-    Instead, use `panther_detection_helpers.caching.check_account_age`."""
+    Instead, use `from panther_detection_helpers.caching import check_account_age`."""
     return caching.check_account_age(key=key)
 
 
