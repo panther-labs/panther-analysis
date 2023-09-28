@@ -300,6 +300,7 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     url = f"https://ipinfo.io/{valid_ip}/json"
     resp = requests.get(url, timeout=5)
     if resp.status_code != 200:
+        # pylint: disable=broad-exception-raised
         raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
     geoinfo = json.loads(resp.text)
     return geoinfo
