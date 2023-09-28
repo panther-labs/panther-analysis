@@ -37,7 +37,7 @@ lint: lint-pylint lint-fmt
 lint-pylint:
 	pipenv run bandit -r $(dirs) --skip B101  # allow assert statements in tests
 	pipenv run pylint $(dirs) \
-	  --disable=missing-docstring,duplicate-code,import-error,fixme,consider-iterating-dictionary,global-variable-not-assigned \
+	  --disable=missing-docstring,duplicate-code,import-error,fixme,consider-iterating-dictionary,global-variable-not-assigned,broad-exception-raised \
 	  --load-plugins=pylint.extensions.mccabe,pylint_print \
 	  --max-line-length=100
 
