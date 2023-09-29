@@ -44,7 +44,9 @@ def rule(event):
         return False
     # add a new username if this is a unique user from this ip address
     if user_id not in user_ids:
-        user_ids = add_to_string_set(event_key, user_id, epoch_seconds=event.event_time_epoch() + THRESH_TTL)
+        user_ids = add_to_string_set(
+            event_key, user_id, epoch_seconds=event.event_time_epoch() + THRESH_TTL
+        )
     return len(user_ids) > THRESH
 
 
