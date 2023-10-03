@@ -1,0 +1,16 @@
+AnalysisType: rule
+RuleID: "Notion.PageSharedToWeb"
+DisplayName: "Notion Page Published to Web"
+Description: A Notion User published a page to the web.
+LogTypes:
+    - Notion.AuditLogs
+Enabled: true
+Filename: notion_page_shared_to_web.py
+Runbook: Potential information exposure - review the shared page and rectify if needed.
+Severity: Low
+DedupPeriodMinutes: 60
+Threshold: 1
+Tags:
+  - Notion
+  - Public Exposure
+  - Beta
