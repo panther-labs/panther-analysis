@@ -1,0 +1,16 @@
+AnalysisType: rule
+RuleID: "Notion.TeamGuestAddedToPage"
+DisplayName: "Notion Team Guest Added to Page"
+Description: An external team guest was added to a Notion page.
+LogTypes:
+    - Notion.AuditLogs
+Enabled: true
+Filename: notion_team_guest_added_to_page.py
+Runbook: Potential information exposure - review the shared page and rectify if needed.
+Severity: Low
+DedupPeriodMinutes: 60
+Threshold: 1
+Tags:
+  - Notion
+  - Public Exposure
+  - Beta
