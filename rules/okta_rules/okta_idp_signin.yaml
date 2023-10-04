@@ -5,7 +5,6 @@ DisplayName: "Okta Identity Provider Sign-in"
 Enabled: false
 LogTypes:
     - Okta.SystemLog
-# Tags:
 Reports:
     MITRE ATT&CK:
         - TA0001:T1199 # Trusted Relationship
@@ -21,13 +20,11 @@ Description: >
     “source” Identity Provider to match a real user in the compromised “target” Identity Provider. 
     This provided the ability to Single sign-on (SSO) into applications in the target IdP as the targeted user.
     Do not use this rule if your organization uses legitimate 3rd-party Identity Providers.
-# Runbook: >
 Reference: >
     https://sec.okta.com/articles/2023/08/cross-tenant-impersonation-prevention-and-detection
     https://developer.okta.com/docs/concepts/identity-providers/
 DedupPeriodMinutes: 30
 Threshold: 1
-# SummaryAttributes:
 Tests:
     - ExpectedResult: false
       Log:
