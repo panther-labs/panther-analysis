@@ -4,6 +4,8 @@ from panther_base_helpers import deep_get
 
 def get_event_type(event):
     # pylint: disable=too-many-return-statements
+    etype = deep_get(event, "event", "type")
+    breakpoint()
     return {
         'user.login': event_type.SUCCESSFUL_LOGIN,
         'user.logout': event_type.SUCCESSFUL_LOGOUT,
@@ -14,7 +16,7 @@ def get_event_type(event):
         'user.settings.preferred_name_updated': event_type.USER_ACCOUNT_MODIFIED,
         'user.settings.profile_photo_updated': event_type.USER_ACCOUNT_MODIFIED,
         'workspace.permissions.member_role_updated': event_type.USER_ROLE_MODIFIED
-    }.get(deep_get(event, "event", "type"))
+    }.get(etype, etype)
 
 
 def get_actor_user(event):
