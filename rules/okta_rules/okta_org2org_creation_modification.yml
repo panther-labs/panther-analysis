@@ -5,7 +5,6 @@ DisplayName: "Okta Org2Org application created of modified"
 Enabled: true
 LogTypes:
     - Okta.SystemLog
-# Tags:
 Reports:
     MITRE ATT&CK:
         - TA0006:T1556 # Modify Authentication Process
@@ -16,13 +15,11 @@ Description: >
     Okta's Org2Org applications instances are used to push and match users from one Okta organization to another.
     A malicious actor can add an Org2Org application instance and create a user in the source organization (controlled by the attacker) 
     with the same identifier as a Super Administrator in the target organization.
-# Runbook: >
 Reference: >
     https://www.authomize.com/blog/authomize-discovers-password-stealing-and-impersonation-risks-to-in-okta/
     https://cardinalops.com/blog/splunk-and-other-siem-detections-for-okta-passbleed/
 DedupPeriodMinutes: 60
 Threshold: 1
-# SummaryAttributes:
 Tests:
 -
     Name: Org2Org modified
