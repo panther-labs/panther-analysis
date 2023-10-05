@@ -1,0 +1,20 @@
+AnalysisType: rule
+RuleID: "Notion.LoginFromBlockedIP"
+DisplayName: "Notion Login From Blocked IP"
+Description: A user attempted to access Notion from a blocked IP address.
+LogTypes:
+    - Notion.AuditLogs
+Enabled: true
+Filename: notion_login_from_blocked_ip.py
+InlineFilters:
+  - Key: "event.ip_address"
+    Condition: IsIPAddressInCIDR
+    Value: 0.0.0.0/32
+Runbook: Potential information exposure - review the shared page and rectify if needed.
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+Tags:
+  - Notion
+  - Public Exposure
+  - Beta
