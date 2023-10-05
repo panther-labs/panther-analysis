@@ -7,9 +7,9 @@ LogTypes:
 Enabled: true
 Filename: notion_login_from_blocked_ip.py
 InlineFilters:
-  - Key: "event.ip_address"
+  - KeyPath: "event.ip_address"
     Condition: IsIPAddressInCIDR
-    Value: 0.0.0.0/32
+    Value: "0.0.0.0/32"
 Runbook: Potential information exposure - review the shared page and rectify if needed.
 Severity: Medium
 DedupPeriodMinutes: 60
