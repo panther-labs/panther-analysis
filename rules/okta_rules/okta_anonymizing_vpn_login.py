@@ -2,10 +2,9 @@ from panther_base_helpers import deep_get, okta_alert_context
 
 
 def rule(event):
-    return (
-        event.get("eventType") == "user.session.start"
-        and deep_get(event, "securityContext", "isProxy") == True
-        )
+    return event.get("eventType") == "user.session.start" and deep_get(
+        event, "securityContext", "isProxy"
+    )
 
 
 def title(event):

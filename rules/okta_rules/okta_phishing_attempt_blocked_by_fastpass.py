@@ -2,9 +2,11 @@ from panther_base_helpers import deep_get, okta_alert_context
 
 
 def rule(event):
-    return (event.get("eventType") == "user.authentication.auth_via_mfa"
+    return (
+        event.get("eventType") == "user.authentication.auth_via_mfa"
         and deep_get(event, "outcome", "result") == "FAILURE"
-        and deep_get(event, "outcome", "reason") == "FastPass declined phishing attempt")
+        and deep_get(event, "outcome", "reason") == "FastPass declined phishing attempt"
+    )
 
 
 def title(event):

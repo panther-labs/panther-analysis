@@ -2,7 +2,7 @@ from panther_base_helpers import okta_alert_context
 
 
 def rule(event):
-    return event.get("eventType") == 'user.authentication.auth_via_IDP'
+    return event.get("eventType") == "user.authentication.auth_via_IDP"
 
 
 def title(event):
