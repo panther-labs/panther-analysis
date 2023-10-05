@@ -9,7 +9,6 @@ from panther_oss_helpers import (
     put_string_set,
     resolve_timestamp_string,
 )
-import pdb
 
 # pylint: disable=global-variable-undefined
 

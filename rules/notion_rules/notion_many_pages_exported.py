@@ -1,5 +1,4 @@
 from global_filter_notion import filter_include_event
-from panther_base_helpers import deep_get
 from panther_notion_helpers import notion_alert_context
 
 

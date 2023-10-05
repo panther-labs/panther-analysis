@@ -17,8 +17,7 @@ def title(event):
     workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
     state = deep_get(
         event,
-        "event"
-        "workspace.settings.enforce_saml_sso_config_updated",
+        "event",
         "state",
         default="<NO_STATE_FOUND>",
     )

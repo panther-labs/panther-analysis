@@ -58,7 +58,7 @@ def alert_context(event):
     city = IPINFO_LOC.city(path_to_ip)
     region = IPINFO_LOC.region(path_to_ip)
     country = IPINFO_LOC.country(path_to_ip)
-    user_email = user_email = event.deep_walk("event", "actor", "person", "email", default="UNKNWON_EMAIL")
+    user_email = event.deep_walk("event", "actor", "person", "email", default="UNKNWON_EMAIL")
 
     context = notion_alert_context(event)
     context["user_email"] = user_email

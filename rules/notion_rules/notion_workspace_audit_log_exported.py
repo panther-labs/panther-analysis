@@ -6,9 +6,8 @@ from panther_notion_helpers import notion_alert_context
 def rule(event):
     if not filter_include_event(event):
         return False
-    return (
-        event.deep_get("event", "type", default="<NO_EVENT_TYPE_FOUND>") == "workspace.audit_log_exported"
-    )
+    event_type = event.deep_get("event", "type", default="<NO_EVENT_TYPE_FOUND>")
+    return event_type == "workspace.audit_log_exported"
 
 
 def title(event):

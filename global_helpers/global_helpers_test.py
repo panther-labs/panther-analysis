@@ -1986,19 +1986,21 @@ class TestNotionHelpers(unittest.TestCase):
     def setUp(self):
         self.event = ImmutableCaseInsensitiveDict(
             {
-                "id": "...",
-                "timestamp": "2023-06-02T20:16:41.217Z",
-                "workspace_id": "..",
-                "actor": {
-                    "id": "..",
-                    "object": "user",
-                    "type": "person",
-                    "person": {"email": "user.name@yourcompany.io"},
-                },
-                "ip_address": "...",
-                "platform": "mac-desktop",
-                "type": "workspace.content_exported",
-                "workspace.content_exported": {},
+                "event": {
+                    "id": "...",
+                    "timestamp": "2023-06-02T20:16:41.217Z",
+                    "workspace_id": "..",
+                    "actor": {
+                        "id": "..",
+                        "object": "user",
+                        "type": "person",
+                        "person": {"email": "user.name@yourcompany.io"},
+                    },
+                    "ip_address": "...",
+                    "platform": "mac-desktop",
+                    "type": "workspace.content_exported",
+                    "workspace.content_exported": {},
+                }
             }
         )
 
