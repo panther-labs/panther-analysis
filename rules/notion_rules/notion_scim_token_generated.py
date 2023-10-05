@@ -11,7 +11,7 @@ def rule(event):
 
 def title(event):
     user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
-    workspace_id = event.get("workspace_id", "<NO_WORKSPACE_ID_FOUND>")
+    workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
     token_id = event.deep_get("event", "workspace", "scim_token_generated", default="{}")
     return (
         f"Notion User [{user}] generated a SCIM token "
