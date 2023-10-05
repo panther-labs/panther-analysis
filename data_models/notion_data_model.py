@@ -5,7 +5,6 @@ from panther_base_helpers import deep_get
 def get_event_type(event):
     # pylint: disable=too-many-return-statements
     etype = deep_get(event, "event", "type")
-    breakpoint()
     return {
         'user.login': event_type.SUCCESSFUL_LOGIN,
         'user.logout': event_type.SUCCESSFUL_LOGOUT,
