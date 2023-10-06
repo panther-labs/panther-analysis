@@ -13,13 +13,15 @@ def rule(event):
         return False
     return event.deep_get("event", "type", default="<NO_EVENT_TYPE_FOUND>") in event_types
 
+
 def title(event):
     user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
     page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
     return f"Notion User [{user}] added an integration to page [{page_id}]."
 
+
 def alert_context(event):
     context = notion_alert_context(event)
     page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
-    context['page_id'] = page_id
+    context["page_id"] = page_id
     return context

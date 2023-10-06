@@ -13,7 +13,7 @@ def rule(event):
 
 def title(event):
     actor = event.deep_get("event", "actor", "person", "email", default="<NO_EMAIL_FOUND>")
-    workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
+    wkspc_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
     db_id = deep_get(
         event,
         "event",
@@ -22,7 +22,7 @@ def title(event):
         "database_id",
         default="<NO_DATABASE_ID_FOUND>",
     )
-    return f"Notion User [{actor}] added a new public homepage [{db_id}] in workspace [{workspace_id}]"
+    return f"Notion User [{actor}] added a new public homepage [{db_id}] in workspace [{wkspc_id}]"
 
 
 def alert_context(event):
@@ -36,6 +36,6 @@ def alert_context(event):
         "database_id",
         default="<NO_DATABASE_ID_FOUND>",
     )
-    context['workspace_id'] = workspace_id
-    context['page_id'] = db_id
+    context["workspace_id"] = workspace_id
+    context["page_id"] = db_id
     return context

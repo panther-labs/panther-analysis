@@ -11,8 +11,8 @@ def rule(event):
 
 def title(event):
     user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
-    ip = event.deep_get("event", "ip_address", default="<UNKNOWN IP>")
-    return f"Notion User [{user}] attempted to login from a blocked IP: [{ip}]."
+    ip_addr = event.deep_get("event", "ip_address", default="<UNKNOWN IP>")
+    return f"Notion User [{user}] attempted to login from a blocked IP: [{ip_addr}]."
 
 
 def alert_context(event):
