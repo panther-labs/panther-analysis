@@ -38,8 +38,7 @@ def rule(event):
         return False  # No need to alert - user has logged in from here before.
 
     # Else, his is a location the user hasn't recently used
-    put_string_set(cache_key, ["arbitrary value"])
-    set_key_expiration(cache_key, time.time() + DEFAULT_CACHE_PERIOD)
+    put_string_set(cache_key, ["arbitrary value"], int(time.time()) + DEFAULT_CACHE_PERIOD)
     return True
 
 
