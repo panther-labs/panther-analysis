@@ -32,7 +32,7 @@ def rule(event):
         return False
 
     # Global Variable Stuff
-    # pylint: disable=global-variable-undefined
+    # pylint: disable=global-statement
     global LOGIN_TS
 
     # Extract user info
