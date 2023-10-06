@@ -32,7 +32,7 @@ def rule(event):
     user = event.deep_walk("event", "actor", "id")
     cache_key = f"{user} {loc_string}"
     # Check if this key already exists
-    if get_string_set(cache_key):
+    if get_string_set(cache_key, true):
         # User has logged in from this location recently. Let's refresh this login key.
         set_key_expiration(cache_key, time.time() + DEFAULT_CACHE_PERIOD)
         return False  # No need to alert - user has logged in from here before.
