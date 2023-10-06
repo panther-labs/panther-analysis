@@ -10,9 +10,9 @@ def rule(event):
 
 
 def title(event):
-    user = event.deep_get("event", "event", "actor", "person", "email", default="<NO_USER_FOUND>")
-    page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
-    return f"Notion User [{user}] exported a multiple pages with page ids [{page_id}]."
+    user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
+    ip = event.deep_get("event", "ip_address", default="<UNKNOWN IP>")
+    return f"Notion User [{user}] attempted to login from a blocked IP: [{ip}]."
 
 
 def alert_context(event):

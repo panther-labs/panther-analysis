@@ -22,8 +22,20 @@ def title(event):
         "database_id",
         default="<NO_DATABASE_ID_FOUND>",
     )
-    return f"Notion User [{actor}] added a new public page [{db_id}] in workspace [{workspace_id}]"
+    return f"Notion User [{actor}] added a new public homepage [{db_id}] in workspace [{workspace_id}]"
 
 
 def alert_context(event):
-    return notion_alert_context(event)
+    context = notion_alert_context(event)
+    workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
+    db_id = deep_get(
+        event,
+        "event",
+        "workspace.settings.public_homepage_added",
+        "new_public_page",
+        "database_id",
+        default="<NO_DATABASE_ID_FOUND>",
+    )
+    context['workspace_id'] = workspace_id
+    context['page_id'] = db_id
+    return context

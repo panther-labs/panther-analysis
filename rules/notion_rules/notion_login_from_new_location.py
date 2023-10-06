@@ -50,7 +50,7 @@ def title(event):
     country = IPINFO_LOC.country(path_to_ip)
 
     user_email = event.deep_walk("event", "actor", "person", "email", default="UNKNWON_EMAIL")
-    return f"[{user_email}] logged in from a new location: {city}, {region}, {country}."
+    return f"Notion [{user_email}] logged in from a new location: {city}, {region}, {country}."
 
 
 def alert_context(event):

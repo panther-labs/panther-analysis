@@ -63,11 +63,11 @@ def title(event):
     mins = DEFAULT_EMAIL_CHANGE_WINDOW_MINUTES
     action_taken = {
         "user.settings.login_method.email_updated": "changed their email",
-        "user.settings.login_method.password_updated": "added a password to their account",
-        "user.settings.login_method.password_added": "changed their password",
+        "user.settings.login_method.password_updated": "changed their password",
+        "user.settings.login_method.password_added": "added a password to their account",
         "user.settings.login_method.password_removed": "removed the password from their account",
     }.get(event.deep_get("event", "type"), "altered their account info")
-    return f"User [{user_email}] {action_taken} within [{mins}] minutes of logging in."
+    return f"Notion User [{user_email}] {action_taken} within [{mins}] minutes of logging in."
 
 
 def alert_context(event):

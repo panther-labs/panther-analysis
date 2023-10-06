@@ -12,4 +12,7 @@ def rule(event):
 
 
 def alert_context(event):
-    return notion_alert_context(event)
+    context = notion_alert_context(event)
+    page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
+    context['page_id'] = page_id
+    return context
