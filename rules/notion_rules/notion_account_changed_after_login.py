@@ -13,6 +13,9 @@ DEFAULT_EMAIL_CHANGE_WINDOW_MINUTES = 10
 CACHE_PREFIX = "Notion.AccountChangedAfterLogin"
 
 
+LOGIN_TS = None  # Default Value
+
+
 def rule(event):
     if not filter_include_event(event):
         return False
@@ -31,7 +34,6 @@ def rule(event):
     # Global Variable Stuff
     # pylint: disable=global-variable-undefined
     global LOGIN_TS
-    LOGIN_TS = None  # Default Value
 
     # Extract user info
     userid = event.deep_walk("event", "actor", "id")

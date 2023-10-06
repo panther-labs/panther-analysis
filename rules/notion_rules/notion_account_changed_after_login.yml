@@ -14,7 +14,9 @@ Tags:
   - Notion
   - Account Takeover
 Tests:
-    - Name: Login event
+    - # This unit test is to make sure the logic for handling login events successfully results in
+      #   caching the login info. The outputted title/alert_context are not important.
+      Name: Login event
       ExpectedResult: true
       Mocks:
         - objectName: put_string_set
