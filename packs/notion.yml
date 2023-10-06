@@ -3,15 +3,25 @@ PackID: PantherManaged.Notion
 Description: Group of all Notion detections
 PackDefinition:
   IDs:
+    - Notion.AccountChangedAfterLogin
+    - Notion.Audit.Log.Exported
+    - Notion.GuestAddedToPage
+    - Notion.LoginFromBlockedIP
+    - Notion.LoginFromNewLocation
+    - Notion.Many.Pages.Exported
+    - Notion.Many.Pages.Deleted
+    - Notion.PageAccessibleToAPI
+    - Notion.PageViews.ImpossibleTravel
+    - Notion.PageSharedToWeb
+    - Notion.SAML.SSO.Configuration.Changed
     - Notion.Workspace.Exported
     - Notion.Workspace.SCIM.Token.Generated
     - Notion.Workspace.Public.Page.Added
-    - Notion.Many.Pages.Exported
-    - Notion.Many.Pages.Deleted
-    - Notion.Audit.Log.Exported
-    - Notion.SAML.SSO.Configuration.Changed
     # Globals used in these detections
     - panther_base_helpers
+    - panther_oss_helpers
     - panther_notion_helpers
     - global_filter_notion
+    # Data Model
+    - Standard.Notion.AuditLogs
 DisplayName: "Panther Notion Pack"
