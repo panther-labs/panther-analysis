@@ -1,7 +1,10 @@
+import datetime
 import time
+import json
+
 from global_filter_notion import filter_include_event
 from panther_notion_helpers import notion_alert_context
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_oss_helpers import get_dictionary, put_dictionary
 from panther_ipinfo_helpers import IPInfoLocation
 
 # How long (in seconds) to keep previous login locations in cached memory
@@ -29,16 +32,33 @@ def rule(event):
     # Store the login location. The premise is to create a new entry for each combimation of user
     # and location, and then have those records persist for some length of time (4 weeks by
     # default).
+    # Store the login location. Here, we use Panther's cache to store a dictionary, using the
+    #   user's unique ID to ensure it hold data unique to them. In this dictionary, we'll use the
+    #   location strings (loc_string) as the key, and the values will be the timestamp of the last
+    #   recorded login from that location.
     user = event.deep_walk("event", "actor", "id")
-    cache_key = f"{user} {loc_string}"
-    # Check if this key already exists
-    if get_string_set(cache_key, True):
-        # User has logged in from this location recently. Let's refresh this login key.
-        set_key_expiration(cache_key, time.time() + DEFAULT_CACHE_PERIOD)
-        return False  # No need to alert - user has logged in from here before.
+    cache = get_dictionary(user) or {}
 
-    # Else, his is a location the user hasn't recently used
-    put_string_set(cache_key, ["arbitrary value"], int(time.time()) + DEFAULT_CACHE_PERIOD)
+    # If this is a unit test, convert cache from string
+    if isinstance(cache, str):
+        cache = json.loads(cache)
+
+    # -- Step 1: Record this login.
+    new_cache = cache.copy()
+    new_cache[loc_string] = time.time()
+    put_dictionary(user, new_cache)
+
+    # -- Step 2: Determine if we shoul raise an alert.
+    if not cache:
+        # User hasn't been recorded logging in before. Since this is their first login, we don't
+        #   have a baseline to know if it's unusual, so we won't raise an alert.
+        return False
+
+    if is_recent_login(cache, loc_string, event.get("p_parse_time")):
+        # User has logged in from this location in the recent past. No need to raise an alert.
+        return False
+
+    # User has NOT logged in from this location in the recent past - we should trigger an alert!
     return True
 
 
@@ -64,3 +84,12 @@ def alert_context(event):
     context["location"] = {"city": city, "region": region, "country": country}
 
     return context
+
+
+def is_recent_login(cache: dict, loc_string: str, parse_time: str) -> bool:
+    # Use p_parse_time to calculate current timestamp, so that unit tests work.
+    now = time.mktime(datetime.datetime.fromisoformat(parse_time[:23]).timetuple())
+    return (
+        loc_string in cache  # location was previously recorded
+        and cache[loc_string] > now - DEFAULT_CACHE_PERIOD  # last recorded login is recent
+    )
