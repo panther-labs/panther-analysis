@@ -25,12 +25,12 @@ def title(event):
     if state == "enabled":
         return (
             f"Notion User [{user}] updated settings to enable SAML SSO config "
-            f"for workspace id {workspace_id}"
+            f"from workspace id {workspace_id}"
         )
 
     return (
         f"Notion User [{user}] updated settings to disable SAML SSO config "
-        f"for workspace id {workspace_id}"
+        f"from workspace id {workspace_id}"
     )
 
 
