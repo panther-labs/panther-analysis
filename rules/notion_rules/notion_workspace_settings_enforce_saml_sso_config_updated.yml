@@ -1,12 +1,22 @@
 AnalysisType: rule
-Description: A Notion User changed settings to enforce SAML SSO configurations for your organization.
+Filename: notion_workspace_settings_enforce_saml_sso_config_updated.py
+RuleID: "Notion.SAML.SSO.Configuration.Changed"
 DisplayName: "Notion SAML SSO Configuration Changed"
 Enabled: true
-Filename: notion_workspace_settings_enforce_saml_sso_config_updated.py
-Runbook:  Follow up with the Notion User to determine if this was done for a valid business reason and to ensure these settings get re-enabled quickly for best security practices.
+LogTypes:
+    - Notion.AuditLogs
+Tags:
+  - Notion
+  - Identity & Access Management
+  - Credential Security
 Severity: High
+Description: A Notion User changed settings to enforce SAML SSO configurations for your organization.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook:  Follow up with the Notion User to determine if this was done for a valid business reason and to ensure these settings get re-enabled quickly for best security practices.
 Tests:
-    - ExpectedResult: false
+    - Name: Other Event
+      ExpectedResult: false
       Log:
           {
             "event": {
@@ -27,8 +37,8 @@ Tests:
               "workspace.content_exported": {}
             }
           }
-      Name: Other Event
-    - ExpectedResult: true
+    - Name: SAML SSO Enabled
+      ExpectedResult: true
       Log:
         {
           "event": {
@@ -51,8 +61,8 @@ Tests:
             }
           }
         }
-      Name: SAML SSO Enabled
-    - ExpectedResult: true
+    - Name: SAML SSO Disabled
+      ExpectedResult: true
       Log:
         {
           "event": {
@@ -75,13 +85,4 @@ Tests:
             }
           }
         }
-      Name: SAML SSO Disabled
-DedupPeriodMinutes: 60
-LogTypes:
-    - Notion.AuditLogs
-RuleID: "Notion.SAML.SSO.Configuration.Changed"
-Threshold: 1
-Tags:
-  - Notion
-  - Identity & Access Management
-  - Credential Security
+        

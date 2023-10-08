@@ -1,16 +1,16 @@
 AnalysisType: rule
+Filename: notion_login_from_blocked_ip.py
 RuleID: "Notion.LoginFromBlockedIP"
 DisplayName: "Notion Login From Blocked IP"
-Description: "A user attempted to access Notion from a blocked IP address. Note: before deployinh, make sure to add Rule Filters checking if event.ip_address is in a certain CIDR range(s)."
+Enabled: false
 LogTypes:
     - Notion.AuditLogs
-Enabled: false
-Filename: notion_login_from_blocked_ip.py
-Runbook: Confirm with user if the login was legitimate. If so, determine why the IP is blocked.
-Severity: Medium
-DedupPeriodMinutes: 60
-Threshold: 1
 Tags:
   - Notion
   - Network Security Monitoring
   - Malicious Connections
+Severity: Medium
+Description: "A user attempted to access Notion from a blocked IP address. Note: before deployinh, make sure to add Rule Filters checking if event.ip_address is in a certain CIDR range(s)."
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Confirm with user if the login was legitimate. If so, determine why the IP is blocked.

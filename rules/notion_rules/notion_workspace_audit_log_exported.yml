@@ -1,16 +1,22 @@
 AnalysisType: rule
-Description: A Notion User exported audit logs for your organization’s workspace.
+Filename: notion_workspace_audit_log_exported.py
+RuleID: "Notion.Audit.Log.Exported"
 DisplayName: "Notion Audit Log Exported"
 Enabled: true
-Filename: notion_workspace_audit_log_exported.py
-Runbook: Possible Data Exfiltration. Follow up with the Notion User to determine if this was done for a valid business reason.
-Severity: Medium
+LogTypes:
+    - Notion.AuditLogs
 Tags:
   - Notion
   - Data Security
   - Data Exfiltration
+Severity: Medium
+Description: A Notion User exported audit logs for your organization’s workspace.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible Data Exfiltration. Follow up with the Notion User to determine if this was done for a valid business reason.
 Tests:
-    - ExpectedResult: false
+    - Name: Other Event
+      ExpectedResult: false
       Log:
           {
             "event": {
@@ -31,8 +37,8 @@ Tests:
               "workspace.content_exported": {}
             }
          }
-      Name: Other Event
-    - ExpectedResult: true
+    - Name: Audit Log Exported
+      ExpectedResult: true
       Log:
           {
             "event": {
@@ -55,10 +61,3 @@ Tests:
               }
             }
          }
-
-      Name: Audit Log Exported
-DedupPeriodMinutes: 60
-LogTypes:
-    - Notion.AuditLogs
-RuleID: "Notion.Audit.Log.Exported"
-Threshold: 1

@@ -1,16 +1,22 @@
 AnalysisType: rule
-Description: A Notion User deleted multiple pages.
+Filename: notion_many_pages_deleted.py
+RuleID: "Notion.Many.Pages.Deleted"
 DisplayName: "Notion Many Pages Deleted"
 Enabled: true
-Filename: notion_many_pages_deleted.py
-Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
-Severity: Medium
+LogTypes:
+    - Notion.AuditLogs
 Tags:
   - Notion
   - Data Security
   - Data Destruction
+Severity: Medium
+Description: A Notion User deleted multiple pages.
+DedupPeriodMinutes: 60
+Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.
+Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
 Tests:
-    - ExpectedResult: false
+    - Name: Other Event
+      ExpectedResult: false
       Log:
           {
             "event": {
@@ -31,8 +37,8 @@ Tests:
               "workspace.content_exported": {}
             }
          }
-      Name: Other Event
-    - ExpectedResult: true
+    - Name: Many Pages Deleted
+      ExpectedResult: true
       Log:
           {
             "event": {
@@ -62,9 +68,3 @@ Tests:
               "workspace_id": "ea65b016-6abc-4dcf-808b-sdfg445654"
             }
           }
-      Name: Many Pages Deleted
-DedupPeriodMinutes: 60
-LogTypes:
-    - Notion.AuditLogs
-RuleID: "Notion.Many.Pages.Deleted"
-Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.

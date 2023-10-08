@@ -1,19 +1,19 @@
 AnalysisType: rule
-Description: A Notion page was set to public in your worksace.
+Filename: notion_workspace_settings_public_homepage_added.py
+RuleID: "Notion.Workspace.Public.Page.Added"
 DisplayName: "Notion Workspace public page added"
 Enabled: true
-Filename: notion_workspace_settings_public_homepage_added.py
-Runbook: A Notion page was made public. Check with the author to determine why this page was made public.
-Severity: Info
-DedupPeriodMinutes: 60
 LogTypes:
     - Notion.AuditLogs
-RuleID: "Notion.Workspace.Public.Page.Added"
-Threshold: 1
 Tags:
   - Notion
   - Data Security
   - Information Disclosure
+Severity: Info
+Description: A Notion page was set to public in your worksace.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: A Notion page was made public. Check with the author to determine why this page was made public.
 Tests:
   - Name: Public page added
     ExpectedResult: true

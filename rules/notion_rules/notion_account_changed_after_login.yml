@@ -1,19 +1,19 @@
 AnalysisType: rule
+Filename: notion_account_changed_after_login.py
 RuleID: "Notion.AccountChangedAfterLogin"
 DisplayName: "Notion Account Changed Shortly After Login"
-Description: A Notion User logged in then changed their account details.
-LogTypes:
-    - Notion.AuditLogs
 Enabled: true
-Filename: notion_account_changed_after_login.py
-Runbook: Possible account takeover. Follow up with the Notion User to determine if this email change is genuine.
-Severity: Medium
-DedupPeriodMinutes: 60
-Threshold: 1
+LogTypes:
+  - Notion.AuditLogs
 Tags:
   - Notion
   - Identity & Access Management
   - Persistence
+Severity: Medium
+Description: A Notion User logged in then changed their account details.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible account takeover. Follow up with the Notion User to determine if this email change is genuine.
 Tests:
     - # This unit test is to make sure the logic for handling login events successfully results in
       #   caching the login info. The outputted title/alert_context are not important.

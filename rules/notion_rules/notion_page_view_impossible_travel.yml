@@ -1,15 +1,20 @@
 AnalysisType: rule
-Description: A Notion User viewed a page from 2 locations simultaneously
+Filename: notion_page_view_impossible_travel.py
+RuleID: "Notion.PageViews.ImpossibleTravel"
 DisplayName: "Notion Page View Impossible Travel"
 Enabled: true
-Filename: notion_page_view_impossible_travel.py
-Runbook: Possible account compromise. Review activity of this user.
-Severity: High
+LogTypes:
+    - Notion.AuditLogs
 Tags:
   - Notion
   - Identity & Access Management
   - Login & Access Patterns
   - Account Compromise
+Severity: High
+Description: A Notion User viewed a page from 2 locations simultaneously
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible account compromise. Review activity of this user.
 Tests:
   - Name: Normal Page View
     ExpectedResult: False
@@ -153,8 +158,3 @@ Tests:
         "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "p_source_label": "Notion-Panther-Labs"
       }
-DedupPeriodMinutes: 60
-LogTypes:
-    - Notion.AuditLogs
-RuleID: "Notion.PageViews.ImpossibleTravel"
-Threshold: 1

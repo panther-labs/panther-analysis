@@ -1,19 +1,19 @@
 AnalysisType: rule
+Filename: notion_page_accessible_to_guests.py
 RuleID: "Notion.PagePerms.GuestPermsChanged"
 DisplayName: "Notion Page Guest Permissions Changed"
-Description: The external guest permissions for a Notion page have been altered.
+Enabled: true
 LogTypes:
     - Notion.AuditLogs
-Enabled: true
-Filename: notion_page_accessible_to_guests.py
-Runbook: Potential information exposure - review the shared page and rectify if needed.
-Severity: Low
-DedupPeriodMinutes: 60
-Threshold: 1
 Tags:
   - Notion
   - Data Security
   - Information Disclosure
+Severity: Low
+Description: The external guest permissions for a Notion page have been altered.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Potential information exposure - review the shared page and rectify if needed.
 Tests:
   - Name: Guest Role Added
     ExpectedResult: true

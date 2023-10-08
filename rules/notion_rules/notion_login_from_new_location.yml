@@ -1,19 +1,19 @@
 AnalysisType: rule
+Filename: notion_login_from_new_location.py
 RuleID: "Notion.LoginFromNewLocation"
 DisplayName: "Notion Login from New Location"
-Description: A Notion User logged in from a new location.
+Enabled: true
 LogTypes:
     - Notion.AuditLogs
-Enabled: true
-Filename: notion_login_from_new_location.py
-Runbook: Possible account takeover. Follow up with the Notion User to determine if this login is genuine.
-Severity: Medium
-DedupPeriodMinutes: 60
-Threshold: 1 # Number of pages deleted; please change this value to suit your organization's needs.
 Tags:
   - Notion
   - Identity & Access Management
   - Login & Access Patterns
+Severity: Medium
+Description: A Notion User logged in from a new location.
+DedupPeriodMinutes: 60
+Threshold: 1 # Number of pages deleted; please change this value to suit your organization's needs.
+Runbook: Possible account takeover. Follow up with the Notion User to determine if this login is genuine.
 Tests:
     - Name: Login from normal location
       ExpectedResult: false
