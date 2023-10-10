@@ -20,6 +20,9 @@ def rule(event):
         return False
 
     # Get the user's location, via IPInfo
+    # Return False if we have no location information
+    if "ipinfo_location" not in event.get("p_enrichment", {}):
+        return False
     # pylint: disable=global-variable-undefined
     global IPINFO_LOC
     IPINFO_LOC = IPInfoLocation(event)
