@@ -27,7 +27,10 @@ def dedup(event):
 
 # Additional information append to an alert, must return a dictionary
 def alert_context(event):
-    return dict(event)
+    return {
+        "someField": event.get("someField"),
+        "someRandomValue": 4,  # chosen by a dice roll, guaranteed to be random
+    }
 
 
 ## Override Functions
