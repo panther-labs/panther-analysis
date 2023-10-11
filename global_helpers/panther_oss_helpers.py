@@ -3,11 +3,10 @@ import json
 import os
 import re
 import time
-from collections.abc import Mapping
 from datetime import datetime
 from ipaddress import ip_address
 from math import atan2, cos, radians, sin, sqrt
-from typing import Any, Dict, Optional, Sequence, Set, Union
+from typing import Any, Dict, Mapping, Optional, Sequence, Set, Union
 
 import boto3
 import requests
@@ -209,11 +208,9 @@ def get_counter(key: str, force_ttl_check: bool = False) -> int:
 
 def increment_counter(key: str, val: int = 1) -> int:
     """Increment a counter in the table.
-
     Args:
         key: The name of the counter (need not exist yet)
         val: How much to add to the counter
-
     Returns:
         The new value of the count
     """
@@ -236,9 +233,7 @@ def reset_counter(key: str) -> None:
 
 def set_key_expiration(key: str, epoch_seconds: int) -> None:
     """Configure the key to automatically expire at the given time.
-
     DynamoDB typically deletes expired items within 48 hours of expiration.
-
     Args:
         key: The name of the counter
         epoch_seconds: When you want the counter to expire (set to 0 to disable)
@@ -263,13 +258,11 @@ def set_key_expiration(key: str, epoch_seconds: int) -> None:
 
 def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
     """Overwrite a dictionary under the given key.
-
     The value must be JSON serializable, and therefore cannot contain:
         - Sets
         - Complex numbers or formulas
         - Custom objects
         - Keys that are not strings
-
     Args:
         key: The name of the dictionary
         val: A Python dictionary
@@ -330,10 +323,8 @@ def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
 
 def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
     """Overwrite a string set under the given key.
-
     This is faster than (reset_string_set + add_string_set) if you know exactly what the contents
     of the set should be.
-
     Args:
         key: The name of the string set
         val: A list/set/tuple of strings to store
@@ -350,11 +341,9 @@ def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> N
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Add one or more strings to a set.
-
     Args:
         key: The name of the string set
         val: Either a single string or a list/tuple/set of strings to add
-
     Returns:
         The new value of the string set
     """
@@ -378,11 +367,9 @@ def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
 
 def remove_from_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
     """Remove one or more strings from a set.
-
     Args:
         key: The name of the string set
         val: Either a single string or a list/tuple/set of strings to remove
-
     Returns:
         The new value of the string set
     """
@@ -421,6 +408,16 @@ def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600
     elif hourly_error_count >= threshold:
         reset_counter(key)
         return True
+    return False
+
+
+def check_account_age(key):
+    """
+    Searches DynamoDB for stored user_id or account_id string stored by indicator creation
+    rules for new user / account creation
+    """
+    if isinstance(key, str) and key != "":
+        return bool(get_string_set(key))
     return False
 
 
@@ -478,6 +475,7 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     url = f"https://ipinfo.io/{valid_ip}/json"
     resp = requests.get(url, timeout=5)
     if resp.status_code != 200:
+        # pylint: disable=broad-exception-raised
         raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
     geoinfo = json.loads(resp.text)
     return geoinfo
@@ -526,16 +524,6 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
-
-
-def check_account_age(key):
-    """
-    Searches DynamoDB for stored user_id or account_id string stored by indicator creation
-    rules for new user / account creation
-    """
-    if isinstance(key, str) and key != "":
-        return bool(get_string_set(key))
-    return False
 
 
 # When a single item is loaded from json, it is loaded as a single item
