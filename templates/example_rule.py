@@ -29,7 +29,7 @@ def dedup(event):
 def alert_context(event):
     return {
         "someField": event.get("someField"),
-        "someRandomValue": 4 # chosen by a dice roll, guaranteed to be random
+        "someRandomValue": 4,  # chosen by a dice roll, guaranteed to be random
     }
 
 
