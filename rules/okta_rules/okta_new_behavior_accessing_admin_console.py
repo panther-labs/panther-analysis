@@ -1,15 +1,11 @@
-from panther_base_helpers import deep_get, get_val_from_list, okta_alert_context
+from panther_base_helpers import deep_get, deep_walk, okta_alert_context
 
 
 def rule(event):
     if event.get("eventtype") != "policy.evaluate_sign_on":
         return False
 
-    target_app_names = get_val_from_list(
-        event.get("target", [{}]), "displayName", "type", "AppInstance"
-    )
-
-    if "Okta Admin Console" not in target_app_names:
+    if "Okta Admin Console" not in deep_walk(event, "target", "displayName"):
         return False
 
     behaviors = deep_get(event, "debugContext", "debugData", "behaviors")
@@ -30,10 +26,11 @@ def rule(event):
 
 def title(event):
     return (
-        f"A user {deep_get(event, 'actor', 'alternateId')} accessed "
-        f"Okta Admin Console using new behaviors: "
-        f"New IP: {deep_get(event, 'client', 'ipAddress')} "
-        f"New Device: {deep_get(event, 'device', 'name')}"
+        f"{deep_get(event, 'actor', 'displayName', default='<displayName-not-found>')} "
+        f"<{deep_get(event, 'actor', 'alternateId', default='alternateId-not-found')}> "
+        f"accessed Okta Admin Console using new behaviors: "
+        f"New IP: {deep_get(event, 'client', 'ipAddress', default='<ipAddress-not-found>')} "
+        f"New Device: {deep_get(event, 'device', 'name', default='<deviceName-not-found>')}"
     )
 
 

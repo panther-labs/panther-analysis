@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, okta_alert_context
+from panther_base_helpers import deep_get, deep_walk, okta_alert_context
 
 
 def rule(event):
@@ -10,9 +10,13 @@ def rule(event):
 
 
 def title(event):
+    target = deep_walk(
+        event, "target", "alternateId", default="<alternateId-not-found>", return_val="first"
+    )
     return (
-        f"Okta: [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
-        f"extracted cleartext user passwords via SCIM"
+        f"{deep_get(event, 'actor', 'displayName', default='<displayName-not-found>')} "
+        f"<{deep_get(event, 'actor', 'alternateId', default='alternateId-not-found')}> "
+        f"extracted cleartext user passwords via SCIM app [{target}]"
     )
 
 

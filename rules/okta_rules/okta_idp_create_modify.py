@@ -1,4 +1,4 @@
-from panther_base_helpers import okta_alert_context
+from panther_base_helpers import deep_get, deep_walk, okta_alert_context
 
 
 def rule(event):
@@ -7,9 +7,13 @@ def rule(event):
 
 def title(event):
     action = event.get("eventType").split(".")[3]
+    target = deep_walk(
+        event, "target", "displayName", default="<displayName-not-found>", return_val="first"
+    )
     return (
-        f"Okta: [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
-        f"{action} Identity Provider"
+        f"{deep_get(event, 'actor', 'displayName', default='<displayName-not-found>')} "
+        f"<{deep_get(event, 'actor', 'alternateId', default='alternateId-not-found')}> "
+        f"{action}d Identity Provider [{target}]"
     )
 
 

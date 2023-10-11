@@ -3,15 +3,16 @@ from panther_base_helpers import deep_get, okta_alert_context
 
 def rule(event):
     return event.get("eventType") == "user.session.start" and deep_get(
-        event, "securityContext", "isProxy"
+        event, "securityContext", "isProxy", default=False
     )
 
 
 def title(event):
     return (
-        f"Okta: [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
-        f"sign-in attempt from anonymizing VPN: "
-        f"{deep_get(event, 'securityContext', 'domain')}"
+        f"{deep_get(event, 'actor', 'displayName', default='<displayName-not-found>')} "
+        f"<{deep_get(event, 'actor', 'alternateId', default='alternateId-not-found')}> "
+        f"attempted to sign-in from anonymizing VPN with domain "
+        f"[{deep_get(event, 'securityContext', 'domain', default='<domain-not-found>')}]"
     )
 
 

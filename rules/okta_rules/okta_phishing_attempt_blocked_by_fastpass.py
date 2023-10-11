@@ -11,8 +11,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"Okta: [{event.get('actor',{}).get('alternateId','<id-not-found>')}] "
-        f"phishing attempt blocked by FastPass."
+        f"{deep_get(event, 'actor', 'displayName', default='<displayName-not-found>')} "
+        f"<{deep_get(event, 'actor', 'alternateId', default='alternateId-not-found')}> "
+        f"FastPass declined phishing attempt"
     )
 
 
