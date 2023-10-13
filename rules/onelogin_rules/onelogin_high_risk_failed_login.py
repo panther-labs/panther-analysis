@@ -1,5 +1,4 @@
 def rule(event):
-
     # check risk associated with this event
     if event.get("risk_score", 0) > 50:
         # a failed authentication attempt with high risk

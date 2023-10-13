@@ -1,5 +1,4 @@
 def rule(event):
-
     # filter events; event type 17 is a user deleted
     return str(event.get("event_type_id")) == "17"
 

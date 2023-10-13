@@ -2,7 +2,11 @@ from datetime import datetime, timedelta
 from json import dumps
 
 from panther_base_helpers import deep_get, slack_alert_context
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_detection_helpers.caching import (
+    get_string_set,
+    put_string_set,
+    set_key_expiration,
+)
 
 DENIAL_OF_SERVICE_ACTIONS = [
     "bulk_session_reset_by_admin",

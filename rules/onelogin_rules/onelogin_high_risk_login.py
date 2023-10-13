@@ -1,6 +1,6 @@
 import time
 
-from panther_oss_helpers import (
+from panther_detection_helpers.caching import (
     get_counter,
     increment_counter,
     reset_counter,
@@ -11,7 +11,6 @@ THRESH_TTL = 600
 
 
 def rule(event):
-
     # Filter events down to successful and failed login events
     if not event.get("user_id") or str(event.get("event_type_id")) not in ["5", "6"]:
         return False
