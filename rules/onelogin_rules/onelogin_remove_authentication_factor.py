@@ -1,5 +1,4 @@
 def rule(event):
-
     # verify this is a auth factor being removed
     # event id 24 is otp device deregistration
     # event id 172 is a user deleted an authentication factor

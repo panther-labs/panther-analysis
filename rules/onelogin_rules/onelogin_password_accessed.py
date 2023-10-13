@@ -1,5 +1,4 @@
 def rule(event):
-
     # Filter events; event type 240 is actor_user revealed user's app password
     if (
         str(event.get("event_type_id")) != "240"
