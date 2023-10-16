@@ -1,55 +1,61 @@
 AnalysisType: rule
-Description: A Notion User generated a SCIM token.
+Filename: notion_scim_token_generated.py
+RuleID: "Notion.Workspace.SCIM.Token.Generated"
 DisplayName: "Notion SCIM Token Generated"
 Enabled: true
-Filename: notion_scim_token_generated.py
-Runbook: Possible Initial Access. Follow up with the Notion User to determine if this was done for a valid business reason.
-Severity: Medium
+LogTypes:
+    - Notion.AuditLogs
 Tags:
-  - Initial Access:Supply Chain Compromise
+  - Notion
+  - Application Security
+  - Supply Chain Attack
+Description: A Notion User generated a SCIM token.
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible Initial Access. Follow up with the Notion User to determine if this was done for a valid business reason.
 Tests:
     - ExpectedResult: false
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:16:41.217Z",
-            "workspace_id": "123",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.io"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:16:41.217Z",
+              "workspace_id": "123",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.io"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.content_exported",
+              "workspace.content_exported": {}
+            }
          }
       Name: other event
     - ExpectedResult: true
       Log:
           {
-            "id": "...",
-            "timestamp": "2023-06-02T20:21:01.873Z",
-            "workspace_id": "123",
-            "actor": {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": {
-                    "email": "homer.simpson@yourcompany.com"
-                }
-            },
-            "ip_address": "...",
-            "platform": "mac-desktop",
-            "type": "workspace.scim_token_generated",
-            "workspace.scim_token_generated": {}
+            "event": {
+              "id": "...",
+              "timestamp": "2023-06-02T20:21:01.873Z",
+              "workspace_id": "123",
+              "actor": {
+                  "id": "..",
+                  "object": "user",
+                  "type": "person",
+                  "person": {
+                      "email": "homer.simpson@yourcompany.com"
+                  }
+              },
+              "ip_address": "...",
+              "platform": "mac-desktop",
+              "type": "workspace.scim_token_generated",
+              "workspace.scim_token_generated": {}
+            }
           }
       Name: Token Generated
-DedupPeriodMinutes: 60
-LogTypes:
-    - Notion.AuditLogs
-RuleID: "Notion.Workspace.SCIM.Token.Generated"
-Threshold: 1

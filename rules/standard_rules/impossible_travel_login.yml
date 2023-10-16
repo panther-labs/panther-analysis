@@ -6,6 +6,7 @@ Enabled: true
 LogTypes:
   - Asana.Audit
   - AWS.CloudTrail
+  - Notion.AuditLogs
   - Okta.SystemLog
 Tags:
   - Identity & Access Management
@@ -725,3 +726,65 @@ Tests:
         },
         "p_event_time": "2023-06-12T22:26:01.951000",
       }
+  - Name: Notion Impossible Travel
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+          [
+            {
+              "p_event_time": "2023-10-03T18:26:01.951000",
+              "source_ip": "192.168.100.100",
+              "city": "Minas Tirith",
+              "country": "Gondor",
+              "lat": "0.00000",
+              "lng": "0.00000",
+              "p_match": "192.168.100.100",
+              "postal_code": "55555",
+              "region": "Pellenor",
+              "region_code": "PL",
+              "timezone": "Middle Earth/Pellenor"
+            }
+          ]
+    Log:
+      {
+        "event": {
+          "actor": {
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "object": "user",
+            "person": {
+              "email": "aragorn.elessar@lotr.com"
+            },
+            "type": "person"
+          },
+          "details": {
+            "authType": "saml"
+          },
+          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "ip_address": "192.168.100.100",
+          "timestamp": "2023-10-03T19:02:28.044000Z",
+          "type": "user.login",
+          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
+        "p_enrichment": {
+          "ipinfo_location": {
+            "event.ip_address": {
+              "city": "Barad-Dur",
+              "lat": "100.00000",
+              "lng": "0.00000",
+              "country": "Mordor",
+              "postal_code": "55555",
+              "p_match": "192.168.100.100",
+              "region": "Mount Doom",
+              "region_code": "MD",
+              "timezone": "Middle Earth/Mordor",
+            },
+          },
+        },
+        "p_event_time": "2023-10-03T19:02:28.044000Z",
+        "p_log_type": "Notion.AuditLogs",
+        "p_source_label": "Notion-Panther-Labs"
+      }
+
