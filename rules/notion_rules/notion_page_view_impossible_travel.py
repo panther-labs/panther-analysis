@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta
 from json import dumps, loads
 
-import panther_event_type_helpers as event_type
 from panther_base_helpers import deep_get
-from panther_detection_helpers.caching import get_string_set, put_string_set
 from panther_lookuptable_helpers import LookupTableMatches
-from panther_oss_helpers import km_between_ipinfo_loc, resolve_timestamp_string
+from panther_oss_helpers import (
+    get_string_set,
+    km_between_ipinfo_loc,
+    put_string_set,
+    resolve_timestamp_string,
+)
 
 # pylint: disable=global-variable-undefined
 
@@ -36,9 +39,8 @@ def rule(event):
     CACHE_KEY = None
     IS_VPN = False
     IS_APPLE_PRIVATE_RELAY = False
-
-    # Only evaluate successful logins
-    if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
+    # Only evaluate page views
+    if event.deep_get("event", "type") != "page.viewed":
         return False
 
     p_event_datetime = resolve_timestamp_string(deep_get(event, "p_event_time"))
