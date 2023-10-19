@@ -8,7 +8,7 @@ def rule(event):
     if not any(
         [
             deep_walk(event, "protoPayload", "methodName") == "io.k8s.core.v1.pods.exec.create",
-            deep_walk(event, "protoPayload", "resourceName"),
+            deep_walk(event, "resource", "type") == "k8s_cluster",
         ]
     ):
         return False
