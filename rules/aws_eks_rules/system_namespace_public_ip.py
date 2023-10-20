@@ -6,6 +6,7 @@ from panther_base_helpers import deep_get, eks_panther_obj_ref
 #  which are run as Lambdas and originate from public IPs
 AMZ_PUBLICS = {"eks:addon-manager", "eks:node-manager"}
 
+
 # Alert if
 #   the username starts ( with system: or eks: )
 #   and

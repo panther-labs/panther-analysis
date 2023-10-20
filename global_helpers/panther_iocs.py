@@ -163,6 +163,7 @@ CRYPTO_MINING_DOMAINS = {
     "shscrypto.net",
 }
 
+
 # IOC Helper functions:
 def ioc_match(indicators: list, known_iocs: set) -> list:
     """Matches a set of indicators against known Indicators of Compromise

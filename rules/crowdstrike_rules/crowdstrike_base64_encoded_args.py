@@ -20,7 +20,6 @@ def rule(event):
     # Define a regular expression pattern to match Base64 encoded strings
 
     if event.get("event_platform") == "Win":
-
         base64_pattern = re.compile(
             r"^(\W|)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?(\W|)$"
         )

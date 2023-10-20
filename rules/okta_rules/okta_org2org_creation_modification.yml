@@ -1,0 +1,251 @@
+AnalysisType: rule
+Filename: okta_org2org_creation_modification.py
+RuleID: "Okta.Org2org.Creation.Modification"
+DisplayName: "Okta Org2Org application created of modified"
+Enabled: true
+LogTypes:
+    - Okta.SystemLog
+Reports:
+    MITRE ATT&CK:
+        - TA0006:T1556 # Modify Authentication Process
+        - TA0004:T1078.004 # Valid Accounts: Cloud Accounts
+Severity: High
+Description: >
+    An Okta Org2Org application has been created or modified.
+    Okta's Org2Org applications instances are used to push and match users from one Okta organization to another.
+    A malicious actor can add an Org2Org application instance and create a user in the source organization (controlled by the attacker) 
+    with the same identifier as a Super Administrator in the target organization.
+Reference: >
+    https://www.authomize.com/blog/authomize-discovers-password-stealing-and-impersonation-risks-to-in-okta/
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+-
+    Name: Org2Org modified
+    ExpectedResult: true
+    Log:
+        actor:
+            alternateId: homer.simpson@duff.com
+            displayName: Homer Simpson
+            id: 00abc123
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: 100-abc-9999
+        client:
+            device: Computer
+            geographicalContext:
+                city: Springfield
+                country: United States
+                geolocation:
+                    lat: 20
+                    lon: -25
+                postalCode: "12345"
+                state: Ohio
+            ipAddress: 1.3.2.4
+            userAgent:
+                browser: CHROME
+                os: Mac OS X
+                rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36
+            zone: "null"
+        device:
+            name: Evil Computer
+        debugcontext:
+            debugData:
+                requestId: AbCdEf12G
+                requestUri: /api/v1/users/AbCdEfG/lifecycle/reset_factors
+                url: /api/v1/users/AbCdEfG/lifecycle/reset_factors?
+                behaviors: {New Geo-Location=NEGATIVE, New Device=POSITIVE, New IP=POSITIVE, New State=NEGATIVE, New Country=NEGATIVE, Velocity=NEGATIVE, New City=NEGATIVE}
+        displaymessage: Evaluation of sign-on policy
+        eventtype: application.lifecycle.update
+        outcome:
+            reason: Sign-on policy evaluation resulted in CHALLENGE
+            result: CHALLENGE
+        published: "2022-06-22 18:18:29.015"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: Springfield
+                    country: United States
+                    geolocation:
+                        lat: 20
+                        lon: -25
+                    postalCode: "12345"
+                    state: Ohio
+                    ip: 1.3.2.4
+                    version: V4
+        securitycontext:
+            asNumber: 701
+            asOrg: verizon
+            domain: verizon.net
+            isProxy: false
+            isp: verizon
+        severity: INFO
+        target:
+            - 
+                alternateId: Okta Org2Org
+                displayName: Okta Org2Org
+                type: AppInstance
+            - 
+                alternateId: peter.griffin@company.com
+                displayName: Peter Griffin
+                id: 0002222AAAA
+                type: User
+        transaction:
+            detail: {}
+            id: ABcDeFgG
+            type: WEB
+        uuid: AbC-123-XyZ
+        version: "0"
+-
+    Name: Org2Org created
+    ExpectedResult: true
+    Log:
+        actor:
+            alternateId: homer.simpson@duff.com
+            displayName: Homer Simpson
+            id: 00abc123
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: 100-abc-9999
+        client:
+            device: Computer
+            geographicalContext:
+                city: Springfield
+                country: United States
+                geolocation:
+                    lat: 20
+                    lon: -25
+                postalCode: "12345"
+                state: Ohio
+            ipAddress: 1.3.2.4
+            userAgent:
+                browser: CHROME
+                os: Mac OS X
+                rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36
+            zone: "null"
+        device:
+            name: Evil Computer
+        debugcontext:
+            debugData:
+                requestId: AbCdEf12G
+                requestUri: /api/v1/users/AbCdEfG/lifecycle/reset_factors
+                url: /api/v1/users/AbCdEfG/lifecycle/reset_factors?
+                logOnlySecurityData: {"risk":{"level":"LOW"},"behaviors":{"New Geo-Location":"NEGATIVE","New Device":"POSITIVE","New IP":"POSITIVE","New State":"NEGATIVE","New Country":"NEGATIVE","Velocity":"NEGATIVE","New City":"NEGATIVE"}}
+        displaymessage: Evaluation of sign-on policy
+        eventtype: application.lifecycle.create
+        outcome:
+            reason: Sign-on policy evaluation resulted in CHALLENGE
+            result: CHALLENGE
+        published: "2022-06-22 18:18:29.015"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: Springfield
+                    country: United States
+                    geolocation:
+                        lat: 20
+                        lon: -25
+                    postalCode: "12345"
+                    state: Ohio
+                    ip: 1.3.2.4
+                    version: V4
+        securitycontext:
+            asNumber: 701
+            asOrg: verizon
+            domain: verizon.net
+            isProxy: false
+            isp: verizon
+        severity: INFO
+        target:
+            - 
+                alternateId: Random Org2Org
+                displayName: Random Org2Org
+                type: AppInstance
+            - 
+                alternateId: peter.griffin@company.com
+                displayName: Peter Griffin
+                id: 0002222AAAA
+                type: User
+        transaction:
+            detail: {}
+            id: ABcDeFgG
+            type: WEB
+        uuid: AbC-123-XyZ
+        version: "0"
+-
+    Name: Not New Behavior
+    ExpectedResult: false
+    Log:
+        actor:
+            alternateId: homer.simpson@duff.com
+            displayName: Homer Simpson
+            id: 00abc123
+            type: User
+        authenticationcontext:
+            authenticationStep: 0
+            externalSessionId: 100-abc-9999
+        client:
+            device: Computer
+            geographicalContext:
+                city: Springfield
+                country: United States
+                geolocation:
+                    lat: 20
+                    lon: -25
+                postalCode: "12345"
+                state: Ohio
+            ipAddress: 1.3.2.4
+            userAgent:
+                browser: CHROME
+                os: Mac OS X
+                rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36
+            zone: "null"
+        debugcontext:
+            debugData:
+                requestId: AbCdEf12G
+                requestUri: /api/v1/users/AbCdEfG/lifecycle/reset_factors
+                url: /api/v1/users/AbCdEfG/lifecycle/reset_factors?
+                logOnlySecurityData: {"risk":{"level":"LOW"},"behaviors":{"New Geo-Location":"NEGATIVE","New Device":"NEGATIVE","New IP":"NEGATIVE","New State":"NEGATIVE","New Country":"NEGATIVE","Velocity":"NEGATIVE","New City":"NEGATIVE"}}
+        displaymessage: Evaluation of sign-on policy
+        eventtype: policy.evaluate_sign_on
+        outcome:
+            reason: Sign-on policy evaluation resulted in CHALLENGE
+            result: CHALLENGE
+        published: "2022-06-22 18:18:29.015"
+        request:
+            ipChain:
+                - geographicalContext:
+                    city: Springfield
+                    country: United States
+                    geolocation:
+                        lat: 20
+                        lon: -25
+                    postalCode: "12345"
+                    state: Ohio
+                    ip: 1.3.2.4
+                    version: V4
+        securitycontext:
+            asNumber: 701
+            asOrg: verizon
+            domain: verizon.net
+            isProxy: false
+            isp: verizon
+        severity: INFO
+        target:
+            - 
+                alternateId: Okta Admin Console
+                displayName: Okta Admin Console
+                type: AppInstance
+            - 
+                alternateId: peter.griffin@company.com
+                displayName: Peter Griffin
+                id: 0002222AAAA
+                type: User
+        transaction:
+            detail: {}
+            id: ABcDeFgG
+            type: WEB
+        uuid: AbC-123-XyZ
+        version: "0"
