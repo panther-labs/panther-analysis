@@ -10,6 +10,10 @@ def actor_user(event):
     return None
 
 
+def is_sign_in_event(event):
+    return deep_get(event, "operationName", default="") == "Sign-in activity"
+
+
 def azure_signin_alert_context(event) -> dict:
     ac_actor_user = actor_user(event)
     if ac_actor_user is None:
