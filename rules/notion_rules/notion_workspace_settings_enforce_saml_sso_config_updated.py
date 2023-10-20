@@ -18,6 +18,7 @@ def title(event):
     state = deep_get(
         event,
         "event",
+        "workspace.settings.enforce_saml_sso_config_updated",
         "state",
         default="<NO_STATE_FOUND>",
     )
