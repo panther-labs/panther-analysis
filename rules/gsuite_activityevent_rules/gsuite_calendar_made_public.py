@@ -15,3 +15,7 @@ def title(event):
         f"[{deep_get(event, 'parameters', 'calendar_id', default='<NO_CALENDAR_ID>')}] made "
         f"public by [{deep_get(event, 'actor', 'email', default='<NO_ACTOR_FOUND>')}]"
     )
+
+
+def severity(event):
+    return "INFO" if deep_get(event, "parameters", "access_level") == "none" else "MEDIUM"
