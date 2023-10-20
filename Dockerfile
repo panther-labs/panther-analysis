@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12.0b1-slim
 
 # Install Make to use make commands inside container
 RUN apt-get update
