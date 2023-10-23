@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from json import dumps
 
 from panther_base_helpers import deep_get, slack_alert_context
 from panther_detection_helpers.caching import (
     get_string_set,
     put_string_set,
-    set_key_expiration,
 )
 
 DENIAL_OF_SERVICE_ACTIONS = [
@@ -55,6 +54,5 @@ def store_reset_info(key, event):
                 }
             )
         ],
+        epoch_seconds=event.event_time_epoch() + timedelta(days=1).total_seconds(),
     )
-    # Expire the entry after 24 hours
-    set_key_expiration(key, int((datetime.now() + timedelta(days=1)).timestamp()))
