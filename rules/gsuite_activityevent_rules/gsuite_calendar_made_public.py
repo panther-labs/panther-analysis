@@ -13,7 +13,8 @@ def title(event):
     return (
         f"GSuite calendar "
         f"[{deep_get(event, 'parameters', 'calendar_id', default='<NO_CALENDAR_ID>')}] made "
-        f"{public_or_private(event)} by [{deep_get(event, 'actor', 'email', default='<NO_ACTOR_FOUND>')}]"
+        f"{public_or_private(event)} by "
+        f"[{deep_get(event, 'actor', 'email', default='<NO_ACTOR_FOUND>')}]"
     )
 
 
