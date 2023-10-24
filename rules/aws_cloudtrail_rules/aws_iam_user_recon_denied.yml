@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_iam_user_recon_denied.py
-RuleID: AWS.IAMUser.ReconAccessDenied
-DisplayName: Detect Reconnaisance from IAM Users
+RuleID: "AWS.IAMUser.ReconAccessDenied"
+DisplayName: "Detect Reconnaissance from IAM Users"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
@@ -11,7 +11,7 @@ Tags:
 Reports:
   MITRE ATT&CK:
     - TA0007:T1526
-Severity: Medium
+Severity: Info
 Threshold: 15
 DedupPeriodMinutes: 10
 Description: An IAM user has a high volume of access denied API calls.

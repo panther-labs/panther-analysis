@@ -23,7 +23,7 @@ def get_event_type(event):
 
 def load_ip_address(event):
     """
-    CloudTrail occassionally sets non-IPs in the sourceIPAddress field.
+    CloudTrail occasionally sets non-IPs in the sourceIPAddress field.
     This method ensures that either an IPv4 or IPv6 address is always returned.
     """
     source_ip = event.get("sourceIPAddress")

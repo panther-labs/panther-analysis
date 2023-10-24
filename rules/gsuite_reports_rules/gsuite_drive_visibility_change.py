@@ -1,7 +1,11 @@
+import json
+from unittest.mock import MagicMock
+
 from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
-EXCLUDED_DOMAINS = {"example.com"}
+# Add any domain name(s) that you expect to share documents with in the ALLOWED_DOMAINS set
+ALLOWED_DOMAINS = set()
 
 PUBLIC_PROVIDERS = {
     "gmail.com",
@@ -50,7 +54,11 @@ def init_alert_details(log):
 
 
 def user_is_external(target_user):
-    for domain in EXCLUDED_DOMAINS:
+    global ALLOWED_DOMAINS  # pylint: disable=global-statement
+    # We need to type-cast ALLOWED_DOMAINS for unit testing mocks
+    if isinstance(ALLOWED_DOMAINS, MagicMock):
+        ALLOWED_DOMAINS = set(json.loads(ALLOWED_DOMAINS()))  # pylint: disable=not-callable
+    for domain in ALLOWED_DOMAINS:
         if domain in target_user:
             return False
     return True
@@ -58,6 +66,7 @@ def user_is_external(target_user):
 
 def rule(event):
     # pylint: disable=too-complex
+    global ALLOWED_DOMAINS  # pylint: disable=global-statement
     if deep_get(event, "id", "applicationName") != "drive":
         return False
 
@@ -76,12 +85,16 @@ def rule(event):
     # for visibility changes that apply to a domain, not a user
     change_document_visibility = False
 
+    # We need to type-cast ALLOWED_DOMAINS for unit testing mocks
+    if isinstance(ALLOWED_DOMAINS, MagicMock):
+        ALLOWED_DOMAINS = set(json.loads(ALLOWED_DOMAINS()))  # pylint: disable=not-callable
+
     for details in event.get("events", [{}]):
         if (
             details.get("type") == "acl_change"
             and details.get("name") == "change_document_visibility"
             and param_lookup(details.get("parameters", {}), "new_value") != ["private"]
-            and param_lookup(details.get("parameters", {}), "target_domain") not in EXCLUDED_DOMAINS
+            and not param_lookup(details.get("parameters", {}), "target_domain") in ALLOWED_DOMAINS
             and param_lookup(details.get("parameters", {}), "visibility") in VISIBILITY
         ):
             ALERT_DETAILS[log]["TARGET_DOMAIN"] = param_lookup(
@@ -176,9 +189,9 @@ def title(event):
     else:
         sharing_scope = f"the {ALERT_DETAILS[log]['TARGET_DOMAIN']} domain"
         if ALERT_DETAILS[log]["NEW_VISIBILITY"] == "people_within_domain_with_link":
-            sharing_scope += f" (anyone in {ALERT_DETAILS['TARGET_DOMAIN']} with the link)"
+            sharing_scope += f" (anyone in {ALERT_DETAILS[log]['TARGET_DOMAIN']} with the link)"
         elif ALERT_DETAILS[log]["NEW_VISIBILITY"] == "public_in_the_domain":
-            sharing_scope += f" (anyone in {ALERT_DETAILS['TARGET_DOMAIN']})"
+            sharing_scope += f" (anyone in {ALERT_DETAILS[log]['TARGET_DOMAIN']})"
 
     alert_access_scope = ALERT_DETAILS[log]["ACCESS_SCOPE"][0].replace("can_", "")
 

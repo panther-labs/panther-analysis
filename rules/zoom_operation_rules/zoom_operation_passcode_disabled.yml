@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: zoom_operation_passcode_disabled.py
-RuleID: Zoom.PasscodeDisabled
-DisplayName: Zoom Meeting Passcode Disabled
+RuleID: "Zoom.PasscodeDisabled"
+DisplayName: "Zoom Meeting Passcode Disabled"
 Enabled: true
 LogTypes:
   - Zoom.Operation
@@ -42,5 +42,17 @@ Tests:
         "category_type": "User Group",
         "action": "Update",
         "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from Off to On",
+        "p_log_type": "Zoom.Operation",
+        }
+  -
+    Name: Add User Group
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2021-11-17 00:37:24Z",
+        "operator": "homer@panther.io",
+        "category_type": "User Group",
+        "action": "Add",
+        "operation_detail": "Add Group Engineers",
         "p_log_type": "Zoom.Operation",
         }

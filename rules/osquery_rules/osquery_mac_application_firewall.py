@@ -16,7 +16,7 @@ def rule(event):
         # 2 If the firewall is configured to block all incoming connections
         int(deep_get(event, "columns", "global_state")) == 0
         or
-        # Stealth mode is a best practice to avoid responding to unsolicted probes
+        # Stealth mode is a best practice to avoid responding to unsolicited probes
         int(deep_get(event, "columns", "stealth_enabled")) == 0
     )
 

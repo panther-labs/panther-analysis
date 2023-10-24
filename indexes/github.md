@@ -22,7 +22,7 @@
 
 [ GitHub Repository Created](../rules/github_rules/github_repo_created.py)
 
-[ GitHub Repository Visibility Change](../rules/github_rules/github_repo_collaborator_change.py)
+[ GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.py)
 
 [ GitHub Web Hook Modified](../rules/github_rules/github_repo_hook_modified.py)
 

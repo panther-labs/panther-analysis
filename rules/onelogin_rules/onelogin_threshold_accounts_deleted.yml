@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: onelogin_threshold_accounts_deleted.py
-RuleID: OneLogin.ThresholdAccountsDeleted
-DisplayName: OneLogin Multiple Accounts Deleted
+RuleID: "OneLogin.ThresholdAccountsDeleted"
+DisplayName: "OneLogin Multiple Accounts Deleted"
 Enabled: true
 LogTypes:
   - OneLogin.Events
@@ -13,7 +13,7 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1531
 Description: >
-  Possible Denial of Sevice detected. Threshold for user account deletions exceeded.
+  Possible Denial of Service detected. Threshold for user account deletions exceeded.
 Threshold: 10
 DedupPeriodMinutes: 10
 Reference: https://developers.onelogin.com/api-docs/1/events/event-resource
@@ -28,7 +28,7 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        'event_type_id': 16,
+        'event_type_id': "16",
         'actor_user_id': 654321,
         'actor_user_name': ' Lion',
         'user_id': 123456,
@@ -39,7 +39,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        'event_type_id': 17,
+        'event_type_id': "17",
         'actor_user_id': 654321,
         'actor_user_name': ' Lion',
         'user_id': 123456,

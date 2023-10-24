@@ -52,14 +52,13 @@ def rule(event):
 
     # Check that the IP is classified as 'malicious'
     if NOISE.classification("sourceIPAddress") == "malicious":
-
         # Filter: Roles that generate FP's if used from AWS IP Space
         if pattern_match_list(deep_get(event, "userIdentity", "arn"), _ALLOWED_ROLES):
             # Only Greynoise advanced provides AS organization info
             if NOISE.subscription_level() == "advanced":
                 if NOISE.organization("sourceIPAddress") == "Amazon.com, Inc.":
                     return False
-            # return false if the role is seen and we are not able to valide the AS organization
+            # return false if the role is seen and we are not able to validate the AS organization
             else:
                 return False
         return True

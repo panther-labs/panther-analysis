@@ -1,37 +1,44 @@
-# NOTE: Both "Optional" and "Override" functions will override YAML settings in the rule for a
-# particular alert.
+from panther_base_helpers import deep_get, pattern_match
 
-## Required Function
-# The logic for sending an alert, return True = Alert, False = Do not Alert
+
+## Required
+#
+# The logic to determine if an alert should send.
+# return True = Alert, False = Do not Alert
 def rule(event):
-    if event.get("Something"):
-        return True
-    return False
+    return event.get("field") == "value" and deep_get(event, "field", "nestedValue")
 
 
 ## Optional Functions
-# Set custom alert titles, must return a string
-# If not defined, defaults to the rule display name or ID
+#
+# Set custom alert titles, must return a string.
+# If not defined, defaults to the rule display name or rule ID.
 def title(event):
-    return f"This is my title {event.get('Something')}"
+    if pattern_match(event.get("field"), "string*"):
+        return f"This is my alert title {event.get('field')}"
+    return f"This is my fallback title {event.get('field')}"
 
 
-# Set custom deduplication strings, must return a string
-# If not defined, defaults to the alert title
+# Set custom deduplication strings, must return a string.
+# If not defined, defaults to the alert title.
 def dedup(event):
-    return f"DedupString: {event.get('Something')}"
+    return event.get("identity")
 
 
 # Additional information append to an alert, must return a dictionary
 def alert_context(event):
-    return dict(event)
+    return {
+        "someField": event.get("someField"),
+        "someRandomValue": 4,  # chosen by a dice roll, guaranteed to be random
+    }
 
 
 ## Override Functions
+#
 # Override the severity of an alert based on the contents of the events,
 # must return one of the following strings "INFO", "LOW", "MEDIUM', "HIGH", "CRITICAL"
 def severity(event):
-    if event.get("Something"):
+    if event.get("field") == "value":
         return "INFO"
     return "HIGH"
 

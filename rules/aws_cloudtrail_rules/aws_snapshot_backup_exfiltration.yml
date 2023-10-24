@@ -1,0 +1,106 @@
+AnalysisType: rule
+Description: Detects the modification of an EC2 snapshot's permissions to enable access from another account.
+DisplayName: "--DEPRECATED-- Snapshot Backup Exfiltration"
+Enabled: False
+Filename: aws_snapshot_backup_exfiltration.py
+Reports:
+    MITRE ATT&CK:
+        - TA0010:T1537
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventName: ModifySnapshotAttribute
+        eventSource: ec2.amazonaws.com
+        eventTime: "2022-09-29 22:28:40"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "12345"
+        requestParameters:
+            attributeType: CREATE_VOLUME_PERMISSION
+            createVolumePermission:
+                add:
+                    items:
+                        - userId: "54321"
+            snapshotId: snap-12345
+        responseElements:
+            _return: true
+            requestId: "12345"
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ABC123
+            accountId: "12345"
+            arn: arn:aws:sts::12345:assumed-role/aa/b
+            principalId: aa/b
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:22:46Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "12345"
+                    arn: arn:aws:iam::12345/aa/cc
+                    principalId: "12345"
+                    type: Role
+                    userName: cc
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Modified Snapshot Attribute
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventName: TerminateInstances
+        eventSource: ec2.amazonaws.com
+        eventTime: "2022-09-29 22:27:40"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "12345"
+        requestParameters:
+            instancesSet:
+                items:
+                    - instanceId: i-12345
+        responseElements:
+            instancesSet:
+                items:
+                    - currentState:
+                        code: 32
+                        name: shutting-down
+                      instanceId: i-12345
+                      previousState:
+                        code: 16
+                        name: running
+            requestId: "12356"
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ABCD
+            accountId: "12345"
+            arn: arn:aws:sts::12345/aa
+            principalId: ABCD/12345
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:22:46Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "927278427150"
+                    arn: arn:aws:iam::ABCD/EFGH
+                    principalId: ABCD/12345
+                    type: Role
+                    userName: CCC
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: other ec2 event
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.CloudTrail
+RuleID: "AWS.Snapshot.Backup.Exfiltration"
+Threshold: 1

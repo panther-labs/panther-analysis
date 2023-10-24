@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: duo_user_action_fraudulent.py
+RuleID: "DUO.User.Action.Fraudulent"
+DisplayName: "Duo User Action Reported as Fraudulent"
+Enabled: true
+DedupPeriodMinutes: 15
+LogTypes:
+  - Duo.Authentication
+Tags:
+  - Duo
+Severity: Medium
+Description: >
+  Alert when a user reports a Duo action as fraudulent.
+Reference: https://duo.com/docs/adminapi#authentication-logs
+Runbook: Follow up with the user to confirm.
+Tests:
+  -
+    Name: user_marked_fraud
+    ExpectedResult: true
+    Log:
+      {
+        "access_device": {
+          "ip": "12.12.112.25",
+          "os": "Mac OS X"
+        },
+        "auth_device": {
+          "ip": "12.12.12.12"
+        },
+        "application": {
+          "key": "D12345",
+          "name": "Slack"
+        },
+        "event_type": "authentication",
+        "factor": "duo_push",
+        "reason": "user_marked_fraud",
+        "result": "fraud",
+        "user": {
+          "name": "example@example.io"
+        }
+      }

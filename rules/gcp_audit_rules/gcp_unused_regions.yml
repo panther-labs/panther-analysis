@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: gcp_unused_regions.py
-RuleID: GCP.UnusedRegions
-DisplayName: GCP Resource in Unused Region
-Enabled: true
+RuleID: "GCP.UnusedRegions"
+DisplayName: "GCP Resource in Unused Region"
+Enabled: false
 DedupPeriodMinutes: 15
 LogTypes:
   - GCP.AuditLog
@@ -20,7 +20,7 @@ Description: >
 Runbook: Validate the user making the request and the resource created.
 SummaryAttributes:
   - severity
-  - p_any_ip_address
+  - p_any_ip_addresses
   - p_any_domain_names
 Tests:
   -

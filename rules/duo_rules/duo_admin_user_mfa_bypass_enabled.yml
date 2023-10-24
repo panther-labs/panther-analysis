@@ -1,0 +1,48 @@
+AnalysisType: rule
+Description: An Administrator enabled a user to authenticate without MFA.
+DisplayName: "Duo Admin User MFA Bypass Enabled"
+Enabled: true
+Filename: duo_admin_user_mfa_bypass_enabled.py
+Severity: Medium
+Tests:
+    - ExpectedResult: false
+      Log:
+        action: user_update
+        description: '{"status": "Active"}'
+        isotimestamp: "2021-10-05 22:45:33"
+        object: bart.simpson@simpsons.com
+        timestamp: "2021-10-05 22:45:33"
+        username: Homer Simpson
+      Name: Account Active
+    - ExpectedResult: false
+      Log:
+        action: user_update
+        description: '{"status": "Disabled"}'
+        isotimestamp: "2021-10-05 22:45:33"
+        object: bart.simpson@simpsons.com
+        timestamp: "2021-10-05 22:45:33"
+        username: Homer Simpson
+      Name: Account Disabled
+    - ExpectedResult: true
+      Log:
+        action: user_update
+        description: '{"status": "Bypass"}'
+        isotimestamp: "2021-10-05 22:45:33"
+        object: bart.simpson@simpsons.com
+        timestamp: "2021-10-05 22:45:33"
+        username: Homer Simpson
+      Name: Bypass Enabled
+    - ExpectedResult: false
+      Log:
+        action: user_update
+        description: '{"phones": ""}'
+        isotimestamp: "2021-07-02 19:06:40"
+        object: homer.simpson@simpsons.com
+        timestamp: "2021-07-02 19:06:40"
+        username: Homer Simpson
+      Name: Phones Update
+DedupPeriodMinutes: 60
+LogTypes:
+    - Duo.Administrator
+RuleID: "Duo.Admin.User.MFA.Bypass.Enabled"
+Threshold: 1

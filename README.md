@@ -16,17 +16,16 @@
 
 ---
 
-Panther is a security analytics platform built for cloud-focused security teams.
+Panther is a modern SIEM built for security operations at scale.
 
-Panther enables teams to define detections as code and programmatically upload them to your Panther deployment.
-
-This repository contains all the detections developed by Panther for use in your Panther deployment.
+With Panther, teams can define detections as code and programmatically upload them to your Panther deployment. This repository contains all detections developed by the Panther Team and the Community.
 
 We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
 
 # Quick Start
 
 ## Clone the repository
+
 ```bash
 git clone git@github.com:panther-labs/panther-analysis.git
 cd panther-analysis
@@ -40,80 +39,131 @@ Each folder contains detections in the format of `<log/resource type>_<detecton_
 * **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
 * **Scheduled rules** analyze output of periodically executed [SQL queries](https://docs.panther.com/data-analytics/example-queries)
 
-### Available Detections by Platform/Service 
-[AWS](indexes/aws.md)
-
-[Google Cloud Platform](indexes/gcp.md)
-
-[Google Workspace](indexes/gworkspace.md)
-
-[Okta](indexes/okta.md)
-
-[OSquery](indexes/osquery.md)
-
-[Snowflake](indexes/snowflake.md)
-
-[Other SaaS Services](indexes/saas.md)
-
-[Panther Standard Detections](indexes/standard.md)
-
 ## Configure your Python environment
+
 ```bash
+python3 -m pip install pipenv
+echo "PYTHON_BIN_PATH=\"$(python3 -m site --user-base)/bin\"" >> ~/.zprofile
+echo "export PATH=\"$PATH:$PYTHON_BIN_PATH\"" >> ~/.zprofile
+. ~/.zprofile
 make install
-make venv
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ````
+
 ### Install dependencies and run your first test!
+
 ```bash 
-make deps
-pipenv run panther_analysis_tool test --path aws_cloudtrail_rules/
+make install
+pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/
 ```
+
 ### Run detection tests
+
 ```bash
 pipenv run panther_analysis_tool test [-h] [--path PATH]
                                 [--filter KEY=VALUE [KEY=VALUE ...]
                                 [--debug]
-````
-### Test with a specific path
-```bash
-pipenv run panther_analysis_tool test --path cisco_umbrella_dns_rules`
 ```
+
+### Test with a specific path
+
+```bash
+pipenv run panther_analysis_tool test --path rules/cisco_umbrella_dns_rules
+```
+
 ### Test by severity
+
 ```bash
 pipenv run panther_analysis_tool test --filter Severity=Critical
 ```
 
 ### Test by log type
+
 ```bash
 pipenv run panther_analysis_tool test --filter LogTypes=AWS.GuardDuty
 ```
 
 ### Create a zip file of detections
+
 ```bash
 pipenv run panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
                                [--filter KEY=VALUE [KEY=VALUE ...]]
                                [--debug]
 ```
+
 ### Zip all Critical severity detections
+
 ```bash
 pipenv run panther_analysis_tool zip --filter Severity=Critical
 ````
+
 ### Upload detections to your Panther instance
+
 ```bash
+# Note: Set your AWS access keys and region env variables before running the `upload` command
+
+export AWS_REGION=us-east-1
 pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
                                   [--filter KEY=VALUE [KEY=VALUE ...]]
                                   [--debug]
-
-# Important: Make sure you have access keys and region settings set for the AWS account running Panther
 ```
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
 
 Additionally, groups of detections may be linked to multiple "Reports", which is a system for tracking frameworks like CIS, PCI, MITRE ATT&CK, or more.
 
+## Using [Visual Studio Code](https://code.visualstudio.com/)
+
+If you are comfortable using the Visual Studio Code IDE, the `make vscode-config` command can configure VSCode to work with this repo. 
+
+In addition to this command, you will need to install these vscode add-ons:
+
+1. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+2. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+
+You will also need Visual Studio's [code](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line) configured to open Visual Studio from your CLI.
+
+`make vscode-config` will configure:
+
+1. Configure VSCode to use the python virtual environment for this repository.
+1. Resolve local imports like global_helpers, which permits code completion via Intellisense/Pylance
+1. Creates two debugging targets, which will give you single-button push support for running `panther_analysis_tool test` through the debugger.
+1. Installs JSONSchema support for your custom panther-analysis schemas in the `schemas/` directory. This brings IDE hints about which fields are necessary for schemas/custom-schema.yml files.
+1. Installs JSONSchema support for panther-analysis rules in the `rules/` directory. This brings IDE hints about which fields are necessary for rules/my-rule.yml files.
+
+```shell
+user@computer:panther-analysis: make vscode-config
+```
+
+## Using Docker
+
+To use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run a different command, follow the pattern in the Makefile.
+
+  ``` bash
+  make docker-build
+  make docker-test
+  make docker-lint
+  ```
+
+Please note that you only need to rebuild the container if you update your `Pipfile.lock` changes, because the dependencies are install when the image is built. The subsequent test and lint commands are run in the image by mounting the current file system directory, so it is using your local file system.
+
+## Using Windows
+
+If you are on a Windows machine, you can use the following instructions to perform the standard panther-analysis workflow.
+
+1. Install [docker desktop](https://docs.docker.com/desktop/install/windows-install/) for Windows.
+2. Using `make` is recommended. If you would like to use `make`, first install [chocolately](https://chocolatey.org/install), a standard Windows packaging manager.
+3. With chocolately, install the make command:
+
+    ```shell
+    choco install make
+    ```
+
+4. `make` should now be installed and added to your PATH. Try running a `make docker-build` to get started.
+
 # Writing Detections
 
-*For a full reference on writing detections, read our [docs](https://docs.runpanther.io/writing-detections/panther-analysis-tool)!*
+*For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
 
 Each detection has a Python file (`.py`) and a metadata file (`.yml`) of the same name (in the same location), for example:
 
@@ -137,8 +187,8 @@ Example detection metadata: `okta_brute_force_logins.yml`
 ```yaml
 AnalysisType: rule
 Filename: okta_brute_force_logins.py
-RuleID: Okta.BruteForceLogins
-DisplayName: Okta Brute Force Logins
+RuleID: "Okta.BruteForceLogins"
+DisplayName: "Okta Brute Force Logins"
 Enabled: true
 LogTypes:
   - Okta.SystemLog
@@ -180,11 +230,13 @@ Customizing detections-as-code is one of the most powerful capabilities Panther 
 
 Upon [tagged releases](https://github.com/panther-labs/panther-analysis/releases), you can pull upstream changes from this public repo.
 
-Follow the instructions [here](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) to learn how to get started with forks.
+Follow the instructions [here](https://docs.panther.com/panther-developer-workflows/ci-cd/detections-repo) to get started with either a public fork or a private cloned repo to host your custom detection content.
 
 ## Getting Updates
 
-When you want to pull in the latest changes from this repository, perform the following steps from your private repo:
+When you want to pull in the latest changes from this repository, we recommend leveraging the [included GitHub Action](https://docs.panther.com/panther-developer-workflows/ci-cd/detections-repo/public-fork#keeping-in-sync-with-upstream).
+
+If you wish to sync manually, the process below can be run from a terminal.
 
 ```bash
 # add the public repository as a remote

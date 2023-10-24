@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: gsuite_login_type.py
-RuleID: GSuite.LoginType
-DisplayName: GSuite Login Type
+RuleID: "GSuite.LoginType"
+DisplayName: "GSuite Login Type"
 Enabled: false
 LogTypes:
   - GSuite.ActivityEvent
@@ -71,4 +71,27 @@ Tests:
         "parameters": {
           "login_type": "saml"
         },
+      }
+  -
+    Name: Saml Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "email": "some.user@somedomain.com",
+        },
+        "id": {
+          "applicationName": "saml",
+          "time": "2022-05-26 15:26:09.421000000",
+        },
+        "ipAddress": "10.10.10.10",
+        "kind": "admin#reports#activity",
+        "name": "login_success",
+        "parameters": {
+          "application_name": "Some SAML Application",
+          "initiated_by": "sp",
+          "orgunit_path": "/SomeOrgUnit",
+          "saml_status_code": "SUCCESS_URI"
+        },
+        "type": "login"
       }

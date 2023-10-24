@@ -1,0 +1,70 @@
+AnalysisType: rule
+Description: Monitor application logs for suspicious events including repeated MFA failures that may indicate user's primary credentials have been compromised.
+DisplayName: "AWS Unsuccessful MFA attempt"
+Enabled: false
+Filename: aws_cloudtrail_unsuccessful_mfa_attempt.py
+Reference: https://attack.mitre.org/techniques/T1621/
+Reports:
+    MITRE ATT&CK:
+        - TA0006:T1621
+Severity: High
+Tests:
+    - ExpectedResult: false
+      Log:
+        additionalEventData:
+            LoginTo: https://console.aws.amazon.com/console/home?state=hashArgs%23&isauthcode=true
+            MFAIdentifier: arn:aws:iam::111122223333:u2f/user/anaya/default-AAAAAAAABBBBBBBBCCCCCCCCDD
+            MFAUsed: "Yes"
+            MobileVersion: "No"
+        awsRegion: us-east-1
+        eventID: fed06f42-cb12-4764-8c69-121063dc79b9
+        eventName: ConsoleLogin
+        eventSource: signin.amazonaws.com
+        eventTime: "2022-11-10T16:24:34Z"
+        eventType: AwsConsoleSignIn
+        eventVersion: "1.05"
+        recipientAccountId: "111122223333"
+        requestParameters: null
+        responseElements:
+            ConsoleLogin: Success
+        sourceIPAddress: 192.0.2.0
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+        userIdentity:
+            accountId: "111122223333"
+            arn: arn:aws:iam::111122223333:user/anaya
+            principalId: AIDACKCEVSQ6C2EXAMPLE
+            type: IAMUser
+            userName: anaya
+      Name: Successful Login w/ MFA
+    - ExpectedResult: true
+      Log:
+        additionalEventData:
+            LoginTo: https://console.aws.amazon.com/console/home?state=hashArgs%23&isauthcode=true
+            MFAUsed: "Yes"
+            MobileVersion: "No"
+        awsRegion: us-east-1
+        errorMessage: Failed authentication
+        eventID: d38ce1b3-4575-4cb8-a632-611b8243bfc3
+        eventName: ConsoleLogin
+        eventSource: signin.amazonaws.com
+        eventTime: "2022-11-10T16:24:34Z"
+        eventType: AwsConsoleSignIn
+        eventVersion: "1.05"
+        recipientAccountId: "111122223333"
+        requestParameters: null
+        responseElements:
+            ConsoleLogin: Failure
+        sourceIPAddress: 192.0.2.0
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+        userIdentity:
+            accessKeyId: ""
+            accountId: "111122223333"
+            principalId: AIDACKCEVSQ6C2EXAMPLE
+            type: IAMUser
+            userName: anaya
+      Name: Unsuccessful Login w/ MFA
+DedupPeriodMinutes: 15
+LogTypes:
+    - AWS.CloudTrail
+RuleID: "AWS.Unsuccessful.MFA.attempt"
+Threshold: 2

@@ -1,14 +1,10 @@
 AnalysisType: pack
 PackID: PantherManaged.GSuite.Reports
-Description: Group of all GSuite Reports detections
+Description: Panther GSuite Detections
 PackDefinition:
   IDs:
     - GSuite.AdvancedProtection
-    - GSuite.DocOwnershipTransfer
-    - GSuite.Drive.ExternalFileShare
     - GSuite.DriveOverlyVisible
-    - GSuite.DriveVisiblityChanged
-    - GSuite.ExternalMailForwarding
     - GSuite.GoogleAccess
     - GSuite.GovernmentBackedAttack
     - GSuite.GroupBannedUser
@@ -21,6 +17,13 @@ PackDefinition:
     - GSuite.SuspiciousLogins
     - GSuite.TwoStepVerification
     - GSuite.UserSuspended
+    - Google.Workspace.Admin.Custom.Role
+    - Google.Workspace.Advanced.Protection.Program
+    - Google.Workspace.Apps.Marketplace.New.Domain.Application
+    - Google.Workspace.Apps.Marketplace.Allowlist
+    - Google.Workspace.Apps.New.Mobile.App.Installed
+    # Data Models used in these detections
+    - Standard.GSuite.Reports 
     # Globals used in these detections
     - panther_base_helpers
-DisplayName: Panther GSuite Pack
+DisplayName: "Panther GSuite Pack"

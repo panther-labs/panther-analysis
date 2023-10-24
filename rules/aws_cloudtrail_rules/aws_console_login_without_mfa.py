@@ -1,14 +1,14 @@
-import ast
 import logging
 
-from panther import lookup_aws_account_name
 from panther_base_helpers import aws_rule_context, deep_get
-from panther_oss_helpers import check_account_age
+from panther_default import lookup_aws_account_name
+from panther_detection_helpers.caching import check_account_age
 
 # Set to True for environments that permit direct role assumption via external IDP
 ROLES_VIA_EXTERNAL_IDP = False
 
-# pylint: disable=R0911
+
+# pylint: disable=R0911,R0912,R1260
 def rule(event):
     if event.get("eventName") != "ConsoleLogin":
         return False
@@ -48,14 +48,20 @@ def rule(event):
     is_new_user = check_account_age(new_user_string)
     if isinstance(is_new_user, str):
         logging.debug("check_account_age is a mocked string for unit testing")
-        is_new_user = ast.literal_eval(is_new_user)
+        if is_new_user == "False":
+            is_new_user = False
+        if is_new_user == "True":
+            is_new_user = True
     if is_new_user:
         return False
 
     is_new_account = check_account_age(event.get("recipientAccountId"))
     if isinstance(is_new_account, str):
         logging.debug("check_account_age is a mocked string for unit testing")
-        is_new_account = ast.literal_eval(is_new_account)
+        if is_new_account == "False":
+            is_new_account = False
+        if is_new_account == "True":
+            is_new_account = True
     if is_new_account:
         return False
 

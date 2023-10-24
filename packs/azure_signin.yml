@@ -1,0 +1,13 @@
+AnalysisType: pack
+PackID: PantherManaged.AzureAudit.Signin
+Description: Group of Azure.Audit detections
+PackDefinition:
+  IDs:
+    - Azure.Audit.LegacyAuth
+    - Azure.Audit.ManyFailedSignIns
+    - Azure.Audit.RiskLevelPassthrough
+    # Globals used in these detections
+    - global_filter_azuresignin
+    - panther_azuresignin_helpers
+    - panther_base_helpers
+DisplayName: "Panther Azure.Audit SignIn Pack"

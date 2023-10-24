@@ -2,7 +2,7 @@
 #
 # Example usage:
 #
-# import panther
+# import panther_default
 # def policy(resource):
 #     return panther.example_helper()
 #
