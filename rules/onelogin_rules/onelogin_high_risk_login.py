@@ -1,13 +1,12 @@
-import time
+from datetime import timedelta
 
 from panther_detection_helpers.caching import (
     get_counter,
     increment_counter,
     reset_counter,
-    set_key_expiration,
 )
 
-THRESH_TTL = 600
+THRESH_TTL = timedelta(minutes=10).total_seconds()
 
 
 def rule(event):
@@ -21,8 +20,7 @@ def rule(event):
         # a failed authentication attempt with high risk score
         if str(event.get("event_type_id")) == "6":
             # update a counter for this user's failed login attempts with a high risk score
-            increment_counter(event_key)
-            set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
+            increment_counter(event_key, event.event_time_epoch() + THRESH_TTL)
 
     # Trigger alert if this user recently
     # failed a high risk login
