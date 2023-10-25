@@ -30,12 +30,12 @@ def rule(event):
     global EVENT_CITY_TRACKING
     global CACHE_KEY
     global IS_VPN
-    global IS_APPLE_PRIVATE_RELAY
+    global IS_PRIVATE_RELAY
 
     EVENT_CITY_TRACKING = {}
     CACHE_KEY = None
     IS_VPN = False
-    IS_APPLE_PRIVATE_RELAY = False
+    IS_PRIVATE_RELAY = False
 
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
@@ -65,14 +65,14 @@ def rule(event):
     if None in new_login_stats.values():
         return False
 
-    ## Check for VPN or Apple Private Relay
+    ## Check for VPN or Private Relay
     ipinfo_privacy = deep_get(src_ip_enrichments, "ipinfo_privacy")
     if ipinfo_privacy is not None:
-        ###  Do VPN/Apple private relay
-        IS_APPLE_PRIVATE_RELAY = all(
+        ###  Do VPN/private relay
+        IS_PRIVATE_RELAY = all(
             [
                 deep_get(ipinfo_privacy, "relay", default=False),
-                deep_get(ipinfo_privacy, "service", default="") == "Apple Private Relay",
+                deep_get(ipinfo_privacy, "service", default="") != "",
             ]
         )
         # We've found that some places, like WeWork locations,
@@ -87,11 +87,11 @@ def rule(event):
                 deep_get(ipinfo_privacy, "service", default="") != "",
             ]
         )
-    if IS_VPN or IS_APPLE_PRIVATE_RELAY:
+    if IS_VPN or IS_PRIVATE_RELAY:
         new_login_stats.update(
             {
                 "is_vpn": f"{IS_VPN}",
-                "is_apple_priv_relay": f"{IS_APPLE_PRIVATE_RELAY}",
+                "is_apple_priv_relay": f"{IS_PRIVATE_RELAY}",
                 "service_name": f"{deep_get(ipinfo_privacy, 'service', default='<NO_SERVICE>')}",
                 "NOTE": "APPLE PRIVATE RELAY AND VPN LOGINS ARE NOT CACHED FOR COMPARISON",
             }
@@ -106,7 +106,7 @@ def rule(event):
     last_login = get_string_set(CACHE_KEY)
     # If we haven't seen this user login in the past 1 day,
     # store this login for future use and don't alert
-    if not last_login and not IS_APPLE_PRIVATE_RELAY and not IS_VPN:
+    if not last_login and not IS_PRIVATE_RELAY and not IS_VPN:
         put_string_set(
             key=CACHE_KEY,
             val=[dumps(new_login_stats)],
@@ -133,11 +133,13 @@ def rule(event):
     speed = distance / time_delta
 
     # Calculation is complete, write the current login to the cache
-    put_string_set(
-        key=CACHE_KEY,
-        val=[dumps(new_login_stats)],
-        epoch_seconds=int((datetime.utcnow() + timedelta(days=1)).timestamp()),
-    )
+    # Only if non-VPN non-relay!
+    if not IS_PRIVATE_RELAY and not IS_VPN:
+        put_string_set(
+            key=CACHE_KEY,
+            val=[dumps(new_login_stats)],
+            epoch_seconds=int((datetime.utcnow() + timedelta(days=1)).timestamp()),
+        )
 
     EVENT_CITY_TRACKING["previous"] = last_login_stats
     EVENT_CITY_TRACKING["current"] = new_login_stats
@@ -176,7 +178,7 @@ def alert_context(event):
 
 
 def severity(_):
-    if IS_VPN or IS_APPLE_PRIVATE_RELAY:
+    if IS_VPN or IS_PRIVATE_RELAY:
         return "INFO"
     # time = distance/speed
     distance = deep_get(EVENT_CITY_TRACKING, "distance", default=None)
