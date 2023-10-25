@@ -5,7 +5,7 @@ def rule(event):
     return event.get(
         "eventType"
     ) == "application.lifecycle.update" and "Pushing user passwords" in deep_get(
-        event, "outcome", "reason"
+        event, "outcome", "reason", default=""
     )
 
 
