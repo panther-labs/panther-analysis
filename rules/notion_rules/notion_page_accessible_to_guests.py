@@ -1,6 +1,6 @@
 from global_filter_notion import filter_include_event
-from panther_notion_helpers import notion_alert_context
 from panther_base_helpers import deep_get
+from panther_notion_helpers import notion_alert_context
 
 # These event types correspond to users adding or editing the default role on a public page
 event_types = ("page.permissions.guest_role_added", "page.permissions.guest_role_updated")
