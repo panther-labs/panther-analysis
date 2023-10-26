@@ -253,4 +253,4 @@ git push
 
 # License
 
-This repository is licensed under the AGPL-3.0 [license](https://github.com/panther-labs/panther-analysis/blob/master/LICENSE).
+This repository is licensed under the AGPL-3.0 [license](https://github.com/panther-labs/panther-analysis/blob/main/LICENSE.txt).
