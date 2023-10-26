@@ -3,10 +3,7 @@ from json import dumps, loads
 from math import asin, cos, radians, sin, sqrt
 
 from panther_base_helpers import deep_get, okta_alert_context
-from panther_detection_helpers.caching import (
-    get_string_set,
-    put_string_set,
-)
+from panther_detection_helpers.caching import get_string_set, put_string_set
 
 PANTHER_TIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 EVENT_CITY_TRACKING = {}
