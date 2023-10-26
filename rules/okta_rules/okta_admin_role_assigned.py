@@ -41,6 +41,8 @@ def alert_context(event):
 
 
 def severity(event):
-    if deep_get(event, "debugContext", "debugData", "privilegeGranted") == "Super administrator":
+    if "Super administrator" in deep_get(
+        event, "debugContext", "debugData", "privilegeGranted", default=""
+    ):
         return "HIGH"
     return "INFO"
