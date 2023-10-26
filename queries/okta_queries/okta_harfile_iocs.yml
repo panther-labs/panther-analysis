@@ -1,0 +1,25 @@
+AnalysisType: saved_query
+QueryName: "Okta HAR File IOCs"
+Description: https://sec.okta.com/harfiles
+Query: |4
+    -- SQL copied from Search
+    WITH perTable AS (
+
+    SELECT p_timeline, databaseName, tableName, row_object FROM (SELECT
+       p_event_time as p_timeline,
+       'panther_logs.public' as databaseName,
+       'okta_systemlog' as tableName,
+       data as row_object
+    FROM
+       panther_logs.public.okta_systemlog_variant
+    WHERE
+       (ARRAYS_OVERLAP(p_any_ip_addresses,ARRAY_CONSTRUCT('23.105.182.19', '104.251.211.122', '202.59.10.100', '162.210.194.35', '198.16.66.124', '198.16.66.156', '198.16.70.28', '198.16.74.203', '198.16.74.204', '198.16.74.205', '198.98.49.203', '2.56.164.52', '207.244.71.82', '207.244.71.84', '207.244.89.161', '207.244.89.162', '23.106.249.52', '23.106.56.11', '23.106.56.21', '23.106.56.36', '23.106.56.37', '23.106.56.38', '23.106.56.54')) OR data:client.userAgent.rawUserAgent IN ('Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36', ' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36'))
+    ORDER by p_event_time DESC
+    LIMIT 999)
+
+    )
+    SELECT
+       *
+    FROM perTable
+    ORDER BY 1 DESC
+    LIMIT 999
