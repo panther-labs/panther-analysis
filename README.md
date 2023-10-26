@@ -50,9 +50,9 @@ make install
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ````
 
-### Install dependencies and run your first test!
+### Install dependencies and run your first test
 
-```bash 
+```bash
 make install
 pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/
 ```
@@ -114,7 +114,7 @@ Additionally, groups of detections may be linked to multiple "Reports", which is
 
 ## Using [Visual Studio Code](https://code.visualstudio.com/)
 
-If you are comfortable using the Visual Studio Code IDE, the `make vscode-config` command can configure VSCode to work with this repo. 
+If you are comfortable using the Visual Studio Code IDE, the `make vscode-config` command can configure VSCode to work with this repo.
 
 In addition to this command, you will need to install these vscode add-ons:
 
@@ -245,7 +245,7 @@ git remote add panther-upstream git@github.com:panther-labs/panther-analysis.git
 # Pull in the latest changes
 # Note: You may need to use the `--allow-unrelated-histories`
 #       flag if you did not maintain the history originally
-git pull panther-upstream master
+git pull panther-upstream main 
 
 # Push the latest changes up to your forked repo and merge them
 git push
