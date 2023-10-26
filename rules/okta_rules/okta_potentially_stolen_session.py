@@ -1,13 +1,14 @@
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 from difflib import SequenceMatcher
 
 from panther_base_helpers import deep_get, okta_alert_context
-from panther_oss_helpers import get_string_set, put_string_set, set_key_expiration
+from panther_detection_helpers.caching import get_string_set, put_string_set
 
 FUZZ_RATIO_MIN = 0.95
 PREVIOUS_SESSION = {}
-SESSION_TIMEOUT = 1  # the number of days an Okta session is valid for (configured in Okta)
+# the number of days an Okta session is valid for (configured in Okta)
+SESSION_TIMEOUT = timedelta(days=1).total_seconds()
 EVENT_TYPES = ("user.authentication.sso", "user.session.start")
 
 
@@ -43,9 +44,8 @@ def rule(event):
                 deep_get(event, "client", "userAgent", "os"),
                 event.get("p_event_time"),
             ],
+            epoch_seconds=event.event_time_epoch() + SESSION_TIMEOUT,
         )
-        # Expire the session from the KV store once it is no longer valid within Okta
-        set_key_expiration(key, str((datetime.now() + timedelta(days=SESSION_TIMEOUT)).timestamp()))
 
     # if the session cookie was seen before
     else:
