@@ -20,7 +20,7 @@ Panther is a modern SIEM built for security operations at scale.
 
 With Panther, teams can define detections as code and programmatically upload them to your Panther deployment. This repository contains all detections developed by the Panther Team and the Community.
 
-We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/master/CONTRIBUTING.md) before submitting pull requests.
+We welcome all contributions! Please read the [contributing guidelines](https://github.com/panther-labs/panther-analysis/blob/main/CONTRIBUTING.md) before submitting pull requests.
 
 # Quick Start
 
