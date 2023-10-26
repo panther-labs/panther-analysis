@@ -1,6 +1,6 @@
 # Contributing
 
-Please follow the [Code of Conduct](https://github.com/panther-labs/panther-analysis/blob/master/CODE_OF_CONDUCT.md)
+Please follow the [Code of Conduct](https://github.com/panther-labs/panther-analysis/blob/main/CODE_OF_CONDUCT.md)
 in all of your interactions with the project.
 
 Prior to contributing code, you will be required to sign our [Contributor License Agreement](https://cla-assistant.io/panther-labs/panther-analysis).
