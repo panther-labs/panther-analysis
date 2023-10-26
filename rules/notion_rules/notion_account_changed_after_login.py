@@ -1,8 +1,8 @@
 import time
+
 from global_filter_notion import filter_include_event
 from panther_notion_helpers import notion_alert_context
 from panther_oss_helpers import get_string_set, put_string_set
-
 
 # Length of time in minutes. If a user logs in, then changes their email within this many
 # minutes, raise an alert.

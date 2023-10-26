@@ -15,7 +15,9 @@ def rule(event):
 def title(event):
     change_target = deep_get(event, "actionParams", "dynamic", "input", "email")
     if change_target is None:
-        change_target = deep_get(event, "actionParams", "input", "email", default="<UNKNOWN_USER>")
+        change_target = deep_get(event, "actionParams", "input", "email")
+    if change_target is None:
+        change_target = deep_get(event, "actionParams", "email", default="<UNKNOWN_USER>")
     return f"The user account " f"{change_target} " f"was modified by {event.udm('actor_user')}"
 
 

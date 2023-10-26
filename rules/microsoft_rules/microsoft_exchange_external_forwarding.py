@@ -6,7 +6,7 @@ ALLOWED_FORWARDING_DESTINATION_EMAILS = ["exception@example.com"]
 def rule(event):
     if event.get("operation", "") in ("Set-Mailbox", "New-InboxRule"):
         for param in event.get("parameters", []):
-            if param.get("Name", "") in ("ForwardingSmtpAddress", "ForwardTo"):
+            if param.get("Name", "") in ("ForwardingSmtpAddress", "ForwardTo", "ForwardingAddress"):
                 to_email = param.get("Value", "")
                 if to_email.lower().replace("smtp:", "") in ALLOWED_FORWARDING_DESTINATION_EMAILS:
                     return False
