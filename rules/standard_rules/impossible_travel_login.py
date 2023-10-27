@@ -106,12 +106,13 @@ def rule(event):
     last_login = get_string_set(CACHE_KEY)
     # If we haven't seen this user login in the past 1 day,
     # store this login for future use and don't alert
-    if not last_login and not IS_PRIVATE_RELAY and not IS_VPN:
-        put_string_set(
-            key=CACHE_KEY,
-            val=[dumps(new_login_stats)],
-            epoch_seconds=int((datetime.utcnow() + timedelta(days=1)).timestamp()),
-        )
+    if not last_login:
+        if not (IS_PRIVATE_RELAY or IS_VPN):
+            put_string_set(
+                key=CACHE_KEY,
+                val=[dumps(new_login_stats)],
+                epoch_seconds=int((datetime.utcnow() + timedelta(days=1)).timestamp()),
+            )
         return False
     # Load the last login from the cache into an object we can compare
     # str check is in place for unit test mocking

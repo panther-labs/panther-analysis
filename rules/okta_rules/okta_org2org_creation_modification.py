@@ -11,7 +11,7 @@ def rule(event):
     if event.get("eventType") not in APP_LIFECYCLE_EVENTS:
         return False
 
-    return "Org2Org" in deep_walk(event, "target", "displayName", return_val="first")
+    return "Org2Org" in deep_walk(event, "target", "displayName", default="", return_val="first")
 
 
 def title(event):

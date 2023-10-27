@@ -5,7 +5,7 @@ def rule(event):
     if event.get("eventtype") != "policy.evaluate_sign_on":
         return False
 
-    if "Okta Admin Console" not in deep_walk(event, "target", "displayName"):
+    if "Okta Admin Console" not in deep_walk(event, "target", "displayName", default=""):
         return False
 
     behaviors = deep_get(event, "debugContext", "debugData", "behaviors")
