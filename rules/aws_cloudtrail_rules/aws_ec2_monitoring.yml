@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: Checks CloudTrail for occurrences of EC2 Image Actions.
-DisplayName: AWS EC2 Image Monitoring
+DisplayName: "AWS EC2 Image Monitoring"
 Enabled: true
 Filename: aws_ec2_monitoring.py
 Reports:
@@ -332,8 +332,57 @@ Tests:
                 webIdFederationData: {}
             type: AssumedRole
       Name: 'RunInstance - Dry Run '
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 0ea3f05a-066c-43f9-8869-393ba67e7936
+        eventName: CreateImage
+        eventSource: ec2.amazonaws.com
+        eventTime: "2022-09-29 22:25:17"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789101"
+        requestID: e686939a-a08a-4fd6-abf5-ffffffffffff
+        requestParameters:
+            blockDeviceMapping:
+                items:
+                    - deviceName: /dev/xvda
+                      ebs:
+                        deleteOnTermination: true
+                        volumeSize: 8
+            instanceId: i-0381a3817f72a949d
+            name: testimage
+            noReboot: false
+        responseElements:
+            imageId: ami-06aaf5e4b77161786
+            requestId: e686939a-a08a-4fd6-abf5-9ea34793cf25
+        sessionCredentialFromConsole: true
+        sourceIPAddress: AWS Internal
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: ASIA5PZQZ5QHE2FUNXHR
+            accountId: "123456789101"
+            arn: arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
+            principalId: AROA5PZQZ5QHBULW27VAC:test_user
+            invokedBy: null
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-29T22:22:46Z"
+                    mfaAuthenticated: "true"
+                sessionIssuer:
+                    accountId: "123456789101"
+                    arn: arn:aws:iam::123456789101:role/DevAdministrator
+                    principalId: AROA5PZQZ5QHBULW27VAC
+                    type: Role
+                    userName: DevAdministrator
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: CopyImage - UserIdentity Null
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.EC2.Monitoring
+RuleID: "AWS.EC2.Monitoring"
 Threshold: 1

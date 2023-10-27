@@ -1,14 +1,14 @@
 AnalysisType: rule
 Filename: slack_user_privilege_escalation.py
-RuleID: Slack.AuditLogs.UserPrivilegeEscalation
-DisplayName: Slack User Privilege Escalation
+RuleID: "Slack.AuditLogs.UserPrivilegeEscalation"
+DisplayName: "Slack User Privilege Escalation"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
 Severity: High
-Description: Detects when a Slack App has had its permission scopes expanded
+Description: Detects when a Slack user gains escalated privileges
 Reference: https://api.slack.com/admins/audit-logs
 DedupPeriodMinutes: 60
 Threshold:  1

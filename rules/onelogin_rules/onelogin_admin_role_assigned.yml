@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: onelogin_admin_role_assigned.py 
-RuleID: OneLogin.AdminRoleAssigned
-DisplayName: --DEPRECATED-- OneLogin Admin Role Assigned
+RuleID: "OneLogin.AdminRoleAssigned"
+DisplayName: "--DEPRECATED-- OneLogin Admin Role Assigned"
 Enabled: false
 LogTypes:
   - OneLogin.Events
@@ -19,14 +19,14 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "event_type_id": 8
+        "event_type_id": "8"
       }
   -
     Name: Non super user permissions assigned
     ExpectedResult: false
     Log:
       {
-        "event_type_id": 72,
+        "event_type_id": "72",
         "privilege_name": "Manage users"
       }
   -
@@ -34,7 +34,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "event_type_id": 72,
+        "event_type_id": "72",
         "privilege_name": "Super user",
         "user_name": "Evil Bob",
         "actor_user_name": "Bobert O'Bobly"

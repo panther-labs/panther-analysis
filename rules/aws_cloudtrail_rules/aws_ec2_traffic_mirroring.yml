@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: This rule captures multiple traffic mirroring events in AWS Cloudtrail.
-DisplayName: AWS EC2 Traffic Mirroring
+DisplayName: "AWS EC2 Traffic Mirroring"
 Enabled: true
 Filename: aws_ec2_traffic_mirroring.py
 Reference: https://attack.mitre.org/techniques/T1040/
@@ -507,10 +507,55 @@ Tests:
                 webIdFederationData: {}
             type: AssumedRole
       Name: UnrelatedEvent
+    - Name: AWS Config Runs DescribeTrafficMirrorTargets
+      ExpectedResult: false
+      Log:
+        {
+            "awsRegion": "us-west-2",
+            "eventCategory": "Management",
+            "eventID": "c98e81a7-15ee-4888-bbbb-cccccccccccc",
+            "eventName": "DescribeTrafficMirrorTargets",
+            "eventSource": "ec2.amazonaws.com",
+            "eventTime": "2023-02-10 18:08:33",
+            "eventType": "AwsApiCall",
+            "eventVersion": "1.08",
+            "managementEvent": true,
+            "readOnly": true,
+            "recipientAccountId": "123456789012",
+            "requestID": "1531eeee-5ddd-4fff-8111-844444444444",
+            "requestParameters": {
+                "DescribeTrafficMirrorTargetsRequest": {
+                    "MaxResults": 1000
+                }
+            },
+            "sourceIPAddress": "config.amazonaws.com",
+            "userAgent": "config.amazonaws.com",
+            "userIdentity": {
+                "accountId": "123456789012",
+                "arn": "arn:aws:sts::123456789012:assumed-role/SomeAWSConfig/ConfigResourceCompositionSession",
+                "invokedBy": "config.amazonaws.com",
+                "principalId": "AROAAAAAAAAAAAAAAAAAA:ConfigResourceCompositionSession",
+                "sessionContext": {
+                    "attributes": {
+                        "creationDate": "2023-02-13T18:08:33Z",
+                        "mfaAuthenticated": "false"
+                    },
+                    "sessionIssuer": {
+                        "accountId": "123456789012",
+                        "arn": "arn:aws:iam::123456789012:role/PantherAWSConfig",
+                        "principalId": "AROAAAAAAAAAAAAAAAAAA",
+                        "type": "Role",
+                        "userName": "PantherAWSConfig"
+                    },
+                    "webIdFederationData": {}
+                },
+                "type": "AssumedRole"
+            }
+        }
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.EC2.Traffic.Mirroring
+RuleID: "AWS.EC2.Traffic.Mirroring"
 SummaryAttributes:
     - userIdentity.type
 Threshold: 1

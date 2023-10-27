@@ -8,19 +8,21 @@ APPROVED_VPCS = {
 # instance is to be exempted from this rule.
 # Example: IGNORED_INSTANCE_TAGS = {'KeyOne': 'ValueOne', 'KeyTwo': 'ValueTwo'}
 IGNORED_INSTANCE_TAGS = {
-    "\\KeyOne": "\\ValueOne",
+    "KeyOne": "ValueOne",
 }
 
 
 def policy(resource):
     # Check if any tags on this EC2 instance make it exempt from this rule
     if resource["Tags"] is not None:
-        tag_presence = [
-            tag["Key"] in IGNORED_INSTANCE_TAGS
-            and tag["Value"] == IGNORED_INSTANCE_TAGS[tag["Key"]]
-            for tag in resource["Tags"]
-        ]
-        if any(tag_presence):
-            return True
+        tags = resource.get("Tags", {})
+        for tag in tags:
+            if tag in IGNORED_INSTANCE_TAGS.keys():
+                if isinstance(IGNORED_INSTANCE_TAGS[tag], str):
+                    if tags[tag] == IGNORED_INSTANCE_TAGS[tag]:
+                        return True
+                elif isinstance(IGNORED_INSTANCE_TAGS[tag], list):
+                    if tags[tag] in IGNORED_INSTANCE_TAGS[tag]:
+                        return True
 
     return resource["VpcId"] in APPROVED_VPCS

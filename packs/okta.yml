@@ -6,13 +6,29 @@ PackDefinition:
     - Okta.AdminRoleAssigned
     - Okta.APIKeyCreated
     - Okta.APIKeyRevoked
-    - Okta.GeographicallyImprobableAccess
+    # - Okta.GeographicallyImprobableAccess DEPRECATED
     - Okta.Support.Access
     - Okta.Global.MFA.Disabled
+    - Okta.ThreatInsight.Security.Threat.Detected
+    - Okta.User.Account.Locked
+    - Okta.User.MFA.Factor.Suspend
+    - Okta.User.MFA.Reset.All
+    - Okta.User.Reported.Suspicious.Activity
+    - Okta.Refresh.Access.Token.Reuse
+    - Okta.App.Unauthorized.Access.Attempt
+    - Okta.Group.Admin.Role.Assigned
+    - Okta.Rate.Limits
+    - Okta.Anonymizing.VPN.Login
+    - Okta.Identity.Provider.Created.Modified
+    - Okta.Identity.Provider.SignIn
+    - Okta.New.Behavior.Accessing.Admin.Console
+    - Okta.Org2org.Creation.Modification
+    - Okta.Password.Extraction.via.SCIM
+    - Okta.Phishing.Attempt.Blocked.FastPass
     # Globals used in these detections
     - panther_base_helpers
     - panther_oss_helpers
     - panther_event_type_helpers
     # Data Model
     - Standard.Okta.SystemLog
-DisplayName: Panther Okta Pack
+DisplayName: "Panther Okta Pack"

@@ -11,6 +11,7 @@ Recommended steps to enable:
     5. Run a Data Replay test to identify unknown domains that should be in ALLOWED_DOMAINS
 """
 
+from panther_base_helpers import filter_crowdstrike_fdr_event_type
 
 # *** Change this to match your company name ***
 COMPANY_NAME = "company_name_here"
@@ -36,6 +37,11 @@ ALLOWED_DOMAINS = [
 
 
 def rule(event):
+    # We need to run either for Crowdstrike.DnsRequest or for DnsRequest.FDREvent of 'DnsRequest'
+    # type. Crowdstrike.DnsRequest is covered because of the association with the type
+    if filter_crowdstrike_fdr_event_type(event, "DnsRequest"):
+        return False
+
     # check domain for company name AND a fake keyword
     for domain in event.get("p_any_domain_names", []):
         domain_was_allowed = [x for x in ALLOWED_DOMAINS if domain.lower().endswith(x)]

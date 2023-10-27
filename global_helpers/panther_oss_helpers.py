@@ -2,14 +2,15 @@
 import json
 import os
 import re
-import time
 from datetime import datetime
 from ipaddress import ip_address
+from math import atan2, cos, radians, sin, sqrt
 from typing import Any, Dict, Optional, Sequence, Set, Union
 
 import boto3
 import requests
 from dateutil import parser
+from panther_detection_helpers import caching
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -133,7 +134,8 @@ def resource_table() -> boto3.resource:
     if not _RESOURCE_TABLE:
         # pylint: disable=no-member
         _RESOURCE_TABLE = boto3.resource(
-            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
+            "dynamodb",
+            endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None,
         ).Table("panther-resources")
     return _RESOURCE_TABLE
 
@@ -160,184 +162,119 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
     return response["Item"]["attributes"]
 
 
-# Helper functions for accessing Dynamo key-value store.
-#
-# Keys can be any string specified by rules and policies,
-# values are integer counters and/or string sets.
-#
-# Use kv_table() if you want to interact with the table directly.
-_KV_TABLE = None
-_COUNT_COL = "intCount"
-_STRING_SET_COL = "stringSet"
+def ttl_expired(response: dict) -> bool:
+    """Global `ttl_expired` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import ttl_expired`."""
+    return caching.ttl_expired(response)
 
 
-def kv_table() -> boto3.resource:
-    """Lazily build key-value table resource"""
-    # pylint: disable=global-statement
-    global _KV_TABLE
-    if not _KV_TABLE:
-        # pylint: disable=no-member
-        _KV_TABLE = boto3.resource(
-            "dynamodb", endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None
-        ).Table("panther-kv-store")
-    return _KV_TABLE
-
-
-def get_counter(key: str) -> int:
-    """Get a counter's current value (defaulting to 0 if key does not exist)."""
-    response = kv_table().get_item(
-        Key={"key": key},
-        ProjectionExpression=_COUNT_COL,
-    )
-    return response.get("Item", {}).get(_COUNT_COL, 0)
+def get_counter(key: str, force_ttl_check: bool = False) -> int:
+    """Global `get_counter` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import get_counter`."""
+    return caching.get_counter(key=key, force_ttl_check=force_ttl_check)
 
 
 def increment_counter(key: str, val: int = 1) -> int:
-    """Increment a counter in the table.
-
-    Args:
-        key: The name of the counter (need not exist yet)
-        val: How much to add to the counter
-
-    Returns:
-        The new value of the count
-    """
-    response = kv_table().update_item(
-        Key={"key": key},
-        ReturnValues="UPDATED_NEW",
-        UpdateExpression="ADD #col :incr",
-        ExpressionAttributeNames={"#col": _COUNT_COL},
-        ExpressionAttributeValues={":incr": val},
-    )
-
-    # Numeric values are returned as decimal.Decimal
-    return response["Attributes"][_COUNT_COL].to_integral_value()
+    """Global `increment_counter` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import increment_counter`."""
+    return caching.increment_counter(key=key, val=val)
 
 
 def reset_counter(key: str) -> None:
-    """Reset a counter to 0."""
-    kv_table().put_item(Item={"key": key, _COUNT_COL: 0})
+    """Global `reset_counter` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import reset_counter`."""
+    return caching.reset_counter(key=key)
 
 
 def set_key_expiration(key: str, epoch_seconds: int) -> None:
-    """Configure the key to automatically expire at the given time.
-
-    DynamoDB typically deletes expired items within 48 hours of expiration.
-
-    Args:
-        key: The name of the counter
-        epoch_seconds: When you want the counter to expire (set to 0 to disable)
-    """
-    kv_table().update_item(
-        Key={"key": key},
-        UpdateExpression="SET expiresAt = :time",
-        ExpressionAttributeValues={":time": epoch_seconds},
-    )
+    """Global `set_key_expiration` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import set_key_expiration`."""
+    return caching.set_key_expiration(key=key, epoch_seconds=epoch_seconds)
 
 
-def get_string_set(key: str) -> Set[str]:
-    """Get a string set's current value (defaulting to empty set if key does not exit)."""
-    response = kv_table().get_item(
-        Key={"key": key},
-        ProjectionExpression=_STRING_SET_COL,
-    )
-    return response.get("Item", {}).get(_STRING_SET_COL, set())
+def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
+    """Global `put_dictionary` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import put_dictionary`."""
+    return caching.put_dictionary(key=key, val=val, epoch_seconds=epoch_seconds)
+
+
+def get_dictionary(key: str, force_ttl_check: bool = False) -> dict:
+    """Global `get_dictionary` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import get_dictionary`."""
+    return caching.get_dictionary(key=key, force_ttl_check=force_ttl_check)
+
+
+def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
+    """Global `get_string_set` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import get_string_set`."""
+    return caching.get_string_set(key=key, force_ttl_check=force_ttl_check)
 
 
 def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
-    """Overwrite a string set under the given key.
-
-    This is faster than (reset_string_set + add_string_set) if you know exactly what the contents
-    of the set should be.
-
-    Args:
-        key: The name of the string set
-        val: A list/set/tuple of strings to store
-        epoch_seconds: (Optional) Set string expiration time
-    """
-    if not val:
-        # Can't put an empty string set - remove it instead
-        reset_string_set(key)
-    else:
-        kv_table().put_item(Item={"key": key, _STRING_SET_COL: set(val)})
-    if epoch_seconds:
-        set_key_expiration(key, epoch_seconds)
+    """Global `put_string_set` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import put_string_set`."""
+    return caching.put_string_set(key=key, val=val, epoch_seconds=epoch_seconds)
 
 
 def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
-    """Add one or more strings to a set.
-
-    Args:
-        key: The name of the string set
-        val: Either a single string or a list/tuple/set of strings to add
-
-    Returns:
-        The new value of the string set
-    """
-    if isinstance(val, str):
-        item_value = {val}
-    else:
-        item_value = set(val)
-        if not item_value:
-            # We can't add empty sets, just return the existing value instead
-            return get_string_set(key)
-
-    response = kv_table().update_item(
-        Key={"key": key},
-        ReturnValues="UPDATED_NEW",
-        UpdateExpression="ADD #col :ss",
-        ExpressionAttributeNames={"#col": _STRING_SET_COL},
-        ExpressionAttributeValues={":ss": item_value},
-    )
-    return response["Attributes"][_STRING_SET_COL]
+    """Global `add_to_string_set` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import add_to_string_set`."""
+    return caching.add_to_string_set(key=key, val=val)
 
 
 def remove_from_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
-    """Remove one or more strings from a set.
-
-    Args:
-        key: The name of the string set
-        val: Either a single string or a list/tuple/set of strings to remove
-
-    Returns:
-        The new value of the string set
-    """
-    if isinstance(val, str):
-        item_value = {val}
-    else:
-        item_value = set(val)
-        if not item_value:
-            # We can't remove empty sets, just return the existing value instead
-            return get_string_set(key)
-
-    response = kv_table().update_item(
-        Key={"key": key},
-        ReturnValues="UPDATED_NEW",
-        UpdateExpression="DELETE #col :ss",
-        ExpressionAttributeNames={"#col": _STRING_SET_COL},
-        ExpressionAttributeValues={":ss": item_value},
-    )
-    return response["Attributes"][_STRING_SET_COL]
+    """Global `remove_from_string_set` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import remove_from_string_set`."""
+    return caching.remove_from_string_set(key=key, val=val)
 
 
 def reset_string_set(key: str) -> None:
-    """Reset a string set to empty."""
-    kv_table().update_item(
-        Key={"key": key},
-        UpdateExpression="REMOVE #col",
-        ExpressionAttributeNames={"#col": _STRING_SET_COL},
-    )
+    """Global `reset_string_set` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import reset_string_set`."""
+    return caching.reset_string_set(key=key)
 
 
 def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
-    hourly_error_count = increment_counter(key)
-    if hourly_error_count == 1:
-        set_key_expiration(key, int(time.time()) + expiry_seconds)
-    # If it exceeds our threshold, reset and then return an alert
-    elif hourly_error_count >= threshold:
-        reset_counter(key)
-        return True
-    return False
+    """Global `evaluate_threshold` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import evaluate_threshold`."""
+    return caching.evaluate_threshold(key=key, threshold=threshold, expiry_seconds=expiry_seconds)
+
+
+def check_account_age(key):
+    """Global `check_account_age` is DEPRECATED.
+    Instead, use `from panther_detection_helpers.caching import check_account_age`."""
+    return caching.check_account_age(key=key)
+
+
+def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
+    """
+    compute the number of kilometers between two ipinfo_location enrichments
+    This uses a haversine computation which is imperfect and holds the benefit
+    of being supportable via stdlib. At polar opposites, haversine might be
+    0.3-0.5% off
+    See also https://en.wikipedia.org/wiki/Haversine_formula
+    See also https://stackoverflow.com/a/19412565
+    See also https://www.sunearthtools.com/tools/distance.php
+    """
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_one.keys())):
+        # input ipinfo_loc_one doesn't have lat and lng keys
+        return None
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_two.keys())):
+        # input ipinfo_loc_two doesn't have lat and lng keys
+        return None
+    lat_1 = radians(float(ipinfo_loc_one.get("lat")))
+    lng_1 = radians(float(ipinfo_loc_one.get("lng")))
+    lat_2 = radians(float(ipinfo_loc_two.get("lat")))
+    lng_2 = radians(float(ipinfo_loc_two.get("lng")))
+    # radius of the earth in kms
+    radius = 6372.795477598
+    lng_diff = lng_2 - lng_1
+    lat_diff = lat_2 - lat_1
+
+    step_1 = sin(lat_diff / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(lng_diff / 2) ** 2
+    step_2 = 2 * atan2(sqrt(step_1), sqrt(1 - step_1))
+    distance = radius * step_2
+    return distance
 
 
 def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
@@ -363,6 +300,7 @@ def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     url = f"https://ipinfo.io/{valid_ip}/json"
     resp = requests.get(url, timeout=5)
     if resp.status_code != 200:
+        # pylint: disable=broad-exception-raised
         raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
     geoinfo = json.loads(resp.text)
     return geoinfo
@@ -413,16 +351,6 @@ def add_parse_delay(event, context: dict) -> dict:
     return context
 
 
-def check_account_age(key):
-    """
-    Searches DynamoDB for stored user_id or account_id string stored by indicator creation
-    rules for new user / account creation
-    """
-    if isinstance(key, str) and key != "":
-        return bool(get_string_set(key))
-    return False
-
-
 # When a single item is loaded from json, it is loaded as a single item
 # When a list of items is loaded from json, it is loaded as a list of that item
 # When we want to iterate over something that could be a single item or a list
@@ -435,59 +363,3 @@ def listify(maybe_list):
         return [maybe_list]
     # either a list or string
     return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list
-
-
-def _test_kv_store():
-    """Integration tests which validate the functions which interact with the key-value store.
-
-    Deploy Panther and then simply run "python3 panther.py" to test.
-    """
-    assert increment_counter("panther", 1) == 1
-    assert increment_counter("labs", 3) == 3
-    assert increment_counter("panther", -2) == -1
-    assert increment_counter("panther", 0) == -1
-    assert increment_counter("panther", 11) == 10
-
-    assert get_counter("panther") == 10
-    assert get_counter("labs") == 3
-    assert get_counter("nonexistent") == 0
-
-    reset_counter("panther")
-    reset_counter("labs")
-    assert get_counter("panther") == 0
-    assert get_counter("labs") == 0
-
-    set_key_expiration("panther", int(time.time()))
-
-    # Add elements in a list, tuple, set, or as singleton strings
-    # The same key can be used to store int counts and string sets
-    assert add_to_string_set("panther", ["a", "b"]) == {"a", "b"}
-    assert add_to_string_set("panther", ["b", "a"]) == {"a", "b"}
-    assert add_to_string_set("panther", "c") == {"a", "b", "c"}
-    assert add_to_string_set("panther", set()) == {"a", "b", "c"}
-    assert add_to_string_set("panther", {"b", "c", "d"}) == {"a", "b", "c", "d"}
-    assert add_to_string_set("panther", ("d", "e")) == {"a", "b", "c", "d", "e"}
-
-    # Empty strings are allowed
-    assert add_to_string_set("panther", "") == {"a", "b", "c", "d", "e", ""}
-
-    assert get_string_set("labs") == set()
-    assert get_string_set("panther") == {"a", "b", "c", "d", "e", ""}
-
-    assert remove_from_string_set("panther", ["b", "c", "d"]) == {"a", "e", ""}
-    assert remove_from_string_set("panther", "") == {"a", "e"}
-    assert remove_from_string_set("panther", "") == {"a", "e"}
-
-    # Overwrite contents completely
-    put_string_set("panther", ["go", "python"])
-    assert get_string_set("panther") == {"go", "python"}
-    put_string_set("labs", [])
-    assert get_string_set("labs") == set()
-
-    reset_string_set("panther")
-    reset_string_set("nonexistent")  # no error
-    assert get_string_set("panther") == set()
-
-
-if __name__ == "__main__":
-    _test_kv_store()
