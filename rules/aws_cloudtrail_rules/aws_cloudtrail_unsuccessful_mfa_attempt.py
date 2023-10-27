@@ -2,7 +2,6 @@ from panther_base_helpers import aws_rule_context, deep_get
 
 
 def rule(event):
-
     if (
         event.get("eventSource") != "signin.amazonaws.com"
         and event.get("eventName") != "ConsoleLogin"
@@ -18,7 +17,6 @@ def rule(event):
 
 
 def title(event):
-
     arn = deep_get(event, "userIdenity", "arn", default="No ARN")
     username = deep_get(event, "userIdentity", "userName", default="No Username")
 

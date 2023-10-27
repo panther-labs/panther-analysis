@@ -11,4 +11,4 @@ def title(event):
 
 
 def alert_context(event):
-    return event
+    return event.to_dict()

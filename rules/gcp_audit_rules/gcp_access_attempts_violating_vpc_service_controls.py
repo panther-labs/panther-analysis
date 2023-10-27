@@ -1,15 +1,20 @@
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, deep_walk
 
 
 def rule(event):
-    if event.get("severity", "") == "ERROR":
-        if deep_get(event, "protoPayload", "status", "code") == 7:
-            details = deep_get(event, "protoPayload", "status", "details", default=[])
-            for detail in details:
-                violations = deep_get(detail, "violations", default=[])
-                for violation in violations:
-                    if violation.get("type", "") == "VPC_SERVICE_CONTROLS":
-                        return True
+    severity = deep_get(event, "severity", default="")
+    status_code = deep_get(event, "protoPayload", "status", "code", default="")
+    violation_types = deep_walk(
+        event, "protoPayload", "status", "details", "violations", "type", default=[]
+    )
+    if all(
+        [
+            severity == "ERROR",
+            status_code == 7,
+            "VPC_SERVICE_CONTROLS" in violation_types,
+        ]
+    ):
+        return True
     return False
 
 

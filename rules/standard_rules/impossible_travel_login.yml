@@ -6,6 +6,7 @@ Enabled: true
 LogTypes:
   - Asana.Audit
   - AWS.CloudTrail
+  - Notion.AuditLogs
   - Okta.SystemLog
 Tags:
   - Identity & Access Management
@@ -21,7 +22,7 @@ Runbook: >
   If the user responds that the geolocation on the new location is incorrect, you can directly
   report the inaccuracy via  https://ipinfo.io/corrections
 SummaryAttributes:
-  - p_any_user_names
+  - p_any_usernames
   - p_any_ip_addresses
   - p_any_domain_names
 # All test cases for this detection will need to include:
@@ -436,6 +437,7 @@ Tests:
           "ipinfo_privacy": {
             "client.ipAddress": {
               "hosting": false,
+              "p_match": "12.12.12.12",
               "proxy": false,
               "relay": false,
               "service": "Private Internet Access",
@@ -723,4 +725,151 @@ Tests:
           }
         },
         "p_event_time": "2023-06-12T22:26:01.951000",
+      }
+  - Name: Notion Impossible Travel
+    ExpectedResult: true
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: >-
+          [
+            {
+              "p_event_time": "2023-10-03T18:26:01.951000",
+              "source_ip": "192.168.100.100",
+              "city": "Minas Tirith",
+              "country": "Gondor",
+              "lat": "0.00000",
+              "lng": "0.00000",
+              "p_match": "192.168.100.100",
+              "postal_code": "55555",
+              "region": "Pellenor",
+              "region_code": "PL",
+              "timezone": "Middle Earth/Pellenor"
+            }
+          ]
+    Log:
+      {
+        "event": {
+          "actor": {
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "object": "user",
+            "person": {
+              "email": "aragorn.elessar@lotr.com"
+            },
+            "type": "person"
+          },
+          "details": {
+            "authType": "saml"
+          },
+          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "ip_address": "192.168.100.100",
+          "timestamp": "2023-10-03T19:02:28.044000Z",
+          "type": "user.login",
+          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
+        "p_enrichment": {
+          "ipinfo_location": {
+            "event.ip_address": {
+              "city": "Barad-Dur",
+              "lat": "100.00000",
+              "lng": "0.00000",
+              "country": "Mordor",
+              "postal_code": "55555",
+              "p_match": "192.168.100.100",
+              "region": "Mount Doom",
+              "region_code": "MD",
+              "timezone": "Middle Earth/Mordor",
+            },
+          },
+        },
+        "p_event_time": "2023-10-03T19:02:28.044000Z",
+        "p_log_type": "Notion.AuditLogs",
+        "p_source_label": "Notion-Panther-Labs"
+      }
+  - Name: First hit from VPN should not fail
+    ExpectedResult: false
+    Mocks:
+      - objectName: put_string_set
+        returnValue: ""
+      - objectName: get_string_set
+        returnValue: ""
+    Log:
+      {
+        "actor": {
+          "alternateId": "homer.simpson@company.com",
+          "displayName": "Homer Simpson",
+          "id": "00uwuwuwuwuwuwuwuwuw",
+          "type": "User"
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "idx1234"
+        },
+        "client": {
+          "device": "Computer",
+          "ipAddress": "12.12.12.12",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "debugContext": {
+          "debugData": {
+          }
+        },
+        "device": {
+        },
+        "displayMessage": "User login to Okta",
+        "eventType": "user.session.start",
+        "legacyEventType": "core.user_auth.login_success",
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "p_event_time": "2023-05-26 20:18:51",
+        "p_enrichment": {
+          "ipinfo_location": {
+            "client.ipAddress": {
+              "city": "Los Angeles",
+              "country": "US",
+              "lat": "34.05223",
+              "lng": "-118.24368",
+              "p_match": "12.12.12.12",
+              "postal_code": "90009",
+              "region": "California",
+              "region_code": "CA",
+              "timezone": "America/Los_Angeles"
+            }
+          },
+          "ipinfo_privacy": {
+            "client.ipAddress": {
+              "hosting": true,
+              "p_match": "12.12.12.12",
+              "proxy": false,
+              "relay": true,
+              "service": "Apple Private Relay",
+              "tor": false,
+              "vpn": false
+            }
+          }
+        },
+        "p_log_type": "Okta.SystemLog",
+        "p_source_label": "Okta Logs",
+        "p_parse_time": "2023-05-26 20:22:51.888",
+        "published": "2023-05-26 20:18:51.888",
+        "request": {
+          "ipChain": [
+          ]
+        },
+        "securityContext": {
+        },
+        "severity": "INFO",
+        "target": [
+        ],
+        "transaction": {
+        },
+        "uuid": "79999999-ffff-eeee-bbbb-222222222222",
+        "version": "0"
       }

@@ -167,6 +167,45 @@ Tests:
         usertype: 2
         workload: Exchange
       Name: Forwarding to Exception
+    - ExpectedResult: true
+      Log:
+        {
+          "AppAccessContext": {},
+          "ClientIP": "20.185.225.251:6688",
+          "CreationTime": "2023-10-24 13:06:33.000000000",
+          "ExternalAccess": false,
+          "Id": "78ab3f60-bd49-42e5-e69d-08dbd4920c3d",
+          "ObjectId": "28eb696a-03f7-47bd-a07a-b09d5f6e592e",
+          "Operation": "Set-Mailbox",
+          "OrganizationId": "18360841-3f87-44a6-8c9a-3ffc680611a0",
+          "OrganizationName": "fellowship.lotr.com",
+          "OriginatingServer": "AM6PR0402MB3448 (15.20.6933.008)",
+          "Parameters": [
+            {
+              "Name": "Identity",
+              "Value": "28eb696a-03f7-47bd-a07a-b09d5f6e592e"
+            },
+            {
+              "Name": "ForwardingAddress",
+              "Value": "sauron@mordor.dev"
+            },
+            {
+              "Name": "ForwardingSmtpAddress",
+              "Value": ""
+            },
+            {
+              "Name": "DeliverToMailboxAndForward",
+              "Value": "False"
+            }
+          ],
+          "RecordType": 1,
+          "ResultStatus": "True",
+          "UserId": "saurman@lotr.com",
+          "UserKey": "10032002CD6B7EFD",
+          "UserType": 2,
+          "Workload": "Exchange"
+        }
+      Name: Log with ForwardingAddress
 DedupPeriodMinutes: 60
 LogTypes:
     - Microsoft365.Audit.Exchange
