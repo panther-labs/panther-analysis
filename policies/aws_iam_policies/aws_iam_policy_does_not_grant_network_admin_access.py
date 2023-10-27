@@ -32,6 +32,14 @@ def policy(resource):
     if "ec2" not in action_summary:
         return True
 
+    # Sometimes AWS Service Linked Roles+Policies violate the
+    # expectation as expressed in policyuniverse.
+    # service-linked roles have a path of /aws-service-role/
+    #   service-linked roles and their policies are not editable
+    # service-role is editable, and so not included
+    if resource.get("Path", "") == "/aws-service-role/":
+        return True
+
     # Check if the policy grants administrative privileges
     if not ADMIN_ACTIONS.intersection(action_summary["ec2"]):
         return True

@@ -1,4 +1,4 @@
-from panther_base_helpers import okta_alert_context
+from panther_base_helpers import deep_get, okta_alert_context
 
 
 def severity_from_threat_string(threat_detection):
@@ -30,6 +30,9 @@ def title(event):
 
 
 def severity(event):
+    outcome = deep_get(event, "outcome", "result", default="<OUTCOME_NOT_FOUND>")
+    if outcome == "DENY":
+        return "INFO"
     threat_detection = (
         event.get("debugcontext", {})
         .get("debugData", {})

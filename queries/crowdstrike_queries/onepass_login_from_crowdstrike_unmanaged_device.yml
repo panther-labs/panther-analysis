@@ -13,10 +13,10 @@ Query: |
       AND client:ip_address NOT IN 
         (
             SELECT distinct aip
-            FROM crowdstrike_aidmaster
+            FROM panther_logs.public.crowdstrike_aidmaster
             WHERE p_occurs_since('3 days')
         )
-QueryName: 1Password Login From CrowdStrike Unmanaged Device Query
+QueryName: "1Password Login From CrowdStrike Unmanaged Device Query"
 Schedule:
     RateMinutes: 60
     TimeoutMinutes: 1

@@ -13,7 +13,6 @@ EC2_IMAGE_ACTIONS = [
 
 
 def rule(event):
-
     # Disqualify any eventSource that is not ec2
     if event.get("eventSource", "") != "ec2.amazonaws.com":
         return False

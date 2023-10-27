@@ -1,0 +1,96 @@
+AnalysisType: rule
+Filename: snyk_role_change.py
+RuleID: "Snyk.Role.Change"
+DisplayName: "Snyk Role Change"
+Enabled: true
+LogTypes:
+  - Snyk.GroupAudit
+  - Snyk.OrgAudit
+Tags:
+  - Snyk
+Severity: High
+Description: >
+  Detects when Snyk Roles are changed
+Runbook: >
+  These actions in the Snyk Audit logs indicate that a ServiceAccount
+  has been created/deleted/modified.
+
+  All events where the Role is marked as ADMIN have CRITICAL severity
+  Other events are marked with MEDIUM severity
+  
+Reference: https://docs.snyk.io/snyk-admin/manage-users-and-permissions/member-roles
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - event
+Tests:
+  -
+    Name: Snyk Group Role Edit -  ADMIN role ( CRIT )
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "after": {
+            "role": "ADMIN",
+            "rolePublicId": "8ddddddd-fbbb-4fff-8111-5eeeeeeeeeee"
+          },
+          "before": {
+            "role": "MEMBER",
+            "rolePublicId": "6aaaaaaa-c000-4ddd-9ddd-c55555555555"
+          },
+          "userPublicId": "05555555-3333-4ddd-8ccc-755555555555"
+        },
+        "created": "1999-04-04 18:38:19.843",
+        "event": "group.user.role.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk Org Role Edit -  ADMIN role ( CRIT )
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "afterRoleName": "ADMIN",
+          "afterRolePublicId": "d8999999-aaaa-4999-9f0b-9bbbbbbbbbbb",
+          "beforeRoleName": "Org Collaborator",
+          "beforeRolePublicId": "b0000000-dbbb-4000-addd-1ddddddddddd",
+          "userPublicId": "05555555-3333-4ddd-8ccc-755555555555"
+        },
+        "created": "1999-03-08 16:24:02.616",
+        "event": "org.user.role.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "orgId": "21111111-a222-4eee-8ddd-a99999999999"
+      }
+  -
+    Name: Snyk Group Role Edit -  MEMBER role ( MEDIUM )
+    ExpectedResult: true
+    Log:
+      {
+        "content": {
+          "before": {
+            "role": "ADMIN",
+            "rolePublicId": "8ddddddd-fbbb-4fff-8111-5eeeeeeeeeee"
+          },
+          "after": {
+            "role": "MEMBER",
+            "rolePublicId": "6aaaaaaa-c000-4ddd-9ddd-c55555555555"
+          },
+          "userPublicId": "05555555-3333-4ddd-8ccc-755555555555"
+        },
+        "created": "1999-04-04 18:38:19.843",
+        "event": "group.user.role.edit",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+        "userId": "05555555-3333-4ddd-8ccc-755555555555"
+      }
+  -
+    Name: Snyk Group SSO Membership sync
+    ExpectedResult: false
+    Log:
+      {
+        "content": {},
+        "created": "2023-03-15 13:13:13.133",
+        "event": "group.sso.membership.sync",
+        "groupId": "8fffffff-1555-4444-b000-b55555555555",
+      }

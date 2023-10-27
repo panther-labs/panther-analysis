@@ -1,0 +1,23 @@
+AnalysisType: scheduled_rule
+Description: Detects when a dropbox user downloads many documents.
+DisplayName: "Dropbox Many Downloads"
+Enabled: false
+Filename: dropbox_many_downloads.py
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        downloaded_files:
+            - /test/test2.txt
+            - /test/test3.txt
+            - /test/test5.txt
+            - /test/test4.txt
+        download_count: 4
+        t_s: "2023-04-19 19:00:00"
+        user: alice.bob@company.com
+      Name: Test-8f5ece
+DedupPeriodMinutes: 60
+RuleID: "Dropbox.Many.Downloads"
+Threshold: 1
+ScheduledQueries:
+    - Dropbox Many Downloads

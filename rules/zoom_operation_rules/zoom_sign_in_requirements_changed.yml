@@ -1,0 +1,47 @@
+AnalysisType: rule
+Description: 'A Zoom User changed your organization''s sign in requirements. '
+DisplayName: "Zoom Sign In Requirements Changed"
+Enabled: true
+Filename: zoom_sign_in_requirements_changed.py
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-In Password Requirement  - Include at least 1 letter: from On to Off - Include at least 1 number: from On to Off - Include both uppercase and lowercase characters: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:21:29"
+      Name: Setting Change One
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-In Password Requirement  - Have at least specified length of characters: from 8 to 14 - Include at least 1 letter: from On to Off - Include at least 1 number: from On to Off - Include both uppercase and lowercase characters: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:21:23"
+      Name: Setting Change Two
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Sign in with Two-Factor Authentication: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:20:35"
+      Name: 2FA disabled
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Sign-In Password Requirement  - Have at least specified length of characters: from 8 to 14 - Include at least 1 letter: from Off to On - Include at least 1 number: from Off to On - Include both uppercase and lowercase characters: from Off to On'
+        operator: example@example.io
+        time: "2022-12-16 18:21:23"
+      Name: Setting Change Off to On
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: "Zoom.Sign.In.Requirements.Changed"
+SummaryAttributes:
+    - operation_detail
+Threshold: 1

@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_cloudtrail_enabled.py
-PolicyID: AWS.CloudTrail.Enabled
-DisplayName: AWS CloudTrail Management Events Enabled
+PolicyID: "AWS.CloudTrail.Enabled"
+DisplayName: "AWS CloudTrail Management Events Enabled"
 Enabled: true
 ResourceTypes:
   - AWS.CloudTrail.Meta
@@ -198,5 +198,104 @@ Tests:
                 }
             ]
           }]
+      }
+  -
+    Name: None Global Selector, Valid Advanced Selector
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "GlobalEventSelectors": null,
+        "GlobalAdvancedEventSelectors": [
+          {
+            "FieldSelectors": [
+              {
+                "EndsWith": null,
+                "Equals": [
+                  "Data"
+                ],
+                "Field": "eventCategory",
+                "NotEndsWith": null,
+                "NotEquals": null,
+                "NotStartsWith": null,
+                "StartsWith": null
+              },
+              {
+                "EndsWith": null,
+                "Equals": null,
+                "Field": "eventName",
+                "NotEndsWith": null,
+                "NotEquals": [
+                  "UploadPart",
+                  "HeadObject"
+                ],
+                "NotStartsWith": null,
+                "StartsWith": null
+              },
+              {
+                "EndsWith": null,
+                "Equals": [
+                  "AWS::S3::Object"
+                ],
+                "Field": "resources.type",
+                "NotEndsWith": null,
+                "NotEquals": null,
+                "NotStartsWith": null,
+                "StartsWith": null
+              }
+            ],
+            "Name": "S3DataEvents"
+          },
+          {
+            "FieldSelectors": [
+              {
+                "EndsWith": null,
+                "Equals": [
+                  "Data"
+                ],
+                "Field": "eventCategory",
+                "NotEndsWith": null,
+                "NotEquals": null,
+                "NotStartsWith": null,
+                "StartsWith": null
+              },
+              {
+                "EndsWith": null,
+                "Equals": [
+                  "AWS::Lambda::Function"
+                ],
+                "Field": "resources.type",
+                "NotEndsWith": null,
+                "NotEquals": null,
+                "NotStartsWith": null,
+                "StartsWith": null
+              }
+            ],
+            "Name": "LambdaDataEvents"
+          },
+          {
+            "FieldSelectors": [
+              {
+                "EndsWith": null,
+                "Equals": [
+                  "Management"
+                ],
+                "Field": "eventCategory",
+                "NotEndsWith": null,
+                "NotEquals": null,
+                "NotStartsWith": null,
+                "StartsWith": null
+              }
+            ],
+            "Name": "Management events selector"
+          }
+        ],
+        "Name": "AWS.CloudTrail.Meta",
+        "Region": "global",
+        "ResourceId": "123456789012::AWS.CloudTrail.Meta",
+        "ResourceType": "AWS.CloudTrail.Meta",
+        "Trails": [
+          "arn:aws:cloudtrail:us-east-1:123456789012/bucket"
+        ]
       }
 

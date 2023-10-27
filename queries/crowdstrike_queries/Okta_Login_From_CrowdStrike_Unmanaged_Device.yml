@@ -12,10 +12,10 @@ Query: |
       AND client:ipAddress NOT IN
         (
           SELECT DISTINCT aip
-          FROM crowdstrike_aidmaster
+          FROM panther_logs.public.crowdstrike_aidmaster
           WHERE p_occurs_since('3 days')
         )
-QueryName: Okta Login From CrowdStrike Unmanaged Device
+QueryName: "Okta Login From CrowdStrike Unmanaged Device"
 Schedule:
     RateMinutes: 60
     TimeoutMinutes: 1

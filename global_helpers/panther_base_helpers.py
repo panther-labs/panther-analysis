@@ -1,10 +1,11 @@
 import json
 import re
+from collections import OrderedDict
 from collections.abc import Mapping
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Sequence
+from typing import Any, List, Optional, Sequence, Union
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -217,6 +218,7 @@ def okta_alert_context(event: dict):
 def crowdstrike_detection_alert_context(event: dict):
     """Returns common context for Crowdstrike detections"""
     return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
         "user": get_crowdstrike_field(event, "UserName", default=""),
         "console-link": get_crowdstrike_field(event, "FalconHostLink", default=""),
         "commandline": get_crowdstrike_field(event, "CommandLine", default=""),
@@ -225,6 +227,35 @@ def crowdstrike_detection_alert_context(event: dict):
         "filepath": get_crowdstrike_field(event, "FilePath", default=""),
         "description": get_crowdstrike_field(event, "DetectDescription", default=""),
         "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
+    }
+
+
+def crowdstrike_process_alert_context(event: dict):
+    """Returns common process context for Crowdstrike detections"""
+    return {
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "CommandLine": get_crowdstrike_field(event, "CommandLine", default=""),
+        "TargetProcessId": get_crowdstrike_field(event, "TargetProcessId", default=""),
+        "RawProcessId": get_crowdstrike_field(event, "RawProcessId", default=""),
+        "ParentBaseFileName": get_crowdstrike_field(event, "ParentBaseFileName", default=""),
+        "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
+        "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
+        "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
+        "platform": get_crowdstrike_field(event, "event_platform", default=""),
+    }
+
+
+def crowdstrike_network_detection_alert_context(event: dict):
+    """Returns common network context for Crowdstrike detections"""
+    return {
+        "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),
+        "LocalPort": get_crowdstrike_field(event, "LocalPort", default=""),
+        "RemoteAddressIP4": get_crowdstrike_field(event, "RemoteAddressIP4", default=""),
+        "RemotePort": get_crowdstrike_field(event, "RemotePort", default=""),
+        "Protocol": get_crowdstrike_field(event, "Protocol", default=""),
+        "event_simpleName": get_crowdstrike_field(event, "event_simpleName", default=""),
+        "aid": get_crowdstrike_field(event, "aid", default=""),
+        "ContextProcessId": get_crowdstrike_field(event, "ContextProcessId", default=""),
     }
 
 
@@ -278,6 +309,68 @@ def deep_get(dictionary: dict, *keys, default=None):
     if out is None:
         return default
     return out
+
+
+# pylint: disable=too-complex,too-many-return-statements
+def deep_walk(
+    obj: Optional[Any], *keys: str, default: Optional[str] = None, return_val: str = "all"
+) -> Union[Optional[Any], Optional[List[Any]]]:
+    """Safely retrieve a value stored in complex dictionary structure
+
+    Similar to deep_get but supports accessing dictionary keys within nested lists as well
+
+    Parameters:
+    obj (any): the original log event passed to rule(event)
+               and nested objects retrieved recursively
+    keys (str): comma-separated list of keys used to traverse the event object
+    default (str): the default value to return if the desired key's value is not present
+    return_val (str): string specifying which value to return
+                      possible values are "first", "last", or "all"
+
+    Returns:
+    any | list[any]: A single value if return_val is "first", "last",
+                     or if "all" is a list containing one element,
+                     otherwise a list of values
+    """
+
+    def _empty_list(sub_obj: Any):
+        return (
+            all(_empty_list(next_obj) for next_obj in sub_obj)
+            if isinstance(sub_obj, Sequence) and not isinstance(sub_obj, str)
+            else False
+        )
+
+    if not keys:
+        return default if _empty_list(obj) else obj
+
+    current_key = keys[0]
+    found: OrderedDict = OrderedDict()
+
+    if isinstance(obj, Mapping):
+        next_key = obj.get(current_key, None)
+        return (
+            deep_walk(next_key, *keys[1:], default=default, return_val=return_val)
+            if next_key is not None
+            else default
+        )
+    if isinstance(obj, Sequence) and not isinstance(obj, str):
+        for item in obj:
+            value = deep_walk(item, *keys, default=default, return_val=return_val)
+            if value is not None:
+                if isinstance(value, Sequence) and not isinstance(value, str):
+                    for sub_item in value:
+                        found[sub_item] = None
+                else:
+                    found[value] = None
+
+    found_list: list[Any] = list(found.keys())
+    if not found_list:
+        return default
+    return {
+        "first": found_list[0],
+        "last": found_list[-1],
+        "all": found_list[0] if len(found_list) == 1 else found_list,
+    }.get(return_val, "all")
 
 
 def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
@@ -396,3 +489,8 @@ def m365_alert_context(event):
         "application": event.get("Application", ""),
         "actor": event.get("Actor", []),
     }
+
+
+def defang_ioc(ioc):
+    """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    return ioc.replace(".", "[.]")

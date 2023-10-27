@@ -1,4 +1,7 @@
+from typing import Union
+
 from panther_base_helpers import deep_get
+from panther_lookuptable_helpers import LookupTableMatches
 
 IPINFO_LOCATION_LUT_NAME = "ipinfo_location"
 IPINFO_ASN_LUT_NAME = "ipinfo_asn"
@@ -9,38 +12,38 @@ class PantherIPInfoException(Exception):
     ...
 
 
-class IPInfoLocation:
+class IPInfoLocation(LookupTableMatches):
     """Helper to get IPInfo location information for enriched fields"""
 
     def __init__(self, event):
-        self.ipinfo_location = deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME)
-        self.event = event
+        super().__init__()
+        super()._register(event, IPINFO_LOCATION_LUT_NAME)
 
-    def city(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "city")
+    def city(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "city")
 
-    def country(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "country")
+    def country(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "country")
 
-    def latitude(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "lat")
+    def latitude(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "lat")
 
-    def longitude(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "lng")
+    def longitude(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "lng")
 
-    def postal_code(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "postal_code")
+    def postal_code(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "postal_code")
 
-    def region(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "region")
+    def region(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "region")
 
-    def region_code(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "region_code")
+    def region_code(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "region_code")
 
-    def timezone(self, match_field) -> str:
-        return deep_get(self.ipinfo_location, match_field, "timezone")
+    def timezone(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "timezone")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "City": self.city(match_field),
             "Country": self.country(match_field),
@@ -53,29 +56,29 @@ class IPInfoLocation:
         }
 
 
-class IPInfoASN:
+class IPInfoASN(LookupTableMatches):
     """Helper to get IPInfo ASN information for enriched fields"""
 
     def __init__(self, event):
-        self.ipinfo_asn = deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME)
-        self.event = event
+        super().__init__()
+        super()._register(event, IPINFO_ASN_LUT_NAME)
 
-    def asn(self, match_field) -> str:
-        return deep_get(self.ipinfo_asn, match_field, "asn")
+    def asn(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "asn")
 
-    def domain(self, match_field) -> str:
-        return deep_get(self.ipinfo_asn, match_field, "domain")
+    def domain(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "domain")
 
-    def name(self, match_field) -> str:
-        return deep_get(self.ipinfo_asn, match_field, "name")
+    def name(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "name")
 
-    def route(self, match_field) -> str:
-        return deep_get(self.ipinfo_asn, match_field, "route")
+    def route(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "route")
 
-    def type(self, match_field) -> str:
-        return deep_get(self.ipinfo_asn, match_field, "type")
+    def type(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "type")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "ASN": self.asn(match_field),
             "Domain": self.domain(match_field),
@@ -85,32 +88,32 @@ class IPInfoASN:
         }
 
 
-class IPInfoPrivacy:
+class IPInfoPrivacy(LookupTableMatches):
     """Helper to get IPInfo Privacy information for enriched fields"""
 
     def __init__(self, event):
-        self.ipinfo_privacy = deep_get(event, "p_enrichment", IPINFO_PRIVACY_LUT_NAME)
-        self.event = event
+        super().__init__()
+        super()._register(event, IPINFO_PRIVACY_LUT_NAME)
 
-    def hosting(self, match_field) -> bool:
-        return deep_get(self.ipinfo_privacy, match_field, "hosting")
+    def hosting(self, match_field: str) -> bool or list:
+        return self._lookup(match_field, "hosting")
 
-    def proxy(self, match_field) -> bool:
-        return deep_get(self.ipinfo_privacy, match_field, "proxy")
+    def proxy(self, match_field: str) -> bool or list:
+        return self._lookup(match_field, "proxy")
 
-    def tor(self, match_field) -> bool:
-        return deep_get(self.ipinfo_privacy, match_field, "tor")
+    def tor(self, match_field: str) -> bool or list:
+        return self._lookup(match_field, "tor")
 
-    def vpn(self, match_field) -> bool:
-        return deep_get(self.ipinfo_privacy, match_field, "vpn")
+    def vpn(self, match_field: str) -> bool or list:
+        return self._lookup(match_field, "vpn")
 
-    def relay(self, match_field) -> bool:
-        return deep_get(self.ipinfo_privacy, match_field, "relay")
+    def relay(self, match_field: str) -> bool or list:
+        return self._lookup(match_field, "relay")
 
-    def service(self, match_field) -> str:
-        return deep_get(self.ipinfo_privacy, match_field, "service")
+    def service(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "service")
 
-    def context(self, match_field) -> object:
+    def context(self, match_field: str) -> object:
         return {
             "Hosting": self.hosting(match_field),
             "Proxy": self.proxy(match_field),
@@ -142,7 +145,7 @@ def get_ipinfo_privacy(event):
     return None
 
 
-def geoinfo_from_ip(event, match_field):
+def geoinfo_from_ip(event, match_field: str):
     """Returns a dictionary with geolocation information that is the same format as
     panther_oss_helper.geoinfo_from_ip() with the following differences:
 
@@ -157,8 +160,8 @@ def geoinfo_from_ip(event, match_field):
         )
 
     if (
-        deep_get(asn.ipinfo_asn, match_field) is None
-        or deep_get(location.ipinfo_location, match_field) is None
+        deep_get(asn.lut_matches, match_field) is None
+        or deep_get(location.lut_matches, match_field) is None
     ):
         raise PantherIPInfoException(
             f"IPInfo is not configured on the provided match_field: {match_field}"
