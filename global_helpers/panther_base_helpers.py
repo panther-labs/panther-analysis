@@ -508,6 +508,7 @@ def aws_key_account_id(aws_key: str):
     key_id_int = int.from_bytes(decoded_key, byteorder='big', signed=False)
     mask = int.from_bytes(binascii.unhexlify(b'7fffffffff80'), byteorder='big', signed=False)
 
-    # Do a bitwise AND with the mask to retrieve the account ID (divide the 10-byte key integer by 128 and remove the fractional part(s))
+    # Do a bitwise AND with the mask to retrieve the account ID 
+    # (divide the 10-byte key integer by 128 and remove the fractional part(s))
     account_id = (key_id_int & mask)>>7
     return str(account_id)
