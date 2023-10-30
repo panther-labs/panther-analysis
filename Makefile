@@ -59,6 +59,7 @@ install:
 	pipenv sync --dev
 
 test: global-helpers-unit-test
+	pipenv run which panther_analysis_tool
 	pipenv run panther_analysis_tool test
 
 docker-build:
