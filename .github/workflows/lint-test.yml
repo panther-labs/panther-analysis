@@ -40,7 +40,11 @@ jobs:
         run: make venv
 
       - name: make lint
-        run: make lint
+        run: |
+          pipenv shell
+          make lint
 
       - name: make test
-        run: make test
+        run: |
+          pipenv shell
+          make test
