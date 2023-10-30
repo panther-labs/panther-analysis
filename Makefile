@@ -19,9 +19,6 @@ vscode-config: install-pipenv install
 	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
 	which code && code . 
 
-clone-pat:
-
-
 ci:
 	pipenv run $(MAKE) lint test
 
