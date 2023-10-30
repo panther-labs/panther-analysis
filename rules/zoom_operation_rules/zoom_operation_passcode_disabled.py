@@ -6,7 +6,9 @@ def rule(event):
         return False
 
     context = get_context(event)
-    return "Passcode" in context["Change"] and context["DisabledSetting"]
+    changed = "Passcode" in context.get("Change", "")
+    disabled = context.get("DisabledSetting", False)
+    return changed and disabled
 
 
 def title(event):

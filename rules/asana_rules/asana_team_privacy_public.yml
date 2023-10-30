@@ -1,6 +1,6 @@
 AnalysisType: rule
-Description: 'An Asana team''s setting was changed to public to the organization (not public to internet). '
-DisplayName: Asana Team Privacy Public
+Description: An Asana team's privacy setting was changed to public to the organization (not public to internet)
+DisplayName: "Asana Team Privacy Public"
 Enabled: true
 Filename: asana_team_privacy_public.py
 Severity: Low
@@ -26,6 +26,7 @@ Tests:
             gid: "12345"
             name: Example Team Name
             resource_type: team
+        p_log_type: Asana.Audit
       Name: Team made public
     - ExpectedResult: false
       Log:
@@ -50,9 +51,10 @@ Tests:
             gid: "1234567890"
             name: Homer Simpson
             resource_type: user
+        p_log_type: Asana.Audit
       Name: Other event
 DedupPeriodMinutes: 60
 LogTypes:
     - Asana.Audit
-RuleID: Asana.Team.Privacy.Public
+RuleID: "Asana.Team.Privacy.Public"
 Threshold: 1

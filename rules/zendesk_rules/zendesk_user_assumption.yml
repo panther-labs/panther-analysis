@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: zendesk_user_assumption.py
-RuleID: Zendesk.UserAssumption
-DisplayName: Enabled Zendesk Support to Assume Users
+RuleID: "Zendesk.UserAssumption"
+DisplayName: "Enabled Zendesk Support to Assume Users"
 Enabled: true
 LogTypes:
   - Zendesk.Audit
@@ -16,7 +16,7 @@ Description: User enabled or disabled zendesk support user assumption.
 Runbook: >
   Investigate whether allowing zendesk support to assume users is necessary. If not, disable the feature.
 SummaryAttributes:
-  - p_any_addresses
+  - p_any_ip_addresses
 Tests:
   - 
     Name: User assumption settings changed

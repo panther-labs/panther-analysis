@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-QueryName: Query.EC2.CRUD.Activity.Role
+QueryName: "Query.EC2.CRUD.Activity.Role"
 Enabled: false
 Description: >
   This query searches for CRUD activity in EC2 by role arn. Activities from a role outside typical deployment processes may warrant investigation. 
@@ -7,7 +7,12 @@ AthenaQuery: >
   /* athena query not supported */ 
   SELECT count(1)
 SnowflakeQuery: >
-  SELECT count(*),recipientAccountId, userIdentity:arn, eventName, eventSource
+  SELECT 
+    count(*) as num_logs,
+    recipientAccountId, 
+    userIdentity:arn as arn, 
+    eventName, 
+    eventSource
   FROM panther_logs.public.aws_cloudtrail
   WHERE 
     eventSource = 'ec2.amazonaws.com' 

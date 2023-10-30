@@ -1,0 +1,352 @@
+AnalysisType: rule
+Filename: notion_account_changed_after_login.py
+RuleID: "Notion.AccountChangedAfterLogin"
+DisplayName: "Notion Account Changed Shortly After Login"
+Enabled: true
+LogTypes:
+  - Notion.AuditLogs
+Tags:
+  - Notion
+  - Identity & Access Management
+  - Persistence
+Severity: Medium
+Description: A Notion User logged in then changed their account details.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible account takeover. Follow up with the Notion User to determine if this email change is genuine.
+Tests:
+    - # This unit test is to make sure the logic for handling login events successfully results in
+      #   caching the login info. The outputted title/alert_context are not important.
+      Name: Login event
+      ExpectedResult: true
+      Mocks:
+        - objectName: put_string_set
+          returnValue: true
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Email Changed Shortly After Login
+      ExpectedResult: true
+      Mocks:
+        - objectName: get_string_set
+          returnValue: >-
+            [
+              "2023-06-12 21:40:28.690000000"
+            ]
+        - objectName: put_string_set
+          returnValue: ""
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.settings.login_method.email_updated",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Password Changed Shortly After Login
+      ExpectedResult: true
+      Mocks:
+        - objectName: get_string_set
+          returnValue: >-
+            [
+              "2023-06-12 21:40:28.690000000"
+            ]
+        - objectName: put_string_set
+          returnValue: ""
+      Log:
+        {
+          "event": {
+              "actor": {
+                  "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                  "object": "user",
+                  "person": { "email": "aragorn.elessar@lotr.com" },
+                  "type": "person",
+                },
+              "details": { "authType": "email" },
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "ip_address": "192.168.100.100",
+              "platform": "web",
+              "timestamp": "2023-06-12 21:40:28.690000000",
+              "type": "user.settings.login_method.password_updated",
+              "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            },
+          "p_enrichment": {
+              "ipinfo_location": {
+                  "event.ip_address": {
+                      "city": "Barad-Dur",
+                      "lat": "0.00000",
+                      "lng": "0.00000",
+                      "country": "Mordor",
+                      "postal_code": "55555",
+                      "region": "Mount Doom",
+                      "region_code": "MD",
+                      "timezone": "Middle Earth/Mordor",
+                    },
+                },
+            },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs",
+        }
+    - Name: Password Added Shortly After Login
+      ExpectedResult: true
+      Mocks:
+        - objectName: get_string_set
+          returnValue: >-
+            [
+              "2023-06-12 21:40:28.690000000"
+            ]
+        - objectName: put_string_set
+          returnValue: ""
+      Log:
+        {
+          "event": {
+              "actor": {
+                  "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                  "object": "user",
+                  "person": { "email": "aragorn.elessar@lotr.com" },
+                  "type": "person",
+                },
+              "details": { "authType": "email" },
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "ip_address": "192.168.100.100",
+              "platform": "web",
+              "timestamp": "2023-06-12 21:40:28.690000000",
+              "type": "user.settings.login_method.password_added",
+              "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            },
+          "p_enrichment": {
+              "ipinfo_location": {
+                  "event.ip_address": {
+                      "city": "Barad-Dur",
+                      "lat": "0.00000",
+                      "lng": "0.00000",
+                      "country": "Mordor",
+                      "postal_code": "55555",
+                      "region": "Mount Doom",
+                      "region_code": "MD",
+                      "timezone": "Middle Earth/Mordor",
+                    },
+                },
+            },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs",
+        }
+    - Name: Password Removed Shortly After Login
+      ExpectedResult: true
+      Mocks:
+        - objectName: get_string_set
+          returnValue: >-
+            [
+              "2023-06-12 21:40:28.690000000"
+            ]
+        - objectName: put_string_set
+          returnValue: ""
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.settings.login_method.password_removed",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Email Changed Not Shortly After Login
+      ExpectedResult: false
+      Mocks:
+        - objectName: get_string_set
+          returnValue: False
+        - objectName: put_string_set
+          returnValue: ""
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.settings.login_method.email_updated",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Unrelated event
+      ExpectedResult: false
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "page.viewed",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }

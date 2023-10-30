@@ -9,7 +9,6 @@ def rule(event):
 
 
 def title(event):
-
     target = event.get("target", [{}])
     key_name = target[0].get("displayName", "MISSING DISPLAY NAME") if target else "MISSING TARGET"
 

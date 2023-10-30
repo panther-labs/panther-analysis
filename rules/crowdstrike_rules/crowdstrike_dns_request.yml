@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: crowdstrike_dns_request.py
-RuleID: Crowdstrike.DNS.Request
-DisplayName: DNS request to denylisted domain
+RuleID: "Crowdstrike.DNS.Request"
+DisplayName: "DNS request to denylisted domain"
 Enabled: false
 LogTypes:
   - Crowdstrike.DNSRequest
@@ -21,6 +21,7 @@ DedupPeriodMinutes: 15
 SummaryAttributes:
   - DomainName
   - aid
+  - p_any_domain_names
   - p_any_ip_addresses
 Tests:
   -
