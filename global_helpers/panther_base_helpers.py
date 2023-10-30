@@ -1,3 +1,5 @@
+import base64
+import binascii
 import json
 import re
 from collections import OrderedDict
@@ -494,3 +496,18 @@ def m365_alert_context(event):
 def defang_ioc(ioc):
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
     return ioc.replace(".", "[.]")
+
+# Adapted from https://medium.com/@TalBeerySec/a-short-note-on-aws-key-id-f88cc4317489
+def aws_key_account_id(aws_key: str):
+    """retrieve the AWS account ID associated with a given access key ID"""
+    key_no_prefix = aws_key[4:] # remove the four-character prefix
+    base32_key = base64.b32decode(key_no_prefix) # remainder of the key is base32-encoded
+    decoded_key = base32_key[0:6] # retrieve the 10-byte string
+
+    # Convert the 10-byte string to an integer
+    key_id_int = int.from_bytes(decoded_key, byteorder='big', signed=False)
+    mask = int.from_bytes(binascii.unhexlify(b'7fffffffff80'), byteorder='big', signed=False)
+
+    # Do a bitwise AND with the mask to retrieve the account ID (divide the 10-byte key integer by 128 and remove the fractional part(s))
+    account_id = (key_id_int & mask)>>7
+    return str(account_id)
