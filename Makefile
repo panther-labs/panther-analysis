@@ -19,6 +19,8 @@ vscode-config: install-pipenv install
 	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
 	which code && code . 
 
+clone-pat:
+
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -59,7 +61,6 @@ install:
 	pipenv sync --dev
 
 test: global-helpers-unit-test
-	pipenv run which panther_analysis_tool
 	pipenv run panther_analysis_tool test
 
 docker-build:

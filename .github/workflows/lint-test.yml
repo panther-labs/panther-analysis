@@ -22,8 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout Source Repo
+      - name: Checkout panther-analysis
         uses: actions/checkout@v3
+      
+      - name: Checkout panther_analysis_tool
+        uses: actions/checkout@v3
+        with:
+          repository: panther-labs/panther_analysis_tool
+          token: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
 
       - name: Set python version  
         uses: actions/setup-python@v4
