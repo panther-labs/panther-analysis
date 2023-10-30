@@ -6,6 +6,7 @@ from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
+from unittest.mock import MagicMock
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -494,3 +495,25 @@ def m365_alert_context(event):
 def defang_ioc(ioc):
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
     return ioc.replace(".", "[.]")
+
+def unmock(func: callable, *args, **kwargs):
+    """Wraps mocked functions to perform automatic JSON unmarshalling on the returned value during
+    unit tests, and return the unmodified value during actual log analysis.
+    
+    Usage:
+        func: the mocked function you want to call
+        *args: the positional arguments of 'func', if any
+        **kwargs: the keyword arguments of 'func', if any
+    
+    Example:
+        To wrap `get_counter("cache-key", force_ttl=True)`, call:
+            unmock(get_counter, "cache-key", force_ttl=True)
+    """
+    # Call the function and save the return value
+    val = func(*args, **kwargs)
+
+    # If this is a mocked function, unmarhsal the returned string as JSON
+    if isinstance(func, MagicMock):
+        return json.loads(val)
+    # Else, just return the original value
+    return val
