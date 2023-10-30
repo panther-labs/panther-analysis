@@ -29,6 +29,9 @@ deps:
 deps-update:
 	pipenv update
 
+default-unit-test:
+	pipenv run python -m unittest global_helpers/default_test.py
+
 global-helpers-unit-test:
 	pipenv run python -m unittest global_helpers/*_test.py
 
@@ -58,7 +61,7 @@ fmt:
 install:
 	pipenv sync --dev
 
-test: global-helpers-unit-test
+test: global-helpers-unit-test default-unit-test
 	pipenv run panther_analysis_tool test
 
 docker-build:
