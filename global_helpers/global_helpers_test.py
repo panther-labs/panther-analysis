@@ -2362,11 +2362,13 @@ class TestAzureSigninHelpers(unittest.TestCase):
             },
         )
 
+
 class TestAWSKeyAccountID(unittest.TestCase):
     def test_aws_key_account_id(self):
         aws_key_id = "ASIAY34FZKBOKMUTVV7A"
         account_id = p_b_h.aws_key_account_id(aws_key_id)
         self.assertEqual(account_id, "609629065308")
+
 
 if __name__ == "__main__":
     unittest.main()
