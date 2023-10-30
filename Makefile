@@ -30,7 +30,7 @@ deps-update:
 	pipenv update
 
 global-helpers-unit-test:
-	pipenv run python global_helpers/*_test.py
+	pipenv run python -m unittest global_helpers/*_test.py
 
 lint: lint-pylint lint-fmt
 
