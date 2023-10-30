@@ -515,6 +515,11 @@ def unmock(func: callable, *args, **kwargs):
 
     # If this is a mocked function, unmarhsal the returned string as JSON
     if isinstance(func, MagicMock):
-        return json.loads(val)
+        try:
+            unmarshalled = json.loads(val)
+            return unmarshalled
+        # Probably safe to return the original value for either of these errors
+        except (TypeError, OverflowError):
+            return val
     # Else, just return the original value
     return val
