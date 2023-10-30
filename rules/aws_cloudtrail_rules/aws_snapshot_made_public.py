@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 
-from panther import aws_cloudtrail_success
 from panther_base_helpers import aws_rule_context, deep_get
+from panther_default import aws_cloudtrail_success
 
 
 def rule(event):

@@ -1,5 +1,5 @@
 AnalysisType: scheduled_query
-QueryName: Query.Snowflake.UserEnabled
+QueryName: "Query.Snowflake.UserEnabled"
 Enabled: false
 Description: >
   Monitor for users that are being re-enabled.
@@ -19,7 +19,7 @@ SnowflakeQuery: >
     role_name
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('24 h', start_time)
+      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
       AND execution_status = 'SUCCESS'
       AND query_type = 'ALTER_USER'
       AND (query_text ILIKE '%alter user%set disabled = false%'
@@ -28,5 +28,5 @@ SnowflakeQuery: >
           OR query_text ILIKE '%alter user%set disabled=false%')
   ORDER BY end_time desc
 Schedule:
-  CronExpression: "0 6 * * *"
-  TimeoutMinutes: 1
+  CronExpression: "0 0 * * *"
+  TimeoutMinutes: 3

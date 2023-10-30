@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: gcp_iam_org_folder_changes.py
-RuleID: GCP.IAM.OrgFolderIAMChanges
-DisplayName: GCP Org or Folder Policy Was Changed Manually
+RuleID: "GCP.IAM.OrgFolderIAMChanges"
+DisplayName: "GCP Org or Folder Policy Was Changed Manually"
 Enabled: true
 DedupPeriodMinutes: 1440 # 24 hours
 LogTypes:
@@ -26,10 +26,7 @@ Runbook: >
   put your new policy bindings. 
 SummaryAttributes:
   - severity
-  - actor
-  - policy_change
-  - caller_ip
-  - user_agent
+  - p_any_ip_addresses
 Tests:
   - Name: Terraform User Agent
     ExpectedResult: true

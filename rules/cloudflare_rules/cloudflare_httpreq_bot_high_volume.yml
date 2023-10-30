@@ -1,18 +1,17 @@
 AnalysisType: rule
 Filename: cloudflare_httpreq_bot_high_volume.py
-RuleID: Cloudflare.HttpRequest.BotHighVolume
-DisplayName: Cloudflare Bot High Volume
-Enabled: true
+RuleID: "Cloudflare.HttpRequest.BotHighVolume"
+DisplayName: "Cloudflare Bot High Volume"
+Enabled: false
 LogTypes:
   - Cloudflare.HttpRequest
 Tags:
   - Cloudflare
-  - Configuration Required
 Severity: Low
-Description: Monitors for high volume of likely automated HTTP Requests
+Description: Monitors for bots making HTTP Requests at a rate higher than 2req/sec
 Runbook: Inspect and monitor internet-facing services for potential outages
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  100
+Threshold:  7560 # 2req/sec is 7200 + 5% for just-in-case
 SummaryAttributes:
   - ClientIP
   - ClientRequestUserAgent

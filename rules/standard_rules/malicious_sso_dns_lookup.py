@@ -5,12 +5,13 @@ domains you own, that contain your company name, false positive alerts will be g
 
 Recommended steps to enable:
     1. Change COMPANY_NAME to match your organization
-    2. Update the occurences of "company_name_here" in malicious_sso_dns_lookup.yml
+    2. Update the occurrences of "company_name_here" in malicious_sso_dns_lookup.yml
     3. Add known domains containing COMPANY_NAME to ALLOWED_DOMAINS
     4. Run local tests
     5. Run a Data Replay test to identify unknown domains that should be in ALLOWED_DOMAINS
 """
 
+from panther_base_helpers import filter_crowdstrike_fdr_event_type
 
 # *** Change this to match your company name ***
 COMPANY_NAME = "company_name_here"
@@ -36,6 +37,11 @@ ALLOWED_DOMAINS = [
 
 
 def rule(event):
+    # We need to run either for Crowdstrike.DnsRequest or for DnsRequest.FDREvent of 'DnsRequest'
+    # type. Crowdstrike.DnsRequest is covered because of the association with the type
+    if filter_crowdstrike_fdr_event_type(event, "DnsRequest"):
+        return False
+
     # check domain for company name AND a fake keyword
     for domain in event.get("p_any_domain_names", []):
         domain_was_allowed = [x for x in ALLOWED_DOMAINS if domain.lower().endswith(x)]

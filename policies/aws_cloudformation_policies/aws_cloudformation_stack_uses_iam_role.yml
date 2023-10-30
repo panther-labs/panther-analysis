@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_cloudformation_stack_uses_iam_role.py
-PolicyID: AWS.CloudFormation.Stack.UsesIAMServiceRole
-DisplayName: AWS CloudFormation Stack IAM Service Role
+PolicyID: "AWS.CloudFormation.Stack.UsesIAMServiceRole"
+DisplayName: "AWS CloudFormation Stack IAM Service Role"
 Enabled: true
 ResourceTypes:
   - AWS.CloudFormation.Stack
@@ -11,7 +11,7 @@ Tags:
   - Panther
 Severity: Info
 Description: >
-  Assocating IAM roles with CloudFormation stacks ensures least privilege when making
+  Associating IAM roles with CloudFormation stacks ensures least privilege when making
   changes to your account.
 Runbook: >
   Create a new IAM role to be assumable by the cloudformation service, and then update the

@@ -1,0 +1,14 @@
+AnalysisType: scheduled_query
+Enabled: false
+Query: |-
+    SELECT
+    	count(*) as num_logs, p_log_type
+    FROM
+    	panther_logs.public.aws_cloudtrail
+    WHERE
+    	p_occurs_since('5m')
+    GROUP BY p_log_type
+QueryName: "AWS CloudTrail 2-minute count"
+Schedule:
+    RateMinutes: 2
+    TimeoutMinutes: 1

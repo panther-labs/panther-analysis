@@ -1,7 +1,7 @@
 AnalysisType: rule
 Description: Detects the modification of an EC2 snapshot's permissions to enable access from another account.
-DisplayName: AWS Snapshot Backup Exfiltration
-Enabled: true
+DisplayName: "--DEPRECATED-- Snapshot Backup Exfiltration"
+Enabled: False
 Filename: aws_snapshot_backup_exfiltration.py
 Reports:
     MITRE ATT&CK:
@@ -102,5 +102,5 @@ Tests:
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.CloudTrail
-RuleID: AWS.Snapshot.Backup.Exfiltration
+RuleID: "AWS.Snapshot.Backup.Exfiltration"
 Threshold: 1

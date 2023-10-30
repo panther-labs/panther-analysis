@@ -1,0 +1,410 @@
+AnalysisType: rule
+Filename: system_namespace_public_ip.py
+RuleID: "Amazon.EKS.Audit.SystemNamespaceFromPublicIP"
+DisplayName: "EKS Audit Log Reporting system Namespace is Used From A Public IP"
+Enabled: true
+LogTypes:
+  - Amazon.EKS.Audit
+Tags: 
+  - EKS
+#Reports: # (Optional)
+#  MITRE ATT&CK:
+#    - 'TA0027:T1475' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
+Severity: Info
+Description: > # (Optional)
+  This detection identifies if an activity is recorded in the Kubernetes audit log where 
+  the user:username attribute begins with "system:" or "eks:" and the requests originating 
+  IP Address is a Public IP Address
+DedupPeriodMinutes: 15 # The amount of time in minutes for grouping alerts (Optional, defaults to 60)
+Threshold: 1 # The minimum number of event matches prior to an alert sending (Optional, defaults to 1)
+SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
+  - user:username
+  - p_source_label
+Tests:
+  -
+    Name: non-system username
+    ExpectedResult: false
+    Log: 
+      {
+        "annotations": {
+        "authorization.k8s.io/decision": "allow",
+        "authorization.k8s.io/reason": ""
+      },
+      "apiVersion": "audit.k8s.io/v1",
+      "auditID": "35506555-dffc-4337-b2b1-c4af52b88e18",
+      "kind": "Event",
+      "level": "Request",
+      "objectRef": {
+        "apiVersion": "v1",
+        "name": "kube-bench-drn4j",
+        "namespace": "default",
+        "resource": "pods",
+        "subresource": "log"
+      },
+      "p_any_aws_account_ids": [
+        "123412341234"
+      ],
+      "p_any_aws_arns": [
+        "arn:aws:iam::123412341234:role/DevAdministrator",
+        "arn:aws:sts::123412341234:assumed-role/DevAdministrator/1669660343296132000"
+      ],
+      "p_any_ip_addresses": [
+        "5.5.5.5"
+      ],
+      "p_any_usernames": [
+        "kubernetes-admin"
+      ],
+      "p_event_time": "2022-11-29 00:09:04.38",
+      "p_log_type": "Amazon.EKS.Audit",
+      "p_parse_time": "2022-11-29 00:10:25.067",
+      "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a",
+      "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+      "p_source_label": "example-cluster-eks-logs",
+      "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
+      "requestURI": "/api/v1/namespaces/default/pods/kube-bench-drn4j/log?container=kube-bench",
+      "responseStatus": {
+        "code": 200
+      },
+      "sourceIPs": [
+        "5.5.5.5"
+      ],
+      "stage": "ResponseStarted",
+      "stageTimestamp": "2022-11-29 00:09:04.392",
+      "user": {
+        "extra": {
+          "accessKeyId": [
+            "ASIARLIVEKVNN6Y6J5UW"
+          ],
+          "arn": [
+            "arn:aws:sts::123412341234:assumed-role/DevAdministrator/1669660343296132000"
+          ],
+          "canonicalArn": [
+            "arn:aws:iam::123412341234:role/DevAdministrator"
+          ],
+          "sessionName": [
+            "1669660343296132000"
+          ]
+        },
+        "groups": [
+          "system:masters",
+          "system:authenticated"
+        ],
+        "uid": "aws-iam-authenticator:123412341234:AROARLIVEKVNIRVGDLJWJ",
+        "username": "kubernetes-admin"
+      },
+      "userAgent": "kubectl/v1.25.4 (darwin/arm64) kubernetes/872a965",
+      "verb": "get"
+      }
+  -
+    Name: system username - private ip
+    ExpectedResult: false
+    Log: 
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:coredns\" of ClusterRole \"system:coredns\" to ServiceAccount \"coredns/kube-system\""
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "e2626946-90e1-4d0c-829e-ad5a78572926",
+        "kind": "Event",
+        "level": "Metadata",
+        "objectRef": {
+          "apiGroup": "discovery.k8s.io",
+          "apiVersion": "v1",
+          "resource": "endpointslices"
+        },
+        "p_any_ip_addresses": [
+          "10.0.27.115"
+        ],
+        "p_any_usernames": [
+          "system:serviceaccount:kube-system:coredns"
+        ],
+        "p_event_time": "2022-11-29 22:34:06.892",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_parse_time": "2022-11-29 22:45:25.024",
+        "p_row_id": "c2a7d8dd7c858dcae0a1aaf314b2a207",
+        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-11-29 22:34:06.892",
+        "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2528212&timeout=5m56s&timeoutSeconds=356&watch=true",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "10.0.27.115"
+        ],
+        "stage": "ResponseComplete",
+        "stageTimestamp": "2022-11-29 22:40:02.903",
+        "user": {
+          "extra": {
+            "authentication_kubernetes_io_slash_pod-name": [
+              "coredns-57ff979f67-bl27n"
+            ],
+            "authentication_kubernetes_io_slash_pod-uid": [
+              "5b9488ae-5563-42aa-850b-b0d82edb3e22"
+            ]
+          },
+          "groups": [
+            "system:serviceaccounts",
+            "system:serviceaccounts:kube-system",
+            "system:authenticated"
+          ],
+          "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+          "username": "system:serviceaccount:kube-system:coredns"
+        },
+        "userAgent": "Go-http-client/2.0",
+        "verb": "watch"
+      }
+  -
+    Name: 403 from Public IP zero count
+    ExpectedResult: true
+    Log: 
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:coredns\" of ClusterRole \"system:coredns\" to ServiceAccount \"coredns/kube-system\""
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "e2626946-90e1-4d0c-829e-ad5a78572926",
+        "kind": "Event",
+        "level": "Metadata",
+        "objectRef": {
+          "apiGroup": "discovery.k8s.io",
+          "apiVersion": "v1",
+          "resource": "endpointslices"
+        },
+        "p_any_ip_addresses": [
+          "5.5.5.5"
+        ],
+        "p_any_usernames": [
+          "system:serviceaccount:kube-system:coredns"
+        ],
+        "p_event_time": "2022-11-29 22:34:06.892",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_parse_time": "2022-11-29 22:45:25.024",
+        "p_row_id": "c2a7d8dd7c858dcae0a1aaf314b2a207",
+        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-11-29 22:34:06.892",
+        "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2528212&timeout=5m56s&timeoutSeconds=356&watch=true",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "5.5.5.5"
+        ],
+        "stage": "ResponseComplete",
+        "stageTimestamp": "2022-11-29 22:40:02.903",
+        "user": {
+          "extra": {
+            "authentication_kubernetes_io_slash_pod-name": [
+              "coredns-57ff979f67-bl27n"
+            ],
+            "authentication_kubernetes_io_slash_pod-uid": [
+              "5b9488ae-5563-42aa-850b-b0d82edb3e22"
+            ]
+          },
+          "groups": [
+            "system:serviceaccounts",
+            "system:serviceaccounts:kube-system",
+            "system:authenticated"
+          ],
+          "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+          "username": "system:serviceaccount:kube-system:coredns"
+        },
+        "userAgent": "Go-http-client/2.0",
+        "verb": "watch"
+    }
+  -
+    Name: system username - public ip - not ResponseComplete
+    ExpectedResult: false
+    Log: 
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:coredns\" of ClusterRole \"system:coredns\" to ServiceAccount \"coredns/kube-system\""
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "c8c5bc49-cd5d-45d6-999c-b55783c7840f",
+        "kind": "Event",
+        "level": "Metadata",
+        "objectRef": {
+          "apiGroup": "discovery.k8s.io",
+          "apiVersion": "v1",
+          "resource": "endpointslices"
+        },
+        "p_any_ip_addresses": [
+          "5.5.5.5"
+        ],
+        "p_any_usernames": [
+          "system:serviceaccount:kube-system:coredns"
+        ],
+        "p_event_time": "2022-11-29 22:46:37.995",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_parse_time": "2022-11-29 22:50:24.942",
+        "p_row_id": "fa229ed1d0b18094f4a1aff3149531",
+        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-11-29 22:46:37.995",
+        "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2529923&timeout=6m41s&timeoutSeconds=401&watch=true",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "5.5.5.5"
+        ],
+        "stage": "ResponseStarted",
+        "stageTimestamp": "2022-11-29 22:46:38.013",
+        "user": {
+          "extra": {
+            "authentication_kubernetes_io_slash_pod-name": [
+              "coredns-57ff979f67-bl27n"
+            ],
+            "authentication_kubernetes_io_slash_pod-uid": [
+              "5b9488ae-5563-42aa-850b-b0d82edb3e22"
+            ]
+          },
+          "groups": [
+            "system:serviceaccounts",
+            "system:serviceaccounts:kube-system",
+            "system:authenticated"
+          ],
+          "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+          "username": "system:serviceaccount:kube-system:coredns"
+        },
+        "userAgent": "Go-http-client/2.0",
+        "verb": "watch"
+      }
+  -
+    Name: system username - public ip - 403
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:coredns\" of ClusterRole \"system:coredns\" to ServiceAccount \"coredns/kube-system\""
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "c8c5bc49-cd5d-45d6-999c-b55783c7840f",
+        "kind": "Event",
+        "level": "Metadata",
+        "objectRef": {
+          "apiGroup": "discovery.k8s.io",
+          "apiVersion": "v1",
+          "resource": "endpointslices"
+        },
+        "p_any_ip_addresses": [
+          "5.5.5.5"
+        ],
+        "p_any_usernames": [
+          "system:serviceaccount:kube-system:coredns"
+        ],
+        "p_event_time": "2022-11-29 22:46:37.995",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_parse_time": "2022-11-29 22:50:24.942",
+        "p_row_id": "fa229ed1d0b18094f4a1aff3149531",
+        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-11-29 22:46:37.995",
+        "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2529923&timeout=6m41s&timeoutSeconds=401&watch=true",
+        "responseStatus": {
+          "code": 403
+        },
+        "sourceIPs": [
+          "5.5.5.5"
+        ],
+        "stage": "ResponseComplete",
+        "stageTimestamp": "2022-11-29 22:46:38.013",
+        "user": {
+          "extra": {
+            "authentication_kubernetes_io_slash_pod-name": [
+              "coredns-57ff979f67-bl27n"
+            ],
+            "authentication_kubernetes_io_slash_pod-uid": [
+              "5b9488ae-5563-42aa-850b-b0d82edb3e22"
+            ]
+          },
+          "groups": [
+            "system:serviceaccounts",
+            "system:serviceaccounts:kube-system",
+            "system:authenticated"
+          ],
+          "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+          "username": "system:serviceaccount:kube-system:coredns"
+        },
+        "userAgent": "Go-http-client/2.0",
+        "verb": "watch"
+      }
+  -
+    Name: eks:addon-manager from public ip as lambda
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by RoleBinding \"eks:addon-manager/kube-system\" of Role \"eks:addon-manager\" to User \"eks:addon-manager\""
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "43410f6e-9c19-482b-b2c7-f2cde260b0e9",
+        "kind": "Event",
+        "level": "Request",
+        "objectRef": {
+          "apiGroup": "apps",
+          "apiVersion": "v1",
+          "name": "coredns",
+          "namespace": "kube-system",
+          "resource": "deployments"
+        },
+        "p_any_aws_account_ids": [
+          "123412341234"
+        ],
+        "p_any_aws_arns": [
+          "arn:aws:iam::123412341234:role/AWSWesleyClusterManagerLambda-Add-AddonManagerRole-G332QAM69HWF",
+          "arn:aws:sts::123412341234:assumed-role/AWSWesleyClusterManagerLambda-Add-AddonManagerRole-G332QAM69HWF/1669918824986835422"
+        ],
+        "p_any_ip_addresses": [
+          "35.163.244.48"
+        ],
+        "p_any_usernames": [
+          "eks:addon-manager"
+        ],
+        "p_event_time": "2022-12-01 18:20:25.054",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_parse_time": "2022-12-01 18:24:24.734",
+        "p_row_id": "a22a2e182591cfb8ead2f7f7149215",
+        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-12-01 18:20:25.054",
+        "requestURI": "/apis/apps/v1/namespaces/kube-system/deployments/coredns?timeout=10s",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "35.163.244.48"
+        ],
+        "stage": "ResponseComplete",
+        "stageTimestamp": "2022-12-01 18:20:25.078",
+        "user": {
+          "extra": {
+            "accessKeyId": [
+              "ASIAXXXXXXXXXXXXXXXX"
+            ],
+            "arn": [
+              "arn:aws:sts::123412341234:assumed-role/AWSWesleyClusterManagerLambda-Add-AddonManagerRole-G332QAM69HWF/1669918824986835422"
+            ],
+            "canonicalArn": [
+              "arn:aws:iam::123412341234:role/AWSWesleyClusterManagerLambda-Add-AddonManagerRole-G332QAM69HWF"
+            ],
+            "sessionName": [
+              "1669918824986835422"
+            ]
+          },
+          "groups": [
+            "system:authenticated"
+          ],
+          "uid": "aws-iam-authenticator:123412341234:AROATAVZDPHFJWUSNL3ZV",
+          "username": "eks:addon-manager"
+        },
+        "userAgent": "Go-http-client/1.1",
+        "verb": "get"
+      }

@@ -1,0 +1,32 @@
+AnalysisType: rule
+Description: An administrator viewed the MFA bypass code for a user.
+DisplayName: "Duo Admin Bypass Code Viewed"
+Enabled: true
+Filename: duo_admin_bypass_code_viewed.py
+Reference: https://duo.com/docs/adminapi
+Runbook: Confirm this behavior is authorized. The security of your Duo application is tied to the security of your secret key (skey). Secure it as you would any sensitive credential. You should not share it with unauthorized individuals or email it to anyone under any circumstances!
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: bypass_view
+        description: '{"user_id": "D1234", "bypass_code_id": "D5678"}'
+        isotimestamp: "2022-12-14 21:17:54"
+        object: target@example.io
+        timestamp: "2022-12-14 21:17:54"
+        username: Homer Simpson
+      Name: Bypass View
+    - ExpectedResult: false
+      Log:
+        action: bypass_create
+        description: '{"bypass": "", "count": 1, "valid_secs": 3600, "auto_generated": true, "remaining_uses": 1, "user_id": "D12345", "bypass_code_ids": ["A12345"]}'
+        isotimestamp: "2022-12-14 21:17:39"
+        object: target@example.io
+        timestamp: "2022-12-14 21:17:39"
+        username: Homer Simpson
+      Name: Bypass Create
+DedupPeriodMinutes: 60
+LogTypes:
+    - Duo.Administrator
+RuleID: "Duo.Admin.Bypass.Code.Viewed"
+Threshold: 1

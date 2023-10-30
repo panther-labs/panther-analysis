@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_object_lock_configured.py
-PolicyID: AWS.S3.BucketObjectLockConfigured
-DisplayName: AWS S3 Bucket Object Lock Configured
+PolicyID: "AWS.S3.BucketObjectLockConfigured"
+DisplayName: "AWS S3 Bucket Object Lock Configured"
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
@@ -22,7 +22,7 @@ Runbook: Create a new S3 bucket with an appropriate Object Lock configuration an
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html
 Tests:
   -
-    Name: Obect Lock Configured With Governance
+    Name: Object Lock Configured With Governance
     ExpectedResult: false
     Resource:
       {
@@ -83,7 +83,7 @@ Tests:
           "Versioning": "Enabled"
       }
   -
-    Name: Obect Lock Configured With Compliance
+    Name: Object Lock Configured With Compliance
     ExpectedResult: true
     Resource:
       {
@@ -144,7 +144,7 @@ Tests:
           "Versioning": "Enabled"
       }
   -
-    Name: Obect Lock Not Configured
+    Name: Object Lock Not Configured
     ExpectedResult: false
     Resource:
       {

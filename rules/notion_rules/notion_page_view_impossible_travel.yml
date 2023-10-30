@@ -1,0 +1,160 @@
+AnalysisType: rule
+Filename: notion_page_view_impossible_travel.py
+RuleID: "Notion.PageViews.ImpossibleTravel"
+DisplayName: "Notion Page View Impossible Travel DEPRECATED"
+Enabled: false
+LogTypes:
+    - Notion.AuditLogs
+Tags:
+  - Notion
+  - Identity & Access Management
+  - Login & Access Patterns
+  - Account Compromise
+Severity: High
+Description: A Notion User viewed a page from 2 locations simultaneously
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Possible account compromise. Review activity of this user.
+Tests:
+  - Name: Normal Page View
+    ExpectedResult: False
+    Mocks:
+      - objectName: get_string_set
+        returnValue: >-
+          [
+            {
+              "p_event_time": "2023-09-20T16:11:44.067000",
+              "source_ip": "192.168.100.100",
+              "city": "Minas Tirith",
+              "country": "Gondor",
+              "lat": "0.00000",
+              "lng": "0.00000",
+              "p_match": "192.168.100.100",
+              "postal_code": "55555",
+              "region": "Pellenor",
+              "region_code": "PL",
+              "timezone": "Middle Earth/Pellenor"
+            }
+          ]
+      - objectName: put_string_set
+        returnValue: False
+    Log:
+      {
+        "event": {
+          "actor": {
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "object": "user",
+            "person": {
+              "email": "aragorn.elessar@lotr.com"
+            },
+            "type": "person"
+          },
+          "details": {
+            "page_audience": "shared_internally",
+            "page_name": "Notes: Council of Elrond",
+            "target": {
+              "page_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "type": "page_id"
+            }
+          },
+          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "ip_address": "192.168.100.100",
+          "platform": "web",
+          "timestamp": "2023-09-20 16:11:44.067000000",
+          "type": "page.viewed",
+          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
+        "p_enrichment": {
+          "ipinfo_location": {
+            "event.ip_address": {
+              "city": "Minas Tirith",
+              "country": "Gondor",
+              "lat": "0.00000",
+              "lng": "0.00000",
+              "p_match": "192.168.100.100",
+              "postal_code": "55555",
+              "region": "Pellenor",
+              "region_code": "PL",
+              "timezone": "Middle Earth/Pellenor"
+            }
+          }
+        },
+        "p_event_time": "2023-09-20 16:11:44.067",
+        "p_log_type": "Notion.AuditLogs",
+        "p_parse_time": "2023-09-20 16:18:27.542",
+        "p_row_id": "52d6bafb77d1a7fb8bbdbfd81a0e",
+        "p_schema_version": 0,
+        "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "p_source_label": "Notion-Panther-Labs"
+      }
+  - Name: Evil Page View
+    ExpectedResult: True
+    Mocks:
+      - objectName: get_string_set
+        returnValue: >-
+          [
+            {
+              "p_event_time": "2023-09-20T15:11:44.067000",
+              "source_ip": "192.168.100.100",
+              "city": "Minas Tirith",
+              "country": "Gondor",
+              "lat": "0.00000",
+              "lng": "0.00000",
+              "p_match": "192.168.100.100",
+              "postal_code": "55555",
+              "region": "Pellenor",
+              "region_code": "PL",
+              "timezone": "Middle Earth/Pellenor"
+            }
+          ]
+      - objectName: put_string_set
+        returnValue: False
+    Log:
+      {
+        "event": {
+          "actor": {
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "object": "user",
+            "person": {
+              "email": "aragorn.elessar@lotr.com"
+            },
+            "type": "person"
+          },
+          "details": {
+            "page_audience": "shared_internally",
+            "page_name": "Notes: Council of Elrond",
+            "target": {
+              "page_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "type": "page_id"
+            }
+          },
+          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "ip_address": "192.168.100.100",
+          "platform": "web",
+          "timestamp": "2023-09-20 16:11:44.067000000",
+          "type": "page.viewed",
+          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
+        "p_enrichment": {
+          "ipinfo_location": {
+            "event.ip_address": {
+              "city": "Barad-Dur",
+              "lat": "100.00000",
+              "lng": "0.00000",
+              "country": "Mordor",
+              "postal_code": "55555",
+              "p_match": "192.168.100.100",
+              "region": "Mount Doom",
+              "region_code": "MD",
+              "timezone": "Middle Earth/Mordor",
+            },
+          },
+        },
+        "p_event_time": "2023-09-20 16:11:44.067",
+        "p_log_type": "Notion.AuditLogs",
+        "p_parse_time": "2023-09-20 16:18:27.542",
+        "p_row_id": "52d6bafb77d1a7fb8bbdbfd81a0e",
+        "p_schema_version": 0,
+        "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "p_source_label": "Notion-Panther-Labs"
+      }

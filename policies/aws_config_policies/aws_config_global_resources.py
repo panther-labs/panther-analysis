@@ -1,7 +1,7 @@
 import json
 
 from panther_base_helpers import deep_get
-from panther_oss_helpers import resource_lookup
+from panther_oss_helpers import BadLookup, resource_lookup
 
 # TODO: Once Detection Pipelines are merged, implement downgraded (INFO) case for multiple
 #       global resource recorders.
@@ -16,7 +16,10 @@ def policy(resource):
         return False
 
     for recorder_name in resource.get("Recorders", []):
-        recorder = resource_lookup(recorder_name)
+        try:
+            recorder = resource_lookup(recorder_name)
+        except BadLookup:
+            continue
         if isinstance(recorder, str):
             recorder = json.loads(recorder)
         resource_records_global_resources = bool(

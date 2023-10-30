@@ -1,0 +1,22 @@
+AnalysisType: scheduled_rule
+Description: Scheduled rule for the High Google Drive Download Count query which looks for incidents of more than 10 (tunable) downloads by a user in the past day.
+DisplayName: "Google Drive High Download Count"
+Enabled: true
+Filename: gsuite_drive_many_docs_downloaded.py
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        download_count: 23
+        downloaded_files:
+            - all_hands01.mov
+            - all_hands02.mov
+            - all_hands03.mov
+            - all_hands23.mov
+        user: homer.simpson@simpsons.com
+      Name: Result Row
+DedupPeriodMinutes: 60
+RuleID: "Google.Drive.High.Download.Count"
+Threshold: 1
+ScheduledQueries:
+    - GSuite Many Docs Downloaded Query

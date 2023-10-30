@@ -1,0 +1,47 @@
+AnalysisType: rule
+Description: A public Github repository was created.
+DisplayName: "Github Public Repository Created"
+Enabled: true
+Filename: github_public_repository_created.py
+Runbook: Confirm this github repository was intended to be created as 'public' versus 'private'.
+Severity: Medium
+Tags:
+    - Github Repository
+    - Public
+    - Repository Created
+Tests:
+    - ExpectedResult: true
+      Log:
+        _document_id: abCD
+        action: repo.create
+        actor: example-actor
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-11 22:40:20.268"
+        created_at: "2022-12-11 22:40:20.268"
+        org: example-io
+        repo: example-io/oops
+        visibility: public
+      Name: Public Repo Created
+    - ExpectedResult: false
+      Log:
+        _document_id: abCD
+        action: repo.create
+        actor: example-actor
+        actor_location:
+            country_code: US
+        at_sign_timestamp: "2022-12-11 22:40:20.268"
+        created_at: "2022-12-11 22:40:20.268"
+        org: example-io
+        repo: example-io/oops
+        visibility: private
+      Name: Private Repo Created
+DedupPeriodMinutes: 60
+LogTypes:
+    - GitHub.Audit
+RuleID: "Github.Public.Repository.Created"
+SummaryAttributes:
+    - actor
+    - repository
+    - visibility
+Threshold: 1

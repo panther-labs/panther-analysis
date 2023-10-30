@@ -14,11 +14,14 @@ PackDefinition:
     - AWS.IAM.Role.RestrictsUsage
     - AWS.IAM.User.NotInConflictingGroups
     - AWS.KMS.RestrictsUsage
+    - AWS.CMK.KeyRotation
+    - AWS.NetworkACL.RestrictedSSH
     - AWS.NetworkACL.RestrictsInboundTraffic
     - AWS.NetworkACL.RestrictsInsecureProtocols
     - AWS.NetworkACL.RestrictsOutboundTraffic
     - AWS.RDS.Instance.AutoMinorVersionUpgradeEnabled
     - AWS.RDS.InstanceBackupRetentionAcceptable
+    - AWS.RDS.InstanceBackup
     - AWS.Redshift.Cluster.SnapshotRetentionAcceptable
     - AWS.S3.BucketObjectLockConfigured
     - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
@@ -30,8 +33,9 @@ PackDefinition:
     - AWS.SecurityGroup.TightlyRestrictsInboundTraffic
     - AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
     - AWS.VPC.DefaultNetworkACLRestrictsAllTraffic
+    - AWS.VPC.DefaultSecurityGroup.Restrictions
     - AWS.WAF.HasXSSPredicate
     # Globals used in these detections
     - panther_base_helpers
     - panther_oss_helpers
-DisplayName: Panther AWS CIS Pack
+DisplayName: "Panther AWS CIS Pack"

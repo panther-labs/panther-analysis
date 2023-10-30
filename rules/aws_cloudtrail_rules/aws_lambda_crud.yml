@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_lambda_crud.py
-RuleID: AWS.LAMBDA.CRUD
-DisplayName: Lambda CRUD Actions
+RuleID: "AWS.LAMBDA.CRUD"
+DisplayName: "Lambda CRUD Actions"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
@@ -20,7 +20,7 @@ Reference: reference.link
 SummaryAttributes:
   - eventSource
   - eventName
-  - accountId
+  - recipientAccountId
   - awsRegion
   - p_any_aws_arns
 Tests:
@@ -54,7 +54,7 @@ Tests:
         "recipientAccountId": "999999999999"
       }
   -
-    Name: Lambda DeleteFunction Unauthorized Region
+    Name: Lambda DeleteFunction Unauthorized User
     ExpectedResult: true
     Log:
       {
@@ -91,7 +91,7 @@ Tests:
         "userIdentity": {
           "type": "IAMUser",
           "principalId": "A1B2C3D4E5F6G7EXAMPLE",
-          "arn": "arn:aws:iam::123456789012:user/myUserName",
+          "arn": "arn:aws:iam::123456789012:user/DeployRole",
           "accountId": "123456789012",
           "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
           "userName": "myUserName"

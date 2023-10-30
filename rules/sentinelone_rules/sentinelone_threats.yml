@@ -1,0 +1,101 @@
+AnalysisType: rule
+Description: 'Passthrough SentinelOne Threats '
+DisplayName: "SentinelOne Threats"
+Enabled: true
+Filename: sentinelone_threats.py
+Severity: High
+Tests:
+    - ExpectedResult: true
+      Log:
+        accountid: "123456789"
+        accountname: Account1
+        activitytype: 19
+        activityuuid: 123-456-678-89
+        agentid: "1111112222233333"
+        createdat: "2022-12-07 16:08:55.703"
+        data:
+            accountname: Account1
+            computername: BobsPC
+            confidencelevel: malicious
+            filecontenthash: cf8bd9dfddff007f75adf4c2be48005cea317c62
+            filedisplayname: eicar.txt
+            filepath: /home/ubuntu/eicar.txt
+            fullscopedetails: Group Testing in Site Default site of Account Account1
+            fullscopedetailspath: Global / Account1 / Default site / Testing
+            groupname: Testing
+            sitename: Default site
+            threatclassification: Virus
+            threatclassificationsource: Cloud
+        groupid: "12345"
+        groupname: Testing
+        id: "11111111"
+        primarydescription: 'Threat with confidence level malicious detected: eicar.txt'
+        secondarydescription: cf8bd9dfddff007f75adf4c2be48005cea317c62
+        siteid: "456789"
+        sitename: Default site
+        threatid: "123456789"
+        updatedat: "2022-12-07 16:08:55.698"
+      Name: malicious event
+    - ExpectedResult: false
+      Log:
+        accountid: "12345"
+        accountname: Account1
+        activitytype: 90
+        activityuuid: 123-456-789
+        agentid: "111111"
+        createdat: "2022-12-07 16:06:35.483"
+        data:
+            accountname: Account1
+            computername: BobsPC
+            createdat: "2022-12-07T16:06:35.477827Z"
+            fullscopedetails: Group Testing in Site Default site of Account Account1
+            fullscopedetailspath: Global / Account1 / Default site / Testing
+            groupname: Testing
+            scopelevel: Group
+            scopename: Testing
+            sitename: Default site
+            status: started
+        groupid: "11234"
+        groupname: Testing
+        id: "123564"
+        primarydescription: Agent BobsPC started full disk scan at Wed, 07 Dec 2022, 16:06:35 UTC.
+        siteid: "12345"
+        sitename: Default site
+        updatedat: "2022-12-07 16:06:35.479"
+      Name: non-threat event
+    - ExpectedResult: true
+      Log:
+        accountid: "123456789"
+        accountname: Account1
+        activitytype: 19
+        activityuuid: 123-456-678-89
+        agentid: "1111112222233333"
+        createdat: "2022-12-07 16:08:55.703"
+        data:
+            accountname: Account1
+            computername: BobsPC
+            confidencelevel: suspicious
+            filecontenthash: cf8bd9dfddff007f75adf4c2be48005cea317c62
+            filedisplayname: eicar.txt
+            filepath: /home/ubuntu/eicar.txt
+            fullscopedetails: Group Testing in Site Default site of Account Account1
+            fullscopedetailspath: Global / Account1 / Default site / Testing
+            groupname: Testing
+            sitename: Default site
+            threatclassification: Virus
+            threatclassificationsource: Cloud
+        groupid: "12345"
+        groupname: Testing
+        id: "11111111"
+        primarydescription: 'Threat with confidence level malicious detected: eicar.txt'
+        secondarydescription: cf8bd9dfddff007f75adf4c2be48005cea317c62
+        siteid: "456789"
+        sitename: Default site
+        threatid: "123456789"
+        updatedat: "2022-12-07 16:08:55.698"
+      Name: suspicious event
+DedupPeriodMinutes: 60
+LogTypes:
+    - SentinelOne.Activity
+RuleID: "SentinelOne.Threats"
+Threshold: 1
