@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: zendesk_new_owner.py
-RuleID: Zendesk.AccountOwnerChanged
+RuleID: "Zendesk.AccountOwnerChanged"
 DedupPeriodMinutes: 60
-DisplayName: Zendesk Account Owner Changed
+DisplayName: "Zendesk Account Owner Changed"
 Enabled: true
 LogTypes:
   - Zendesk.Audit
@@ -26,6 +26,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account",
         "source_label": "Account: Account",
@@ -44,6 +45,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "user",
         "source_label": "Account: Account",

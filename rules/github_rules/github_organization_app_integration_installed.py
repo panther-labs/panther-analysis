@@ -1,7 +1,10 @@
+from global_filter_github import filter_include_event
 from panther_base_helpers import github_alert_context
 
 
 def rule(event):
+    if not filter_include_event(event):
+        return False
     # Return True to match the log event and trigger an alert.
     # Creates a new alert if the event's action was ""
     return event.get("action") == "integration_installation.create"

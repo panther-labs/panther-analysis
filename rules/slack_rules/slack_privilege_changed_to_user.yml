@@ -1,0 +1,92 @@
+AnalysisType: rule
+Filename: slack_privilege_changed_to_user.py
+RuleID: Slack.AuditLogs.UserPrivilegeChangedToUser
+DisplayName: Slack User Privileges Changed to User
+Enabled: true
+LogTypes:
+  - Slack.AuditLogs
+Tags:
+  - Slack
+Severity: Medium
+Description: Detects when a Slack account is changed to User from an elevated role.
+Reference: https://api.slack.com/admins/audit-logs
+DedupPeriodMinutes: 60
+Threshold:  1
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  -
+    Name: Role Changed to User
+    ExpectedResult: true
+    Log:
+      {
+        "action": "role_change_to_user",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "slack-enterprise-example@example.io",
+            "id": "W015MH5MPGE",
+            "name": "primary-owner",
+            "team": "T017E0M3CQ4"
+          }
+        },
+        "context": {
+          "ip_address": "12.12.12.12",
+          "location": {
+            "domain": "example-workspace-domain",
+            "id": "T017E0M3CQ4",
+            "name": "example-workspace",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        },
+        "date_create": "2023-02-24 18:34:18",
+        "entity": {
+          "type": "user",
+          "user": {
+            "email": "example-account@example.com",
+            "id": "U04R70MM40K",
+            "name": "Example Account",
+            "team": "T017E0M3CQ4"
+          }
+        },
+        "id": "4c248a02-119c-4f76-ba5d-a96767d45be8",
+      }
+  -
+    Name: Role Changed to Admin
+    ExpectedResult: false
+    Log:
+      {
+        "action": "role_change_to_admin",
+        "actor": {
+          "type": "user",
+          "user": {
+            "email": "slack-enterprise-example@example.io",
+            "id": "W015MH5MPGE",
+            "name": "primary-owner",
+            "team": "T017E0M3CQ4"
+          }
+        },
+        "context": {
+          "ip_address": "12.12.12.12",
+          "location": {
+            "domain": "example-workspace-domain",
+            "id": "T017E0M3CQ4",
+            "name": "example-workspace",
+            "type": "workspace"
+          },
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        },
+        "date_create": "2023-02-24 18:33:21",
+        "entity": {
+          "type": "user",
+          "user": {
+            "email": "example-account@example.com",
+            "id": "U04R70MM40K",
+            "name": "Example Account",
+            "team": "T017E0M3CQ4"
+          }
+        },
+        "id": "1ad8fa51-f18e-450a-8e18-cfe31278be96",
+      }

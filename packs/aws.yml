@@ -1,6 +1,6 @@
 AnalysisType: pack
 PackID: PantherManaged.AWS.Core
-DisplayName: Panther Core AWS Pack
+DisplayName: "Panther Core AWS Pack"
 Description: This is a group of detections that act on data sourced from AWS.
 PackDefinition:
   IDs:
@@ -17,12 +17,15 @@ PackDefinition:
     - AWS.S3.Bucket.PublicWrite
     - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
     - AWS.S3.Bucket.PrincipalRestrictions
+    - AWS.S3.Bucket.PublicAccessBlock
+    - AWS.S3.Bucket.SecureAccess
+    - AWS.S3.Bucket.Versioning
     - AWS.EC2.Traffic.Mirroring
     - AWS.Macie.Evasion
     - AWS.CloudTrail.ResourceMadePublic
     - AWS.CloudTrail.SnapshotMadePublic
+    - AWS.EC2.Instance.DetailedMonitoring
     # Encryption Status
-    - AWS.DynamoDB.TableEncryption
     - AWS.EC2.Volume.Encryption
     - AWS.EC2.Volume.Snapshot.Encrypted
     - AWS.EC2.EBS.Encryption.Disabled
@@ -51,6 +54,7 @@ PackDefinition:
     - AWS.CloudTrail.RootPasswordChanged
     - AWS.RootAccount.AccessKeys
     - AWS.RootAccount.MFA
+    - AWS.EC2.Instance.DetailedMonitoring
     # User and Account Policies and Rules
     - AWS.Console.LoginWithoutMFA
     - AWS.Console.LoginWithoutSAML
@@ -68,6 +72,8 @@ PackDefinition:
     - AWS.IAMUser.ReconAccessDenied
     - AWS.IAM.CredentialsUpdated
     - AWS.User.Login.Profile.Modified
+    - AWS.IAM.Group.Users
+    - AWS.IAM.Policy.AssignedToUser
     # General Policies and Rules
     - AWS.ACM.Certificate.Valid
     - AWS.ACM.Certificate.Expiration
@@ -85,16 +91,24 @@ PackDefinition:
     - AWS.GuardDuty.MediumSeverityFinding
     - AWS.GuardDuty.LowSeverityFinding
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
+    - AWS.ELBv2.SSLPolicy
     - AWS.WAF.HasXSSPredicate
     - AWS.WAF.Disassociation
     - AWS.EC2.Startup.Script.Change
+    - AWS.EC2.Instance.EBSOptimization
     - AWS.RDS.MasterPasswordUpdated
     - AWS.RDS.PublicRestore
+    - AWS.RDS.InstanceHighAvailability
     - AWS.S3.GreyNoiseActivity
     - AWS.S3.BucketDeleted
     - AWS.S3.BucketPolicyModified
+    - AWS.S3.Bucket.ActionRestrictions
     - AWS.S3.ServerAccess.Error
     - AWS.S3.ServerAccess.Insecure
+    - AWS.S3.Bucket.LifecycleConfiguration
+    - AWS.S3.Bucket.Logging
+    - AWS.S3.Bucket.MFADelete
+    - AWS.S3.Bucket.NameDNSCompliance
     - AWS.CloudTrail.SecurityConfigurationChange
     - AWS.SecurityHub.Finding.Evasion
     - AWS.CloudTrail.UnauthorizedAPICall
@@ -108,6 +122,13 @@ PackDefinition:
     - AWS.Config.RecordAllResourceTypes
     - AWS.Config.GlobalResources
     - AWS.DynamoDB.Autoscaling
+    - AWS.AccessKey.Rotation
+    - AWS.AccessKey.Unused
+    - AWS.AccessKeys.AccountCreation
+    - AWS.Redshift.Cluster.Logging
+    - AWS.Redshift.Cluster.SnapshotRetention
+    - AWS.Redshift.Cluster.VersionUpgrade
+    - AWS.VPC.FlowLogs
     # AWS DataModels
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
@@ -115,6 +136,8 @@ PackDefinition:
     - Standard.AWS.VPCFlow
     # Globals used in these rules/policies
     - panther_base_helpers
+    - panther_default
     - panther_event_type_helpers
+    - panther_greynoise_helpers
+    - panther_lookuptable_helpers
     - panther_oss_helpers
-    - panther

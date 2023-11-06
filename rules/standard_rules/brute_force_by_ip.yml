@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: brute_force_by_ip.py
-RuleID: Standard.BruteForceByIP
+RuleID: "Standard.BruteForceByIP"
 DedupPeriodMinutes: 60
-DisplayName: Brute Force By IP
+DisplayName: "Brute Force By IP"
 Enabled: true
 LogTypes:
   - Asana.Audit
@@ -13,11 +13,11 @@ LogTypes:
   - Okta.SystemLog
   - OneLogin.Events
   - OnePassword.SignInAttempt
-Severity: Medium
+Severity: Info
 Tags:
   - DataModel
   - Credential Access:Brute Force
-Threshold: 5
+Threshold: 20
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110

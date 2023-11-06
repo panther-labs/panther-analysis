@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: slack_application_dos.py
-RuleID: Slack.AuditLogs.ApplicationDoS
-DisplayName: Slack Denial of Service
+RuleID: "Slack.AuditLogs.ApplicationDoS"
+DisplayName: "Slack Denial of Service"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
@@ -24,8 +24,6 @@ Tests:
       - objectName: get_string_set
         returnValue: ""
       - objectName: put_string_set
-        returnValue: ""
-      - objectName: set_key_expiration
         returnValue: ""
     Log:
       {
@@ -57,8 +55,6 @@ Tests:
       - objectName: get_string_set
         returnValue: "{\"time\":\"2021-06-08 22:24:43\"}"
       - objectName: put_string_set
-        returnValue: ""
-      - objectName: set_key_expiration
         returnValue: ""
     Log:
       {

@@ -1,0 +1,30 @@
+AnalysisType: rule
+Description: A Zoom User turned off your organization's setting to automatically sign users out after a specified period of time.
+DisplayName: "Zoom Automatic Sign Out Disabled"
+Enabled: true
+Filename: zoom_automatic_sign_out_disabled.py
+Reference: https://support.zoom.us/hc/en-us/articles/115005756143-Changing-account-security-settings#:~:text=Users%20need%20to%20sign%20in,of%205%20to%20120%20minutes
+Runbook: Confirm this user acted with valid business intent and determine whether this activity was authorized.
+Severity: Medium
+Tests:
+    - ExpectedResult: true
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Automatically sign users out after a specified time: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:20:42"
+      Name: Automatic Signout Setting Disabled
+    - ExpectedResult: false
+      Log:
+        action: Update
+        category_type: Account
+        operation_detail: 'Security  - Require that all meetings are secured with one security option: from On to Off'
+        operator: example@example.io
+        time: "2022-12-16 18:15:38"
+      Name: Meeting Setting Disabled
+DedupPeriodMinutes: 60
+LogTypes:
+    - Zoom.Operation
+RuleID: "Zoom.Automatic.Sign.Out.Disabled"
+Threshold: 1

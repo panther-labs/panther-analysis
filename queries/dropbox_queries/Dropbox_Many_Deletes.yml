@@ -1,0 +1,19 @@
+AnalysisType: scheduled_query
+Description: Dropbox Many Deletes
+Enabled: false
+Query: |-
+    SELECT
+      actor:user:email AS user,
+      ARRAY_AGG( DISTINCT assets[0]:path:contextual) AS deleted_files,
+      ARRAY_SIZE(deleted_files) as delete_count,
+      TIME_SLICE(p_event_time, 60, 'minute') as t_s
+    FROM panther_logs.public.dropbox_teamevent
+    WHERE p_occurs_since('1 day')
+      AND event_type:_tag = 'file_delete'
+    GROUP BY actor:user:email, t_s
+    HAVING delete_count > 2
+    ORDER BY delete_count DESC
+QueryName: "Dropbox Many Deletes"
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 3

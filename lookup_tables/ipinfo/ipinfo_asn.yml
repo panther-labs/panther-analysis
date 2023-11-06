@@ -1,10 +1,10 @@
 AnalysisType: lookup_table
-LookupName: ipinfo_asn
+LookupName: "ipinfo_asn"
 Schema: IPInfo.ASNCIDR
 Refresh:
   RoleARN: arn:aws:iam::893421435052:role/panther-ipinfo-access-role
   ObjectPath: s3://panther-ipinfo-ha771dhqm13j11czzb6kcpuy6ueccusw2a-s3alias/luts/data/ipinfo/asn.mmdb
-  PeriodMinutes: 60
+  PeriodMinutes: 1400
 Description: IpInfo Owner (ASN) includes ASN details for every IP address and every ASNs related domains, allocation date, registry name, total number of IP addresses, and assigned prefixes. This dataset is for detection engine. For the datalake, also enable ipinfo_asn_datalake.
 Reference: https://docs.panther.com/enrichment/ipinfo
 Enabled: false
@@ -132,6 +132,9 @@ LogTypeMap:
     - LogType: Crowdstrike.UserLogonLogoff
       Selectors:
         - 'aip'
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - 'p_any_ip_addresses'
     - LogType: Dropbox.TeamEvent
       Selectors:
         - '$.origin.geo_location.ip_address'
@@ -149,6 +152,9 @@ LogTypeMap:
         - '$.jsonPayload.removeIp'
         - '$.httpRequest.remoteIp'
         - '$.httpRequest.serverIp'
+    - LogType: GitHub.Audit
+      Selectors:
+        - 'actor_ip'
     - LogType: GitLab.API
       Selectors:
         - 'remote_ip'
@@ -279,7 +285,43 @@ LogTypeMap:
     - LogType: Workday.SignOnAttempt
       Selectors:
         - 'Session_IP_Address'
+    - LogType: Zeek.Conn
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
     - LogType: Zeek.DNS
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.DPD
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.HTTP
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Notice
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.NTP
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Ssh
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Ssl
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Tunnel
+      Selectors:
+        - 'id.orig_h'
+        - 'id.resp_h'
+    - LogType: Zeek.Weird
       Selectors:
         - 'id.orig_h'
         - 'id.resp_h'

@@ -1,0 +1,244 @@
+AnalysisType: rule
+Filename: notion_login_from_new_location.py
+RuleID: "Notion.LoginFromNewLocation"
+DisplayName: "Notion Login from New Location"
+Enabled: true
+LogTypes:
+    - Notion.AuditLogs
+Tags:
+  - Notion
+  - Identity & Access Management
+  - Login & Access Patterns
+Severity: Medium
+Description: A Notion User logged in from a new location.
+DedupPeriodMinutes: 60
+Threshold: 1 # Number of pages deleted; please change this value to suit your organization's needs.
+Runbook: Possible account takeover. Follow up with the Notion User to determine if this login is genuine.
+Tests:
+    - Name: Login from normal location
+      ExpectedResult: false
+      Mocks:
+        - objectName: get_dictionary
+          returnValue: '{ "Minas Tirith_Pellenor_Gondor": 1686542031 }'
+        - objectName: put_dictionary
+          returnValue: False
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Minas Tirith",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Gondor",
+                "postal_code": "55555",
+                "region": "Pellenor",
+                "region_code": "PL",
+                "timezone": "Middle Earth/Pellenor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: No previous recorded login
+      ExpectedResult: false
+      Mocks:
+        - objectName: get_dictionary
+          returnValue: ""
+        - objectName: put_dictionary
+          returnValue: False
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Minas Tirith",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Gondor",
+                "postal_code": "55555",
+                "region": "Pellenor",
+                "region_code": "PL",
+                "timezone": "Middle Earth/Pellenor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Login from different location
+      ExpectedResult: true
+      Mocks:
+        - objectName: get_dictionary
+          returnValue: '{ "Minas Tirith_Pellenor_Gondor": 1686542031 }'
+        - objectName: put_dictionary
+          returnValue: False
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Missing enrichment
+      ExpectedResult: false
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          },
+          "p_enrichment": {},
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }
+    - Name: Unrelated event
+      ExpectedResult: false
+      Log:
+        {
+          "event": {
+            "actor": {
+              "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+              "object": "user",
+              "person": {
+                "email": "aragorn.elessar@lotr.com"
+              },
+              "type": "person"
+            },
+            "details": {
+              "authType": "email"
+            },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "page.viewed",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          },
+          "p_enrichment": {
+            "ipinfo_location": {
+              "event.ip_address": {
+                "city": "Barad-Dur",
+                "lat": "0.00000",
+                "lng": "0.00000",
+                "country": "Mordor",
+                "postal_code": "55555",
+                "region": "Mount Doom",
+                "region_code": "MD",
+                "timezone": "Middle Earth/Mordor"
+              }
+            }
+          },
+          "p_event_time": "2023-06-12 21:40:28.690000000",
+          "p_log_type": "Notion.AuditLogs",
+          "p_parse_time": "2023-06-12 22:53:51.602223297",
+          "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "p_schema_version": 0,
+          "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "p_source_label": "Notion Logs"
+        }

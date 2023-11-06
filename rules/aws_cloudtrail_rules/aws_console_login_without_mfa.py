@@ -1,11 +1,12 @@
 import logging
 
-from panther import lookup_aws_account_name
 from panther_base_helpers import aws_rule_context, deep_get
-from panther_oss_helpers import check_account_age
+from panther_default import lookup_aws_account_name
+from panther_detection_helpers.caching import check_account_age
 
 # Set to True for environments that permit direct role assumption via external IDP
 ROLES_VIA_EXTERNAL_IDP = False
+
 
 # pylint: disable=R0911,R0912,R1260
 def rule(event):

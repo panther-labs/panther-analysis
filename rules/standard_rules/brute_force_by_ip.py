@@ -1,7 +1,7 @@
 from json import loads
 
 import panther_event_type_helpers as event_type
-from panther import lookup_aws_account_name
+from panther_default import lookup_aws_account_name
 from panther_oss_helpers import add_parse_delay, geoinfo_from_ip
 
 

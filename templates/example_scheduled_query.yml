@@ -1,13 +1,16 @@
 AnalysisType: scheduled_query
-QueryName: My Query Name
+QueryName: "My Query Name"
 Enabled: true
 Tags:
   - Optional
   - Tags
 Description: >
   An optional Description
+# Note: Use this parameter if the query includes generic syntax
 Query: 'SELECT * FROM panther_logs.aws_cloudtrail LIMIT 10'
+# Note: Use this parameter if the query includes Snowflake-specific syntax
 SnowflakeQuery: 'SELECT * FROM panther_logs.public.aws_cloudtrail LIMIT 10'
+# Note: Use this parameter if the query includes Athena-specific syntax
 AthenaQuery: 'SELECT * FROM panther_logs.aws_cloudtrail LIMIT 10'
 Schedule:
   # Note: CronExpression and RateMinutes are mutually exclusive, only

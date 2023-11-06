@@ -1,5 +1,5 @@
-from panther import aws_cloudtrail_success
 from panther_base_helpers import aws_rule_context
+from panther_default import aws_cloudtrail_success
 
 # API calls that are indicative of an AWS Config Service change
 CONFIG_SERVICE_DISABLE_DELETE_EVENTS = {
