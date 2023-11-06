@@ -3,14 +3,16 @@ def rule(event):
 
 
 def title(event):
-    f"{event.get('attack_tactic', 'CB')}:"
-    f"{event.get('device_username', '<no-user-found>')} on "
-    f"{event.get('device_name', '<no-device-found>')}: "
-    f"{event.get('reason', '<no-reason-found>')}"
+    return (
+        f"{event.get('attack_tactic', 'CB')}: "
+        f"{event.get('device_username', '<no-user-found>')} on "
+        f"{event.get('device_name', '<no-device-found>')}: "
+        f"{event.get('reason', '<no-reason-found>')}"
+    )
 
 
 def description(event):
-    return
+    return event.get("reason", "<no-reason-found>")
 
 
 def severity(event):
