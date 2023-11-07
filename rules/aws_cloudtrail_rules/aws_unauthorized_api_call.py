@@ -23,10 +23,7 @@ def rule(event):
 
 
 def dedup(event):
-    user_identity = event.get("userIdentity", {})
-    if user_identity.get("type") == "AssumedRole":
-        return aws_strip_role_session_id(user_identity.get("arn", ""))
-    return user_identity.get("arn", "")
+    return deep_get(event, 'userIdentity', 'principalId', default="<UNKNOWN_PRINCIPAL>")
 
 
 def title(event):
