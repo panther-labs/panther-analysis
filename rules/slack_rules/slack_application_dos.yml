@@ -7,6 +7,12 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Impact
+  - Endpoint Denial of Service
+  - Application Exhaustion Flood
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1499.003
 Severity: Critical
 Description: Detects when slack admin invalidates user session(s) more than once in a 24 hour period which can lead to DoS
 Reference: https://api.slack.com/admins/audit-logs
