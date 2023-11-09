@@ -1,5 +1,6 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
+TEST_ARGS :=
 
 ifeq ($(UNAME), Darwin)
 	install_pipenv_cmd = brew install pipenv
@@ -58,13 +59,13 @@ install:
 	pipenv sync --dev
 
 test: global-helpers-unit-test
-	pipenv run panther_analysis_tool test
+	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
 docker-build:
 	docker build -t panther-analysis .
 
 docker-test:
-	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test TEST_ARGS="$(TEST_ARGS)"
 
 docker-lint:
 	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make lint
