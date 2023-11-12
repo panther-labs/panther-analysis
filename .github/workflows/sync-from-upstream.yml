@@ -55,10 +55,7 @@ jobs:
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
           #test_mode: true
-          # turning off rebase for now as it could make for more complex merges
-          #git_config_pull_rebase: true 
-          # look back all the way through all git history - not just the default 1 month
-          shallow_since: 5 years ago
+          upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
       - uses: actions/github-script@v6
         id: create_pr
