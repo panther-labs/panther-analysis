@@ -54,14 +54,10 @@ jobs:
           #  change the usptream_sync_branch to master
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
-          #test_mode: true
+          #test_mode: true 
 
-          # turning off rebase for now as it could make for more complex merges
-          #git_config_pull_rebase: true
-          
-          # we don't want shallow, we want to check all git history
+          # check all git history for a shared commit or fall back to unrelated history if necessary
           shallow_since: 5 years ago
-          # fall back to unrelated histories if necessary
           upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
       - uses: actions/github-script@v6
