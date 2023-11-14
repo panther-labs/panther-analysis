@@ -27,7 +27,7 @@ def title(event):
 
 
 def severity(event):
-    if event.get('severity', '') == "INFO":
+    if event.get("severity", "") == "INFO":
         return "INFO"
     return "DEFAULT"
 
