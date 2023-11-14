@@ -4,9 +4,15 @@ DisplayName: "Okta Rate Limits"
 Enabled: true
 Filename: okta_rate_limits.py
 Severity: High
+Tags:
+  - Credential Access
+  - Brute Force
+  - Impact
+  - Network Denial of Service
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110
+    - TA0040:T1498
 Tests:
     - ExpectedResult: true
       Log:
@@ -49,7 +55,7 @@ Tests:
                 - ip: 1.2.3.4
                   version: V4
         securitycontext: {}
-        severity: WARN
+        severity: INFO
         target:
             - id: /api/v1/users
               type: URL Pattern

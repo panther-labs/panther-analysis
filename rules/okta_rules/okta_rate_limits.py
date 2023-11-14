@@ -26,5 +26,11 @@ def title(event):
     )
 
 
+def severity(event):
+    if event.get('severity', '') == "INFO":
+        return "INFO"
+    return "DEFAULT"
+
+
 def alert_context(event):
     return okta_alert_context(event)
