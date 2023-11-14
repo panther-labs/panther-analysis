@@ -2,12 +2,12 @@ name: sync-panther-analysis-from-upstream
 
 on:
   schedule:
-    # 15:00Z, every Tuesday
-    - cron: "00 15 * * 2"
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
   workflow_dispatch: # or on button click  
 
 env:
-  YOUR_REPO_PRIMARY_BRANCH_NAME: "master"
+  YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
 jobs:
   check_upstream:
@@ -54,7 +54,8 @@ jobs:
           #  change the usptream_sync_branch to master
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
-          #test_mode: true  
+          #test_mode: true
+          upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
       - uses: actions/github-script@v6
         id: create_pr
@@ -104,4 +105,3 @@ jobs:
         run: |
           echo "unhandled exception in PR create step. Check output of that step."
           exit 128
-      

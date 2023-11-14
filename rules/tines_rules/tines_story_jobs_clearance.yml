@@ -1,0 +1,45 @@
+AnalysisType: rule
+Filename: tines_story_jobs_clearance.py
+RuleID: Tines.Story.Jobs.Clearance
+DisplayName: "Tines Story Jobs Clearance"
+Enabled: true
+LogTypes:
+    - Tines.Audit
+Tags:
+  - Tines
+Severity: Low
+Description: "A Tines User has cleared story jobs."
+Runbook: "Possible data destruction. Please reach out to the user and confirm this was done for valid business reasons."
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Detection Trigger
+      ExpectedResult: true
+      Log:
+          {
+              "created_at": "2023-06-13 15:14:46",
+              "id": 1234,
+              "operation_name": "StoryJobsClearance",
+              "p_source_label": "tines-log-source-name",
+              "request_ip": "98.224.225.84",
+              "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (  KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+              "tenant_id": "1337",
+              "user_email": "user@email.com",
+              "user_id": "7331",
+              "user_name": "Tines User Person"
+          }
+    - Name: Tines Login
+      ExpectedResult: false
+      Log:
+          {
+              "created_at": "2023-05-17 14:45:19",
+              "id": 7888888,
+              "operation_name": "Login",
+              "p_source_label": "tines-log-source-name",
+              "request_ip": "12.12.12.12",
+              "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              "tenant_id": "8888",
+              "user_email": "user@company.com",
+              "user_id": "17171",
+              "user_name": "user at company dot com"
+          }

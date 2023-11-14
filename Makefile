@@ -1,5 +1,6 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
+TEST_ARGS :=
 
 ifeq ($(UNAME), Darwin)
 	install_pipenv_cmd = brew install pipenv
@@ -19,7 +20,6 @@ vscode-config: install-pipenv install
 	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
 	which code && code . 
 
-
 ci:
 	pipenv run $(MAKE) lint test
 
@@ -30,7 +30,7 @@ deps-update:
 	pipenv update
 
 global-helpers-unit-test:
-	pipenv run python global_helpers/*_test.py
+	pipenv run python -m unittest global_helpers/*_test.py
 
 lint: lint-pylint lint-fmt
 
@@ -59,13 +59,13 @@ install:
 	pipenv sync --dev
 
 test: global-helpers-unit-test
-	pipenv run panther_analysis_tool test
+	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
 docker-build:
 	docker build -t panther-analysis .
 
 docker-test:
-	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test TEST_ARGS="$(TEST_ARGS)"
 
 docker-lint:
 	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make lint
