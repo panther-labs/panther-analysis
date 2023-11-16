@@ -7,6 +7,7 @@ BAD_PERMISSIONS = {
     "http://acs.amazonaws.com/groups/global/AllUsers",
 }
 
+# docs.aws.amazon.com/codepipeline/latest/userguide/reference-ct-placeholder-buckets.html
 EXCLUDED_BUCKET_NAMES = {
     f"codepipeline-cloudtrail-placeholder-bucket-{region}" for region in aws_regions()
 }
