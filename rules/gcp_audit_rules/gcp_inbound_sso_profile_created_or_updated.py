@@ -5,7 +5,7 @@ METHODS = [
 
 
 def rule(event):
-    return event.deep_walk("protoPayload", "methodName", default="") in METHODS
+    return event.deep_get("protoPayload", "methodName", default="") in METHODS
 
 
 def title(event):
