@@ -1,0 +1,41 @@
+AnalysisType: rule
+RuleID: "CarbonBlack.Audit.Flagged"
+LogTypes:
+    - CarbonBlack.Audit
+Description: 'Detects when Carbon Black has flagged a log as important, such as failed login attempts and locked accounts.'
+DisplayName: "Carbon Black Log Entry Flagged"
+Enabled: true
+Filename: cb_audit_flagged.py
+Severity: High
+Reference: https://docs.vmware.com/en/VMware-Carbon-Black-Cloud/services/carbon-black-cloud-user-guide/GUID-FB61E4E3-6431-4226-A4E3-5949FB75922B.html
+Threshold: 1
+DedupPeriodMinutes: 60
+Tests:
+    - Name: Flagged
+      ExpectedResult: true
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "User bob.ross@acme.com retrieved secret for API ID JFDNIPS464 in org 12345",
+          "eventId": "66443924833011eeac3cb393f3d07f9f",
+          "eventTime": "2023-11-14 20:57:19.186000000",
+          "flagged": true,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "acme.com",
+          "verbose": false
+        }
+    - Name: Other role granted
+      ExpectedResult: false
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "Created grant: psc:cnn:A1234567:BC1234567890 with role Read Only",
+          "eventId": "66443924833011eeac3cb393f3d07f9f",
+          "eventTime": "2023-11-14 20:57:19.186000000",
+          "flagged": false,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "acme.com",
+          "requestUrl": "/access/v2/orgs/A1234567/grants",
+          "verbose": false
+        }
+

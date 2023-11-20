@@ -1,0 +1,39 @@
+AnalysisType: rule
+RuleID: "CarbonBlack.Audit.User.Added.Outside.Org"
+LogTypes:
+    - CarbonBlack.Audit
+Description: 'Detects when a user from a different organization is added to Carbon Black.'
+DisplayName: "Carbon Black User Added Outside Org"
+Enabled: true
+Filename: cb_audit_user_added_outside_org.py
+Severity: High
+Reference: https://docs.vmware.com/en/VMware-Carbon-Black-Cloud/services/carbon-black-cloud-user-guide/GUID-516BAF8C-A13D-4FC7-AA92-923159C13083.html
+Threshold: 1
+DedupPeriodMinutes: 60
+Tests:
+    - Name: Outside org
+      ExpectedResult: true
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "Added user badguy@acme.io to org 12345 (Email Invitation)",
+          "eventId": "d109e568832111ee8ab2057b240e65f8",
+          "eventTime": "2023-11-14 19:12:55.917000000",
+          "flagged": false,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "acme.com",
+          "verbose": false
+        }
+    - Name: Inside org
+      ExpectedResult: false
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "Added user goodguy@acme.com to org 12345 (Email Invitation)",
+          "eventId": "d109e568832111ee8ab2057b240e65f8",
+          "eventTime": "2023-11-14 19:12:55.917000000",
+          "flagged": false,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "acme.com",
+          "verbose": false
+        }
