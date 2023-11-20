@@ -1,0 +1,170 @@
+AnalysisType: rule
+Filename: gcp_workload_identity_pool_created_or_updated.py
+RuleID: "GCP.Workload.Identity.Pool.Created.or.Updated"
+DisplayName: "GCP Workload Identity Pool Created or Updated"
+Enabled: true
+LogTypes:
+    - GCP.AuditLog
+Tags:
+    - Account Manipulation
+    - Additional Cloud Roles
+    - GCP
+    - Privilege Escalation
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003
+    - TA0003:T1098.003
+    - TA0004:T1098.003
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: >
+    Ensure that the Workload Identity Pool creation or modification was expected. Adversaries may use this to persist or allow additional access or escalate their privilege.
+Reference: https://medium.com/google-cloud/detection-of-inbound-sso-persistence-techniques-in-gcp-c56f7b2a588b
+Tests:
+    - Name: DeleteWorkloadIdentityPoolProvider-False
+      ExpectedResult: false
+      Log:
+        insertId: 1h09dxwe33il5
+        logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+        operation:
+            first: true
+            id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/operations/bigarrpp32vamefyvthk4ay000000000
+            producer: iam.googleapis.com
+        protoPayload:
+            '@type': type.googleapis.com/google.cloud.audit.AuditLog
+            authenticationInfo:
+                principalEmail: user@example.com
+                principalSubject: user:user@example.com
+            authorizationInfo:
+                - granted: true
+                  permission: iam.workloadIdentityPools.delete
+                  resource: projects/test-project/locations/global/workloadIdentityPools/test-pool
+                  resourceAttributes: {}
+            methodName: google.iam.v1.WorkloadIdentityPools.DeleteWorkloadIdentityPool
+            request:
+                '@type': type.googleapis.com/google.iam.v1.DeleteWorkloadIdentityPoolRequest
+                name: projects/test-project/locations/global/workloadIdentityPools/test-pool
+            requestMetadata:
+                callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+                callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
+                destinationAttributes: {}
+                requestAttributes:
+                    auth: {}
+                    time: "2023-11-17T18:58:13.519015485Z"
+            resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool
+            serviceName: iam.googleapis.com
+        receiveTimestamp: "2023-11-17T18:58:14.565078208Z"
+        resource:
+            labels:
+                method: google.iam.v1.WorkloadIdentityPools.DeleteWorkloadIdentityPool
+                project_id: test-project
+                service: iam.googleapis.com
+            type: audited_resource
+        severity: NOTICE
+        timestamp: "2023-11-17T18:58:13.511621185Z"
+    - Name: UpdateWorkloadIdentityPoolProvider-True
+      ExpectedResult: true
+      Log:
+        insertId: 1plwiv7e2lak8
+        logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+        operation:
+            first: true
+            id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/providers/test-project/operations/bifqr6xo32vameeqtose200000000000
+            producer: iam.googleapis.com
+        protoPayload:
+            '@type': type.googleapis.com/google.cloud.audit.AuditLog
+            authenticationInfo:
+                principalEmail: user@example.com
+                principalSubject: user:user@example.com
+            authorizationInfo:
+                - granted: true
+                  permission: iam.workloadIdentityPoolProviders.update
+                  resource: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+                  resourceAttributes: {}
+            methodName: google.iam.v1.WorkloadIdentityPools.UpdateWorkloadIdentityPoolProvider
+            request:
+                '@type': type.googleapis.com/google.iam.v1.UpdateWorkloadIdentityPoolProviderRequest
+                updateMask: displayName,disabled,attributeMapping,attributeCondition,aws.accountId
+                workloadIdentityPoolProvider:
+                    attributeCondition: '''admins'' in google.groups'
+                    attributeMapping:
+                        attribute.aws_role: 'assertion.arn.contains(''assumed-role'') ? assertion.arn.extract(''{account_arn}assumed-role/'') + ''assumed-role/'' + assertion.arn.extract(''assumed-role/{role_name}/'') : assertion.arn'
+                        google.subject: assertion.arn
+                    aws:
+                        accountId: "123456789012"
+                    disabled: false
+                    displayName: Test Provider
+                    name: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+            requestMetadata:
+                callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+                callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
+                destinationAttributes: {}
+                requestAttributes:
+                    auth: {}
+                    time: "2023-11-17T18:56:57.745203848Z"
+            resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+            serviceName: iam.googleapis.com
+        receiveTimestamp: "2023-11-17T18:56:58.871491875Z"
+        resource:
+            labels:
+                method: google.iam.v1.WorkloadIdentityPools.UpdateWorkloadIdentityPoolProvider
+                project_id: test-project
+                service: iam.googleapis.com
+            type: audited_resource
+        severity: NOTICE
+        timestamp: "2023-11-17T18:56:57.730630771Z"
+    - Name: CreateWorkloadIdentityPoolProvider-True
+      ExpectedResult: true
+      Log:
+        insertId: 11gmdk5e1ne4r
+        logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+        operation:
+            first: true
+            id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/providers/test-project/operations/bigarpxj32vamehaqcf5oai000000000
+            producer: iam.googleapis.com
+        protoPayload:
+            '@type': type.googleapis.com/google.cloud.audit.AuditLog
+            authenticationInfo:
+                principalEmail: user@example.com
+                principalSubject: user:user@example.com
+            authorizationInfo:
+                - granted: true
+                  permission: iam.workloadIdentityPoolProviders.create
+                  resource: projects/test-project/locations/global/workloadIdentityPools/test-pool
+                  resourceAttributes: {}
+            methodName: google.iam.v1.WorkloadIdentityPools.CreateWorkloadIdentityPoolProvider
+            request:
+                '@type': type.googleapis.com/google.iam.v1.CreateWorkloadIdentityPoolProviderRequest
+                parent: projects/test-project/locations/global/workloadIdentityPools/test-pool
+                workloadIdentityPoolProvider:
+                    attributeCondition: ""
+                    attributeMapping:
+                        attribute.aws_role: 'assertion.arn.contains(''assumed-role'') ? assertion.arn.extract(''{account_arn}assumed-role/'') + ''assumed-role/'' + assertion.arn.extract(''assumed-role/{role_name}/'') : assertion.arn'
+                        google.subject: assertion.arn
+                    aws:
+                        accountId: "123456789012"
+                    disabled: false
+                    displayName: Test Provider
+                workloadIdentityPoolProviderId: test-project
+            requestMetadata:
+                callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+                callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
+                destinationAttributes: {}
+                requestAttributes:
+                    auth: {}
+                    time: "2023-11-17T18:45:17.961743198Z"
+            resourceLocation:
+                currentLocations:
+                    - global
+            resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool
+            serviceName: iam.googleapis.com
+        receiveTimestamp: "2023-11-17T18:45:19.404664001Z"
+        resource:
+            labels:
+                method: google.iam.v1.WorkloadIdentityPools.CreateWorkloadIdentityPoolProvider
+                project_id: test-project
+                service: iam.googleapis.com
+            type: audited_resource
+        severity: NOTICE
+        timestamp: "2023-11-17T18:45:17.952414168Z"

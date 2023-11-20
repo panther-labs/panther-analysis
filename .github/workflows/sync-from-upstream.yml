@@ -2,8 +2,8 @@ name: sync-panther-analysis-from-upstream
 
 on:
   schedule:
-    # 15:00Z, every Tuesday
-    - cron: "00 15 * * 2"
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
   workflow_dispatch: # or on button click  
 
 env:
@@ -54,7 +54,8 @@ jobs:
           #  change the usptream_sync_branch to master
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
-          #test_mode: true  
+          #test_mode: true
+          upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
       - uses: actions/github-script@v6
         id: create_pr
@@ -73,11 +74,11 @@ jobs:
                 base: '${{env.YOUR_REPO_PRIMARY_BRANCH_NAME}}',
               });
             } catch(e) {
-              if (e.response.data.errors[0].message.includes('No commits between')) {
+              if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('No commits between')) {
                 fs.appendFileSync(
                   process.env['GITHUB_OUTPUT'],
                   'pr_state=no-updates\n');
-              } else if (e.response.data.errors[0].message.includes('A pull request already exists for')) {
+              } else if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('A pull request already exists for')) {
                 fs.appendFileSync(
                   process.env['GITHUB_OUTPUT'],
                   'pr_state=update-pr-already-exists\n');

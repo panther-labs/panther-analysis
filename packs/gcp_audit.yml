@@ -3,22 +3,25 @@ PackID: PantherManaged.GCP.Audit
 Description: Group of all Google Cloud Platform (GCP) Audit detections
 PackDefinition:
   IDs:
+    - GCP.Access.Attempts.Violating.IAP.Access.Controls
+    - GCP.Access.Attempts.Violating.VPC.Service.Controls
+    - GCP.BigQuery.Large.Scan
+    - GCP.Cloud.Storage.Buckets.Modified.Or.Deleted
+    - GCP.Destructive.Queries
     - GCP.GCS.IAMChanges
     - GCP.GCS.Public
     - GCP.IAM.CorporateEmail
     - GCP.IAM.CustomRoleChanges
     - GCP.IAM.OrgFolderIAMChanges
-    - GCP.SQL.ConfigChanges
-    - GCP.Access.Attempts.Violating.VPC.Service.Controls
-    - GCP.Access.Attempts.Violating.IAP.Access.Controls
-    - GCP.VPC.Flow.Logs.Disabled
-    - GCP.BigQuery.Large.Scan
-    - GCP.Destructive.Queries
+    - GCP.Inbound.SSO.Profile.Created
     - GCP.Logging.Settings.Modified
-    - GCP.Cloud.Storage.Buckets.Modified.Or.Deleted
     - GCP.Permissions.Granted.to.Create.or.Manage.Service.Account.Key
-    - GCP.User.Added.to.IAP.Protected.Service
     - GCP.Service.Account.or.Keys.Created
+    - GCP.SQL.ConfigChanges
+    - GCP.User.Added.to.IAP.Protected.Service
+    - GCP.VPC.Flow.Logs.Disabled
+    - GCP.Workforce.Pool.Created.or.Updated
+    - GCP.Workload.Identity.Pool.Created.or.Updated
     # Data model
     - Standard.GCP.AuditLog
     # Globals used in these rules/policies
