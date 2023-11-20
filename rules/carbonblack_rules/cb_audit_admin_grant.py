@@ -5,7 +5,7 @@ def rule(event):
     if not event.get("requestUrl", "").startswith("/access/"):
         return False
     desc = event.get("description", "")
-    if not any([desc.startswith(prefix) for prefix in PREFIXES]):
+    if not any(desc.startswith(prefix) for prefix in PREFIXES):
         return False
     if "Admin" in desc:
         return True
