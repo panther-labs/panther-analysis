@@ -9,11 +9,13 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      GITHUB_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
-          token: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
         with:
@@ -24,7 +26,7 @@ jobs:
         uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
         with:
           python-version: '3.9'
-      - name: Create new panther-analysis-release
+      - name: Create new panther-analysis release
         run: |
           export AWS_REGION=${{ secrets.AWS_REGION }}
           export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
