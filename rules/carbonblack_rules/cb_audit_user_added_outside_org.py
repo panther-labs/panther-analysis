@@ -1,6 +1,9 @@
+PATTERNS = ("Added user ",)
+
+
 def rule(event):
     desc = event.get("description", "")
-    if not desc.startswith("Added user "):
+    if not any(desc.startswith(pattern) for pattern in PATTERNS):
         return False
     src_user = event.get("loginName", "")
     src_domain = src_user.split("@")[1]

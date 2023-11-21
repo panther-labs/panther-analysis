@@ -8,10 +8,7 @@ PATTERNS = (
 
 def rule(event):
     desc = event.get("description", "")
-    for pattern in PATTERNS:
-        if pattern in desc:
-            return True
-    return False
+    return any(pattern in desc for pattern in PATTERNS)
 
 
 def title(event):
