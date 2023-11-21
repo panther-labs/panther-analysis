@@ -8,8 +8,10 @@ def rule(event):
 
 
 def title(event):
-    return (f"Github detected a secret in {event.get('repo', '<REPO_NOT_FOUND>')} \
-            (#{event.get('number', '<NUMBER_NOT_FOUND>')})")
+    return (
+        f"Github detected a secret in {event.get('repo', '<REPO_NOT_FOUND>')} "
+        f"(#{event.get('number', '<NUMBER_NOT_FOUND>')})"
+    )
 
 
 def alert_context(event):
