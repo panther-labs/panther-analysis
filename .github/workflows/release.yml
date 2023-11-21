@@ -38,4 +38,4 @@ jobs:
           pipenv run panther_analysis_tool release --kms-key ${{ secrets.KMS_KEY_ARN }}
           openssl dgst -binary -sha512 panther-analysis-all.zip > ${{ secrets.DIGEST_FILE }}
           aws kms verify --key-id ${{ secrets.KMS_KEY_ARN }} --signing-algorithm ${{ secrets.SIGNING_ALGORITHM }} --message fileb://${{ secrets.DIGEST_FILE }} --message-type DIGEST --output json --signature $(cat panther-analysis-all.sig) | jq '.SignatureValid'
-          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --latest --notes-from-tag
+          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --latest --generate-notes
