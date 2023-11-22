@@ -1,15 +1,14 @@
-import time
+from datetime import timedelta
 
 from panther_base_helpers import is_ip_in_network
-from panther_oss_helpers import (
+from panther_detection_helpers.caching import (
     add_to_string_set,
     get_string_set,
     put_string_set,
-    set_key_expiration,
 )
 
 THRESH = 2
-THRESH_TTL = 43200  # 1/2 day
+THRESH_TTL = timedelta(hours=12).total_seconds()
 
 # Safelist for IP Subnets to ignore in this ruleset
 # Each entry in the list should be in CIDR notation
@@ -41,13 +40,13 @@ def rule(event):
     user_id = str(event.get("user_id"))
     if not user_ids:
         # store this as the first user login from this ip address
-        put_string_set(event_key, [user_id])
-        set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
+        put_string_set(event_key, [user_id], epoch_seconds=event.event_time_epoch() + THRESH_TTL)
         return False
     # add a new username if this is a unique user from this ip address
     if user_id not in user_ids:
-        user_ids = add_to_string_set(event_key, user_id)
-        set_key_expiration(event_key, int(time.time()) + THRESH_TTL)
+        user_ids = add_to_string_set(
+            event_key, user_id, epoch_seconds=event.event_time_epoch() + THRESH_TTL
+        )
     return len(user_ids) > THRESH
 
 

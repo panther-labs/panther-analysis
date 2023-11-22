@@ -1,0 +1,41 @@
+name: Panther Analysis Release
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      GITHUB_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          token: ${{ env.GITHUB_TOKEN }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@010d0da01d0b5a38af31e9c3470dbfdabdecca3a # v4.0.1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: panther-analysis-release
+      - name: Install Python
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        with:
+          python-version: '3.9'
+      - name: Create new panther-analysis release
+        run: |
+          export AWS_REGION=${{ secrets.AWS_REGION }}
+          export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
+          export OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
+          export NEW_VERSION=$(echo $OLD_VERSION | awk -F. '{printf "%s.%d.0", $1, $2+1}')
+          pip3 install --user pipenv
+          rm -rf $(pipenv --venv)
+          make install
+          pipenv run panther_analysis_tool release --kms-key ${{ secrets.KMS_KEY_ARN }}
+          openssl dgst -binary -sha512 panther-analysis-all.zip > ${{ secrets.DIGEST_FILE }}
+          aws kms verify --key-id ${{ secrets.KMS_KEY_ARN }} --signing-algorithm ${{ secrets.SIGNING_ALGORITHM }} --message fileb://${{ secrets.DIGEST_FILE }} --message-type DIGEST --output json --signature $(cat panther-analysis-all.sig) | jq '.SignatureValid'
+          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --latest --generate-notes

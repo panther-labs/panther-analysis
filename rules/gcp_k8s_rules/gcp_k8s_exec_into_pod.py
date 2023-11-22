@@ -5,10 +5,10 @@ from panther_base_helpers import deep_walk
 
 def rule(event):
     # Defaults to False (no alert) unless method is exec and principal not allowed
-    if not any(
+    if not all(
         [
             deep_walk(event, "protoPayload", "methodName") == "io.k8s.core.v1.pods.exec.create",
-            deep_walk(event, "protoPayload", "resourceName"),
+            deep_walk(event, "resource", "type") == "k8s_cluster",
         ]
     ):
         return False

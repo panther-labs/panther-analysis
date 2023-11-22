@@ -1,0 +1,49 @@
+AnalysisType: rule
+RuleID: "CarbonBlack.Audit.Data.Forwarder.Stopped"
+LogTypes:
+    - CarbonBlack.Audit
+Description: 'Detects when a user disables or deletes a Data Forwarder.'
+DisplayName: "Carbon Black Data Forwarder Stopped"
+Enabled: true
+Filename: cb_audit_data_forwarder_stopped.py
+Severity: High
+Tags:
+  - Defense Evasion
+  - Impair Defenses
+  - Disable or Modify Cloud Logs
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+Reference: https://docs.vmware.com/en/VMware-Carbon-Black-Cloud/services/carbon-black-cloud-user-guide/GUID-E8D33F72-BABB-4157-A908-D8BBDB5AF349.html
+Threshold: 1
+DedupPeriodMinutes: 60
+Tests:
+    - Name: Endpoint event forwarder disabled
+      ExpectedResult: true
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "Updated Config: {\"id\":\"b6ab1fb9-61f6-11ee-9e9b-5655adf4bf96\",\"org_key\":\"A1234567\",\"name\":\"endpoint event\",\"enabled\":false,\"s3_bucket_name\":\"carbonblackbucket\",\"s3_prefix\":\"endpoint\",\"type\":\"endpoint.event\",\"create_time\":\"2023-10-03T14:11:14Z\",\"update_time\":\"2023-11-14T19:16:43Z\"}\n",
+          "eventId": "58bef441832211ee83ef1721d866b8d6",
+          "eventTime": "2023-11-14 19:16:43.123000000",
+          "flagged": false,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "bob.ross@acme.com",
+          "requestUrl": "/data_forwarder/v2/orgs/A1234567/configs/b6ab1fb9-61f6-11ee-9e9b-5655adf4bf96",
+          "verbose": false
+        }
+    - Name: Endpoint event forwarder updated
+      ExpectedResult: false
+      Log:
+        {
+          "clientIp": "12.34.56.78",
+          "description": "Updated Config: {\"id\":\"b6ab1fb9-61f6-11ee-9e9b-5655adf4bf96\",\"org_key\":\"A1234567\",\"name\":\"endpoint event\",\"enabled\":true,\"s3_bucket_name\":\"carbonblackbucket\",\"s3_prefix\":\"endpoint\",\"type\":\"endpoint.event\",\"create_time\":\"2023-10-03T14:11:14Z\",\"update_time\":\"2023-11-14T19:16:43Z\"}\n",
+          "eventId": "58bef441832211ee83ef1721d866b8d6",
+          "eventTime": "2023-11-14 19:16:43.123000000",
+          "flagged": false,
+          "loginName": "bob.ross@acme.com",
+          "orgName": "bob.ross@acme.com",
+          "requestUrl": "/data_forwarder/v2/orgs/A1234567/configs/b6ab1fb9-61f6-11ee-9e9b-5655adf4bf96",
+          "verbose": false
+        }
+
