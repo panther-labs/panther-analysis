@@ -18,7 +18,7 @@ Query: >
                  AND objectRef:subresource = 'attach'
                  AND objectRef:namespace IN ('kube-system','kube-public','default')
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for known workloads that are not sensitive or need to run in these namespaces
+                 --insert allow-list for known workloads that are not sensitive or need to run in these namespaces
                  LIMIT 100
 Schedule:
   RateMinutes: 30
