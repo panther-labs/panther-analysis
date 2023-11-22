@@ -43,7 +43,7 @@ Tests:
         "change_timestamp": "2023-10-04 08:47:36.268000000",
         "value": "NONE"
       },
-      "device_external_ip": "94.123.213.12",
+      "device_external_ip": "12.34.56.78",
       "device_id": 173050323,
       "device_internal_ip": "192.168.31.23",
       "device_location": "OFFSITE",
@@ -111,289 +111,94 @@ Tests:
         "status": "OPEN"
       }
     }
-Reports:
-  MITRE ATT&CK:  # https://docs.vmware.com/en/VMware-Carbon-Black-Cloud/services/carbon-black-cloud-user-guide/GUID-0B68199D-6411-45D1-AE0D-2AB9B7A28513.html
-    - T1156  # .bash_profile and .bashrc
-    - T1548  # Abuse Elevation Control Mechanism
-    - T1134  # Access Token Manipulation
-    - T1015  # Accessibility Features
-    - T1087  # Account Discovery
-    - T1098  # Account Manipulation
-    - T1307  # Acquire and/or use 3rd party infrastructure services
-    - T1329  # Acquire and/or use 3rd party infrastructure services
-    - T1308  # Acquire and/or use 3rd party software services
-    - T1330  # Acquire and/or use 3rd party software services
-    - T1310  # Acquire or compromise 3rd party signing certificates
-    - T1182  # AppCert DLLs
-    - T1103  # AppInit DLLs
-    - T1155  # AppleScript
-    - T1017  # Application Deployment Software
-    - T1138  # Application Shimming
-    - T1010  # Application Window Discovery
-    - T1560  # Archive Collected Data
-    - T1123  # Audio Capture
-    - T1131  # Authentication Package
-    - T1119  # Automated Collection
-    - T1020  # Automated Exfiltration
-    - T1139  # Bash History
-    - T1009  # Binary Padding
-    - T1197  # BITS Jobs
-    - T1547  # Boot or Logon Autostart Execution
-    - T1067  # Bootkit
-    - T1217  # Browser Bookmark Discovery
-    - T1176  # Browser Extensions
-    - T1110  # Brute Force
-    - T1088  # Bypass User Account Control
-    - T1042  # Change Default File Association
-    - T1146  # Clear Command History
-    - T1115  # Clipboard Data
-    - T1191  # CMSTP
-    - T1116  # Code Signing
-    - T1059  # Command-Line or Script Interface
-    - T1043  # Commonly Used Port
-    - T1092  # Communication Through Removable Media
-    - T1500  # Compile After Delivery
-    - T1223  # Compiled HTML File
-    - T1109  # Component Firmware
-    - T1175  # Component Object Model and Distributed COM
-    - T1122  # Component Object Model Hijacking
-    - T1196  # Control Panel Items
-    - T1136  # Create Account
-    - T1345  # Create Custom Payloads
-    - T1543  # Create or Modify System Process
-    - T1003  # OS Credential Dumping
-    - T1555  # Credentials from Password Stores
-    - T1503  # Credentials from Web Browsers
-    - T1081  # Credentials in Files
-    - T1214  # Credentials in Registry
-    - T1094  # Custom Command and Control Protocol
-    - T1024  # Custom Cryptographic Protocol
-    - T1002  # Data Compressed
-    - T1485  # Data Destruction
-    - T1132  # Data Encoding
-    - T1022  # Data Encrypted
-    - T1486  # Data Encrypted for Impact
-    - T1213  # Data from Information Repositories
-    - T1005  # Data from Local System
-    - T1039  # Data from Network Shared Drive
-    - T1025  # Data from Removable Media
-    - T1320  # Data Hiding
-    - T1001  # Data Obfuscation
-    - T1565  # Data Manipulation
-    - T1074  # Data Staged
-    - T1030  # Data Transfer Size Limits
-    - T1207  # Rogue Domain Controller
-    - T1491  # Defacement
-    - T1140  # Deobfuscate/Decode Files or Information
-    - T1089  # Disabling Security Tools
-    - T1488  # Disk Content Wipe
-    - T1487  # Disk Structure Wipe
-    - T1561  # Disk Wipe
-    - T1038  # DLL Search Order Hijacking
-    - T1073  # DLL Side-Loading
-    - T1172  # Domain Fronting
-    - T1483  # Domain Generation Algorithms
-    - T1482  # Domain Trust Discovery
-    - T1189  # Drive-by Compromise
-    - T1157  # Dylib Hijacking
-    - T1173  # Dynamic Data Exchange
-    - T1568  # Dynamic Resolution
-    - T1514  # Elevated Execution with Prompt
-    - T1114  # Email Collection
-    - T1573  # Encrypted Channel
-    - T1499  # Endpoint Denial of Service
-    - T1546  # Event Triggered Execution
-    - T1480  # Execution Guardrails
-    - T1106  # Native API
-    - T1129  # Shared Modules
-    - T1048  # Exfiltration Over Alternative Protocol
-    - T1041  # Exfiltration Over Command and Control Channel
-    - T1011  # Exfiltration Over Other Network Medium
-    - T1052  # Exfiltration Over Physical Medium
-    - T1190  # Exploit Public-Facing Application
-    - T1203  # Exploitation for Client Execution
-    - T1212  # Exploitation for Credential Access
-    - T1211  # Exploitation for Defense Evasion
-    - T1068  # Exploitation for Privilege Escalation
-    - T1210  # Exploitation of Remote Services
-    - T1133  # External Remote Services
-    - T1181  # Extra Window Memory Injection
-    - T1008  # Fallback Channels
-    - T1083  # File and Directory Discovery
-    - T1222  # File and Directory Permissions Modification
-    - T1107  # File Deletion
-    - T1006  # Direct Volume Access
-    - T1044  # File System Permissions Weakness
-    - T1495  # Firmware Corruption
-    - T1187  # Forced Authentication
-    - T1144  # Gatekeeper Bypass
-    - T1061  # Graphical User Interface
-    - T1484  # Group Policy Modification
-    - T1200  # Hardware Additions
-    - T1158  # Hidden Files and Directories
-    - T1147  # Hidden Users
-    - T1143  # Hidden Window
-    - T1564  # Hide Artifacts
-    - T1574  # Hijack Execution Flow
-    - T1148  # HISTCONTROL
-    - T1179  # Hooking
-    - T1062  # Hypervisor
-    - T1183  # Image File Execution Options Injection
-    - T1562  # Impair Defenses
-    - T1054  # Indicator Blocking
-    - T1066  # Indicator Removal from Tools
-    - T1070  # Indicator Removal on Host
-    - T1202  # Indirect Command Execution
-    - T1490  # Inhibit System Recovery
-    - T1056  # Input Capture
-    - T1141  # Input Prompt
-    - T1130  # Install Root Certificate
-    - T1118  # InstallUtil
-    - T1559  # Inter-Process Communication
-    - T1208  # Kerberoasting
-    - T1215  # Kernel Modules and Extensions
-    - T1142  # Keychain
-    - T1570  # Lateral Tool Transfer
-    - T1159  # Launch Agent
-    - T1160  # Launch Daemon
-    - T1152  # Launchctl
-    - T1161  # LC_LOAD_DYLIB Addition
-    - T1149  # LC_MAIN Hijacking
-    - T1171  # LLMNR/NBT-NS Poisoning and Relay
-    - T1168  # Local Job Scheduling
-    - T1162  # Login Item
-    - T1037  # Logon Scripts
-    - T1177  # LSASS Driver
-    - T1185  # Man in the Browser
-    - T1557  # Man-in-the-Middle
-    - T1036  # Masquerading
-    - T1556  # Modify Authentication Process
-    - T1578  # Modify Cloud Compute Infrastructure
-    - T1031  # Modify Existing Service
-    - T1112  # Modify Registry
-    - T1170  # Mshta
-    - T1188  # Multi-hop Proxy
-    - T1104  # Multi-Stage Channels
-    - T1026  # Multiband Communication
-    - T1079  # Multilayer Encryption
-    - T1128  # Netsh Helper DLL
-    - T1498  # Network Denial of Service
-    - T1046  # Network Service Scanning
-    - T1126  # Network Share Connection Removal
-    - T1135  # Network Share Discovery
-    - T1040  # Network Sniffing
-    - T1050  # New Service
-    - T1095  # Non-Application Layer Protocol
-    - T1571  # Non-Standard Port
-    - T1096  # NTFS File Attributes
-    - T1027  # Obfuscated Files or Information
-    - T1137  # Office Application Startup
-    - T1502  # Parent PID Spoofing
-    - T1075  # Pass the Hash
-    - T1097  # Pass the Ticket
-    - T1174  # Password Filter DLL
-    - T1201  # Password Policy Discovery
-    - T1034  # Path Interception
-    - T1120  # Peripheral Device Discovery
-    - T1069  # Permission Groups Discovery
-    - T1566  # Phishing
-    - T1150  # Plist Modification
-    - T1205  # Traffic Signaling
-    - T1013  # Port Monitors
-    - T1086  # PowerShell
-    - T1504  # PowerShell Profile
-    - T1542  # Pre-OS Boot
-    - T1145  # Private Keys
-    - T1057  # Process Discovery
-    - T1186  # Process Doppelgänging
-    - T1093  # Process Hollowing
-    - T1055  # Process Injection
-    - T1090  # Proxy
-    - T1012  # Query Registry
-    - T1163  # Rc.common
-    - T1164  # Re-opened Applications
-    - T1108  # Redundant Access
-    - T1060  # Registry Run Keys / Startup Folder
-    - T1121  # Regsvcs/Regasm
-    - T1117  # Regsvr32
-    - T1219  # Remote Access Software
-    - T1076  # Remote Desktop Protocol
-    - T1105  # Ingress Tool Transfer
-    - T1021  # Remote Services
-    - T1563  # Remote Service Session Hijacking
-    - T1018  # Remote System Discovery
-    - T1091  # Replication Through Removable Media
-    - T1496  # Resource Hijacking
-    - T1014  # Rootkit
-    - T1085  # Rundll32
-    - T1494  # Runtime Data Manipulation
-    - T1053  # Scheduled Task or Job
-    - T1029  # Scheduled Transfer
-    - T1113  # Screen Capture
-    - T1180  # Screensaver
-    - T1064  # Scripting
-    - T1063  # Security Software Discovery
-    - T1101  # Security Support Provider
-    - T1167  # Securityd Memory
-    - T1505  # Server Software Component
-    - T1035  # Service Execution
-    - T1058  # Service Registry Permissions Weakness
-    - T1489  # Service Stop
-    - T1166  # Setuid and Setgid
-    - T1051  # Shared Webroot
-    - T1023  # Shortcut Modification
-    - T1178  # SID-History Injection
-    - T1218  # Signed Binary Proxy Execution
-    - T1216  # Signed Script Proxy Execution
-    - T1198  # SIP and Trust Provider Hijacking
-    - T1072  # Software Deployment Tools
-    - T1518  # Software Discovery
-    - T1045  # Software Packing
-    - T1153  # Source
-    - T1151  # Space after Filename
-    - T1193  # Spearphishing Attachment
-    - T1192  # Spearphishing Link
-    - T1194  # Spearphishing via Service
-    - T1184  # SSH Hijacking
-    - T1071  # Standard Application Layer Protocol
-    - T1032  # Standard Cryptographic Protocol
-    - T1165  # Startup Items
-    - T1558  # Steal or Forge Kerberos Tickets
-    - T1492  # Stored Data Manipulation
-    - T1553  # Subvert Trust Controls
-    - T1169  # Sudo
-    - T1206  # Sudo Caching
-    - T1195  # Supply Chain Compromise
-    - T1019  # System Firmware
-    - T1082  # System Information Discovery
-    - T1016  # System Network Configuration Discovery
-    - T1049  # System Network Connections Discovery
-    - T1033  # System Owner/User Discovery
-    - T1569  # System Services
-    - T1007  # System Service Discovery
-    - T1124  # System Time Discovery
-    - T1501  # Systemd Service
-    - T1080  # Taint Shared Content
-    - T1221  # Template Injection
-    - T1209  # Time Providers
-    - T1099  # Timestomp
-    - T1493  # Transmitted Data Manipulation
-    - T1154  # Trap
-    - T1127  # Trusted Developer Utilities Proxy Execution
-    - T1199  # Trusted Relationship
-    - T1111  # Two-Factor Authentication Interception
-    - T1065  # Uncommonly Used Port
-    - T1552  # Unsecured Credentials
-    - T1550  # Use Alternate Authentication Material
-    - T1204  # User Execution
-    - T1078  # Valid Accounts
-    - T1125  # Video Capture
-    - T1497  # Virtualization/Sandbox Evasion
-    - T1102  # Web Service
-    - T1100  # Web Shell
-    - T1077  # Windows Admin Shares
-    - T1047  # Windows Management Instrumentation
-    - T1084  # Windows Management Instrumentation Event Subscription
-    - T1028  # Windows Remote Management
-    - T1004  # Winlogon Helper DLL
-    - T1220  # XSL Script Processing
+  - Name: Alert Updated
+    ExpectedResult: false
+    Log: {
+      "p_log_type": "CarbonBlack.AlertV2",
+      "alert_notes_present": false,
+      "alert_url": "https://d5.carbonblack.net/alerts?orgKey=ABCD1234&s%5Bc%5D%5Bquery_string%5D=id%3A9728f0c8-7810-fb20-15d0-343031500435",
+      "attack_tactic": "TA0002",
+      "backend_timestamp": "2023-10-04 08:47:36.268000000",
+      "backend_update_timestamp": "2023-10-04 08:47:36.268000000",
+      "blocked_effective_reputation": "TRUSTED_WHITE_LIST",
+      "blocked_name": "c:\\windows\\system32\\cmd.exe",
+      "blocked_sha256": "b99d61d874728edc0918ca0eb10eab93d381e7367e377406e65963366c874450",
+      "childproc_cmdline": "C:\\Windows\\system32\\cmd.exe /c \"\"C:\\Users\\bob.ross\\Downloads\\u0007irreg\\AirRegNCmd.cmd\" N18906\"",
+      "childproc_effective_reputation": "TRUSTED_WHITE_LIST",
+      "childproc_guid": "ABCD1234-0a5089d3-00002004-00000000-1d9f69f13af9c8b",
+      "childproc_name": "c:\\windows\\system32\\cmd.exe",
+      "childproc_sha256": "b99d61d874728edc0918ca0eb10eab93d381e7367e377406e65963366c874450",
+      "childproc_username": "DESKTOP-A1B2C3\\bob.ross",
+      "detection_timestamp": "2023-10-04 08:46:44.508000000",
+      "determination": {
+        "change_timestamp": "2023-10-04 08:47:36.268000000",
+        "value": "NONE"
+      },
+      "device_external_ip": "12.34.56.78",
+      "device_id": 173050323,
+      "device_internal_ip": "192.168.31.23",
+      "device_location": "OFFSITE",
+      "device_name": "DESKTOP-A1B2C3",
+      "device_os": "WINDOWS",
+      "device_policy": "Standard",
+      "device_policy_id": 390195,
+      "device_target_value": "MEDIUM",
+      "device_username": "bob.ross@gmail.com",
+      "first_event_timestamp": "2023-10-04 08:42:17.182000000",
+      "id": "9728f0c8-7810-fb20-15d0-343031500435",
+      "is_updated": false,
+      "last_event_timestamp": "2023-10-04 08:45:49.524000000",
+      "mdr_alert": false,
+      "mdr_alert_notes_present": false,
+      "org_key": "ABCD1234",
+      "parent_effective_reputation": "LOCAL_WHITE",
+      "parent_guid": "ABCD1234-0a5089d3-000013f8-00000000-1d9f69f13af9c8b",
+      "parent_name": "c:\\windows\\explorer.exe",
+      "parent_pid": 5112,
+      "parent_reputation": "TRUSTED_WHITE_LIST",
+      "parent_sha256": "9c06462b5d1b85517a8ed4b5754c21e6beca5c9a02e42efa8b0e1049431c2972",
+      "parent_username": "DESKTOP-A1B2C3\\bob.ross",
+      "policy_applied": "APPLIED",
+      "primary_event_id": "8e8f7f9f629211ee87ce374372b370f0",
+      "process_cmdline": "\"C:\\Windows\\System32\\WindowsPowerShell\\u000b1.0\\powershell.exe\" ",
+      "process_effective_reputation": "TRUSTED_WHITE_LIST",
+      "process_guid": "ABCD1234-0a5089d3-000029a8-00000000-1d9f69f13af9c8b",
+      "process_issuer": [
+        ""
+      ],
+      "process_md5": "dfd66604ca0898e8e26df7b1635b6326",
+      "process_name": "c:\\windows\\system32\\windowspowershell\\u000b1.0\\powershell.exe",
+      "process_pid": 10664,
+      "process_publisher": [
+        ""
+      ],
+      "process_reputation": "TRUSTED_WHITE_LIST",
+      "process_sha256": "d23b67799a0da0143e395ba5db906a22ab08fac4bd5581e275b1e0f1b3fac55c",
+      "process_username": "DESKTOP-A1B2C3\\bob.ross",
+      "reason": "The application utweb.exe was detected running. A Terminate Policy Action was applied.",
+      "reason_code": "T_POL_TERM : utweb.exe",
+      "run_state": "RAN",
+      "sensor_action": "ALLOW",
+      "severity": 3,
+      "threat_id": "f1088650549018a6dab7e582a9d3b826",
+      "ttps": [
+        "POLICY_TERMINATE",
+        "NETWORK_ACCESS",
+        "MITRE_T1059_003_WIN_CMD_SHELL",
+        "ACTIVE_CLIENT",
+        "INTERNATIONAL_SITE",
+        "MITRE_T1059_001_POWERSHELL",
+        "MITRE_T1059_CMD_LINE_OR_SCRIPT_INTER",
+        "UNKNOWN_APP",
+        "RUN_CMD_SHELL"
+      ],
+      "type": "CB_ANALYTICS",
+      "version": "2.0.0",
+      "workflow": {
+        "change_timestamp": "2023-10-04 08:47:36.268000000",
+        "changed_by": "admin",
+        "changed_by_type": "USER",
+        "closure_reason": "RESOLVED",
+        "status": "CLOSED"
+      }
+    }

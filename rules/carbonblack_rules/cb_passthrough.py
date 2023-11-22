@@ -17,13 +17,13 @@ def description(event):
 
 def severity(event):
     sev = event.get("severity")
-    if sev >= 9:
+    if sev >= 8:
         return "CRITICAL"
-    if sev >= 7:
+    if sev >= 6:
         return "HIGH"
-    if sev >= 5:
+    if sev >= 4:
         return "MEDIUM"
-    if sev >= 3:
+    if sev >= 2:
         return "LOW"
     return "INFO"
 
