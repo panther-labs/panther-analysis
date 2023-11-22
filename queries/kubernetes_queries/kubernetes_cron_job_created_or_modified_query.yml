@@ -15,7 +15,7 @@ Query: >
                  verb IN ('create', 'update', 'patch')
                  AND objectRef:resource = 'cronjobs'
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for expected cronjobs in a cluster, for example a sync service 
+                 --insert allow-list for expected cronjobs in a cluster, for example a sync service 
                  LIMIT 100
 Schedule:
   RateMinutes: 30
