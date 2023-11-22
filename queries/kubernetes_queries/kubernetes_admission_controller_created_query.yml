@@ -15,7 +15,7 @@ Query: >
                  verb ='create'
                  AND objectRef:resource IN ('mutatingwebhookconfigurations', 'validatingwebhookconfiguration')
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for known admission controllers such as gatekeeper/OPA
+                 --insert allow-list for known admission controllers such as gatekeeper/OPA
                  LIMIT 100
 Schedule:
   RateMinutes: 30
