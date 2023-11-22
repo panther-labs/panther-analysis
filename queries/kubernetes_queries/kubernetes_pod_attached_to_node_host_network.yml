@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: "Kubernetes.PodAttachedHostNetwork"
+DisplayName: "Pod attached to the Node Host Network"
+Description: >
+  This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Pod attached to the Node Host Network
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value

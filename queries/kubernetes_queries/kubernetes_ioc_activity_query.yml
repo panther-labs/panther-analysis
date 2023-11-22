@@ -1,0 +1,25 @@
+AnalysisType: scheduled_query
+QueryName: IOC Activity in K8 Control Plane
+Enabled: false
+Tags:
+  - Optional
+Description: >
+  This detection monitors for any kuberentes API Request originating from an Indicator of Compromise.
+Query: >
+                 SELECT *,
+                        VALUE as SRC_IP,
+                        THIS as IP_ADDRESS,
+                        CASE WHEN INDEX = 0 THEN 'X_Forwarded_For'
+                          WHEN INDEX = 1 THEN 'X_Real_Ip'
+                          WHEN INDEX = 2 THEN 'Remote_Address'
+                        ELSE 'Unknown'
+                        END AS IP_TYPE
+                 FROM panther_logs.public.amazon_eks_audit, lateral flatten(source_ips)
+                 WHERE p_occurs_since('30 minutes')
+                  -- as an example, could be replaced with any IOC data store in a lookup table
+                 INNER JOIN panther_lookups.public.tor_exit_nodes 
+                 ON value = ip
+                 LIMIT 10
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

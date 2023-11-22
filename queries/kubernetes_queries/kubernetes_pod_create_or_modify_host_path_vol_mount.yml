@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: "Kubernetes.PodHostPathVolumeMount"
+DisplayName: "Pod creation or modification to a Host Path Volume Mount"
+Description: >
+  This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Pod creation or modification to a Host Path Volume Mount 
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value

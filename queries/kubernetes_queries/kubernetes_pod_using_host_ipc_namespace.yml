@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: "Kubernetes.PodUsingIPCNamespace"
+DisplayName: "Pod Created or Modified Using the Host IPC Namespace"
+Description: >
+  This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Pod Created or Modified Using the Host IPC Namespace
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value
