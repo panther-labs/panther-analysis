@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+QueryName: Privileged Pod Created
+Enabled: true
+Tags:
+  - Optional
+Description: >
+  This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb ='create'
+                 AND objectRef:resource = 'pods'
+                 AND (requestObject:spec:containers[0]:securityContext:privileged = 'true' OR requestObject:spec:securityContext:runAsNonRoot = 'false')
+                 AND p_occurs_since('30 minutes')
+                --insert allow-list for pods that are expected to run as privileged workloads or as root
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

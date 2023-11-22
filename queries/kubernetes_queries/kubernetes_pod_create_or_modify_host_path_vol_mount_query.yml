@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+QueryName: Pod creation or modification to a Host Path Volume Mount
+Enabled: true
+Tags:
+  - Optional
+Description: >
+  This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb IN ('create', 'update', 'patch')
+                 AND objectRef:resource = 'pods'
+                 AND request_object:spec:volumes[0]:hostPath:path ilike ANY (/var/run/docker.sock','/var/run/crio/crio.sock','/var/lib/kubelet','/var/lib/kubelet/pki','/var/lib/docker/overlay2','/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/home/admin')                  
+                 AND p_occurs_since('30 minutes')
+                --insert allow-list for expected workloads that require a sensitive mount
+                 LIMIT 10
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

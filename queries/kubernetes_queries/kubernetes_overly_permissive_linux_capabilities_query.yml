@@ -1,0 +1,25 @@
+AnalysisType: scheduled_query
+QueryName: Pod Created with Overly Permissive Linux Capabilities
+Enabled: true
+Tags:
+  - Optional
+Description: >
+  This detection monitors for a pod created with overly permissive linux capabilities. Excessive pod permissions and capabilities can be a launch point for privilege escalation or container breakout.
+Query: |-
+                 SELECT *,
+                        ARRAY_INTERSECTION(requestObject:spec:containers[0]:securityContext:capabilities:add, ARRAY_CONSTRUCT('BPF','NET_ADMIN','SYS_ADMIN')) as linux_capabilities, --linux capabilities the pod was deployed with
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb IN ('create', 'update')
+                 AND objectRef:resource = 'pods'
+                 AND ARRAY_INTERSECTION(REQUEST_OBJECT:spec:containers[0]:securityContext:capabilities:add, ARRAY_CONSTRUCT('BPF','NET_ADMIN','SYS_ADMIN')) != [] --linux capabilities array intersect to identify if any are present
+                 AND requestObject:spec:containers[0]:securityContext is not null
+                 AND p_occurs_since('30 minutes')
+                --insert allow-list for pods that are expected to have privileged linux capabilities, for example a observability agent
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2
