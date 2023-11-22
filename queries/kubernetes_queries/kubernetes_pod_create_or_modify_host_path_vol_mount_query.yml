@@ -16,7 +16,7 @@ Query: >
                  AND objectRef:resource = 'pods'
                  AND request_object:spec:volumes[0]:hostPath:path ilike ANY (/var/run/docker.sock','/var/run/crio/crio.sock','/var/lib/kubelet','/var/lib/kubelet/pki','/var/lib/docker/overlay2','/etc/kubernetes','/etc/kubernetes/manifests','/etc/kubernetes/pki','/home/admin')                  
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for expected workloads that require a sensitive mount
+                 --insert allow-list for expected workloads that require a sensitive mount
                  LIMIT 10
 Schedule:
   RateMinutes: 30
