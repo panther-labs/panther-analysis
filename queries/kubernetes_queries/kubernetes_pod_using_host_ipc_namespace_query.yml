@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+QueryName: Pod Created or Modified Using the Host IPC Namespace
+Enabled: true
+Tags:
+  - Optional
+Description: >
+  This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb IN ('create', 'update', 'patch')
+                 AND objectRef:resource = 'pods'
+                 AND requestObject:spec:hostIPC = True
+                 AND p_occurs_since('30 minutes')
+                 --insert allow-list for pods that are expected to use the Host IPC namespace
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

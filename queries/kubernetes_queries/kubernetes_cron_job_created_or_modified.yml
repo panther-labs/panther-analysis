@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default.py 
+RuleID: "Kubernetes.CronJobCreatedOrModified"
+DisplayName: "Kubernetes Cron Job Created or Modified"
+Description: >
+  This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence. 
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Kubernetes Cron Job Created or Modified
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value
