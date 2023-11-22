@@ -16,7 +16,7 @@ Query: >
                  AND objectRef:resource = 'pods'
                  AND requestObject:spec:hostNetwork = True
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for expected pods that are attached to the node's network
+                 --insert allow-list for expected pods that are attached to the node's network
                  LIMIT 10
 Schedule:
   RateMinutes: 30
