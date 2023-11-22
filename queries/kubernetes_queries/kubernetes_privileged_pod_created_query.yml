@@ -16,7 +16,7 @@ Query: >
                  AND objectRef:resource = 'pods'
                  AND (requestObject:spec:containers[0]:securityContext:privileged = 'true' OR requestObject:spec:securityContext:runAsNonRoot = 'false')
                  AND p_occurs_since('30 minutes')
-                --insert allow-list for pods that are expected to run as privileged workloads or as root
+                 --insert allow-list for pods that are expected to run as privileged workloads or as root
                  LIMIT 100
 Schedule:
   RateMinutes: 30
