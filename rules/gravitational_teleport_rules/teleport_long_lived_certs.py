@@ -48,7 +48,7 @@ def rule(event):
     if not event.get("event") == "cert.create":
         return False
     max_validity = MAXIMUM_NORMAL_VALIDITY_INTERVAL + ISSUANCE_GRACE_PERIOD
-    for role in event.get("identity", {}).get("roles", []):
+    for role in event.deep_get("identity", "roles", default=[]):
         validity, expiration = CLUSTER_ROLE_MAX_VALIDITIES.get(event.get("cluster_name"), {}).get(
             role, (None, None)
         )
