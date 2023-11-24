@@ -15,7 +15,7 @@ jobs:
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: set_upstream
         name: Check Upstream
         with:
@@ -57,7 +57,7 @@ jobs:
           #test_mode: true
           upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: create_pr
         name: Create a PR to bring upstream changes into the local repo primary branch
         if: steps.sync.outputs.has_new_commits == 'true'
