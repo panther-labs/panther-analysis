@@ -1,0 +1,22 @@
+AnalysisType: scheduled_query
+QueryName: New Admission Controller Created
+Enabled: true
+Tags:
+  - Optional
+Description: >
+  This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb ='create'
+                 AND objectRef:resource IN ('mutatingwebhookconfigurations', 'validatingwebhookconfiguration')
+                 AND p_occurs_since('30 minutes')
+                 --insert allow-list for known admission controllers such as gatekeeper/OPA
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2
