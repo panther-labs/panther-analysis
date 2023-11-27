@@ -2,7 +2,7 @@ AnalysisType: rule
 Filename: aws_vpc_crypto_ports.py
 RuleID: "AWS.VPC.CryptoPorts"
 DisplayName: "VPC Flow Logs Known Cryotomining Ports"
-Enabled: true
+Enabled: false
 LogTypes:
   - AWS.VPCFlow
 Tags:
@@ -13,7 +13,7 @@ Tags:
 Reports:
   MITRE ATT&CK:
     - TA0040:T1496
-Severity: High
+Severity: Low
 Description: >
   Alerts if a known cryptomining port is detected in outbound traffic.
 Runbook: >
