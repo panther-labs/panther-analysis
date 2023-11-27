@@ -9,4 +9,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{event.get('user', '<UNKNOWN_USER>')}] has modified scheduled jobs"
+    return (
+        f"User [{event.get('user', '<UNKNOWN_USER>')}] has modified scheduled jobs"
+        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
+    )

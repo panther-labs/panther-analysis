@@ -1,0 +1,92 @@
+AnalysisType: rule
+Filename: teleport_long_lived_certs.py
+RuleID: Teleport.LongLivedCerts
+DisplayName: A long-lived cert was created
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - Teleport
+Severity: Medium
+Description: An unusually long-lived Teleport certificate was created
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Reference: https://goteleport.com/docs/management/admin/
+Runbook: >
+  Teleport certificates are usually issued for a short period of time. Alert if long-lived certificates were created.
+SummaryAttributes:
+  - event
+  - code
+  - time
+  - identity
+Tests:
+  -
+    Name: A certificate was created for the default period of 1 hour
+    ExpectedResult: false
+    Log:
+      {
+        "cert_type": "user",
+        "cluster_name": "teleport.example.com",
+        "code": "TC000I",
+        "ei": 0,
+        "event": "cert.create",
+        "time": "2023-09-17 21:00:00.000000",
+        "identity": {
+          "disallow_reissue": true,
+          "expires": "2023-09-17T22:00:00.444444428Z",
+          "impersonator": "bot-application",
+          "kubernetes_cluster": "staging",
+          "kubernetes_groups": [
+            "application"
+          ],
+          "logins": [
+            "-teleport-nologin-88888888-4444-4444-4444-222222222222",
+            "-teleport-internal-join"
+          ],
+          "prev_identity_expires": "0001-01-01T00:00:00Z",
+          "roles": [
+            "application"
+          ],
+          "route_to_cluster": "teleport.example.com",
+          "teleport_cluster": "teleport.example.com",
+          "traits": {},
+          "user": "bot-application"
+        },
+        "uid": "88888888-4444-4444-4444-222222222222"
+      }
+  -
+    Name: A certificate was created for longer than the default period of 1 hour
+    ExpectedResult: true
+    Log:
+      {
+        "cert_type": "user",
+        "cluster_name": "teleport.example.com",
+        "code": "TC000I",
+        "ei": 0,
+        "event": "cert.create",
+        "time": "2023-09-17 21:00:00.000000",
+        "identity": {
+          "disallow_reissue": true,
+          "expires": "2043-09-17T22:00:00.444444428Z",
+          "impersonator": "bot-application",
+          "kubernetes_cluster": "staging",
+          "kubernetes_groups": [
+            "application"
+          ],
+          "logins": [
+            "-teleport-nologin-88888888-4444-4444-4444-222222222222",
+            "-teleport-internal-join"
+          ],
+          "prev_identity_expires": "0001-01-01T00:00:00Z",
+          "roles": [
+            "application"
+          ],
+          "route_to_cluster": "teleport.example.com",
+          "teleport_cluster": "teleport.example.com",
+          "traits": {},
+          "user": "bot-application"
+        },
+        "uid": "88888888-4444-4444-4444-222222222222"
+      }
