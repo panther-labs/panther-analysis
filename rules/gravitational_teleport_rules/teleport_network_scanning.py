@@ -12,5 +12,6 @@ def rule(event):
 def title(event):
     return (
         f"User [{event.get('user', '<UNKNOWN_USER>')}] has issued a network scan with "
-        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}]"
+        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}] "
+        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
     )
