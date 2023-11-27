@@ -71,6 +71,7 @@ def validity_interval(event):
 
 
 def title(event):
+    identity = event.deep_get('identity', 'user', default='<Cert with no User!?>')
     return (
         f"A Certificate for  [{event.deep_get('identity', 'user', default='<Cert with no User!?>')}] "
         f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}] "
