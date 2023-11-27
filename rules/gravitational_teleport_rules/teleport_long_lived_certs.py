@@ -63,7 +63,7 @@ def validity_interval(event):
     event_time = panther_nanotime_to_python_datetime(event.get("time"))
     expires = golang_nanotime_to_python_datetime(
         event.deep_get("identity", "expires", default=None)
-        )
+    )
     if not event_time and expires:
         return False
     interval = expires - event_time
