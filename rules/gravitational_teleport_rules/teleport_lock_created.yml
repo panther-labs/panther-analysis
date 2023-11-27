@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: teleport_lock_created.py
+RuleID: Teleport.LockCreated
+DisplayName: A Teleport Lock was created
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - Teleport
+Severity: Info
+Description: A Teleport Lock was created
+DedupPeriodMinutes: 60
+Reference: https://goteleport.com/docs/management/admin/
+Runbook: >
+  A Teleport Lock was created; this is an unusual administrative action. Investigate to understand why a Lock was created.
+SummaryAttributes:
+  - event
+  - code
+  - time
+  - identity
+Tests:
+  -
+    Name: A Lock was created
+    ExpectedResult: true
+    Log:
+      {
+        "cluster_name": "teleport.example.com",
+        "code": "TLK00I",
+        "ei": 0,
+        "event": "lock.created",
+        "expires": "0001-01-01T00:00:00Z",
+        "name": "88888888-4444-4444-4444-222222222222",
+        "target": {
+          "user": "user-to-disable"
+        },
+        "time": "2023-09-21T00:00:00.000000Z",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "updated_by": "max.mustermann@example.com",
+        "user": "max.mustermann@example.com"
+      }
