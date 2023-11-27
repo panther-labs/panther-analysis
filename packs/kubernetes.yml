@@ -1,0 +1,22 @@
+AnalysisType: pack
+PackID: PantherManaged.Kubernetes.Core
+DisplayName: "Panther Core Kubernetes Pack"
+Description: This is a group of detections that act on Kubernetes logs sourced from Amazon EKS.
+PackDefinition:
+  IDs:
+    # Kubernetes scheduled queries and rules
+    - Kubernetes.PodUsingIPCNamespace
+    - Kubernetes.PodUsingHostPIDNamespace
+    - Kubernetes.UnauthenticatedAPIRequest
+    - Kubernetes.ServiceTypeNodePortDeployed
+    - Kubernetes.UnauthorizedPodExecution
+    - Kubernetes.OverlyPermissivePod
+    - Kubernetes.CronJobCreatedOrModified
+    - Kubernetes.PodHostPathVolumeMount
+    - Kubernetes.PodCreatedDefaultNameSpace
+    - Kubernetes.NewAdmissionControllerCreated
+    - Kubernetes.SecretEnumeration
+    - Kubernetes.PrivilegedPodCreated
+    - Kubernetes.DaemonSetDeployed
+    - Kubernetes.PodAttachedHostNetwork
+    - Kubernetes.IOCActivity
