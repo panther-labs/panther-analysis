@@ -348,6 +348,43 @@ CRYPTO_MINING_DOMAINS = {
     "zer0day.ru",
 }
 
+# https://github.com/falcosecurity/rules/blob/64e2adb309b7e07953691eeb53347d28e361b0e3/rules/falco-sandbox_rules.yaml#L1367-L1374
+CRYPTO_MINING_PORTS = {
+    3333,
+    3334,
+    3335,
+    3336,
+    3357,
+    4444,
+    5555,
+    5556,
+    5588,
+    5730,
+    6099,
+    6641,
+    6642,
+    6666,
+    7777,
+    7778,
+    8000,
+    8001,
+    8008,
+    8080,
+    8118,
+    8333,
+    8888,
+    8899,
+    9332,
+    9999,
+    10300,  # stratum
+    10343,  # stratum ssl
+    14433,
+    14444,
+    18080,  # monero p2p mainnet
+    18081,  # monero rpc mainnet
+    45560,
+    45700,
+}
 
 # IOC Helper functions:
 def ioc_match(indicators: list, known_iocs: set) -> list:
