@@ -191,8 +191,8 @@ CRYPTO_MINING_PORTS = {
     8899,
     9332,
     9999,
-    10300, # stratum
-    10343, # stratum ssl
+    10300,  # stratum
+    10343,  # stratum ssl
     14433,
     14444,
     45560,
