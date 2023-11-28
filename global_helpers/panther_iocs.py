@@ -195,6 +195,8 @@ CRYPTO_MINING_PORTS = {
     10343,  # stratum ssl
     14433,
     14444,
+    18080,  # monero p2p mainnet
+    18081,  # monero rpc mainnet
     45560,
     45700,
 }
