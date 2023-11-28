@@ -163,8 +163,8 @@ CRYPTO_MINING_DOMAINS = {
     "shscrypto.net",
 }
 
+# https://github.com/falcosecurity/rules/blob/64e2adb309b7e07953691eeb53347d28e361b0e3/rules/falco-sandbox_rules.yaml#L1367-L1374
 CRYPTO_MINING_PORTS = {
-    25,
     3333,
     3334,
     3335,
@@ -191,6 +191,8 @@ CRYPTO_MINING_PORTS = {
     8899,
     9332,
     9999,
+    10300, # stratum
+    10343, # stratum ssl
     14433,
     14444,
     45560,
