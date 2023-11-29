@@ -166,6 +166,33 @@ Tests:
         "p_log_type": "GitHub.Audit",
         "user": "bob"
       }
+  - Name: Github - Admin Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "business.add_admin",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  - Name: Github - Admin Invited
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "business.invite_admin",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  - Name: Github - Unknown Admin Role
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "unknown.admin_role",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
   -
     Name: Zendesk - Admin Role Downgraded
     ExpectedResult: false
