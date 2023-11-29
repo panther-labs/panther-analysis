@@ -40,6 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          token: ${{ secrets.GITHUB_TOKEN }}
       # Sync this branch with upstream
       - name: Sync upstream changes into PR branch
         id: sync
