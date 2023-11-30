@@ -21,9 +21,6 @@
         "**/__pycache": true,
         "**/*pyc": true
     },
-    //"python.analysis.logLevel": "Trace",
-    //"files.autoSave": "afterDelay",
-    //"makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "panther_analysis_tool": "python"
     },
@@ -32,6 +29,13 @@
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
-        }
-    }
+        },
+    },
+    // Add pylint.lintOnChange to your User (not Workspace) settings
+    // Cmd+Shift+P -> Preferences: Open Settings (JSON)
+    "pylint.lintOnChange": true,
+    "bandit.args": [
+        "-r",
+        "."
+    ]
 }
