@@ -136,7 +136,7 @@ You will also need Visual Studio's [code](https://code.visualstudio.com/docs/set
 1. Configures `Black` and `isort` settings for auto-formatting on save (thus reducing the need to run `make fmt` on all files)
 1. Configures `pylint` settings for linting when changes are made
     - Ensure that `"pylint.lintOnChange": true` is present in the User-level VSCode settings (`Cmd+Shift+P` -> `Preferences: Open Settings (JSON)`)
-2. Configures `Bandit` settings for linting when files are opened
+1. Configures `Bandit` settings for linting when files are opened
 
 ```shell
 user@computer:panther-analysis: make vscode-config
