@@ -3,27 +3,48 @@ PackID: PantherManaged.GSuite.Reports
 Description: Panther GSuite Detections
 PackDefinition:
   IDs:
+    - Google.Workspace.Admin.Custom.Role
+    - Google.Workspace.Advanced.Protection.Program
+    - Google.Workspace.Apps.Marketplace.Allowlist
+    - Google.Workspace.Apps.Marketplace.New.Domain.Application
+    - Google.Workspace.Apps.New.Mobile.App.Installed
     - GSuite.AdvancedProtection
-    - GSuite.DriveOverlyVisible
+    - GSuite.BruteForceLogin
+    - GSuite.CalendarMadePublic
+    - GSuite.DocOwnershipTransfer
+    - GSuite.Drive.Many.Documents.Deleted
+    - Google.Drive.High.Download.Count
+    - GSuite.ExternalMailForwarding
     - GSuite.GoogleAccess
     - GSuite.GovernmentBackedAttack
     - GSuite.GroupBannedUser
     - GSuite.LeakedPassword
     - GSuite.LoginType
-    - GSuite.Rule
     - GSuite.DeviceCompromise
     - GSuite.DeviceUnlockFailure
     - GSuite.DeviceSuspiciousActivity
+    - GSuite.Rule
+    - GSuite.PermisssionsDelegated
     - GSuite.SuspiciousLogins
     - GSuite.TwoStepVerification
     - GSuite.UserSuspended
-    - Google.Workspace.Admin.Custom.Role
-    - Google.Workspace.Advanced.Protection.Program
-    - Google.Workspace.Apps.Marketplace.New.Domain.Application
-    - Google.Workspace.Apps.Marketplace.Allowlist
-    - Google.Workspace.Apps.New.Mobile.App.Installed
+    - GSuite.Workspace.CalendarExternalSharingSetting
+    - GSuite.Workspace.DataExportCreated
+    - GSuite.Workspace.GmailDefaultRoutingRuleModified
+    - GSuite.Workspace.GmailPredeliveryScanningDisabled
+    - GSuite.Workspace.GmailSecuritySandboxDisabled
+    - GSuite.Workspace.PasswordEnforceStrongDisabled
+    - GSuite.Workspace.PasswordReuseEnabled
+    - GSuite.Workspace.TrustedDomainsAllowlist
+    - GSuite.Drive.ExternalFileShare
+    - GSuite.DriveOverlyVisible
+    - GSuite.DriveVisibilityChanged
+    - GSuite.DriveVisiblityChanged
     # Data Models used in these detections
     - Standard.GSuite.Reports 
     # Globals used in these detections
     - panther_base_helpers
+    - panther_config
+    - panther_config_defaults
+    - panther_config_overrides
 DisplayName: "Panther GSuite Pack"
