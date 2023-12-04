@@ -1,8 +1,18 @@
 {
     "python.defaultInterpreterPath": "XXX_pipenv_py_output_XXX",
     "yaml.schemas": {
-        "https://panther-community-us-east-1.s3.amazonaws.com/latest/logschema/schema.json": [ "schemas/*.yml", "schemas/*.yaml", "schemas/**/*yaml", "schemas/**/*.yaml"],
-        ".vscode/rule_jsonschema.json": [ "rules/*.yml", "rules/*.yaml", "rules/**/*.yaml", "rules/**/*.yml"]
+        "https://panther-community-us-east-1.s3.amazonaws.com/latest/logschema/schema.json": [
+            "schemas/*.yml",
+            "schemas/*.yaml",
+            "schemas/**/*yaml",
+            "schemas/**/*.yaml"
+        ],
+        ".vscode/rule_jsonschema.json": [
+            "rules/*.yml",
+            "rules/*.yaml",
+            "rules/**/*.yaml",
+            "rules/**/*.yml"
+        ]
     },
     "python.analysis.extraPaths": [
         "global_helpers"
@@ -11,10 +21,21 @@
         "**/__pycache": true,
         "**/*pyc": true
     },
-    //"python.analysis.logLevel": "Trace",
-    //"files.autoSave": "afterDelay",
-    //"makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "panther_analysis_tool": "python"
-    }
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    },
+    // Add pylint.lintOnChange to your User (not Workspace) settings
+    // Cmd+Shift+P -> Preferences: Open Settings (JSON)
+    "pylint.lintOnChange": true,
+    "bandit.args": [
+        "-r",
+        "."
+    ]
 }

@@ -119,7 +119,10 @@ If you are comfortable using the Visual Studio Code IDE, the `make vscode-config
 In addition to this command, you will need to install these vscode add-ons:
 
 1. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-2. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+2. [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
+3. [Pylint](https://marketplace.visualstudio.com/items?itemName=ms-python.pylint)
+4  [Bandit](https://marketplace.visualstudio.com/items?itemName=nwgh.bandit)
+5. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 
 You will also need Visual Studio's [code](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line) configured to open Visual Studio from your CLI.
 
@@ -130,6 +133,10 @@ You will also need Visual Studio's [code](https://code.visualstudio.com/docs/set
 1. Creates two debugging targets, which will give you single-button push support for running `panther_analysis_tool test` through the debugger.
 1. Installs JSONSchema support for your custom panther-analysis schemas in the `schemas/` directory. This brings IDE hints about which fields are necessary for schemas/custom-schema.yml files.
 1. Installs JSONSchema support for panther-analysis rules in the `rules/` directory. This brings IDE hints about which fields are necessary for rules/my-rule.yml files.
+1. Configures `Black` and `isort` settings for auto-formatting on save (thus reducing the need to run `make fmt` on all files)
+1. Configures `pylint` settings for linting when changes are made
+    - Ensure that `"pylint.lintOnChange": true` is present in the User-level VSCode settings (`Cmd+Shift+P` -> `Preferences: Open Settings (JSON)`)
+1. Configures `Bandit` settings for linting when files are opened
 
 ```shell
 user@computer:panther-analysis: make vscode-config
