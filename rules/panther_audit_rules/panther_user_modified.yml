@@ -212,10 +212,14 @@ Tests:
       "actionDescription": "User updated automatically by SAML.",
       "actionName": "UPDATE_USER",
       "actionParams": {
-          "email": "john.doe@usgs.gov",
-          "familyName": "Doe",
-          "givenName": "John",
-          "role": "AnalystReadOnly"
+        "dynamic": {
+          "input": {
+            "email": "john.doe@usgs.gov",
+            "familyName": "Doe",
+            "givenName": "John",
+            "role": "AnalystReadOnly"
+          }
+        }
       },
       "actionResult": "SUCCEEDED",
       "actor": {

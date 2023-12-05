@@ -24,12 +24,14 @@ Tests:
       {
         "actionName": "DELETE_DETECTION",
         "actionParams": {
-          "input": {
-            "detections": [
-              {
-                "id": "GitHub.Team.Modified"
-              }
-            ]
+          "dynamic": {
+            "input": {
+              "detections": [
+                {
+                  "id": "GitHub.Team.Modified"
+                }
+              ]
+            }
           }
         },
         "actionResult": "SUCCEEDED",
@@ -55,21 +57,23 @@ Tests:
       {
       "actionName": "DELETE_DETECTION",
       "actionParams": {
-        "input": {
-          "detections": [
-            {
-              "id": "Github.Repo.Created"
-            },
-            {
-              "id": "Okta.Global.MFA.Disabled"
-            },
-            {
-              "id": "Okta.AdminRoleAssigned"
-            },
-            {
-              "id": "Okta.BruteForceLogins"
-            }
-          ]
+        "dynamic": {
+          "input": {
+            "detections": [
+              {
+                "id": "Github.Repo.Created"
+              },
+              {
+                "id": "Okta.Global.MFA.Disabled"
+              },
+              {
+                "id": "Okta.AdminRoleAssigned"
+              },
+              {
+                "id": "Okta.BruteForceLogins"
+              }
+            ]
+          }
         }
       },
       "actionResult": "SUCCEEDED",
