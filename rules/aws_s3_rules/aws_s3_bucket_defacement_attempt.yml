@@ -1,0 +1,191 @@
+AnalysisType: rule
+Description: Adversaries may modify visual content available internally or externally to an enterprise network, thus affecting the integrity of the original content. Reasons for Defacement include delivering messaging, intimidation, or claiming (possibly false) credit for an intrusion. Disturbing or offensive images may be used as a part of Defacement in order to cause user discomfort, or to pressure compliance with accompanying messages.
+DisplayName: S3 Bucket Defacement Attempt
+Enabled: false
+Filename: aws_s3_bucket_defacement_attempt.py
+Reference: https://attack.mitre.org/techniques/T1491/
+Reports:
+    MITRE ATT&CK:
+        - TA0040:T1491
+Tags:
+  - Configuration Required
+Severity: Low
+Tests:
+    - ExpectedResult: false
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::732337452730:assumed-role/AWSServiceRoleForSomething
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Name: EXCLUDED ASSUMED_ROLES - False
+    - ExpectedResult: false
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: S3.EXPIRE.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::12345678910:assumed-role/test-role
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Name: EXCLUDED OPERATIONS - False
+    - ExpectedResult: false
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: AmazonS3
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Name: EXCLUDED REQUESTER - False
+    - ExpectedResult: false
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::123456789012:assumed-role/SomeRole/some_role_assumer
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-internal/3 aws-sdk-java/1.12.302 Linux/4.14.294-150.533.amzn1.x86_64 OpenJDK_64-Bit_Server_VM/25.342-b07 java/1.8.0_342 scala/2.12.7 kotlin/1.3.72 vendor/Oracle_Corporation cfg/retry-mode/standard
+      Name: EXCLUDED USERAGENTS - False
+    - ExpectedResult: true
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::123456789012:assumed-role/SomeRole/some_role_assumer
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: S3Console/0.4, aws-internal/3 aws-sdk-java/1.11.1030 Linux/5.10.157-122.673.amzn2int.x86_64 OpenJDK_64-Bit_Server_VM/25.352-b08 java/1.8.0_352 vendor/Oracle_Corporation cfg/retry-mode/standard
+      Mocks:
+        - objectName: ALERT_SETTINGS
+          returnValue: >-
+                  {
+                    "bucket": ["sample-bucket-name"]
+                  }
+      Name: aws-internal UserAgent for S3 Console - True
+    - ExpectedResult: true
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::12345678910:assumed-role/test-role
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Mocks:
+        - objectName: ALERT_SETTINGS
+          returnValue: '{"bucket": ["sample-bucket-name"]}'
+      Name: S3 PUT - Included Bucket Names
+    - ExpectedResult: true
+      Log:
+        authenticationtype: AuthHeader
+        bucket: sample-bucket-name
+        bucketowner: a5ebe8d8c26923db177773b444efba8fc3c87ee7416a2a7453c42b49eb66dcee
+        ciphersuite: ECDHE-RSA-AES128-GCM-SHA256
+        hostheader: sample-bucket-name.s3.us-east-2.amazonaws.com
+        hostid: r+TmRb3RpSpdyYMQQX/1OQKWO8duNRIT8jkARf0+5aInlIfkixImJwhoyzK+6nczpgOnIdIksBg=
+        httpstatus: 200
+        key: layers/sample-file.zip
+        objectsize: 6.022694e+06
+        operation: REST.PUT.OBJECT
+        remoteip: 10.0.18.38
+        requester: arn:aws:sts::12345678910:assumed-role/test-role
+        requestid: 6NBZJ3SRYX5MPDX8
+        requesturi: PUT /layers/sample-file.zip HTTP/1.1
+        signatureversion: SigV4
+        time: "2022-11-01 18:45:45"
+        tlsVersion: TLSv1.2
+        totaltime: 197
+        turnaroundtime: 96
+        useragent: aws-cli/1.20.58 Python/3.9.5 Linux/4.14.248-189.473.amzn2.aarch64 exec-env/AWS_ECS_EC2 botocore/1.21.58
+      Mocks:
+        - objectName: ALERT_SETTINGS
+          returnValue: '{"key": ["layers/sample-file.zip"]}'
+      Name: S3 PUT - Included S3 Bucket Key
+DedupPeriodMinutes: 60
+LogTypes:
+    - AWS.S3ServerAccess
+RuleID: AWS.S3.Defacement.Attempt
+Threshold: 1
