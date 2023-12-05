@@ -19,6 +19,9 @@ LogTypeMap:
         - "$.sourceIPs"
         - "$.spec.clusterIP"
         - "$.requestObject.spec.clusterIP"
+    - LogType: Anomali.Indicator
+      Selectors:
+        - "ip"
     - LogType: Apache.AccessCombined
       Selectors:
         - "remote_host_ip_address"
@@ -31,6 +34,10 @@ LogTypeMap:
     - LogType: Asana.Audit
       Selectors:
         - "$.context.client_ip_address"
+    - LogType: Auth0.Events
+      Selectors:
+        - "$.data.ip"
+        - "$.data.client_ip"
     - LogType: AWS.ALB
       Selectors:
         - "clientIp"
@@ -46,6 +53,14 @@ LogTypeMap:
     - LogType: AWS.S3ServerAccess
       Selectors:
         - "remoteip"
+    - LogType: AWS.SecurityFindingFormat
+      Selectors:
+        - "$.Action.AwsApiCallAction.RemoteIpDetails.IpAddressV4"
+        - "$.Action.NetworkConnectionAction.RemoteIpDetails.IpAddressV4"
+    - LogType: AWS.TransitGatewayFlow
+      Selectors:
+        - "srcAddr"
+        - "dstAddr"
     - LogType: AWS.VPCDns
       Selectors:
         # use p_any_ip_addresses because the answers are variable and not always ip addresses
@@ -57,9 +72,39 @@ LogTypeMap:
     - LogType: AWS.WAFWebACL
       Selectors:
         - "$.httpRequest.clientIp"
+    - LogType: Azure.Audit
+      Selectors:
+        - "callerIpAddress"
+        - "$.properties.initiatedBy.user.ipAddress"
+    - LogType: Bitwarden.Events
+      Selectors:
+        - "ipAddress"
     - LogType: Box.Event
       Selectors:
         - "ip_address"
+    - LogType: CarbonBlack.AlertV2
+      Selectors:
+        - "device_external_ip"
+        - "device_internal_ip"
+        - "netconn_local_ip"
+        - "netconn_local_ipv4"
+        - "netconn_local_ipv6"
+        - "netconn_remote_ip"
+        - "netconn_remote_ipv4"
+        - "netconn_remote_ipv6"
+    - LogType: CarbonBlack.Audit
+      Selectors:
+        - "clientIp"
+    - LogType: CarbonBlack.EndpointEvent
+      Selectors:
+        - "device_external_ip"
+        - "local_ip"
+        - "remote_ip"
+        - "netconn_proxy_ip"
+    - LogType: CarbonBlack.WatchlistHit
+      Selectors:
+        - "device_external_ip"
+        - "device_internal_ip"
     - LogType: CiscoUmbrella.CloudFirewall
       Selectors:
         - "destinationIp"
@@ -77,6 +122,9 @@ LogTypeMap:
         - "destinationIp"
         - "externalIp"
         - "internalIp"
+    - LogType: Cloudflare.Audit
+      Selectors:
+        - "ActorIP"
     - LogType: Cloudflare.HttpRequest
       Selectors:
         - "ClientIP"
@@ -89,6 +137,9 @@ LogTypeMap:
       Selectors:
         - "ClientIP"
         - "OriginIP"
+    - LogType: Crowdstrike.CriticalFile
+      Selectors:
+        - "aip"
     - LogType: Crowdstrike.ActivityAudit
       Selectors:
         - "UserIp"
@@ -99,6 +150,9 @@ LogTypeMap:
     - LogType: Crowdstrike.DNSRequest
       Selectors:
         - "IpAddress"
+    - LogType: Crowdstrike.GroupIdentity
+      Selectors:
+        - "aip"
     - LogType: Crowdstrike.AIDMaster
       Selectors:
         - "aip"
@@ -121,6 +175,9 @@ LogTypeMap:
       Selectors:
         - "aip"
         - "CurrentLocalIP"
+    - LogType: Crowdstrike.ProcessRollup2
+      Selectors:
+        - "aip"
     - LogType: Crowdstrike.ProcessRollup2Stats
       Selectors:
         - "aip"
@@ -162,6 +219,9 @@ LogTypeMap:
     - LogType: GitLab.API
       Selectors:
         - "remote_ip"
+    - LogType: GitLab.Audit
+      Selectors:
+        - "ip_address"
     - LogType: GitLab.Production
       Selectors:
         - "remote_ip"
@@ -175,6 +235,10 @@ LogTypeMap:
     - LogType: GSuite.Reports
       Selectors:
         - "ipAddress"
+    - LogType: Jamfpro.ComplianceReporter
+      Selectors:
+        - "$.process.terminal_id.ip_address"
+        - "$.socket_inet.ip_address"
     - LogType: Jamfpro.Login
       Selectors:
         - "ipAddress"
@@ -195,6 +259,9 @@ LogTypeMap:
     - LogType: Lacework.AgentManagement
       Selectors:
         - "IP_ADDR"
+    - LogType: Lacework.Applications
+      Selectors:
+        - "$.PROPS_MACHINE.ip_addr"
     - LogType: Lacework.DNSQuery
       Selectors:
         - "DNS_SERVER_IP"
@@ -203,6 +270,25 @@ LogTypeMap:
       Selectors:
         # use p_any_ip_addresses because we extract ip addresses but fields are variable
         - "p_any_ip_addresses"
+    - LogType: Lacework.Interfaces
+      Selectors:
+        - "IP_ADDR"
+    - LogType: Lacework.InternalIPA
+      Selectors:
+        - "IP_ADDR"
+    - LogType: Lacework.MachineSummary
+      Selectors:
+        - "PRIMARY_IP_ADDR"
+    - LogType: Lacework.PodSummary
+      Selectors:
+        - "PRIMARY_IP_ADDR"
+    - LogType: Lacework.UserLogin
+      Selectors:
+        - "SOURCE_IP_ADDR"
+    - LogType: Linux.Auditd
+      Selectors:
+        - "addr"
+        - "ip"
     - LogType: Microsoft365.Audit.AzureActiveDirectory
       Selectors:
         - "ActorIpAddress"
@@ -224,18 +310,27 @@ LogTypeMap:
       Selectors:
         # use p_any_ip_addresses because we extract ip addresses but fields are variable
         - "p_any_ip_addresses"
+    - LogType: MongoDB.OrganizationEvent
+      Selectors:
+        - "remoteAddress"
     - LogType: MongoDB.ProjectEvent
       Selectors:
         - "remoteAddress"
     - LogType: Nginx.Access
       Selectors:
         - "remoteAddr"
+    - LogType: Notion.AuditLogs
+      Selectors:
+        - "$.event.ip_address"
     - LogType: Okta.SystemLog
       Selectors:
         - "$.client.ipAddress"
     - LogType: OneLogin.Events
       Selectors:
         - "ipaddr"
+    - LogType: OnePassword.AuditEvent
+      Selectors:
+        - "$.session.ip"
     - LogType: OnePassword.ItemUsage
       Selectors:
         - "$.client.ip_address"
@@ -250,6 +345,10 @@ LogTypeMap:
     - LogType: Panther.Audit
       Selectors:
         - "sourceIP"
+    - LogType: Tenable.Vulnerability
+      Selectors:
+        - "$.asset.ipv6"
+        - "$.asset.ipv4"
     - LogType: Salesforce.Login
       Selectors:
         - "CLIENT_IP"
@@ -263,6 +362,16 @@ LogTypeMap:
     - LogType: Salesforce.URI
       Selectors:
         - "CLIENT_IP"
+    - LogType: SentinelOne.DeepVisibility
+      Selectors:
+        - "$.event.sourceAddress.address"
+        - "$.event.destinationAddress.address"
+        - "$.event.local.address"
+    - LogType: SentinelOne.DeepVisibilityV2
+      Selectors:
+        - "src_ip_address"
+        - "dst_ip_address"
+        - "src_endpoint_ip_address"
     - LogType: Slack.AccessLogs
       Selectors:
         - "ip"
@@ -272,17 +381,60 @@ LogTypeMap:
     - LogType: Sophos.Central
       Selectors:
         - "$.source_info.ip"
+    - LogType: Suricata.Alert
+      Selectors:
+        - "$.tls.sni"
+        - "$.dest_ip"
+        - "$.src_ip"
     - LogType: Suricata.Anomaly
       Selectors:
         - "dest_ip"
         - "src_ip"
+    - LogType: Suricata.DHCP
+      Selectors:
+        - "$.dest_ip"
+        - "$.dhcp.assigned_ip"
+        - "$.src_ip"
     - LogType: Suricata.DNS
+      Selectors:
+        - "dest_ip"
+        - "src_ip"
+    - LogType: Suricata.FileInfo
+      Selectors:
+        - "dest_ip"
+        - "src_ip"
+    - LogType: Suricata.Flow
+      Selectors:
+        - "dest_ip"
+        - "src_ip"
+    - LogType: Suricata.HTTP
+      Selectors:
+        - "dest_ip"
+        - "src_ip"
+    - LogType: Suricata.SSH
+      Selectors:
+        - "dest_ip"
+        - "src_ip"
+    - LogType: Suricata.TLS
       Selectors:
         - "dest_ip"
         - "src_ip"
     - LogType: Sysdig.Audit
       Selectors:
         - "$.content.userOriginIP"
+    - LogType: Tailscale.Network
+      Selectors:
+        - "$.event.virtualTraffic.srcIp"
+        - "$.event.virtualTraffic.dstIp"
+        - "$.event.subnetTraffic.srcIp"
+        - "$.event.subnetTraffic.dstIp"
+        - "$.event.exitTraffic.srcIp"
+        - "$.event.exitTraffic.dstIp"
+        - "$.event.physicalTraffic.srcIp"
+        - "$.event.physicalTraffic.dstIp"
+    - LogType: Tines.Audit
+      Selectors:
+        - "request_ip"
     - LogType: Workday.Activity
       Selectors:
         - "ipAddress"
@@ -293,6 +445,9 @@ LogTypeMap:
       Selectors:
         - "$.id.orig_h"
         - "$.id.resp_h"
+    - LogType: Zeek.DHCP
+      Selectors:
+        - "requested_addr"
     - LogType: Zeek.DNS
       Selectors:
         - "$.id.orig_h"
@@ -313,6 +468,13 @@ LogTypeMap:
       Selectors:
         - "$.id.orig_h"
         - "$.id.resp_h"
+    - LogType: Zeek.SIP
+      Selectors:
+        - "$.id.orig_h"
+        - "$.id.resp_h"
+    - LogType: Zeek.Software
+      Selectors:
+        - "host"
     - LogType: Zeek.Ssh
       Selectors:
         - "$.id.orig_h"
