@@ -121,7 +121,7 @@ In addition to this command, you will need to install these vscode add-ons:
 1. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 2. [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
 3. [Pylint](https://marketplace.visualstudio.com/items?itemName=ms-python.pylint)
-4  [Bandit](https://marketplace.visualstudio.com/items?itemName=nwgh.bandit)
+4.  [Bandit](https://marketplace.visualstudio.com/items?itemName=nwgh.bandit)
 5. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 
 You will also need Visual Studio's [code](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line) configured to open Visual Studio from your CLI.
