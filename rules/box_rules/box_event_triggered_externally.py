@@ -1,8 +1,7 @@
 from panther_base_helpers import deep_get
+from panther_config import config
 
-DOMAINS = {
-    "@example.com",
-}
+DOMAINS = {"@" + domain for domain in config.ORGANIZATION_DOMAINS}
 
 
 def rule(event):

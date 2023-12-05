@@ -1,6 +1,5 @@
 from panther_base_helpers import deep_get
-
-ALLOWED_DOMAINS = ["example.com"]  # List of external domains that are allowed to be forwarded to
+from panther_config import config
 
 
 def rule(event):
@@ -11,7 +10,7 @@ def rule(event):
         domain = deep_get(event, "parameters", "email_forwarding_destination_address").split("@")[
             -1
         ]
-        if domain not in ALLOWED_DOMAINS:
+        if domain not in config.GSUITE_TRUSTED_FORWARDING_DESTINATION_DOMAINS:
             return True
 
     return False
