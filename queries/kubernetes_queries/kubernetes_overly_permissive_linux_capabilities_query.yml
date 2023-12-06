@@ -15,7 +15,7 @@ Query: |-
                  WHERE
                  verb IN ('create', 'update')
                  AND objectRef:resource = 'pods'
-                 AND ARRAY_INTERSECTION(REQUEST_OBJECT:spec:containers[0]:securityContext:capabilities:add, ARRAY_CONSTRUCT('BPF','NET_ADMIN','SYS_ADMIN')) != [] --linux capabilities array intersect to identify if any are present
+                 AND ARRAY_INTERSECTION(requestObject:spec:containers[0]:securityContext:capabilities:add, ARRAY_CONSTRUCT('BPF','NET_ADMIN','SYS_ADMIN')) != [] --linux capabilities array intersect to identify if any are present
                  AND requestObject:spec:containers[0]:securityContext is not null
                  AND p_occurs_since('30 minutes')
                  --insert allow-list for pods that are expected to have privileged linux capabilities, for example a observability agent
