@@ -7,21 +7,21 @@ Description: >
   This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
 Query: >
                  SELECT *,
-                        OBJECT_REF:name as service,
-                        OBJECT_REF:namespace as namespace,
-                        OBJECT_REF:resource as resource_type,                        
+                        objectRef:name as service,
+                        objectRef:namespace as namespace,
+                        objectRef:resource as resource_type,                        
                         COALESCE(impersonated_user, USER:username) as src_user,
-                        USER_AGENT,
-                        RESPONSE_OBJECT:spec:externalTrafficPolicy as external_traffic_policy,
-                        RESPONSE_OBJECT:spec:internalTrafficPolicy as internal_traffic_policy,
-                        RESPONSE_OBJECT:spec:clusterIP as cluster_ip_address,
+                        userAgent,
+                        responseObject:spec:externalTrafficPolicy as external_traffic_policy,
+                        responseObject:spec:internalTrafficPolicy as internal_traffic_policy,
+                        responseObject:spec:clusterIP as cluster_ip_address,
                         VALUE:port as port, --port where traffic gets forwarded to in the pod 
                         VALUE:protocol as protocol, --protocol the service uses
                         VALUE:nodePort as node_port, --which port acts as the nodeport on all the nodes 
-                        REQUEST_OBJECT:spec:type as type,
-                        IFF(REQUEST_OBJECT:spec:status:loadBalancer is null, 'No LB Present', 
-                        REQUEST_OBJECT:spec:status:loadBalancer) as load_balancer,
-                        RESPONSE_STATUS:code as response_status
+                        requestObject:spec:type as type,
+                        IFF(requestObject:spec:status:loadBalancer is null, 'No LB Present', 
+                        requestObject:spec:status:loadBalancer) as load_balancer,
+                        responseStatus:code as response_status
                         FROM panther_logs.public.kubernetes_control_plane, lateral flatten(response_object:spec:ports)
                         WHERE
                         objectRef:resource = 'services'
