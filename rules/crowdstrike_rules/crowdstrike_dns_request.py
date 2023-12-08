@@ -1,7 +1,4 @@
-from panther_base_helpers import (
-    filter_crowdstrike_fdr_event_type,
-    get_crowdstrike_field,
-)
+from panther_base_helpers import filter_crowdstrike_fdr_event_type, get_crowdstrike_field
 
 # baddomain.com is present for testing purposes. Add domains you wish to be alerted on to this list
 DENYLIST = ["baddomain.com"]

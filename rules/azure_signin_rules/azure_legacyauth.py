@@ -2,11 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from global_filter_azuresignin import filter_include_event
-from panther_azuresignin_helpers import (
-    actor_user,
-    azure_signin_alert_context,
-    is_sign_in_event,
-)
+from panther_azuresignin_helpers import actor_user, azure_signin_alert_context, is_sign_in_event
 from panther_base_helpers import deep_get
 
 LEGACY_AUTH_USERAGENTS = ["BAV2ROPC", "CBAInPROD"]  # CBAInPROD is reported to be IMAP
