@@ -1,9 +1,6 @@
 from global_filter_tailscale import filter_include_event
 from panther_base_helpers import deep_get
-from panther_tailscale_helpers import (
-    is_tailscale_admin_console_event,
-    tailscale_alert_context,
-)
+from panther_tailscale_helpers import is_tailscale_admin_console_event, tailscale_alert_context
 
 
 def rule(event):
