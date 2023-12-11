@@ -59,23 +59,21 @@ def is_dmz_cidr(ip_range):
     return any(ip_network(ip_range).overlaps(dmz_network) for dmz_network in DMZ_NETWORKS)
 
 
-DMZ_TAG_KEY = "environment"
-DMZ_TAG_VALUE = "dmz"
-
-
 # Defaults to False to assume something is not a DMZ if it is not tagged
-def is_dmz_tags(resource):
+def is_dmz_tags(resource, dmz_tags):
     """This function determines whether a given resource is tagged as existing in a DMZ."""
     if resource["Tags"] is None:
         return False
-    return resource["Tags"].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
+    for key, value in dmz_tags:
+        if resource["Tags"].get(key) == value:
+            return True
+    return False
 
 
 # Function variables here so that implementation details of these functions can be changed without
 # having to rename the function in all locations its used, or having an outdated name on the actual
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
-IS_DMZ = is_dmz_tags
 
 # # # # # # # # # # # # # #
 #      GSuite Helpers     #
