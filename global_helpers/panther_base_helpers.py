@@ -7,6 +7,7 @@ from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
+from panther_config import config
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -35,25 +36,16 @@ def in_pci_scope_tags(resource):
     return resource["Tags"].get(CDE_TAG_KEY) == CDE_TAG_VALUE
 
 
+PCI_NETWORKS = config.PCI_NETWORKS
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as in scope
-PCI_NETWORKS = [
-    ip_network("10.0.0.0/24"),
-]
-
-
 def is_pci_scope_cidr(ip_range):
     return any(ip_network(ip_range).overlaps(pci_network) for pci_network in PCI_NETWORKS)
 
 
+DMZ_NETWORKS = config.DMZ_NETWORKS
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as DMZ space.
-DMZ_NETWORKS = [
-    ip_network("10.1.0.0/24"),
-    ip_network("100.1.0.0/24"),
-]
-
-
 def is_dmz_cidr(ip_range):
     """This function determines whether a given IP range is within the defined DMZ IP range."""
     return any(ip_network(ip_range).overlaps(dmz_network) for dmz_network in DMZ_NETWORKS)
