@@ -10,12 +10,11 @@ def rule(event):
             event.deep_get("requestParameters", "attributeName") == "restore",
         ]
     ):
+        current_account_id = event.deep_get("userIdentity", "accountId", default="")
         shared_account_ids = event.deep_get("requestParameters", "valuesToAdd", default=[])
         if shared_account_ids:
             return any(
-                account_id
-                for account_id in shared_account_ids
-                if account_id != event.deep_get("userIdentity", "accountId", default="")
+                account_id for account_id in shared_account_ids if account_id != current_account_id
             )
         return False
     return False
