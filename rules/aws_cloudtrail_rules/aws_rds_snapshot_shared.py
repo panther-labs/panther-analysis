@@ -1,8 +1,5 @@
 from panther_base_helpers import aws_rule_context
 
-# Account IDs exempted from this rule
-ALLOWED_ACCOUNTS = {}
-
 
 def rule(event):
     if all(
@@ -18,7 +15,7 @@ def rule(event):
             return any(
                 account_id
                 for account_id in shared_account_ids
-                if account_id not in ALLOWED_ACCOUNTS
+                if account_id != event.deep_get("userIdentity", "accountId", default="")
             )
         return False
     return False
