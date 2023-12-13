@@ -12,7 +12,7 @@ def rule(event):
     )
 
     for item in added_perms:
-        if item.get("group") == "all":
+        if item.get("userId") or item.get("group") == "all":
             return True
 
     return False
