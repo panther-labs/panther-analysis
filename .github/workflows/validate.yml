@@ -23,6 +23,6 @@ jobs:
       - name: Setup venv
         run: make venv
       
-      - name: make validate
+      - name: validate
         run: |
             pipenv run panther_analysis_tool validate --api-host ${{ secrets.API_HOST }} --api-token ${{ secrets.API_TOKEN }}
