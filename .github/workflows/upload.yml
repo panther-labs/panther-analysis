@@ -1,8 +1,11 @@
-on: pull_request
+on:
+    push:
+        branches:
+            - main
 
 jobs:
-  test:
-    name: Test
+  upload:
+    name: 
     runs-on: ubuntu-latest
     
     steps:
@@ -22,6 +25,7 @@ jobs:
       
       - name: Setup venv
         run: make venv
-
-      - name: make test
-        run: make test
+      
+      - name: make validate
+        run: |
+            pipenv run panther_analysis_tool upload --api-host ${{ secrets.API_HOST }} --api-token ${{ secrets.API_TOKEN }}
