@@ -4,8 +4,16 @@ jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
-    
+    env:
+      API_HOST: ${{ secrets.API_HOST }}
+      API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
+      - name: Validate Secrets
+        if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
+        run: |
+          echo "API_HOST or API_TOKEN not set"
+          exit 0
+
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
 
@@ -25,4 +33,4 @@ jobs:
       
       - name: validate
         run: |
-            pipenv run panther_analysis_tool validate --api-host ${{ secrets.API_HOST }} --api-token ${{ secrets.API_TOKEN }}
+            pipenv run panther_analysis_tool validate --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
