@@ -1,0 +1,192 @@
+AnalysisType: rule
+Description: SentinelOne Alert Passthrough
+DisplayName: "SentinelOne Alert Passthrough"
+Enabled: true
+Detection:
+  - All:
+      - Key: activitytype
+        Condition: Equals
+        Value: 3608
+AlertTitle: "SentinelOne [{event.severity)}] Alert - [{data.rulename)}]"
+AlertContext:
+  - KeyName: primarydescription
+    KeyValue:
+      Key: primarydescription
+  - KeyName: accountname
+    KeyValue:
+      Key: accountname
+  - KeyName: accountid
+    KeyValue:
+      Key: accountid
+  - KeyName: siteid
+    KeyValue:
+      Key: siteid
+  - KeyName: sitename
+    KeyValue:
+      Key: sitename
+  - KeyName: groupid
+    KeyValue:
+      Key: groupid
+  - KeyName: groupname
+    KeyValue:
+      Key: groupname
+  - KeyName: activityuuid
+    KeyValue:
+      Key: activityuuid
+  - KeyName: agentid
+    KeyValue:
+      Key: agentid
+  - KeyName: id
+    KeyValue:
+      Key: id
+  - KeyName: data
+    KeyValue:
+      Key: data
+Reference: https://www.sentinelone.com/blog/feature-spotlight-introducing-the-new-threat-center/
+Severity: Medium
+DynamicSeverities:
+  - ChangeTo: Critical
+    Conditions:
+      - Key: data.severity
+        Condition: Equals
+        Value: E_CRITICAL
+  - ChangeTo: Hight
+    Conditions:
+      - Key: data.severity
+        Condition: Equals
+        Value: E_HIGH
+  - ChangeTo: Medium
+    Conditions:
+      - KeyPath: data.severity
+        Condition: Equals
+        Value: E_MEDIUM
+  - ChangeTo: Low
+    Conditions:
+      - KeyPath: data.severity
+        Condition: Equals
+        Value: E_LOW
+GroupBy:
+  - Key: id
+Tests:
+    - ExpectedResult: true
+      Log:
+        accountid: "12345"
+        accountname: Account1
+        activitytype: 3608
+        activityuuid: f123-345-1234
+        agentid: "1234567"
+        createdat: "2022-12-07 17:36:05.076"
+        data:
+            accountid: "987654"
+            accountname: Account1
+            actoralternateid: ""
+            agentipv4: 1.2.3.4
+            alertid: "1570395776954206544"
+            datasourcename: SentinelOne
+            detectedat: "2022-12-07T17:35:48Z"
+            dnsrequest: ""
+            dnsresponse: ""
+            dstip: ""
+            dstport: 0
+            ruledescription: test
+            ruleid: "12345"
+            rulename: test-rule
+            rulescopeid: 123
+            rulescopelevel: E_ACCOUNT
+            scopeid: 123
+            scopelevel: Group
+            scopename: Default Group
+            severity: E_CRITICAL
+            siteid: "12345"
+            sitename: Default site
+            tiindicatorsource: ""
+            tiindicatortype: ""
+            tiindicatorvalue: ""
+            userid: 432134
+        groupid: "12345"
+        groupname: Default Group
+        id: "5423"
+        primarydescription: 'Alert created for sshd from Custom Rule: test-rule in Group Default Group in Site Default site of Account Account1, detected on BobsPC.'
+        secondarydescription: e020cd039b099b6bfdfd33d13554da5383cc4cc0
+        siteid: "1408801957997975086"
+        sitename: Default site
+        updatedat: "2022-12-07 17:36:05.075"
+        userid: "1234"
+      Name: CRITICAL
+    - ExpectedResult: true
+      Log:
+        accountid: "12345"
+        accountname: Account1
+        activitytype: 3608
+        activityuuid: f123-345-1234
+        agentid: "1234567"
+        createdat: "2022-12-07 17:36:05.076"
+        data:
+            accountid: "987654"
+            accountname: Account1
+            actoralternateid: ""
+            agentipv4: 1.2.3.4
+            alertid: "1570395776954206544"
+            datasourcename: SentinelOne
+            detectedat: "2022-12-07T17:35:48Z"
+            dnsrequest: ""
+            dnsresponse: ""
+            dstip: ""
+            dstport: 0
+            ruledescription: test
+            ruleid: "12345"
+            rulename: test-rule
+            rulescopeid: 123
+            rulescopelevel: E_ACCOUNT
+            scopeid: 123
+            scopelevel: Group
+            scopename: Default Group
+            severity: E_MEDIUM
+            siteid: "12345"
+            sitename: Default site
+            tiindicatorsource: ""
+            tiindicatortype: ""
+            tiindicatorvalue: ""
+            userid: 432134
+        groupid: "12345"
+        groupname: Default Group
+        id: "5423"
+        primarydescription: 'Alert created for sshd from Custom Rule: test-rule in Group Default Group in Site Default site of Account Account1, detected on BobsPC.'
+        secondarydescription: e020cd039b099b6bfdfd33d13554da5383cc4cc0
+        siteid: "1408801957997975086"
+        sitename: Default site
+        updatedat: "2022-12-07 17:36:05.075"
+        userid: "1234"
+      Name: MEDIUM
+    - ExpectedResult: false
+      Log:
+        accountid: "12345"
+        accountname: Account1
+        activitytype: 90
+        activityuuid: 123-456-789
+        agentid: "111111"
+        createdat: "2022-12-07 16:06:35.483"
+        data:
+            accountname: Account1
+            computername: BobsPC
+            createdat: "2022-12-07T16:06:35.477827Z"
+            fullscopedetails: Group Testing in Site Default site of Account Account1
+            fullscopedetailspath: Global / Account1 / Default site / Testing
+            groupname: Testing
+            scopelevel: Group
+            scopename: Testing
+            sitename: Default site
+            status: started
+        groupid: "11234"
+        groupname: Testing
+        id: "123564"
+        primarydescription: Agent BobsPC started full disk scan at Wed, 07 Dec 2022, 16:06:35 UTC.
+        siteid: "12345"
+        sitename: Default site
+        updatedat: "2022-12-07 16:06:35.479"
+      Name: Non-Alert
+DedupPeriodMinutes: 60
+LogTypes:
+    - SentinelOne.Activity
+RuleID: "SentinelOne.Alert.Passthrough.Simple"
+Threshold: 1
