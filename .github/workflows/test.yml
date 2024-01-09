@@ -23,5 +23,6 @@ jobs:
       - name: Setup venv
         run: make venv
 
-      - name: make test
-        run: make test
+      - name: test
+        run: |
+          pipenv run panther_analysis_tool test --api-host ${{ secrets.API_HOST }} --api-token ${{ secrets.API_TOKEN }}
