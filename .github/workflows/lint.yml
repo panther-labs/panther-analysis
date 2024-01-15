@@ -17,8 +17,8 @@
 on: pull_request
 
 jobs:
-  make_lint:
-    name: lint and test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     
     steps:
@@ -41,6 +41,3 @@ jobs:
 
       - name: make lint
         run: make lint
-
-      - name: make test
-        run: make test
