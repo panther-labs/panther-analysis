@@ -1,0 +1,68 @@
+AnalysisType: rule
+RuleID: "Netskope.ManyDeletes"
+DisplayName: "Netskope Many Objects Deleted"
+AlertTitle: "[{user}] deleted many objects in a short time"
+Detection:
+  - All:
+    - KeyPath: audit_log_event
+      Condition: Contains
+      Value: Delete
+Enabled: true
+LogTypes:
+  - Netskope.Audit
+Tags:
+  - Netskope
+  - Configuration Required
+  - Data Destruction
+Reports:
+  MITRE ATT&CK: 
+    - TA0040:T1485
+Severity: High
+Description: A user deleted a large number of objects in a short period of time.
+DedupPeriodMinutes: 60
+Threshold: 10
+Runbook: A user deleted a large number of objects in a short period of time.  Validate that this activity is expected and authorized.
+Reference: https://docs.netskope.com/en/netskope-help/admin-console/administration/audit-log/
+Tests:
+    - Name: True positive
+      ExpectedResult: true
+      Log: 
+        {
+        "_id": "1e589befa3da30132362f32a",
+        "_insertion_epoch_timestamp": 1702318213,
+        "audit_log_event": "Deleted rbi template",
+        "count": 1,
+        "is_netskope_personnel": false,
+        "organization_unit": "",
+        "severity_level": 2,
+        "timestamp": "2023-12-11 18:10:13.000000000",
+        "type": "admin_audit_logs",
+        "ur_normalized": "service-account",
+        "user": "service-account"
+      }
+    - Name: True negative
+      ExpectedResult: false
+      Log: 
+        {
+        "_id": "1e589befa3da30132362f32a",
+        "_insertion_epoch_timestamp": 1702318213,
+        "audit_log_event": "Rest API V2 Call",
+        "count": 1,
+        "is_netskope_personnel": false,
+        "organization_unit": "",
+        "severity_level": 2,
+        "supporting_data": {
+          "data_type": "incidents",
+          "data_values": [
+            200,
+            "POST",
+            "/api/v2/incidents/uba/getuci",
+            "trid=ccb898fgrhvdd0v0lebg"
+          ]
+        },
+        "timestamp": "2023-12-11 18:10:13.000000000",
+        "type": "admin_audit_logs",
+        "ur_normalized": "service-account",
+        "user": "service-account"
+      }
+

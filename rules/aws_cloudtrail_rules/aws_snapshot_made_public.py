@@ -18,13 +18,9 @@ def rule(event):
         for item in items:
             if not isinstance(item, (Mapping, dict)):
                 continue
-            if item.get("group") == "all":
+            if item.get("userId") or item.get("group") == "all":
                 return True
         return False
-
-    # RDS snapshot made public
-    if event.get("eventName") == "ModifyDBClusterSnapshotAttribute":
-        return "all" in deep_get(event, "requestParameters", "valuesToAdd", default=[])
 
     return False
 

@@ -7,130 +7,132 @@ PackDefinition:
     # Data Exposure
     - AWS.AMI.Private
     - AWS.CloudTrail.AMIModifiedForPublicAccess
+    - AWS.CloudTrail.ResourceMadePublic
     - AWS.CloudTrail.S3Bucket.Public
+    - AWS.CloudTrail.SnapshotMadePublic
+    - AWS.EC2.Instance.DetailedMonitoring
+    - AWS.EC2.Traffic.Mirroring
     - AWS.IAM.AccessKeyCompromised
-    - AWS.KMS.RestrictsUsage
     - AWS.KMS.CustomerManagedKeyLoss
+    - AWS.KMS.RestrictsUsage
+    - AWS.Macie.Evasion
     - AWS.RDS.Instance.PublicAccess
     - AWS.RDS.Instance.SnapshotPublicAccess
-    - AWS.S3.Bucket.PublicRead
-    - AWS.S3.Bucket.PublicWrite
     - AWS.S3.Bucket.PolicyAllowWithNotPrincipal
     - AWS.S3.Bucket.PrincipalRestrictions
     - AWS.S3.Bucket.PublicAccessBlock
+    - AWS.S3.Bucket.PublicRead
+    - AWS.S3.Bucket.PublicWrite
     - AWS.S3.Bucket.SecureAccess
     - AWS.S3.Bucket.Versioning
-    - AWS.EC2.Traffic.Mirroring
-    - AWS.Macie.Evasion
-    - AWS.CloudTrail.ResourceMadePublic
-    - AWS.CloudTrail.SnapshotMadePublic
-    - AWS.EC2.Instance.DetailedMonitoring
     # Encryption Status
+    - AWS.EC2.EBS.Encryption.Disabled
     - AWS.EC2.Volume.Encryption
     - AWS.EC2.Volume.Snapshot.Encrypted
-    - AWS.EC2.EBS.Encryption.Disabled
-    - AWS.Redshift.Cluster.Encryption
     - AWS.RDS.Instance.Encryption
+    - AWS.Redshift.Cluster.Encryption
     - AWS.S3.Bucket.Encryption
     # Networking Policies
-    - AWS.NetworkACL.RestrictsInboundTraffic
-    - AWS.SecurityGroup.AdministrativeIngress
-    - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
-    - AWS.SecurityGroup.RestrictsInboundTraffic
+    - AWS.CloudTrail.NetworkACLPermissiveEntry
+    - AWS.DNS.Crypto.Domain
     - AWS.EC2.GatewayModified
     - AWS.EC2.Monitoring
     - AWS.EC2.NetworkACLModified
     - AWS.EC2.RouteTableModified
     - AWS.EC2.VPCModified
     - AWS.IPSet.Modified
-    - AWS.CloudTrail.NetworkACLPermissiveEntry
-    - AWS.DNS.Crypto.Domain
+    - AWS.NetworkACL.RestrictsInboundTraffic
+    - AWS.SecurityGroup.AdministrativeIngress
+    - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
+    - AWS.SecurityGroup.RestrictsInboundTraffic
     - AWS.VPC.HealthyLogStatus
     # Root Activity
-    - AWS.Console.RootLogin
-    - AWS.Console.RootLoginFailed
-    - AWS.Root.Activity
     - AWS.CloudTrail.RootAccessKeyCreated
     - AWS.CloudTrail.RootPasswordChanged
+    - AWS.Console.RootLogin
+    - AWS.Console.RootLoginFailed
+    - AWS.EC2.Instance.DetailedMonitoring
+    - AWS.Root.Activity
     - AWS.RootAccount.AccessKeys
     - AWS.RootAccount.MFA
-    - AWS.EC2.Instance.DetailedMonitoring
     # User and Account Policies and Rules
+    - AWS.CloudTrail.IAMAnythingChanged
+    - AWS.CloudTrail.IAMCompromisedKeyQuarantine
+    - AWS.CloudTrail.Password.Policy.Discovery
     - AWS.Console.LoginWithoutMFA
     - AWS.Console.LoginWithoutSAML
-    - AWS.PasswordPolicy.PasswordReuse
-    - AWS.Suspicious.SAML.Activity
+    - AWS.EC2.SecurityGroupModified
+    - AWS.IAM.Backdoor.User.Keys
+    - AWS.IAM.CredentialsUpdated
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
+    - AWS.IAM.Group.Users
+    - AWS.IAM.Policy.AssignedToUser
+    - AWS.IAM.PolicyModified
     - AWS.IAM.User.MFA
+    - AWS.IAMUser.ReconAccessDenied
     - AWS.Password.Unused
     - AWS.PasswordPolicy.ComplexityGuidelines
     - AWS.PasswordPolicy.PasswordAgeLimit
-    - AWS.EC2.SecurityGroupModified
-    - AWS.CloudTrail.IAMAnythingChanged
-    - AWS.IAM.PolicyModified
-    - AWS.IAM.Backdoor.User.Keys
-    - AWS.IAMUser.ReconAccessDenied
-    - AWS.IAM.CredentialsUpdated
+    - AWS.PasswordPolicy.PasswordReuse
+    - AWS.Suspicious.SAML.Activity
     - AWS.User.Login.Profile.Modified
-    - AWS.CloudTrail.Password.Policy.Discovery
-    - AWS.IAM.Group.Users
-    - AWS.IAM.Policy.AssignedToUser
-    - AWS.CloudTrail.IAMCompromisedKeyQuarantine
     # General Policies and Rules
-    - AWS.ACM.Certificate.Valid
+    - Amazon.EKS.Audit.Multiple403
+    - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
+    - AWS.AccessKey.Rotation
+    - AWS.AccessKey.Unused
+    - AWS.AccessKeys.AccountCreation
     - AWS.ACM.Certificate.Expiration
+    - AWS.ACM.Certificate.Valid
+    - AWS.CloudFormation.Stack.Drifted
+    - AWS.CloudFormation.Stack.TerminationProtection
+    - AWS.CloudFormation.Stack.UsesIAMServiceRole
+    - AWS.CloudTrail.CodebuildProjectMadePublic
     - AWS.CloudTrail.Created
     - AWS.CloudTrail.Enabled
+    - AWS.CloudTrail.SecurityConfigurationChange
     - AWS.CloudTrail.Stopped
-    - AWS.CloudTrail.CodebuildProjectMadePublic
-    - AWS.ConfigService.Created
-    - AWS.ConfigService.DisabledDeleted
+    - AWS.CloudTrail.UnauthorizedAPICall
+    - AWS.CloudWatchLogs.DataRetention1Year
+    - AWS.CloudWatchLogs.Encrypted
+    - AWS.Config.GlobalResources
+    - AWS.Config.RecordAllResourceTypes
     - AWS.Config.RecordingEnabled
     - AWS.Config.RecordingNoErrors
-    - AWS.IAM.Policy.AdministrativePrivileges
-    - AWS.GuardDuty.Enabled
-    - AWS.GuardDuty.HighSeverityFinding
-    - AWS.GuardDuty.MediumSeverityFinding
-    - AWS.GuardDuty.LowSeverityFinding
+    - AWS.ConfigService.Created
+    - AWS.ConfigService.DisabledDeleted
+    - AWS.DynamoDB.Autoscaling
+    - AWS.EC2.Instance.EBSOptimization
+    - AWS.EC2.Startup.Script.Change
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.ELBv2.SSLPolicy
-    - AWS.WAF.HasXSSPredicate
-    - AWS.WAF.Disassociation
-    - AWS.EC2.Startup.Script.Change
-    - AWS.EC2.Instance.EBSOptimization
+    - AWS.GuardDuty.Enabled
+    - AWS.GuardDuty.HighSeverityFinding
+    - AWS.GuardDuty.LowSeverityFinding
+    - AWS.GuardDuty.MediumSeverityFinding
+    - AWS.IAM.Policy.AdministrativePrivileges
+    - AWS.RDS.InstanceHighAvailability
+    - AWS.RDS.ManualSnapshotCreated
     - AWS.RDS.MasterPasswordUpdated
     - AWS.RDS.PublicRestore
-    - AWS.RDS.InstanceHighAvailability
-    - AWS.S3.GreyNoiseActivity
-    - AWS.S3.BucketDeleted
-    - AWS.S3.BucketPolicyModified
+    - AWS.RDS.SnapshotShared
+    - AWS.Redshift.Cluster.Logging
+    - AWS.Redshift.Cluster.SnapshotRetention
+    - AWS.Redshift.Cluster.VersionUpgrade
     - AWS.S3.Bucket.ActionRestrictions
-    - AWS.S3.ServerAccess.Error
-    - AWS.S3.ServerAccess.Insecure
     - AWS.S3.Bucket.LifecycleConfiguration
     - AWS.S3.Bucket.Logging
     - AWS.S3.Bucket.MFADelete
     - AWS.S3.Bucket.NameDNSCompliance
-    - AWS.CloudTrail.SecurityConfigurationChange
+    - AWS.S3.BucketDeleted
+    - AWS.S3.BucketPolicyModified
+    - AWS.S3.GreyNoiseActivity
+    - AWS.S3.ServerAccess.Error
+    - AWS.S3.ServerAccess.Insecure
     - AWS.SecurityHub.Finding.Evasion
-    - AWS.CloudTrail.UnauthorizedAPICall
-    - Amazon.EKS.Audit.Multiple403
-    - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
-    - AWS.CloudFormation.Stack.Drifted
-    - AWS.CloudFormation.Stack.UsesIAMServiceRole
-    - AWS.CloudFormation.Stack.TerminationProtection
-    - AWS.CloudWatchLogs.DataRetention1Year
-    - AWS.CloudWatchLogs.Encrypted
-    - AWS.Config.RecordAllResourceTypes
-    - AWS.Config.GlobalResources
-    - AWS.DynamoDB.Autoscaling
-    - AWS.AccessKey.Rotation
-    - AWS.AccessKey.Unused
-    - AWS.AccessKeys.AccountCreation
-    - AWS.Redshift.Cluster.Logging
-    - AWS.Redshift.Cluster.SnapshotRetention
-    - AWS.Redshift.Cluster.VersionUpgrade
     - AWS.VPC.FlowLogs
+    - AWS.WAF.Disassociation
+    - AWS.WAF.HasXSSPredicate
     # AWS DataModels
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
@@ -143,3 +145,6 @@ PackDefinition:
     - panther_greynoise_helpers
     - panther_lookuptable_helpers
     - panther_oss_helpers
+    - panther_config
+    - panther_config_defaults
+    - panther_config_overrides
