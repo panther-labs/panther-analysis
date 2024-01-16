@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default_k8s.py 
+RuleID: "Kubernetes.UnauthorizedPodExecution"
+DisplayName: "Unauthorized Kubernetes Pod Execution"
+Description: >
+  This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions. 
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Unauthorized Kubernetes Pod Execution
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value

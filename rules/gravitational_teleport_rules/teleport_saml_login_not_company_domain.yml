@@ -1,0 +1,63 @@
+AnalysisType: rule
+Filename: teleport_saml_login_not_company_domain.py
+RuleID: Teleport.SAMLLoginWithoutCompanyDomain
+DisplayName: "A user authenticated with SAML, but from an unknown company domain"
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - Teleport
+Severity: High
+Description: "A user authenticated with SAML, but from an unknown company domain"
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+Reference: https://goteleport.com/docs/management/admin/
+Runbook: >
+  A user authenticated with SAML, but from an unknown company domain
+SummaryAttributes:
+  - event
+  - code
+  - user
+  - method
+  - mfa_device
+Tests:
+  -
+    Name: A user authenticated with SAML, but from a known company domain
+    ExpectedResult: false
+    Log:
+      {
+        "attributes": {
+          "firstName": [
+            ""
+          ],
+          "groups": [
+            "employees"
+          ]
+        },
+        "cluster_name": "teleport.example.com",
+        "code": "T1001I",
+        "ei": 0,
+        "event": "user.login",
+        "method": "saml",
+        "success": true,
+        "time": "2023-09-18 00:00:00",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "user": "jane.doe@example.com"
+      }
+  -
+    Name: A user authenticated with SAML, but not from a company domain
+    ExpectedResult: true
+    Log:
+      {
+        "cluster_name": "teleport.example.com",
+        "code": "T1001I",
+        "ei": 0,
+        "event": "user.login",
+        "method": "saml",
+        "success": true,
+        "time": "2023-09-18 00:00:00",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "user": "wtf.how@omghax.gravitational.io"
+      }

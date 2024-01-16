@@ -2,10 +2,13 @@ import json
 import re
 from collections import OrderedDict
 from collections.abc import Mapping
+from datetime import datetime
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
+
+from panther_config import config
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -34,47 +37,36 @@ def in_pci_scope_tags(resource):
     return resource["Tags"].get(CDE_TAG_KEY) == CDE_TAG_VALUE
 
 
+PCI_NETWORKS = config.PCI_NETWORKS
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as in scope
-PCI_NETWORKS = [
-    ip_network("10.0.0.0/24"),
-]
-
-
 def is_pci_scope_cidr(ip_range):
     return any(ip_network(ip_range).overlaps(pci_network) for pci_network in PCI_NETWORKS)
 
 
+DMZ_NETWORKS = config.DMZ_NETWORKS
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as DMZ space.
-DMZ_NETWORKS = [
-    ip_network("10.1.0.0/24"),
-    ip_network("100.1.0.0/24"),
-]
-
-
 def is_dmz_cidr(ip_range):
     """This function determines whether a given IP range is within the defined DMZ IP range."""
     return any(ip_network(ip_range).overlaps(dmz_network) for dmz_network in DMZ_NETWORKS)
 
 
-DMZ_TAG_KEY = "environment"
-DMZ_TAG_VALUE = "dmz"
-
-
 # Defaults to False to assume something is not a DMZ if it is not tagged
-def is_dmz_tags(resource):
+def is_dmz_tags(resource, dmz_tags):
     """This function determines whether a given resource is tagged as existing in a DMZ."""
     if resource["Tags"] is None:
         return False
-    return resource["Tags"].get(DMZ_TAG_KEY) == DMZ_TAG_VALUE
+    for key, value in dmz_tags:
+        if resource["Tags"].get(key) == value:
+            return True
+    return False
 
 
 # Function variables here so that implementation details of these functions can be changed without
 # having to rename the function in all locations its used, or having an outdated name on the actual
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
-IS_DMZ = is_dmz_tags
 
 # # # # # # # # # # # # # #
 #      GSuite Helpers     #
@@ -494,3 +486,22 @@ def m365_alert_context(event):
 def defang_ioc(ioc):
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
     return ioc.replace(".", "[.]")
+
+
+def panther_nanotime_to_python_datetime(panther_time: str) -> datetime:
+    panther_time_micros = re.search(r"\.(\d+)", panther_time).group(1)
+    panther_time_micros_rounded = panther_time_micros[0:6]
+    panther_time_rounded = re.sub(r"\.\d+", f".{panther_time_micros_rounded}", panther_time)
+    panther_time_format = r"%Y-%m-%d %H:%M:%S.%f"
+    return datetime.strptime(panther_time_rounded, panther_time_format)
+
+
+def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
+    golang_time_format = r"%Y-%m-%dT%H:%M:%S.%fZ"
+    # Golang fractional seconds include a mix of microseconds and
+    # nanoseconds, which doesn't play well with Python's microseconds datetimes.
+    # This rounds the fractional seconds to a microsecond-size.
+    golang_time_micros = re.search(r"\.(\d+)Z", golang_time).group(1)
+    golang_time_micros_rounded = golang_time_micros[0:6]
+    golang_time_rounded = re.sub(r"\.\d+Z", f".{golang_time_micros_rounded}Z", golang_time)
+    return datetime.strptime(golang_time_rounded, golang_time_format)

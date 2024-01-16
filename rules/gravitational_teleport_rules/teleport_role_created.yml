@@ -1,0 +1,39 @@
+AnalysisType: rule
+Filename: teleport_role_created.py
+RuleID: Teleport.RoleCreated
+DisplayName: A Teleport Role was modified or created
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - Teleport
+Severity: Medium
+Description: A Teleport Role was modified or created
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098.001
+Reference: https://goteleport.com/docs/management/admin/
+Runbook: >
+  A Teleport Role was modified or created. Validate its legitimacy.
+SummaryAttributes:
+  - event
+  - code
+  - user
+  - name
+Tests:
+  -
+    Name: A role was created
+    ExpectedResult: true
+    Log:
+      {
+        "cluster_name": "teleport.example.com",
+        "code": "T9000I",
+        "ei": 0,
+        "event": "role.created",
+        "expires": "0001-01-01T00:00:00Z",
+        "name": "teleport-event-handler",
+        "time": "2023-09-20T23:00:000.000000Z",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "user": "max.mustermann@example.com"
+      }

@@ -14,6 +14,7 @@ Reports:
   MITRE ATT&CK:
     - TA0004:T1078
 Description: Only one admin user can be the account owner. Ensure the change in ownership is expected.
+Reference: https://support.zendesk.com/hc/en-us/articles/4408822084634-Changing-the-account-owner
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -26,6 +27,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account",
         "source_label": "Account: Account",
@@ -44,6 +46,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "user",
         "source_label": "Account: Account",

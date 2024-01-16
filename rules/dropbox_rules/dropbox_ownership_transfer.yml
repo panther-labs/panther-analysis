@@ -3,6 +3,7 @@ Description: 'Dropbox ownership of a document or folder has been transferred.'
 DisplayName: "Dropbox Document/Folder Ownership Transfer"
 Enabled: true
 Filename: dropbox_ownership_transfer.py
+Reference: https://help.dropbox.com/share/owner
 Severity: High
 Tests:
     - ExpectedResult: true
@@ -131,7 +132,7 @@ Tests:
       Name: Other
     - ExpectedResult: true
       Mocks:
-        - objectName: ALLOWED_DOMAINS
+        - objectName: DROPBOX_TRUSTED_OWNERSHIP_DOMAINS
           returnValue: >-
             [
                 "example.com"

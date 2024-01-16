@@ -2,12 +2,12 @@ name: sync-panther-analysis-from-upstream
 
 on:
   schedule:
-    # 15:00Z, every Tuesday
-    - cron: "00 15 * * 2"
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
   workflow_dispatch: # or on button click  
 
 env:
-  YOUR_REPO_PRIMARY_BRANCH_NAME: "master"
+  YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
 jobs:
   check_upstream:
@@ -15,7 +15,7 @@ jobs:
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: set_upstream
         name: Check Upstream
         with:
@@ -29,7 +29,7 @@ jobs:
               process.env['GITHUB_OUTPUT'],
               'latest-release=' +  upstreamLatest.data.tag_name + '\n');
       ## CREATE A BRANCH
-      - uses: peterjgrainger/action-create-branch@v2.3.0
+      - uses: peterjgrainger/action-create-branch@v2.4.0
         id: create_a_branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,9 +37,10 @@ jobs:
           branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          token: ${{ secrets.GITHUB_TOKEN }}
       # Sync this branch with upstream
       - name: Sync upstream changes into PR branch
         id: sync
@@ -54,9 +55,10 @@ jobs:
           #  change the usptream_sync_branch to master
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
-          #test_mode: true  
+          #test_mode: true
+          upstream_pull_args: '--allow-unrelated-histories'
       # Create a PR from this branch back to this fork's primary branch
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: create_pr
         name: Create a PR to bring upstream changes into the local repo primary branch
         if: steps.sync.outputs.has_new_commits == 'true'
@@ -73,11 +75,11 @@ jobs:
                 base: '${{env.YOUR_REPO_PRIMARY_BRANCH_NAME}}',
               });
             } catch(e) {
-              if (e.response.data.errors[0].message.includes('No commits between')) {
+              if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('No commits between')) {
                 fs.appendFileSync(
                   process.env['GITHUB_OUTPUT'],
                   'pr_state=no-updates\n');
-              } else if (e.response.data.errors[0].message.includes('A pull request already exists for')) {
+              } else if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('A pull request already exists for')) {
                 fs.appendFileSync(
                   process.env['GITHUB_OUTPUT'],
                   'pr_state=update-pr-already-exists\n');
@@ -104,4 +106,3 @@ jobs:
         run: |
           echo "unhandled exception in PR create step. Check output of that step."
           exit 128
-      

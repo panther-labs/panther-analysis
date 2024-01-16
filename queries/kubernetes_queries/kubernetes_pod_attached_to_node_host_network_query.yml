@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+QueryName: Pod attached to the Node Host Network
+Enabled: false
+Tags:
+  - Optional
+Description: >
+  This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb = 'create'
+                 AND objectRef:resource = 'pods'
+                 AND requestObject:spec:hostNetwork = True
+                 AND p_occurs_since('30 minutes')
+                 --insert allow-list for expected pods that are attached to the node's network
+                 LIMIT 10
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

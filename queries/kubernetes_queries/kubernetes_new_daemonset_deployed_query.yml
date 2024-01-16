@@ -1,0 +1,22 @@
+AnalysisType: scheduled_query
+QueryName: New DaemonSet Deployed to Kubernetes
+Enabled: false
+Tags:
+  - Optional
+Description: >
+  This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
+Query: >
+                 SELECT *,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 verb ='create'
+                 AND objectRef:resource = 'daemonsets'
+                 AND p_occurs_since('30 minutes')
+                 --insert allow-list for know daemonsets running kubernetes clusters i.e a security agent
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

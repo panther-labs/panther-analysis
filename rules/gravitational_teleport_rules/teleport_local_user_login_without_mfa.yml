@@ -1,0 +1,64 @@
+AnalysisType: rule
+Filename: teleport_local_user_login_without_mfa.py
+RuleID: Teleport.LocalUserLoginWithoutMFA
+DisplayName: User Logged in wihout MFA
+Enabled: true
+LogTypes:
+  - Gravitational.TeleportAudit
+Tags:
+  - Teleport
+Severity: High
+Description: A local User logged in without MFA
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+Reference: https://goteleport.com/docs/management/admin/
+Runbook: >
+  A local user logged in without Multi-Factor Authentication
+SummaryAttributes:
+  - event
+  - code
+  - user
+  - success
+  - mfa_device
+Tests:
+  -
+    Name: User logged in with MFA
+    ExpectedResult: false
+    Log:
+      {
+        "addr.remote": "[2001:db8:feed:face:c0ff:eeb0:baf00:00d]:65123",
+        "cluster_name": "teleport.example.com",
+        "code": "T1000I",
+        "ei": 0,
+        "event": "user.login",
+        "method": "local",
+        "mfa_device": {
+          "mfa_device_name": "1Password",
+          "mfa_device_type": "WebAuthn",
+          "mfa_device_uuid": "88888888-4444-4444-4444-222222222222"
+        },
+        "success": true,
+        "time": "2023-09-20T19:00:00.123456Z",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "user": "max.mustermann",
+        "user_agent": "Examplecorp Spacedeck-web/99.9 (Hackintosh; ARM Cortex A1000)"
+      }
+  -
+    Name: User logged in without MFA
+    ExpectedResult: false
+    Log:
+      {
+        "addr.remote": "[2001:db8:face:face:face:face:face:face]:65123",
+        "cluster_name": "teleport.example.com",
+        "code": "T1000I",
+        "ei": 0,
+        "event": "user.login",
+        "method": "local",
+        "success": true,
+        "time": "2023-09-20T19:00:00.123456Z",
+        "uid": "88888888-4444-4444-4444-222222222222",
+        "user": "max.mustermann",
+        "user_agent": "Examplecorp Spacedeck-web/99.9 (Hackintosh; ARM Cortex A1000)"
+      }

@@ -1,10 +1,6 @@
 from datetime import timedelta
 
-from panther_detection_helpers.caching import (
-    get_counter,
-    increment_counter,
-    reset_counter,
-)
+from panther_detection_helpers.caching import get_counter, increment_counter, reset_counter
 
 THRESH_TTL = timedelta(minutes=10).total_seconds()
 

@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default_k8s.py 
+RuleID: "Kubernetes.PrivilegedPodCreated"
+DisplayName: "Privileged Pod Created"
+Description: >
+  This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Privileged Pod Created
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value
