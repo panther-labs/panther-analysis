@@ -7,6 +7,7 @@ from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
+
 from panther_config import config
 
 # # # # # # # # # # # # # #
