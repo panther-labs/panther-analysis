@@ -1,6 +1,6 @@
 from panther_base_helpers import deep_get
 
-LATEST_VERSION = "4.2.0"
+LATEST_VERSION = "5.10.2"
 
 
 def rule(event):

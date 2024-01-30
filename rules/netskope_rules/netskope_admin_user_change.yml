@@ -27,16 +27,20 @@ Tags:
 Reports:
   MITRE ATT&CK: 
     - TA0004:T1098
+Reference: https://docs.netskope.com/en/netskope-help/admin-console/administration/managing-administrators/
 Severity: High
 DynamicSeverities:
   - ChangeTo: Critical
     Conditions:
       - KeyPath: audit_log_event
-        Condition: Contains
-        Values:
-          - Create
-          - Add
-          - Delete
+        Condition: IContains
+        Value: Create
+      - KeyPath: audit_log_event
+        Condition: IContains
+        Value: Add
+      - KeyPath: audit_log_event
+        Condition: IContains
+        Value: Delete
 Description: An administrator account was created, deleted, or modified.
 DedupPeriodMinutes: 60
 Threshold: 1
@@ -90,4 +94,3 @@ Tests:
         "ur_normalized": "service-account",
         "user": "service-account"
       }
-

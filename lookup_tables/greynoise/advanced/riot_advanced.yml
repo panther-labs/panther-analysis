@@ -76,6 +76,9 @@ LogTypeMap:
       Selectors:
         - "callerIpAddress"
         - "$.properties.initiatedBy.user.ipAddress"
+    - LogType: Azure.MonitorActivity
+      Selectors:
+        - "callerIpAddress"
     - LogType: Bitwarden.Events
       Selectors:
         - "ipAddress"
@@ -422,16 +425,6 @@ LogTypeMap:
     - LogType: Sysdig.Audit
       Selectors:
         - "$.content.userOriginIP"
-    - LogType: Tailscale.Network
-      Selectors:
-        - "$.event.virtualTraffic[].srcIp"
-        - "$.event.virtualTraffic[].dstIp"
-        - "$.event.subnetTraffic[].srcIp"
-        - "$.event.subnetTraffic[].dstIp"
-        - "$.event.exitTraffic[].srcIp"
-        - "$.event.exitTraffic[].dstIp"
-        - "$.event.physicalTraffic[].srcIp"
-        - "$.event.physicalTraffic[].dstIp"
     - LogType: Tines.Audit
       Selectors:
         - "request_ip"

@@ -16,12 +16,12 @@ def rule(event):
 
 def title(event):
     user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
-    page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
-    return f"Notion User [{user}] changed the status of page [{page_id}] to public."
+    page_name = event.deep_get("event", "details", "page_name", default="<NO_PAGE_NAME_FOUND>")
+    return f"Notion User [{user}] changed the status of page [{page_name}] to public."
 
 
 def alert_context(event):
     context = notion_alert_context(event)
-    page_id = event.deep_get("event", "details", "target", "page_id", default="<NO_PAGE_ID_FOUND>")
-    context["page_id"] = page_id
+    page_name = event.deep_get("event", "details", "page_name", default="<NO_PAGE_NAME_FOUND>")
+    context["page_name"] = page_name
     return context

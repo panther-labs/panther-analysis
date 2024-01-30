@@ -25,6 +25,9 @@ Tests:
   -
     Name: DMZ Security Group Does Allows Public Access
     ExpectedResult: true
+    Mocks:
+      - objectName: DMZ_TAGS
+        returnValue: '[["environment", "dmz"]]'
     Resource:
       {
         "Description": "example VPC security group",
@@ -88,6 +91,9 @@ Tests:
   -
     Name: Non DMZ Security Group Allows Public Access
     ExpectedResult: false
+    Mocks:
+      - objectName: DMZ_TAGS
+        returnValue: '[["environment", "dmz"]]'
     Resource:
       {
         "Description": "example VPC security group",
@@ -151,6 +157,9 @@ Tests:
   -
     Name: Non DMZ Security Group Does Not Allow Public Access
     ExpectedResult: true
+    Mocks:
+      - objectName: DMZ_TAGS
+        returnValue: '[["environment", "dmz"]]'
     Resource:
       {
         "Description": "example VPC security group",

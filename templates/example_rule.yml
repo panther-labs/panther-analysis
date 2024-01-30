@@ -23,6 +23,10 @@ Threshold: 1 # The minimum number of event matches prior to an alert sending (Op
 SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
   - fieldName
   - FieldName:nestedFieldName
+InlineFilters: # https://docs.panther.com/detections/rules/inline-filters#yaml-inlinefilter-syntax
+  - KeyPath: environment
+    Condition: StartsWith
+    Value: "Sandbox"
 Tests: # Unit tests for the Detection. Best practice is to include a positive and negative case (Optional)
   -
     Name: Name # The title of the test

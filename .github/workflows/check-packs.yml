@@ -38,9 +38,9 @@ jobs:
         id: check-packs
         run: |
           panther_analysis_tool check-packs 2> errors.txt || true
-          echo ::set-output name=errors::`cat errors.txt`
+          
           # run again to get exit code
-          panther_analysis_tool check-packs
+          panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
@@ -52,4 +52,15 @@ jobs:
             looks like somethings could be wrong with the packs
             ```diff
             ${{ steps.check-packs.outputs.errors }}
-          comment_tag: execution
+          comment_tag: check-packs
+      - name: Delete comment
+        uses: thollander/actions-comment-pull-request@v2
+        if: ${{ !steps.check-packs.outputs.errors }}
+        with:
+          mode: delete
+          message: |
+            :scream: 
+            looks like somethings could be wrong with the packs
+            ```diff
+            ${{ steps.check-packs.outputs.errors }}
+          comment_tag: check-packs
