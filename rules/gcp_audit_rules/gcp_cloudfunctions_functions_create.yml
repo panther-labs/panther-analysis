@@ -1,0 +1,57 @@
+AnalysisType: rule
+RuleID: "GCP.Cloudfunctions.Functions.Create"
+DisplayName: "GCP cloudfunctions functions create"
+Description: "The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions."
+Enabled: true
+LogTypes:
+    - GCP.AuditLog
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1548
+Detection:
+    - All:
+        - KeyPath: protoPayload.authorizationInfo[*].granted
+          Condition: Contains
+          Value: true
+        - KeyPath: protoPayload.authorizationInfo[*].permission
+          Condition: Contains
+          Value: cloudfunctions.functions.create
+Tests:
+    - Name: privilege-escalation
+      ExpectedResult: true
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: cloudfunctions.functions.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: fail
+      ExpectedResult: false
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: false
+                  permission: cloudfunctions.functions.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
