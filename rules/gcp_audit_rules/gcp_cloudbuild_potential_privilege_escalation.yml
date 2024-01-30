@@ -1,0 +1,179 @@
+AnalysisType: rule
+LogTypes:
+    - GCP.AuditLog
+Description: Detects privilege escalation attacks designed to gain access to the Cloud Build Service Account. 
+  A user with permissions to start a new build with Cloud Build can gain access to the Cloud Build Service Account 
+  and abuse it for more access to the environment.
+DisplayName: "GCP CloudBuild Potential Privilege Escalation"
+RuleID: "GCP.CloudBuild.Potential.Privilege.Escalation"
+Enabled: true
+Reference: https://rhinosecuritylabs.com/gcp/iam-privilege-escalation-gcp-cloudbuild/
+Runbook: Confirm this was authorized and necessary behavior. To defend against this privilege escalation attack, 
+  it is necessary to restrict the permissions granted to the Cloud Build Service Account and to be careful granting 
+  the cloudbuild.builds.create permission to any users in your Organization. Most importantly, you need to know that 
+  any user who is granted cloudbuild.builds.create, is also indirectly granted all the permissions granted to the 
+  Cloud Build Service Account. If that’s alright with you, then you may not need to worry about this attack vector, 
+  but it is still highly recommended to modify the default permissions granted to the Cloud Build Service Account.
+Reports:
+    MITRE ATT&CK:
+        - TA0004:T1548  # Abuse Elevation Control Mechanism
+Severity: High
+Detection:
+  - All:
+      - KeyPath: protoPayload.authorizationInfo[*].granted
+        Condition: Contains
+        Value: true
+      - KeyPath: protoPayload.authorizationInfo[*].permission
+        Condition: Contains
+        Value: cloudbuild.builds.create
+      - KeyPath: protoPayload.methodName
+        Condition: EndsWith
+        Value: CloudBuild.CreateBuild
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] performed [{protoPayload.methodName}] on 
+project [{resource.labels.project_id}]"
+AlertContext:
+  - KeyName: project
+    KeyValue:
+      KeyPath: resource.labels.project_id
+  - KeyName: principal
+    KeyValue:
+      KeyPath: protoPayload.authenticationInfo.principalEmail
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: protoPayload.requestMetadata.callerIP
+  - KeyName: methodName
+    KeyValue:
+      KeyPath: protoPayload.methodName
+  - KeyName: resourceName
+    KeyValue:
+      KeyPath: protoPayload.resourceName
+  - KeyName: serviceName
+    KeyValue:
+      KeyPath: protoPayload.serviceName
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  -
+    Name: GCP CloudBuild - Build with Potentially Privileged Access
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "first": true,
+          "id": "operations/build/some-project/YzNhZWI0YWYtNjAwNi00YzM5LTgxYmUtMjhmMjc1YzJkOGEz",
+          "producer": "cloudbuild.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "whodoneit@some-project.iam.gserviceaccount.com",
+            "principalSubject": "serviceAccount:whodoneit@some-project.iam.gserviceaccount.com",
+            "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/whodoneit@some-project.iam.gserviceaccount.com/keys/123er456788"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "cloudbuild.builds.create",
+              "resource": "projects/some-project",
+              "resourceAttributes": { }
+            }
+          ],
+          "methodName": "google.devtools.cloudbuild.v1.CloudBuild.CreateBuild",
+          "request": {
+            "@type": "type.googleapis.com/google.devtools.cloudbuild.v1.CreateBuildRequest",
+            "build": { },
+            "projectId": "some-project"
+          },
+          "requestMetadata": {
+            "callerIP": "189.163.74.177",
+            "callerSuppliedUserAgent": "(gzip),gzip(gfe),gzip(gfe)",
+            "destinationAttributes": { },
+            "requestAttributes": {
+              "auth": { },
+              "time": "2024-01-25T11:55:09.740095Z"
+            }
+          },
+          "resourceLocation": {
+            "currentLocations": [
+              "global"
+            ]
+          },
+          "resourceName": "projects/some-project/builds",
+          "serviceName": "cloudbuild.googleapis.com"
+        },
+        "receiveTimestamp": "2024-01-25 11:55:09.854909113",
+        "resource": {
+          "labels": {
+            "build_id": "c3aeb4ap-6006-4c39-81be-28f275c2d8a3",
+            "build_trigger_id": "",
+            "project_id": "some-project"
+          },
+          "type": "build"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2024-01-25 11:55:08.919358000"
+      }
+  -
+    Name: GCP CreateBrand - No Privileged Access
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "john.doe@some-project.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "clientauthconfig.brands.create",
+              "resource": "brands/1028347248702",
+              "resourceAttributes": { }
+            }
+          ],
+          "methodName": "CreateBrand",
+          "request": {
+            "brand": {
+              "displayName": "NewBrand",
+              "projectNumbers": [
+                "1028345275902"
+              ],
+              "supportEmail": "john.doe@some-project.com"
+            },
+            "visibility": "INTERNAL"
+          },
+          "requestMetadata": {
+            "callerIP": "189.163.74.177",
+            "destinationAttributes": { },
+            "requestAttributes": {
+              "auth": { },
+              "time": "2024-01-24T14:30:05.891336Z"
+            }
+          },
+          "resourceName": "brands/1028347275902",
+          "response": {
+            "brandId": "1028347248702",
+            "creationTime": "2024-01-24T14:30:05.400Z",
+            "displayName": "NewBrand test",
+            "projectNumbers": [
+              "1028347248702"
+            ],
+            "supportEmail": "some.user@company.com",
+            "updateTime": "2024-01-24T14:30:05.866002Z"
+          },
+          "serviceName": "clientauthconfig.googleapis.com",
+          "status": { }
+        },
+        "receiveTimestamp": "2024-01-24 14:30:06.741210353",
+        "resource": {
+          "labels": {
+            "brand_id": "1028347248702",
+            "project_id": "some-project"
+          },
+          "type": "client_auth_config_brand"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2024-01-24 14:30:05.207884000"
+      }
