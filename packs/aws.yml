@@ -133,6 +133,80 @@ PackDefinition:
     - AWS.VPC.FlowLogs
     - AWS.WAF.Disassociation
     - AWS.WAF.HasXSSPredicate
+    # Other rules
+    - AWS.ACM.HasSecureAlgorithms
+    - AWS.ApplicationLoadBalancer.WebACL
+    - AWS.Authentication.From.CrowdStrike.Unmanaged.Device
+    - AWS.CMK.KeyRotation
+    - AWS.CloudTrail.Account.Discovery
+    - AWS.CloudTrail.CloudWatchLogs
+    - AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored
+    - AWS.CloudTrail.IAMEntityCreatedWithoutCloudFormation
+    - AWS.CloudTrail.LeastPrivilege
+    - AWS.CloudTrail.LogEncryption
+    - AWS.CloudTrail.LogValidation
+    - AWS.CloudTrail.S3Bucket.AccessLogging
+    - AWS.CloudWatchLogs.SensitiveLogGroup.Encryption
+    - AWS.DynamoDB.AutoscalingConfiguration
+    - AWS.DynamoDB.TableTTLEnabled
+    - AWS.EC2.AMI.ApprovedHost
+    - AWS.EC2.AMI.ApprovedInstanceType
+    - AWS.EC2.AMI.ApprovedTenancy
+    - AWS.EC2.CDEVolumeEncrypted
+    - AWS.EC2.Instance.ApprovedAMI
+    - AWS.EC2.Instance.ApprovedHost
+    - AWS.EC2.Instance.ApprovedInstanceType
+    - AWS.EC2.Instance.ApprovedTenancy
+    - AWS.EC2.Instance.ApprovedVPC
+    - AWS.EC2.ManualSecurityGroupChange
+    - AWS.ECR.CRUD
+    - AWS.ECR.EVENTS
+    - AWS.GuardDuty.MasterAccount
+    - AWS.IAM.Group.Read.Only.Events
+    - AWS.IAM.Policy.Blacklist
+    - AWS.IAM.Policy.DoesNotGrantAdminAccess
+    - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
+    - AWS.IAM.Policy.RoleMapping
+    - AWS.IAM.Resource.DoesNotHaveInlinePolicy
+    - AWS.IAM.Role.ExternalPermission
+    - AWS.IAM.Role.RestrictsUsage
+    - AWS.IAM.User.NotInConflictingGroups
+    - AWS.LAMBDA.CRUD
+    - AWS.Modify.Cloud.Compute.Infrastructure
+    - AWS.NetworkACL.RestrictedSSH
+    - AWS.NetworkACL.RestrictsInsecureProtocols
+    - AWS.NetworkACL.RestrictsOutboundTraffic
+    - AWS.RDS.Instance.AutoMinorVersionUpgradeEnabled
+    - AWS.RDS.InstanceBackup
+    - AWS.RDS.InstanceBackupRetentionAcceptable
+    - AWS.Redshift.Cluster.MaintenanceWindow
+    - AWS.Redshift.Cluster.SnapshotRetentionAcceptable
+    - AWS.Resource.MinimumTags
+    - AWS.Resource.RequiredTags
+    - AWS.RootAccount.HardwareMFA
+    - AWS.S3.BucketObjectLockConfigured
+    - AWS.S3.ServerAccess.IPWhitelist
+    - AWS.S3.ServerAccess.Unauthenticated
+    - AWS.S3.ServerAccess.UnknownRequester
+    - AWS.SecurityGroup.RestrictsAccessToCDE
+    - AWS.SecurityGroup.RestrictsInterSecurityGroupTraffic
+    - AWS.SecurityGroup.RestrictsOutboundTraffic
+    - AWS.SecurityGroup.RestrictsTrafficLeavingCDE
+    - AWS.SecurityGroup.TightlyRestrictsInboundTraffic
+    - AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
+    - AWS.Software.Discovery
+    - AWS.Unsuccessful.MFA.attempt
+    - AWS.UnusedRegion
+    - AWS.VPC.DefaultNetworkACLRestrictsAllTraffic
+    - AWS.VPC.DefaultSecurityGroup.Restrictions
+    - AWS.VPC.InboundPortBlacklist
+    - AWS.VPC.InboundPortWhitelist
+    - AWS.VPC.UnapprovedOutboundDNS
+    - AWS.WAF.RuleOrdering
+    - CloudTrail.Password.Spraying
+    - VPC.DNS.Tunneling
+    - VPCFlow.Port.Scanning
+
     # AWS DataModels
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
