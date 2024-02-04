@@ -1,0 +1,24 @@
+AnalysisType: datamodel
+LogTypes: 
+  - Custom.GCPComputeGoogleapisComFirewall
+  - Custom.ComputeGoogleapisComVpcflows
+  - Custom.ComputeGoogleapisComNatflows
+DataModelID: Standard.GCP.Connection
+DisplayName: GCP Connection Log for firewall and flow logs
+Filename: gcp_connection_data_model.py
+Enabled: true
+Mappings:
+  - Name: source_ip
+    Path: $.jsonPayload.connection.src_ip
+  - Name: destination_ip
+    Path: $.jsonPayload.connection.dest_ip
+  - Name: source_port
+    Path: $.jsonPayload.connection.src_port
+  - Name: destination_port
+    Path: $.jsonPayload.connection.dest_port
+  - Name: protocol
+    Path: $.jsonPayload.connection.protocol
+  - Name: project_id
+    Path: $.resource.labels.project_id
+  - Name: resource
+    Path: get_resource_tags
