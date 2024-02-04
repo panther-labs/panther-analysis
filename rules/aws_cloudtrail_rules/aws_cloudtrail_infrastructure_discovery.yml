@@ -1,0 +1,59 @@
+AnalysisType: rule
+Description: This detection looks for Describe* and List* events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Cloud Infrastructure Discovery reconnaissance.
+DisplayName: AWS CloudTrail Infrastructure Discovery
+Enabled: false
+Filename: aws_cloudtrail_infrastructure_discovery.py
+Reports:
+    MITRE ATT&CK:
+        - TA0007:T1580
+Severity: Info
+Tests:
+    - ExpectedResult: true
+      Log:
+        awsregion: ap-northeast-2
+        eventcategory: Management
+        eventid: cb2c7673-326e-490e-99be-8d062fe5f328
+        eventname: DescribeInstances
+        eventsource: ec2.amazonaws.com
+        eventtime: "2023-01-10 21:16:37"
+        eventtype: AwsApiCall
+        eventversion: "1.08"
+        managementevent: true
+        useridentity:
+            arn: arn:aws:test_arn
+      Name: Describe* Event
+    - ExpectedResult: true
+      Log:
+        apiversion: "2012-08-10"
+        awsregion: eu-west-1
+        eventcategory: Management
+        eventid: bc68d763-b374-4e19-a53f-317a1f23ffc1
+        eventname: ListTables
+        eventsource: dynamodb.amazonaws.com
+        eventtime: "2023-01-10 20:28:16"
+        eventtype: AwsApiCall
+        eventversion: "1.08"
+        managementevent: true
+        useridentity:
+            arn: arn:aws:test_arn
+      Name: List* Event
+    - ExpectedResult: false
+      Log:
+        apiversion: "2012-08-10"
+        awsregion: eu-west-1
+        eventcategory: Data
+        eventid: 5d4b45ed-a15c-41b6-80e9-031729fa060d
+        eventname: GetRecords
+        eventsource: dynamodb.amazonaws.com
+        eventtime: "2023-01-10 21:04:02"
+        eventtype: AwsApiCall
+        eventversion: "1.08"
+        managementevent: false
+        useridentity:
+            arn: arn:aws:test_arn
+      Name: Non-Discovery Event
+DedupPeriodMinutes: 30
+LogTypes:
+    - AWS.CloudTrail
+RuleID: AWS.CloudTrail.Infrastructure.Discovery
+Threshold: 5
