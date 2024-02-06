@@ -18,15 +18,12 @@ Reports:
         - TA0004:T1548  # Abuse Elevation Control Mechanism
 Severity: High
 Detection:
-    - KeyPath: protoPayload.authorizationInfo
-      Condition: AnyElement
-      Expressions:
-        - Key: granted
-          Condition: Equals
-          Value: true
-        - Key: permission
-          Condition: Equals
-          Value: serviceusage.apiKeys.create
+    - KeyPath: protoPayload.authorizationInfo[*].granted
+      Condition: Contains
+      Value: true
+    - KeyPath: protoPayload.authorizationInfo[*].permission
+      Condition: Contains
+      Value: serviceusage.apiKeys.create
     - KeyPath: protoPayload.methodName
       Condition: EndsWith
       Value: ApiKeys.CreateKey
@@ -171,6 +168,50 @@ Tests:
           },
           "type": "audited_resource"
         },
+        "severity": "NOTICE",
+        "timestamp": "2024-01-25 13:28:18.961519813"
+      }
+  - Name: Log Without authorizationInfo
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "id": "operations/akmf.p7-1028347275902-fe0c0688-44a7-4dca-bc06-8456068e5673",
+          "last": true,
+          "producer": "apikeys.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@some-project.com",
+            "principalSubject": "serviceAccount:some-team@some-project.com",
+            "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/some-team@some-project.gserviceaccount.com/keys/dc5344c246064589v76ec76f66bafc92b093ed41"
+          },
+          "methodName": "google.api.apikeys.v2.ApiKeys.CreateKey",
+          "request": {
+            "@type": "type.googleapis.com/google.api.apikeys.v2.CreateKeyRequest",
+            "parent": "projects/some-project/locations/global"
+          },
+          "requestMetadata": {
+            "callerIP": "189.163.74.177",
+            "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
+            "destinationAttributes": { },
+            "requestAttributes": { }
+          },
+          "resourceName": "projects/1028347245602",
+          "response": {
+            "@type": "type.googleapis.com/google.api.apikeys.v2.Key",
+            "createTime": "1970-01-01T00:00:00Z",
+            "etag": "W/\"DSLGu9UKHwqq2ICm7YPE7g==\"",
+            "name": "projects/1028347245602/locations/global/keys/bf67db25-d748-4335-ae08-7f0e65fnfy02",
+            "updateTime": "1970-01-01T00:00:00Z"
+          },
+          "serviceName": "apikeys.googleapis.com",
+          "status": { }
+        },
+        "receiveTimestamp": "2024-01-25 13:28:18.961519813",
+        "resource": { },
         "severity": "NOTICE",
         "timestamp": "2024-01-25 13:28:18.961519813"
       }
