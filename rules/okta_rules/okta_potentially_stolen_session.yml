@@ -345,4 +345,107 @@ Tests:
           "uuid": "redacted",
           "version": "0"
       }
+  -
+    Name: Okta internal event should be ignored
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: >
+                        [
+                            "123456",
+                            "4.3.2.1",
+                            "user_agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+                            "CHROME",
+                            "MacOS"
+                        ]
+    Log:
+        {
+            "actor": {
+              "alternateId": "admin",
+              "displayName": "Bobert",
+              "id": "unknown",
+              "type": "User"
+          },
+          "authenticationContext": {
+              "authenticationStep": 0,
+              "externalSessionId": "123456789"
+          },
+          "client": {
+            "device": "Unknown",
+            "geographicalContext": {
+                "city": "Boardman",
+                "country": "United States",
+                "geolocation": {
+                    "lat": 45.8234,
+                    "lon": -119.7257
+                },
+                "postalCode": "97818",
+                "state": "Oregon"
+            },
+            "id": "okta.b58d5b75-07d4-5f25-bf59-368a1261a405",
+            "ipAddress": "44.238.82.114",
+            "userAgent": {
+                "browser": "UNKNOWN",
+                "os": "Unknown",
+                "rawUserAgent": "Okta-Integrations"
+            },
+            "zone": "null"
+        },
+          "debugContext": {
+              "debugData": {
+                  "loginResult": "VERIFICATION_ERROR",
+                  "requestId": "redacted",
+                  "requestUri": "redacted",
+                  "threatSuspected": "false",
+                  "url": "redacted"
+              }
+          },
+          "displayMessage": "User login to Okta",
+          "eventType": "user.session.start",
+          "legacyEventType": "core.user_auth.login_failed",
+          "outcome": {
+              "reason": "VERIFICATION_ERROR",
+              "result": "FAILURE"
+          },
+          "p_any_domain_names": [
+              "rnvtelecom.com.br"
+          ],
+          "p_any_ip_addresses": [
+              "redacted"
+          ],
+          "p_event_time": "redacted",
+          "p_log_type": "Okta.SystemLog",
+          "p_parse_time": "redacted",
+          "p_row_id": "redacted",
+          "p_source_id": "redacted",
+          "p_source_label": "Okta",
+          "published": "redacted",
+          "request": {
+            "ipChain": [
+                {
+                    "geographicalContext": {
+                        "city": "Boardman",
+                        "country": "United States",
+                        "geolocation": {
+                            "lat": 45.8234,
+                            "lon": -119.7257
+                        },
+                        "postalCode": "97818",
+                        "state": "Oregon"
+                    },
+                    "ip": "44.238.82.114",
+                    "version": "V4"
+                }
+            ]
+        },
+          "securityContext": {},
+          "severity": "INFO",
+          "transaction": {
+              "detail": {},
+              "id": "redacted",
+              "type": "WEB"
+          },
+          "uuid": "redacted",
+          "version": "0"
+      }
  
