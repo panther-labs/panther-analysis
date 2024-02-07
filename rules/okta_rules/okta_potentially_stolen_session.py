@@ -19,7 +19,8 @@ def rule(event):
 
     session_id = deep_get(event, "authenticationContext", "externalSessionId", default="unknown")
 
-    # Some events by Okta admins may appear to have changed IPs and user agents due to internal Okta behavior:
+    # Some events by Okta admins may appear to have changed IPs
+    # and user agents due to internal Okta behavior:
     # https://support.okta.com/help/s/article/okta-integrations-showing-as-rawuseragent-with-okta-ips
     # As such, we ignore certain client ids known to originate from Okta:
     # https://developer.okta.com/docs/api/openapi/okta-myaccount/myaccount/tag/OktaApplications/
