@@ -18,6 +18,7 @@ def rule(event):
     global PREVIOUS_SESSION
 
     session_id = deep_get(event, "authenticationContext", "externalSessionId", default="unknown")
+    dt_hash = deep_get(event, "debugContext", "debugData", "dtHash", default="unknown")
 
     # Some events by Okta admins may appear to have changed IPs
     # and user agents due to internal Okta behavior:
@@ -30,7 +31,9 @@ def rule(event):
         return False
 
     # Filter only on app access and session start events
-    if event.get("eventType") not in EVENT_TYPES or session_id == "unknown":
+    if event.get("eventType") not in EVENT_TYPES or (
+        session_id == "unknown" or dt_hash == "unknown"
+    ):
         return False
 
     # lookup if we've previously stored the session cookie
@@ -41,8 +44,8 @@ def rule(event):
         PREVIOUS_SESSION = set(json.loads(PREVIOUS_SESSION))
 
     # If the sessionID has not been seen before, store information about it
-    if len(PREVIOUS_SESSION) == 0:
-        key = session_id
+    if not PREVIOUS_SESSION:
+        key = session_id + "-" + dt_hash
         put_string_set(
             key,
             [
@@ -53,6 +56,12 @@ def rule(event):
                 deep_get(event, "client", "userAgent", "browser"),
                 deep_get(event, "client", "userAgent", "os"),
                 event.get("p_event_time"),
+                "sign_on_mode:"
+                + deep_get(event, "debugContext", "debugData", "signOnMode", default="unknown"),
+                "threat_suspected:"
+                + deep_get(
+                    event, "debugContext", "debugData", "threat_suspected", default="unknown"
+                ),
             ],
             epoch_seconds=event.event_time_epoch() + SESSION_TIMEOUT,
         )
