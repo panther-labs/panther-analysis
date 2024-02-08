@@ -7,18 +7,18 @@ LogTypes:
   - Amazon.EKS.Audit
 Tags: 
   - EKS
-#Reports: # (Optional)
-#  MITRE ATT&CK:
-#    - 'TA0027:T1475' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
+Reports: 
+  MITRE ATT&CK:
+    - 'TA0027:T1475' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
 Reference: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
 Severity: Info
-Description: > # (Optional)
+Description: > 
   This detection identifies if an activity is recorded in the Kubernetes audit log where 
   the user:username attribute begins with "system:" or "eks:" and the requests originating 
   IP Address is a Public IP Address
-DedupPeriodMinutes: 15 # The amount of time in minutes for grouping alerts (Optional, defaults to 60)
-Threshold: 1 # The minimum number of event matches prior to an alert sending (Optional, defaults to 1)
-SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
+DedupPeriodMinutes: 1440 # 24 hours
+Threshold: 1 
+SummaryAttributes: 
   - user:username
   - p_source_label
 Tests:

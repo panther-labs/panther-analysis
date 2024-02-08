@@ -1,5 +1,6 @@
 from panther_base_helpers import aws_rule_context, deep_get
 
+# CONFIGURATION REQUIRED: Update with your expected AWS Accounts/Regions
 AWS_ACCOUNTS_AND_REGIONS = {
     "123456789012": {"us-west-1", "us-west-2"},
     "103456789012": {"us-east-1", "us-east-2"},
