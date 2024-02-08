@@ -13,7 +13,7 @@ Reports:
   MITRE ATT&CK:
     - TA0006:T1110
     - TA0040:T1498
-Reference: https://help.okta.com/en-us/content/topics/security/api-rate-limits.htm
+Reference: https://developer.okta.com/docs/reference/rl-system-log-events/
 Tests:
     - ExpectedResult: true
       Log:
@@ -236,7 +236,7 @@ Tests:
         uuid: aa-11-22-33-44-bb
         version: "0"
       Name: Non event
-DedupPeriodMinutes: 60
+DedupPeriodMinutes: 360 # 6 hours
 LogTypes:
     - Okta.SystemLog
 RuleID: "Okta.Rate.Limits"

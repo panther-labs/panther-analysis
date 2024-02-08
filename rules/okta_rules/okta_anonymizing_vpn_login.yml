@@ -8,14 +8,14 @@ LogTypes:
 Reports:
     MITRE ATT&CK:
         - TA0006:T1556 # Modify Authentication Process
-Severity: High
+Severity: Medium
 Description: >
     A user is attempting to sign-in to Okta from a known VPN anonymizer.  The threat actor would access the compromised account using anonymizing proxy services. 
 Runbook: >
     Restrict this access to trusted Network Zones and deny access from anonymizing proxies in policy using a Dynamic Network Zone.
 Reference: >
     https://sec.okta.com/articles/2023/08/cross-tenant-impersonation-prevention-and-detection
-DedupPeriodMinutes: 30
+DedupPeriodMinutes: 360 # 6 hours
 Threshold: 1
 Tests:
     - Name: Other Event

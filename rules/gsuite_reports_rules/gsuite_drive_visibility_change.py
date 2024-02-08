@@ -167,8 +167,7 @@ def alert_context(event):
 
 
 def dedup(event):
-    log = event.get("p_row_id")
-    return ALERT_DETAILS[log]["DOC_TITLE"]
+    return deep_get(event, "actor", "email", default="<UNKNOWN_USER>")
 
 
 def title(event):
@@ -193,12 +192,11 @@ def title(event):
         elif ALERT_DETAILS[log]["NEW_VISIBILITY"] == "public_in_the_domain":
             sharing_scope += f" (anyone in {ALERT_DETAILS[log]['TARGET_DOMAIN']})"
 
-    alert_access_scope = ALERT_DETAILS[log]["ACCESS_SCOPE"][0].replace("can_", "")
+    # alert_access_scope = ALERT_DETAILS[log]["ACCESS_SCOPE"][0].replace("can_", "")
 
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] made the document "
-        f"[{ALERT_DETAILS[log]['DOC_TITLE']}] externally visible to [{sharing_scope}] with "
-        f"[{alert_access_scope}] access"
+        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] made documents "
+        f"externally visible"
     )
 
 
