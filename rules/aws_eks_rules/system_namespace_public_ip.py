@@ -46,7 +46,7 @@ def title(event):
 
 def dedup(event):
     p_eks = eks_panther_obj_ref(event)
-    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('actor')}"
+    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('sourceIPs')[0]}"
 
 
 def alert_context(event):
