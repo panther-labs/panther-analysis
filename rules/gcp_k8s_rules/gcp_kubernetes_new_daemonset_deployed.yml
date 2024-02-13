@@ -1,0 +1,54 @@
+AnalysisType: rule
+RuleID: "GCP.K8s.New.Daemonset.Deployed"
+DisplayName: "GCP K8s New Daemonset Deployed"
+Description: "Detects Daemonset creation in GCP Kubernetes clusters."
+Enabled: true
+LogTypes:
+    - GCP.AuditLog
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Detection:
+    - All:
+        - KeyPath: protoPayload.authorizationInfo[*].granted
+          Condition: Contains
+          Value: true
+        - KeyPath: protoPayload.authorizationInfo[*].permission
+          Condition: Contains
+          Value: io.k8s.apps.v1.daemonsets.create
+Tests:
+    - Name: privilege-escalation
+      ExpectedResult: true
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: io.k8s.apps.v1.daemonsets.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: fail
+      ExpectedResult: false
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: false
+                  permission: io.k8s.apps.v1.daemonsets.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
