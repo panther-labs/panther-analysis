@@ -72,7 +72,7 @@ def rule(event):
         IS_PRIVATE_RELAY = all(
             [
                 deep_get(ipinfo_privacy, "relay", default=False),
-                deep_get(ipinfo_privacy, "service", default="") != "",
+                deep_get(ipinfo_privacy, "service", default="") == "Apple Private Relay",
             ]
         )
         # We've found that some places, like WeWork locations,
