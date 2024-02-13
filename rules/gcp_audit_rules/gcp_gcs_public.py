@@ -12,7 +12,7 @@ def rule(event):
     if not service_data:
         return False
 
-    # Reference: bit.ly/2WsJdZS
+    # Reference: https://cloud.google.com/iam/docs/policies
     binding_deltas = deep_get(service_data, "policyDelta", "bindingDeltas")
     if not binding_deltas:
         return False
