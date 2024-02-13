@@ -1,0 +1,344 @@
+AnalysisType: rule
+RuleID: "GCP.K8S.Privileged.Pod.Created"
+DisplayName: "GCP K8S Privileged Pod Created"
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Severity: High
+Filename: gcp_k8s_privileged_pod_created.py
+Description: >
+  Alerts when a user creates privileged pod. These particular pods have full access to the host’s namespace and 
+  devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching 
+  point for further attacks. In the event of a successful container escape where a user is operating with root 
+  privileges, the attacker retains this role on the node.
+Runbook: >
+  Investigate the reason of creating privileged pod. Advise that it is discouraged practice. 
+  Create ticket if appropriate.
+Reference: https://www.golinuxcloud.com/kubernetes-privileged-pod-examples/
+Reports:
+    MITRE ATT&CK:
+        - TA0004:T1548  # Abuse Elevation Control Mechanism
+Tests:
+  -
+    Name: Privileged Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {},
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "john.doe@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test-privileged-pod"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test-privileged-pod",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                  "securityContext": {
+                    "privileged": true
+                  },
+                }
+              ],
+              "securityContext": { },
+            },
+            "status": { }
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test-privileged-pod",
+          "response": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {},
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                  "securityContext": {
+                    "privileged": true
+                  },
+                }
+              ],
+              "securityContext": { },
+              "serviceAccount": "default",
+              "serviceAccountName": "default",
+              "terminationGracePeriodSeconds": 30,
+            },
+            "status": {}
+          },
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "receiveTimestamp": "2024-02-13 12:45:20.058795785",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-13 12:45:06.073905000"
+      }
+  -
+    Name: Run-As-Root Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {},
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "john.doe@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test-runasroot-pod"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {},
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                  "securityContext": {
+                    "runAsNonRoot": false
+                  },
+                }
+              ],
+            },
+            "status": { }
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test-runasroot-pod",
+          "response": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {},
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                  "securityContext": {
+                    "runAsNonRoot": false
+                  },
+                }
+              ],
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          },
+          "serviceName": "k8s.io",
+          "status": { }
+        },
+        "receiveTimestamp": "2024-02-13 13:13:53.113465457",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-13 13:13:45.363388000"
+      }
+  -
+    Name: Non-Privileged Pod Created
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "first": true,
+          "id": "7f8c5bec-01ff-4079-97e3-065ac34e10e8",
+          "last": true,
+          "producer": "k8s.io"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "john.doe@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test-non-privileged-pod"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test-non-privileged-pod",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                }
+              ],
+            },
+            "status": { }
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test-non-privileged-pod",
+          "response": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {},
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                }
+              ],
+            },
+            "status": {}
+          },
+          "serviceName": "k8s.io",
+          "status": { }
+        },
+        "receiveTimestamp": "2024-02-13 13:07:54.642331675",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-13 13:07:29.505948000"
+      }
+  - Name: Error Creating Pod
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "john.doe@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test-privileged-pod"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test-privileged-pod",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "nginx",
+                  "resources": { },
+                  "securityContext": {
+                    "runAsNonRoot": false
+                  },
+                }
+              ],
+            },
+            "status": { }
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test-privileged-pod",
+          "response": {
+            "@type": "core.k8s.io/v1.Status",
+            "apiVersion": "v1",
+            "code": 409,
+            "details": {
+              "kind": "pods",
+              "name": "test-privileged-pod"
+            },
+            "kind": "Status",
+            "message": "pods \"test-privileged-pod\" already exists",
+            "metadata": { },
+            "reason": "AlreadyExists",
+            "status": "Failure"
+          },
+          "serviceName": "k8s.io",
+          "status": {
+            "code": 10,
+            "message": "pods \"test-privileged-pod\" already exists"
+          }
+        },
+        "receiveTimestamp": "2024-02-13 13:13:33.486605432",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-13 13:13:24.079140000"
+      }
