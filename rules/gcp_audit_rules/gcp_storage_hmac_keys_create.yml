@@ -1,0 +1,57 @@
+AnalysisType: rule
+RuleID: "GCP.Storage.Hmac.Keys.Create"
+DisplayName: "GCP storage hmac keys create"
+Description: "There is a feature of Cloud Storage, “interoperability”, that provides a way for Cloud Storage to interact with storage offerings from other cloud providers, like AWS S3. As part of that, there are HMAC keys that can be created for both Service Accounts and regular users. We can escalate Cloud Storage permissions by creating an HMAC key for a higher-privileged Service Account."
+Enabled: true
+LogTypes:
+    - GCP.AuditLog
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://rhinosecuritylabs.com/cloud-security/privilege-escalation-google-cloud-platform-part-2/
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1548
+Detection:
+    - All:
+        - KeyPath: protoPayload.authorizationInfo[*].granted
+          Condition: Contains
+          Value: true
+        - KeyPath: protoPayload.authorizationInfo[*].permission
+          Condition: Contains
+          Value: storage.hmacKeys.create
+Tests:
+    - Name: privilege-escalation
+      ExpectedResult: true
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: storage.hmacKeys.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: fail
+      ExpectedResult: false
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: false
+                  permission: storage.hmacKeys.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
