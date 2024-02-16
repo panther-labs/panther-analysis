@@ -38,4 +38,3 @@
   - Google Workspace
   - OneLogin
   - Zendesk
-  

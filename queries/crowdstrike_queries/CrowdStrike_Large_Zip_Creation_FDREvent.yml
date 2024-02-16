@@ -8,9 +8,9 @@ Query: |
   select
     ppr.event:CommandLine as parent_commandline,
     zip_proc.*
-  from 
+  from
     (
-    select 
+    select
       zips.*,
       pr2.event:TargetProcessId as process_targetpid,
       pr2.event:ParentProcessId as process_parentpid,
@@ -21,7 +21,7 @@ Query: |
           *
         from
           panther_logs.public.crowdstrike_fdrevent
-        where 
+        where
           event_simpleName IN (
             'GzipFileWritten',
             'SevenZipFileWritten',
@@ -33,12 +33,12 @@ Query: |
       ) zips
       left join panther_logs.public.crowdstrike_fdrevent pr2
       on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
-      
-      where 
+
+      where
       pr2.event:CommandLine like any(
         '%zip%'
       )
-      
+
       and not (
         pr2.event:CommandLine like any (
           '%curl%',
@@ -46,11 +46,11 @@ Query: |
           '%install%'
         )
       )
-  
+
     ) zip_proc
     LEFT JOIN panther_logs.public.crowdstrike_fdrevent ppr
     on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
-  where 
+  where
     (
       (parent_commandline is null) or
       not (parent_commandline like any (

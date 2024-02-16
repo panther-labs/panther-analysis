@@ -5,27 +5,27 @@ DisplayName: "EKS Audit Log Reporting system Namespace is Used From A Public IP"
 Enabled: true
 LogTypes:
   - Amazon.EKS.Audit
-Tags: 
+Tags:
   - EKS
-Reports: 
+Reports:
   MITRE ATT&CK:
     - 'TA0027:T1475' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
 Reference: https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
 Severity: Info
-Description: > 
-  This detection identifies if an activity is recorded in the Kubernetes audit log where 
-  the user:username attribute begins with "system:" or "eks:" and the requests originating 
+Description: >
+  This detection identifies if an activity is recorded in the Kubernetes audit log where
+  the user:username attribute begins with "system:" or "eks:" and the requests originating
   IP Address is a Public IP Address
 DedupPeriodMinutes: 1440 # 24 hours
-Threshold: 1 
-SummaryAttributes: 
+Threshold: 1
+SummaryAttributes:
   - user:username
   - p_source_label
 Tests:
   -
     Name: non-system username
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "annotations": {
         "authorization.k8s.io/decision": "allow",
@@ -99,7 +99,7 @@ Tests:
   -
     Name: system username - private ip
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "annotations": {
           "authorization.k8s.io/decision": "allow",
@@ -159,7 +159,7 @@ Tests:
   -
     Name: 403 from Public IP zero count
     ExpectedResult: true
-    Log: 
+    Log:
       {
         "annotations": {
           "authorization.k8s.io/decision": "allow",
@@ -219,7 +219,7 @@ Tests:
   -
     Name: system username - public ip - not ResponseComplete
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "annotations": {
           "authorization.k8s.io/decision": "allow",

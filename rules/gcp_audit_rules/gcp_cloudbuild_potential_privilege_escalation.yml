@@ -1,18 +1,18 @@
 AnalysisType: rule
 LogTypes:
     - GCP.AuditLog
-Description: Detects privilege escalation attacks designed to gain access to the Cloud Build Service Account. 
-  A user with permissions to start a new build with Cloud Build can gain access to the Cloud Build Service Account 
+Description: Detects privilege escalation attacks designed to gain access to the Cloud Build Service Account.
+  A user with permissions to start a new build with Cloud Build can gain access to the Cloud Build Service Account
   and abuse it for more access to the environment.
 DisplayName: "GCP CloudBuild Potential Privilege Escalation"
 RuleID: "GCP.CloudBuild.Potential.Privilege.Escalation"
 Enabled: true
 Reference: https://rhinosecuritylabs.com/gcp/iam-privilege-escalation-gcp-cloudbuild/
-Runbook: Confirm this was authorized and necessary behavior. To defend against this privilege escalation attack, 
-  it is necessary to restrict the permissions granted to the Cloud Build Service Account and to be careful granting 
-  the cloudbuild.builds.create permission to any users in your Organization. Most importantly, you need to know that 
-  any user who is granted cloudbuild.builds.create, is also indirectly granted all the permissions granted to the 
-  Cloud Build Service Account. If that’s alright with you, then you may not need to worry about this attack vector, 
+Runbook: Confirm this was authorized and necessary behavior. To defend against this privilege escalation attack,
+  it is necessary to restrict the permissions granted to the Cloud Build Service Account and to be careful granting
+  the cloudbuild.builds.create permission to any users in your Organization. Most importantly, you need to know that
+  any user who is granted cloudbuild.builds.create, is also indirectly granted all the permissions granted to the
+  Cloud Build Service Account. If that’s alright with you, then you may not need to worry about this attack vector,
   but it is still highly recommended to modify the default permissions granted to the Cloud Build Service Account.
 Reports:
     MITRE ATT&CK:
@@ -29,7 +29,7 @@ Detection:
       - KeyPath: protoPayload.methodName
         Condition: EndsWith
         Value: CloudBuild.CreateBuild
-AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] performed [{protoPayload.methodName}] on 
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] performed [{protoPayload.methodName}] on
 project [{resource.labels.project_id}]"
 AlertContext:
   - KeyName: project

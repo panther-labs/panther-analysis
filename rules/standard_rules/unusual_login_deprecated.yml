@@ -3,7 +3,7 @@ Filename: unusual_login_deprecated.py
 RuleID: "Standard.UnusualLogin"
 DisplayName: "--DEPRECATED-- Unusual Login"
 # This rule is disabled by default because it makes API calls to a third party geolocation
-# service. At high rates of log processing, the third party service may throttle requests 
+# service. At high rates of log processing, the third party service may throttle requests
 # unless you buy a subscription to it, which may cause this rule to no longer work.
 Enabled: false
 LogTypes:
@@ -71,7 +71,7 @@ Tests:
           "p_parse_time": "2021-06-04 10:02:33.650807",
           "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
-      }  
+      }
   -
     Name: AWS.CloudTrail - Successful Login - New Geo - Does Not Exceed History Length of 5
     ExpectedResult: true
@@ -102,7 +102,7 @@ Tests:
           "p_parse_time": "2021-06-04 10:02:33.650807",
           "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
-      }  
+      }
   -
     Name: AWS.CloudTrail - Successful Login - New Geo - No History
     ExpectedResult: false
@@ -163,8 +163,8 @@ Tests:
           "p_parse_time": "2021-06-04 10:02:33.650807",
           "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
-      }  
-    
+      }
+
 
 
 
@@ -202,7 +202,7 @@ Tests:
               "ConsoleLogin": "Success"
           },
           "p_log_type": "AWS.CloudTrail"
-      }  
+      }
   -
     Name: AWS.CloudTrail - Failed Login
     ExpectedResult: false
@@ -235,7 +235,7 @@ Tests:
           "recipientAccountId": "123456789012",
           "p_event_time": "2021-06-04 09:59:53.650807",
           "p_log_type": "AWS.CloudTrail"
-      }  
+      }
   -
     Name: GSuite - New Geo - No History
     ExpectedResult: false
@@ -303,7 +303,7 @@ Tests:
         'p_event_time': '2021-06-04 09:59:53.650807',
         'p_log_type': 'GSuite.Reports'
       }
-  - 
+  -
     Name: Okta - Non Login
     ExpectedResult: false
     Log:
@@ -374,7 +374,7 @@ Tests:
         'p_event_time': '2021-06-04 09:59:53.650807'
       }
   -
-    Name: Zendesk - Successful Login 
+    Name: Zendesk - Successful Login
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip

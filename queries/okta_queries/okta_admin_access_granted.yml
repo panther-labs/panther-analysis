@@ -4,7 +4,7 @@ Enabled: false
 Description: >
   Audit instances of admin access granted in your okta tenant
 AthenaQuery: >
-  SELECT 
+  SELECT
   p_event_time as event_time,
   actor.alternateid as actor_email,
   actor.displayName as actor_name,
@@ -17,9 +17,9 @@ AthenaQuery: >
   client.geographicalContext.country as country,
   client.useragent.rawUserAgent as user_agent
   FROM panther_logs.okta_systemlog
-  WHERE 
+  WHERE
   (
-  eventType = 'user.account.privilege.grant' OR 
+  eventType = 'user.account.privilege.grant' OR
   eventType = 'group.privilege.grant' AND
   cast(json_extract(debugcontext.debugdata, '$.privilegeGranted') as varchar) LIKE '%Admin%'
   ) AND
@@ -27,7 +27,7 @@ AthenaQuery: >
   ORDER BY
   event_time desc
 SnowflakeQuery: >
-  SELECT 
+  SELECT
   p_event_time as event_time,
   actor:alternateId as actor_email,
   actor:displayName as actor_name,
@@ -39,16 +39,16 @@ SnowflakeQuery: >
   client:geographicalContext:city as city,
   client:geographicalContext:country as country,
   client:userAgent:rawUserAgent as user_agent
-  FROM 
+  FROM
     panther_logs.public.okta_systemlog
-  WHERE 
-  ( eventType = 'user.account.privilege.grant' 
-   OR 
+  WHERE
+  ( eventType = 'user.account.privilege.grant'
+   OR
     eventType = 'group.privilege.grant'
    AND
      debugContext:debugData:privilegeGranted like '%Admin%'
   )
-    AND  
+    AND
     p_occurs_between('2022-01-14','2022-03-22')
   ORDER BY
   event_time desc

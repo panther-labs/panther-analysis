@@ -15,13 +15,13 @@ Runbook: >
   These actions in the Snyk Audit logs indicate that a ServiceAccount
   has been created/deleted/modified.
 
-  Service Accounts are system user accounts with an API token 
+  Service Accounts are system user accounts with an API token
   associated to it in place of standard user credentials.
   All events where the Service Account's role is ADMIN have CRITICAL severity
   Deletion events are marked with HIGH severity
   Creation events are marked with HIGH severity
   Edit events are marked with MEDIUM Severity
-  
+
 Reference: https://docs.snyk.io/snyk-admin/service-accounts
 DedupPeriodMinutes: 60
 Threshold:  1
@@ -44,7 +44,7 @@ Tests:
         "orgId": "21111111-a222-4eee-8ddd-a99999999999",
         "userId": "05555555-3333-4ddd-8ccc-755555555555"
       }
-  - 
+  -
     Name: Snyk Group Service Account ADMIN role ( CRIT )
     ExpectedResult: true
     Log:
@@ -179,7 +179,7 @@ Tests:
         "groupId": "8fffffff-1555-4444-b000-b55555555555",
         "userId": "05555555-3333-4ddd-8ccc-755555555555"
       }
-  - 
+  -
     Name: Snyk Group Service Account Create - Viewer Role ( HIGH )
     ExpectedResult: true
     Log:
@@ -208,10 +208,10 @@ Tests:
         "groupId": "8fffffff-1555-4444-b000-b55555555555",
         "userId": "05555555-3333-4ddd-8ccc-755555555555"
       }
-  - 
+  -
     Name: Snyk Service Account Edit ( MEDIUM )
     ExpectedResult: true
-    Log: 
+    Log:
       {
         "groupId": "8fffffff-1555-4444-b000-b55555555555",
         "userId": "05555555-3333-4ddd-8ccc-755555555555",

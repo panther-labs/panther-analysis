@@ -4,7 +4,7 @@ Enabled: false
 Tags:
   - Optional
 Description: >
-  This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions. 
+  This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions.
 Query: >
                  SELECT *,
                         split(split(impersonatedUser:username,'remote-')[1],'-')[0] as src_user,

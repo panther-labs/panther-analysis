@@ -1,4 +1,4 @@
-## Drive and Docs 
+## Drive and Docs
 [ External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.py)
 
 [ GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.py)
@@ -7,7 +7,7 @@
 
 [ GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.py)
 
-## User Specific 
+## User Specific
 
 [ GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.py)
 

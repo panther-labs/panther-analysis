@@ -4,7 +4,7 @@ Enabled: false
 Tags:
   - Optional
 Description: >
-  This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence. 
+  This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
 Query: >
                  SELECT *,
                         IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
@@ -15,7 +15,7 @@ Query: >
                  verb IN ('create', 'update', 'patch')
                  AND objectRef:resource = 'cronjobs'
                  AND p_occurs_since('30 minutes')
-                 --insert allow-list for expected cronjobs in a cluster, for example a sync service 
+                 --insert allow-list for expected cronjobs in a cluster, for example a sync service
                  LIMIT 100
 Schedule:
   RateMinutes: 30

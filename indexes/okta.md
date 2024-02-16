@@ -1,4 +1,4 @@
-## Rules 
+## Rules
 
 [ Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.py)
 
@@ -15,7 +15,7 @@
 [ Okta Support Access Granted](../rules/okta_rules/okta_account_support_access.py)
 
 
-## Investigative Queries 
+## Investigative Queries
 
 [Session ID Audit ](../queries/okta_queries/okta_session_id_audit.yml)
 

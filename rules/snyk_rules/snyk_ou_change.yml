@@ -12,12 +12,12 @@ Severity: High
 Description: >
   Detects when Snyk Group or Organization Settings are changed.
 Runbook: >
-  These actions in the Snyk Audit logs indicate that a Organization or 
+  These actions in the Snyk Audit logs indicate that a Organization or
   Group setting has changed, including Group and Org creation/deletion.
   Deletion events are marked with HIGH severity
   Creation events are marked with INFO severity
   Edit events are marked with MEDIUM Severity
-  
+
 Reference: https://docs.snyk.io/snyk-admin/introduction-to-snyk-administration
 DedupPeriodMinutes: 60
 Threshold:  1
@@ -38,7 +38,7 @@ Tests:
         "created": "2023-04-09T23:32:14.649Z",
         "userId": "05555555-3333-4ddd-8ccc-755555555555"
       }
-  - 
+  -
     Name: Snyk Group Org Remove ( HIGH )
     ExpectedResult: true
     Log:
@@ -52,7 +52,7 @@ Tests:
         "created": "2023-04-09T23:32:14.649Z",
         "userId": "05555555-3333-4ddd-8ccc-755555555555"
       }
-  - 
+  -
     Name: Snyk Group Edit ( MEDIUM )
     ExpectedResult: true
     Log:
@@ -66,7 +66,7 @@ Tests:
         },
         "created": "2023-04-11T23:22:57.667Z"
       }
-  - 
+  -
     Name: Snyk Org Create ( INFO )
     ExpectedResult: true
     Log:

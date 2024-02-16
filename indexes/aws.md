@@ -1,5 +1,5 @@
 
-## ACM 
+## ACM
 
 [ AWS ACM Certificate Expiration](../policies/aws_acm_policies/aws_acm_certificate_expiration.py)
 
@@ -7,7 +7,7 @@
 
 [ AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.py)
 
-## Access Keys 
+## Access Keys
 
 [ AWS Access Key Rotation](../policies/aws_iam_policies/aws_access_key_rotation.py)
 
@@ -50,7 +50,7 @@
 
 [ CodeBuild Project made Public](../rules/aws_cloudtrail_rules/aws_codebuild_made_public.py)
 
-## CloudWatch 
+## CloudWatch
 
 [ AWS CloudWatch Log Encryption](../policies/aws_cloudwatch_policies/aws_cloudwatch_loggroup_encrypted.py)
 
@@ -59,7 +59,7 @@
 [ Sensitive AWS CloudWatch Log Encryption](../policies/aws_cloudwatch_policies/aws_cloudwatch_loggroup_sensitive_encrypted.py)
 
 
-## Config Audit 
+## Config Audit
 
 [ AWS Config Global Resources](../policies/aws_config_policies/aws_config_global_resources.py)
 
@@ -129,7 +129,7 @@
 
 [ EC2 VPC Modified](../rules/aws_cloudtrail_rules/aws_ec2_vpc_modified.py)
 
-## Load Balancer 
+## Load Balancer
 
 [ AWS ELB SSL Policies](../policies/aws_load_balancer_policies/aws_alb_ssl_policy.py)
 
@@ -221,7 +221,7 @@
 [ Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.py)
 
 
-## KMS 
+## KMS
 
 [ AWS KMS CMK Key Rotation](../policies/aws_kms_policies/aws_cmk_key_rotation.py)
 
@@ -229,7 +229,7 @@
 
 [ KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.py)
 
-## Network ACLs 
+## Network ACLs
 
 [ AWS Network ACL Overly Permissive Entry Created](../rules/aws_cloudtrail_rules/aws_network_acl_permissive_entry.py)
 
@@ -279,7 +279,7 @@
 
 [ AWS Redshift Cluster Version Upgrade](../policies/aws_redshift_policies/aws_redshift_cluster_version_upgrade.py)
 
-## Account Policies 
+## Account Policies
 
 [ AWS Resource Made Public](../rules/aws_cloudtrail_rules/aws_resource_made_public.py)
 

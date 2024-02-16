@@ -19,11 +19,11 @@ Description: >
   Alert if a GCP Org or Folder Policy Was Changed Manually.
 Runbook: >
   Contact the party that made the change.
-  If it was intended to be temporary, ask for a window for rollback (< 24 hours). 
-  If it must be permanent, ask for change-management doc explaining why it was needed. 
+  If it was intended to be temporary, ask for a window for rollback (< 24 hours).
+  If it must be permanent, ask for change-management doc explaining why it was needed.
   Direct them to make the change in Terraform to avoid automated rollback.
-  Grep for google_org and google_folder in terraform repos for places to 
-  put your new policy bindings. 
+  Grep for google_org and google_folder in terraform repos for places to
+  put your new policy bindings.
 Reference: https://cloud.google.com/iam/docs/granting-changing-revoking-access
 SummaryAttributes:
   - severity

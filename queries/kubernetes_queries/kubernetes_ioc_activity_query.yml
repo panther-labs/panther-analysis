@@ -17,7 +17,7 @@ Query: >
                  FROM panther_logs.public.amazon_eks_audit, lateral flatten(source_ips)
                  WHERE p_occurs_since('30 minutes')
                   -- as an example, could be replaced with any IOC data store in a lookup table
-                 INNER JOIN panther_lookups.public.tor_exit_nodes 
+                 INNER JOIN panther_lookups.public.tor_exit_nodes
                  ON value = ip
                  LIMIT 10
 Schedule:

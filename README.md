@@ -252,7 +252,7 @@ git remote add panther-upstream git@github.com:panther-labs/panther-analysis.git
 # Pull in the latest changes
 # Note: You may need to use the `--allow-unrelated-histories`
 #       flag if you did not maintain the history originally
-git pull panther-upstream main 
+git pull panther-upstream main
 
 # Push the latest changes up to your forked repo and merge them
 git push

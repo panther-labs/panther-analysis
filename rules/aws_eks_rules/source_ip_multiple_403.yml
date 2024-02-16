@@ -5,7 +5,7 @@ DisplayName: "EKS Audit Log based single sourceIP is generating multiple 403s"
 Enabled: true
 LogTypes:
   - Amazon.EKS.Audit
-Tags: 
+Tags:
   - EKS
 Reports:
   MITRE ATT&CK:
@@ -25,7 +25,7 @@ Tests:
   -
     Name: Not 403
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "annotations": {
         "authorization.k8s.io/decision": "allow",
@@ -99,7 +99,7 @@ Tests:
   -
     Name: 403 and Private IP
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "annotations": {
           "authorization.k8s.io/decision": "allow",
@@ -159,7 +159,7 @@ Tests:
   -
     Name: 403 and Public IP
     ExpectedResult: true
-    Log: 
+    Log:
       {
         "annotations": {
           "authorization.k8s.io/decision": "allow",

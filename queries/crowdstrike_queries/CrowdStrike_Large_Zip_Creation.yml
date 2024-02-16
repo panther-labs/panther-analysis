@@ -5,9 +5,9 @@ Query: |
   select
     ppr.commandline as parent_commandline,
     zip_proc.*
-  from 
+  from
     (
-    select 
+    select
       zips.*,
       pr2.targetprocessid as process_targetpid,
       pr2.parentprocessid as process_parentpid,
@@ -18,7 +18,7 @@ Query: |
           *
         from
           panther_logs.public.crowdstrike_unknown
-        where 
+        where
           event_simpleName IN (
             'GzipFileWritten',
             'SevenZipFileWritten',
@@ -30,12 +30,12 @@ Query: |
       ) zips
       left join panther_logs.public.crowdstrike_processrollup2 pr2
       on zips.ContextProcessId = pr2.targetprocessid
-      
-      where 
+
+      where
       pr2.commandline like any(
         '%zip%'
       )
-      
+
       and not (
         pr2.commandline like any (
           '%curl%',
@@ -43,13 +43,13 @@ Query: |
           '%install%'
         )
       )
-  
+
     ) zip_proc
     LEFT JOIN panther_logs.public.crowdstrike_processrollup2 ppr
     on zip_proc.process_parentpid = ppr.targetprocessid
-  where 
+  where
     (
-      (parent_commandline is null) or 
+      (parent_commandline is null) or
       not (parent_commandline like any (
         '%homebrew%',
         '%Homebrew%',

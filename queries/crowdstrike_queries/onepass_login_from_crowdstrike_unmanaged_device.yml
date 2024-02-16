@@ -2,7 +2,7 @@ AnalysisType: scheduled_query
 Description: Looks for OnePassword Logins from IP Addresses that aren''t seen in CrowdStrike''s AIP List.
 Enabled: false
 Query: |
-    SELECT * 
+    SELECT *
     FROM panther_logs.public.onepassword_signinattempt
     WHERE category = 'success'
       AND client:ip_address LIKE '%.%.%.%'
@@ -10,7 +10,7 @@ Query: |
       AND client:platform_name NOT LIKE '%iPhone'
       AND type = 'credentials_ok'
       AND client:app_name != '1Password SCIM Bridge'
-      AND client:ip_address NOT IN 
+      AND client:ip_address NOT IN
         (
             SELECT distinct aip
             FROM panther_logs.public.crowdstrike_aidmaster

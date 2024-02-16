@@ -9,10 +9,10 @@ LogTypes:
   - Azure.Audit
 Severity: Medium
 Description: >
-  This detection surfaces an alert based on 
+  This detection surfaces an alert based on
   riskLevelAggregated, riskLevelDuringSignIn, and riskState.
 
-  riskLevelAggregated and riskLevelDuringSignIn are only 
+  riskLevelAggregated and riskLevelDuringSignIn are only
   expected for Azure AD Premium P2 customers.
 Reference: https://learn.microsoft.com/en-us/azure/active-directory/identity-protection/howto-identity-protection-risk-feedback
 Reports:
@@ -20,7 +20,7 @@ Reports:
     - TA0006:T1110
     - TA0001:T1078
 Runbook: >
-  There are a variety of potential responses to these sign-in risks. 
+  There are a variety of potential responses to these sign-in risks.
   MSFT has provided an in-depth reference material at https://learn.microsoft.com/en-us/azure/active-directory/identity-protection/howto-identity-protection-risk-feedback
 
 SummaryAttributes:
@@ -34,7 +34,7 @@ Tests:
   -
     Name: Failed Sign-In
     ExpectedResult: False
-    Log: 
+    Log:
       {
         "calleripaddress": "12.12.12.12",
         "category": "ServicePrincipalSignInLogs",
@@ -101,7 +101,7 @@ Tests:
   -
     Name: Failed Sign-In with riskLevelAggregated
     ExpectedResult: True
-    Log: 
+    Log:
       {
         "calleripaddress": "12.12.12.12",
         "category": "ServicePrincipalSignInLogs",
@@ -168,7 +168,7 @@ Tests:
   -
     Name: Failed Sign-In with riskLevelDuringSignIn
     ExpectedResult: True
-    Log: 
+    Log:
       {
         "calleripaddress": "12.12.12.12",
         "category": "ServicePrincipalSignInLogs",
@@ -235,7 +235,7 @@ Tests:
   -
     Name: Failed Sign-In with riskLevelDuringSignIn and dismissed
     ExpectedResult: False
-    Log: 
+    Log:
       {
         "calleripaddress": "12.12.12.12",
         "category": "ServicePrincipalSignInLogs",
@@ -302,7 +302,7 @@ Tests:
   -
     Name: Missing RiskState
     ExpectedResult: False
-    Log: 
+    Log:
       {
         "calleripaddress": "12.12.12.12",
         "category": "ServicePrincipalSignInLogs",

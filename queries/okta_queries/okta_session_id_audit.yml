@@ -4,7 +4,7 @@ Enabled: false
 Description: >
  Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
 AthenaQuery: >
-  SELECT  
+  SELECT
     p_event_time as event_time,
     actor.alternateId as actor_email,
     actor.displayName as actor_name,
@@ -21,7 +21,7 @@ AthenaQuery: >
   -- and authenticationContext:externalSessionId = '<SESSIONID_GOES_HERE>'
     ORDER BY event_time DESC
 SnowflakeQuery: >
-    SELECT  
+    SELECT
       p_event_time as event_time,
       actor:alternateId as actor_email,
       actor:displayName as actor_name,

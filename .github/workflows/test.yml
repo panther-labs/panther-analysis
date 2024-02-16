@@ -1,26 +1,26 @@
-on: 
+on:
   pull_request:
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
 
-      - name: Set python version  
+      - name: Set python version
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-        
+
       - name: Install pipenv
         run: pip install pipenv
-      
+
       - name: Install
         run: make install
-      
+
       - name: Setup venv
         run: make venv
 

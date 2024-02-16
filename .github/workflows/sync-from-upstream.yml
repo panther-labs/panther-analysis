@@ -4,14 +4,14 @@ on:
   schedule:
     # 15:00Z, every Wednesday
     - cron: "00 15 * * 3"
-  workflow_dispatch: # or on button click  
+  workflow_dispatch: # or on button click
 
 env:
   YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
 jobs:
   check_upstream:
-    if: | 
+    if: |
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
@@ -99,7 +99,7 @@ jobs:
         name: Local repo already synced to latest release
         if: ${{ steps.create_pr.outputs.pr_state == 'no-updates' }}
         run: |
-          echo "Local repo in sync with latest upstream release"  
+          echo "Local repo in sync with latest upstream release"
       - id: pr_create_error
         name: Create PR step had an error
         if: ${{ steps.create_pr.outputs.pr_state == 'error' }}

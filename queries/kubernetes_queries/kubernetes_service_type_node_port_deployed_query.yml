@@ -9,17 +9,17 @@ Query: >
                  SELECT *,
                         objectRef:name as service,
                         objectRef:namespace as namespace,
-                        objectRef:resource as resource_type,                        
+                        objectRef:resource as resource_type,
                         COALESCE(impersonated_user, USER:username) as src_user,
                         userAgent,
                         responseObject:spec:externalTrafficPolicy as external_traffic_policy,
                         responseObject:spec:internalTrafficPolicy as internal_traffic_policy,
                         responseObject:spec:clusterIP as cluster_ip_address,
-                        VALUE:port as port, --port where traffic gets forwarded to in the pod 
+                        VALUE:port as port, --port where traffic gets forwarded to in the pod
                         VALUE:protocol as protocol, --protocol the service uses
-                        VALUE:nodePort as node_port, --which port acts as the nodeport on all the nodes 
+                        VALUE:nodePort as node_port, --which port acts as the nodeport on all the nodes
                         requestObject:spec:type as type,
-                        IFF(requestObject:spec:status:loadBalancer is null, 'No LB Present', 
+                        IFF(requestObject:spec:status:loadBalancer is null, 'No LB Present',
                         requestObject:spec:status:loadBalancer) as load_balancer,
                         responseStatus:code as response_status
                         FROM panther_logs.public.kubernetes_control_plane, lateral flatten(response_object:spec:ports)

@@ -8,10 +8,10 @@ LogTypes:
 Reports:
   MITRE ATT&CK:
     - 'TA0005:T1562' # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
-Severity: Medium 
-Description: > 
+Severity: Medium
+Description: >
   Amazon Macie is a data security and data privacy service to discover and protect sensitive data.
-  Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with 
+  Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with
   policy violations, such as missing Encryption. If an attacker disables Macie, it could potentially hide data exfiltration.
 Reference: https://aws.amazon.com/macie/
 Runbook: >
@@ -27,7 +27,7 @@ SummaryAttributes:
   - userIdentity:type
   - userIdentity:arn
 Tests:
-  - 
+  -
     Name: ListMembers
     ExpectedResult: false
     Log:

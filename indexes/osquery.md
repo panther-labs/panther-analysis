@@ -1,10 +1,10 @@
-## Linux 
+## Linux
 
 [ A Login from Outside the Corporate Office](../rules/osquery_rules/osquery_linux_logins_non_office.py)
 
 [ AWS command executed on the command line](../rules/osquery_rules/osquery_linux_aws_commands.py)
 
-## MacOS 
+## MacOS
 [ OSQuery Reports Application Firewall Disabled](../rules/osquery_rules/osquery_mac_enable_auto_update.py)
 
 [ Unsupported macOS version](../rules/osquery_rules/osquery_outdated_macos.py)
@@ -15,7 +15,7 @@
 
 [ macOS Malware Detected with osquery](../rules/osquery_rules/osquery_mac_osx_attacks.py)
 
-## OSQuery Config and Universal  
+## OSQuery Config and Universal
 [ OSQuery Detected SSH Listener](../rules/osquery_rules/osquery_ssh_listener.py)
 
 [ Suspicious cron detected](../rules/osquery_rules/osquery_suspicious_cron.py)
