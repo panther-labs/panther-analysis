@@ -27,8 +27,7 @@ Detection:
     - KeyPath: protoPayload.methodName
       Condition: EndsWith
       Value: ApiKeys.CreateKey
-AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] created new API Key in 
-project [{resource.labels.project_id}]"
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] created new API Key in project [{resource.labels.project_id}]"
 AlertContext:
   - KeyName: project
     KeyValue:
