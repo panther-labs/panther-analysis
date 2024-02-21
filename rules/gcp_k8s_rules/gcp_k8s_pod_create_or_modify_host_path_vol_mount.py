@@ -1,6 +1,10 @@
 from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get, deep_walk
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> eee3021 ([sync] GCP K8S Pod Create Or Modify Host Path Volume Mount - rule (#85) (#1115))
 SUSPICIOUS_PATHS = [
     "/var/run/docker.sock",
     "/var/run/crio/crio.sock",
@@ -28,18 +32,26 @@ def rule(event):
     volume_mount_path = deep_walk(
         event, "protoPayload", "request", "spec", "volumes", "hostPath", "path"
     )
+<<<<<<< HEAD
 
     if (
         not volume_mount_path
         or volume_mount_path not in SUSPICIOUS_PATHS
         and not any(path in SUSPICIOUS_PATHS for path in volume_mount_path)
+=======
+    if volume_mount_path not in SUSPICIOUS_PATHS and not any(
+        path in SUSPICIOUS_PATHS for path in volume_mount_path
+>>>>>>> eee3021 ([sync] GCP K8S Pod Create Or Modify Host Path Volume Mount - rule (#85) (#1115))
     ):
         return False
 
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+<<<<<<< HEAD
     if not authorization_info:
         return False
 
+=======
+>>>>>>> eee3021 ([sync] GCP K8S Pod Create Or Modify Host Path Volume Mount - rule (#85) (#1115))
     for auth in authorization_info:
         if (
             auth.get("permission")
