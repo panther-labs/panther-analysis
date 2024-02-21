@@ -1,0 +1,71 @@
+AnalysisType: rule
+RuleID: "GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified.Simple"
+DisplayName: "GCP GKE Kubernetes Cron Job Created Or Modified"
+Description: "This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence."
+Enabled: true
+LogTypes:
+    - GCP.AuditLog
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Detection:
+    - Any:
+        - KeyPath: protoPayload.authorizationInfo[*].permission
+          Condition: Contains
+          Value: io.k8s.batch.v1.cronjobs.create
+        - KeyPath: protoPayload.authorizationInfo[*].permission
+          Condition: Contains
+          Value: io.k8s.batch.v1.cronjobs.update
+Tests:
+    - Name: create
+      ExpectedResult: true
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: io.k8s.batch.v1.cronjobs.create
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: update
+      ExpectedResult: true
+      Log:
+        protoPayload:
+          authorizationInfo:
+            - granted: true
+              permission: io.k8s.batch.v1.cronjobs.update
+          methodName: v2.deploymentmanager.deployments.insert
+          serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+          labels:
+            name: test-vm-deployment
+            project_id: panther-threat-research
+          type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: fail
+      ExpectedResult: false
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: false
+                  permission: cloudfunctions.functions.upsert
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
