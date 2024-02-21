@@ -7,9 +7,9 @@ PackDefinition:
     - GCP.Access.Attempts.Violating.VPC.Service.Controls
     - GCP.BigQuery.Large.Scan
     - GCP.Cloud.Storage.Buckets.Modified.Or.Deleted
-    - GCP.CloudBuild.Potential.Privilege.Escalation
-    - GCP.Cloudfunctions.Functions.Create
-    - GCP.Cloudfunctions.Functions.Update
+    - GCP.CloudBuild.Potential.Privilege.Escalation.Simple
+    - GCP.Cloudfunctions.Functions.Create.Simple
+    - GCP.Cloudfunctions.Functions.Update.Simple
     - GCP.Destructive.Queries
     - GCP.DNS.Zone.Modified.or.Deleted
     - GCP.Firewall.Rule.Created
@@ -17,35 +17,36 @@ PackDefinition:
     - GCP.Firewall.Rule.Modified
     - GCP.GCS.IAMChanges
     - GCP.GCS.Public
+    - GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified.Simple
     - GCP.IAM.CorporateEmail
     - GCP.IAM.CustomRoleChanges
     - GCP.IAM.OrgFolderIAMChanges
-    - GCP.iam.roles.update.Privilege.Escalation
-    - GCP.iam.serviceAccountKeys.create
+    - GCP.iam.roles.update.Privilege.Escalation.Simple
+    - GCP.iam.serviceAccountKeys.create.Simple
     - GCP.Inbound.SSO.Profile.Created
+    - GCP.K8s.New.Daemonset.Deployed.Simple
     - GCP.Log.Bucket.Or.Sink.Deleted
     - GCP.Logging.Settings.Modified
     - GCP.Logging.Sink.Modified
     - GCP.Permissions.Granted.to.Create.or.Manage.Service.Account.Key
-    - GCP.Privilege.Escalation.By.Deployments.Create
+    - GCP.Privilege.Escalation.By.Deployments.Create.Simple
     - GCP.Service.Account.Access.Denied
     - GCP.Service.Account.or.Keys.Created
-    - GCP.serviceusage.apiKeys.create.Privilege.Escalation
+    - GCP.serviceusage.apiKeys.create.Privilege.Escalation.Simple
     - GCP.SQL.ConfigChanges
+    - GCP.Storage.Hmac.Keys.Create
     - GCP.User.Added.to.IAP.Protected.Service
     - GCP.VPC.Flow.Logs.Disabled
     - GCP.Workforce.Pool.Created.or.Updated
     - GCP.Workload.Identity.Pool.Created.or.Updated
-    - GCP.Storage.Hmac.Keys.Create
-    - GCP.K8s.New.Daemonset.Deployed
     # Data model
     - Standard.GCP.AuditLog
     # Globals used in these rules/policies
-    - panther_base_helpers
-    - panther_event_type_helpers
     - gcp_base_helpers
     - gcp_environment
+    - panther_base_helpers
     - panther_config
     - panther_config_defaults
     - panther_config_overrides
+    - panther_event_type_helpers
 DisplayName: "Panther GCP Audit Pack"

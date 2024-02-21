@@ -1,0 +1,287 @@
+AnalysisType: rule
+RuleID: "GCP.K8S.Pot.Create.Or.Modify.Host.Path.Volume.Mount"
+DisplayName: "GCP K8S Pot Create Or Modify Host Path Volume Mount"
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Severity: High
+Description: >
+  This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow 
+  for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration 
+  or unauthorized file access. It is very rare to see this being a pod requirement.
+Runbook: >
+  Investigate the reason of adding hostPath volume mount. Advise that it is discouraged practice. 
+  Create ticket if appropriate.
+Reference: https://linuxhint.com/kubernetes-hostpath-volumes/
+Reports:
+    MITRE ATT&CK:
+        - TA0001  # Initial Access
+        - TA0002  # Execution
+Filename: gcp_k8s_pod_create_or_modify_host_path_vol_mount.py
+Tests:
+  -
+    Name: Pod With Suspicious Volume Mount Created
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "test",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/test",
+                      "name": "test-volume"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "hostPath": {
+                    "path": "/var/lib/kubelet",
+                    "type": "DirectoryOrCreate"
+                  },
+                  "name": "test-volume"
+                }
+              ]
+            },
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3"
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test",
+          "response": {
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "test",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/test",
+                      "name": "test-volume"
+                    },
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "hostPath": {
+                    "path": "/var/lib/kubelet",
+                    "type": "DirectoryOrCreate"
+                  },
+                  "name": "test-volume"
+                },
+              ]
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          },
+        },
+        "receiveTimestamp": "2024-02-16 11:48:43.531373988",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-16 11:48:22.742154000"
+      }
+  - Name: Pod With Non-Suspicious Volume Mount Created
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "test",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/test",
+                      "name": "test-volume"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "hostPath": {
+                    "path": "/data",
+                    "type": "DirectoryOrCreate"
+                  },
+                  "name": "test-volume"
+                }
+              ]
+            },
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3"
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test",
+          "response": {
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "test",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/test",
+                      "name": "test-volume"
+                    },
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "hostPath": {
+                    "path": "/data",
+                    "type": "DirectoryOrCreate"
+                  },
+                  "name": "test-volume"
+                },
+              ]
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          },
+        },
+        "receiveTimestamp": "2024-02-16 11:48:43.531373988",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-16 11:48:22.742154000"
+      }
+  -
+    Name: Pod Not Created
+    ExpectedResult: False
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/test"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {
+              "name": "test",
+              "namespace": "default"
+            },
+            "spec": {
+              "containers": [
+                {
+                  "image": "nginx",
+                  "imagePullPolicy": "Always",
+                  "name": "test",
+                  "volumeMounts": [
+                    {
+                      "mountPath": "/test",
+                      "name": "test-volume"
+                    }
+                  ]
+                }
+              ],
+              "volumes": [
+                {
+                  "hostPath": {
+                    "path": "/var/lib/kubelet",
+                    "type": "DirectoryOrCreate"
+                  },
+                  "name": "test-volume"
+                }
+              ]
+            },
+            "status": { }
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test",
+          "response": {
+            "status": "Failure"
+          },
+        },
+        "receiveTimestamp": "2024-02-16 12:55:17.003485190",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-16 12:55:00.510160000"
+      }
