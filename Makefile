@@ -51,6 +51,7 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
+	./format.sh
 
 install:
 	pipenv sync --dev
