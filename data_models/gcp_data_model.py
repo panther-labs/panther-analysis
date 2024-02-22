@@ -51,52 +51,52 @@ def get_iam_roles(event):
 
 
 def get_api_group(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     try:
-        return deep_get(event, "protoPayload", "resourceName", default="").split('/')[0]
+        return deep_get(event, "protoPayload", "resourceName", default="").split("/")[0]
     except IndexError:
         return ""
-    
+
 
 def get_api_version(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     try:
-        return deep_get(event, "protoPayload", "resourceName", default="").split('/')[1]
+        return deep_get(event, "protoPayload", "resourceName", default="").split("/")[1]
     except IndexError:
         return ""
-    
+
 
 def get_namespace(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     try:
-        return deep_get(event, "protoPayload", "resourceName", default="").split('/')[3]
+        return deep_get(event, "protoPayload", "resourceName", default="").split("/")[3]
     except IndexError:
         return ""
-    
+
 
 def get_resource(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     try:
-        return deep_get(event, "protoPayload", "resourceName", default="").split('/')[4]
+        return deep_get(event, "protoPayload", "resourceName", default="").split("/")[4]
     except IndexError:
         return ""
-    
+
 
 def get_name(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     try:
-        return deep_get(event, "protoPayload", "resourceName", default="").split('/')[5]
+        return deep_get(event, "protoPayload", "resourceName", default="").split("/")[5]
     except IndexError:
         return ""
-    
+
 
 def get_request_uri(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     return "/apis/" + deep_get(event, "protoPayload", "resourceName", default="")
 
@@ -109,6 +109,6 @@ def get_source_ips(event):
 
 
 def get_verb(event):
-    if not deep_get(event, "protoPayload", "serviceName", default="") == "k8s.io":
+    if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
-    return deep_get(event, "protoPayload", "methodName", default="").split('.')[-1]
+    return deep_get(event, "protoPayload", "methodName", default="").split(".")[-1]

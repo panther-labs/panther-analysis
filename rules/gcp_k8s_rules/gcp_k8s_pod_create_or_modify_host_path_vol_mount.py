@@ -1,7 +1,6 @@
 from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get, deep_walk
 
-
 SUSPICIOUS_PATHS = [
     "/var/run/docker.sock",
     "/var/run/crio/crio.sock",
