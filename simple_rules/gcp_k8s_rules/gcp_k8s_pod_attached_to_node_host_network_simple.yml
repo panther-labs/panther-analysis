@@ -1,0 +1,67 @@
+AnalysisType: rule
+RuleID: "GCP.K8s.Pod.Attached.To.Node.Host.Network.Simple"
+DisplayName: "GCP K8s Pod Attached To Node Host Network"
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Optional
+Severity: Medium
+Description: This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
+Detection:
+  - All:
+    - KeyPath: protoPayload.methodName
+      Condition: IsIn
+      Values:
+        - io.k8s.core.v1.pods.create
+        - io.k8s.core.v1.pods.update
+        - io.k8s.core.v1.pods.patch
+    - Any:
+      - KeyPath: protoPayload.request.spec.hostNetwork
+        Condition: Equals
+        Value: true
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Tests:
+  -
+    Name: triggers
+    ExpectedResult: true
+    Log:
+      {
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }
+        ],
+        "protoPayload": {
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "spec": {
+              "hostNetwork": true,
+            }
+          }
+        }
+      }
+  -
+    Name: ignore
+    ExpectedResult: false
+    Log:
+      {
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }
+        ],
+        "protoPayload": {
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "spec": {
+              "hostNetwork": false,
+            }
+          }
+        }
+      }
