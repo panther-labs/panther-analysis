@@ -11,10 +11,7 @@ def rule(event):
         return False
 
     for auth in authorization_info:
-        if (
-                auth.get("permission") == "cloudbuild.builds.create"
-                and auth.get("granted") is True
-        ):
+        if auth.get("permission") == "cloudbuild.builds.create" and auth.get("granted") is True:
             return True
     return False
 

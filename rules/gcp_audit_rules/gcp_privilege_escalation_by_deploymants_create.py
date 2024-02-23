@@ -5,8 +5,8 @@ def rule(event):
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
     for auth in authorization_info:
         if (
-                auth.get("permission") == "deploymentmanager.deployments.create"
-                and auth.get("granted") is True
+            auth.get("permission") == "deploymentmanager.deployments.create"
+            and auth.get("granted") is True
         ):
             return True
     return False
