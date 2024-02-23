@@ -1,0 +1,38 @@
+AnalysisType: rule
+RuleID: "GCP.iam.roles.update.Privilege.Escalation"
+DisplayName: "GCP iam.roles.update Privilege Escalation"
+Description: "If your user is assigned a custom IAM role, then iam.roles.update will allow you to update the “includedPermissons” on that role. Because it is assigned to you, you will gain the additional privileges, which could be anything you desire."
+Enabled: true
+Filename: gcp_iam_roles_update_privilege_escalation.py
+LogTypes:
+    - GCP.AuditLog
+Tags:
+    - GCP
+Severity: High
+Reports:
+    TA0004:
+        - T1548
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
+Tests:
+    - Name: Test-876cde
+      ExpectedResult: false
+      Log:
+        p_enrichment: null
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: iam.roles.dunno
+                  resource: projects/some-research/roles/CustomRole
+                  resourceAttributes: {}
+    - Name: Test-ffdf6
+      ExpectedResult: true
+      Log:
+        p_enrichment: null
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: iam.roles.update
+                  resource: projects/some-research/roles/CustomRole
+                  resourceAttributes: {}
