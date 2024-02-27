@@ -1,0 +1,35 @@
+AnalysisType: datamodel
+LogTypes:
+  - Amazon.EKS.Audit
+DataModelID: "Standard.Amazon.EKS.Audit"
+DisplayName: "AWS EKS Audit"
+Enabled: true
+Mappings: 
+  - Name: annotations
+    Path: $.annotations
+  - Name: apiGroup
+    Path: $.objectRef.apiGroup
+  - Name: apiVersion
+    Path: $.objectRef.apiVersion
+  - Name: namespace
+    Path: $.objectRef.namespace
+  - Name: resource
+    Path: $.objectRef.resource
+  - Name: name
+    Path: $.objectRef.name
+  - Name: requestURI
+    Path: $.requestURI
+  - Name: responseStatus
+    Path: $.responseStatus
+  - Name: sourceIPs
+    Path: $.sourceIPs
+  - Name: username
+    Path: $.user.username
+  - Name: userAgent
+    Path: $.userAgent
+  - Name: verb
+    Path: $.verb
+  - Name: requestObject
+    Path: $.requestObject
+  - Name: responseObject
+    Path: $.responseObject
