@@ -10,6 +10,8 @@ def rule(event):
         return False
 
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+    if not authorization_info:
+        return False
     containers_info = deep_walk(event, "protoPayload", "response", "spec", "containers")
     for auth in authorization_info:
         if auth.get("permission") == "io.k8s.core.v1.pods.create" and auth.get("granted") is True:
