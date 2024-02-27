@@ -1,0 +1,16 @@
+AnalysisType: rule
+LogTypes:
+  - GitHub.Audit
+DisplayName: "GitHub Repository Cloned"
+RuleID: "GitHub.Repository.Cloned"
+Enabled: true
+CreateAlert: false
+Detection:
+  - Key: action
+    Condition: Equals
+    Value: git.clone
+AlertContext:
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: resource.actor_ip
+AlertTitle: "Repository {repository} has been cloned"
