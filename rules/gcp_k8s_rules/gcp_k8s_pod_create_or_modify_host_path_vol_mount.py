@@ -1,7 +1,6 @@
 from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get, deep_walk
 
-
 SUSPICIOUS_PATHS = [
     "/var/run/docker.sock",
     "/var/run/crio/crio.sock",
@@ -35,6 +34,9 @@ def rule(event):
         return False
 
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+    if not authorization_info:
+        return False
+
     for auth in authorization_info:
         if (
             auth.get("permission")
