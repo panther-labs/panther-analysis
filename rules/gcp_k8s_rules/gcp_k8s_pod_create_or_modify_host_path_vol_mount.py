@@ -28,8 +28,11 @@ def rule(event):
     volume_mount_path = deep_walk(
         event, "protoPayload", "request", "spec", "volumes", "hostPath", "path"
     )
-    if volume_mount_path not in SUSPICIOUS_PATHS and not any(
-        path in SUSPICIOUS_PATHS for path in volume_mount_path
+
+    if (
+        not volume_mount_path
+        or volume_mount_path not in SUSPICIOUS_PATHS
+        and not any(path in SUSPICIOUS_PATHS for path in volume_mount_path)
     ):
         return False
 
