@@ -1,0 +1,38 @@
+AnalysisType: rule
+RuleID: "GCP.K8s.IOC.Activity"
+DisplayName: "GCP K8s IOCActivity"
+Enabled: true
+Filename: gcp_k8s_ioc_activity.py
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Optional
+Severity: Medium
+Description: This detection monitors for any kuberentes API Request originating from an Indicator of Compromise.
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Tests:
+  -
+    Name: triggers
+    ExpectedResult: true
+    Log:
+      {
+        "operation": {"producer":"k8s.io"},
+        "p_enrichment": {
+          "tor_exit_nodes": [
+            "1.1.1.1"
+          ]
+        }
+      }
+  -
+    Name: ignore
+    ExpectedResult: false
+    Log:
+      {
+        "operation": {"producer":"chrome"},
+        "p_enrichment": {
+          "tor_exit_nodes": [
+            "1.1.1.1"
+          ]
+        }
+      }
