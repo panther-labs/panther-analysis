@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default_k8s.py 
+RuleID: "Kubernetes.PodUsingHostPIDNamespace"
+DisplayName: "Pod Created or Modified Using the Host PID Namespace"
+Description: >
+  This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the hosts processes. This can offer a powerful escape hatch to the underlying host.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Pod Created or Modified Using the Host PID Namespace
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value

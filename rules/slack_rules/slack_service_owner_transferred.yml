@@ -7,9 +7,20 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Defense Evasion
+  - File and Directory Permissions Modification
+  - Persistence
+  - Account Manipulation
+  - Impact
+  - Account Access Removal
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1222
+    - TA0003:T1098
+    - TA0040:T1531
 Severity: Critical
 Description: Detects transferring of service owner on request from primary owner
-Reference: https://api.slack.com/admins/audit-logs
+Reference: https://slack.com/intl/en-gb/help/articles/204401633-Transfer-ownership-of-a-workspace-or-org
 DedupPeriodMinutes: 60
 Threshold:  1
 SummaryAttributes:

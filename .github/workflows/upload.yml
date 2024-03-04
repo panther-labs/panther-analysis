@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload:
+    name: 
+    runs-on: ubuntu-latest
+    env:
+      API_HOST: ${{ secrets.API_HOST }}
+      API_TOKEN: ${{ secrets.API_TOKEN }}
+    steps:
+      - name: Validate Secrets
+        if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
+        run: |
+          echo "API_HOST or API_TOKEN not set"
+          exit 0
+
+      - name: Checkout panther-analysis
+        uses: actions/checkout@v4
+
+      - name: Set python version  
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+        
+      - name: Install pipenv
+        run: pip install pipenv
+      
+      - name: Install
+        run: make install
+      
+      - name: Setup venv
+        run: make venv
+
+      - name: upload
+        run: |
+            pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}

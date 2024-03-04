@@ -6,6 +6,7 @@ from panther_base_helpers import deep_get, eks_panther_obj_ref
 #  which are run as Lambdas and originate from public IPs
 AMZ_PUBLICS = {"eks:addon-manager", "eks:node-manager"}
 
+
 # Alert if
 #   the username starts ( with system: or eks: )
 #   and
@@ -45,7 +46,7 @@ def title(event):
 
 def dedup(event):
     p_eks = eks_panther_obj_ref(event)
-    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('actor')}"
+    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('sourceIPs')[0]}"
 
 
 def alert_context(event):

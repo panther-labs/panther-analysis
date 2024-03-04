@@ -45,7 +45,7 @@ Tests:
         "operationname": "Sign-in activity",
         "operationversion": 1,
         "p_event_time": "2023-07-26 23:00:20.889",
-        "p_log_type": "Azure.SignIn",
+        "p_log_type": "Azure.Audit",
         "properties": {
           "appId": "cfceb902-8fab-4f8c-88ba-374d3c975c3a",
           "authenticationProcessingDetails": [
@@ -246,7 +246,7 @@ Tests:
         "operationname": "Sign-in activity",
         "operationversion": 1,
         "p_event_time": "2023-07-26 23:00:20.889",
-        "p_log_type": "Azure.SignIn",
+        "p_log_type": "Azure.Audit",
         "properties": {
           "appId": "cfceb902-8fab-4f8c-88ba-374d3c975c3a",
           "authenticationProcessingDetails": [
@@ -285,6 +285,72 @@ Tests:
           "riskLevelAggregated": "none",
           "riskLevelDuringSignIn": "high",
           "riskState": "dismissed",
+          "servicePrincipalId": "b1c34143-e405-4058-8e29-84596ad737b8",
+          "servicePrincipalName": "some-service-principal",
+          "status": {
+            "errorCode": 7000215
+          },
+          "tokenIssuerType": "AzureAD",
+          "uniqueTokenIdentifier": "NDDDDDDDDDDDDDDDDDD_DD"
+        },
+        "resourceid": "/tenants/c0dd2fa0-71be-4df8-b2a6-24cee7de069a/providers/Microsoft.aadiam",
+        "resultsignature": "None",
+        "resulttype": 7000215,
+        "tenantid": "a2aa49aa-2c0c-49d2-af87-f402c421df0b",
+        "time": "2023-07-26 23:00:20.889"
+    }
+  -
+    Name: Missing RiskState
+    ExpectedResult: False
+    Log: 
+      {
+        "calleripaddress": "12.12.12.12",
+        "category": "ServicePrincipalSignInLogs",
+        "correlationid": "e1f237ef-6548-4172-be79-03818c04c06e",
+        "durationms": 0,
+        "level": 4,
+        "location": "IE",
+        "operationname": "Sign-in activity",
+        "operationversion": 1,
+        "p_event_time": "2023-07-26 23:00:20.889",
+        "p_log_type": "Azure.Audit",
+        "properties": {
+          "appId": "cfceb902-8fab-4f8c-88ba-374d3c975c3a",
+          "authenticationProcessingDetails": [
+            {
+              "key": "Azure AD App Authentication Library",
+              "value": ""
+            }
+          ],
+          "authenticationProtocol": "none",
+          "clientCredentialType": "none",
+          "conditionalAccessStatus": "notApplied",
+          "correlationId": "5889315c-c4ac-4807-99da-e17417eae786",
+          "createdDateTime": "2023-07-26 22:58:30.983201900",
+          "crossTenantAccessType": "none",
+          "flaggedForReview": false,
+          "id": "36658c78-02d9-4d8f-84ee-5ca4a3fdefef",
+          "incomingTokenType": "none",
+          "ipAddress": "12.12.12.12",
+          "isInteractive": false,
+          "isTenantRestricted": false,
+          "location": {
+            "city": "Dublin",
+            "countryOrRegion": "IE",
+            "geoCoordinates": {
+              "latitude": 51.35555555555555,
+              "longitude": -5.244444444444444
+            },
+            "state": "Dublin"
+          },
+          "managedIdentityType": "none",
+          "processingTimeInMilliseconds": 0,
+          "resourceDisplayName": "Azure Storage",
+          "resourceId": "037694de-8c7d-498d-917d-edb650090fa5",
+          "resourceServicePrincipalId": "a225221f-8cc5-411a-9cc7-5e1394b8a5b8",
+          "riskDetail": "none",
+          "riskLevelAggregated": "none",
+          "riskLevelDuringSignIn": "none",
           "servicePrincipalId": "b1c34143-e405-4058-8e29-84596ad737b8",
           "servicePrincipalName": "some-service-principal",
           "status": {

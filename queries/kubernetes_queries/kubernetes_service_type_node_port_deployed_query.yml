@@ -1,0 +1,36 @@
+AnalysisType: scheduled_query
+QueryName: Kubernetes Service with Type Node Port Deployed
+Enabled: false
+Tags:
+  - Optional
+Description: >
+  This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+Query: >
+                 SELECT *,
+                        objectRef:name as service,
+                        objectRef:namespace as namespace,
+                        objectRef:resource as resource_type,                        
+                        COALESCE(impersonated_user, USER:username) as src_user,
+                        userAgent,
+                        responseObject:spec:externalTrafficPolicy as external_traffic_policy,
+                        responseObject:spec:internalTrafficPolicy as internal_traffic_policy,
+                        responseObject:spec:clusterIP as cluster_ip_address,
+                        VALUE:port as port, --port where traffic gets forwarded to in the pod 
+                        VALUE:protocol as protocol, --protocol the service uses
+                        VALUE:nodePort as node_port, --which port acts as the nodeport on all the nodes 
+                        requestObject:spec:type as type,
+                        IFF(requestObject:spec:status:loadBalancer is null, 'No LB Present', 
+                        requestObject:spec:status:loadBalancer) as load_balancer,
+                        responseStatus:code as response_status
+                        FROM panther_logs.public.kubernetes_control_plane, lateral flatten(response_object:spec:ports)
+                        WHERE
+                        objectRef:resource = 'services'
+                        AND verb = 'create'
+                        AND requestObject:spec:type = 'NodePort'
+                        AND p_occurs_since('30 minutes')
+                        --Insert allow-list for expected NodePort Services
+                        LIMIT 100
+
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

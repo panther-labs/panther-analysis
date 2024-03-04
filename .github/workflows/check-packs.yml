@@ -1,0 +1,67 @@
+# Panther is a Cloud-Native SIEM for the Modern Security Team.
+# Copyright (C) 2023 Panther Labs Inc
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+on: 
+  pull_request:
+
+jobs:
+  check_packs:
+    name: check packs
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout panther-analysis
+        uses: actions/checkout@v4
+
+      - name: Set python version  
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+        
+      - name: Install panther_analysis_tool
+        run: pip install panther_analysis_tool
+
+      - name: Check packs
+        continue-on-error: true
+        id: check-packs
+        run: |
+          panther_analysis_tool check-packs 2> errors.txt || true
+          
+          # run again to get exit code
+          panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        if: ${{ steps.check-packs.outputs.errors }}
+        with:
+          mode: upsert
+          message: |
+            :scream: 
+            looks like somethings could be wrong with the packs
+            ```diff
+            ${{ steps.check-packs.outputs.errors }}
+          comment_tag: check-packs
+      - name: Delete comment
+        uses: thollander/actions-comment-pull-request@v2
+        if: ${{ !steps.check-packs.outputs.errors }}
+        with:
+          mode: delete
+          message: |
+            :scream: 
+            looks like somethings could be wrong with the packs
+            ```diff
+            ${{ steps.check-packs.outputs.errors }}
+          comment_tag: check-packs

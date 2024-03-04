@@ -1,0 +1,17 @@
+AnalysisType: rule
+Filename: notion_page_accessible_to_api.py
+DisplayName: "Notion Page API Permissions Changed"
+RuleID: "Notion.PagePerms.APIPermsChanged"
+Enabled: true
+LogTypes:
+    - Notion.AuditLogs
+Tags:
+  - Notion
+  - Data Security
+  - Unapproved 3rd Party Apps
+Severity: Low
+Description: "A new API integration was added to a Notion page, or it's permissions were changed."
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Potential information exposure - review the shared page and rectify if needed.
+Reference: https://www.notion.so/help/sharing-and-permissions

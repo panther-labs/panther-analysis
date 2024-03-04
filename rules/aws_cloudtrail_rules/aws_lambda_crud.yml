@@ -8,6 +8,7 @@ LogTypes:
 Tags:
   - AWS
   - Security Control
+  - Configuration Required
 Reports:
   CIS:
     - 3.12
@@ -16,11 +17,11 @@ Reports:
 Severity: High
 Description: Unauthorized lambda Create, Read, Update, or Delete event occurred.
 Runbook: https://docs.aws.amazon.com/lambda/latest/dg/logging-using-cloudtrail.html
-Reference: reference.link
+Reference: https://docs.aws.amazon.com/lambda/latest/dg/logging-using-cloudtrail.html
 SummaryAttributes:
   - eventSource
   - eventName
-  - accountId
+  - recipientAccountId
   - awsRegion
   - p_any_aws_arns
 Tests:

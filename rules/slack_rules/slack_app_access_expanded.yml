@@ -7,9 +7,14 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Privilege Escalation
+  - Account Manipulation
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1098
 Severity: Medium
 Description: Detects when a Slack App has had its permission scopes expanded
-Reference: https://api.slack.com/admins/audit-logs
+Reference: https://slack.com/intl/en-gb/help/articles/1500009181142-Manage-app-settings-and-permissions
 DedupPeriodMinutes: 60
 Threshold:  1
 SummaryAttributes:

@@ -7,9 +7,20 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Defense Evasion
+  - File and Directory Permissions Modification
+  - Persistence
+  - Account Manipulation
+  - Exfiltration
+  - Exfiltration Over Web Service
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1222
+    - TA0003:T1098
+    - TA0010:T1567
 Severity: High
 Description: Detects when a channel that was previously private is made public
-Reference: https://api.slack.com/admins/audit-logs
+Reference: https://slack.com/intl/en-gb/help/articles/213185467-Convert-a-channel-to-private-or-public
 DedupPeriodMinutes: 60
 Threshold:  1
 SummaryAttributes:

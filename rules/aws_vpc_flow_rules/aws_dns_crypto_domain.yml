@@ -6,6 +6,7 @@ Filename: aws_dns_crypto_domain.py
 Reports:
     MITRE ATT&CK:
         - TA0040:T1496
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
 Severity: High
 Tests:
     - ExpectedResult: false
@@ -134,6 +135,48 @@ Tests:
         version: "1.100000"
         vpc_id: vpc-abc123
       Name: Crypto Query Subdomain Trailing Period
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: webservicepag.webhop.net
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Checking Against Subdomain IOC
+    - ExpectedResult: true
+      Log:
+        account_id: "0123456789"
+        answers:
+            - Class: IN
+              Rdata: 1.2.3.4
+              Type: A
+        query_class: IN
+        query_name: webservicepag.webhop.net.
+        query_timestamp: "2022-06-25 00:27:53"
+        query_type: A
+        rcode: NOERROR
+        region: us-west-2
+        srcaddr: 5.6.7.8
+        srcids:
+            instance: i-0abc234
+        srcport: "8888"
+        transport: UDP
+        version: "1.100000"
+        vpc_id: vpc-abc123
+      Name: Checking Against Subdomain IOC Trailing Period
 DedupPeriodMinutes: 60
 LogTypes:
     - AWS.VPCDns

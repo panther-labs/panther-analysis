@@ -7,9 +7,15 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Impact
+  - Endpoint Denial of Service
+  - Application Exhaustion Flood
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1499.003
 Severity: Critical
 Description: Detects when slack admin invalidates user session(s) more than once in a 24 hour period which can lead to DoS
-Reference: https://api.slack.com/admins/audit-logs
+Reference: https://slack.com/intl/en-gb/help/articles/115005223763-Manage-session-duration-#pro-and-business+-subscriptions-2
 DedupPeriodMinutes: 60
 Threshold:  60
 SummaryAttributes:
@@ -24,8 +30,6 @@ Tests:
       - objectName: get_string_set
         returnValue: ""
       - objectName: put_string_set
-        returnValue: ""
-      - objectName: set_key_expiration
         returnValue: ""
     Log:
       {
@@ -57,8 +61,6 @@ Tests:
       - objectName: get_string_set
         returnValue: "{\"time\":\"2021-06-08 22:24:43\"}"
       - objectName: put_string_set
-        returnValue: ""
-      - objectName: set_key_expiration
         returnValue: ""
     Log:
       {

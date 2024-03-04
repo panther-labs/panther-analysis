@@ -14,7 +14,10 @@ def rule(event):
     global IDENTIFIED_RISK_LEVEL  # pylint: disable=global-variable-undefined
     IDENTIFIED_RISK_LEVEL = ""
     # Do not pass through risks marked as dismissed or remediated in AD
-    if deep_get(event, "properties", "riskState").lower() in ["dismissed", "remediated"]:
+    if deep_get(event, "properties", "riskState", default="").lower() in [
+        "dismissed",
+        "remediated",
+    ]:
         return False
     # check riskLevelAggregated
     for risk_type in ["riskLevelAggregated", "riskLevelDuringSignIn"]:

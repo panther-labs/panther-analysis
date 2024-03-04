@@ -15,6 +15,7 @@ Reports:
 Severity: High
 Description: A user updated account setting that disabled credit card redaction.
 Runbook: Re-enable credit card redaction.
+Reference: https://support.zendesk.com/hc/en-us/articles/4408822124314-Automatically-redacting-credit-card-numbers-from-tickets
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -27,6 +28,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account_setting",
         "source_label": "Credit Card Redaction",
@@ -45,6 +47,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account_setting",
         "source_label": "Credit Card Redaction",

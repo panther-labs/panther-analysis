@@ -13,7 +13,7 @@ Reports:
 Severity: Medium
 Description: >
   A User or Admin Has Modified A Calendar To Be Public
-Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/calendar#change_calendar_acls
+Reference: https://support.google.com/calendar/answer/37083?hl=en&sjid=864417124752637253-EU
 Runbook: >
   Follow up with user about this calendar share. 
 SummaryAttributes:
@@ -40,6 +40,34 @@ Tests:
         "ownerDomain": "example.io",
         "parameters": {
           "access_level": "freebusy",
+          "api_kind": "web",
+          "calendar_id": "user@example.io",
+          "grantee_email": "__public_principal__@public.calendar.google.com",
+          "user_agent": "Mozilla/5.0"
+        },
+        "type": "calendar_change"
+      }
+  -
+    Name: User Made Calendar Private
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "email": "user@example.io",
+          "profileId": "110111111111111111111"
+        },
+        "id": {
+          "applicationName": "calendar",
+          "customerId": "D12345",
+          "time": "2022-12-10 22:33:31.852000000",
+          "uniqueQualifier": "-2888888888888888888"
+        },
+        "ipAddress": "1.2.3.4",
+        "kind": "admin#reports#activity",
+        "name": "change_calendar_acls",
+        "ownerDomain": "example.io",
+        "parameters": {
+          "access_level": "none",
           "api_kind": "web",
           "calendar_id": "user@example.io",
           "grantee_email": "__public_principal__@public.calendar.google.com",

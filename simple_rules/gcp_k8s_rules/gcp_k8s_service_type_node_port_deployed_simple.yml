@@ -1,0 +1,290 @@
+AnalysisType: rule
+RuleID: "GCP.K8S.Service.Type.NodePort.Deployed.Simple"
+DisplayName: "GCP K8S Service Type NodePort Deployed"
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Severity: High
+Detection:
+  - All:
+      - KeyPath: protoPayload.methodName
+        Condition: Contains
+        Value: io.k8s.core.v1.services.create
+      - KeyPath: protoPayload.authorizationInfo[*].granted
+        Condition: Contains
+        Value: true
+      - KeyPath: protoPayload.authorizationInfo[*].permission
+        Condition: Contains
+        Value: io.k8s.core.v1.services.create
+      - KeyPath: protoPayload.response.status
+        Condition: DoesNotEqual
+        Value: Failure
+      - KeyPath: protoPayload.request.spec.type
+        Condition: Equals
+        Value: NodePort
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] created NodePort service in 
+project [{resource.labels.project_id}]"
+AlertContext:
+  - KeyName: project
+    KeyValue:
+      KeyPath: resource.labels.project_id
+  - KeyName: principal
+    KeyValue:
+      KeyPath: protoPayload.authenticationInfo.principalEmail
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: protoPayload.requestMetadata.callerIP
+  - KeyName: methodName
+    KeyValue:
+      KeyPath: protoPayload.methodName
+  - KeyName: resourceName
+    KeyValue:
+      KeyPath: protoPayload.resourceName
+  - KeyName: serviceName
+    KeyValue:
+      KeyPath: protoPayload.serviceName
+  - KeyName: request_spec
+    KeyValue:
+      KeyPath: protoPayload.request.spec
+Description: >
+  This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows 
+  an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting 
+  traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to 
+  the outside network.
+Runbook: >
+  Investigate the reason of creating NodePort service. Advise that it is discouraged practice. 
+  Create ticket if appropriate.
+Reference: https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/
+Reports:
+    MITRE ATT&CK:
+        - T1190  # Exploit Public-Facing Application
+Tests:
+  -
+    Name: Service Created
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.services.create",
+              "resource": "core/v1/namespaces/default/services/test-ns"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.services.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Service",
+            "apiVersion": "v1",
+            "kind": "Service",
+            "spec": {
+              "ports": [
+                {
+                  "name": "5678-8080",
+                  "port": 5678,
+                  "protocol": "TCP",
+                  "targetPort": 8080
+                }
+              ],
+              "type": "NodePort"
+            },
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3"
+          },
+          "resourceName": "core/v1/namespaces/default/services/test-ns",
+          "response": {
+            "@type": "core.k8s.io/v1.Service",
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+              "creationTimestamp": "2024-02-19T12:02:21Z",
+              "name": "test-ns",
+              "namespace": "default",
+              "resourceVersion": "15036073",
+              "uid": "28758fe1-534a-4705-bcc2-12eeac6f11a4"
+            },
+            "spec": {
+              "clusterIP": "2.3.4.5",
+              "clusterIPs": [
+                "2.3.4.5"
+              ],
+              "ports": [
+                {
+                  "name": "5678-8080",
+                  "nodePort": 32361,
+                  "port": 5678,
+                  "protocol": "TCP",
+                  "targetPort": 8080
+                }
+              ],
+              "type": "NodePort"
+            },
+          },
+          "serviceName": "k8s.io",
+          "status": { }
+        },
+        "receiveTimestamp": "2024-02-19 12:02:39.542633547",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-19 12:02:22.057586000"
+      }
+  -
+    Name: Error Creating Service
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.services.create",
+              "resource": "core/v1/namespaces/default/services/test-ns"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.services.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Service",
+            "apiVersion": "v1",
+            "kind": "Service",
+            "spec": {
+              "ports": [
+                {
+                  "name": "5678-8080",
+                  "port": 5678,
+                  "protocol": "TCP",
+                  "targetPort": 8080
+                }
+              ],
+              "type": "NodePort"
+            },
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3"
+          },
+          "resourceName": "core/v1/namespaces/default/services/test-ns",
+          "response": {
+            "@type": "core.k8s.io/v1.Status",
+            "apiVersion": "v1",
+            "code": 409,
+            "details": {
+              "kind": "services",
+              "name": "test-ns"
+            },
+            "kind": "Status",
+            "message": "services \"test-ns\" already exists",
+            "metadata": { },
+            "reason": "AlreadyExists",
+            "status": "Failure"
+          },
+          "serviceName": "k8s.io",
+          "status": {
+            "code": 10,
+            "message": "services \"test-ns\" already exists"
+          }
+        },
+        "receiveTimestamp": "2024-02-20 13:47:46.955496128",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-20 13:47:43.126037000"
+      }
+  -
+    Name: No Permission Granted
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "some.user@company.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": false,
+              "permission": "io.k8s.core.v1.services.create",
+              "resource": "core/v1/namespaces/default/services/test-ns"
+            }
+          ],
+          "methodName": "io.k8s.core.v1.services.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Service",
+            "apiVersion": "v1",
+            "kind": "Service",
+            "spec": {
+              "ports": [
+                {
+                  "name": "5678-8080",
+                  "port": 5678,
+                  "protocol": "TCP",
+                  "targetPort": 8080
+                }
+              ],
+              "type": "NodePort"
+            },
+          },
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3"
+          },
+          "resourceName": "core/v1/namespaces/default/services/test-ns",
+          "spec": {
+            "clusterIP": "2.3.4.5",
+            "clusterIPs": [
+              "2.3.4.5"
+            ],
+            "externalTrafficPolicy": "Cluster",
+            "internalTrafficPolicy": "Cluster",
+            "ipFamilies": [
+              "IPv4"
+            ],
+            "ipFamilyPolicy": "SingleStack",
+            "ports": [
+              {
+                "name": "5678-8080",
+                "nodePort": 32361,
+                "port": 5678,
+                "protocol": "TCP",
+                "targetPort": 8080
+              }
+            ],
+            "type": "NodePort"
+          },
+        },
+        "serviceName": "k8s.io",
+        "status": { },
+        "receiveTimestamp": "2024-02-19 12:02:39.542633547",
+        "resource": {
+          "labels": {
+            "cluster_name": "some-project-cluster",
+            "location": "us-west1",
+            "project_id": "some-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "timestamp": "2024-02-19 12:02:22.057586000"
+      }

@@ -1,0 +1,64 @@
+AnalysisType: rule
+RuleID: "GCP.K8s.Pod.Using.Host.PID.Namespace"
+DisplayName: "GCP K8s Pod Using Host PID Namespace"
+Enabled: true
+Filename: gcp_k8s_pod_using_host_pid_namespace.py
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Optional
+Severity: Medium
+Description: This detection monitors for any pod creation or modification using the host PID namespace. The Host 
+  PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s 
+  processes. This can offer a powerful escape hatch to the underlying host.
+Runbook: Investigate a reason of creating a pod using the host PID namespace. Advise that it is discouraged 
+  practice. Create ticket if appropriate.
+Reports:
+    MITRE ATT&CK:
+        - TA0004:T1611  # Escape to Host
+        - TA0002:T1610  # Deploy Container
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Tests:
+  -
+    Name: triggers
+    ExpectedResult: true
+    Log:
+      {
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }
+        ],
+        "protoPayload": {
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "spec": {
+              "hostPID": true,
+            }
+          }
+        }
+      }
+  -
+    Name: ignore
+    ExpectedResult: false
+    Log:
+      {
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }
+        ],
+        "protoPayload": {
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "spec": {
+              "hostPID": false,
+            }
+          }
+        }
+      }

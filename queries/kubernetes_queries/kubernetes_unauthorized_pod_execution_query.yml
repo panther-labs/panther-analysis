@@ -1,0 +1,24 @@
+AnalysisType: scheduled_query
+QueryName: Unauthorized Kubernetes Pod Execution
+Enabled: false
+Tags:
+  - Optional
+Description: >
+  This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions. 
+Query: >
+                 SELECT *,
+                        split(split(impersonatedUser:username,'remote-')[1],'-')[0] as src_user,
+                        SPLIT(requestURI,'exec?')[1] as command_executed,
+                        IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
+                        IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
+                        IFF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+                 FROM panther_logs.public.amazon_eks_audit
+                 WHERE
+                 objectRef:resource = 'pods'
+                 AND objectRef:subresource = 'exec'
+                 AND p_occurs_since('30 minutes')
+                 --insert allow-list here for example namespaces where exec is expected for debugging or log gathering
+                 LIMIT 100
+Schedule:
+  RateMinutes: 30
+  TimeoutMinutes: 2

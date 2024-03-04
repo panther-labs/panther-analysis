@@ -16,3 +16,31 @@ Mappings:
     Path: $.protoPayload.requestMetadata.callerIP
   - Name: user
     Method: get_modified_users
+  - Name: annotations
+    Path: $.labels
+  - Name: apiGroup
+    Method: get_api_group
+  - Name: apiVersion
+    Method: get_api_version
+  - Name: namespace
+    Method: get_namespace
+  - Name: resource
+    Method: get_resource
+  - Name: name
+    Method: get_name
+  - Name: requestURI
+    Method: get_request_uri
+  - Name: responseStatus
+    Path: $.protoPayload.status
+  - Name: sourceIPs
+    Method: get_source_ips
+  - Name: username
+    Path: $.protoPayload.authenticationInfo.principalEmail
+  - Name: userAgent
+    Path: $.protoPayload.requestMetadata.callerSuppliedUserAgent
+  - Name: verb
+    Method: get_verb
+  - Name: requestObject
+    Path: $.protoPayload.request
+  - Name: responseObject
+    Path: $.protoPayload.response

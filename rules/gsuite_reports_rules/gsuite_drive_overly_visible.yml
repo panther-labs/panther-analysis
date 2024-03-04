@@ -14,11 +14,12 @@ Reports:
 Severity: Info
 Description: >
   A Google drive resource that is overly visible has been modified.
-Reference: https://developers.google.com/admin-sdk/reports/v1/appendix/activity/drive#access
+Reference: https://support.google.com/docs/answer/2494822?hl=en&co=GENIE.Platform%3DDesktop&sjid=864417124752637253-EU
 Runbook: >
   Investigate whether the drive document is appropriate to be this visible.
 SummaryAttributes:
   - actor:email
+DedupPeriodMinutes: 360 # 6 hours
 Tests:
   -
     Name: Access Event
@@ -58,6 +59,31 @@ Tests:
       {
         'p_row_id': '111222',
         'actor': {'email': 'bobert@example.com'},
+        'id': {'applicationName': 'drive'},
+        'events': [
+          {
+            'type': 'access',
+            'name': 'edit',
+            'parameters': [
+                {
+                  'name': 'visibility', 
+                  'value': 'people_with_link'
+                },
+                {
+                  'name':'doc_title', 
+                  'value':'my shared document'
+                }
+              ]
+          }
+        ]
+      }
+  -
+    Name: Overly Visible Doc Modified - no email
+    ExpectedResult: true
+    Log:
+      {
+        'p_row_id': '111222',
+        'actor': {'profileId': '1234567890123'},
         'id': {'applicationName': 'drive'},
         'events': [
           {

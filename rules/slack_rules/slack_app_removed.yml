@@ -7,9 +7,18 @@ LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
+  - Impact
+  - Service Stop
+  - Defense Evasion
+  - Indicator Removal
+  - Clear Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1489
+    - TA0005:T1070.009
 Severity: Medium
 Description: Detects when a Slack App has been removed
-Reference: https://api.slack.com/admins/audit-logs
+Reference: https://slack.com/intl/en-gb/help/articles/360003125231-Remove-apps-and-customised-integrations-from-your-workspace
 DedupPeriodMinutes: 60
 Threshold:  1
 SummaryAttributes:

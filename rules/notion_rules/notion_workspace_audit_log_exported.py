@@ -1,22 +1,20 @@
 from global_filter_notion import filter_include_event
-from panther_base_helpers import deep_get
 from panther_notion_helpers import notion_alert_context
 
 
 def rule(event):
     if not filter_include_event(event):
         return False
-    return (
-        deep_get(event, "type", default="<NO_EVENT_TYPE_FOUND>") == "workspace.audit_log_exported"
-    )
+    event_type = event.deep_get("event", "type", default="<NO_EVENT_TYPE_FOUND>")
+    return event_type == "workspace.audit_log_exported"
 
 
 def title(event):
-    user = deep_get(event, "actor", "person", "email", default="<NO_USER_FOUND>")
-    workspace_id = deep_get(event, "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
-    duration_in_days = deep_get(
-        event,
-        "workspace.audit_log_exported",
+    user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
+    workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
+    duration_in_days = event.deep_get(
+        "event",
+        "details",
         "duration_in_days",
         default="<NO_DURATION_IN_DAYS_FOUND>",
     )

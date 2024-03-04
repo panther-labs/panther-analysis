@@ -22,7 +22,9 @@ def title(event):
 
 
 def alert_context(event):
-    detections_list = deep_get(event, "actionParams", "input", "detections")
+    detections_list = deep_get(event, "actionParams", "dynamic", "input", "detections")
+    if detections_list is None:
+        detections_list = deep_get(event, "actionParams", "input", "detections")
     return {
         "deleted_detections_list": [x.get("id") for x in detections_list],
         "user": event.udm("actor_user"),

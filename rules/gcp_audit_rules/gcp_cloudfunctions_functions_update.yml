@@ -1,0 +1,57 @@
+AnalysisType: rule
+RuleID: "GCP.Cloudfunctions.Functions.Update"
+DisplayName: "GCP cloudfunctions functions update"
+Description: The Identity and Access Management (IAM) service manages authorization and authentication for 
+  a GCP environment. This means that there are very likely multiple privilege escalation methods that use 
+  the IAM service and/or its permissions.
+Enabled: true
+Filename: gcp_cloudfunctions_functions_update.py
+LogTypes:
+    - GCP.AuditLog
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
+Runbook: Confirm this was authorized and necessary behavior. This is not a vulnerability in GCP, it is a vulnerability 
+  in how GCP environment is configured, so it is necessary to be aware of these attack vectors and to defend against 
+  them. It’s also important to remember that privilege escalation does not necessarily need to pass through the 
+  IAM service to be effective. Make sure to follow the principle of least-privilege in your environments to help 
+  mitigate these security risks.
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1548
+Tests:
+    - Name: privilege-escalation
+      ExpectedResult: true
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: true
+                  permission: cloudfunctions.functions.update
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"
+    - Name: fail
+      ExpectedResult: false
+      Log:
+        protoPayload:
+            authorizationInfo:
+                - granted: false
+                  permission: cloudfunctions.functions.update
+            methodName: v2.deploymentmanager.deployments.insert
+            serviceName: deploymentmanager.googleapis.com
+        receiveTimestamp: "2024-01-19 13:47:19.465856238"
+        resource:
+            labels:
+                name: test-vm-deployment
+                project_id: panther-threat-research
+            type: deployment
+        severity: NOTICE
+        timestamp: "2024-01-19 13:47:18.279921000"

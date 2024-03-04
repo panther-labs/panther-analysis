@@ -8,6 +8,7 @@ LogTypes:
 Tags:
   - AWS
   - Security Control
+  - Configuration Required
 Reports:
   CIS:
     - 3.12
@@ -16,11 +17,11 @@ Reports:
 Severity: High
 Description: Unauthorized ECR Create, Read, Update, or Delete event occurred.
 Runbook: https://docs.aws.amazon.com/AmazonECR/latest/userguide/logging-using-cloudtrail.html
-Reference: reference.link
+Reference: https://docs.aws.amazon.com/AmazonECR/latest/userguide/security-iam.html#security_iam_authentication
 SummaryAttributes:
   - eventSource
   - eventName
-  - accountId
+  - recipientAccountId
   - awsRegion
   - p_any_aws_arns
 Tests:

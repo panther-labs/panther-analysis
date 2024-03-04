@@ -2,7 +2,7 @@ from datetime import datetime
 from json import dumps, loads
 from statistics import mean
 
-from panther_oss_helpers import get_string_set, put_string_set
+from panther_detection_helpers.caching import get_string_set, put_string_set
 
 # AVERAGE_THRESHOLD defines the factor by which the log count must exceed the rolling_ledger average
 AVERAGE_THRESHOLD = 10

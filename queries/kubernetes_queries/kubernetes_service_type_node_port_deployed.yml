@@ -1,0 +1,18 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default_k8s.py 
+RuleID: "Kubernetes.ServiceTypeNodePortDeployed"
+DisplayName: "Kubernetes Service with Type Node Port Deployed"
+Description: >
+  This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+Enabled: false
+Runbook: >
+  .
+ScheduledQueries:
+  - Kubernetes Service with Type Node Port Deployed 
+Severity: Medium
+Tests:
+  -
+    Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      Anything: any value

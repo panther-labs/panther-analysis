@@ -20,6 +20,7 @@ Runbook: >
   Querying Sign-In logs for the ServicePrincipalName or UserPrincipalName may indicate
   that the principal is under attack, or that a sign-in credential rolled and some 
   user of the credential didn't get updated.
+Reference: https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
 SummaryAttributes:
   - properties:ServicePrincipalName
   - properties:UserPrincipalName
@@ -39,7 +40,7 @@ Tests:
         "operationname": "Sign-in activity",
         "operationversion": 1,
         "p_event_time": "2023-07-26 23:00:20.889",
-        "p_log_type": "Azure.SignIn",
+        "p_log_type": "Azure.Audit",
         "properties": {
           "appId": "cfceb902-8fab-4f8c-88ba-374d3c975c3a",
           "authenticationProcessingDetails": [
@@ -104,7 +105,7 @@ Tests:
         "location": "US",
         "operationname": "Sign-in activity",
         "operationversion": 1,
-        "p_log_type": "Azure.SignIn",
+        "p_log_type": "Azure.Audit",
         "properties": {
           "appId": "3b245ca3-dcce-4a54-a070-49ad8de02963",
           "authenticationProcessingDetails": [

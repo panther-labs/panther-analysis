@@ -11,6 +11,7 @@ Tags:
 Severity: Info
 Description: Monitors high volume events blocked from the same IP enriched with GreyNoise
 Runbook: Inspect and monitor internet-facing services for potential outages
+Reference: https://docs.greynoise.io/docs/understanding-greynoise-enrichments
 DedupPeriodMinutes: 60 # 1 hour
 Threshold:  200
 SummaryAttributes:
@@ -19,8 +20,6 @@ SummaryAttributes:
   - Action
   - EdgeResponseStatus
   - OriginResponseStatus
-  - p_alert_context
-  - p_enrichment
 Tests:
   -
     Name: Blocked Event - Malicious

@@ -17,6 +17,7 @@ Severity: Medium
 Description: >
   An EC2 security group was manually updated without abiding by the organization's accepted processes. This rule expects organizations to either use the Console, CloudFormation, or Terraform, configurable in the rule's ALLOWED_USER_AGENTS.
 Runbook: Identify the actor who changed the security group and validate it was legitimate
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/working-with-security-groups.html
 Tests:
   -
     Name: AWS Console - Ingress SG Authorization

@@ -8,16 +8,17 @@ LogTypes:
 Tags:
   - AWS
   - Security Control
+  - Configuration Required
 Reports:
   MITRE ATT&CK:
     - TA0005:T1535
-Severity: High
+Severity: Medium
 Description: An ECR event occurred outside of an expected account or region
 Runbook: https://docs.aws.amazon.com/AmazonECR/latest/userguide/logging-using-cloudtrail.html
-Reference: reference.link
+Reference: https://aws.amazon.com/blogs/containers/amazon-ecr-in-multi-account-and-multi-region-architectures/
 SummaryAttributes:
   - eventSource
-  - accountId
+  - recipientAccountId
   - awsRegion
   - p_any_aws_arns
 Tests:

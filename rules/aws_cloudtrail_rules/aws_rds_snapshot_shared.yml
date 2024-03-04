@@ -1,0 +1,150 @@
+AnalysisType: rule
+Filename: aws_rds_snapshot_shared.py
+RuleID: "AWS.RDS.SnapshotShared"
+DisplayName: "AWS RDS Snapshot Shared"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Exfiltration
+  - Transfer Data to Cloud Account
+Severity: High
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Description: >
+  An RDS snapshot was shared with another account. This could be an indicator of exfiltration.
+Runbook: >
+  Ensure that the snapshot was shared intentionally and with an approved account. If not, remove the snapshot and quarantine the compromised IAM user.
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ShareSnapshot.html
+SummaryAttributes:
+  - eventSource
+  - recipientAccountId
+  - awsRegion
+  - p_any_aws_arns
+Tests:
+  -
+    Name: Snapshot shared with another account
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+            "type": "AssumedRole",
+            "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
+            "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/fake.user",
+            "accountId": "123456789012",
+            "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
+            "sessionContext": {
+                "sessionIssuer": {
+                    "type": "Role",
+                    "principalId": "AROA2DFDF0C1FDFCAD2B2",
+                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6",
+                    "accountId": "123456789012",
+                    "userName": "AWSReservedSSO_DevAdmin_635426549a280cc6"
+                },
+                "webIdFederationData": {},
+                "attributes": {
+                    "creationDate": "2023-12-12T19:43:57Z",
+                    "mfaAuthenticated": "false"
+                }
+            }
+        },
+        "eventTime": "2023-12-12T20:12:22Z",
+        "eventSource": "rds.amazonaws.com",
+        "eventName": "ModifyDBSnapshotAttribute",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "68319f60-9dec-43b2-9702-de3a08c9d8a3",
+        "requestParameters": {
+            "dBSnapshotIdentifier": "exfiltration",
+            "attributeName": "restore",
+            "valuesToAdd": [
+                "193672423079"
+            ]
+        },
+        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+            "dBSnapshotAttributes": [
+                {
+                    "attributeName": "restore",
+                    "attributeValues": [
+                        "193672423079"
+                    ]
+                }
+            ]
+        },
+        "requestID": "b7f91314-eb8b-4be5-995d-6b97d70dfb3b",
+        "eventID": "86581591-0f39-4eae-9a8d-b2224a3c91fa",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "123456789012",
+        "eventCategory": "Management",
+        "tlsDetails": {
+            "tlsVersion": "TLSv1.3",
+            "cipherSuite": "TLS_AES_128_GCM_SHA256",
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
+        }
+    }
+  -
+    Name: Snapshot shared with no accounts
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+            "type": "AssumedRole",
+            "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
+            "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/fake.user",
+            "accountId": "123456789012",
+            "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
+            "sessionContext": {
+                "sessionIssuer": {
+                    "type": "Role",
+                    "principalId": "AROA2DFDF0C1FDFCAD2B2",
+                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6",
+                    "accountId": "123456789012",
+                    "userName": "AWSReservedSSO_DevAdmin_635426549a280cc6"
+                },
+                "webIdFederationData": {},
+                "attributes": {
+                    "creationDate": "2023-12-12T19:43:57Z",
+                    "mfaAuthenticated": "false"
+                }
+            }
+        },
+        "eventTime": "2023-12-12T20:12:22Z",
+        "eventSource": "rds.amazonaws.com",
+        "eventName": "ModifyDBSnapshotAttribute",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "68319f60-9dec-43b2-9702-de3a08c9d8a3",
+        "requestParameters": {
+            "dBSnapshotIdentifier": "exfiltration",
+            "attributeName": "restore",
+            "valuesToAdd": []
+        },
+        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+            "dBSnapshotAttributes": [
+                {
+                    "attributeName": "restore",
+                    "attributeValues": []
+                }
+            ]
+        },
+        "requestID": "b7f91314-eb8b-4be5-995d-6b97d70dfb3b",
+        "eventID": "86581591-0f39-4eae-9a8d-b2224a3c91fa",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "123456789012",
+        "eventCategory": "Management",
+        "tlsDetails": {
+            "tlsVersion": "TLSv1.3",
+            "cipherSuite": "TLS_AES_128_GCM_SHA256",
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
+        }
+    }

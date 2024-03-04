@@ -5,6 +5,7 @@ from panther_base_helpers import deep_get
 ENRICHMENT_KEY = "p_enrichment"
 IGNORE_ENRICHMENTS = "p_any_"
 
+
 # pylint: disable=too-few-public-methods
 class LookupTableMatches:
     def __init__(self):

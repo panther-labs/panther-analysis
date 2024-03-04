@@ -18,8 +18,9 @@ Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0004:T1078
-Description: Attaching an audit role manually could be a sign of privilege escalation
+Description: Assigning an admin role manually could be a sign of privilege escalation
 Runbook: Verify with the user who attached the role or add to a allowlist
+Reference: https://medium.com/@gokulelango1040/privilege-escalation-attacks-28a9ef226abb
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -163,6 +164,33 @@ Tests:
       {
         "actor": "cat",
         "action": "team.promote_maintainer",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  - Name: Github - Admin Added
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "business.add_admin",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  - Name: Github - Admin Invited
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "business.invite_admin",
+        "p_log_type": "GitHub.Audit",
+        "user": "bob"
+      }
+  - Name: Github - Unknown Admin Role
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "unknown.admin_role",
         "p_log_type": "GitHub.Audit",
         "user": "bob"
       }

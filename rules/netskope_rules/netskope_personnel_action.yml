@@ -1,0 +1,69 @@
+AnalysisType: rule
+RuleID: "Netskope.NetskopePersonnelActivity"
+DisplayName: "Action Performed by Netskope Personnel"
+Enabled: true
+Filename: netskope_personnel_action.py
+LogTypes:
+  - Netskope.Audit
+Tags:
+  - Netskope
+  - Supply Chain Compromise
+Reports:
+  MITRE ATT&CK: 
+    - TA0001:T1195
+Severity: Medium
+Description: An action was performed by Netskope personnel.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Action taken by Netskope Personnel.  Validate that this action was authorized.
+Reference: https://docs.netskope.com/en/netskope-help/admin-console/administration/audit-log/#filters-1
+Tests:
+    - Name: True positive
+      ExpectedResult: true
+      Log: 
+        {
+          "_id": "e5ca619b059fccdd0cfd9398",
+          "_insertion_epoch_timestamp": 1702308331,
+          "audit_log_event": "Login Successful",
+          "count": 1,
+          "is_netskope_personnel": true,
+          "organization_unit": "",
+          "severity_level": 2,
+          "supporting_data": {
+            "data_type": "user",
+            "data_values": [
+              "11.22.33.44",
+              "adminsupport@netskope.com"
+            ]
+          },
+          "timestamp": "2023-12-11 15:25:31.000000000",
+          "type": "admin_audit_logs",
+          "ur_normalized": "adminsupport@netskope.com",
+          "user": "adminsupport@netskope.com"
+        }
+    - Name: True negative
+      ExpectedResult: false
+      Log: 
+        {
+        "_id": "1e589befa3da30132362f32a",
+        "_insertion_epoch_timestamp": 1702318213,
+        "audit_log_event": "Rest API V2 Call",
+        "count": 1,
+        "is_netskope_personnel": false,
+        "organization_unit": "",
+        "severity_level": 2,
+        "supporting_data": {
+          "data_type": "incidents",
+          "data_values": [
+            200,
+            "POST",
+            "/api/v2/incidents/uba/getuci",
+            "trid=ccb898fgrhvdd0v0lebg"
+          ]
+        },
+        "timestamp": "2023-12-11 18:10:13.000000000",
+        "type": "admin_audit_logs",
+        "ur_normalized": "service-account",
+        "user": "service-account"
+      }
+

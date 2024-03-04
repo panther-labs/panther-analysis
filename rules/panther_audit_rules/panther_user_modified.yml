@@ -14,6 +14,7 @@ Reports:
     - TA0003:T1098
 Description: A Panther user's role has been modified. This could mean password, email, or role has changed for the user.
 Runbook: Validate that this user modification was intentional.
+Reference: https://docs.panther.com/panther-developer-workflows/api/operations/user-management
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
@@ -205,3 +206,30 @@ Tests:
         "sourceIP": "12.12.12.12",
         "timestamp": "2023-06-23 17:49:37.553847671"
       }
+  - Name: User modified by System account
+    ExpectedResult: true
+    Log:
+      {
+      "actionDescription": "User updated automatically by SAML.",
+      "actionName": "UPDATE_USER",
+      "actionParams": {
+        "dynamic": {
+          "input": {
+            "email": "john.doe@usgs.gov",
+            "familyName": "Doe",
+            "givenName": "John",
+            "role": "AnalystReadOnly"
+          }
+        }
+      },
+      "actionResult": "SUCCEEDED",
+      "actor": {
+          "id": "00000000-0000-4000-8000-000000000000",
+          "name": "System",
+          "type": "USER"
+      },
+      "p_log_type": "Panther.Audit",
+      "pantherVersion": "1.86.15",
+      "sourceIP": "",
+      "timestamp": "2023-10-25 05:30:15.618835297"
+    }
