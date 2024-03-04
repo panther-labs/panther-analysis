@@ -16,13 +16,17 @@ def rule(event):
         return True
     return False
 
+
 def title(event):
     actor = deep_get(
         event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
     project_id = deep_get(event, "resource", "labels", "project_id", default="<PROJECT_NOT_FOUND>")
 
-    return f"[GCP]: [{actor}] created or modified pod using the host PID namespace in project [{project_id}]"
+    return (
+        f"[GCP]: [{actor}] created or modified pod using the host PID namespace "
+        f"in project [{project_id}]"
+    )
 
 
 def alert_context(event):

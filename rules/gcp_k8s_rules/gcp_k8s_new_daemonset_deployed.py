@@ -14,6 +14,7 @@ def rule(event):
             return True
     return False
 
+
 def title(event):
     actor = deep_get(
         event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
