@@ -447,3 +447,42 @@ Tests:
         "p_row_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "p_log_type": "AWS.CloudTrail"
       }
+  - 
+    Name: Role name in title example
+    ExpectedResult: true
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "11.22.33.44",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "accessKeyId": "ASIAEXAMPLE000000000",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/role-name/session-name",
+          "principalId": "AROAEXAMPLE0000000000:session-name",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2024-02-29T19:56:31Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam:: 123456789012:role/role-name",
+              "principalId": "AROAEXAMPLE0000000000",
+              "type": "Role",
+              "userName": "role-name"
+            },
+            "webIdFederationData": {}
+          },
+          "type": "AssumedRole"
+        },
+        "responseElements": {
+          "ConsoleLogin": "Success"
+        },
+      }
