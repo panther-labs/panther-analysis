@@ -1,7 +1,9 @@
 AnalysisType: rule
 RuleID: "GCP.Cloudfunctions.Functions.Create.Simple"
 DisplayName: "GCP cloudfunctions functions create"
-Description: "The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions."
+Description: The Identity and Access Management (IAM) service manages authorization and authentication for 
+  a GCP environment. This means that there are very likely multiple privilege escalation methods that use 
+  the IAM service and/or its permissions.
 Enabled: true
 LogTypes:
     - GCP.AuditLog
@@ -12,6 +14,11 @@ Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-p
 Reports:
   MITRE ATT&CK:
     - TA0004:T1548
+Runbook: Confirm this was authorized and necessary behavior. This is not a vulnerability in GCP, it is a vulnerability 
+  in how GCP environment is configured, so it is necessary to be aware of these attack vectors and to defend against 
+  them. It’s also important to remember that privilege escalation does not necessarily need to pass through the 
+  IAM service to be effective. Make sure to follow the principle of least-privilege in your environments to help 
+  mitigate these security risks.
 Detection:
     - All:
         - KeyPath: protoPayload.authorizationInfo[*].granted
@@ -20,6 +27,26 @@ Detection:
         - KeyPath: protoPayload.authorizationInfo[*].permission
           Condition: Contains
           Value: cloudfunctions.functions.create
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] performed [{protoPayload.methodName}] on project [{resource.labels.project_id}]"
+AlertContext:
+  - KeyName: project
+    KeyValue:
+      KeyPath: resource.labels.project_id
+  - KeyName: principal
+    KeyValue:
+      KeyPath: protoPayload.authenticationInfo.principalEmail
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: protoPayload.requestMetadata.callerIP
+  - KeyName: methodName
+    KeyValue:
+      KeyPath: protoPayload.methodName
+  - KeyName: resourceName
+    KeyValue:
+      KeyPath: protoPayload.resourceName
+  - KeyName: serviceName
+    KeyValue:
+      KeyPath: protoPayload.serviceName
 Tests:
     - Name: privilege-escalation
       ExpectedResult: true

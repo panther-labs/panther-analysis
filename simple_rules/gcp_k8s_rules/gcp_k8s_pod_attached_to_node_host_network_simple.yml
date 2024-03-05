@@ -8,7 +8,15 @@ Tags:
   - GCP
   - Optional
 Severity: Medium
-Description: This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
+Description: This detection monitor for the creation of pods which are attached to the host's network. 
+  This allows a pod to listen to all network traffic for all deployed computer on that particular node and 
+  communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in 
+  arguments or connections.
+Reports:
+    MITRE ATT&CK:
+        - TA0004:T1611  # Escape to Host
+Runbook: Investigate a reason of creating a pod which is attached to the host's network. Advise that it is discouraged 
+  practice. Create ticket if appropriate.
 Detection:
   - All:
     - KeyPath: protoPayload.methodName
@@ -22,6 +30,26 @@ Detection:
         Condition: Equals
         Value: true
 Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+AlertTitle: "[GCP]: [{protoPayload.authenticationInfo.principalEmail}] created or modified pod which is attached to the host's network in project [{resource.labels.project_id}]"
+AlertContext:
+  - KeyName: project
+    KeyValue:
+      KeyPath: resource.labels.project_id
+  - KeyName: principal
+    KeyValue:
+      KeyPath: protoPayload.authenticationInfo.principalEmail
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: protoPayload.requestMetadata.callerIP
+  - KeyName: methodName
+    KeyValue:
+      KeyPath: protoPayload.methodName
+  - KeyName: resourceName
+    KeyValue:
+      KeyPath: protoPayload.resourceName
+  - KeyName: serviceName
+    KeyValue:
+      KeyPath: protoPayload.serviceName
 Tests:
   -
     Name: triggers

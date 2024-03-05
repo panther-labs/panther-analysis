@@ -1,12 +1,18 @@
 from gcp_base_helpers import gcp_alert_context
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_walk, deep_get
 
 
 def rule(event):
-    if deep_get(event, "operation", "producer") == "k8s.io" and deep_get(
-        event, "p_enrichment", "tor_exit_nodes"
-    ):
-        return True
+    authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+    if not authorization_info:
+        return False
+    for auth in authorization_info:
+        if (
+            auth.get("permission")
+            in ["io.k8s.batch.v1.cronjobs.create", "io.k8s.batch.v1.cronjobs.update"]
+            and auth.get("granted") is True
+        ):
+            return True
     return False
 
 
@@ -21,6 +27,4 @@ def title(event):
 
 
 def alert_context(event):
-    context = gcp_alert_context(event)
-    context["tor_exit_nodes"] = deep_get(event, "p_enrichment", "tor_exit_nodes")
-    return context
+    return gcp_alert_context(event)
