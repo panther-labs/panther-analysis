@@ -41,8 +41,10 @@ def get_zoom_usergroup_context(event):
             operation_context["GroupName"] = " ".join(raw_string.split()[1:])
 
         if action == "Update":
-            operation_context["GroupName"] = " ".join(raw_string.split("-")[0].split()[2:])
-            operation_context["Change"] = raw_string.split("-")[1].strip()
+            columns = raw_string.split("-")
+            operation_context["GroupName"] = " ".join(columns[0].split()[2:])
+            operation_context["Change"] = columns[1].strip() if len(columns) > 1 else ""
+
             operation_context["DisabledSetting"] = "On to Off" in operation_context["Change"]
             operation_context["EnabledSetting"] = "Off to On" in operation_context["Change"]
 
