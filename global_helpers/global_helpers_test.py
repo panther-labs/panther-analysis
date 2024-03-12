@@ -30,6 +30,7 @@ import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tailscale_helpers as p_tscale_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
 import panther_tor_helpers as p_tor_h  # pylint: disable=C0413
+import panther_zoom_helpers as p_zoom_h  # pylint: disable=C0413
 
 # pylint: disable=too-many-lines
 
@@ -2359,6 +2360,26 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "source_ip": "<NO_SOURCEIP>",
                 "resourceDisplayName": "<NO_RESOURCEDISPLAYNAME>",
                 "resourceId": "<NO_RESOURCEID>",
+            },
+        )
+
+
+class TestZoomHelpers(unittest.TestCase):
+    def test_change_filed_is_empty_on_update_context(self):
+        event = {
+            "action": "Update",
+            "category_type": "User Group",
+            "operation_detail": "Edit Group Recruiting ",
+            "time": "2024-02-20 17:23:30",
+        }
+        returns = p_zoom_h.get_zoom_usergroup_context(event)
+        self.assertEqual(
+            returns,
+            {
+                "GroupName": "Recruiting",
+                "Change": "",
+                "DisabledSetting": False,
+                "EnabledSetting": False,
             },
         )
 
