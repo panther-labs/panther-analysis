@@ -5,23 +5,23 @@ from panther_base_helpers import crowdstrike_process_alert_context
 
 DECODED = ""
 
+# List of command line tools to monitor for execution with Base64 encoded arguments
+COMMAND_LINE_TOOLS = {
+    "powershell.exe",
+    "cmd.exe",
+    "cscript.exe",
+    "wscript.exe",
+    "rundll32.exe",
+}
+
 
 def rule(event):
-    # List of command line tools to monitor for execution with Base64 encoded arguments
-    command_line_tools = {
-        "powershell.exe",
-        "cmd.exe",
-        "cscript.exe",
-        "wscript.exe",
-        "rundll32.exe",
-    }
-
     # Filter by CS event type, Windows platform, and process name
     if not all(
         [
             event.get("fdr_event_type") == "ProcessRollup2",
             event.get("event_platform") == "Win",
-            event.udm("process_name").lower() in command_line_tools,
+            event.udm("process_name").lower() in COMMAND_LINE_TOOLS,
         ]
     ):
         return False
