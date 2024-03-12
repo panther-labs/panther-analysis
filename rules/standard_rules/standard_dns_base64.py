@@ -1,37 +1,18 @@
-import re
-from base64 import b64decode
-from binascii import Error as AsciiError
-
-from panther_base_helpers import defang_ioc
+from panther_base_helpers import defang_ioc, is_base64
 
 DECODED = ""
-
-BASE64_PATTERN = re.compile(
-    r"^(\W|)(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?(\W|)$"
-)
 
 
 def rule(event):
     args = event.udm("dns_query").split(".")
 
+    # Check if Base64 encoded arguments are present in the command line
     for arg in args:
-        # handle false positives for very short strings
-        if len(arg) < 12:
-            continue
-        # check if string matches base64 pattern
-        if not BASE64_PATTERN.search(arg):
-            continue
-        try:
-            # Check if the matched string can be decoded back into ASCII
-            # pylint: disable=global-statement
-            global DECODED
-            DECODED = b64decode(arg).decode("ascii")
-            if len(DECODED) > 0:
-                return True
-        except AsciiError:
-            continue
-        except UnicodeDecodeError:
-            continue
+        # pylint: disable=global-statement
+        global DECODED
+        DECODED = is_base64(arg)
+        if DECODED:
+            return True
 
     return False
 
