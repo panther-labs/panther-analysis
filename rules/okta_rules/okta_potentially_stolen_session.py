@@ -36,8 +36,10 @@ def rule(event):
     ):
         return False
 
+    key = session_id + "-" + dt_hash
+
     # lookup if we've previously stored the session cookie
-    PREVIOUS_SESSION = get_string_set(session_id)
+    PREVIOUS_SESSION = get_string_set(key)
 
     # For unit test mocks we need to eval the string to a set
     if isinstance(PREVIOUS_SESSION, str):
@@ -45,7 +47,6 @@ def rule(event):
 
     # If the sessionID has not been seen before, store information about it
     if not PREVIOUS_SESSION:
-        key = session_id + "-" + dt_hash
         put_string_set(
             key,
             [
