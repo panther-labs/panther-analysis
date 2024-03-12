@@ -31,5 +31,7 @@ def title(event):
 
 def alert_context(event):
     context = {}
+    context["source ip"] = event.udm("source_ip")
+    context["defanged query"] = defang_ioc(event.udm("dns_query"))
     context["decoded url part"] = DECODED
     return context
