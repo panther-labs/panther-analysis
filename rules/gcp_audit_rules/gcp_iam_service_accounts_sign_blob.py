@@ -8,10 +8,7 @@ def rule(event):
         return False
 
     for auth in authorization_info:
-        if (
-            auth.get("permission") == "iam.serviceAccounts.getAccessToken"
-            and auth.get("granted") is True
-        ):
+        if auth.get("permission") == "iam.serviceAccounts.signBlob" and auth.get("granted") is True:
             return True
     return False
 
