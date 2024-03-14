@@ -27,7 +27,7 @@ def rule(event):
         return False
     if (
         p_eks.get("actor").startswith("system:") or p_eks.get("actor").startswith("eks:")
-    ) and not ip_address(p_eks.get("sourceIPs")[0]).is_private:
+    ) and ip_address(p_eks.get("sourceIPs")[0]).is_global:
         return True
     return False
 
