@@ -1,5 +1,7 @@
 import json
 import re
+from base64 import b64decode
+from binascii import Error as AsciiError
 from collections import OrderedDict
 from collections.abc import Mapping
 from datetime import datetime
@@ -505,3 +507,19 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
     golang_time_micros_rounded = golang_time_micros[0:6]
     golang_time_rounded = re.sub(r"\.\d+Z", f".{golang_time_micros_rounded}Z", golang_time)
     return datetime.strptime(golang_time_rounded, golang_time_format)
+
+
+def is_base64(b64: str) -> str:
+    # if the string is base64 encoded, return the decoded ASCII string
+    # otherwise return an empty string
+    # handle false positives for very short strings
+    if len(b64) < 12:
+        return ""
+    # Check if the matched string can be decoded back into ASCII
+    try:
+        return b64decode(b64).decode("ascii")
+    except AsciiError:
+        pass
+    except UnicodeDecodeError:
+        pass
+    return ""
