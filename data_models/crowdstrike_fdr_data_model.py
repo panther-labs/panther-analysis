@@ -6,7 +6,7 @@ def get_dns_query(event):
     # Domain Names from Crowdstrike FDR end with a trailing period, such as google.com.
     domain = deep_get(event, "event", "DomainName", default=None)
     if domain:
-        domain = domain.rstrip(".").lower()
+        domain = domain.rstrip(".")
     return domain
 
 
