@@ -15,7 +15,7 @@ def rule(event):
     if deep_get(event, "protoPayload", "response", "error"):
         return False
 
-    method = deep_get(event, "protoPayload", "methodName")
+    method = deep_get(event, "protoPayload", "methodName", default="METHOD_NOT_FOUND")
     if not method.endswith("compute.instances.insert"):
         return False
 
