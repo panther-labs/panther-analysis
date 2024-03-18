@@ -1,0 +1,62 @@
+name: sync-panther-analysis-from-upstream-with-subtree
+
+on:
+  schedule:
+    # 15:00Z every Wednesday
+    - cron: "00 15 * * 3"
+  workflow_dispatch: # or on button click
+
+jobs:
+  check_upstream:
+    if: | 
+      github.repository != 'panther-labs/panther-analysis'
+    runs-on: ubuntu-latest
+    env:
+      YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
+      YOUR_REPO_NAME: "ben-githubs/nested-pa"
+      PATH_TO_PA: "upstream"
+      UPSTREAM_REPO: "ben-githubs/upstream-test"
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      ## CRAETE LOCAL REPO
+      - name: Create Local Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      ## CHECK LATEST RELEASE
+      - id: get_tag
+        name: Get Latest Release
+        run: |
+          LATEST_TAG=$(git -c 'versionsort.suffix=-' \
+            ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/${{ env.UPSTREAM_REPO }}.git '*.*.*' \
+            | tail --lines=1 \
+            | cut -d '/' -f 3)
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+      ## SET GIT CONFIG
+      - id: set_config
+        name: Set Git Identity
+        run: |
+          git config user.email = "ghaction@github.com"
+          git config user.name = "Github Action"
+      ## CREATE NEW BRANCH
+      - id: create_branch
+        name: Create New Branch
+        run: |
+          BRANCH_NAME="panther_analysis_sync_${{ steps.get_tag.outputs.tag }}"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          git checkout -b $BRANCH_NAME
+          git subtree pull --prefix ${{ env.PATH_TO_PA }} https://github.com/${{ env.UPSTREAM_REPO }}.git ${{ steps.get_tag.outputs.tag }} --squash -m "Updating Panther Analysis to version ${{ steps.get_tag.outputs.tag }}"
+      ## CHECK FOR UPDATES
+      - id: check_updates
+        name: Check for Updates
+        run: |
+          [[ ! -z $(git diff ${{ steps.create_branch.outputs.branch_name }} ${{ env.YOUR_REPO_PRIMARY_BRANCH_NAME }}) ]] && HAS_CHANGES="yes" || HAS_CHANGES="no"
+          echo "HasChanges: $HAS_CHANGES"
+          echo "has_changes=$HAS_CHANGES" >> $GITHUB_OUTPUT
+      ## PUSH AND MAKE PR
+      - id: create_pr
+        name: Push and Create PR
+        if: ${{ steps.check_updates.outputs.has_changes == 'yes' }}
+        run: |
+          git push --set-upstream origin ${{ steps.create_branch.outputs.branch_name }}
+          gh pr create --title "Update Panther Analysis to ${{ steps.get_tag.outputs.tag }}" --fill --base ${{ env.YOUR_REPO_PRIMARY_BRANCH_NAME }} --repo ${{ env.YOUR_REPO_NAME }}
