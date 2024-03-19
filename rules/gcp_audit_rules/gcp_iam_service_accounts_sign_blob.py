@@ -1,14 +1,14 @@
 from gcp_base_helpers import gcp_alert_context
-from panther_base_helpers import deep_get, deep_walk
+from panther_base_helpers import deep_get
 
 
 def rule(event):
-    authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+    authorization_info = event.deep_walk("protoPayload", "authorizationInfo")
     if not authorization_info:
         return False
 
     for auth in authorization_info:
-        if auth.get("permission") == "iam.roles.update" and auth.get("granted") is True:
+        if auth.get("permission") == "iam.serviceAccounts.signBlob" and auth.get("granted") is True:
             return True
     return False
 

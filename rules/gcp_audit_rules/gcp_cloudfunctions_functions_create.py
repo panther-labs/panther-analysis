@@ -4,6 +4,9 @@ from panther_base_helpers import deep_get, deep_walk
 
 def rule(event):
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
+    if not authorization_info:
+        return False
+
     for auth in authorization_info:
         if (
             auth.get("permission") == "cloudfunctions.functions.create"
