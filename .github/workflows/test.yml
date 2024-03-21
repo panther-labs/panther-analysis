@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set python version  
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
         
@@ -26,4 +26,4 @@ jobs:
 
       - name: test
         run: |
-          pipenv run panther_analysis_tool test --api-host ${{ secrets.API_HOST }} --api-token ${{ secrets.API_TOKEN }}
+          pipenv run panther_analysis_tool test
