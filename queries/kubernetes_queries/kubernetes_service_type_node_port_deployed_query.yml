@@ -26,7 +26,7 @@ Query: >
                         WHERE
                         objectRef:resource = 'services'
                         AND verb = 'create'
-                        AND requestObject:spec:type = 'NodePort'
+                        AND REQUEST_OBJECT:spec:type = 'NodePort'
                         AND p_occurs_since('30 minutes')
                         --Insert allow-list for expected NodePort Services
                         LIMIT 100
