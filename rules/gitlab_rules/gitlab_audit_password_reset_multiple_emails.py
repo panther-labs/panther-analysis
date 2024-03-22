@@ -20,4 +20,4 @@ def rule(event):
 
 def title(event):
     emails = event.deep_get("detail", "target_details", default="")
-    return f"Someone tried to reset your password with multiple emails :{emails}"
+    return f"[GitLab] Multiple password reset emails requested for {emails}"
