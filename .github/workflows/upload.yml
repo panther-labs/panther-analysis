@@ -33,7 +33,11 @@ jobs:
       
       - name: Setup venv
         run: make venv
+      
+      - name: validate
+        run: |
+          pipenv run panther_analysis_tool validate --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
 
       - name: upload
         run: |
-            pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
+          pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
