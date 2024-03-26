@@ -3,8 +3,6 @@
 Please follow the [Code of Conduct](https://github.com/panther-labs/panther-analysis/blob/main/CODE_OF_CONDUCT.md)
 in all of your interactions with the project.
 
-Prior to contributing code, you will be required to sign our [Contributor License Agreement](https://cla-assistant.io/panther-labs/panther-analysis).
-
 ## Pull Request Process
 
 1. Create new detections in the appropriate folder (or create your own) or make modifications to existing ones
