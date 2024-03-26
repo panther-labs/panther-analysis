@@ -81,13 +81,7 @@ def title(event):
     if deep_get(event, "userIdentity", "type") == "Root":
         user_string = "the root user"
     else:
-        user = deep_get(event, "userIdentity", "userName") or deep_get(
-            event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
-        )
-        type_ = deep_get(
-            event, "userIdentity", "sessionContext", "sessionIssuer", "type", default="user"
-        ).lower()
-        user_string = f"{type_} {user}"
+        user_string = f"user {deep_get(event, 'userIdentity', 'userName')}"
     account_id = event.get("recipientAccountId")
     account_name = lookup_aws_account_name(account_id)
     if account_id == account_name:

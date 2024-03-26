@@ -1,6 +1,11 @@
 import datetime
 
-from panther_base_helpers import PantherUnexpectedAlert, deep_get, pattern_match, pattern_match_list
+from panther_base_helpers import (
+    PantherUnexpectedAlert,
+    deep_get,
+    pattern_match,
+    pattern_match_list,
+)
 
 COMPANY_DOMAIN = "your-company-name.com"
 EXCEPTION_PATTERNS = {

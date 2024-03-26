@@ -35,9 +35,5 @@ def title(event):
     )
 
 
-def dedup(event):
-    return deep_get(event, "userIdentity", "principalId")
-
-
 def alert_context(event):
     return aws_rule_context(event)

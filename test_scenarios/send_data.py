@@ -1,5 +1,3 @@
-#!/usr/bin/env -S python3
-
 import argparse
 import gzip
 import json

@@ -1,4 +1,6 @@
-from panther_config import config
+ALLOWED_FORWARDING_DESTINATION_DOMAINS = ["company.com"]
+
+ALLOWED_FORWARDING_DESTINATION_EMAILS = ["exception@example.com"]
 
 
 def rule(event):
@@ -6,12 +8,9 @@ def rule(event):
         for param in event.get("parameters", []):
             if param.get("Name", "") in ("ForwardingSmtpAddress", "ForwardTo", "ForwardingAddress"):
                 to_email = param.get("Value", "")
-                if (
-                    to_email.lower().replace("smtp:", "")
-                    in config.MS_EXCHANGE_ALLOWED_FORWARDING_DESTINATION_EMAILS
-                ):
+                if to_email.lower().replace("smtp:", "") in ALLOWED_FORWARDING_DESTINATION_EMAILS:
                     return False
-                for domain in config.MS_EXCHANGE_ALLOWED_FORWARDING_DESTINATION_DOMAINS:
+                for domain in ALLOWED_FORWARDING_DESTINATION_DOMAINS:
                     if to_email.lower().replace("smtp:", "").endswith(domain):
                         return False
                 return True

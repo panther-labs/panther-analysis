@@ -1,4 +1,7 @@
-from panther_duo_helpers import deserialize_administrator_log_event_description, duo_alert_context
+from panther_duo_helpers import (
+    deserialize_administrator_log_event_description,
+    duo_alert_context,
+)
 
 
 def rule(event):

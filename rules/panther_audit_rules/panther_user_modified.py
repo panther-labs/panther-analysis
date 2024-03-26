@@ -36,6 +36,4 @@ def severity(event):
     user = event.udm("actor_user")
     if user == "scim":
         return "INFO"
-    if event.deep_get("actor", "id") == "00000000-0000-4000-8000-000000000000":
-        return "INFO"
-    return "DEFAULT"
+    return "HIGH"

@@ -13,6 +13,5 @@ def rule(event):
 def title(event):
     return (
         f"User [{event.get('user', '<UNKNOWN_USER>')}] has executed the command "
-        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}] "
-        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
+        f"[{event.get('program', '<UNKNOWN_PROGRAM>')}]"
     )

@@ -3,7 +3,6 @@ Description: Detects creation of forwarding rule to external domains
 DisplayName: "Microsoft Exchange External Forwarding"
 Enabled: true
 Filename: microsoft_exchange_external_forwarding.py
-Reference: https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/outbound-spam-policies-external-email-forwarding?view=o365-worldwide
 Severity: High
 Tests:
     - ExpectedResult: true
@@ -77,7 +76,7 @@ Tests:
             - Name: Force
               Value: "False"
             - Name: ForwardTo
-              Value: hello@example.com
+              Value: hello@company.com
             - Name: Name
               Value: test forwarding
             - Name: StopProcessingRules
@@ -106,7 +105,7 @@ Tests:
             - Name: Force
               Value: "False"
             - Name: ForwardTo
-              Value: postmaster@example.com
+              Value: exception@example.com
             - Name: Name
               Value: test forwarding
             - Name: StopProcessingRules
@@ -133,7 +132,7 @@ Tests:
             - Name: Identity
               Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
             - Name: ForwardingSmtpAddress
-              Value: smtp:hello@example.com
+              Value: smtp:hello@company.com
             - Name: DeliverToMailboxAndForward
               Value: "False"
         recordtype: 1
@@ -158,7 +157,7 @@ Tests:
             - Name: Identity
               Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
             - Name: ForwardingSmtpAddress
-              Value: smtp:postmaster@example.com
+              Value: smtp:exception@example.com
             - Name: DeliverToMailboxAndForward
               Value: "False"
         recordtype: 1

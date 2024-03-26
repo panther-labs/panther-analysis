@@ -18,35 +18,21 @@ def rule(event):
     global PREVIOUS_SESSION
 
     session_id = deep_get(event, "authenticationContext", "externalSessionId", default="unknown")
-    dt_hash = deep_get(event, "debugContext", "debugData", "dtHash", default="unknown")
-
-    # Some events by Okta admins may appear to have changed IPs
-    # and user agents due to internal Okta behavior:
-    # https://support.okta.com/help/s/article/okta-integrations-showing-as-rawuseragent-with-okta-ips
-    # As such, we ignore certain client ids known to originate from Okta:
-    # https://developer.okta.com/docs/api/openapi/okta-myaccount/myaccount/tag/OktaApplications/
-    if deep_get(event, "client", "id") in [
-        "okta.b58d5b75-07d4-5f25-bf59-368a1261a405"  # Admin Console
-    ]:
-        return False
 
     # Filter only on app access and session start events
-    if event.get("eventType") not in EVENT_TYPES or (
-        session_id == "unknown" or dt_hash == "unknown"
-    ):
+    if event.get("eventType") not in EVENT_TYPES or session_id == "unknown":
         return False
 
-    key = session_id + "-" + dt_hash
-
     # lookup if we've previously stored the session cookie
-    PREVIOUS_SESSION = get_string_set(key)
+    PREVIOUS_SESSION = get_string_set(session_id)
 
     # For unit test mocks we need to eval the string to a set
     if isinstance(PREVIOUS_SESSION, str):
         PREVIOUS_SESSION = set(json.loads(PREVIOUS_SESSION))
 
     # If the sessionID has not been seen before, store information about it
-    if not PREVIOUS_SESSION:
+    if len(PREVIOUS_SESSION) == 0:
+        key = session_id
         put_string_set(
             key,
             [
@@ -57,12 +43,6 @@ def rule(event):
                 deep_get(event, "client", "userAgent", "browser"),
                 deep_get(event, "client", "userAgent", "os"),
                 event.get("p_event_time"),
-                "sign_on_mode:"
-                + deep_get(event, "debugContext", "debugData", "signOnMode", default="unknown"),
-                "threat_suspected:"
-                + deep_get(
-                    event, "debugContext", "debugData", "threat_suspected", default="unknown"
-                ),
             ],
             epoch_seconds=event.event_time_epoch() + SESSION_TIMEOUT,
         )

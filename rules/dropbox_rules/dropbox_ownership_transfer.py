@@ -2,9 +2,10 @@ import json
 from unittest.mock import MagicMock
 
 from panther_base_helpers import deep_get
-from panther_config import config
 
-DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = config.DROPBOX_TRUSTED_OWNERSHIP_DOMAINS
+ALLOWED_DOMAINS = [
+    # "example.com"
+]
 
 
 def rule(event):
@@ -26,12 +27,10 @@ def title(event):
 
 
 def severity(event):
-    global DROPBOX_TRUSTED_OWNERSHIP_DOMAINS  # pylint: disable=global-statement
-    if isinstance(DROPBOX_TRUSTED_OWNERSHIP_DOMAINS, MagicMock):
-        DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = set(
-            json.loads(DROPBOX_TRUSTED_OWNERSHIP_DOMAINS())
-        )  # pylint: disable=not-callable
+    global ALLOWED_DOMAINS  # pylint: disable=global-statement
+    if isinstance(ALLOWED_DOMAINS, MagicMock):
+        ALLOWED_DOMAINS = set(json.loads(ALLOWED_DOMAINS()))  # pylint: disable=not-callable
     new_owner = deep_get(event, "details", "new_owner_email", default="<NEW_OWNER_NOT_FOUND>")
-    if new_owner.split("@")[-1] not in DROPBOX_TRUSTED_OWNERSHIP_DOMAINS:
+    if new_owner.split("@")[-1] not in ALLOWED_DOMAINS:
         return "HIGH"
     return "LOW"

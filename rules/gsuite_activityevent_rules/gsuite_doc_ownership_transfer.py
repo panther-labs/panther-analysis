@@ -1,8 +1,7 @@
 from panther_base_helpers import deep_get
-from panther_config import config
 
-GSUITE_TRUSTED_OWNERSHIP_DOMAINS = {
-    "@" + domain for domain in config.GSUITE_TRUSTED_OWNERSHIP_DOMAINS
+ORG_DOMAINS = {
+    "@example.com",
 }
 
 
@@ -12,7 +11,5 @@ def rule(event):
 
     if bool(event.get("name") == "TRANSFER_DOCUMENT_OWNERSHIP"):
         new_owner = deep_get(event, "parameters", "NEW_VALUE", default="<UNKNOWN USER>")
-        return bool(new_owner) and not any(
-            new_owner.endswith(x) for x in GSUITE_TRUSTED_OWNERSHIP_DOMAINS
-        )
+        return bool(new_owner) and not any(new_owner.endswith(x) for x in ORG_DOMAINS)
     return False

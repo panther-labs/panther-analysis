@@ -4,7 +4,6 @@ Description: Detects DNS queries with Base64 encoded subdomains, which could ind
 RuleID: "Standard.DNSBase64"
 Enabled: false
 Filename: standard_dns_base64.py
-Reference: https://zofixer.com/what-is-base64-disclosure-vulnerability/
 Severity: Medium
 DedupPeriodMinutes: 60
 Threshold: 1
@@ -55,7 +54,7 @@ Tests:
             ],
             "p_log_type": "AWS.VPCDns",
             "query_class": "IN",
-            "query_name": "test.com",
+            "query_name": "google.com",
             "query_timestamp": "2023-04-11 01:29:20",
             "query_type": "A",
             "rcode": "NOERROR",
@@ -83,7 +82,7 @@ Tests:
             ],
             "p_log_type": "AWS.VPCDns",
             "query_class": "IN",
-            "query_name": "=.test.com",
+            "query_name": "=.google.com",
             "query_timestamp": "2023-04-11 01:29:20",
             "query_type": "A",
             "rcode": "NOERROR",

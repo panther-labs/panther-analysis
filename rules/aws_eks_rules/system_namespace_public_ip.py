@@ -27,7 +27,7 @@ def rule(event):
         return False
     if (
         p_eks.get("actor").startswith("system:") or p_eks.get("actor").startswith("eks:")
-    ) and ip_address(p_eks.get("sourceIPs")[0]).is_global:
+    ) and not ip_address(p_eks.get("sourceIPs")[0]).is_private:
         return True
     return False
 
@@ -46,7 +46,7 @@ def title(event):
 
 def dedup(event):
     p_eks = eks_panther_obj_ref(event)
-    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('sourceIPs')[0]}"
+    return f"{p_eks.get('p_source_label')}_eks_system_namespace_{p_eks.get('actor')}"
 
 
 def alert_context(event):

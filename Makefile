@@ -1,6 +1,5 @@
 dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
-TEST_ARGS :=
 
 ifeq ($(UNAME), Darwin)
 	install_pipenv_cmd = brew install pipenv
@@ -35,8 +34,11 @@ global-helpers-unit-test:
 lint: lint-pylint lint-fmt
 
 lint-pylint:
-	pipenv run bandit -r $(dirs)
-	pipenv run pylint $(dirs)
+	pipenv run bandit -r $(dirs) --skip B101  # allow assert statements in tests
+	pipenv run pylint $(dirs) \
+	  --disable=missing-docstring,duplicate-code,import-error,fixme,consider-iterating-dictionary,global-variable-not-assigned,broad-exception-raised \
+	  --load-plugins=pylint.extensions.mccabe,pylint_print \
+	  --max-line-length=100
 
 lint-fmt:
 	@echo Checking python file formatting with the black code style checker
@@ -51,21 +53,18 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
-	npx prettier . --write
 
 install:
 	pipenv sync --dev
-	# install prettier for formatting YAML and Markdown files
-	npm install
 
 test: global-helpers-unit-test
-	pipenv run panther_analysis_tool test $(TEST_ARGS)
+	pipenv run panther_analysis_tool test
 
 docker-build:
 	docker build -t panther-analysis .
 
 docker-test:
-	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test TEST_ARGS="$(TEST_ARGS)"
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test
 
 docker-lint:
 	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make lint

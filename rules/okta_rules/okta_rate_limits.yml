@@ -4,16 +4,9 @@ DisplayName: "Okta Rate Limits"
 Enabled: true
 Filename: okta_rate_limits.py
 Severity: High
-Tags:
-  - Credential Access
-  - Brute Force
-  - Impact
-  - Network Denial of Service
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110
-    - TA0040:T1498
-Reference: https://developer.okta.com/docs/reference/rl-system-log-events/
 Tests:
     - ExpectedResult: true
       Log:
@@ -56,7 +49,7 @@ Tests:
                 - ip: 1.2.3.4
                   version: V4
         securitycontext: {}
-        severity: INFO
+        severity: WARN
         target:
             - id: /api/v1/users
               type: URL Pattern
@@ -236,7 +229,7 @@ Tests:
         uuid: aa-11-22-33-44-bb
         version: "0"
       Name: Non event
-DedupPeriodMinutes: 360 # 6 hours
+DedupPeriodMinutes: 60
 LogTypes:
     - Okta.SystemLog
 RuleID: "Okta.Rate.Limits"

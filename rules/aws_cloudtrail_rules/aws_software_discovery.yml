@@ -4,11 +4,9 @@ DisplayName: "AWS Software Discovery"
 Enabled: false
 Filename: aws_software_discovery.py
 Reference: https://attack.mitre.org/techniques/T1518/001/
-Tags:
-    - Configuration Required
 Reports:
     MITRE ATT&CK:
-        - TA0007:T1518
+        - T1518:T1518.001
 Severity: Info
 Tests:
     - ExpectedResult: true
@@ -76,8 +74,8 @@ Tests:
         eventVersion: "1.08"
         managementEvent: false
       Name: Non Discovery Event Names
-DedupPeriodMinutes: 360 # 6 hours
+DedupPeriodMinutes: 15
 LogTypes:
     - AWS.CloudTrail
 RuleID: "AWS.Software.Discovery"
-Threshold: 50
+Threshold: 5

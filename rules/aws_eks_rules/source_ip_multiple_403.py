@@ -18,7 +18,7 @@ def rule(event):
     if not event.get("requestURI", "").startswith(("/api/", "/apis/")):
         return False
     p_eks = eks_panther_obj_ref(event)
-    if not ip_address(p_eks.get("sourceIPs")[0]).is_global:
+    if ip_address(p_eks.get("sourceIPs")[0]).is_private:
         return False
     return True
 
