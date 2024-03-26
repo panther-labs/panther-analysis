@@ -10,6 +10,8 @@ RUN apk update \
         bzip2-dev \
         git \
         libffi-dev \
+        nodejs \
+        npm \
         openssl-dev \
         readline-dev \
         sqlite-dev \
