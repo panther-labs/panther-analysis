@@ -48,6 +48,10 @@ COPY Pipfile.lock .
 RUN pipenv uninstall --all
 RUN pipenv sync --dev
 
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
+
 # Remove pipfile so it doesn't interfere with local files after install
 RUN rm Pipfile 
 RUN rm Pipfile.lock
