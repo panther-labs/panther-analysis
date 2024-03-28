@@ -20,8 +20,7 @@ Runbook: >
   Immediately remove public access from the AMI until you can determine whether that setting is intentional
 Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sharing-amis.html
 Tests:
-  -
-    Name: Private AMI
+  - Name: Private AMI
     ExpectedResult: true
     Resource:
       {
@@ -54,10 +53,9 @@ Tests:
         "SriovNetSupport": null,
         "State": "available",
         "StateReason": null,
-        "VirtualizationType": "paravirtual"
+        "VirtualizationType": "paravirtual",
       }
-  -
-    Name: Public AMI
+  - Name: Public AMI
     ExpectedResult: false
     Resource:
       {
@@ -90,5 +88,5 @@ Tests:
         "SriovNetSupport": null,
         "State": "available",
         "StateReason": null,
-        "VirtualizationType": "paravirtual"
+        "VirtualizationType": "paravirtual",
       }

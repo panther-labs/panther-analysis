@@ -19,45 +19,47 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_usernames
 Tests:
-  -
-    Name: SAML config modified
+  - Name: SAML config modified
     ExpectedResult: True
     Log:
       {
-      "actionName": "UPDATE_SAML_SETTINGS",
-      "actionParams": {},
-      "actionResult": "SUCCEEDED",
-      "actor": {
-        "attributes": {
-          "email": "homer@springfield.gov",
-          "emailVerified": true,
-          "roleId": "111111"
-        },
-        "id": "111111",
-        "name": "Homer Simpson",
-        "type": "USER"
-      },
-      "errors": null,
-      "p_log_type": "Panther.Audit",
-    }
-  -
-    Name: SAML config viewed
+        "actionName": "UPDATE_SAML_SETTINGS",
+        "actionParams": {},
+        "actionResult": "SUCCEEDED",
+        "actor":
+          {
+            "attributes":
+              {
+                "email": "homer@springfield.gov",
+                "emailVerified": true,
+                "roleId": "111111",
+              },
+            "id": "111111",
+            "name": "Homer Simpson",
+            "type": "USER",
+          },
+        "errors": null,
+        "p_log_type": "Panther.Audit",
+      }
+  - Name: SAML config viewed
     ExpectedResult: false
     Log:
       {
-      "actionName": "GET_SAML_SETTINGS",
-      "actionParams": {},
-      "actionResult": "SUCCEEDED",
-      "actor": {
-        "attributes": {
-          "email": "homer@springfield.gov",
-          "emailVerified": true,
-          "roleId": "111111"
-        },
-        "id": "111111",
-        "name": "Homer Simpson",
-        "type": "USER"
-      },
-      "errors": null,
-      "p_log_type": "Panther.Audit",
-    }
+        "actionName": "GET_SAML_SETTINGS",
+        "actionParams": {},
+        "actionResult": "SUCCEEDED",
+        "actor":
+          {
+            "attributes":
+              {
+                "email": "homer@springfield.gov",
+                "emailVerified": true,
+                "roleId": "111111",
+              },
+            "id": "111111",
+            "name": "Homer Simpson",
+            "type": "USER",
+          },
+        "errors": null,
+        "p_log_type": "Panther.Audit",
+      }

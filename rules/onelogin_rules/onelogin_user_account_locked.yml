@@ -23,47 +23,43 @@ SummaryAttributes:
   - user_name
   - user_id
 Tests:
-  -
-    Name: User account locked via api - first method.
+  - Name: User account locked via api - first method.
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "531",
-        'actor_user_id': 123456,
-        'actor_user_name': 'Bob Cat',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
+        "event_type_id": "531",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
       }
-  - 
-    Name: User account locked via api - second method.
+  - Name: User account locked via api - second method.
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "553",
-        'actor_user_id': 654321,
-        'actor_user_name': 'Mountain Lion',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
+        "event_type_id": "553",
+        "actor_user_id": 654321,
+        "actor_user_name": "Mountain Lion",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
       }
-  - 
-    Name: User account suspended via api.
+  - Name: User account suspended via api.
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "551",
-        'actor_user_id': 654321,
-        'actor_user_name': 'Mountain Lion',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
-      } 
-  -
-    Name: Normal User Activated Event
+        "event_type_id": "551",
+        "actor_user_id": 654321,
+        "actor_user_name": "Mountain Lion",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+      }
+  - Name: Normal User Activated Event
     ExpectedResult: false
     Log:
       {
-        'event_type_id': "11",
-        'actor_user_id': 654321,
-        'actor_user_name': 'Mountain Lion',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
+        "event_type_id": "11",
+        "actor_user_id": 654321,
+        "actor_user_name": "Mountain Lion",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
       }

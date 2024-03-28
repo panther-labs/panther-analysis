@@ -22,74 +22,63 @@ Description: >
 Runbook: Delete the unapproved IAM admin policy.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
-  -
-    Name: Policy Does Not Grant Administrative Privileges
+  - Name: Policy Does Not Grant Administrative Privileges
     ExpectedResult: true
     Resource:
       {
-          "AccountId": "123456789012",
-          "Arn": "arn:aws:iam::123456789012:policy/ExamplePolicy",
-          "AttachmentCount": 1,
-          "DefaultVersionId": "v1",
-          "Description": null,
-          "Entities": {
-              "PolicyGroups": null,
-              "PolicyRoles": [
-                  {
-                      "RoleId": "1111",
-                      "RoleName": "ExampleRole"
-                  }
-              ],
-              "PolicyUsers": null
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:policy/ExamplePolicy",
+        "AttachmentCount": 1,
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles": [{ "RoleId": "1111", "RoleName": "ExampleRole" }],
+            "PolicyUsers": null,
           },
-          "Id": "AAAAA",
-          "IsAttachable": true,
-          "Name": "ExamplePolicy",
-          "Path": "/",
-          "PermissionsBoundaryUsageCount": 0,
-          "PolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"kms:DescribeKey\"],\"Resource\":\"arn:aws:kms:us-west-2:123456789012:key/1\",\"Effect\":\"Allow\",\"Sid\":\"EncryptMessages\"}]}",
-          "Region": "global",
-          "ResourceId": "arn:aws:iam::123456789012:policy/ExamplePolicy",
-          "ResourceType": "AWS.IAM.Policy",
-          "Tags": null,
-          "TimeCreated": "2019-01-01T00:00:00.000Z",
-          "UpdateDate": "2019-01-01T00:00:00Z"
+        "Id": "AAAAA",
+        "IsAttachable": true,
+        "Name": "ExamplePolicy",
+        "Path": "/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": '{"Version":"2012-10-17","Statement":[{"Action":["kms:DescribeKey"],"Resource":"arn:aws:kms:us-west-2:123456789012:key/1","Effect":"Allow","Sid":"EncryptMessages"}]}',
+        "Region": "global",
+        "ResourceId": "arn:aws:iam::123456789012:policy/ExamplePolicy",
+        "ResourceType": "AWS.IAM.Policy",
+        "Tags": null,
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: Policy Does Grant Administrative Privileges
+  - Name: Policy Does Grant Administrative Privileges
     ExpectedResult: false
     Resource:
       {
-          "AccountId": "123456789012",
-          "Arn": "arn:aws:iam::123456789012:policy/ExamplePolicy",
-          "AttachmentCount": 1,
-          "DefaultVersionId": "v1",
-          "Description": null,
-          "Entities": {
-              "PolicyGroups": null,
-              "PolicyRoles": [
-                  {
-                      "RoleId": "1111",
-                      "RoleName": "ExampleRole"
-                  }
-              ],
-              "PolicyUsers": null
+        "AccountId": "123456789012",
+        "Arn": "arn:aws:iam::123456789012:policy/ExamplePolicy",
+        "AttachmentCount": 1,
+        "DefaultVersionId": "v1",
+        "Description": null,
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles": [{ "RoleId": "1111", "RoleName": "ExampleRole" }],
+            "PolicyUsers": null,
           },
-          "Id": "AAAAA",
-          "IsAttachable": true,
-          "Name": "ExamplePolicy",
-          "Path": "/",
-          "PermissionsBoundaryUsageCount": 0,
-          "PolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"kms:PutKeyPolicy\",\"kms:GenerateDataKey\"],\"Resource\":\"arn:aws:kms:us-west-2:123456789012:key/1\",\"Effect\":\"Allow\",\"Sid\":\"EncryptMessages\"},{\"Action\":[\"sqs:SendMessage\",\"sqs:SendMessageBatch\"],\"Resource\":\"arn:aws:sqs:us-west-2:123456789012:example-queue\",\"Effect\":\"Allow\",\"Sid\":\"SendSQSMessages\"}]}",
-          "Region": "global",
-          "ResourceId": "arn:aws:iam::123456789012:policy/ExamplePolicy",
-          "ResourceType": "AWS.IAM.Policy",
-          "Tags": null,
-          "TimeCreated": "2019-01-01T00:00:00.000Z",
-          "UpdateDate": "2019-01-01T00:00:00Z"
+        "Id": "AAAAA",
+        "IsAttachable": true,
+        "Name": "ExamplePolicy",
+        "Path": "/",
+        "PermissionsBoundaryUsageCount": 0,
+        "PolicyDocument": '{"Version":"2012-10-17","Statement":[{"Action":["kms:PutKeyPolicy","kms:GenerateDataKey"],"Resource":"arn:aws:kms:us-west-2:123456789012:key/1","Effect":"Allow","Sid":"EncryptMessages"},{"Action":["sqs:SendMessage","sqs:SendMessageBatch"],"Resource":"arn:aws:sqs:us-west-2:123456789012:example-queue","Effect":"Allow","Sid":"SendSQSMessages"}]}',
+        "Region": "global",
+        "ResourceId": "arn:aws:iam::123456789012:policy/ExamplePolicy",
+        "ResourceType": "AWS.IAM.Policy",
+        "Tags": null,
+        "TimeCreated": "2019-01-01T00:00:00.000Z",
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  - 
-    Name: AWS Service-Linked Policy Network Admin
+  - Name: AWS Service-Linked Policy Network Admin
     ExpectedResult: true
     Resource:
       {
@@ -97,16 +86,18 @@ Tests:
         "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
         "AttachmentCount": 1,
         "DefaultVersionId": "v6",
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
-              "RoleName": "AWSServiceRoleForAmazonGuardDuty"
-            }
-          ],
-          "PolicyUsers": null
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [
+                {
+                  "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+                  "RoleName": "AWSServiceRoleForAmazonGuardDuty",
+                },
+              ],
+            "PolicyUsers": null,
+          },
         "Id": "ANPPPPPPPPPPPPPPPPPPP",
         "IsAttachable": true,
         "Name": "AmazonGuardDutyServiceRolePolicy",
@@ -117,10 +108,9 @@ Tests:
         "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
         "ResourceType": "AWS.IAM.Policy",
         "TimeCreated": "2017-11-28T20:12:59Z",
-        "UpdateDate": "2023-03-05T19:19:19Z"
+        "UpdateDate": "2023-03-05T19:19:19Z",
       }
-  - 
-    Name: AWS Service Linked Role Policy Admin
+  - Name: AWS Service Linked Role Policy Admin
     ExpectedResult: true
     Resource:
       {
@@ -128,16 +118,18 @@ Tests:
         "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
         "AttachmentCount": 1,
         "DefaultVersionId": "v4",
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
-              "RoleName": "AWSServiceRoleForAmazonElasticFileSystem"
-            }
-          ],
-          "PolicyUsers": null
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [
+                {
+                  "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+                  "RoleName": "AWSServiceRoleForAmazonElasticFileSystem",
+                },
+              ],
+            "PolicyUsers": null,
+          },
         "Id": "ANPPPPPPPPPPPPPPPPPPP",
         "IsAttachable": true,
         "Name": "AmazonElasticFileSystemServiceRolePolicy",
@@ -148,6 +140,5 @@ Tests:
         "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
         "ResourceType": "AWS.IAM.Policy",
         "TimeCreated": "2019-11-05T16:52:41Z",
-        "UpdateDate": "2023-03-10T19:19:19Z"
+        "UpdateDate": "2023-03-10T19:19:19Z",
       }
-

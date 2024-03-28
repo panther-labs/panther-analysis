@@ -9,7 +9,7 @@ Tags:
   - GSuite
   - Collection:Data from Information Repositories
 Reports:
-   MITRE ATT&CK:
+  MITRE ATT&CK:
     - TA0009:T1213
 Severity: Info
 Description: >
@@ -21,84 +21,68 @@ SummaryAttributes:
   - actor:email
 DedupPeriodMinutes: 360 # 6 hours
 Tests:
-  -
-    Name: Access Event
+  - Name: Access Event
     ExpectedResult: false
     Log:
       {
-        'p_row_id': '111222',
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'drive'},
-        'events': [
-          {
-            'type': 'access',
-            'name': 'download'
-          }
-        ]
+        "p_row_id": "111222",
+        "actor": { "email": "bobert@example.com" },
+        "id": { "applicationName": "drive" },
+        "events": [{ "type": "access", "name": "download" }],
       }
-  -
-    Name: Modify Event Without Over Visibility
+  - Name: Modify Event Without Over Visibility
     ExpectedResult: false
     Log:
       {
-        'p_row_id': '111222',
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'drive'},
-        'events': [
-          {
-            'type': 'access',
-            'name': 'edit',
-            'parameters': [{'name': 'visibility', 'value': 'private'}]
-          }
-        ]
+        "p_row_id": "111222",
+        "actor": { "email": "bobert@example.com" },
+        "id": { "applicationName": "drive" },
+        "events":
+          [
+            {
+              "type": "access",
+              "name": "edit",
+              "parameters": [{ "name": "visibility", "value": "private" }],
+            },
+          ],
       }
-  -
-    Name: Overly Visible Doc Modified
+  - Name: Overly Visible Doc Modified
     ExpectedResult: true
     Log:
       {
-        'p_row_id': '111222',
-        'actor': {'email': 'bobert@example.com'},
-        'id': {'applicationName': 'drive'},
-        'events': [
-          {
-            'type': 'access',
-            'name': 'edit',
-            'parameters': [
-                {
-                  'name': 'visibility', 
-                  'value': 'people_with_link'
-                },
-                {
-                  'name':'doc_title', 
-                  'value':'my shared document'
-                }
-              ]
-          }
-        ]
+        "p_row_id": "111222",
+        "actor": { "email": "bobert@example.com" },
+        "id": { "applicationName": "drive" },
+        "events":
+          [
+            {
+              "type": "access",
+              "name": "edit",
+              "parameters":
+                [
+                  { "name": "visibility", "value": "people_with_link" },
+                  { "name": "doc_title", "value": "my shared document" },
+                ],
+            },
+          ],
       }
-  -
-    Name: Overly Visible Doc Modified - no email
+  - Name: Overly Visible Doc Modified - no email
     ExpectedResult: true
     Log:
       {
-        'p_row_id': '111222',
-        'actor': {'profileId': '1234567890123'},
-        'id': {'applicationName': 'drive'},
-        'events': [
-          {
-            'type': 'access',
-            'name': 'edit',
-            'parameters': [
-                {
-                  'name': 'visibility', 
-                  'value': 'people_with_link'
-                },
-                {
-                  'name':'doc_title', 
-                  'value':'my shared document'
-                }
-              ]
-          }
-        ]
+        "p_row_id": "111222",
+        "actor": { "profileId": "1234567890123" },
+        "id": { "applicationName": "drive" },
+        "events":
+          [
+            {
+              "type": "access",
+              "name": "edit",
+              "parameters":
+                [
+                  { "name": "visibility", "value": "people_with_link" },
+                  { "name": "doc_title", "value": "my shared document" },
+                ],
+            },
+          ],
       }

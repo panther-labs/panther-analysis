@@ -20,34 +20,22 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Two Step Verification Enabled
+  - Name: Two Step Verification Enabled
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "user_accounts",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "some.user@somedomain.com",
-        },
+        "id": { "applicationName": "user_accounts" },
+        "actor": { "callerType": "USER", "email": "some.user@somedomain.com" },
         "kind": "admin#reports#activity",
         "type": "2sv_change",
         "name": "2sv_enroll",
       }
-  -
-    Name: Two Step Verification Disabled
+  - Name: Two Step Verification Disabled
     ExpectedResult: True
     Log:
       {
-        "id": {
-          "applicationName": "user_accounts",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "some.user@somedomain.com",
-        },
+        "id": { "applicationName": "user_accounts" },
+        "actor": { "callerType": "USER", "email": "some.user@somedomain.com" },
         "kind": "admin#reports#activity",
         "type": "2sv_change",
         "name": "2sv_disable",

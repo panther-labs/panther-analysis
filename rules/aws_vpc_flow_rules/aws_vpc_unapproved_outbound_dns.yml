@@ -24,30 +24,12 @@ SummaryAttributes:
   - dstaddr
   - dstport
 Tests:
-  -
-    Name: Approved Outbound DNS Traffic
+  - Name: Approved Outbound DNS Traffic
     ExpectedResult: false
-    Log:
-      {
-        "dstport": 53,
-        "dstaddr": "1.1.1.1",
-        "srcaddr": "10.0.0.1"
-      }
-  -
-    Name: Unapproved Outbound DNS Traffic
+    Log: { "dstport": 53, "dstaddr": "1.1.1.1", "srcaddr": "10.0.0.1" }
+  - Name: Unapproved Outbound DNS Traffic
     ExpectedResult: true
-    Log:
-      {
-        "dstport": 53,
-        "dstaddr": "100.100.100.100",
-        "srcaddr": "10.0.0.1"
-      }
-  -
-    Name: Outbound Non-DNS Traffic
+    Log: { "dstport": 53, "dstaddr": "100.100.100.100", "srcaddr": "10.0.0.1" }
+  - Name: Outbound Non-DNS Traffic
     ExpectedResult: false
-    Log:
-      {
-        "dstport": 80,
-        "dstaddr": "100.100.100.100",
-        "srcaddr": "10.0.0.1"
-      }
+    Log: { "dstport": 80, "dstaddr": "100.100.100.100", "srcaddr": "10.0.0.1" }

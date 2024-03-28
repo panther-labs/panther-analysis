@@ -10,23 +10,18 @@ ScheduledQueries:
   - Query.Snowflake.Multiple.Logins.Followed.By.Success
 Severity: Medium
 Tests:
-  -
-    Name: Multiple Failed Logins Followed By Success
+  - Name: Multiple Failed Logins Followed By Success
     ExpectedResult: true
     Log:
       {
-      "client_ip": "12.12.12.12",
-      "error_codes": [
-        390100
-      ],
-      "error_messages": [
-        "INCORRECT_USERNAME_PASSWORD"
-      ],
-      "match_number": 1,
-      "num_fails": 6,
-      "num_successes": 1,
-      "rows_in_sequence": 7,
-      "start_of_unsuccessful_logins_time": "2023-04-12 18:12:49Z",
-      "successful_login_time": "2023-04-12 18:13:35Z",
-      "user_name": "USERNAME"
+        "client_ip": "12.12.12.12",
+        "error_codes": [390100],
+        "error_messages": ["INCORRECT_USERNAME_PASSWORD"],
+        "match_number": 1,
+        "num_fails": 6,
+        "num_successes": 1,
+        "rows_in_sequence": 7,
+        "start_of_unsuccessful_logins_time": "2023-04-12 18:12:49Z",
+        "successful_login_time": "2023-04-12 18:13:35Z",
+        "user_name": "USERNAME",
       }

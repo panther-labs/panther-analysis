@@ -11,20 +11,18 @@ Reference: https://docs.github.com/en/get-started/quickstart/create-a-repo
 Severity: Info
 Description: Detects when a repository is created.
 Tests:
-  -
-    Name: GitHub - Repo Created
+  - Name: GitHub - Repo Created
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
-        "action": "repo.create",        
+        "action": "repo.create",
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Repo Archived
+  - Name: GitHub - Repo Archived
     ExpectedResult: false
     Log:
       {
@@ -33,5 +31,5 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }

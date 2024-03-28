@@ -28,17 +28,13 @@ SummaryAttributes:
   - p_any_domain_names
 # All test cases for this detection will need to include:
 # * p_log_type ( for udm)
-# Alerting test cases for this detection will need to include: 
+# Alerting test cases for this detection will need to include:
 # * p_source_label
 # * p_event_time
 Tests:
   - Name: CloudTrail not ConsoleLogin
     ExpectedResult: false
-    Log:
-      {
-        "eventType": "logout",
-        "p_log_type": "AWS.CloudTrail"
-      }
+    Log: { "eventType": "logout", "p_log_type": "AWS.CloudTrail" }
   - Name: CloudTrail ConsoleLogin no history
     ExpectedResult: false
     Mocks:
@@ -48,10 +44,7 @@ Tests:
         returnValue: >-
     Log:
       {
-        "additionalEventData": {
-          "MFAUsed": "No",
-          "MobileVersion": "No"
-        },
+        "additionalEventData": { "MFAUsed": "No", "MobileVersion": "No" },
         "awsRegion": "us-east-1",
         "eventCategory": "Management",
         "eventName": "ConsoleLogin",
@@ -61,43 +54,46 @@ Tests:
         "eventVersion": "1.08",
         "managementEvent": true,
         "p_event_time": "2023-05-26 20:14:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "sourceIPAddress": {
-              "city": "Auckland",
-              "country": "NZ",
-              "lat": "-36.84853",
-              "lng": "174.76349",
-              "p_match": "12.12.12.12",
-              "postal_code": "1010",
-              "region": "Auckland",
-              "region_code": "AUK",
-              "timezone": "Pacific/Auckland"
-            }
-          }
-        },
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "sourceIPAddress":
+                  {
+                    "city": "Auckland",
+                    "country": "NZ",
+                    "lat": "-36.84853",
+                    "lng": "174.76349",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "1010",
+                    "region": "Auckland",
+                    "region_code": "AUK",
+                    "timezone": "Pacific/Auckland",
+                  },
+              },
+          },
         "p_log_type": "AWS.CloudTrail",
         "p_parse_time": "2023-05-26 20:19:14.002",
         "p_source_label": "LogSource Name",
         "readOnly": false,
         "recipientAccountId": "123456789012",
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
         "sourceIPAddress": "12.12.12.12",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "signin.aws.amazon.com",
-          "tlsVersion": "TLSv1.3"
-        },
+        "tlsDetails":
+          {
+            "cipherSuite": "TLS_AES_128_GCM_SHA256",
+            "clientProvidedHostHeader": "signin.aws.amazon.com",
+            "tlsVersion": "TLSv1.3",
+          },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:user/tester",
-          "accountId": "123456789012",
-          "userName": "tester"
-        }
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
       }
   - Name: CloudTrail ConsoleLogin with history
     ExpectedResult: true
@@ -121,10 +117,7 @@ Tests:
           ]
     Log:
       {
-        "additionalEventData": {
-          "MFAUsed": "No",
-          "MobileVersion": "No"
-        },
+        "additionalEventData": { "MFAUsed": "No", "MobileVersion": "No" },
         "awsRegion": "us-east-1",
         "eventCategory": "Management",
         "eventName": "ConsoleLogin",
@@ -134,51 +127,50 @@ Tests:
         "eventVersion": "1.08",
         "managementEvent": true,
         "p_event_time": "2023-05-26 20:14:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "sourceIPAddress": {
-              "city": "Auckland",
-              "country": "NZ",
-              "lat": "-36.84853",
-              "lng": "174.76349",
-              "p_match": "12.12.12.12",
-              "postal_code": "1010",
-              "region": "Auckland",
-              "region_code": "AUK",
-              "timezone": "Pacific/Auckland"
-            }
-          }
-        },
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "sourceIPAddress":
+                  {
+                    "city": "Auckland",
+                    "country": "NZ",
+                    "lat": "-36.84853",
+                    "lng": "174.76349",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "1010",
+                    "region": "Auckland",
+                    "region_code": "AUK",
+                    "timezone": "Pacific/Auckland",
+                  },
+              },
+          },
         "p_log_type": "AWS.CloudTrail",
         "p_parse_time": "2023-05-26 20:19:14.002",
         "p_source_label": "LogSource Name",
         "readOnly": false,
         "recipientAccountId": "123456789012",
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
         "sourceIPAddress": "12.12.12.12",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "signin.aws.amazon.com",
-          "tlsVersion": "TLSv1.3"
-        },
+        "tlsDetails":
+          {
+            "cipherSuite": "TLS_AES_128_GCM_SHA256",
+            "clientProvidedHostHeader": "signin.aws.amazon.com",
+            "tlsVersion": "TLSv1.3",
+          },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:user/tester",
-          "accountId": "123456789012",
-          "userName": "tester"
-        }
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
       }
   - Name: Okta Not sign-in
     ExpectedResult: false
-    Log:
-      {
-        "eventType": "logout",
-        "p_log_type": "Okta.SystemLog",
-      }
+    Log: { "eventType": "logout", "p_log_type": "Okta.SystemLog" }
   - Name: Okta sign-in with history and impossible travel
     ExpectedResult: true
     Mocks:
@@ -201,71 +193,63 @@ Tests:
           ]
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.12",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.12",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-05-26 20:18:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "city": "Auckland",
-              "country": "NZ",
-              "lat": "-36.84853",
-              "lng": "174.76349",
-              "p_match": "12.12.12.12",
-              "postal_code": "1010",
-              "region": "Auckland",
-              "region_code": "AUK",
-              "timezone": "Pacific/Auckland"
-            }
-          }
-        },
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "city": "Auckland",
+                    "country": "NZ",
+                    "lat": "-36.84853",
+                    "lng": "174.76349",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "1010",
+                    "region": "Auckland",
+                    "region_code": "AUK",
+                    "timezone": "Pacific/Auckland",
+                  },
+              },
+          },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-05-26 20:22:51.888",
         "published": "2023-05-26 20:18:51.888",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }
   - Name: Okta sign-in with history and impossible travel, Apple Private Relay
     ExpectedResult: true
@@ -289,82 +273,76 @@ Tests:
           ]
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.12",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.12",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-05-26 20:18:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "city": "Los Angeles",
-              "country": "US",
-              "lat": "34.05223",
-              "lng": "-118.24368",
-              "p_match": "12.12.12.12",
-              "postal_code": "90009",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "city": "Los Angeles",
+                    "country": "US",
+                    "lat": "34.05223",
+                    "lng": "-118.24368",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "90009",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
+            "ipinfo_privacy":
+              {
+                "client.ipAddress":
+                  {
+                    "hosting": true,
+                    "p_match": "12.12.12.12",
+                    "proxy": false,
+                    "relay": true,
+                    "service": "Apple Private Relay",
+                    "tor": false,
+                    "vpn": false,
+                  },
+              },
           },
-          "ipinfo_privacy": {
-            "client.ipAddress": {
-              "hosting": true,
-              "p_match": "12.12.12.12",
-              "proxy": false,
-              "relay": true,
-              "service": "Apple Private Relay",
-              "tor": false,
-              "vpn": false
-            }
-          }
-        },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-05-26 20:22:51.888",
         "published": "2023-05-26 20:18:51.888",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }
   - Name: Okta sign-in with history and impossible travel, VPN with service
     ExpectedResult: true
@@ -388,82 +366,76 @@ Tests:
           ]
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.12",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.12",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-05-26 20:18:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "city": "Los Angeles",
-              "country": "US",
-              "lat": "34.05223",
-              "lng": "-118.24368",
-              "p_match": "12.12.12.12",
-              "postal_code": "90009",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "city": "Los Angeles",
+                    "country": "US",
+                    "lat": "34.05223",
+                    "lng": "-118.24368",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "90009",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
+            "ipinfo_privacy":
+              {
+                "client.ipAddress":
+                  {
+                    "hosting": false,
+                    "p_match": "12.12.12.12",
+                    "proxy": false,
+                    "relay": false,
+                    "service": "Private Internet Access",
+                    "tor": false,
+                    "vpn": true,
+                  },
+              },
           },
-          "ipinfo_privacy": {
-            "client.ipAddress": {
-              "hosting": false,
-              "p_match": "12.12.12.12",
-              "proxy": false,
-              "relay": false,
-              "service": "Private Internet Access",
-              "tor": false,
-              "vpn": true
-            }
-          }
-        },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-05-26 20:22:51.888",
         "published": "2023-05-26 20:18:51.888",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }
   - Name: Okta sign-in with history and impossible travel, VPN with no service
     ExpectedResult: true
@@ -487,81 +459,75 @@ Tests:
           ]
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.12",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.12",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-05-26 20:18:51",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "city": "Los Angeles",
-              "country": "US",
-              "lat": "34.05223",
-              "lng": "-118.24368",
-              "p_match": "12.12.12.12",
-              "postal_code": "90009",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "city": "Los Angeles",
+                    "country": "US",
+                    "lat": "34.05223",
+                    "lng": "-118.24368",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "90009",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
+            "ipinfo_privacy":
+              {
+                "client.ipAddress":
+                  {
+                    "hosting": false,
+                    "proxy": false,
+                    "relay": false,
+                    "service": "",
+                    "tor": false,
+                    "vpn": true,
+                  },
+              },
           },
-          "ipinfo_privacy": {
-            "client.ipAddress": {
-              "hosting": false,
-              "proxy": false,
-              "relay": false,
-              "service": "",
-              "tor": false,
-              "vpn": true
-            }
-          }
-        },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-05-26 20:22:51.888",
         "published": "2023-05-26 20:18:51.888",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }
   - Name: Short Distances and Short Timedeltas
     ExpectedResult: true
@@ -585,72 +551,64 @@ Tests:
           ]
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.11",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.11",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-06-12T22:26:01.951000",
-        "p_enrichment":  {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "p_match": "12.12.12.11",
-              "city": "Anaheim",
-              "country": "US",
-              "lat": "33.8085",
-              "lng": "-117.9228",
-              "p_event_time": "2023-06-12T22:26:01.951000",
-              "postal_code": "92802",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
-          }
-        },
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "p_match": "12.12.12.11",
+                    "city": "Anaheim",
+                    "country": "US",
+                    "lat": "33.8085",
+                    "lng": "-117.9228",
+                    "p_event_time": "2023-06-12T22:26:01.951000",
+                    "postal_code": "92802",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
+          },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-06-12T22:29:01.951000",
         "published": "2023-06-12 22:26:01.951000",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }
   - Name: Asana ImpossibleTravel
     ExpectedResult: true
@@ -675,56 +633,54 @@ Tests:
 
     Log:
       {
-        "actor": {
-          "actor_type": "user",
-          "email": "homer.simpsons@simpsons.com",
-          "gid": "1234567890",
-          "name": "Homer Simpson"
-        },
-        "context": {
-          "client_ip_address": "1.2.3.4",
-          "context_type": "web",
-          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-        },
+        "actor":
+          {
+            "actor_type": "user",
+            "email": "homer.simpsons@simpsons.com",
+            "gid": "1234567890",
+            "name": "Homer Simpson",
+          },
+        "context":
+          {
+            "client_ip_address": "1.2.3.4",
+            "context_type": "web",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+          },
         "created_at": "2023-05-26 18:24:51.413",
-        "details": {
-          "method": [
-            "SAML"
-          ]
-        },
+        "details": { "method": ["SAML"] },
         "event_category": "logins",
         "event_type": "user_login_succeeded",
         "gid": "123456789",
-        "resource": {
-          "email": "homer.simpsons@simpsons.com",
-          "gid": "1234567890",
-          "name": "Homer Simpson",
-          "resource_type": "user"
-        },
+        "resource":
+          {
+            "email": "homer.simpsons@simpsons.com",
+            "gid": "1234567890",
+            "name": "Homer Simpson",
+            "resource_type": "user",
+          },
         "p_log_type": "Asana.Audit",
         "p_source_label": "Asana Logs",
-        "p_enrichment":  {
-          # ipinfo privacy reset is needed for unit testing
-          "ipinfo_privacy": {
-            "context.client_ip_address": {
-              "p_match": "1.2.3.4"
-            }
+        "p_enrichment": {
+            # ipinfo privacy reset is needed for unit testing
+            "ipinfo_privacy":
+              { "context.client_ip_address": { "p_match": "1.2.3.4" } },
+            "ipinfo_location":
+              {
+                "context.client_ip_address":
+                  {
+                    "p_match": "1.2.3.4",
+                    "city": "Anaheim",
+                    "country": "US",
+                    "lat": "33.8085",
+                    "lng": "-117.9228",
+                    "p_event_time": "2023-06-12T22:26:01.951000",
+                    "postal_code": "92802",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
           },
-          "ipinfo_location": {
-            "context.client_ip_address": {
-              "p_match": "1.2.3.4",
-              "city": "Anaheim",
-              "country": "US",
-              "lat": "33.8085",
-              "lng": "-117.9228",
-              "p_event_time": "2023-06-12T22:26:01.951000",
-              "postal_code": "92802",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
-          }
-        },
         "p_event_time": "2023-06-12T22:26:01.951000",
       }
   - Name: Notion Impossible Travel
@@ -751,42 +707,43 @@ Tests:
           ]
     Log:
       {
-        "event": {
-          "actor": {
+        "event":
+          {
+            "actor":
+              {
+                "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "object": "user",
+                "person": { "email": "aragorn.elessar@lotr.com" },
+                "type": "person",
+              },
+            "details": { "authType": "saml" },
             "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "object": "user",
-            "person": {
-              "email": "aragorn.elessar@lotr.com"
-            },
-            "type": "person"
+            "ip_address": "192.168.100.100",
+            "timestamp": "2023-10-03T19:02:28.044000Z",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
           },
-          "details": {
-            "authType": "saml"
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "event.ip_address":
+                  {
+                    "city": "Barad-Dur",
+                    "lat": "100.00000",
+                    "lng": "0.00000",
+                    "country": "Mordor",
+                    "postal_code": "55555",
+                    "p_match": "192.168.100.100",
+                    "region": "Mount Doom",
+                    "region_code": "MD",
+                    "timezone": "Middle Earth/Mordor",
+                  },
+              },
           },
-          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-          "ip_address": "192.168.100.100",
-          "timestamp": "2023-10-03T19:02:28.044000Z",
-          "type": "user.login",
-          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-        },
-        "p_enrichment": {
-          "ipinfo_location": {
-            "event.ip_address": {
-              "city": "Barad-Dur",
-              "lat": "100.00000",
-              "lng": "0.00000",
-              "country": "Mordor",
-              "postal_code": "55555",
-              "p_match": "192.168.100.100",
-              "region": "Mount Doom",
-              "region_code": "MD",
-              "timezone": "Middle Earth/Mordor",
-            },
-          },
-        },
         "p_event_time": "2023-10-03T19:02:28.044000Z",
         "p_log_type": "Notion.AuditLogs",
-        "p_source_label": "Notion-Panther-Labs"
+        "p_source_label": "Notion-Panther-Labs",
       }
   - Name: First hit from VPN should not fail
     ExpectedResult: false
@@ -797,80 +754,74 @@ Tests:
         returnValue: ""
     Log:
       {
-        "actor": {
-          "alternateId": "homer.simpson@company.com",
-          "displayName": "Homer Simpson",
-          "id": "00uwuwuwuwuwuwuwuwuw",
-          "type": "User"
-        },
-        "authenticationContext": {
-          "authenticationStep": 0,
-          "externalSessionId": "idx1234"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "12.12.12.12",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+        "actor":
+          {
+            "alternateId": "homer.simpson@company.com",
+            "displayName": "Homer Simpson",
+            "id": "00uwuwuwuwuwuwuwuwuw",
+            "type": "User",
           },
-          "zone": "null"
-        },
-        "debugContext": {
-          "debugData": {
-          }
-        },
-        "device": {
-        },
+        "authenticationContext":
+          { "authenticationStep": 0, "externalSessionId": "idx1234" },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "12.12.12.12",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "debugContext": { "debugData": {} },
+        "device": {},
         "displayMessage": "User login to Okta",
         "eventType": "user.session.start",
         "legacyEventType": "core.user_auth.login_success",
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "outcome": { "result": "SUCCESS" },
         "p_event_time": "2023-05-26 20:18:51",
-        "p_enrichment": {
-          "ipinfo_location": {
-            "client.ipAddress": {
-              "city": "Los Angeles",
-              "country": "US",
-              "lat": "34.05223",
-              "lng": "-118.24368",
-              "p_match": "12.12.12.12",
-              "postal_code": "90009",
-              "region": "California",
-              "region_code": "CA",
-              "timezone": "America/Los_Angeles"
-            }
+        "p_enrichment":
+          {
+            "ipinfo_location":
+              {
+                "client.ipAddress":
+                  {
+                    "city": "Los Angeles",
+                    "country": "US",
+                    "lat": "34.05223",
+                    "lng": "-118.24368",
+                    "p_match": "12.12.12.12",
+                    "postal_code": "90009",
+                    "region": "California",
+                    "region_code": "CA",
+                    "timezone": "America/Los_Angeles",
+                  },
+              },
+            "ipinfo_privacy":
+              {
+                "client.ipAddress":
+                  {
+                    "hosting": true,
+                    "p_match": "12.12.12.12",
+                    "proxy": false,
+                    "relay": true,
+                    "service": "Apple Private Relay",
+                    "tor": false,
+                    "vpn": false,
+                  },
+              },
           },
-          "ipinfo_privacy": {
-            "client.ipAddress": {
-              "hosting": true,
-              "p_match": "12.12.12.12",
-              "proxy": false,
-              "relay": true,
-              "service": "Apple Private Relay",
-              "tor": false,
-              "vpn": false
-            }
-          }
-        },
         "p_log_type": "Okta.SystemLog",
         "p_source_label": "Okta Logs",
         "p_parse_time": "2023-05-26 20:22:51.888",
         "published": "2023-05-26 20:18:51.888",
-        "request": {
-          "ipChain": [
-          ]
-        },
-        "securityContext": {
-        },
+        "request": { "ipChain": [] },
+        "securityContext": {},
         "severity": "INFO",
-        "target": [
-        ],
-        "transaction": {
-        },
+        "target": [],
+        "transaction": {},
         "uuid": "79999999-ffff-eeee-bbbb-222222222222",
-        "version": "0"
+        "version": "0",
       }

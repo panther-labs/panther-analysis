@@ -8,80 +8,47 @@ LogTypes:
   - Duo.Authentication
 Tags:
   - Duo
-Severity: Low 
+Severity: Low
 Description: A Duo user's bypass code was used to authenticate
 Reference: https://duo.com/docs/adminapi#authentication-logs
 Runbook: Follow up with the user to confirm they used the bypass code themselves.
 Tests:
-  -
-    Name: bypass_code_used 
+  - Name: bypass_code_used
     ExpectedResult: true
     Log:
       {
-        "access_device": {
-          "ip": "12.12.112.25",
-          "os": "Mac OS X"
-        },
-        "auth_device": {
-          "ip": "12.12.12.12"
-        },
-        "application": {
-          "key": "D12345",
-          "name": "Slack"
-        },
+        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
+        "auth_device": { "ip": "12.12.12.12" },
+        "application": { "key": "D12345", "name": "Slack" },
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "bypass_user",
         "result": "success",
-        "user": {
-          "name": "example@example.io"
-        }
+        "user": { "name": "example@example.io" },
       }
-  -
-    Name: good_auth
+  - Name: good_auth
     ExpectedResult: false
     Log:
       {
-        "access_device": {
-          "ip": "12.12.112.25",
-          "os": "Mac OS X"
-        },
-        "auth_device": {
-          "ip": "12.12.12.12"
-        },
-        "application": {
-          "key": "D12345",
-          "name": "Slack"
-        },
+        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
+        "auth_device": { "ip": "12.12.12.12" },
+        "application": { "key": "D12345", "name": "Slack" },
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "user_approved",
         "result": "success",
-        "user": {
-          "name": "example@example.io"
-        }
+        "user": { "name": "example@example.io" },
       }
-  -
-    Name: denied_old_creds
+  - Name: denied_old_creds
     ExpectedResult: false
     Log:
       {
-        "access_device": {
-          "ip": "12.12.112.25",
-          "os": "Mac OS X"
-        },
-        "auth_device": {
-          "ip": "12.12.12.12"
-        },
-        "application": {
-          "key": "D12345",
-          "name": "Slack"
-        },
+        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
+        "auth_device": { "ip": "12.12.12.12" },
+        "application": { "key": "D12345", "name": "Slack" },
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "out_of_date",
         "result": "denied",
-        "user": {
-          "name": "example@example.io"
-        }
+        "user": { "name": "example@example.io" },
       }
