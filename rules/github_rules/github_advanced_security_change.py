@@ -68,7 +68,7 @@ ADV_SEC_ACTIONS = {
     "repo.advanced_security_disabled": "CRITICAL",
     "repo.advanced_security_policy_selected_member_disabled": "HIGH",
     # repository_vulnerability_alerts.disable - Dependabot alerts was disabled.
-    "repository_vulnerability_alerts.disable": "HIGH"
+    "repository_vulnerability_alerts.disable": "HIGH",
 }
 
 

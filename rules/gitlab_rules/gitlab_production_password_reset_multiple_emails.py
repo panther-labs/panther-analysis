@@ -1,6 +1,5 @@
-from panther_core.immutable import ImmutableList
-
 from panther_base_helpers import deep_get
+from panther_core.immutable import ImmutableList
 
 
 def rule(event):
