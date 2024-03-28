@@ -57,7 +57,7 @@ ADV_SEC_ACTIONS = {
     # business_secret_scanning_push_protection.disabled_for_new_repos  -  Push protection for {% data variables.product.prodname_secret_scanning %} was disabled for new repositories in your enterprise. For more information, see "[Managing {% data variables.product.prodname_GH_advanced_security %} features for your enterprise](/admin/code-security/managing-github-advanced-security-for-your-enterprise/managing-github-advanced-security-features-for-your-enterprise)."
     "business_secret_scanning_push_protection.disabled_for_new_repos": "HIGH",
     # business_secret_scanning_push_protection_custom_message.disable  -  The custom message triggered by an attempted push to a push-protected repository was disabled for your enterprise. For more information, see "[Managing {% data variables.product.prodname_GH_advanced_security %} features for your enterprise](/admin/code-security/managing-github-advanced-security-for-your-enterprise/managing-github-advanced-security-features-for-your-enterprise)."
-    "business_secret_scanning_push_protection_custom_message.disable": "XXXX",
+    "business_secret_scanning_push_protection_custom_message.disable": "HIGH",
     #
     # There are also correlating github _org_ level events
     "org.advanced_security_disabled_for_new_repos": "HIGH",
@@ -67,6 +67,8 @@ ADV_SEC_ACTIONS = {
     "org.advanced_security_policy_selected_member_disabled": "HIGH",
     "repo.advanced_security_disabled": "CRITICAL",
     "repo.advanced_security_policy_selected_member_disabled": "HIGH",
+    # repository_vulnerability_alerts.disable - Dependabot alerts was disabled.
+    "repository_vulnerability_alerts.disable": "HIGH",
 }
 
 
