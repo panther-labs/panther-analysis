@@ -16,48 +16,33 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Login Event
+  - Name: Normal Login Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
+        "id": { "applicationName": "login" },
         "kind": "admin#reports#activity",
         "type": "account_warning",
         "name": "login_success",
-        "parameters": {
-          "affected_email_address": "bobert@ext.runpanther.io"
-        },
+        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
       }
-  -
-    Name: Account Warning Not For Suspicious Login
+  - Name: Account Warning Not For Suspicious Login
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
+        "id": { "applicationName": "login" },
         "kind": "admin#reports#activity",
         "type": "account_warning",
         "name": "account_disabled_spamming",
-        "parameters": {
-          "affected_email_address": "bobert@ext.runpanther.io"
-        },
+        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
       }
-  -
-    Name: Account Warning For Suspicious Login
+  - Name: Account Warning For Suspicious Login
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
+        "id": { "applicationName": "login" },
         "kind": "admin#reports#activity",
         "type": "account_warning",
         "name": "suspicious_login",
-        "parameters": {
-          "affected_email_address": "bobert@ext.runpanther.io"
-        },
+        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
       }

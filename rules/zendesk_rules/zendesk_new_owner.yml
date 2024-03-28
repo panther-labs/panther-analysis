@@ -18,8 +18,7 @@ Reference: https://support.zendesk.com/hc/en-us/articles/4408822084634-Changing-
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Zendesk - Owner Changed
+  - Name: Zendesk - Owner Changed
     ExpectedResult: true
     Log:
       {
@@ -35,10 +34,9 @@ Tests:
         "change_description": "Owner changed from Bob Cat to Mountain Lion",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Admin Role Assigned
+  - Name: Zendesk - Admin Role Assigned
     ExpectedResult: false
     Log:
       {
@@ -54,5 +52,5 @@ Tests:
         "change_description": "Role changed from End User to Administrator",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }

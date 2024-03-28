@@ -21,8 +21,7 @@ Runbook: >
   Delete the unapproved network admin policy.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
-  -
-    Name: IAM Policy Does Not Grant VPC Permissions
+  - Name: IAM Policy Does Not Grant VPC Permissions
     ExpectedResult: true
     Resource:
       {
@@ -31,31 +30,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-              {
-                  "RoleId": "ABCDEFGHIJKLMNOP",
-                  "RoleName": "Example-Role"
-              }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [{\n            \"Effect\": \"Allow\",\n            \"Resource\": [\n                \"arn:aws:s3:::bucket-name\"\n            ],\n            \"Action\": [\n                \"s3:PutObject\",\n                \"s3:GetObject\",\n                \"s3:GetObjectVersion\"\n            ]\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: IAM Policy Does Grant VPC Write Permissions
+  - Name: IAM Policy Does Grant VPC Write Permissions
     ExpectedResult: false
     Resource:
       {
@@ -64,31 +55,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-              {
-                  "RoleId": "ABCDEFGHIJKLMNOP",
-                  "RoleName": "Example-Role"
-              }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [{\n            \"Effect\": \"Allow\",\n            \"Resource\": [\n                \"arn:aws:vpc:::vpc-name\"\n            ],\n            \"Action\": [\n                \"ec2:PutNetworkACL\",\n                \"ec2:DeleteSecurityGroup\",\n                \"ec2:DescribeVpcs\"\n            ]\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: IAM Policy Grants Only VPC Read Permissions
+  - Name: IAM Policy Grants Only VPC Read Permissions
     ExpectedResult: true
     Resource:
       {
@@ -97,31 +80,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-              {
-                  "RoleId": "ABCDEFGHIJKLMNOP",
-                  "RoleName": "Example-Role"
-              }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [{\n            \"Effect\": \"Allow\",\n            \"Resource\": [\n                \"arn:aws:vpc:::vpc-name\"\n            ],\n            \"Action\": [\n                \"ec2:DescribeNetworkAcls\",\n                \"ec2:DescribeSecurityGroups\",\n                \"ec2:DescribeVpcs\"\n            ]\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  - 
-    Name: AWS Service-Linked Policy Network Admin
+  - Name: AWS Service-Linked Policy Network Admin
     ExpectedResult: true
     Resource:
       {
@@ -129,16 +104,18 @@ Tests:
         "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
         "AttachmentCount": 1,
         "DefaultVersionId": "v6",
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
-              "RoleName": "AWSServiceRoleForAmazonGuardDuty"
-            }
-          ],
-          "PolicyUsers": null
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [
+                {
+                  "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+                  "RoleName": "AWSServiceRoleForAmazonGuardDuty",
+                },
+              ],
+            "PolicyUsers": null,
+          },
         "Id": "ANPPPPPPPPPPPPPPPPPPP",
         "IsAttachable": true,
         "Name": "AmazonGuardDutyServiceRolePolicy",
@@ -149,10 +126,9 @@ Tests:
         "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonGuardDutyServiceRolePolicy",
         "ResourceType": "AWS.IAM.Policy",
         "TimeCreated": "2017-11-28T20:12:59Z",
-        "UpdateDate": "2023-03-05T19:19:19Z"
+        "UpdateDate": "2023-03-05T19:19:19Z",
       }
-  - 
-    Name: AWS Service Linked Role Policy Admin
+  - Name: AWS Service Linked Role Policy Admin
     ExpectedResult: true
     Resource:
       {
@@ -160,16 +136,18 @@ Tests:
         "Arn": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
         "AttachmentCount": 1,
         "DefaultVersionId": "v4",
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "AROOOOOOOOOOOOOOOOOOO",
-              "RoleName": "AWSServiceRoleForAmazonElasticFileSystem"
-            }
-          ],
-          "PolicyUsers": null
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [
+                {
+                  "RoleId": "AROOOOOOOOOOOOOOOOOOO",
+                  "RoleName": "AWSServiceRoleForAmazonElasticFileSystem",
+                },
+              ],
+            "PolicyUsers": null,
+          },
         "Id": "ANPPPPPPPPPPPPPPPPPPP",
         "IsAttachable": true,
         "Name": "AmazonElasticFileSystemServiceRolePolicy",
@@ -180,6 +158,5 @@ Tests:
         "ResourceId": "arn:aws:iam::123456789012:policy/aws-service-role/AmazonElasticFileSystemServiceRolePolicy",
         "ResourceType": "AWS.IAM.Policy",
         "TimeCreated": "2019-11-05T16:52:41Z",
-        "UpdateDate": "2023-03-10T19:19:19Z"
+        "UpdateDate": "2023-03-10T19:19:19Z",
       }
-

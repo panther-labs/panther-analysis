@@ -13,49 +13,48 @@ Reports:
     - TA0010:T1567
 Severity: High
 Description: >
-  A user's download activity has altered significantly. 
+  A user's download activity has altered significantly.
 Reference: https://developer.box.com/guides/events/shield-alert-events/
 Runbook: >
-   Investigate whether this was triggered by expected user download activity.
+  Investigate whether this was triggered by expected user download activity.
 SummaryAttributes:
   - event_type
   - ip_address
 Tests:
-  -
-    Name: Regular Event
+  - Name: Regular Event
     ExpectedResult: false
     Log:
       {
         "type": "event",
-        "additional_details": {
-          '"key": "value"'
-        },
-        "created_by": {
-          "id": "12345678",
-          "type": "user",
-          "login": "cat@example",
-          "name": "Bob Cat"
-        },
+        "additional_details": { '"key": "value"' },
+        "created_by":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "cat@example",
+            "name": "Bob Cat",
+          },
         "event_type": "DELETE",
       }
-  -
-    Name: Anomalous Download Event
+  - Name: Anomalous Download Event
     ExpectedResult: true
     Log:
       {
         "type": "event",
         "additional_details": '{"shield_alert":{"rule_category":"Anomalous Download","risk_score":77,"alert_summary":{"description":"Significant increase in download content week over week, 9999% (50.00 MB) more than last week."}}}',
-        "created_by": {
-          "id": "12345678",
-          "type": "user",
-          "login": "bob@example",
-          "name": "Bob Cat"
-        },
+        "created_by":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "bob@example",
+            "name": "Bob Cat",
+          },
         "event_type": "SHIELD_ALERT",
-        "source": {
-          "id": "12345678",
-          "type": "user",
-          "login": "bob@example",
-          "name": "Bob Cat",
-        }
-      } 
+        "source":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "bob@example",
+            "name": "Bob Cat",
+          },
+      }

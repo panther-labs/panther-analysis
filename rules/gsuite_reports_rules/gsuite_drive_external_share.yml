@@ -11,7 +11,7 @@ Tags:
   - Configuration Required
   - Collection:Data from Information Repositories
 Reports:
-   MITRE ATT&CK:
+  MITRE ATT&CK:
     - TA0009:T1213
 Severity: High
 Description: An employee shared a sensitive file externally with another organization
@@ -20,253 +20,133 @@ Runbook: >
   If the share was legitimate, add to the EXCEPTION_PATTERNS in the detection.
 Reference: https://support.google.com/docs/answer/2494822?hl=en&co=GENIE.Platform%3DiOS&sjid=864417124752637253-EU
 Tests:
-  -
-    Name: Dangerous Share of Known Document with a Missing User
+  - Name: Dangerous Share of Known Document with a Missing User
     LogType: GSuite.Reports
     ExpectedResult: true
     Log:
       {
-         "kind":"admin#reports#activity",
-         "id":{
-            "time":"2020-09-07T15:50:49.617Z",
-            "uniqueQualifier":"1111111111111111111",
-            "applicationName":"drive",
-            "customerId":"C010qxghg"
-         },
-         "actor":{
-            "email":"example@acme.com",
-            "profileId":"1111111111111111111"
-         },
-         "events":[
+        "kind": "admin#reports#activity",
+        "id":
+          {
+            "time": "2020-09-07T15:50:49.617Z",
+            "uniqueQualifier": "1111111111111111111",
+            "applicationName": "drive",
+            "customerId": "C010qxghg",
+          },
+        "actor":
+          { "email": "example@acme.com", "profileId": "1111111111111111111" },
+        "events":
+          [
             {
-               "type":"acl_change",
-               "name":"change_user_access",
-               "parameters":[
+              "type": "acl_change",
+              "name": "change_user_access",
+              "parameters":
+                [
+                  { "name": "primary_event", "boolValue": true },
+                  { "name": "visibility_change", "value": "external" },
+                  { "name": "target_user", "value": "outside@acme.com" },
+                  { "name": "old_visibility", "value": "private" },
+                  { "name": "doc_id", "value": "1111111111111111111" },
+                  { "name": "doc_type", "value": "document" },
+                  { "name": "doc_title", "value": "Document Title Primary" },
+                  { "name": "visibility", "value": "shared_externally" },
                   {
-                     "name":"primary_event",
-                     "boolValue":true
+                    "name": "originating_app_id",
+                    "value": "1111111111111111111",
                   },
-                  {
-                     "name":"visibility_change",
-                     "value":"external"
-                  },
-                  {
-                     "name":"target_user",
-                     "value":"outside@acme.com"
-                  },
-                  {
-                     "name":"old_visibility",
-                     "value":"private"
-                  },
-                  {
-                     "name":"doc_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"doc_type",
-                     "value":"document"
-                  },
-                  {
-                     "name":"doc_title",
-                     "value":"Document Title Primary"
-                  },
-                  {
-                     "name":"visibility",
-                     "value":"shared_externally"
-                  },
-                  {
-                     "name":"originating_app_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"owner_is_shared_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"owner_is_team_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"old_value",
-                     "multiValue":[
-                        "none"
-                     ]
-                  },
-                  {
-                     "name":"new_value",
-                     "multiValue":[
-                        "can_edit"
-                     ]
-                  }
-               ]
-            }
-         ]
+                  { "name": "owner_is_shared_drive", "boolValue": false },
+                  { "name": "owner_is_team_drive", "boolValue": false },
+                  { "name": "old_value", "multiValue": ["none"] },
+                  { "name": "new_value", "multiValue": ["can_edit"] },
+                ],
+            },
+          ],
       }
-  -
-    Name: Dangerous Share of Unknown Document
+  - Name: Dangerous Share of Unknown Document
     LogType: GSuite.Reports
     ExpectedResult: true
     Log:
       {
-         "kind":"admin#reports#activity",
-         "id":{
-            "time":"2020-09-07T15:50:49.617Z",
-            "uniqueQualifier":"1111111111111111111",
-            "applicationName":"drive",
-            "customerId":"C010qxghg"
-         },
-         "actor":{
-            "email":"example@acme.com",
-            "profileId":"1111111111111111111"
-         },
-         "events":[
+        "kind": "admin#reports#activity",
+        "id":
+          {
+            "time": "2020-09-07T15:50:49.617Z",
+            "uniqueQualifier": "1111111111111111111",
+            "applicationName": "drive",
+            "customerId": "C010qxghg",
+          },
+        "actor":
+          { "email": "example@acme.com", "profileId": "1111111111111111111" },
+        "events":
+          [
             {
-               "type":"acl_change",
-               "name":"change_user_access",
-               "parameters":[
+              "type": "acl_change",
+              "name": "change_user_access",
+              "parameters":
+                [
+                  { "name": "primary_event", "boolValue": true },
+                  { "name": "visibility_change", "value": "external" },
+                  { "name": "target_user", "value": "alice@external.com" },
+                  { "name": "old_visibility", "value": "private" },
+                  { "name": "doc_id", "value": "1111111111111111111" },
+                  { "name": "doc_type", "value": "document" },
+                  { "name": "doc_title", "value": "Untitled document" },
+                  { "name": "visibility", "value": "shared_externally" },
                   {
-                     "name":"primary_event",
-                     "boolValue":true
+                    "name": "originating_app_id",
+                    "value": "1111111111111111111",
                   },
-                  {
-                     "name":"visibility_change",
-                     "value":"external"
-                  },
-                  {
-                     "name":"target_user",
-                     "value":"alice@external.com"
-                  },
-                  {
-                     "name":"old_visibility",
-                     "value":"private"
-                  },
-                  {
-                     "name":"doc_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"doc_type",
-                     "value":"document"
-                  },
-                  {
-                     "name":"doc_title",
-                     "value":"Untitled document"
-                  },
-                  {
-                     "name":"visibility",
-                     "value":"shared_externally"
-                  },
-                  {
-                     "name":"originating_app_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"owner_is_shared_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"owner_is_team_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"old_value",
-                     "multiValue":[
-                        "none"
-                     ]
-                  },
-                  {
-                     "name":"new_value",
-                     "multiValue":[
-                        "can_edit"
-                     ]
-                  }
-               ]
-            }
-         ]
+                  { "name": "owner_is_shared_drive", "boolValue": false },
+                  { "name": "owner_is_team_drive", "boolValue": false },
+                  { "name": "old_value", "multiValue": ["none"] },
+                  { "name": "new_value", "multiValue": ["can_edit"] },
+                ],
+            },
+          ],
       }
-  -
-    Name: Share Allowed by Exception
+  - Name: Share Allowed by Exception
     LogType: GSuite.Reports
     ExpectedResult: false
     Log:
       {
-         "kind":"admin#reports#activity",
-         "id":{
-            "time":"2020-07-07T15:50:49.617Z",
-            "uniqueQualifier":"1111111111111111111",
-            "applicationName":"drive",
-            "customerId":"C010qxghg"
-         },
-         "actor":{
-            "email":"alice@acme.com",
-            "profileId":"1111111111111111111"
-         },
-         "events":[
+        "kind": "admin#reports#activity",
+        "id":
+          {
+            "time": "2020-07-07T15:50:49.617Z",
+            "uniqueQualifier": "1111111111111111111",
+            "applicationName": "drive",
+            "customerId": "C010qxghg",
+          },
+        "actor":
+          { "email": "alice@acme.com", "profileId": "1111111111111111111" },
+        "events":
+          [
             {
-               "type":"acl_change",
-               "name":"change_user_access",
-               "parameters":[
+              "type": "acl_change",
+              "name": "change_user_access",
+              "parameters":
+                [
+                  { "name": "primary_event", "boolValue": true },
+                  { "name": "billable", "boolValue": true },
+                  { "name": "visibility_change", "value": "external" },
+                  { "name": "target_domain", "value": "acme.com" },
+                  { "name": "old_visibility", "value": "private" },
+                  { "name": "doc_id", "value": "1111111111111111111" },
+                  { "name": "doc_type", "value": "document" },
+                  { "name": "doc_title", "value": "Document Title Pattern" },
+                  { "name": "visibility", "value": "shared_externally" },
                   {
-                     "name":"primary_event",
-                     "boolValue":true
+                    "name": "originating_app_id",
+                    "value": "1111111111111111111",
                   },
+                  { "name": "owner_is_shared_drive", "boolValue": false },
+                  { "name": "owner_is_team_drive", "boolValue": false },
+                  { "name": "old_value", "multiValue": ["none"] },
                   {
-                     "name":"billable",
-                     "boolValue":true
+                    "name": "new_value",
+                    "multiValue": ["people_within_domain_with_link"],
                   },
-                  {
-                     "name":"visibility_change",
-                     "value":"external"
-                  },
-                  {
-                     "name":"target_domain",
-                     "value":"acme.com"
-                  },
-                  {
-                     "name":"old_visibility",
-                     "value":"private"
-                  },
-                  {
-                     "name":"doc_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"doc_type",
-                     "value":"document"
-                  },
-                  {
-                     "name":"doc_title",
-                     "value":"Document Title Pattern"
-                  },
-                  {
-                     "name":"visibility",
-                     "value":"shared_externally"
-                  },
-                  {
-                     "name":"originating_app_id",
-                     "value":"1111111111111111111"
-                  },
-                  {
-                     "name":"owner_is_shared_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"owner_is_team_drive",
-                     "boolValue":false
-                  },
-                  {
-                     "name":"old_value",
-                     "multiValue":[
-                        "none"
-                     ]
-                  },
-                  {
-                     "name":"new_value",
-                     "multiValue":[
-                        "people_within_domain_with_link"
-                     ]
-                  }
-               ]
-            }
-         ]
+                ],
+            },
+          ],
       }

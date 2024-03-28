@@ -18,34 +18,29 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Other Admin Action
+  - Name: Other Admin Action
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "admin",
-        },
+        "id": { "applicationName": "admin" },
         "type": "DELEGATED_ADMIN_SETTINGS",
         "name": "RENAME_ROLE",
-        "parameters": {
-          "ROLE_NAME": "Vault Admins",
-          "USER_EMAIL": "homer.simpson@example.com"
-        },
+        "parameters":
+          {
+            "ROLE_NAME": "Vault Admins",
+            "USER_EMAIL": "homer.simpson@example.com",
+          },
       }
-  -
-    Name: Privileges Assigned
+  - Name: Privileges Assigned
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "admin",
-        },
+        "id": { "applicationName": "admin" },
         "type": "DELEGATED_ADMIN_SETTINGS",
         "name": "ASSIGN_ROLE",
-        "parameters": {
-          "ROLE_NAME": "Vault Admins",
-          "USER_EMAIL": "homer.simpson@example.com"
-        },
+        "parameters":
+          {
+            "ROLE_NAME": "Vault Admins",
+            "USER_EMAIL": "homer.simpson@example.com",
+          },
       }
-

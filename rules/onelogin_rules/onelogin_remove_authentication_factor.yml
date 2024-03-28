@@ -1,5 +1,5 @@
 AnalysisType: rule
-Filename: onelogin_remove_authentication_factor.py 
+Filename: onelogin_remove_authentication_factor.py
 RuleID: "OneLogin.AuthFactorRemoved"
 DisplayName: "OneLogin Authentication Factor Removed"
 Enabled: true
@@ -26,30 +26,27 @@ SummaryAttributes:
   - authentication_factor_description
   - otp_device_name
 Tests:
-  -
-    Name: User removed an auth factor
+  - Name: User removed an auth factor
     LogType: OneLogin.Events
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "172",
-        'actor_user_id': 123456,
-        'actor_user_name': 'Bob Cat',
-        'user_id': 123456,
-        'user_name': 'Bob Cat',
-        'authentication_factor_description': '2FA Name'
+        "event_type_id": "172",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "authentication_factor_description": "2FA Name",
       }
-  - 
-    Name: User deactivated an otp deice
+  - Name: User deactivated an otp deice
     LogType: OneLogin.Events
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "24",
-        'actor_user_id': 123456,
-        'actor_user_name': 'Bob Cat',
-        'user_id': 123456,
-        'user_name': 'Bob Cat',
-        'otp_device_name': '2FA Name'
+        "event_type_id": "24",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "otp_device_name": "2FA Name",
       }
-      

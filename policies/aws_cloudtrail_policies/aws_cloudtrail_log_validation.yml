@@ -24,23 +24,18 @@ Runbook: >
 Reference: >
   https://amzn.to/2MMgE6W
 Tests:
-  -
-    Name: Log File Validation Disabled
+  - Name: Log File Validation Disabled
     ExpectedResult: false
     Resource:
       {
-        "EventSelectors": [
-          {
-            "DataResources": [
-              {
-                "Type": "AWS::S3::Object",
-                "Values": null
-              }
-            ],
-            "IncludeManagementEvents": false,
-            "ReadWriteType": "All"
-          }
-        ],
+        "EventSelectors":
+          [
+            {
+              "DataResources": [{ "Type": "AWS::S3::Object", "Values": null }],
+              "IncludeManagementEvents": false,
+              "ReadWriteType": "All",
+            },
+          ],
         "CloudWatchLogsLogGroupArn": null,
         "CloudWatchLogsRoleArn": null,
         "HasCustomEventSelectors": true,
@@ -56,43 +51,39 @@ Tests:
         "SnsTopicARN": null,
         "SnsTopicName": null,
         "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
-        "Status": {
-          "IsLogging": true,
-          "LatestCloudWatchLogsDeliveryError": null,
-          "LatestCloudWatchLogsDeliveryTime": null,
-          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
-          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
-          "LatestDeliveryError": null,
-          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestDigestDeliveryError": null,
-          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
-          "LatestNotificationError": null,
-          "LatestNotificationTime": null,
-          "StartLoggingTime": "2019-01-01T00:00:00Z",
-          "StopLoggingTime": null,
-          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
-        }
+        "Status":
+          {
+            "IsLogging": true,
+            "LatestCloudWatchLogsDeliveryError": null,
+            "LatestCloudWatchLogsDeliveryTime": null,
+            "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
+            "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
+            "LatestDeliveryError": null,
+            "LatestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestDigestDeliveryError": null,
+            "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestNotificationAttemptSucceeded": null,
+            "LatestNotificationAttemptTime": null,
+            "LatestNotificationError": null,
+            "LatestNotificationTime": null,
+            "StartLoggingTime": "2019-01-01T00:00:00Z",
+            "StopLoggingTime": null,
+            "TimeLoggingStarted": "2019-01-01T00:00:00Z",
+            "TimeLoggingStopped": null,
+          },
       }
-  -
-    Name: Log File Validation Enabled
+  - Name: Log File Validation Enabled
     ExpectedResult: true
     Resource:
       {
-        "EventSelectors": [
-          {
-            "DataResources": [
-              {
-                "Type": "AWS::S3::Object",
-                "Values": null
-              }
-            ],
-            "IncludeManagementEvents": false,
-            "ReadWriteType": "All"
-          }
-        ],
+        "EventSelectors":
+          [
+            {
+              "DataResources": [{ "Type": "AWS::S3::Object", "Values": null }],
+              "IncludeManagementEvents": false,
+              "ReadWriteType": "All",
+            },
+          ],
         "CloudWatchLogsLogGroupArn": null,
         "CloudWatchLogsRoleArn": null,
         "HasCustomEventSelectors": true,
@@ -108,43 +99,39 @@ Tests:
         "SnsTopicARN": null,
         "SnsTopicName": null,
         "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
-        "Status": {
-          "IsLogging": true,
-          "LatestCloudWatchLogsDeliveryError": null,
-          "LatestCloudWatchLogsDeliveryTime": null,
-          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
-          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
-          "LatestDeliveryError": null,
-          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestDigestDeliveryError": null,
-          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
-          "LatestNotificationError": null,
-          "LatestNotificationTime": null,
-          "StartLoggingTime": "2019-01-01T00:00:00Z",
-          "StopLoggingTime": null,
-          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
-        }
+        "Status":
+          {
+            "IsLogging": true,
+            "LatestCloudWatchLogsDeliveryError": null,
+            "LatestCloudWatchLogsDeliveryTime": null,
+            "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
+            "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
+            "LatestDeliveryError": null,
+            "LatestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestDigestDeliveryError": null,
+            "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestNotificationAttemptSucceeded": null,
+            "LatestNotificationAttemptTime": null,
+            "LatestNotificationError": null,
+            "LatestNotificationTime": null,
+            "StartLoggingTime": "2019-01-01T00:00:00Z",
+            "StopLoggingTime": null,
+            "TimeLoggingStarted": "2019-01-01T00:00:00Z",
+            "TimeLoggingStopped": null,
+          },
       }
-  -
-    Name: Log File Validation Not Set
+  - Name: Log File Validation Not Set
     ExpectedResult: false
     Resource:
       {
-        "EventSelectors": [
-          {
-            "DataResources": [
-              {
-                "Type": "AWS::S3::Object",
-                "Values": null
-              }
-            ],
-            "IncludeManagementEvents": false,
-            "ReadWriteType": "All"
-          }
-        ],
+        "EventSelectors":
+          [
+            {
+              "DataResources": [{ "Type": "AWS::S3::Object", "Values": null }],
+              "IncludeManagementEvents": false,
+              "ReadWriteType": "All",
+            },
+          ],
         "CloudWatchLogsLogGroupArn": null,
         "CloudWatchLogsRoleArn": null,
         "HasCustomEventSelectors": true,
@@ -160,23 +147,24 @@ Tests:
         "SnsTopicARN": null,
         "SnsTopicName": null,
         "TrailARN": "arn:aws:cloudtrail:us-west-2:112233445566:trail/cloudtrail-name",
-        "Status": {
-          "IsLogging": true,
-          "LatestCloudWatchLogsDeliveryError": null,
-          "LatestCloudWatchLogsDeliveryTime": null,
-          "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
-          "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
-          "LatestDeliveryError": null,
-          "LatestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestDigestDeliveryError": null,
-          "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
-          "LatestNotificationAttemptSucceeded": null,
-          "LatestNotificationAttemptTime": null,
-          "LatestNotificationError": null,
-          "LatestNotificationTime": null,
-          "StartLoggingTime": "2019-01-01T00:00:00Z",
-          "StopLoggingTime": null,
-          "TimeLoggingStarted": "2019-01-01T00:00:00Z",
-          "TimeLoggingStopped": null
-        }
+        "Status":
+          {
+            "IsLogging": true,
+            "LatestCloudWatchLogsDeliveryError": null,
+            "LatestCloudWatchLogsDeliveryTime": null,
+            "LatestDeliveryAttemptSucceeded": "2019-01-01T00:00:00Z",
+            "LatestDeliveryAttemptTime": "2019-01-01T00:00:00Z",
+            "LatestDeliveryError": null,
+            "LatestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestDigestDeliveryError": null,
+            "LatestDigestDeliveryTime": "2019-01-01T00:00:00Z",
+            "LatestNotificationAttemptSucceeded": null,
+            "LatestNotificationAttemptTime": null,
+            "LatestNotificationError": null,
+            "LatestNotificationTime": null,
+            "StartLoggingTime": "2019-01-01T00:00:00Z",
+            "StopLoggingTime": null,
+            "TimeLoggingStarted": "2019-01-01T00:00:00Z",
+            "TimeLoggingStopped": null,
+          },
       }

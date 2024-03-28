@@ -14,45 +14,30 @@ Description: A GSuite user was denied login access several times
 Reference: https://support.google.com/a/answer/7281227?hl=en&sjid=864417124752637253-EU
 Runbook: Analyze the IP they came from and actions taken before/after.
 Tests:
-  -
-    Name: Failed Login
+  - Name: Failed Login
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
-        "actor": {
-          "email": "some.user@somedomain.com",
-        },
+        "id": { "applicationName": "login" },
+        "actor": { "email": "some.user@somedomain.com" },
         "type": "login",
         "name": "login_failure",
       }
-  -
-    Name: Successful Login
+  - Name: Successful Login
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
-        "actor": {
-          "email": "some.user@somedomain.com",
-        },
+        "id": { "applicationName": "login" },
+        "actor": { "email": "some.user@somedomain.com" },
         "type": "login",
         "name": "login_success",
       }
-  -
-    Name: Other Login Event
+  - Name: Other Login Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
-        "actor": {
-          "email": "some.user@somedomain.com",
-        },
+        "id": { "applicationName": "login" },
+        "actor": { "email": "some.user@somedomain.com" },
         "type": "login",
         "name": "login_verification",
       }

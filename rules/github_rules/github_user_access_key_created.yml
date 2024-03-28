@@ -15,8 +15,7 @@ Reference: https://docs.github.com/en/authentication/connecting-to-github-with-s
 Severity: Info
 Description: Detects when a GitHub user access key is created.
 Tests:
-  -
-    Name: GitHub - User Access Key Created
+  - Name: GitHub - User Access Key Created
     ExpectedResult: true
     Log:
       {
@@ -24,10 +23,9 @@ Tests:
         "action": "public_key.create",
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
-  -
-    Name: GitHub - User Access Key Deleted
+  - Name: GitHub - User Access Key Deleted
     ExpectedResult: false
     Log:
       {
@@ -35,5 +33,5 @@ Tests:
         "action": "public_key.delete",
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }

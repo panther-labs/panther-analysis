@@ -23,192 +23,168 @@ Runbook: >
   Remove any IP permissions allowing inbound traffic from Public IP space to the CDE.
 Reference: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
 Tests:
-  -
-    Name: In Scope Security Group Restricts Access
+  - Name: In Scope Security Group Restricts Access
     ExpectedResult: true
     Resource:
       {
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "10.0.1.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "0.0.0.0/0",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "10.0.1.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "0.0.0.0/0", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "pci"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "pci" },
+        "VpcId": "vpc-abc111222333",
       }
-  -
-    Name: In Scope Security Group Does Not Restrict Access
+  - Name: In Scope Security Group Does Not Restrict Access
     ExpectedResult: false
     Resource:
       {
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "1.1.1.1/32",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.0.2.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "1.1.1.1/32", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.0.2.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "pci"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "pci" },
+        "VpcId": "vpc-abc111222333",
       }
-  -
-    Name: Out Of Scope Security Group Does Not Restrict Access
+  - Name: Out Of Scope Security Group Does Not Restrict Access
     ExpectedResult: true
     Resource:
       {
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.0.2.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.0.2.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.0.2.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.0.2.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "dmz"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "dmz" },
+        "VpcId": "vpc-abc111222333",
       }

@@ -25,44 +25,49 @@ SummaryAttributes:
   - awsRegion
   - p_any_aws_arns
 Tests:
-  -
-    Name: Manual Snapshot Created
+  - Name: Manual Snapshot Created
     ExpectedResult: true
     Log:
       {
         "eventVersion": "1.08",
-        "userIdentity": {
+        "userIdentity":
+          {
             "type": "AssumedRole",
             "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
             "arn": "arn:aws:sts::123456789012:assumed-role/ARole/fake.user",
             "accountId": "123456789012",
             "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
-            "sessionContext": {
-                "sessionIssuer": {
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
                     "type": "Role",
                     "principalId": "AROA2DFDF0C1FDFCAD2B2",
                     "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
                     "accountId": "123456789012",
-                    "userName": "ARole"
-                },
+                    "userName": "ARole",
+                  },
                 "webIdFederationData": {},
-                "attributes": {
+                "attributes":
+                  {
                     "creationDate": "2023-12-08T13:53:48Z",
-                    "mfaAuthenticated": "false"
-                }
-            }
-        },
+                    "mfaAuthenticated": "false",
+                  },
+              },
+          },
         "eventTime": "2023-12-08T14:55:19Z",
         "eventSource": "rds.amazonaws.com",
         "eventName": "CreateDBSnapshot",
         "awsRegion": "us-west-2",
         "sourceIPAddress": "1.2.3.4",
         "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.1.2 (+https://www.terraform.io) terraform-provider-aws/3.76.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go/1.44.157 (go1.19.3; darwin; arm64) 68319f60-9dec-43b2-9702-de3a08c9d8a3 HashiCorp-terraform-exec/0.17.3",
-        "requestParameters": {
+        "requestParameters":
+          {
             "dBInstanceIdentifier": "terraform-20231208145149286600000001",
-            "dBSnapshotIdentifier": "exfiltration"
-        },
-        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+          },
+        "responseElements":
+          {
             "allocatedStorage": 10,
             "instanceCreateTime": "Dec 8, 2023 2:55:17 PM",
             "dBSnapshotIdentifier": "exfiltration",
@@ -86,8 +91,8 @@ Tests:
             "snapshotType": "manual",
             "engineVersion": "8.0.33",
             "licenseModel": "general-public-license",
-            "snapshotTarget": "region"
-        },
+            "snapshotTarget": "region",
+          },
         "requestID": "e5fd8d41-db7c-45df-a21a-f9cff8c19755",
         "eventID": "c665b42c-89b4-4072-ad71-0f9c8d50f649",
         "readOnly": false,
@@ -95,50 +100,56 @@ Tests:
         "managementEvent": true,
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
-        "tlsDetails": {
+        "tlsDetails":
+          {
             "tlsVersion": "TLSv1.3",
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
-        }
-    }
-  -
-    Name: Public Snapshot Created
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
+          },
+      }
+  - Name: Public Snapshot Created
     ExpectedResult: true
     Log:
       {
         "eventVersion": "1.08",
-        "userIdentity": {
+        "userIdentity":
+          {
             "type": "AssumedRole",
             "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
             "arn": "arn:aws:sts::123456789012:assumed-role/ARole/fake.user",
             "accountId": "123456789012",
             "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
-            "sessionContext": {
-                "sessionIssuer": {
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
                     "type": "Role",
                     "principalId": "AROA2DFDF0C1FDFCAD2B2",
                     "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
                     "accountId": "123456789012",
-                    "userName": "ARole"
-                },
+                    "userName": "ARole",
+                  },
                 "webIdFederationData": {},
-                "attributes": {
+                "attributes":
+                  {
                     "creationDate": "2023-12-08T13:53:48Z",
-                    "mfaAuthenticated": "false"
-                }
-            }
-        },
+                    "mfaAuthenticated": "false",
+                  },
+              },
+          },
         "eventTime": "2023-12-08T14:55:19Z",
         "eventSource": "rds.amazonaws.com",
         "eventName": "CreateDBSnapshot",
         "awsRegion": "us-west-2",
         "sourceIPAddress": "1.2.3.4",
         "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.1.2 (+https://www.terraform.io) terraform-provider-aws/3.76.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go/1.44.157 (go1.19.3; darwin; arm64) 68319f60-9dec-43b2-9702-de3a08c9d8a3 HashiCorp-terraform-exec/0.17.3",
-        "requestParameters": {
+        "requestParameters":
+          {
             "dBInstanceIdentifier": "terraform-20231208145149286600000001",
-            "dBSnapshotIdentifier": "exfiltration"
-        },
-        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+          },
+        "responseElements":
+          {
             "allocatedStorage": 10,
             "instanceCreateTime": "Dec 8, 2023 2:55:17 PM",
             "dBSnapshotIdentifier": "exfiltration",
@@ -162,8 +173,8 @@ Tests:
             "snapshotType": "public",
             "engineVersion": "8.0.33",
             "licenseModel": "general-public-license",
-            "snapshotTarget": "region"
-        },
+            "snapshotTarget": "region",
+          },
         "requestID": "e5fd8d41-db7c-45df-a21a-f9cff8c19755",
         "eventID": "c665b42c-89b4-4072-ad71-0f9c8d50f649",
         "readOnly": false,
@@ -171,50 +182,56 @@ Tests:
         "managementEvent": true,
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
-        "tlsDetails": {
+        "tlsDetails":
+          {
             "tlsVersion": "TLSv1.3",
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
-        }
-    }
-  -
-    Name: Automated Snapshot Created
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
+          },
+      }
+  - Name: Automated Snapshot Created
     ExpectedResult: false
     Log:
       {
         "eventVersion": "1.08",
-        "userIdentity": {
+        "userIdentity":
+          {
             "type": "AssumedRole",
             "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
             "arn": "arn:aws:sts::123456789012:assumed-role/ARole/fake.user",
             "accountId": "123456789012",
             "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
-            "sessionContext": {
-                "sessionIssuer": {
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
                     "type": "Role",
                     "principalId": "AROA2DFDF0C1FDFCAD2B2",
                     "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
                     "accountId": "123456789012",
-                    "userName": "ARole"
-                },
+                    "userName": "ARole",
+                  },
                 "webIdFederationData": {},
-                "attributes": {
+                "attributes":
+                  {
                     "creationDate": "2023-12-08T13:53:48Z",
-                    "mfaAuthenticated": "false"
-                }
-            }
-        },
+                    "mfaAuthenticated": "false",
+                  },
+              },
+          },
         "eventTime": "2023-12-08T14:55:19Z",
         "eventSource": "rds.amazonaws.com",
         "eventName": "CreateDBSnapshot",
         "awsRegion": "us-west-2",
         "sourceIPAddress": "1.2.3.4",
         "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.1.2 (+https://www.terraform.io) terraform-provider-aws/3.76.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go/1.44.157 (go1.19.3; darwin; arm64) 68319f60-9dec-43b2-9702-de3a08c9d8a3 HashiCorp-terraform-exec/0.17.3",
-        "requestParameters": {
+        "requestParameters":
+          {
             "dBInstanceIdentifier": "terraform-20231208145149286600000001",
-            "dBSnapshotIdentifier": "exfiltration"
-        },
-        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+          },
+        "responseElements":
+          {
             "allocatedStorage": 10,
             "instanceCreateTime": "Dec 8, 2023 2:55:17 PM",
             "dBSnapshotIdentifier": "exfiltration",
@@ -238,8 +255,8 @@ Tests:
             "snapshotType": "automated",
             "engineVersion": "8.0.33",
             "licenseModel": "general-public-license",
-            "snapshotTarget": "region"
-        },
+            "snapshotTarget": "region",
+          },
         "requestID": "e5fd8d41-db7c-45df-a21a-f9cff8c19755",
         "eventID": "c665b42c-89b4-4072-ad71-0f9c8d50f649",
         "readOnly": false,
@@ -247,50 +264,56 @@ Tests:
         "managementEvent": true,
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
-        "tlsDetails": {
+        "tlsDetails":
+          {
             "tlsVersion": "TLSv1.3",
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
-        }
-    }
-  -
-    Name: Awsbackup Snapshot Created
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
+          },
+      }
+  - Name: Awsbackup Snapshot Created
     ExpectedResult: false
     Log:
       {
         "eventVersion": "1.08",
-        "userIdentity": {
+        "userIdentity":
+          {
             "type": "AssumedRole",
             "principalId": "AROA2DFDF0C1FDFCAD2B2:fake.user",
             "arn": "arn:aws:sts::123456789012:assumed-role/ARole/fake.user",
             "accountId": "123456789012",
             "accessKeyId": "ASIAFFA5AFEC02FFCD8ED",
-            "sessionContext": {
-                "sessionIssuer": {
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
                     "type": "Role",
                     "principalId": "AROA2DFDF0C1FDFCAD2B2",
                     "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
                     "accountId": "123456789012",
-                    "userName": "ARole"
-                },
+                    "userName": "ARole",
+                  },
                 "webIdFederationData": {},
-                "attributes": {
+                "attributes":
+                  {
                     "creationDate": "2023-12-08T13:53:48Z",
-                    "mfaAuthenticated": "false"
-                }
-            }
-        },
+                    "mfaAuthenticated": "false",
+                  },
+              },
+          },
         "eventTime": "2023-12-08T14:55:19Z",
         "eventSource": "rds.amazonaws.com",
         "eventName": "CreateDBSnapshot",
         "awsRegion": "us-west-2",
         "sourceIPAddress": "1.2.3.4",
         "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.1.2 (+https://www.terraform.io) terraform-provider-aws/3.76.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go/1.44.157 (go1.19.3; darwin; arm64) 68319f60-9dec-43b2-9702-de3a08c9d8a3 HashiCorp-terraform-exec/0.17.3",
-        "requestParameters": {
+        "requestParameters":
+          {
             "dBInstanceIdentifier": "terraform-20231208145149286600000001",
-            "dBSnapshotIdentifier": "exfiltration"
-        },
-        "responseElements": {
+            "dBSnapshotIdentifier": "exfiltration",
+          },
+        "responseElements":
+          {
             "allocatedStorage": 10,
             "instanceCreateTime": "Dec 8, 2023 2:55:17 PM",
             "dBSnapshotIdentifier": "exfiltration",
@@ -314,8 +337,8 @@ Tests:
             "snapshotType": "awsbackup",
             "engineVersion": "8.0.33",
             "licenseModel": "general-public-license",
-            "snapshotTarget": "region"
-        },
+            "snapshotTarget": "region",
+          },
         "requestID": "e5fd8d41-db7c-45df-a21a-f9cff8c19755",
         "eventID": "c665b42c-89b4-4072-ad71-0f9c8d50f649",
         "readOnly": false,
@@ -323,9 +346,10 @@ Tests:
         "managementEvent": true,
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
-        "tlsDetails": {
+        "tlsDetails":
+          {
             "tlsVersion": "TLSv1.3",
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com"
-        }
-    }
+            "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
+          },
+      }

@@ -20,76 +20,74 @@ SummaryAttributes:
   - name
   - action
 Tests:
-  -
-    Name: AWS command executed on MacOS
+  - Name: AWS command executed on MacOS
     ExpectedResult: false
     Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
-        "decorations": {
-          "platform": "darwin"
-        },
-        "columns": {
-          "command": "aws sts get-caller-identity",
-          "uid": "1000",
-          "directory": "/home/ubuntu",
-          "username": "ubuntu"
-        }
+        "decorations": { "platform": "darwin" },
+        "columns":
+          {
+            "command": "aws sts get-caller-identity",
+            "uid": "1000",
+            "directory": "/home/ubuntu",
+            "username": "ubuntu",
+          },
       }
-  -
-    Name: AWS command executed
+  - Name: AWS command executed
     ExpectedResult: true
     Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
-        "columns": {
-          "command": "aws s3 ls",
-          "uid": "1000",
-          "directory": "/home/ubuntu",
-          "username": "ubuntu"
-        }
+        "columns":
+          {
+            "command": "aws s3 ls",
+            "uid": "1000",
+            "directory": "/home/ubuntu",
+            "username": "ubuntu",
+          },
       }
-  -
-    Name: Tail command executed
+  - Name: Tail command executed
     ExpectedResult: false
     Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
-        "columns": {
-          "command": "tail -f /var/log/all",
-          "uid": "1000",
-          "directory": "/home/ubuntu",
-          "username": "ubuntu"
-        }
+        "columns":
+          {
+            "command": "tail -f /var/log/all",
+            "uid": "1000",
+            "directory": "/home/ubuntu",
+            "username": "ubuntu",
+          },
       }
-  -
-    Name: Command with quote executed
+  - Name: Command with quote executed
     ExpectedResult: false
     Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
-        "columns": {
-          "command": "git commit -m 'all done'",
-          "uid": "1000",
-          "directory": "/home/ubuntu",
-          "username": "ubuntu"
-        }
+        "columns":
+          {
+            "command": "git commit -m 'all done'",
+            "uid": "1000",
+            "directory": "/home/ubuntu",
+            "username": "ubuntu",
+          },
       }
-  -
-    Name: Invalid command ignored
+  - Name: Invalid command ignored
     ExpectedResult: false
     Log:
       {
         "name": "pack_incident-response_shell_history",
         "action": "added",
-        "columns": {
-          "command": "unopened '",
-          "uid": "1000",
-          "directory": "/home/ubuntu",
-          "username": "ubuntu"
-        }
+        "columns":
+          {
+            "command": "unopened '",
+            "uid": "1000",
+            "directory": "/home/ubuntu",
+            "username": "ubuntu",
+          },
       }

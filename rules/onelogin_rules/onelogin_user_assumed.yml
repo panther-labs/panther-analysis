@@ -21,25 +21,23 @@ SummaryAttributes:
   - user_name
   - user_id
 Tests:
-  -
-    Name: User assumed their own account
+  - Name: User assumed their own account
     ExpectedResult: false
     Log:
       {
-        'event_type_id': "240",
-        'actor_user_id': 123456,
-        'actor_user_name': 'Bob Cat',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
+        "event_type_id": "240",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
       }
-  - 
-    Name: User assumed another user's account
+  - Name: User assumed another user's account
     ExpectedResult: true
     Log:
       {
-        'event_type_id': "3",
-        'actor_user_id': 654321,
-        'actor_user_name': 'Mountain Lion',
-        'user_id': 123456,
-        'user_name': 'Bob Cat'
+        "event_type_id": "3",
+        "actor_user_id": 654321,
+        "actor_user_name": "Mountain Lion",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
       }

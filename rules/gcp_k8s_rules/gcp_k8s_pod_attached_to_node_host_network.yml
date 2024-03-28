@@ -9,56 +9,52 @@ Tags:
   - GCP
   - Optional
 Severity: Medium
-Description: This detection monitor for the creation of pods which are attached to the host's network. 
-  This allows a pod to listen to all network traffic for all deployed computer on that particular node and 
-  communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in 
+Description:
+  This detection monitor for the creation of pods which are attached to the host's network.
+  This allows a pod to listen to all network traffic for all deployed computer on that particular node and
+  communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in
   arguments or connections.
 Reports:
-    MITRE ATT&CK:
-        - TA0004:T1611  # Escape to Host
-Runbook: Investigate a reason of creating a pod which is attached to the host's network. Advise that it is discouraged 
+  MITRE ATT&CK:
+    - TA0004:T1611 # Escape to Host
+Runbook:
+  Investigate a reason of creating a pod which is attached to the host's network. Advise that it is discouraged
   practice. Create ticket if appropriate.
 Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
 Tests:
-  -
-    Name: triggers
+  - Name: triggers
     ExpectedResult: true
     Log:
       {
-        "authorizationInfo": [
+        "authorizationInfo":
+          [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/nginx-test",
+            },
+          ],
+        "protoPayload":
           {
-            "granted": true,
-            "permission": "io.k8s.core.v1.pods.create",
-            "resource": "core/v1/namespaces/default/pods/nginx-test"
-          }
-        ],
-        "protoPayload": {
-          "methodName": "io.k8s.core.v1.pods.create",
-          "request": {
-            "spec": {
-              "hostNetwork": true,
-            }
-          }
-        }
+            "methodName": "io.k8s.core.v1.pods.create",
+            "request": { "spec": { "hostNetwork": true } },
+          },
       }
-  -
-    Name: ignore
+  - Name: ignore
     ExpectedResult: false
     Log:
       {
-        "authorizationInfo": [
+        "authorizationInfo":
+          [
+            {
+              "granted": true,
+              "permission": "io.k8s.core.v1.pods.create",
+              "resource": "core/v1/namespaces/default/pods/nginx-test",
+            },
+          ],
+        "protoPayload":
           {
-            "granted": true,
-            "permission": "io.k8s.core.v1.pods.create",
-            "resource": "core/v1/namespaces/default/pods/nginx-test"
-          }
-        ],
-        "protoPayload": {
-          "methodName": "io.k8s.core.v1.pods.create",
-          "request": {
-            "spec": {
-              "hostNetwork": false,
-            }
-          }
-        }
+            "methodName": "io.k8s.core.v1.pods.create",
+            "request": { "spec": { "hostNetwork": false } },
+          },
       }

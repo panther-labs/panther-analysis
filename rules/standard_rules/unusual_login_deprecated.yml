@@ -3,7 +3,7 @@ Filename: unusual_login_deprecated.py
 RuleID: "Standard.UnusualLogin"
 DisplayName: "--DEPRECATED-- Unusual Login"
 # This rule is disabled by default because it makes API calls to a third party geolocation
-# service. At high rates of log processing, the third party service may throttle requests 
+# service. At high rates of log processing, the third party service may throttle requests
 # unless you buy a subscription to it, which may cause this rule to no longer work.
 Enabled: false
 LogTypes:
@@ -33,490 +33,412 @@ Reference: https://d3fend.mitre.org/technique/d3f:UserGeolocationLogonPatternAna
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: AWS.CloudTrail - Successful Login - New Geo - Exceeds History Length of 5
+  - Name: AWS.CloudTrail - Successful Login - New Geo - Exceeds History Length of 5
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCityNew",
-                          "country": "UnitTestCountry",
-                          "hostname": "somedomain.com",
-                          "org": "Some Org"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                          {
-                          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
-                          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
-                          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
-                          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
-                          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
-                          }
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "userName": "some_user"
-          },
-          "eventName": "ConsoleLogin",
-          "sourceIPAddress": "111.111.111.111",
-          "responseElements": {
-              "ConsoleLogin": "Success"
-          },
-          "p_parse_time": "2021-06-04 10:02:33.650807",
-          "p_event_time": "2021-06-04 09:59:53.650807",
-          "p_log_type": "AWS.CloudTrail"
-      }  
-  -
-    Name: AWS.CloudTrail - Successful Login - New Geo - Does Not Exceed History Length of 5
-    ExpectedResult: true
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCityNew",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                       {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "userName": "some_user"
-          },
-          "eventName": "ConsoleLogin",
-          "sourceIPAddress": "111.111.111.111",
-          "responseElements": {
-              "ConsoleLogin": "Success"
-          },
-          "p_parse_time": "2021-06-04 10:02:33.650807",
-          "p_event_time": "2021-06-04 09:59:53.650807",
-          "p_log_type": "AWS.CloudTrail"
-      }  
-  -
-    Name: AWS.CloudTrail - Successful Login - New Geo - No History
-    ExpectedResult: false
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCityNew",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "userName": "some_user"
-          },
-          "eventName": "ConsoleLogin",
-          "sourceIPAddress": "111.111.111.111",
-          "responseElements": {
-              "ConsoleLogin": "Success"
-          },
-          "p_parse_time": "2021-06-04 10:02:33.650807",
-          "p_event_time": "2021-06-04 09:59:53.650807",
-          "p_log_type": "AWS.CloudTrail"
-      }
-  -
-    Name: AWS.CloudTrail - Successful Login - New Geo
-    ExpectedResult: true
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCityNew",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                         {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "userName": "some_user"
-          },
-          "eventName": "ConsoleLogin",
-          "sourceIPAddress": "111.111.111.111",
-          "responseElements": {
-              "ConsoleLogin": "Success"
-          },
-          "p_parse_time": "2021-06-04 10:02:33.650807",
-          "p_event_time": "2021-06-04 09:59:53.650807",
-          "p_log_type": "AWS.CloudTrail"
-      }  
-    
-
-
-
-  -
-    Name: AWS.CloudTrail - Successful Login - Existing Geo
-    ExpectedResult: false
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                          {
-                          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
-                          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
-                          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
-                          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
-                          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
-                          }
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "userName": "some_user"
-          },
-          "eventName": "ConsoleLogin",
-          "sourceIPAddress": "111.111.111.111",
-          "responseElements": {
-              "ConsoleLogin": "Success"
-          },
-          "p_log_type": "AWS.CloudTrail"
-      }  
-  -
-    Name: AWS.CloudTrail - Failed Login
-    ExpectedResult: false
-    Log:
-      {
-          "userIdentity": {
-              "type": "IAMUser",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:user/tester",
-              "accountId": "123456789012",
-              "userName": "tester"
-          },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "signin.amazonaws.com",
-          "eventName": "ConsoleLogin",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "Mozilla",
-          "requestParameters": null,
-          "responseElements": {
-              "ConsoleLogin": "Failure"
-          },
-          "additionalEventData": {
-              "LoginTo": "https://console.aws.amazon.com/console/",
-              "MobileVersion": "No",
-              "MFAUsed": "No"
-          },
-          "eventID": "1",
-          "eventType": "AwsConsoleSignIn",
-          "recipientAccountId": "123456789012",
-          "p_event_time": "2021-06-04 09:59:53.650807",
-          "p_log_type": "AWS.CloudTrail"
-      }  
-  -
-    Name: GSuite - New Geo - No History
-    ExpectedResult: false
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-        'actor': {
-          'email': 'nick@acme.io',
-          'profileId': '11949494222400014922'
-        },
-        'id': {'applicationName': 'login'},
-        'ipAddress': '111.111.111.111',
-        'events': [
           {
-            'type': 'login',
-            'name': 'login_success'
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry",
+          "hostname": "somedomain.com",
+          "org": "Some Org"
           }
-        ],
-        'p_parse_time': '2021-06-04 10:02:33.650807',
-        'p_event_time': '2021-06-04 09:59:53.650807',
-        'p_log_type': 'GSuite.Reports'
-      }
-  -
-    Name: GSuite - New Geo
-    ExpectedResult: true
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
       - objectName: get_string_set
         returnValue: >-
-                         {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+          {
+          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+          }
       - objectName: put_string_set
         returnValue: >-
     Log:
       {
-        'actor': {
-          'email': 'nick@acme.io',
-          'profileId': '11949494222400014922'
-        },
-        'id': {'applicationName': 'login'},
-        'ipAddress': '111.111.111.111',
-        'events': [
+        "userIdentity": { "type": "IAMUser", "userName": "some_user" },
+        "eventName": "ConsoleLogin",
+        "sourceIPAddress": "111.111.111.111",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: AWS.CloudTrail - Successful Login - New Geo - Does Not Exceed History Length of 5
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
           {
-            'type': 'login',
-            'name': 'login_success'
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry"
           }
-        ],
-        'p_parse_time': '2021-06-04 10:02:33.650807',
-        'p_event_time': '2021-06-04 09:59:53.650807',
-        'p_log_type': 'GSuite.Reports'
+      - objectName: get_string_set
+        returnValue: >-
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "userIdentity": { "type": "IAMUser", "userName": "some_user" },
+        "eventName": "ConsoleLogin",
+        "sourceIPAddress": "111.111.111.111",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "AWS.CloudTrail",
       }
-  - 
-    Name: Okta - Non Login
+  - Name: AWS.CloudTrail - Successful Login - New Geo - No History
+    ExpectedResult: false
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "userIdentity": { "type": "IAMUser", "userName": "some_user" },
+        "eventName": "ConsoleLogin",
+        "sourceIPAddress": "111.111.111.111",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: AWS.CloudTrail - Successful Login - New Geo
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "userIdentity": { "type": "IAMUser", "userName": "some_user" },
+        "eventName": "ConsoleLogin",
+        "sourceIPAddress": "111.111.111.111",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "AWS.CloudTrail",
+      }
+
+  - Name: AWS.CloudTrail - Successful Login - Existing Geo
+    ExpectedResult: false
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+          {
+          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+          }
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "userIdentity": { "type": "IAMUser", "userName": "some_user" },
+        "eventName": "ConsoleLogin",
+        "sourceIPAddress": "111.111.111.111",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: AWS.CloudTrail - Failed Login
     ExpectedResult: false
     Log:
       {
-        "eventType": "logout",
-        "p_log_type": "Okta.SystemLog",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": { "ConsoleLogin": "Failure" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "AWS.CloudTrail",
       }
-  -
-    Name: Okta - Failed Login
+  - Name: GSuite - New Geo - No History
+    ExpectedResult: false
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "actor":
+          { "email": "nick@acme.io", "profileId": "11949494222400014922" },
+        "id": { "applicationName": "login" },
+        "ipAddress": "111.111.111.111",
+        "events": [{ "type": "login", "name": "login_success" }],
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "GSuite.Reports",
+      }
+  - Name: GSuite - New Geo
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "actor":
+          { "email": "nick@acme.io", "profileId": "11949494222400014922" },
+        "id": { "applicationName": "login" },
+        "ipAddress": "111.111.111.111",
+        "events": [{ "type": "login", "name": "login_success" }],
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+        "p_log_type": "GSuite.Reports",
+      }
+  - Name: Okta - Non Login
+    ExpectedResult: false
+    Log: { "eventType": "logout", "p_log_type": "Okta.SystemLog" }
+  - Name: Okta - Failed Login
     ExpectedResult: false
     Log:
       {
-        "actor": {
+        "actor":
+          {
             "alternateId": "admin",
             "displayName": "unknown",
             "id": "unknown",
-            "type": "User"
-        },
-        "client": {
-            "ipAddress": "redacted",
-        },
+            "type": "User",
+          },
+        "client": { "ipAddress": "redacted" },
         "eventType": "user.session.start",
-        "outcome": {
-            "reason": "VERIFICATION_ERROR",
-            "result": "FAILURE"
-        },
+        "outcome": { "reason": "VERIFICATION_ERROR", "result": "FAILURE" },
         "p_log_type": "Okta.SystemLog",
       }
-  -
-    Name: OneLogin - Non Login
+  - Name: OneLogin - Non Login
     ExpectedResult: false
-    Log:
-      {
-        "event_type_id": 8,
-        "p_log_type": "OneLogin.Events",
-      }
-  -
-    Name: Zendesk - Successful Login - No History
+    Log: { "event_type_id": 8, "p_log_type": "OneLogin.Events" }
+  - Name: Zendesk - Successful Login - No History
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Sign in",
-        "actor_id": 123,
-        "actor_name": "Bob Cat",
-        "source_id": 123,
-        "source_type": "user",
-        "source_label": "Bob Cat",
-        "action": "login",
-        "change_description": "Successful sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-        'p_parse_time': '2021-06-04 10:02:33.650807',
-        'p_event_time': '2021-06-04 09:59:53.650807'
-      }
-  -
-    Name: Zendesk - Successful Login 
-    ExpectedResult: true
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                        {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Sign in",
-        "actor_id": 123,
-        "actor_name": "Bob Cat",
-        "source_id": 123,
-        "source_type": "user",
-        "source_label": "Bob Cat",
-        "action": "login",
-        "change_description": "Successful sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-        'p_parse_time': '2021-06-04 10:02:33.650807',
-        'p_event_time': '2021-06-04 09:59:53.650807'
-      }
-  -
-    Name: GSuite - Successful Login Event
-    ExpectedResult: true
-    Mocks:
-      - objectName: geoinfo_from_ip
-        returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
-      - objectName: get_string_set
-        returnValue: >-
-                        {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
-      - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-        'actor': {
-          'email': 'nick@acme.io',
-          'profileId': '11949494222400014922'
-        },
-        'id': {'applicationName': 'login'},
-        'ipAddress': '127.0.0.1',
-        'events': [
           {
-            'type': 'login',
-            'name': 'login_success'
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
           }
-        ],
-        'p_log_type': 'GSuite.Reports',
-        'p_parse_time': '2021-06-04 10:02:33.650807',
-        'p_event_time': '2021-06-04 09:59:53.650807'
+      - objectName: get_string_set
+        returnValue: >-
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Sign in",
+        "actor_id": 123,
+        "actor_name": "Bob Cat",
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "login",
+        "change_description": "Successful sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
       }
-  -
-    Name: Zoom - Successful Login Event - No History
+  - Name: Zendesk - Successful Login
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "id": 123456789123,
+        "action_label": "Sign in",
+        "actor_id": 123,
+        "actor_name": "Bob Cat",
+        "source_id": 123,
+        "source_type": "user",
+        "source_label": "Bob Cat",
+        "action": "login",
+        "change_description": "Successful sign-in using Zendesk password from https://myzendesk.zendesk.com/access/login",
+        "ip_address": "127.0.0.1",
+        "created_at": "2021-05-28T18:39:50Z",
+        "p_log_type": "Zendesk.Audit",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  - Name: GSuite - Successful Login Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: geoinfo_from_ip
+        returnValue: >-
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
+      - objectName: get_string_set
+        returnValue: >-
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+      - objectName: put_string_set
+        returnValue: >-
+    Log:
+      {
+        "actor":
+          { "email": "nick@acme.io", "profileId": "11949494222400014922" },
+        "id": { "applicationName": "login" },
+        "ipAddress": "127.0.0.1",
+        "events": [{ "type": "login", "name": "login_success" }],
+        "p_log_type": "GSuite.Reports",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  - Name: Zoom - Successful Login Event - No History
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
       - objectName: get_string_set
         returnValue: >-
       - objectName: put_string_set
         returnValue: >-
     Log:
       {
-      "email": "homer.simpson@example.io",
-      "time": "2021-10-22 10:39:04Z",
-      "type": "Sign in",
-      "ip_address": "1.1.1.1",
-      "client_type": "Browser",
-      'p_log_type': 'Zoom.Activity',
-      'p_parse_time': '2021-06-04 10:02:33.650807',
-      'p_event_time': '2021-06-04 09:59:53.650807'
-    }
-  -
-    Name: Zoom - Successful Login Event
+        "email": "homer.simpson@example.io",
+        "time": "2021-10-22 10:39:04Z",
+        "type": "Sign in",
+        "ip_address": "1.1.1.1",
+        "client_type": "Browser",
+        "p_log_type": "Zoom.Activity",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  - Name: Zoom - Successful Login Event
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                          {
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCity1",
-                          "country": "UnitTestCountry"
-                          }
+          {
+          "region": "UnitTestRegion",
+          "city": "UnitTestCity1",
+          "country": "UnitTestCountry"
+          }
       - objectName: get_string_set
         returnValue: >-
-                         {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
+          {"UnitTestRegion:UnitTestCity": "2021-06-04 09:59:53.650801"}
       - objectName: put_string_set
         returnValue: >-
     Log:
       {
-      "email": "homer.simpson@example.io",
-      "time": "2021-10-22 10:39:04Z",
-      "type": "Sign in",
-      "ip_address": "1.1.1.1",
-      "client_type": "Browser",
-      'p_log_type': 'Zoom.Activity',
-      'p_parse_time': '2021-06-04 10:02:33.650807',
-      'p_event_time': '2021-06-04 09:59:53.650807'
-    }
-  -
-    Name: 1Password - Regular Login
+        "email": "homer.simpson@example.io",
+        "time": "2021-10-22 10:39:04Z",
+        "type": "Sign in",
+        "ip_address": "1.1.1.1",
+        "client_type": "Browser",
+        "p_log_type": "Zoom.Activity",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }
+  - Name: 1Password - Regular Login
     ExpectedResult: true
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                        {
-                        "ip": "111.111.111.111",
-                        "region": "UnitTestRegion",
-                        "city": "UnitTestCityNew",
-                        "country": "UnitTestCountry",
-                        "hostname": "somedomain.com",
-                        "org": "Some Org"
-                        }
+          {
+          "ip": "111.111.111.111",
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry",
+          "hostname": "somedomain.com",
+          "org": "Some Org"
+          }
       - objectName: get_string_set
         returnValue: >-
-                        {
-                        "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
-                        "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
-                        "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
-                        "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
-                        "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
-                        }
+          {
+          "UnitTestRegion:UnitTestCity1": "2021-06-04 09:59:53.650801",
+          "UnitTestRegion:UnitTestCity2": "2021-06-04 09:59:53.650802",
+          "UnitTestRegion:UnitTestCity3": "2021-06-04 09:59:53.650803",
+          "UnitTestRegion:UnitTestCity4": "2021-06-04 09:59:53.650804",
+          "UnitTestRegion:UnitTestCity5": "2021-06-04 09:59:53.650805"
+          }
       - objectName: put_string_set
         returnValue: >-
     Log:
@@ -527,63 +449,64 @@ Tests:
         "category": "success",
         "type": "credentials_ok",
         "country": "US",
-        "target_user": {
-          "email": "homer@springfield.gov",
-          "name": "Homer Simpson",
-          "uuid": "1234"
-        },
-        "client": {
-          "app_name": "1Password Browser Extension",
-          "app_version": "20184",
-          "ip_address": "1.1.1.1",
-          "os_name": "Solaris",
-          "os_version": "10",
-          "platform_name": "Chrome",
-          "platform_version": "96.0.4664.55"
-        },
+        "target_user":
+          {
+            "email": "homer@springfield.gov",
+            "name": "Homer Simpson",
+            "uuid": "1234",
+          },
+        "client":
+          {
+            "app_name": "1Password Browser Extension",
+            "app_version": "20184",
+            "ip_address": "1.1.1.1",
+            "os_name": "Solaris",
+            "os_version": "10",
+            "platform_name": "Chrome",
+            "platform_version": "96.0.4664.55",
+          },
         "p_log_type": "OnePassword.SignInAttempt",
         "p_parse_time": "2021-06-04 10:02:33.650807",
-        "p_event_time": "2021-06-04 09:59:53.650807"
-
+        "p_event_time": "2021-06-04 09:59:53.650807",
       }
-  -
-    Name: 1Password - Failed Login
+  - Name: 1Password - Failed Login
     ExpectedResult: false
     Mocks:
       - objectName: geoinfo_from_ip
         returnValue: >-
-                          {
-                          "ip": "111.111.111.111",
-                          "region": "UnitTestRegion",
-                          "city": "UnitTestCityNew",
-                          "country": "UnitTestCountry",
-                          "hostname": "somedomain.com",
-                          "org": "Some Org"
-                          }
+          {
+          "ip": "111.111.111.111",
+          "region": "UnitTestRegion",
+          "city": "UnitTestCityNew",
+          "country": "UnitTestCountry",
+          "hostname": "somedomain.com",
+          "org": "Some Org"
+          }
     Log:
       {
-      "uuid": "1234",
-      "session_uuid": "5678",
-      "timestamp": "2021-12-03 19:52:52",
-      "category": "credentials_failed",
-      "type": "password_secret_bad",
-      "country": "US",
-      "target_user": {
-        "email": "homer@springfield.gov",
-        "name": "Homer Simpson",
-        "uuid": "1234"
-      },
-      "client": {
-        "app_name": "1Password Browser Extension",
-        "app_version": "20184",
-        "ip_address": "111.111.111.111",
-        "os_name": "Solaris",
-        "os_version": "10",
-        "platform_name": "Chrome",
-        "platform_version": "96.0.4664.55"
-      },
-      "p_log_type": "OnePassword.SignInAttempt",
-      "p_parse_time": "2021-06-04 10:02:33.650807",
-      "p_event_time": "2021-06-04 09:59:53.650807"
-
-    }
+        "uuid": "1234",
+        "session_uuid": "5678",
+        "timestamp": "2021-12-03 19:52:52",
+        "category": "credentials_failed",
+        "type": "password_secret_bad",
+        "country": "US",
+        "target_user":
+          {
+            "email": "homer@springfield.gov",
+            "name": "Homer Simpson",
+            "uuid": "1234",
+          },
+        "client":
+          {
+            "app_name": "1Password Browser Extension",
+            "app_version": "20184",
+            "ip_address": "111.111.111.111",
+            "os_name": "Solaris",
+            "os_version": "10",
+            "platform_name": "Chrome",
+            "platform_version": "96.0.4664.55",
+          },
+        "p_log_type": "OnePassword.SignInAttempt",
+        "p_parse_time": "2021-06-04 10:02:33.650807",
+        "p_event_time": "2021-06-04 09:59:53.650807",
+      }

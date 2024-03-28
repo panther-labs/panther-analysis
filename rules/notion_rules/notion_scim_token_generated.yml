@@ -4,7 +4,7 @@ RuleID: "Notion.Workspace.SCIM.Token.Generated"
 DisplayName: "Notion SCIM Token Generated"
 Enabled: true
 LogTypes:
-    - Notion.AuditLogs
+  - Notion.AuditLogs
 Tags:
   - Notion
   - Application Security
@@ -16,47 +16,47 @@ Threshold: 1
 Runbook: Possible Initial Access. Follow up with the Notion User to determine if this was done for a valid business reason.
 Reference: https://www.notion.so/help/provision-users-and-groups-with-scim
 Tests:
-    - ExpectedResult: false
-      Log:
+  - ExpectedResult: false
+    Log:
+      {
+        "event":
           {
-            "event": {
-              "id": "...",
-              "timestamp": "2023-06-02T20:16:41.217Z",
-              "workspace_id": "123",
-              "actor": {
-                  "id": "..",
-                  "object": "user",
-                  "type": "person",
-                  "person": {
-                      "email": "homer.simpson@yourcompany.io"
-                  }
+            "id": "...",
+            "timestamp": "2023-06-02T20:16:41.217Z",
+            "workspace_id": "123",
+            "actor":
+              {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": { "email": "homer.simpson@yourcompany.io" },
               },
-              "ip_address": "...",
-              "platform": "mac-desktop",
-              "type": "workspace.content_exported",
-              "workspace.content_exported": {}
-            }
-         }
-      Name: other event
-    - ExpectedResult: true
-      Log:
+            "ip_address": "...",
+            "platform": "mac-desktop",
+            "type": "workspace.content_exported",
+            "workspace.content_exported": {},
+          },
+      }
+    Name: other event
+  - ExpectedResult: true
+    Log:
+      {
+        "event":
           {
-            "event": {
-              "id": "...",
-              "timestamp": "2023-06-02T20:21:01.873Z",
-              "workspace_id": "123",
-              "actor": {
-                  "id": "..",
-                  "object": "user",
-                  "type": "person",
-                  "person": {
-                      "email": "homer.simpson@yourcompany.com"
-                  }
+            "id": "...",
+            "timestamp": "2023-06-02T20:21:01.873Z",
+            "workspace_id": "123",
+            "actor":
+              {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": { "email": "homer.simpson@yourcompany.com" },
               },
-              "ip_address": "...",
-              "platform": "mac-desktop",
-              "type": "workspace.scim_token_generated",
-              "workspace.scim_token_generated": {}
-            }
-          }
-      Name: Token Generated
+            "ip_address": "...",
+            "platform": "mac-desktop",
+            "type": "workspace.scim_token_generated",
+            "workspace.scim_token_generated": {},
+          },
+      }
+    Name: Token Generated

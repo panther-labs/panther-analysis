@@ -23,8 +23,7 @@ Runbook: >
   be re-created with the --enable-termination-protection flag.
 Reference: https://amzn.to/2HAdfny
 Tests:
-  -
-    Name: Termination Protection Enabled
+  - Name: Termination Protection Enabled
     ExpectedResult: true
     Resource:
       {
@@ -37,50 +36,47 @@ Tests:
         "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "ResourceType": "AWS.CloudFormation.Stack",
         "TimeCreated": "2019-01-01T00:00:00Z",
-        "Capabilities": [
-          "CAPABILITY_NAMED_IAM"
-        ],
+        "Capabilities": ["CAPABILITY_NAMED_IAM"],
         "ChangeSetId": null,
         "DeletionTime": null,
         "Description": "IAM Admin role",
         "DisableRollback": false,
-        "DriftInformation": {
-          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
-          "StackDriftStatus": "DRIFTED"
-        },
+        "DriftInformation":
+          {
+            "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+            "StackDriftStatus": "DRIFTED",
+          },
         "EnableTerminationProtection": true,
         "LastUpdatedTime": "2019-01-01T00:00:00Z",
         "NotificationARNs": [],
         "Outputs": null,
-        "Parameters": [
-          {
-            "ParameterKey": "MaxSessionDurationSec",
-            "ParameterValue": "28800",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          },
-          {
-            "ParameterKey": "Prefix",
-            "ParameterValue": "Dev",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          }
-        ],
+        "Parameters":
+          [
+            {
+              "ParameterKey": "MaxSessionDurationSec",
+              "ParameterValue": "28800",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+            {
+              "ParameterKey": "Prefix",
+              "ParameterValue": "Dev",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+          ],
         "ParentId": null,
         "RoleARN": "arn:aws:iam::123456789012:role/CFNServiceRole",
-        "RollbackConfiguration": {
-          "MonitoringTimeInMinutes": null,
-          "RollbackTriggers": []
-        },
+        "RollbackConfiguration":
+          { "MonitoringTimeInMinutes": null, "RollbackTriggers": [] },
         "RootId": null,
         "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "StackStatus": "UPDATE_COMPLETE",
         "StackStatusReason": null,
         "TimeoutInMinutes": null,
-        "Drifts": []
+        "Drifts": [],
       }
-  -
-    Name: Termination Protection Not Specified
+  - Name: Termination Protection Not Specified
     ExpectedResult: false
     Resource:
       {
@@ -93,50 +89,47 @@ Tests:
         "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "ResourceType": "AWS.CloudFormation.Stack",
         "TimeCreated": "2019-01-01T00:00:00Z",
-        "Capabilities": [
-          "CAPABILITY_NAMED_IAM"
-        ],
+        "Capabilities": ["CAPABILITY_NAMED_IAM"],
         "ChangeSetId": null,
         "DeletionTime": null,
         "Description": "IAM Admin role",
         "DisableRollback": false,
-        "DriftInformation": {
-          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
-          "StackDriftStatus": "DRIFTED"
-        },
+        "DriftInformation":
+          {
+            "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+            "StackDriftStatus": "DRIFTED",
+          },
         "EnableTerminationProtection": null,
         "LastUpdatedTime": "2019-01-01T00:00:00Z",
         "NotificationARNs": [],
         "Outputs": null,
-        "Parameters": [
-          {
-            "ParameterKey": "MaxSessionDurationSec",
-            "ParameterValue": "28800",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          },
-          {
-            "ParameterKey": "Prefix",
-            "ParameterValue": "Dev",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          }
-        ],
+        "Parameters":
+          [
+            {
+              "ParameterKey": "MaxSessionDurationSec",
+              "ParameterValue": "28800",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+            {
+              "ParameterKey": "Prefix",
+              "ParameterValue": "Dev",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+          ],
         "ParentId": null,
         "RoleARN": null,
-        "RollbackConfiguration": {
-          "MonitoringTimeInMinutes": null,
-          "RollbackTriggers": []
-        },
+        "RollbackConfiguration":
+          { "MonitoringTimeInMinutes": null, "RollbackTriggers": [] },
         "RootId": null,
         "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "StackStatus": "UPDATE_COMPLETE",
         "StackStatusReason": null,
         "TimeoutInMinutes": null,
-        "Drifts": []
+        "Drifts": [],
       }
-  -
-    Name: Termination Protection Not Specified On Nested Stack
+  - Name: Termination Protection Not Specified On Nested Stack
     ExpectedResult: true
     Resource:
       {
@@ -149,45 +142,43 @@ Tests:
         "ResourceID": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "ResourceType": "AWS.CloudFormation.Stack",
         "TimeCreated": "2019-01-01T00:00:00Z",
-        "Capabilities": [
-          "CAPABILITY_NAMED_IAM"
-        ],
+        "Capabilities": ["CAPABILITY_NAMED_IAM"],
         "ChangeSetId": null,
         "DeletionTime": null,
         "Description": "IAM Admin role",
         "DisableRollback": false,
-        "DriftInformation": {
-          "LastCheckTimestamp": "2019-01-01T00:00:00Z",
-          "StackDriftStatus": "DRIFTED"
-        },
+        "DriftInformation":
+          {
+            "LastCheckTimestamp": "2019-01-01T00:00:00Z",
+            "StackDriftStatus": "DRIFTED",
+          },
         "EnableTerminationProtection": null,
         "LastUpdatedTime": "2019-01-01T00:00:00Z",
         "NotificationARNs": [],
         "Outputs": null,
-        "Parameters": [
-          {
-            "ParameterKey": "MaxSessionDurationSec",
-            "ParameterValue": "28800",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          },
-          {
-            "ParameterKey": "Prefix",
-            "ParameterValue": "Dev",
-            "ResolvedValue": null,
-            "UsePreviousValue": null
-          }
-        ],
+        "Parameters":
+          [
+            {
+              "ParameterKey": "MaxSessionDurationSec",
+              "ParameterValue": "28800",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+            {
+              "ParameterKey": "Prefix",
+              "ParameterValue": "Dev",
+              "ResolvedValue": null,
+              "UsePreviousValue": null,
+            },
+          ],
         "ParentId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12",
         "RoleARN": null,
-        "RollbackConfiguration": {
-          "MonitoringTimeInMinutes": null,
-          "RollbackTriggers": []
-        },
+        "RollbackConfiguration":
+          { "MonitoringTimeInMinutes": null, "RollbackTriggers": [] },
         "RootId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/12",
         "StackId": "arn:aws:cloudformation:us-west-2:123456789012:stack/iam-roles/11",
         "StackStatus": "UPDATE_COMPLETE",
         "StackStatusReason": null,
         "TimeoutInMinutes": null,
-        "Drifts": []
+        "Drifts": [],
       }

@@ -35,9 +35,9 @@ cd panther-analysis
 
 Each folder contains detections in the format of `<log/resource type>_<detecton_type>`:
 
-* **Rules** analyze [logs](https://docs.panther.com/data-onboarding/supported-logs) to detect malicious activity
-* **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
-* **Scheduled rules** analyze output of periodically executed [SQL queries](https://docs.panther.com/data-analytics/example-queries)
+- **Rules** analyze [logs](https://docs.panther.com/data-onboarding/supported-logs) to detect malicious activity
+- **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
+- **Scheduled rules** analyze output of periodically executed [SQL queries](https://docs.panther.com/data-analytics/example-queries)
 
 ## Configure your Python environment
 
@@ -48,7 +48,7 @@ echo "export PATH=\"$PATH:$PYTHON_BIN_PATH\"" >> ~/.zprofile
 . ~/.zprofile
 make install
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
-````
+```
 
 ### Install dependencies and run your first test
 
@@ -95,7 +95,7 @@ pipenv run panther_analysis_tool zip [-h] [--path PATH] [--out OUT]
 
 ```bash
 pipenv run panther_analysis_tool zip --filter Severity=Critical
-````
+```
 
 ### Upload detections to your Panther instance
 
@@ -121,7 +121,7 @@ In addition to this command, you will need to install these vscode add-ons:
 1. [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 2. [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
 3. [Pylint](https://marketplace.visualstudio.com/items?itemName=ms-python.pylint)
-4.  [Bandit](https://marketplace.visualstudio.com/items?itemName=nwgh.bandit)
+4. [Bandit](https://marketplace.visualstudio.com/items?itemName=nwgh.bandit)
 5. [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 
 You will also need Visual Studio's [code](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line) configured to open Visual Studio from your CLI.
@@ -135,7 +135,7 @@ You will also need Visual Studio's [code](https://code.visualstudio.com/docs/set
 1. Installs JSONSchema support for panther-analysis rules in the `rules/` directory. This brings IDE hints about which fields are necessary for rules/my-rule.yml files.
 1. Configures `Black` and `isort` settings for auto-formatting on save (thus reducing the need to run `make fmt` on all files)
 1. Configures `pylint` settings for linting when changes are made
-    - Ensure that `"pylint.lintOnChange": true` is present in the User-level VSCode settings (`Cmd+Shift+P` -> `Preferences: Open Settings (JSON)`)
+   - Ensure that `"pylint.lintOnChange": true` is present in the User-level VSCode settings (`Cmd+Shift+P` -> `Preferences: Open Settings (JSON)`)
 1. Configures `Bandit` settings for linting when files are opened
 
 ```shell
@@ -146,11 +146,11 @@ user@computer:panther-analysis: make vscode-config
 
 To use Docker, you can run some of the `make` commands provided to run common panther-analysis workflows. Start by building the container, then you can run any command you want from the image created. If you would like to run a different command, follow the pattern in the Makefile.
 
-  ``` bash
-  make docker-build
-  make docker-test
-  make docker-lint
-  ```
+```bash
+make docker-build
+make docker-test
+make docker-lint
+```
 
 Please note that you only need to rebuild the container if you update your `Pipfile.lock` changes, because the dependencies are install when the image is built. The subsequent test and lint commands are run in the image by mounting the current file system directory, so it is using your local file system.
 
@@ -162,15 +162,15 @@ If you are on a Windows machine, you can use the following instructions to perfo
 2. Using `make` is recommended. If you would like to use `make`, first install [chocolately](https://chocolatey.org/install), a standard Windows packaging manager.
 3. With chocolately, install the make command:
 
-    ```shell
-    choco install make
-    ```
+   ```shell
+   choco install make
+   ```
 
 4. `make` should now be installed and added to your PATH. Try running a `make docker-build` to get started.
 
 # Writing Detections
 
-*For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!*
+_For a full reference on writing detections, read our [guide](https://docs.panther.com/writing-detections)!_
 
 Each detection has a Python file (`.py`) and a metadata file (`.yml`) of the same name (in the same location), for example:
 
@@ -202,7 +202,7 @@ LogTypes:
 Tags:
   - Identity & Access Management
 Severity: Medium
-...
+---
 Threshold: 5
 DedupPeriodMinutes: 15
 SummaryAttributes:
@@ -211,23 +211,20 @@ SummaryAttributes:
   - displayMessage
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Failed login
+  - Name: Failed login
     ExpectedResult: true
     Log:
       {
         "eventType": "user.session.start",
-        "actor": {
-          "id": "00uu1uuuuIlllaaaa356",
-          "type": "User",
-          "alternateId": "panther_labs@acme.io",
-          "displayName": "Run Panther"
-        },
+        "actor":
+          {
+            "id": "00uu1uuuuIlllaaaa356",
+            "type": "User",
+            "alternateId": "panther_labs@acme.io",
+            "displayName": "Run Panther",
+          },
         "request": {},
-        "outcome": {
-          "result": "FAILURE",
-          "reason": "VERIFICATION_ERROR"
-        }
+        "outcome": { "result": "FAILURE", "reason": "VERIFICATION_ERROR" },
       }
 ```
 
@@ -252,7 +249,7 @@ git remote add panther-upstream git@github.com:panther-labs/panther-analysis.git
 # Pull in the latest changes
 # Note: You may need to use the `--allow-unrelated-histories`
 #       flag if you did not maintain the history originally
-git pull panther-upstream main 
+git pull panther-upstream main
 
 # Push the latest changes up to your forked repo and merge them
 git push

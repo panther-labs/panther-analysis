@@ -16,8 +16,7 @@ Description: Bypassing branch protection controls could indicate malicious use o
 Runbook: Verify that the GitHub admin performed this activity and validate its use.
 Reference: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 Tests:
-  -
-    Name: GitHub - Branch Protection Policy Override
+  - Name: GitHub - Branch Protection Policy Override
     ExpectedResult: true
     Log:
       {
@@ -26,10 +25,9 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Protected Branch Name Updated
+  - Name: GitHub - Protected Branch Name Updated
     ExpectedResult: false
     Log:
       {
@@ -38,5 +36,5 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }

@@ -25,258 +25,258 @@ SummaryAttributes:
   - recipientAccountId
   - p_any_aws_arns
 Tests:
-  -
-    Name: IAM Entity Created Automatically
+  - Name: IAM Entity Created Automatically
     ExpectedResult: false
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "invokedBy": "cloudformation.amazonaws.com",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "invokedBy": "cloudformation.amazonaws.com",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "CreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: IAM Entity Created Manually With Approved Role
+  - Name: IAM Entity Created Manually With Approved Role
     ExpectedResult: true
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "CreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: IAM Entity Created Manually With Approved Role Pattern
+  - Name: IAM Entity Created Manually With Approved Role Pattern
     ExpectedResult: false
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "invokedBy": "cloudformation.amazonaws.com",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "invokedBy": "cloudformation.amazonaws.com",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::210987654321:role/IdentityCFNServiceRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::210987654321:role/IdentityCFNServiceRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "CreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: IAM Entity Created Manually
+  - Name: IAM Entity Created Manually
     ExpectedResult: true
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/OtherRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/OtherRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "CreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: Non IAM Entity Creation Event
+  - Name: Non IAM Entity Creation Event
     ExpectedResult: false
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/OtherRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/OtherRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "NotCreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "NotCreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: Error Manually Creating IAM Entity 
+  - Name: Error Manually Creating IAM Entity
     ExpectedResult: false
     Log:
       {
-          "eventVersion": "1.05",
-          "errorCode": "EntityAlreadyExists",
-          "userIdentity": {
-              "type": "AssumedRole",
-              "principalId": "1111:tester",
-              "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-              "accountId": "123456789012",
-              "accessKeyId": "1",
-              "sessionContext": {
-                  "attributes": {
-                      "mfaAuthenticated": "true",
-                      "creationDate": "2019-01-01T00:00:00Z"
+        "eventVersion": "1.05",
+        "errorCode": "EntityAlreadyExists",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111:tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
                   },
-                  "sessionIssuer": {
-                      "type": "Role",
-                      "principalId": "1111",
-                      "arn": "arn:aws:iam::123456789012:role/OtherRole",
-                      "accountId": "123456789012",
-                      "userName": "tester"
-                  }
-              }
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/OtherRole",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "iam.amazonaws.com",
-          "eventName": "CreateUser",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "console.amazonaws.com",
-          "requestParameters": {
-              "userName": "user",
-              "path": "/"
-          },
-          "responseElements": null,
-          "requestID": "1",
-          "eventID": "1",
-          "eventType": "AwsApiCall",
-          "recipientAccountId": "123456789012"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "CreateUser",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": { "userName": "user", "path": "/" },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
       }

@@ -24,59 +24,63 @@ SummaryAttributes:
   - displayMessage
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Support Access Granted
+  - Name: Support Access Granted
     ExpectedResult: true
     Log:
       {
-      "published": "2022-03-22 14:21:53.225",
-      "eventType": "user.session.impersonation.grant",
-      "version": "0",
-      "severity": "INFO",
-      "legacyEventType": "core.user.impersonation.grant.enabled",
-      "displayMessage": "Enable impersonation grant",
-      "actor": {
-        "alternateId": "homer@springfield.gov",
-        "displayName": "Homer Simpson",
-        "id": "111111",
-        "type": "User"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "1.1.1.1",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
-            },
-            "zone": "null"
+        "published": "2022-03-22 14:21:53.225",
+        "eventType": "user.session.impersonation.grant",
+        "version": "0",
+        "severity": "INFO",
+        "legacyEventType": "core.user.impersonation.grant.enabled",
+        "displayMessage": "Enable impersonation grant",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "111111",
+            "type": "User",
           },
-        "p_log_type": "Okta.SystemLog"
-        }
-  -
-    Name: Login Event
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "1.1.1.1",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Login Event
     ExpectedResult: False
     Log:
       {
-      "published": "2022-03-22 14:21:53.225",
-      "eventType": "user.session.start",
-      "version": "0",
-      "severity": "INFO",
-      "actor": {
-        "alternateId": "homer@springfield.gov",
-        "displayName": "Homer Simpson",
-        "id": "111111",
-        "type": "User"
-        },
-        "client": {
-          "device": "Computer",
-          "ipAddress": "1.1.1.1",
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
-            },
-            "zone": "null"
+        "published": "2022-03-22 14:21:53.225",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "111111",
+            "type": "User",
           },
-        "p_log_type": "Okta.SystemLog"
-        }
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "1.1.1.1",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
+              },
+            "zone": "null",
+          },
+        "p_log_type": "Okta.SystemLog",
+      }

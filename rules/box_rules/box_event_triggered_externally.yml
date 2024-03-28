@@ -17,47 +17,36 @@ Description: >
   An external user has triggered a box enterprise event.
 Reference: https://support.box.com/hc/en-us/articles/8391393127955-Using-the-Enterprise-Event-Stream
 Runbook: >
-  Investigate whether this user's activity is expected. 
+  Investigate whether this user's activity is expected.
 SummaryAttributes:
   - ip_address
 Threshold: 10
 DedupPeriodMinutes: 60
 Tests:
-  -
-    Name: Regular Event
+  - Name: Regular Event
     ExpectedResult: false
     Log:
       {
         "type": "event",
         "additional_details": '{"key": "value"}',
-        "created_by": {
-          "id": "12345678",
-          "type": "user",
-          "login": "cat@example.com",
-          "name": "Bob Cat"
-        },
+        "created_by":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "cat@example.com",
+            "name": "Bob Cat",
+          },
         "event_type": "DELETE",
       }
-  -
-    Name: Previewed Anonymously
+  - Name: Previewed Anonymously
     ExpectedResult: true
     Log:
       {
-        "created_by": {
-          "id": "2",
-          "type": "user",
-          "name": "Unknown User"
-        },
+        "created_by": { "id": "2", "type": "user", "name": "Unknown User" },
         "event_type": "PREVIEW",
         "type": "event",
         "ip_address": "1.2.3.4",
       }
-  -
-    Name: Missing Created By
+  - Name: Missing Created By
     ExpectedResult: false
-    Log:
-      {
-        "event_type": "PREVIEW",
-        "type": "event",
-        "ip_address": "1.2.3.4",
-      }
+    Log: { "event_type": "PREVIEW", "type": "event", "ip_address": "1.2.3.4" }

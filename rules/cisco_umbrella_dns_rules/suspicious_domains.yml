@@ -20,8 +20,7 @@ SummaryAttributes:
   - domain
   - responseCode
 Tests:
-  -
-    Name: Suspicious Domain
+  - Name: Suspicious Domain
     ExpectedResult: true
     Log:
       {
@@ -30,10 +29,9 @@ Tests:
         "externalIp": "136.24.229.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "cron.photoscape.ch."
+        "domain": "cron.photoscape.ch.",
       }
-  -
-    Name: Safe Domain
+  - Name: Safe Domain
     ExpectedResult: false
     Log:
       {
@@ -42,5 +40,5 @@ Tests:
         "externalIp": "136.24.229.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "google.com."
+        "domain": "google.com.",
       }

@@ -1,20 +1,20 @@
-on: 
+on:
   pull_request:
 
 jobs:
   check_packs:
     name: check packs
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
 
-      - name: Set python version  
+      - name: Set python version
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-        
+          python-version: "3.9"
+
       - name: Install panther_analysis_tool
         run: pip install panther_analysis_tool
 
@@ -23,7 +23,7 @@ jobs:
         id: check-packs
         run: |
           panther_analysis_tool check-packs 2> errors.txt || true
-          
+
           # run again to get exit code
           panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
 

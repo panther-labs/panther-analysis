@@ -22,8 +22,7 @@ SummaryAttributes:
   - displayMessage
   - p_any_ip_addresses
 Tests:
-  -
-    Name: API Key Created
+  - Name: API Key Created
     ExpectedResult: true
     Log:
       {
@@ -34,24 +33,24 @@ Tests:
         "severity": "INFO",
         "legacyEventType": "api.token.create",
         "displayMessage": "Create API token",
-        "actor": {
-          "alternateId": "user@example.com",
-          "displayName": "Test User",
-          "id": "00u3q14ei6KUOm4Xi2p4",
-          "type": "User"
-        },
-        "outcome": {
-          "result": "SUCCESS"
-        },
+        "actor":
+          {
+            "alternateId": "user@example.com",
+            "displayName": "Test User",
+            "id": "00u3q14ei6KUOm4Xi2p4",
+            "type": "User",
+          },
+        "outcome": { "result": "SUCCESS" },
         "request": {},
         "debugContext": {},
-        "target": [
-          {
-            "id": "00Tpki36zlWjhjQ1u2p4",
-            "type": "Token",
-            "alternateId": "unknown",
-            "displayName": "test_key",
-            "details": null
-          }
-        ]
+        "target":
+          [
+            {
+              "id": "00Tpki36zlWjhjQ1u2p4",
+              "type": "Token",
+              "alternateId": "unknown",
+              "displayName": "test_key",
+              "details": null,
+            },
+          ],
       }

@@ -20,23 +20,21 @@ Runbook: >
 SummaryAttributes:
   - p_any_emails
 Tests:
-  -
-    Name: User Granted Admin
+  - Name: User Granted Admin
     ExpectedResult: True
     Log:
       {
-         "operator": "homer@panther.io",
-         "category_type": "User",
-         "action": "Update",
-         "operation_detail": "Update User bart@panther.io  - User Role: from Member to Admin"
+        "operator": "homer@panther.io",
+        "category_type": "User",
+        "action": "Update",
+        "operation_detail": "Update User bart@panther.io  - User Role: from Member to Admin",
       }
-  -
-    Name: Non-admin user update
+  - Name: Non-admin user update
     ExpectedResult: False
     Log:
       {
-         "operator": "homer@panther.io",
-         "category_type": "User",
-         "action": "Update",
-         "operation_detail": "Update User lisa@panther.io  - Job Title: set to Contractor"
+        "operator": "homer@panther.io",
+        "category_type": "User",
+        "action": "Update",
+        "operation_detail": "Update User lisa@panther.io  - Job Title: set to Contractor",
       }

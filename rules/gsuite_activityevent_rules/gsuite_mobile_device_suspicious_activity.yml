@@ -16,39 +16,23 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Mobile Event
+  - Name: Normal Mobile Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "DEVICE_SYNC_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io"
-        },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
       }
-  -
-    Name: Suspicious Activity
+  - Name: Suspicious Activity
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "SUSPICIOUS_ACTIVITY_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io"
-       },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
       }

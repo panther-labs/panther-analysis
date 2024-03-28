@@ -19,8 +19,7 @@ Reference: https://support.zendesk.com/hc/en-us/articles/4408822124314-Automatic
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Zendesk - Credit Card Redaction Off
+  - Name: Zendesk - Credit Card Redaction Off
     ExpectedResult: true
     Log:
       {
@@ -36,10 +35,9 @@ Tests:
         "change_description": "Disabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Credit Card Redaction On
+  - Name: Zendesk - Credit Card Redaction On
     ExpectedResult: true
     Log:
       {
@@ -55,10 +53,9 @@ Tests:
         "change_description": "Enabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  - 
-    Name: User assumption settings changed
+  - Name: User assumption settings changed
     ExpectedResult: false
     Log:
       {
@@ -73,5 +70,5 @@ Tests:
         "change_description": "Changed",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }

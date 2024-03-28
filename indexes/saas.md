@@ -1,4 +1,5 @@
 ## 1Password
+
 [ Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.py)
 
 [ BETA - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_lut_sensitive_item_access.py)
@@ -6,6 +7,7 @@
 [ Configuration Required - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_sensitive_item_access.py)
 
 ## Gravitational Teleport
+
 [ Teleport Suspicious Commands Executed](../rules/gravitational_teleport_rules/teleport_suspicious_commands.py)
 
 [ Teleport SSH Auth Errors](../rules/gravitational_teleport_rules/teleport_auth_errors.py)
@@ -27,6 +29,7 @@
 [ Teleport Network Scan Initiated](../rules/gravitational_teleport_rules/teleport_network_scanning.py)
 
 ## Zendesk
+
 [ Zendesk User Suspension Status Changed](../rules/zendesk_rules/zendesk_user_suspension.py)
 
 [ Zendesk Account Owner Changed](../rules/zendesk_rules/zendesk_new_owner.py)
@@ -56,6 +59,7 @@
 [ Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.py)
 
 ## Zoom
+
 [ Zoom User Granted Admin Rights](../rules/zoom_operation_rules/zoom_operation_user_granted_admin.py)
 
 [ Zoom Meeting Passcode Disabled](../rules/zoom_operation_rules/zoom_operation_passcode_disabled.py)
@@ -65,6 +69,7 @@
 [ Zoom Meeting Passcode Disabled](../rules/zoom_operation_rules/zoom_operation_passcode_disabled.py)
 
 ## Box
+
 [ Box Access Granted](../rules/box_rules/box_access_granted.py)
 
 [ Box Content Workflow Policy Violation](../rules/box_rules/box_policy_violation.py)

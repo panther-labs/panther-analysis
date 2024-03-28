@@ -16,102 +16,62 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Non Triggered Rule
+  - Name: Non Triggered Rule
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "rules"
-        },
-        "actor": {
-          "email": "some.user@somedomain.com"
-        },
-        "parameters": {
-          "severity": "HIGH",
-          "triggered_actions": null
-        },
+        "id": { "applicationName": "rules" },
+        "actor": { "email": "some.user@somedomain.com" },
+        "parameters": { "severity": "HIGH", "triggered_actions": null },
       }
-  -
-    Name: High Severity Rule
+  - Name: High Severity Rule
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "rules"
-        },
-        "actor": {
-          "email": "some.user@somedomain.com"
-        },
-        "parameters": {
-          "data_source": "DRIVE",
-          "severity": "HIGH",
-          "triggered_actions": [
-            {
-              "action_type": "DRIVE_UNFLAG_DOCUMENT"
-            }
-          ]
-        }
+        "id": { "applicationName": "rules" },
+        "actor": { "email": "some.user@somedomain.com" },
+        "parameters":
+          {
+            "data_source": "DRIVE",
+            "severity": "HIGH",
+            "triggered_actions": [{ "action_type": "DRIVE_UNFLAG_DOCUMENT" }],
+          },
       }
-  -
-    Name: Medium Severity Rule
+  - Name: Medium Severity Rule
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "rules"
-        },
-        "actor": {
-          "email": "some.user@somedomain.com"
-        },
-        "parameters": {
-          "data_source": "DRIVE",
-          "severity": "MEDIUM",
-          "triggered_actions": [
-            {
-              "action_type": "DRIVE_UNFLAG_DOCUMENT"
-            }
-          ]
-        }
+        "id": { "applicationName": "rules" },
+        "actor": { "email": "some.user@somedomain.com" },
+        "parameters":
+          {
+            "data_source": "DRIVE",
+            "severity": "MEDIUM",
+            "triggered_actions": [{ "action_type": "DRIVE_UNFLAG_DOCUMENT" }],
+          },
       }
-  -
-    Name: Low Severity Rule
+  - Name: Low Severity Rule
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "rules"
-        },
-        "actor": {
-          "email": "some.user@somedomain.com"
-        },
-        "parameters": {
-          "severity": "LOW",
-          "triggered_actions": [
-            {
-              "action_type": "DRIVE_UNFLAG_DOCUMENT"
-            }
-          ]
-        }
+        "id": { "applicationName": "rules" },
+        "actor": { "email": "some.user@somedomain.com" },
+        "parameters":
+          {
+            "severity": "LOW",
+            "triggered_actions": [{ "action_type": "DRIVE_UNFLAG_DOCUMENT" }],
+          },
       }
-  -
-    Name: High Severity Rule with Rule Name
+  - Name: High Severity Rule with Rule Name
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "rules"
-        },
-        "actor": {
-          "email": "some.user@somedomain.com"
-        },
-        "parameters": {
-          "severity": "HIGH",
-          "rule_name": "CEO Impersonation",
-          "triggered_actions": [
-            {
-              "action_type": "MAIL_MARK_AS_PHISHING"
-            }
-          ]
-        }
+        "id": { "applicationName": "rules" },
+        "actor": { "email": "some.user@somedomain.com" },
+        "parameters":
+          {
+            "severity": "HIGH",
+            "rule_name": "CEO Impersonation",
+            "triggered_actions": [{ "action_type": "MAIL_MARK_AS_PHISHING" }],
+          },
       }

@@ -23,44 +23,35 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_domain_names
 Tests:
-  -
-    Name: Non-office network login (logged_in_users)
+  - Name: Non-office network login (logged_in_users)
     ExpectedResult: true
     Log:
       {
         "name": "pack/incident_response/logged_in_users",
         "action": "added",
-        "columns": {
-          "host": "10.0.3.1",
-          "type": "user",
-          "user": "ubuntu"
-        }
+        "columns": { "host": "10.0.3.1", "type": "user", "user": "ubuntu" },
       }
-  -
-    Name: Non-office network login (last)
+  - Name: Non-office network login (last)
     ExpectedResult: true
     Log:
       {
         "name": "pack-incident_response-last",
         "action": "added",
-        "columns": {
-          "host": "10.0.3.1",
-          "type": "8",
-          "username": "ubuntu",
-          "tty": "ttys008",
-          "pid": "648",
-          "time": "1587502574"
-        }
+        "columns":
+          {
+            "host": "10.0.3.1",
+            "type": "8",
+            "username": "ubuntu",
+            "tty": "ttys008",
+            "pid": "648",
+            "time": "1587502574",
+          },
       }
-  -
-    Name: Office network login
+  - Name: Office network login
     ExpectedResult: false
     Log:
       {
         "name": "pack-logged_in_users",
         "action": "added",
-        "columns": {
-          "host": "192.168.1.200",
-          "user": "ubuntu"
-        }
+        "columns": { "host": "192.168.1.200", "user": "ubuntu" },
       }

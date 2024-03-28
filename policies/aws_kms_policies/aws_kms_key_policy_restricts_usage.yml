@@ -20,8 +20,7 @@ Description: >
 Runbook: Add appropriate limitations to the KMS Key's policy.
 Reference: https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html
 Tests:
-  -
-    Name: Key Usage Not Restricted
+  - Name: Key Usage Not Restricted
     ExpectedResult: false
     Resource:
       {
@@ -41,10 +40,9 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{\n  \"Version\" : \"2012-10-17\",\n  \"Id\" : \"use-key\",\n  \"Statement\" : [ {\n    \"Sid\" : \"Allow access\",\n    \"Effect\" : \"Allow\",\n    \"Principal\" : {\n      \"AWS\" : \"*\"\n    },\n    \"Action\" : [ \"kms:*\", \"kms:Decrypt\", \"kms:ReEncrypt*\", \"kms:GenerateDataKey*\", \"kms:CreateGrant\", \"kms:DescribeKey\" ],\n    \"Resource\" : \"*\"} ]\n}"
+        "Policy": "{\n  \"Version\" : \"2012-10-17\",\n  \"Id\" : \"use-key\",\n  \"Statement\" : [ {\n    \"Sid\" : \"Allow access\",\n    \"Effect\" : \"Allow\",\n    \"Principal\" : {\n      \"AWS\" : \"*\"\n    },\n    \"Action\" : [ \"kms:*\", \"kms:Decrypt\", \"kms:ReEncrypt*\", \"kms:GenerateDataKey*\", \"kms:CreateGrant\", \"kms:DescribeKey\" ],\n    \"Resource\" : \"*\"} ]\n}",
       }
-  -
-    Name: Key Restricts Usage With Condition
+  - Name: Key Restricts Usage With Condition
     ExpectedResult: true
     Resource:
       {
@@ -64,5 +62,5 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{\n  \"Version\" : \"2012-10-17\",\n  \"Id\" : \"use key\",\n  \"Statement\" : [ {\n    \"Sid\" : \"Allow access\",\n    \"Effect\" : \"Allow\",\n    \"Principal\" : {\n      \"AWS\" : \"*\"\n    },\n    \"Action\" : [ \"kms:Encrypt\", \"kms:Decrypt\"],\n    \"Resource\" : \"*\",\n    \"Condition\" : {\n      \"StringEquals\" : {\n        \"kms:CallerAccount\" : \"123456789012\",\n        \"kms:ViaService\" : \"lambda.us-east-1.amazonaws.com\"\n      }\n    }\n  } ]\n}"
+        "Policy": "{\n  \"Version\" : \"2012-10-17\",\n  \"Id\" : \"use key\",\n  \"Statement\" : [ {\n    \"Sid\" : \"Allow access\",\n    \"Effect\" : \"Allow\",\n    \"Principal\" : {\n      \"AWS\" : \"*\"\n    },\n    \"Action\" : [ \"kms:Encrypt\", \"kms:Decrypt\"],\n    \"Resource\" : \"*\",\n    \"Condition\" : {\n      \"StringEquals\" : {\n        \"kms:CallerAccount\" : \"123456789012\",\n        \"kms:ViaService\" : \"lambda.us-east-1.amazonaws.com\"\n      }\n    }\n  } ]\n}",
       }

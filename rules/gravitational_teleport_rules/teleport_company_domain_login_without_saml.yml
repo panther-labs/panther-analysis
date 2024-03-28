@@ -23,19 +23,11 @@ SummaryAttributes:
   - method
   - mfa_device
 Tests:
-  -
-    Name: A User from the company domain(s) logged in with SAML
+  - Name: A User from the company domain(s) logged in with SAML
     ExpectedResult: false
     Log:
       {
-        "attributes": {
-          "firstName": [
-            ""
-          ],
-          "groups": [
-            "employees"
-          ]
-        },
+        "attributes": { "firstName": [""], "groups": ["employees"] },
         "cluster_name": "teleport.example.com",
         "code": "T1001I",
         "ei": 0,
@@ -44,10 +36,9 @@ Tests:
         "success": true,
         "time": "2023-09-18 00:00:00",
         "uid": "88888888-4444-4444-4444-222222222222",
-        "user": "jane.doe@example.com"
+        "user": "jane.doe@example.com",
       }
-  -
-    Name: A User from the company domain(s) logged in without SAML
+  - Name: A User from the company domain(s) logged in without SAML
     ExpectedResult: true
     Log:
       {
@@ -59,5 +50,5 @@ Tests:
         "success": true,
         "time": "2023-09-18 00:00:00",
         "uid": "88888888-4444-4444-4444-222222222222",
-        "user": "jane.doe@example.com"
+        "user": "jane.doe@example.com",
       }

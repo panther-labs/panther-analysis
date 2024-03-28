@@ -21,8 +21,7 @@ Runbook: >
   From the ACM panel in the AWS console, check and resolve the certificate status.
 Reference: https://docs.aws.amazon.com/acm/latest/userguide/check-certificate-renewal-status.html
 Tests:
-  -
-    Name: Certificate renewal pending validation
+  - Name: Certificate renewal pending validation
     ExpectedResult: false
     Resource:
       {
@@ -32,51 +31,45 @@ Tests:
         "CreatedAt": "2019-05-23T19:20:52Z",
         "Domain": "test.domain.io",
         "DomainName": "test.domain.io",
-        "DomainValidationOptions": [
-          {
-            "DomainName": "test.domain.io",
-            "ResourceRecord": {
-              "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
-              "Type": "CNAME",
-              "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws."
+        "DomainValidationOptions":
+          [
+            {
+              "DomainName": "test.domain.io",
+              "ResourceRecord":
+                {
+                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Type": "CNAME",
+                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                },
+              "ValidationDomain": "test.domain.io",
+              "ValidationEmails": null,
+              "ValidationMethod": "DNS",
+              "ValidationStatus": "SUCCESS",
             },
-            "ValidationDomain": "test.domain.io",
-            "ValidationEmails": null,
-            "ValidationMethod": "DNS",
-            "ValidationStatus": "SUCCESS"
-          }
-        ],
-        "ExtendedKeyUsages": [
-          {
-            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.2"
-          },
-          {
-            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.1"
-          }
-        ],
+          ],
+        "ExtendedKeyUsages":
+          [
+            {
+              "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.2",
+            },
+            {
+              "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.1",
+            },
+          ],
         "FailureReason": "No Available Contacts",
         "ImportedAt": null,
-        "InUseBy": [
-          "arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"
-        ],
+        "InUseBy":
+          ["arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"],
         "IssuedAt": "2019-05-23T19:21:48Z",
         "Issuer": "Amazon",
         "KeyAlgorithm": "RSA-2048",
-        "KeyUsages": [
-          {
-            "Name": "DIGITAL_SIGNATURE"
-          },
-          {
-            "Name": "KEY_ENCIPHERMENT"
-          }
-        ],
+        "KeyUsages":
+          [{ "Name": "DIGITAL_SIGNATURE" }, { "Name": "KEY_ENCIPHERMENT" }],
         "NotAfter": "3020-06-23T12:00:00Z",
         "NotBefore": "2019-05-23T00:00:00Z",
-        "Options": {
-          "CertificateTransparencyLoggingPreference": "ENABLED"
-        },
+        "Options": { "CertificateTransparencyLoggingPreference": "ENABLED" },
         "RenewalEligibility": "INELIGIBLE",
         "RenewalSummary": null,
         "RevocationReason": null,
@@ -85,13 +78,10 @@ Tests:
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "PENDING_VALIDATION",
         "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": [
-          "test.domain.io"
-        ],
-        "Type": "AMAZON_ISSUED"
+        "SubjectAlternativeNames": ["test.domain.io"],
+        "Type": "AMAZON_ISSUED",
       }
-  -
-    Name: Certificate renewal failed
+  - Name: Certificate renewal failed
     ExpectedResult: false
     Resource:
       {
@@ -101,51 +91,45 @@ Tests:
         "CreatedAt": "2019-05-23T19:20:52Z",
         "Domain": "test.domain.io",
         "DomainName": "test.domain.io",
-        "DomainValidationOptions": [
-          {
-            "DomainName": "test.domain.io",
-            "ResourceRecord": {
-              "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
-              "Type": "CNAME",
-              "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws."
+        "DomainValidationOptions":
+          [
+            {
+              "DomainName": "test.domain.io",
+              "ResourceRecord":
+                {
+                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Type": "CNAME",
+                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                },
+              "ValidationDomain": "test.domain.io",
+              "ValidationEmails": null,
+              "ValidationMethod": "DNS",
+              "ValidationStatus": "SUCCESS",
             },
-            "ValidationDomain": "test.domain.io",
-            "ValidationEmails": null,
-            "ValidationMethod": "DNS",
-            "ValidationStatus": "SUCCESS"
-          }
-        ],
-        "ExtendedKeyUsages": [
-          {
-            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.2"
-          },
-          {
-            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.1"
-          }
-        ],
+          ],
+        "ExtendedKeyUsages":
+          [
+            {
+              "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.2",
+            },
+            {
+              "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.1",
+            },
+          ],
         "FailureReason": "No Available Contacts",
         "ImportedAt": null,
-        "InUseBy": [
-          "arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"
-        ],
+        "InUseBy":
+          ["arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"],
         "IssuedAt": "2019-05-23T19:21:48Z",
         "Issuer": "Amazon",
         "KeyAlgorithm": "RSA-2048",
-        "KeyUsages": [
-          {
-            "Name": "DIGITAL_SIGNATURE"
-          },
-          {
-            "Name": "KEY_ENCIPHERMENT"
-          }
-        ],
+        "KeyUsages":
+          [{ "Name": "DIGITAL_SIGNATURE" }, { "Name": "KEY_ENCIPHERMENT" }],
         "NotAfter": "3020-06-23T12:00:00Z",
         "NotBefore": "2019-05-23T00:00:00Z",
-        "Options": {
-          "CertificateTransparencyLoggingPreference": "ENABLED"
-        },
+        "Options": { "CertificateTransparencyLoggingPreference": "ENABLED" },
         "RenewalEligibility": "INELIGIBLE",
         "RenewalSummary": null,
         "RevocationReason": null,
@@ -154,13 +138,10 @@ Tests:
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "FAILED",
         "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": [
-          "test.domain.io"
-        ],
-        "Type": "AMAZON_ISSUED"
+        "SubjectAlternativeNames": ["test.domain.io"],
+        "Type": "AMAZON_ISSUED",
       }
-  -
-    Name: Certificate has been issued
+  - Name: Certificate has been issued
     ExpectedResult: true
     Resource:
       {
@@ -170,51 +151,45 @@ Tests:
         "CreatedAt": "2019-05-23T19:20:52Z",
         "Domain": "test.domain.io",
         "DomainName": "test.domain.io",
-        "DomainValidationOptions": [
-          {
-            "DomainName": "test.domain.io",
-            "ResourceRecord": {
-              "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
-              "Type": "CNAME",
-              "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws."
+        "DomainValidationOptions":
+          [
+            {
+              "DomainName": "test.domain.io",
+              "ResourceRecord":
+                {
+                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Type": "CNAME",
+                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                },
+              "ValidationDomain": "test.domain.io",
+              "ValidationEmails": null,
+              "ValidationMethod": "DNS",
+              "ValidationStatus": "SUCCESS",
             },
-            "ValidationDomain": "test.domain.io",
-            "ValidationEmails": null,
-            "ValidationMethod": "DNS",
-            "ValidationStatus": "SUCCESS"
-          }
-        ],
-        "ExtendedKeyUsages": [
-          {
-            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.2"
-          },
-          {
-            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.1"
-          }
-        ],
+          ],
+        "ExtendedKeyUsages":
+          [
+            {
+              "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.2",
+            },
+            {
+              "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.1",
+            },
+          ],
         "FailureReason": null,
         "ImportedAt": null,
-        "InUseBy": [
-          "arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"
-        ],
+        "InUseBy":
+          ["arn:aws:cloudfront::123456789012:distribution/E12KXPQHVLSYVC"],
         "IssuedAt": "2019-05-23T19:21:48Z",
         "Issuer": "Amazon",
         "KeyAlgorithm": "RSA-2048",
-        "KeyUsages": [
-          {
-            "Name": "DIGITAL_SIGNATURE"
-          },
-          {
-            "Name": "KEY_ENCIPHERMENT"
-          }
-        ],
+        "KeyUsages":
+          [{ "Name": "DIGITAL_SIGNATURE" }, { "Name": "KEY_ENCIPHERMENT" }],
         "NotAfter": "2000-06-23T12:00:00Z",
         "NotBefore": "2019-05-23T00:00:00Z",
-        "Options": {
-          "CertificateTransparencyLoggingPreference": "ENABLED"
-        },
+        "Options": { "CertificateTransparencyLoggingPreference": "ENABLED" },
         "RenewalEligibility": "ELIGIBLE",
         "RenewalSummary": null,
         "RevocationReason": null,
@@ -223,49 +198,40 @@ Tests:
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "ISSUED",
         "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": [
-          "test.domain.io"
-        ],
-        "Type": "AMAZON_ISSUED"
+        "SubjectAlternativeNames": ["test.domain.io"],
+        "Type": "AMAZON_ISSUED",
       }
-  -
-    Name: Certificate is INELIGIBLE but not in use
+  - Name: Certificate is INELIGIBLE but not in use
     ExpectedResult: true
     Resource:
       {
         "Status": "ISSUED",
-        "KeyUsages": [
-          {
-            "Name": "DIGITAL_SIGNATURE"
-          },
-          {
-            "Name": "KEY_ENCIPHERMENT"
-          }
-        ],
+        "KeyUsages":
+          [{ "Name": "DIGITAL_SIGNATURE" }, { "Name": "KEY_ENCIPHERMENT" }],
         "Type": "AMAZON_ISSUED",
         "NotAfter": "2020-06-09T12:00:00Z",
-        "Options": {
-          "CertificateTransparencyLoggingPreference": "ENABLED"
-        },
+        "Options": { "CertificateTransparencyLoggingPreference": "ENABLED" },
         "KeyAlgorithm": "RSA-2048",
         "ResourceId": "arn:aws:acm:us-east-1:123456789012:certificate/fe9dceea-121d-4a04-bda1-de35a68a846e",
         "FailureReason": null,
         "Serial": "08:57:00:ff:aa:11:ff:99:ee:44:33:77:99:bb:00:dd",
         "Region": "us-east-1",
-        "DomainValidationOptions": [
-          {
-            "DomainName": "staging.productionenv.io",
-            "ResourceRecord": {
-              "Value": "_0b741cda9f99a8df89813rjj1lkrj.ltfvzjuylp.acm-validations.aws.",
-              "Type": "CNAME",
-              "Name": "_sad9f087asdfujejkwf09wa8.staging.productionenv.io."
+        "DomainValidationOptions":
+          [
+            {
+              "DomainName": "staging.productionenv.io",
+              "ResourceRecord":
+                {
+                  "Value": "_0b741cda9f99a8df89813rjj1lkrj.ltfvzjuylp.acm-validations.aws.",
+                  "Type": "CNAME",
+                  "Name": "_sad9f087asdfujejkwf09wa8.staging.productionenv.io.",
+                },
+              "ValidationDomain": "staging.productionenv.io",
+              "ValidationMethod": "DNS",
+              "ValidationStatus": "SUCCESS",
+              "ValidationEmails": null,
             },
-            "ValidationDomain": "staging.productionenv.io",
-            "ValidationMethod": "DNS",
-            "ValidationStatus": "SUCCESS",
-            "ValidationEmails": null
-          }
-        ],
+          ],
         "RenewalEligibility": "INELIGIBLE",
         "IssuedAt": "2019-05-09T19:49:06Z",
         "AccountId": "123456789012",
@@ -275,26 +241,25 @@ Tests:
         "ResourceType": "AWS.ACM.Certificate",
         "TimeCreated": null,
         "RenewalSummary": null,
-        "ExtendedKeyUsages": [
-          {
-            "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.2"
-          },
-          {
-            "Name": "TLS_WEB_SERVER_AUTHENTICATION",
-            "OID": "1.3.6.1.5.5.7.3.1"
-          }
-        ],
+        "ExtendedKeyUsages":
+          [
+            {
+              "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.2",
+            },
+            {
+              "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.1",
+            },
+          ],
         "NotBefore": "2019-05-09T00:00:00Z",
         "RevocationReason": null,
         "InUseBy": null,
-        "SubjectAlternativeNames": [
-          "staging.productionenv.io"
-        ],
+        "SubjectAlternativeNames": ["staging.productionenv.io"],
         "Tags": null,
         "Subject": "CN=staging.productionenv.io",
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Issuer": "Amazon",
         "Name": "staging.productionenv.io",
-        "CertificateAuthorityArn": null
+        "CertificateAuthorityArn": null,
       }

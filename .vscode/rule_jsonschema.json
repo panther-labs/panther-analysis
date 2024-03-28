@@ -28,7 +28,7 @@
     },
     "Tests": {
       "type": "array",
-      "items": {"$ref": "#/definitions/UnitTestCase"}
+      "items": { "$ref": "#/definitions/UnitTestCase" }
     },
     "Description": {
       "$ref": "#/definitions/Description"
@@ -63,9 +63,9 @@
   },
   "required": [
     "AnalysisType",
-    "DisplayName", 
+    "DisplayName",
     "Enabled",
-    "RuleID", 
+    "RuleID",
     "Severity",
     "Tests"
   ],
@@ -82,10 +82,7 @@
     "AnalysisType": {
       "description": "what kind of detection",
       "type": "string",
-      "enum": [
-        "rule",
-        "scheduled_rule"
-      ],
+      "enum": ["rule", "scheduled_rule"],
       "default": "rule"
     },
     "DisplayName": {
@@ -116,10 +113,10 @@
       "description": "Description is a short sentence that describes what the detection detects.",
       "type": "string"
     },
-    "Detection":{
+    "Detection": {
       "$comment": "https://docs.panther.com/detections/rules/yaml",
       "description": "Panther Simple Detection rule in YAML format",
-      "type": "array" 
+      "type": "array"
     },
     "DedupPeriodMinutes": {
       "$comment": "https://docs.panther.com/detections/writing-and-editing-detections/rules",
@@ -146,13 +143,7 @@
       "description": "Alert severity",
       "default": "Medium",
       "type": "string",
-      "enum": [
-          "Info",
-          "Low",
-          "Medium",
-          "High",
-          "Critical"
-        ]
+      "enum": ["Info", "Low", "Medium", "High", "Critical"]
     },
     "Threshold": {
       "$comment": "How many events should match this rule before an alert is fired",
@@ -164,25 +155,19 @@
       "$comment": "Enter the attributes you want to showcase in the alerts that are triggered by this detection",
       "description": "Enter the attributes you want to showcase in the alerts that are triggered by this detection",
       "type": "array",
-      "items": [
-        {"type": "string"}
-      ]
+      "items": [{ "type": "string" }]
     },
     "Tags": {
       "$comment": "Enter custom tags to help you understand the rule at a glance",
       "description": "Enter custom tags to help you understand the rule at a glance",
       "type": "array",
-      "items": [
-        {"type": "string"}
-      ]
+      "items": [{ "type": "string" }]
     },
     "LogTypes": {
       "id": "LogTypes",
       "description": "which log types should this work against",
       "type": "array",
-      "items": [
-        {"type": "string"}
-      ],
+      "items": [{ "type": "string" }],
       "minItems": 1
     },
     "Runbook": {
@@ -196,7 +181,7 @@
       "$comment": "https://docs.panther.com/detections/writing-and-editing-detections",
       "description": "Unit test cases",
       "type": "array",
-      "items": { "$ref": "#/definitions/UnitTestCase"}
+      "items": { "$ref": "#/definitions/UnitTestCase" }
     },
     "UnitTestCase": {
       "type": "object",
@@ -215,9 +200,9 @@
           "anyOf": [
             {
               "if": {
-                "properties": { "AnalysisType": {"enum": ["rule"]} }
+                "properties": { "AnalysisType": { "enum": ["rule"] } }
               },
-              "then": { 
+              "then": {
                 "type": "object",
                 "comment": "A log entry, json or yaml formatted",
                 "description": "the log data"
@@ -230,9 +215,9 @@
           "anyOf": [
             {
               "if": {
-                "properties": { "AnalysisType": {"enum": ["scheduled_rule"]} }
+                "properties": { "AnalysisType": { "enum": ["scheduled_rule"] } }
               },
-              "then": { 
+              "then": {
                 "type": "object",
                 "comment": "A resource definition entry, json or yaml formatted",
                 "description": "the resource data"
@@ -245,10 +230,10 @@
       "allOf": [
         {
           "if": {
-            "properties": { "AnalysisType": {"enum": ["rule"]} }
+            "properties": { "AnalysisType": { "enum": ["rule"] } }
           },
-          "then": { 
-            "required": [ "Name", "ExpectedResult", "Log" ] 
+          "then": {
+            "required": ["Name", "ExpectedResult", "Log"]
           }
         }
       ]

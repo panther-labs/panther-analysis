@@ -15,23 +15,19 @@ Reference: https://docs.github.com/en/organizations/managing-membership-in-your-
 Severity: Info
 Description: Detects when a user is added or removed from a GitHub Org.
 Tests:
-  -
-    Name: GitHub - Team Deleted
+  - Name: GitHub - Team Deleted
     ExpectedResult: false
     Log:
       {
         "actor": "cat",
         "action": "team.destroy",
         "created_at": 1621305118553,
-        "data": {
-          "team": "my-org/my-team"
-        },
+        "data": { "team": "my-org/my-team" },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Org - User Added
+  - Name: GitHub - Org - User Added
     ExpectedResult: true
     Log:
       {
@@ -40,10 +36,9 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "user":"cat"
+        "user": "cat",
       }
-  -
-    Name: GitHub - Org - User Removed
+  - Name: GitHub - Org - User Removed
     ExpectedResult: true
     Log:
       {
@@ -52,5 +47,5 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "user":"bob"
+        "user": "bob",
       }

@@ -22,8 +22,7 @@ Runbook: >
   you can manually modify the engine version, or you can choose to enable auto minor version upgrades.
 Reference: https://amzn.to/2L8POnD
 Tests:
-  -
-    Name: Instance Auto Minor Version Upgrade Enabled
+  - Name: Instance Auto Minor Version Upgrade Enabled
     ExpectedResult: true
     Resource:
       {
@@ -41,46 +40,46 @@ Tests:
         "DBInstanceIdentifier": "example-instance",
         "DBInstanceStatus": "available",
         "DBName": "db_1",
-        "DBParameterGroups": [
-          {
-            "DBParameterGroupName": "default.mysql5.7",
-            "ParameterApplyStatus": "in-sync"
-          }
-        ],
-        "DBSecurityGroups": null,
-        "DBSubnetGroup": {
-          "DBSubnetGroupArn": null,
-          "DBSubnetGroupDescription": "default",
-          "DBSubnetGroupName": "default",
-          "SubnetGroupStatus": "Complete",
-          "Subnets": [
+        "DBParameterGroups":
+          [
             {
-              "SubnetAvailabilityZone": {
-                "Name": "us-west-2b"
-              },
-              "SubnetIdentifier": "subnet-111222333",
-              "SubnetStatus": "Active"
+              "DBParameterGroupName": "default.mysql5.7",
+              "ParameterApplyStatus": "in-sync",
             },
-            {
-              "SubnetAvailabilityZone": {
-                "Name": "us-west-2d"
-              },
-              "SubnetIdentifier": "subnet-444555666",
-              "SubnetStatus": "Active"
-            }
           ],
-          "VpcId": "vpc-111222333"
-        },
+        "DBSecurityGroups": null,
+        "DBSubnetGroup":
+          {
+            "DBSubnetGroupArn": null,
+            "DBSubnetGroupDescription": "default",
+            "DBSubnetGroupName": "default",
+            "SubnetGroupStatus": "Complete",
+            "Subnets":
+              [
+                {
+                  "SubnetAvailabilityZone": { "Name": "us-west-2b" },
+                  "SubnetIdentifier": "subnet-111222333",
+                  "SubnetStatus": "Active",
+                },
+                {
+                  "SubnetAvailabilityZone": { "Name": "us-west-2d" },
+                  "SubnetIdentifier": "subnet-444555666",
+                  "SubnetStatus": "Active",
+                },
+              ],
+            "VpcId": "vpc-111222333",
+          },
         "DbInstancePort": 0,
         "DbiResourceId": "db-ABCDEFGHIJKLMNOP",
         "DeletionProtection": false,
         "DomainMemberships": null,
         "EnabledCloudwatchLogsExports": null,
-        "Endpoint": {
-          "Address": "example-instance.abcdefghijkl.us-west-2.rds.amazonaws.com",
-          "HostedZoneId": "ABCDEF1234",
-          "Port": 3306
-        },
+        "Endpoint":
+          {
+            "Address": "example-instance.abcdefghijkl.us-west-2.rds.amazonaws.com",
+            "HostedZoneId": "ABCDEF1234",
+            "Port": 3306,
+          },
         "Engine": "mysql",
         "EngineVersion": "5.7.22",
         "EnhancedMonitoringResourceArn": null,
@@ -96,29 +95,26 @@ Tests:
         "MonitoringInterval": 0,
         "MonitoringRoleArn": null,
         "MultiAZ": false,
-        "OptionGroupMemberships": [
+        "OptionGroupMemberships":
+          [{ "OptionGroupName": "default:mysql-5-7", "Status": "in-sync" }],
+        "PendingModifiedValues":
           {
-            "OptionGroupName": "default:mysql-5-7",
-            "Status": "in-sync"
-          }
-        ],
-        "PendingModifiedValues": {
-          "AllocatedStorage": null,
-          "BackupRetentionPeriod": null,
-          "CACertificateIdentifier": null,
-          "DBInstanceClass": null,
-          "DBInstanceIdentifier": null,
-          "DBSubnetGroupName": null,
-          "EngineVersion": null,
-          "Iops": null,
-          "LicenseModel": null,
-          "MasterUserPassword": null,
-          "MultiAZ": null,
-          "PendingCloudwatchLogsExports": null,
-          "Port": null,
-          "ProcessorFeatures": null,
-          "StorageType": null
-        },
+            "AllocatedStorage": null,
+            "BackupRetentionPeriod": null,
+            "CACertificateIdentifier": null,
+            "DBInstanceClass": null,
+            "DBInstanceIdentifier": null,
+            "DBSubnetGroupName": null,
+            "EngineVersion": null,
+            "Iops": null,
+            "LicenseModel": null,
+            "MasterUserPassword": null,
+            "MultiAZ": null,
+            "PendingCloudwatchLogsExports": null,
+            "Port": null,
+            "ProcessorFeatures": null,
+            "StorageType": null,
+          },
         "PerformanceInsightsEnabled": false,
         "PerformanceInsightsKMSKeyId": null,
         "PerformanceInsightsRetentionPeriod": null,
@@ -131,40 +127,28 @@ Tests:
         "ReadReplicaDBInstanceIdentifiers": null,
         "ReadReplicaSourceDBInstanceIdentifier": null,
         "SecondaryAvailabilityZone": null,
-        "SnapshotAttributes": [
-          {
-            "DBSnapshotAttributes": [
-              {
-                "AttributeName": "restore",
-                "AttributeValues": null
-              }
-            ],
-            "DBSnapshotIdentifier": "rds:example-instance-2019-01-01-07-36"
-          },
-          {
-            "DBSnapshotAttributes": [
-              {
-                "AttributeName": "restore",
-                "AttributeValues": null
-              }
-            ],
-            "DBSnapshotIdentifier": "rds:example-instance-2019-01-08-07-36"
-          }
-        ],
+        "SnapshotAttributes":
+          [
+            {
+              "DBSnapshotAttributes":
+                [{ "AttributeName": "restore", "AttributeValues": null }],
+              "DBSnapshotIdentifier": "rds:example-instance-2019-01-01-07-36",
+            },
+            {
+              "DBSnapshotAttributes":
+                [{ "AttributeName": "restore", "AttributeValues": null }],
+              "DBSnapshotIdentifier": "rds:example-instance-2019-01-08-07-36",
+            },
+          ],
         "StatusInfos": null,
         "StorageEncrypted": true,
         "StorageType": "gp2",
         "TdeCredentialArn": null,
         "Timezone": null,
-        "VpcSecurityGroups": [
-          {
-            "Status": "active",
-            "VpcSecurityGroupId": "sg-112233"
-          }
-        ]
+        "VpcSecurityGroups":
+          [{ "Status": "active", "VpcSecurityGroupId": "sg-112233" }],
       }
-  -
-    Name: Instance Auto Minor Version Upgrade Not Enabled
+  - Name: Instance Auto Minor Version Upgrade Not Enabled
     ExpectedResult: false
     Resource:
       {
@@ -182,46 +166,46 @@ Tests:
         "DBInstanceIdentifier": "example-instance",
         "DBInstanceStatus": "available",
         "DBName": "db_1",
-        "DBParameterGroups": [
-          {
-            "DBParameterGroupName": "default.mysql5.7",
-            "ParameterApplyStatus": "in-sync"
-          }
-        ],
-        "DBSecurityGroups": null,
-        "DBSubnetGroup": {
-          "DBSubnetGroupArn": null,
-          "DBSubnetGroupDescription": "default",
-          "DBSubnetGroupName": "default",
-          "SubnetGroupStatus": "Complete",
-          "Subnets": [
+        "DBParameterGroups":
+          [
             {
-              "SubnetAvailabilityZone": {
-                "Name": "us-west-2b"
-              },
-              "SubnetIdentifier": "subnet-111222333",
-              "SubnetStatus": "Active"
+              "DBParameterGroupName": "default.mysql5.7",
+              "ParameterApplyStatus": "in-sync",
             },
-            {
-              "SubnetAvailabilityZone": {
-                "Name": "us-west-2d"
-              },
-              "SubnetIdentifier": "subnet-444555666",
-              "SubnetStatus": "Active"
-            }
           ],
-          "VpcId": "vpc-111222333"
-        },
+        "DBSecurityGroups": null,
+        "DBSubnetGroup":
+          {
+            "DBSubnetGroupArn": null,
+            "DBSubnetGroupDescription": "default",
+            "DBSubnetGroupName": "default",
+            "SubnetGroupStatus": "Complete",
+            "Subnets":
+              [
+                {
+                  "SubnetAvailabilityZone": { "Name": "us-west-2b" },
+                  "SubnetIdentifier": "subnet-111222333",
+                  "SubnetStatus": "Active",
+                },
+                {
+                  "SubnetAvailabilityZone": { "Name": "us-west-2d" },
+                  "SubnetIdentifier": "subnet-444555666",
+                  "SubnetStatus": "Active",
+                },
+              ],
+            "VpcId": "vpc-111222333",
+          },
         "DbInstancePort": 0,
         "DbiResourceId": "db-ABCDEFGHIJKLMNOP",
         "DeletionProtection": false,
         "DomainMemberships": null,
         "EnabledCloudwatchLogsExports": null,
-        "Endpoint": {
-          "Address": "example-instance.abcdefghijkl.us-west-2.rds.amazonaws.com",
-          "HostedZoneId": "ABCDEF1234",
-          "Port": 3306
-        },
+        "Endpoint":
+          {
+            "Address": "example-instance.abcdefghijkl.us-west-2.rds.amazonaws.com",
+            "HostedZoneId": "ABCDEF1234",
+            "Port": 3306,
+          },
         "Engine": "mysql",
         "EngineVersion": "5.7.22",
         "EnhancedMonitoringResourceArn": null,
@@ -237,29 +221,26 @@ Tests:
         "MonitoringInterval": 0,
         "MonitoringRoleArn": null,
         "MultiAZ": false,
-        "OptionGroupMemberships": [
+        "OptionGroupMemberships":
+          [{ "OptionGroupName": "default:mysql-5-7", "Status": "in-sync" }],
+        "PendingModifiedValues":
           {
-            "OptionGroupName": "default:mysql-5-7",
-            "Status": "in-sync"
-          }
-        ],
-        "PendingModifiedValues": {
-          "AllocatedStorage": null,
-          "BackupRetentionPeriod": null,
-          "CACertificateIdentifier": null,
-          "DBInstanceClass": null,
-          "DBInstanceIdentifier": null,
-          "DBSubnetGroupName": null,
-          "EngineVersion": null,
-          "Iops": null,
-          "LicenseModel": null,
-          "MasterUserPassword": null,
-          "MultiAZ": null,
-          "PendingCloudwatchLogsExports": null,
-          "Port": null,
-          "ProcessorFeatures": null,
-          "StorageType": null
-        },
+            "AllocatedStorage": null,
+            "BackupRetentionPeriod": null,
+            "CACertificateIdentifier": null,
+            "DBInstanceClass": null,
+            "DBInstanceIdentifier": null,
+            "DBSubnetGroupName": null,
+            "EngineVersion": null,
+            "Iops": null,
+            "LicenseModel": null,
+            "MasterUserPassword": null,
+            "MultiAZ": null,
+            "PendingCloudwatchLogsExports": null,
+            "Port": null,
+            "ProcessorFeatures": null,
+            "StorageType": null,
+          },
         "PerformanceInsightsEnabled": false,
         "PerformanceInsightsKMSKeyId": null,
         "PerformanceInsightsRetentionPeriod": null,
@@ -272,35 +253,24 @@ Tests:
         "ReadReplicaDBInstanceIdentifiers": null,
         "ReadReplicaSourceDBInstanceIdentifier": null,
         "SecondaryAvailabilityZone": null,
-        "SnapshotAttributes": [
-          {
-            "DBSnapshotAttributes": [
-              {
-                "AttributeName": "restore",
-                "AttributeValues": null
-              }
-            ],
-            "DBSnapshotIdentifier": "rds:example-instance-2019-01-01-07-36"
-          },
-          {
-            "DBSnapshotAttributes": [
-              {
-                "AttributeName": "restore",
-                "AttributeValues": null
-              }
-            ],
-            "DBSnapshotIdentifier": "rds:example-instance-2019-01-08-07-36"
-          }
-        ],
+        "SnapshotAttributes":
+          [
+            {
+              "DBSnapshotAttributes":
+                [{ "AttributeName": "restore", "AttributeValues": null }],
+              "DBSnapshotIdentifier": "rds:example-instance-2019-01-01-07-36",
+            },
+            {
+              "DBSnapshotAttributes":
+                [{ "AttributeName": "restore", "AttributeValues": null }],
+              "DBSnapshotIdentifier": "rds:example-instance-2019-01-08-07-36",
+            },
+          ],
         "StatusInfos": null,
         "StorageEncrypted": true,
         "StorageType": "gp2",
         "TdeCredentialArn": null,
         "Timezone": null,
-        "VpcSecurityGroups": [
-          {
-            "Status": "active",
-            "VpcSecurityGroupId": "sg-112233"
-          }
-        ]
+        "VpcSecurityGroups":
+          [{ "Status": "active", "VpcSecurityGroupId": "sg-112233" }],
       }

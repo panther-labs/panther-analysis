@@ -15,8 +15,7 @@ Reference: https://docs.github.com/en/organizations/managing-peoples-access-to-y
 Severity: High
 Description: Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 Tests:
-  -
-    Name: GitHub - Member Updated
+  - Name: GitHub - Member Updated
     ExpectedResult: true
     Log:
       {
@@ -25,10 +24,9 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
-        "user": "bob"
+        "user": "bob",
       }
-  -
-    Name: GitHub - Member Invited
+  - Name: GitHub - Member Invited
     ExpectedResult: false
     Log:
       {
@@ -37,5 +35,5 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
-        "user": "bob"
+        "user": "bob",
       }

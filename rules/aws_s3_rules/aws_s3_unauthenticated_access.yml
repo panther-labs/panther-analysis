@@ -24,18 +24,13 @@ SummaryAttributes:
   - key
   - requester
 Tests:
-  -
-    Name: Authenticated Access
+  - Name: Authenticated Access
     ExpectedResult: false
     Log:
       {
-        "bucket" : "example-bucket",
-        "requester": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be"
+        "bucket": "example-bucket",
+        "requester": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be",
       }
-  -
-    Name: Unauthenticated Access
+  - Name: Unauthenticated Access
     ExpectedResult: true
-    Log:
-      {
-        "bucket" : "example-bucket",
-      }
+    Log: { "bucket": "example-bucket" }

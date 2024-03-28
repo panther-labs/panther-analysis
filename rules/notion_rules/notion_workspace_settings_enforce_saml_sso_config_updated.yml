@@ -4,7 +4,7 @@ RuleID: "Notion.SAML.SSO.Configuration.Changed"
 DisplayName: "Notion SAML SSO Configuration Changed"
 Enabled: true
 LogTypes:
-    - Notion.AuditLogs
+  - Notion.AuditLogs
 Tags:
   - Notion
   - Identity & Access Management
@@ -13,77 +13,74 @@ Severity: High
 Description: A Notion User changed settings to enforce SAML SSO configurations for your organization.
 DedupPeriodMinutes: 60
 Threshold: 1
-Runbook:  Follow up with the Notion User to determine if this was done for a valid business reason and to ensure these settings get re-enabled quickly for best security practices.
+Runbook: Follow up with the Notion User to determine if this was done for a valid business reason and to ensure these settings get re-enabled quickly for best security practices.
 Reference: https://www.notion.so/help/saml-sso-configuration
 Tests:
-    - Name: Other Event
-      ExpectedResult: false
-      Log:
+  - Name: Other Event
+    ExpectedResult: false
+    Log:
+      {
+        "event":
           {
-            "event": {
-              "id": "...",
-              "timestamp": "2023-05-15T19:14:21.031Z",
-              "workspace_id": "..",
-              "actor": {
-                  "id": "..",
-                  "object": "user",
-                  "type": "person",
-                  "person": {
-                      "email": "homer.simpson@yourcompany.io"
-                  }
+            "id": "...",
+            "timestamp": "2023-05-15T19:14:21.031Z",
+            "workspace_id": "..",
+            "actor":
+              {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": { "email": "homer.simpson@yourcompany.io" },
               },
-              "ip_address": "...",
-              "platform": "web",
-              "type": "workspace.content_exported",
-              "workspace.content_exported": {}
-            }
-          }
-    - Name: SAML SSO Enabled
-      ExpectedResult: true
-      Log:
-        {
-          "event": {
+            "ip_address": "...",
+            "platform": "web",
+            "type": "workspace.content_exported",
+            "workspace.content_exported": {},
+          },
+      }
+  - Name: SAML SSO Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "event":
+          {
             "id": "...",
             "timestamp": "2023-05-15T19:14:21.031Z",
             "workspace_id": "..",
-            "actor": {
-              "id": "..",
-              "object": "user",
-              "type": "person",
-              "person": {
-                  "email": "homer.simpson@yourcompany.io"
-              }
-            },
+            "actor":
+              {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": { "email": "homer.simpson@yourcompany.io" },
+              },
             "ip_address": "...",
             "platform": "web",
             "type": "workspace.settings.enforce_saml_sso_config_updated",
-            "workspace.settings.enforce_saml_sso_config_updated": {
-              "state": "enabled"
-            }
-          }
-        }
-    - Name: SAML SSO Disabled
-      ExpectedResult: true
-      Log:
-        {
-          "event": {
+            "workspace.settings.enforce_saml_sso_config_updated":
+              { "state": "enabled" },
+          },
+      }
+  - Name: SAML SSO Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "event":
+          {
             "id": "...",
             "timestamp": "2023-05-15T19:14:21.031Z",
             "workspace_id": "..",
-            "actor": {
-              "id": "..",
-              "object": "user",
-              "type": "person",
-              "person": {
-                  "email": "homer.simpson@yourcompany.io"
-              }
-            },
+            "actor":
+              {
+                "id": "..",
+                "object": "user",
+                "type": "person",
+                "person": { "email": "homer.simpson@yourcompany.io" },
+              },
             "ip_address": "...",
             "platform": "web",
             "type": "workspace.settings.enforce_saml_sso_config_updated",
-            "workspace.settings.enforce_saml_sso_config_updated": {
-              "state": "disabled"
-            }
-          }
-        }
-        
+            "workspace.settings.enforce_saml_sso_config_updated":
+              { "state": "disabled" },
+          },
+      }

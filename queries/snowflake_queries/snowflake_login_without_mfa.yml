@@ -1,5 +1,5 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_login_without_mfa.py 
+Filename: snowflake_login_without_mfa.py
 RuleID: "Snowflake.LoginWithoutMFA"
 Description: >
   Detect snowflake logins without multifactor authentication
@@ -15,13 +15,11 @@ Reports:
     - TA0005:T1556
 Severity: Medium
 Tests:
-  -
-    Name: Return True 
+  - Name: Return True
     ExpectedResult: true
     Log:
       Anything: any value
-  - 
-    Name: True Exception
+  - Name: True Exception
     ExpectedResult: false
-    Log: 
+    Log:
       user_name: PANTHER_READONLY

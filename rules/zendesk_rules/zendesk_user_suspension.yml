@@ -19,8 +19,7 @@ Reference: https://support.zendesk.com/hc/en-us/articles/4408889293978-Suspendin
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Zendesk - Suspension Enabled
+  - Name: Zendesk - Suspension Enabled
     ExpectedResult: true
     Log:
       {
@@ -36,10 +35,9 @@ Tests:
         "change_description": "Suspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Suspension Disabled
+  - Name: Zendesk - Suspension Disabled
     ExpectedResult: true
     Log:
       {
@@ -55,10 +53,9 @@ Tests:
         "change_description": "Unsuspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Admin Role Assigned
+  - Name: Zendesk - Admin Role Assigned
     ExpectedResult: false
     Log:
       {
@@ -74,5 +71,5 @@ Tests:
         "change_description": "Role changed from End User to Administrator",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }

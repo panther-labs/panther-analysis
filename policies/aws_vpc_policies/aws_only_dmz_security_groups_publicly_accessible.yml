@@ -22,8 +22,7 @@ Runbook: >
   Remove the IP permissions in non-DMZ Security Groups that are allowing inbound traffic from public IP space.
 Reference: https://en.wikipedia.org/wiki/DMZ_(computing)
 Tests:
-  -
-    Name: DMZ Security Group Does Allows Public Access
+  - Name: DMZ Security Group Does Allows Public Access
     ExpectedResult: true
     Mocks:
       - objectName: DMZ_TAGS
@@ -33,63 +32,55 @@ Tests:
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "1.0.0.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "0.0.0.0/0",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "1.0.0.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "0.0.0.0/0", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "dmz"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "dmz" },
+        "VpcId": "vpc-abc111222333",
       }
-  -
-    Name: Non DMZ Security Group Allows Public Access
+  - Name: Non DMZ Security Group Allows Public Access
     ExpectedResult: false
     Mocks:
       - objectName: DMZ_TAGS
@@ -99,63 +90,55 @@ Tests:
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "1.1.1.1/32",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.0.2.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "1.1.1.1/32", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.0.2.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "pci"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "pci" },
+        "VpcId": "vpc-abc111222333",
       }
-  -
-    Name: Non DMZ Security Group Does Not Allow Public Access
+  - Name: Non DMZ Security Group Does Not Allow Public Access
     ExpectedResult: true
     Mocks:
       - objectName: DMZ_TAGS
@@ -165,58 +148,51 @@ Tests:
         "Description": "example VPC security group",
         "GroupId": "sg-abc123",
         "GroupName": "default",
-        "IpPermissions": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": null,
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": [
-              {
-                "Description": null,
-                "GroupId": "sg-def123",
-                "GroupName": null,
-                "PeeringStatus": null,
-                "UserId": "123456789012",
-                "VpcId": null,
-                "VpcPeeringConnectionId": null
-              }
-            ]
-          },
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.168.0.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
-        "IpPermissionsEgress": [
-          {
-            "FromPort": null,
-            "IpProtocol": "-1",
-            "IpRanges": [
-              {
-                "CidrIp": "192.0.2.0/24",
-                "Description": null
-              }
-            ],
-            "Ipv6Ranges": null,
-            "PrefixListIds": null,
-            "ToPort": null,
-            "UserIdGroupPairs": null
-          }
-        ],
+        "IpPermissions":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": null,
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs":
+                [
+                  {
+                    "Description": null,
+                    "GroupId": "sg-def123",
+                    "GroupName": null,
+                    "PeeringStatus": null,
+                    "UserId": "123456789012",
+                    "VpcId": null,
+                    "VpcPeeringConnectionId": null,
+                  },
+                ],
+            },
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.168.0.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
+        "IpPermissionsEgress":
+          [
+            {
+              "FromPort": null,
+              "IpProtocol": "-1",
+              "IpRanges": [{ "CidrIp": "192.0.2.0/24", "Description": null }],
+              "Ipv6Ranges": null,
+              "PrefixListIds": null,
+              "ToPort": null,
+              "UserIdGroupPairs": null,
+            },
+          ],
         "OwnerId": "123456789012",
-        "Tags": {"environment": "pci"},
-        "VpcId": "vpc-abc111222333"
+        "Tags": { "environment": "pci" },
+        "VpcId": "vpc-abc111222333",
       }

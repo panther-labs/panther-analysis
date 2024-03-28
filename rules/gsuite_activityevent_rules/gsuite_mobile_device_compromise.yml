@@ -16,59 +16,41 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Mobile Event
+  - Name: Normal Mobile Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "DEVICE_REGISTER_UNREGISTER_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io"
-        },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
       }
-  -
-    Name: Suspicious Activity Shows not Compromised
+  - Name: Suspicious Activity Shows not Compromised
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "DEVICE_COMPROMISED_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io",
-          "DEVICE_COMPROMISED_STATE": "NOT_COMPROMISED"
-        },
+        "parameters":
+          {
+            "USER_EMAIL": "homer.simpson@example.io",
+            "DEVICE_COMPROMISED_STATE": "NOT_COMPROMISED",
+          },
       }
-  -
-    Name: Suspicious Activity Shows Compromised
+  - Name: Suspicious Activity Shows Compromised
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "DEVICE_COMPROMISED_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io",
-          "DEVICE_COMPROMISED_STATE": "COMPROMISED"
-        },
+        "parameters":
+          {
+            "USER_EMAIL": "homer.simpson@example.io",
+            "DEVICE_COMPROMISED_STATE": "COMPROMISED",
+          },
       }

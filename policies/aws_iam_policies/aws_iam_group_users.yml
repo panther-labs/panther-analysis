@@ -20,8 +20,7 @@ Runbook: >
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-iam-group-has-users
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
-  -
-    Name: Group Has No Users
+  - Name: Group Has No Users
     ExpectedResult: false
     Resource:
       {
@@ -30,10 +29,9 @@ Tests:
         "GroupId": "ABCDEFGHIJKLMNOP",
         "GroupName": "ExampleGroup",
         "Path": "/",
-        "Users": null
+        "Users": null,
       }
-  -
-    Name: Group Has Users
+  - Name: Group Has Users
     ExpectedResult: true
     Resource:
       {
@@ -42,16 +40,17 @@ Tests:
         "GroupId": "ABCDEFGHIJKLMNOP",
         "GroupName": "ExampleGroup",
         "Path": "/",
-        "Users": [
-          {
-            "Arn": "arn:aws:iam::123456789012:user/Bobert",
-            "CreateDate": "2019-01-1T00:00:00Z",
-            "PasswordLastUsed": null,
-            "Path": "/",
-            "PermissionsBoundary": null,
-            "Tags": null,
-            "UserId": "ABCDEFGHIJKLMNOP",
-            "UserName": "Bobert"
-          }
-        ]
+        "Users":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:user/Bobert",
+              "CreateDate": "2019-01-1T00:00:00Z",
+              "PasswordLastUsed": null,
+              "Path": "/",
+              "PermissionsBoundary": null,
+              "Tags": null,
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert",
+            },
+          ],
       }

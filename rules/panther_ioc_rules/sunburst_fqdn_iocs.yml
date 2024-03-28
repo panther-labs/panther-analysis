@@ -43,8 +43,7 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_sha256_hashes
 Tests:
-  -
-    Name: Non-matching traffic
+  - Name: Non-matching traffic
     ExpectedResult: false
     Log:
       {
@@ -53,8 +52,7 @@ Tests:
         "srcaddr": "10.0.0.1",
         "p_any_domain_names": ["example.com"],
       }
-  -
-    Name: Sunburst Indicator of Compromise (FQDN) Detected
+  - Name: Sunburst Indicator of Compromise (FQDN) Detected
     ExpectedResult: true
     Log:
       {

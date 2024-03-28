@@ -16,31 +16,21 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: User Added
+  - Name: User Added
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "groups_enterprise",
-        },
-        "actor": {
-          "email": "homer.simpson@example.com"
-        },
+        "id": { "applicationName": "groups_enterprise" },
+        "actor": { "email": "homer.simpson@example.com" },
         "type": "moderator_action",
         "name": "add_member",
       }
-  -
-    Name: User Banned from Group
+  - Name: User Banned from Group
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "groups_enterprise",
-        },
-        "actor": {
-          "email": "homer.simpson@example.com"
-        },
+        "id": { "applicationName": "groups_enterprise" },
+        "actor": { "email": "homer.simpson@example.com" },
         "type": "moderator_action",
         "name": "ban_user_with_moderation",
       }

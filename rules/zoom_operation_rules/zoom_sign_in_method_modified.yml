@@ -7,32 +7,32 @@ Runbook: Confirm this user acted with valid business intent and determine whethe
 Reference: https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0067602#:~:text=Go%20to%20the%20Zoom%20site,click%20Link%20and%20Sign%20In
 Severity: Medium
 Tests:
-    - ExpectedResult: true
-      Log:
-        action: Update
-        category_type: Account
-        operation_detail: 'Sign-in Methods  - Allow users to sign in with Google: from Off to On'
-        operator: example@example.io
-        time: "2022-12-16 18:20:07"
-      Name: Google
-    - ExpectedResult: true
-      Log:
-        action: Update
-        category_type: Account
-        operation_detail: 'Sign-in Methods  - Allow users to sign in with Apple ID: from Off to On'
-        operator: example@example.io
-        time: "2022-12-16 18:19:57"
-      Name: Apple ID
-    - ExpectedResult: false
-      Log:
-        action: Update
-        category_type: Account
-        operation_detail: 'Security  - Automatically sign users out after a specified time: from On to Off'
-        operator: example@example.io
-        time: "2022-12-16 18:20:42"
-      Name: Automatic Sign Out Disabled
+  - ExpectedResult: true
+    Log:
+      action: Update
+      category_type: Account
+      operation_detail: "Sign-in Methods  - Allow users to sign in with Google: from Off to On"
+      operator: example@example.io
+      time: "2022-12-16 18:20:07"
+    Name: Google
+  - ExpectedResult: true
+    Log:
+      action: Update
+      category_type: Account
+      operation_detail: "Sign-in Methods  - Allow users to sign in with Apple ID: from Off to On"
+      operator: example@example.io
+      time: "2022-12-16 18:19:57"
+    Name: Apple ID
+  - ExpectedResult: false
+    Log:
+      action: Update
+      category_type: Account
+      operation_detail: "Security  - Automatically sign users out after a specified time: from On to Off"
+      operator: example@example.io
+      time: "2022-12-16 18:20:42"
+    Name: Automatic Sign Out Disabled
 DedupPeriodMinutes: 60
 LogTypes:
-    - Zoom.Operation
+  - Zoom.Operation
 RuleID: "Zoom.Sign.In.Method.Modified"
 Threshold: 1
