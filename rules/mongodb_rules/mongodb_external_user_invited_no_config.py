@@ -1,3 +1,6 @@
+from panther_mongodb_helpers import mongodb_alert_context
+
+
 def rule(event):
     if event.deep_get("eventTypeName", default="") != "INVITED_TO_ORG":
         return False
@@ -18,8 +21,4 @@ def title(event):
 
 
 def alert_context(event):
-    return {
-        "username": event.get("username", "<USER_NOT_FOUND>"),
-        "target_username": event.get("targetUsername", "<USER_NOT_FOUND>"),
-        "org_id": event.get("orgId", "<ORG_NOT_FOUND>"),
-    }
+    return mongodb_alert_context(event)
