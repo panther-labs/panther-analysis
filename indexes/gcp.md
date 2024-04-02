@@ -9,4 +9,3 @@
 [ GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.py)
 
 [ GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.py)
-

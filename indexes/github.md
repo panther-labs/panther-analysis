@@ -28,7 +28,6 @@
 
 [ GitHub Repository Visibility Change](../rules/github_rules/github_repo_visibility_change.py)
 
-
 ## Organization Rules
 
 [ GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.py)

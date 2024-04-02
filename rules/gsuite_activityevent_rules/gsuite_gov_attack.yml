@@ -16,43 +16,25 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Login Event
+  - Name: Normal Login Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
-        "actor": {
-          "email": "homer.simpson@example.com",
-        },
+        "id": { "applicationName": "login" },
+        "actor": { "email": "homer.simpson@example.com" },
         "type": "login",
         "name": "login_success",
-        "parameters": {
-          "is_suspicious": null,
-          "login_challenge_method": [
-              "none"
-          ],
-        },
+        "parameters":
+          { "is_suspicious": null, "login_challenge_method": ["none"] },
       }
-  -
-    Name: Government Backed Attack Warning
+  - Name: Government Backed Attack Warning
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "login",
-        },
-        "actor": {
-          "email": "homer.simpson@example.com",
-        },
+        "id": { "applicationName": "login" },
+        "actor": { "email": "homer.simpson@example.com" },
         "type": "login",
         "name": "gov_attack_warning",
-        "parameters": {
-          "is_suspicious": null,
-          "login_challenge_method": [
-              "none"
-          ],
-        },
+        "parameters":
+          { "is_suspicious": null, "login_challenge_method": ["none"] },
       }

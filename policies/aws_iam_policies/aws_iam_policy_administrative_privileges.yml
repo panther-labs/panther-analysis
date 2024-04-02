@@ -23,8 +23,7 @@ Runbook: >
 Reference: >
   https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
-  -
-    Name: Policy Does Not Grant Full Administrative Privileges
+  - Name: Policy Does Not Grant Full Administrative Privileges
     ExpectedResult: true
     Resource:
       {
@@ -33,31 +32,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "ABCDEFGHIJKLMNOP",
-              "RoleName": "Example-Role"
-            }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: Policy Does Not Grant Full Administrative Privileges Single Statement
+  - Name: Policy Does Not Grant Full Administrative Privileges Single Statement
     ExpectedResult: true
     Resource:
       {
@@ -66,31 +57,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "ABCDEFGHIJKLMNOP",
-              "RoleName": "Example-Role"
-            }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n        }\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: Policy Grant Full Administrative Access With Multiple Resources
+  - Name: Policy Grant Full Administrative Access With Multiple Resources
     ExpectedResult: false
     Resource:
       {
@@ -99,31 +82,23 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "ABCDEFGHIJKLMNOP",
-              "RoleName": "Example-Role"
-            }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": [\"*\", \"S3*\"]\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }
-  -
-    Name: Policy Grants Full Administrative Privileges
+  - Name: Policy Grants Full Administrative Privileges
     ExpectedResult: false
     Resource:
       {
@@ -132,26 +107,19 @@ Tests:
         "CreateDate": "2019-01-01T00:00:00Z",
         "DefaultVersionId": "v1",
         "Description": null,
-        "Entities": {
-          "PolicyGroups": null,
-          "PolicyRoles": [
-            {
-              "RoleId": "ABCDEFGHIJKLMNOP",
-              "RoleName": "Example-Role"
-            }
-          ],
-          "PolicyUsers": [
-            {
-              "UserId": "ABCDEFGHIJKLMNOP",
-              "UserName": "Bobert"
-            }
-          ]
-        },
+        "Entities":
+          {
+            "PolicyGroups": null,
+            "PolicyRoles":
+              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
+            "PolicyUsers":
+              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
+          },
         "IsAttachable": true,
         "Path": "/service-role/",
         "PermissionsBoundaryUsageCount": 0,
         "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"*\"\n        }\n    ]\n}",
         "PolicyId": "ABCDEFGHIJKLMNOP",
         "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z"
+        "UpdateDate": "2019-01-01T00:00:00Z",
       }

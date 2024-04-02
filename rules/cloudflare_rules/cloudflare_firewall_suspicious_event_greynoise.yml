@@ -13,7 +13,7 @@ Description: Monitors for non-blocked requests from Greynoise identified malicio
 Runbook: Inspect resources accessed for malicious behavior
 Reference: https://docs.greynoise.io/docs/understanding-greynoise-enrichments
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  1
+Threshold: 1
 SummaryAttributes:
   - ClientRequestUserAgent
   - ClientRequestPath
@@ -23,8 +23,7 @@ SummaryAttributes:
   - OriginResponseStatus
   - Source
 Tests:
-  -
-    Name: Blocked Event - Malicious
+  - Name: Blocked Event - Malicious
     ExpectedResult: false
     Log:
       {
@@ -50,63 +49,56 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "ruleset_version": "65",
-          "type": "customer",
-          "version": "59"
-        },
+        "Metadata":
+          { "ruleset_version": "65", "type": "customer", "version": "59" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
         "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
         "Source": "firewallmanaged",
-        "p_enrichment": {
-          "greynoise_noise_basic": {
-            "ClientIP": {
-              "actor": "unknown",
-              "bot": false,
-              "classification": "malicious",
-              "cve": [ ],
-              "first_seen": "2022-03-19",
-              "ip": "142.93.204.250",
-              "last_seen": "2022-04-06",
-              "metadata": {
-                "asn": "AS14061",
-                "category": "hosting",
-                "city": "North Bergen",
-                "country": "United States",
-                "country_code": "US",
-                "organization": "DigitalOcean, LLC",
-                "os": "Linux 2.2-3.x",
-                "rdns": "",
-                "region": "New Jersey",
-                "tor": false
-              },
-              "raw_data": {
-                "hassh": [ ],
-                "ja3": [ ],
-                "scan": [
+        "p_enrichment":
+          {
+            "greynoise_noise_basic":
+              {
+                "ClientIP":
                   {
-                    "port": 23,
-                    "protocol": "TCP"
-                  }
-                ],
-                "web": { }
+                    "actor": "unknown",
+                    "bot": false,
+                    "classification": "malicious",
+                    "cve": [],
+                    "first_seen": "2022-03-19",
+                    "ip": "142.93.204.250",
+                    "last_seen": "2022-04-06",
+                    "metadata":
+                      {
+                        "asn": "AS14061",
+                        "category": "hosting",
+                        "city": "North Bergen",
+                        "country": "United States",
+                        "country_code": "US",
+                        "organization": "DigitalOcean, LLC",
+                        "os": "Linux 2.2-3.x",
+                        "rdns": "",
+                        "region": "New Jersey",
+                        "tor": false,
+                      },
+                    "raw_data":
+                      {
+                        "hassh": [],
+                        "ja3": [],
+                        "scan": [{ "port": 23, "protocol": "TCP" }],
+                        "web": {},
+                      },
+                    "seen": true,
+                    "spoofable": false,
+                    "tags": ["Mirai", "ZMap Client"],
+                    "vpn": false,
+                    "vpn_service": "N/A",
+                  },
               },
-              "seen": true,
-              "spoofable": false,
-              "tags": [
-                  "Mirai",
-                  "ZMap Client"
-              ],
-              "vpn": false,
-              "vpn_service": "N/A"
-            }
-          }
-        },
+          },
       }
-  -
-    Name: Skip Event - Non-Malicious
+  - Name: Skip Event - Non-Malicious
     ExpectedResult: false
     Log:
       {
@@ -132,60 +124,56 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "ruleset_version": "65",
-          "type": "customer",
-          "version": "59"
-        },
+        "Metadata":
+          { "ruleset_version": "65", "type": "customer", "version": "59" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
         "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
         "Source": "firewallmanaged",
-        "p_enrichment": {
-          "greynoise_noise_basic": {
-            "ClientIP": {
-              "actor": "unknown",
-              "bot": false,
-              "classification": "benign",
-              "cve": [ ],
-              "first_seen": "2022-03-19",
-              "ip": "142.93.204.250",
-              "last_seen": "2022-04-06",
-              "metadata": {
-                "asn": "AS14061",
-                "category": "hosting",
-                "city": "North Bergen",
-                "country": "United States",
-                "country_code": "US",
-                "organization": "DigitalOcean, LLC",
-                "os": "Linux 2.2-3.x",
-                "rdns": "",
-                "region": "New Jersey",
-                "tor": false
-              },
-              "raw_data": {
-                "hassh": [ ],
-                "ja3": [ ],
-                "scan": [
+        "p_enrichment":
+          {
+            "greynoise_noise_basic":
+              {
+                "ClientIP":
                   {
-                    "port": 23,
-                    "protocol": "TCP"
-                  }
-                ],
-                "web": { }
+                    "actor": "unknown",
+                    "bot": false,
+                    "classification": "benign",
+                    "cve": [],
+                    "first_seen": "2022-03-19",
+                    "ip": "142.93.204.250",
+                    "last_seen": "2022-04-06",
+                    "metadata":
+                      {
+                        "asn": "AS14061",
+                        "category": "hosting",
+                        "city": "North Bergen",
+                        "country": "United States",
+                        "country_code": "US",
+                        "organization": "DigitalOcean, LLC",
+                        "os": "Linux 2.2-3.x",
+                        "rdns": "",
+                        "region": "New Jersey",
+                        "tor": false,
+                      },
+                    "raw_data":
+                      {
+                        "hassh": [],
+                        "ja3": [],
+                        "scan": [{ "port": 23, "protocol": "TCP" }],
+                        "web": {},
+                      },
+                    "seen": true,
+                    "spoofable": false,
+                    "tags": [],
+                    "vpn": false,
+                    "vpn_service": "N/A",
+                  },
               },
-              "seen": true,
-              "spoofable": false,
-              "tags": [ ],
-              "vpn": false,
-              "vpn_service": "N/A"
-            }
-          }
-        }
+          },
       }
-  -
-    Name: Skip Event - Malicious
+  - Name: Skip Event - Malicious
     ExpectedResult: true
     Log:
       {
@@ -211,58 +199,52 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "ruleset_version": "65",
-          "type": "customer",
-          "version": "59"
-        },
+        "Metadata":
+          { "ruleset_version": "65", "type": "customer", "version": "59" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
         "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
         "Source": "firewallmanaged",
-        "p_enrichment": {
-          "greynoise_noise_basic": {
-            "ClientIP": {
-              "actor": "unknown",
-              "bot": false,
-              "classification": "malicious",
-              "cve": [ ],
-              "first_seen": "2022-03-19",
-              "ip": "142.93.204.250",
-              "last_seen": "2022-04-06",
-              "metadata": {
-                "asn": "AS14061",
-                "category": "hosting",
-                "city": "North Bergen",
-                "country": "United States",
-                "country_code": "US",
-                "organization": "DigitalOcean, LLC",
-                "os": "Linux 2.2-3.x",
-                "rdns": "",
-                "region": "New Jersey",
-                "tor": false
-              },
-              "raw_data": {
-                "hassh": [ ],
-                "ja3": [ ],
-                "scan": [
+        "p_enrichment":
+          {
+            "greynoise_noise_basic":
+              {
+                "ClientIP":
                   {
-                    "port": 23,
-                    "protocol": "TCP"
-                  }
-                ],
-                "web": { }
+                    "actor": "unknown",
+                    "bot": false,
+                    "classification": "malicious",
+                    "cve": [],
+                    "first_seen": "2022-03-19",
+                    "ip": "142.93.204.250",
+                    "last_seen": "2022-04-06",
+                    "metadata":
+                      {
+                        "asn": "AS14061",
+                        "category": "hosting",
+                        "city": "North Bergen",
+                        "country": "United States",
+                        "country_code": "US",
+                        "organization": "DigitalOcean, LLC",
+                        "os": "Linux 2.2-3.x",
+                        "rdns": "",
+                        "region": "New Jersey",
+                        "tor": false,
+                      },
+                    "raw_data":
+                      {
+                        "hassh": [],
+                        "ja3": [],
+                        "scan": [{ "port": 23, "protocol": "TCP" }],
+                        "web": {},
+                      },
+                    "seen": true,
+                    "spoofable": false,
+                    "tags": ["Mirai", "ZMap Client"],
+                    "vpn": false,
+                    "vpn_service": "N/A",
+                  },
               },
-              "seen": true,
-              "spoofable": false,
-              "tags": [
-                  "Mirai",
-                  "ZMap Client"
-              ],
-              "vpn": false,
-              "vpn_service": "N/A"
-            }
-          }
-        },
+          },
       }

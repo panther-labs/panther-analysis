@@ -51,9 +51,12 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
+	npx prettier . --write
 
 install:
 	pipenv sync --dev
+	# install prettier for formatting YAML and Markdown files
+	npm install
 
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)

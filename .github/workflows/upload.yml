@@ -5,7 +5,7 @@ on:
 
 jobs:
   upload:
-    name: 
+    name:
     runs-on: ubuntu-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
@@ -20,20 +20,24 @@ jobs:
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
 
-      - name: Set python version  
+      - name: Set python version
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-        
+          python-version: "3.9"
+
       - name: Install pipenv
         run: pip install pipenv
-      
+
       - name: Install
         run: make install
-      
+
       - name: Setup venv
         run: make venv
 
+      - name: validate
+        run: |
+          pipenv run panther_analysis_tool validate --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
+
       - name: upload
         run: |
-            pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
+          pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}

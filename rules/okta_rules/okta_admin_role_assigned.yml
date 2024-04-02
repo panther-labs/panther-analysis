@@ -23,8 +23,7 @@ SummaryAttributes:
   - displayMessage
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Admin Access Assigned
+  - Name: Admin Access Assigned
     ExpectedResult: true
     Log:
       {
@@ -35,59 +34,60 @@ Tests:
         "severity": "INFO",
         "legacyEventType": "core.user.admin_privilege.granted",
         "displayMessage": "Grant user privilege",
-        "actor": {
-          "id": "00uu1uuuuIlllaaaa356",
-          "type": "User",
-          "alternateId": "jack@acme.io",
-          "displayName": "Jack Naglieri"
-        },
-        "client": {
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
-          },
-          "geographicalContext": {
-            "geolocation": {
-              "lat": 37.7852,
-              "lon": -122.3874
-            },
-            "city": "San Francisco",
-            "state": "California",
-            "country": "United States",
-            "postalCode": "94105"
-          },
-          "zone": "null",
-          "ipAddress": "136.24.229.58",
-          "device": "Computer"
-        },
-        "request": {},
-        "outcome": {
-          "result": "SUCCESS"
-        },
-        "target": [
+        "actor":
           {
-            "id": "00u6eup97mAJZWYmP357",
+            "id": "00uu1uuuuIlllaaaa356",
             "type": "User",
-            "alternateId": "alice@acme.io",
-            "displayName": "Alice Green"
-          }
-        ],
+            "alternateId": "jack@acme.io",
+            "displayName": "Jack Naglieri",
+          },
+        "client":
+          {
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
+              },
+            "geographicalContext":
+              {
+                "geolocation": { "lat": 37.7852, "lon": -122.3874 },
+                "city": "San Francisco",
+                "state": "California",
+                "country": "United States",
+                "postalCode": "94105",
+              },
+            "zone": "null",
+            "ipAddress": "136.24.229.58",
+            "device": "Computer",
+          },
+        "request": {},
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "00u6eup97mAJZWYmP357",
+              "type": "User",
+              "alternateId": "alice@acme.io",
+              "displayName": "Alice Green",
+            },
+          ],
         "transaction": {},
-        "debugContext": {
-          "debugData": {
-            "privilegeGranted": "Organization administrator, Application administrator (all)",
-            "requestUri": "/api/internal/administrators/00u6eu8c68bb72a21b57",
-            "threatSuspected": "false",
-            "url": "/api/internal/administrators/00u6eu8c68bb72a21b57",
-            "requestId": "X777JJ9sssQQHHrrrQTyYQAABBE"
-          }
-        },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "privilegeGranted": "Organization administrator, Application administrator (all)",
+                "requestUri": "/api/internal/administrators/00u6eu8c68bb72a21b57",
+                "threatSuspected": "false",
+                "url": "/api/internal/administrators/00u6eu8c68bb72a21b57",
+                "requestId": "X777JJ9sssQQHHrrrQTyYQAABBE",
+              },
+          },
         "authenticationContext": {},
-        "securityContext": {}
+        "securityContext": {},
       }
-  -
-    Name: Super Admin Access Assigned (High sev)
+  - Name: Super Admin Access Assigned (High sev)
     ExpectedResult: true
     Log:
       {
@@ -98,54 +98,56 @@ Tests:
         "severity": "INFO",
         "legacyEventType": "core.user.admin_privilege.granted",
         "displayMessage": "Grant user privilege",
-        "actor": {
-          "id": "00uu1uuuuIlllaaaa356",
-          "type": "User",
-          "alternateId": "jack@acme.io",
-          "displayName": "Jack Naglieri"
-        },
-        "client": {
-          "userAgent": {
-            "browser": "CHROME",
-            "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
-          },
-          "geographicalContext": {
-            "geolocation": {
-              "lat": 37.7852,
-              "lon": -122.3874
-            },
-            "city": "San Francisco",
-            "state": "California",
-            "country": "United States",
-            "postalCode": "94105"
-          },
-          "zone": "null",
-          "ipAddress": "136.24.229.58",
-          "device": "Computer"
-        },
-        "request": {},
-        "outcome": {
-          "result": "SUCCESS"
-        },
-        "target": [
+        "actor":
           {
-            "id": "00u6eup97mAJZWYmP357",
+            "id": "00uu1uuuuIlllaaaa356",
             "type": "User",
-            "alternateId": "alice@acme.io",
-            "displayName": "Alice Green"
-          }
-        ],
+            "alternateId": "jack@acme.io",
+            "displayName": "Jack Naglieri",
+          },
+        "client":
+          {
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
+              },
+            "geographicalContext":
+              {
+                "geolocation": { "lat": 37.7852, "lon": -122.3874 },
+                "city": "San Francisco",
+                "state": "California",
+                "country": "United States",
+                "postalCode": "94105",
+              },
+            "zone": "null",
+            "ipAddress": "136.24.229.58",
+            "device": "Computer",
+          },
+        "request": {},
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "00u6eup97mAJZWYmP357",
+              "type": "User",
+              "alternateId": "alice@acme.io",
+              "displayName": "Alice Green",
+            },
+          ],
         "transaction": {},
-        "debugContext": {
-          "debugData": {
-            "privilegeGranted": "Super administrator, Read only admin",
-            "requestUri": "/api/internal/administrators/00u6eu8c68bb72a21b57",
-            "threatSuspected": "false",
-            "url": "/api/internal/administrators/00u6eu8c68bb72a21b57",
-            "requestId": "X777JJ9sssQQHHrrrQTyYQAABBE"
-          }
-        },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "privilegeGranted": "Super administrator, Read only admin",
+                "requestUri": "/api/internal/administrators/00u6eu8c68bb72a21b57",
+                "threatSuspected": "false",
+                "url": "/api/internal/administrators/00u6eu8c68bb72a21b57",
+                "requestId": "X777JJ9sssQQHHrrrQTyYQAABBE",
+              },
+          },
         "authenticationContext": {},
-        "securityContext": {}
+        "securityContext": {},
       }
