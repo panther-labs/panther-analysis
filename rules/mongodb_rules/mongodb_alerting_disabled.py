@@ -2,7 +2,10 @@ from panther_mongodb_helpers import mongodb_alert_context
 
 
 def rule(event):
-    return event.deep_get("eventTypeName", default="") in ["ALERT_CONFIG_DISABLED_AUDIT", "ALERT_CONFIG_DELETED_AUDIT"]
+    return event.deep_get("eventTypeName", default="") in [
+        "ALERT_CONFIG_DISABLED_AUDIT",
+        "ALERT_CONFIG_DELETED_AUDIT",
+    ]
 
 
 def title(event):
