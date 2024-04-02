@@ -132,13 +132,14 @@ PackDefinition:
     - AWS.WAF.HasXSSPredicate
     # Other rules
     - AWS.Authentication.From.CrowdStrike.Unmanaged.Device
-    - AWS.CMK.KeyRotation
     - AWS.CloudTrail.Account.Discovery
     - AWS.CloudTrail.CloudWatchLogs
     - AWS.CloudTrail.LogEncryption
     - AWS.CloudTrail.LogValidation
     - AWS.CloudTrail.S3Bucket.AccessLogging
+    - AWS.CMK.KeyRotation
     - AWS.DynamoDB.TableTTLEnabled
+    - AWS.EC2.Vulnerable.XZ.Image.Launched
     - AWS.IAM.Policy.DoesNotGrantAdminAccess
     - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
     - AWS.IAM.Resource.DoesNotHaveInlinePolicy
@@ -168,12 +169,13 @@ PackDefinition:
     - Standard.AWS.S3ServerAccess
     - Standard.AWS.VPCFlow
     # Globals used in these rules/policies
+    - panther_aws_xz_ami
     - panther_base_helpers
+    - panther_config
+    - panther_config_defaults
+    - panther_config_overrides
     - panther_default
     - panther_event_type_helpers
     - panther_greynoise_helpers
     - panther_lookuptable_helpers
     - panther_oss_helpers
-    - panther_config
-    - panther_config_defaults
-    - panther_config_overrides
