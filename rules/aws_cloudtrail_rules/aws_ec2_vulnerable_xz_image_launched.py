@@ -1,4 +1,4 @@
-from panther_aws_ami import XZ_AMI_LIST
+from panther_aws_ami import XZ_AMIS
 from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
@@ -21,7 +21,7 @@ def rule(event):
     # convert to a list if only one item is returned
     if not isinstance(amis_launched, list):
         amis_launched = [amis_launched]
-    if any(ami in XZ_AMI_LIST for ami in amis_launched):
+    if any(ami in XZ_AMIS for ami in amis_launched):
         return True
 
     return False

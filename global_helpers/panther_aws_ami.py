@@ -1,5 +1,5 @@
 # pylint: disable=line-too-long
-XZ_AMI_LIST = {
+XZ_AMIS = {
     "ami-08f974397021146fe",  # Fedora-Cloud-Base-AmazonEC2.x86_64-Rawhide-20240331.n.0-hvm-ap-northeast-1-gp3-0 ap-northeast-1
     "ami-0edfc5ccf045075e0",  # Fedora-Cloud-Base-AmazonEC2.x86_64-Rawhide-20240328.n.0-hvm-ap-northeast-1-gp3-0 ap-northeast-1
     "ami-0cdbbdaeecf641b07",  # Fedora-Cloud-Base-AmazonEC2.x86_64-Rawhide-20240330.n.0-hvm-ap-northeast-1-gp3-0 ap-northeast-1
