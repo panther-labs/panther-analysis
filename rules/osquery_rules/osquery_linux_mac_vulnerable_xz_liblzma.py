@@ -48,5 +48,5 @@ def title(event):
     name = event.deep_get("columns", "name", default="")
     version = event.deep_get("columns", "version", default="")
     status = event.deep_get("columns", "status", default="")
-    title = f"[CVE-2024-3094] {name} {version} {status} on {host}"
-    return title
+    alert_title = f"[CVE-2024-3094] {name} {version} {status} on {host}"
+    return alert_title
