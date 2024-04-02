@@ -16,8 +16,7 @@ Runbook: >
   Encrypt the CloudWatch log group with a KMS key, or add this log group to the ignore list.
 Reference: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
 Tests:
-  -
-    Name: Logs Are Encrypted
+  - Name: Logs Are Encrypted
     ExpectedResult: true
     Resource:
       {
@@ -34,13 +33,10 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": null,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }
-  -
-    Name: Logs Are Not Encrypted
+  - Name: Logs Are Not Encrypted
     ExpectedResult: false
     Resource:
       {
@@ -57,8 +53,6 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": null,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }

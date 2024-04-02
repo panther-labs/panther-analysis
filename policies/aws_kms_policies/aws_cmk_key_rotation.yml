@@ -24,8 +24,7 @@ Runbook: >
 Reference: >
   https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html
 Tests:
-  -
-    Name: Key Managed By AWS
+  - Name: Key Managed By AWS
     ExpectedResult: true
     Resource:
       {
@@ -45,10 +44,9 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}",
       }
-  -
-    Name: Key Rotation Enabled
+  - Name: Key Rotation Enabled
     ExpectedResult: true
     Resource:
       {
@@ -68,10 +66,9 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}",
       }
-  -
-    Name: Key Rotation Never Set
+  - Name: Key Rotation Never Set
     ExpectedResult: false
     Resource:
       {
@@ -91,10 +88,9 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}",
       }
-  -
-    Name: Key Rotation Not Enabled
+  - Name: Key Rotation Not Enabled
     ExpectedResult: false
     Resource:
       {
@@ -114,10 +110,9 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "AWS_KMS",
         "ValidTo": null,
-        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}",
       }
-  -
-    Name: Key Not Eligible for Rotation
+  - Name: Key Not Eligible for Rotation
     ExpectedResult: true
     Resource:
       {
@@ -137,5 +132,5 @@ Tests:
         "KeyUsage": "ENCRYPT_DECRYPT",
         "Origin": "External",
         "ValidTo": null,
-        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}"
+        "Policy": "{JSON policy document see https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html for details}",
       }

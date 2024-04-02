@@ -39,17 +39,10 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_sha256_hashes
 Tests:
-  -
-    Name: Non-matching traffic
+  - Name: Non-matching traffic
     ExpectedResult: false
-    Log:
-      {
-        "dstport": 53,
-        "dstaddr": "1.1.1.1",
-        "srcaddr": "10.0.0.1"
-      }
-  -
-    Name: Sunburst Indicator of Compromise (IP) Detected
+    Log: { "dstport": 53, "dstaddr": "1.1.1.1", "srcaddr": "10.0.0.1" }
+  - Name: Sunburst Indicator of Compromise (IP) Detected
     ExpectedResult: true
     Log:
       {

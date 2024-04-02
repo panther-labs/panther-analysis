@@ -13,52 +13,39 @@ Reports:
     - TA0010:T1020
 Reference: https://docs.github.com/en/webhooks/about-webhooks
 Severity: Info
-Description: Detects when a web hook is added, modified, or deleted in an org repository. 
+Description: Detects when a web hook is added, modified, or deleted in an org repository.
 Tests:
-  -
-    Name: GitHub - Webhook Created
+  - Name: GitHub - Webhook Created
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
         "action": "hook.create",
-        "data": {
+        "data":
+          {
             "hook_id": 111222333444555,
-            "events": [
-                "fork",
-                "public",
-                "pull_request",
-                "push",
-                "repository"
-            ]
-        },
+            "events": ["fork", "public", "pull_request", "push", "repository"],
+          },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
+        "repository": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Webhook Deleted
+  - Name: GitHub - Webhook Deleted
     ExpectedResult: true
     Log:
       {
         "actor": "cat",
         "action": "hook.destroy",
-        "data": {
+        "data":
+          {
             "hook_id": 111222333444555,
-            "events": [
-                "fork",
-                "public",
-                "pull_request",
-                "push",
-                "repository"
-            ]
-        },
+            "events": ["fork", "public", "pull_request", "push", "repository"],
+          },
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
+        "repository": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Non Webhook Event
+  - Name: GitHub - Non Webhook Event
     ExpectedResult: false
     Log:
       {
@@ -66,5 +53,5 @@ Tests:
         "action": "org.invite_member",
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo"
+        "repository": "my-org/my-repo",
       }

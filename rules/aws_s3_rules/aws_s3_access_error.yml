@@ -29,8 +29,7 @@ SummaryAttributes:
   - operation
   - errorCode
 Tests:
-  -
-    Name: Amazon Access Error
+  - Name: Amazon Access Error
     ExpectedResult: false
     Log:
       {
@@ -52,10 +51,9 @@ Tests:
         "time": "2020-06-21 20:41:25.000000000",
         "tlsVersion": "TLSv1.2",
         "totaltime": 9,
-        "useragent": "aws-internal/3"
+        "useragent": "aws-internal/3",
       }
-  -
-    Name: Access Error
+  - Name: Access Error
     ExpectedResult: true
     Log:
       {
@@ -67,10 +65,9 @@ Tests:
         "operation": "REST.GET.OBJECT",
         "httpstatus": 403,
         "errorcode": "AccessDenied",
-        "tlsversion": "TLSv1.2"
+        "tlsversion": "TLSv1.2",
       }
-  -
-    Name: 403 on HEAD.BUCKET
+  - Name: 403 on HEAD.BUCKET
     ExpectedResult: false
     Log:
       {
@@ -82,10 +79,9 @@ Tests:
         "operation": "REST.HEAD.BUCKET",
         "httpstatus": 403,
         "errorcode": "InternalServerError",
-        "tlsversion": "TLSv1.2"
+        "tlsversion": "TLSv1.2",
       }
-  -
-    Name: Internal Server Error
+  - Name: Internal Server Error
     ExpectedResult: false
     Log:
       {
@@ -97,5 +93,5 @@ Tests:
         "operation": "REST.HEAD.BUCKET",
         "httpstatus": 500,
         "errorcode": "InternalServerError",
-        "tlsversion": "TLSv1.2"
+        "tlsversion": "TLSv1.2",
       }

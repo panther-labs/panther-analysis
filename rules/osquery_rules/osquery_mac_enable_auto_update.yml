@@ -28,42 +28,42 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_domain_names
 Tests:
-  -
-    Name: Auto Updates Disabled
+  - Name: Auto Updates Disabled
     ExpectedResult: true
     Log:
       {
-        "columns": {
-          "domain": "com.apple.SoftwareUpdate",
-          "key": "AutomaticCheckEnabled",
-          "value": "false"
-        },
+        "columns":
+          {
+            "domain": "com.apple.SoftwareUpdate",
+            "key": "AutomaticCheckEnabled",
+            "value": "false",
+          },
         "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate"
+        "name": "pack/mac-cis/SoftwareUpdate",
       }
-  -
-    Name: Auto Updates Enabled
+  - Name: Auto Updates Enabled
     ExpectedResult: false
     Log:
       {
-        "columns": {
-          "domain": "com.apple.SoftwareUpdate",
-          "key": "AutomaticCheckEnabled",
-          "value": "true"
-        },
+        "columns":
+          {
+            "domain": "com.apple.SoftwareUpdate",
+            "key": "AutomaticCheckEnabled",
+            "value": "true",
+          },
         "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate"
+        "name": "pack/mac-cis/SoftwareUpdate",
       }
-  -
-    Name: Wrong Key
+  - Name: Wrong Key
     ExpectedResult: false
     Log:
       {
-        "columns": {
-          "domain": "com.apple.SoftwareUpdate",
-          "key": "LastFullSuccessfulDate",
-          "value": "false"
-        },
+        "columns":
+          {
+            "domain": "com.apple.SoftwareUpdate",
+            "key": "LastFullSuccessfulDate",
+            "value": "false",
+          },
         "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate"
+        "name": "pack/mac-cis/SoftwareUpdate",
       }

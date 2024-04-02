@@ -4,14 +4,14 @@ on:
   schedule:
     # 15:00Z, every Wednesday
     - cron: "00 15 * * 3"
-  workflow_dispatch: # or on button click  
+  workflow_dispatch: # or on button click
 
 env:
   YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
 jobs:
   check_upstream:
-    if: | 
+    if: |
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
@@ -34,12 +34,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
         uses: actions/checkout@v4
         with:
-          ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           token: ${{ secrets.GITHUB_TOKEN }}
       # Sync this branch with upstream
       - name: Sync upstream changes into PR branch
@@ -47,7 +47,7 @@ jobs:
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
           # target_sync_branch == the branch in your fork that you want to sync to upstream
-          target_sync_branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          target_sync_branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           # REQUIRED 'target_repo_token' exactly like this!
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}
           #  NOTE NOTE NOTE NOTE
@@ -56,7 +56,7 @@ jobs:
           upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
           upstream_sync_repo: panther-labs/panther-analysis
           #test_mode: true
-          upstream_pull_args: '--allow-unrelated-histories'
+          upstream_pull_args: "--allow-unrelated-histories"
       # Create a PR from this branch back to this fork's primary branch
       - uses: actions/github-script@v7
         id: create_pr
@@ -99,7 +99,7 @@ jobs:
         name: Local repo already synced to latest release
         if: ${{ steps.create_pr.outputs.pr_state == 'no-updates' }}
         run: |
-          echo "Local repo in sync with latest upstream release"  
+          echo "Local repo in sync with latest upstream release"
       - id: pr_create_error
         name: Create PR step had an error
         if: ${{ steps.create_pr.outputs.pr_state == 'error' }}

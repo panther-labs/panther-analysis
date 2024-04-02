@@ -9,14 +9,13 @@ Tags:
   - GitHub
   - Configuration Required
 Severity: High
-Description: A monitored github action has failed. 
+Description: A monitored github action has failed.
 Runbook: >
   Inspect the action failure link and take appropriate response.
   There are no general plans of response for this activity.
 Reference: https://docs.github.com/en/actions/creating-actions/setting-exit-codes-for-actions#about-exit-codes
 Tests:
-  -
-    Name: GitHub - Branch Protection Disabled
+  - Name: GitHub - Branch Protection Disabled
     ExpectedResult: false
     Log:
       {
@@ -25,7 +24,7 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
   - Name: GitHub Action Failed - No Configuration
     ExpectedResult: false
@@ -52,7 +51,7 @@ Tests:
         "run_number": 99,
         "started_at": "2023-01-31 18:58:04",
         "workflow_id": 44444444,
-        "workflow_run_id": 5555555555
+        "workflow_run_id": 5555555555,
       }
   - Name: GitHub Action Failed - Monitored Action Configured
     ExpectedResult: true
@@ -85,7 +84,7 @@ Tests:
         "run_number": 99,
         "started_at": "2023-01-31 18:58:04",
         "workflow_id": 44444444,
-        "workflow_run_id": 5555555555
+        "workflow_run_id": 5555555555,
       }
   - Name: GitHub Action Failed - Monitored Action Configured - GLOBAL FILTER
     ExpectedResult: false
@@ -120,5 +119,5 @@ Tests:
         "run_number": 99,
         "started_at": "2023-01-31 18:58:04",
         "workflow_id": 44444444,
-        "workflow_run_id": 5555555555
+        "workflow_run_id": 5555555555,
       }
