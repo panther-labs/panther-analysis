@@ -21,8 +21,7 @@ Runbook: >
   Remove the AWSCloudTrailFullAccess managed IAM policy from all but one user in the account.
 Reference: https://amzn.to/2ZEUrKm
 Tests:
-  -
-    Name: Limited Membership to IAM Group with CloudTrail FullAccess Policy
+  - Name: Limited Membership to IAM Group with CloudTrail FullAccess Policy
     ExpectedResult: true
     Resource:
       {
@@ -32,25 +31,26 @@ Tests:
         "GroupName": "CloudTrailAdmins",
         "Path": "/",
         "InlinePolicies": [],
-        "ManagedPolicyARNs": [
-          "arn:aws:iam::aws:policy/AWSCloudTrailFullAccess",
-          "arn:aws:iam::aws:policy/Readonly"
-        ],
-        "Users": [
-          {
-            "Arn": "arn:aws:iam::123456789012:user/Bobert",
-            "CreateDate": "2019-01-1T00:00:00Z",
-            "PasswordLastUsed": null,
-            "Path": "/",
-            "PermissionsBoundary": null,
-            "Tags": null,
-            "UserId": "ABCDEFGHIJKLMNOP",
-            "UserName": "Bobert"
-          }
-        ]
+        "ManagedPolicyARNs":
+          [
+            "arn:aws:iam::aws:policy/AWSCloudTrailFullAccess",
+            "arn:aws:iam::aws:policy/Readonly",
+          ],
+        "Users":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:user/Bobert",
+              "CreateDate": "2019-01-1T00:00:00Z",
+              "PasswordLastUsed": null,
+              "Path": "/",
+              "PermissionsBoundary": null,
+              "Tags": null,
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert",
+            },
+          ],
       }
-  -
-    Name: More Than 2 Users in IAM Group with CloudTrail FullAccess Policy
+  - Name: More Than 2 Users in IAM Group with CloudTrail FullAccess Policy
     ExpectedResult: false
     Resource:
       {
@@ -60,40 +60,42 @@ Tests:
         "GroupName": "CloudTrailAdmins",
         "Path": "/",
         "InlinePolicies": [],
-        "ManagedPolicyARNs": [
-          "arn:aws:iam::aws:policy/AWSCloudTrailFullAccess",
-          "arn:aws:iam::aws:policy/ReadOnly"
-        ],
-        "Users": [
-          {
-            "Arn": "arn:aws:iam::123456789012:user/Bobert",
-            "CreateDate": "2019-01-1T00:00:00Z",
-            "PasswordLastUsed": null,
-            "Path": "/",
-            "PermissionsBoundary": null,
-            "Tags": null,
-            "UserId": "ABCDEFGHIJKLMNOP",
-            "UserName": "Bobert"
-          },
-          {
-            "Arn": "arn:aws:iam::123456789012:user/Bobert2",
-            "CreateDate": "2019-01-1T00:00:00Z",
-            "PasswordLastUsed": null,
-            "Path": "/",
-            "PermissionsBoundary": null,
-            "Tags": null,
-            "UserId": "ABCDEFGHIJKLMNOP",
-            "UserName": "Bobert2"
-          },
-          {
-            "Arn": "arn:aws:iam::123456789012:user/Bobert3",
-            "CreateDate": "2019-01-1T00:00:00Z",
-            "PasswordLastUsed": null,
-            "Path": "/",
-            "PermissionsBoundary": null,
-            "Tags": null,
-            "UserId": "ABCDEFGHIJKLMNOP",
-            "UserName": "Bobert3"
-          }
-        ]
+        "ManagedPolicyARNs":
+          [
+            "arn:aws:iam::aws:policy/AWSCloudTrailFullAccess",
+            "arn:aws:iam::aws:policy/ReadOnly",
+          ],
+        "Users":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:user/Bobert",
+              "CreateDate": "2019-01-1T00:00:00Z",
+              "PasswordLastUsed": null,
+              "Path": "/",
+              "PermissionsBoundary": null,
+              "Tags": null,
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert",
+            },
+            {
+              "Arn": "arn:aws:iam::123456789012:user/Bobert2",
+              "CreateDate": "2019-01-1T00:00:00Z",
+              "PasswordLastUsed": null,
+              "Path": "/",
+              "PermissionsBoundary": null,
+              "Tags": null,
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert2",
+            },
+            {
+              "Arn": "arn:aws:iam::123456789012:user/Bobert3",
+              "CreateDate": "2019-01-1T00:00:00Z",
+              "PasswordLastUsed": null,
+              "Path": "/",
+              "PermissionsBoundary": null,
+              "Tags": null,
+              "UserId": "ABCDEFGHIJKLMNOP",
+              "UserName": "Bobert3",
+            },
+          ],
       }

@@ -25,84 +25,90 @@ SummaryAttributes:
   - recipientAccountId
   - p_any_aws_arns
 Tests:
-  -
-    Name: Root Access Key Created
+  - Name: Root Access Key Created
     ExpectedResult: true
     Log:
       {
-          "awsRegion": "us-east-1",
-          "eventID": "1111",
-          "eventName": "CreateAccessKey",
-          "eventSource": "iam.amazonaws.com",
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventType": "AwsApiCall",
-          "eventVersion": "1.05",
-          "recipientAccountId": "123456789012",
-          "requestID": "1111",
-          "requestParameters": null,
-          "responseElements": {
-              "accessKey": {
-                  "accessKeyId": "1111",
-                  "createDate": "Jan 01, 2019 0:00:00 PM",
-                  "status": "Active"
-              }
-          },
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "signin.amazonaws.com",
-          "userIdentity": {
-              "accessKeyId": "1111",
-              "accountId": "123456789012",
-              "arn": "arn:aws:iam::123456789012:root",
-              "invokedBy": "signin.amazonaws.com",
-              "principalId": "123456789012",
-              "sessionContext": {
-                  "attributes": {
-                      "creationDate": "2019-01-01T00:00:00Z",
-                      "mfaAuthenticated": "true"
-                  }
+        "awsRegion": "us-east-1",
+        "eventID": "1111",
+        "eventName": "CreateAccessKey",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.05",
+        "recipientAccountId": "123456789012",
+        "requestID": "1111",
+        "requestParameters": null,
+        "responseElements":
+          {
+            "accessKey":
+              {
+                "accessKeyId": "1111",
+                "createDate": "Jan 01, 2019 0:00:00 PM",
+                "status": "Active",
               },
-              "type": "Root"
-          }
+          },
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "signin.amazonaws.com",
+        "userIdentity":
+          {
+            "accessKeyId": "1111",
+            "accountId": "123456789012",
+            "arn": "arn:aws:iam::123456789012:root",
+            "invokedBy": "signin.amazonaws.com",
+            "principalId": "123456789012",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2019-01-01T00:00:00Z",
+                    "mfaAuthenticated": "true",
+                  },
+              },
+            "type": "Root",
+          },
       }
-  -
-    Name: Root Created Access Key For User
+  - Name: Root Created Access Key For User
     ExpectedResult: false
     Log:
       {
-          "awsRegion": "us-east-1",
-          "eventID": "1111",
-          "eventName": "CreateAccessKey",
-          "eventSource": "iam.amazonaws.com",
-          "eventTime": "2019-01-00T00:00:00Z",
-          "eventType": "AwsApiCall",
-          "eventVersion": "1.05",
-          "recipientAccountId": "123456789012",
-          "requestID": "1111",
-          "requestParameters": {
-              "userName": "example-user"
-          },
-          "responseElements": {
-              "accessKey": {
-                  "accessKeyId": "1111",
-                  "createDate": "Jan 01, 2019 0:00:00 PM",
-                  "status": "Active",
-                  "userName": "example-user"
-              }
-          },
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "signin.amazonaws.com",
-          "userIdentity": {
-              "accessKeyId": "1111",
-              "accountId": "123456789012",
-              "arn": "arn:aws:iam::123456789012:root",
-              "invokedBy": "signin.amazonaws.com",
-              "principalId": "123456789012",
-              "sessionContext": {
-                  "attributes": {
-                      "creationDate": "2019-01-00T00:00:00Z",
-                      "mfaAuthenticated": "true"
-                  }
+        "awsRegion": "us-east-1",
+        "eventID": "1111",
+        "eventName": "CreateAccessKey",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2019-01-00T00:00:00Z",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.05",
+        "recipientAccountId": "123456789012",
+        "requestID": "1111",
+        "requestParameters": { "userName": "example-user" },
+        "responseElements":
+          {
+            "accessKey":
+              {
+                "accessKeyId": "1111",
+                "createDate": "Jan 01, 2019 0:00:00 PM",
+                "status": "Active",
+                "userName": "example-user",
               },
-              "type": "Root"
-          }
+          },
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "signin.amazonaws.com",
+        "userIdentity":
+          {
+            "accessKeyId": "1111",
+            "accountId": "123456789012",
+            "arn": "arn:aws:iam::123456789012:root",
+            "invokedBy": "signin.amazonaws.com",
+            "principalId": "123456789012",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2019-01-00T00:00:00Z",
+                    "mfaAuthenticated": "true",
+                  },
+              },
+            "type": "Root",
+          },
       }

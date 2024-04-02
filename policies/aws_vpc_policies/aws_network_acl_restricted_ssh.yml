@@ -19,8 +19,7 @@ Runbook: >
   Remove the NACL rule granting unprotected SSH access.
 Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
 Tests:
-  -
-    Name: Secure VPC SSH Access
+  - Name: Secure VPC SSH Access
     ExpectedResult: true
     Resource:
       {
@@ -32,48 +31,43 @@ Tests:
         "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
         "ResourceType": "AWS.EC2.NetworkACL",
         "TimeCreated": null,
-        "Associations": [
-          {
-            "NetworkAclAssociationId": "aclassoc-111222333",
-            "NetworkAclId": "acl-111222333",
-            "SubnetId": "subnet-111222333"
-          }
-        ],
-        "Entries": [
-          {
-            "CidrBlock": "8.8.8.8/32",
-            "Egress": false,
-            "IcmpTypeCode": null,
-            "Ipv6CidrBlock": null,
-            "PortRange": {
-              "From": 22,
-              "To": 22
+        "Associations":
+          [
+            {
+              "NetworkAclAssociationId": "aclassoc-111222333",
+              "NetworkAclId": "acl-111222333",
+              "SubnetId": "subnet-111222333",
             },
-            "Protocol": "-1",
-            "RuleAction": "allow",
-            "RuleNumber": 100
-          },
-          {
-            "CidrBlock": "0.0.0.0/0",
-            "Egress": true,
-            "IcmpTypeCode": null,
-            "Ipv6CidrBlock": null,
-            "PortRange": {
-              "From": 22,
-              "To": 22
+          ],
+        "Entries":
+          [
+            {
+              "CidrBlock": "8.8.8.8/32",
+              "Egress": false,
+              "IcmpTypeCode": null,
+              "Ipv6CidrBlock": null,
+              "PortRange": { "From": 22, "To": 22 },
+              "Protocol": "-1",
+              "RuleAction": "allow",
+              "RuleNumber": 100,
             },
-            "Protocol": "-1",
-            "RuleAction": "allow",
-            "RuleNumber": 100
-          }
-        ],
+            {
+              "CidrBlock": "0.0.0.0/0",
+              "Egress": true,
+              "IcmpTypeCode": null,
+              "Ipv6CidrBlock": null,
+              "PortRange": { "From": 22, "To": 22 },
+              "Protocol": "-1",
+              "RuleAction": "allow",
+              "RuleNumber": 100,
+            },
+          ],
         "IsDefault": true,
         "NetworkAclId": "acl-111222333",
         "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12"
+        "VpcId": "vpc-6aa60b12",
       }
-  -
-    Name: Global VPC SSH Access
+  - Name: Global VPC SSH Access
     ExpectedResult: false
     Resource:
       {
@@ -85,35 +79,33 @@ Tests:
         "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
         "ResourceType": "AWS.EC2.NetworkACL",
         "TimeCreated": null,
-        "Associations": [
-          {
-            "NetworkAclAssociationId": "aclassoc-111222333",
-            "NetworkAclId": "acl-111222333",
-            "SubnetId": "subnet-111222333"
-          }
-        ],
-        "Entries": [
-          {
-            "CidrBlock": "0.0.0.0/0",
-            "Egress": false,
-            "IcmpTypeCode": null,
-            "Ipv6CidrBlock": null,
-            "PortRange": {
-              "From": 22,
-              "To": 22
+        "Associations":
+          [
+            {
+              "NetworkAclAssociationId": "aclassoc-111222333",
+              "NetworkAclId": "acl-111222333",
+              "SubnetId": "subnet-111222333",
             },
-            "Protocol": "-1",
-            "RuleAction": "allow",
-            "RuleNumber": 100
-          }
-        ],
+          ],
+        "Entries":
+          [
+            {
+              "CidrBlock": "0.0.0.0/0",
+              "Egress": false,
+              "IcmpTypeCode": null,
+              "Ipv6CidrBlock": null,
+              "PortRange": { "From": 22, "To": 22 },
+              "Protocol": "-1",
+              "RuleAction": "allow",
+              "RuleNumber": 100,
+            },
+          ],
         "IsDefault": true,
         "NetworkAclId": "acl-111222333",
         "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12"
+        "VpcId": "vpc-6aa60b12",
       }
-  -
-    Name: Global VPC SSH Access From Range
+  - Name: Global VPC SSH Access From Range
     ExpectedResult: false
     Resource:
       {
@@ -125,35 +117,33 @@ Tests:
         "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
         "ResourceType": "AWS.EC2.NetworkACL",
         "TimeCreated": null,
-        "Associations": [
-          {
-            "NetworkAclAssociationId": "aclassoc-111222333",
-            "NetworkAclId": "acl-111222333",
-            "SubnetId": "subnet-111222333"
-          }
-        ],
-        "Entries": [
-          {
-            "CidrBlock": "0.0.0.0/0",
-            "Egress": false,
-            "IcmpTypeCode": null,
-            "Ipv6CidrBlock": null,
-            "PortRange": {
-              "From": 0,
-              "To": 1024
+        "Associations":
+          [
+            {
+              "NetworkAclAssociationId": "aclassoc-111222333",
+              "NetworkAclId": "acl-111222333",
+              "SubnetId": "subnet-111222333",
             },
-            "Protocol": "-1",
-            "RuleAction": "allow",
-            "RuleNumber": 100
-          }
-        ],
+          ],
+        "Entries":
+          [
+            {
+              "CidrBlock": "0.0.0.0/0",
+              "Egress": false,
+              "IcmpTypeCode": null,
+              "Ipv6CidrBlock": null,
+              "PortRange": { "From": 0, "To": 1024 },
+              "Protocol": "-1",
+              "RuleAction": "allow",
+              "RuleNumber": 100,
+            },
+          ],
         "IsDefault": true,
         "NetworkAclId": "acl-111222333",
         "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12"
+        "VpcId": "vpc-6aa60b12",
       }
-  -
-    Name: Global VPC SSH Access From Unrestricted Port Range
+  - Name: Global VPC SSH Access From Unrestricted Port Range
     ExpectedResult: false
     Resource:
       {
@@ -165,26 +155,28 @@ Tests:
         "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
         "ResourceType": "AWS.EC2.NetworkACL",
         "TimeCreated": null,
-        "Associations": [
-          {
-            "NetworkAclAssociationId": "aclassoc-111222333",
-            "NetworkAclId": "acl-111222333",
-            "SubnetId": "subnet-111222333"
-          }
-        ],
-        "Entries": [
-          {
-            "CidrBlock": "0.0.0.0/0",
-            "Egress": false,
-            "IcmpTypeCode": null,
-            "Ipv6CidrBlock": null,
-            "Protocol": "-1",
-            "RuleAction": "allow",
-            "RuleNumber": 100
-          }
-        ],
+        "Associations":
+          [
+            {
+              "NetworkAclAssociationId": "aclassoc-111222333",
+              "NetworkAclId": "acl-111222333",
+              "SubnetId": "subnet-111222333",
+            },
+          ],
+        "Entries":
+          [
+            {
+              "CidrBlock": "0.0.0.0/0",
+              "Egress": false,
+              "IcmpTypeCode": null,
+              "Ipv6CidrBlock": null,
+              "Protocol": "-1",
+              "RuleAction": "allow",
+              "RuleNumber": 100,
+            },
+          ],
         "IsDefault": true,
         "NetworkAclId": "acl-111222333",
         "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12"
+        "VpcId": "vpc-6aa60b12",
       }

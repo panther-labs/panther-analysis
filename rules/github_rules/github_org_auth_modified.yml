@@ -19,8 +19,7 @@ Description: Detects changes to GitHub org authentication changes.
 Runbook: Verify that the GitHub admin performed this activity and validate its use.
 Reference: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
 Tests:
-  -
-    Name: GitHub - Authentication Method Changed
+  - Name: GitHub - Authentication Method Changed
     ExpectedResult: true
     Log:
       {
@@ -29,10 +28,9 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }
-  -
-    Name: GitHub - Non Auth Related Org Change
+  - Name: GitHub - Non Auth Related Org Change
     ExpectedResult: false
     Log:
       {
@@ -41,5 +39,5 @@ Tests:
         "created_at": 1621305118553,
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
+        "repo": "my-org/my-repo",
       }

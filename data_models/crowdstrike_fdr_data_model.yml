@@ -4,21 +4,21 @@ DisplayName: "Crowdstrike FDR"
 Enabled: true
 Filename: crowdstrike_fdr_data_model.py
 LogTypes:
-    - Crowdstrike.FDREvent
+  - Crowdstrike.FDREvent
 Mappings:
-    - Name: actor_user
-      Path: $.event.UserName
-    - Name: cmd
-      Path: $.event.CommandLine
-    - Name: destination_ip
-      Path: $.event.RemoteAddressIP4
-    - Name: destination_port
-      Path: $.event.RemotePort
-    - Name: dns_query
-      Method: get_dns_query
-    - Name: process_name
-      Method: get_process_name
-    - Name: source_ip
-      Path: $.aip
-    - Name: source_port
-      Path: $.event.LocalPort
+  - Name: actor_user
+    Path: $.event.UserName
+  - Name: cmd
+    Path: $.event.CommandLine
+  - Name: destination_ip
+    Path: $.event.RemoteAddressIP4
+  - Name: destination_port
+    Path: $.event.RemotePort
+  - Name: dns_query
+    Method: get_dns_query
+  - Name: process_name
+    Method: get_process_name
+  - Name: source_ip
+    Path: $.aip
+  - Name: source_port
+    Path: $.event.LocalPort

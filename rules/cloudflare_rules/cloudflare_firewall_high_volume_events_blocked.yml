@@ -12,7 +12,7 @@ Description: Monitors high volume events blocked from the same IP
 Runbook: Inspect and monitor internet-facing services for potential outages
 Reference: https://developers.cloudflare.com/firewall/cf-firewall-rules/actions/
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  200
+Threshold: 200
 SummaryAttributes:
   - ClientRequestUserAgent
   - ClientRequestPath
@@ -20,8 +20,7 @@ SummaryAttributes:
   - EdgeResponseStatus
   - OriginResponseStatus
 Tests:
-  -
-    Name: Blocked Event
+  - Name: Blocked Event
     ExpectedResult: true
     Log:
       {
@@ -47,19 +46,15 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "ruleset_version": "65",
-          "type": "customer",
-          "version": "59"
-        },
+        "Metadata":
+          { "ruleset_version": "65", "type": "customer", "version": "59" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
         "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
         "Source": "firewallmanaged",
       }
-  -
-    Name: Skip Event
+  - Name: Skip Event
     ExpectedResult: false
     Log:
       {
@@ -85,11 +80,8 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "ruleset_version": "65",
-          "type": "customer",
-          "version": "59"
-        },
+        "Metadata":
+          { "ruleset_version": "65", "type": "customer", "version": "59" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
