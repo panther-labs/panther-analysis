@@ -1,6 +1,6 @@
-from panther_aws_ami import XZ_AMIS
 from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
+from panther_iocs import XZ_AMIS
 
 # AMIs published by Fedora between 2024-03-26 and 2024-04-02
 # OpenSUSE and Kali do not have any recent [public] AMIs that would be affected
