@@ -26,48 +26,48 @@ SummaryAttributes:
   - hostIdentifier
   - action
 Tests:
-  -
-    Name: Vulnerable liblzma
+  - Name: Vulnerable liblzma
     ExpectedResult: true
     Log:
       {
         "name": "pack_vuln-management_rpm_packages",
         "action": "added",
         "hostIdentifier": "test-host",
-        "columns": {
-          "source": "test-host",
-          "name": "liblzma.so",
-          "version": "5.6.1.000",
-          "status": "Potentially vulnerable"
-        }
+        "columns":
+          {
+            "source": "test-host",
+            "name": "liblzma.so",
+            "version": "5.6.1.000",
+            "status": "Potentially vulnerable",
+          },
       }
-  -
-    Name: Vulnerable xz
+  - Name: Vulnerable xz
     ExpectedResult: true
     Log:
       {
         "name": "pack_vuln-management_deb_packages",
         "action": "added",
         "hostIdentifier": "test-host",
-        "columns": {
-          "source": "test-host",
-          "name": "xz",
-          "version": "5.6.0.000",
-          "status": "Potentially vulnerable"
-        }
+        "columns":
+          {
+            "source": "test-host",
+            "name": "xz",
+            "version": "5.6.0.000",
+            "status": "Potentially vulnerable",
+          },
       }
-  -
-    Name: Not vulnerable
+  - Name: Not vulnerable
     ExpectedResult: false
     Log:
       {
         "name": "pack_vuln-management_rpm_packages",
         "action": "added",
         "hostIdentifier": "test-host",
-        "columns": {
-          "source": "test-host",
-          "name": "liblzma.so",
-          "version": "5.4.6.000",
-          "status": "Most likely not vulnerable"
-        }
+        "columns":
+          {
+            "source": "test-host",
+            "name": "liblzma.so",
+            "version": "5.4.6.000",
+            "status": "Most likely not vulnerable",
+          },
       }
