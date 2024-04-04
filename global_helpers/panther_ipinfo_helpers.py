@@ -8,6 +8,7 @@ IPINFO_ASN_LUT_NAME = "ipinfo_asn"
 IPINFO_PRIVACY_LUT_NAME = "ipinfo_privacy"
 
 
+# pylint: disable=multiple-statements
 class PantherIPInfoException(Exception): ...
 
 
