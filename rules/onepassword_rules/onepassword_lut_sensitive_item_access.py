@@ -7,6 +7,7 @@ lookup table to do this translation can be found at :
 
 The steps detailed in that document are required for this rule to function as intended.
 """
+
 from panther_base_helpers import deep_get
 
 # Add the human-readable names of 1Password items you want to monitor

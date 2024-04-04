@@ -605,6 +605,7 @@ XZ_AMIS = {
     "ami-083bb1ae22e9bf463",  # fedora-coreos-40.20240329.10.0-aarch64 us-west-2
 }
 
+
 # IOC Helper functions:
 def ioc_match(indicators: list, known_iocs: set) -> list:
     """Matches a set of indicators against known Indicators of Compromise

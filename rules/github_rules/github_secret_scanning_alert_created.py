@@ -19,8 +19,10 @@ def alert_context(event):
         "github_organization": event.get("org", "<ORG_NOT_FOUND>"),
         "github_repository": event.get("repo", "<REPO_NOT_FOUND>"),
         "alert_number": str(event.get("number", "<NUMBER_NOT_FOUND>")),
-        "url": f"https://github.com/{event.get('repo')}/security/secret-scanning/"
-        f"{event.get('number')}"
-        if all([event.get("repo"), event.get("number")])
-        else "<URL_NOT_FOUND>",
+        "url": (
+            f"https://github.com/{event.get('repo')}/security/secret-scanning/"
+            f"{event.get('number')}"
+            if all([event.get("repo"), event.get("number")])
+            else "<URL_NOT_FOUND>"
+        ),
     }
