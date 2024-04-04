@@ -8,8 +8,7 @@ IPINFO_ASN_LUT_NAME = "ipinfo_asn"
 IPINFO_PRIVACY_LUT_NAME = "ipinfo_privacy"
 
 
-class PantherIPInfoException(Exception):
-    ...
+class PantherIPInfoException(Exception): ...
 
 
 class IPInfoLocation(LookupTableMatches):
