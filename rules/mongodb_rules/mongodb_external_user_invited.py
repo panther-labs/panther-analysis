@@ -2,6 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from panther_base_helpers import deep_get
+from panther_mongodb_helpers import mongodb_alert_context
 
 # Set domains allowed to join the organization ie. company.com
 ALLOWED_DOMAINS = []
@@ -26,8 +27,4 @@ def title(event):
 
 
 def alert_context(event):
-    return {
-        "username": event.get("username", "<USER_NOT_FOUND>"),
-        "target_username": event.get("targetUsername", "<USER_NOT_FOUND>"),
-        "org_id": event.get("orgId", "<ORG_NOT_FOUND>"),
-    }
+    return mongodb_alert_context(event)
