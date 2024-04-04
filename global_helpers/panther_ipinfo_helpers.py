@@ -8,8 +8,8 @@ IPINFO_ASN_LUT_NAME = "ipinfo_asn"
 IPINFO_PRIVACY_LUT_NAME = "ipinfo_privacy"
 
 
-class PantherIPInfoException(Exception):
-    ...
+# pylint: disable=multiple-statements
+class PantherIPInfoException(Exception): ...
 
 
 class IPInfoLocation(LookupTableMatches):
@@ -95,19 +95,19 @@ class IPInfoPrivacy(LookupTableMatches):
         super().__init__()
         super()._register(event, IPINFO_PRIVACY_LUT_NAME)
 
-    def hosting(self, match_field: str) -> bool or list:
+    def hosting(self, match_field: str) -> Union[bool, list]:
         return self._lookup(match_field, "hosting")
 
-    def proxy(self, match_field: str) -> bool or list:
+    def proxy(self, match_field: str) -> Union[bool, list]:
         return self._lookup(match_field, "proxy")
 
-    def tor(self, match_field: str) -> bool or list:
+    def tor(self, match_field: str) -> Union[bool, list]:
         return self._lookup(match_field, "tor")
 
-    def vpn(self, match_field: str) -> bool or list:
+    def vpn(self, match_field: str) -> Union[bool, list]:
         return self._lookup(match_field, "vpn")
 
-    def relay(self, match_field: str) -> bool or list:
+    def relay(self, match_field: str) -> Union[bool, list]:
         return self._lookup(match_field, "relay")
 
     def service(self, match_field: str) -> Union[list[str], str]:
