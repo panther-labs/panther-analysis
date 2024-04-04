@@ -8,7 +8,7 @@ def snyk_alert_context(event) -> dict:
         a_c.get("actor", "<NO_USERID>") != "<NO_USERID>"
         and a_c.get("groupId", "<NO_GROUPID>") != "<NO_GROUPID>"
     ):
-        a_c[
-            "actor_link"
-        ] = f"https://app.snyk.io/group/{a_c.get('groupId')}/manage/member/{a_c.get('actor')}"
+        a_c["actor_link"] = (
+            f"https://app.snyk.io/group/{a_c.get('groupId')}/manage/member/{a_c.get('actor')}"
+        )
     return a_c
