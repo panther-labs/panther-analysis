@@ -51,7 +51,7 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
-	npx prettier . --write
+	npx prettier . --write --list-different
 
 install:
 	pipenv sync --dev
