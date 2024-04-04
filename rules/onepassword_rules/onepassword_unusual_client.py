@@ -8,6 +8,7 @@ select distinct client:app_name from panther_logs.public.onepassword_signinattem
 The client_allowlist variable is a collection of standard 1Password clients.
 If this differs from your orginization's needs this rule can be edited to suit your environment
 """
+
 from panther_base_helpers import deep_get
 
 
