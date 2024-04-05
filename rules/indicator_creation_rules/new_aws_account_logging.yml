@@ -19,8 +19,7 @@ Reference: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_secur
 SummaryAttributes:
   - p_any_aws_account_ids
 Tests:
-  -
-    Name: AWS Account created
+  - Name: AWS Account created
     ExpectedResult: true
     Mocks:
       - objectName: put_string_set
@@ -36,19 +35,14 @@ Tests:
         "eventVersion": "1.08",
         "managementEvent": true,
         "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": [
-          "111111111111",
-          "222222222222"
-          ],
+        "p_any_aws_account_ids": ["111111111111", "222222222222"],
         "p_event_time": "2021-05-20 15:53:47Z",
         "readOnly": false,
         "recipientAccountId": "292442345278",
         "serviceEventDetails": "{\n  \"createAccountStatus\": {\n    \"accountId\": \"1111111111111111\",\n    \"accountName\": \"****\",\n    \"completedTimestamp\": \"May 20, 2021 3:53:47 PM\",\n    \"id\": \"car-aaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"requestedTimestamp\": \"May 20, 2021 3:53:44 PM\",\n    \"state\": \"SUCCEEDED\"\n  }\n}",
       }
 
-
-  -
-    Name: Non-Account-Creation Event
+  - Name: Non-Account-Creation Event
     ExpectedResult: false
     Mocks:
       - objectName: put_string_set
@@ -67,8 +61,5 @@ Tests:
         "sourceIPAddress": "72.177.120.134",
         "p_event_time": "2020-11-05 21:21:46Z",
         "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": [
-        "222222222222"
-        ],
-    }
-
+        "p_any_aws_account_ids": ["222222222222"],
+      }

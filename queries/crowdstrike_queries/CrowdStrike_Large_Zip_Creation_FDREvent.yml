@@ -46,7 +46,7 @@ Query: |
           '%install%'
         )
       )
-  
+
     ) zip_proc
     LEFT JOIN panther_logs.public.crowdstrike_fdrevent ppr
     on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'

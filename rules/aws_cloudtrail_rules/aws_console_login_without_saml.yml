@@ -25,25 +25,26 @@ SummaryAttributes:
   - recipientAccountId
   - p_any_aws_arns
 Tests:
-  -
-    Name: Login with SAML
+  - Name: Login with SAML
     ExpectedResult: false
     Log:
       {
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/home",
-          "MobileVersion": "No",
-          "MFAUsed": "No",
-          "SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta"
-        },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/home",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+            "SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta",
+          },
         "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:assumed-role/okta/tester@domain.tld",
-          "accountId": "123456789012",
-          "userName": "tester"
-        },
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:assumed-role/okta/tester@domain.tld",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -51,42 +52,39 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012"
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: Normal Login
+  - Name: Normal Login
     ExpectedResult: true
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "IAMUser",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:user/tester",
-              "accountId": "123456789012",
-              "userName": "tester"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "signin.amazonaws.com",
-          "eventName": "ConsoleLogin",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "Mozilla",
-          "requestParameters": null,
-          "responseElements": {
-              "ConsoleLogin": "Failure"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": { "ConsoleLogin": "Failure" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "Yes",
           },
-          "additionalEventData": {
-              "LoginTo": "https://console.aws.amazon.com/console/",
-              "MobileVersion": "No",
-              "MFAUsed": "Yes"
-          },
-          "eventID": "1",
-          "eventType": "AwsConsoleSignIn",
-          "recipientAccountId": "123456789012"
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012",
       }

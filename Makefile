@@ -37,10 +37,12 @@ lint: lint-pylint lint-fmt
 lint-pylint:
 	pipenv run bandit -r $(dirs)
 	pipenv run pylint $(dirs)
+	pipenv run isort --profile=black --check-only $(dirs)
 
 lint-fmt:
 	@echo Checking python file formatting with the black code style checker
 	pipenv run black --line-length=100 --check $(dirs)
+	npx prettier . --check
 
 venv:
 	pipenv sync --dev
@@ -51,7 +53,7 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
-	npx prettier . --write
+	npx prettier . --write --list-different
 
 install:
 	pipenv sync --dev
@@ -62,10 +64,10 @@ test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
 docker-build:
-	docker build -t panther-analysis .
+	docker build -t panther-analysis:latest .
 
 docker-test:
-	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make test TEST_ARGS="$(TEST_ARGS)"
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis:latest make test TEST_ARGS="$(TEST_ARGS)"
 
 docker-lint:
-	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis make lint
+	docker run --mount "type=bind,source=${CURDIR},target=/home/panther-analysis" panther-analysis:latest make lint

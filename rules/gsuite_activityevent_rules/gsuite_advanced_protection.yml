@@ -20,34 +20,21 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Advanced Protection Enabled
+  - Name: Advanced Protection Enabled
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "user_accounts",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.com"
-        },
+        "id": { "applicationName": "user_accounts" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.com" },
         "type": "titanium_change",
         "name": "titanium_enroll",
       }
-  -
-    Name: Advanced Protection Disabled
+  - Name: Advanced Protection Disabled
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "user_accounts",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.com"
-        },
+        "id": { "applicationName": "user_accounts" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.com" },
         "type": "titanium_change",
         "name": "titanium_unenroll",
       }
-

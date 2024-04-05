@@ -17,8 +17,7 @@ Runbook: >
   SDK, CloudFormation, or any other supported method.
 Reference: https://docs.aws.amazon.com/cli/latest/reference/logs/put-retention-policy.html
 Tests:
-  -
-    Name: Unlimited Log Retention
+  - Name: Unlimited Log Retention
     ExpectedResult: true
     Resource:
       {
@@ -35,13 +34,10 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": null,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }
-  -
-    Name: Logs Retained 1 Year
+  - Name: Logs Retained 1 Year
     ExpectedResult: true
     Resource:
       {
@@ -58,13 +54,10 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": 365,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }
-  -
-    Name: Logs Retained 2 Years
+  - Name: Logs Retained 2 Years
     ExpectedResult: true
     Resource:
       {
@@ -81,13 +74,10 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": 730,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }
-  -
-    Name: Logs Retained 1 Week
+  - Name: Logs Retained 1 Week
     ExpectedResult: false
     Resource:
       {
@@ -104,8 +94,6 @@ Tests:
         "ResourceType": "AWS.CloudWatch.LogGroup",
         "RetentionInDays": 7,
         "StoredBytes": 0,
-        "Tags": {
-          "Key1Name": "Value1"
-        },
-        "TimeCreated": "2009-02-13T15:31:30.000-08:00"
+        "Tags": { "Key1Name": "Value1" },
+        "TimeCreated": "2009-02-13T15:31:30.000-08:00",
       }

@@ -16,23 +16,13 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Login Event
+  - Name: Normal Login Event
     ExpectedResult: false
-    Log:
-      {
-        "id": {
-          "applicationName": "login",
-        },
-        "type": "login",
-      }
-  -
-    Name: Resource Accessed by Google
+    Log: { "id": { "applicationName": "login" }, "type": "login" }
+  - Name: Resource Accessed by Google
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "access_transparency",
-        },
+        "id": { "applicationName": "access_transparency" },
         "type": "GSUITE_RESOURCE",
       }

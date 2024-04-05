@@ -4,33 +4,33 @@ DisplayName: "--DEPRECATED-- Abnormally High Event Volume"
 Enabled: false
 Filename: abnormally_high_event_volume.py
 Reports:
-    MITRE ATT&CK:
-        - TA0040:T1499
+  MITRE ATT&CK:
+    - TA0040:T1499
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html
 Severity: Medium
 Tests:
-    - ExpectedResult: false
-      Log:
-        num_logs: 5
-        p_log_type: AWS.CloudTrail
-      Mocks:
-        - objectName: get_string_set
-          returnValue: "True"
-        - objectName: put_string_set
-          returnValue: "True"
-      Name: Abnormal = False
-    - ExpectedResult: true
-      Log:
-        num_logs: 5e+06
-        p_log_type: AWS.CloudTrail
-      Mocks:
-        - objectName: get_string_set
-          returnValue: "True"
-        - objectName: put_string_set
-          returnValue: "True"
-      Name: Abnormal = True
+  - ExpectedResult: false
+    Log:
+      num_logs: 5
+      p_log_type: AWS.CloudTrail
+    Mocks:
+      - objectName: get_string_set
+        returnValue: "True"
+      - objectName: put_string_set
+        returnValue: "True"
+    Name: Abnormal = False
+  - ExpectedResult: true
+    Log:
+      num_logs: 5e+06
+      p_log_type: AWS.CloudTrail
+    Mocks:
+      - objectName: get_string_set
+        returnValue: "True"
+      - objectName: put_string_set
+        returnValue: "True"
+    Name: Abnormal = True
 DedupPeriodMinutes: 30
 RuleID: "Abnormally.High.Event.Volume"
 Threshold: 1
 ScheduledQueries:
-    - AWS CloudTrail 2-minute count
+  - AWS CloudTrail 2-minute count

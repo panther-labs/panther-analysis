@@ -2,8 +2,7 @@
 LogType: AWS.CloudTrail
 Format: json
 Logs:
-  -
-    additionalEventData:
+  - additionalEventData:
       LoginTo: "https://console.aws.amazon.com/console/"
       MFAUsed: "No"
       MobileVersion: "No"
@@ -26,8 +25,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData:
+  - additionalEventData:
       LoginTo: "https://console.aws.amazon.com/console/"
       MFAUsed: "No"
       MobileVersion: "No"
@@ -50,8 +48,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData:
+  - additionalEventData:
       LoginTo: "https://console.aws.amazon.com/console/"
       MFAUsed: "No"
       MobileVersion: "No"
@@ -74,8 +71,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData:
+  - additionalEventData:
       LoginTo: "https://console.aws.amazon.com/console/"
       MFAUsed: "No"
       MobileVersion: "No"
@@ -98,8 +94,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     errorCode: NotOrganizationMasterAccountException
     errorMessage: Cannot stop trail, not master trail.
     awsRegion: us-east-1
@@ -121,8 +116,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: CreateAccessKey
@@ -146,8 +140,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: CreateUser
@@ -174,8 +167,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: AttachUserPolicy
@@ -196,8 +188,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: AttachUserPolicy
@@ -218,8 +209,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: AttachUserPolicy
@@ -240,8 +230,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: CreateAccessKey
@@ -266,8 +255,7 @@ Logs:
       principalId: "493859302102"
       type: Root
       userName: root
-  -
-    additionalEventData: ~
+  - additionalEventData: ~
     awsRegion: us-east-1
     eventID: "1"
     eventName: RunInstances
@@ -280,15 +268,15 @@ Logs:
       ebsOptimized: false
       blockDeviceMapping:
         items:
-        - ebs:
-            volumeType: gp2
-            deleteOnTermination: true
-            volumeSize: '32'
-          deviceName: "/dev/sda1"
-        - noDevice: {}
-          deviceName: "/dev/sdb"
-        - noDevice: {}
-          deviceName: "/dev/sdc"
+          - ebs:
+              volumeType: gp2
+              deleteOnTermination: true
+              volumeSize: "32"
+            deviceName: "/dev/sda1"
+          - noDevice: {}
+            deviceName: "/dev/sdb"
+          - noDevice: {}
+            deviceName: "/dev/sdc"
       capacityReservationSpecification:
         capacityReservationPreference: open
       instanceType: p2.8xlarge
@@ -299,105 +287,105 @@ Logs:
         enabled: false
       groupSet:
         items:
-        - groupId: sg-07ebc4087aa0b2a81
+          - groupId: sg-07ebc4087aa0b2a81
       hibernationOptions:
         configured: false
       instancesSet:
         items:
-        - imageId: ami-085925f297f89fce1
-          keyName: panther-test
-          minCount: '1'
-          maxCount: '1'
+          - imageId: ami-085925f297f89fce1
+            keyName: panther-test
+            minCount: "1"
+            maxCount: "1"
       instanceInitiatedShutdownBehavior: stop
       disableApiTermination: false
       metadataOptions:
-        httpPutResponseHopLimit: '1'
+        httpPutResponseHopLimit: "1"
         httpEndpoint: enabled
         httpTokens: optional
     responseElements:
       instancesSet:
         items:
-        - subnetId: subnet-73a1094d
-          virtualizationType: hvm
-          capacityReservationSpecification:
-            capacityReservationPreference: open
-          amiLaunchIndex: '0'
-          stateReason:
-            code: pending
-            message: pending
-          sourceDestCheck: true
-          groupSet:
-            items:
-            - groupName: test-box
-              groupId: sg-0917d39b0f1a143b5
-          hibernationOptions:
-            configured: false
-          platform: linux
-          instanceId: i-05261ffb46217cdc3
-          instanceState:
-            code: '0'
-            name: pending
-          vpcId: vpc-c85cedb2
-          hypervisor: xen
-          rootDeviceName: "/dev/sda1"
-          productCodes: {}
-          architecture: x86_64
-          ebsOptimized: false
-          imageId: ami-04a0ee204b44cc91a
-          networkInterfaceSet:
-            items:
-            - networkInterfaceId: eni-0b13344793d4fde67
-              subnetId: subnet-73a1094d
-              ownerId: '493859302102'
-              sourceDestCheck: true
-              groupSet:
-                items:
+          - subnetId: subnet-73a1094d
+            virtualizationType: hvm
+            capacityReservationSpecification:
+              capacityReservationPreference: open
+            amiLaunchIndex: "0"
+            stateReason:
+              code: pending
+              message: pending
+            sourceDestCheck: true
+            groupSet:
+              items:
                 - groupName: test-box
                   groupId: sg-0917d39b0f1a143b5
-              privateIpAddress: 172.31.77.31
-              interfaceType: interface
-              tagSet: {}
-              macAddress: 06:02:cd:a5:08:67
-              attachment:
-                attachmentId: eni-attach-00e2ef9b796c88634
-                deleteOnTermination: true
-                deviceIndex: '0'
-                attachTime: '1590777496000'
-                status: attaching
-              vpcId: vpc-c85cedb2
-              ipv6AddressesSet: {}
-              privateDnsName: ip-172-31-77-110.ec2.internal
-              privateIpAddressesSet:
-                item:
-                - privateDnsName: ip-172-31-77-31.ec2.internal
+            hibernationOptions:
+              configured: false
+            platform: linux
+            instanceId: i-05261ffb46217cdc3
+            instanceState:
+              code: "0"
+              name: pending
+            vpcId: vpc-c85cedb2
+            hypervisor: xen
+            rootDeviceName: "/dev/sda1"
+            productCodes: {}
+            architecture: x86_64
+            ebsOptimized: false
+            imageId: ami-04a0ee204b44cc91a
+            networkInterfaceSet:
+              items:
+                - networkInterfaceId: eni-0b13344793d4fde67
+                  subnetId: subnet-73a1094d
+                  ownerId: "493859302102"
+                  sourceDestCheck: true
+                  groupSet:
+                    items:
+                      - groupName: test-box
+                        groupId: sg-0917d39b0f1a143b5
                   privateIpAddress: 172.31.77.31
-                  primary: true
-              status: in-use
-          blockDeviceMapping: {}
-          instanceType: p2.8xlarge
-          keyName: panther-test
-          cpuOptions:
-            threadsPerCore: '1'
-            coreCount: '1'
-          monitoring:
-            state: disabled
-          privateIpAddress: 172.31.77.31
-          rootDeviceType: ebs
-          enclaveOptions:
-            enabled: false
-          launchTime: '1590777496000'
-          metadataOptions:
-            httpPutResponseHopLimit: '1'
-            httpEndpoint: enabled
-            state: pending
-            httpTokens: optional
-          privateDnsName: ip-172-31-77-31.ec2.internal
-          placement:
-            tenancy: default
-            availabilityZone: us-east-1e
+                  interfaceType: interface
+                  tagSet: {}
+                  macAddress: 06:02:cd:a5:08:67
+                  attachment:
+                    attachmentId: eni-attach-00e2ef9b796c88634
+                    deleteOnTermination: true
+                    deviceIndex: "0"
+                    attachTime: "1590777496000"
+                    status: attaching
+                  vpcId: vpc-c85cedb2
+                  ipv6AddressesSet: {}
+                  privateDnsName: ip-172-31-77-110.ec2.internal
+                  privateIpAddressesSet:
+                    item:
+                      - privateDnsName: ip-172-31-77-31.ec2.internal
+                        privateIpAddress: 172.31.77.31
+                        primary: true
+                  status: in-use
+            blockDeviceMapping: {}
+            instanceType: p2.8xlarge
+            keyName: panther-test
+            cpuOptions:
+              threadsPerCore: "1"
+              coreCount: "1"
+            monitoring:
+              state: disabled
+            privateIpAddress: 172.31.77.31
+            rootDeviceType: ebs
+            enclaveOptions:
+              enabled: false
+            launchTime: "1590777496000"
+            metadataOptions:
+              httpPutResponseHopLimit: "1"
+              httpEndpoint: enabled
+              state: pending
+              httpTokens: optional
+            privateDnsName: ip-172-31-77-31.ec2.internal
+            placement:
+              tenancy: default
+              availabilityZone: us-east-1e
       reservationId: r-07e78c128894ab85b
       requestId: c4cc9607-2ff7-4193-8070-f487c01bb90d
-      ownerId: '493859302102'
+      ownerId: "493859302102"
       groupSet: {}
     sourceIPAddress: "92.55.146.245"
     userAgent: console.ec2.amazonaws.com
@@ -408,4 +396,3 @@ Logs:
       principalId: "493859302102"
       type: IAMUser
       userName: tracy_stone
-

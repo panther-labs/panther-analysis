@@ -11,8 +11,7 @@ Reference: https://docs.github.com/en/organizations/managing-user-access-to-your
 Severity: Info
 Description: Detects when a user initially accesses a private organization repository.
 Tests:
-  -
-    Name: GitHub - Initial Access
+  - Name: GitHub - Initial Access
     ExpectedResult: true
     Mocks:
       - objectName: get_string_set
@@ -31,10 +30,9 @@ Tests:
         "repository": "my-org/my-repo",
         "repository_public": false,
         "actor": "cat",
-        "user": ""
+        "user": "",
       }
-  -
-    Name: GitHub - Repeated Access
+  - Name: GitHub - Repeated Access
     ExpectedResult: false
     Mocks:
       - objectName: get_string_set
@@ -52,10 +50,9 @@ Tests:
         "repository": "my-org/my-repo",
         "repository_public": false,
         "actor": "cat",
-        "user": ""
+        "user": "",
       }
-  -
-    Name: GitHub - Initial Access Public Repo
+  - Name: GitHub - Initial Access Public Repo
     ExpectedResult: false
     Mocks:
       - objectName: get_string_set
@@ -74,10 +71,9 @@ Tests:
         "repository": "my-org/my-repo",
         "repository_public": true,
         "actor": "cat",
-        "user": ""
+        "user": "",
       }
-  -
-    Name: GitHub - Clone without Actor
+  - Name: GitHub - Clone without Actor
     ExpectedResult: false
     Log:
       {
@@ -91,5 +87,5 @@ Tests:
         "repository": "my-org/my-repo",
         "repository_public": false,
         "actor": "",
-        "user": ""
+        "user": "",
       }

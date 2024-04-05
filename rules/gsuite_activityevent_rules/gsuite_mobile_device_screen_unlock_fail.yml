@@ -20,78 +20,55 @@ Runbook: >
 SummaryAttributes:
   - actor:email
 Tests:
-  -
-    Name: Normal Mobile Event
+  - Name: Normal Mobile Event
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "DEVICE_SYNC_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io"
-        },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
       }
-  -
-    Name: Small Number of Failed Logins
+  - Name: Small Number of Failed Logins
     ExpectedResult: false
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io",
-          "FAILED_PASSWD_ATTEMPTS": 2
-        },
+        "parameters":
+          {
+            "USER_EMAIL": "homer.simpson@example.io",
+            "FAILED_PASSWD_ATTEMPTS": 2,
+          },
       }
-  -
-    Name: Multiple Failed Login Attempts with int Type
+  - Name: Multiple Failed Login Attempts with int Type
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io",
-          "FAILED_PASSWD_ATTEMPTS": 100
-        },
+        "parameters":
+          {
+            "USER_EMAIL": "homer.simpson@example.io",
+            "FAILED_PASSWD_ATTEMPTS": 100,
+          },
       }
-  -
-    Name: Multiple Failed Login Attempts with String Type
+  - Name: Multiple Failed Login Attempts with String Type
     ExpectedResult: true
     Log:
       {
-        "id": {
-          "applicationName": "mobile",
-        },
-        "actor": {
-          "callerType": "USER",
-          "email": "homer.simpson@example.io",
-        },
+        "id": { "applicationName": "mobile" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
-        "parameters": {
-          "USER_EMAIL": "homer.simpson@example.io",
-          "FAILED_PASSWD_ATTEMPTS": "100"
-        },
+        "parameters":
+          {
+            "USER_EMAIL": "homer.simpson@example.io",
+            "FAILED_PASSWD_ATTEMPTS": "100",
+          },
       }

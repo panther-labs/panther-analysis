@@ -30,8 +30,7 @@ SummaryAttributes:
   - p_any_aws_arns
   - p_any_aws_account_ids
 Tests:
-  -
-    Name: Expected Access
+  - Name: Expected Access
     ExpectedResult: false
     Log:
       {
@@ -54,10 +53,9 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  -
-    Name: Unexpected Access
+  - Name: Unexpected Access
     ExpectedResult: true
     Log:
       {
@@ -80,10 +78,9 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  -
-    Name: Failed Request
+  - Name: Failed Request
     ExpectedResult: false
     Log:
       {
@@ -106,12 +103,11 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  - 
-    Name: Snowflake Request
+  - Name: Snowflake Request
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "authenticationtype": "AuthHeader",
         "bucket": "panther-bootstrap-processeddata-AF1341JAK",
@@ -130,5 +126,5 @@ Tests:
         "tlsVersion": "TLSv1.2",
         "totaltime": 10,
         "turnaroundtime": 9,
-        "useragent": "snowflake/1.0"
+        "useragent": "snowflake/1.0",
       }

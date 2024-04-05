@@ -1334,12 +1334,14 @@ class TestDeepWalk(unittest.TestCase):
             "".join(
                 secrets.choice(string.hexdigits)
                 for _ in range(secrets.SystemRandom().randrange(1, 6))
-            ): "".join(
-                secrets.choice(string.hexdigits)
-                for _ in range(secrets.SystemRandom().randrange(1, 6))
+            ): (
+                "".join(
+                    secrets.choice(string.hexdigits)
+                    for _ in range(secrets.SystemRandom().randrange(1, 6))
+                )
+                if secrets.choice([True, False])
+                else secrets.randbelow(secrets.SystemRandom().randrange(1, 11) ** 10)
             )
-            if secrets.choice([True, False])
-            else secrets.randbelow(secrets.SystemRandom().randrange(1, 11) ** 10)
             for _ in range(secrets.SystemRandom().randrange(1, 6))
         }
 
