@@ -68,6 +68,6 @@ jobs:
             PR_TITLE+=" [MERGE CONFLICTS]"
             PR_BODY+=" Merge conflicts need resolution."
           fi
-          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --head conflicts/upstream-${{ github.run_id }} --base ${{ github.event.repository.default_branch }} --label sync,automated-pr
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --head conflicts/upstream-${{ github.run_id }} --base ${{ github.event.repository.default_branch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
