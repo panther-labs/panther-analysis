@@ -20,45 +20,54 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-      - name: Add and fetch upstream
+
+      - name: Get the latest release from upstream
+        id: get-latest-release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.repos.getLatestRelease({
+              owner: 'panther-labs',
+              repo: 'panther-analysis',
+            });
+            return response.data.tag_name
+
+      - name: Add and fetch the latest release from upstream
         run: |
           git remote add upstream https://github.com/panther-labs/panther-analysis.git
-          git fetch upstream release
-      - name: Create branch and reset excluding workflow changes
+          git fetch upstream ${{ steps.get-latest-release.outputs.result }}
+
+      - name: Create branch for changes
         run: |
-          # Create a new branch for the changes
           git checkout -b conflicts/upstream-${{ github.run_id }}
-          
-          # Reset this new branch to match upstream/release
-          git fetch upstream release
-          git reset --hard upstream/release
-          
-          # Restore .github/workflows from the current default branch to exclude any workflow changes from upstream
-          git checkout origin/${{ github.event.repository.default_branch }} -- .github/workflows/
-          
-          # Stage all changes after restoring .github/workflows
+          git reset --hard upstream/${{ steps.get-latest-release.outputs.result }}
+          git checkout ${{ github.event.repository.default_branch }} -- .github/workflows/
           git add -A
-          
-          # Commit if there are any changes to commit
-          if git diff --cached --quiet; then
-              echo "No changes to commit, working tree clean."
-          else
-              git commit -m "Sync with upstream/release, excluding workflow changes"
-              git push --set-upstream origin conflicts/upstream-${{ github.run_id }} --force
-          fi
-      - name: Open PR for conflict resolution
+
+      - name: Check for changes
+        id: check-for-changes
         run: |
-          # Check if the current branch diverges from the base branch
-          if ! git diff --quiet origin/${{ github.event.repository.default_branch }}...conflicts/upstream-${{ github.run_id }}; then
-            echo "Creating a pull request for conflict resolution"
-            gh pr create --title "Resolve merge conflicts from upstream/release" \
-                         --body "Automated PR to resolve conflicts." \
-                         --head conflicts/upstream-${{ github.run_id }} \
-                         --base ${{ github.event.repository.default_branch }} \
-                         --label sync,automated-pr,conflicts \
-                         --repo ${{ github.repository }}
+          if ! git diff --cached --quiet; then
+              echo "changes_exist=true" >> "$GITHUB_OUTPUT"
+              git commit -m "Sync with panther-analysis release ${{ steps.get-latest-release.outputs.result }}"
+              git push --set-upstream origin conflicts/upstream-${{ github.run_id }} --force
           else
-            echo "No changes to merge; no pull request created."
+              echo "changes_exist=false" >> "$GITHUB_OUTPUT"
+              echo "No changes to commit, working tree clean."
           fi
+
+      - name: Open PR for changes
+        if: steps.check-for-changes.outputs.changes_exist == 'true'
+        run: |
+          PR_TITLE="Integrate `panther-analysis` release `${{ steps.get-latest-release.outputs.result }}`"
+          PR_BODY="Automated PR to sync with the latest release."
+          git fetch origin ${{ github.event.repository.default_branch }}:local-default
+          if git merge-base --is-ancestor local-default conflicts/upstream-${{ github.run_id }}; then
+            echo "No merge conflicts detected."
+          else
+            PR_TITLE+=" [MERGE CONFLICTS]"
+            PR_BODY+=" Merge conflicts need resolution."
+          fi
+          gh pr create --title "$PR_TITLE" --body "$PR_BODY" --head conflicts/upstream-${{ github.run_id }} --base ${{ github.event.repository.default_branch }} --label sync,automated-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
