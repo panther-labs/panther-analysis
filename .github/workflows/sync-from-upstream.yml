@@ -40,7 +40,7 @@ jobs:
       - name: Create branch for changes
         run: |
           git checkout -b conflicts/upstream-${{ github.run_id }}
-          git reset --hard upstream/${{ steps.get-latest-release.outputs.result }}
+          git reset --hard ${{ steps.get-latest-release.outputs.result }}
           git checkout ${{ github.event.repository.default_branch }} -- .github/workflows/
           git add -A
 
@@ -59,7 +59,7 @@ jobs:
       - name: Open PR for changes
         if: steps.check-for-changes.outputs.changes_exist == 'true'
         run: |
-          PR_TITLE="Integrate `panther-analysis` release `${{ steps.get-latest-release.outputs.result }}`"
+          PR_TITLE="Integrate panther-labs/panther-analysis release ${{ steps.get-latest-release.outputs.result }}"
           PR_BODY="Automated PR to sync with the latest release."
           git fetch origin ${{ github.event.repository.default_branch }}:local-default
           if git merge-base --is-ancestor local-default conflicts/upstream-${{ github.run_id }}; then
