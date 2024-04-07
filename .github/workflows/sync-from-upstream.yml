@@ -35,7 +35,7 @@ jobs:
       - name: Add and fetch the latest release from upstream
         run: |
           git remote add upstream https://github.com/panther-labs/panther-analysis.git
-          git fetch upstream ${{ steps.get-latest-release.outputs.result }}
+          git fetch upstream --tags
 
       - name: Create branch for changes
         run: |
