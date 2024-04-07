@@ -11,7 +11,7 @@ def rule(event):
         return False
 
     # event['target'] = [{...}, {...}, {...}]
-    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "type", "AppUser")
+    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "type", "User")
     TARGET_APP_NAMES = get_val_from_list(
         event.get("target", [{}]), "alternateId", "type", "AppInstance"
     )

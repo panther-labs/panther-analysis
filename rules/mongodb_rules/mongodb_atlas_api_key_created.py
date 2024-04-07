@@ -1,4 +1,5 @@
 from panther_base_helpers import deep_get, deep_walk
+from panther_mongodb_helpers import mongodb_alert_context
 
 
 def rule(event):
@@ -12,11 +13,13 @@ def title(event):
 
 
 def alert_context(event):
+    context = mongodb_alert_context(event)
     links = deep_walk(event, "links", "href", return_val="first", default="<LINKS_NOT_FOUND>")
-    return {
+    extra_context = {
         "links": links,
-        "username": deep_get(event, "username", default="<USER_NOT_FOUND>"),
         "event_type_name": deep_get(event, "eventTypeName", default="<EVENT_TYPE_NOT_FOUND>"),
-        "org_id": deep_get(event, "orgId", default="<ORG_ID_NOT_FOUND>"),
         "target_public_key": deep_get(event, "targetPublicKey", default="<PUBLIC_KEY_NOT_FOUND>"),
     }
+    context.update(extra_context)
+
+    return context

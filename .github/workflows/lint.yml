@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set python version
         uses: actions/setup-python@v4
@@ -17,9 +19,6 @@ jobs:
 
       - name: Install pipenv
         run: pip install pipenv
-
-      - name: Install
-        run: make install
 
       - name: Setup venv
         run: make venv
