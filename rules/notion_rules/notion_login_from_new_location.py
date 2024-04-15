@@ -27,9 +27,9 @@ def rule(event):
     global IPINFO_LOC
     IPINFO_LOC = IPInfoLocation(event)
     path_to_ip = "event.ip_address"
-    city = IPINFO_LOC.city(path_to_ip)
-    region = IPINFO_LOC.region(path_to_ip)
-    country = IPINFO_LOC.country(path_to_ip)
+    city = IPINFO_LOC.city(path_to_ip) or ""
+    region = IPINFO_LOC.region(path_to_ip) or ""
+    country = IPINFO_LOC.country(path_to_ip) or ""
     loc_string = "_".join((city, region, country))
 
     # Store the login location. The premise is to create a new entry for each combimation of user
