@@ -1,0 +1,86 @@
+AnalysisType: rule
+Filename: push_security_open_security_finding.py
+RuleID: "Push.Security.Open.Security.Finding"
+DisplayName: "Push Security Open Security Finding"
+Enabled: true
+LogTypes:
+    - Custom.PushSecurity.Entities
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Resolved Finding
+      ExpectedResult: false
+      Log:
+        id: c478966c-f927-411c-b919-179832d3d50c
+        new:
+            accountId: null
+            appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            appType: PUSH_SECURITY
+            creationTimestamp: 1.698064423e+09
+            employeeId: 379ac7ea-ff2a-42ef-af37-06d2020dc46a
+            id: d6a32ba5-0532-4a66-8137-48cdf409c972
+            passwordId: c4a045a1-5331-4714-af83-6a361e98960d
+            state: RESOLVED
+            type: WEAK_PASSWORD
+        object: FINDING
+        old:
+            accountId: null
+            appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            appType: PUSH_SECURITY
+            creationTimestamp: 1.698064423e+09
+            employeeId: 379ac7ea-ff2a-42ef-af37-06d2020dc46a
+            id: d6a32ba5-0532-4a66-8137-48cdf409c972
+            passwordId: c4a045a1-5331-4714-af83-6a361e98960d
+            state: OPEN
+            type: WEAK_PASSWORD
+        timestamp: 1.698604061e+09
+        type: UPDATE
+        version: "1"
+    - Name: New Finding
+      ExpectedResult: true
+      Log:
+        id: c478966c-f927-411c-b919-179832d3d50c
+        new:
+            accountId: null
+            appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            appType: PUSH_SECURITY
+            creationTimestamp: 1.698064423e+09
+            employeeId: 379ac7ea-ff2a-42ef-af37-06d2020dc46a
+            id: d6a32ba5-0532-4a66-8137-48cdf409c972
+            passwordId: c4a045a1-5331-4714-af83-6a361e98960d
+            state: OPEN
+            type: WEAK_PASSWORD
+        object: FINDING
+        old: null
+        timestamp: 1.698604061e+09
+        type: CREATE
+        version: "1"
+    - Name: Reopened Finding
+      ExpectedResult: true
+      Log:
+        id: c478966c-f927-411c-b919-179832d3d50c
+        new:
+            accountId: null
+            appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            appType: PUSH_SECURITY
+            creationTimestamp: 1.698064423e+09
+            employeeId: 379ac7ea-ff2a-42ef-af37-06d2020dc46a
+            id: d6a32ba5-0532-4a66-8137-48cdf409c972
+            passwordId: c4a045a1-5331-4714-af83-6a361e98960d
+            state: OPEN
+            type: WEAK_PASSWORD
+        object: FINDING
+        old:
+            accountId: null
+            appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            appType: PUSH_SECURITY
+            creationTimestamp: 1.698064423e+09
+            employeeId: 379ac7ea-ff2a-42ef-af37-06d2020dc46a
+            id: d6a32ba5-0532-4a66-8137-48cdf409c972
+            passwordId: c4a045a1-5331-4714-af83-6a361e98960d
+            state: RESOLVED
+            type: WEAK_PASSWORD
+        timestamp: 1.698604061e+09
+        type: UPDATE
+        version: "1"

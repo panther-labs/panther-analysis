@@ -1,0 +1,54 @@
+AnalysisType: rule
+Filename: push_security_new_app_detected.py
+RuleID: "Push.Security.New.App.Detected"
+DisplayName: "Push Security New App Detected"
+Enabled: true
+LogTypes:
+    - Custom.PushSecurity.Entities
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: New App
+      ExpectedResult: true
+      Log:
+        id: c478966c-f927-411c-b919-179832d3d50c
+        new:
+            approvalStatus: null
+            creationTimestamp: 1.698064423e+09
+            id: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            notes: ""
+            ownerId: null
+            sensitivityLevel: null
+            type: ZAPIER
+        object: APP
+        old: null
+        timestamp: 1.698604061e+09
+        type: CREATE
+        version: "1"
+    - Name: App Updated
+      ExpectedResult: false
+      Log:
+        id: c478966c-f927-411c-b919-179832d3d50c
+        new:
+            approvalStatus: APPROVED
+            creationTimestamp: 1.698064423e+09
+            id: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            notes: |
+                Last security audit: 16 January 2023.
+            ownerId: 87569da6-fb7a-4df7-8ce2-246c14044911
+            sensitivityLevel: HIGH
+            type: ZAPIER
+        object: APP
+        old:
+            approvalStatus: UNDER_REVIEW
+            creationTimestamp: 1.698064423e+09
+            id: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
+            notes: |
+                Initial submission for review.
+            ownerId: 87569da6-fb7a-4df7-8ce2-246c14044911
+            sensitivityLevel: MEDIUM
+            type: ZAPIER
+        timestamp: 1.698604061e+09
+        type: UPDATE
+        version: "1"

@@ -1,0 +1,167 @@
+AnalysisType: rule
+Filename: push_security_mfa_method_changed.py
+RuleID: "Push.Security.MFA.Method.Changed"
+DisplayName: "Push Security SaaS App MFA Method Changed"
+Enabled: true
+LogTypes:
+    - Custom.PushSecurity.Entities
+Severity: Info
+Description: MFA method on SaaS app changed
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: All MFA methods removed
+      ExpectedResult: true
+      Log:
+        id: d1e5794f-666d-4cba-abae-c6d889ca1903
+        new:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods: []
+            mfaRegistered: false
+            passwordId: null
+        object: ACCOUNT
+        old:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+            mfaRegistered: false
+            passwordId: null
+        timestamp: 1.707775049e+09
+        type: CREATE
+        version: "1"
+    - Name: First seen
+      ExpectedResult: false
+      Log:
+        id: d1e5794f-666d-4cba-abae-c6d889ca1903
+        new:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+                - APP_OTP
+            mfaRegistered: false
+            passwordId: null
+        object: ACCOUNT
+        old: null
+        timestamp: 1.707775049e+09
+        type: CREATE
+        version: "1"
+    - Name: MFA method added
+      ExpectedResult: true
+      Log:
+        id: d1e5794f-666d-4cba-abae-c6d889ca1903
+        new:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+                - APP_OTP
+            mfaRegistered: false
+            passwordId: null
+        object: ACCOUNT
+        old:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+            mfaRegistered: false
+            passwordId: null
+        timestamp: 1.707775049e+09
+        type: CREATE
+        version: "1"
+    - Name: No MFA method change
+      ExpectedResult: false
+      Log:
+        id: d1e5794f-666d-4cba-abae-c6d889ca1903
+        new:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+                - APP_OTP
+            mfaRegistered: false
+            passwordId: null
+        object: ACCOUNT
+        old:
+            appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
+            appType: CONTENTFUL
+            creationTimestamp: 1.707775048e+09
+            email: jet.black@issp.com
+            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+            id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
+            lastUsedTimestamp: null
+            loginMethods:
+                oidcLogin: null
+                oktaSwaLogin: false
+                passwordLogin: false
+                samlLogin: null
+            mfaMethods:
+                - SMS
+                - APP_OTP
+            mfaRegistered: false
+            passwordId: null
+        timestamp: 1.707775049e+09
+        type: CREATE
+        version: "1"
