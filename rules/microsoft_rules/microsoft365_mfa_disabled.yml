@@ -3,6 +3,11 @@ Description: A user's MFA has been removed
 DisplayName: "Microsoft365 MFA Disabled"
 Enabled: true
 Filename: microsoft365_mfa_disabled.py
+Reports:
+  MITRE ATT&CK:
+    - TA003:T1556 # Persistence - Modify Authentication Process
+    - TA005:T1556 # Defense Evansion - Modify Authentication Process
+    - TA006:T1556 # Credential Access - Modify Authentication Process
 Runbook: Depending on company policy, either suggest or require the user re-enable two step verification.
 Reference: https://learn.microsoft.com/en-us/microsoft-365/admin/security-and-compliance/set-up-multi-factor-authentication?view=o365-worldwide
 Severity: Low
