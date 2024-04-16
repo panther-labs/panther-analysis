@@ -9,7 +9,8 @@ IPINFO_PRIVACY_LUT_NAME = "ipinfo_privacy"
 
 
 # pylint: disable=multiple-statements
-class PantherIPInfoException(Exception): ...
+class PantherIPInfoException(Exception):
+    ...
 
 
 class IPInfoLocation(LookupTableMatches):
