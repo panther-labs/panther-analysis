@@ -11,6 +11,15 @@ LogTypeMap:
     - LogType: AWS.CloudTrail
       Selectors:
         - "eventName"
+    - LogType: OCSF.AccountChange
+      Selectors:
+        - "$.api.operation"
+    - LogType: OCSF.ApiActivity
+      Selectors:
+        - "$.api.operation"
+    - LogType: OCSF.Authentication
+      Selectors:
+        - "$.api.operation"
     - LogType: OCSF.UserAccess
       Selectors:
         - "$.api.operation"
