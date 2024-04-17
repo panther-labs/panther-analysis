@@ -2,7 +2,8 @@ name: sync-panther-analysis-from-upstream
 
 on:
   schedule:
-    - cron: "0 3,15 * * *"
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
   workflow_dispatch:
 
 jobs:
