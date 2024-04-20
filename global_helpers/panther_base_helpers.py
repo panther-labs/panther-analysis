@@ -1,18 +1,19 @@
+from __future__ import annotations
+
 import json
 import re
 from base64 import b64decode
 from binascii import Error as AsciiError
 from collections import OrderedDict
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from datetime import datetime
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Any, List, Optional, Sequence, Union, TypeVar, cast
-
-from panther_core import PantherEvent
+from typing import Any, Optional, TypeVar, Union, cast
 
 from panther_config import config
+from panther_core import PantherEvent
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -317,7 +318,7 @@ def deep_get(dictionary: Mapping[str, Any], *keys: str, default: Any = None) -> 
 # pylint: disable=too-complex,too-many-return-statements
 def deep_walk(
     obj: Optional[Any], *keys: str, default: Optional[str] = None, return_val: str = "all"
-) -> Union[Optional[Any], Optional[List[Any]]]:
+) -> Union[Optional[Any], Optional[list[Any]]]:
     """Safely retrieve a value stored in complex dictionary structure
 
     Similar to deep_get but supports accessing dictionary keys within nested lists as well
@@ -376,7 +377,11 @@ def deep_walk(
     }.get(return_val, "all")
 
 
-def get_val_from_list(list_of_dicts: Sequence[Mapping[_K, _V]], return_field_key: _K, field_cmp_key: _K, field_cmp_val: _V) -> set[Optional[_V]]:
+def get_val_from_list(
+        list_of_dicts: Sequence[Mapping[_K, _V]],
+        return_field_key: _K,
+        field_cmp_key: _K,
+        field_cmp_val: _V) -> set[Optional[_V]]:
     """Return a specific field in a list of Python dictionaries.
     We return the empty set if the comparison key is not found"""
     values_of_return_field = set()
@@ -427,7 +432,7 @@ def eks_panther_obj_ref(event: PantherEvent) -> dict[str, Any]:
     obj_subres = deep_get(event, "objectRef", "subresource", default="")
     p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL>")
     if obj_subres:
-        obj_res = "/".join([obj_res, obj_subres])
+        obj_res = f"{obj_res}/{obj_subres}"
     return {
         "actor": user,
         "ns": obj_ns,
@@ -532,7 +537,7 @@ def is_base64(b64: str) -> str:
     # if the string is base64 encoded, return the decoded ASCII string
     # otherwise return an empty string
     # handle false positives for very short strings
-    if len(b64) < 12:
+    if len(b64) < 12: # noqa: PLR2004
         return ""
     # Check if the matched string can be decoded back into ASCII
     try:
