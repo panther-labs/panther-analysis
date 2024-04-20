@@ -378,10 +378,11 @@ def deep_walk(
 
 
 def get_val_from_list(
-        list_of_dicts: Sequence[Mapping[_K, _V]],
-        return_field_key: _K,
-        field_cmp_key: _K,
-        field_cmp_val: _V) -> set[Optional[_V]]:
+    list_of_dicts: Sequence[Mapping[_K, _V]],
+    return_field_key: _K,
+    field_cmp_key: _K,
+    field_cmp_val: _V,
+) -> set[Optional[_V]]:
     """Return a specific field in a list of Python dictionaries.
     We return the empty set if the comparison key is not found"""
     values_of_return_field = set()
@@ -537,7 +538,7 @@ def is_base64(b64: str) -> str:
     # if the string is base64 encoded, return the decoded ASCII string
     # otherwise return an empty string
     # handle false positives for very short strings
-    if len(b64) < 12: # noqa: PLR2004
+    if len(b64) < 12:  # noqa: PLR2004
         return ""
     # Check if the matched string can be decoded back into ASCII
     try:
