@@ -1,4 +1,7 @@
 from collections.abc import Mapping, Sequence
+from typing import Optional, Union
+
+from panther_core import PantherEvent
 
 from panther_base_helpers import deep_get
 
@@ -8,14 +11,15 @@ IGNORE_ENRICHMENTS = "p_any_"
 
 # pylint: disable=too-few-public-methods
 class LookupTableMatches:
+    lut_matches: Optional[PantherEvent]
     def __init__(self):
         self.lut_matches = None
         self._p_matched = {}
 
-    def _register(self, event, lookuptable_name: str):
+    def _register(self, event: PantherEvent, lookuptable_name: str):
         self.lut_matches = deep_get(event, ENRICHMENT_KEY, lookuptable_name)
 
-    def _lookup(self, match_field: str, *keys) -> list or str:
+    def _lookup(self, match_field: str, *keys) -> Union[list, str, None]:
         match = deep_get(self.lut_matches, match_field)
         if not match:
             return None

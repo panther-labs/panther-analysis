@@ -1,6 +1,8 @@
 """
 Here, default values for `panther_config.config` are defined
 """
+from ipaddress import IPv4Network, IPv6Network
+from typing import Union
 
 # A list of public DNS domain names that fall under the administrative domain of
 # the Panther installation
@@ -14,7 +16,7 @@ MS_EXCHANGE_ALLOWED_FORWARDING_DESTINATION_DOMAINS = ORGANIZATION_DOMAINS
 MS_EXCHANGE_ALLOWED_FORWARDING_DESTINATION_EMAILS = ["postmaster@" + ORGANIZATION_DOMAINS[0]]
 TELEPORT_ORGANIZATION_DOMAINS = ORGANIZATION_DOMAINS
 
-DMZ_NETWORKS = [
+DMZ_NETWORKS: list[Union[IPv4Network, IPv6Network]] = [
     # ip_network("10.1.0.0/24"),
 ]
 
@@ -24,6 +26,6 @@ DMZ_TAGS = set(
     ]
 )
 
-PCI_NETWORKS = [
+PCI_NETWORKS: list[Union[IPv6Network, IPv6Network]] = [
     # ip_network("10.0.0.0/24"),
 ]

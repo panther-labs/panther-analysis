@@ -8,7 +8,9 @@ from datetime import datetime
 from fnmatch import fnmatch
 from functools import reduce
 from ipaddress import ip_address, ip_network
-from typing import Any, List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union, TypeVar, cast
+
+from panther_core import PantherEvent
 
 from panther_config import config
 
@@ -31,9 +33,12 @@ class PantherUnexpectedAlert(Exception):
 CDE_TAG_KEY = "environment"
 CDE_TAG_VALUE = "pci"
 
+_K = TypeVar("_K")
+_V = TypeVar("_V")
+
 
 # Defaults to True to assume something is in scope if it is not tagged
-def in_pci_scope_tags(resource):
+def in_pci_scope_tags(resource: Mapping[str, Any]) -> Any:
     if resource.get("Tags") is None:
         return True
     return resource["Tags"].get(CDE_TAG_KEY) == CDE_TAG_VALUE
@@ -44,7 +49,7 @@ PCI_NETWORKS = config.PCI_NETWORKS
 
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as in scope
-def is_pci_scope_cidr(ip_range):
+def is_pci_scope_cidr(ip_range: str) -> bool:
     return any(ip_network(ip_range).overlaps(pci_network) for pci_network in PCI_NETWORKS)
 
 
@@ -53,13 +58,13 @@ DMZ_NETWORKS = config.DMZ_NETWORKS
 
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as DMZ space.
-def is_dmz_cidr(ip_range):
+def is_dmz_cidr(ip_range: str) -> bool:
     """This function determines whether a given IP range is within the defined DMZ IP range."""
     return any(ip_network(ip_range).overlaps(dmz_network) for dmz_network in DMZ_NETWORKS)
 
 
 # Defaults to False to assume something is not a DMZ if it is not tagged
-def is_dmz_tags(resource, dmz_tags):
+def is_dmz_tags(resource: Mapping[str, Any], dmz_tags: Sequence[Any]) -> bool:
     """This function determines whether a given resource is tagged as existing in a DMZ."""
     if resource["Tags"] is None:
         return False
@@ -114,7 +119,7 @@ GSUITE_PARAMETER_VALUES = [
 #       "multiValue": [ "DRIVE" , "MEME"]
 #   }
 # ]
-def gsuite_parameter_lookup(parameters, key):
+def gsuite_parameter_lookup(parameters: list[dict[str, Any]], key: str) -> Any:
     for param in parameters:
         if param["name"] != key:
             continue
@@ -131,7 +136,7 @@ def gsuite_parameter_lookup(parameters, key):
 # the list searching for a particular type and name.
 #
 # This helper function handles the looping functionality that is common in many of the gsuite rules
-def gsuite_details_lookup(detail_type, detail_names, event):
+def gsuite_details_lookup(detail_type: Any, detail_names: Any, event: PantherEvent) -> Any:
     for details in event.get("events", {}):
         if details.get("type") == detail_type and details.get("name") in detail_names:
             return details
@@ -153,7 +158,7 @@ ZENDESK_ROLE_ASSIGNED = re.compile(
 )
 
 
-def zendesk_get_roles(event):
+def zendesk_get_roles(event: PantherEvent) -> tuple[str, str]:
     old_role = ""
     new_role = ""
     role_change = event.get(ZENDESK_CHANGE_DESCRIPTION, "")
@@ -186,7 +191,7 @@ def zendesk_get_roles(event):
 
 # 'additional_details' from box logs varies by event_type.
 # This helper wraps the process of extracting those details.
-def box_parse_additional_details(event: dict):
+def box_parse_additional_details(event: PantherEvent) -> Any:
     additional_details = event.get("additional_details", {})
     if isinstance(additional_details, (str, bytes)):
         try:
@@ -196,7 +201,7 @@ def box_parse_additional_details(event: dict):
     return additional_details
 
 
-def okta_alert_context(event: dict):
+def okta_alert_context(event: PantherEvent) -> dict[str, Any]:
     """Returns common context for automation of Okta alerts"""
     return {
         "event_type": event.get("eventtype", ""),
@@ -213,7 +218,7 @@ def okta_alert_context(event: dict):
     }
 
 
-def crowdstrike_detection_alert_context(event: dict):
+def crowdstrike_detection_alert_context(event: PantherEvent) -> dict[str, Any]:
     """Returns common context for Crowdstrike detections"""
     return {
         "aid": get_crowdstrike_field(event, "aid", default=""),
@@ -228,7 +233,7 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
-def crowdstrike_process_alert_context(event: dict):
+def crowdstrike_process_alert_context(event: PantherEvent) -> dict[str, Any]:
     """Returns common process context for Crowdstrike detections"""
     return {
         "aid": get_crowdstrike_field(event, "aid", default=""),
@@ -243,7 +248,7 @@ def crowdstrike_process_alert_context(event: dict):
     }
 
 
-def crowdstrike_network_detection_alert_context(event: dict):
+def crowdstrike_network_detection_alert_context(event: PantherEvent) -> dict[str, Any]:
     """Returns common network context for Crowdstrike detections"""
     return {
         "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),
@@ -257,17 +262,17 @@ def crowdstrike_network_detection_alert_context(event: dict):
     }
 
 
-def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
+def filter_crowdstrike_fdr_event_type(event: PantherEvent, name: str) -> bool:
     """
     Checks if the event belongs to the Crowdstrike.FDREvent log type
     and the event type is not the name parameter.
     """
     if event.get("p_log_type") != "Crowdstrike.FDREvent":
         return False
-    return event.get("fdr_event_type", "") != name
+    return cast(bool, event.get("fdr_event_type", "") != name)
 
 
-def get_crowdstrike_field(event, field_name, default=None):
+def get_crowdstrike_field(event: PantherEvent, field_name: str, default: Any = None) -> Any:
     return (
         deep_get(event, field_name)
         or deep_get(event, "event", field_name)
@@ -276,7 +281,7 @@ def get_crowdstrike_field(event, field_name, default=None):
     )
 
 
-def slack_alert_context(event: dict):
+def slack_alert_context(event: Mapping[str, Any]) -> Mapping[str, str]:
     return {
         "actor-name": deep_get(event, "actor", "user", "name", default="<MISSING_NAME>"),
         "actor-email": deep_get(event, "actor", "user", "email", default="<MISSING_EMAIL>"),
@@ -285,7 +290,7 @@ def slack_alert_context(event: dict):
     }
 
 
-def github_alert_context(event: dict):
+def github_alert_context(event: Mapping[str, Any]) -> Mapping[str, Any]:
     return {
         "action": event.get("action", ""),
         "actor": event.get("actor", ""),
@@ -296,7 +301,7 @@ def github_alert_context(event: dict):
     }
 
 
-def deep_get(dictionary: dict, *keys, default=None):
+def deep_get(dictionary: Mapping[str, Any], *keys: str, default: Any = None) -> Any:
     """Safely return the value of an arbitrarily nested map
 
     Inspired by https://bit.ly/3a0hq9E
@@ -331,7 +336,7 @@ def deep_walk(
                      otherwise a list of values
     """
 
-    def _empty_list(sub_obj: Any):
+    def _empty_list(sub_obj: Any) -> bool:
         return (
             all(_empty_list(next_obj) for next_obj in sub_obj)
             if isinstance(sub_obj, Sequence) and not isinstance(sub_obj, str)
@@ -342,7 +347,7 @@ def deep_walk(
         return default if _empty_list(obj) else obj
 
     current_key = keys[0]
-    found: OrderedDict = OrderedDict()
+    found: OrderedDict[Any, Any] = OrderedDict()
 
     if isinstance(obj, Mapping):
         next_key = obj.get(current_key, None)
@@ -371,7 +376,7 @@ def deep_walk(
     }.get(return_val, "all")
 
 
-def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_val):
+def get_val_from_list(list_of_dicts: Sequence[Mapping[_K, _V]], return_field_key: _K, field_cmp_key: _K, field_cmp_val: _V) -> set[Optional[_V]]:
     """Return a specific field in a list of Python dictionaries.
     We return the empty set if the comparison key is not found"""
     values_of_return_field = set()
@@ -381,7 +386,7 @@ def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_
     return values_of_return_field
 
 
-def aws_strip_role_session_id(user_identity_arn):
+def aws_strip_role_session_id(user_identity_arn: str) -> str:
     # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
     arn_parts = user_identity_arn.split("/")
     if arn_parts:
@@ -389,7 +394,7 @@ def aws_strip_role_session_id(user_identity_arn):
     return user_identity_arn
 
 
-def aws_rule_context(event: dict):
+def aws_rule_context(event: PantherEvent) -> dict[str, Any]:
     return {
         "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
         "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
@@ -401,7 +406,7 @@ def aws_rule_context(event: dict):
     }
 
 
-def aws_guardduty_context(event: dict):
+def aws_guardduty_context(event: PantherEvent) -> dict[str, Any]:
     return {
         "description": event.get("description", "<MISSING DESCRIPTION>"),
         "severity": event.get("severity", "<MISSING SEVERITY>"),
@@ -412,7 +417,7 @@ def aws_guardduty_context(event: dict):
     }
 
 
-def eks_panther_obj_ref(event: dict):
+def eks_panther_obj_ref(event: PantherEvent) -> dict[str, Any]:
     user = deep_get(event, "user", "username", default="<NO_USERNAME>")
     source_ips = event.get("sourceIPs", ["0.0.0.0"])  # nosec
     verb = event.get("verb", "<NO_VERB>")
@@ -434,22 +439,22 @@ def eks_panther_obj_ref(event: dict):
     }
 
 
-def is_ip_in_network(ip_addr, networks):
+def is_ip_in_network(ip_addr: str, networks: Sequence[str]) -> bool:
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)
 
 
-def pattern_match(string_to_match: str, pattern: str):
+def pattern_match(string_to_match: str, pattern: str) -> bool:
     """Wrapper around fnmatch for basic pattern globs"""
     return fnmatch(string_to_match, pattern)
 
 
-def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
+def pattern_match_list(string_to_match: str, patterns: Sequence[str]) -> bool:
     """Check that a string matches any pattern in a given list"""
     return any(fnmatch(string_to_match, p) for p in patterns)
 
 
-def get_binding_deltas(event):
+def get_binding_deltas(event: PantherEvent) -> Any:
     """A GCP helper function to return the binding deltas from audit events
 
     Binding deltas provide context on a permission change, including the
@@ -469,7 +474,7 @@ def get_binding_deltas(event):
     return binding_deltas
 
 
-def msft_graph_alert_context(event):
+def msft_graph_alert_context(event: PantherEvent) -> dict[str, Any]:
     return {
         "category": event.get("category", ""),
         "description": event.get("description", ""),
@@ -477,7 +482,7 @@ def msft_graph_alert_context(event):
     }
 
 
-def m365_alert_context(event):
+def m365_alert_context(event: PantherEvent) -> dict[str, Any]:
     return {
         "operation": event.get("Operation", ""),
         "organization_id": event.get("OrganizationId", ""),
@@ -489,13 +494,18 @@ def m365_alert_context(event):
     }
 
 
-def defang_ioc(ioc):
+def defang_ioc(ioc: str) -> str:
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
     return ioc.replace(".", "[.]")
 
 
 def panther_nanotime_to_python_datetime(panther_time: str) -> datetime:
-    panther_time_micros = re.search(r"\.(\d+)", panther_time).group(1)
+    panther_time_match = re.search(r"\.(\d+)", panther_time)
+
+    if panther_time_match is None:
+        raise ValueError("Input failed to match expected time format")
+
+    panther_time_micros = panther_time_match.group(1)
     panther_time_micros_rounded = panther_time_micros[0:6]
     panther_time_rounded = re.sub(r"\.\d+", f".{panther_time_micros_rounded}", panther_time)
     panther_time_format = r"%Y-%m-%d %H:%M:%S.%f"
@@ -507,7 +517,12 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
     # Golang fractional seconds include a mix of microseconds and
     # nanoseconds, which doesn't play well with Python's microseconds datetimes.
     # This rounds the fractional seconds to a microsecond-size.
-    golang_time_micros = re.search(r"\.(\d+)Z", golang_time).group(1)
+    golang_time_match = re.search(r"\.(\d+)Z", golang_time)
+
+    if golang_time_match is None:
+        raise ValueError("Input fialed to match expected time format")
+
+    golang_time_micros = golang_time_match.group(1)
     golang_time_micros_rounded = golang_time_micros[0:6]
     golang_time_rounded = re.sub(r"\.\d+Z", f".{golang_time_micros_rounded}Z", golang_time)
     return datetime.strptime(golang_time_rounded, golang_time_format)

@@ -4,6 +4,8 @@ from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
+from panther_core import PantherEvent
+
 from panther_base_helpers import deep_get
 from panther_lookuptable_helpers import LookupTableMatches
 
@@ -26,12 +28,12 @@ class PantherGreyNoiseException(Exception):
 
 
 class GreyNoiseBasic(LookupTableMatches):
-    def __init__(self, event):
+    def __init__(self, event: PantherEvent):
         super().__init__()
         super()._register(event, "greynoise_noise_basic")
         self.sublevel = "basic"
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         def advanced_only():
             advanced_methods = [
                 method
@@ -77,7 +79,7 @@ class GreyNoiseBasic(LookupTableMatches):
 
 class GreyNoiseAdvanced(GreyNoiseBasic):
     # pylint: disable=W0231
-    def __init__(self, event):
+    def __init__(self, event: PantherEvent):
         super().__init__(event)
         super()._register(event, "greynoise_noise_advanced")
         self.sublevel = "advanced"
