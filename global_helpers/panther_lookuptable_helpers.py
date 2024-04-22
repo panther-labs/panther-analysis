@@ -11,6 +11,7 @@ IGNORE_ENRICHMENTS = "p_any_"
 # pylint: disable=too-few-public-methods
 class LookupTableMatches:
     lut_matches: Optional[PantherEvent]
+
     def __init__(self):
         self.lut_matches = None
         self._p_matched = {}

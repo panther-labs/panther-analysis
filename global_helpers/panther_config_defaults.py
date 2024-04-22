@@ -1,6 +1,7 @@
 """
 Here, default values for `panther_config.config` are defined
 """
+
 from ipaddress import IPv4Network, IPv6Network
 from typing import Union
 
