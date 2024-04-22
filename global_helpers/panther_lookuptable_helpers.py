@@ -1,9 +1,8 @@
 from collections.abc import Mapping, Sequence
 from typing import Optional, Union
 
-from panther_core import PantherEvent
-
 from panther_base_helpers import deep_get
+from panther_core import PantherEvent
 
 ENRICHMENT_KEY = "p_enrichment"
 IGNORE_ENRICHMENTS = "p_any_"

@@ -4,9 +4,8 @@ from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
-from panther_core import PantherEvent
-
 from panther_base_helpers import deep_get
+from panther_core import PantherEvent
 from panther_lookuptable_helpers import LookupTableMatches
 
 
