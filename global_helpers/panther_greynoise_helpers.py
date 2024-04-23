@@ -1,16 +1,20 @@
 # pylint: disable=too-many-public-methods
-import datetime
+from __future__ import annotations
+
 from collections.abc import Sequence
-from typing import Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from dateutil import parser
 from panther_base_helpers import deep_get
 from panther_core import PantherEvent
 from panther_lookuptable_helpers import LookupTableMatches
 
+if TYPE_CHECKING:
+    import datetime
+
 
 class PantherGreyNoiseException(Exception):
-    def __init__(self, sublevel):
+    def __init__(self, sublevel: str):
         if sublevel == "advanced":
             message = (
                 "This account is configured with an advanced GreyNoise Subscription. Please "
@@ -32,8 +36,8 @@ class GreyNoiseBasic(LookupTableMatches):
         super()._register(event, "greynoise_noise_basic")
         self.sublevel = "basic"
 
-    def __getattr__(self, name: str):
-        def advanced_only():
+    def __getattr__(self, name: str) -> None:
+        def advanced_only() -> None:
             advanced_methods = [
                 method
                 for method in dir(GreyNoiseAdvanced)
@@ -44,7 +48,7 @@ class GreyNoiseBasic(LookupTableMatches):
 
         return advanced_only()
 
-    def subscription_level(self):
+    def subscription_level(self) -> str:
         return self.sublevel
 
     def ip_address(self, match_field: str) -> Union[list[str], str]:
@@ -67,7 +71,7 @@ class GreyNoiseBasic(LookupTableMatches):
             ]
         return f"https://www.greynoise.io/viz/ip/{ip_address}"
 
-    def context(self, match_field: str) -> dict:
+    def context(self, match_field: str) -> dict[str, Any]:
         return {
             "IP": self.ip_address(match_field),
             "Classification": self.classification(match_field),
@@ -90,15 +94,19 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         cve_raw = self._lookup(match_field, "cve")
         if isinstance(cve_raw, Sequence) and not isinstance(cve_raw, str):
             return " ".join(cve_raw[:limit])
+        if not isinstance(cve_raw, str):
+            raise TypeError("CVE field is unknown type")
         return cve_raw
 
-    def cve_list(self, match_field: str) -> list:
+    def cve_list(self, match_field: str) -> list[str]:
         cve_raw = self._lookup(match_field, "cve")
         if isinstance(cve_raw, str):
             return [cve_raw]
+        if not (isinstance(cve_raw, list) and all(isinstance(cve, str) for cve in cve_raw)):
+            raise TypeError("CVE field is unknown type")
         return cve_raw
 
-    def first_seen(self, match_field: str) -> datetime.date:
+    def first_seen(self, match_field: str) -> Optional[datetime.date]:
         time = self._lookup(match_field, "first_seen")
         if not time:
             return None
@@ -108,7 +116,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
             return min(parser.parse(t) for t in time)
         return parser.parse(time)
 
-    def last_seen(self, match_field: str) -> datetime.date:
+    def last_seen(self, match_field: str) -> Optional[datetime.date]:
         time = self._lookup(match_field, "last_seen_timestamp")
         if not time:
             return None
@@ -151,7 +159,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
     def is_spoofable(self, match_field: str) -> bool:
         return bool(self._lookup(match_field, "spoofable"))
 
-    def tags_list(self, match_field: str) -> list:
+    def tags_list(self, match_field: str) -> list[str]:
         tags = self._lookup(match_field, "tags")
         if isinstance(tags, str):
             return [tags]
@@ -161,6 +169,8 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
         tags_raw = self._lookup(match_field, "tags")
         if isinstance(tags_raw, Sequence) and not isinstance(tags_raw, str):
             return " ".join(tags_raw[:limit])
+        if not isinstance(tags_raw, str):
+            raise TypeError("tags field is unknown type")
         return tags_raw
 
     def is_vpn(self, match_field: str) -> bool:
@@ -172,7 +182,7 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
     def metadata(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "metadata")
 
-    def context(self, match_field: str) -> dict:
+    def context(self, match_field: str) -> dict[str, Any]:
         return {
             "IP": self.ip_address(match_field),
             "Classification": self.classification(match_field),
@@ -186,13 +196,13 @@ class GreyNoiseAdvanced(GreyNoiseBasic):
 
 
 class GreyNoiseRIOTBasic(LookupTableMatches):
-    def __init__(self, event):
+    def __init__(self, event: PantherEvent):
         super().__init__()
         super()._register(event, "greynoise_riot_basic")
         self.sublevel = "basic"
 
-    def __getattr__(self, name):
-        def advanced_only():
+    def __getattr__(self, name: str) -> None:
+        def advanced_only() -> None:
             advanced_methods = [
                 method
                 for method in dir(GreyNoiseRIOTAdvanced)
@@ -203,7 +213,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
 
         return advanced_only()
 
-    def subscription_level(self):
+    def subscription_level(self) -> str:
         return self.sublevel
 
     def is_riot(self, match_field: str) -> bool:
@@ -223,7 +233,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
     def name(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "provider", "name")
 
-    def url(self, match_field: str) -> Union[list[str], str]:
+    def url(self, match_field: str) -> Union[list[str], str, None]:
         ip_stripped = self._lookup(match_field, "ip_cidr")
         if not ip_stripped:
             return None
@@ -234,7 +244,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
             ]
         return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
 
-    def last_updated(self, match_field: str) -> datetime.date:
+    def last_updated(self, match_field: str) -> Optional[datetime.date]:
         time = self._lookup(match_field, "scan_time")
         if not time:
             return None
@@ -244,7 +254,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
             return max(parser.parse(t) for t in time)
         return parser.parse(time)
 
-    def context(self, match_field: str) -> dict:
+    def context(self, match_field: str) -> dict[str, Any]:
         return {
             "Is_RIOT": self.is_riot(match_field),
             "IP": self.ip_address(match_field),
@@ -255,7 +265,7 @@ class GreyNoiseRIOTBasic(LookupTableMatches):
 
 class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
     # pylint: disable=W0231
-    def __init__(self, event):
+    def __init__(self, event: PantherEvent):
         super()._register(event, "greynoise_riot_advanced")
         self.sublevel = "advanced"
 
@@ -274,7 +284,7 @@ class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
     def trust_level(self, match_field: str) -> Union[int, list[str], str]:
         return self._lookup(match_field, "provider", "trust_level")
 
-    def context(self, match_field: str) -> dict:
+    def context(self, match_field: str) -> dict[str, Any]:
         return {
             "Is_RIOT": self.is_riot(match_field),
             "IP": self.ip_address(match_field),
@@ -285,19 +295,19 @@ class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
 
 
 # pylint: disable=invalid-name
-def GetGreyNoiseObject(event):
+def GetGreyNoiseObject(event: PantherEvent) -> Union[GreyNoiseBasic, GreyNoiseAdvanced]:
     if deep_get(event, "p_enrichment", "greynoise_noise_advanced"):
         return GreyNoiseAdvanced(event)
     return GreyNoiseBasic(event)
 
 
-def GetGreyNoiseRiotObject(event):
+def GetGreyNoiseRiotObject(event: PantherEvent) -> Union[GreyNoiseRIOTBasic, GreyNoiseRIOTAdvanced]:
     if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
         return GreyNoiseRIOTAdvanced(event)
     return GreyNoiseRIOTBasic(event)
 
 
-def GreyNoiseSeverity(event, field, default="MEDIUM"):
+def GreyNoiseSeverity(event: PantherEvent, field: str, default: str = "MEDIUM") -> str:
     # Set Severity based on GreyNoise classification.
     # If unknown to GreyNoise return default
     noise = GetGreyNoiseObject(event)
@@ -338,4 +348,7 @@ _SEVERITIES = {
 
 
 def SeverityGreaterThan(sev1: str, sev2: str) -> bool:
-    return _SEVERITIES.get(sev1) > _SEVERITIES.get(sev2)
+    if sev1 not in _SEVERITIES or sev2 not in _SEVERITIES:
+        raise ValueError("Invalid severity string")
+
+    return _SEVERITIES[sev1] > _SEVERITIES[sev2]

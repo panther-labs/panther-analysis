@@ -21,9 +21,14 @@ lint.ignore = [
     "S104", # Not worried about network binding
     "TCH002", # Not worried about importing panther_core
     "SIM110", # Overkill simplification
+    "ANN101", # Deprecated and overkill typing of Self
 
     "DTZ007", # Naive timezone datetimes. May want to re-enable this?
+    "N802", # function naming: Should probably be enabled
 ]
 line-length = 100
 
 target-version = "py39"
+
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true
