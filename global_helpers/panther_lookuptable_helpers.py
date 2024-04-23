@@ -24,7 +24,7 @@ class LookupTableMatches:
 
     def _lookup(self, match_field: str, *keys: str) -> Union[list[Any], Any]:
         if self.lut_matches is None:
-            raise ValueError("Must call _register before _lookup")
+            return None
 
         match = deep_get(self.lut_matches, match_field)
         if not match:
