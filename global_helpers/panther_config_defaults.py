@@ -2,8 +2,12 @@
 Here, default values for `panther_config.config` are defined
 """
 
-from ipaddress import IPv4Network, IPv6Network
-from typing import Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from ipaddress import IPv4Network, IPv6Network
 
 # A list of public DNS domain names that fall under the administrative domain of
 # the Panther installation
@@ -21,12 +25,10 @@ DMZ_NETWORKS: list[Union[IPv4Network, IPv6Network]] = [
     # ip_network("10.1.0.0/24"),
 ]
 
-DMZ_TAGS = set(
-    [
-        ("environment", "dmz"),
-    ]
-)
+DMZ_TAGS = {
+    ("environment", "dmz"),
+}
 
-PCI_NETWORKS: list[Union[IPv6Network, IPv6Network]] = [
+PCI_NETWORKS: list[Union[IPv4Network, IPv6Network]] = [
     # ip_network("10.0.0.0/24"),
 ]
