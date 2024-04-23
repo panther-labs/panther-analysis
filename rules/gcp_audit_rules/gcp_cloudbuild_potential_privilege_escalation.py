@@ -3,7 +3,9 @@ from panther_base_helpers import deep_get, deep_walk
 
 
 def rule(event):
-    if not deep_get(event, "protoPayload", "methodName").endswith("CloudBuild.CreateBuild"):
+    if not deep_get(event, "protoPayload", "methodName", default="METHOD_NOT_FOUND").endswith(
+        "CloudBuild.CreateBuild"
+    ):
         return False
 
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")

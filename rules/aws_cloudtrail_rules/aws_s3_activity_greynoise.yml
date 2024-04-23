@@ -1,7 +1,7 @@
 AnalysisType: rule
 Description: S3 operations from known malicious GreyNoise classifications. Note that this rule will only work with S3 object-level logging enabled for a given bucket.
-DisplayName: "GreyNoise Malicious AWS S3 Get/List Object"
-Enabled: true
+DisplayName: "--DEPRECATED-- GreyNoise Malicious AWS S3 Get/List Object"
+Enabled: false
 Filename: aws_s3_activity_greynoise.py
 Reference: https://attack.mitre.org/techniques/T1530/
 Reports:
@@ -25,6 +25,7 @@ Tags:
   - AWS
   - GreyNoise
   - Collection:Data From Cloud Storage Object
+  - Deprecated
 Tests:
   - ExpectedResult: true
     Name: GetObject from Malicious GreyNoise finding
