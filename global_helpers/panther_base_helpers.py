@@ -473,7 +473,9 @@ def msft_graph_alert_context(event):
     return {
         "category": event.get("category", ""),
         "description": event.get("description", ""),
-        "userstates": event.get("userstates", []),
+        "userStates": event.get("userStates", []),
+        "fileStates": event.get("fileStates", []),
+        "hostStates": event.get("hostStates", []),
     }
 
 
