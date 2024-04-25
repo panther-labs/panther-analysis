@@ -1,7 +1,7 @@
 FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/wolfi-base
 
 ARG TARGETPLATFORM
-ARG PYTHON_VERSION="3.9.18"
+ARG PYTHON_VERSION="3.11.9"
 
 RUN apk update \
     && apk add --no-cache \
@@ -10,6 +10,7 @@ RUN apk update \
         bzip2-dev \
         git \
         libffi-dev \
+        ncurses-dev \
         nodejs \
         npm \
         openssl-dev \
