@@ -20,8 +20,7 @@ Runbook: >
 SummaryAttributes:
   - p_any_emails
 Tests:
-  -
-    Name: Meeting Passcode Disabled
+  - Name: Meeting Passcode Disabled
     ExpectedResult: true
     Log:
       {
@@ -31,9 +30,8 @@ Tests:
         "action": "Update",
         "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from On to Off",
         "p_log_type": "Zoom.Operation",
-        }
-  -
-    Name: Meeting Passcode Enabled
+      }
+  - Name: Meeting Passcode Enabled
     ExpectedResult: false
     Log:
       {
@@ -43,9 +41,8 @@ Tests:
         "action": "Update",
         "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from Off to On",
         "p_log_type": "Zoom.Operation",
-        }
-  -
-    Name: Add User Group
+      }
+  - Name: Add User Group
     ExpectedResult: false
     Log:
       {
@@ -55,4 +52,4 @@ Tests:
         "action": "Add",
         "operation_detail": "Add Group Engineers",
         "p_log_type": "Zoom.Operation",
-        }
+      }

@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: "Changes to identity provider settings are privileged activities that should be carefully audited.  Attackers may add or change IDP integrations to gain persistence to environments"
+DisplayName: "MongoDB Identity Provider Activity"
+Enabled: true
+Filename: mongodb_identity_provider_activity.py
+Severity: Medium
+Reference: https://attack.mitre.org/techniques/T1556/007/
+Tests:
+  - ExpectedResult: false
+    Log:
+      eventTypeName: cat_jumped
+    Name: Random event
+  - ExpectedResult: true
+    Log:
+      eventTypeName: FEDERATION_SETTINGS_CREATED
+    Name: FEDERATION_SETTINGS_CREATED
+  - ExpectedResult: true
+    Log:
+      eventTypeName: IDENTITY_PROVIDER_CREATED
+    Name: IDENTITY_PROVIDER_CREATED
+DedupPeriodMinutes: 60
+LogTypes:
+  - MongoDB.OrganizationEvent
+RuleID: "MongoDB.Identity.Provider.Activity"
+Threshold: 1

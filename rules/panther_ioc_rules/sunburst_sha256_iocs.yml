@@ -41,22 +41,22 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_sha256_hashes
 Tests:
-  -
-    Name: Non-matching traffic
+  - Name: Non-matching traffic
     ExpectedResult: false
     Log:
       {
         "dstport": 53,
         "dstaddr": "1.1.1.1",
         "srcaddr": "10.0.0.1",
-        "p_any_sha256_hashes": ["98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4"],
+        "p_any_sha256_hashes":
+          ["98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4"],
       }
-  -
-    Name: Sunburst Indicator of Compromise (SHA-256) Detected
+  - Name: Sunburst Indicator of Compromise (SHA-256) Detected
     ExpectedResult: true
     Log:
       {
         "srcaddr": "13.59.205.66",
         "dstaddr": "10.0.0.1",
-        "p_any_sha256_hashes": ["019085a76ba7126fff22770d71bd901c325fc68ac55aa743327984e89f4b0134"],
+        "p_any_sha256_hashes":
+          ["019085a76ba7126fff22770d71bd901c325fc68ac55aa743327984e89f4b0134"],
       }

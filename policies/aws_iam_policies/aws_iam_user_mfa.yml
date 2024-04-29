@@ -24,211 +24,207 @@ Runbook: >
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-iam-user-has-mfa-enabled
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable.html
 Tests:
-  -
-    Name: Password Disabled, MFA Disabled
+  - Name: Password Disabled, MFA Disabled
     ExpectedResult: true
     Resource:
       {
         "Arn": "arn:aws:iam::123456789012:user/Bobert",
         "CreateDate": "2019-05-10T21:49:56Z",
-        "CredentialReport": {
-          "ARN": "arn:aws:iam::123456789012:user/Bobert",
-          "AccessKey1Active": true,
-          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
-          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey1LastUsedRegion": "N/A",
-          "AccessKey1LastUsedService": "N/A",
-          "AccessKey2Active": false,
-          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedRegion": "N/A",
-          "AccessKey2LastUsedService": "N/A",
-          "Cert1Active": false,
-          "Cert1LastRotated": "0001-01-01T00:00:00Z",
-          "Cert2Active": false,
-          "Cert2LastRotated": "0001-01-01T00:00:00Z",
-          "MfaActive": false,
-          "PasswordEnabled": false,
-          "PasswordLastChanged": "2019-05-21T22:10:11Z",
-          "PasswordLastUsed": "0001-01-01T00:00:00Z",
-          "PasswordNextRotation": "2019-08-14T22:10:11Z",
-          "UserCreationTime": "2019-05-10T21:49:56Z",
-          "UserName": "Bobert"
-        },
-        "Groups": [
+        "CredentialReport":
           {
-            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
-            "CreateDate": "2019-01-01T00:00:00Z",
-            "GroupId": "ABCDEFGHIJKLMNOP",
-            "GroupName": "ExampleGroup",
-            "Path": "/"
-          }
-        ],
+            "ARN": "arn:aws:iam::123456789012:user/Bobert",
+            "AccessKey1Active": true,
+            "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+            "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey1LastUsedRegion": "N/A",
+            "AccessKey1LastUsedService": "N/A",
+            "AccessKey2Active": false,
+            "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedRegion": "N/A",
+            "AccessKey2LastUsedService": "N/A",
+            "Cert1Active": false,
+            "Cert1LastRotated": "0001-01-01T00:00:00Z",
+            "Cert2Active": false,
+            "Cert2LastRotated": "0001-01-01T00:00:00Z",
+            "MfaActive": false,
+            "PasswordEnabled": false,
+            "PasswordLastChanged": "2019-05-21T22:10:11Z",
+            "PasswordLastUsed": "0001-01-01T00:00:00Z",
+            "PasswordNextRotation": "2019-08-14T22:10:11Z",
+            "UserCreationTime": "2019-05-10T21:49:56Z",
+            "UserName": "Bobert",
+          },
+        "Groups":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+              "CreateDate": "2019-01-01T00:00:00Z",
+              "GroupId": "ABCDEFGHIJKLMNOP",
+              "GroupName": "ExampleGroup",
+              "Path": "/",
+            },
+          ],
         "InlinePolicyNames": null,
-        "ManagedPolicyNames": [
-          "IAMUserChangePassword"
-        ],
+        "ManagedPolicyNames": ["IAMUserChangePassword"],
         "PasswordLastUsed": null,
         "Path": "/",
         "PermissionsBoundary": null,
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": null,
       }
-  -
-    Name: Password Disabled, MFA Enabled
+  - Name: Password Disabled, MFA Enabled
     ExpectedResult: true
     Resource:
       {
         "Arn": "arn:aws:iam::123456789012:user/Bobert",
         "CreateDate": "2019-05-10T21:49:56Z",
-        "CredentialReport": {
-          "ARN": "arn:aws:iam::123456789012:user/Bobert",
-          "AccessKey1Active": true,
-          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
-          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey1LastUsedRegion": "N/A",
-          "AccessKey1LastUsedService": "N/A",
-          "AccessKey2Active": false,
-          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedRegion": "N/A",
-          "AccessKey2LastUsedService": "N/A",
-          "Cert1Active": false,
-          "Cert1LastRotated": "0001-01-01T00:00:00Z",
-          "Cert2Active": false,
-          "Cert2LastRotated": "0001-01-01T00:00:00Z",
-          "MfaActive": true,
-          "PasswordEnabled": true,
-          "PasswordLastChanged": "2019-05-21T22:10:11Z",
-          "PasswordLastUsed": "0001-01-01T00:00:00Z",
-          "PasswordNextRotation": "2019-08-14T22:10:11Z",
-          "UserCreationTime": "2019-05-10T21:49:56Z",
-          "UserName": "Bobert"
-        },
-        "Groups": [
+        "CredentialReport":
           {
-            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
-            "CreateDate": "2019-01-01T00:00:00Z",
-            "GroupId": "ABCDEFGHIJKLMNOP",
-            "GroupName": "ExampleGroup",
-            "Path": "/"
-          }
-        ],
+            "ARN": "arn:aws:iam::123456789012:user/Bobert",
+            "AccessKey1Active": true,
+            "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+            "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey1LastUsedRegion": "N/A",
+            "AccessKey1LastUsedService": "N/A",
+            "AccessKey2Active": false,
+            "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedRegion": "N/A",
+            "AccessKey2LastUsedService": "N/A",
+            "Cert1Active": false,
+            "Cert1LastRotated": "0001-01-01T00:00:00Z",
+            "Cert2Active": false,
+            "Cert2LastRotated": "0001-01-01T00:00:00Z",
+            "MfaActive": true,
+            "PasswordEnabled": true,
+            "PasswordLastChanged": "2019-05-21T22:10:11Z",
+            "PasswordLastUsed": "0001-01-01T00:00:00Z",
+            "PasswordNextRotation": "2019-08-14T22:10:11Z",
+            "UserCreationTime": "2019-05-10T21:49:56Z",
+            "UserName": "Bobert",
+          },
+        "Groups":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+              "CreateDate": "2019-01-01T00:00:00Z",
+              "GroupId": "ABCDEFGHIJKLMNOP",
+              "GroupName": "ExampleGroup",
+              "Path": "/",
+            },
+          ],
         "InlinePolicyNames": null,
-        "ManagedPolicyNames": [
-          "IAMUserChangePassword"
-        ],
+        "ManagedPolicyNames": ["IAMUserChangePassword"],
         "PasswordLastUsed": null,
         "Path": "/",
         "PermissionsBoundary": null,
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": null,
       }
-  -
-    Name: Password Enabled, MFA Disabled
+  - Name: Password Enabled, MFA Disabled
     ExpectedResult: false
     Resource:
       {
         "Arn": "arn:aws:iam::123456789012:user/Bobert",
         "CreateDate": "2019-05-10T21:49:56Z",
-        "CredentialReport": {
-          "ARN": "arn:aws:iam::123456789012:user/Bobert",
-          "AccessKey1Active": true,
-          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
-          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey1LastUsedRegion": "N/A",
-          "AccessKey1LastUsedService": "N/A",
-          "AccessKey2Active": false,
-          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedRegion": "N/A",
-          "AccessKey2LastUsedService": "N/A",
-          "Cert1Active": false,
-          "Cert1LastRotated": "0001-01-01T00:00:00Z",
-          "Cert2Active": false,
-          "Cert2LastRotated": "0001-01-01T00:00:00Z",
-          "MfaActive": false,
-          "PasswordEnabled": true,
-          "PasswordLastChanged": "2019-05-21T22:10:11Z",
-          "PasswordLastUsed": "0001-01-01T00:00:00Z",
-          "PasswordNextRotation": "2019-08-14T22:10:11Z",
-          "UserCreationTime": "2019-05-10T21:49:56Z",
-          "UserName": "Bobert"
-        },
-        "Groups": [
+        "CredentialReport":
           {
-            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
-            "CreateDate": "2019-01-01T00:00:00Z",
-            "GroupId": "ABCDEFGHIJKLMNOP",
-            "GroupName": "ExampleGroup",
-            "Path": "/"
-          }
-        ],
+            "ARN": "arn:aws:iam::123456789012:user/Bobert",
+            "AccessKey1Active": true,
+            "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+            "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey1LastUsedRegion": "N/A",
+            "AccessKey1LastUsedService": "N/A",
+            "AccessKey2Active": false,
+            "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedRegion": "N/A",
+            "AccessKey2LastUsedService": "N/A",
+            "Cert1Active": false,
+            "Cert1LastRotated": "0001-01-01T00:00:00Z",
+            "Cert2Active": false,
+            "Cert2LastRotated": "0001-01-01T00:00:00Z",
+            "MfaActive": false,
+            "PasswordEnabled": true,
+            "PasswordLastChanged": "2019-05-21T22:10:11Z",
+            "PasswordLastUsed": "0001-01-01T00:00:00Z",
+            "PasswordNextRotation": "2019-08-14T22:10:11Z",
+            "UserCreationTime": "2019-05-10T21:49:56Z",
+            "UserName": "Bobert",
+          },
+        "Groups":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+              "CreateDate": "2019-01-01T00:00:00Z",
+              "GroupId": "ABCDEFGHIJKLMNOP",
+              "GroupName": "ExampleGroup",
+              "Path": "/",
+            },
+          ],
         "InlinePolicyNames": null,
-        "ManagedPolicyNames": [
-          "IAMUserChangePassword"
-        ],
+        "ManagedPolicyNames": ["IAMUserChangePassword"],
         "PasswordLastUsed": null,
         "Path": "/",
         "PermissionsBoundary": null,
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": null,
       }
-  -
-    Name: Password Enabled, MFA Enabled
+  - Name: Password Enabled, MFA Enabled
     ExpectedResult: true
     Resource:
       {
         "Arn": "arn:aws:iam::123456789012:user/Bobert",
         "CreateDate": "2019-05-10T21:49:56Z",
-        "CredentialReport": {
-          "ARN": "arn:aws:iam::123456789012:user/Bobert",
-          "AccessKey1Active": true,
-          "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
-          "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey1LastUsedRegion": "N/A",
-          "AccessKey1LastUsedService": "N/A",
-          "AccessKey2Active": false,
-          "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
-          "AccessKey2LastUsedRegion": "N/A",
-          "AccessKey2LastUsedService": "N/A",
-          "Cert1Active": false,
-          "Cert1LastRotated": "0001-01-01T00:00:00Z",
-          "Cert2Active": false,
-          "Cert2LastRotated": "0001-01-01T00:00:00Z",
-          "MfaActive": true,
-          "PasswordEnabled": true,
-          "PasswordLastChanged": "2019-05-21T22:10:11Z",
-          "PasswordLastUsed": "0001-01-01T00:00:00Z",
-          "PasswordNextRotation": "2019-08-14T22:10:11Z",
-          "UserCreationTime": "2019-05-10T21:49:56Z",
-          "UserName": "Bobert"
-        },
-        "Groups": [
+        "CredentialReport":
           {
-            "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
-            "CreateDate": "2019-01-01T00:00:00Z",
-            "GroupId": "ABCDEFGHIJKLMNOP",
-            "GroupName": "ExampleGroup",
-            "Path": "/"
-          }
-        ],
+            "ARN": "arn:aws:iam::123456789012:user/Bobert",
+            "AccessKey1Active": true,
+            "AccessKey1LastRotated": "2019-05-10T21:49:57Z",
+            "AccessKey1LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey1LastUsedRegion": "N/A",
+            "AccessKey1LastUsedService": "N/A",
+            "AccessKey2Active": false,
+            "AccessKey2LastRotated": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedDate": "0001-01-01T00:00:00Z",
+            "AccessKey2LastUsedRegion": "N/A",
+            "AccessKey2LastUsedService": "N/A",
+            "Cert1Active": false,
+            "Cert1LastRotated": "0001-01-01T00:00:00Z",
+            "Cert2Active": false,
+            "Cert2LastRotated": "0001-01-01T00:00:00Z",
+            "MfaActive": true,
+            "PasswordEnabled": true,
+            "PasswordLastChanged": "2019-05-21T22:10:11Z",
+            "PasswordLastUsed": "0001-01-01T00:00:00Z",
+            "PasswordNextRotation": "2019-08-14T22:10:11Z",
+            "UserCreationTime": "2019-05-10T21:49:56Z",
+            "UserName": "Bobert",
+          },
+        "Groups":
+          [
+            {
+              "Arn": "arn:aws:iam::123456789012:group/ExampleGroup",
+              "CreateDate": "2019-01-01T00:00:00Z",
+              "GroupId": "ABCDEFGHIJKLMNOP",
+              "GroupName": "ExampleGroup",
+              "Path": "/",
+            },
+          ],
         "InlinePolicyNames": null,
-        "ManagedPolicyNames": [
-          "IAMUserChangePassword"
-        ],
+        "ManagedPolicyNames": ["IAMUserChangePassword"],
         "PasswordLastUsed": null,
         "Path": "/",
         "PermissionsBoundary": null,
         "Tags": null,
         "UserId": "ASDFASDFASDFASDF",
         "UserName": "Bobert",
-        "VirtualMFA": null
+        "VirtualMFA": null,
       }

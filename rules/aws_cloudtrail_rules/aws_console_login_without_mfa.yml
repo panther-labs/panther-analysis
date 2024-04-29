@@ -25,8 +25,7 @@ SummaryAttributes:
   - recipientAccountId
   - p_any_aws_arns
 Tests:
-  -
-    Name: No MFA Login - IAM User
+  - Name: No MFA Login - IAM User
     ExpectedResult: true
     Mocks:
       - objectName: check_account_age
@@ -34,13 +33,14 @@ Tests:
     Log:
       {
         "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:user/tester",
-          "accountId": "123456789012",
-          "userName": "tester"
-        },
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -48,20 +48,18 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/",
-          "MobileVersion": "No",
-          "MFAUsed": "No"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012"
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: No MFA Login - IAM User Unknown Account
+  - Name: No MFA Login - IAM User Unknown Account
     ExpectedResult: true
     Mocks:
       - objectName: check_account_age
@@ -69,13 +67,14 @@ Tests:
     Log:
       {
         "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789013:user/tester",
-          "accountId": "123456789013",
-          "userName": "tester"
-        },
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789013:user/tester",
+            "accountId": "123456789013",
+            "userName": "tester",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -83,20 +82,18 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/",
-          "MobileVersion": "No",
-          "MFAUsed": "No"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789013"
+        "recipientAccountId": "123456789013",
       }
-  -
-    Name: No MFA Login - Root User
+  - Name: No MFA Login - Root User
     ExpectedResult: true
     Mocks:
       - objectName: check_account_age
@@ -104,13 +101,14 @@ Tests:
     Log:
       {
         "eventVersion": "1.05",
-        "userIdentity": {
-          "accessKeyId": "",
-          "accountId": "123456789012",
-          "arn": "arn:aws:iam::123456789012:root",
-          "principalId": "123456789012",
-          "type": "Root"
-        },
+        "userIdentity":
+          {
+            "accessKeyId": "",
+            "accountId": "123456789012",
+            "arn": "arn:aws:iam::123456789012:root",
+            "principalId": "123456789012",
+            "type": "Root",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -118,40 +116,40 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/",
-          "MobileVersion": "No",
-          "MFAUsed": "No"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012"
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: MFA Login - SAML
+  - Name: MFA Login - SAML
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
         returnValue: "False"
     Log:
       {
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/home",
-          "MobileVersion": "No",
-          "MFAUsed": "No",
-          "SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta"
-        },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/home",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+            "SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta",
+          },
         "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:user/tester",
-          "accountId": "123456789012",
-          "userName": "tester"
-        },
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -159,85 +157,80 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012"
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: MFA Login
+  - Name: MFA Login
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
         returnValue: "False"
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "IAMUser",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:user/tester",
-              "accountId": "123456789012",
-              "userName": "tester"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "signin.amazonaws.com",
-          "eventName": "ConsoleLogin",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "Mozilla",
-          "requestParameters": null,
-          "responseElements": {
-              "ConsoleLogin": "Success"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "Yes",
           },
-          "additionalEventData": {
-              "LoginTo": "https://console.aws.amazon.com/console/",
-              "MobileVersion": "No",
-              "MFAUsed": "Yes"
-          },
-          "eventID": "1",
-          "eventType": "AwsConsoleSignIn",
-          "recipientAccountId": "123456789012"
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: No MFA - Login Failed
+  - Name: No MFA - Login Failed
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
         returnValue: "False"
     Log:
       {
-          "eventVersion": "1.05",
-          "userIdentity": {
-              "type": "IAMUser",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:user/tester",
-              "accountId": "123456789012",
-              "userName": "tester"
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
           },
-          "eventTime": "2019-01-01T00:00:00Z",
-          "eventSource": "signin.amazonaws.com",
-          "eventName": "ConsoleLogin",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "111.111.111.111",
-          "userAgent": "Mozilla",
-          "requestParameters": null,
-          "responseElements": {
-              "ConsoleLogin": "Failure"
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "signin.amazonaws.com",
+        "eventName": "ConsoleLogin",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters": null,
+        "responseElements": { "ConsoleLogin": "Failure" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "Yes",
           },
-          "additionalEventData": {
-              "LoginTo": "https://console.aws.amazon.com/console/",
-              "MobileVersion": "No",
-              "MFAUsed": "Yes"
-          },
-          "eventID": "1",
-          "eventType": "AwsConsoleSignIn",
-          "recipientAccountId": "123456789012"
+        "eventID": "1",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: No MFA - authenticated from session with MFA
+  - Name: No MFA - authenticated from session with MFA
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
@@ -247,30 +240,33 @@ Tests:
         "p_event_time": "2019-01-01 00:20:04.000Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
-        "userIdentity": {
-          "accountId": "123456789012",
-          "arn": "arn:aws:sts::123456789012:assumed-role/testrole_34c15ddd84cb4648/tester@example.com",
-          "principalId": "AROAXXXXXXXXXXXXXXXXX:tester@example.com",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2019-09-01T21:20:03Z",
-              "mfaAuthenticated": "true"
-            },
-            "sessionIssuer": {
-              "accountId": "123456789012",
-              "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-east-1/testrole_34c15ddd84cb4648",
-              "principalId": "AROAXXXXXXXXXXXXXXXXX",
-              "type": "Role",
-              "userName": "testrole_34c15ddd84cb4648"
-            },
-            "webIdFederationData": {}
+        "userIdentity":
+          {
+            "accountId": "123456789012",
+            "arn": "arn:aws:sts::123456789012:assumed-role/testrole_34c15ddd84cb4648/tester@example.com",
+            "principalId": "AROAXXXXXXXXXXXXXXXXX:tester@example.com",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2019-09-01T21:20:03Z",
+                    "mfaAuthenticated": "true",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "123456789012",
+                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-east-1/testrole_34c15ddd84cb4648",
+                    "principalId": "AROAXXXXXXXXXXXXXXXXX",
+                    "type": "Role",
+                    "userName": "testrole_34c15ddd84cb4648",
+                  },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
           },
-          "type": "AssumedRole"
-        }
       }
 
-  -
-    Name: No MFA Login - New User
+  - Name: No MFA Login - New User
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
@@ -278,13 +274,14 @@ Tests:
     Log:
       {
         "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "1111",
-          "arn": "arn:aws:iam::123456789012:user/tester",
-          "accountId": "123456789012",
-          "userName": "tester"
-        },
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "1111",
+            "arn": "arn:aws:iam::123456789012:user/tester",
+            "accountId": "123456789012",
+            "userName": "tester",
+          },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -292,80 +289,73 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/",
-          "MobileVersion": "No",
-          "MFAUsed": "No"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012"
+        "recipientAccountId": "123456789012",
       }
-  -
-    Name: AWS SSOv2 Login
+  - Name: AWS SSOv2 Login
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
         returnValue: "False"
     Log:
       {
-      "additionalEventData": {
-        "MFAUsed": "No",
-        "MobileVersion": "No"
-      },
-      "awsRegion": "us-east-2",
-      "eventID": "1111111111",
-      "eventName": "ConsoleLogin",
-      "eventSource": "signin.amazonaws.com",
-      "eventTime": "2022-03-16 19:17:41",
-      "eventType": "AwsConsoleSignIn",
-      "eventVersion": "1.08",
-      "managementEvent": true,
+        "additionalEventData": { "MFAUsed": "No", "MobileVersion": "No" },
+        "awsRegion": "us-east-2",
+        "eventID": "1111111111",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2022-03-16 19:17:41",
+        "eventType": "AwsConsoleSignIn",
+        "eventVersion": "1.08",
+        "managementEvent": true,
 
-      "readOnly": false,
-      "recipientAccountId": "xxx",
-      "responseElements": {
-        "ConsoleLogin": "Success"
-      },
-      "sourceIPAddress": "1.2.3.4",
-      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
-      "userIdentity": {
-        "accountId": "xxx",
-        "arn": "arn:aws:sts::xxx:assumed-role/AWSReservedSSO_developer_admin_asdf/foo@bar.com",
-        "principalId": "xxx:foo@bar.com",
-        "sessionContext": {
-          "attributes": {
-            "creationDate": "2022-03-16T19:17:41Z",
-            "mfaAuthenticated": "false"
-          },
-          "sessionIssuer": {
+        "readOnly": false,
+        "recipientAccountId": "xxx",
+        "responseElements": { "ConsoleLogin": "Success" },
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
+        "userIdentity":
+          {
             "accountId": "xxx",
-            "arn": "arn:aws:iam::xxx:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_developer_admin_asdf",
-            "principalId": "xxx",
-            "type": "Role",
-            "userName": "AWSReservedSSO_developer_admin_asdf"
+            "arn": "arn:aws:sts::xxx:assumed-role/AWSReservedSSO_developer_admin_asdf/foo@bar.com",
+            "principalId": "xxx:foo@bar.com",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-03-16T19:17:41Z",
+                    "mfaAuthenticated": "false",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "xxx",
+                    "arn": "arn:aws:iam::xxx:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_developer_admin_asdf",
+                    "principalId": "xxx",
+                    "type": "Role",
+                    "userName": "AWSReservedSSO_developer_admin_asdf",
+                  },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
           },
-          "webIdFederationData": {}
-        },
-        "type": "AssumedRole"
       }
-    }
 
-  -
-    Name: AssumeRole from MFA User Session
+  - Name: AssumeRole from MFA User Session
     ExpectedResult: false
     Mocks:
       - objectName: check_account_age
         returnValue: "False"
     Log:
       {
-        "additionalEventData": {
-          "MFAUsed": "No",
-          "MobileVersion": "No"
-        },
+        "additionalEventData": { "MFAUsed": "No", "MobileVersion": "No" },
         "awsRegion": "us-east-1",
         "eventID": "sdsdsdsd",
         "eventName": "ConsoleLogin",
@@ -376,30 +366,27 @@ Tests:
         "managementEvent": true,
         "readOnly": false,
         "recipientAccountId": "111111111111111",
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
         "sourceIPAddress": "1.1.1.1",
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
-        "userIdentity": {
-          "accountId": "11111",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2022-03-29T17:16:35Z",
-              "mfaAuthenticated": "true"
-            },
-            "sessionIssuer": {
-              "accountId": "2222",
-              "type": "Role",
-              "userName": "asdsda"
-            },
-            "webIdFederationData": { }
+        "userIdentity":
+          {
+            "accountId": "11111",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-03-29T17:16:35Z",
+                    "mfaAuthenticated": "true",
+                  },
+                "sessionIssuer":
+                  { "accountId": "2222", "type": "Role", "userName": "asdsda" },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
           },
-          "type": "AssumedRole"
-        }
       }
-  - 
-    Name: No MFA - IAM Role and External IDP
+  - Name: No MFA - IAM Role and External IDP
     ExpectedResult: false
     Mocks:
       - objectName: ROLES_VIA_EXTERNAL_IDP
@@ -407,25 +394,29 @@ Tests:
     Log:
       {
         "eventVersion": "1.05",
-        "userIdentity": {
-          "accountId": "123456789012",
-          "arn": "arn:aws:sts::123456789012:assumed-role/SomeRole/1641313043312360000",
-          "principalId": "AROAXXXXXXXXXXXXXXXXX:1641313043312360000",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2022-01-04T16:17:27Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "123456789012",
-              "arn": "arn:aws:iam::123456789012:role/SomeRole",
-              "principalId": "AROAXXXXXXXXXXXXXXXXX",
-              "type": "Role",
-              "userName": "SomeRole"
-            }
+        "userIdentity":
+          {
+            "accountId": "123456789012",
+            "arn": "arn:aws:sts::123456789012:assumed-role/SomeRole/1641313043312360000",
+            "principalId": "AROAXXXXXXXXXXXXXXXXX:1641313043312360000",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-01-04T16:17:27Z",
+                    "mfaAuthenticated": "false",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "123456789012",
+                    "arn": "arn:aws:iam::123456789012:role/SomeRole",
+                    "principalId": "AROAXXXXXXXXXXXXXXXXX",
+                    "type": "Role",
+                    "userName": "SomeRole",
+                  },
+              },
+            "type": "AssumedRole",
           },
-          "type": "AssumedRole"
-        },
         "eventTime": "2019-01-01T00:00:00Z",
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
@@ -433,56 +424,16 @@ Tests:
         "sourceIPAddress": "111.111.111.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
-        "additionalEventData": {
-          "LoginTo": "https://console.aws.amazon.com/console/",
-          "MobileVersion": "No",
-          "MFAUsed": "No"
-        },
+        "responseElements": { "ConsoleLogin": "Success" },
+        "additionalEventData":
+          {
+            "LoginTo": "https://console.aws.amazon.com/console/",
+            "MobileVersion": "No",
+            "MFAUsed": "No",
+          },
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789013",
         "p_row_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "p_log_type": "AWS.CloudTrail"
-      }
-  - 
-    Name: Role name in title example
-    ExpectedResult: true
-    Mocks:
-      - objectName: check_account_age
-        returnValue: "False"
-    Log:
-      {
-        "awsRegion": "us-east-1",
-        "eventName": "ConsoleLogin",
-        "eventSource": "signin.amazonaws.com",
-        "recipientAccountId": "123456789012",
-        "sourceIPAddress": "11.22.33.44",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "userIdentity": {
-          "accessKeyId": "ASIAEXAMPLE000000000",
-          "accountId": "123456789012",
-          "arn": "arn:aws:sts::123456789012:assumed-role/role-name/session-name",
-          "principalId": "AROAEXAMPLE0000000000:session-name",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-02-29T19:56:31Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "123456789012",
-              "arn": "arn:aws:iam:: 123456789012:role/role-name",
-              "principalId": "AROAEXAMPLE0000000000",
-              "type": "Role",
-              "userName": "role-name"
-            },
-            "webIdFederationData": {}
-          },
-          "type": "AssumedRole"
-        },
-        "responseElements": {
-          "ConsoleLogin": "Success"
-        },
+        "p_log_type": "AWS.CloudTrail",
       }

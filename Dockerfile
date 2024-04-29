@@ -10,6 +10,8 @@ RUN apk update \
         bzip2-dev \
         git \
         libffi-dev \
+        nodejs \
+        npm \
         openssl-dev \
         readline-dev \
         sqlite-dev \
@@ -31,7 +33,7 @@ ENV PATH="/root/.pyenv/bin:$PATH"
 ENV PATH="/root/.pyenv/shims:$PATH"
 
 # Install Python
-RUN env PYTHON_CONFIGURE_OPTS='--enable-optimizations --with-lto' PYTHON_CFLAGS='-march=native -mtune=native' pyenv install $PYTHON_VERSION \
+RUN pyenv install $PYTHON_VERSION \
     && pyenv global $PYTHON_VERSION
 
 # Install pipenv
@@ -45,6 +47,12 @@ COPY Pipfile .
 COPY Pipfile.lock .
 RUN pipenv uninstall --all
 RUN pipenv sync --dev
+
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
+
+ENV PATH="/home/panther-analysis/node_modules/.bin:$PATH"
 
 # Remove pipfile so it doesn't interfere with local files after install
 RUN rm Pipfile 

@@ -1,19 +1,20 @@
 AnalysisType: rule
 Filename: cloudflare_httpreq_bot_high_volume_greynoise.py
 RuleID: "Cloudflare.HttpRequest.BotHighVolumeGreyNoise"
-DisplayName: "Cloudflare Bot High Volume GreyNoise"
+DisplayName: "--DEPRECATED-- Cloudflare Bot High Volume GreyNoise"
 Enabled: false
 LogTypes:
   - Cloudflare.HttpRequest
 Tags:
   - Cloudflare
   - GreyNoise
+  - Deprecated
 Severity: Low
 Description: Monitors for high volume of likely automated HTTP Requests with GreyNoise enrichment
 Runbook: Inspect and monitor internet-facing services for potential outages
 Reference: https://docs.greynoise.io/docs/understanding-greynoise-enrichments
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  7560 # 2req/sec is 7200 + 5% for just-in-case
+Threshold: 7560 # 2req/sec is 7200 + 5% for just-in-case
 SummaryAttributes:
   - ClientIP
   - ClientRequestUserAgent
@@ -21,8 +22,7 @@ SummaryAttributes:
   - ClientCountry
   - ClientRequestURI
 Tests:
-  -
-    Name: Likely Human
+  - Name: Likely Human
     ExpectedResult: false
     Log:
       {
@@ -81,26 +81,17 @@ Tests:
         "WorkerSubrequest": false,
         "WorkerSubrequestCount": 0,
         "ZoneID": 526503649,
-        "p_any_domain_names": [
-            "https://example.com/",
-            "example.com"
-        ],
-        "p_any_ip_addresses": [
-            "142.93.204.250"
-        ],
-        "p_any_trace_ids": [
-            "00",
-            "707c283ab88274cd"
-        ],
+        "p_any_domain_names": ["https://example.com/", "example.com"],
+        "p_any_ip_addresses": ["142.93.204.250"],
+        "p_any_trace_ids": ["00", "707c283ab88274cd"],
         "p_event_time": "2022-05-07 18:53:12",
         "p_log_type": "Cloudflare.HttpRequest",
         "p_parse_time": "2022-05-07 18:54:31.922",
         "p_row_id": "a6e3965df054cfcdbdccf3ec10a134",
         "p_source_id": "2b9fc5ae-9cab-4715-8683-9bfbdb15a313",
-        "p_source_label": "Cloudflare"
+        "p_source_label": "Cloudflare",
       }
-  -
-    Name: Likely Automated
+  - Name: Likely Automated
     ExpectedResult: true
     Log:
       {
@@ -159,17 +150,9 @@ Tests:
         "WorkerSubrequest": false,
         "WorkerSubrequestCount": 0,
         "ZoneID": 526503649,
-        "p_any_domain_names": [
-            "https://example.com/",
-            "example.com"
-        ],
-        "p_any_ip_addresses": [
-            "142.93.204.250"
-        ],
-        "p_any_trace_ids": [
-            "00",
-            "707c283ab88274cd"
-        ],
+        "p_any_domain_names": ["https://example.com/", "example.com"],
+        "p_any_ip_addresses": ["142.93.204.250"],
+        "p_any_trace_ids": ["00", "707c283ab88274cd"],
         "p_event_time": "2022-05-07 18:53:12",
         "p_log_type": "Cloudflare.HttpRequest",
         "p_parse_time": "2022-05-07 18:54:31.922",
@@ -177,8 +160,7 @@ Tests:
         "p_source_id": "2b9fc5ae-9cab-4715-8683-9bfbdb15a313",
         "p_source_label": "Cloudflare",
       }
-  -
-    Name: Likely Automated - B2B
+  - Name: Likely Automated - B2B
     ExpectedResult: false
     Log:
       {
@@ -237,35 +219,29 @@ Tests:
         "WorkerSubrequest": false,
         "WorkerSubrequestCount": 0,
         "ZoneID": 526503649,
-        "p_any_domain_names": [
-            "https://example.com/",
-            "example.com"
-        ],
-        "p_any_ip_addresses": [
-            "142.93.204.250"
-        ],
-        "p_any_trace_ids": [
-            "00",
-            "707c283ab88274cd"
-        ],
+        "p_any_domain_names": ["https://example.com/", "example.com"],
+        "p_any_ip_addresses": ["142.93.204.250"],
+        "p_any_trace_ids": ["00", "707c283ab88274cd"],
         "p_event_time": "2022-05-07 18:53:12",
         "p_log_type": "Cloudflare.HttpRequest",
         "p_parse_time": "2022-05-07 18:54:31.922",
         "p_row_id": "a6e3965df054cfcdbdccf3ec10a134",
         "p_source_id": "2b9fc5ae-9cab-4715-8683-9bfbdb15a313",
         "p_source_label": "Cloudflare",
-        "p_enrichment": {
-          "greynoise_riot_basic": {
-            "ClientIP": {
-              "ip_address": "142.93.204.250",
-              "is_riot": true,
-              "ip_cidr": "142.93.204.250/32",
-            }
-          }
-        }
+        "p_enrichment":
+          {
+            "greynoise_riot_basic":
+              {
+                "ClientIP":
+                  {
+                    "ip_address": "142.93.204.250",
+                    "is_riot": true,
+                    "ip_cidr": "142.93.204.250/32",
+                  },
+              },
+          },
       }
-  -
-    Name: Bot Score Not Computed
+  - Name: Bot Score Not Computed
     ExpectedResult: False
     Log:
       {
@@ -324,17 +300,9 @@ Tests:
         "WorkerSubrequest": false,
         "WorkerSubrequestCount": 0,
         "ZoneID": 526503649,
-        "p_any_domain_names": [
-            "https://example.com/",
-            "example.com"
-        ],
-        "p_any_ip_addresses": [
-            "142.93.204.250"
-        ],
-        "p_any_trace_ids": [
-            "00",
-            "707c283ab88274cd"
-        ],
+        "p_any_domain_names": ["https://example.com/", "example.com"],
+        "p_any_ip_addresses": ["142.93.204.250"],
+        "p_any_trace_ids": ["00", "707c283ab88274cd"],
         "p_event_time": "2022-05-07 18:53:12",
         "p_log_type": "Cloudflare.HttpRequest",
         "p_parse_time": "2022-05-07 18:54:31.922",

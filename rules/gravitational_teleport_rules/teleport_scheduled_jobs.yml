@@ -28,8 +28,7 @@ SummaryAttributes:
   - server_id
   - sid
 Tests:
-  -
-    Name: Crontab no args
+  - Name: Crontab no args
     ExpectedResult: true
     Log:
       {
@@ -49,16 +48,13 @@ Tests:
         "sid": "29a3d18c-2c05-453d-979a-2ed888a14788",
         "time": "2020-08-18T00:05:12.465Z",
         "uid": "83e88438-efbc-41a2-8135-b0157e0d14c0",
-        "user": "panther"
+        "user": "panther",
       }
-  -
-    Name: Crontab Edit
+  - Name: Crontab Edit
     ExpectedResult: true
     Log:
       {
-        "argv": [
-          "-e"
-        ],
+        "argv": ["-e"],
         "cgroup_id": 4294967582,
         "code": "T4000I",
         "ei": 50,
@@ -74,16 +70,13 @@ Tests:
         "sid": "af24d0b8-9767-4bd8-99ce-7a4449ee3eba",
         "time": "2020-08-17T18:54:32.273Z",
         "uid": "ad4a31d0-d739-4409-8f1c-cf573ed97a89",
-        "user": "panther"
+        "user": "panther",
       }
-  -
-    Name: Crontab List
+  - Name: Crontab List
     ExpectedResult: false
     Log:
       {
-        "argv": [
-          "-l"
-        ],
+        "argv": ["-l"],
         "cgroup_id": 4294967582,
         "code": "T4000I",
         "ei": 37,
@@ -99,10 +92,9 @@ Tests:
         "sid": "af24d0b8-9767-4bd8-99ce-7a4449ee3eba",
         "time": "2020-08-17T18:50:39.1Z",
         "uid": "6b463839-c641-43d3-ab97-3137ff9b09f8",
-        "user": "panther"
+        "user": "panther",
       }
-  -
-    Name: Echo command
+  - Name: Echo command
     ExpectedResult: false
     Log:
       {
@@ -122,5 +114,5 @@ Tests:
         "sid": "8a3fc038-785b-43f3-8737-827b3e25fe5b",
         "time": "2020-08-17T17:40:37.491Z",
         "uid": "8eaf8f39-09d4-4a42-a22a-65163d2af702",
-        "user": "panther"
+        "user": "panther",
       }

@@ -40,6 +40,8 @@ def in_pci_scope_tags(resource):
 
 
 PCI_NETWORKS = config.PCI_NETWORKS
+
+
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as in scope
 def is_pci_scope_cidr(ip_range):
@@ -47,6 +49,8 @@ def is_pci_scope_cidr(ip_range):
 
 
 DMZ_NETWORKS = config.DMZ_NETWORKS
+
+
 # Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
 # Returns True if any ip in the range is marked as DMZ space.
 def is_dmz_cidr(ip_range):
@@ -469,7 +473,9 @@ def msft_graph_alert_context(event):
     return {
         "category": event.get("category", ""),
         "description": event.get("description", ""),
-        "userstates": event.get("userstates", []),
+        "userStates": event.get("userStates", []),
+        "fileStates": event.get("fileStates", []),
+        "hostStates": event.get("hostStates", []),
     }
 
 
