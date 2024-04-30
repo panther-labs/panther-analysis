@@ -29,7 +29,7 @@ def main(args):
         return False
 
     with open(args.file) as file:
-        data = yaml.load(file, Loader=yaml.FullLoader)
+        data = yaml.safe_load(file, Loader=yaml.FullLoader)
 
     # ensure UTC
     args.panther_compromise_datetime = args.panther_compromise_datetime.replace(tzinfo=timezone.utc)
