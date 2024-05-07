@@ -10,7 +10,7 @@ import string
 import sys
 import unittest
 
-from panther_analysis_tool.immutable import ImmutableCaseInsensitiveDict, ImmutableList
+from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
 
 # pipenv run does the right thing, but IDE based debuggers may fail to import
 #   so noting, we append this directory to sys.path
