@@ -55,7 +55,8 @@ def rule(event):
     if is_new_user:
         return False
 
-    is_new_account = check_account_age(event.get("recipientAccountId"))
+    new_account_string = "new_account - " + event.get("recipientAccountId")
+    is_new_account = check_account_age(new_account_string)
     if isinstance(is_new_account, str):
         logging.debug("check_account_age is a mocked string for unit testing")
         if is_new_account == "False":
