@@ -56,5 +56,5 @@ RUN npm install
 ENV PATH="/home/panther-analysis/node_modules/.bin:$PATH"
 
 # Remove pipfile so it doesn't interfere with local files after install
-RUN rm Pipfile 
+RUN rm Pipfile
 RUN rm Pipfile.lock
