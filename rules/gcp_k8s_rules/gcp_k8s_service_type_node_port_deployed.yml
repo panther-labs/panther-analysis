@@ -7,12 +7,12 @@ LogTypes:
   - GCP.AuditLog
 Severity: High
 Description: >
-  This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows 
-  an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting 
-  traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to 
+  This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows
+  an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting
+  traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to
   the outside network.
 Runbook: >
-  Investigate the reason of creating NodePort service. Advise that it is discouraged practice. 
+  Investigate the reason of creating NodePort service. Advise that it is discouraged practice.
   Create ticket if appropriate.
 Reference: https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/
 Reports:
