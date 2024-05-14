@@ -24,8 +24,8 @@ SnowflakeQuery: >
       AND event_type = 'LOGIN'
       AND client_ip != '0.0.0.0' -- filtering out unnecessary 'elided' snowflake entries
   )
-  SELECT 
-  * 
+  SELECT
+  *
   FROM login_attempts
   MATCH_RECOGNIZE(
       PARTITION BY client_ip, user_name
