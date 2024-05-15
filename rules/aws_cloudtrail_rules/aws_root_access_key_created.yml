@@ -5,10 +5,12 @@ DisplayName: "Root Account Access Key Created"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Identity and Access Management
   - Persistence:Account Manipulation
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0003:T1098
@@ -67,6 +69,7 @@ Tests:
               },
             "type": "Root",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Root Created Access Key For User
     ExpectedResult: false
@@ -111,4 +114,51 @@ Tests:
               },
             "type": "Root",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Root Access Key Created - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateAccessKey",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "type": "Root",
+              },
+          },
+        "request_parameters": null,
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Root Created Access Key For User - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateAccessKey",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "type": "Root",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "request_parameters": "some_params",
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

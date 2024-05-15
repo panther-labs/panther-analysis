@@ -1,23 +1,20 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
-    return event.get("eventName") == "DisassociateWebACL"
+    return event.udm("event_name") == "DisassociateWebACL"
 
 
 def title(event):
     return (
-        f"AWS Account ID [{event.get('recipientAccountId')}] "
-        f"disassociated WebACL [{deep_get(event, 'requestParameters', 'resourceArn')}]"
+        f"AWS Account ID [{event.udm('recipient_account_id')}] "
+        f"disassociated WebACL [{event.udm('resource_arn')}]"
     )
 
 
 def alert_context(event):
     return {
-        "awsRegion": event.get("awsRegion"),
-        "eventName": event.get("eventName"),
-        "recipientAccountId": event.get("recipientAccountId"),
+        "awsRegion": event.udm("cloud_region"),
+        "eventName": event.udm("event_name"),
+        "recipientAccountId": event.udm("recipient_account_id"),
         "requestID": event.get("requestID"),
-        "requestParameters": deep_get(event, "requestParameters", "resourceArn"),
-        "userIdentity": deep_get(event, "userIdentity", "principalId"),
+        "requestParameters": event.udm("resource_arn"),
+        "userIdentity": event.udm("user_principal_id"),
     }

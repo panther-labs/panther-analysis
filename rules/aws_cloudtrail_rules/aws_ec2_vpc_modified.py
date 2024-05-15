@@ -18,11 +18,11 @@ EC2_VPC_MODIFIED_EVENTS = {
 
 
 def rule(event):
-    return aws_cloudtrail_success(event) and event.get("eventName") in EC2_VPC_MODIFIED_EVENTS
+    return aws_cloudtrail_success(event) and event.udm("event_name") in EC2_VPC_MODIFIED_EVENTS
 
 
 def dedup(event):
-    return event.get("recipientAccountId")
+    return event.udm("recipient_account_id")
 
 
 def alert_context(event):

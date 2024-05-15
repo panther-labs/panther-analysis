@@ -1,6 +1,6 @@
 import re
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 # The role dedicated for IAM administration
@@ -28,12 +28,12 @@ def rule(event):
     # Check if this event is in scope
     if (
         not aws_cloudtrail_success(event)
-        or event.get("eventName") not in IAM_ENTITY_CREATION_EVENTS
+        or event.udm("event_name") not in IAM_ENTITY_CREATION_EVENTS
     ):
         return False
 
     # All IAM changes MUST go through CloudFormation
-    if deep_get(event, "userIdentity", "invokedBy") != "cloudformation.amazonaws.com":
+    if event.udm("invoked_by") != "cloudformation.amazonaws.com":
         return True
 
     # Only approved IAM Roles can make IAM Changes
@@ -43,17 +43,14 @@ def rule(event):
             len(
                 re.findall(
                     admin_role_pattern,
-                    deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "arn"),
+                    event.udm("session_issuer_arn"),
                 )
             )
             > 0
         ):
             return False
 
-    return (
-        deep_get(event, "userIdentity", "sessionContext", "sessionIssuer", "arn")
-        not in IAM_ADMIN_ROLES
-    )
+    return event.udm("session_issuer_arn") not in IAM_ADMIN_ROLES
 
 
 def alert_context(event):

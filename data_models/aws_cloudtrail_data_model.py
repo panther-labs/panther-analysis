@@ -7,16 +7,16 @@ from panther_base_helpers import deep_get
 def get_event_type(event):
     # currently, only tracking a few event types
     if (
-        event.get("eventName") == "ConsoleLogin"
+        event.udm("event_name") == "ConsoleLogin"
         and deep_get(event, "userIdentity", "type") == "IAMUser"
     ):
         if deep_get(event, "responseElements", "ConsoleLogin") == "Failure":
             return event_type.FAILED_LOGIN
         if deep_get(event, "responseElements", "ConsoleLogin") == "Success":
             return event_type.SUCCESSFUL_LOGIN
-    if event.get("eventName") == "CreateUser":
+    if event.udm("event_name") == "CreateUser":
         return event_type.USER_ACCOUNT_CREATED
-    if event.get("eventName") == "CreateAccountResult":
+    if event.udm("event_name") == "CreateAccountResult":
         return event_type.ACCOUNT_CREATED
     return None
 

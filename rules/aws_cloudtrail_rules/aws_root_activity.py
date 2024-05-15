@@ -1,4 +1,3 @@
-from panther_base_helpers import deep_get
 from panther_default import aws_cloudtrail_success, lookup_aws_account_name
 
 EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
@@ -6,44 +5,44 @@ EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
 
 def rule(event):
     return (
-        deep_get(event, "userIdentity", "type") == "Root"
+        event.udm("user_type") == "Root"
         and aws_cloudtrail_success(event)
-        and deep_get(event, "userIdentity", "invokedBy") is None
-        and event.get("eventType") != "AwsServiceEvent"
-        and event.get("eventName") not in EVENT_ALLOW_LIST
+        and event.udm("invoked_by") is None
+        and event.udm("event_type") != "AwsServiceEvent"
+        and event.udm("event_name") not in EVENT_ALLOW_LIST
     )
 
 
 def dedup(event):
     return (
-        event.get("sourceIPAddress", "<UNKNOWN_IP>")
+        event.udm("source_ip_address", default="<UNKNOWN_IP>")
         + ":"
-        + lookup_aws_account_name(event.get("recipientAccountId"))
+        + lookup_aws_account_name(event.udm("recipient_account_id"))
         + ":"
-        + str(event.get("readOnly"))
+        + str(event.get("read_only"))
     )
 
 
 def title(event):
     return (
         "AWS root user activity "
-        f"[{event.get('eventName')}] "
+        f"[{event.udm('event_name')}] "
         "in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{lookup_aws_account_name(event.udm('recipient_account_id'))}]"
     )
 
 
 def alert_context(event):
     return {
-        "sourceIPAddress": event.get("sourceIPAddress"),
-        "userIdentityAccountId": deep_get(event, "userIdentity", "accountId"),
-        "userIdentityArn": deep_get(event, "userIdentity", "arn"),
-        "eventTime": event.get("eventTime"),
-        "mfaUsed": deep_get(event, "additionalEventData", "MFAUsed"),
+        "sourceIPAddress": event.udm("source_ip_address"),
+        "userIdentityAccountId": event.udm("user_account_id"),
+        "userIdentityArn": event.udm("user_arn"),
+        "eventTime": event.udm("event_time"),
+        "mfaUsed": event.udm("mfa_used"),
     }
 
 
 def severity(event):
-    if event.get("readOnly"):
+    if event.get("read_only"):
         return "LOW"
     return "HIGH"

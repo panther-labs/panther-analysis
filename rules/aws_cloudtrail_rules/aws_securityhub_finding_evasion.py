@@ -5,8 +5,8 @@ EVASION_OPERATIONS = ["BatchUpdateFindings", "DeleteInsight", "UpdateFindings", 
 
 def rule(event):
     if (
-        event.get("eventSource", "") == "securityhub.amazonaws.com"
-        and event.get("eventName", "") in EVASION_OPERATIONS
+        event.udm("event_source", default="") == "securityhub.amazonaws.com"
+        and event.udm("event_name", default="") in EVASION_OPERATIONS
     ):
         return True
     return False
@@ -15,7 +15,7 @@ def rule(event):
 def title(event):
     return (
         "SecurityHub Findings have been modified in account: "
-        f"[{event.get('recipientAccountId','')}]"
+        f"[{event.udm('recipient_account_id',default='')}]"
     )
 
 

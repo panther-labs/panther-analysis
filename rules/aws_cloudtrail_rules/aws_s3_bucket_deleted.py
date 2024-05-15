@@ -1,10 +1,12 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 
 def rule(event):
     # Capture DeleteBucket, DeleteBucketPolicy, DeleteBucketWebsite
-    return event.get("eventName").startswith("DeleteBucket") and aws_cloudtrail_success(event)
+    return event.udm("event_name", default="").startswith(
+        "DeleteBucket"
+    ) and aws_cloudtrail_success(event)
 
 
 def helper_strip_role_session_id(user_identity_arn):
@@ -16,14 +18,13 @@ def helper_strip_role_session_id(user_identity_arn):
 
 
 def dedup(event):
-    user_identity = event.get("userIdentity", {})
-    if user_identity.get("type") == "AssumedRole":
-        return helper_strip_role_session_id(user_identity.get("arn", ""))
-    return user_identity.get("arn")
+    if event.udm("user_type") == "AssumedRole":
+        return helper_strip_role_session_id(event.udm("user_arn", default=""))
+    return event.udm("user_arn")
 
 
 def title(event):
-    return f"{deep_get(event, 'userIdentity', 'type')} [{dedup(event)}] destroyed a bucket"
+    return f"{event.udm('user_type')} [{dedup(event)}] destroyed a bucket"
 
 
 def alert_context(event):

@@ -5,12 +5,14 @@ DisplayName: "AWS Access Key Uploaded to Github"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Reports:
   MITRE ATT&CK:
     - TA0006:T1552
 Tags:
   - AWS
   - Credential Access:Unsecured Credentials
+  - DataModel
 Severity: High
 Description: A users static AWS API key was uploaded to a public github repo.
 Runbook: Determine the key owner, disable/delete key, and delete the user to resolve the AWS case. If user needs a new IAM give them a stern talking to first.
@@ -47,6 +49,7 @@ Tests:
         "awsRegion": "us-east-1",
         "requestID": "27ca92a5-61cc-44aa-b875-042a25310064",
         "eventTime": "2020-04-10T06:22:08Z",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Request Param is null
     ExpectedResult: false
@@ -74,4 +77,53 @@ Tests:
         "awsRegion": "us-east-1",
         "requestID": "27ca92a5-61cc-44aa-b875-042a25310064",
         "eventTime": "2020-04-10T06:22:08Z",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: An AWS Access Key was Uploaded to Github - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutUserPolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "name": "tester",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "requestParameters.policyName": "AWSExposedCredentialPolicy_DO_NOT_REMOVE",
+          },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Request Param is null - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutUserPolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "name": "tester",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

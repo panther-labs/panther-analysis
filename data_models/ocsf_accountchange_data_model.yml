@@ -1,0 +1,36 @@
+AnalysisType: datamodel
+LogTypes:
+  - OCSF.AccountChange
+DataModelID: "Standard.OCSF.Account.Change"
+DisplayName: "OCSF Account Change"
+Filename: ocsf_accountchange_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.user.name
+  - Name: event_name
+    Path: $.api.operation
+  - Name: invoked_by
+    Path: $.actor.invoked_by
+  - Name: session_issuer_arn
+    Path: $.actor.session.issuer
+  - Name: event_source
+    Path: $.api.service.name
+  - Name: cloud_region
+    Path: $.cloud.region
+  - Name: recipient_account_id
+    Path: $.unmapped.recipientAccountId
+  - Name: source_ip_address
+    Method: source_ip_address
+  - Name: user_agent
+    Path: $.http_request.user_agent
+  - Name: user_identity
+    Path: actor
+  - Name: user_arn
+    Path: $.actor.user.uid
+  - Name: user_name
+    Path: $.unmapped."requestParameters.userName"
+  - Name: password_reset_required
+    Path: $.unmapped."requestParameters.passwordResetRequired"
+  - Name: user_type
+    Path: $.actor.user.type

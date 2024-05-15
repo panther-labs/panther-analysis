@@ -5,10 +5,12 @@ DisplayName: "Unused AWS Region"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Defense Evasion:Unused/Unsupported Cloud Regions
   - Configuration Required
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0005:T1535
@@ -75,6 +77,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Unauthorized region, read-only
     ExpectedResult: false
@@ -131,6 +134,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Unauthorized region
     ExpectedResult: true
@@ -180,4 +184,41 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Unauthorized region, read-only - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "Decrypt",
+            "service": { "name": "kms.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "ap-east-1" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012", "readOnly": true },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Unauthorized region - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateLogStream",
+            "service": { "name": "logs.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "eu-central-1" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012", "readOnly": false },
+        "p_log_type": "OCSF.ApiActivity",
       }

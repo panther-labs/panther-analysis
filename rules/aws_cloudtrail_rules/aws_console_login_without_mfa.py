@@ -1,6 +1,6 @@
 import logging
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import lookup_aws_account_name
 from panther_detection_helpers.caching import check_account_age
 
@@ -10,13 +10,11 @@ ROLES_VIA_EXTERNAL_IDP = False
 
 # pylint: disable=R0911,R0912,R1260
 def rule(event):
-    if event.get("eventName") != "ConsoleLogin":
+    if event.udm("event_name") != "ConsoleLogin":
         return False
 
     # Extract some nested JSON structure
-    additional_event_data = event.get("additionalEventData", {})
-    response_elements = event.get("responseElements", {})
-    user_identity_type = deep_get(event, "userIdentity", "type", default="")
+    user_identity_type = event.udm("user_type", default="")
 
     # When there is an external IdP setup and users directly assume roles
     # the additionalData.MFAUsed attribute will be set to "no"
@@ -32,8 +30,8 @@ def rule(event):
 
     # If using AWS SSOv2 or other SAML provider return False
     if (
-        "AWSReservedSSO" in deep_get(event, "userIdentity", "arn", default=" ")
-        or additional_event_data.get("SamlProviderArn") is not None
+        "AWSReservedSSO" in event.udm("user_arn", default=" ")
+        or event.udm("saml_provider_arn") is not None
     ):
         return False
 
@@ -41,9 +39,9 @@ def rule(event):
     # This functionality is not enabled by default, in order to start logging new user creations
     # Enable indicator_creation_rules/new_account_logging to start logging new users
     new_user_string = (
-        deep_get(event, "userIdentity", "userName", default="<MISSING_USER_NAME>")
+        event.udm("actor_user", default="<MISSING_USER_NAME>")
         + "-"
-        + deep_get(event, "userIdentity", "principalId", default="<MISSING_ID>")
+        + event.udm("user_principal_id", default="<MISSING_ID>")
     )
     is_new_user = check_account_age(new_user_string)
     if isinstance(is_new_user, str):
@@ -55,7 +53,7 @@ def rule(event):
     if is_new_user:
         return False
 
-    is_new_account = check_account_age(event.get("recipientAccountId"))
+    is_new_account = check_account_age(event.udm("recipient_account_id"))
     if isinstance(is_new_account, str):
         logging.debug("check_account_age is a mocked string for unit testing")
         if is_new_account == "False":
@@ -65,30 +63,22 @@ def rule(event):
     if is_new_account:
         return False
 
-    if response_elements.get("ConsoleLogin") == "Success":
+    if event.udm("login_status") == "Success":
         # This logic is inverted because at times the second condition is None.
         # It is not recommended to remove this 'double negative"
-        if (
-            additional_event_data.get("MFAUsed") != "Yes"
-            and deep_get(event, "userIdentity", "sessionContext", "attributes", "mfaAuthenticated")
-            != "true"
-        ):
+        if event.udm("mfa_used") != "Yes" and event.udm("mfa_authenticated") != "true":
             return True
     return False
 
 
 def title(event):
-    if deep_get(event, "userIdentity", "type") == "Root":
+    if event.udm("user_type") == "Root":
         user_string = "the root user"
     else:
-        user = deep_get(event, "userIdentity", "userName") or deep_get(
-            event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
-        )
-        type_ = deep_get(
-            event, "userIdentity", "sessionContext", "sessionIssuer", "type", default="user"
-        ).lower()
+        user = event.udm("actor_user") or event.udm("session_user_name")
+        type_ = event.udm("session_user_type", default="user").lower()
         user_string = f"{type_} {user}"
-    account_id = event.get("recipientAccountId")
+    account_id = event.udm("recipient_account_id")
     account_name = lookup_aws_account_name(account_id)
     if account_id == account_name:
         account_string = f"unnamed account ({account_id})"

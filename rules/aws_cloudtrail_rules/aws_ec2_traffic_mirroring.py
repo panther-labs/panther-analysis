@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
@@ -19,11 +19,10 @@ def rule(event):
         "ModifyTrafficMirrorFilterRule",
         "ModifyTrafficMirrorSession",
     ]
-    if deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com"):
+    if event.udm("invoked_by", default="").endswith(".amazonaws.com"):
         return False
     return (
-        event.get("eventSource", "") == "ec2.amazonaws.com"
-        and event.get("eventName", "") in event_names
+        event.udm("event_source") == "ec2.amazonaws.com" and event.udm("event_name") in event_names
     )
 
 
@@ -32,16 +31,17 @@ def title(event):
     # If no 'dedup' function is defined, the return value of this method will
     # act as deduplication string.
     return (
-        f"{event.get('userIdentity',{}).get('arn','no-type')} ec2 activity found for "
-        f"{event.get('eventName')} in account {event.get('recipientAccountId')} "
-        f"in region {event.get('awsRegion')}."
+        f"{event.udm('user_arn')} ec2 activity found for "
+        f"{event.udm('event_name')} in account {event.udm('recipient_account_id')} "
+        f"in region {event.udm('cloud_region')}."
     )
 
 
 def dedup(event):
     #  (Optional) Return a string which will be used to deduplicate similar alerts.
     # Dedupe based on user identity, to not include multiple events from the same identity.
-    return f"{event.get('userIdentity',{}).get('arn','no-user-identity-provided')}"
+    user_arn = event.udm("user_arn") or "no-user-identity-provided"
+    return user_arn
 
 
 def alert_context(event):

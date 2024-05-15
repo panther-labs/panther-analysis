@@ -12,27 +12,64 @@ Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.htm
 Severity: Medium
 Tests:
   - ExpectedResult: true
-    Log:
-      awsRegion: us-east-1
-      eventName: DisableEbsEncryptionByDefault
-      eventSource: ec2.amazonaws.com
-      recipientAccountId: "123456789"
-      sourceIPAddress: 1.2.3.4
-      userAgent: Chrome Browser
     Name: DisableEbsEncryptionByDefault Event
-  - ExpectedResult: false
     Log:
-      awsRegion: ap-northeast-1
-      eventName: DescribeInstanceStatus
-      eventSource: ec2.amazonaws.com
-      eventTime: "2022-09-25 16:16:37"
-      eventType: AwsApiCall
-      readOnly: true
-      sourceIPAddress: 1.2.3.4
-      userAgent: Datadog
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "DisableEbsEncryptionByDefault",
+        "eventSource": "ec2.amazonaws.com",
+        "recipientAccountId": "123456789",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "Chrome Browser",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - ExpectedResult: false
     Name: Non Matching Event
+    Log:
+      {
+        "awsRegion": "ap-northeast-1",
+        "eventName": "DescribeInstanceStatus",
+        "eventSource": "ec2.amazonaws.com",
+        "eventTime": "2022-09-25 16:16:37",
+        "eventType": "AwsApiCall",
+        "readOnly": true,
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "Datadog",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - ExpectedResult: true
+    Name: DisableEbsEncryptionByDefault Event - OCSF
+    Log:
+      {
+        "api":
+          {
+            "operation": "DisableEbsEncryptionByDefault",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - ExpectedResult: false
+    Name: Non Matching Event - OCSF
+    Log:
+      {
+        "api":
+          {
+            "operation": "DescribeInstanceStatus",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "cloud": { "provider": "AWS", "region": "ap-northeast-1" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
 DedupPeriodMinutes: 60
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
+Tags:
+  - DataModel
 RuleID: "AWS.EC2.EBS.Encryption.Disabled"
 Threshold: 1

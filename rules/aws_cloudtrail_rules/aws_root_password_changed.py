@@ -1,17 +1,17 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
     # Only check password update changes
-    if event.get("eventName") != "PasswordUpdated":
+    if event.udm("event_name") != "PasswordUpdated":
         return False
 
     # Only check root activity
-    if deep_get(event, "userIdentity", "type") != "Root":
+    if event.udm("user_type") != "Root":
         return False
 
     # Only alert if the login was a success
-    return deep_get(event, "responseElements", "PasswordUpdated") == "Success"
+    return event.udm("password_updated") == "Success"
 
 
 def alert_context(event):

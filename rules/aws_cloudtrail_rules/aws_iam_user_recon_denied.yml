@@ -5,9 +5,11 @@ DisplayName: "Detect Reconnaissance from IAM Users"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Discovery:Cloud Service Discovery
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0007:T1526
@@ -63,6 +65,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Unauthorized API Call from Within AWS (FQDN)
     ExpectedResult: false
@@ -101,6 +104,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Authorized API Call
     ExpectedResult: false
@@ -137,6 +141,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Unauthorized API Call - From AWS console
     LogType: AWS.CloudTrail
@@ -176,4 +181,52 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Unauthorized API Call - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "GetRole",
+            "service": { "name": "iam.amazonaws.com" },
+            "response": { "error": "AccessDenied" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "type": "IAMUser",
+                "uid": "arn:aws:iam::123456789012:user/tester",
+              },
+          },
+        "http_request":
+          {
+            "user_agent": "aws-sdk-go/1.32.7 (go1.14.6; linux; amd64) exec-env/AWS_Lambda_go1.x",
+          },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Unauthorized API Call from Within AWS (FQDN) - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateServiceLinkedRole",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "type": "IAMUser",
+                "uid": "arn:aws:iam::123456789012:user/tester",
+              },
+          },
+        "response": { "error": "AccessDenied" },
+        "http_request": { "user_agent": "sqs.amazonaws.com" },
+        "src_endpoint": { "domain": "sqs.amazonaws.com" },
+        "p_log_type": "OCSF.Authentication",
       }

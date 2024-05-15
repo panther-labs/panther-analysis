@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 SECURITY_CONFIG_ACTIONS = {
@@ -28,31 +28,22 @@ def rule(event):
 
     for entry in ALLOW_LIST:
         if fnmatch(
-            deep_get(
-                event,
-                "userIdentity",
-                "sessionContext",
-                "sessionIssuer",
-                "userName",
-                default="",
-            ),
+            event.udm("session_user_name", default=""),
             entry["userName"],
         ):
-            if fnmatch(event.get("eventName"), entry["eventName"]):
+            if fnmatch(event.udm("event_name"), entry["eventName"]):
                 return False
 
-    if event.get("eventName") == "UpdateDetector":
-        return not deep_get(event, "requestParameters", "enable", default=True)
+    if event.udm("event_name") == "UpdateDetector":
+        return not event.udm("request_enable", default=True)
 
-    return event.get("eventName") in SECURITY_CONFIG_ACTIONS
+    return event.udm("event_name") in SECURITY_CONFIG_ACTIONS
 
 
 def title(event):
-    user = deep_get(event, "userIdentity", "userName") or deep_get(
-        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
-    )
+    user = event.udm("actor_user") or event.udm("session_user_name")
 
-    return f"Sensitive AWS API call {event.get('eventName')} made by {user}"
+    return f"Sensitive AWS API call {event.udm('event_name')} made by {user}"
 
 
 def alert_context(event):

@@ -5,9 +5,11 @@ DisplayName: "AWS Network ACL Overly Permissive Entry Created"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Persistence:Account Manipulation
+  - DataModel
 Severity: Medium
 Reports:
   MITRE ATT&CK:
@@ -75,6 +77,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Not Overly Permissive Entry Added
     ExpectedResult: false
@@ -128,6 +131,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Adding Overly Permissive Entry
     ExpectedResult: false
@@ -182,4 +186,53 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - ExpectedResult: true
+    Name: Discovery Event Names - OCSF
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateNetworkAclEntry",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "requestParameters.cidrBlock": "0.0.0.0/0",
+            "requestParameters.ruleAction": "allow",
+            "requestParameters.egress": false,
+          },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - ExpectedResult: false
+    Name: Non Discovery Event Names - OCSF
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateNetworkAclEntry",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "requestParameters.cidrBlock": "111.111.111.111/32",
+            "requestParameters.ruleAction": "allow",
+            "requestParameters.egress": false,
+          },
+        "p_log_type": "OCSF.ApiActivity",
       }

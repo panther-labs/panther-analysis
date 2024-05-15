@@ -7,14 +7,15 @@ KMS_KEY_TYPE = "AWS::KMS::Key"
 
 
 def rule(event):
-    return aws_cloudtrail_success(event) and event.get("eventName") in KMS_LOSS_EVENTS
+    return aws_cloudtrail_success(event) and event.udm("event_name") in KMS_LOSS_EVENTS
 
 
 def dedup(event):
-    for resource in event.get("resources") or []:
+    resources = event.udm("resources") or [{}]
+    for resource in resources:
         if resource.get("type", "") == KMS_KEY_TYPE:
-            return resource.get("ARN")
-    return event.get("eventName")
+            return resource.get("ARN") or resource.get("uid")
+    return event.udm("event_name")
 
 
 def alert_context(event):

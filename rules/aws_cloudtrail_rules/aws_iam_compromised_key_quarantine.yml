@@ -1,6 +1,7 @@
 AnalysisType: rule
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Description: "Detects when an IAM user has the AWSCompromisedKeyQuarantineV2 policy attached to their account."
 DisplayName: "AWS Compromised IAM Key Quarantine"
 Enabled: true
@@ -12,6 +13,7 @@ Tags:
   - Identity and Access Management
   - Initial Access:Valid Accounts
   - Credential Access:Unsecured Credentials
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0001:T1078.004
@@ -72,6 +74,7 @@ Tests:
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
         "sessionCredentialFromConsole": "true",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: PutUserPolicy-false
     ExpectedResult: false
@@ -124,4 +127,37 @@ Tests:
         "recipientAccountId": "123456789012",
         "eventCategory": "Management",
         "sessionCredentialFromConsole": "true",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: AttachUserPolicy AWSCompromisedKeyQuarantineV2-true - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "AttachUserPolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "AssumedRole" } },
+        "unmapped":
+          {
+            "requestParameters.policyArn": "arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2",
+          },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: PutUserPolicy-false - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutUserPolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "AssumedRole" } },
+        "unmapped":
+          {
+            "requestParameters.policyArn": "arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2",
+          },
+        "p_log_type": "OCSF.Authentication",
       }

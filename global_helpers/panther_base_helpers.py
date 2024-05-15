@@ -11,6 +11,7 @@ from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
 
 from panther_config import config
+from panther_core import PantherEvent
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -389,15 +390,15 @@ def aws_strip_role_session_id(user_identity_arn):
     return user_identity_arn
 
 
-def aws_rule_context(event: dict):
+def aws_rule_context(event: PantherEvent):
     return {
-        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
-        "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
-        "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
-        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
-        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
-        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
-        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
+        "eventName": event.udm("event_name"),
+        "eventSource": event.udm("event_source"),
+        "awsRegion": event.udm("cloud_region"),
+        "recipientAccountId": event.udm("recipient_account_id"),
+        "sourceIPAddress": event.udm("source_ip_address"),
+        "userAgent": event.udm("user_agent"),
+        "userIdentity": event.udm("user_identity"),
     }
 
 

@@ -38,7 +38,7 @@ def lookup_aws_account_name(account_id):
 
 
 def aws_cloudtrail_success(event):
-    if event.get("errorCode", "") or event.get("errorMessage", ""):
+    if event.udm("error_code", default="") or event.udm("error_message", default=""):
         return False
     return True
 

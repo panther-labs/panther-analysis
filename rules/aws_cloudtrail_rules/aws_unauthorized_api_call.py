@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 # Do not alert on these access denied errors for these events.
 # Events could be exceptions because they are particularly noisy and provide little to no value,
@@ -14,20 +14,21 @@ EVENT_EXCEPTIONS = {
 def rule(event):
     # Validate the request came from outside of AWS
     try:
-        ip_address(event.get("sourceIPAddress"))
+        ip_address(event.udm("source_ip_address"))
     except ValueError:
         return False
     return (
-        event.get("errorCode") == "AccessDenied" and event.get("eventName") not in EVENT_EXCEPTIONS
+        event.udm("error_code") == "AccessDenied"
+        and event.udm("event_name") not in EVENT_EXCEPTIONS
     )
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "principalId", default="<UNKNOWN_PRINCIPAL>")
+    return event.udm("user_principal_id", default="<UNKNOWN_PRINCIPAL>")
 
 
 def title(event):
-    return f"Access denied to {deep_get(event, 'userIdentity', 'type')} [{dedup(event)}]"
+    return f"Access denied to {event.udm('user_type')} [{dedup(event)}]"
 
 
 def alert_context(event):

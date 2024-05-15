@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, pattern_match
+from panther_base_helpers import pattern_match
 
 MACIE_EVENTS = {
     "ArchiveFindings",
@@ -16,12 +16,12 @@ MACIE_EVENTS = {
 
 
 def rule(event):
-    return event.get("eventName") in MACIE_EVENTS and pattern_match(
-        event.get("eventSource"), "macie*.amazonaws.com"
+    return event.udm("event_name") in MACIE_EVENTS and pattern_match(
+        event.udm("event_source"), "macie*.amazonaws.com"
     )
 
 
 def title(event):
-    account = event.get("recipientAccountId")
-    user_arn = deep_get(event, "userIdentity", "arn")
+    account = event.udm("recipient_account_id")
+    user_arn = event.udm("user_arn")
     return f"AWS Macie in AWS Account [{account}] Disabled/Updated by [{user_arn}]"

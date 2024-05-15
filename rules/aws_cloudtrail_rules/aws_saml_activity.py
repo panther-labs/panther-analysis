@@ -1,24 +1,22 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 SAML_ACTIONS = ["UpdateSAMLProvider", "CreateSAMLProvider", "DeleteSAMLProvider"]
 
 
 def rule(event):
     # Allow AWSSSO to manage
-    if deep_get(event, "userIdentity", "arn", default="").endswith(
-        ":assumed-role/AWSServiceRoleForSSO/AWS-SSO"
-    ):
+    if event.udm("user_arn", default="").endswith(":assumed-role/AWSServiceRoleForSSO/AWS-SSO"):
         return False
     return (
-        event.get("eventSource") == "iam.amazonaws.com" and event.get("eventName") in SAML_ACTIONS
+        event.udm("event_source") == "iam.amazonaws.com" and event.udm("event_name") in SAML_ACTIONS
     )
 
 
 def title(event):
     return (
-        f"[{deep_get(event,'userIdentity','arn')}] "
-        f"performed [{event.get('eventName')}] "
-        f"in account [{event.get('recipientAccountId')}]"
+        f"[{event.udm('user_arn')}] "
+        f"performed [{event.udm('event_name')}] "
+        f"in account [{event.udm('recipient_account_id')}]"
     )
 
 

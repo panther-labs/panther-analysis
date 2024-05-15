@@ -5,10 +5,12 @@ DisplayName: "AWS RDS Snapshot Shared"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Exfiltration
   - Transfer Data to Cloud Account
+  - DataModel
 Severity: High
 Reports:
   MITRE ATT&CK:
@@ -90,6 +92,7 @@ Tests:
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
             "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Snapshot shared with no accounts
     ExpectedResult: false
@@ -152,4 +155,59 @@ Tests:
             "cipherSuite": "TLS_AES_128_GCM_SHA256",
             "clientProvidedHostHeader": "rds.us-west-2.amazonaws.com",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Snapshot shared with another account - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "ModifyDBSnapshotAttribute",
+            "service": { "name": "rds.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "account_uid": "123456789012",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "requestParameters.attributeName": "restore",
+            "requestParameters.valuesToAdd": ["193672423079"],
+          },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Snapshot shared with no accounts - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "ModifyDBSnapshotAttribute",
+            "service": { "name": "rds.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "account_uid": "123456789012",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "requestParameters.attributeName": "restore",
+            "requestParameters.valuesToAdd": [],
+          },
+        "p_log_type": "OCSF.ApiActivity",
       }

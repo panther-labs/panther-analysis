@@ -7,14 +7,110 @@ Filename: aws_cloudtrail_data_model.py
 Enabled: true
 Mappings:
   - Name: actor_user
-    Path: $.userIdentity..userName
-  - Name: event_type
+    Path: $.userIdentity.userName
+  - Name: panther_event_type
     Method: get_event_type
   - Name: source_ip
     Method: load_ip_address
+  - Name: source_ip_address
+    Path: sourceIPAddress
   - Name: user_agent
     Path: userAgent
   - Name: user
     Path: $.responseElements.user.userName
-  - Name: user_account_id
+  - Name: user_id
     Path: $.responseElements.user.userId
+  - Name: event_name
+    Path: eventName
+  - Name: error_code
+    Path: errorCode
+  - Name: error_message
+    Path: errorMessage
+  - Name: request_parameters
+    Path: requestParameters
+  - Name: event_source
+    Path: eventSource
+  - Name: cloud_region
+    Path: awsRegion
+  - Name: recipient_account_id
+    Path: recipientAccountId
+  - Name: user_identity
+    Path: userIdentity
+  - Name: event_type
+    Path: eventType
+  - Name: user_arn
+    Path: $.userIdentity.arn
+  - Name: mfa_used
+    Path: $.additionalEventData.MFAUsed
+  - Name: login_status
+    Path: $.responseElements.ConsoleLogin
+  - Name: user_type
+    Path: $.userIdentity.type
+  - Name: event_time
+    Path: eventTime
+  - Name: user_account_id
+    Path: $.userIdentity.accountId
+  - Name: invoked_by
+    Path: $.userIdentity.invokedBy
+  - Name: session_issuer_arn
+    Path: $.userIdentity.sessionContext.sessionIssuer.arn
+  - Name: user_role_arn
+    Path: $.requestParameters.roleArn
+  - Name: resources
+    Path: resources
+  - Name: policy_arn
+    Path: $.requestParameters.policyArn
+  - Name: user_name
+    Path: $.requestParameters.userName
+  - Name: access_key_user_name
+    Path: $.responseElements.accessKey.userName
+  - Name: read_only
+    Path: readOnly
+  - Name: project_visibility
+    Path: $.requestParameters.projectVisibility
+  - Name: user_data
+    Path: $.requestParameters.userData
+  - Name: instance_id
+    Path: $.requestParameters.instanceId
+  - Name: snapshot_type
+    Path: $.responseElements.snapshotType
+  - Name: db_instance_identifier
+    Path: $.responseElements.dBInstanceIdentifier
+  - Name: attribute_name
+    Path: $.requestParameters.attributeName
+  - Name: values_to_add
+    Path: $.requestParameters.valuesToAdd
+  - Name: password_updated
+    Path: $.responseElements.PasswordUpdated
+  - Name: user_principal_id
+    Path: $.userIdentity.principalId
+  - Name: saml_provider_arn
+    Path: $.additionalEventData.SamlProviderArn
+  - Name: mfa_authenticated
+    Path: $.userIdentity.sessionContext.attributes.mfaAuthenticated
+  - Name: password_reset_required
+    Path: $.requestParameters.passwordResetRequired
+  - Name: credential_uid
+    Path: $.userIdentity.accessKeyId
+  - Name: policy_name
+    Path: $.requestParameters.policyName
+  - Name: publicly_accessible
+    Path: $.responseElements.publiclyAccessible
+  - Name: master_user_password
+    Path: $.responseElements.pendingModifiedValues.masterUserPassword
+  - Name: db_instance_arn
+    Path: $.responseElements.dBInstanceArn
+  - Name: session_user_name
+    Path: $.userIdentity.sessionContext.sessionIssuer.userName
+  - Name: session_user_type
+    Path: $.userIdentity.sessionContext.sessionIssuer.type
+  - Name: cidr_block
+    Path: $.requestParameters.cidrBlock
+  - Name: rule_action
+    Path: $.requestParameters.ruleAction
+  - Name: egress
+    Path: $.requestParameters.egress
+  - Name: request_enable
+    Path: $.requestParameters.enable
+  - Name: resource_arn
+    Path: $.requestParameters.resourceArn

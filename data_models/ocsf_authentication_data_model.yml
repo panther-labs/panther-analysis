@@ -1,0 +1,70 @@
+AnalysisType: datamodel
+LogTypes:
+  - OCSF.Authentication
+DataModelID: "Standard.OCSF.Authentication"
+DisplayName: "OCSF Authentication"
+Filename: ocsf_authentication_data_model.py
+Enabled: true
+Mappings:
+  - Name: user_agent
+    Path: $.http_request.user_agent
+  - Name: event_name
+    Path: $.api.operation
+  - Name: error_code
+    Path: $.api.response.error
+  - Name: error_message
+    Path: $.api.response.message
+  - Name: request_parameters
+    Path: $.api.request.data
+  - Name: event_source
+    Path: $.api.service.name
+  - Name: cloud_region
+    Path: $.cloud.region
+  - Name: recipient_account_id
+    Path: $.unmapped.recipientAccountId
+  - Name: user_identity
+    Path: actor
+  - Name: event_type
+    Path: $.metadata.event_code
+  - Name: source_ip
+    Method: load_ip_address
+  - Name: source_ip_address
+    Method: source_ip_address
+  - Name: mfa_used
+    Path: is_mfa
+  - Name: login_status
+    Path: status
+  - Name: user_arn
+    Path: $.actor.user.uid
+  - Name: actor_user
+    Path: $.actor.user.name
+  - Name: user_type
+    Path: $.actor.user.type
+  - Name: event_time
+    Path: time
+  - Name: user_account_id
+    Path: $.actor.user.account.uid
+  - Name: invoked_by
+    Path: $.actor.invoked_by
+  - Name: session_issuer_arn
+    Path: $.actor.session.issuer
+  - Name: user_role_arn
+    Path: $.user.uid
+  - Name: resources
+    Path: resources
+  - Name: policy_arn
+    Path: $.unmapped."requestParameters.policyArn"
+  - Name: user_name
+    Path: $.unmapped."requestParameters.userName"
+  - Name: access_key_user_name
+    Path: $.unmapped."responseElements.accessKey.userName"
+  - Name: user_principal_id
+    Path: $.actor.user.uid_alt
+  - Name: saml_provider_arn
+    Path: $.unmapped."additionalEventData.SamlProviderArn"
+  - Name: mfa_authenticated
+    Path: $.actor.session.is_mfa
+  - Name: session_user_name
+    Path: $.unmapped."userIdentity.sessionContext.sessionIssuer.userName"
+  - Name: session_user_type
+    Path: $.unmapped."userIdentity.sessionContext.sessionIssuer.type"

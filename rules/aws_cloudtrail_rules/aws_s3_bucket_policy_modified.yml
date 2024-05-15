@@ -5,10 +5,12 @@ DisplayName: "AWS S3 Bucket Policy Modified"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Identity & Access Management
   - Exfiltration:Exfiltration Over Web Service
+  - DataModel
 Reports:
   CIS:
     - 3.8
@@ -79,6 +81,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: S3 Bucket Policy Modified Error Response
     ExpectedResult: false
@@ -134,6 +137,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: S3 Bucket Policy Not Modified
     ExpectedResult: false
@@ -187,4 +191,42 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: S3 Bucket Policy Modified - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutBucketAcl",
+            "service": { "name": "s3.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: S3 Bucket Policy Modified Error Response - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutBucketAcl",
+            "service": { "name": "s3.amazonaws.com" },
+            "response": { "error": "AccessDenied" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

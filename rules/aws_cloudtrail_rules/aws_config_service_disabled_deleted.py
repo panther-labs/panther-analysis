@@ -11,7 +11,7 @@ CONFIG_SERVICE_DISABLE_DELETE_EVENTS = {
 def rule(event):
     return (
         aws_cloudtrail_success(event)
-        and event.get("eventName") in CONFIG_SERVICE_DISABLE_DELETE_EVENTS
+        and event.udm("event_name") in CONFIG_SERVICE_DISABLE_DELETE_EVENTS
     )
 
 

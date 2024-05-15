@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 EC2_CRUD_ACTIONS = {
     "AssociateIamInstanceProfile",
     "AssociateInstanceEventWindow",
@@ -37,7 +35,7 @@ EC2_CRUD_ACTIONS = {
 
 def rule(event):
     # Disqualify any eventSource that is not ec2
-    if event.get("eventSource", "") != "ec2.amazonaws.com":
+    if event.udm("event_source", default="") != "ec2.amazonaws.com":
         return False
     # Disqualify AWS Service-Service operations, which can appear in a variety of forms
     if (
@@ -46,36 +44,35 @@ def rule(event):
         #  web-console will have their sourceIPAddress recorded as "AWS Internal"
         #  though their userIdentity will be more normal.
         #  Example cloudtrail event in the "Terminate instance From WebUI with assumedRole" test
-        event.get("sourceIPAddress", "").endswith(".amazonaws.com")
-        or deep_get(event, "userIdentity", "type", default="") == "AWSService"
-        or deep_get(event, "userIdentity", "invokedBy", default="") == "AWS Internal"
-        or deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
+        event.udm("source_ip_address", default="").endswith(".amazonaws.com")
+        or event.udm("user_type", default="") == "AWSService"
+        or event.udm("invoked_by", default="") == "AWS Internal"
+        or event.udm("invoked_by", default="").endswith(".amazonaws.com")
     ):
         return False
     # Dry run operations get logged as SES Internal in the sourceIPAddress
     #  but not in the invokedBy field
-    if event.get("errorCode", "") == "Client.DryRunOperation":
+    if event.udm("error_code", default="") == "Client.DryRunOperation":
         return False
     # Disqualify any eventNames that do not Include instance
     # and events that have readOnly set to false
-    if event.get("eventName", "") in EC2_CRUD_ACTIONS:
+    if event.udm("event_name", default="") in EC2_CRUD_ACTIONS:
         return True
     return False
 
 
 def title(event):
-    items = deep_get(event, "requestParameters", "instancesSet", "items")
     return (
-        f"AWS Event [{event.get('eventName')}] Instance ID "
-        f"[{items[0].get('instanceId')}] AWS Account ID [{event.get('recipientAccountId')}]"
+        f"AWS Event [{event.udm('event_name')}] "
+        f"AWS Account ID [{event.udm('recipient_account_id')}]"
     )
 
 
 def alert_context(event):
-    items = deep_get(event, "requestParameters", "instancesSet", "items")
+    # items = deep_get(event, "requestParameters", "instancesSet", "items")  not sure if we can get this data in OCSF
     return {
-        "awsRegion": event.get("awsRegion"),
-        "eventName": event.get("eventName"),
-        "recipientAccountId": event.get("recipientAccountId"),
-        "instanceId": items[0].get("instanceId"),
+        "awsRegion": event.udm("cloud_region"),
+        "eventName": event.udm("event_name"),
+        "recipientAccountId": event.udm("recipient_account_id"),
+        # "instanceId": items[0].get("instanceId"),
     }

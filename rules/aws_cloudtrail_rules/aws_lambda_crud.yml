@@ -5,10 +5,12 @@ DisplayName: "Lambda CRUD Actions"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Security Control
   - Configuration Required
+  - DataModel
 Reports:
   CIS:
     - 3.12
@@ -51,6 +53,7 @@ Tests:
         "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
         "eventType": "AwsApiCall",
         "recipientAccountId": "999999999999",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Lambda DeleteFunction Unauthorized User
     ExpectedResult: true
@@ -78,6 +81,7 @@ Tests:
         "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Lambda DeleteFunction Authorized Account
     ExpectedResult: false
@@ -105,4 +109,37 @@ Tests:
         "eventID": "20b84ce5-730f-482e-b2b2-e8fcc87ceb22",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Lambda DeleteFunction Unauthorized Account - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "DeleteFunction",
+            "service": { "name": "lambda.amazonaws.com" },
+          },
+        "actor":
+          { "user": { "uid": "arn:aws:iam::999999999999:user/myUserName" } },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Lambda DeleteFunction Authorized Account - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "DeleteFunction",
+            "service": { "name": "lambda.amazonaws.com" },
+          },
+        "actor":
+          { "user": { "uid": "arn:aws:iam::123456789012:user/DeployRole" } },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }
