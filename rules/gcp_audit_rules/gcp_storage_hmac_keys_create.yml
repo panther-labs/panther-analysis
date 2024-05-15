@@ -12,14 +12,7 @@ Reference: https://rhinosecuritylabs.com/cloud-security/privilege-escalation-goo
 Reports:
   MITRE ATT&CK:
     - TA0004:T1548
-Detection:
-  - All:
-      - KeyPath: protoPayload.authorizationInfo[*].granted
-        Condition: Contains
-        Value: true
-      - KeyPath: protoPayload.authorizationInfo[*].permission
-        Condition: Contains
-        Value: storage.hmacKeys.create
+Filename: gcp_storage_hmac_keys_create.py
 Tests:
   - Name: privilege-escalation
     ExpectedResult: true

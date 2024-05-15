@@ -1,19 +1,46 @@
-AnalysisType: scheduled_query
-Description: Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
+AnalysisType: scheduled_rule
+Description: Detects AWS Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+DisplayName: "AWS Authentication From CrowdStrike Unmanaged Device"
 Enabled: false
-Query: |
-  SELECT *
-  FROM panther_logs.public.aws_cloudtrail
-  WHERE p_occurs_since('1 hour')
-    AND eventName IN ('ConsoleLogin', 'SignIn', 'GetSessionToken')
-    AND eventSource IN ('sts.amazonaws.com', 'signin.amazonaws.com')
-    AND sourceIPAddress NOT IN
-      (
-        SELECT DISTINCT aip
-        FROM panther_logs.public.crowdstrike_aidmaster
-        WHERE p_occurs_since('3 days')
-      )
-QueryName: "AWS Authentication from CrowdStrike Unmanaged Device"
-Schedule:
-  RateMinutes: 60
-  TimeoutMinutes: 3
+Filename: aws_authentication_from_crowdstrike_unmanaged_device.py
+Reference: https://www.crowdstrike.com/wp-content/uploads/2023/05/crowdstrike-falcon-device-control-data-sheet.pdf
+Severity: Medium
+Tests:
+  - ExpectedResult: true
+    Log:
+      additionalEventData:
+        LoginTo: https://console.aws.amazon.com/console/home
+        MFAIdentifier: arn:aws:iam::12345:mfa/homer_simpson
+        MFAUsed: "Yes"
+        MobileVersion: "No"
+      awsRegion: us-east-2
+      eventCategory: Management
+      eventID: "12345"
+      eventName: ConsoleLogin
+      eventSource: signin.amazonaws.com
+      eventTime: "2023-01-10 20:10:41"
+      eventType: AwsConsoleSignIn
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "12345"
+      responseElements:
+        ConsoleLogin: Success
+      sourceIPAddress: 1.2.3.4
+      tlsDetails:
+        cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+        clientProvidedHostHeader: us-east-2.signin.aws.amazon.com
+        tlsVersion: TLSv1.2
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+      userIdentity:
+        accountId: "12345"
+        arn: arn:aws:iam::12345:user/homer_simpson
+        principalId: ABCDEF
+        type: IAMUser
+        userName: homer_simpson
+    Name: Test-d8301d
+DedupPeriodMinutes: 60
+RuleID: "AWS.Authentication.From.CrowdStrike.Unmanaged.Device"
+Threshold: 1
+ScheduledQueries:
+  - AWS Authentication from CrowdStrike Unmanaged Device
