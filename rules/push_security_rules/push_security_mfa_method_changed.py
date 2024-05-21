@@ -5,7 +5,7 @@ def rule(event):
     if event.get("object") != "ACCOUNT":
         return False
 
-    if event.get("old") == None:
+    if event.get("old") is None:
         return False
 
     new_mfa_methods = set(deep_get(event, "new", "mfaMethods"))
@@ -25,7 +25,9 @@ def severity(event):
 
 def title(event):
     mfa_methods = ", ".join(deep_get(event, "new", "mfaMethods", default="No MFA"))
+    new_email = deep_get(event, "new", "email")
+    new_apptype = deep_get(event, "new", "appType")
 
     if mfa_methods == "":
-        return f"{deep_get(event, 'new', 'email')} removed all MFA methods on {deep_get(event, 'new', 'appType')}"
-    return f"{deep_get(event, 'new', 'email')} changed MFA method to {mfa_methods} on {deep_get(event, 'new', 'appType')}"
+        return f"{new_email} removed all MFA methods on {new_apptype}"
+    return f"{new_email} changed MFA method to {mfa_methods} on {new_apptype}"

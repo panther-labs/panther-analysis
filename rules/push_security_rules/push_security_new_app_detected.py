@@ -12,4 +12,5 @@ def rule(event):
 
 
 def title(event):
-    return f"New app in use: {deep_get(event, 'new', 'type')}"
+    new_type = deep_get(event, "new", "type")
+    return f"New app in use: {new_type}"

@@ -12,7 +12,9 @@ def rule(event):
 
 
 def title(event):
-    return f"{deep_get(event, 'new', 'appType')} accessed by {deep_get(event, 'new', 'employee', 'email')}"
+    app_type = deep_get(event, "new", "appType")
+    employee_email = deep_get(event, "new", "employee", "email")
+    return f"{app_type} accessed by {employee_email}"
 
 
 def alert_context(event):

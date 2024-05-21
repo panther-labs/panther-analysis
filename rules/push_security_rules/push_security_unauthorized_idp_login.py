@@ -14,7 +14,6 @@ def rule(event):
 
     identity_provider = deep_get(event, "new", "identityProvider")
     login_type = deep_get(event, "new", "loginType")
-    app_type = deep_get(event, "new", "appType")
 
     if identity_provider in allowed_idps and login_type in allowed_idps[identity_provider]:
         return False
@@ -26,6 +25,7 @@ def title(event):
     identity_provider = deep_get(event, "new", "identityProvider", default="Null identityProvider")
     login_type = deep_get(event, "new", "loginType", default="Null loginType")
     app_type = deep_get(event, "new", "appType", default="Null appType")
+    new_email = deep_get(event, "new", "email")
 
-    return f"Unauthorized identity provider in use. User: {deep_get(event, 'new', 'email')} \
+    return f"Unauthorized identity provider in use. User: {new_email} \
         used {identity_provider} {login_type} on {app_type}"

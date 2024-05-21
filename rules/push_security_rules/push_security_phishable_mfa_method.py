@@ -26,5 +26,8 @@ def severity(event):
 
 def title(event):
     mfa_methods = ", ".join(deep_get(event, "new", "mfaMethods", default="No MFA"))
+    new_email = deep_get(event, "new", "email")
+    app_type = deep_get(event, "new", "appType", default=[])
 
-    return f"{deep_get(event, 'new', 'email')} using phisbable MFA method with {deep_get(event, 'new', 'appType', default=[])}. MFA methods enabled: {mfa_methods}"
+    return f"{new_email} using phisbable MFA method with {app_type}. \
+            MFA methods enabled: {mfa_methods}"

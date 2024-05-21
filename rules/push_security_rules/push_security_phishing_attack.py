@@ -15,4 +15,8 @@ def severity(event):
 
 
 def title(event):
-    return f"Phishing attack on app {deep_get(event, 'new', 'appType')} user {deep_get(event, 'new', 'employee', 'email')}. Attack detected in mode {deep_get(event, 'new', 'mode')}."
+    app_type = deep_get(event, "new", "appType")
+    employee_email = deep_get(event, "new", "employee", "email")
+    new_mode = deep_get(event, "new", "mode")
+    return f"Phishing attack on app {app_type} user {employee_email}. \
+             Attack detected in mode {new_mode}."

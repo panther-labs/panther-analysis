@@ -12,4 +12,6 @@ def rule(event):
 
 
 def title(event):
-    return f"New account on {deep_get(event, 'new', 'appType')} created by {deep_get(event, 'new', 'email')}"
+    app_type = deep_get(event, "new", "appType")
+    new_email = deep_get(event, "new", "email")
+    return f"New account on {app_type} created by {new_email}"

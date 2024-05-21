@@ -17,6 +17,6 @@ def rule(event):
 
 
 def title(event):
-    return (
-        f"Open finding {deep_get(event, 'new', 'type')} for app {deep_get(event, 'new', 'appType')}"
-    )
+    new_type = deep_get(event, "new", "type")
+    app_type = deep_get(event, "new", "appType")
+    return f"Open finding {new_type} for app {app_type}"

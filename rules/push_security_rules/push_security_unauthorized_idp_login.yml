@@ -4,85 +4,85 @@ RuleID: "Push.Security.Unauthorized.IdP.Login"
 DisplayName: "Push Security Unauthorized IdP Login"
 Enabled: true
 LogTypes:
-    - Custom.PushSecurity.Activity
+  - Custom.PushSecurity.Activity
 Severity: High
 Description: Login to application with unauthorized identity provider which could indicate a SAMLjacking attack.
 Reference: https://github.com/pushsecurity/saas-attacks/blob/main/techniques/samljacking/description.md
 DedupPeriodMinutes: 60
 Threshold: 1
 Tests:
-    - Name: Google Workspace Password Login
-      ExpectedResult: true
-      Log:
-        id: d240e3f2-3cd6-425f-a835-dad0ff237d09
-        new:
-            accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
-            appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
-            appType: GOOGLE_WORKSPACE
-            browser: EDGE
-            email: jet.black@issp.com
-            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-            identityProvider: GOOGLE_WORKSPACE
-            leakedPassword: false
-            loginTimestamp: 1.707773386e+09
-            loginType: PASSWORD_LOGIN
-            os: WINDOWS
-            passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
-            passwordManuallyTyped: false
-            sourceIpAddress: 35.90.103.134
-            userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
-            weakPassword: false
-            weakPasswordReasons: null
-        object: LOGIN
-        timestamp: 1.707774319e+09
-        version: "1"
-    - Name: Microsoft 365 OIDC Login
-      ExpectedResult: true
-      Log:
-        id: d240e3f2-3cd6-425f-a835-dad0ff237d09
-        new:
-            accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
-            appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
-            appType: DROPBOX
-            browser: EDGE
-            email: jet.black@issp.com
-            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-            identityProvider: MICROSOFT_365
-            leakedPassword: false
-            loginTimestamp: 1.707773386e+09
-            loginType: OIDC_LOGIN
-            os: WINDOWS
-            passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
-            passwordManuallyTyped: false
-            sourceIpAddress: 35.90.103.134
-            userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
-            weakPassword: false
-            weakPasswordReasons: null
-        object: LOGIN
-        timestamp: 1.707774319e+09
-        version: "1"
-    - Name: Password Login
-      ExpectedResult: false
-      Log:
-        id: d240e3f2-3cd6-425f-a835-dad0ff237d09
-        new:
-            accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
-            appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
-            appType: DROPBOX
-            browser: EDGE
-            email: jet.black@issp.com
-            employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-            identityProvider: null
-            leakedPassword: false
-            loginTimestamp: 1.707773386e+09
-            loginType: PASSWORD_LOGIN
-            os: WINDOWS
-            passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
-            passwordManuallyTyped: false
-            sourceIpAddress: 35.90.103.134
-            userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
-            weakPassword: false
-            weakPasswordReasons: null
-        object: LOGIN
-        timestamp: 1.707774319e+09
-        version: "1"
+  - Name: Google Workspace Password Login
+    ExpectedResult: true
+    Log:
+      id: d240e3f2-3cd6-425f-a835-dad0ff237d09
+      new:
+        accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
+        appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
+        appType: GOOGLE_WORKSPACE
+        browser: EDGE
+        email: jet.black@issp.com
+        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+        identityProvider: GOOGLE_WORKSPACE
+        leakedPassword: false
+        loginTimestamp: 1.707773386e+09
+        loginType: PASSWORD_LOGIN
+        os: WINDOWS
+        passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
+        passwordManuallyTyped: false
+        sourceIpAddress: 35.90.103.134
+        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
+        weakPassword: false
+        weakPasswordReasons: null
+      object: LOGIN
+      timestamp: 1.707774319e+09
+      version: "1"
+  - Name: Microsoft 365 OIDC Login
+    ExpectedResult: true
+    Log:
+      id: d240e3f2-3cd6-425f-a835-dad0ff237d09
+      new:
+        accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
+        appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
+        appType: DROPBOX
+        browser: EDGE
+        email: jet.black@issp.com
+        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+        identityProvider: MICROSOFT_365
+        leakedPassword: false
+        loginTimestamp: 1.707773386e+09
+        loginType: OIDC_LOGIN
+        os: WINDOWS
+        passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
+        passwordManuallyTyped: false
+        sourceIpAddress: 35.90.103.134
+        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
+        weakPassword: false
+        weakPasswordReasons: null
+      object: LOGIN
+      timestamp: 1.707774319e+09
+      version: "1"
+  - Name: Password Login
+    ExpectedResult: false
+    Log:
+      id: d240e3f2-3cd6-425f-a835-dad0ff237d09
+      new:
+        accountId: a93b45a7-fdce-489e-b76d-2bd6862a62ba
+        appId: 8348ca36-d254-4e1b-8f31-6837d82fc5cb
+        appType: DROPBOX
+        browser: EDGE
+        email: jet.black@issp.com
+        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
+        identityProvider: null
+        leakedPassword: false
+        loginTimestamp: 1.707773386e+09
+        loginType: PASSWORD_LOGIN
+        os: WINDOWS
+        passwordId: 6ae9f0b2-9300-43f0-b210-c0d3c16640f8
+        passwordManuallyTyped: false
+        sourceIpAddress: 35.90.103.134
+        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81
+        weakPassword: false
+        weakPasswordReasons: null
+      object: LOGIN
+      timestamp: 1.707774319e+09
+      version: "1"
