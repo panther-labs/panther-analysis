@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if event.get("object") != "ACCOUNT":
         return False
@@ -8,8 +5,8 @@ def rule(event):
     if event.get("old") is None:
         return False
 
-    new_mfa_methods = set(deep_get(event, "new", "mfaMethods"))
-    old_mfa_methods = set(deep_get(event, "old", "mfaMethods", default=[]))
+    new_mfa_methods = set(event.deep_get("new", "mfaMethods"))
+    old_mfa_methods = set(event.deep_get("old", "mfaMethods", default=[]))
 
     if new_mfa_methods != old_mfa_methods:
         return True
@@ -18,15 +15,15 @@ def rule(event):
 
 
 def severity(event):
-    if deep_get(event, "new", "mfaMethods") == []:
+    if event.deep_get("new", "mfaMethods") == []:
         return "HIGH"
     return "LOW"
 
 
 def title(event):
-    mfa_methods = ", ".join(deep_get(event, "new", "mfaMethods", default="No MFA"))
-    new_email = deep_get(event, "new", "email")
-    new_apptype = deep_get(event, "new", "appType")
+    mfa_methods = ", ".join(event.deep_get("new", "mfaMethods", default="No MFA"))
+    new_email = event.deep_get("new", "email")
+    new_apptype = event.deep_get("new", "appType")
 
     if mfa_methods == "":
         return f"{new_email} removed all MFA methods on {new_apptype}"
