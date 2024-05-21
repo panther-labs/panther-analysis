@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if event.get("object") != "APP":
         return False
@@ -12,5 +9,5 @@ def rule(event):
 
 
 def title(event):
-    new_type = deep_get(event, "new", "type")
+    new_type = event.deep_get("new", "type")
     return f"New app in use: {new_type}"

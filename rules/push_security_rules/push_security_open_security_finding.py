@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if event.get("object") != "FINDING":
         return False
@@ -10,13 +7,13 @@ def rule(event):
     if event_type == "CREATE":
         return True
 
-    if event_type == "UPDATE" and deep_get(event, "new", "state") == "OPEN":
+    if event_type == "UPDATE" and event.deep_get("new", "state") == "OPEN":
         return True
 
     return False
 
 
 def title(event):
-    new_type = deep_get(event, "new", "type")
-    app_type = deep_get(event, "new", "appType")
+    new_type = event.deep_get("new", "type")
+    app_type = event.deep_get("new", "appType")
     return f"Open finding {new_type} for app {app_type}"
