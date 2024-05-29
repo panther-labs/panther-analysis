@@ -44,7 +44,6 @@ WORKDIR /home/panther-analysis
 # Install requirements
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN pipenv --rm
 RUN pipenv uninstall --all
 RUN pipenv sync --dev
 
