@@ -3,14 +3,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read      
+
 jobs:
   upload:
-    name:
+    name: Upload
     runs-on: ubuntu-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
+      - uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          egress-policy: audit
       - name: Validate Secrets
         if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
         run: |
