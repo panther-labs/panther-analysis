@@ -21,7 +21,7 @@ jobs:
             pypi.org:443
     
       - name: Checkout panther-analysis
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b #v4.1.4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
 
       - name: Set python version
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
@@ -41,7 +41,7 @@ jobs:
           panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
         if: ${{ steps.check-packs.outputs.errors }}
         with:
           mode: upsert
@@ -52,7 +52,7 @@ jobs:
             ${{ steps.check-packs.outputs.errors }}
           comment_tag: check-packs
       - name: Delete comment
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
         if: ${{ !steps.check-packs.outputs.errors }}
         with:
           mode: delete
