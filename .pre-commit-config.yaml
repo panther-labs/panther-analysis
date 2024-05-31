@@ -1,0 +1,29 @@
+# Enable ruff and mypy for code paths that have been updated for full mypy compliance (opt-in)
+files: |
+  (?x)^(
+      global_helpers/panther_base_helpers\.py|
+      global_helpers/panther_greynoise_helpers\.py|
+      global_helpers/panther_lookuptable_helpers\.py|
+      global_helpers/panther_config(_.*)?\.py|
+      global_helpers/panther_event_type_helpers\.py
+  )$
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.1
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+      - id: mypy
+        args:
+          [
+            --strict,
+            --warn-return-any,
+            --warn-unused-configs,
+            --ignore-missing-imports,
+          ]
+        additional_dependencies:
+          [panther-detection-helpers, panther-core, types-python-dateutil]
