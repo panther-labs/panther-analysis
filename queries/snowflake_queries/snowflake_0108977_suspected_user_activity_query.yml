@@ -1,0 +1,20 @@
+AnalysisType: saved_query
+QueryName: "Query.Snowflake.SuspectedUserActivity"
+Enabled: false
+Description: >
+  Return actions/queries made by suspected users as part of ongoing cyber threat activity
+SnowflakeQuery: >
+  -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
+
+  -- replace <SUSPECTED_USER> with actual user name
+
+  SELECT
+    *
+  FROM
+      snowflake.account_usage.query_history
+  WHERE
+      user_name = '<SUSPECTED_USER>'
+      AND start_time BETWEEN '2024-04-01'
+      AND CURRENT_TIMESTAMP
+  ORDER BY
+  start_time;
