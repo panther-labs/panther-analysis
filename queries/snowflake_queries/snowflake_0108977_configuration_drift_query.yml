@@ -17,6 +17,7 @@ SnowflakeQuery: >
   FROM snowflake.account_usage.query_history
     WHERE execution_status = 'SUCCESS'
       AND query_type NOT in ('SELECT')
+      AND user_name NOT in ('PANTHER_ADMIN', 'PANTHERACCOUNTADMIN')
       AND (query_text ILIKE '%create role%'
           OR query_text ILIKE '%manage grants%'
           OR query_text ILIKE '%create integration%'
