@@ -8,23 +8,34 @@ Description: >
 DisplayName: "Panther Snowflake Account_Usage Pack"
 PackDefinition:
   IDs:
-    - Snowflake.AccountAdminGranted
+    # Queries
     - Query.Snowflake.AccountAdminGranted
-    - Snowflake.BruteForceByIp
     - Query.Snowflake.BruteForceByIp
-    - Snowflake.BruteForceByUsername
     - Query.Snowflake.BruteForceByUsername
-    - Snowflake.External.Shares
+    - Query.Snowflake.ClientIp
+    - Query.Snowflake.ConfigurationDrift
     - Query.Snowflake.External.Shares
-    - Snowflake.KeyUserPasswordLogin
     - Query.Snowflake.KeyUserPasswordLogin
-    - Snowflake.LoginWithoutMFA
-    - Query.Snowflake.LoginWithoutMFA
-    - Snowflake.Multiple.Failed.Logins.Followed.By.Success
     - Query.Snowflake.Multiple.Failed.Logins.Followed.By.Success
-    - Snowflake.PublicRoleGrant
-    - Query.Snowflake.PublicRoleGrant
-    - Snowflake.UserCreated
+    - Query.Snowflake.SuspectedUserAccess
+    - Query.Snowflake.SuspectedUserActivity
     - Query.Snowflake.UserCreated
-    - Snowflake.UserEnabled
     - Query.Snowflake.UserEnabled
+    # Rules
+    - Snowflake.AccountAdminGranted
+    - Snowflake.BruteForceByIp
+    - Snowflake.BruteForceByUsername
+    - Snowflake.Client.IP
+    - Snowflake.Configuration.Drift
+    - Snowflake.External.Shares
+    - Snowflake.KeyUserPasswordLogin
+    - Snowflake.Multiple.Failed.Logins.Followed.By.Success
+    - Snowflake.User.Access
+    - Snowflake.User.Activity
+    - Snowflake.UserCreated
+    - Snowflake.UserEnabled
+    # Threat Hunting Queries
+    - Query.Snowflake.ThreatHunting.ConfigurationDrift
+    - Query.Snowflake.ThreatHunting.ClientIp
+    - Query.Snowflake.ThreatHunting.SuspectedUserAccess
+    - Query.Snowflake.ThreatHunting.SuspectedUserActivity
