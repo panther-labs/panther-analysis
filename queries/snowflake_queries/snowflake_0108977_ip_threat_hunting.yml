@@ -1,6 +1,5 @@
-AnalysisType: scheduled_query
-Enabled: true
-QueryName: "Query.Snowflake.ClientIp"
+AnalysisType: saved_query
+QueryName: "Query.Snowflake.ThreatHunting.ClientIp"
 Description: >
   Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 SnowflakeQuery: >
@@ -82,6 +81,3 @@ SnowflakeQuery: >
   ORDER BY
   event_timestamp
   LIMIT 100;
-Schedule:
-  RateMinutes: 1440
-  TimeoutMinutes: 3

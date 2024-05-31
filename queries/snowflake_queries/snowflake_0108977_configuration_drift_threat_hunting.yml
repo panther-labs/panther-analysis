@@ -1,6 +1,5 @@
-AnalysisType: scheduled_query
-Enabled: true
-QueryName: "Query.Snowflake.ConfigurationDrift"
+AnalysisType: saved_query
+QueryName: "Query.Snowflake.ThreatHunting.ConfigurationDrift"
 Description: >
   Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
 SnowflakeQuery: >
@@ -46,6 +45,3 @@ SnowflakeQuery: >
       )
     ORDER BY end_time desc
     LIMIT 100;
-Schedule:
-  RateMinutes: 1440
-  TimeoutMinutes: 3

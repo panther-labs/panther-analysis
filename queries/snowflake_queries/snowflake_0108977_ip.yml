@@ -1,0 +1,27 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_0108977_ip.py
+RuleID: "Snowflake.Client.IP"
+Description: >
+  Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
+DisplayName: "Snowflake Client IP"
+Enabled: true
+Runbook: Determine if this occurred as a result of a valid business request.
+ScheduledQueries:
+  - Query.Snowflake.ClientIp
+Severity: High
+Tests:
+  - Name: Client IP Access
+    ExpectedResult: true
+    Log:
+      {
+        "client_ip": "1.2.3.4",
+        "event_id": 01234567,
+        "event_timestamp": "2023-11-08 23:40:08.524Z",
+        "event_type": "LOGIN",
+        "first_authentication_factor": "PASSWORD",
+        "is_success": "YES",
+        "related_event_id": 0,
+        "reported_client_type": "OTHER",
+        "reported_client_version": "1.6.24",
+        "user_name": "USER_NAME",
+      }

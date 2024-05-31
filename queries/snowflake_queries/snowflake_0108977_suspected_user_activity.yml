@@ -1,0 +1,78 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_0108977_suspected_user_activity.py
+RuleID: "Snowflake.User.Activity"
+Description: >
+  Return actions/queries made by suspected users as part of ongoing cyber threat activity reported May 31st, 2024
+DisplayName: "Snowflake User Activity"
+Enabled: true
+Runbook: Determine if this occurred as a result of a valid business request.
+ScheduledQueries:
+  - Query.Snowflake.SuspectedUserActivity
+Severity: High
+Tests:
+  - Name: User Activity
+    ExpectedResult: true
+    Log:
+      {
+        "bytes_deleted": 0,
+        "bytes_read_from_result": 0,
+        "bytes_scanned": 0,
+        "bytes_sent_over_the_network": 0,
+        "bytes_spilled_to_local_storage": 0,
+        "bytes_spilled_to_remote_storage": 0,
+        "bytes_written": 0,
+        "bytes_written_to_result": 496,
+        "child_queries_wait_time": 0,
+        "compilation_time": 88,
+        "credits_used_cloud_services": 0.000013,
+        "database_id": 4,
+        "database_name": "PANTHER_LOGS",
+        "end_time": "2024-04-01 00:11:04.463Z",
+        "execution_status": "SUCCESS",
+        "execution_time": 1,
+        "external_function_total_invocations": 0,
+        "external_function_total_received_bytes": 0,
+        "external_function_total_received_rows": 0,
+        "external_function_total_sent_bytes": 0,
+        "external_function_total_sent_rows": 0,
+        "inbound_data_transfer_bytes": 0,
+        "is_client_generated_statement": false,
+        "list_external_files_time": 0,
+        "outbound_data_transfer_bytes": 0,
+        "partitions_scanned": 0,
+        "partitions_total": 0,
+        "percentage_scanned_from_cache": 0,
+        "query_acceleration_bytes_scanned": 0,
+        "query_acceleration_partitions_scanned": 0,
+        "query_acceleration_upper_limit_scale_factor": 0,
+        "query_hash": "b6ee76a5529464a34eca48936c3f8f15",
+        "query_hash_version": 2,
+        "query_id": "01b35dcb-0205-0bc0-0002-00eb00fed6de",
+        "query_parameterized_hash": "b6ee76a5529464a34eca48936c3f8f15",
+        "query_parameterized_hash_version": 1,
+        "query_tag": "",
+        "query_text": "SELECT 1",
+        "query_type": "SELECT",
+        "queued_overload_time": 0,
+        "queued_provisioning_time": 0,
+        "queued_repair_time": 0,
+        "release_version": "8.12.2",
+        "role_name": "ADMIN",
+        "role_type": "ROLE",
+        "rows_deleted": 0,
+        "rows_inserted": 0,
+        "rows_unloaded": 0,
+        "rows_updated": 0,
+        "rows_written_to_result": 1,
+        "secondary_role_stats":
+          { "roleNames": [], "roleCount": 0, "roleIds": [] },
+        "session_id": 563959287514918,
+        "start_time": "2024-04-01 00:11:04.374Z",
+        "total_elapsed_time": 89,
+        "transaction_blocked_time": 0,
+        "transaction_id": 0,
+        "user_name": "USER_NAME",
+        "warehouse_id": 4,
+        "warehouse_name": "WAREHOUSE",
+        "warehouse_type": "STANDARD",
+      }
