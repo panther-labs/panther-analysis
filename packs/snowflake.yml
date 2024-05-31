@@ -1,0 +1,30 @@
+AnalysisType: pack
+PackID: PantherManaged.Snowflake.Account_Usage
+Description: >
+  Group of all Snowflake account_usage audit log detections and threat hunting queries.
+  These queries require that Panther's read-only role has access to the snowflake.account_usage audit database 
+  (this may need to be done by the Snowflake admins).
+  https://docs.panther.com/search/scheduled-searches/examples#database-monitoring-snowflake
+DisplayName: "Panther Snowflake Account_Usage Pack"
+PackDefinition:
+  IDs:
+    - Snowflake.AccountAdminGranted
+    - Query.Snowflake.AccountAdminGranted
+    - Snowflake.BruteForceByIp
+    - Query.Snowflake.BruteForceByIp
+    - Snowflake.BruteForceByUsername
+    - Query.Snowflake.BruteForceByUsername
+    - Snowflake.External.Shares
+    - Query.Snowflake.External.Shares
+    - Snowflake.KeyUserPasswordLogin
+    - Query.Snowflake.KeyUserPasswordLogin
+    - Snowflake.LoginWithoutMFA
+    - Query.Snowflake.LoginWithoutMFA
+    - Snowflake.Multiple.Failed.Logins.Followed.By.Success
+    - Query.Snowflake.Multiple.Failed.Logins.Followed.By.Success
+    - Snowflake.PublicRoleGrant
+    - Query.Snowflake.PublicRoleGrant
+    - Snowflake.UserCreated
+    - Query.Snowflake.UserCreated
+    - Snowflake.UserEnabled
+    - Query.Snowflake.UserEnabled

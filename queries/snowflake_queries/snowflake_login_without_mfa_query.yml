@@ -25,6 +25,7 @@ SnowflakeQuery: >
       AND event_type = 'LOGIN'
       AND first_authentication_factor = 'PASSWORD'
       AND second_authentication_factor IS null
+      AND user_name NOT in ('PANTHERACCOUNTADMIN')
   ORDER BY event_timestamp desc
 Schedule:
   RateMinutes: 1440

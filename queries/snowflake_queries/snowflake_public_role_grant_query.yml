@@ -22,6 +22,7 @@ SnowflakeQuery: >
       AND execution_status = 'SUCCESS'
       AND query_type = 'GRANT'
       AND query_text ILIKE '%to%public%'
+      AND user_name NOT in ('PANTHERACCOUNTADMIN')
   ORDER BY end_time desc
 Schedule:
   RateMinutes: 1440
