@@ -18,6 +18,7 @@ SnowflakeQuery: >
           AND
           PARSE_JSON(CLIENT_ENVIRONMENT):OS = 'Windows Server 2022'
       )
+  AND p_occurs_since('12 hours')
   ORDER BY CREATED_ON
   LIMIT 100;
 Schedule:
