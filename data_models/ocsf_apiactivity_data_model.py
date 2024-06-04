@@ -65,3 +65,7 @@ def request_enable(event):
 
 def resource_arn(event):
     return request_parameters(event).get("resourceArn", "")
+
+
+def request_items(event):
+    return deep_get(request_parameters(event), "instancesSet", "items", default=[{}])

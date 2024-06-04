@@ -69,10 +69,10 @@ def title(event):
 
 
 def alert_context(event):
-    # items = deep_get(event, "requestParameters", "instancesSet", "items")  not sure if we can get this data in OCSF
+    items = event.udm("request_items")
     return {
         "awsRegion": event.udm("cloud_region"),
         "eventName": event.udm("event_name"),
         "recipientAccountId": event.udm("recipient_account_id"),
-        # "instanceId": items[0].get("instanceId"),
+        "instanceId": items[0].get("instanceId"),
     }
