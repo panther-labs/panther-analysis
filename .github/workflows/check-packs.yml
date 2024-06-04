@@ -3,6 +3,7 @@ on:
 
 permissions:
   contents: read    
+  pull-requests: write
 
 jobs:
   check_packs:
@@ -50,6 +51,7 @@ jobs:
             looks like some things could be wrong with the packs
             ```diff
             ${{ steps.check-packs.outputs.errors }}
+            ```
           comment_tag: check-packs
       - name: Delete comment
         uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
@@ -61,4 +63,5 @@ jobs:
             looks like some things could be wrong with the packs
             ```diff
             ${{ steps.check-packs.outputs.errors }}
+            ```
           comment_tag: check-packs
