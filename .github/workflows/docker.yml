@@ -3,13 +3,31 @@ on:
     paths:
       - "Dockerfile"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Build Dockerfile
     runs-on: ubuntu-latest
     steps:
+      - uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            9236a389bd48b984df91adc1bc924620.r2.cloudflarestorage.com:443
+            auth.docker.io:443
+            cgr.dev:443
+            files.pythonhosted.org:443
+            github.com:443
+            packages.wolfi.dev:443
+            production.cloudflare.docker.com:443
+            pypi.org:443
+            registry-1.docker.io:443
+            www.python.org:443
       - name: Checkout panther-analysis
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b #v4.1.4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
       - uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 #v3.0.0
       - name: Set up Docker Buildx
         id: buildx

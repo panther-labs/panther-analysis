@@ -3,14 +3,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read      
+
 jobs:
   upload:
-    name:
+    name: Upload
     runs-on: ubuntu-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
+      - uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          egress-policy: audit
       - name: Validate Secrets
         if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
         run: |
@@ -18,7 +24,7 @@ jobs:
           exit 0
 
       - name: Checkout panther-analysis
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b #v4.1.4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
 
       - name: Set python version
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
