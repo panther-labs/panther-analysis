@@ -196,6 +196,7 @@ Tests:
           {
             "operation": "CreateNetworkAclEntry",
             "service": { "name": "ec2.amazonaws.com" },
+            "request": {"data": "{\"cidrBlock\":\"0.0.0.0/0\", \"ruleAction\":\"allow\", \"egress\":false}",}
           },
         "actor":
           {
@@ -206,9 +207,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.cidrBlock": "0.0.0.0/0",
-            "requestParameters.ruleAction": "allow",
-            "requestParameters.egress": false,
           },
         "p_log_type": "OCSF.ApiActivity",
       }
@@ -220,6 +218,7 @@ Tests:
           {
             "operation": "CreateNetworkAclEntry",
             "service": { "name": "ec2.amazonaws.com" },
+            "request": {"data": "{\"cidrBlock\":\"111.111.111.111/32\", \"ruleAction\":\"allow\", \"egress\":false}",}
           },
         "actor":
           {
@@ -230,9 +229,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.cidrBlock": "111.111.111.111/32",
-            "requestParameters.ruleAction": "allow",
-            "requestParameters.egress": false,
           },
         "p_log_type": "OCSF.ApiActivity",
       }

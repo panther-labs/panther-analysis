@@ -161,6 +161,7 @@ Tests:
           {
             "operation": "UpdateLoginProfile",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "{\"userName\":\"alice\", \"passwordResetRequired\":false}",}
           },
         "actor":
           {
@@ -173,8 +174,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.userName": "alice",
-            "requestParameters.passwordResetRequired": false,
           },
         "p_log_type": "OCSF.AccountChange",
       }
@@ -186,6 +185,7 @@ Tests:
           {
             "operation": "UpdateLoginProfile",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "{\"userName\":\"bob\", \"passwordResetRequired\":false}",}
           },
         "actor":
           {
@@ -198,8 +198,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.userName": "bob",
-            "requestParameters.passwordResetRequired": false,
           },
         "p_log_type": "OCSF.AccountChange",
       }

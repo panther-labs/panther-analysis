@@ -137,12 +137,9 @@ Tests:
           {
             "operation": "AttachUserPolicy",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "{\"policyArn\":\"arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2\"}",}
           },
         "actor": { "user": { "type": "AssumedRole" } },
-        "unmapped":
-          {
-            "requestParameters.policyArn": "arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2",
-          },
         "p_log_type": "OCSF.Authentication",
       }
   - Name: PutUserPolicy-false - OCSF
@@ -153,11 +150,8 @@ Tests:
           {
             "operation": "PutUserPolicy",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "{\"policyArn\":\"arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2\"}",}
           },
         "actor": { "user": { "type": "AssumedRole" } },
-        "unmapped":
-          {
-            "requestParameters.policyArn": "arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2",
-          },
         "p_log_type": "OCSF.Authentication",
       }

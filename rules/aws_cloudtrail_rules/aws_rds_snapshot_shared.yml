@@ -165,6 +165,7 @@ Tests:
           {
             "operation": "ModifyDBSnapshotAttribute",
             "service": { "name": "rds.amazonaws.com" },
+            "request": {"data": "{\"attributeName\":\"restore\", \"valuesToAdd\":[\"193672423079\"]}",}
           },
         "actor":
           {
@@ -179,8 +180,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.attributeName": "restore",
-            "requestParameters.valuesToAdd": ["193672423079"],
           },
         "p_log_type": "OCSF.ApiActivity",
       }
@@ -192,6 +191,7 @@ Tests:
           {
             "operation": "ModifyDBSnapshotAttribute",
             "service": { "name": "rds.amazonaws.com" },
+            "request": {"data": "{\"attributeName\":\"restore\", \"valuesToAdd\":[]}",}
           },
         "actor":
           {
@@ -206,8 +206,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.attributeName": "restore",
-            "requestParameters.valuesToAdd": [],
           },
         "p_log_type": "OCSF.ApiActivity",
       }

@@ -32,7 +32,7 @@ Mappings:
     Path: $.unmapped.recipientAccountId
   - Name: user_identity
     Path: actor
-  - Name: event_type
+  - Name: log_event_type
     Path: $.metadata.event_code
   - Name: user_arn
     Path: $.actor.user.uid
@@ -45,7 +45,7 @@ Mappings:
   - Name: read_only
     Path: $.unmapped.readOnly
   - Name: project_visibility
-    Path: $.unmapped."requestParameters.projectVisibility"
+    Method: project_visibility
   - Name: user_type
     Path: $.actor.user.type
   - Name: user_data
@@ -57,9 +57,9 @@ Mappings:
   - Name: db_instance_identifier
     Path: $.unmapped."responseElements.dBInstanceIdentifier"
   - Name: attribute_name
-    Path: $.unmapped."requestParameters.attributeName"
+    Method: attribute_name
   - Name: values_to_add
-    Path: $.unmapped."requestParameters.valuesToAdd"
+    Method: values_to_add
   - Name: password_updated
     Path: $.unmapped."responseElements.PasswordUpdated"
   - Name: user_principal_id
@@ -67,7 +67,7 @@ Mappings:
   - Name: credential_uid
     Path: $.actor.user.credential_uid
   - Name: policy_name
-    Path: $.unmapped."requestParameters.policyName"
+    Method: policy_name
   - Name: publicly_accessible
     Path: $.unmapped."responseElements.publiclyAccessible"
   - Name: master_user_password
@@ -75,14 +75,14 @@ Mappings:
   - Name: db_instance_arn
     Path: $.unmapped."responseElements.dBInstanceArn"
   - Name: cidr_block
-    Path: $.unmapped."requestParameters.cidrBlock"
+    Method: cidr_block
   - Name: rule_action
-    Path: $.unmapped."requestParameters.ruleAction"
+    Method: rule_action
   - Name: egress
-    Path: $.unmapped."requestParameters.egress"
+    Method: egress
   - Name: session_user_name
     Path: $.unmapped."userIdentity.sessionContext.sessionIssuer.userName"
   - Name: request_enable
-    Path: $.unmapped."requestParameters.enable"
+    Method: request_enable
   - Name: resource_arn
-    Path: $.unmapped."requestParameters.resourceArn"
+    Method: resource_arn

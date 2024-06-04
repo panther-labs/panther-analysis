@@ -8,7 +8,7 @@ PASSWORD_DISCOVERY_EVENTS = [
 
 
 def rule(event):
-    service_event = event.udm("event_type") == "AwsServiceEvent"
+    service_event = event.udm("log_event_type") == "AwsServiceEvent"
     return event.udm("event_name") in PASSWORD_DISCOVERY_EVENTS and not service_event
 
 

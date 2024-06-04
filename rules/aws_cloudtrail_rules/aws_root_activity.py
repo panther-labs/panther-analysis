@@ -8,7 +8,7 @@ def rule(event):
         event.udm("user_type") == "Root"
         and aws_cloudtrail_success(event)
         and event.udm("invoked_by") is None
-        and event.udm("event_type") != "AwsServiceEvent"
+        and event.udm("log_event_type") != "AwsServiceEvent"
         and event.udm("event_name") not in EVENT_ALLOW_LIST
     )
 

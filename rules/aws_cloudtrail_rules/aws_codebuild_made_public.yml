@@ -163,6 +163,7 @@ Tests:
           {
             "operation": "UpdateProjectVisibility",
             "service": { "name": "codebuild.amazonaws.com" },
+            "request": {"data": "{\"projectVisibility\":\"PUBLIC_READ\"}",}
           },
         "actor":
           {
@@ -173,7 +174,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.projectVisibility": "PUBLIC_READ",
           },
         "p_log_type": "OCSF.ApiActivity",
       }
@@ -185,6 +185,7 @@ Tests:
           {
             "operation": "UpdateProjectVisibility",
             "service": { "name": "codebuild.amazonaws.com" },
+            "request": {"data": "{\"projectVisibility\":\"PRIVATE\"}",}
           },
         "actor":
           {
@@ -195,7 +196,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.projectVisibility": "PRIVATE",
           },
         "p_log_type": "OCSF.ApiActivity",
       }

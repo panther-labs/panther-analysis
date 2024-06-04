@@ -147,6 +147,7 @@ Tests:
           {
             "operation": "CreateAccessKey",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "some_params"}
           },
         "actor":
           {
@@ -157,7 +158,6 @@ Tests:
               },
           },
         "cloud": { "provider": "AWS", "region": "us-east-2" },
-        "request_parameters": "some_params",
         "src_endpoint": { "ip": "111.111.111.111" },
         "unmapped": { "recipientAccountId": "123456789012" },
         "p_log_type": "OCSF.ApiActivity",

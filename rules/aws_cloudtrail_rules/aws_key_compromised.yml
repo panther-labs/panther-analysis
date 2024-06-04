@@ -87,6 +87,7 @@ Tests:
           {
             "operation": "PutUserPolicy",
             "service": { "name": "iam.amazonaws.com" },
+            "request": {"data": "{\"policyName\":\"AWSExposedCredentialPolicy_DO_NOT_REMOVE\"}",}
           },
         "actor":
           {
@@ -101,7 +102,6 @@ Tests:
         "unmapped":
           {
             "recipientAccountId": "123456789012",
-            "requestParameters.policyName": "AWSExposedCredentialPolicy_DO_NOT_REMOVE",
           },
         "p_log_type": "OCSF.ApiActivity",
       }

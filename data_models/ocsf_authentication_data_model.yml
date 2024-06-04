@@ -24,7 +24,7 @@ Mappings:
     Path: $.unmapped.recipientAccountId
   - Name: user_identity
     Path: actor
-  - Name: event_type
+  - Name: log_event_type
     Path: $.metadata.event_code
   - Name: source_ip
     Method: load_ip_address
@@ -53,9 +53,9 @@ Mappings:
   - Name: resources
     Path: resources
   - Name: policy_arn
-    Path: $.unmapped."requestParameters.policyArn"
+    Method: policy_arn
   - Name: user_name
-    Path: $.unmapped."requestParameters.userName"
+    Method: user_name
   - Name: access_key_user_name
     Path: $.unmapped."responseElements.accessKey.userName"
   - Name: user_principal_id
