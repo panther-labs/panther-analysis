@@ -18,8 +18,8 @@ def title(event):
     # NOTE: Not sure if the offending actor Id will always be in the 0th index of Resources
     # It's possible to just return the Title as a whole string
     secret = event['Resources'][0]['Id']
-    return f"Suspicious activity detected accessing private decoy Systems Manager parameter "
-    f"{secret}"
+    return f"Suspicious activity detected accessing \
+    private decoy Systems Manager parameter {secret}"
 
 # def dedup(event):
     #  (Optional) Return a string which will be used to deduplicate similar alerts.
