@@ -22,11 +22,3 @@ def title(event):
     return f"Suspicious activity detected accessing \
     private decoy Systems Manager parameter {secret}"
 
-
-# def dedup(event):
-#  (Optional) Return a string which will be used to deduplicate similar alerts.
-# return ''
-
-# def alert_context(event):
-# (Optional) Return a dict with data to be included in the alert sent to the SNS/SQS/Webhook
-# return {'key':'value'}
