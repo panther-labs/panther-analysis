@@ -18,14 +18,14 @@ Detection:
       MinMatchCount: 1
 
   Transitions: # Add conditions for each transition
-    - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on username
+    - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on stage
       From: SnowflakeTempStageCreated   
       To: SnowflakeCopyIntoStage
       # WithinTimeFrameMinutes: # set max amount of time for this transition to occur
       Match:
         - On: stage
 
-    - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on username
+    - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on path
       From: SnowflakeCopyIntoStage   
       To: SnowflakeFileDownloaded
       # WithinTimeFrameMinutes: # set max amount of time for this transition to occur
