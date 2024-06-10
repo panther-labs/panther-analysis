@@ -5,9 +5,11 @@ DisplayName: "EC2 Route Table Modified"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Exfiltration:Exfiltration Over Alternative Protocol
+  - DataModel
 Reports:
   CIS:
     - 3.13
@@ -70,6 +72,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Route Table Not Modified
     ExpectedResult: false
@@ -126,6 +129,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Modifying Route Table
     ExpectedResult: false
@@ -174,4 +178,41 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Network Gateway Modified - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateRoute",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Network Gateway Not Modified - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "DescribeRouteTables",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

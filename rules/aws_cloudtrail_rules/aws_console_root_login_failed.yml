@@ -6,12 +6,14 @@ Enabled: true
 DedupPeriodMinutes: 15
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Identity & Access Management
   - Authentication
   - DemoThreatHunting
   - Credential Access:Brute Force
+  - DataModel
 Threshold: 5
 Reports:
   CIS:
@@ -58,6 +60,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Successful Login
     ExpectedResult: false
@@ -89,6 +92,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Non-Login Event
     ExpectedResult: false
@@ -142,4 +146,37 @@ Tests:
         "apiVersion": "2012-08-10",
         "managementEvent": true,
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Failed Root Login - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "Root" } },
+        "is_mfa": "No",
+        "status": "Failure",
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Successful Login - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "Root" } },
+        "is_mfa": "No",
+        "status": "Success",
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
       }

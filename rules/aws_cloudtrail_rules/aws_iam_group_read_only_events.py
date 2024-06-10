@@ -14,13 +14,13 @@ GROUP_ACTIONS = [
 
 
 def rule(event):
-    event_arn = event.get("userIdentity", {}).get("arn", "<NO_ARN_FOUND>")
+    event_arn = event.udm("user_arn")
     # Return True if arn not in whitelist and event source is iam and event name is
     # present in read/list event_name list.
     if (
         event_arn not in ARN_ALLOW_LIST
-        and event.get("eventSource", "<NO_EVENT_SOURCE_FOUND>") == "iam.amazonaws.com"
-        and event.get("eventName", "<NO_EVENT_NAME_FOUND>") in GROUP_ACTIONS
+        and event.udm("event_source") == "iam.amazonaws.com"
+        and event.udm("event_name") in GROUP_ACTIONS
     ):
         # continue on with analysis
         return True
@@ -29,16 +29,16 @@ def rule(event):
 
 def title(event):
     return (
-        f"{event.get('userIdentity',{}).get('arn','<NO_ARN_FOUND>')} "
-        f"IAM user group activity event found: {event.get('eventName', '<NO_EVENT_NAME_FOUND>')} "
-        f"in account {event.get('recipientAccountId', '<NO_RECIPIENT_ACCT_ID_FOUND>')} "
-        f"in region {event.get('awsRegion', '<NO_AWS_REGION_FOUND>')}."
+        f"{event.udm('user_arn')} "
+        f"IAM user group activity event found: {event.udm('event_name')} "
+        f"in account {event.udm('recipient_account_id')} "
+        f"in region {event.udm('cloud_region')}."
     )
 
 
 def dedup(event):
     # dedup via arn value
-    return f"{event.get('userIdentity',{}).get('arn','<NO_ARN_FOUND>')}"
+    return f"{event.udm('user_arn')}"
 
 
 def alert_context(event):

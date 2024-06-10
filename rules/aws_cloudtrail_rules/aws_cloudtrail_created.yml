@@ -5,8 +5,10 @@ DisplayName: "A CloudTrail Was Created or Updated"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
+  - DataModel
   - Security Control
   - Discovery:Cloud Service Dashboard
 Reports:
@@ -72,6 +74,7 @@ Tests:
         "readOnly": false,
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: KMS Decrypt Event
     ExpectedResult: false
@@ -129,6 +132,7 @@ Tests:
           ],
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Creating CloudTrail
     ExpectedResult: false
@@ -177,4 +181,31 @@ Tests:
         "readOnly": false,
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: CloudTrail Was Created - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateTrail",
+            "service": { "name": "cloudtrail.amazonaws.com" },
+          },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: KMS Decrypt Event - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "Decrypt",
+            "service": { "name": "kms.amazonaws.com" },
+          },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

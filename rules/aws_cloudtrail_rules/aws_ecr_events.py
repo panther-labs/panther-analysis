@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 # CONFIGURATION REQUIRED: Update with your expected AWS Accounts/Regions
 AWS_ACCOUNTS_AND_REGIONS = {
@@ -8,10 +8,10 @@ AWS_ACCOUNTS_AND_REGIONS = {
 
 
 def rule(event):
-    if event.get("eventSource") == "ecr.amazonaws.com":
-        aws_account_id = deep_get(event, "userIdentity", "accountId")
+    if event.udm("event_source") == "ecr.amazonaws.com":
+        aws_account_id = event.udm("user_account_id")
         if aws_account_id in AWS_ACCOUNTS_AND_REGIONS:
-            if event.get("awsRegion") not in AWS_ACCOUNTS_AND_REGIONS[aws_account_id]:
+            if event.udm("cloud_region") not in AWS_ACCOUNTS_AND_REGIONS[aws_account_id]:
                 return True
         else:
             return True
@@ -19,7 +19,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event.get("recipientAccountId")
+    return event.udm("recipient_account_id")
 
 
 def alert_context(event):

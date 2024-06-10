@@ -5,9 +5,11 @@ DisplayName: "S3 Bucket Deleted"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Impact:Data Destruction
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0040:T1485
@@ -72,6 +74,7 @@ Tests:
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
         "vpcEndpointId": "vpce-aaa333c9",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: S3 Bucket Deletion Failed
     ExpectedResult: false
@@ -90,6 +93,7 @@ Tests:
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
         "vpcEndpointId": "vpce-aaa333c9",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: An S3 Object Deleted
     ExpectedResult: false
@@ -106,4 +110,45 @@ Tests:
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
         "vpcEndpointId": "vpce-aaa333c9",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: An S3 Bucket was deleted - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "DeleteBucket",
+            "service": { "name": "s3.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/BucketAdministrator/user_name",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: S3 Bucket Deletion Failed - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "DeleteBucket",
+            "service": { "name": "s3.amazonaws.com" },
+            "response":
+              {
+                "error": "BucketNotEmpty",
+                "message": "The bucket you tried to delete is not empty",
+              },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

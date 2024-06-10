@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 LAMBDA_CRUD_EVENTS = {
     "AddPermission",
@@ -25,11 +25,11 @@ ALLOWED_ROLES = [
 
 def rule(event):
     if (
-        event.get("eventSource") == "lambda.amazonaws.com"
-        and event.get("eventName") in LAMBDA_CRUD_EVENTS
+        event.udm("event_source") == "lambda.amazonaws.com"
+        and event.udm("event_name") in LAMBDA_CRUD_EVENTS
     ):
         for role in ALLOWED_ROLES:
-            if fnmatch(deep_get(event, "userIdentity", "arn", default="unknown-arn"), role):
+            if fnmatch(event.udm("user_arn", default="unknown-arn"), role):
                 return False
         return True
     return False
@@ -37,15 +37,15 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}] "
+        f"[{event.udm('user_arn', default = 'unknown-arn')}] "
         f"performed Lambda "
-        f"[{event.get('eventName')}] in "
-        f"[{event.get('recipientAccountId')} {event.get('awsRegion')}]."
+        f"[{event.udm('event_name')}] in "
+        f"[{event.udm('recipient_account_id')} {event.udm('cloud_region')}]."
     )
 
 
 def dedup(event):
-    return f"{deep_get(event, 'userIdentity','arn', default = 'unknown-arn')}"
+    return f"{event.udm('user_arn', default = 'unknown-arn')}"
 
 
 def alert_context(event):

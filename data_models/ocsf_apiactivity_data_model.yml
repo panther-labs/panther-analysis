@@ -1,0 +1,90 @@
+AnalysisType: datamodel
+LogTypes:
+  - OCSF.ApiActivity
+DataModelID: "Standard.OCSF.ApiActivity"
+DisplayName: "OCSF API Activity"
+Filename: ocsf_apiactivity_data_model.py
+Enabled: true
+Mappings:
+  - Name: actor_user
+    Path: $.actor.user.name
+  - Name: source_ip
+    Method: load_ip_address
+  - Name: source_ip_address
+    Method: source_ip_address
+  - Name: user_agent
+    Path: $.http_request.user_agent
+  - Name: user_account_id
+    Path: $.actor.user.account_uid
+  - Name: event_name
+    Path: $.api.operation
+  - Name: error_code
+    Path: $.api.response.error
+  - Name: error_message
+    Path: $.api.response.message
+  - Name: request_parameters
+    Path: $.api.request.data
+  - Name: event_source
+    Path: $.api.service.name
+  - Name: cloud_region
+    Path: $.cloud.region
+  - Name: recipient_account_id
+    Path: $.unmapped.recipientAccountId
+  - Name: user_identity
+    Path: actor
+  - Name: log_event_type
+    Path: $.metadata.event_code
+  - Name: user_arn
+    Path: $.actor.user.uid
+  - Name: invoked_by
+    Path: $.actor.invoked_by
+  - Name: session_issuer_arn
+    Path: $.actor.session.issuer
+  - Name: resources
+    Path: resources
+  - Name: read_only
+    Path: $.unmapped.readOnly
+  - Name: project_visibility
+    Method: project_visibility
+  - Name: user_type
+    Path: $.actor.user.type
+  - Name: user_data
+    Path: $.unmapped."request_parameters.userData"
+  - Name: instance_id
+    Path: $.unmapped."request_parameters.instanceId"
+  - Name: snapshot_type
+    Path: $.unmapped."responseElements.snapshotType"
+  - Name: db_instance_identifier
+    Path: $.unmapped."responseElements.dBInstanceIdentifier"
+  - Name: attribute_name
+    Method: attribute_name
+  - Name: values_to_add
+    Method: values_to_add
+  - Name: password_updated
+    Path: $.unmapped."responseElements.PasswordUpdated"
+  - Name: user_principal_id
+    Path: $.actor.user.uid_alt
+  - Name: credential_uid
+    Path: $.actor.user.credential_uid
+  - Name: policy_name
+    Method: policy_name
+  - Name: publicly_accessible
+    Path: $.unmapped."responseElements.publiclyAccessible"
+  - Name: master_user_password
+    Path: $.unmapped."responseElements.pendingModifiedValues.masterUserPassword"
+  - Name: db_instance_arn
+    Path: $.unmapped."responseElements.dBInstanceArn"
+  - Name: cidr_block
+    Method: cidr_block
+  - Name: rule_action
+    Method: rule_action
+  - Name: egress
+    Method: egress
+  - Name: session_user_name
+    Path: $.unmapped."userIdentity.sessionContext.sessionIssuer.userName"
+  - Name: request_enable
+    Method: request_enable
+  - Name: resource_arn
+    Method: resource_arn
+  - Name: request_items
+    Method: request_items

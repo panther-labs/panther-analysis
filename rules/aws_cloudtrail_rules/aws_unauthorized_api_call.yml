@@ -6,9 +6,11 @@ Enabled: true
 DedupPeriodMinutes: 1440 # 24 hours
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Discovery:Cloud Service Discovery
+  - DataModel
 Reports:
   CIS:
     - 3.1
@@ -63,6 +65,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Unauthorized API Call from Within AWS (FQDN)
     ExpectedResult: false
@@ -101,6 +104,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Authorized API Call
     ExpectedResult: false
@@ -137,4 +141,41 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Unauthorized API Call from Within AWS (IP) - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateServiceLinkedRole",
+            "service": { "name": "iam.amazonaws.com" },
+            "response":
+              {
+                "error": "AccessDenied",
+                "message": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+              },
+          },
+        "src_endpoint": { "ip": "3.10.107.144" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Unauthorized API Call from Within AWS (FQDN) - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateServiceLinkedRole",
+            "service": { "name": "iam.amazonaws.com" },
+            "response":
+              {
+                "error": "AccessDenied",
+                "message": "User: arn:aws:iam::123456789012:user/tester is not authorized to perform: iam:Action on resource: arn:aws:iam::123456789012:resource",
+              },
+          },
+        "src_endpoint": { "domain": "sqs.amazonaws.com" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
       }

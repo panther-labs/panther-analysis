@@ -5,10 +5,12 @@ DisplayName: "EC2 VPC Modified"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Security Control
   - Defense Evasion:Impair Defenses
+  - DataModel
 Reports:
   CIS:
     - 3.14
@@ -99,6 +101,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: VPC Not Modified
     ExpectedResult: false
@@ -142,6 +145,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Modifying VPC
     ExpectedResult: false
@@ -217,4 +221,41 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Network Gateway Modified - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateVpc",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: Network Gateway Not Modified - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "DescribeVpcs",
+            "service": { "name": "ec2.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "uid": "arn:aws:sts::123456789012:assumed-role/tester" },
+          },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

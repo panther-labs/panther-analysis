@@ -10,7 +10,7 @@ CONFIG_SERVICE_CREATE_EVENTS = {
 
 
 def rule(event):
-    return aws_cloudtrail_success(event) and event.get("eventName") in CONFIG_SERVICE_CREATE_EVENTS
+    return aws_cloudtrail_success(event) and event.udm("event_name") in CONFIG_SERVICE_CREATE_EVENTS
 
 
 def alert_context(event):

@@ -5,11 +5,13 @@ DisplayName: "IAM Assume Role Blocklist Ignored"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Configuration Required
   - Identity and Access Management
   - Privilege Escalation:Abuse Elevation Control Mechanism
+  - DataModel
 Reports:
   MITRE ATT&CK:
     - TA0004:T1548
@@ -87,6 +89,7 @@ Tests:
             "type": "IAMUser",
             "userName": "example-user",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Non Blocklisted Role Assumed
     ExpectedResult: false
@@ -150,6 +153,7 @@ Tests:
             "type": "IAMUser",
             "userName": "example-user",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Assuming IAM Blocked Role
     ExpectedResult: false
@@ -214,4 +218,31 @@ Tests:
             "type": "IAMUser",
             "userName": "example-user",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: IAM Blocklisted Role Assumed - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "AssumeRole",
+            "service": { "name": "sts.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "IAMUser" } },
+        "user": { "uid": "arn:aws:iam::123456789012:role/FullAdminRole" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Error Assuming IAM Blocked Role - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "AttachRolePolicy",
+            "service": { "name": "sts.amazonaws.com" },
+            "response": { "error": "ExpiredToken" },
+          },
+        "actor": { "user": { "type": "IAMUser" } },
+        "p_log_type": "OCSF.Authentication",
       }

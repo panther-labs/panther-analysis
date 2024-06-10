@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success, lookup_aws_account_name
 
 # API calls that are indicative of CloudTrail changes
@@ -9,18 +9,20 @@ CLOUDTRAIL_STOP_DELETE = {
 
 
 def rule(event):
-    return aws_cloudtrail_success(event) and event.get("eventName") in CLOUDTRAIL_STOP_DELETE
+    return aws_cloudtrail_success(event) and event.udm("event_name") in CLOUDTRAIL_STOP_DELETE
 
 
 def dedup(event):
     # Merge on the CloudTrail ARN
-    return deep_get(event, "requestParameters", "name", default="<UNKNOWN_NAME>")
+    request_parameters = event.udm("request_parameters")
+    trail_name = request_parameters.get("name") if request_parameters else "TRAIL_NAME_NOT_FOUND"
+    return trail_name
 
 
 def title(event):
     return (
         f"CloudTrail [{dedup(event)}] in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}] was stopped/deleted"
+        f"[{lookup_aws_account_name(event.udm('recipient_account_id'))}] was stopped/deleted"
     )
 
 

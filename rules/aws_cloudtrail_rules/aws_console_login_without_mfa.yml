@@ -5,11 +5,13 @@ DisplayName: "Logins Without MFA"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Identity & Access Management
   - Authentication
   - Initial Access:Valid Accounts
+  - DataModel
 Reports:
   CIS:
     - 3.2
@@ -58,6 +60,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: No MFA Login - IAM User Unknown Account
     ExpectedResult: true
@@ -92,6 +95,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789013",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: No MFA Login - Root User
     ExpectedResult: true
@@ -126,6 +130,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: MFA Login - SAML
     ExpectedResult: false
@@ -161,6 +166,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: MFA Login
     ExpectedResult: false
@@ -195,6 +201,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: No MFA - Login Failed
     ExpectedResult: false
@@ -229,6 +236,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: No MFA - authenticated from session with MFA
     ExpectedResult: false
@@ -264,8 +272,8 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
-
   - Name: No MFA Login - New User
     ExpectedResult: false
     Mocks:
@@ -299,6 +307,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: AWS SSOv2 Login
     ExpectedResult: false
@@ -346,8 +355,8 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
-
   - Name: AssumeRole from MFA User Session
     ExpectedResult: false
     Mocks:
@@ -385,6 +394,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: No MFA - IAM Role and External IDP
     ExpectedResult: false
@@ -436,4 +446,64 @@ Tests:
         "recipientAccountId": "123456789013",
         "p_row_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: No MFA Login - IAM User - OCSF
+    ExpectedResult: true
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "type": "IAMUser",
+                "uid": "arn:aws:iam::123456789012:user/tester",
+                "name": "tester",
+                "uid_alt": "1111",
+              },
+          },
+        "src_endpoint": { "ip": "1.2.3.4" },
+        "status": "Success",
+        "is_mfa": "No",
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: MFA Login - SAML - OCSF
+    ExpectedResult: false
+    Mocks:
+      - objectName: check_account_age
+        returnValue: "False"
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "type": "IAMUser",
+                "uid": "arn:aws:iam::123456789012:user/tester",
+                "name": "tester",
+                "uid_alt": "1111",
+              },
+          },
+        "src_endpoint": { "ip": "1.2.3.4" },
+        "status": "Success",
+        "is_mfa": "No",
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "additionalEventData.SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta",
+          },
+        "p_log_type": "OCSF.Authentication",
       }

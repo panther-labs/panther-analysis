@@ -6,11 +6,13 @@ DedupPeriodMinutes: 60
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.ApiActivity
 Tags:
   - AWS
   - Identity & Access Management
   - DemoThreatHunting
   - Privilege Escalation:Valid Accounts
+  - DataModel
 Reports:
   CIS:
     - 3.3
@@ -81,6 +83,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Root Activity
     ExpectedResult: true
@@ -132,6 +135,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAMUser Activity
     ExpectedResult: false
@@ -181,6 +185,7 @@ Tests:
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
         "vpcEndpointId": "vpce-1",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Root User Failed Activity
     ExpectedResult: false
@@ -255,4 +260,52 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Root Activity - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "PutBucketVersioning",
+            "service": { "name": "s3.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "type": "Root",
+              },
+          },
+        "metadata": { "event_code": "AwsApiCall" },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
+      }
+  - Name: IAMUser Activity - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "GetBucketAcl",
+            "service": { "name": "s3.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user":
+              {
+                "uid": "arn:aws:sts::123456789012:assumed-role/tester",
+                "type": "IAMUser",
+                "invoked_by": "signin.amazonaws.com",
+              },
+          },
+        "metadata": { "event_code": "AwsApiCall" },
+        "cloud": { "provider": "AWS", "region": "us-east-2" },
+        "src_endpoint": { "ip": "111.111.111.111" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.ApiActivity",
       }

@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import lookup_aws_account_name
 
 # service/event patterns to monitor
@@ -15,39 +15,40 @@ RECON_ACTIONS = {
 
 def rule(event):
     # Filter events
-    if event.get("errorCode") != "AccessDenied":
+    if event.udm("error_code") != "AccessDenied":
         return False
-    if deep_get(event, "userIdentity", "type") != "IAMUser":
+    if event.udm("user_type") != "IAMUser":
         return False
 
     # Console Activity can easily result in false positives as some pages contain a mix of
     # items that a user may or may not have access to.
-    if event.get("userAgent").startswith("aws-internal/3"):
+    if event.udm("user_agent", default="").startswith("aws-internal/3"):
         return False
 
     # Validate the request came from outside of AWS
     try:
-        ip_address(event.get("sourceIPAddress"))
+        ip_address(event.udm("source_ip_address"))
     except ValueError:
         return False
 
     # Pattern match this event to the recon actions
     for event_source, event_patterns in RECON_ACTIONS.items():
-        if event.get("eventSource", "").startswith(event_source) and any(
-            event.get("eventName", "").startswith(event_pattern) for event_pattern in event_patterns
+        if event.udm("event_source", default="").startswith(event_source) and any(
+            event.udm("event_name", default="").startswith(event_pattern)
+            for event_pattern in event_patterns
         ):
             return True
     return False
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "arn")
+    return event.udm("user_arn")
 
 
 def title(event):
-    user_type = deep_get(event, "userIdentity", "type")
+    user_type = event.udm("user_type")
     if user_type == "IAMUser":
-        user = deep_get(event, "userIdentity", "userName")
+        user = event.udm("actor_user")
     # root user
     elif user_type == "Root":
         user = user_type
@@ -57,7 +58,7 @@ def title(event):
         "Reconnaissance activity denied to user "
         f"[{user}] "
         "in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{lookup_aws_account_name(event.udm('recipient_account_id'))}]"
     )
 
 

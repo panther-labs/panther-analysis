@@ -5,10 +5,12 @@ DisplayName: "IAM Policy Modified"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Identity & Access Management
   - Privilege Escalation:Abuse Elevation Control Mechanism
+  - DataModel
 Reports:
   CIS:
     - 3.4
@@ -68,6 +70,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Not IAM Policy Change
     ExpectedResult: false
@@ -121,6 +124,7 @@ Tests:
         "apiVersion": "2012-08-10",
         "managementEvent": true,
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Policy Change Error
     ExpectedResult: false
@@ -164,4 +168,29 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: IAM Policy Change - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "DeleteGroupPolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Not IAM Policy Change - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "DescribeTable",
+            "service": { "name": "dynamodb.amazonaws.com" },
+          },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
       }

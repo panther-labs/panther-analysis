@@ -5,9 +5,11 @@ DisplayName: "IAM Change"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Tags:
   - AWS
   - Identity and Access Management
+  - DataModel
 Severity: Info
 DedupPeriodMinutes: 720 # 12 hours
 Description: >
@@ -69,6 +71,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Read Only Activity
     ExpectedResult: false
@@ -113,6 +116,7 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Making IAM Change
     ExpectedResult: false
@@ -162,4 +166,28 @@ Tests:
               },
             "type": "AssumedRole",
           },
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: IAM Change - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "AttachRolePolicy",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Error Making IAM Change - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "AttachRolePolicy",
+            "service": { "name": "iam.amazonaws.com" },
+            "response": { "error": "NoSuchEntity" },
+          },
+        "p_log_type": "OCSF.Authentication",
       }

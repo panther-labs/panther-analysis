@@ -5,6 +5,7 @@ DisplayName: "IAM Entity Created Without CloudFormation"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.AccountChange
 Reports:
   MITRE ATT&CK:
     - TA0003:T1136
@@ -13,6 +14,7 @@ Tags:
   - Configuration Required
   - Identity and Access Management
   - Persistence:Create Account
+  - DataModel
 Severity: Medium
 Description: >
   An IAM Entity (Group, Policy, Role, or User) was created manually. IAM entities should be created in code to ensure that permissions are tracked and managed correctly.
@@ -67,6 +69,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Entity Created Manually With Approved Role
     ExpectedResult: true
@@ -109,6 +112,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Entity Created Manually With Approved Role Pattern
     ExpectedResult: false
@@ -152,6 +156,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: IAM Entity Created Manually
     ExpectedResult: true
@@ -194,6 +199,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Non IAM Entity Creation Event
     ExpectedResult: false
@@ -236,6 +242,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Error Manually Creating IAM Entity
     ExpectedResult: false
@@ -279,4 +286,60 @@ Tests:
         "eventID": "1",
         "eventType": "AwsApiCall",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: IAM Entity Created Automatically - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateUser",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "type": "AssumedRole" },
+            "invoked_by": "cloudformation.amazonaws.com",
+            "session":
+              {
+                "issuer": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
+              },
+          },
+        "p_log_type": "OCSF.AccountChange",
+      }
+  - Name: IAM Entity Created Manually With Approved Role - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "CreateUser",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "type": "AssumedRole" },
+            "session":
+              {
+                "issuer": "arn:aws:iam::123456789012:role/IdentityCFNServiceRole",
+              },
+          },
+        "p_log_type": "OCSF.AccountChange",
+      }
+  - Name: Non IAM Entity Creation Event - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "NotCreateUser",
+            "service": { "name": "iam.amazonaws.com" },
+          },
+        "actor":
+          {
+            "user": { "type": "AssumedRole" },
+            "session": { "issuer": "arn:aws:iam::123456789012:role/OtherRole" },
+          },
+        "p_log_type": "OCSF.AccountChange",
       }

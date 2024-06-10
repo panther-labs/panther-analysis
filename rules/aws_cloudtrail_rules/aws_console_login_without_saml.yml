@@ -6,6 +6,7 @@ DedupPeriodMinutes: 60
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
+  - OCSF.Authentication
 Reports:
   MITRE ATT&CK:
     - TA0001:T1078
@@ -15,6 +16,7 @@ Tags:
   - Identity & Access Management
   - Authentication
   - Initial Access:Valid Accounts
+  - DataModel
 Severity: High
 Description: An AWS console login was made without SAML/SSO.
 Runbook: Modify the AWS account configuration.
@@ -56,6 +58,7 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
       }
   - Name: Normal Login
     ExpectedResult: true
@@ -87,4 +90,37 @@ Tests:
         "eventID": "1",
         "eventType": "AwsConsoleSignIn",
         "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail",
+      }
+  - Name: Login with SAML - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "AssumedRole" } },
+        "src_endpoint": { "ip": "1.2.3.4" },
+        "unmapped":
+          {
+            "recipientAccountId": "123456789012",
+            "additionalEventData.SamlProviderArn": "arn:aws:iam::123456789012:saml-provider/Okta",
+          },
+        "p_log_type": "OCSF.Authentication",
+      }
+  - Name: Normal Login - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "api":
+          {
+            "operation": "ConsoleLogin",
+            "service": { "name": "signin.amazonaws.com" },
+          },
+        "actor": { "user": { "type": "IAMUser" } },
+        "src_endpoint": { "ip": "1.2.3.4" },
+        "unmapped": { "recipientAccountId": "123456789012" },
+        "p_log_type": "OCSF.Authentication",
       }
