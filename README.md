@@ -265,7 +265,7 @@ Previously, Node, NPM and Prettier were used for formatting Markdown and YAML fi
 
 Depending on how Node is managed, it will need to be uninstalled or removed if it is no longer needed elsewhere. Refer to your system/package manager's documentation for instructions on removing Node.
 
-Otherwise, running `npm unintall prettier` will remove Prettier.
+Otherwise, running `npm uninstall prettier` will remove Prettier.
 
 # License
 

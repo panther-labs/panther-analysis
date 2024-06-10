@@ -1,0 +1,24 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_0108977_configuration_drift.py
+RuleID: "Snowflake.Configuration.Drift"
+Description: >
+  Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
+DisplayName: "Snowflake Configuration Drift"
+Enabled: false
+Runbook: Determine if this occurred as a result of a valid business request.
+ScheduledQueries:
+  - Query.Snowflake.ConfigurationDrift
+Tags:
+  - Configuration Required
+Severity: Medium
+Tests:
+  - Name: Configuration Drift
+    ExpectedResult: true
+    Log:
+      {
+        "end_time": "2024-05-31 19:20:08.604Z",
+        "query_text": "COPY INTO table.name FROM here as test file_format = (type = JSON);",
+        "role_name": "ADMIN",
+        "start_time": "2024-05-31 19:20:07.088Z",
+        "user_name": "USER_NAME",
+      }
