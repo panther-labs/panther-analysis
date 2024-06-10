@@ -2,7 +2,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read    
+  contents: read
   pull-requests: write
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
             files.pythonhosted.org:443
             github.com:443
             pypi.org:443
-    
+
       - name: Checkout panther-analysis
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
 
@@ -39,7 +39,7 @@ jobs:
           panther_analysis_tool check-packs 2> errors.txt || true
 
           # run again to get exit code
-          panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
+          panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
