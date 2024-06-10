@@ -21,4 +21,3 @@ def title(event):
     secret = event["Resources"][0]["Id"]
     return f"Suspicious activity detected accessing \
     private decoy Systems Manager parameter {secret}"
-

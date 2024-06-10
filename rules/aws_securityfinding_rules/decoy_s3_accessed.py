@@ -40,4 +40,3 @@ def title(event):
     # It's possible to just return the Title as a whole string
     secret = event["Resources"][0]["Id"]
     return f"Suspicious activity detected accessing private decoy S3 bucket {secret}"
-
