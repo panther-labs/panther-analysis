@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+QueryName: "Snowflake Table Copied Into Stage"
+Enabled: true
+Description: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Query: >
+    SELECT 
+    user_name,
+    role_name,
+    start_time,
+    query_type,
+    execution_status,
+    regexp_substr(query_text, 'COPY\\s+INTO\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\.]+)', 1, 1, 'i', 2) as stage,
+    regexp_substr(query_text, 'COPY\\s+INTO\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\./]+)(\\$\\$|\\\')?\\s+FROM', 1, 1, 'i', 2) as path,
+    query_text
+
+    FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+    WHERE query_type = 'UNLOAD' and stage is not NULL and start_time >= DATEADD(day, -1, CURRENT_TIMESTAMP) and execution_status = 'SUCCESS'
+    LIMIT 100
+Schedule:
+    RateMinutes: 1440
+    TimeoutMinutes: 1
+Tags:
+    - data exfil

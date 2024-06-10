@@ -1,0 +1,66 @@
+AnalysisType: correlation_rule
+RuleID: "Snowflake.Data.Exfiltration"
+DisplayName: "Snowflake Data Exfiltration"
+Enabled: true
+Severity: Critical
+Description: In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
+Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Detection:
+- Sequence: # Create a list of rules or signals to correlate (order matters)
+    - ID: SnowflakeTempStageCreated
+      RuleID: Snowflake.TempStageCreated
+      MinMatchCount: 1
+    - ID: SnowflakeCopyIntoStage
+      RuleID: Snowflake.CopyIntoStage
+      MinMatchCount: 1
+    - ID: SnowflakeFileDownloaded
+      RuleID: Snowflake.FileDownloaded
+      MinMatchCount: 1
+
+  Transitions: # Add conditions for each transition
+    - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on username
+      From: SnowflakeTempStageCreated   
+      To: SnowflakeCopyIntoStage
+      # WithinTimeFrameMinutes: # set max amount of time for this transition to occur
+      Match:
+        - On: stage
+
+    - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on username
+      From: SnowflakeCopyIntoStage   
+      To: SnowflakeFileDownloaded
+      # WithinTimeFrameMinutes: # set max amount of time for this transition to occur
+      Match:
+        - On: path
+  
+  Schedule:
+    RateMinutes: 720
+    # CronExpression: # set if you need a schedule other than minutes 
+    TimeoutMinutes: 2
+    
+  LookbackWindowMinutes: 1440 # the amount of time this correlation rule should lookback over when evaluating rule and signal matches
+Tests:
+    - Name: Test-663425
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: SnowflakeTempStageCreated
+          Matches:
+            stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+        - ID: SnowflakeCopyIntoStage
+          Matches:
+            stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+            path:
+                LOGS.PUBLIC.data_exfil/DATA.csv:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+        - ID: SnowflakeFileDownloaded
+          Matches:
+            path:
+                LOGS.PUBLIC.data_exfil/DATA.csv:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
