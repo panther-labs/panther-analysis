@@ -5,8 +5,10 @@ DisplayName: "AWS VPC Healthy Log Status"
 Enabled: true
 LogTypes:
   - AWS.VPCFlow
+  - OCSF.NetworkActivity
 Tags:
   - AWS
+  - DataModel
   - Security Control
 Severity: Low
 Description: >
@@ -17,7 +19,13 @@ Runbook: >
 Tests:
   - Name: Healthy Log Status
     ExpectedResult: false
-    Log: { "log-status": "OK" }
+    Log: { "log-status": "OK", "p_log_type": "AWS.VPCFlow" }
   - Name: Unhealthy Log Status
     ExpectedResult: true
-    Log: { "log-status": "SKIPDATA" }
+    Log: { "log-status": "SKIPDATA", "p_log_type": "AWS.VPCFlow" }
+  - Name: Healthy Log Status - OCSF
+    ExpectedResult: false
+    Log: { "status_code": "OK", "p_log_type": "OCSF.NetworkActivity" }
+  - Name: Unhealthy Log Status - OCSF
+    ExpectedResult: true
+    Log: { "status_code": "SKIPDATA", "p_log_type": "OCSF.NetworkActivity" }
