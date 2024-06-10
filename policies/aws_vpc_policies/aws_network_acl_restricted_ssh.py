@@ -17,7 +17,6 @@ def policy(resource):
             entry.get("CidrBlock") == "0.0.0.0/0"
             # Handle non-standard representations like `"0::/0"`.
             or ipaddress.IPv6Network(entry.get("Ipv6CidrBlock") or IPV6_SENTINEL) == GLOBAL_IPV6
-            == GLOBAL_IPV6
         ) and (
             not entry.get("PortRange")
             or entry["PortRange"]["From"] <= 22 <= entry["PortRange"]["To"]
