@@ -1,0 +1,28 @@
+AnalysisType: correlation_rule
+RuleID: "Okta.Login.Without.Push"
+DisplayName: "Okta Login Without Push"
+Enabled: false
+Tags:
+  - Push Security
+  - Configuration Required
+Severity: Critical
+Detection:
+  - Sequence:
+      - ID: Okta
+        RuleID: Okta.Login.Signal
+        MinMatchCount: 1
+      - ID: Push
+        RuleID: Push.Security.Authorized.IdP.Login
+        Absence: true
+    Transitions:
+      - ID: Okta to Push
+        From: Okta
+        To: Push
+        WithinTimeFrameMinutes: 5
+        Match:
+          - From: actor.alternateId
+            To: new.email
+    Schedule:
+      RateMinutes: 5
+      TimeoutMinutes: 2
+    LookbackWindowMinutes: 30
