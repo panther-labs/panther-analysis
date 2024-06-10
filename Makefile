@@ -18,7 +18,7 @@ vscode-config: install-pipenv install
 	@echo "Creating new vscode config files"
 	cp .vscode/example_launch.json  .vscode/launch.json
 	sed -e 's#XXX_pipenv_py_output_XXX#$(shell pipenv --py)#' .vscode/example_settings.json  > .vscode/settings.json
-	which code && code . 
+	which code && code .
 
 ci:
 	pipenv run $(MAKE) lint test
@@ -42,7 +42,6 @@ lint-pylint:
 lint-fmt:
 	@echo Checking python file formatting with the black code style checker
 	pipenv run black --line-length=100 --check $(dirs)
-	npx prettier . --check
 
 venv:
 	pipenv sync --dev
@@ -53,12 +52,9 @@ pat-update:
 fmt:
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
-	npx prettier . --write --list-different
 
 install:
 	pipenv sync --dev
-	# install prettier for formatting YAML and Markdown files
-	npm install
 
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)

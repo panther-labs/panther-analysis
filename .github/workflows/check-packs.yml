@@ -1,14 +1,28 @@
 on:
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   check_packs:
     name: check packs
     runs-on: ubuntu-latest
 
     steps:
+      - uses: step-security/harden-runner@17d0e2bd7d51742c71671bd19fa12bdc9d40a3d6 # v2.8.1
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
+
       - name: Checkout panther-analysis
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b #v4.1.4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
 
       - name: Set python version
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
@@ -25,27 +39,29 @@ jobs:
           panther_analysis_tool check-packs 2> errors.txt || true
 
           # run again to get exit code
-          panther_analysis_tool check-packs || echo ::set-output name=errors::`cat errors.txt`
+          panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
         if: ${{ steps.check-packs.outputs.errors }}
         with:
           mode: upsert
           message: |
-            :scream: 
-            looks like somethings could be wrong with the packs
+            :scream:
+            looks like some things could be wrong with the packs
             ```diff
             ${{ steps.check-packs.outputs.errors }}
+            ```
           comment_tag: check-packs
       - name: Delete comment
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
         if: ${{ !steps.check-packs.outputs.errors }}
         with:
           mode: delete
           message: |
-            :scream: 
-            looks like somethings could be wrong with the packs
+            :scream:
+            looks like some things could be wrong with the packs
             ```diff
             ${{ steps.check-packs.outputs.errors }}
+            ```
           comment_tag: check-packs

@@ -5,8 +5,10 @@ DisplayName: "VPC Flow Logs Inbound Port Allowlist"
 Enabled: false
 LogTypes:
   - AWS.VPCFlow
+  - OCSF.NetworkActivity
 Tags:
   - AWS
+  - DataModel
   - Configuration Required
   - Security Control
   - Command and Control:Non-Standard Port
@@ -26,10 +28,44 @@ SummaryAttributes:
 Tests:
   - Name: Public to Private IP on Restricted Port
     ExpectedResult: true
-    Log: { "dstport": 22, "dstaddr": "10.0.0.1", "srcaddr": "1.1.1.1" }
+    Log:
+      {
+        "dstPort": 22,
+        "dstAddr": "10.0.0.1",
+        "srcAddr": "1.1.1.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
   - Name: Public to Private IP on Allowed Port
     ExpectedResult: false
-    Log: { "dstport": 443, "dstaddr": "10.0.0.1", "srcaddr": "1.1.1.1" }
+    Log:
+      {
+        "dstPort": 443,
+        "dstAddr": "10.0.0.1",
+        "srcAddr": "1.1.1.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
   - Name: Private to Private IP on Restricted Port
     ExpectedResult: false
-    Log: { "dstport": 22, "dstaddr": "10.0.0.1", "srcaddr": "10.10.10.1" }
+    Log:
+      {
+        "dstPort": 22,
+        "dstAddr": "10.0.0.1",
+        "srcAddr": "10.10.10.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
+  - Name: Public to Private IP on Restricted Port - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "dst_endpoint": { "ip": "10.0.0.1", "port": 22 },
+        "src_endpoint": { "ip": "1.1.1.1" },
+        "p_log_type": "OCSF.NetworkActivity",
+      }
+  - Name: Public to Private IP on Allowed Port - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "dst_endpoint": { "ip": "10.0.0.1", "port": 443 },
+        "src_endpoint": { "ip": "1.1.1.1" },
+        "p_log_type": "OCSF.NetworkActivity",
+      }

@@ -5,8 +5,10 @@ DisplayName: "VPC Flow Logs Unapproved Outbound DNS Traffic"
 Enabled: false
 LogTypes:
   - AWS.VPCFlow
+  - OCSF.NetworkActivity
 Tags:
   - AWS
+  - DataModel
   - Configuration Required
   - Security Control
   - Command and Control:Application Layer Protocol
@@ -26,10 +28,44 @@ SummaryAttributes:
 Tests:
   - Name: Approved Outbound DNS Traffic
     ExpectedResult: false
-    Log: { "dstport": 53, "dstaddr": "1.1.1.1", "srcaddr": "10.0.0.1" }
+    Log:
+      {
+        "dstPort": 53,
+        "dstAddr": "1.1.1.1",
+        "srcAddr": "10.0.0.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
   - Name: Unapproved Outbound DNS Traffic
     ExpectedResult: true
-    Log: { "dstport": 53, "dstaddr": "100.100.100.100", "srcaddr": "10.0.0.1" }
+    Log:
+      {
+        "dstPort": 53,
+        "dstAddr": "100.100.100.100",
+        "srcAddr": "10.0.0.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
   - Name: Outbound Non-DNS Traffic
     ExpectedResult: false
-    Log: { "dstport": 80, "dstaddr": "100.100.100.100", "srcaddr": "10.0.0.1" }
+    Log:
+      {
+        "dstPort": 80,
+        "dstAddr": "100.100.100.100",
+        "srcAddr": "10.0.0.1",
+        "p_log_type": "AWS.VPCFlow",
+      }
+  - Name: Approved Outbound DNS Traffic - OCSF
+    ExpectedResult: false
+    Log:
+      {
+        "dst_endpoint": { "ip": "1.1.1.1", "port": 53 },
+        "src_endpoint": { "ip": "10.0.0.1" },
+        "p_log_type": "OCSF.NetworkActivity",
+      }
+  - Name: Unapproved Outbound DNS Traffic - OCSF
+    ExpectedResult: true
+    Log:
+      {
+        "dst_endpoint": { "ip": "100.100.100.100", "port": 53 },
+        "src_endpoint": { "ip": "10.0.0.1" },
+        "p_log_type": "OCSF.NetworkActivity",
+      }
