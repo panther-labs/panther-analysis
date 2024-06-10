@@ -1,0 +1,54 @@
+AnalysisType: scheduled_query
+Enabled: false
+QueryName: "Query.Snowflake.ConfigurationDrift"
+Description: >
+  Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
+Tags:
+  - Configuration Required
+SnowflakeQuery: >
+  -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
+
+  -- adjust query/limit to narrow as necessary
+
+  SELECT
+      query_text,
+      user_name,
+      role_name,
+      start_time,
+      end_time
+  FROM snowflake.account_usage.query_history
+    WHERE execution_status = 'SUCCESS'
+      AND query_type NOT in ('SELECT')
+      AND user_name NOT in ('PANTHER_ADMIN', 'PANTHERACCOUNTADMIN')
+      AND (query_text ILIKE '%create role%'
+          OR query_text ILIKE '%manage grants%'
+          OR query_text ILIKE '%create integration%'
+          OR query_text ILIKE '%alter integration%'
+          OR query_text ILIKE '%create share%'
+          OR query_text ILIKE '%create account%'
+          OR query_text ILIKE '%monitor usage%'
+          OR query_text ILIKE '%ownership%'
+          OR query_text ILIKE '%drop table%'
+          OR query_text ILIKE '%drop database%'
+          OR query_text ILIKE '%create stage%'
+          OR query_text ILIKE '%drop stage%'
+          OR query_text ILIKE '%alter stage%'
+          OR query_text ILIKE '%create user%'
+          OR query_text ILIKE '%alter user%'
+          OR query_text ILIKE '%drop user%'
+          OR query_text ILIKE '%create_network_policy%'
+          OR query_text ILIKE '%alter_network_policy%'
+          OR query_text ILIKE '%drop_network_policy%'
+          OR query_text ILIKE '%copy%'
+          )
+      OR (
+        query_text ilike '%grant%accountadmin%to%'
+        AND query_type = 'GRANT'
+        AND execution_status = 'SUCCESS'
+      )
+    AND p_occurs_since('1 day')
+    ORDER BY end_time desc
+    LIMIT 100;
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 3

@@ -7,7 +7,8 @@ import logging
 
 import panther_event_type_helpers as event_type
 from panther_detection_helpers.caching import get_string_set, put_string_set
-from panther_oss_helpers import add_parse_delay, geoinfo_from_ip
+from panther_ipinfo_helpers import geoinfo_from_ip
+from panther_oss_helpers import add_parse_delay
 
 # number of unique geolocation city:region combinations retained in the
 # panther-kv-table in Dynamo to suppress alerts
@@ -34,7 +35,7 @@ def rule(event):
 
     # Lookup geo-ip data via API call
     # Mocked during unit testing
-    GEO_INFO[log] = geoinfo_from_ip(event.udm("source_ip"))
+    GEO_INFO[log] = geoinfo_from_ip(event=event, match_field=event.udm_path("source_ip"))
 
     # As of Panther 1.19, mocking returns all mocked objects in a string
     # GEO_INFO must be converted back to a dict to mimic the API call

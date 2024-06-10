@@ -11,8 +11,6 @@ RUN apk update \
         git \
         libffi-dev \
         ncurses-dev \
-        nodejs \
-        npm \
         openssl-dev \
         readline-dev \
         sqlite-dev \
@@ -48,12 +46,6 @@ COPY Pipfile .
 COPY Pipfile.lock .
 RUN pipenv uninstall --all
 RUN pipenv sync --dev
-
-COPY package.json .
-COPY package-lock.json .
-RUN npm install
-
-ENV PATH="/home/panther-analysis/node_modules/.bin:$PATH"
 
 # Remove pipfile so it doesn't interfere with local files after install
 RUN rm Pipfile
