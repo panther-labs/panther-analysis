@@ -3,8 +3,10 @@ def rule(event):
 
 
 def title(event):
-    return (f"[Wiz Alert]: "
-            f"{event.deep_get('sourceRule', 'name', default='ALERT_DESCRIPTION_NOT_FOUND')}")
+    return (
+        f"[Wiz Alert]: "
+        f"{event.deep_get('sourceRule', 'name', default='ALERT_DESCRIPTION_NOT_FOUND')}"
+    )
 
 
 def severity(event):
