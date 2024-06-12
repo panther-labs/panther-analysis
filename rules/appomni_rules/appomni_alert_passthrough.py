@@ -8,7 +8,7 @@ def rule(event):
 def title(event):
     # Create title that includes severity and message
     sev_dict = {0: "Critical", 1: "High", 2: "Medium", 3: "Low", 4: "Informational"}
-    sev = sev_dict[event.deep_get("event", "severity")]
+    sev = sev_dict.get(event.deep_get("event", "severity"))
 
     # Use type service in title if only one field, label as 'Multiple Services' if more than one.
     if len(event.deep_get("related", "services", "type")) == 1:

@@ -29,6 +29,8 @@ def title(event):
         setting_change = "Always Require"
     if "confidence-score" in request_body:
         setting_change = "Use Adaptive MFA"
+    else:
+        setting_change = "Unknown"
 
     return (
         f"Auth0 user [{user_email}] set the "

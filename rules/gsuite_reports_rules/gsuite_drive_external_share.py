@@ -96,4 +96,4 @@ def title(event):
                 + f'"{doc_title}" to {target_user}'
             )
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
-    raise PantherUnexpectedAlert("No matching events, but DangerousShares still fired")
+    return "No matching events, but DangerousShares still fired"
