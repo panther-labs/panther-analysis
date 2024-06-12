@@ -14,10 +14,7 @@ def rule(event):
         return False
 
     for auth in authorization_info:
-        if (
-                auth.get("permission") == "run.services.create"
-                and auth.get("granted") is True
-        ):
+        if auth.get("permission") == "run.services.create" and auth.get("granted") is True:
             return True
     return False
 
@@ -41,6 +38,6 @@ def alert_context(event):
         "spec",
         "template",
         "spec",
-        default="<SERVICE_ACCOUNT_NOT_FOUND>"
+        default="<SERVICE_ACCOUNT_NOT_FOUND>",
     )
     return context
