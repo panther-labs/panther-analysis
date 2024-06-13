@@ -1,15 +1,18 @@
-from pypanther import get_panther_rules, register
-from pypanther.base import PantherSeverity
-from pypanther.log_types import LogType
+from pypanther import PantherLogType, PantherSeverity, get_panther_rules, register
 from pypanther.rules.asana_rules.asana_service_account_created import AsanaServiceAccountCreated
 from pypanther.rules.aws_s3_rules.aws_s3_unauthenticated_access import (
     AWSS3ServerAccessUnauthenticated,
 )
 
-from v2_rules import subclass_custom_rule, subclass_panther_aws_rule, subclass_panther_base_rule
+from v2_rules import (
+    dual,
+    subclass_custom_rule,
+    subclass_panther_aws_rule,
+    subclass_panther_base_rule,
+)
 
 # override a rule attribute in one line
-AsanaServiceAccountCreated.Severity = PantherSeverity.High
+AsanaServiceAccountCreated.Severity = PantherSeverity.Info
 
 # override many attributes using override function
 AWSS3ServerAccessUnauthenticated.override(
@@ -24,6 +27,8 @@ register(
         subclass_custom_rule.SubclassCustomRule,
         subclass_panther_base_rule.SubclassPantherBaseRule,
         subclass_panther_aws_rule.SubclassPantherAwsRule,
+        dual.Bob,  # rules can be defined in the same file
+        dual.Charlie,
     ]
 )
 
@@ -31,9 +36,8 @@ register(
 register(
     get_panther_rules(
         LogTypes=[
-            LogType.Panther_Audit,
-            LogType.AWS_CloudTrail,
-            LogType.Asana_Audit,
+            PantherLogType.Panther_Audit,
+            PantherLogType.AWS_CloudTrail,
         ]
     )
 )

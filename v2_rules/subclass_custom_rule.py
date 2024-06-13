@@ -1,4 +1,4 @@
-from pypanther.base import PantherSeverity
+from pypanther import PantherSeverity
 
 from .subclass_panther_base_rule import SubclassPantherBaseRule
 

@@ -1,4 +1,4 @@
-from pypanther.base import PantherRuleTest, PantherSeverity
+from pypanther import PantherRuleTest, PantherSeverity
 from pypanther.rules.aws_cloudtrail_rules.aws_cloudtrail_created import AWSCloudTrailCreated
 
 rule_tests = [

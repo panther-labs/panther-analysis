@@ -1,11 +1,10 @@
-from pypanther.base import PantherRule, PantherRuleTest, PantherSeverity
-from pypanther.log_types import LogType
+from pypanther import PantherLogType, PantherRule, PantherRuleTest, PantherSeverity
 
 
 class SubclassPantherBaseRule(PantherRule):
     RuleID = "SubclassPantherBaseRule-roast"
     Severity = PantherSeverity.High
-    LogTypes = [LogType.Panther_Audit]
+    LogTypes = [PantherLogType.Panther_Audit]
     Tests = [
         PantherRuleTest(
             Name="Rule1-test1",
