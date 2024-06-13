@@ -26,7 +26,7 @@ def alert_context(event):
     try:
         geoinfo = geoinfo_from_ip(event=event, match_field=event.udm_path("source_ip"))
     except PantherIPInfoException:
-        geoinfo = "No geolocation information available"
+        geoinfo = {}
     if isinstance(geoinfo, str):
         geoinfo = loads(geoinfo)
     context = {}
@@ -38,6 +38,8 @@ def alert_context(event):
     context["ip_org"] = geoinfo.get("org", "No organization listed")
     try:
         context = add_parse_delay(event, context)
-    except ValueError:
+    except TypeError:
+        pass
+    except AttributeError:
         pass
     return context

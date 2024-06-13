@@ -64,7 +64,9 @@ def rule(event):
 
 
 def title(event):
-    items = deep_get(event, "requestParameters", "instancesSet", "items", default=["none"])
+    items = deep_get(
+        event, "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
+    )
     return (
         f"AWS Event [{event.get('eventName')}] Instance ID "
         f"[{items[0].get('instanceId')}] AWS Account ID [{event.get('recipientAccountId')}]"
@@ -72,7 +74,9 @@ def title(event):
 
 
 def alert_context(event):
-    items = deep_get(event, "requestParameters", "instancesSet", "items", default=["none"])
+    items = deep_get(
+        event, "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
+    )
     return {
         "awsRegion": event.get("awsRegion"),
         "eventName": event.get("eventName"),
