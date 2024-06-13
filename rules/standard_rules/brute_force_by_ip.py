@@ -36,5 +36,8 @@ def alert_context(event):
     context["ip"] = geoinfo.get("ip")
     context["reverse_lookup"] = geoinfo.get("hostname", "No reverse lookup hostname")
     context["ip_org"] = geoinfo.get("org", "No organization listed")
-    context = add_parse_delay(event, context)
+    try:
+        context = add_parse_delay(event, context)
+    except ValueError:
+        pass
     return context

@@ -11,7 +11,7 @@ def title(event):
     sev = sev_dict.get(event.deep_get("event", "severity"))
 
     # Use type service in title if only one field, label as 'Multiple Services' if more than one.
-    if len(event.deep_get("related", "services", "type")) == 1:
+    if len(event.deep_get("related", "services", "type", default=[])) == 1:
         service = event.deep_get("related", "services", "type")[0]
     else:
         service = "Multiple Services"

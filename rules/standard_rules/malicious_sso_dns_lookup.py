@@ -57,4 +57,6 @@ def rule(event):
 
 
 def title(event):
-    return f"Potential Malicious SSO Domain - {event.get('p_any_domain_names',[])[0]}"
+    return (
+        f"Potential Malicious SSO Domain - {event.get('p_any_domain_names',['NO_DOMAIN_FOUND'])[0]}"
+    )
