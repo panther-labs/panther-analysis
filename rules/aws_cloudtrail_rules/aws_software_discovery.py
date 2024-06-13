@@ -36,7 +36,7 @@ def title(event):
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "principalId")
+    return deep_get(event, "userIdentity", "principalId", default="NO_PRINCIPAL_ID_FOUND")
 
 
 def alert_context(event):
