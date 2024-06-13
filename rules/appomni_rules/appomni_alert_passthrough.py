@@ -1,3 +1,6 @@
+SEV_DICT = {0: "Critical", 1: "High", 2: "Medium", 3: "Low", 4: "Info"}
+
+
 def rule(event):
     # Only alert where event.kind == "alert"
     if event.deep_get("event", "kind") == "alert":
@@ -7,11 +10,10 @@ def rule(event):
 
 def title(event):
     # Create title that includes severity and message
-    sev_dict = {0: "Critical", 1: "High", 2: "Medium", 3: "Low", 4: "Informational"}
-    sev = sev_dict[event.deep_get("event", "severity")]
+    sev = SEV_DICT.get(event.deep_get("event", "severity"))
 
     # Use type service in title if only one field, label as 'Multiple Services' if more than one.
-    if len(event.deep_get("related", "services", "type")) == 1:
+    if len(event.deep_get("related", "services", "type", default=[])) == 1:
         service = event.deep_get("related", "services", "type")[0]
     else:
         service = "Multiple Services"
@@ -21,8 +23,7 @@ def title(event):
 
 def severity(event):
     # Update Panther alert severity based on severity from AppOmni Alert
-    sev = {0: "Critical", 1: "High", 2: "Medium", 3: "Low", 4: "Informational"}
-    return sev[event.deep_get("event", "severity")]
+    return SEV_DICT[event.deep_get("event", "severity", default=4)]
 
 
 def dedup(event):

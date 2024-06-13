@@ -37,6 +37,6 @@ def title(event):
 
 def alert_context(event):
     context = gcp_alert_context(event)
-    containers_info = deep_walk(event, "protoPayload", "response", "spec", "containers")
+    containers_info = deep_walk(event, "protoPayload", "response", "spec", "containers", default=[])
     context["pod_security_context"] = [i.get("securityContext") for i in containers_info]
     return context

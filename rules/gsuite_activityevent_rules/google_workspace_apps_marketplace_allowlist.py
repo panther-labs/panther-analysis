@@ -24,6 +24,6 @@ def title(event):
     actor = deep_get(event, "actor", "email", default="<NO_EMAIL_FOUND>")
     return (
         f"Google Workspace User [{actor}] "
-        f"made an application allowlist setting change from [{value_dict.get(old_val)}] "
-        f"to [{value_dict.get(new_val)}]"
+        f"made an application allowlist setting change from [{value_dict.get(str(old_val))}] "
+        f"to [{value_dict.get(str(new_val))}]"
     )

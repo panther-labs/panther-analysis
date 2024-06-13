@@ -1,6 +1,6 @@
 import datetime
 
-from panther_base_helpers import PantherUnexpectedAlert, deep_get, pattern_match, pattern_match_list
+from panther_base_helpers import deep_get, pattern_match, pattern_match_list
 
 COMPANY_DOMAIN = "your-company-name.com"
 EXCEPTION_PATTERNS = {
@@ -96,4 +96,4 @@ def title(event):
                 + f'"{doc_title}" to {target_user}'
             )
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
-    raise PantherUnexpectedAlert("No matching events, but DangerousShares still fired")
+    return "No matching events, but DangerousShares still fired"
