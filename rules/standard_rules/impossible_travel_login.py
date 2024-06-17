@@ -33,7 +33,7 @@ def rule(event):
     global IS_PRIVATE_RELAY
 
     EVENT_CITY_TRACKING = {}
-    CACHE_KEY = None
+    CACHE_KEY = ""
     IS_VPN = False
     IS_PRIVATE_RELAY = False
 
@@ -99,7 +99,7 @@ def rule(event):
 
     # Generate a unique cache key for each user per log type
     CACHE_KEY = gen_key(event)
-    if CACHE_KEY is None:
+    if not CACHE_KEY:
         # We can't save without a cache key
         return False
     # Retrieve the prior login info from the cache, if any

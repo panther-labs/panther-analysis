@@ -1,5 +1,9 @@
 <p align="center">
-  <a href="https://panther.com"><img src=".img/panther-logo-github-highres.png" width=40% alt="Panther Logo"/></a>
+  <a href="https://panther.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".img/panther-logo-github-highres-light.png" width=75%>
+    <source media="(prefers-color-scheme: light)" srcset=".img/panther-logo-github-highres-dark.png" width=75%>
+    <img alt="Displays the dark Panther logo in light mode an the light Panther logo in dark mode.">
+  </picture></a>
 </p>
 
 <h3 align="center">Built-in Panther Detections</h3>
@@ -254,6 +258,14 @@ git pull panther-upstream main
 # Push the latest changes up to your forked repo and merge them
 git push
 ```
+
+# Remove Deprecated Formatters
+
+Previously, Node, NPM and Prettier were used for formatting Markdown and YAML files; these are no longer in use.
+
+Depending on how Node is managed, it will need to be uninstalled or removed if it is no longer needed elsewhere. Refer to your system/package manager's documentation for instructions on removing Node.
+
+Otherwise, running `npm uninstall prettier` will remove Prettier.
 
 # License
 

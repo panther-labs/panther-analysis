@@ -13,7 +13,7 @@ def rule(event):
         return False
 
     user_event_id = f"new_user_{event.get('p_row_id')}"
-    new_user = event.udm("user")
+    new_user = event.udm("user") or "<UNKNOWN_USER>"
     new_account = event.udm("user_account_id") or "<UNKNOWN_ACCOUNT>"
     event_time = resolve_timestamp_string(event.get("p_event_time"))
     expiry_time = event_time + TTL

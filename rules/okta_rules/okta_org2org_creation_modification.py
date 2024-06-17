@@ -15,7 +15,7 @@ def rule(event):
 
 
 def title(event):
-    action = event.get("eventType").split(".")[2]
+    action = event.get("eventType").split(".")[-1]
     target = deep_walk(
         event, "target", "alternateId", default="<alternateId-not-found>", return_val="first"
     )

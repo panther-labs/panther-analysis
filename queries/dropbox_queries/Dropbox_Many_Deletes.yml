@@ -1,19 +1,24 @@
-AnalysisType: scheduled_query
-Description: Dropbox Many Deletes
+AnalysisType: scheduled_rule
+Description: Detects when a dropbox user deletes many documents.
+DisplayName: "Dropbox Many Deletes"
 Enabled: false
-Query: |-
-  SELECT
-    actor:user:email AS user,
-    ARRAY_AGG( DISTINCT assets[0]:path:contextual) AS deleted_files,
-    ARRAY_SIZE(deleted_files) as delete_count,
-    TIME_SLICE(p_event_time, 60, 'minute') as t_s
-  FROM panther_logs.public.dropbox_teamevent
-  WHERE p_occurs_since('1 day')
-    AND event_type:_tag = 'file_delete'
-  GROUP BY actor:user:email, t_s
-  HAVING delete_count > 2
-  ORDER BY delete_count DESC
-QueryName: "Dropbox Many Deletes"
-Schedule:
-  RateMinutes: 1440
-  TimeoutMinutes: 3
+Filename: dropbox_many_deletes.py
+Reference: https://help.dropbox.com/delete-restore/delete-files
+Severity: Medium
+Tests:
+  - ExpectedResult: true
+    Log:
+      deleted_files:
+        - /test/test2.txt
+        - /test/test3.txt
+        - /test/test5.txt
+        - /test/test4.txt
+      delete_count: 4
+      t_s: "2023-04-19 19:00:00"
+      user: alice.bob@company.com
+    Name: Test-8f5ece
+DedupPeriodMinutes: 60
+RuleID: "Dropbox.Many.Deletes"
+Threshold: 1
+ScheduledQueries:
+  - Dropbox Many Deletes
