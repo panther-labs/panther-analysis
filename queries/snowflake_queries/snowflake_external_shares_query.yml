@@ -12,15 +12,16 @@ SnowflakeQuery: >
   --this was adapted from a Security Feature Checklist query
 
   SELECT
+    start_time as p_event_time,
     *
   FROM snowflake.account_usage.data_transfer_history
     WHERE
-      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
-      AND start_time IS NOT NULL
+      p_occurs_since('1 day')
+      AND p_event_time IS NOT NULL
       AND source_cloud IS NOT NULL
       AND target_cloud IS NOT NULL
       AND bytes_transferred > 0
-  ORDER BY start_time desc
+  ORDER BY p_event_time desc
 Schedule:
   CronExpression: "0 0 * * *"
   TimeoutMinutes: 2

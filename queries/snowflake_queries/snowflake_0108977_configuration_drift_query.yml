@@ -14,7 +14,7 @@ SnowflakeQuery: >
       query_text,
       user_name,
       role_name,
-      start_time,
+      start_time as p_event_time,
       end_time
   FROM snowflake.account_usage.query_history
     WHERE execution_status = 'SUCCESS'
