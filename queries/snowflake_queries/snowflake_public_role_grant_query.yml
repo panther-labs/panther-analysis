@@ -15,10 +15,11 @@ SnowflakeQuery: >
     user_name,
     role_name,
     query_text,
+    start_time as p_event_time,
     end_time
   FROM snowflake.account_usage.query_history
     WHERE
-      DATEDIFF(HOUR, start_time, CURRENT_TIMESTAMP) < 24
+      p_occurs_since('1 day')
       AND execution_status = 'SUCCESS'
       AND query_type = 'GRANT'
       AND query_text ILIKE '%to%public%'
