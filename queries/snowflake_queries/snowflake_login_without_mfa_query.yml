@@ -12,7 +12,7 @@ SnowflakeQuery: >
   --this was adapted from a Security Feature Checklist query
 
   SELECT
-    event_timestamp,
+    event_timestamp as p_event_time,
     user_name,
     client_ip,
     reported_client_type,
@@ -21,11 +21,11 @@ SnowflakeQuery: >
     second_authentication_factor
   FROM snowflake.account_usage.login_history
     WHERE
-      DATEDIFF(HOUR, event_timestamp, CURRENT_TIMESTAMP) < 24
+      p_occurs_since('1 day')
       AND event_type = 'LOGIN'
       AND first_authentication_factor = 'PASSWORD'
       AND second_authentication_factor IS null
-  ORDER BY event_timestamp desc
+  ORDER BY p_event_time desc
 Schedule:
   RateMinutes: 1440
   TimeoutMinutes: 3

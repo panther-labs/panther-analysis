@@ -6,6 +6,7 @@ SnowflakeQuery: >
   -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
 
   SELECT
+    event_timestamp as p_event_time,
     *
   FROM
       snowflake.account_usage.login_history
@@ -78,6 +79,5 @@ SnowflakeQuery: >
   '146.70.119.24',
   '138.199.34.144'
       )
-  ORDER BY
-  event_timestamp
+  ORDER BY p_event_time
   LIMIT 100;
