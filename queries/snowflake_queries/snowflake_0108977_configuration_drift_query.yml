@@ -3,6 +3,8 @@ Enabled: false
 QueryName: "Query.Snowflake.ConfigurationDrift"
 Description: >
   Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
+Tags:
+  - Configuration Required
 SnowflakeQuery: >
   -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
 
@@ -12,7 +14,7 @@ SnowflakeQuery: >
       query_text,
       user_name,
       role_name,
-      start_time,
+      start_time as p_event_time,
       end_time
   FROM snowflake.account_usage.query_history
     WHERE execution_status = 'SUCCESS'
@@ -44,6 +46,7 @@ SnowflakeQuery: >
         AND query_type = 'GRANT'
         AND execution_status = 'SUCCESS'
       )
+    AND p_occurs_since('1 day')
     ORDER BY end_time desc
     LIMIT 100;
 Schedule:

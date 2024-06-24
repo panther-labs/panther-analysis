@@ -7,6 +7,7 @@ SnowflakeQuery: >
   -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
 
   SELECT
+    CREATED_ON as p_event_time,
     *
   FROM
       snowflake.account_usage.sessions
@@ -18,7 +19,8 @@ SnowflakeQuery: >
           AND
           PARSE_JSON(CLIENT_ENVIRONMENT):OS = 'Windows Server 2022'
       )
-  ORDER BY CREATED_ON
+  AND p_occurs_since('1 day')
+  ORDER BY p_event_time
   LIMIT 100;
 Schedule:
   RateMinutes: 1440

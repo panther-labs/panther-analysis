@@ -2,7 +2,7 @@ from json import loads
 
 import panther_event_type_helpers as event_type
 from panther_default import lookup_aws_account_name
-from panther_ipinfo_helpers import geoinfo_from_ip
+from panther_ipinfo_helpers import PantherIPInfoException, geoinfo_from_ip
 from panther_oss_helpers import add_parse_delay
 
 
@@ -23,7 +23,10 @@ def title(event):
 
 
 def alert_context(event):
-    geoinfo = geoinfo_from_ip(event=event, match_field=event.udm_path("source_ip"))
+    try:
+        geoinfo = geoinfo_from_ip(event=event, match_field=event.udm_path("source_ip"))
+    except PantherIPInfoException:
+        geoinfo = {}
     if isinstance(geoinfo, str):
         geoinfo = loads(geoinfo)
     context = {}
@@ -33,5 +36,10 @@ def alert_context(event):
     context["ip"] = geoinfo.get("ip")
     context["reverse_lookup"] = geoinfo.get("hostname", "No reverse lookup hostname")
     context["ip_org"] = geoinfo.get("org", "No organization listed")
-    context = add_parse_delay(event, context)
+    try:
+        context = add_parse_delay(event, context)
+    except TypeError:
+        pass
+    except AttributeError:
+        pass
     return context

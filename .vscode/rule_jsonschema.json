@@ -61,15 +61,18 @@
       "$ref": "#/definitions/ScheduledQueries"
     }
   },
-  "required": [
-    "AnalysisType",
-    "DisplayName",
-    "Enabled",
-    "RuleID",
-    "Severity",
-    "Tests"
-  ],
+  "required": ["AnalysisType", "DisplayName", "Enabled", "RuleID", "Severity"],
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "AnalysisType": { "enum": ["rule", "scheduled_rule"] } }
+      },
+      "then": {
+        "required": ["Tests"]
+      }
+    }
+  ],
   "anyOf": [
     {
       "required": ["Filename"]
@@ -82,7 +85,7 @@
     "AnalysisType": {
       "description": "what kind of detection",
       "type": "string",
-      "enum": ["rule", "scheduled_rule"],
+      "enum": ["rule", "scheduled_rule", "correlation_rule"],
       "default": "rule"
     },
     "DisplayName": {
@@ -177,6 +180,23 @@
       "type": "string",
       "minLength": 1
     },
+    "RuleMatch": {
+      "$comment": "https://docs.panther.com/detections/correlation-rules/correlation-rule-reference#ruleoutput-fields",
+      "description": "The Match that occurred for 1 of the rules in this test case",
+      "type": "object",
+      "required": ["ID"],
+      "properties": {
+        "ID": {
+          "type": "string",
+          "description": "The ID of the Rule from the Sequence/Group section above to simulate matches on"
+        },
+        "Matches": {
+          "type": "object",
+          "description": "The Match definition for this rule. Key: field that matched. value: mapping of the value that was matched on to the timestamps that the match(es) occurred. See docs for more details",
+          "$comment": "https://docs.panther.com/detections/correlation-rules/correlation-rule-reference#matchvalue-fields"
+        }
+      }
+    },
     "Tests": {
       "$comment": "https://docs.panther.com/detections/writing-and-editing-detections",
       "description": "Unit test cases",
@@ -225,15 +245,41 @@
               "else": false
             }
           ]
+        },
+        "RuleOutputs": {
+          "anyOf": [
+            {
+              "if": {
+                "properties": {
+                  "AnalysisType": { "enum": ["correlation_rule"] }
+                }
+              },
+              "then": {
+                "type": "array",
+                "description": "List of Rule Matches that occurred for this test case",
+                "items": { "$ref": "#/definitions/RuleMatch" },
+                "minItems": 1
+              },
+              "else": false
+            }
+          ]
         }
       },
-      "allOf": [
+      "oneOf": [
         {
           "if": {
             "properties": { "AnalysisType": { "enum": ["rule"] } }
           },
           "then": {
             "required": ["Name", "ExpectedResult", "Log"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "AnalysisType": { "enum": ["correlation_rule"] } }
+          },
+          "then": {
+            "required": ["Name", "ExpectedResult", "RuleOutputs"]
           }
         }
       ]

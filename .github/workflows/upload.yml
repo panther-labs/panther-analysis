@@ -14,7 +14,7 @@ jobs:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
-      - uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+      - uses: step-security/harden-runner@17d0e2bd7d51742c71671bd19fa12bdc9d40a3d6 # v2.8.1
         with:
           egress-policy: audit
       - name: Validate Secrets
@@ -24,7 +24,7 @@ jobs:
           exit 0
 
       - name: Checkout panther-analysis
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
 
       - name: Set python version
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
