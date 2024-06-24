@@ -44,7 +44,6 @@ WORKDIR /home/panther-analysis
 # Install requirements
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN pipenv uninstall --all
 RUN pipenv sync --dev
 
 # Remove pipfile so it doesn't interfere with local files after install
