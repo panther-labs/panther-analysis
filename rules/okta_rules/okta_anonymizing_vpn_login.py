@@ -18,3 +18,14 @@ def title(event):
 
 def alert_context(event):
     return okta_alert_context(event)
+
+
+def severity(event):
+    # If the user is using Apple Private Relay, demote the severity to INFO
+    if (
+        event.deep_get("p_enrichment", "ipinfo_privacy", "client.ipAddress", "service")
+        == "Apple Private Relay"
+    ):
+        return "INFO"
+    # Return Medium by default
+    return "MEDIUM"
