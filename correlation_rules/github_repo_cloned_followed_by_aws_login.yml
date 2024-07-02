@@ -1,0 +1,26 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.Repo.Cloned.Followed.By.AWS.Login"
+DisplayName: "GitHub Repo Cloned Followed By AWS Login"
+Enabled: true
+Severity: Medium
+Description: The threat actor appears to have used automated tools to continually clone public GitHub repositories and scan for exposed Amazon Web Services (AWS) IAM credentials. The threat actor also appeared to blocklist AWS accounts that routinely expose IAM credentials, in what we believe to be an effort to prevent security researchers from following their operations. The threat actors might have perceived them to be obvious honey traps.
+Reference: https://unit42.paloaltonetworks.com/malicious-operations-of-exposed-iam-keys-cryptojacking/
+Detection:
+  - Sequence:
+      - ID: GitHub Repository Cloned
+        RuleID: GitHub.Repository.Cloned
+        MinMatchCount: 1
+      - ID: AWS Console Login
+        RuleID: AWS.Console.Login
+        MinMatchCount: 1
+    Transitions:
+      - ID: GitHub to AWS movement
+        From: GitHub Repository Cloned
+        To: AWS Console Login
+        WithinTimeFrameMinutes: 60
+        Match:
+          - On: p_alert_context.caller_ip
+    LookbackWindowMinutes: 15
+    Schedule:
+      RateMinutes: 10
+      TimeoutMinutes: 1
