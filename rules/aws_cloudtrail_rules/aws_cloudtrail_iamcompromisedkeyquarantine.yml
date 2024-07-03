@@ -1,0 +1,114 @@
+AnalysisType: rule
+Filename: aws_cloudtrail_iamcompromisedkeyquarantine.py
+RuleID: "AWS.CloudTrail.IAMCompromisedKeyQuarantine"
+DisplayName: "AWS Compromised IAM Key Quarantine"
+Enabled: true
+LogTypes:
+    - AWS.CloudTrail
+Tags:
+    - AWS
+    - Credential Access:Unsecured Credentials
+    - Identity and Access Management
+    - Initial Access:Valid Accounts
+Severity: High
+Reports:
+    MITRE ATT&CK:
+        - TA0001:T1078.004
+        - TA0006:T1552.001
+Description: Detects when an IAM user has the AWSCompromisedKeyQuarantineV2 policy attached to their account.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: |
+    Check the quarantined IAM entity's key usage for signs of compromise and follow the instructions outlined in the AWS support case opened regarding this event.
+Reference: https://unit42.paloaltonetworks.com/malicious-operations-of-exposed-iam-keys-cryptojacking/
+Tests:
+    - Name: AttachUserPolicy AWSCompromisedKeyQuarantineV2-true
+      ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: e7bb4b23-66e1-4656-b607-f575fde3b790
+        eventName: AttachUserPolicy
+        eventSource: iam.amazonaws.com
+        eventTime: "2023-11-21T23:23:52Z"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789012"
+        requestID: a2468e00-2b3c-4696-8056-327a624b5887
+        requestParameters:
+            policyArn: arn:aws:iam::aws:policy/AWSCompromisedKeyQuarantineV2
+            userName: test-user
+        responseElements: null
+        sessionCredentialFromConsole: "true"
+        sourceIPAddress: 1.2.3.4
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: FAKE_ACCESS_KEY
+            accountId: "123456789012"
+            arn: arn:aws:sts::123456789012:assumed-role/a-role/user.name
+            principalId: FAKE_PRINCIPAL:user.name
+            sessionContext:
+                attributes:
+                    creationDate: "2023-11-21T22:28:31Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "123456789012"
+                    arn: arn:aws:iam::123456789012:role/a-role
+                    principalId: FAKE_PRINCIPAL
+                    type: Role
+                    userName: a-role
+                webIdFederationData: {}
+            type: AssumedRole
+    - Name: PutUserPolicy-false
+      ExpectedResult: false
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 7ee6ba6e-1943-417a-a6a3-3a2b0292cdac
+        eventName: PutUserPolicy
+        eventSource: iam.amazonaws.com
+        eventTime: "2023-11-21T23:31:17Z"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        readOnly: false
+        recipientAccountId: "123456789012"
+        requestID: 2f59fa44-615c-40b7-a31f-01401e523663
+        requestParameters:
+            policyDocument: |-
+                {
+                	"Version": "2012-10-17",
+                	"Statement": [
+                		{
+                			"Sid": "TestUserDenyAll",
+                			"Effect": "Deny",
+                			"Action": ["*"],
+                			"Resource": ["*"]
+                		}
+                	]
+                }
+            policyName: TestUserDenyAll
+            userName: test-user
+        responseElements: null
+        sessionCredentialFromConsole: "true"
+        sourceIPAddress: 136.32.237.81
+        userAgent: AWS Internal
+        userIdentity:
+            accessKeyId: FAKE_ACCESS_KEY
+            accountId: "123456789012"
+            arn: arn:aws:sts::123456789012:assumed-role/a-role/user.name
+            principalId: FAKE_PRINCIPAL:evan.gibler
+            sessionContext:
+                attributes:
+                    creationDate: "2023-11-21T22:28:31Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "123456789012"
+                    arn: arn:aws:iam::123456789012:role/a-role
+                    principalId: FAKE_PRINCIPAL
+                    type: Role
+                    userName: a-role
+                webIdFederationData: {}
+            type: AssumedRole

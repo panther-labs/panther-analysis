@@ -1,0 +1,39 @@
+AnalysisType: rule
+Filename: signal_-_okta_sso_to_aws.py
+RuleID: "SIGNAL.-.Okta.SSO.to.AWS"
+DisplayName: "SIGNAL - Okta SSO to AWS"
+Enabled: true
+LogTypes:
+    - Okta.SystemLog
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Test-3503a9
+      ExpectedResult: true
+      Log:
+        displayMessage: User single sign on to app
+        eventType: user.authentication.sso
+        legacyEventType: app.auth.sso
+        outcome:
+            result: SUCCESS
+        securityContext: {}
+        severity: INFO
+        target:
+            - alternateId: AWS Production
+              detailEntry:
+                signOnModeType: SAML_2_0
+              displayName: AWS IAM Identity Center
+              id: 0oaua5ldoougycQAO696
+              type: AppInstance
+            - alternateId: aardvark
+              displayName: aardvark
+              id: 0ua8aardvarkD697
+              type: AppUser
+        transaction:
+            detail: {}
+            id: 1a3852fc0d172ecdad0e2447e47fbc98
+            type: WEB
+        uuid: 35cae732-21bd-11ef-a011-dd05aa53a11a
+        version: "0"
+CreateAlert: false

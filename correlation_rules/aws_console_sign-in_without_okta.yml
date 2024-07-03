@@ -1,0 +1,32 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.Console.Sign-In.Without.Okta"
+DisplayName: "AWS Console Sign-In Without Okta"
+Enabled: true
+Tags:
+    - AWS
+    - Configuration Required
+    - Okta
+Severity: High
+Description: A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
+Detection:
+    - Sequence: # Create a list of rules or signals to correlate (order matters)
+        - ID: SIGNAL-OktaSSOtoAWS
+          RuleID: SIGNAL.-.Okta.SSO.to.AWS
+          Absence: true # makes sure the step did not happen
+        - ID: SIGNAL-AWSConsoleSign-In
+          RuleID: SIGNAL.-.AWS.Console.Sign-In
+          MinMatchCount: 1
+          # MaxMatchCount:  
+          # Absence: true # makes sure the step did not happen
+      Transitions: # Add conditions for each transition
+        - ID: Match SIGNAL-OktaSSOtoAWS and SIGNAL-AWSConsoleSign-In on username
+          From: SIGNAL-OktaSSOtoAWS
+          To: SIGNAL-AWSConsoleSign-In
+          WithinTimeFrameMinutes: 5 # set max amount of time for this transition to occur
+          Match:
+            - On: p_udm.user.id # specify a key path for the transition to match on
+      Schedule:
+        RateMinutes: 10
+        # CronExpression: # set if you need a schedule other than minutes 
+        TimeoutMinutes: 2
+      LookbackWindowMinutes: 15 # the amount of time this correlation rule should lookback over when evaluating rule and signal matches

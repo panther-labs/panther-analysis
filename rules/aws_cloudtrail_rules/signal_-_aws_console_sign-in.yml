@@ -1,0 +1,24 @@
+AnalysisType: rule
+Filename: signal_-_aws_console_sign-in.py
+RuleID: "SIGNAL.-.AWS.Console.Sign-In"
+DisplayName: "SIGNAL - AWS Console Sign-In"
+Enabled: true
+LogTypes:
+    - AWS.CloudTrail
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Test-94439c
+      ExpectedResult: true
+      Log:
+        awsRegion: us-east-1
+        eventCategory: Management
+        eventID: 8cb05708-9764-4774-a048-59a4c8e1684d
+        eventName: Authenticate
+        eventSource: sso.amazonaws.com
+        eventTime: "2024-06-03 15:23:22.000000000"
+        eventType: AwsServiceEvent
+        eventVersion: "1.08"
+        managementEvent: true
+CreateAlert: false

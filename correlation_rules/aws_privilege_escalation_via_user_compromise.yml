@@ -1,0 +1,23 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.Privilege.Escalation.Via.User.Compromise"
+DisplayName: "AWS Privilege Escalation Via User Compromise"
+Enabled: true
+Severity: Medium
+Detection:
+    - Sequence:
+        - ID: User Backdoored
+          RuleID: AWS.IAM.Backdoor.User.Keys
+          MinMatchCount: 1
+        - ID: User Accessed
+          RuleID: AWS.CloudTrail.UserAccessKeyAuth
+          MinMatchCount: 1
+      Transitions:
+        - ID: Correlate IP
+          From: User Backdoored
+          To: User Accessed
+          Match:
+            - On: p_alert_context.ip_accessKeyId
+      Schedule:
+        RateMinutes: 15
+        TimeoutMinutes: 2
+      LookbackWindowMinutes: 60

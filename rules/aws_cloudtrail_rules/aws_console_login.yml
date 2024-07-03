@@ -1,0 +1,15 @@
+AnalysisType: rule
+RuleID: "AWS.Console.Login"
+DisplayName: "AWS Console Login"
+Enabled: true
+LogTypes:
+    - AWS.CloudTrail
+Severity: Low
+DedupPeriodMinutes: 60
+Threshold: 1
+Detection:
+    - Key: eventName
+      Condition: Equals
+      Value: ConsoleLogin
+AlertTitle: '{userIdentity.userName} logged into the AWS Management Console'
+CreateAlert: false
