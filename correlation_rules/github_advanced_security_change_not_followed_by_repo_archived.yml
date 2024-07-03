@@ -2,26 +2,23 @@ AnalysisType: correlation_rule
 RuleID: "GitHub.Advanced.Security.Change.NOT.FOLLOWED.BY.repo.archived"
 DisplayName: "GitHub Advanced Security Change NOT FOLLOWED BY repo archived"
 Enabled: true
-Severity: Critical # the highest possible severity, as we do not have dynamic severities
+Severity: Critical 
 Description: Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
 Reference: https://docs.github.com/en/code-security/getting-started/auditing-security-alerts
 Detection:
-    - Sequence:
-        - ID: ID.1
-          RuleID: GitHub.Advanced.Security.Change
-          MinMatchCount: 1
-        - ID: ID.2
-          RuleID: Github.Repo.Archived
-          Absence: true
-      Transitions:
-        # Add conditions for each transition, if needed (otherwise, the rules and rule groups will simply follow a default sequence)
-        - ID: TR1
-          From: ID.1
-          To: ID.2
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.repo
-      Schedule:
-        # Required scheduled rule settings
-        RateMinutes: 10 # or CronExpression, required field
-        TimeoutMinutes: 1
+  - Sequence:
+      - ID: GHASChange
+        RuleID: GitHub.Advanced.Security.Change
+      - ID: RepoArchived
+        RuleID: Github.Repo.Archived
+        Absence: true
+    Transitions:
+      - ID: GHASChange NOT FOLLOWED BY RepoArchived
+        From: GHASChange
+        To: RepoArchived
+        Match:
+          - On: p_alert_context.repo
+    LookbackWindowMinutes: 15
+    Schedule:
+      RateMinutes: 10
+      TimeoutMinutes: 1

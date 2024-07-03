@@ -4,7 +4,7 @@ DisplayName: "GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy"
 Enabled: true
 Severity: High
 Description: Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run 
-  Service that, when invoked, returns the Service Account’s access token by accessing the metadata API of the server 
+  Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server 
   it is running on.
 Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
 Runbook: Confirm this was authorized and necessary behavior
@@ -13,23 +13,17 @@ Reports:
         - TA0004:T1548  # Abuse Elevation Control Mechanism
 Detection:
     - Sequence:
-        # Create a list of rules to correlate
-        - ID: ID.1
+        - ID: ServiceCreated
           RuleID: GCP.Cloud.Run.Service.Created
-          MinMatchCount: 1
-        - ID: ID.2
+        - ID: SetIAMPolicy
           RuleID: GCP.Cloud.Run.Set.IAM.Policy
-          MinMatchCount: 1
       Transitions:
-        # Add conditions for each transition, if needed (otherwise, the rules and rule groups will simply follow a default sequence)
-        - ID: TR1
-          From: ID.1
-          To: ID.2
-          WithinTimeFrameMinutes: 60
+        - ID: ServiceCreated FOLLOWED BY SetIAMPolicy
+          From: ServiceCreated
+          To: SetIAMPolicy
           Match:
             - On: p_alert_context.caller_ip
-      LookbackWindowMinutes: 60
+      LookbackWindowMinutes: 90
       Schedule:
-        # Required scheduled rule settings
-        RateMinutes: 60 # or CronExpression, required field
+        RateMinutes: 60 
         TimeoutMinutes: 1

@@ -7,23 +7,18 @@ Description: Identifies when StopInstance and ModifyInstanceAttributes CloudTrai
 Reference: https://unit42.paloaltonetworks.com/malicious-operations-of-exposed-iam-keys-cryptojacking/
 Detection:
     - Sequence:
-        # Create a list of rules to correlate
-        - ID: ID.1
+        - ID: StopInstance
           RuleID: AWS.CloudTrail.StopInstances
-          MinMatchCount: 1
-        - ID: ID.2
+        - ID: StartupScriptChange
           RuleID: AWS.EC2.Startup.Script.Change
-          MinMatchCount: 1
       Transitions:
-        # Add conditions for each transition, if needed (otherwise, the rules and rule groups will simply follow a default sequence)
-        - ID: TR1
-          From: ID.1
-          To: ID.2
-          WithinTimeFrameMinutes: 60
+        - ID: StopInstance FOLLOWED BY StartupScriptChange
+          From: StopInstance
+          To: StartupScriptChange
           Match:
             - On: p_alert_context.instance_id
-      LookbackWindowMinutes: 60
+            # TODO: instance_id in StopInstance is a list, but in StartupScriptChange it is a string
+      LookbackWindowMinutes: 90
       Schedule:
-        # Required scheduled rule settings 
-        RateMinutes: 60 # or CronExpression, required field 
+        RateMinutes: 60 
         TimeoutMinutes: 1
