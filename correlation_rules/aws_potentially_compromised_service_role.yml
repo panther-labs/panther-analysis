@@ -1,0 +1,32 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.Potentially.Stolen.Service.Role"
+DisplayName: "AWS Potentiall Stolen Service Role"
+Enabled: true
+Tags:
+    - AWS
+Severity: High
+Description: A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
+Detection:
+  - Sequence: # Create a list of rules or signals to correlate (order matters)
+      - ID: SIGNAL-RoleAssumedbyAWSService
+        RuleID: SIGNAL.-.Role.Assumed.by.AWS.Service
+        MinMatchCount: 1
+        # MaxMatchCount:  
+        # Absence: true # makes sure the step did not happen
+      - ID: SIGNAL-RoleAssumedbyUser
+        RuleID: SIGNAL.-.Role.Assumed.by.User
+        MinMatchCount: 1
+        # MaxMatchCount:  
+        # Absence: true # makes sure the step did not happen
+    Transitions: # Add conditions for each transition
+      - ID: Match SIGNAL-RoleAssumedbyAWSService and SIGNAL-RoleAssumedbyUser on username
+        From: SIGNAL-RoleAssumedbyAWSService   
+        To: SIGNAL-RoleAssumedbyUser
+        WithinTimeFrameMinutes: 1440 # set max amount of time for this transition to occur
+        Match:
+          - On: requestParameters.roleArn # specify a key path for the transition to match on
+    Schedule:
+      RateMinutes: 60
+      # CronExpression: # set if you need a schedule other than minutes 
+      TimeoutMinutes: 2
+    LookbackWindowMinutes: 1500 # the amount of time this correlation rule should lookback over when evaluating rule and signal matches
