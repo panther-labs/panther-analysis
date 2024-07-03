@@ -16,8 +16,9 @@ Detection:
           From: StopInstance
           To: StartupScriptChange
           Match:
-            - On: p_alert_context.instance_id
-            # TODO: instance_id in StopInstance is a list, but in StartupScriptChange it is a string
+            - On: p_alert_context.instance_ids
+            # instance_id in StopInstance is a list, but in StartupScriptChange it is a string
+            # list on list comparison works! it does an intersection of the 2 lists
       LookbackWindowMinutes: 90
       Schedule:
         RateMinutes: 60 
