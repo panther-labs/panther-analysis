@@ -21,5 +21,27 @@ Detection:
             # list on list comparison works! it does an intersection of the 2 lists
       LookbackWindowMinutes: 90
       Schedule:
-        RateMinutes: 60 
+        RateMinutes: 60
         TimeoutMinutes: 1
+Tests:
+    - Name: Instance Stopped, Followed By Script Change
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: StopInstance
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:00:01Z"
+        - ID: StartupScriptChange
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:01:01Z"
+    - Name: Instance Stopped, Not Followed By Script Change
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: StopInstance
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:00:01Z"

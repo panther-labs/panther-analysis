@@ -27,3 +27,46 @@ Detection:
       Schedule:
         RateMinutes: 60 
         TimeoutMinutes: 1
+Tests:
+    - Name: GCP Service Run, Followed By IAM Policy Change From Same IP
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: ServiceCreated
+          Matches:
+            p_alert_context.caller_ip:
+              1.1.1.1:
+                - "2024-06-01T10:00:00Z"
+        - ID: SetIAMPolicy
+          Matches:
+            p_alert_context.caller_ip:
+              1.1.1.1:
+                - "2024-06-01T10:00:01Z"
+    - Name: GCP Service Run, Not Followed By IAM Policy Change
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: ServiceCreated
+          Matches:
+            p_alert_context.caller_ip:
+              1.1.1.1:
+                - "2024-06-01T10:00:00Z"
+    - Name: IAM Policy Change, Not Preceeded By GCP Service Run
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: SetIAMPolicy
+          Matches:
+            p_alert_context.caller_ip:
+              1.1.1.1:
+                - "2024-06-01T10:00:01Z"
+    - Name: GCP Service Run, Followed By IAM Policy Change From Different IP
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: ServiceCreated
+          Matches:
+            p_alert_context.caller_ip:
+              1.1.1.1:
+                - "2024-06-01T10:00:00Z"
+        - ID: SetIAMPolicy
+          Matches:
+            p_alert_context.caller_ip:
+              2.2.2.2:
+                - "2024-06-01T10:00:01Z"

@@ -22,3 +22,38 @@ Detection:
     Schedule:
       RateMinutes: 10
       TimeoutMinutes: 1
+Tests:
+    - Name: Security Change on Repo, Followed By Same Repo Archived
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"
+        - ID: RepoArchived
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:01Z"
+    - Name: Security Change on Repo, Followed By Different Repo Archived
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"
+        - ID: RepoArchived
+          Matches:
+            p_alert_context.repo:
+              my-org/other-repo:
+                - "2024-06-01T10:00:01Z"
+    - Name: Security Change on Repo, Not Followed By Repo Archived
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"
