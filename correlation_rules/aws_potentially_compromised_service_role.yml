@@ -23,3 +23,40 @@ Detection:
       RateMinutes: 60
       TimeoutMinutes: 2
     LookbackWindowMinutes: 1500
+Tests:
+    - Name: Role Assumed By Service, Followed By Role Assumed By User
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: Role Assumed by Service
+          Matches:
+            requestParameters.roleArn:
+              FAKE_ROLE_ARN: [0]
+        - ID: Role Assumed by User
+          Matches:
+            requestParameters.roleArn:
+              FAKE_ROLE_ARN: [30]
+    - Name: Role Assumed By Service, Followed By Different Role Assumed By User
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: Role Assumed by Service
+          Matches:
+            requestParameters.roleArn:
+              FAKE_ROLE_ARN: [0]
+        - ID: Role Assumed by User
+          Matches:
+            requestParameters.roleArn:
+              OTHER_ROLE_ARN: [30]
+    - Name: Role Assumed By Service, Not Followed By Role Assumed By User
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: Role Assumed by Service
+          Matches:
+            requestParameters.roleArn:
+              FAKE_ROLE_ARN: [0]
+    - Name: Role Assumed By User, Not Preceded By Role Assumed By Service
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: Role Assumed by User
+          Matches:
+            requestParameters.roleArn:
+              FAKE_ROLE_ARN: [0]

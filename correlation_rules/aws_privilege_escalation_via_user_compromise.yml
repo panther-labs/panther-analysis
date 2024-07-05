@@ -19,3 +19,51 @@ Detection:
         RateMinutes: 15
         TimeoutMinutes: 2
       LookbackWindowMinutes: 60
+Tests:
+    - Name: Access Key Created and Used from Same IP
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [30]
+    - Name: Access Key Created and Used from Different IPs
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              2.2.2.2-FAKE_ACCESS_KEY_ID: [30]
+    - Name: Single IP Creates Access Key, Uses Different Key
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-OTHER_ACCESS_KEY_ID: [30]
+    - Name: Access Key Created But Not Used
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+    - Name: Access Key Used But Not Created
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [30]
