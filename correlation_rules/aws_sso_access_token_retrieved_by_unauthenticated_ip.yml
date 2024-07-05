@@ -9,22 +9,20 @@ Description: |-
     In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
 Reference: https://blog.christophetd.fr/phishing-for-aws-credentials-via-aws-sso-device-code-authentication/
 Detection:
-    - Sequence: # Create a list of rules or signals to correlate (order matters)
-        - ID: SIGNAL-Sign-inwithAWSCLIprompt
+    - Sequence:
+        - ID: Absent CLI Prompt
           RuleID: SIGNAL.-.Sign-in.with.AWS.CLI.prompt
-          Absence: true # makes sure the step did not happen
-        - ID: SIGNAL-RetrieveSSOaccesstoken
+          Absence: true
+        - ID: SSO Access Token Retrieved
           RuleID: SIGNAL.-.Retrieve.SSO.access.token
-          MinMatchCount: 1
-      Transitions: # Add conditions for each transition
-        - ID: Match SIGNAL-Sign-inwithAWSCLIprompt and SIGNAL-RetrieveSSOaccesstoken on IP
-          From: SIGNAL-Sign-inwithAWSCLIprompt
-          To: SIGNAL-RetrieveSSOaccesstoken
-          WithinTimeFrameMinutes: 120 # set max amount of time for this transition to occur
+      Transitions:
+        - ID: Absent CLI Prompt TO Access Token Retrieved ON IP Addr
+          From: Absent CLI Prompt
+          To: Access Token Retrieved
+          WithinTimeFrameMinutes: 120
           Match:
-            - On: sourceIPAddress # specify a key path for the transition to match on
+            - On: sourceIPAddress
       Schedule:
         RateMinutes: 15
-        # CronExpression: # set if you need a schedule other than minutes 
         TimeoutMinutes: 2
-      LookbackWindowMinutes: 60 # the amount of time this correlation rule should lookback over when evaluating rule and signal matches
+      LookbackWindowMinutes: 60

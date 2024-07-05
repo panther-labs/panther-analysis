@@ -7,12 +7,10 @@ Detection:
     - Sequence:
         - ID: User Backdoored
           RuleID: AWS.IAM.Backdoor.User.Keys
-          MinMatchCount: 1
         - ID: User Accessed
           RuleID: AWS.CloudTrail.UserAccessKeyAuth
-          MinMatchCount: 1
       Transitions:
-        - ID: Correlate IP
+        - ID: User Backdoored TO User Accessed ON IP Addr
           From: User Backdoored
           To: User Accessed
           Match:
