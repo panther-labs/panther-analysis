@@ -1,8 +1,9 @@
 AnalysisType: rule
-RuleID: "AWS.CloudTrail.StopInstances"
-DisplayName: "CloudTrail StopInstances"
+RuleID: "AWS.EC2.StopInstances"
+DisplayName: "CloudTrail EC2 StopInstances"
 Enabled: true
 CreateAlert: false
+Filename: aws_ec2_stopinstances.py
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -11,42 +12,6 @@ Severity: Info
 Description: >
   A CloudTrail instances were stopped. It makes further changes of instances possible
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-examples.html
-Detection:
-  - All:
-      - Key: errorCode
-        Condition: IsNullOrEmpty
-      - Key: errorMessage
-        Condition: IsNullOrEmpty
-      - Key: eventName
-        Condition: Equals
-        Value: StopInstances
-AlertTitle: "CloudTrail instances {requestParameters.instancesSet.items[*].instanceId} 
-in account [{recipientAccountId}] were stopped"
-AlertContext:
-  - KeyName: eventName
-    KeyValue:
-      Key: eventName
-  - KeyName: eventSource
-    KeyValue:
-      Key: eventSource
-  - KeyName: awsRegion
-    KeyValue:
-      Key: awsRegion
-  - KeyName: recipientAccountId
-    KeyValue:
-      Key: recipientAccountId
-  - KeyName: sourceIPAddress
-    KeyValue:
-      Key: sourceIPAddress
-  - KeyName: userAgent
-    KeyValue:
-      Key: userAgent
-  - KeyName: userIdentity
-    KeyValue:
-      Key: userIdentity
-  - KeyName: instance_ids
-    KeyValue:
-      KeyPath: requestParameters.instancesSet.items[*].instanceId
 Tests:
   -
     Name: CloudTrail Instances Were Stopped
