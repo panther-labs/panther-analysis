@@ -1,13 +1,14 @@
 from panther_base_helpers import aws_rule_context, deep_get
 
 PROFILE_EVENTS = {
-    'UpdateLoginProfile',
-    'CreateLoginProfile',
+    "UpdateLoginProfile",
+    "CreateLoginProfile",
 }
+
 
 def rule(event):
     # Only look for successes
-    if event.get('errorCode') or event.get('errorMessage'):
+    if event.get("errorCode") or event.get("errorMessage"):
         return False
 
     # Check when someone other than the user themselves creates or modifies a login profile

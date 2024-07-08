@@ -1,5 +1,4 @@
 def rule(event):
-    # Return True to match the log event and trigger an alert.
     return all(
         [
             event.get("eventType") == "user.authentication.sso",

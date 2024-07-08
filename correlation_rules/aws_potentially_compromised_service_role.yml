@@ -9,20 +9,19 @@ Description: A role was assumed by an AWS service, followed by a user within 24 
 Detection:
   - Sequence:
       - ID: Role Assumed by Service
-        RuleID: SIGNAL.-.Role.Assumed.by.AWS.Service
+        RuleID: Role.Assumed.by.AWS.Service
       - ID: Role Assumed by User
-        RuleID: SIGNAL.-.Role.Assumed.by.User
+        RuleID: Role.Assumed.by.User
     Transitions:
       - ID: Role Assumed by Service TO Role Assumed by User ON username
         From: Role Assumed by Service
         To: Role Assumed by User
-        WithinTimeFrameMinutes: 1440
         Match:
           - On: requestParameters.roleArn
     Schedule:
       RateMinutes: 60
       TimeoutMinutes: 2
-    LookbackWindowMinutes: 1500
+    LookbackWindowMinutes: 1440
 Tests:
     - Name: Role Assumed By Service, Followed By Role Assumed By User
       ExpectedResult: true

@@ -1,15 +1,16 @@
 AnalysisType: rule
-Filename: signal_-_okta_sso_to_aws.py
-RuleID: "SIGNAL.-.Okta.SSO.to.AWS"
+Filename: okta_sso_to_aws.py
+RuleID: "Okta.SSO.to.AWS"
 DisplayName: "SIGNAL - Okta SSO to AWS"
 Enabled: true
+CreateAlert: false
 LogTypes:
     - Okta.SystemLog
 Severity: Info
 DedupPeriodMinutes: 60
 Threshold: 1
 Tests:
-    - Name: Test-3503a9
+    - Name: AWS SSO via Okta
       ExpectedResult: true
       Log:
         displayMessage: User single sign on to app
@@ -36,4 +37,3 @@ Tests:
             type: WEB
         uuid: 35cae732-21bd-11ef-a011-dd05aa53a11a
         version: "0"
-CreateAlert: false

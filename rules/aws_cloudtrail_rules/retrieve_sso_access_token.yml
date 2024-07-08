@@ -1,15 +1,16 @@
 AnalysisType: rule
-Filename: signal_-_retrieve_sso_access_token.py
-RuleID: "SIGNAL.-.Retrieve.SSO.access.token"
+Filename: retrieve_sso_access_token.py
+RuleID: "Retrieve.SSO.access.token"
 DisplayName: "SIGNAL - Retrieve SSO access token"
 Enabled: true
+CreateAlert: false
 LogTypes:
     - AWS.CloudTrail
 Severity: Info
 DedupPeriodMinutes: 60
 Threshold: 1
 Tests:
-    - Name: Test-c3a66
+    - Name: Retrieve SSO access token
       ExpectedResult: true
       Log:
         eventName: CreateToken
@@ -34,4 +35,4 @@ Tests:
             principalId: <internal victim user id>
             type: Unknown
             userName: <victim display name>
-CreateAlert: false
+

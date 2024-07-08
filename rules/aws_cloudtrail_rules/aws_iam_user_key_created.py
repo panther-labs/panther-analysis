@@ -29,5 +29,9 @@ def dedup(event):
 
 def alert_context(event):
     base = aws_rule_context(event)
-    base['ip_accessKeyId'] = event.get("sourceIpAddress") + ":" + event.deep_get("responseElements", "accessKey", "accessKeyId")
+    base["ip_accessKeyId"] = (
+        event.get("sourceIpAddress")
+        + ":"
+        + event.deep_get("responseElements", "accessKey", "accessKeyId")
+    )
     return base

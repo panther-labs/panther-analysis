@@ -11,14 +11,14 @@ Reference: https://blog.christophetd.fr/phishing-for-aws-credentials-via-aws-sso
 Detection:
     - Sequence:
         - ID: Absent CLI Prompt
-          RuleID: SIGNAL.-.Sign-in.with.AWS.CLI.prompt
+          RuleID: Sign-in.with.AWS.CLI.prompt
           Absence: true
         - ID: SSO Access Token Retrieved
-          RuleID: SIGNAL.-.Retrieve.SSO.access.token
+          RuleID: Retrieve.SSO.access.token
       Transitions:
         - ID: Absent CLI Prompt TO Access Token Retrieved ON IP Addr
           From: Absent CLI Prompt
-          To: Access Token Retrieved
+          To: SSO Access Token Retrieved
           WithinTimeFrameMinutes: 120
           Match:
             - On: sourceIPAddress
