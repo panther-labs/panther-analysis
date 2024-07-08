@@ -2,7 +2,6 @@ from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
 
 SUSPICIOUS_PARENT_CHILD_COMBINATIONS_WINDOWS = {
     ("svchost.exe", "cmd.exe"),
-    ("explorer.exe", "powershell.exe"),
     ("winword.exe", "cmd.exe"),
     ("winword.exe", "powershell.exe"),
     ("excel.exe", "cmd.exe"),
