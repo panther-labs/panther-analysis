@@ -9,4 +9,5 @@ def rule(event):
 
 
 def title(event):
-    return f'{event.deep_get("actor", "displayName")} logged in from device without expected Push marker'
+    actor = event.deep_get("actor", "displayName")
+    return f"{actor} logged in from device without expected Push marker"
