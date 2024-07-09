@@ -1,19 +1,23 @@
 AnalysisType: scheduled_query
-QueryName: "Snowflake File Downloaded"
+QueryName: "Query.Snowflake.FileDownloaded"
 Enabled: true
 Description: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Query: >
     SELECT 
     user_name,
     role_name,
-    start_time,
+    start_time AS p_event_time,
     query_type,
     execution_status,
+    regexp_substr(query_text, 'GET\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\.]+)', 1, 1, 'i', 2) as stage,
     regexp_substr(query_text, 'GET\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\./]+)(\\$\\$|\\\')?\\s', 1, 1, 'i', 2) as path,
     query_text
 
     FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
-    WHERE query_type = 'GET_FILES' and path is not NULL and start_time >= DATEADD(day, -1, CURRENT_TIMESTAMP) and execution_status = 'SUCCESS'
+    WHERE query_type = 'GET_FILES' 
+        AND path IS NOT NULL 
+        AND p_occurs_since('1 day')
+        AND execution_status = 'SUCCESS'
     LIMIT 100
 Schedule:
     RateMinutes: 1440

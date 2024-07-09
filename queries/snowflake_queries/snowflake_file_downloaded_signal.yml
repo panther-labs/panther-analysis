@@ -8,7 +8,7 @@ Enabled: true
 CreateAlert: false
 Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 ScheduledQueries:
-  - Snowflake File Downloaded
+  - Query.Snowflake.FileDownloaded
 Severity: Info
 Tests:
   - Name: Value Returned By Query
@@ -20,6 +20,7 @@ Tests:
       "query_text": "GET '@LOGS.PUBLIC.data_exfil/DATA.csv' 'file:///Users/evil.genius/Documents'",
       "query_type": "GET_FILES",
       "role_name": "SYSADMIN",
+      "stage": "LOGS.PUBLIC.data_exfil",
       "start_time": "2024-06-10 19:37:15.698Z",
       "user_name": "ADMIN"
     }
