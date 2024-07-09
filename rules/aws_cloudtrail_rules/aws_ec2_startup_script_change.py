@@ -23,4 +23,6 @@ def dedup(event):
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    context = aws_rule_context(event)
+    context["instance_ids"] = [deep_get(event, "requestParameters", "instanceId"), "no_instance_id"]
+    return context

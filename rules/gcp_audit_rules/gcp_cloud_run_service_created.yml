@@ -1,0 +1,202 @@
+AnalysisType: rule
+LogTypes:
+  - GCP.AuditLog
+Description:
+  Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack
+  aimed to invoke the service and retrieve the access token.
+DisplayName: "GCP Cloud Run Service Created"
+RuleID: "GCP.Cloud.Run.Service.Created"
+Filename: gcp_cloud_run_service_created.py
+Enabled: true
+CreateAlert: false
+Reference: https://cloud.google.com/run/docs/quickstarts/deploy-container
+Runbook: Confirm this was authorized and necessary behavior
+Severity: Low
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: GCP Run Service Created
+    ExpectedResult: true
+    Log:
+      {
+        "insertId": "jzm5rucrn2",
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "some.user@company.com",
+                "principalSubject": "user:some.user@company.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "run.services.create",
+                  "resource": "namespaces/some-project/services/cloudrun-exfil",
+                  "resourceAttributes": {},
+                },
+              ],
+            "methodName": "google.cloud.run.v1.Services.CreateService",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.cloud.run.v1.CreateServiceRequest",
+                "parent": "namespaces/some-project",
+                "service":
+                  {
+                    "apiVersion": "serving.knative.dev/v1",
+                    "kind": "Service",
+                    "metadata":
+                      {
+                        "annotations":
+                          {
+                            "client.knative.dev/user-image": "us-west1-docker.pkg.dev/some-project/abc-test/run_services_create_test",
+                          },
+                        "name": "cloudrun-exfil",
+                        "namespace": "some-project",
+                      },
+                    "spec":
+                      {
+                        "template":
+                          {
+                            "metadata":
+                              {
+                                "annotations":
+                                  {
+                                    "client.knative.dev/user-image": "us-west1-docker.pkg.dev/some-project/abc-test/run_services_create_test",
+                                  },
+                                "labels":
+                                  {
+                                    "cloud.googleapis.com/location": "us-west1",
+                                  },
+                                "name": "cloudrun-exfil-00001-zif",
+                              },
+                            "spec":
+                              {
+                                "serviceAccountName": "abc-test@some-project.iam.gserviceaccount.com",
+                              },
+                          },
+                      },
+                  },
+              },
+            "requestMetadata":
+              {
+                "callerIP": "1.2.3.4",
+                "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
+                "destinationAttributes": {},
+                "requestAttributes":
+                  { "auth": {}, "time": "2024-02-02T09:43:54.690161Z" },
+              },
+            "resourceLocation": { "currentLocations": ["us-west1"] },
+            "resourceName": "namespaces/some-project/services/cloudrun-exfil",
+            "response":
+              {
+                "@type": "type.googleapis.com/google.cloud.run.v1.Service",
+                "apiVersion": "serving.knative.dev/v1",
+                "kind": "Service",
+                "metadata":
+                  {
+                    "annotations":
+                      {
+                        "client.knative.dev/user-image": "us-west1-docker.pkg.dev/some-project/abc-test/run_services_create_test",
+                        "run.googleapis.com/ingress": "all",
+                        "run.googleapis.com/operation-id": "6fdf115a-1bdd-4836-b0ca-ae71f8ba6718",
+                        "serving.knative.dev/creator": "some.user@company.com",
+                        "serving.knative.dev/lastModifier": "some.user@company.com",
+                      },
+                    "creationTimestamp": "2024-02-02T09:43:54.640837Z",
+                    "generation": 1,
+                    "labels": { "cloud.googleapis.com/location": "us-west1" },
+                    "name": "cloudrun-exfil",
+                    "namespace": "1028347275902",
+                    "resourceVersion": "AAYQYvNHUcU",
+                    "selfLink": "/apis/serving.knative.dev/v1/namespaces/1028347275902/services/cloudrun-exfil",
+                    "uid": "45101e8e-7b91-4c41-81a1-969e876923f4",
+                  },
+                "spec":
+                  {
+                    "template":
+                      {
+                        "metadata":
+                          {
+                            "annotations":
+                              {
+                                "autoscaling.knative.dev/maxScale": "100",
+                                "client.knative.dev/user-image": "us-west1-docker.pkg.dev/some-project/abc-test/run_services_create_test",
+                              },
+                            "labels":
+                              {
+                                "run.googleapis.com/startupProbeType": "Default",
+                              },
+                            "name": "cloudrun-exfil-00001-zif",
+                          },
+                        "spec":
+                          {
+                            "containerConcurrency": 80,
+                            "serviceAccountName": "abc-test@some-project.iam.gserviceaccount.com",
+                            "timeoutSeconds": 300,
+                          },
+                      },
+                    "traffic": [{ "latestRevision": true, "percent": 100 }],
+                  },
+                "status": {},
+              },
+            "serviceName": "run.googleapis.com",
+          },
+        "receiveTimestamp": "2024-02-02 09:43:54.723840817",
+        "resource":
+          {
+            "labels":
+              {
+                "configuration_name": "",
+                "location": "us-west1",
+                "project_id": "some-project",
+                "revision_name": "",
+                "service_name": "cloudrun-exfil",
+              },
+            "type": "cloud_run_revision",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2024-02-02 09:43:54.497796000",
+      }
+  - Name: GCP Run Service Not Created
+    ExpectedResult: false
+    Log:
+      {
+        "insertId": "jfca5rd3wqn",
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "some.user@company.com",
+                "principalSubject": "user:some.user@company.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "run.services.create",
+                  "resource": "namespaces/some-project/services/cloudrun-exfil",
+                  "resourceAttributes": {},
+                },
+              ],
+            "methodName": "google.cloud.run.v1.Services.CreateService",
+            "request": ...,
+            "requestMetadata": ...,
+            "resourceLocation": ...,
+            "resourceName": ...,
+            "serviceName": "run.googleapis.com",
+            "status":
+              {
+                "code": 6,
+                "message": "Resource 'cloudrun-exfil' already exists.",
+              },
+          },
+        "receiveTimestamp": "2024-02-02 09:36:22.250430490",
+        "resource": ...,
+        "severity": "ERROR",
+        "timestamp": "2024-02-02 09:36:21.212182000",
+      }
