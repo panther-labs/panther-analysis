@@ -1,0 +1,28 @@
+AnalysisType: scheduled_rule
+Filename: scheduled_rule_default_snowflake.py
+RuleID: "Snowflake.TempStageCreated"
+Description: >
+  A temporary stage was created
+DisplayName: "Snowflake Temporary Stage Created"
+Enabled: true
+CreateAlert: false
+Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Reports:
+    MITRE ATT&CK:
+        - TA0010:T1041  # Exfiltration Over C2 Channel
+ScheduledQueries:
+  - Query.Snowflake.TempStageCreated
+Severity: Info
+Tests:
+  - Name: Value Returned By Query
+    ExpectedResult: true
+    Log:
+      {
+      "execution_status": "SUCCESS",
+      "query_text": "CREATE OR REPLACE TEMP STAGE logs.PUBLIC.data_exfil",
+      "query_type": "CREATE",
+      "role_name": "SYSADMIN",
+      "stage": "logs.PUBLIC.data_exfil",
+      "start_time": "2024-06-10 19:48:52.068Z",
+      "user_name": "ADMIN"
+    }
