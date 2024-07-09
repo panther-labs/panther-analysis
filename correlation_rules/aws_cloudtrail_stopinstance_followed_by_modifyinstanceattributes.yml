@@ -1,0 +1,48 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.EC2.StopInstance.FOLLOWED.BY.ModifyInstanceAttributes"
+DisplayName: "StopInstance FOLLOWED BY ModifyInstanceAttributes"
+Enabled: true
+Severity: High
+Description: Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.
+Reference: https://unit42.paloaltonetworks.com/malicious-operations-of-exposed-iam-keys-cryptojacking/
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1059
+Detection:
+    - Sequence:
+        - ID: StopInstance
+          RuleID: AWS.EC2.StopInstances
+        - ID: StartupScriptChange
+          RuleID: AWS.EC2.Startup.Script.Change
+      Transitions:
+        - ID: StopInstance FOLLOWED BY StartupScriptChange
+          From: StopInstance
+          To: StartupScriptChange
+          Match:
+            - On: p_alert_context.instance_ids
+      LookbackWindowMinutes: 90
+      Schedule:
+        RateMinutes: 60
+        TimeoutMinutes: 1
+Tests:
+    - Name: Instance Stopped, Followed By Script Change
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: StopInstance
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:00:01Z"
+        - ID: StartupScriptChange
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:01:01Z"
+    - Name: Instance Stopped, Not Followed By Script Change
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: StopInstance
+          Matches:
+            p_alert_context.instance_ids:
+              'i-abcdef0123456789a':
+                - "2024-06-01T10:00:01Z"
