@@ -7,3 +7,9 @@ def title(event):
     ip_addr = event.get("clientIp", "<NO_IP_FOUND>")
     desc = event.get("description", "<NO_DESCRIPTION_FOUND>")
     return f"{user} [{ip_addr}] {desc}"
+
+
+def severity(event):
+    if event.get("description").startswith("Requested sensor update"):
+        return "INFO"
+    return "DEFAULT"
