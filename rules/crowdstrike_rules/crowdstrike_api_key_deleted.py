@@ -3,7 +3,7 @@ from panther_base_helpers import deep_get
 def rule(event):
     return (
         deep_get(event, "event", "OperationName") == "DeleteAPIClients"
-        and deep_get(event, "event", "Success") == True
+        and bool(deep_get(event, "event", "Success"))
     )
 
 def title(event):
