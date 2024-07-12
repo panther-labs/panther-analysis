@@ -6,7 +6,7 @@ from panther_base_helpers import deep_get
 CLUSTER_ADMIN_USERNAMES = []
 
 # update to production environment source labels
-PROD_SOURCE_LABELS = [] 
+PROD_SOURCE_LABELS = []
 
 def get_exec_command(request_uri: str) -> str:
     """Takes the requesturi from an Kubernetes Audit Log event for
@@ -14,7 +14,9 @@ def get_exec_command(request_uri: str) -> str:
 
     example input:
 
-    "/api/v1/namespaces/defectdojo/pods/defectdojo-postgresql-0/exec?command=sh&command=-c&command=command+-v+bash+%3E%2Fdev%2Fnull+%26%26+exec+bash+%7C%7C+exec+sh&container=postgresql&stdin=true&stdout=true&tty=true"
+    "/api/v1/namespaces/n/pods/pod/exec?command=sh&command=-c
+    &command=command+-v+bash+%3E%2Fdev%2Fnull+%26%26+exec+bash+%7C%7C+exec+sh&container=pod
+    &stdin=true&stdout=true&tty=true"
 
     example output:
 
