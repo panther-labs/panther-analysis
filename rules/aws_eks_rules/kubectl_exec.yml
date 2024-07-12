@@ -1,0 +1,22 @@
+AnalysisType: rule
+Filename: kubectl_exec.py
+RuleID: "Amazon.EKS.Audit.Exec"
+DisplayName: "User exec into running container on Amazon EKS"
+Enabled: true
+LogTypes:
+  - Amazon.EKS.Audit
+Tags:
+  - EKS
+Reports:
+  MITRE ATT&CK:
+    - "TA0002:T1609"
+Reference: https://aws.github.io/aws-eks-best-practices/security/docs/detective/
+Severity: Info
+Description: > # (Optional)
+  This detection indicates an identity has used their credentials to create an interactive session with a runner container on the cluster.
+DedupPeriodMinutes: 30 # The amount of time in minutes for grouping alerts (Optional, defaults to 60)
+Threshold: 10 # The minimum number of event matches prior to an alert sending (Optional, defaults to 1)
+SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
+  - user:username
+  - p_any_ip_addresses
+  - p_source_label
