@@ -1,5 +1,5 @@
-import urllib.parse
 from panther_base_helpers import deep_get
+import urllib.parse
 
 # update to username value for mapping in aws-auth configmap or eks access entries api
 # docs: https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html#creating-access-entries
