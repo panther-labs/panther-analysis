@@ -6,7 +6,7 @@ Description: "Detects when Carbon Black has flagged a log as important, such as 
 DisplayName: "Carbon Black Log Entry Flagged"
 Enabled: true
 Filename: cb_audit_flagged.py
-Severity: High
+Severity: Medium
 Tags:
   - Credential Access
   - Brute Force
@@ -43,4 +43,17 @@ Tests:
         "orgName": "acme.com",
         "requestUrl": "/access/v2/orgs/A1234567/grants",
         "verbose": false,
+      }
+  - Name: Sensor update requested
+    ExpectedResult: true
+    Log:
+      {
+      	"description": "Requested sensor update to version: 2.16.0.2566828 for the following device: ABCDEFG012 (ID: 21360056)",
+        "eventId": "ac5f46923e9c11efaadd07ba65d6cd7b",
+        "eventTime": "2024-07-10 09:13:29.952000000",
+        "flagged": true,
+        "loginName": "",
+        "orgName": "acme.com",
+        "requestUrl": "/settings/users/pushSensorKits",
+        "verbose": false
       }
