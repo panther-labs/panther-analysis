@@ -4,7 +4,16 @@ Description: DO NOT ENABLE THIS PACK! This pack contains rules that require mult
 DisplayName: "Panther Multi-Source Correlations Pack"
 PackDefinition:
   IDs:
+  # AWS + Okta
     - Secret.Exposed.and.not.Quarantined
     - GitHub.Secret.Scanning.Alert.Created
     - AWS.CloudTrail.IAMCompromisedKeyQuarantine
     - global_filter_github
+
+  # Okta + Push Security
+    - Okta.Login.Without.Push
+    - Potential.Compromised.Okta.Credentials
+    - Okta.Login.Signal
+    - Push.Security.Authorized.IdP.Login
+    - Okta.Login.Without.Push.Marker
+    - Push.Security.Phishing.Attack
