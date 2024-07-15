@@ -1,0 +1,26 @@
+AnalysisType: rule
+Filename: signin_with_aws_cli_prompt.py
+RuleID: "Sign-in.with.AWS.CLI.prompt"
+DisplayName: "SIGNAL - Sign-in with AWS CLI prompt"
+Enabled: true
+CreateAlert: false
+LogTypes:
+    - AWS.CloudTrail
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Test-291327
+      ExpectedResult: true
+      Log:
+        eventName: ListApplications
+        eventSource: sso.amazonaws.com
+        eventTime: '...'
+        eventVersion: "1.08"
+        sourceIPAddress: <Victim source IP>
+        userAgent: <Victim browser user agent>
+        userIdentity:
+            accountId: <organization master account ID>
+            principalId: <internal victim user id>
+            type: Unknown
+            userName: <victim display name>

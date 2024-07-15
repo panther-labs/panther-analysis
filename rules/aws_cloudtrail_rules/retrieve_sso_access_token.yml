@@ -1,0 +1,38 @@
+AnalysisType: rule
+Filename: retrieve_sso_access_token.py
+RuleID: "Retrieve.SSO.access.token"
+DisplayName: "SIGNAL - Retrieve SSO access token"
+Enabled: true
+CreateAlert: false
+LogTypes:
+    - AWS.CloudTrail
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+    - Name: Retrieve SSO access token
+      ExpectedResult: true
+      Log:
+        eventName: CreateToken
+        eventSource: sso.amazonaws.com
+        eventVersion: "1.08"
+        recipientAccountId: <organization master account ID>
+        requestParameters:
+            clientId: '...'
+            clientSecret: HIDDEN_DUE_TO_SECURITY_REASONS
+            deviceCode: '...'
+            grantType: urn:ietf:params:oauth:grant-type:device_code
+        responseElements:
+            accessToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            expiresIn: 28800
+            idToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            refreshToken: HIDDEN_DUE_TO_SECURITY_REASONS
+            tokenType: Bearer
+        sourceIPAddress: <Attacker source IP>
+        userAgent: '<Attacker user agent (here: Boto3/1.17.80 Python/3.9.5 Darwin/20.3.0 Botocore/1.20.80)>'
+        userIdentity:
+            accountId: <organization master account ID>
+            principalId: <internal victim user id>
+            type: Unknown
+            userName: <victim display name>
+
