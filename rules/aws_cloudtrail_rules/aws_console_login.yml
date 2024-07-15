@@ -1,0 +1,16 @@
+AnalysisType: rule
+LogTypes:
+  - AWS.CloudTrail
+DisplayName: "AWS Console Login"
+RuleID: "AWS.Console.Login"
+Enabled: true
+CreateAlert: false
+Detection:
+  - Key: eventName
+    Condition: Equals
+    Value: ConsoleLogin
+AlertContext:
+  - KeyName: caller_ip
+    KeyValue:
+      KeyPath: p_udm.source.ip
+AlertTitle: "{userIdentity.userName} logged into the AWS Management Console"
