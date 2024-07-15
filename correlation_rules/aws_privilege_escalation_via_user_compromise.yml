@@ -3,6 +3,9 @@ RuleID: "AWS.Privilege.Escalation.Via.User.Compromise"
 DisplayName: "AWS Privilege Escalation Via User Compromise"
 Enabled: true
 Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - T1098.001 # Additional Cloud Credentials
 Detection:
     - Sequence:
         - ID: User Backdoored
