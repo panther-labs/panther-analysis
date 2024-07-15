@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
+from panther_base_helpers import crowdstrike_detection_alert_context
 
 CREDENTIAL_DUMPING_TOOLS = {
     "mimikatz.exe",
@@ -33,7 +33,7 @@ def rule(event):
     if event.get("fdr_event_type", "") == "ProcessRollup2":
         if event.get("event_platform", "") == "Win":
             process_name = (
-                deep_get(event, "event", "ImageFileName", default="").lower().split("\\")[-1]
+                event.deep_get("event", "ImageFileName", default="").lower().split("\\")[-1]
             )
             if process_name in CREDENTIAL_DUMPING_TOOLS:
                 return True
@@ -42,9 +42,7 @@ def rule(event):
 
 def title(event):
     tool = (
-        deep_get(event, "event", "ImageFileName", default="<TOOL_NOT_FOUND>")
-        .lower()
-        .split("\\")[-1]
+        event.deep_get("event", "ImageFileName", default="<TOOL_NOT_FOUND>").lower().split("\\")[-1]
     )
     aid = event.get("aid", "<AID_NOT_FOUND>")
     return f"Crowdstrike: Credential dumping tool [{tool}] detected on aid [{aid}]"

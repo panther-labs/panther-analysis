@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_process_alert_context, deep_get
+from panther_base_helpers import crowdstrike_process_alert_context
 
 LOLBAS_EXE = {
     "AppInstaller.exe",
@@ -111,22 +111,22 @@ LOLBAS_EXE = {
 
 
 def rule(event):
-    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2":
-        if deep_get(event, "event", "event_platform") == "Win":
+    if event.deep_get("event", "event_simpleName") == "ProcessRollup2":
+        if event.deep_get("event", "event_platform") == "Win":
             exe = event.udm("process_name")
             return bool(exe.lower() in [x.lower() for x in LOLBAS_EXE])
     return False
 
 
 def title(event):
-    exe = deep_get(event, "event", "ImageFileName").split("\\")[-1]
-    return f'Crowdstrike: LOLBAS execution - [{exe}] - [{deep_get(event, "event", "CommandLine")}]'
+    exe = event.deep_get("event", "ImageFileName").split("\\")[-1]
+    return f'Crowdstrike: LOLBAS execution - [{exe}] - [{event.deep_get("event", "CommandLine")}]'
 
 
 def dedup(event):
     # dedup string on "{aid}-{exe}"
     exe = event.udm("process_name")
-    return f'{deep_get(event, "event", "aid")}-{exe}'
+    return f'{event.deep_get("event", "aid")}-{exe}'
 
 
 def alert_context(event):
