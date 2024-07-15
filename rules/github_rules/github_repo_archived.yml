@@ -1,0 +1,62 @@
+AnalysisType: rule
+RuleID: "Github.Repo.Archived"
+DisplayName: "GitHub Repository Archived"
+Enabled: true
+CreateAlert: false
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - panther-signal
+Reference: https://docs.github.com/en/repositories/archiving-a-github-repository/about-archiving-content-and-data-on-github
+Severity: Info
+Description: Detects when a repository is archived.
+Detection:
+  - Key: action
+    Condition: Equals
+    Value: repo.archived
+AlertTitle: "Repository [{repo}] archived."
+AlertContext:
+  - KeyName: action
+    KeyValue:
+      Key: action
+  - KeyName: actor
+    KeyValue:
+      Key: actor
+  - KeyName: org
+    KeyValue:
+      Key: org
+  - KeyName: repo
+    KeyValue:
+      Key: repo
+  - KeyName: user
+    KeyValue:
+      Key: user
+  - KeyName: actor_location
+    KeyValue:
+      KeyPath: actor_location.country_code
+Tests:
+  -
+    Name: GitHub - Repo Created
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "repo.create",        
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
+  -
+    Name: GitHub - Repo Archived
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "repo.archived",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo"
+      }
