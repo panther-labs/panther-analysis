@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_network_detection_alert_context, deep_get
+from panther_base_helpers import crowdstrike_network_detection_alert_context
 
 # U.S. Gov Sanctioned Destinations
 EMBARGO_COUNTRY_CODES = {
@@ -10,7 +10,7 @@ EMBARGO_COUNTRY_CODES = {
 
 
 def get_enrichment_obj(event):
-    return deep_get(event, "p_enrichment", "ipinfo_location", "p_any_ip_addresses", default=None)
+    return event.deep_get("p_enrichment", "ipinfo_location", "p_any_ip_addresses", default=None)
 
 
 def rule(event):

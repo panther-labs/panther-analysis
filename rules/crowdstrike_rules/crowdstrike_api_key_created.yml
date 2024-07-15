@@ -2,10 +2,13 @@ AnalysisType: rule
 Filename: crowdstrike_api_key_created.py
 RuleID: "Crowdstrike.API.Key.Created"
 DisplayName: "Crowdstrike API Key Created"
+Reports:
+    MITRE ATT&CK:
+        - T1098.001 # Additional Cloud Credentials
 Enabled: true
 LogTypes:
     - Crowdstrike.EventStreams
-Severity: Info
+Severity: Medium
 Description: A user created an API Key in CrowdStrike
 DedupPeriodMinutes: 60
 Threshold: 1
