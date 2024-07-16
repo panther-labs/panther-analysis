@@ -529,3 +529,10 @@ def is_base64(b64: str) -> str:
     except UnicodeDecodeError:
         pass
     return ""
+
+
+def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> dict:
+    # Convert a list of dictionaries to a single dictionary
+    # example: [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}]
+    # becomes: {'a': 1, 'b': 2}
+    return {item[key]: item[value] for item in list_objects}

@@ -1,0 +1,65 @@
+AnalysisType: correlation_rule
+RuleID: "Okta.Login.Without.Push"
+DisplayName: "Okta Login Without Push"
+Enabled: false
+Tags:
+  - Push Security
+  - Configuration Required
+Reports:
+  MITRE ATT&CK:
+    - T1212 # Exploitation for Credential Access
+    - T1539 # Steal Web Session Cookie
+Severity: Critical
+Detection:
+  - Sequence:
+      - ID: Okta
+        RuleID: Okta.Login.Success
+      - ID: Push
+        RuleID: Push.Security.Authorized.IdP.Login
+        Absence: true
+    Transitions:
+      - ID: Okta to Push
+        From: Okta
+        To: Push
+        Match:
+          - From: actor.alternateId
+            To: new.email
+    Schedule:
+      RateMinutes: 5
+      TimeoutMinutes: 2
+    LookbackWindowMinutes: 30
+Tests:
+  - Name: Okta Login, Followed By Push Authorized Login
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Okta
+        Matches:
+          actor.alternateId:
+            frodo.baggins@hobbiton.com:
+              - 0
+      - ID: Push
+        Matches:
+          new.email:
+            frodo.baggins@hobbiton.com:
+              - 3
+  - Name: Okta Login, Not Followed By Push Authorized Login
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Okta
+        Matches:
+          actor.alternateId:
+            frodo.baggins@hobbiton.com:
+              - 0
+  - Name: Okta Login, Followed By Push Authorized Login By Other User
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Okta
+        Matches:
+          actor.alternateId:
+            frodo.baggins@hobbiton.com:
+              - 0
+      - ID: Push
+        Matches:
+          new.email:
+            samwise.gamgee@hobbiton.com:
+              - 3
