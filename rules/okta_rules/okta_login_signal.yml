@@ -10,7 +10,7 @@ Severity: Info
 DedupPeriodMinutes: 60
 Threshold: 1
 Tests:
-  - Name: Test-a5ab34
+  - Name: Non-Login Event
     ExpectedResult: false
     Log:
       actor:
@@ -67,7 +67,7 @@ Tests:
         type: WEB
       uuid: 44aeb388-08b4-11ef-9cec-73ffcb6f9fdd
       version: "0"
-  - Name: Test-d3d03f
+  - Name: Successful Login
     ExpectedResult: true
     Log:
       actor:
@@ -109,6 +109,83 @@ Tests:
       legacyEventType: core.user_auth.login_success
       outcome:
         result: SUCCESS
+      published: "2024-04-02 19:17:37.621000000"
+      request:
+        ipChain:
+          - geographicalContext:
+              city: Atlanta
+              country: United States
+              geolocation:
+                lat: 33.9794
+                lon: -84.3459
+              postalCode: "30350"
+              state: Georgia
+            ip: 99.108.5.25
+            version: V4
+      securityContext:
+        asNumber: 7018
+        asOrg: at&t corp.
+        domain: sbcglobal.net
+        isProxy: false
+        isp: att services inc
+      severity: INFO
+      target:
+        - alternateId: unknown
+          displayName: Password
+          id: lae1at5k3ir9bV1gr697
+          type: AuthenticatorEnrollment
+        - alternateId: Okta Dashboard
+          displayName: Okta Dashboard
+          id: 0oabewfkt83T8ve1o697
+          type: AppInstance
+      transaction:
+        detail: {}
+        id: 601b158a3b3e23be5bbf74d0fe63cd78
+        type: WEB
+      uuid: aac560bd-f125-11ee-9caa-cd5d09945def
+      version: "0"
+  - Name: Failed Login
+    ExpectedResult: false
+    Log:
+      actor:
+        alternateId: casey.hill@hey.com
+        displayName: Casey Hill
+        id: 00ubewfku1EX0WCFk697
+        type: User
+      authenticationContext:
+        authenticationStep: 0
+        externalSessionId: idxvF50v_5sT2-GOA7_K0Amyw
+      client:
+        device: Computer
+        geographicalContext:
+          city: Atlanta
+          country: United States
+          geolocation:
+            lat: 33.9794
+            lon: -84.3459
+          postalCode: "30350"
+          state: Georgia
+        ipAddress: 99.108.5.25
+        userAgent:
+          browser: CHROME
+          os: Mac OS 14.4.1 (Sonoma)
+          rawUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+        zone: "null"
+      debugContext:
+        debugData:
+          authnRequestId: 5167029d2c8308348d651c0be650230f
+          dtHash: f23be3b6d8bfd69c14e0d1b33e790b84fa5358eab0a09a1058816ad65d633da4
+          oktaUserAgentExtended: okta-auth-js/7.0.1 okta-signin-widget-7.16.1
+          origin: https://trial-2340039.okta.com
+          requestId: 601b158a3b3e23be5bbf74d0fe63cd78
+          requestUri: /idp/idx/challenge/answer
+          threatSuspected: "false"
+          url: /idp/idx/challenge/answer?
+      displayMessage: User login to Okta
+      eventType: user.session.start
+      legacyEventType: core.user_auth.login_success
+      outcome:
+        result: FAILURE
       published: "2024-04-02 19:17:37.621000000"
       request:
         ipChain:
