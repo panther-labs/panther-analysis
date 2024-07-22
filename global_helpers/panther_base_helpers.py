@@ -523,7 +523,7 @@ def is_base64(b64: str) -> str:
         return ""
     # Check if the matched string can be decoded back into ASCII
     try:
-        return b64decode(b64).decode("ascii")
+        return b64decode(b64, validate=True).decode("ascii")
     except AsciiError:
         pass
     except UnicodeDecodeError:
