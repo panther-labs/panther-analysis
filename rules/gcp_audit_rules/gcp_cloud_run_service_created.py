@@ -6,7 +6,9 @@ def rule(event):
     if deep_get(event, "severity") == "ERROR":
         return False
 
-    if not deep_get(event, "protoPayload", "methodName").endswith("Services.CreateService"):
+    if not deep_get(event, "protoPayload", "methodName", default="<NO_METHODNAME_FOUND>").endswith(
+        "Services.CreateService"
+    ):
         return False
 
     authorization_info = deep_walk(event, "protoPayload", "authorizationInfo")
