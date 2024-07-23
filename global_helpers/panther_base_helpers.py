@@ -521,9 +521,11 @@ def is_base64(b64: str) -> str:
     # handle false positives for very short strings
     if len(b64) < 12:
         return ""
+    # Pad args with "=" to ensure proper decoding
+    b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
     # Check if the matched string can be decoded back into ASCII
     try:
-        return b64decode(b64).decode("ascii")
+        return b64decode(b64, validate=True).decode("ascii")
     except AsciiError:
         pass
     except UnicodeDecodeError:

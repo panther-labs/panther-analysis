@@ -25,8 +25,9 @@ def rule(event):
 
     # Split arguments from process path
     command_line_args = event.udm("cmd")
-    command_line_args = command_line_args.replace('"', "")
-    command_line_args = command_line_args.replace("'", "")
+    command_line_args = command_line_args.replace('"', " ")
+    command_line_args = command_line_args.replace("'", " ")
+    command_line_args = command_line_args.replace("=", " ")
     command_line_args = command_line_args.split(" ")[1:]
 
     # Check if Base64 encoded arguments are present in the command line

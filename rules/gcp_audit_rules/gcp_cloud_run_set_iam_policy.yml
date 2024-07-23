@@ -152,3 +152,56 @@ Tests:
         "severity": "NOTICE",
         "timestamp": "2024-02-02 09:44:26.029835000",
       }
+  - Name: No method provided
+    ExpectedResult: false
+    Log:
+      {
+        "insertId": "l3jvzyd2s2s",
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "some.user@company.com",
+                "principalSubject": "user:some.user@company.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": false,
+                  "permission": "run.services.setIamPolicy",
+                  "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
+                  "resourceAttributes": {},
+                },
+                {
+                  "granted": false,
+                  "permission": "run.services.setIamPolicy",
+                  "resourceAttributes": {},
+                },
+              ],
+            "request":
+              {
+                "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+                "policy":
+                  {
+                    "bindings":
+                      [
+                        {
+                          "members": ["user:some.user@company.com"],
+                          "role": "roles/run.invoker",
+                        },
+                      ],
+                  },
+                "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
+              },
+            "requestMetadata": ...,
+            "resourceLocation": ...,
+            "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
+            "serviceName": "run.googleapis.com",
+          },
+        "receiveTimestamp": "2024-02-02 09:44:26.653891982",
+        "resource": ...,
+        "severity": "NOTICE",
+        "timestamp": "2024-02-02 09:44:26.029835000",
+      }
