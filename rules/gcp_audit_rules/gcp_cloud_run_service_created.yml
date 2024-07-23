@@ -15,6 +15,47 @@ Severity: Low
 DedupPeriodMinutes: 60
 Threshold: 1
 Tests:
+  - Name: GCP No methodName found
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-07-22 14:20:56.237323088",
+        "p_log_type": "GCP.AuditLog",
+        "insertId": "123456789xyz",
+        "logName": "projects/internal-sentry/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "0000000000000@cloudbuild.gserviceaccount.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "cloudbuild.builds.create",
+                  "resource": "projects/00000000aaaaaaaa",
+                  "resourceAttributes": {},
+                },
+              ],
+            "requestMetadata":
+              {
+                "destinationAttributes": {},
+                "requestAttributes":
+                  { "auth": {}, "time": "2024-07-22T14:20:55.898367039Z" },
+              },
+          },
+        "receiveTimestamp": "2024-07-22 14:20:56.428021476",
+        "resource":
+          {
+            "labels":
+              { "method": "", "project_id": "some-project", "service": "" },
+            "type": "audited_resource",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2024-07-22 14:20:56.237323088",
+      }
   - Name: GCP Run Service Created
     ExpectedResult: true
     Log:
