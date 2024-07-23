@@ -32,8 +32,6 @@ def rule(event):
 
     # Check if Base64 encoded arguments are present in the command line
     for arg in command_line_args:
-        # Pad args with "=" to ensure proper decoding
-        arg = arg.ljust((len(arg) + 3) // 4 * 4, "=")
         # pylint: disable=global-statement
         global DECODED
         DECODED = is_base64(arg)
