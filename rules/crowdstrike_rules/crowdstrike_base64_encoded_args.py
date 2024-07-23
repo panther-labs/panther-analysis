@@ -28,7 +28,7 @@ def rule(event):
     command_line_args = command_line_args.replace('"', " ")
     command_line_args = command_line_args.replace("'", " ")
     command_line_args = command_line_args.replace("=", " ")
-    command_line_args = command_line_args.split(" ")
+    command_line_args = command_line_args.split(" ")[1:]
 
     # Check if Base64 encoded arguments are present in the command line
     for arg in command_line_args:
