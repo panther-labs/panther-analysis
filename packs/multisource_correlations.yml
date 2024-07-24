@@ -1,0 +1,19 @@
+AnalysisType: pack
+PackID: PantherManaged.MultiSourceCorrelations
+Description: DO NOT ENABLE THIS PACK! This pack contains rules that require multiple log sources to correlate. It is not intended to be enabled unless you have all the required log sources. Please enable individual rules for which you have all the required log sources.
+DisplayName: "Panther Multi-Source Correlations Pack"
+PackDefinition:
+  IDs:
+  # AWS + Okta
+    - Secret.Exposed.and.not.Quarantined
+    - GitHub.Secret.Scanning.Alert.Created
+    - AWS.CloudTrail.IAMCompromisedKeyQuarantine
+    - global_filter_github
+
+  # Okta + Push Security
+    - Okta.Login.Without.Push
+    - Potential.Compromised.Okta.Credentials
+    - Okta.Login.Success
+    - Push.Security.Authorized.IdP.Login
+    - Okta.Login.Without.Push.Marker
+    - Push.Security.Phishing.Attack

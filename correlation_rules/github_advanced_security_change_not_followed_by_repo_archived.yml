@@ -1,0 +1,59 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.Advanced.Security.Change.NOT.FOLLOWED.BY.Repo.Archived"
+DisplayName: "GitHub Advanced Security Change NOT FOLLOWED BY Repo Archived"
+Enabled: true
+Severity: Critical 
+Description: Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
+Reference: https://docs.github.com/en/code-security/getting-started/auditing-security-alerts
+Detection:
+  - Sequence:
+      - ID: GHASChange
+        RuleID: GitHub.Advanced.Security.Change
+      - ID: RepoArchived
+        RuleID: Github.Repo.Archived
+        Absence: true
+    Transitions:
+      - ID: GHASChange NOT FOLLOWED BY RepoArchived
+        From: GHASChange
+        To: RepoArchived
+        Match:
+          - On: p_alert_context.repo
+    LookbackWindowMinutes: 15
+    Schedule:
+      RateMinutes: 10
+      TimeoutMinutes: 5
+Tests:
+    - Name: Security Change on Repo, Followed By Same Repo Archived
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"
+        - ID: RepoArchived
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:01Z"
+    - Name: Security Change on Repo, Followed By Different Repo Archived
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"
+        - ID: RepoArchived
+          Matches:
+            p_alert_context.repo:
+              my-org/other-repo:
+                - "2024-06-01T10:00:01Z"
+    - Name: Security Change on Repo, Not Followed By Repo Archived
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: GHASChange
+          Matches:
+            p_alert_context.repo:
+              my-org/example-repo:
+                - "2024-06-01T10:00:00Z"

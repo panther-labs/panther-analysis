@@ -521,11 +521,20 @@ def is_base64(b64: str) -> str:
     # handle false positives for very short strings
     if len(b64) < 12:
         return ""
+    # Pad args with "=" to ensure proper decoding
+    b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
     # Check if the matched string can be decoded back into ASCII
     try:
-        return b64decode(b64).decode("ascii")
+        return b64decode(b64, validate=True).decode("ascii")
     except AsciiError:
         pass
     except UnicodeDecodeError:
         pass
     return ""
+
+
+def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> dict:
+    # Convert a list of dictionaries to a single dictionary
+    # example: [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}]
+    # becomes: {'a': 1, 'b': 2}
+    return {item[key]: item[value] for item in list_objects}
