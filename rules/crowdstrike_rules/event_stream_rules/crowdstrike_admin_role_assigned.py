@@ -1,5 +1,4 @@
 from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context
-from panther_base_helpers import key_value_list_to_dict
 
 # List of priviledged roles.
 # IMPORTANT: YOU MUST ADD ANY CUSTOM ADMIN ROLES YOURSELF
@@ -7,8 +6,8 @@ ADMIN_ROLES = {
     "billing_dashboard_admin",
     "falconhost_admin",
     "firewall_manager",
-    "xdr_admin", # NG SIEM Admin
-    "remote_responder_three" # Remote Responder Admin
+    "xdr_admin",  # NG SIEM Admin
+    "remote_responder_three",  # Remote Responder Admin
 }
 
 
@@ -21,6 +20,7 @@ def get_roles_assigned(event):
 
 
 def rule(event):
+    # Ignore non role-granting events
     if not all(
         [
             event.deep_get("event", "OperationName") == "grantUserRoles",
@@ -28,7 +28,7 @@ def rule(event):
         ]
     ):
         return False
-    
+
     # Raise alert if any of the admin roles were assigned
     roles_assigned = get_roles_assigned(event)
     return bool(ADMIN_ROLES & set(roles_assigned))

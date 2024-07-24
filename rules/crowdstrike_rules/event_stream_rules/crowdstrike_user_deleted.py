@@ -2,8 +2,12 @@ from crowdstrike_event_streams_helpers import cs_alert_context
 
 
 def rule(event):
-    subevent = event.get("event", {})
-    return subevent.get("OperationName") == "deleteUser" and subevent.get("Success")
+    return all(
+        [
+            event.deep_get("event", "OperationName") == "deleteUser",
+            event.deep_get("event", "Success"),
+        ]
+    )
 
 
 def title(event):

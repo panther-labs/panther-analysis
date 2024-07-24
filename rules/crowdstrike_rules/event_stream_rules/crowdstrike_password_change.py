@@ -3,9 +3,12 @@ from panther_base_helpers import key_value_list_to_dict
 
 
 def rule(event):
-    # Return True if this is a password change event
-    subevent = event.get("event", {})
-    return subevent.get("OperationName") == "changePassword" and subevent.get("Success")
+    return all(
+        [
+            event.deep_get("event", "OperationName") == "changePassword",
+            event.deep_get("event", "Success"),
+        ]
+    )
 
 
 def title(event):
