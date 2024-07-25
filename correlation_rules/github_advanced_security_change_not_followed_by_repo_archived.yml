@@ -18,10 +18,10 @@ Detection:
         To: RepoArchived
         Match:
           - On: p_alert_context.repo
-    LookbackWindowMinutes: 15
+    LookbackWindowMinutes: 90
     Schedule:
-      RateMinutes: 10
-      TimeoutMinutes: 5
+      RateMinutes: 60
+      TimeoutMinutes: 10
 Tests:
     - Name: Security Change on Repo, Followed By Same Repo Archived
       ExpectedResult: false
