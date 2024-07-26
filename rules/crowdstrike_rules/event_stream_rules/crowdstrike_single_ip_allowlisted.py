@@ -1,12 +1,12 @@
 from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context
 
 
-def get_single_ips(event) -> list[str]:
+def get_single_ips(event, fieldname="cidrs") -> list[str]:
     """Searches the "cidrs" field of the event audit keys, and returns any cidr entries which
     are actually just single IP addresses."""
     single_ips = []
     audit_keys = audit_keys_dict(event)
-    cidrs = str_to_list(audit_keys["cidrs"])
+    cidrs = str_to_list(audit_keys[fieldname])
     for entry in cidrs:
         if "/" not in entry:
             single_ips.append(entry)
@@ -17,18 +17,24 @@ def get_single_ips(event) -> list[str]:
 
 
 def str_to_list(liststr: str) -> list[str]:
-    """Several crowdstrike values are returned as a list like "[x,y,z]". This function convetrs
+    """Several crowdstrike values are returned as a list like "[x y z]". This function convetrs
     such entries to Python list of strings, like: ["x", "y", "z"]."""
-    return [x.strip() for x in liststr[1:-1].split(",")]
+    return [x.strip() for x in liststr[1:-1].split(" ")]
 
 
 def rule(event):
-    # Only alert if an allow list is created
-    if event.deep_get("event", "OperationName") != "CreateAllowlistGroup":
+    # Only alert if an allow list is created or edited
+    op_name = event.deep_get("event", "OperationName")
+    if op_name not in ("CreateAllowlistGroup", "UpdateAllowlistGroup"):
         return False
 
     # Only alert if there's a single IP address allowed by the allowlist
     single_ips = get_single_ips(event)
+
+    if op_name == "UpdateAllowlistGroup":
+        # Remove IPs from single_ips if the weren't recently added
+        old_single_ips = set(get_single_ips(event, "old_cidrs"))
+        single_ips = [ip for ip in single_ips if ip not in old_single_ips]
 
     # Return true if there were any single IPs
     return len(single_ips) > 0
