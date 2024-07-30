@@ -4,7 +4,11 @@ DECODED = ""
 
 
 def rule(event):
-    args = event.udm("dns_query").split(".")
+    query = event.udm("dns_query")
+    # If there is no query present (or the appropriate data model is missing) don't alert
+    if not query:
+        return False
+    args = split(".")
 
     # Check if Base64 encoded arguments are present in the command line
     for arg in args:
