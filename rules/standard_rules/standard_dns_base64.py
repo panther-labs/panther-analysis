@@ -8,7 +8,7 @@ def rule(event):
     # If there is no query present (or the appropriate data model is missing) don't alert
     if not query:
         return False
-    args = split(".")
+    args = query.split(".")
 
     # Check if Base64 encoded arguments are present in the command line
     for arg in args:
