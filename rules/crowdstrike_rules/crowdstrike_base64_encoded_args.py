@@ -13,18 +13,25 @@ COMMAND_LINE_TOOLS = {
 
 
 def rule(event):
+    # If there is no process name available (or the CrowdStrike data model is missing) don't alert
+    process_name = event.udm("process_name")
+    if not process_name:
+        return False
+
     # Filter by CS event type, Windows platform, and process name
     if not all(
         [
             event.get("fdr_event_type") == "ProcessRollup2",
             event.get("event_platform") == "Win",
-            event.udm("process_name").lower() in COMMAND_LINE_TOOLS,
+            process_name.lower() in COMMAND_LINE_TOOLS,
         ]
     ):
         return False
 
     # Split arguments from process path
     command_line_args = event.udm("cmd")
+    if not command_line_args:
+        return False
     command_line_args = command_line_args.replace('"', " ")
     command_line_args = command_line_args.replace("'", " ")
     command_line_args = command_line_args.replace("=", " ")
