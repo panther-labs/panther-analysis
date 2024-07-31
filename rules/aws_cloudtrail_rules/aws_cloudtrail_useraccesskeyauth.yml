@@ -205,4 +205,74 @@ Tests:
                     userName: AWSReservedSSO_DevAdmin_635426549a280cc6
                 webIdFederationData: {}
             type: AssumedRole
+    - Name: No Access Key
+      ExpectedResult: false
+      Log:
+        additionalEventData:
+            MFAUsed: "No"
+            MobileVersion: "No"
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: 364ad368-42bf-4e05-a500-971ddfe8ebff
+        eventName: AssumeRole
+        eventSource: signin.amazonaws.com
+        eventTime: "2024-06-02 19:41:40.000000000"
+        eventType: AwsConsoleSignIn
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_actor_ids:
+            - AROASXP6SDP2F4WLQVARB
+            - AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
+        p_any_aws_account_ids:
+            - "187901811700"
+        p_any_aws_arns:
+            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6
+            - arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
+            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6
+        p_any_ip_addresses:
+            - 73.252.165.138
+        p_any_trace_ids:
+            - ASIASXP6SDP2HUZY3TOB
+        p_any_usernames:
+            - nicholas.hakmiller
+        p_event_time: "2024-06-02 19:41:40.000000000"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2024-06-02 19:50:54.391407154"
+        p_row_id: f26228572e3f9acd88e0cadc1f80a502
+        p_schema_version: 0
+        p_source_file:
+            aws_s3_bucket: threat-research-trail-trail-bucket-xhh4yndpq5
+            aws_s3_key: AWSLogs/187901811700/CloudTrail/us-west-2/2024/06/02/187901811700_CloudTrail_us-west-2_20240602T1945Z_ggfzMNc1AHPJypqR.json.gz
+        p_source_id: 469edf86-a0c6-4d13-ba48-47c4060bb804
+        p_source_label: threat-research-trail-us-west-2
+        p_udm:
+            source:
+                address: 73.252.165.138
+                ip: 73.252.165.138
+            user:
+                arns:
+                    - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6
+                    - arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
+        readOnly: false
+        recipientAccountId: "187901811700"
+        responseElements:
+            ConsoleLogin: Success
+        sourceIPAddress: 73.252.165.138
+        tlsDetails:
+            cipherSuite: TLS_AES_128_GCM_SHA256
+            clientProvidedHostHeader: us-west-2.signin.aws.amazon.com
+            tlsVersion: TLSv1.3
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+        userIdentity:
+            accountId: "187901811700"
+            arn: arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
+            principalId: AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
+            sessionContext:
+                attributes:
+                    creationDate: "2024-06-02T19:41:40Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    type: lambda
+                webIdFederationData: {}
+            type: AssumedRole
 CreateAlert: false

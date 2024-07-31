@@ -3,7 +3,7 @@ def rule(event):
     if event.get("errorCode") or event.get("errorMessage"):
         return False
     # Reference: https://awsteele.com/blog/2020/09/26/aws-access-key-format.html
-    return event.deep_get("userIdentity", "accessKeyId").startswith("AKIA")
+    return event.deep_get("userIdentity", "accessKeyId", default="").startswith("AKIA")
 
 
 def title(event):
@@ -14,7 +14,7 @@ def title(event):
 
 def alert_context(event):
     return {
-        "ip_accessKeyId": event.get("sourceIpAddress")
+        "ip_accessKeyId": event.get("sourceIpAddress", default="{not found}")
         + ":"
-        + event.deep_get("userIdentity", "accessKeyId")
+        + event.deep_get("userIdentity", "accessKeyId", default="{not found}")
     }
