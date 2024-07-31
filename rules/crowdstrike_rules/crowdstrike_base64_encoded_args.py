@@ -49,6 +49,7 @@ def rule(event):
 
 
 def title(event):
+    process_name = event.udm("process_name") if event.udm("process_name") else "Unknown"
     process_name = event.udm("process_name").lower()
     command_line = event.udm("cmd")
     return f"Crowdstrike: Execution with base64 encoded args: [{process_name}] - [{command_line}]"
