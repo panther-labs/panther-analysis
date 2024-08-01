@@ -1,0 +1,77 @@
+{
+  "action": "UpdateCloudEventRule",
+  "actionparameters": {
+    "input": {
+      "id": "12345-a0b0-417e-be4e-12345",
+      "patch": {
+        "cloudEventRuleParams": {
+          "cloudProviders": [],
+          "filters": {
+            "and": [
+              {
+                "actor": {
+                  "name": {
+                    "doesNotContain": [
+                      "stuff"
+                    ]
+                  }
+                },
+                "externalName": {
+                  "equals": [
+                    "GetSecretValue"
+                  ]
+                },
+                "origin": {
+                  "equals": [
+                    "AWS_CLOUDTRAIL"
+                  ]
+                }
+              },
+              {
+                "rawAuditLogRecordPath": {
+                  "contains": [
+                    "/stuff/stuff"
+                  ],
+                  "path": "requestParameters.secretId"
+                }
+              }
+            ]
+          },
+          "targetEventNames": []
+        },
+        "description": "<redacted>",
+        "enabled": true,
+        "generateFindings": false,
+        "generateIssues": false,
+        "name": "stuff",
+        "securitySubCategory": [],
+        "severity": "CRITICAL"
+      }
+    },
+    "selection": [
+      "__typename",
+      {
+        "rule": [
+          "__typename",
+          "id",
+          "enabled",
+          "generateFindings",
+          "generateIssues",
+          "severity"
+        ]
+      }
+    ]
+  },
+  "id": "12345-405e-4505-a916-12345",
+  "log_type": null,
+  "requestid": "12345-0bbd-4ba2-b726-12345",
+  "serviceaccount": null,
+  "sourceip": "8.8.8.8",
+  "status": "SUCCESS",
+  "timestamp": "2024-02-29 12:45:49.007",
+  "user": {
+    "id": "test@wiz.io",
+    "name": "test@wiz.io"
+  },
+  "useragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}

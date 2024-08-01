@@ -1,0 +1,83 @@
+{
+  "action": "UpdateCICDScanPolicy",
+  "actionparameters": {
+    "input": {
+      "id": "12345-91a8-4a84-933d-12345",
+      "patch": {
+        "description": "<redacted>",
+        "iacParams": {
+          "countThreshold": 1,
+          "customIgnoreTags": [],
+          "ignoredRules": [],
+          "securityFrameworks": [
+            "9f1b4c4c-4d10-4cac-9d14-45b9dc2cc44b"
+          ],
+          "severityThreshold": "HIGH"
+        },
+        "name": "<redacted>",
+        "policyLifecycleEnforcements": [
+          {
+            "deploymentLifecycle": "CLI",
+            "enforcementMethod": "AUDIT"
+          },
+          {
+            "deploymentLifecycle": "ADMISSION_CONTROLLER",
+            "enforcementConfig": {
+              "admissionControllerConfig": {
+                "enforceOnScope": false
+              }
+            },
+            "enforcementMethod": "BLOCK"
+          }
+        ]
+      }
+    },
+    "selection": [
+      "__typename",
+      {
+        "scanPolicy": [
+          "__typename",
+          "id",
+          "name",
+          {
+            "projects": [
+              "__typename",
+              "id"
+            ]
+          },
+          "description",
+          "builtin",
+          {
+            "policyLifecycleEnforcements": [
+              "__typename",
+              "deploymentLifecycle",
+              "enforcementMethod",
+              {
+                "enforcementConfig": [
+                  "__typename"
+                ]
+              }
+            ]
+          },
+          {
+            "params": [
+              "__typename"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "id": "12345-0c38-4f0c-beba-12345",
+  "log_type": null,
+  "requestid": "12345-fe01-452d-8aa2-12345",
+  "serviceaccount": null,
+  "sourceip": "8.8.8.8",
+  "status": "SUCCESS",
+  "timestamp": "2024-02-15 21:54:31.3",
+  "user": {
+    "id": "wiz-production_test.user@wiz.io",
+    "name": "test.user@wiz.io"
+  },
+  "useragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+}
