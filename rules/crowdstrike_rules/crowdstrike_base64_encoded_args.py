@@ -29,9 +29,7 @@ def rule(event):
         return False
 
     # Split arguments from process path
-    command_line_args = event.udm("cmd")
-    if not command_line_args:
-        return False
+    command_line_args = event.udm("cmd", default="")
     command_line_args = command_line_args.replace('"', " ")
     command_line_args = command_line_args.replace("'", " ")
     command_line_args = command_line_args.replace("=", " ")
@@ -49,7 +47,8 @@ def rule(event):
 
 
 def title(event):
-    process_name = event.udm("process_name").lower()
+    process_name = event.udm("process_name") if event.udm("process_name") else "Unknown"
+    process_name = process_name.lower()
     command_line = event.udm("cmd")
     return f"Crowdstrike: Execution with base64 encoded args: [{process_name}] - [{command_line}]"
 
