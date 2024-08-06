@@ -1,0 +1,23 @@
+AnalysisType: scheduled_query
+Description: A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
+Enabled: false
+Query: |
+  SELECT
+    requestParameters:roleArn AS role,
+    ARRAY_AGG(distinct userIdentity:principalId) AS users,
+    ARRAY_AGG(distinct userIdentity:type) AS types
+  FROM
+    panther_logs.public.aws_cloudtrail
+  WHERE
+    P_OCCURS_SINCE('1 day')
+    AND eventName = 'AssumeRole'
+    AND errorCode IS NULL
+  GROUP BY role
+  HAVING
+    ARRAY_SIZE(types) > 1
+    AND ARRAY_CONTAINS('AWSService'::VARIANT, types)
+  LIMIT 100
+QueryName: "AWS Potentially Stolen Service Role"
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5
