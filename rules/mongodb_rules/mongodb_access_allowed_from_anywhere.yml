@@ -7,9 +7,15 @@ LogTypes:
 RuleID: "MongoDB.Access.Allowed.From.Anywhere"
 Filename: mongodb_access_allowed_from_anywhere.py
 Severity: High
+Tags:
+  - MongoDB
+  - Persistence
+  - Remote Services
+  - Modify Authentication Process - Conditional Access Policies
 Reports:
   MITRE ATT&CK:
-    - T1021 # Remote Services
+    - TA0003:T1556.009 # Modify Authentication Process - Conditional Access Policies
+    - TA0008:T1021.007 # Remote Services
 Reference: https://www.mongodb.com/docs/atlas/security/ip-access-list/
 Runbook: Check if this activity was legitimate. If not, delete 0.0.0.0/0 from the list of allowed ips.
 Tests:

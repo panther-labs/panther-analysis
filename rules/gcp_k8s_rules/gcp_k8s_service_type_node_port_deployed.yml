@@ -15,9 +15,12 @@ Runbook: >
   Investigate the reason of creating NodePort service. Advise that it is discouraged practice.
   Create ticket if appropriate.
 Reference: https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/
+Tags:
+  - Exploit Public-Facing Application
+  - Initial Access
 Reports:
   MITRE ATT&CK:
-    - T1190 # Exploit Public-Facing Application
+    - TA0001:T1190 # Exploit Public-Facing Application
 Tests:
   - Name: Service Created
     ExpectedResult: true
