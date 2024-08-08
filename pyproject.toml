@@ -6,3 +6,29 @@ include = '\.pyi?$'
 [tool.isort]
 line_length = 100
 profile = "black"
+
+[tool.ruff]
+lint.select = ["ALL"]
+lint.ignore = [
+    "D", # No docstrings required
+    "INP001", # Implicit package is fine in panther-analysis
+    "ISC001", # Incompatible with ruff-format
+    "ERA001", # Commented out code is common :(
+    "ANN401", # Using typing.Any is going to be common for a while
+    "COM812", # Trailing commas are a taste thing
+    "UP007", # Pipes for or'ing types aren't available in 3.9
+    "TRY003", "EM101", "N818", # Weird opinions about exceptions
+    "S104", # Not worried about network binding
+    "TCH002", # Not worried about importing panther_core
+    "SIM110", # Overkill simplification
+    "ANN101", # Deprecated and overkill typing of Self
+
+    "DTZ007", # Naive timezone datetimes. May want to re-enable this?
+    "N802", # function naming: Should probably be enabled
+]
+line-length = 100
+
+target-version = "py39"
+
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true
