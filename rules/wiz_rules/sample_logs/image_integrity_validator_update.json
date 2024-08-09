@@ -1,0 +1,73 @@
+{
+  "action": "UpdateImageIntegrityValidator",
+  "actionparameters": {
+    "input": {
+      "id": "12345-927b-4c6f-b74c-12345",
+      "patch": {
+        "description": "Image Integrity validator",
+        "imagePatterns": [
+          "*/test/*"
+        ],
+        "name": "Validator",
+        "value": {
+          "cosign": {
+            "key": "-----BEGIN PUBLIC KEY-----\n12345123451234512345L31SPWWLVWLm6oUKbNIOcCAwEAAQ==\n-----END PUBLIC KEY-----",
+            "method": "KEY"
+          },
+          "method": "COSIGN"
+        }
+      }
+    },
+    "selection": [
+      "__typename",
+      {
+        "imageIntegrityValidator": [
+          "__typename",
+          "id",
+          "name",
+          "description",
+          "imagePatterns",
+          {
+            "projects": [
+              "__typename",
+              "id"
+            ]
+          },
+          {
+            "value": [
+              "__typename",
+              "method",
+              {
+                "notary": [
+                  "__typename",
+                  "certificate"
+                ]
+              },
+              {
+                "cosign": [
+                  "__typename",
+                  "method",
+                  "key",
+                  "certificate",
+                  "certificateChain"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "id": "12345-9a12-43a8-a898-12345",
+  "log_type": null,
+  "requestid": "12345-9348-4c47-bcb7-12345",
+  "serviceaccount": null,
+  "sourceip": "8.8.8.8",
+  "status": "SUCCESS",
+  "timestamp": "2023-10-27 19:14:36.252",
+  "user": {
+    "id": "test@wiz.io",
+    "name": "test@wiz.io"
+  },
+  "useragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+}

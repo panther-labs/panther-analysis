@@ -1,0 +1,120 @@
+{
+  "action": "UpdateHostConfigurationRule",
+  "actionparameters": {
+    "input": {
+      "id": "12345-3b1a-4c17-a466-12345",
+      "patch": {
+        "description": "Test",
+        "directOVAL": "<redacted>",
+        "name": "test-Test",
+        "remediationInstructions": "",
+        "securitySubCategories": [
+          "wsct-id-13508"
+        ],
+        "severity": "CRITICAL",
+        "targetOperatingSystems": [],
+        "targetTechnologies": []
+      }
+    },
+    "selection": [
+      "__typename",
+      {
+        "rule": [
+          "__typename",
+          "id",
+          "externalId",
+          "name",
+          "description",
+          "enabled",
+          "builtin",
+          "shortName",
+          {
+            "matchers": [
+              "__typename",
+              {
+                "workloadScanner": [
+                  "__typename",
+                  "enabled",
+                  "description",
+                  "ovalDefinition"
+                ]
+              },
+              {
+                "dynamicScanner": [
+                  "__typename",
+                  "enabled",
+                  "description",
+                  "redactedTemplate"
+                ]
+              }
+            ]
+          },
+          {
+            "targetOperatingSystems": [
+              "__typename",
+              "id",
+              "version",
+              "displayName",
+              {
+                "technology": [
+                  "__typename",
+                  "id"
+                ]
+              }
+            ]
+          },
+          {
+            "targetTechnologies": [
+              "__typename",
+              "id",
+              "version",
+              "displayName",
+              {
+                "technology": [
+                  "__typename",
+                  "id"
+                ]
+              }
+            ]
+          },
+          "severity",
+          {
+            "securitySubCategories": [
+              "__typename",
+              "id"
+            ]
+          },
+          "remediationInstructions",
+          {
+            "analytics": [
+              "__typename",
+              "errorCount",
+              "failCount",
+              "notAssessedCount",
+              "passCount",
+              "totalCount"
+            ]
+          },
+          {
+            "projects": [
+              "__typename",
+              "id"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "id": "12345-564d-412f-9c0b-12345",
+  "log_type": "auditLogEntries",
+  "requestid": "12345-bd16-4ba0-822a-12345",
+  "serviceaccount": null,
+  "sourceip": "8.8.8.8",
+  "status": "SUCCESS",
+  "timestamp": "2024-07-31 18:16:44.427",
+  "user": {
+    "id": "test@wiz.io",
+    "name": "test@wiz.io"
+  },
+  "useragent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
+}
