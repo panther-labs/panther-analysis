@@ -1,8 +1,10 @@
-from panther_iocs import SUNBURST_FQDN_IOCS, ioc_match, sanitize_domain
+from panther_iocs import ioc_match, sanitize_domain
+
+SUNBURST_FQDN_IOCS = []
 
 
 def rule(event):
-    return any(ioc_match(event.get("p_any_domain_names"), SUNBURST_FQDN_IOCS))
+    return False  # any(ioc_match(event.get("p_any_domain_names"), SUNBURST_FQDN_IOCS))
 
 
 def title(event):
