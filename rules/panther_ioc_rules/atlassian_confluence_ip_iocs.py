@@ -3,7 +3,7 @@ from panther_iocs import ioc_match
 VOLEXITY_CONFLUENCE_IP_IOCS = []
 
 
-def rule(event):
+def rule(_):
     return False  # any(ioc_match(event.get("p_any_ip_addresses"), VOLEXITY_CONFLUENCE_IP_IOCS))
 
 

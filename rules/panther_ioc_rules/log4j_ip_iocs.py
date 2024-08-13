@@ -3,7 +3,7 @@ from panther_iocs import ioc_match
 LOG4J_IP_IOCS = []
 
 
-def rule(event):
+def rule(_):
     return False  # any(ioc_match(event.get("p_any_ip_addresses"), LOG4J_IP_IOCS))
 
 

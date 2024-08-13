@@ -3,7 +3,7 @@ from panther_iocs import ioc_match
 SUNBURST_SHA256_IOCS = []
 
 
-def rule(event):
+def rule(_):
     return False  # any(ioc_match(event.get("p_any_sha256_hashes"), SUNBURST_SHA256_IOCS))
 
 
