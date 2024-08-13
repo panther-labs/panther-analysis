@@ -1,4 +1,4 @@
-from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context
+from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context, str_to_list
 
 
 def get_single_ips(event, fieldname="cidrs") -> list[str]:
@@ -6,7 +6,7 @@ def get_single_ips(event, fieldname="cidrs") -> list[str]:
     are actually just single IP addresses."""
     single_ips = []
     audit_keys = audit_keys_dict(event)
-    cidrs = str_to_list(audit_keys[fieldname])
+    cidrs = str_to_list(audit_keys.get(fieldname, []))
     for entry in cidrs:
         if "/" not in entry:
             single_ips.append(entry)
@@ -14,12 +14,6 @@ def get_single_ips(event, fieldname="cidrs") -> list[str]:
             # A 32-bit CIDR range is the same as a single IP address
             single_ips.append(entry[:-3])
     return single_ips
-
-
-def str_to_list(liststr: str) -> list[str]:
-    """Several crowdstrike values are returned as a list like "[x y z]". This function convetrs
-    such entries to Python list of strings, like: ["x", "y", "z"]."""
-    return [x.strip() for x in liststr[1:-1].split(" ")]
 
 
 def rule(event):
