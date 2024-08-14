@@ -1,5 +1,4 @@
 from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context, str_to_list
-from panther_base_helpers import deep_get
 
 
 def rule(event):
@@ -10,11 +9,12 @@ def rule(event):
 
     return True
 
+
 def title(event):
     actor = event.deep_get("event", "UserId")
     action = {
         "CreateAllowlistGroup": "created a new",
-        "UpdateAllowlistGroup": "made changes to"
+        "UpdateAllowlistGroup": "made changes to",
     }.get(event.deep_get("event", "OperationName"))
     group = audit_keys_dict(event).get("group_name", "UNKNWOWN GROUP")
     return f"{actor} {action} Crowdstrike IP allowlist group: {group}"
@@ -29,8 +29,8 @@ def alert_context(event):
         if context.get(key):
             try:
                 context[key] = str_to_list(context[key])
-            except:
-                pass # Just ignore if we can't unmarshal it
+            except ValueError:
+                pass  # Just ignore if we can't unmarshal it
 
     # Find out what entries were removed, and which were added
     op_name = event.deep_get("event", "OperationName")
@@ -39,7 +39,10 @@ def alert_context(event):
     removed_cidrs = []
     added_contexts = []
     removed_contexts = []
-    getlist = lambda key: str_to_list(audit_keys.get(key))
+
+    def getlist(key: str):
+        return str_to_list(audit_keys.get(key))
+
     match op_name:
         case "UpdateAllowlistGroup":
             new_cidrs = getlist("cidrs")
@@ -58,17 +61,20 @@ def alert_context(event):
             #   This is in case we update the rule logic but forget to update this logic too
             raise ValueError(f"Unepected Operation Name: {op_name}")
 
-    context.update({
-        "changes": {
-            "cidr_added": added_cidrs,
-            "cidr_removed": removed_cidrs,
-            "context_added": added_contexts,
-            "context_removed": removed_contexts
+    context.update(
+        {
+            "changes": {
+                "cidr_added": added_cidrs,
+                "cidr_removed": removed_cidrs,
+                "context_added": added_contexts,
+                "context_removed": removed_contexts,
+            }
         }
-    })
+    )
 
     return context
 
-def get_unique_entries(l1: list, l2: list) -> list:
+
+def get_unique_entries(list1: list, list2: list) -> list:
     """Returns items in l1 that are not in l2."""
-    return list(set(l1)-set(l2))
+    return list(set(list1) - set(list2))

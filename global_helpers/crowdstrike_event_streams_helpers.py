@@ -14,4 +14,7 @@ def audit_keys_dict(event):
 def str_to_list(liststr: str) -> list[str]:
     """Several crowdstrike values are returned as a list like "[x y z]". This function convetrs
     such entries to Python list of strings, like: ["x", "y", "z"]."""
+    # Validate
+    if liststr[0] != "[" or liststr[-1] != "]":
+        raise ValueError(f"Invalid list string: {liststr}")
     return [x.strip() for x in liststr[1:-1].split(" ")]
