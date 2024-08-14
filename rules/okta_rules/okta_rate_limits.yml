@@ -3,7 +3,7 @@ Description: Potential DoS/Bruteforce attack or hitting limits (system degradati
 DisplayName: "Okta Rate Limits"
 Enabled: true
 Filename: okta_rate_limits.py
-Severity: High
+Severity: Medium
 Tags:
   - Credential Access
   - Brute Force
@@ -14,6 +14,11 @@ Reports:
     - TA0006:T1110
     - TA0040:T1498
 Reference: https://developer.okta.com/docs/reference/rl-system-log-events/
+DedupPeriodMinutes: 1440 # 24 hours
+LogTypes:
+  - Okta.SystemLog
+RuleID: "Okta.Rate.Limits"
+Threshold: 1
 Tests:
   - ExpectedResult: true
     Log:
@@ -236,8 +241,3 @@ Tests:
       uuid: aa-11-22-33-44-bb
       version: "0"
     Name: Non event
-DedupPeriodMinutes: 360 # 6 hours
-LogTypes:
-  - Okta.SystemLog
-RuleID: "Okta.Rate.Limits"
-Threshold: 1

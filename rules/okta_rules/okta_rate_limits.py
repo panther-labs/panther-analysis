@@ -16,7 +16,7 @@ DETECTION_EVENTS = [
 def rule(event):
     eventtype = event.get("eventtype", "")
     for detection_event in DETECTION_EVENTS:
-        if fnmatch(eventtype, detection_event):
+        if fnmatch(eventtype, detection_event) and "violation" in eventtype:
             return True
     return False
 
@@ -24,8 +24,12 @@ def rule(event):
 def title(event):
     return (
         f"Okta Rate Limit Event: [{event.get('eventtype','')}] "
-        f"by [{event.get('actor', {}).get('alternateId', '<id-not-found>')}]"
+        f"by [{event.deep_get('actor', 'alternateId', default='<id-not-found>')}]"
     )
+
+
+def dedup(event):
+    return event.deep_get("actor", "alternateId", default="<id-not-found>")
 
 
 def severity(event):
@@ -33,11 +37,11 @@ def severity(event):
         return "INFO"
     eventtype = event.get("eventtype", "")
     if "notification" in eventtype:
-        return "LOW"
+        return "INFO"
     if "warning" in eventtype:
-        return "MEDIUM"
+        return "INFO"
     if "violation" in eventtype:
-        return "HIGH"
+        return "MEDIUM"
     return "DEFAULT"
 
 
