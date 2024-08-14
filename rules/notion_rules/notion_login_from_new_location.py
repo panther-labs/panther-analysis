@@ -3,9 +3,9 @@ import json
 import time
 
 from global_filter_notion import filter_include_event
+from panther_detection_helpers.caching import get_dictionary, put_dictionary
 from panther_ipinfo_helpers import IPInfoLocation
 from panther_notion_helpers import notion_alert_context
-from panther_oss_helpers import get_dictionary, put_dictionary
 
 # How long (in seconds) to keep previous login locations in cached memory
 DEFAULT_CACHE_PERIOD = 2419200
