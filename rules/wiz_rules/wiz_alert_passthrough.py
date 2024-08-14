@@ -13,11 +13,13 @@ def title(event):
 
 
 def severity(event):
+    if event.get("severity") == "INFORMATIONAL":
+        return "INFO"
     return event.get("severity")
 
 
 def dedup(event):
-    return event.get("id")
+    return event.deep_get("entitySnapshot", "externalId", default="<RESOURCE_NOT_FOUND>")
 
 
 def description(event):
