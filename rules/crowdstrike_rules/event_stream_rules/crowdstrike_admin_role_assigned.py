@@ -52,4 +52,8 @@ def dedup(event):
 
 
 def alert_context(event):
-    return cs_alert_context(event)
+    context = cs_alert_context(event)
+    actor = context.get("actor_user", "UNKNWON_ACTOR")
+    target = context.get("target_name", "UNKNOWN_TARGET")
+    context["actor_target"] = f"{actor}-{target}"
+    return context
