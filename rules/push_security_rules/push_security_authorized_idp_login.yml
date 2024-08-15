@@ -3,18 +3,16 @@ Filename: push_security_authorized_idp_login.py
 RuleID: "Push.Security.Authorized.IdP.Login"
 DisplayName: "Push Security Authorized IdP Login"
 Enabled: false
-CreateAlert: false
 LogTypes:
   - PushSecurity.Activity
 Tags:
   - Configuration Required
 Severity: Info
+CreateAlert: false
 Description: Login to application with unauthorized identity provider which could indicate a SAMLjacking attack.
 DedupPeriodMinutes: 60
 Threshold: 1
 Reference: https://github.com/pushsecurity/saas-attacks/blob/main/techniques/samljacking/description.md
-InlineFilters:
-  - All: []
 Tests:
   - Name: Google Workspace Password Login
     ExpectedResult: false

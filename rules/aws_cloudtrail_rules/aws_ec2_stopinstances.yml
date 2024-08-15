@@ -2,13 +2,13 @@ AnalysisType: rule
 RuleID: "AWS.EC2.StopInstances"
 DisplayName: "CloudTrail EC2 StopInstances"
 Enabled: true
-CreateAlert: false
 Filename: aws_ec2_stopinstances.py
 LogTypes:
   - AWS.CloudTrail
 Tags:
   - panther-signal
 Severity: Info
+CreateAlert: false
 Description: >
   A CloudTrail instances were stopped. It makes further changes of instances possible
 Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-examples.html

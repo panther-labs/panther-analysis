@@ -6,10 +6,9 @@ Enabled: true
 LogTypes:
     - AWS.CloudTrail
 Severity: Info
+CreateAlert: false
 DedupPeriodMinutes: 60
 Threshold: 1
-InlineFilters:
-    - All: []
 Tests:
     - Name: Access Key Action Failed
       ExpectedResult: false
@@ -275,4 +274,3 @@ Tests:
                     type: lambda
                 webIdFederationData: {}
             type: AssumedRole
-CreateAlert: false
