@@ -2,13 +2,13 @@ AnalysisType: rule
 Filename: crowdstrike_allowlist_removed.py
 RuleID: "Crowdstrike.AllowlistRemoved"
 DisplayName: "Crowdstrike Allowlist Removed"
-Reports:
-    MITRE ATT&CK:
-        - T1531 # Account Access removal
 Enabled: true
 LogTypes:
-    - Crowdstrike.EventStreams
+  - Crowdstrike.EventStreams
 Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - T1531 # Account Access removal
 Description: A user deleted an allowlist
 DedupPeriodMinutes: 60
 Threshold: 1

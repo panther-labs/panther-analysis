@@ -2,17 +2,17 @@ AnalysisType: rule
 Filename: crowdstrike_user_deleted.py
 RuleID: "Crowdstrike.UserDeleted"
 DisplayName: "Crowdstrike User Deleted"
-Reports:
-  MITRE ATT&CK:
-    - T1070 # Indicator Removal
 Enabled: true
 LogTypes:
   - Crowdstrike.EventStreams
+Severity: High
+Reports:
+  MITRE ATT&CK:
+    - T1070 # Indicator Removal
 Description: Someone has deleted multiple users.
 DedupPeriodMinutes: 60
 Threshold: 3
 Runbook: Validate this action was authorized.
-Severity: High
 Tests:
   - Name: Successful User Deletion
     ExpectedResult: true

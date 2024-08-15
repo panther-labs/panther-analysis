@@ -2,18 +2,18 @@ AnalysisType: rule
 Filename: crowdstrike_new_user_created.py
 RuleID: "Crowdstrike.NewUserCreated"
 DisplayName: "Crowdstrike New User Created"
-Reports:
-  MITRE ATT&CK:
-    - T1136.003 # Create Cloud Account
-CreateAlert: false
 Enabled: true
 LogTypes:
   - Crowdstrike.EventStreams
+Severity: Info
+CreateAlert: false
+Reports:
+  MITRE ATT&CK:
+    - T1136.003 # Create Cloud Account
 Description: A new Crowdstrike user was created
 DedupPeriodMinutes: 60
 Threshold: 1
 Runbook: Confirm the new user is valid.
-Severity: Info
 Tests:
   - Name: New User Created
     ExpectedResult: true

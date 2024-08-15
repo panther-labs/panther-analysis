@@ -10,48 +10,48 @@ Reports:
     - T1136.003 # Create Cloud Account
     - T1070 # Indicator Removal
 Detection:
-    - Sequence:
-        - ID: AccountCreated
-          RuleID: Crowdstrike.NewUserCreated
-        - ID: AccountDeleted
-          RuleID: Crowdstrike.UserDeleted
-      Transitions:
-        - ID: User Created FOLLOWED BY User Deleted
-          From: AccountCreated
-          To: AccountDeleted
-          Match:
-            - On: p_alert_context.target_name
-      LookbackWindowMinutes: 720 # 12 hours
-      Schedule:
-        RateMinutes: 480 # 8 hours
-        TimeoutMinutes: 1
+  - Sequence:
+      - ID: AccountCreated
+        RuleID: Crowdstrike.NewUserCreated
+      - ID: AccountDeleted
+        RuleID: Crowdstrike.UserDeleted
+    Transitions:
+      - ID: User Created FOLLOWED BY User Deleted
+        From: AccountCreated
+        To: AccountDeleted
+        Match:
+          - On: p_alert_context.target_name
+    LookbackWindowMinutes: 720 # 12 hours
+    Schedule:
+      RateMinutes: 480 # 8 hours
+      TimeoutMinutes: 1
 Tests:
-    - Name: User Creation, Followed By Deletion
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: AccountCreated
-          Matches:
-            p_alert_context.target_name:
-              'non.chalant@legitbiz.com':
-                - 0
-        - ID: AccountDeleted
-          Matches:
-            p_alert_context.target_name:
-              'non.chalant@legitbiz.com':
-                - 640 # 9 hours
-    - Name: User Creation, Not Followed By Deletion
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: AccountCreated
-          Matches:
-            p_alert_context.target_name:
-              'non.chalant@legitbiz.com':
-                - 0
-    - Name: User Deletion, Not Preceded By Creation
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: AccountDeleted
-          Matches:
-            p_alert_context.target_name:
-              'non.chalant@legitbiz.com':
-                - 120 # 2 hours
+  - Name: User Creation, Followed By Deletion
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: AccountCreated
+        Matches:
+          p_alert_context.target_name:
+            'non.chalant@legitbiz.com':
+              - 0
+      - ID: AccountDeleted
+        Matches:
+          p_alert_context.target_name:
+            'non.chalant@legitbiz.com':
+              - 640 # 9 hours
+  - Name: User Creation, Not Followed By Deletion
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: AccountCreated
+        Matches:
+          p_alert_context.target_name:
+            'non.chalant@legitbiz.com':
+              - 0
+  - Name: User Deletion, Not Preceded By Creation
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: AccountDeleted
+        Matches:
+          p_alert_context.target_name:
+            'non.chalant@legitbiz.com':
+              - 120 # 2 hours

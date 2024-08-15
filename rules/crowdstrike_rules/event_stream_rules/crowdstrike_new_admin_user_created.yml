@@ -14,16 +14,12 @@ Detection:
         RuleID: Crowdstrike.NewUserCreated
       - ID: AdminRoleAssigned
         RuleID: Crowdstrike.AdminRoleAssigned
-
     Transitions:
       - ID: AcountCreated FOLLOWED BY AdminRoleAssigned ON target AND actor
         From: AccountCreated
         To: AdminRoleAssigned
         Match:
           - On: p_alert_context.actor_target
-
-    EventEvaluationOrder: Chronological
-
     LookbackWindowMinutes: 45
     Schedule:
       RateMinutes: 30
