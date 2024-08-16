@@ -13,22 +13,26 @@ def rule(event):
 
 
 def title(event):
-    username = deep_get(event, "actor", "user", "name", default="<unknown-actor>")
-    email = deep_get(event, "actor", "user", "email", default="<unknown-email>")
+    # This is the user taking the action.
+    actor_username = deep_get(event, "actor", "user", "name", default="<unknown-actor>")
+    actor_email = deep_get(event, "actor", "user", "email", default="<unknown-email>")
+    # This is the user the action is taken on.
+    entity_username = deep_get(event, "entity", "user", "name", default="<unknown-actor>")
+    entity_email = deep_get(event, "entity", "user", "email", default="<unknown-email>")
+    action = event.get("action")
+    if action == "owner_transferred":
+        return f"{USER_PRIV_ESC_ACTIONS[action]} from {actor_username} ({actor_email})"
 
-    if event.get("action") == "owner_transferred":
-        return f"Slack Owner Transferred from {username} ({email})"
+    if action == "permissions_assigned":
+        return f"{USER_PRIV_ESC_ACTIONS[action]} {entity_username} ({entity_email})"
 
-    if event.get("action") == "permissions_assigned":
-        return f"Slack User, {username} ({email}), assigned permissions"
+    if action == "role_change_to_admin":
+        return f"{USER_PRIV_ESC_ACTIONS[action]} {entity_username} ({entity_email})"
 
-    if event.get("action") == "role_change_to_admin":
-        return f"Slack User, {username} ({email}), promoted to admin"
+    if action == "role_change_to_owner":
+        return f"{USER_PRIV_ESC_ACTIONS[action]} {entity_username} ({entity_email})"
 
-    if event.get("action") == "role_change_to_owner":
-        return f"Slack User, {username} ({email}), promoted to Owner"
-
-    return f"Slack User Privilege Escalation event {event.get('action')} on {username} ({email})"
+    return f"Slack User Privilege Escalation event {action} on {entity_username} ({entity_email})"
 
 
 def severity(event):
