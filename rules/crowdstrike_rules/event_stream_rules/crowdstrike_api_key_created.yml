@@ -7,43 +7,46 @@ Reports:
         - TA0006:T1098.001 # Additional Cloud Credentials
 Enabled: true
 LogTypes:
-    - Crowdstrike.EventStreams
+  - Crowdstrike.EventStreams
 Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - T1098.001 # Additional Cloud Credentials
 Description: A user created an API Key in CrowdStrike
 DedupPeriodMinutes: 60
 Threshold: 1
 Runbook: Reach out to the user if needed to validate the activity.
 Tests:
-    - Name: API Key Created
-      ExpectedResult: true
-      Log:
-        event:
-            AuditKeyValues:
-                - Key: scope(s)
-                  ValueString: alerts:read,api-integrations:read
-                - Key: actor_user
-                  ValueString: tester@panther.com
-                - Key: actor_user_uuid
-                  ValueString: a11a1111-1a11-1a1a-1a11-a11a111a111a
-                - Key: actor_cid
-                  ValueString: aaa111111111111111aaaaaa11a11a11
-                - Key: trace_id
-                  ValueString: 1a111111-a1a1-111a-11aa-a111111a1a1a
-                - Key: APIClientID
-                  ValueString: aaa1a11aaa111a1a11a11aaaa1aa1a11
-                - Key: id
-                  ValueString: aaa1a11aaa111a1a11a11aaaa1aa1a11
-                - Key: name
-                  ValueString: key name
-            OperationName: CreateAPIClient
-            ServiceName: Crowdstrike API Client
-            Success: true
-            UTCTimestamp: "2024-07-08 14:01:54.000000000"
-            UserId: tester@panther.com
-            UserIp: 11.1.111.11
-        metadata:
-            customerIDString: aaa111111111111111aaaaaa11a11a11
-            eventCreationTime: "2024-07-08 14:01:54.451000000"
-            eventType: AuthActivityAuditEvent
-            offset: 111111
-            version: "1.0"
+  - Name: API Key Created
+    ExpectedResult: true
+    Log:
+      event:
+          AuditKeyValues:
+              - Key: scope(s)
+                ValueString: alerts:read,api-integrations:read
+              - Key: actor_user
+                ValueString: tester@panther.com
+              - Key: actor_user_uuid
+                ValueString: a11a1111-1a11-1a1a-1a11-a11a111a111a
+              - Key: actor_cid
+                ValueString: aaa111111111111111aaaaaa11a11a11
+              - Key: trace_id
+                ValueString: 1a111111-a1a1-111a-11aa-a111111a1a1a
+              - Key: APIClientID
+                ValueString: aaa1a11aaa111a1a11a11aaaa1aa1a11
+              - Key: id
+                ValueString: aaa1a11aaa111a1a11a11aaaa1aa1a11
+              - Key: name
+                ValueString: key name
+          OperationName: CreateAPIClient
+          ServiceName: Crowdstrike API Client
+          Success: true
+          UTCTimestamp: "2024-07-08 14:01:54.000000000"
+          UserId: tester@panther.com
+          UserIp: 11.1.111.11
+      metadata:
+          customerIDString: aaa111111111111111aaaaaa11a11a11
+          eventCreationTime: "2024-07-08 14:01:54.451000000"
+          eventType: AuthActivityAuditEvent
+          offset: 111111
+          version: "1.0"

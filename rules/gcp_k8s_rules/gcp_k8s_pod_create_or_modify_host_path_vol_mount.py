@@ -67,6 +67,12 @@ def title(event):
     )
 
 
+def dedup(event):
+    return deep_get(
+        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+
+
 def alert_context(event):
     context = gcp_alert_context(event)
     volume_mount_path = deep_walk(

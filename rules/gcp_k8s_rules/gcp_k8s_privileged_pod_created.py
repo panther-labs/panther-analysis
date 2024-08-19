@@ -35,6 +35,12 @@ def title(event):
     return f"[GCP]: [{actor}] created a privileged pod [{pod_name}] in project [{project_id}]"
 
 
+def dedup(event):
+    return deep_get(
+        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+
+
 def alert_context(event):
     context = gcp_alert_context(event)
     containers_info = deep_walk(event, "protoPayload", "response", "spec", "containers", default=[])

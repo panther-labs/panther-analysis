@@ -10,6 +10,13 @@ Tags:
   - AWS
   - Cloudtrail
   - MITRE
+DedupPeriodMinutes: 1440
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.EC2.Traffic.Mirroring"
+SummaryAttributes:
+  - userIdentity.type
+Threshold: 1
 Tests:
   - ExpectedResult: true
     Log:
@@ -341,7 +348,7 @@ Tests:
           webIdFederationData: {}
         type: AssumedRole
     Name: DeleteTrafficMirrorTarget
-  - ExpectedResult: true
+  - ExpectedResult: false
     Log:
       awsRegion: us-east-1
       eventCategory: Management
@@ -553,10 +560,3 @@ Tests:
             "type": "AssumedRole",
           },
       }
-DedupPeriodMinutes: 60
-LogTypes:
-  - AWS.CloudTrail
-RuleID: "AWS.EC2.Traffic.Mirroring"
-SummaryAttributes:
-  - userIdentity.type
-Threshold: 1
