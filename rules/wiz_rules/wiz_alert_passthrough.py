@@ -13,8 +13,8 @@ def title(event):
 
 
 def severity(event):
-    if event.get("severity") == "INFORMATIONAL":
-        return "INFO"
+    # if event.get("severity") == "INFORMATIONAL":
+    #     return "INFO"
     return event.get("severity")
 
 
