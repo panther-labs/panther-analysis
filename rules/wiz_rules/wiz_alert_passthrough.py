@@ -2,7 +2,7 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    return event.get("status") == "OPEN"
+    return event.get("status") == "OPEN" and event.get("severity") != "INFORMATIONAL"
 
 
 def title(event):
@@ -19,7 +19,9 @@ def severity(event):
 
 
 def dedup(event):
-    return event.deep_get("entitySnapshot", "externalId", default="<RESOURCE_NOT_FOUND>")
+    return event.deep_get(
+        "entitySnapshot", "externalId", default="<RESOURCE_NOT_FOUND>"
+    ) + event.get("severity", "<SEVERITY_NOT_FOUND>")
 
 
 def description(event):
