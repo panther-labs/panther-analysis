@@ -32,18 +32,5 @@ def dedup(event):
     return event.deep_get("actor", "alternateId", default="<id-not-found>")
 
 
-def severity(event):
-    if event.get("severity", "") == "INFO":
-        return "INFO"
-    eventtype = event.get("eventtype", "")
-    if "notification" in eventtype:
-        return "INFO"
-    if "warning" in eventtype:
-        return "INFO"
-    if "violation" in eventtype:
-        return "MEDIUM"
-    return "DEFAULT"
-
-
 def alert_context(event):
     return okta_alert_context(event)

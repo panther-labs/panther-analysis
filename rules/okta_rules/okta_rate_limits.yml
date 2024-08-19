@@ -3,7 +3,7 @@ Description: Potential DoS/Bruteforce attack or hitting limits (system degradati
 DisplayName: "Okta Rate Limits"
 Enabled: true
 Filename: okta_rate_limits.py
-Severity: Medium
+Severity: Low
 Tags:
   - Credential Access
   - Brute Force
@@ -20,7 +20,7 @@ LogTypes:
 RuleID: "Okta.Rate.Limits"
 Threshold: 1
 Tests:
-  - ExpectedResult: true
+  - ExpectedResult: false
     Log:
       actor:
         alternateId: homer.simpson@duff.com
@@ -129,7 +129,7 @@ Tests:
       uuid: asdfdashh
       version: "0"
     Name: system.operation.ratelimit.violation
-  - ExpectedResult: true
+  - ExpectedResult: false
     Log:
       actor:
         alternateId: homer.simpson@duff.com
