@@ -12,9 +12,9 @@ def rule(event):
         "DeleteTrafficMirrorFilterRule",
         "DeleteTrafficMirrorSession",
         "DeleteTrafficMirrorTarget",
-        "DescribeTrafficMirrorFilters",
-        "DescribeTrafficMirrorSessions",
-        "DescribeTrafficMirrorTargets",
+        # "DescribeTrafficMirrorFilters",
+        # "DescribeTrafficMirrorSessions",
+        # "DescribeTrafficMirrorTargets",
         "ModifyTrafficMirrorFilterNetworkServices",
         "ModifyTrafficMirrorFilterRule",
         "ModifyTrafficMirrorSession",
@@ -28,9 +28,6 @@ def rule(event):
 
 
 def title(event):
-    # (Optional) Return a string which will be shown as the alert title.
-    # If no 'dedup' function is defined, the return value of this method will
-    # act as deduplication string.
     return (
         f"{event.get('userIdentity',{}).get('arn','no-type')} ec2 activity found for "
         f"{event.get('eventName')} in account {event.get('recipientAccountId')} "
@@ -39,12 +36,8 @@ def title(event):
 
 
 def dedup(event):
-    #  (Optional) Return a string which will be used to deduplicate similar alerts.
-    # Dedupe based on user identity, to not include multiple events from the same identity.
     return f"{event.get('userIdentity',{}).get('arn','no-user-identity-provided')}"
 
 
 def alert_context(event):
-    #  (Optional) Return a dictionary with additional data to be included
-    #  in the alert sent to the SNS/SQS/Webhook destination
     return aws_rule_context(event)
