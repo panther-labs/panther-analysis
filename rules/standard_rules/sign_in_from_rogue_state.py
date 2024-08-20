@@ -1,3 +1,5 @@
+import traceback
+
 import panther_country_helpers as countries
 import panther_event_type_helpers as event_type
 
@@ -11,6 +13,10 @@ ROGUE_STATES = {"CN", "IR", "RU"}
 def rule(event):
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
+        return False
+    
+    # Ignore events with no IP data
+    if not event.udm("source_ip"):
         return False
 
     # Get contry of request origin and compare to identified rogue state list
@@ -26,9 +32,11 @@ def title(event):
 
 def alert_context(event):
     return {
+        "udm_path": event.udm_path("source_ip"),
+        "event_type": event.udm("event_type"),
         "source_ip": event.udm("source_ip"),
         "country": get_country(event).name,
-        "account_name": get_account_name(event),
+        "account_name": get_account_name(event)
     }
 
 
