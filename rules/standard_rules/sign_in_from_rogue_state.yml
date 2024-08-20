@@ -1,7 +1,6 @@
 AnalysisType: rule
 Filename: sign_in_from_rogue_state.py
 RuleID: "Standard.SignInFromRogueState"
-DedupPeriodMinutes: 60
 DisplayName: "Sign In from Rogue State"
 Enabled: true
 LogTypes:
@@ -16,16 +15,17 @@ LogTypes:
   - OnePassword.SignInAttempt
   - Zendesk.Audit
   - Zoom.Activity
-Tags:
-  - DataModel
-  - Configuration Required
+Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0001:T1078.004
-Severity: Medium
 Description: Detects when an entity signs in from a nation associated with cyber attacks
+DedupPeriodMinutes: 60
 SummaryAttributes:
   - p_udm.source.address
+Tags:
+  - DataModel
+  - Configuration Required
 Tests:
   - Name: Non-Sign-In Event
     ExpectedResult: false
@@ -57,7 +57,8 @@ Tests:
           "userAgent": {
             "browser": "CHROME",
             "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
           },
           "zone": "null"
         },
@@ -155,7 +156,8 @@ Tests:
           "userAgent": {
             "browser": "CHROME",
             "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
           },
           "zone": "null"
         },
@@ -164,7 +166,10 @@ Tests:
             "authnRequestId": "xxx",
             "deviceFingerprint": "xxx",
             "dtHash": "xxx",
-            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New City\":\"NEGATIVE\"}}",
+            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New
+      Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New
+      State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New
+      City\":\"NEGATIVE\"}}",
             "oktaUserAgentExtended": "okta-auth-js/7.7.0 okta-signin-widget-7.21.0",
             "origin": "https://example.okta.com",
             "requestId": "xxx",
@@ -271,7 +276,8 @@ Tests:
         "context": {
           "client_ip_address": "1.1.1.1",
           "context_type": "web",
-          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
         },
         "created_at": "2023-02-16 06:47:34.903",
         "details": {
@@ -329,7 +335,7 @@ Tests:
         "p_enrichment": {
           "ipinfo_location": {
             "properties.ipAddress": {
-              "city": "Moscow"  ,
+              "city": "Moscow",
               "country": "RU",
               "lat": "55.7520",
               "lng": "37.6150",
@@ -342,55 +348,53 @@ Tests:
           }
         },
         "p_log_type": "Azure.Audit",
-        "properties":
-          {
-            "appId": "3b245ca3-dcce-4a54-a070-49ad8de02963",
-            "authenticationProcessingDetails":
-              [
-                {
-                  "key": "Azure AD App Authentication Library",
-                  "value": "Family: Unknown Library: Unknown 1.0.0 Platform: Unknown"
-                }
-              ],
-            "authenticationProtocol": "none",
-            "clientCredentialType": "none",
-            "conditionalAccessStatus": "notApplied",
-            "correlationId": "52d1e530-786c-443c-8dc8-aa7b1317608e",
-            "createdDateTime": "2023-07-27 13:59:53.691680300",
-            "crossTenantAccessType": "none",
-            "flaggedForReview": false,
-            "id": "55270060-d8fe-435e-9bf2-219a1d456b60",
-            "incomingTokenType": "none",
-            "ipAddress": "12.12.12.12",
-            "isInteractive": false,
-            "isTenantRestricted": false,
-            "location":
-              {
-                "city": "Springfield",
-                "countryOrRegion": "US",
-                "geoCoordinates":
-                  {
-                    "latitude": 42.73333333333333,
-                    "longitude": -110.88888888888888
-                  },
-                "state": "Oregon"
-              },
-            "managedIdentityType": "none",
-            "processingTimeInMilliseconds": 0,
-            "resourceDisplayName": "Office 365 Management APIs",
-            "resourceId": "9cc31481-8822-49ff-b638-552ecc26c777",
-            "resourceServicePrincipalId": "2acf8174-5e07-4ec4-9de8-08d880129ba5",
-            "riskDetail": "none",
-            "riskLevelAggregated": "low",
-            "riskLevelDuringSignIn": "low",
-            "riskState": "none",
-            "servicePrincipalCredentialKeyId": "2afc776a-4e79-4588-b2ad-f62c94d6bea8",
-            "servicePrincipalId": "4b6986ec-c49c-40c0-89ce-b2ac51213e39",
-            "servicePrincipalName": "very-normal-service-principal",
-            "status": { "errorCode": 0 },
-            "tokenIssuerType": "AzureAD",
-            "uniqueTokenIdentifier": "CXXXXXXXXXXXXXXXXXXXXX"
+        "properties": {
+          "appId": "3b245ca3-dcce-4a54-a070-49ad8de02963",
+          "authenticationProcessingDetails": [
+            {
+              "key": "Azure AD App Authentication Library",
+              "value": "Family: Unknown Library: Unknown 1.0.0 Platform: Unknown"
+            }
+          ],
+          "authenticationProtocol": "none",
+          "clientCredentialType": "none",
+          "conditionalAccessStatus": "notApplied",
+          "correlationId": "52d1e530-786c-443c-8dc8-aa7b1317608e",
+          "createdDateTime": "2023-07-27 13:59:53.691680300",
+          "crossTenantAccessType": "none",
+          "flaggedForReview": false,
+          "id": "55270060-d8fe-435e-9bf2-219a1d456b60",
+          "incomingTokenType": "none",
+          "ipAddress": "12.12.12.12",
+          "isInteractive": false,
+          "isTenantRestricted": false,
+          "location": {
+            "city": "Springfield",
+            "countryOrRegion": "US",
+            "geoCoordinates": {
+              "latitude": 42.73333333333333,
+              "longitude": -110.88888888888889
+            },
+            "state": "Oregon"
           },
+          "managedIdentityType": "none",
+          "processingTimeInMilliseconds": 0,
+          "resourceDisplayName": "Office 365 Management APIs",
+          "resourceId": "9cc31481-8822-49ff-b638-552ecc26c777",
+          "resourceServicePrincipalId": "2acf8174-5e07-4ec4-9de8-08d880129ba5",
+          "riskDetail": "none",
+          "riskLevelAggregated": "low",
+          "riskLevelDuringSignIn": "low",
+          "riskState": "none",
+          "servicePrincipalCredentialKeyId": "2afc776a-4e79-4588-b2ad-f62c94d6bea8",
+          "servicePrincipalId": "4b6986ec-c49c-40c0-89ce-b2ac51213e39",
+          "servicePrincipalName": "very-normal-service-principal",
+          "status": {
+            "errorCode": 0
+          },
+          "tokenIssuerType": "AzureAD",
+          "uniqueTokenIdentifier": "CXXXXXXXXXXXXXXXXXXXXX"
+        },
         "resourceid": "/tenants/60641ed1-32f7-4a2e-a912-d724c497e1e9/providers/Microsoft.aadiam",
         "resultsignature": "None",
         "resulttype": 0,
@@ -406,19 +410,18 @@ Tests:
       {
         "type": "event",
         "additional_details": "{\"key\": \"value\"}",
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat"
-          },
+        "created_by": {
+          "id": "12345678",
+          "type": "user",
+          "login": "cat@example",
+          "name": "Bob Cat"
+        },
         "event_type": "LOGIN",
         "ip_address": "1.1.1.1",
         "p_enrichment": {
           "ipinfo_location": {
             "ip_address": {
-              "city": "Moscow"  ,
+              "city": "Moscow",
               "country": "RU",
               "lat": "55.7520",
               "lng": "37.6150",
@@ -431,7 +434,11 @@ Tests:
           }
         },
         "p_log_type": "Box.Event",
-        "source": { "id": "12345678", "type": "user", "login": "user@example" }
+        "source": {
+          "id": "12345678",
+          "type": "user",
+          "login": "user@example"
+        }
       }
   - Name: Cloudtrail - Rogue State Sign-In
     ExpectedResult: true
@@ -482,7 +489,8 @@ Tests:
           "clientProvidedHostHeader": "signin.aws.amazon.com",
           "tlsVersion": "TLSv1.3"
         },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
         "userIdentity": {
           "type": "IAMUser",
           "principalId": "1111",
@@ -498,22 +506,24 @@ Tests:
         returnValue: true
     Log:
       {
-        "event":
-          {
-            "actor":
-              {
-                "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-                "object": "user",
-                "person": { "email": "aragorn.elessar@lotr.com" },
-                "type": "person",
-              },
-            "details": { "authType": "saml" },
+        "event": {
+          "actor": {
             "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "ip_address": "192.168.100.100",
-            "timestamp": "2023-10-03T19:02:28.044000Z",
-            "type": "user.login",
-            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "object": "user",
+            "person": {
+              "email": "aragorn.elessar@lotr.com"
+            },
+            "type": "person"
           },
+          "details": {
+            "authType": "saml"
+          },
+          "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "ip_address": "192.168.100.100",
+          "timestamp": "2023-10-03T19:02:28.044000Z",
+          "type": "user.login",
+          "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
         "p_enrichment": {
           "ipinfo_location": {
             "event.ip_address": {
@@ -566,7 +576,8 @@ Tests:
           "userAgent": {
             "browser": "CHROME",
             "os": "Mac OS X",
-            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
           },
           "zone": "null"
         },
@@ -575,7 +586,10 @@ Tests:
             "authnRequestId": "xxx",
             "deviceFingerprint": "xxx",
             "dtHash": "xxx",
-            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New City\":\"NEGATIVE\"}}",
+            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New
+      Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New
+      State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New
+      City\":\"NEGATIVE\"}}",
             "oktaUserAgentExtended": "okta-auth-js/7.7.0 okta-signin-widget-7.21.0",
             "origin": "https://example.okta.com",
             "requestId": "xxx",
@@ -694,7 +708,7 @@ Tests:
         },
         "p_log_type": "OneLogin.Events",
         "user_id": 123456,
-        "user_name": "Bob Cat",
+        "user_name": "Bob Cat"
       }
   - Name: OnePassword - Rogue State Sign-In
     ExpectedResult: true
@@ -717,8 +731,8 @@ Tests:
         "location": {
           "city": "Moscow",
           "country": "RU",
-          "latitude": 55.7520,
-          "longitude": 37.6150,
+          "latitude": 55.752,
+          "longitude": 37.615,
           "region": "Moscow"
         },
         "p_enrichment": {
@@ -778,7 +792,7 @@ Tests:
         "p_enrichment": {
           "ipinfo_location": {
             "ip_address": {
-              "city": "Moscow"  ,
+              "city": "Moscow",
               "country": "RU",
               "lat": "55.7520",
               "lng": "37.6150",
