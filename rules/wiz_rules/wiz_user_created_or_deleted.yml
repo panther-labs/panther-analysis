@@ -2,14 +2,15 @@ AnalysisType: rule
 RuleID: Wiz.User.Created.Or.Deleted
 Description: This rule detects creations and deletions of Wiz users.
 DisplayName: Wiz User Created Or Deleted
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Runbook: Verify that this change was planned.
 Reference: https://support.wiz.io/hc/en-us/categories/5311977085340-User-Management
 Enabled: true
 Filename: wiz_user_created_or_deleted.py
-Severity: Medium
+Severity: Low
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562  # Impair Defenses
+    - T1136 # Create Account
+    - T1070 # Indicator Removal
 LogTypes:
   - Wiz.Audit
 DedupPeriodMinutes: 60

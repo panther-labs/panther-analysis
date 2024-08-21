@@ -2,14 +2,14 @@ AnalysisType: rule
 RuleID: Wiz.Revoke.User.Sessions
 Description: This rule detects user sessions revoked.
 DisplayName: Wiz Revoke User Sessions
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Runbook: Verify that this change was planned. If not, revoke all the sessions of the account and change its credentials
 Reference: https://www.wiz.io/blog/storm-0558-compromised-microsoft-key-enables-authentication-of-countless-micr
 Enabled: true
 Filename: wiz_revoke_user_sessions.py
-Severity: Medium
+Severity: High
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562  # Impair Defenses
+    - T1531  # Account Access Removal
 LogTypes:
   - Wiz.Audit
 DedupPeriodMinutes: 60

@@ -10,7 +10,7 @@ SUSPICIOUS_ACTIONS = [
     "DeleteHostConfigurationRule",
     "UpdateHostConfigurationRule",
     "CreateIgnoreRule",
-    "DeleteIgnoreRule",  # we have no sample log for such event, but I suppose there should exist one
+    "DeleteIgnoreRule",  # we have no sample log for such event, but I suppose there should be one
     "UpdateIgnoreRule",
     "CreateMalwareExclusion",
     "UpdateMalwareExclusion",

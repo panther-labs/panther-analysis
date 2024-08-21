@@ -2,14 +2,14 @@ AnalysisType: rule
 RuleID: Wiz.User.Role.Updated.Or.Deleted
 Description: This rule detects updates and deletions of Wiz user roles.
 DisplayName: Wiz User Role Updated Or Deleted
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again. Review privileges given to accounts to ensure the principle of minimal privilege
 Reference: https://www.wiz.io/blog/cloud-security-custom-roles-democratization
 Enabled: true
 Filename: wiz_user_role_updated_or_deleted.py
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562  # Impair Defenses
+    - TA0003:T1098  # Account Manipulation
 LogTypes:
   - Wiz.Audit
 DedupPeriodMinutes: 60
