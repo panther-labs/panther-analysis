@@ -7,8 +7,8 @@ Description: Detects when a user account is created and deleted within 12 hours.
 Reference: ""
 Reports:
   MITRE ATT&CK:
-    - T1136.003 # Create Cloud Account
-    - T1070 # Indicator Removal
+    - TA0003:T1136.003 # Persistence: Create Cloud Account
+    - TA0005:T1070 # Defense Evasion: Indicator Removal
 Detection:
   - Sequence:
       - ID: AccountCreated
