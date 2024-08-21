@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: sunburst_fqdn_iocs.py
 RuleID: "IOC.SunburstFQDNIOCs"
-DisplayName: "Sunburst Indicators of Compromise (FQDN)"
-Enabled: true
+DisplayName: "DEPRECATED - Sunburst Indicators of Compromise (FQDN)"
+Enabled: false
 LogTypes:
   - AWS.ALB
   - AWS.CloudTrail
@@ -51,12 +51,4 @@ Tests:
         "dstaddr": "1.1.1.1",
         "srcaddr": "10.0.0.1",
         "p_any_domain_names": ["example.com"],
-      }
-  - Name: Sunburst Indicator of Compromise (FQDN) Detected
-    ExpectedResult: true
-    Log:
-      {
-        "srcaddr": "13.59.205.66",
-        "dstaddr": "10.0.0.1",
-        "p_any_domain_names": ["incomeupdate.com"],
       }
