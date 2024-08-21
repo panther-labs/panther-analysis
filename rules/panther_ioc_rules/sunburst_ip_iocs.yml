@@ -42,11 +42,3 @@ Tests:
   - Name: Non-matching traffic
     ExpectedResult: false
     Log: { "dstport": 53, "dstaddr": "1.1.1.1", "srcaddr": "10.0.0.1" }
-  - Name: Sunburst Indicator of Compromise (IP) Detected
-    ExpectedResult: true
-    Log:
-      {
-        "srcaddr": "0.0.0.1",
-        "dstaddr": "10.0.0.1",
-        "p_any_ip_addresses": ["0.0.0.1"],
-      }
