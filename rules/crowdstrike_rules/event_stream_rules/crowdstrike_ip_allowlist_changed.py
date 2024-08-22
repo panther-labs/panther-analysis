@@ -56,10 +56,6 @@ def alert_context(event):
         case "CreateAllowlistGroup":
             added_cidrs = str_to_list(audit_keys.get("cidrs", []))
             added_contexts = str_to_list(audit_keys.get("contexts", []))
-        case _:
-            # Raise error if there's another operationname
-            #   This is in case we update the rule logic but forget to update this logic too
-            raise ValueError(f"Unepected Operation Name: {op_name}")
 
     context.update(
         {
