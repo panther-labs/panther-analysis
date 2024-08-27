@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: atlassian_confluence_ip_iocs.py
 RuleID: "Confluence.0DayIPs"
-DisplayName: "Confluence 0-Day Indicators of Compromise (IOCs)"
-Enabled: True
+DisplayName: "DEPRECATED - Confluence 0-Day Indicators of Compromise (IOCs)"
+Enabled: False
 LogTypes:
   - AWS.ALB
   - AWS.CloudTrail
@@ -45,12 +45,4 @@ Tests:
         "dstaddr": "1.1.1.1",
         "srcaddr": "10.0.0.1",
         "p_any_ip_addresses": ["1.1.1.1"],
-      }
-  - Name: Indicator of Compromise (IP) Detected
-    ExpectedResult: true
-    Log:
-      {
-        "srcaddr": "59.163.248.170",
-        "dstaddr": "0.0.0.1",
-        "p_any_ip_addresses": ["59.163.248.170"],
       }
