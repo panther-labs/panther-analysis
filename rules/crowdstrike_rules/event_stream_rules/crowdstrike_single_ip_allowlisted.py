@@ -41,8 +41,10 @@ def title(event):
 
     # contexts_str: one of API, UI, or API & UI
     #   Also a more general case: API, UI, and XX (for if they add extra contexts in the future)
-    contexts = str_to_list(audit_keys_dict(event)["contexts"])
-    if len(contexts) == 1:
+    contexts = str_to_list(audit_keys_dict(event).get("contexts", ""))
+    if len(contexts) == 0:
+        contexts_str = "no contexts"
+    elif len(contexts) == 1:
         contexts_str = contexts[0]
     else:
         contexts_str = ", ".join(contexts[:-1]) + " & " + contexts[-1]
