@@ -1,8 +1,9 @@
 import argparse
 import csv
 import json
-import os
 import logging
+import os
+
 import yaml
 
 
