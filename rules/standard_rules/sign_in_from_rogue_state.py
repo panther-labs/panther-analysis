@@ -1,5 +1,5 @@
-import panther_country_helpers as countries
 import panther_event_type_helpers as event_type
+import pycountry
 
 # Configuration Required:
 #   Configure the below list of rogue states according to your needs/experience
@@ -18,7 +18,7 @@ def rule(event):
         return False
 
     # Get contry of request origin and compare to identified rogue state list
-    return bool(is_rogue_state(get_country(event).alpha2))
+    return bool(is_rogue_state(get_country(event).alpha_2))
 
 
 def title(event):
@@ -41,7 +41,7 @@ def get_country(event) -> str:
     location_data = event.deep_get("p_enrichment", "ipinfo_location", event.udm_path("source_ip"))
     if not location_data:
         return ""  # Ignore event if we have no enrichment to analyze
-    return countries.get_country(location_data.get("country").upper())
+    return pycountry.countries.get(alpha_2=location_data.get("country").upper())
 
 
 def get_account_name(event) -> str:
