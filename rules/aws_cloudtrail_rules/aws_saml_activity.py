@@ -9,6 +9,9 @@ def rule(event):
         ":assumed-role/AWSServiceRoleForSSO/AWS-SSO"
     ):
         return False
+    # Don't alert on errors such as EntityAlreadyExistsException and NoSuchEntity
+    if event.get("errorCode"):
+        return False
     return (
         event.get("eventSource") == "iam.amazonaws.com" and event.get("eventName") in SAML_ACTIONS
     )
