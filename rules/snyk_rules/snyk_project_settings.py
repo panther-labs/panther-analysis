@@ -12,7 +12,6 @@ ACTIONS = [
     "org.project.attributes.edit",
     "org.project.add",
     "org.project.delete",
-    # "org.project.edit",
     "org.project.fix_pr.manual_open",
     "org.project.ignore.create",
     "org.project.ignore.delete",
