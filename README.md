@@ -259,14 +259,6 @@ git pull panther-upstream main
 git push
 ```
 
-# Remove Deprecated Formatters
-
-Previously, Node, NPM and Prettier were used for formatting Markdown and YAML files; these are no longer in use.
-
-Depending on how Node is managed, it will need to be uninstalled or removed if it is no longer needed elsewhere. Refer to your system/package manager's documentation for instructions on removing Node.
-
-Otherwise, running `npm uninstall prettier` will remove Prettier.
-
 # License
 
 This repository is licensed under [Apache License, Version 2.0](https://github.com/panther-labs/panther-analysis/blob/main/LICENSE.txt).
