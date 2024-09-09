@@ -1,5 +1,4 @@
 from global_filter_snyk import filter_include_event
-from panther_base_helpers import deep_get
 from panther_snyk_helpers import snyk_alert_context
 
 ACTIONS = [
@@ -26,13 +25,13 @@ ACTIONS = [
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = deep_get(event, "event", default="<NO_EVENT>")
+    action = event.deep_get("event", default="<NO_EVENT>")
     # for org.user.add/group.user.add via SAML/SCIM
     # the attributes .userId and .content.publicUserId
     # have the same value
     if action.endswith(".user.add"):
-        target_user = deep_get(event, "content", "userPublicId", default="<NO_CONTENT_UID>")
-        actor = deep_get(event, "userId", default="<NO_USERID>")
+        target_user = event.deep_get("content", "userPublicId", default="<NO_CONTENT_UID>")
+        actor = event.deep_get("userId", default="<NO_USERID>")
         if target_user == actor:
             return False
     return action in ACTIONS
@@ -41,14 +40,14 @@ def rule(event):
 def title(event):
     group_or_org = "<GROUP_OR_ORG>"
     operation = "<NO_OPERATION>"
-    action = deep_get(event, "event", default="<NO_EVENT>")
+    action = event.deep_get("event", default="<NO_EVENT>")
     if "." in action:
         group_or_org = action.split(".")[0].title()
         operation = ".".join(action.split(".")[2:]).title()
     return (
         f"Snyk: [{group_or_org}] User "
         f"[{operation}] "
-        f"performed by [{deep_get(event, 'userId', default='<NO_USERID>')}]"
+        f"performed by [{event.deep_get('userId', default='<NO_USERID>')}]"
     )
 
 
@@ -58,17 +57,17 @@ def alert_context(event):
 
 def dedup(event):
     return (
-        f"{deep_get(event, 'userId', default='<NO_USERID>')}"
-        f"{deep_get(event, 'orgId', default='<NO_ORGID>')}"
-        f"{deep_get(event, 'groupId', default='<NO_GROUPID>')}"
-        f"{deep_get(event, 'event', default='<NO_EVENT>')}"
+        f"{event.deep_get('userId', default='<NO_USERID>')}"
+        f"{event.deep_get('orgId', default='<NO_ORGID>')}"
+        f"{event.deep_get('groupId', default='<NO_GROUPID>')}"
+        f"{event.deep_get('event', default='<NO_EVENT>')}"
     )
 
 
 def severity(event):
-    role = deep_get(event, "content", "after", "role", default=None)
-    if not role and "afterRoleName" in deep_get(event, "content", default={}):
-        role = deep_get(event, "content", "afterRoleName", default=None)
+    role = event.deep_get("content", "after", "role", default=None)
+    if not role and "afterRoleName" in event.deep_get("content", default={}):
+        role = event.deep_get("content", "afterRoleName", default=None)
     if role == "ADMIN":
         return "CRITICAL"
     return "MEDIUM"
