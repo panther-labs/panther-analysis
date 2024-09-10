@@ -1,12 +1,13 @@
 # panther-analysis Style Guide
 
-## Metadata Best Practices
+## Metadata best practices
 
 ### RuleID, Filename and DisplayName
 
-- RuleID, Filename and DisplayName should be similar enough to eachother to be able to easily identify a filename by it's RuleID or vice versa.
-- RuleID should start with the LogType idenifier followed by a `.`
+- RuleID, Filename, and DisplayName should all be similar to one another. A good litmus test is: If you have the RuleID, would you be able to identify the related Python file (its Filename), and vice versa?
+- RuleID should start with the LogType identifier followed by a `.`
 
+Example:
 ```yaml
 DisplayName: "AWS Compromised IAM Key Quarantine"
 RuleID: "AWS.CloudTrail.IAMCompromisedKeyQuarantine"
@@ -19,18 +20,19 @@ Review the [Alert Severity Guidelines](https://docs.panther.com/detections/rules
 
 ### Reference
 
-Reference should link to a relevant security research or threat report describing the attack being detected and why you'd want to detect it from a security perspective.  Links to API docs or other generic log source documentation should be avoided.
+The Reference value should be a link to a relevant security or threat research report that describes the attack this rule detects, as well as why it is valuable to detect it, from a security perspective. Avoid generic documentation links, such as general API or log source pages.
 
 ### Runbook
 
 Runbooks should provide clear triage steps for incident responders.  See [Define Clear Triage Steps](https://jacknaglieri.substack.com/i/148126819/define-clear-triage-steps).
 
-### MITRE ATT&CK Tactics and Techniques
+### MITRE ATT&CK reports
 
-- MITRE ATT&CK tags should be in the form `TA####:T####` or `TA####:T####.###`.
+- MITRE ATT&CK tactics and techniques should be in the form `TA####:T####` or `TA####:T####.###`.
 - Add a comment with the Technique name.
 - Optionally add the Technique name to Tags as well.
 
+Example:
 ```yaml
 Reports:
   MITRE ATT&CK:
@@ -50,16 +52,16 @@ Use tags to label rules for easy classification and reporting.  Some commonly us
 - Relevant security control or compliance framework
 - `Deprecated` indicates a rule has been deprecated and should no longer be used
 
-### Unit Tests
+### Unit tests
 
 - Review Panther's [Testing Documentation](https://docs.panther.com/detections/testing)
 - Write tests for both positive and negative cases
 - Redact all sensitive information and PII from example logs
 - Put tests at the very bottom of the .yml file
 
-## Python Best Practices
+## Python best practices
 
-### Using `get` and `deep_get`
+### Use `get` and `deep_get`
 
 - Use `event.get('field', '')` for top level fields and `event.deep_get('nested', 'field', default='')` for nested fields.
 - Always specify a default return value.  This helps prevent unnecessary `AttributeErrors` when fields are not present in logs.
@@ -78,7 +80,7 @@ def rule(event):
     return deep_get(event, 'foo', default='') == 'bar'
 ```
 
-### Using dynamic functions
+### Use dynamic functions
 
 Panther's [dynamic auxilliary functions](https://docs.panther.com/detections/rules/python#alert-functions-in-python-detections) are a powerful tool for programattically modifying alerts based on event criteria and should be used when appropriate.
 
