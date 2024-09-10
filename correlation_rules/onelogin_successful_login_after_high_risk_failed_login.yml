@@ -19,9 +19,10 @@ Detection:
         - ID: HighRiskFailedLogin FOLLOWED BY SuccessfulLogin
           From: HighRiskFailedLogin
           To: SuccessfulLogin
+          WithinTimeFrameMinutes: 15
           Match:
             - On: user_name
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1440
       Schedule:
         RateMinutes: 60
         TimeoutMinutes: 5

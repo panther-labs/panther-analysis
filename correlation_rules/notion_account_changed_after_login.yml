@@ -19,9 +19,10 @@ Detection:
         - ID: Login FOLLOWED BY AccountChange
           From: Login
           To: AccountChange
+          WithinTimeFrameMinutes: 15
           Match:
             - On: p_alert_context.actor_id
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1440
       Schedule:
         RateMinutes: 60
         TimeoutMinutes: 5
