@@ -1,0 +1,75 @@
+AnalysisType: rule
+Filename: notion_login.py
+RuleID: "Notion.Login"
+DisplayName: "Signal - Notion Login"
+Enabled: true
+CreateAlert: false
+LogTypes:
+  - Notion.AuditLogs
+Tags:
+  - Notion
+  - Identity & Access Management
+Severity: Info
+Description: A Notion User logged in.
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://www.notion.so/help/account-settings
+Tests:
+  - Name: Login event
+    ExpectedResult: true
+    Log:
+      {
+        "event":
+          {
+            "actor":
+              {
+                "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "object": "user",
+                "person": { "email": "aragorn.elessar@lotr.com" },
+                "type": "person",
+              },
+            "details": { "authType": "email" },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.login",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          },
+        "p_event_time": "2023-06-12 21:40:28.690000000",
+        "p_log_type": "Notion.AuditLogs",
+        "p_parse_time": "2023-06-12 22:53:51.602223297",
+        "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "p_schema_version": 0,
+        "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "p_source_label": "Notion Logs",
+      }
+  - Name: Not login event
+    ExpectedResult: false
+    Log:
+      {
+        "event":
+          {
+            "actor":
+              {
+                "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "object": "user",
+                "person": { "email": "aragorn.elessar@lotr.com" },
+                "type": "person",
+              },
+            "details": { "authType": "email" },
+            "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "ip_address": "192.168.100.100",
+            "platform": "web",
+            "timestamp": "2023-06-12 21:40:28.690000000",
+            "type": "user.settings.login_method.email_updated",
+            "workspace_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          },
+        "p_event_time": "2023-06-12 21:40:28.690000000",
+        "p_log_type": "Notion.AuditLogs",
+        "p_parse_time": "2023-06-12 22:53:51.602223297",
+        "p_row_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "p_schema_version": 0,
+        "p_source_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "p_source_label": "Notion Logs",
+      }
