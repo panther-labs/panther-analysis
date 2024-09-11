@@ -27,10 +27,10 @@ Before submitting your pull request, make sure to:
 
 ## Pull Request process
 
-1. Create new detections in the appropriate folder (or create your own) or make modifications to existing ones
-2. Commit both the Python and Metadata files
-3. Write a clear commit message
-4. Open a [Pull Request](https://github.com/panther-labs/panther-analysis/pulls)
+1. Make desired detection changes. This may include creating new detections in existing log type directories, creating new log type directories, updating existing detections, etc.
+2. Commit both the Python and Metadata files.
+3. Write a clear commit message.
+4. Open a [Pull Request](https://github.com/panther-labs/panther-analysis/pulls).
 5. Once your PR has been approved by code owners, if you have merge permissions, merge it. If you do not have merge permissions, leave a comment requesting a code owner merge it for you.
 
 ## Code of Conduct
