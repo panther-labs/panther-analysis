@@ -1,11 +1,13 @@
 # panther-analysis Style Guide
 
+This style guide highlights essential best practices for writing python rules and alert metadata. For a more detailed guide, visit [Writing Python Detections](https://docs.panther.com/detections/rules/python) in the Panther documentation.
+
 ## Metadata best practices
 
-### RuleID, Filename and DisplayName
+### RuleID, Filename, and DisplayName
 
-- RuleID, Filename, and DisplayName should all be similar to one another. A good litmus test is: If you have the RuleID, would you be able to identify the related Python file (its Filename), and vice versa?
-- RuleID should start with the LogType identifier followed by a `.`
+- `RuleID`, `Filename`, and `DisplayName` should all be similar to one another. A good litmus test is: If you have the `RuleID`, would you be able to identify the related Python file (its `Filename`), and vice versa?
+- `RuleID` should start with the log type identifier followed by a `.`
 
 Example:
 ```yaml
@@ -20,17 +22,17 @@ Review the [Alert Severity Guidelines](https://docs.panther.com/detections/rules
 
 ### Reference
 
-The Reference value should be a link to a relevant security or threat research report that describes the attack this rule detects, as well as why it is valuable to detect it, from a security perspective. Avoid generic documentation links, such as general API or log source pages.
+The `Reference` value should be a link to a relevant security or threat research report that describes the attack this rule detects, including why it is valuable to detect it from a security perspective. Avoid generic documentation links, such as general API or log source pages.
 
 ### Runbook
 
-Runbooks should provide clear triage steps for incident responders.  See [Define Clear Triage Steps](https://jacknaglieri.substack.com/i/148126819/define-clear-triage-steps).
+The `Runbook` value should provide clear triage steps for incident responders.  See [Define Clear Triage Steps](https://jacknaglieri.substack.com/i/148126819/define-clear-triage-steps).
 
 ### MITRE ATT&CK reports
 
-- MITRE ATT&CK tactics and techniques should be in the form `TA####:T####` or `TA####:T####.###`.
-- Add a comment with the Technique name.
-- Optionally add the Technique name to Tags as well.
+- MITRE ATT&CK tactics and techniques should be in the form `TA####:T####` or `TA####:T####.###`
+- Add a comment with the Technique name
+- Optionally add the Technique name to Tags as well
 
 Example:
 ```yaml
@@ -63,10 +65,10 @@ Use tags to label rules for easy classification and reporting.  Some commonly us
 
 ### Use `get` and `deep_get`
 
-- Use `event.get('field', '')` for top level fields and `event.deep_get('nested', 'field', default='')` for nested fields.
-- Always specify a default return value.  This helps prevent unnecessary `AttributeErrors` when fields are not present in logs.
-- Don't directly access fields like `event['field']`, which can also cause `AttributeErrors`.
-- Panther's normalized event class has `deep_get` as a built-in method, so it is not necessary to import it from a helper:
+- Use `event.get('field', '')` for top level fields and `event.deep_get('nested', 'field', default='')` for nested fields
+- Always specify a default return value.  This helps prevent unnecessary `AttributeErrors` when fields are not present in logs
+- Don't directly access fields like `event['field']`, which can also cause `AttributeErrors`
+- Panther's normalized event class has `deep_get` as a built-in method, so it is not necessary to import it from a helper.  For example:
 
 ```python
 # Do this
@@ -82,11 +84,11 @@ def rule(event):
 
 ### Use dynamic functions
 
-Panther's [dynamic auxilliary functions](https://docs.panther.com/detections/rules/python#alert-functions-in-python-detections) are a powerful tool for programattically modifying alerts based on event criteria and should be used when appropriate.
+Panther's [dynamic auxiliary functions](https://docs.panther.com/detections/rules/python#alert-functions-in-python-detections) are a powerful tool for programattically modifying alerts based on event criteria and should be used when appropriate.
 
-### Use existing alert_context functions
+### Use existing `alert_context` functions
 
-Check for alert_context functions in global_helpers for the LogType you are developing against.  Alert context can be extended in specific rules, for example:
+Check for `alert_context` functions in `global_helpers` for the LogType you are developing against.  Alert context can be extended in specific rules, for example:
 
 ```python
 from panther_base_helpers import aws_rule_context
