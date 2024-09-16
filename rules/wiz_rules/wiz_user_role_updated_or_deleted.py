@@ -22,3 +22,10 @@ def dedup(event):
 
 def alert_context(event):
     return wiz_alert_context(event)
+
+
+def severity(event):
+    action = event.get("action", "ACTION_NOT_FOUND")
+    if "Delete" in action:
+        return "High"
+    return "Default"

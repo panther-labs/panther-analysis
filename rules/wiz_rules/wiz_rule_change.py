@@ -44,4 +44,4 @@ def severity(event):
         return "High"
     if "Create" in action:
         return "Low"
-    return "Medium"
+    return "Default"
