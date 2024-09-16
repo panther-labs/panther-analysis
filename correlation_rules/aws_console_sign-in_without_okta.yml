@@ -22,7 +22,30 @@ Detection:
           To: AWS Console Sign-In
           Match:
             - On: p_udm.user.id
+          WithinTimeFrameMinutes: 15
       Schedule:
-        RateMinutes: 10
-        TimeoutMinutes: 2
-      LookbackWindowMinutes: 15
+        RateMinutes: 1440
+        TimeoutMinutes: 5
+      LookbackWindowMinutes: 1440
+Tests:
+  - Name: AWS Console Sign-In PRECEDED BY Okta Redirect
+    ExpectedResult: false
+    RuleOutputs:
+    - ID: Okta SSO to AWS
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 0
+    - ID: AWS Console Sign-In
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 2
+  - Name: AWS Console Sign-In NOT PRECEDED BY Okta Redirect
+    ExpectedResult: true
+    RuleOutputs:
+    - ID: AWS Console Sign-In
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 2

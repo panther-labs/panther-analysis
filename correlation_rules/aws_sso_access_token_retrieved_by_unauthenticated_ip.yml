@@ -23,6 +23,28 @@ Detection:
           Match:
             - On: sourceIPAddress
       Schedule:
-        RateMinutes: 15
-        TimeoutMinutes: 2
-      LookbackWindowMinutes: 60
+        RateMinutes: 1440
+        TimeoutMinutes: 5
+      LookbackWindowMinutes: 1440
+Tests:
+  - Name: AWS SSO Access Token Retrieved by Authenticated IP
+    ExpectedResult: false
+    RuleOutputs:
+    - ID: Absent CLI Prompt
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 0
+    - ID: SSO Access Token Retrieved
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 2
+  - Name: AWS SSO Access Token Retrieved by Unauthenticated IP
+    ExpectedResult: true
+    RuleOutputs:
+    - ID: SSO Access Token Retrieved
+      Matches:
+        p_udm.user.id:
+          igor.stravinsky:
+            - 2
