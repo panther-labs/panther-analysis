@@ -3,6 +3,8 @@ from collections.abc import Mapping
 from panther_base_helpers import aws_rule_context, deep_get
 from panther_default import aws_cloudtrail_success
 
+IS_SINGLE_USER_SHARE = False  # Used to adjust severity
+
 
 def rule(event):
     if not aws_cloudtrail_success(event):
@@ -19,10 +21,19 @@ def rule(event):
             if not isinstance(item, (Mapping, dict)):
                 continue
             if item.get("userId") or item.get("group") == "all":
+                global IS_SINGLE_USER_SHARE  # pylint: disable=global-statement
+                IS_SINGLE_USER_SHARE = "userId" in item  # Used for dynamic severity
                 return True
         return False
 
     return False
+
+
+def severity(_):
+    # Set severity to INFO if only shared with a single user
+    if IS_SINGLE_USER_SHARE:
+        return "INFO"
+    return "DEFAULT"
 
 
 def alert_context(event):

@@ -71,3 +71,35 @@ Tests:
         "event": "group.sso.membership.sync",
         "groupId": "8fffffff-1555-4444-b000-b55555555555",
       }
+  - Name: Snyk Org Project Edit
+    ExpectedResult: false
+    Log:
+      {
+        "content": {
+          "snapshotId": "69af7170-87cc-4939-bbaf-1fd99f80cde4"
+        },
+        "created": "2024-09-02 23:49:37.552000000",
+        "event": "org.project.edit",
+        "orgId": "69af7170-87cc-4939-bbaf-1fd99f80cde4",
+        "projectId": "69af7170-87cc-4939-bbaf-1fd99f80cde4"
+      }
+  - Name: Snyk No New Code Issues Found
+    ExpectedResult: false
+    Log:
+      {
+        "content": {
+          "after": {
+            "description": "No new Code Analysis issues found",
+            "state": "success"
+          },
+          "before": {
+            "state": "processing"
+          },
+          "prCheckPublicId": "69af7170-87cc-4939-bbaf-1fd99f80cde4",
+          "prChecksGroupPublicId": "69af7170-87cc-4939-bbaf-1fd99f80cde4"
+        },
+        "created": "2024-08-27 14:02:48.823000000",
+        "event": "org.project.pr_check.edit",
+        "orgId": "69af7170-87cc-4939-bbaf-1fd99f80cde4",
+        "projectId": "69af7170-87cc-4939-bbaf-1fd99f80cde4"
+      }

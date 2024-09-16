@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: sunburst_sha256_iocs.py
 RuleID: "IOC.SunburstSHA256IOCs"
-DisplayName: "Sunburst Indicators of Compromise (SHA-256)"
-Enabled: true
+DisplayName: "DEPRECATED - Sunburst Indicators of Compromise (SHA-256)"
+Enabled: false
 LogTypes:
   - AWS.ALB
   - AWS.CloudTrail
@@ -50,13 +50,4 @@ Tests:
         "srcaddr": "10.0.0.1",
         "p_any_sha256_hashes":
           ["98ea6e4f216f2fb4b69fff9b3a44842c38686ca685f3f55dc48c5d3fb1107be4"],
-      }
-  - Name: Sunburst Indicator of Compromise (SHA-256) Detected
-    ExpectedResult: true
-    Log:
-      {
-        "srcaddr": "13.59.205.66",
-        "dstaddr": "10.0.0.1",
-        "p_any_sha256_hashes":
-          ["019085a76ba7126fff22770d71bd901c325fc68ac55aa743327984e89f4b0134"],
       }

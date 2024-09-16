@@ -13,20 +13,26 @@ COMMAND_LINE_TOOLS = {
 
 
 def rule(event):
+    # If there is no process name available (or the CrowdStrike data model is missing) don't alert
+    process_name = event.udm("process_name")
+    if not process_name:
+        return False
+
     # Filter by CS event type, Windows platform, and process name
     if not all(
         [
             event.get("fdr_event_type") == "ProcessRollup2",
             event.get("event_platform") == "Win",
-            event.udm("process_name").lower() in COMMAND_LINE_TOOLS,
+            process_name.lower() in COMMAND_LINE_TOOLS,
         ]
     ):
         return False
 
     # Split arguments from process path
-    command_line_args = event.udm("cmd")
-    command_line_args = command_line_args.replace('"', "")
-    command_line_args = command_line_args.replace("'", "")
+    command_line_args = event.udm("cmd", default="")
+    command_line_args = command_line_args.replace('"', " ")
+    command_line_args = command_line_args.replace("'", " ")
+    command_line_args = command_line_args.replace("=", " ")
     command_line_args = command_line_args.split(" ")[1:]
 
     # Check if Base64 encoded arguments are present in the command line
@@ -41,7 +47,8 @@ def rule(event):
 
 
 def title(event):
-    process_name = event.udm("process_name").lower()
+    process_name = event.udm("process_name") if event.udm("process_name") else "Unknown"
+    process_name = process_name.lower()
     command_line = event.udm("cmd")
     return f"Crowdstrike: Execution with base64 encoded args: [{process_name}] - [{command_line}]"
 
