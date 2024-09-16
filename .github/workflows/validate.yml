@@ -1,14 +1,14 @@
 on:
-  push:
-    branches:
-      - release
+  pull_request_review:
+    types: [submitted]
 
 permissions:
   contents: read
 
 jobs:
-  upload:
-    name: Upload
+  validate:
+    if: github.event.review.state == 'approved'
+    name: Validate
     runs-on: ubuntu-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
@@ -17,7 +17,6 @@ jobs:
       - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
         with:
           egress-policy: audit
-          
       - name: Validate Secrets
         if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
         run: |
@@ -38,6 +37,6 @@ jobs:
       - name: Setup venv
         run: make venv
 
-      - name: upload
+      - name: validate
         run: |
-          pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
+          pipenv run panther_analysis_tool validate --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
