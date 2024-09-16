@@ -41,34 +41,13 @@ jobs:
           panther_analysis_tool check-packs 2> errors.txt || true
 
           # run again to get exit code
-          # panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
-          {
-            echo "errors<<EOF"
-            panther_analysis_tool check-packs
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
+          panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
         if: ${{ steps.check-packs.outputs.errors }}
         with:
           mode: upsert
-          message: |
-            :scream:
-            looks like some things could be wrong with the packs
-            ```diff
-            ${{ steps.check-packs.outputs.errors }}
-            ```
+          filePath: errors.txt
           comment_tag: check-packs
-      - name: Delete comment
-        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
-        if: ${{ !steps.check-packs.outputs.errors }}
-        with:
-          mode: delete
-          message: |
-            :scream:
-            looks like some things could be wrong with the packs
-            ```diff
-            ${{ steps.check-packs.outputs.errors }}
-            ```
-          comment_tag: check-packs
+
