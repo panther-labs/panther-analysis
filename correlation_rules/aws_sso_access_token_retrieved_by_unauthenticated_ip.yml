@@ -32,19 +32,19 @@ Tests:
     RuleOutputs:
     - ID: Absent CLI Prompt
       Matches:
-        p_udm.user.id:
-          igor.stravinsky:
+        sourceIPAddress:
+          "1.2.3.4":
             - 0
     - ID: SSO Access Token Retrieved
       Matches:
-        p_udm.user.id:
-          igor.stravinsky:
+        sourceIPAddress:
+          "1.2.3.4":
             - 2
   - Name: AWS SSO Access Token Retrieved by Unauthenticated IP
     ExpectedResult: true
     RuleOutputs:
     - ID: SSO Access Token Retrieved
       Matches:
-        p_udm.user.id:
-          igor.stravinsky:
+        sourceIPAddress:
+          "1.2.3.4":
             - 2

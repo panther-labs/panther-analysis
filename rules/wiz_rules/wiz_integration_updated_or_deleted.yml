@@ -1,0 +1,96 @@
+AnalysisType: rule
+RuleID: Wiz.Integration.Updated.Or.Deleted
+Description: This rule detects updates and deletions of Wiz integrations.
+DisplayName: Wiz Integration Updated Or Deleted
+Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Reference: https://www.wiz.io/integrations
+Enabled: true
+Filename: wiz_integration_updated_or_deleted.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.001  # Impair Defenses: Disable or Modify Tools
+LogTypes:
+  - Wiz.Audit
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: DeleteIntegration
+    ExpectedResult: true
+    Log:
+      {
+        "action": "DeleteIntegration",
+        "actionParameters": {
+          "input": {
+            "id": "ab4ab152-509c-425b-aa1f-601b386dfe3f"
+          },
+          "selection": [
+            "__typename",
+            "_stub"
+          ]
+        },
+        "id": "62e490d5-484c-4c21-a2ed-b6ebcaaa5aad",
+        "log_type": "auditLogEntries",
+        "requestId": "bc968f65-060c-40a0-85de-3d74d02d6a54",
+        "sourceIP": "12.34.56.78",
+        "status": "SUCCESS",
+        "timestamp": "2024-06-27 09:19:08.731355000",
+        "user": {
+          "id": "test.user@company.com",
+          "name": "user@company.com"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+      }
+  - Name: CreateUser
+    ExpectedResult: false
+    Log:
+      {
+        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
+        "action": "CreateUser",
+        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
+        "status": "SUCCESS",
+        "timestamp": "2024-07-29T09:40:15.66643Z",
+        "actionParameters": {
+          "input": {
+            "assignedProjectIds": null,
+            "email": "testy@company.com",
+            "expiresAt": null,
+            "name": "Test User",
+            "role": "GLOBAL_ADMIN"
+          },
+          "selection": [
+            "__typename",
+            {
+              "user": [
+                "__typename",
+                "id"
+              ]
+            }
+          ]
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "sourceIP": "8.8.8.8",
+        "serviceAccount": null,
+        "user": {
+          "id": "someuser@company.com",
+          "name": "someuser@company.com"
+        }
+      }
+  - Name: DeleteIntegration - Fail
+    ExpectedResult: false
+    Log:
+      {
+        "action": "DeleteIntegration",
+        "actionParameters": { },
+        "id": "62e490d5-484c-4c21-a2ed-b6ebcaaa5aad",
+        "log_type": "auditLogEntries",
+        "requestId": "bc968f65-060c-40a0-85de-3d74d02d6a54",
+        "sourceIP": "12.34.56.78",
+        "status": "FAILED",
+        "timestamp": "2024-06-27 09:19:08.731355000",
+        "user": {
+          "id": "test.user@company.com",
+          "name": "user@company.com"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+      }
