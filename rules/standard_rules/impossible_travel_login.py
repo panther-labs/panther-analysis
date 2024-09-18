@@ -9,6 +9,8 @@ from panther_oss_helpers import km_between_ipinfo_loc, resolve_timestamp_string
 
 # pylint: disable=global-variable-undefined
 
+SATELLITE_NETWORK_ASNS = ["AS22351"]
+
 
 def gen_key(event):
     """
@@ -57,7 +59,7 @@ def rule(event):
     # stuff everything from ipinfo_location into the new_login_stats
     # new_login_stats is the value that we will cache for this key
     ipinfo_location = deep_get(src_ip_enrichments, "ipinfo_location")
-    if ipinfo_location is None:
+    if ipinfo_location is None or is_satellite_network(src_ip_enrichments):
         return False
     new_login_stats.update(ipinfo_location)
 
@@ -150,6 +152,15 @@ def rule(event):
     EVENT_CITY_TRACKING["distance_units"] = "km"
 
     return speed > 900  # Boeing 747 cruising speed
+
+
+def is_satellite_network(src_ip_enrichments):
+    # Satellite networks have a GeoIP to a physical location, but transit around the globe
+    # In-flight plane wifi like Intelsat provides leads to false positives
+    ipinfo_asn = deep_get(src_ip_enrichments, "ipinfo_asn")
+    if deep_get(ipinfo_asn, "asn", default="") in SATELLITE_NETWORK_ASNS:
+        return True
+    return False
 
 
 def title(event):
