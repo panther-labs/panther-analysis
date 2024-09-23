@@ -28,13 +28,13 @@ def gen_key(event):
 
 def rule(event):
     # too-many-return-statements due to error checking
-    # pylint: disable=global-statement,too-many-return-statements,too-complex
+    # pylint: disable=global-statement,too-many-return-statements,too-complex,too-many-statements
     global EVENT_CITY_TRACKING
     global CACHE_KEY
     global IS_VPN
     global IS_PRIVATE_RELAY
     global IS_SATELLITE_NETWORK
-    
+
     EVENT_CITY_TRACKING = {}
     CACHE_KEY = ""
     IS_VPN = False
@@ -91,7 +91,7 @@ def rule(event):
                 deep_get(ipinfo_privacy, "service", default="") != "",
             ]
         )
-    # Some satellite networks used during plane travel don't always 
+    # Some satellite networks used during plane travel don't always
     #   register properly as VPN's, so we have a separate check here.
     IS_SATELLITE_NETWORK = is_satellite_network(src_ip_enrichments)
     if IS_VPN or IS_PRIVATE_RELAY or IS_SATELLITE_NETWORK:
