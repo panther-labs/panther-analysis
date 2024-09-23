@@ -826,7 +826,7 @@ Tests:
         "version": "0",
       }
   - Name: Okta sign-in with history and impossible travel, no VPN, Intelsat ASN
-    ExpectedResult: false
+    ExpectedResult: true
     Mocks:
       - objectName: put_string_set
         returnValue: ""
@@ -913,7 +913,7 @@ Tests:
                     "relay": false,
                     "service": "",
                     "tor": false,
-                    "vpn": true,
+                    "vpn": false,
                   },
               },
           },
