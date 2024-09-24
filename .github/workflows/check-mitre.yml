@@ -1,37 +1,36 @@
 on:
     pull_request:
   
-  permissions:
-    contents: read
-  
-  jobs:
-    lint:
-      name: Check MITRE Mappings
-      runs-on: ubuntu-latest
-  
-      steps:
-        - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
-          with:
-            disable-sudo: true
-            egress-policy: block
-            allowed-endpoints: >
-              files.pythonhosted.org:443
-              github.com:443
-              pypi.org:443
-        - name: Checkout panther-analysis
-          uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-  
-        - name: Set python version
-          uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 #v5.2.0
-          with:
-            python-version: "3.11"
-  
-        - name: Install pipenv
-          run: pip install pipenv
-  
-        - name: Setup venv
-          run: make venv
-  
-        - name: make lint-mitre
-          run: make lint-mitre
-  
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Check MITRE Mappings
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
+      - name: Checkout panther-analysis
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+
+      - name: Set python version
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 #v5.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Setup venv
+        run: make venv
+
+      - name: make lint-mitre
+        run: make lint-mitre
