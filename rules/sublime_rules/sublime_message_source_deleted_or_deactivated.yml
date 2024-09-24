@@ -9,7 +9,7 @@ Severity: Medium
 DedupPeriodMinutes: 60
 AlertTitle: Sublime message source(s) were deleted or deactivated
 LogTypes:
-  - Custom.Sublime.AuditLogs
+  - Sublime.Audit
 RuleID: "Sublime.Message.Source.Deleted.Or.Deactivated"
 Threshold: 1
 Reports:
@@ -20,141 +20,65 @@ Tests:
     Name: Message Source Deactivated
     Log:
       {
-          "count": 2,
-          "end": "2024-09-09 19:35:31.467216000",
-          "events": [
-              {
-                  "created_at": "2024-09-09 19:33:34.237078000",
-                  "created_by": {
-                      "active": true,
-                      "created_at": "2024-08-28 22:05:15.715644000",
-                      "email_address": "john.doe@sublime.security",
-                      "first_name": "John",
-                      "google_oauth_user_id": "",
-                      "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-                      "is_enrolled": true,
-                      "last_name": "Doe",
-                      "microsoft_oauth_user_id": "",
-                      "role": "admin",
-                      "updated_at": "2024-08-28 22:05:15.715644000"
-                  },
-                  "data": {
-                      "request": {
-                          "authentication_method": "user_session",
-                          "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}",
-                          "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
-                          "ip": "1.2.3.4",
-                          "method": "POST",
-                          "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate",
-                          "query": { },
-                          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-                      }
-                  },
-                  "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737",
-                  "type": "message_source.deactivate"
-              },
-              {
-                  "created_at": "2024-09-09 19:29:00.885628000",
-                  "created_by": {
-                      "active": true,
-                      "created_at": "2024-08-28 22:05:15.715644000",
-                      "email_address": "john.doe@sublime.security",
-                      "first_name": "John",
-                      "google_oauth_user_id": "",
-                      "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-                      "is_enrolled": true,
-                      "last_name": "Doe",
-                      "microsoft_oauth_user_id": "",
-                      "role": "admin",
-                      "updated_at": "2024-08-28 22:05:15.715644000"
-                  },
-                  "data": {
-                      "request": {
-                          "authentication_method": "user_session",
-                          "body": "",
-                          "id": "50a3caa3-aab5-4ca4-948f-0d6426f10d36",
-                          "ip": "1.2.3.4",
-                          "method": "DELETE",
-                          "path": "/v1/rules/6f52131e-5532-4c49-b5d3-2e20d7dedd7a",
-                          "query": { },
-                          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-                      }
-                  },
-                  "id": "1f9d8783-6f22-4d82-bea7-77656719b341",
-                  "type": "rules.delete"
-              },
-          ],
-          "key": "sublime_platform_audit_log/2024/09/09/193531Z-BKQVAP.json",
-          "start": "2024-09-09 19:25:31.467216000"
-      }
+        "created_at": "2024-09-09 19:33:34.237078000",
+        "created_by": {
+          "active": true,
+          "created_at": "2024-08-28 22:05:15.715644000",
+          "email_address": "john.doe@sublime.security",
+          "first_name": "John",
+          "google_oauth_user_id": "",
+          "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
+          "is_enrolled": true,
+          "last_name": "Doe",
+          "microsoft_oauth_user_id": "",
+          "role": "admin",
+          "updated_at": "2024-08-28 22:05:15.715644000"
+          },
+          "data": {
+            "request": {
+              "authentication_method": "user_session",
+              "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}",
+              "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
+              "ip": "1.2.3.4",
+              "method": "POST",
+              "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate",
+              "query": { },
+              "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+              }
+            },
+            "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737",
+            "type": "message_source.deactivate"
+        }
   - ExpectedResult: false
     Name: Other Events
     Log:
       {
-        "count": 2,
-        "end": "2024-09-09 19:35:31.467216000",
-        "events": [
-          {
-            "created_at": "2024-09-09 19:33:34.237078000",
-            "created_by": {
-              "active": true,
-              "created_at": "2024-08-28 22:05:15.715644000",
-              "email_address": "john.doe@sublime.security",
-              "first_name": "John",
-              "google_oauth_user_id": "",
-              "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-              "is_enrolled": true,
-              "last_name": "Doe",
-              "microsoft_oauth_user_id": "",
-              "role": "admin",
-              "updated_at": "2024-08-28 22:05:15.715644000"
-            },
-            "data": {
-              "request": {
-                "authentication_method": "user_session",
-                "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}",
-                "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
-                "ip": "1.2.3.4",
-                "method": "POST",
-                "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/mailboxes/deactivate",
-                "query": { },
-                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+        "created_at": "2024-09-09 19:33:34.237078000",
+        "created_by": {
+          "active": true,
+          "created_at": "2024-08-28 22:05:15.715644000",
+          "email_address": "john.doe@sublime.security",
+          "first_name": "John",
+          "google_oauth_user_id": "",
+          "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
+          "is_enrolled": true,
+          "last_name": "Doe",
+          "microsoft_oauth_user_id": "",
+          "role": "admin",
+          "updated_at": "2024-08-28 22:05:15.715644000"
+          },
+          "data": {
+            "request": {
+              "authentication_method": "user_session",
+              "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}",
+              "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
+              "ip": "1.2.3.4",
+              "method": "POST",
+              "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate",
+              "query": { },
+              "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
               }
             },
             "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737",
-            "type": "message_source.deactivate_mailboxes"
-          },
-          {
-            "created_at": "2024-09-09 19:29:00.885628000",
-            "created_by": {
-              "active": true,
-              "created_at": "2024-08-28 22:05:15.715644000",
-              "email_address": "john.doe@sublime.security",
-              "first_name": "John",
-              "google_oauth_user_id": "",
-              "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-              "is_enrolled": true,
-              "last_name": "Doe",
-              "microsoft_oauth_user_id": "",
-              "role": "admin",
-              "updated_at": "2024-08-28 22:05:15.715644000"
-            },
-            "data": {
-              "request": {
-                "authentication_method": "user_session",
-                "body": "",
-                "id": "3bdc635a-7630-4687-9972-2db9fe87e2c8",
-                "ip": "1.2.3.4",
-                "method": "POST",
-                "path": "/v1/rules/6f52131e-5532-4c49-b5d3-2e20d7dedd7a/activate",
-                "query": { },
-                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
-              }
-            },
-            "id": "7d9fe001-d80d-4d0d-9cd7-cc2f27a896ce",
-            "type": "rules.activate",
-          },
-        ],
-        "key": "sublime_platform_audit_log/2024/09/09/193531Z-BKQVAP.json",
-        "start": "2024-09-09 19:25:31.467216000"
-      }
+            "type": "rule.deactivate"
+        }

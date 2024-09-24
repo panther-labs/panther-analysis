@@ -7,8 +7,7 @@ SUSPICIOUS_EVENTS = [
 
 
 def rule(event):
-    all_events = event.deep_walk("events", "type")
-    return any(event in all_events for event in SUSPICIOUS_EVENTS)
+    return event.get('type') in SUSPICIOUS_EVENTS
 
 
 def alert_context(event):
