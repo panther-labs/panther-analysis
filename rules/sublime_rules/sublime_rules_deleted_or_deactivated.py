@@ -7,7 +7,7 @@ SUSPICIOUS_EVENTS = [
 
 
 def rule(event):
-    return event.get('type') in SUSPICIOUS_EVENTS
+    return event.get("type") in SUSPICIOUS_EVENTS
 
 
 def alert_context(event):
