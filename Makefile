@@ -32,7 +32,7 @@ deps-update:
 global-helpers-unit-test:
 	pipenv run python -m unittest global_helpers/*_test.py
 
-lint: lint-pylint lint-fmt lint-misc
+lint: lint-pylint lint-fmt
 
 lint-pylint:
 	pipenv run bandit -r $(dirs)
@@ -43,7 +43,7 @@ lint-fmt:
 	@echo Checking python file formatting with the black code style checker
 	pipenv run black --line-length=100 --check $(dirs)
 
-lint-misc:
+lint-mitre:
 	pipenv run python3 ./.scripts/mitre_mapping_check.py
 
 venv:
