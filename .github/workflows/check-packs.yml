@@ -9,8 +9,6 @@ jobs:
   check_packs:
     name: check packs
     runs-on: ubuntu-latest
-    outputs:
-      errors: ${{ steps.check-packs.outputs.errors }}
 
     steps:
       - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
@@ -48,6 +46,22 @@ jobs:
         if: ${{ steps.check-packs.outputs.errors }}
         with:
           mode: upsert
-          filePath: errors.txt
+          message: |
+            :scream:
+            looks like some things could be wrong with the packs
+            ```diff
+            ${{ steps.check-packs.outputs.errors }}
+            ```
           comment_tag: check-packs
-
+      - name: Delete comment
+        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
+        if: ${{ !steps.check-packs.outputs.errors }}
+        with:
+          mode: delete
+          message: |
+            :scream:
+            looks like some things could be wrong with the packs
+            ```diff
+            ${{ steps.check-packs.outputs.errors }}
+            ```
+          comment_tag: check-packs
