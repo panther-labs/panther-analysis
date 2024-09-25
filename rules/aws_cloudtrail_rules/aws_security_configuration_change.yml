@@ -206,11 +206,16 @@ Tests:
       }
   - Name: Security Configuration Changed - Allowlisted User
     ExpectedResult: false
+    Mocks:
+      - {
+          "objectName": "ALLOW_LIST",
+          "returnValue": '[{"userName": "ExampleUser", "eventName": "DeleteRule"}]',
+        }
     Log:
       {
         "awsRegion": "us-west-2",
         "eventID": "1111",
-        "eventName": "ExampleEvent",
+        "eventName": "DeleteRule",
         "eventSource": "cloudtrail.amazonaws.com",
         "eventTime": "2019-01-01T00:00:00Z",
         "eventType": "AwsApiCall",
