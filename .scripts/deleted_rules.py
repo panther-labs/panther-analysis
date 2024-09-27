@@ -2,9 +2,13 @@
 deprecated.txt file. """
 
 import argparse
+import logging
 import os
 import re
 import subprocess
+
+import panther_analysis_tool.command.bulk_delete as pat_delete
+import panther_analysis_tool.util as pat_util
 
 diff_pattern = re.compile(r'^-(?:RuleID|PolicyID|QueryName):\s*"?([\w.]+)"?')
 
@@ -44,23 +48,39 @@ def remove(args):
     api_host = args.api_host or os.environ.get("PANTHER_API_HOST")
 
     if not (api_token and api_host):
+        opts = []
         if not api_token:
             print("No API token was found or provided!")
+            opts.append("--api-token")
         if not api_host:
             print("No API host was found or provided!")
-        print("You can pass these values using --api-token or --api-host in your command.")
+            opts.append("--api-host")
+        print(f"You can pass API credentials using {' and '.join(opts)} in your command.")
         exit(1)
 
     ids = list(get_deprecated_ids())
-    cmd = [
-        "pipenv", "run", "panther_analysis_tool", "delete", "--no-confirm", "--api-token", api_token, "--api-host", api_host, "--analysis-id"
-    ]
-    
-    result = subprocess.run(cmd+ids, capture_output=True)
-    if result.stderr:
-        raise Exception(result.stderr.decode("utf-8"))
-    
-    print(result.stdout.decode("utf-8"))
+
+    pat_args = argparse.Namespace(
+        analysis_id = ids,
+        query_id = [],
+        confirm_bypass = True,
+        api_token = api_token,
+        api_host = api_host
+    )
+
+    logging.basicConfig(
+        format="[%(levelname)s][%(name)s]: %(message)s",
+        level=logging.INFO,
+    )
+
+    return_code, out = pat_util.func_with_api_backend(pat_delete.run)(pat_args)
+
+    if return_code == 1:
+        if out:
+            logging.error(out)
+    elif return_code == 0:
+        if out:
+            logging.info(out)
 
 
 def main():
