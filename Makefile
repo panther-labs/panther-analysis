@@ -62,6 +62,9 @@ install:
 test: global-helpers-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
+check-deprecated:
+	pipenv run python3 ./.scripts/deleted_rules.py check
+
 docker-build:
 	docker build -t panther-analysis:latest .
 
