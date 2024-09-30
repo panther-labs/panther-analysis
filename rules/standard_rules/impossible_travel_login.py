@@ -93,8 +93,11 @@ def rule(event):
         )
     # Some satellite networks used during plane travel don't always
     #   register properly as VPN's, so we have a separate check here.
-    IS_SATELLITE_NETWORK = is_satellite_network(src_ip_enrichments)
-    if IS_VPN or IS_PRIVATE_RELAY or IS_SATELLITE_NETWORK:
+    IS_SATELLITE_NETWORK = (
+        deep_get(src_ip_enrichments, "ipinfo_asn", "asn", default="") in SATELLITE_NETWORK_ASNS
+    )
+
+    if any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
         new_login_stats.update(
             {
                 "is_vpn": f"{IS_VPN}",
@@ -115,7 +118,7 @@ def rule(event):
     # If we haven't seen this user login in the past 1 day,
     # store this login for future use and don't alert
     if not last_login:
-        if not (IS_PRIVATE_RELAY or IS_VPN or IS_SATELLITE_NETWORK):
+        if not any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
             put_string_set(
                 key=CACHE_KEY,
                 val=[dumps(new_login_stats)],
@@ -158,15 +161,6 @@ def rule(event):
     EVENT_CITY_TRACKING["distance_units"] = "km"
 
     return speed > 900  # Boeing 747 cruising speed
-
-
-def is_satellite_network(src_ip_enrichments):
-    # Satellite networks have a GeoIP to a physical location, but transit around the globe
-    # In-flight plane wifi like Intelsat provides leads to false positives
-    ipinfo_asn = deep_get(src_ip_enrichments, "ipinfo_asn")
-    if deep_get(ipinfo_asn, "asn", default="") in SATELLITE_NETWORK_ASNS:
-        return True
-    return False
 
 
 def title(event):
