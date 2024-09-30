@@ -8,7 +8,9 @@ PackDefinition:
     - Secret.Exposed.and.not.Quarantined
     - GitHub.Secret.Scanning.Alert.Created
     - AWS.CloudTrail.IAMCompromisedKeyQuarantine
-    - global_filter_github
+    - Okta.SSO.to.AWS
+    - AWS.Console.Sign-In
+    - AWS.Console.Sign-In.NOT.PRECEDED.BY.Okta
 
   # Okta + Push Security
     - Okta.Login.Without.Push
@@ -24,6 +26,7 @@ PackDefinition:
     - Standard.AWS.CloudTrail
   
   # Global Helpers
+    - global_filter_github
     - panther_base_helpers
     - panther_config
     - panther_config_defaults
