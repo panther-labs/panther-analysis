@@ -11,9 +11,14 @@ LogTypes:
 RuleID: "MongoDB.org.Membership.Restriction.Disabled"
 Filename: mongodb_org_membership_restriction_disabled.py
 Severity: High
+Tags:
+  - MongoDB
+  - Persistence
+  - Modify Authentication Process
+  - Conditional Access Policies
 Reports:
   MITRE ATT&CK:
-    - T1556 # Modify Authentication Process
+    - TA0003:T1556.009 # Modify Authentication Process
 Reference: https://www.mongodb.com/docs/atlas/tutorial/manage-organizations/
 Runbook: Check if this activity is legitimate. If not, re-enable IP access list for the Atlas Administration API
 Tests:

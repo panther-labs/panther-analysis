@@ -3,7 +3,7 @@ QueryName: "Okta Admin Access Granted"
 Enabled: false
 Description: >
   Audit instances of admin access granted in your okta tenant
-AthenaQuery: >
+AthenaQuery: |
   SELECT
   p_event_time as event_time,
   actor.alternateid as actor_email,
@@ -26,7 +26,7 @@ AthenaQuery: >
   p_occurs_between('2022-01-14','2022-03-22')
   ORDER BY
   event_time desc
-SnowflakeQuery: >
+SnowflakeQuery: |
   SELECT
   p_event_time as event_time,
   actor:alternateId as actor_email,

@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: github_webhook_modified.py
+RuleID: "GitHub.Webhook.Modified"
+DisplayName: "GitHub Web Hook Modified"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - Exfiltration:Automated Exfiltration
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1020
+Reference:
+  https://docs.github.com/en/webhooks/about-webhooks
+  # GH audit logs for hook events don't include the type: field
+  # Only type:repo webhooks are obvious due to the repo field, Org and App look the same
+  # GETs to /orgs/{org}/hooks or /repos/{owner}/{repo}/hooks will return type
+  # App hooks don't return type and are defined by their API endpoint
+Severity: Info
+Description: Detects when a webhook is added, modified, or deleted
+Tests:
+  - Name: GitHub - Webhook Created
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "hook.create",
+        "data":
+          {
+            "hook_id": 111222333444555,
+            "events": ["fork", "public", "pull_request", "push", "repository"],
+          },
+        "config": { "url": "https://fake.url" },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "public_repo": false,
+      }
+  - Name: GitHub - Webhook Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "cat",
+        "action": "hook.destroy",
+        "data":
+          {
+            "hook_id": 111222333444555,
+            "events": ["fork", "public", "pull_request", "push", "repository"],
+          },
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+        "public_repo": false,
+      }
+  - Name: GitHub - Non Webhook Event
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "org.invite_member",
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/my-repo",
+      }
+  - Name: Github - App Webhook Created #App and Org webhooks look the same in audit logs
+    ExpectedResult: true
+    Log:
+      {
+        "action": "hook.create",
+        "actor": "dog",
+        "actor_id": "11112222",
+        "actor_location": { "country_code": "US" },
+        "business": "my-biz",
+        "business_id": "9999999",
+        "config":
+          {
+            "content_type": "json",
+            "insecure_ssl": "0",
+            "url": "https://fake.url/",
+          },
+        "hook_id": "111222333444555",
+        "integration": "My Cool Github Integration",
+        "name": "webhook",
+        "operation_type": "create",
+        "org": "my-org",
+        "org_id": 9999999,
+        "p_log_type": "GitHub.Audit",
+      }

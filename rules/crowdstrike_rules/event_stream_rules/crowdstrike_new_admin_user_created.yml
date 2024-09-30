@@ -1,0 +1,57 @@
+AnalysisType: correlation_rule
+RuleID: "Crowdstrike.NewAdminUserCreated"
+DisplayName: "Crowdstrike New Admin User Created"
+Enabled: true
+Severity: High
+Description: Detects when a user account is created and assigned admin permissions
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003 # Persistence: Create Cloud Account
+    - TA0003:T1098.003 # Persistence: Additional Cloud Roles
+    - TA0004:T1098.003 # Priv Escalation: Additional Cloud Roles
+Detection:
+  - Sequence:
+      - ID: AccountCreated
+        RuleID: Crowdstrike.NewUserCreated
+      - ID: AdminRoleAssigned
+        RuleID: Crowdstrike.AdminRoleAssigned
+    Transitions:
+      - ID: AcountCreated FOLLOWED BY AdminRoleAssigned ON target AND actor
+        From: AccountCreated
+        To: AdminRoleAssigned
+        Match:
+          - On: p_alert_context.actor_target
+    LookbackWindowMinutes: 45
+    Schedule:
+      RateMinutes: 30
+      TimeoutMinutes: 1
+Tests:
+  - Name: User Creation, Followed By Role Assignment
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: AccountCreated
+        Matches:
+          p_alert_context.actor_target:
+            'newuser@biz.co-hackerman@biz.co':
+              - 0
+      - ID: AdminRoleAssigned
+        Matches:
+          p_alert_context.actor_target:
+            'newuser@biz.co-hackerman@biz.co':
+              - 15
+  - Name: User Creation, Not Followed By Role Assignment
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: AccountCreated
+        Matches:
+          p_alert_context.actor_target:
+            'newuser@biz.co-hackerman@biz.co':
+              - 0
+  - Name: Role Assignment Not Preceded By User Creation
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: AdminRoleAssigned
+        Matches:
+          p_alert_context.actor_target:
+            'newuser@biz.co-hackerman@biz.co':
+              - 20

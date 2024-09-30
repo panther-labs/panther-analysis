@@ -112,3 +112,10 @@ def get_verb(event):
     if deep_get(event, "protoPayload", "serviceName", default="") != "k8s.io":
         return ""
     return deep_get(event, "protoPayload", "methodName", default="").split(".")[-1]
+
+
+def get_actor_user(event):
+    authentication_info = deep_get(event, "protoPayload", "authenticationInfo", default={})
+    if principal_email := authentication_info.get("principalEmail"):
+        return principal_email
+    return authentication_info.get("principalSubject", "<UNKNOWN ACTOR USER>")

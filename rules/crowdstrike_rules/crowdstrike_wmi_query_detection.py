@@ -1,13 +1,13 @@
-from panther_base_helpers import crowdstrike_detection_alert_context, deep_get
+from panther_base_helpers import crowdstrike_detection_alert_context
 
 WMIC_SIGNATURES = ["get", "list", "process call create", "cmd.exe", "powershell.exe", "command.exe"]
 
 
 def rule(event):
-    if deep_get(event, "event", "event_simpleName") == "ProcessRollup2":
-        if deep_get(event, "event", "event_platform") == "Win":
-            if deep_get(event, "event", "ImageFileName", default="").split("\\")[-1] == "wmic.exe":
-                command_line = deep_get(event, "event", "CommandLine", default="")
+    if event.deep_get("event", "event_simpleName") == "ProcessRollup2":
+        if event.deep_get("event", "event_platform") == "Win":
+            if event.deep_get("event", "ImageFileName", default="").split("\\")[-1] == "wmic.exe":
+                command_line = event.deep_get("event", "CommandLine", default="")
                 for signature in WMIC_SIGNATURES:
                     if signature in command_line:
                         return True
@@ -15,7 +15,7 @@ def rule(event):
 
 
 def title(event):
-    cmd = deep_get(event, "event", "CommandLine", default="<COMMAND_LINE_NOT_FOUND>")
+    cmd = event.deep_get("event", "CommandLine", default="<COMMAND_LINE_NOT_FOUND>")
     aid = event.get("aid", "<AID_NOT_FOUND>")
     return f"Crowdstrike: WMIC Query [{cmd}] performed on aid [{aid}]"
 

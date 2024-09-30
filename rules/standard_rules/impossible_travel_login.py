@@ -9,6 +9,8 @@ from panther_oss_helpers import km_between_ipinfo_loc, resolve_timestamp_string
 
 # pylint: disable=global-variable-undefined
 
+SATELLITE_NETWORK_ASNS = ["AS22351"]
+
 
 def gen_key(event):
     """
@@ -26,16 +28,18 @@ def gen_key(event):
 
 def rule(event):
     # too-many-return-statements due to error checking
-    # pylint: disable=global-statement,too-many-return-statements,too-complex
+    # pylint: disable=global-statement,too-many-return-statements,too-complex,too-many-statements
     global EVENT_CITY_TRACKING
     global CACHE_KEY
     global IS_VPN
     global IS_PRIVATE_RELAY
+    global IS_SATELLITE_NETWORK
 
     EVENT_CITY_TRACKING = {}
     CACHE_KEY = ""
     IS_VPN = False
     IS_PRIVATE_RELAY = False
+    IS_SATELLITE_NETWORK = False
 
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
@@ -87,11 +91,18 @@ def rule(event):
                 deep_get(ipinfo_privacy, "service", default="") != "",
             ]
         )
-    if IS_VPN or IS_PRIVATE_RELAY:
+    # Some satellite networks used during plane travel don't always
+    #   register properly as VPN's, so we have a separate check here.
+    IS_SATELLITE_NETWORK = (
+        deep_get(src_ip_enrichments, "ipinfo_asn", "asn", default="") in SATELLITE_NETWORK_ASNS
+    )
+
+    if any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
         new_login_stats.update(
             {
                 "is_vpn": f"{IS_VPN}",
                 "is_apple_priv_relay": f"{IS_PRIVATE_RELAY}",
+                "is_satellite_network": f"{IS_SATELLITE_NETWORK}",
                 "service_name": f"{deep_get(ipinfo_privacy, 'service', default='<NO_SERVICE>')}",
                 "NOTE": "APPLE PRIVATE RELAY AND VPN LOGINS ARE NOT CACHED FOR COMPARISON",
             }
@@ -107,7 +118,7 @@ def rule(event):
     # If we haven't seen this user login in the past 1 day,
     # store this login for future use and don't alert
     if not last_login:
-        if not (IS_PRIVATE_RELAY or IS_VPN):
+        if not any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
             put_string_set(
                 key=CACHE_KEY,
                 val=[dumps(new_login_stats)],
@@ -179,7 +190,7 @@ def alert_context(event):
 
 
 def severity(_):
-    if IS_VPN or IS_PRIVATE_RELAY:
+    if any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
         return "INFO"
     # time = distance/speed
     distance = deep_get(EVENT_CITY_TRACKING, "distance", default=None)

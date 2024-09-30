@@ -7,7 +7,7 @@ Filename: gcp_data_model.py
 Enabled: true
 Mappings:
   - Name: actor_user
-    Path: $.protoPayload.authenticationInfo.principalEmail
+    Method: get_actor_user
   - Name: assigned_admin_role
     Method: get_iam_roles
   - Name: event_type
@@ -35,7 +35,7 @@ Mappings:
   - Name: sourceIPs
     Method: get_source_ips
   - Name: username
-    Path: $.protoPayload.authenticationInfo.principalEmail
+    Method: get_actor_user
   - Name: userAgent
     Path: $.protoPayload.requestMetadata.callerSuppliedUserAgent
   - Name: verb

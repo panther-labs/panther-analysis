@@ -5,7 +5,6 @@ PackDefinition:
   IDs:
     - OneLogin.ActiveLoginActivity
     - OneLogin.HighRiskFailedLogin
-    - OneLogin.HighRiskLogin
     - OneLogin.PasswordAccess
     - OneLogin.PasswordChanged
     - OneLogin.AuthFactorRemoved
@@ -14,10 +13,17 @@ PackDefinition:
     - OneLogin.UnauthorizedAccess
     - OneLogin.UserAccountLocked
     - OneLogin.UserAssumption
+    # Correlation Rules
+    - OneLogin.HighRiskFailedLogin.FOLLOWED.BY.SuccessfulLogin
+    # Signal Rules
+    - OneLogin.Login
     # Globals used in these detections
     - panther_base_helpers
     - panther_oss_helpers
     - panther_config
     - panther_config_defaults
     - panther_config_overrides
+    - panther_event_type_helpers
+    # Data Model
+    - Standard.OneLogin.Events
 DisplayName: "Panther OneLogin Pack"
