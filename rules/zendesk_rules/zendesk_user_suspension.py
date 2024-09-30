@@ -25,4 +25,4 @@ def title(event):
 def severity(event):
     if event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower() == "suspended":
         return "INFO"
-    return "HIGH"
+    return "DEFAULT"

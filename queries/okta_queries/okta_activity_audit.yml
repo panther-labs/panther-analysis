@@ -3,7 +3,7 @@ QueryName: "Okta Investigate User Activity"
 Enabled: false
 Description: >
   Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
-AthenaQuery: >
+AthenaQuery: |
   SELECT actor.displayName AS actor_name, actor.alternateId AS actor_email, eventType, COUNT(*) AS activity_count
   FROM panther_logs.okta_systemlog
   WHERE p_occurs_since('7 days')
@@ -13,7 +13,7 @@ AthenaQuery: >
   -- and eventType = '<EVENTTYPE_GOES_HERE>'
   GROUP BY actor.displayName, actor.alternateId, eventType
   ORDER BY  actor_name, activity_count DESC
-SnowflakeQuery: >
+SnowflakeQuery: |
   SELECT actor:displayName AS actor_name, actor:alternateId AS actor_email, eventType, COUNT(*) AS activity_count
   FROM panther_logs.public.okta_systemlog
   WHERE p_occurs_since('7 days')
