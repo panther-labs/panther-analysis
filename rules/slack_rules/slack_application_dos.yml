@@ -14,22 +14,17 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1499.003
 Severity: Critical
-Description: Detects when slack admin invalidates user session(s) more than once in a 24 hour period which can lead to DoS
+Description: Detects when slack admin invalidates user session(s). If it happens more than once in a 24 hour period it can lead to DoS
 Reference: https://slack.com/intl/en-gb/help/articles/115005223763-Manage-session-duration-#pro-and-business+-subscriptions-2
-DedupPeriodMinutes: 60
+DedupPeriodMinutes: 1440
 Threshold: 60
 SummaryAttributes:
   - action
   - p_any_ip_addresses
   - p_any_emails
 Tests:
-  - Name: User Session Reset - First time
-    ExpectedResult: false
-    Mocks:
-      - objectName: get_string_set
-        returnValue: ""
-      - objectName: put_string_set
-        returnValue: ""
+  - Name: User Session Reset
+    ExpectedResult: true
     Log:
       {
         "action": "user_session_reset_by_admin",
@@ -57,24 +52,19 @@ Tests:
             "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
           },
       }
-  - Name: User Session Reset - Multiple Times
-    ExpectedResult: true
-    Mocks:
-      - objectName: get_string_set
-        returnValue: '{"time":"2021-06-08 22:24:43"}'
-      - objectName: put_string_set
-        returnValue: ""
+  - Name: Other action
+    ExpectedResult: false
     Log:
       {
-        "action": "user_session_reset_by_admin",
+        "action": "organization_created",
         "actor":
           {
             "type": "user",
             "user":
               {
                 "email": "user@example.com",
-                "id": "W012J3FEWAU",
-                "name": "primary-owner",
+                "id": "A012B3CDEFG",
+                "name": "username",
                 "team": "T01234N56GB",
               },
           },
@@ -83,9 +73,9 @@ Tests:
             "ip_address": "1.2.3.4",
             "location":
               {
-                "domain": "test-workspace-1",
+                "domain": "test-workspace",
                 "id": "T01234N56GB",
-                "name": "test-workspace-1",
+                "name": "test-workspace",
                 "type": "workspace",
               },
             "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",

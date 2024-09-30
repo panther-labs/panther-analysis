@@ -1,4 +1,6 @@
+import json
 from fnmatch import fnmatch
+from unittest.mock import MagicMock
 
 from panther_base_helpers import aws_rule_context, deep_get
 from panther_default import aws_cloudtrail_success
@@ -18,11 +20,15 @@ SECURITY_CONFIG_ACTIONS = {
 
 ALLOW_LIST = [
     # Add expected events and users here to suppress alerts
-    {"userName": "ExampleUser", "eventName": "ExampleEvent"},
+    # {"userName": "ExampleUser", "eventName": "DeleteRule"},
 ]
 
 
 def rule(event):
+    global ALLOW_LIST  # pylint: disable=global-statement
+    if isinstance(ALLOW_LIST, MagicMock):
+        ALLOW_LIST = json.loads(ALLOW_LIST())  # pylint: disable=not-callable
+
     if not aws_cloudtrail_success(event):
         return False
 
