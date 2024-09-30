@@ -73,6 +73,7 @@ PackDefinition:
     - AWS.PasswordPolicy.ComplexityGuidelines
     - AWS.PasswordPolicy.PasswordAgeLimit
     - AWS.PasswordPolicy.PasswordReuse
+    - AWS.Potentially.Stolen.Service.Role.Scheduled
     - AWS.Suspicious.SAML.Activity
     - AWS.User.Login.Profile.Modified
     # General Policies and Rules
@@ -132,7 +133,6 @@ PackDefinition:
     - AWS.WAF.Disassociation
     - AWS.WAF.HasXSSPredicate
     # Other rules
-    - AWS.Authentication.From.CrowdStrike.Unmanaged.Device
     - AWS.CloudTrail.Account.Discovery
     - AWS.CloudTrail.CloudWatchLogs
     - AWS.CloudTrail.LogEncryption
@@ -166,6 +166,7 @@ PackDefinition:
     # Correlation Rules
     - AWS.Potentially.Stolen.Service.Role
     - AWS.Privilege.Escalation.Via.User.Compromise
+    - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP
     - AWS.User.Takeover.Via.Password.Reset
     # Signal Rules
     - Role.Assumed.by.AWS.Service
@@ -173,8 +174,10 @@ PackDefinition:
     - AWS.CloudTrail.UserAccessKeyAuth
     - AWS.CloudTrail.LoginProfileCreatedOrModified
     - AWS.Console.Login
+    - Retrieve.SSO.access.token
+    - Sign-in.with.AWS.CLI.prompt
     # Queries
-    - AWS Authentication from CrowdStrike Unmanaged Device
+    - AWS Potentially Stolen Service Role
     - Query.CloudTrail.Password.Spraying
     - Query.VPC.DNS.Tunneling
     - VPC Flow Port Scanning

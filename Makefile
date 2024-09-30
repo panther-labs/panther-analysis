@@ -43,6 +43,9 @@ lint-fmt:
 	@echo Checking python file formatting with the black code style checker
 	pipenv run black --line-length=100 --check $(dirs)
 
+lint-mitre:
+	pipenv run python3 ./.scripts/mitre_mapping_check.py
+
 venv:
 	pipenv sync --dev
 

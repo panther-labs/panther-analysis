@@ -3,7 +3,6 @@ PackID: PantherManaged.Notion
 Description: Group of all Notion detections
 PackDefinition:
   IDs:
-    - Notion.AccountChangedAfterLogin
     - Notion.Audit.Log.Exported
     - Notion.PagePerms.GuestPermsChanged
     - Notion.LoginFromNewLocation
@@ -17,6 +16,11 @@ PackDefinition:
     - Notion.Workspace.Public.Page.Added
     - Notion.SharingSettingsUpdated
     - Notion.TeamspaceOwnerAdded
+    # Correlation Rules
+    - Notion.Login.FOLLOWED.BY.AccountChange
+    # Signal Rules
+    - Notion.Login
+    - Notion.AccountChange
     # Globals used in these detections
     - global_filter_notion
     - panther_base_helpers

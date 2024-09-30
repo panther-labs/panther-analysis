@@ -1,0 +1,34 @@
+AnalysisType: rule
+Filename: onelogin_login.py
+RuleID: "OneLogin.Login"
+DisplayName: "Signal - OneLogin Login"
+Enabled: true
+CreateAlert: false
+LogTypes:
+  - OneLogin.Events
+Tags:
+  - OneLogin
+Severity: Info
+Description: A OneLogin user successfully logged in.
+Reference: https://resources.onelogin.com/OneLogin_RiskBasedAuthentication-WP-v5.pdf
+Tests:
+  - Name: Successful Login Event
+    ExpectedResult: true
+    Log:
+      {
+        "event_type_id": "5",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+      }
+  - Name: Failed Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "event_type_id": "6",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+      }

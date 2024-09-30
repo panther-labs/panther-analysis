@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - release
 
 permissions:
   contents: read
@@ -14,9 +14,10 @@ jobs:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
-      - uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
         with:
           egress-policy: audit
+          
       - name: Validate Secrets
         if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
         run: |
@@ -24,7 +25,7 @@ jobs:
           exit 0
 
       - name: Checkout panther-analysis
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 #v4.2.0
 
       - name: Set python version
         uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 #v5.2.0
@@ -36,10 +37,6 @@ jobs:
 
       - name: Setup venv
         run: make venv
-
-      - name: validate
-        run: |
-          pipenv run panther_analysis_tool validate --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
 
       - name: upload
         run: |
