@@ -5,7 +5,7 @@ Tags:
   - Optional
 Description: >
   This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
-Query: >
+Query: |
   SELECT *,
          IFF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
          IFF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
