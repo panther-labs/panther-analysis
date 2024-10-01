@@ -30,4 +30,8 @@ def title(event):
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    context = aws_rule_context(event)
+    context["ip_and_username"] = event.get(
+        "sourceIPAddress", "<MISSING_SOURCE_IP>"
+    ) + event.deep_get("requestParameters", "userName", default="<MISSING_USER_NAME>")
+    return context
