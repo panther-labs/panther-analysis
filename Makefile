@@ -65,6 +65,9 @@ test: global-helpers-unit-test
 check-deprecated:
 	pipenv run python3 ./.scripts/deleted_rules.py check
 
+remove-deprecated:
+	pipenv run python3 ./.scripts/deleted_rules.py remove
+
 docker-build:
 	docker build -t panther-analysis:latest .
 
