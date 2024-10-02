@@ -28,7 +28,7 @@ def title(event):
     inviter = event.deep_get(
         "data", "details", "request", "auth", "user", "email", default="<NO_INVITER>"
     )
-    source = event.deep_get("p_source_label", default="<NO_PSOURCE>")
+    source = event.get("p_source_label", "<NO_PSOURCE>")
     return f"Auth0 User [{inviter}] invited [{invitee}] to {inv_type} [{source}]]"
 
 

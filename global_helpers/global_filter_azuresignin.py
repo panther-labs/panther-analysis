@@ -14,7 +14,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # example: event['tenantId']
     # # if tenantId were missing, we want default behavior to be to alert on this event.
-    # tenant_id = event.deep_get("tenantId", default="")
+    # tenant_id = event.get("tenantId", "")
     # return event_origin in ["333333eb-a222-33cc-9baf-4a1111111111", ""]
     #
     return True

@@ -10,13 +10,13 @@ ACTIONS = [
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     return action in ACTIONS
 
 
 def title(event):
     current_setting = event.deep_get("content", "after", "isEnabled", default=False)
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     if "." in action:
         action = action.split(".")[0].title()
     return (

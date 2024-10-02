@@ -9,8 +9,8 @@ def rule(event):
     ):
         return False
 
-    event_platform = event.deep_get("event_platform", default="<UNKNOWN_PLATFORM>")
-    fdr_event_type = event.deep_get("fdr_event_type", default="<UNKNOWN_FDR_EVENT_TYPE>")
+    event_platform = event.get("event_platform", "<UNKNOWN_PLATFORM>")
+    fdr_event_type = event.get("fdr_event_type", "<UNKNOWN_FDR_EVENT_TYPE>")
     image_filename = event.deep_get("event", "ImageFileName", default="<UNKNOWN_IMAGE_FILE_NAME>")
 
     return all(

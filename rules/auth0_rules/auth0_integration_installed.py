@@ -22,7 +22,7 @@ def title(event):
     user = event.deep_get(
         "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
-    p_source_label = event.deep_get("p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL_FOUND>")
     return (
         f"Auth0 User [{user}] installed an integration from the actions library for "
         f"your organization's tenant [{p_source_label}]."

@@ -2,7 +2,7 @@ from panther_mongodb_helpers import mongodb_alert_context
 
 
 def rule(event):
-    return event.deep_get("eventTypeName", default="") in ("JOINED_ORG", "REMOVED_FROM_ORG")
+    return event.get("eventTypeName", "") in ("JOINED_ORG", "REMOVED_FROM_ORG")
 
 
 def title(event):

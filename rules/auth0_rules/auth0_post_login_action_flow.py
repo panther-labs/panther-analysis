@@ -25,7 +25,7 @@ def title(event):
     user = event.deep_get(
         "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
-    p_source_label = event.deep_get("p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL_FOUND>")
     request_bindings = event.deep_get("data", "details", "request", "body", "bindings", default=[])
     response_bindings = event.deep_get(
         "data", "details", "response", "body", "bindings", default=[]

@@ -1,6 +1,6 @@
 def rule(event):
     return (
-        event.deep_get("eventType") == "user.session.start"
+        event.get("eventType") == "user.session.start"
         and event.deep_get("outcome", "result") == "SUCCESS"
     )
 

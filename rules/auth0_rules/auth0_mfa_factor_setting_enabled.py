@@ -21,7 +21,7 @@ def title(event):
         "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
     path = event.deep_get("data", "details", "request", "path", default="<NO_PATH_FOUND>")
-    p_source_label = event.deep_get("p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL_FOUND>")
     return (
         f"Auth0 User [{user}] enabled mfa factor settings for [{path}] "
         f"in your organization’s tenant [{p_source_label}]."

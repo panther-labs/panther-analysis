@@ -30,7 +30,7 @@ def title(event):
     else:
         role_type = "custom"
 
-    p_source_label = event.deep_get("p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL_FOUND>")
     return (
         f"Auth0 User [{user}] created a "
         f"role [{request_body_name}] with [{role_type}] "

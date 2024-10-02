@@ -1,5 +1,5 @@
 def rule(event):
-    severity = event.deep_get("severity", default="")
+    severity = event.get("severity", "")
     status_code = event.deep_get("protoPayload", "status", "code", default="")
     violation_types = event.deep_walk(
         "protoPayload", "status", "details", "violations", "type", default=[]

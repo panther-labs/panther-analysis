@@ -16,7 +16,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # not all github enterprise events have org
     # # example: enterprise.self_hosted_runner_online
-    # org = event.deep_get("org", default="")
+    # org = event.get("org", "")
     # return org in ["my-prod-org", ""]
     #
     return True

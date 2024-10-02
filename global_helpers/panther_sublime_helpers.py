@@ -1,6 +1,6 @@
 def sublime_alert_context(event) -> dict:
     context = {}
-    context["events_type"] = event.get("type", default="<TYPE_NOT_FOUND>")
+    context["events_type"] = event.get("type", "<TYPE_NOT_FOUND>")
     context["users_emails"] = event.deep_get(
         "created_by", "email_address", default="<EMAIL_NOT_FOUND>"
     )

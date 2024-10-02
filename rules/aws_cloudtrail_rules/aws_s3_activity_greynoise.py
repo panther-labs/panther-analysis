@@ -68,7 +68,7 @@ def rule(event):
 
 def title(event):
     # Group by ip-arn combinations
-    ip = event.deep_get("sourceIPAddress")
+    ip = event.get("sourceIPAddress")
     arn = event.deep_get("userIdentity", "arn")
     return f"GreyNoise malicious S3 events detected by {ip} from {arn}"
 

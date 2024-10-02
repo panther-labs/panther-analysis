@@ -13,7 +13,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # not all snyk audit events have orgId & projectId
     # # example: group.user.add, sometimes api.access
-    # org = event.deep_get("orgId", default="")
+    # org = event.get("orgId", "")
     # return org in ["21111111-a222-4eee-8ddd-a99999999999", ""]
     #
     return True

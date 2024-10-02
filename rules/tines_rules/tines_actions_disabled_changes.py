@@ -7,13 +7,13 @@ ACTIONS = ["ActionsDisabledChange"]
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = event.deep_get("operation_name", default="<NO_OPERATION_NAME>")
+    action = event.get("operation_name", "<NO_OPERATION_NAME>")
     return action in ACTIONS
 
 
 def title(event):
-    action = event.deep_get("operation_name", default="<NO_OPERATION_NAME>")
-    actor = event.deep_get("user_email", default="<NO_USERNAME>")
+    action = event.get("operation_name", "<NO_OPERATION_NAME>")
+    actor = event.get("user_email", "<NO_USERNAME>")
     return f"Tines: {action} " f"by {actor}"
 
 

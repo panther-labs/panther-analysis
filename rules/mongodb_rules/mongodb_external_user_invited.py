@@ -11,8 +11,8 @@ def rule(event):
     global ALLOWED_DOMAINS  # pylint: disable=global-statement
     if isinstance(ALLOWED_DOMAINS, MagicMock):
         ALLOWED_DOMAINS = json.loads(ALLOWED_DOMAINS())  # pylint: disable=not-callable
-    if event.deep_get("eventTypeName", default="") == "INVITED_TO_ORG":
-        target_user = event.deep_get("targetUsername", default="")
+    if event.get("eventTypeName", "") == "INVITED_TO_ORG":
+        target_user = event.get("targetUsername", "")
         target_domain = target_user.split("@")[-1]
         return target_domain not in ALLOWED_DOMAINS
     return False

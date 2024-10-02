@@ -6,16 +6,16 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    return event.deep_get("operation_name", default="<NO_OPERATION_NAME>") in [
+    return event.get("operation_name", "<NO_OPERATION_NAME>") in [
         "JobsQueuedDeletion",
         "JobsRetryingDeletion",
     ]
 
 
 def title(event):
-    operation = event.deep_get("operation_name", default="<NO_OPERATION_NAME>")
-    user = event.deep_get("user_email", default="<NO_USER_EMAIL>")
-    tines_instance = event.deep_get("p_source_label", default="<NO_SOURCE_LABEL>")
+    operation = event.get("operation_name", "<NO_OPERATION_NAME>")
+    user = event.get("user_email", "<NO_USER_EMAIL>")
+    tines_instance = event.get("p_source_label", "<NO_SOURCE_LABEL>")
 
     return f"Tines [{operation}] performed by [{user}] on [{tines_instance}]."
 
