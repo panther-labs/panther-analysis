@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, deep_walk
+from panther_base_helpers import deep_walk
 
 SERVICE_ACCOUNT_MANAGE_ROLES = [
     "roles/iam.serviceAccountTokenCreator",
@@ -7,10 +7,9 @@ SERVICE_ACCOUNT_MANAGE_ROLES = [
 
 
 def rule(event):
-    if "SetIAMPolicy" in deep_get(event, "protoPayload", "methodName", default=""):
-        role = deep_walk(
-            event,
-            "ProtoPayload",
+    if "SetIAMPolicy" in event.deep_get("protoPayload", "methodName", default=""):
+        role = event.deep_walk(
+            "protoPayload",
             "serviceData",
             "policyDelta",
             "bindingDeltas",
@@ -18,9 +17,8 @@ def rule(event):
             default="",
             return_val="last",
         )
-        action = deep_walk(
-            event,
-            "ProtoPayload",
+        action = event.deep_walk(
+            "protoPayload",
             "serviceData",
             "policyDelta",
             "bindingDeltas",
@@ -33,11 +31,11 @@ def rule(event):
 
 
 def title(event):
-    actor = deep_get(
-        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
-    target = deep_get(event, "resource", "labels", "email_id") or deep_get(
-        event, "resource", "labels", "project_id", default="<TARGET_NOT_FOUND>"
+    target = event.deep_get("resource", "labels", "email_id") or event.deep_get(
+        "resource", "labels", "project_id", default="<TARGET_NOT_FOUND>"
     )
     return (
         f"GCP: [{actor}] granted permissions to create or manage service account keys to [{target}]"
@@ -46,6 +44,6 @@ def title(event):
 
 def alert_context(event):
     return {
-        "resource": deep_get(event, "resource"),
-        "serviceData": deep_get(event, "protoPayload", "serviceData"),
+        "resource": event.get("resource"),
+        "serviceData": event.deep_get("protoPayload", "serviceData"),
     }

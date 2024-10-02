@@ -1,4 +1,3 @@
-from panther_base_helpers import deep_get
 from panther_default import lookup_aws_account_name
 from panther_oss_helpers import geoinfo_from_ip_formatted
 
@@ -6,8 +5,8 @@ from panther_oss_helpers import geoinfo_from_ip_formatted
 def rule(event):
     return (
         event.get("eventName") == "ConsoleLogin"
-        and deep_get(event, "userIdentity", "type") == "Root"
-        and deep_get(event, "responseElements", "ConsoleLogin") == "Success"
+        and event.deep_get("userIdentity", "type") == "Root"
+        and event.deep_get("responseElements", "ConsoleLogin") == "Success"
     )
 
 
@@ -31,8 +30,8 @@ def dedup(event):
 def alert_context(event):
     return {
         "sourceIPAddress": event.get("sourceIPAddress"),
-        "userIdentityAccountId": deep_get(event, "userIdentity", "accountId"),
-        "userIdentityArn": deep_get(event, "userIdentity", "arn"),
+        "userIdentityAccountId": event.deep_get("userIdentity", "accountId"),
+        "userIdentityArn": event.deep_get("userIdentity", "arn"),
         "eventTime": event.get("eventTime"),
-        "mfaUsed": deep_get(event, "additionalEventData", "MFAUsed"),
+        "mfaUsed": event.deep_get("additionalEventData", "MFAUsed"),
     }

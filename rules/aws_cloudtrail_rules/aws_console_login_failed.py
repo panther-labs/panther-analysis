@@ -1,12 +1,12 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import lookup_aws_account_name
 
 
 def rule(event):
     return (
         event.get("eventName") == "ConsoleLogin"
-        and deep_get(event, "userIdentity", "type") == "IAMUser"
-        and deep_get(event, "responseElements", "ConsoleLogin") == "Failure"
+        and event.deep_get("userIdentity", "type") == "IAMUser"
+        and event.deep_get("responseElements", "ConsoleLogin") == "Failure"
     )
 
 

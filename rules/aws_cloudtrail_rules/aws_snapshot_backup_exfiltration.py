@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
@@ -10,9 +10,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event,'userIdentity','arn')}] "
+        f"[{event.deep_get('userIdentity','arn')}] "
         "modified snapshot attributes for "
-        f"[{deep_get(event,'requestParameters','snapshotId')}] "
+        f"[{event.deep_get('requestParameters','snapshotId')}] "
         f"in [{event.get('recipientAccountId')}] - [{event.get('awsRegion')}]."
     )
 

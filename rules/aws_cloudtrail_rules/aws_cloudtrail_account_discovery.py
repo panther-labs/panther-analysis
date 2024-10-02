@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 DISCOVERY_EVENTS = [
     "GetAlternateContact",
     "GetContactInformation",
@@ -15,7 +13,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'userIdentity', 'arn')}]"
+        f"User [{event.deep_get('userIdentity', 'arn')}]"
         f"performed a [{event.get('eventName')}] "
         f"action in AWS account [{event.get('recipientAccountId')}]."
     )

@@ -8,8 +8,6 @@ There is an alternative method for creating this rule that uses Panther's lookup
 BETA - Sensitive 1Password Item Accessed (onepassword_lut_sensitive_item_access.py)
 """
 
-from panther_base_helpers import deep_get
-
 SENSITIVE_ITEM_WATCHLIST = {"ecd1d435c26440dc930ddfbbef201a11": "demo_item"}
 
 
@@ -18,14 +16,14 @@ def rule(event):
 
 
 def title(event):
-    return f"A Sensitive 1Password Item was Accessed by user {deep_get(event, 'user', 'name')}"
+    return f"A Sensitive 1Password Item was Accessed by user {event.deep_get('user', 'name')}"
 
 
 def alert_context(event):
     context = {
-        "user": deep_get(event, "user", "name"),
-        "item_name": deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title"),
-        "client": deep_get(event, "client", "app_name"),
+        "user": event.deep_get("user", "name"),
+        "item_name": event.deep_get("p_enrichment", "1Password Translation", "item_uuid", "title"),
+        "client": event.deep_get("client", "app_name"),
         "ip_address": event.udm("source_ip"),
         "event_time": event.get("timestamp"),
     }

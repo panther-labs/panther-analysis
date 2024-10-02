@@ -1,4 +1,3 @@
-from panther_base_helpers import deep_get
 from panther_config import config
 
 DOMAINS = {"@" + domain for domain in config.ORGANIZATION_DOMAINS}
@@ -19,6 +18,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"External user [{deep_get(event, 'created_by', 'login', default='<UNKNOWN_USER>')}] "
+        f"External user [{event.deep_get('created_by', 'login', default='<UNKNOWN_USER>')}] "
         f"triggered a box event."
     )

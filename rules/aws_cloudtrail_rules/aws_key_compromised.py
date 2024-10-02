@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 EXPOSED_CRED_POLICY = "AWSExposedCredentialPolicy_DO_NOT_REMOVE"
 
@@ -14,12 +14,12 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "userName")
+    return event.deep_get("userIdentity", "userName")
 
 
 def title(event):
     return (
-        f"{dedup(event)}'s access key ID [{deep_get(event, 'userIdentity', 'accessKeyId')}]"
+        f"{dedup(event)}'s access key ID [{event.deep_get('userIdentity', 'accessKeyId')}]"
         f" was uploaded to a public GitHub repo"
     )
 

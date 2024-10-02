@@ -8,7 +8,7 @@ def rule(_):
 def title(event):
     return (
         f"AWS [{event.get('eventName')}] for "
-        f"[{deep_get(event, 'userIdentity', 'arn', default = '<arn_not_found>')}]"
+        f"[{event.deep_get('userIdentity', 'arn', default = '<arn_not_found>')}]"
         " from unmanaged IP Address."
     )
 

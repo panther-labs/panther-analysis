@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     # Filter login events
     if event.get("type") != "login":
@@ -13,5 +10,5 @@ def rule(event):
 def title(event):
     return (
         f"Brute force login suspected for user "
-        f"[{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"
+        f"[{event.deep_get('actor', 'email', default='<UNKNOWN_EMAIL>')}]"
     )

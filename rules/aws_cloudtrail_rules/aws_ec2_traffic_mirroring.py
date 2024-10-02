@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
@@ -19,7 +19,7 @@ def rule(event):
         "ModifyTrafficMirrorFilterRule",
         "ModifyTrafficMirrorSession",
     ]
-    if deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com"):
+    if event.deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com"):
         return False
     return (
         event.get("eventSource", "") == "ec2.amazonaws.com"

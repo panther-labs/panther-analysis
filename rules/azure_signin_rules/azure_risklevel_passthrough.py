@@ -1,6 +1,5 @@
 from global_filter_azuresignin import filter_include_event
 from panther_azuresignin_helpers import actor_user, azure_signin_alert_context, is_sign_in_event
-from panther_base_helpers import deep_get
 
 PASSTHROUGH_SEVERITIES = {"low", "medium", "high"}
 
@@ -14,15 +13,15 @@ def rule(event):
     global IDENTIFIED_RISK_LEVEL  # pylint: disable=global-variable-undefined
     IDENTIFIED_RISK_LEVEL = ""
     # Do not pass through risks marked as dismissed or remediated in AD
-    if deep_get(event, "properties", "riskState", default="").lower() in [
+    if event.deep_get("properties", "riskState", default="").lower() in [
         "dismissed",
         "remediated",
     ]:
         return False
     # check riskLevelAggregated
     for risk_type in ["riskLevelAggregated", "riskLevelDuringSignIn"]:
-        if deep_get(event, "properties", risk_type, default="").lower() in PASSTHROUGH_SEVERITIES:
-            IDENTIFIED_RISK_LEVEL = deep_get(event, "properties", risk_type).lower()
+        if event.deep_get("properties", risk_type, default="").lower() in PASSTHROUGH_SEVERITIES:
+            IDENTIFIED_RISK_LEVEL = event.deep_get("properties", risk_type).lower()
             return True
     return False
 

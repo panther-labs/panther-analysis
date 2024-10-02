@@ -1,12 +1,10 @@
-from panther_base_helpers import deep_get
-
 PERMISSION_DELEGATED_EVENTS = {
     "ASSIGN_ROLE",
 }
 
 
 def rule(event):
-    if deep_get(event, "id", "applicationName") != "admin":
+    if event.deep_get("id", "applicationName") != "admin":
         return False
     if event.get("type") == "DELEGATED_ADMIN_SETTINGS":
         return bool(event.get("name") in PERMISSION_DELEGATED_EVENTS)
@@ -14,13 +12,13 @@ def rule(event):
 
 
 def title(event):
-    role = deep_get(event, "parameters", "ROLE_NAME")
-    user = deep_get(event, "parameters", "USER_EMAIL")
+    role = event.deep_get("parameters", "ROLE_NAME")
+    user = event.deep_get("parameters", "USER_EMAIL")
     if not role:
         role = "<UNKNOWN_ROLE>"
     if not user:
         user = "<UNKNOWN_USER>"
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] delegated new"
+        f"User [{event.deep_get('actor', 'email', default='<UNKNOWN_USER>')}] delegated new"
         f" administrator privileges [{role}] to [{user}]"
     )

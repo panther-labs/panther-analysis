@@ -19,7 +19,7 @@ def gen_key(event):
 
     The data_model needs to answer to "actor_user"
     """
-    rule_name = deep_get(event, "p_source_label")
+    rule_name = event.get("p_source_label")
     actor = event.udm("actor_user")
     if None in [rule_name, actor]:
         return None
@@ -45,7 +45,7 @@ def rule(event):
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
         return False
 
-    p_event_datetime = resolve_timestamp_string(deep_get(event, "p_event_time"))
+    p_event_datetime = resolve_timestamp_string(event.deep_get("p_event_time"))
     if p_event_datetime is None:
         # we couldn't go from p_event_time to a datetime object
         # we need to do this in order to make later time comparisons generic
@@ -165,7 +165,7 @@ def rule(event):
 
 def title(event):
     #
-    log_source = deep_get(event, "p_source_label", default="<NO_SOURCE_LABEL>")
+    log_source = event.deep_get("p_source_label", default="<NO_SOURCE_LABEL>")
     old_city = deep_get(EVENT_CITY_TRACKING, "previous", "city", default="<NO_PREV_CITY>")
     new_city = deep_get(EVENT_CITY_TRACKING, "current", "city", default="<NO_PREV_CITY>")
     speed = deep_get(EVENT_CITY_TRACKING, "speed", default="<NO_SPEED>")

@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, okta_alert_context
+from panther_base_helpers import okta_alert_context
 
 
 def rule(event):
@@ -7,7 +7,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event, 'actor', 'alternateId', default = '<id-not-found>')}] "
+        f"[{event.deep_get('actor', 'alternateId', default = '<id-not-found>')}] "
         f"attempted unauthorized access to "
         f"[{event.get('target', [{}])[0].get('alternateId','<id-not-found>')}]"
     )

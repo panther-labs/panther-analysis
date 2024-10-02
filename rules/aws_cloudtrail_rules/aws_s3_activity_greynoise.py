@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import deep_get, pattern_match_list
+from panther_base_helpers import pattern_match_list
 from panther_greynoise_helpers import GetGreyNoiseObject, GetGreyNoiseRiotObject
 
 # pylint: disable=too-many-return-statements,invalid-name,unused-argument,global-at-module-level,global-variable-undefined
@@ -29,7 +29,7 @@ def rule(event):
     if event.get("errorCode"):
         return False
     # Filter: Internal AWS
-    if deep_get(event, "userIdentity", "type") in ("AWSAccount", "AWSService"):
+    if event.deep_get("userIdentity", "type") in ("AWSAccount", "AWSService"):
         return False
     # Filter: Non "Get" events
     if not pattern_match_list(event.get("eventName"), _S3_EVENT_LIST):
@@ -53,7 +53,7 @@ def rule(event):
     # Check that the IP is classified as 'malicious'
     if NOISE.classification("sourceIPAddress") == "malicious":
         # Filter: Roles that generate FP's if used from AWS IP Space
-        if pattern_match_list(deep_get(event, "userIdentity", "arn"), _ALLOWED_ROLES):
+        if pattern_match_list(event.deep_get("userIdentity", "arn"), _ALLOWED_ROLES):
             # Only Greynoise advanced provides AS organization info
             if NOISE.subscription_level() == "advanced":
                 if NOISE.organization("sourceIPAddress") == "Amazon.com, Inc.":
@@ -68,8 +68,8 @@ def rule(event):
 
 def title(event):
     # Group by ip-arn combinations
-    ip = deep_get(event, "sourceIPAddress")
-    arn = deep_get(event, "userIdentity", "arn")
+    ip = event.deep_get("sourceIPAddress")
+    arn = event.deep_get("userIdentity", "arn")
     return f"GreyNoise malicious S3 events detected by {ip} from {arn}"
 
 

@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 QUERIES = {"pack_incident-response_alf", "pack/mac-cis/ApplicationFirewall"}
 
 
@@ -14,10 +12,10 @@ def rule(event):
         # 0 If the firewall is disabled
         # 1 If the firewall is enabled with exceptions
         # 2 If the firewall is configured to block all incoming connections
-        int(deep_get(event, "columns", "global_state")) == 0
+        int(event.deep_get("columns", "global_state")) == 0
         or
         # Stealth mode is a best practice to avoid responding to unsolicited probes
-        int(deep_get(event, "columns", "stealth_enabled")) == 0
+        int(event.deep_get("columns", "stealth_enabled")) == 0
     )
 
 

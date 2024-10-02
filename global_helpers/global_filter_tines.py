@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all Tines detections
@@ -14,7 +11,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #    1. the specific tenant_id mentioned.
     #    2. events where tenant_id is undefined
     #
-    # tenant_id = deep_get(event, "tenant_id", default="")
+    # tenant_id = event.deep_get("tenant_id", default="")
     # return tenant_id in ["1234", ""]
     #
     return True

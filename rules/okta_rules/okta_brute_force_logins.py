@@ -1,9 +1,9 @@
-from panther_base_helpers import deep_get, okta_alert_context
+from panther_base_helpers import okta_alert_context
 
 
 def rule(event):
     return (
-        deep_get(event, "outcome", "result") == "FAILURE"
+        event.deep_get("outcome", "result") == "FAILURE"
         and event.get("eventType") == "user.session.start"
     )
 
@@ -11,8 +11,8 @@ def rule(event):
 def title(event):
     return (
         f"Suspected brute force Okta logins to account "
-        f"{deep_get(event, 'actor', 'alternateId', default='<UNKNOWN_ACCOUNT>')}, due to "
-        f"[{deep_get(event, 'outcome', 'reason', default='<UNKNOWN_REASON>')}]"
+        f"{event.deep_get('actor', 'alternateId', default='<UNKNOWN_ACCOUNT>')}, due to "
+        f"[{event.deep_get('outcome', 'reason', default='<UNKNOWN_REASON>')}]"
     )
 
 

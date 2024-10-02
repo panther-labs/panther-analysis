@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from panther_base_helpers import deep_get, get_binding_deltas
+from panther_base_helpers import get_binding_deltas
 
 ADMIN_ROLES = {
     # Primitive Roles
@@ -27,5 +27,5 @@ def rule(event):
 def title(event):
     return (
         f"An admin role has been configured in GCP project "
-        f"{deep_get(event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
+        f"{event.deep_get('resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )

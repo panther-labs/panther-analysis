@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all snyk detections
@@ -16,7 +13,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # not all snyk audit events have orgId & projectId
     # # example: group.user.add, sometimes api.access
-    # org = deep_get(event, "orgId", default="")
+    # org = event.deep_get("orgId", default="")
     # return org in ["21111111-a222-4eee-8ddd-a99999999999", ""]
     #
     return True

@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import lookup_aws_account_name
 
 # service/event patterns to monitor
@@ -17,7 +17,7 @@ def rule(event):
     # Filter events
     if event.get("errorCode") != "AccessDenied":
         return False
-    if deep_get(event, "userIdentity", "type") != "IAMUser":
+    if event.deep_get("userIdentity", "type") != "IAMUser":
         return False
 
     # Console Activity can easily result in false positives as some pages contain a mix of
@@ -41,13 +41,13 @@ def rule(event):
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "arn")
+    return event.deep_get("userIdentity", "arn")
 
 
 def title(event):
-    user_type = deep_get(event, "userIdentity", "type")
+    user_type = event.deep_get("userIdentity", "type")
     if user_type == "IAMUser":
-        user = deep_get(event, "userIdentity", "userName")
+        user = event.deep_get("userIdentity", "userName")
     # root user
     elif user_type == "Root":
         user = user_type

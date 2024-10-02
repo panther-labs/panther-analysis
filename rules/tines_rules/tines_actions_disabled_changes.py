@@ -1,5 +1,4 @@
 from global_filter_tines import filter_include_event
-from panther_base_helpers import deep_get
 from panther_tines_helpers import tines_alert_context
 
 ACTIONS = ["ActionsDisabledChange"]
@@ -8,13 +7,13 @@ ACTIONS = ["ActionsDisabledChange"]
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = deep_get(event, "operation_name", default="<NO_OPERATION_NAME>")
+    action = event.deep_get("operation_name", default="<NO_OPERATION_NAME>")
     return action in ACTIONS
 
 
 def title(event):
-    action = deep_get(event, "operation_name", default="<NO_OPERATION_NAME>")
-    actor = deep_get(event, "user_email", default="<NO_USERNAME>")
+    action = event.deep_get("operation_name", default="<NO_OPERATION_NAME>")
+    actor = event.deep_get("user_email", default="<NO_USERNAME>")
     return f"Tines: {action} " f"by {actor}"
 
 

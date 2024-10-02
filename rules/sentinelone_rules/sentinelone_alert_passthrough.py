@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 SENTINELONE_SEVERITY = {
     "E_LOW": "LOW",
     "E_MEDIUM": "MEDIUM",
@@ -16,8 +14,8 @@ def rule(event):
 def title(event):
     return (
         "SentinelOne "
-        f"[{SENTINELONE_SEVERITY.get(deep_get(event,'data', 'severity', default=''))}] "
-        f"Alert - [{deep_get(event, 'data', 'rulename')}]"
+        f"[{SENTINELONE_SEVERITY.get(event.deep_get('data', 'severity', default=''))}] "
+        f"Alert - [{event.deep_get('data', 'rulename')}]"
     )
 
 
@@ -26,7 +24,7 @@ def dedup(event):
 
 
 def severity(event):
-    return SENTINELONE_SEVERITY.get(deep_get(event, "data", "severity", default=""), "MEDIUM")
+    return SENTINELONE_SEVERITY.get(event.deep_get("data", "severity", default=""), "MEDIUM")
 
 
 def alert_context(event):

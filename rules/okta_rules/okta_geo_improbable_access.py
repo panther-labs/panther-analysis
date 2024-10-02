@@ -13,14 +13,14 @@ def rule(event):
     # Only evaluate successful logins
     if (
         event.get("eventType") != "user.session.start"
-        or deep_get(event, "outcome", "result") == "FAILURE"
+        or event.deep_get("outcome", "result") == "FAILURE"
     ):
         return False
 
     new_login_stats = {
-        "city": deep_get(event, "client", "geographicalContext", "city"),
-        "lon": deep_get(event, "client", "geographicalContext", "geolocation", "lon"),
-        "lat": deep_get(event, "client", "geographicalContext", "geolocation", "lat"),
+        "city": event.deep_get("client", "geographicalContext", "city"),
+        "lon": event.deep_get("client", "geographicalContext", "geolocation", "lon"),
+        "lat": event.deep_get("client", "geographicalContext", "geolocation", "lat"),
     }
     # Bail out if we have a None value in set as it causes false positives
     if None in new_login_stats.values():
@@ -58,7 +58,7 @@ def rule(event):
 
 
 def gen_key(event):
-    return f"Okta.Login.GeographicallyImprobable{deep_get(event, 'actor', 'alternateId')}"
+    return f"Okta.Login.GeographicallyImprobable{event.deep_get('actor', 'alternateId')}"
 
 
 # Taken from stack overflow user Michael0x2a: https://stackoverflow.com/a/19412565/6645635
@@ -87,9 +87,9 @@ def store_login_info(key, event):
         [
             dumps(
                 {
-                    "city": deep_get(event, "client", "geographicalContext", "city"),
-                    "lon": deep_get(event, "client", "geographicalContext", "geolocation", "lon"),
-                    "lat": deep_get(event, "client", "geographicalContext", "geolocation", "lat"),
+                    "city": event.deep_get("client", "geographicalContext", "city"),
+                    "lon": event.deep_get("client", "geographicalContext", "geolocation", "lon"),
+                    "lat": event.deep_get("client", "geographicalContext", "geolocation", "lat"),
                     "time": event.get("p_event_time"),
                 }
             )
@@ -107,14 +107,14 @@ def title(event):
         EVENT_CITY_TRACKING.get(event.get("p_row_id")), "new_city", default="<UNKNOWN_NEW_CITY>"
     )
     return (
-        f"Geographically improbable login for user [{deep_get(event, 'actor', 'alternateId')}] "
+        f"Geographically improbable login for user [{event.deep_get('actor', 'alternateId')}] "
         f"from [{old_city}]  to [{new_city}]"
     )
 
 
 def dedup(event):
     # (Optional) Return a string which will de-duplicate similar alerts.
-    return deep_get(event, "actor", "alternateId")
+    return event.deep_get("actor", "alternateId")
 
 
 def alert_context(event):
