@@ -1,0 +1,189 @@
+AnalysisType: rule
+Description: Adversaries may leverage information repositories to mine valuable information.
+DisplayName: AWS S3 Suspicious Application Log Collection
+Enabled: false
+Filename: aws_s3_suspicious_application_log_collection.py
+Reference: https://attack.mitre.org/techniques/T1213/003/
+Reports:
+    MITRE ATT&CK:
+        - TA0009:T1213
+Runbook: Consider periodic review of accounts and privileges for critical and sensitive repositories. Enforce the principle of least-privilege. Consider implementing access control mechanisms that include both authentication and authorization. Develop and publish policies that define acceptable information to be stored in repositories. Use multi-factor authentication for logons to code repositories.
+Severity: Info
+Tests:
+    - ExpectedResult: false
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Management
+        eventID: f6422c42-5d2c-408f-85a4-f8747421afd3
+        eventName: GetBucketLocation
+        eventSource: s3.amazonaws.com
+        eventTime: "2023-01-17 17:51:59"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: true
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_aws_arns:
+            - arn:aws:iam::012345678912:role/LogProcessingRole-test-cloudtrail
+            - arn:aws:s3:::aws-cloudtrail-logs-012345678912-2ad20563
+            - arn:aws:sts::012345678912:assumed-role/LogProcessingRole-test-cloudtrail/1673977919686915903
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_trace_ids:
+            - USJPN24M6MN78LMM78L8
+        p_any_usernames:
+            - LogProcessingRole-test-cloudtrail
+        p_event_time: "2023-01-17 17:51:59"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2023-01-17 17:54:00.274"
+        p_row_id: 36559155024eefe4e3b487ee1541
+        p_schema_version: 0
+        p_source_id: d62c5f90-0d44-40bc-b829-7884174d6fdb
+        p_source_label: test cloudtrail
+        p_timeline: "2023-01-17 17:51:59"
+        readOnly: true
+        recipientAccountId: "012345678912"
+        requestID: 7QF8V7BWBMY17RZT
+        requestParameters:
+            Host: s3.us-west-2.amazonaws.com
+            bucketName: aws-cloudtrail-logs
+            location: ""
+        resources:
+            - accountId: "012345678912"
+              arn: arn:aws:s3:::aws-cloudtrail-logs
+              type: AWS::S3::Bucket
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: s3.us-west-2.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: '[aws-sdk-go/1.44.77 (go1.19; linux; arm64)]'
+        userIdentity:
+            accessKeyId: USJPN24M6MN78LMM78L8
+            accountId: "012345678912"
+            arn: arn:aws:sts::012345678912:assumed-role/LogProcessingRole-test-cloudtrail/1673977919686915903
+            principalId: BRUH345MFJM8JFKH09LF0:0123456789012345678
+            sessionContext:
+                attributes:
+                    creationDate: "2023-01-17T17:51:59Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "012345678912"
+                    arn: arn:aws:iam::012345678912:role/LogProcessingRole-test-cloudtrail
+                    principalId: AROA2PCKFRNXXDYNYYZDO
+                    type: Role
+                    userName: LogProcessingRole-test-cloudtrail
+                webIdFederationData: {}
+            type: AssumedRole
+      Name: Non S3 App log Event
+    - ExpectedResult: true
+      Log:
+        awsRegion: us-west-2
+        eventCategory: Data
+        eventID: 81155ff0-c112-4e02-90da-3118386c7f91
+        eventName: GetObject
+        eventSource: s3.amazonaws.com
+        eventTime: "2022-09-22 16:59:13"
+        eventType: AwsApiCall
+        eventVersion: "1.08"
+        managementEvent: false
+        p_any_aws_account_ids:
+            - "012345678912"
+        p_any_aws_arns:
+            - arn:aws:iam::012345678912:role/ProcessingRole-cloudtrail-dev
+            - arn:aws:s3:::cloudtrail-dev
+            - arn:aws:s3:::cloudtrail-dev/AWSLogs/012345678912/CloudTrail/us-east-1/2022/09/22/012345678912_CloudTrail_us-east-1_20220922T1700Z_KPHI3i5UcUCajr1D.json.gz
+            - arn:aws:sts::012345678912:assumed-role/ProcessingRole-cloudtrail-dev/1663862533915102742
+        p_any_ip_addresses:
+            - 1.1.1.1
+        p_any_trace_ids:
+            - BRUKTKR56YHJ78KJQZX7
+        p_enrichment:
+            greynoise_riot_basic:
+                p_any_ip_addresses:
+                    - ip_cidr: 1.1.1.1/32
+                      provider:
+                        name: Cloudflare Public DNS
+                sourceIPAddress:
+                    ip_cidr: 1.1.1.1/32
+                    provider:
+                        name: Cloudflare Public DNS
+            ipinfo_asn_detections_engine:
+                p_any_ip_addresses:
+                    - asn: AS13335
+                      domain: cloudflare.com
+                      name: Cloudflare, Inc.
+                      route: 1.1.1.0/24
+                      type: hosting
+                sourceIPAddress:
+                    asn: AS13335
+                    domain: cloudflare.com
+                    name: Cloudflare, Inc.
+                    route: 1.1.1.0/24
+                    type: hosting
+            ipinfo_location_detections_engine:
+                p_any_ip_addresses:
+                    - city: Los Angeles
+                      country: US
+                      lat: "34.0522"
+                      lng: "-118.2437"
+                      postal_code: "90076"
+                      region: California
+                      region_code: CA
+                      timezone: America/Los_Angeles
+                sourceIPAddress:
+                    city: Los Angeles
+                    country: US
+                    lat: "34.0522"
+                    lng: "-118.2437"
+                    postal_code: "90076"
+                    region: California
+                    region_code: CA
+                    timezone: America/Los_Angeles
+        p_event_time: "2022-09-22 16:59:13"
+        p_log_type: AWS.CloudTrail
+        p_parse_time: "2022-09-22 17:04:40.964"
+        p_row_id: fa8b17ff35acfb8599fcd2c713f22a
+        p_source_id: 8e13ecaf-ea6d-45c4-89ac-5d6942d7d5db
+        p_source_label: test
+        readOnly: true
+        recipientAccountId: "012345678912"
+        requestID: NPYNWPYS4GKY24CY
+        requestParameters:
+            Host: cloudtrail-dev.s3.us-west-2.amazonaws.com
+            bucketName: cloudtrail-dev
+            key: AWSLogs/012345678912/CloudTrail/us-east-1/2022/09/22/012345678912_CloudTrail_us-east-1_20220922T1700Z_KPHI3i5UcUCajr1D.json.gz
+        resources:
+            - arn: arn:aws:s3:::cloudtrail-dev/AWSLogs/012345678912/CloudTrail/us-east-1/2022/09/22/012345678912_CloudTrail_us-east-1_20220922T1700Z_KPHI3i5UcUCajr1D.json.gz
+              type: AWS::S3::Object
+            - accountId: "012345678912"
+              arn: arn:aws:s3:::cloudtrail-dev
+              type: AWS::S3::Bucket
+        sourceIPAddress: 1.1.1.1
+        tlsDetails:
+            cipherSuite: ECDHE-RSA-AES128-GCM-SHA256
+            clientProvidedHostHeader: cloudtrail-dev.s3.us-west-2.amazonaws.com
+            tlsVersion: TLSv1.2
+        userAgent: '[aws-sdk-go/1.44.77 (go1.19; linux; arm64) S3Manager]'
+        userIdentity:
+            accessKeyId: BRUKTKR56YHJ78KJQZX7
+            accountId: "012345678912"
+            arn: arn:aws:sts::012345678912:assumed-role/ProcessingRole-cloudtrail-dev/1663862533915102742
+            principalId: BRUGTH6M6K899XBV9BRLE:0123456789012345678
+            sessionContext:
+                attributes:
+                    creationDate: "2022-09-22T16:02:13Z"
+                    mfaAuthenticated: "false"
+                sessionIssuer:
+                    accountId: "012345678912"
+                    arn: arn:aws:iam::012345678912:role/ProcessingRole-cloudtrail-dev
+                    principalId: BRUGTH6M6K899XBV9BRLE
+                    type: Role
+                    userName: ProcessingRole-cloudtrail-dev
+            type: AssumedRole
+      Name: S3 App Log Event
+DedupPeriodMinutes: 15
+LogTypes:
+    - AWS.CloudTrail
+RuleID: aws.s3.suspicious.application.log.collection
+Threshold: 10
