@@ -1914,7 +1914,9 @@ class TestTailscaleHelpers(unittest.TestCase):
         self.assertEqual(returns.get("action", ""), "CREATE")
         self.assertEqual(tailscale_admin_console_event, True)
         returns = p_tscale_h.tailscale_alert_context(PantherEvent({}))
-        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event(PantherEvent({}))
+        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event(
+            PantherEvent({})
+        )
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
         self.assertEqual(tailscale_admin_console_event, False)

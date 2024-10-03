@@ -16,9 +16,7 @@ def title(event):
         "protoPayload", "request", "workforcePool", "name", default=""
     ).split("/")[-1]
 
-    resource = organization_id = event.get("logName", "<LOG_NAME_NOT_FOUND>").split(
-        "/"
-    )
+    resource = organization_id = event.get("logName", "<LOG_NAME_NOT_FOUND>").split("/")
 
     organization_id = resource[resource.index("organizations") + 1]
 

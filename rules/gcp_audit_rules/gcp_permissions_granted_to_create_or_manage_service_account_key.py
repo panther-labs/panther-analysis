@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_walk
-
 SERVICE_ACCOUNT_MANAGE_ROLES = [
     "roles/iam.serviceAccountTokenCreator",
     "roles/iam.serviceAccountUser",

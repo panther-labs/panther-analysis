@@ -82,8 +82,8 @@ def title(event):
     if event.deep_get("userIdentity", "type") == "Root":
         user_string = "the root user"
     else:
-        user = event.deep_get("userIdentity", "userName") or deep_get(
-            event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
+        user = event.deep_get("userIdentity", "userName") or event.deep_get(
+            "userIdentity", "sessionContext", "sessionIssuer", "userName"
         )
         type_ = event.deep_get(
             "userIdentity", "sessionContext", "sessionIssuer", "type", default="user"

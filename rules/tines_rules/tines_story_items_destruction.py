@@ -6,9 +6,7 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    return (
-        event.get("operation_name", "<NO_OPERATION_NAME>") == "StoryItemsDestruction"
-    )
+    return event.get("operation_name", "<NO_OPERATION_NAME>") == "StoryItemsDestruction"
 
 
 def title(event):
