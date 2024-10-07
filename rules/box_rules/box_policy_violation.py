@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 POLICY_VIOLATIONS = {
     "CONTENT_WORKFLOW_UPLOAD_POLICY_VIOLATION",
     "CONTENT_WORKFLOW_SHARING_POLICY_VIOLATION",
@@ -12,6 +10,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}] "
+        f"User [{event.deep_get('created_by', 'name', default='<UNKNOWN_USER>')}] "
         f"violated a content workflow policy."
     )

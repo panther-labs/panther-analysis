@@ -1,12 +1,9 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     if all(
         [
             (event.get("type", "") == "EMAIL_SETTINGS"),
             (event.get("name", "").endswith("_GMAIL_SETTING")),
-            (deep_get(event, "parameters", "SETTING_NAME", default="") == "MESSAGE_SECURITY_RULE"),
+            (event.deep_get("parameters", "SETTING_NAME", default="") == "MESSAGE_SECURITY_RULE"),
         ]
     ):
         return True
@@ -21,5 +18,5 @@ def title(event):
     return (
         f"GSuite Gmail Default Routing Rule Was "
         f"[{change_type}] "
-        f"by [{deep_get(event, 'actor', 'email', default='<UNKNOWN_EMAIL>')}]"
+        f"by [{event.deep_get('actor', 'email', default='<UNKNOWN_EMAIL>')}]"
     )

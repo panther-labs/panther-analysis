@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all Auth0 detections
@@ -20,7 +17,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     # # not all Auth0 enterprise events have org
     # # example: request domain
     # # if we don't know the request_domain, we want default behavior to be to alert on this event.
-    # request_domain = deep_get(event, "data", "details", "request", "channel", default="")
+    # request_domain = event.deep_get("data", "details", "request", "channel", default="")
     # return request_domain in ["https://manage.auth0.com/", "https://mycompany.auth0.com", ""]
     #
     return True

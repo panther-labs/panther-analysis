@@ -38,7 +38,7 @@ def _get_location_or_zone(event):
 
 
 def rule(event):
-    method_name = deep_get(event, "protoPayload", "methodName", default="<UNKNOWN_METHOD>")
+    method_name = event.deep_get("protoPayload", "methodName", default="<UNKNOWN_METHOD>")
     if not method_name.endswith(("insert", "create")):
         return False
     return _resource_in_active_region(_get_location_or_zone(event))
@@ -47,5 +47,5 @@ def rule(event):
 def title(event):
     return (
         f"GCP resource(s) created in unused region/zone in project "
-        f"{deep_get(event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
+        f"{event.deep_get('resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )

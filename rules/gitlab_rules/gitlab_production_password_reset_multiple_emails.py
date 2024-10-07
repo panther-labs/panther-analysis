@@ -3,12 +3,12 @@ from panther_core.immutable import ImmutableList
 
 
 def rule(event):
-    path = event.get("path", default="")
+    path = event.get("path", "")
 
     if path != "/users/password":
         return False
 
-    params = event.get("params", default=[])
+    params = event.get("params", [])
     for param in params:
         if param.get("key") == "user":
             email = deep_get(param, "value", "email", default=[])

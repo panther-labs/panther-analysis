@@ -175,7 +175,7 @@ Tests:
         "p_log_type": "Panther.Audit",
         "p_parse_time": "2023-02-09 21:46:53.858602089",
         "p_row_id": "b29dff36ad73cb77a5d7a3a816c39c2a",
-        "p_rule_error": '''NoneType'' object is not iterable: Panther.Sensitive.Role.py, line 20, in rule    role_permissions = set(deep_get(event, "actionParams", "input", "permissions"))',
+        "p_rule_error": '''NoneType'' object is not iterable: Panther.Sensitive.Role.py, line 20, in rule    role_permissions = set(event.deep_get("actionParams", "input", "permissions"))',
         "p_rule_id": "Panther.Sensitive.Role",
         "p_rule_reports": { "MITRE ATT&CK": ["TA0003:T1098"] },
         "p_rule_severity": "HIGH",

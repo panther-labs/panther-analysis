@@ -20,13 +20,13 @@ ACTIONS = [
 def rule(event):
     if not filter_include_event(event):
         return False
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     return action in ACTIONS
 
 
 def title(event):
     group_or_org = "<GROUP_OR_ORG>"
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     if "." in action:
         group_or_org = action.split(".")[0].title()
     return (
@@ -50,7 +50,7 @@ def dedup(event):
 
 
 def severity(event):
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     if action.endswith((".remove", ".delete")):
         return "HIGH"
     if action.endswith((".edit")):

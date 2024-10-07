@@ -1,4 +1,3 @@
-from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_details_lookup as details_lookup
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
@@ -16,7 +15,7 @@ PERMISSIVE_VISIBILITY = {
 
 
 def rule(event):
-    if deep_get(event, "id", "applicationName") != "drive":
+    if event.deep_get("id", "applicationName") != "drive":
         return False
 
     details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
@@ -27,9 +26,9 @@ def rule(event):
 
 
 def dedup(event):
-    user = deep_get(event, "actor", "email")
+    user = event.deep_get("actor", "email")
     if user is None:
-        user = deep_get(event, "actor", "profileId", default="<UNKNOWN_PROFILEID>")
+        user = event.deep_get("actor", "profileId", default="<UNKNOWN_PROFILEID>")
     return user
 
 
@@ -37,9 +36,9 @@ def title(event):
     details = details_lookup("access", RESOURCE_CHANGE_EVENTS, event)
     doc_title = param_lookup(details.get("parameters", {}), "doc_title")
     share_settings = param_lookup(details.get("parameters", {}), "visibility")
-    user = deep_get(event, "actor", "email")
+    user = event.deep_get("actor", "email")
     if user is None:
-        user = deep_get(event, "actor", "profileId", default="<UNKNOWN_PROFILEID>")
+        user = event.deep_get("actor", "profileId", default="<UNKNOWN_PROFILEID>")
     return (
         f"User [{user}]"
         f" modified a document [{doc_title}] that has overly permissive share"

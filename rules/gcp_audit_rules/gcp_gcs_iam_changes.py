@@ -1,12 +1,9 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     return (
-        deep_get(event, "resource", "type") == "gcs_bucket"
-        and deep_get(event, "protoPayload", "methodName") == "storage.setIamPermissions"
+        event.deep_get("resource", "type") == "gcs_bucket"
+        and event.deep_get("protoPayload", "methodName") == "storage.setIamPermissions"
     )
 
 
 def dedup(event):
-    return deep_get(event, "resource", "labels", "project_id", default="<UNKNOWN_PROJECT>")
+    return event.deep_get("resource", "labels", "project_id", default="<UNKNOWN_PROJECT>")

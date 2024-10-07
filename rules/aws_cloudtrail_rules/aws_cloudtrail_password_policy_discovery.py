@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 PASSWORD_DISCOVERY_EVENTS = [
     "GetAccountPasswordPolicy",
@@ -13,7 +13,7 @@ def rule(event):
 
 
 def title(event):
-    user_arn = deep_get(event, "useridentity", "arn", default="<MISSING_ARN>")
+    user_arn = event.deep_get("useridentity", "arn", default="<MISSING_ARN>")
     return f"Password Policy Discovery detected in AWS CloudTrail from [{user_arn}]"
 
 

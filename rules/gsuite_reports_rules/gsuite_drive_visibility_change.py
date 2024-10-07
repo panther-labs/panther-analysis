@@ -1,7 +1,6 @@
 import json
 from unittest.mock import MagicMock
 
-from panther_base_helpers import deep_get
 from panther_base_helpers import gsuite_parameter_lookup as param_lookup
 
 # Add any domain name(s) that you expect to share documents with in the ALLOWED_DOMAINS set
@@ -67,7 +66,7 @@ def user_is_external(target_user):
 def rule(event):
     # pylint: disable=too-complex
     global ALLOWED_DOMAINS  # pylint: disable=global-statement
-    if deep_get(event, "id", "applicationName") != "drive":
+    if event.deep_get("id", "applicationName") != "drive":
         return False
 
     # Events that have the types in INHERITANCE_EVENTS are
@@ -75,7 +74,7 @@ def rule(event):
     # a change in the parent folder's permission. We ignore
     # these events to prevent every folder change from
     # generating multiple alerts.
-    if deep_get(event, "events", "name") in INHERITANCE_EVENTS:
+    if event.deep_get("events", "name") in INHERITANCE_EVENTS:
         return False
 
     log = event.get("p_row_id")
@@ -167,7 +166,7 @@ def alert_context(event):
 
 
 def dedup(event):
-    return deep_get(event, "actor", "email", default="<UNKNOWN_USER>")
+    return event.deep_get("actor", "email", default="<UNKNOWN_USER>")
 
 
 def title(event):
@@ -195,7 +194,7 @@ def title(event):
     # alert_access_scope = ALERT_DETAILS[log]["ACCESS_SCOPE"][0].replace("can_", "")
 
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}] made documents "
+        f"User [{event.deep_get('actor', 'email', default='<UNKNOWN_USER>')}] made documents "
         f"externally visible"
     )
 

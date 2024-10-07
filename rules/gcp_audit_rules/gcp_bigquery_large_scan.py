@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 # 1.07 GB
 QUERY_THRESHOLD_BYTES = 1073741824
 
@@ -7,12 +5,11 @@ QUERY_THRESHOLD_BYTES = 1073741824
 def rule(event):
     return all(
         [
-            deep_get(event, "resource", "type", default="<type not found>").startswith("bigquery"),
-            deep_get(event, "operation", "last") is True,
-            deep_get(event, "protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
+            event.deep_get("resource", "type", default="<type not found>").startswith("bigquery"),
+            event.deep_get("operation", "last") is True,
+            event.deep_get("protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
             == "QUERY",
-            deep_get(
-                event,
+            event.deep_get(
                 "protoPayload",
                 "metadata",
                 "jobChange",
@@ -23,8 +20,7 @@ def rule(event):
             )
             == "SELECT",
             int(
-                deep_get(
-                    event,
+                event.deep_get(
                     "protoPayload",
                     "metadata",
                     "jobChange",
@@ -41,11 +37,10 @@ def rule(event):
 
 
 def title(event):
-    actor = deep_get(
-        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
-    query_size = deep_get(
-        event,
+    query_size = event.deep_get(
         "protoPayload",
         "metadata",
         "jobChange",
@@ -60,8 +55,7 @@ def title(event):
 
 def alert_context(event):
     return {
-        "query": deep_get(
-            event,
+        "query": event.deep_get(
             "protoPayload",
             "metadata",
             "jobChange",
@@ -71,15 +65,13 @@ def alert_context(event):
             "query",
             default="<QUERY_NOT_FOUND>",
         ),
-        "actor": deep_get(
-            event,
+        "actor": event.deep_get(
             "protoPayload",
             "authenticationInfo",
             "principalEmail",
             default="<ACTOR_NOT_FOUND>",
         ),
-        "query_size": deep_get(
-            event,
+        "query_size": event.deep_get(
             "protoPayload",
             "metadata",
             "jobChange",

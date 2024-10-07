@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all github detections
@@ -19,7 +16,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # not all github enterprise events have org
     # # example: enterprise.self_hosted_runner_online
-    # org = deep_get(event, "org", default="")
+    # org = event.get("org", "")
     # return org in ["my-prod-org", ""]
     #
     return True

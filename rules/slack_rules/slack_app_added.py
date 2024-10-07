@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_base_helpers import slack_alert_context
 
 APP_ADDED_ACTIONS = [
     "app_approved",
@@ -13,14 +13,14 @@ def rule(event):
 
 def title(event):
     return (
-        f"Slack App [{deep_get(event, 'entity', 'app', 'name')}] "
-        f"Added by [{deep_get(event, 'actor', 'user', 'name')}]"
+        f"Slack App [{event.deep_get('entity', 'app', 'name')}] "
+        f"Added by [{event.deep_get('actor', 'user', 'name')}]"
     )
 
 
 def alert_context(event):
     context = slack_alert_context(event)
-    context["scopes"] = deep_get(event, "entity", "scopes")
+    context["scopes"] = event.deep_get("entity", "scopes")
 
     return context
 
@@ -28,14 +28,14 @@ def alert_context(event):
 def severity(event):
     # Used to escalate to High/Critical if the app is granted admin privileges
     # May want to escalate to "Critical" depending on security posture
-    if "admin" in deep_get(event, "entity", "app", "scopes", default=[]):
+    if "admin" in event.deep_get("entity", "app", "scopes", default=[]):
         return "High"
 
     # Fallback method in case the admin scope is not directly mentioned in entity for whatever
-    if "admin" in deep_get(event, "details", "new_scope", default=[]):
+    if "admin" in event.deep_get("details", "new_scope", default=[]):
         return "High"
 
-    if "admin" in deep_get(event, "details", "bot_scopes", default=[]):
+    if "admin" in event.deep_get("details", "bot_scopes", default=[]):
         return "High"
 
     return "Medium"

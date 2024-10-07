@@ -1,11 +1,8 @@
-from panther_base_helpers import deep_get, deep_walk
-
-
 def rule(event):
-    severity = deep_get(event, "severity", default="")
-    status_code = deep_get(event, "protoPayload", "status", "code", default="")
-    violation_types = deep_walk(
-        event, "protoPayload", "status", "details", "violations", "type", default=[]
+    severity = event.get("severity", "")
+    status_code = event.deep_get("protoPayload", "status", "code", default="")
+    violation_types = event.deep_walk(
+        "protoPayload", "status", "details", "violations", "type", default=[]
     )
     if all(
         [
@@ -19,8 +16,8 @@ def rule(event):
 
 
 def title(event):
-    actor = deep_get(
-        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
-    method = deep_get(event, "protoPayload", "methodName", default="<METHOD_NOT_FOUND>")
+    method = event.deep_get("protoPayload", "methodName", default="<METHOD_NOT_FOUND>")
     return f"GCP: [{actor}] performed a [{method}] request that violates VPC Service Controls"

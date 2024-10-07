@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 # CONFIGURATION REQUIRED: Update with your expected AWS Accounts/Regions
 AWS_ACCOUNTS_AND_REGIONS = {
@@ -9,7 +9,7 @@ AWS_ACCOUNTS_AND_REGIONS = {
 
 def rule(event):
     if event.get("eventSource") == "ecr.amazonaws.com":
-        aws_account_id = deep_get(event, "userIdentity", "accountId")
+        aws_account_id = event.deep_get("userIdentity", "accountId")
         if aws_account_id in AWS_ACCOUNTS_AND_REGIONS:
             if event.get("awsRegion") not in AWS_ACCOUNTS_AND_REGIONS[aws_account_id]:
                 return True
