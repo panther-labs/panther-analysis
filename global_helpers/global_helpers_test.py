@@ -29,7 +29,6 @@ import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
-import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tailscale_helpers as p_tscale_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
@@ -1977,10 +1976,10 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
         )
 
     def test_distances(self):
-        nyc_to_sfo = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_sfo)
-        nyc_to_athens = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_athens)
-        nyc_to_aukland = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_aukland)
-        aukland_to_nyc = p_o_h.km_between_ipinfo_loc(self.loc_aukland, self.loc_nyc)
+        nyc_to_sfo = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_sfo)
+        nyc_to_athens = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_athens)
+        nyc_to_aukland = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_aukland)
+        aukland_to_nyc = p_i_h.km_between_ipinfo_loc(self.loc_aukland, self.loc_nyc)
         # I used https://www.nhc.noaa.gov/gccalc.shtml to get test comparison distances
         #
         # delta is set to 0.5% of total computed distanc from gccalc

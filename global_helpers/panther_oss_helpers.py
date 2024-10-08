@@ -1,15 +1,11 @@
 """Utility functions provided to policies and rules during execution."""
 
-import json
 import os
 import re
 from datetime import datetime
-from ipaddress import ip_address
-from math import atan2, cos, radians, sin, sqrt
 from typing import Any, Dict, Optional
 
 import boto3
-import requests
 from dateutil import parser
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
@@ -160,75 +156,6 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 
     # Return just the attributes of the item
     return response["Item"]["attributes"]
-
-
-def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
-    """
-    compute the number of kilometers between two ipinfo_location enrichments
-    This uses a haversine computation which is imperfect and holds the benefit
-    of being supportable via stdlib. At polar opposites, haversine might be
-    0.3-0.5% off
-    See also https://en.wikipedia.org/wiki/Haversine_formula
-    See also https://stackoverflow.com/a/19412565
-    See also https://www.sunearthtools.com/tools/distance.php
-    """
-    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_one.keys())):
-        # input ipinfo_loc_one doesn't have lat and lng keys
-        return None
-    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_two.keys())):
-        # input ipinfo_loc_two doesn't have lat and lng keys
-        return None
-    lat_1 = radians(float(ipinfo_loc_one.get("lat")))
-    lng_1 = radians(float(ipinfo_loc_one.get("lng")))
-    lat_2 = radians(float(ipinfo_loc_two.get("lat")))
-    lng_2 = radians(float(ipinfo_loc_two.get("lng")))
-    # radius of the earth in kms
-    radius = 6372.795477598
-    lng_diff = lng_2 - lng_1
-    lat_diff = lat_2 - lat_1
-
-    step_1 = sin(lat_diff / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(lng_diff / 2) ** 2
-    step_2 = 2 * atan2(sqrt(step_1), sqrt(1 - step_1))
-    distance = radius * step_2
-    return distance
-
-
-def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
-    """Looks up the geolocation of an IP address using ipinfo.io
-
-    Example ipinfo output:
-    {
-      "ip": "1.1.1.1",
-      "hostname": "one.one.one.one",
-      "anycast": true,
-      "city": "Miami",
-      "region": "Florida",
-      "country": "US",
-      "loc": "25.7867,-80.1800",
-      "org": "AS13335 Cloudflare, Inc.",
-      "postal": "33132",
-      "timezone": "America/New_York",
-      "readme": "https://ipinfo.io/missingauth"
-    }
-    """
-
-    valid_ip = ip_address(ip)
-    url = f"https://ipinfo.io/{valid_ip}/json"
-    resp = requests.get(url, timeout=5)
-    if resp.status_code != 200:
-        # pylint: disable=broad-exception-raised
-        raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
-    geoinfo = json.loads(resp.text)
-    return geoinfo
-
-
-def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
-    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
-    geoinfo = geoinfo_from_ip(ip)
-    return (
-        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
-        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
-    )
 
 
 # returns the difference between time1 and later time 2 in human-readable time period string
