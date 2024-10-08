@@ -538,15 +538,3 @@ XZ_AMIS = {
     "ami-09b81f0f9f2acfcdf",  # fedora-coreos-40.20240331.1.0-x86_64 us-west-2
     "ami-083bb1ae22e9bf463",  # fedora-coreos-40.20240329.10.0-aarch64 us-west-2
 }
-
-
-# IOC Helper functions:
-def ioc_match(indicators: list, known_iocs: set) -> list:
-    """Matches a set of indicators against known Indicators of Compromise
-
-    :param indicators: List of potential indicators of compromise
-    :param known_iocs: Set of known indicators of compromise
-    :return: List of any indicator matches
-    """
-    # Check through the IP IOCs
-    return [ioc for ioc in (indicators or []) if ioc in known_iocs]

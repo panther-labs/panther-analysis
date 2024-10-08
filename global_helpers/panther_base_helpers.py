@@ -130,6 +130,18 @@ def defang_ioc(ioc: str) -> str:
     return ioc.replace(".", "[.]")
 
 
+# IOC Helper functions:
+def ioc_match(indicators: list, known_iocs: set) -> list:
+    """Matches a set of indicators against known Indicators of Compromise
+
+    :param indicators: List of potential indicators of compromise
+    :param known_iocs: Set of known indicators of compromise
+    :return: List of any indicator matches
+    """
+    # Check through the IP IOCs
+    return [ioc for ioc in (indicators or []) if ioc in known_iocs]
+
+
 def panther_nanotime_to_python_datetime(panther_time: str) -> datetime:
     panther_time_micros = re.search(r"\.(\d+)", panther_time).group(1)
     panther_time_micros_rounded = panther_time_micros[0:6]
