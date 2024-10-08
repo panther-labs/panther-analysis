@@ -123,28 +123,6 @@ def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
     return any(fnmatch(string_to_match, p) for p in patterns)
 
 
-def msft_graph_alert_context(event):
-    return {
-        "category": event.get("category", ""),
-        "description": event.get("description", ""),
-        "userStates": event.get("userStates", []),
-        "fileStates": event.get("fileStates", []),
-        "hostStates": event.get("hostStates", []),
-    }
-
-
-def m365_alert_context(event):
-    return {
-        "operation": event.get("Operation", ""),
-        "organization_id": event.get("OrganizationId", ""),
-        "client_ip": event.get("ClientIp", ""),
-        "extended_properties": event.get("ExtendedProperties", []),
-        "modified_properties": event.get("ModifiedProperties", []),
-        "application": event.get("Application", ""),
-        "actor": event.get("Actor", []),
-    }
-
-
 def defang_ioc(ioc):
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
     return ioc.replace(".", "[.]")
