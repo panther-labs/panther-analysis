@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 USER_PRIV_ESC_ACTIONS = {
     "owner_transferred": "Slack Owner Transferred",

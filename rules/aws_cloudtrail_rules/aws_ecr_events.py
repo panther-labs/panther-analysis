@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 # CONFIGURATION REQUIRED: Update with your expected AWS Accounts/Regions
 AWS_ACCOUNTS_AND_REGIONS = {

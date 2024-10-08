@@ -1,6 +1,6 @@
 from ipaddress import ip_network
 
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 CONTROLLED_PORTS = {
     22,

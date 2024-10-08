@@ -5,13 +5,11 @@ import os
 import re
 from datetime import datetime
 from ipaddress import ip_address
-from math import atan2, cos, radians, sin, sqrt
-from typing import Any, Dict, Optional, Sequence, Set, Union
+from typing import Any, Dict, Optional
 
 import boto3
 import requests
 from dateutil import parser
-from panther_detection_helpers import caching
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
@@ -163,121 +161,6 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
     return response["Item"]["attributes"]
 
 
-def ttl_expired(response: dict) -> bool:
-    """Global `ttl_expired` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import ttl_expired`."""
-    return caching.ttl_expired(response)
-
-
-def get_counter(key: str, force_ttl_check: bool = False) -> int:
-    """Global `get_counter` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import get_counter`."""
-    return caching.get_counter(key=key, force_ttl_check=force_ttl_check)
-
-
-def increment_counter(key: str, val: int = 1) -> int:
-    """Global `increment_counter` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import increment_counter`."""
-    return caching.increment_counter(key=key, val=val)
-
-
-def reset_counter(key: str) -> None:
-    """Global `reset_counter` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import reset_counter`."""
-    return caching.reset_counter(key=key)
-
-
-def set_key_expiration(key: str, epoch_seconds: int) -> None:
-    """Global `set_key_expiration` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import set_key_expiration`."""
-    return caching.set_key_expiration(key=key, epoch_seconds=epoch_seconds)
-
-
-def put_dictionary(key: str, val: dict, epoch_seconds: int = None):
-    """Global `put_dictionary` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import put_dictionary`."""
-    return caching.put_dictionary(key=key, val=val, epoch_seconds=epoch_seconds)
-
-
-def get_dictionary(key: str, force_ttl_check: bool = False) -> dict:
-    """Global `get_dictionary` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import get_dictionary`."""
-    return caching.get_dictionary(key=key, force_ttl_check=force_ttl_check)
-
-
-def get_string_set(key: str, force_ttl_check: bool = False) -> Set[str]:
-    """Global `get_string_set` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import get_string_set`."""
-    return caching.get_string_set(key=key, force_ttl_check=force_ttl_check)
-
-
-def put_string_set(key: str, val: Sequence[str], epoch_seconds: int = None) -> None:
-    """Global `put_string_set` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import put_string_set`."""
-    return caching.put_string_set(key=key, val=val, epoch_seconds=epoch_seconds)
-
-
-def add_to_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
-    """Global `add_to_string_set` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import add_to_string_set`."""
-    return caching.add_to_string_set(key=key, val=val)
-
-
-def remove_from_string_set(key: str, val: Union[str, Sequence[str]]) -> Set[str]:
-    """Global `remove_from_string_set` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import remove_from_string_set`."""
-    return caching.remove_from_string_set(key=key, val=val)
-
-
-def reset_string_set(key: str) -> None:
-    """Global `reset_string_set` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import reset_string_set`."""
-    return caching.reset_string_set(key=key)
-
-
-def evaluate_threshold(key: str, threshold: int = 10, expiry_seconds: int = 3600) -> bool:
-    """Global `evaluate_threshold` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import evaluate_threshold`."""
-    return caching.evaluate_threshold(key=key, threshold=threshold, expiry_seconds=expiry_seconds)
-
-
-def check_account_age(key):
-    """Global `check_account_age` is DEPRECATED.
-    Instead, use `from panther_detection_helpers.caching import check_account_age`."""
-    return caching.check_account_age(key=key)
-
-
-def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
-    """
-    compute the number of kilometers between two ipinfo_location enrichments
-    This uses a haversine computation which is imperfect and holds the benefit
-    of being supportable via stdlib. At polar opposites, haversine might be
-    0.3-0.5% off
-    See also https://en.wikipedia.org/wiki/Haversine_formula
-    See also https://stackoverflow.com/a/19412565
-    See also https://www.sunearthtools.com/tools/distance.php
-    """
-    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_one.keys())):
-        # input ipinfo_loc_one doesn't have lat and lng keys
-        return None
-    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_two.keys())):
-        # input ipinfo_loc_two doesn't have lat and lng keys
-        return None
-    lat_1 = radians(float(ipinfo_loc_one.get("lat")))
-    lng_1 = radians(float(ipinfo_loc_one.get("lng")))
-    lat_2 = radians(float(ipinfo_loc_two.get("lat")))
-    lng_2 = radians(float(ipinfo_loc_two.get("lng")))
-    # radius of the earth in kms
-    radius = 6372.795477598
-    lng_diff = lng_2 - lng_1
-    lat_diff = lat_2 - lat_1
-
-    step_1 = sin(lat_diff / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(lng_diff / 2) ** 2
-    step_2 = 2 * atan2(sqrt(step_1), sqrt(1 - step_1))
-    distance = radius * step_2
-    return distance
-
-
 def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
     """Looks up the geolocation of an IP address using ipinfo.io
 
@@ -350,17 +233,3 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
-
-
-# When a single item is loaded from json, it is loaded as a single item
-# When a list of items is loaded from json, it is loaded as a list of that item
-# When we want to iterate over something that could be a single item or a list
-# of items we can use listify and just continue as if it's always a list
-def listify(maybe_list):
-    try:
-        iter(maybe_list)
-    except TypeError:
-        # not a list
-        return [maybe_list]
-    # either a list or string
-    return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list

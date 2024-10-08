@@ -1,6 +1,6 @@
 from ipaddress import ip_network
 
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 APPROVED_DNS_SERVERS = {
     "1.1.1.1",  # CloudFlare DNS

@@ -1,4 +1,4 @@
-from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context
+from panther_crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context
 
 
 def rule(event):

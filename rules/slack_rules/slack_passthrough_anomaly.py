@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 ELEVATED_ANOMALIES = {"excessive_malware_uploads", "session_fingerprint", "unexpected_admin_action"}
 

@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 # Do not alert on these access denied errors for these events.
 # Events could be exceptions because they are particularly noisy and provide little to no value,

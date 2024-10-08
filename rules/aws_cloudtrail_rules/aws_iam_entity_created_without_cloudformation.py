@@ -1,7 +1,6 @@
 import re
 
-from panther_base_helpers import aws_rule_context
-from panther_default import aws_cloudtrail_success
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 # The role dedicated for IAM administration
 IAM_ADMIN_ROLES = {

@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 DENIAL_OF_SERVICE_ACTIONS = [
     "bulk_session_reset_by_admin",

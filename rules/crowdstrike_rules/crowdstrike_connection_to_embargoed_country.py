@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_network_detection_alert_context
+from panther_crowdstrike_fdr_helpers import crowdstrike_network_detection_alert_context
 
 # U.S. Gov Sanctioned Destinations
 EMBARGO_COUNTRY_CODES = {

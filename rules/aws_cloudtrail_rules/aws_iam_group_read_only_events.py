@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 # arn allow list to suppress alerts
 ARN_ALLOW_LIST = []

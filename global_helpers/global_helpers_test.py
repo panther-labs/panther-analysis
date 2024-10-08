@@ -19,14 +19,16 @@ sys.path.append(os.path.dirname(__file__))
 
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
+import panther_aws_helpers as p_aws_h  # pylint: disable=C0413
 import panther_azuresignin_helpers as p_asi_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
+import panther_box_helpers as p_box_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
+import panther_crowdstrike_fdr_helpers as p_cf_fdr_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
-import panther_oss_helpers as p_o_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tailscale_helpers as p_tscale_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
@@ -94,7 +96,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         )
 
     def test_complete_event(self):
-        response = p_b_h.eks_panther_obj_ref(self.event)
+        response = p_aws_h.eks_panther_obj_ref(self.event)
         self.assertEqual(response.get("actor", ""), "kubernetes-admin")
         self.assertEqual(response.get("object", ""), "some-job-xxx1y")
         self.assertEqual(response.get("ns", ""), "default")
@@ -112,7 +114,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         del temp_event["verb"]
         del temp_event["p_source_label"]
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.eks_panther_obj_ref(temp_event)
+        response = p_aws_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("actor", ""), "<NO_USERNAME>")
         self.assertEqual(response.get("object", ""), "<NO_OBJECT_NAME>")
         self.assertEqual(response.get("ns", ""), "<NO_OBJECT_NAMESPACE>")
@@ -126,7 +128,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         temp_event = self.event.to_dict()
         del temp_event["objectRef"]["subresource"]
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.eks_panther_obj_ref(temp_event)
+        response = p_aws_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("resource", ""), "pods")
 
 
@@ -168,37 +170,37 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
     def test_additional_details_string(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # in the case of a byte array, we expect the empty dict
     def test_additional_details_bytes(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_bytes})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # In the case of a list ( not a string or bytes array ), expect un-altered return
     def test_additional_details_list(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_list})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
     # in the case of a dict or similar, we expect it to be returned un-altered
     def test_additional_details_dict(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_dict})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # If it's a string with no json object to be decoded, we expect an empty dict back
     def test_additional_details_plain_str(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_no_json})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # If it's a string with a json list, we expect the list
     def test_additional_details_str_list_json(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_list_json})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
 
@@ -1100,11 +1102,11 @@ class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
         )
 
     def test_is_different_with_fdr_event_type_provided(self):
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
         self.assertEqual(response, True)
 
     def test_is_same_with_the_fdr_event_type_provided(self):
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
         self.assertEqual(response, False)
 
     def test_is_entirely_different_type(self):
@@ -1115,7 +1117,7 @@ class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
                 "event": {"foo": "bar"},
             }
         )
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
         self.assertEqual(response, False)
 
 
@@ -1131,30 +1133,30 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         )
 
     def test_input_key_default_works(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "zee", default="hello")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "zee", default="hello")
         self.assertEqual(response, "hello")
 
     def test_input_key_does_not_exist(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "zee")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "zee")
         self.assertEqual(response, None)
 
     def test_input_key_exists(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "cid")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "cid")
         self.assertEqual(response, "something")
 
     def test_input_key_can_be_found_in_event(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "foo")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "foo")
         self.assertEqual(response, "bar")
 
     def test_input_key_can_be_found_in_unknown(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "field")
         self.assertEqual(response, "is")
 
     def test_precedence(self):
         temp_event = self.input.to_dict()
         temp_event["event"]["field"] = "found"
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.get_crowdstrike_field(temp_event, "field")
+        response = p_cf_fdr_h.get_crowdstrike_field(temp_event, "field")
         self.assertEqual(response, "found")
 
 
@@ -1974,10 +1976,10 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
         )
 
     def test_distances(self):
-        nyc_to_sfo = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_sfo)
-        nyc_to_athens = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_athens)
-        nyc_to_aukland = p_o_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_aukland)
-        aukland_to_nyc = p_o_h.km_between_ipinfo_loc(self.loc_aukland, self.loc_nyc)
+        nyc_to_sfo = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_sfo)
+        nyc_to_athens = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_athens)
+        nyc_to_aukland = p_i_h.km_between_ipinfo_loc(self.loc_nyc, self.loc_aukland)
+        aukland_to_nyc = p_i_h.km_between_ipinfo_loc(self.loc_aukland, self.loc_nyc)
         # I used https://www.nhc.noaa.gov/gccalc.shtml to get test comparison distances
         #
         # delta is set to 0.5% of total computed distanc from gccalc

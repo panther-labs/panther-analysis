@@ -1,4 +1,4 @@
-from crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context, str_to_list
+from panther_crowdstrike_event_streams_helpers import audit_keys_dict, cs_alert_context, str_to_list
 
 
 def get_single_ips(event, fieldname="cidrs") -> list[str]:

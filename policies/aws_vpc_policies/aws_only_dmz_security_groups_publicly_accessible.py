@@ -2,8 +2,8 @@ import json
 from ipaddress import ip_network
 from unittest.mock import MagicMock
 
-from panther_base_helpers import is_dmz_tags
 from panther_config import config
+from panther_config_defaults import is_dmz_tags
 
 DMZ_TAGS = config.DMZ_TAGS
 

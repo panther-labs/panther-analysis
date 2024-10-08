@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_detection_alert_context
+from panther_crowdstrike_fdr_helpers import crowdstrike_detection_alert_context
 
 WMIC_SIGNATURES = ["get", "list", "process call create", "cmd.exe", "powershell.exe", "command.exe"]
 

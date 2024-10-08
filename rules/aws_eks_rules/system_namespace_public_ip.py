@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import eks_panther_obj_ref
+from panther_aws_helpers import eks_panther_obj_ref
 
 # Explicitly ignore eks:node-manager and eks:addon-manager
 #  which are run as Lambdas and originate from public IPs

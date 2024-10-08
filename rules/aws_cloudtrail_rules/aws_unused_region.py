@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 # Define a list of verboten or unused regions
 # Could modify to include expected user mappings: { "123456789012": { "us-west-1", "us-east-2" } }
