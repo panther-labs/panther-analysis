@@ -1,4 +1,4 @@
-from panther_base_helpers import array_to_dict, deep_get
+from panther_base_helpers import key_value_list_to_dict
 
 PRIVILEGED_GROUPS = {
     # "admins@example.com"
@@ -18,10 +18,10 @@ def rule(event):
         return False
 
     # Get the username
-    params = array_to_dict(event_.get("parameter", []), "name")
+    params = key_value_list_to_dict(event_.get("parameter", []), "name", "value")
     global USER_EMAIL, GROUP_EMAIL  # pylint: disable=global-statement
-    USER_EMAIL = deep_get(params, "USER_EMAIL", "value", default="<UNKNOWN USER>")
-    GROUP_EMAIL = deep_get(params, "GROUP_EMAIL", "value", default="<UNKNOWN GROUP")
+    USER_EMAIL = params.get("USER_EMAIL", "<UNKNOWN USER>")
+    GROUP_EMAIL = params.get("GROUP_EMAIL", "<UNKNOWN GROUP>")
 
     return GROUP_EMAIL in get_privileged_groups()
 

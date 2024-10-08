@@ -538,34 +538,3 @@ def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> di
     # example: [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}]
     # becomes: {'a': 1, 'b': 2}
     return {item[key]: item[value] for item in list_objects}
-
-
-def array_to_dict(array: List[dict], key: str, error_on_duplicate: bool = False) -> dict:
-    """Take a list of dictionaries and convert them into a dictionary based on a unique key.
-
-    Args:
-        array (list of dicts): Array containing the dictionaries to itemize
-        key (str): Specified which value of each listed dict to use as key in the returned dict
-            For each dictionary 'D' in 'array', the corresponding key in the returned dict R is the
-            value D[key], so R[D[key]] = D.
-        error_on_duplicate (bool, optional): Raise KeyError if 2 dicts share the same value for key.
-            If False, previous entries are overridden by later entries of 'array' with the same key
-            value. (Default: False)
-
-    Returns:
-        out (dict): dictionary mapping for each dictionary in 'array'.
-
-    Raises:
-        KeyError: If any of the following occurs:
-            - a dictionary in 'array' does not have an entry for 'key'
-            - if 'error_on_duplicate' is True and multiple dictionaries in 'array' have the same
-                key value
-    """
-    out = {}
-    for dict_ in array:
-        keyval = dict_[key]
-        if error_on_duplicate and keyval in out:
-            raise KeyError(f"Multiple entries in array share the same value for '{key}': {keyval}")
-        out[keyval] = dict_
-
-    return out
