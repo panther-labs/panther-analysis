@@ -1,11 +1,15 @@
 """Utility functions provided to policies and rules during execution."""
 
+import json
 import os
 import re
 from datetime import datetime
+from ipaddress import ip_address
+from math import atan2, cos, radians, sin, sqrt
 from typing import Any, Dict, Optional
 
 import boto3
+import requests
 from dateutil import parser
 
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
@@ -156,6 +160,44 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
 
     # Return just the attributes of the item
     return response["Item"]["attributes"]
+
+
+def geoinfo_from_ip(ip: str) -> dict:  # pylint: disable=invalid-name
+    """Looks up the geolocation of an IP address using ipinfo.io
+
+    Example ipinfo output:
+    {
+      "ip": "1.1.1.1",
+      "hostname": "one.one.one.one",
+      "anycast": true,
+      "city": "Miami",
+      "region": "Florida",
+      "country": "US",
+      "loc": "25.7867,-80.1800",
+      "org": "AS13335 Cloudflare, Inc.",
+      "postal": "33132",
+      "timezone": "America/New_York",
+      "readme": "https://ipinfo.io/missingauth"
+    }
+    """
+
+    valid_ip = ip_address(ip)
+    url = f"https://ipinfo.io/{valid_ip}/json"
+    resp = requests.get(url, timeout=5)
+    if resp.status_code != 200:
+        # pylint: disable=broad-exception-raised
+        raise Exception(f"Geo lookup failed: GET {url} returned {resp.status_code}")
+    geoinfo = json.loads(resp.text)
+    return geoinfo
+
+
+def geoinfo_from_ip_formatted(ip: str) -> str:  # pylint: disable=invalid-name
+    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
+    geoinfo = geoinfo_from_ip(ip)
+    return (
+        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+    )
 
 
 # returns the difference between time1 and later time 2 in human-readable time period string
