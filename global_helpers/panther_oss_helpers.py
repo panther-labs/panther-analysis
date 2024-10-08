@@ -5,7 +5,6 @@ import os
 import re
 from datetime import datetime
 from ipaddress import ip_address
-from math import atan2, cos, radians, sin, sqrt
 from typing import Any, Dict, Optional
 
 import boto3
@@ -234,17 +233,3 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
-
-
-# When a single item is loaded from json, it is loaded as a single item
-# When a list of items is loaded from json, it is loaded as a list of that item
-# When we want to iterate over something that could be a single item or a list
-# of items we can use listify and just continue as if it's always a list
-def listify(maybe_list):
-    try:
-        iter(maybe_list)
-    except TypeError:
-        # not a list
-        return [maybe_list]
-    # either a list or string
-    return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list

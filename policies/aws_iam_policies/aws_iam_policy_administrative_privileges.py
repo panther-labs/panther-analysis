@@ -1,6 +1,6 @@
 import json
 
-from panther_oss_helpers import listify
+from panther_base_helpers import listify
 
 
 def policy(resource):
