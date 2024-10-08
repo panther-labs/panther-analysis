@@ -2,7 +2,9 @@ import base64
 import binascii
 from typing import List
 
-from panther_config_defaults import AWS_ACCOUNTS
+from panther_config import config
+
+AWS_ACCOUNTS = config.AWS_ACCOUNTS
 
 
 def aws_strip_role_session_id(user_identity_arn):

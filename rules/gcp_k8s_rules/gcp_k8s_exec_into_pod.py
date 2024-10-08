@@ -1,9 +1,41 @@
+import json
+from unittest.mock import MagicMock
+
 from panther_base_helpers import deep_walk
-from panther_config_defaults import GCP_PRODUCTION_PROJECT_IDS, gcp_rule_exceptions
+from panther_config import config
 from panther_gcp_helpers import get_k8s_info
+
+GCP_PRODUCTION_PROJECT_IDS = config.GCP_PRODUCTION_PROJECT_IDS
+
+# This is a list of principals that are allowed to exec into pods
+# in various namespaces and projects.
+ALLOW_LIST = [
+    {
+        # If empty, then no principals
+        "principals": [
+            # "system:serviceaccount:example-namespace:example-namespace-service-account",
+        ],
+        # If empty, then all namespaces
+        "namespaces": [],
+        # If projects empty then all projects
+        "projects": [],
+    },
+    # Add more allowed principals here
+    # {
+    #     "principals": [],
+    #     "namespaces": [],
+    #     "projects": [],
+    # },
+]
 
 
 def rule(event):
+    # pylint: disable=not-callable
+    # pylint: disable=global-statement
+    global ALLOW_LIST
+    if isinstance(ALLOW_LIST, MagicMock):
+        ALLOW_LIST = json.loads(ALLOW_LIST())
+
     # Defaults to False (no alert) unless method is exec and principal not allowed
     if not all(
         [
@@ -19,9 +51,7 @@ def rule(event):
     project_id = deep_walk(k8s_info, "project_id", default="<NO PROJECT_ID>")
     # rule_exceptions that are allowed temporarily are defined in gcp_environment.py
     # Some execs have principal which is long numerical UUID, appears to be k8s internals
-    for allowed_principal in deep_walk(
-        gcp_rule_exceptions, "gcp_k8s_exec_into_pod", "allowed_principals", default=[]
-    ):
+    for allowed_principal in ALLOW_LIST:
         allowed_principals = deep_walk(allowed_principal, "principals", default=[])
         allowed_namespaces = deep_walk(allowed_principal, "namespaces", default=[])
         allowed_project_ids = deep_walk(allowed_principal, "projects", default=[])
