@@ -10,6 +10,8 @@ ORGANIZATION_DOMAINS = ["example.com"]
 
 DROPBOX_ALLOWED_SHARE_DOMAINS = ORGANIZATION_DOMAINS
 DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = ORGANIZATION_DOMAINS
+GCP_PRODUCTION_PROJECT_IDS = ["example-production", "example-platform"]
+GCP_ORG_ID = "888888888888"
 GSUITE_TRUSTED_FORWARDING_DESTINATION_DOMAINS = ORGANIZATION_DOMAINS
 GSUITE_TRUSTED_OWNERSHIP_DOMAINS = ORGANIZATION_DOMAINS
 MS_EXCHANGE_ALLOWED_FORWARDING_DESTINATION_DOMAINS = ORGANIZATION_DOMAINS
@@ -74,3 +76,24 @@ def in_pci_scope_tags(resource):
 # having to rename the function in all locations its used, or having an outdated name on the actual
 # function being used, etc.
 IN_PCI_SCOPE = in_pci_scope_tags
+
+gcp_rule_exceptions = {
+    "gcp_k8s_exec_into_pod": {
+        "allowed_principals": [
+            {
+                "principals": [
+                    "system:serviceaccount:example-namespace:example-namespace-service-account"
+                ],
+                # If empty, then all namespaces
+                "namespaces": [],
+                # If projects empty then all projects
+                "projects": [],
+            },
+            {
+                "principals": ["example-allowed-user@example.com"],
+                "namespaces": ["istio-system"],
+                "projects": [],
+            },
+        ]
+    }
+}

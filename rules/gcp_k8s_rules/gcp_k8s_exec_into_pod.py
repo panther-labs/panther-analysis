@@ -1,5 +1,5 @@
-from gcp_environment import PRODUCTION_PROJECT_IDS, rule_exceptions
 from panther_base_helpers import deep_walk
+from panther_config_defaults import GCP_PRODUCTION_PROJECT_IDS, gcp_rule_exceptions
 from panther_gcp_helpers import get_k8s_info
 
 
@@ -20,7 +20,7 @@ def rule(event):
     # rule_exceptions that are allowed temporarily are defined in gcp_environment.py
     # Some execs have principal which is long numerical UUID, appears to be k8s internals
     for allowed_principal in deep_walk(
-        rule_exceptions, "gcp_k8s_exec_into_pod", "allowed_principals", default=[]
+        gcp_rule_exceptions, "gcp_k8s_exec_into_pod", "allowed_principals", default=[]
     ):
         allowed_principals = deep_walk(allowed_principal, "principals", default=[])
         allowed_namespaces = deep_walk(allowed_principal, "namespaces", default=[])
@@ -37,7 +37,7 @@ def rule(event):
 
 def severity(event):
     project_id = deep_walk(get_k8s_info(event), "project_id", default="<NO PROJECT_ID>")
-    if project_id in PRODUCTION_PROJECT_IDS:
+    if project_id in GCP_PRODUCTION_PROJECT_IDS:
         return "high"
     return "info"
 
