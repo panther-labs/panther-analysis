@@ -21,6 +21,7 @@ import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
 import panther_azuresignin_helpers as p_asi_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
+import panther_box_helpers as p_box_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
@@ -168,37 +169,37 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
     def test_additional_details_string(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # in the case of a byte array, we expect the empty dict
     def test_additional_details_bytes(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_bytes})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # In the case of a list ( not a string or bytes array ), expect un-altered return
     def test_additional_details_list(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_list})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
     # in the case of a dict or similar, we expect it to be returned un-altered
     def test_additional_details_dict(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_dict})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(returns.get("t", 0), 10)
 
     # If it's a string with no json object to be decoded, we expect an empty dict back
     def test_additional_details_plain_str(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_no_json})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 0)
 
     # If it's a string with a json list, we expect the list
     def test_additional_details_str_list_json(self):
         event = ImmutableCaseInsensitiveDict({"additional_details": self.initial_str_list_json})
-        returns = p_b_h.box_parse_additional_details(event)
+        returns = p_box_h.box_parse_additional_details(event)
         self.assertEqual(len(returns), 4)
 
 

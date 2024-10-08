@@ -1,4 +1,3 @@
-import json
 import re
 from base64 import b64decode
 from binascii import Error as AsciiError
@@ -22,18 +21,6 @@ class PantherUnexpectedAlert(Exception):
 # # # # # # # # # # # # # #
 #      Generic Helpers    #
 # # # # # # # # # # # # # #
-
-
-# 'additional_details' from box logs varies by event_type.
-# This helper wraps the process of extracting those details.
-def box_parse_additional_details(event: dict):
-    additional_details = event.get("additional_details", {})
-    if isinstance(additional_details, (str, bytes)):
-        try:
-            return json.loads(additional_details)
-        except ValueError:
-            return {}
-    return additional_details
 
 
 def okta_alert_context(event: dict):
