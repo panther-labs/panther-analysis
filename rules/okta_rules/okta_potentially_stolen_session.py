@@ -2,8 +2,8 @@ import json
 from datetime import timedelta
 from difflib import SequenceMatcher
 
-from panther_base_helpers import okta_alert_context
 from panther_detection_helpers.caching import get_string_set, put_string_set
+from panther_okta_helpers import okta_alert_context
 
 FUZZ_RATIO_MIN = 0.95
 PREVIOUS_SESSION = {}
