@@ -1,6 +1,7 @@
 import json
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_rule_context
+from panther_base_helpers import deep_get
 from panther_default import aws_cloudtrail_success
 from policyuniverse.policy import Policy
 

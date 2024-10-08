@@ -1,6 +1,6 @@
-from gcp_base_helpers import get_k8s_info
 from gcp_environment import PRODUCTION_PROJECT_IDS, rule_exceptions
 from panther_base_helpers import deep_walk
+from panther_gcp_helpers import get_k8s_info
 
 
 def rule(event):

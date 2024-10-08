@@ -1,4 +1,5 @@
-from panther_base_helpers import aws_rule_context, pattern_match_list
+from panther_aws_helpers import aws_rule_context
+from panther_base_helpers import pattern_match_list
 from panther_default import aws_cloudtrail_success
 
 PROD_ACCOUNT_IDS = {"11111111111111", "112233445566"}

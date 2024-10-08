@@ -1,6 +1,6 @@
 import logging
 
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 from panther_default import lookup_aws_account_name
 from panther_detection_helpers.caching import check_account_age
 

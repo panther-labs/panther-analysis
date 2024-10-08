@@ -2,7 +2,7 @@ import json
 from fnmatch import fnmatch
 from unittest.mock import MagicMock
 
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 SECURITY_CONFIG_ACTIONS = {

@@ -108,59 +108,6 @@ def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_
     return values_of_return_field
 
 
-def aws_strip_role_session_id(user_identity_arn):
-    # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
-    arn_parts = user_identity_arn.split("/")
-    if arn_parts:
-        return "/".join(arn_parts[:2])
-    return user_identity_arn
-
-
-def aws_rule_context(event: dict):
-    return {
-        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
-        "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
-        "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
-        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
-        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
-        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
-        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
-    }
-
-
-def aws_guardduty_context(event: dict):
-    return {
-        "description": event.get("description", "<MISSING DESCRIPTION>"),
-        "severity": event.get("severity", "<MISSING SEVERITY>"),
-        "id": event.get("id", "<MISSING ID>"),
-        "type": event.get("type", "<MISSING TYPE>"),
-        "resource": event.get("resource", {}),
-        "service": event.get("service", {}),
-    }
-
-
-def eks_panther_obj_ref(event):
-    user = event.deep_get("user", "username", default="<NO_USERNAME>")
-    source_ips = event.get("sourceIPs", ["0.0.0.0"])  # nosec
-    verb = event.get("verb", "<NO_VERB>")
-    obj_name = event.deep_get("objectRef", "name", default="<NO_OBJECT_NAME>")
-    obj_ns = event.deep_get("objectRef", "namespace", default="<NO_OBJECT_NAMESPACE>")
-    obj_res = event.deep_get("objectRef", "resource", default="<NO_OBJECT_RESOURCE>")
-    obj_subres = event.deep_get("objectRef", "subresource", default="")
-    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL>")
-    if obj_subres:
-        obj_res = "/".join([obj_res, obj_subres])
-    return {
-        "actor": user,
-        "ns": obj_ns,
-        "object": obj_name,
-        "resource": obj_res,
-        "sourceIPs": source_ips,
-        "verb": verb,
-        "p_source_label": p_source_label,
-    }
-
-
 def is_ip_in_network(ip_addr, networks):
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)
@@ -174,26 +121,6 @@ def pattern_match(string_to_match: str, pattern: str):
 def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
     """Check that a string matches any pattern in a given list"""
     return any(fnmatch(string_to_match, p) for p in patterns)
-
-
-def get_binding_deltas(event):
-    """A GCP helper function to return the binding deltas from audit events
-
-    Binding deltas provide context on a permission change, including the
-    action, role, and member associated with the request.
-    """
-    if event.get("protoPayload", {}).get("methodName") != "SetIamPolicy":
-        return []
-
-    service_data = event.get("protoPayload", {}).get("serviceData")
-    if not service_data:
-        return []
-
-    # Reference: bit.ly/2WsJdZS
-    binding_deltas = service_data.get("policyDelta", {}).get("bindingDeltas")
-    if not binding_deltas:
-        return []
-    return binding_deltas
 
 
 def msft_graph_alert_context(event):

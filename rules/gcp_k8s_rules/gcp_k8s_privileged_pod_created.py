@@ -1,5 +1,5 @@
-from gcp_base_helpers import gcp_alert_context
 from panther_base_helpers import deep_get
+from panther_gcp_helpers import gcp_alert_context
 
 
 def rule(event):

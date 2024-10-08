@@ -19,6 +19,7 @@ sys.path.append(os.path.dirname(__file__))
 
 import panther_asana_helpers as p_a_h  # pylint: disable=C0413
 import panther_auth0_helpers as p_auth0_h  # pylint: disable=C0413
+import panther_aws_helpers as p_aws_h  # pylint: disable=C0413
 import panther_azuresignin_helpers as p_asi_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_box_helpers as p_box_h  # pylint: disable=C0413
@@ -96,7 +97,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         )
 
     def test_complete_event(self):
-        response = p_b_h.eks_panther_obj_ref(self.event)
+        response = p_aws_h.eks_panther_obj_ref(self.event)
         self.assertEqual(response.get("actor", ""), "kubernetes-admin")
         self.assertEqual(response.get("object", ""), "some-job-xxx1y")
         self.assertEqual(response.get("ns", ""), "default")
@@ -114,7 +115,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         del temp_event["verb"]
         del temp_event["p_source_label"]
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.eks_panther_obj_ref(temp_event)
+        response = p_aws_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("actor", ""), "<NO_USERNAME>")
         self.assertEqual(response.get("object", ""), "<NO_OBJECT_NAME>")
         self.assertEqual(response.get("ns", ""), "<NO_OBJECT_NAMESPACE>")
@@ -128,7 +129,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         temp_event = self.event.to_dict()
         del temp_event["objectRef"]["subresource"]
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.eks_panther_obj_ref(temp_event)
+        response = p_aws_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("resource", ""), "pods")
 
 
