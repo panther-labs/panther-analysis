@@ -23,6 +23,7 @@ import panther_azuresignin_helpers as p_asi_h  # pylint: disable=C0413
 import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_box_helpers as p_box_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
+import panther_crowdstrike_fdr_helpers as p_cf_fdr_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
@@ -1101,11 +1102,11 @@ class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
         )
 
     def test_is_different_with_fdr_event_type_provided(self):
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "SomethingElse")
         self.assertEqual(response, True)
 
     def test_is_same_with_the_fdr_event_type_provided(self):
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
         self.assertEqual(response, False)
 
     def test_is_entirely_different_type(self):
@@ -1116,7 +1117,7 @@ class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
                 "event": {"foo": "bar"},
             }
         )
-        response = p_b_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
+        response = p_cf_fdr_h.filter_crowdstrike_fdr_event_type(self.input, "DnsRequest")
         self.assertEqual(response, False)
 
 
@@ -1132,30 +1133,30 @@ class TestGetCrowdstrikeField(unittest.TestCase):
         )
 
     def test_input_key_default_works(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "zee", default="hello")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "zee", default="hello")
         self.assertEqual(response, "hello")
 
     def test_input_key_does_not_exist(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "zee")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "zee")
         self.assertEqual(response, None)
 
     def test_input_key_exists(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "cid")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "cid")
         self.assertEqual(response, "something")
 
     def test_input_key_can_be_found_in_event(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "foo")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "foo")
         self.assertEqual(response, "bar")
 
     def test_input_key_can_be_found_in_unknown(self):
-        response = p_b_h.get_crowdstrike_field(self.input, "field")
+        response = p_cf_fdr_h.get_crowdstrike_field(self.input, "field")
         self.assertEqual(response, "is")
 
     def test_precedence(self):
         temp_event = self.input.to_dict()
         temp_event["event"]["field"] = "found"
         temp_event = PantherEvent(temp_event)
-        response = p_b_h.get_crowdstrike_field(temp_event, "field")
+        response = p_cf_fdr_h.get_crowdstrike_field(temp_event, "field")
         self.assertEqual(response, "found")
 
 
