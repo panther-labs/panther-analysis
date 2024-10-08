@@ -123,8 +123,10 @@ def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
     return any(fnmatch(string_to_match, p) for p in patterns)
 
 
-def defang_ioc(ioc):
+def defang_ioc(ioc: str) -> str:
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    ioc = ioc.replace("http://", "hxxp://")
+    ioc = ioc.replace("https://", "hxxps://")
     return ioc.replace(".", "[.]")
 
 
