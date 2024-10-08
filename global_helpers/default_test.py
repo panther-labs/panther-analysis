@@ -6,7 +6,7 @@ import sys
 import unittest
 
 sys.path.append(os.path.dirname(__file__))
-import panther_default as p_d  # pylint: disable=C0413
+import panther_aws_helpers as p_d  # pylint: disable=C0413
 
 
 class TestAWSKeyAccountId(unittest.TestCase):

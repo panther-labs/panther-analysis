@@ -1,7 +1,6 @@
 from ipaddress import ip_address
 
-from panther_aws_helpers import aws_rule_context
-from panther_default import lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
 
 # service/event patterns to monitor
 RECON_ACTIONS = {

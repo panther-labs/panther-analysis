@@ -2,8 +2,7 @@ import json
 from fnmatch import fnmatch
 from unittest.mock import MagicMock
 
-from panther_aws_helpers import aws_rule_context
-from panther_default import aws_cloudtrail_success
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 SECURITY_CONFIG_ACTIONS = {
     "DeleteAccountPublicAccessBlock",

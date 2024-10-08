@@ -8,6 +8,10 @@ from ipaddress import ip_network
 # the Panther installation
 ORGANIZATION_DOMAINS = ["example.com"]
 
+AWS_ACCOUNTS = {
+    # Add your AWS account IDs/names below:
+    "123456789012": "sample-account",
+}
 DROPBOX_ALLOWED_SHARE_DOMAINS = ORGANIZATION_DOMAINS
 DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = ORGANIZATION_DOMAINS
 GCP_PRODUCTION_PROJECT_IDS = ["example-production", "example-platform"]

@@ -1,5 +1,4 @@
-from panther_aws_helpers import aws_rule_context
-from panther_default import aws_cloudtrail_success
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 UPDATE_EVENTS = {"ChangePassword", "CreateAccessKey", "CreateLoginProfile", "CreateUser"}
 
