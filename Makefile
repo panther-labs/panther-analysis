@@ -35,6 +35,7 @@ global-helpers-unit-test:
 lint: lint-pylint lint-fmt
 
 lint-pylint:
+	pipenv run pylint --version
 	pipenv run bandit -r $(dirs)
 	pipenv run pylint $(dirs)
 	pipenv run isort --profile=black --check-only $(dirs)
