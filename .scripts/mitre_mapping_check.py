@@ -13,8 +13,13 @@ MITRE_PATTERN = re.compile("^TA\d+\:T\d+(\.\d+)?$")
 
 
 def main(path: Path) -> bool:
+    # Ignore any schema test files
+    #   Schema tests can't be loaded by panther_analysis_tool because each file contains multiple
+    #   YAML documents.
+    ignore_files = list(path.glob("**/*_tests.y*ml"))
+
     # Load Repo
-    analysis_items = load_analysis_specs([path], ignore_files=[])
+    analysis_items = load_analysis_specs([path], ignore_files=ignore_files)
 
     items_with_invalid_mappings = []  # Record all items with bad tags
     for analysis_item in analysis_items:
