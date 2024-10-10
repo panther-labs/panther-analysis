@@ -17,6 +17,6 @@ def title(event):
     return (
         f"GSuite workspace setting for default calendar sharing was changed by "
         f"[{event.deep_get('actor', 'email', default='<UNKNOWN_EMAIL>')}] "
-        f"from [{event.deep_get('parameters', 'OLD_VALUE', default='<NO_OLD_SETTING_FOUND>')}] "
-        f"to [{event.deep_get('parameters', 'NEW_VALUE', default='<NO_NEW_SETTING_FOUND>')}]"
+        + f"from [{event.deep_get('parameters', 'OLD_VALUE', default='<NO_OLD_SETTING_FOUND>')}] "
+        + "to [{event.deep_get('parameters', 'NEW_VALUE', default='<NO_NEW_SETTING_FOUND>')}]"
     )
