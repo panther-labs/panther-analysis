@@ -15,21 +15,21 @@ diff_pattern = re.compile(r'^-(?:RuleID|PolicyID|QueryName):\s*"?([\w.]+)"?')
 
 def get_deleted_ids() -> set[str]:
     # Run git diff, get output
-    result = subprocess.run(['git', 'diff', 'origin/release', 'HEAD'], capture_output=True)
+    result = subprocess.run(["git", "diff", "origin/develop", "HEAD"], capture_output=True)
     if result.stderr:
         raise Exception(result.stderr.decode("utf-8"))
-    
+
     ids = set()
     for line in result.stdout.decode("utf-8").split("\n"):
         if m := diff_pattern.match(line):
             # Add the ID to the list
             ids.add(m.group(1))
-    
+
     return ids
 
 
 def get_deprecated_ids() -> set[str]:
-    """ Returns all the IDs listed in `deprecated.txt`. """
+    """Returns all the IDs listed in `deprecated.txt`."""
     with open("deprecated.txt", "r") as f:
         return set(f.read().split("\n"))
 
@@ -42,6 +42,7 @@ def check(_):
         exit(1)
     else:
         print("✅ No unaccounted deletions found! You're in the clear! 👍")
+
 
 def remove(args):
     api_token = args.api_token or os.environ.get("PANTHER_API_TOKEN")
@@ -61,11 +62,7 @@ def remove(args):
     ids = list(get_deprecated_ids())
 
     pat_args = argparse.Namespace(
-        analysis_id = ids,
-        query_id = [],
-        confirm_bypass = True,
-        api_token = api_token,
-        api_host = api_host
+        analysis_id=ids, query_id=[], confirm_bypass=True, api_token=api_token, api_host=api_host
     )
 
     logging.basicConfig(
