@@ -1,0 +1,47 @@
+AnalysisType: correlation_rule
+RuleID: "Snowflake.PotentialBruteForceSuccess"
+DisplayName: "Snowflake Brute Force Login Success"
+Enabled: true
+Severity: High
+Description: Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+Detection:
+  - Sequence:
+      - ID: Multiple Failed Logins
+        RuleID: Snowflake.Stream.BruteForceByIP
+        MinMatchCount: 5
+      - ID: Successful Login
+        RuleID: Snowflake.Stream.LoginSuccess
+    Transitions:
+      - ID: Multiple Failed Logins FOLLOWED BY Successful Login
+        From: Multiple Failed Logins
+        To: Successful Login
+        WithinTimeFrameMinutes: 30
+        Match:
+          - On: CLIENT_IP
+    Schedule:
+      RateMinutes: 720
+      TimeoutMinutes: 15
+    LookbackWindowMinutes: 1440
+Tests:
+    - Name: Successful Bulk Login
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: Multiple Failed Logins
+          Matches:
+            CLIENT_IP:
+              "1.1.1.1": [0, 2, 3, 6, 9, 10, 11, 15]
+        - ID: Successful Login
+          Matches:
+            CLIENT_IP:
+              "1.1.1.1": [16]
+    - Name: Successful Login With Single Failure
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: Multiple Failed Logins
+          Matches:
+            CLIENT_IP:
+              "1.1.1.1": [0]
+        - ID: Successful Login
+          Matches:
+            CLIENT_IP:
+              "1.1.1.1": [1]
