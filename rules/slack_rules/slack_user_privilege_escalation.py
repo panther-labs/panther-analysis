@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_base_helpers import slack_alert_context
 
 USER_PRIV_ESC_ACTIONS = {
     "owner_transferred": "Slack Owner Transferred",
@@ -14,11 +14,11 @@ def rule(event):
 
 def title(event):
     # This is the user taking the action.
-    actor_username = deep_get(event, "actor", "user", "name", default="<unknown-actor>")
-    actor_email = deep_get(event, "actor", "user", "email", default="<unknown-email>")
+    actor_username = event.deep_get("actor", "user", "name", default="<unknown-actor>")
+    actor_email = event.deep_get("actor", "user", "email", default="<unknown-email>")
     # This is the user the action is taken on.
-    entity_username = deep_get(event, "entity", "user", "name", default="<unknown-actor>")
-    entity_email = deep_get(event, "entity", "user", "email", default="<unknown-email>")
+    entity_username = event.deep_get("entity", "user", "name", default="<unknown-actor>")
+    entity_email = event.deep_get("entity", "user", "email", default="<unknown-email>")
     action = event.get("action")
     if action == "owner_transferred":
         return f"{USER_PRIV_ESC_ACTIONS[action]} from {actor_username} ({actor_email})"

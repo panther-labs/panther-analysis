@@ -19,6 +19,6 @@ def rule(event):
 
 
 def title(event):
-    account_id = event.deep_get("recipientAccountId", default="<ACCOUNT_ID_NOT_FOUND>")
+    account_id = event.get("recipientAccountId", "<ACCOUNT_ID_NOT_FOUND>")
     user_name = event.deep_get("requestParameters", "userName", default="<USER_NAME_NOT_FOUND>")
     return f"Compromised Key quarantined for [{user_name}] in AWS Account [{account_id}]"

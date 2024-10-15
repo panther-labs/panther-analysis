@@ -14,7 +14,7 @@ def title(event):
 
 def alert_context(event):
     return {
-        "ip_accessKeyId": event.get("sourceIpAddress", default="{not found}")
+        "ip_accessKeyId": event.get("sourceIpAddress", "{not found}")
         + ":"
         + event.deep_get("userIdentity", "accessKeyId", default="{not found}")
     }

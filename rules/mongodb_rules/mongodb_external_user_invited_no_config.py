@@ -2,11 +2,11 @@ from panther_mongodb_helpers import mongodb_alert_context
 
 
 def rule(event):
-    if event.deep_get("eventTypeName", default="") != "INVITED_TO_ORG":
+    if event.get("eventTypeName", "") != "INVITED_TO_ORG":
         return False
 
-    user_who_sent_an_invitation = event.deep_get("username", default="")
-    user_who_was_invited = event.deep_get("targetUsername", default="")
+    user_who_sent_an_invitation = event.get("username", "")
+    user_who_was_invited = event.get("targetUsername", "")
     domain = user_who_sent_an_invitation.split("@")[-1]
 
     email_domains_are_different = not user_who_was_invited.endswith(domain)

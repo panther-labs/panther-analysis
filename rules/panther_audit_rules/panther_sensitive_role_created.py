@@ -1,5 +1,4 @@
 import panther_event_type_helpers as event_type
-from panther_base_helpers import deep_get
 
 PANTHER_ADMIN_PERMISSIONS = [
     "UserModify",
@@ -17,9 +16,9 @@ PANTHER_ROLE_ACTIONS = [
 def rule(event):
     if event.udm("event_type") not in PANTHER_ROLE_ACTIONS:
         return False
-    permissions = deep_get(event, "actionParams", "dynamic", "input", "permissions")
+    permissions = event.deep_get("actionParams", "dynamic", "input", "permissions")
     if permissions is None:
-        deep_get(event, "actionParams", "input", "permissions", default="")
+        event.deep_get("actionParams", "input", "permissions", default="")
     role_permissions = set(permissions)
 
     return (
@@ -29,9 +28,9 @@ def rule(event):
 
 
 def title(event):
-    role_name = deep_get(event, "actionParams", "dynamic", "input", "name")
+    role_name = event.deep_get("actionParams", "dynamic", "input", "name")
     if role_name is None:
-        role_name = deep_get(event, "actionParams", "input", "name", default="<UNKNWON ROLE>")
+        role_name = event.deep_get("actionParams", "input", "name", default="<UNKNWON ROLE>")
     return (
         f"Role with Admin Permissions created by {event.udm('actor_user')}"
         f"Role Name: {role_name}"
@@ -41,6 +40,6 @@ def title(event):
 def alert_context(event):
     return {
         "user": event.udm("actor_user"),
-        "role_name": deep_get(event, "actionParams", "name"),
+        "role_name": event.deep_get("actionParams", "name"),
         "ip": event.udm("source_ip"),
     }

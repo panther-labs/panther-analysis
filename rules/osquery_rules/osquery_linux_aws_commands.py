@@ -1,7 +1,5 @@
 import shlex
 
-from panther_base_helpers import deep_get
-
 PLATFORM_IGNORE_LIST = {"darwin"}
 
 
@@ -10,11 +8,11 @@ def rule(event):
     if (
         event.get("action") != "added"
         or "shell_history" not in event.get("name")
-        or deep_get(event, "decorations", "platform") in PLATFORM_IGNORE_LIST
+        or event.deep_get("decorations", "platform") in PLATFORM_IGNORE_LIST
     ):
         return False
 
-    command = deep_get(event, "columns", "command")
+    command = event.deep_get("columns", "command")
     if not command:
         return False
     try:
@@ -31,6 +29,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'columns', 'username', default='<UNKNOWN_USER>')}] issued an"
+        f"User [{event.deep_get('columns', 'username', default='<UNKNOWN_USER>')}] issued an"
         f" aws-cli command on [{event.get('hostIdentifier', '<UNKNOWN_HOST>')}]"
     )

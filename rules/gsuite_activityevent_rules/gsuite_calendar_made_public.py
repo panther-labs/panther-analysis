@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     return (
         event.get("name") == "change_calendar_acls"
@@ -12,9 +9,9 @@ def rule(event):
 def title(event):
     return (
         f"GSuite calendar "
-        f"[{deep_get(event, 'parameters', 'calendar_id', default='<NO_CALENDAR_ID>')}] made "
+        f"[{event.deep_get('parameters', 'calendar_id', default='<NO_CALENDAR_ID>')}] made "
         f"{public_or_private(event)} by "
-        f"[{deep_get(event, 'actor', 'email', default='<NO_ACTOR_FOUND>')}]"
+        f"[{event.deep_get('actor', 'email', default='<NO_ACTOR_FOUND>')}]"
     )
 
 
@@ -23,4 +20,4 @@ def severity(event):
 
 
 def public_or_private(event):
-    return "private" if deep_get(event, "parameters", "access_level") == "none" else "public"
+    return "private" if event.deep_get("parameters", "access_level") == "none" else "public"

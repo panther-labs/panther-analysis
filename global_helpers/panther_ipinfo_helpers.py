@@ -126,21 +126,21 @@ class IPInfoPrivacy(LookupTableMatches):
 
 def get_ipinfo_location(event):
     """Returns an IPInfoLocation object for the event or None if it is not available"""
-    if deep_get(event, "p_enrichment", IPINFO_LOCATION_LUT_NAME):
+    if event.deep_get("p_enrichment", IPINFO_LOCATION_LUT_NAME):
         return IPInfoLocation(event)
     return None
 
 
 def get_ipinfo_asn(event):
     """Returns an IPInfoASN object for the event or None if it is not available"""
-    if deep_get(event, "p_enrichment", IPINFO_ASN_LUT_NAME):
+    if event.deep_get("p_enrichment", IPINFO_ASN_LUT_NAME):
         return IPInfoASN(event)
     return None
 
 
 def get_ipinfo_privacy(event):
     """Returns an IPInfoPrivacy object for the event or None if it is not available"""
-    if deep_get(event, "p_enrichment", IPINFO_PRIVACY_LUT_NAME):
+    if event.deep_get("p_enrichment", IPINFO_PRIVACY_LUT_NAME):
         return IPInfoPrivacy(event)
     return None
 

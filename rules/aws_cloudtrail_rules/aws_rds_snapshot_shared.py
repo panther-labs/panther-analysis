@@ -21,7 +21,7 @@ def rule(event):
 
 
 def title(event):
-    account_id = event.get("recipientAccountId", default="<ACCOUNT_ID_NOT_FOUND>")
+    account_id = event.get("recipientAccountId", "<ACCOUNT_ID_NOT_FOUND>")
     rds_instance_id = event.deep_get(
         "responseElements", "dBInstanceIdentifier", default="<DB_INSTANCE_ID_NOT_FOUND>"
     )
