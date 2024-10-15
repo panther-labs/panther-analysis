@@ -1,0 +1,39 @@
+AnalysisType: rule
+Filename: thinkst_canary_incident.py
+DisplayName: Thinkst Canary Incident
+RuleID: Thinkst.CanaryIncident
+Description: "A Canary incident has been detected."
+Enabled: true
+Severity: High
+LogTypes:
+  - ThinkstCanary.Alert
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - ExpectedResult: true
+    Name: Canary Incident
+    Log:
+      {
+        "AdditionalDetails":
+          [
+            ["User", "guest"],
+            ["Filename", "IT/Default Windows Desktop Configuration.docx"],
+            [
+              "Background Context",
+              "You have had 2 incidents from 192.168.110.14 previously.",
+            ],
+          ],
+        "AlertType": "CanaryIncident",
+        "CanaryID": "000222326791e1e8",
+        "CanaryIP": "192.168.110.27",
+        "CanaryLocation": "Server room A",
+        "CanaryName": "VirtualCanary-unnamed",
+        "CanaryPort": 445,
+        "Description": "Shared File Opened",
+        "IncidentHash": "f78b692a7716d0d668012bc0eb65c367",
+        "IncidentKey": "incident:smbfileopen:89d38322e4e764e202b42bbb:192.168.110.14:1717059335",
+        "Intro": "Shared File Opened has been detected against one of your Canaries (VirtualCanary-unnamed) at 192.168.110.27.",
+        "ReverseDNS": "",
+        "SourceIP": "192.168.110.14",
+        "Timestamp": "2024-05-30 08:55:35 (UTC)",
+      }
