@@ -42,7 +42,7 @@ jobs:
           panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
+        uses: thollander/actions-comment-pull-request@e2c37e53a7d2227b61585343765f73a9ca57eda9
         if: ${{ steps.check-packs.outputs.errors }}
         with:
           mode: upsert
@@ -54,7 +54,7 @@ jobs:
             ```
           comment_tag: check-packs
       - name: Delete comment
-        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6
+        uses: thollander/actions-comment-pull-request@e2c37e53a7d2227b61585343765f73a9ca57eda9
         if: ${{ !steps.check-packs.outputs.errors }}
         with:
           mode: delete
