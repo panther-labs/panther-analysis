@@ -34,14 +34,14 @@ def rule(event):
         return False
     if event.deep_get("content", "after", "description") == "No new Code Analysis issues found":
         return False
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     return action in ACTIONS
 
 
 def title(event):
     group_or_org = "<GROUP_OR_ORG>"
     operation = "<NO_OPERATION>"
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     if "." in action:
         group_or_org = action.split(".")[0].title()
         operation = ".".join(action.split(".")[1:]).title()
@@ -69,7 +69,7 @@ def dedup(event):
 
 
 def severity(event):
-    action = event.deep_get("event", default="<NO_EVENT>")
+    action = event.get("event", "<NO_EVENT>")
     if action == "org.project.fix_pr.manual_open":
         return "INFO"
     return "LOW"

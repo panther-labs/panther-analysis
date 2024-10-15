@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 # allow-list of approved login types
 APPROVED_LOGIN_TYPES = {
     "exchange",
@@ -21,8 +19,8 @@ def rule(event):
         return False
 
     if (
-        deep_get(event, "parameters", "login_type") in APPROVED_LOGIN_TYPES
-        or deep_get(event, "id", "applicationName") in APPROVED_APPLICATION_NAMES
+        event.deep_get("parameters", "login_type") in APPROVED_LOGIN_TYPES
+        or event.deep_get("id", "applicationName") in APPROVED_APPLICATION_NAMES
     ):
         return False
 
@@ -32,5 +30,5 @@ def rule(event):
 def title(event):
     return (
         f"A login attempt of a non-approved type was detected for user "
-        f"[{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
+        f"[{event.deep_get('actor', 'email', default='<UNKNOWN_USER>')}]"
     )

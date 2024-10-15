@@ -9,8 +9,6 @@ The client_allowlist variable is a collection of standard 1Password clients.
 If this differs from your orginization's needs this rule can be edited to suit your environment
 """
 
-from panther_base_helpers import deep_get
-
 
 def rule(event):
     client_allowlist = [
@@ -24,20 +22,20 @@ def rule(event):
         "1Password for Android",
     ]
 
-    return deep_get(event, "client", "app_name") not in client_allowlist
+    return event.deep_get("client", "app_name") not in client_allowlist
 
 
 def title(event):
-    return f"Unusual 1Password client - {deep_get(event, 'client', 'app_name')} detected"
+    return f"Unusual 1Password client - {event.deep_get('client', 'app_name')} detected"
 
 
 def alert_context(event):
     context = {}
-    context["user"] = deep_get(event, "target_user", "name", default="UNKNOWN_USER")
+    context["user"] = event.deep_get("target_user", "name", default="UNKNOWN_USER")
     context["user_email"] = event.udm("actor_user")
     context["ip_address"] = event.udm("source_ip")
-    context["client"] = deep_get(event, "client", "app_name", default="UNKNOWN_CLIENT")
-    context["OS"] = deep_get(event, "client", "os_name", default="UNKNOWN_OS")
+    context["client"] = event.deep_get("client", "app_name", default="UNKNOWN_CLIENT")
+    context["OS"] = event.deep_get("client", "os_name", default="UNKNOWN_OS")
     context["login_result"] = event.get("category")
     context["time_seen"] = event.get("timestamp")
 

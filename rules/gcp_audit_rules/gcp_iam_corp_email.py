@@ -2,10 +2,10 @@ from panther_base_helpers import deep_get
 
 
 def rule(event):
-    if deep_get(event, "protoPayload", "methodName") != "SetIamPolicy":
+    if event.deep_get("protoPayload", "methodName") != "SetIamPolicy":
         return False
 
-    service_data = deep_get(event, "protoPayload", "serviceData")
+    service_data = event.deep_get("protoPayload", "serviceData")
     if not service_data:
         return False
 
@@ -25,5 +25,5 @@ def rule(event):
 def title(event):
     return (
         f"A GCP IAM account has been created with a Gmail email in "
-        f"{deep_get(event, 'resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
+        f"{event.deep_get('resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )

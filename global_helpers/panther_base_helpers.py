@@ -269,27 +269,27 @@ def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
 
 def get_crowdstrike_field(event, field_name, default=None):
     return (
-        deep_get(event, field_name)
-        or deep_get(event, "event", field_name)
-        or deep_get(event, "unknown_payload", field_name)
+        event.deep_get(field_name)
+        or event.deep_get("event", field_name)
+        or event.deep_get("unknown_payload", field_name)
         or default
     )
 
 
-def slack_alert_context(event: dict):
+def slack_alert_context(event):
     return {
-        "actor-name": deep_get(event, "actor", "user", "name", default="<MISSING_NAME>"),
-        "actor-email": deep_get(event, "actor", "user", "email", default="<MISSING_EMAIL>"),
-        "actor-ip": deep_get(event, "context", "ip_address", default="<MISSING_IP>"),
-        "user-agent": deep_get(event, "context", "ua", default="<MISSING_UA>"),
+        "actor-name": event.deep_get("actor", "user", "name", default="<MISSING_NAME>"),
+        "actor-email": event.deep_get("actor", "user", "email", default="<MISSING_EMAIL>"),
+        "actor-ip": event.deep_get("context", "ip_address", default="<MISSING_IP>"),
+        "user-agent": event.deep_get("context", "ua", default="<MISSING_UA>"),
     }
 
 
-def github_alert_context(event: dict):
+def github_alert_context(event):
     return {
         "action": event.get("action", ""),
         "actor": event.get("actor", ""),
-        "actor_location": deep_get(event, "actor_location", "country_code"),
+        "actor_location": event.deep_get("actor_location", "country_code"),
         "org": event.get("org", ""),
         "repo": event.get("repo", ""),
         "user": event.get("user", ""),
@@ -412,14 +412,14 @@ def aws_guardduty_context(event: dict):
     }
 
 
-def eks_panther_obj_ref(event: dict):
-    user = deep_get(event, "user", "username", default="<NO_USERNAME>")
+def eks_panther_obj_ref(event):
+    user = event.deep_get("user", "username", default="<NO_USERNAME>")
     source_ips = event.get("sourceIPs", ["0.0.0.0"])  # nosec
     verb = event.get("verb", "<NO_VERB>")
-    obj_name = deep_get(event, "objectRef", "name", default="<NO_OBJECT_NAME>")
-    obj_ns = deep_get(event, "objectRef", "namespace", default="<NO_OBJECT_NAMESPACE>")
-    obj_res = deep_get(event, "objectRef", "resource", default="<NO_OBJECT_RESOURCE>")
-    obj_subres = deep_get(event, "objectRef", "subresource", default="")
+    obj_name = event.deep_get("objectRef", "name", default="<NO_OBJECT_NAME>")
+    obj_ns = event.deep_get("objectRef", "namespace", default="<NO_OBJECT_NAMESPACE>")
+    obj_res = event.deep_get("objectRef", "resource", default="<NO_OBJECT_RESOURCE>")
+    obj_subres = event.deep_get("objectRef", "subresource", default="")
     p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL>")
     if obj_subres:
         obj_res = "/".join([obj_res, obj_subres])

@@ -1,5 +1,4 @@
 from global_filter_notion import filter_include_event
-from panther_base_helpers import deep_get
 from panther_notion_helpers import notion_alert_context
 
 
@@ -14,8 +13,7 @@ def rule(event):
 def title(event):
     actor = event.deep_get("event", "actor", "person", "email", default="<NO_EMAIL_FOUND>")
     wkspc_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
-    db_id = deep_get(
-        event,
+    db_id = event.deep_get(
         "event",
         "workspace.settings.public_homepage_added",
         "new_public_page",
@@ -28,8 +26,7 @@ def title(event):
 def alert_context(event):
     context = notion_alert_context(event)
     workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
-    db_id = deep_get(
-        event,
+    db_id = event.deep_get(
         "event",
         "workspace.settings.public_homepage_added",
         "new_public_page",

@@ -2,8 +2,8 @@ from panther_base_helpers import crowdstrike_process_alert_context
 
 
 def rule(event):
-    event_platform = event.deep_get("event_platform", default="<UNKNOWN_PLATFORM>")
-    event_simplename = event.deep_get("event_simplename", default="<UNKNOWN_EVENT_SIMPLENAME>")
+    event_platform = event.get("event_platform", "<UNKNOWN_PLATFORM>")
+    event_simplename = event.get("event_simplename", "<UNKNOWN_EVENT_SIMPLENAME>")
     image_filename = event.deep_get("event", "ImageFileName", default="<UNKNOWN_IMAGE_FILE_NAME>")
     command_line = event.deep_get("event", "CommandLine", default="<UNKNOWN_COMMAND_LINE>")
     return all(

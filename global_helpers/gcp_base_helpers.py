@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def get_info(event):
     fields = {
         "principal": "protoPayload.authenticationInfo.principalEmail",
@@ -9,7 +6,7 @@ def get_info(event):
         "user_agent": "protoPayload.requestMetadata.callerSuppliedUserAgent",
         "method_name": "protoPayload.methodName",
     }
-    return {name: deep_get(event, *(path.split("."))) for name, path in fields.items()}
+    return {name: event.deep_get(*(path.split("."))) for name, path in fields.items()}
 
 
 def get_k8s_info(event):
@@ -17,7 +14,7 @@ def get_k8s_info(event):
     Get GCP K8s info such as pod, authorized user etc.
     return a tuple of strings
     """
-    pod_slug = deep_get(event, "protoPayload", "resourceName")
+    pod_slug = event.deep_get("protoPayload", "resourceName")
     # core/v1/namespaces/<namespace>/pods/<pod-id>/<action>
     _, _, _, namespace, _, pod, _ = pod_slug.split("/")
     return get_info(event) | {"namespace": namespace, "pod": pod}
@@ -33,17 +30,17 @@ def get_flow_log_info(event):
         "bytes_sent": "jsonPayload.bytes_sent",
         "reporter": "jsonPayload.reporter",
     }
-    return {name: deep_get(event, *(path.split("."))) for name, path in fields.items()}
+    return {name: event.deep_get(*(path.split("."))) for name, path in fields.items()}
 
 
 def gcp_alert_context(event):
     return {
-        "project": deep_get(event, "resource", "labels", "project_id", default=""),
-        "principal": deep_get(
-            event, "protoPayload", "authenticationInfo", "principalEmail", default=""
+        "project": event.deep_get("resource", "labels", "project_id", default=""),
+        "principal": event.deep_get(
+            "protoPayload", "authenticationInfo", "principalEmail", default=""
         ),
-        "caller_ip": deep_get(event, "protoPayload", "requestMetadata", "callerIP", default=""),
-        "methodName": deep_get(event, "protoPayload", "methodName", default=""),
-        "resourceName": deep_get(event, "protoPayload", "resourceName", default=""),
-        "serviceName": deep_get(event, "protoPayload", "serviceName", default=""),
+        "caller_ip": event.deep_get("protoPayload", "requestMetadata", "callerIP", default=""),
+        "methodName": event.deep_get("protoPayload", "methodName", default=""),
+        "resourceName": event.deep_get("protoPayload", "resourceName", default=""),
+        "serviceName": event.deep_get("protoPayload", "serviceName", default=""),
     }

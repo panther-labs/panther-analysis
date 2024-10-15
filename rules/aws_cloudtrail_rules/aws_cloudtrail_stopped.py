@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success, lookup_aws_account_name
 
 # API calls that are indicative of CloudTrail changes
@@ -14,7 +14,7 @@ def rule(event):
 
 def dedup(event):
     # Merge on the CloudTrail ARN
-    return deep_get(event, "requestParameters", "name", default="<UNKNOWN_NAME>")
+    return event.deep_get("requestParameters", "name", default="<UNKNOWN_NAME>")
 
 
 def title(event):

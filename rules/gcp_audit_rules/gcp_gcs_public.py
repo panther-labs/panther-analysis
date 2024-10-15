@@ -5,10 +5,10 @@ GLOBAL_USERS = {"allUsers", "allAuthenticatedUsers"}
 
 
 def rule(event):
-    if deep_get(event, "protoPayload", "methodName") != "storage.setIamPermissions":
+    if event.deep_get("protoPayload", "methodName") != "storage.setIamPermissions":
         return False
 
-    service_data = deep_get(event, "protoPayload", "serviceData")
+    service_data = event.deep_get("protoPayload", "serviceData")
     if not service_data:
         return False
 
@@ -28,6 +28,6 @@ def rule(event):
 def title(event):
     return (
         f"GCS bucket "
-        f"[{deep_get(event, 'resource', 'labels', 'bucket_name', default='<UNKNOWN_BUCKET>')}] "
+        f"[{event.deep_get('resource', 'labels', 'bucket_name', default='<UNKNOWN_BUCKET>')}] "
         f"made public"
     )

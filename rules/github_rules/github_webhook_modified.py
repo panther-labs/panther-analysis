@@ -1,5 +1,5 @@
 from global_filter_github import filter_include_event
-from panther_base_helpers import deep_get, github_alert_context
+from panther_base_helpers import github_alert_context
 
 
 def rule(event):
@@ -17,7 +17,7 @@ def title(event):
         action = "created"
 
     title_str = (
-        f"Github webhook [{deep_get(event,'config','url',default='<UNKNOWN_URL>')}]"
+        f"Github webhook [{event.deep_get('config','url',default='<UNKNOWN_URL>')}]"
         f" {action} by [{event.get('actor','<UNKNOWN_ACTOR>')}]"
     )
     if repo != "<UNKNOWN_REPO>":
@@ -37,5 +37,5 @@ def alert_context(event):
     ctx["hook_id"] = event.get("hook_id", "")
     ctx["integration"] = event.get("integration", "")
     ctx["operation_type"] = event.get("operation_type", "")
-    ctx["url"] = deep_get(event, "config", "url", default="<UNKNOWN_URL>")
+    ctx["url"] = event.deep_get("config", "url", default="<UNKNOWN_URL>")
     return ctx

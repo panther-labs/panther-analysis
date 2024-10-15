@@ -1,22 +1,22 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
     return (
         event.get("eventSource", "") == "iam.amazonaws.com"
         and event.get("eventName", "") == "UpdateLoginProfile"
-        and not deep_get(event, "requestParameters", "passwordResetRequired", default=False)
-        and not deep_get(event, "userIdentity", "arn", default="").endswith(
-            f"/{deep_get(event, 'requestParameters', 'userName', default='')}"
+        and not event.deep_get("requestParameters", "passwordResetRequired", default=False)
+        and not event.deep_get("userIdentity", "arn", default="").endswith(
+            f"/{event.deep_get('requestParameters', 'userName', default='')}"
         )
     )
 
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'userIdentity', 'arn').split('/')[-1]}] "
+        f"User [{event.deep_get('userIdentity', 'arn').split('/')[-1]}] "
         f"changed the password for "
-        f"[{deep_get(event, 'requestParameters','userName')}]"
+        f"[{event.deep_get('requestParameters','userName')}]"
     )
 
 

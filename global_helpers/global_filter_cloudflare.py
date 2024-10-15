@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all cloudflare detections
