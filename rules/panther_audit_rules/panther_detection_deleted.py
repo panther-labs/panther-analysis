@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 PANTHER_DETECTION_DELETE_ACTIONS = [
     "DELETE_DATA_MODEL",
     "DELETE_DETECTION",
@@ -22,9 +20,9 @@ def title(event):
 
 
 def alert_context(event):
-    detections_list = deep_get(event, "actionParams", "dynamic", "input", "detections")
+    detections_list = event.deep_get("actionParams", "dynamic", "input", "detections")
     if detections_list is None:
-        detections_list = deep_get(event, "actionParams", "input", "detections", default=[])
+        detections_list = event.deep_get("actionParams", "input", "detections", default=[])
     return {
         "deleted_detections_list": [x.get("id") for x in detections_list],
         "user": event.udm("actor_user"),

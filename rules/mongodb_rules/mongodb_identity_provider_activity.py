@@ -16,7 +16,7 @@ def rule(event):
         "OIDC_IDENTITY_PROVIDER_ENABLED",
         "OIDC_IDENTITY_PROVIDER_DISABLED",
     }
-    return event.deep_get("eventTypeName") in important_event_types
+    return event.get("eventTypeName") in important_event_types
 
 
 def title(event):

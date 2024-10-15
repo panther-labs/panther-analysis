@@ -1,5 +1,4 @@
 from global_filter_notion import filter_include_event
-from panther_base_helpers import deep_get
 from panther_notion_helpers import notion_alert_context
 
 
@@ -15,8 +14,7 @@ def rule(event):
 def title(event):
     user = event.deep_get("event", "actor", "person", "email", default="<NO_USER_FOUND>")
     workspace_id = event.deep_get("event", "workspace_id", default="<NO_WORKSPACE_ID_FOUND>")
-    state = deep_get(
-        event,
+    state = event.deep_get(
         "event",
         "workspace.settings.enforce_saml_sso_config_updated",
         "state",
@@ -36,8 +34,7 @@ def title(event):
 
 
 def severity(event):
-    state = deep_get(
-        event,
+    state = event.deep_get(
         "event",
         "workspace.settings.enforce_saml_sso_config_updated",
         "state",

@@ -10,6 +10,7 @@ import string
 import sys
 import unittest
 
+from panther_core.enriched_event import PantherEvent
 from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
 
 # pipenv run does the right thing, but IDE based debuggers may fail to import
@@ -38,7 +39,7 @@ import panther_zoom_helpers as p_zoom_h  # pylint: disable=C0413
 class TestEksPantherObjRef(unittest.TestCase):
     def setUp(self):
         # pylint: disable=C0301
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "annotations": {
                     "authorization.k8s.io/decision": "allow",
@@ -110,7 +111,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         del temp_event["sourceIPs"]
         del temp_event["verb"]
         del temp_event["p_source_label"]
-        temp_event = ImmutableCaseInsensitiveDict(temp_event)
+        temp_event = PantherEvent(temp_event)
         response = p_b_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("actor", ""), "<NO_USERNAME>")
         self.assertEqual(response.get("object", ""), "<NO_OBJECT_NAME>")
@@ -124,7 +125,7 @@ class TestEksPantherObjRef(unittest.TestCase):
     def test_missing_subresource_event(self):
         temp_event = self.event.to_dict()
         del temp_event["objectRef"]["subresource"]
-        temp_event = ImmutableCaseInsensitiveDict(temp_event)
+        temp_event = PantherEvent(temp_event)
         response = p_b_h.eks_panther_obj_ref(temp_event)
         self.assertEqual(response.get("resource", ""), "pods")
 
@@ -203,12 +204,12 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}}
         )
 
         # match against array field
-        self.event_list = ImmutableCaseInsensitiveDict(
+        self.event_list = PantherEvent(
             {
                 "p_enrichment": {
                     "tor_exit_nodes": {
@@ -223,7 +224,7 @@ class TestTorExitNodes(unittest.TestCase):
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
-        tor_exit_nodes = p_tor_h.TorExitNodes({})
+        tor_exit_nodes = p_tor_h.TorExitNodes(PantherEvent({}))
         ip_address = tor_exit_nodes.ip_address("foo")
         self.assertEqual(ip_address, None)
         self.assertEqual(tor_exit_nodes.has_exit_nodes(), False)
@@ -284,7 +285,7 @@ class TestTorExitNodes(unittest.TestCase):
 
 class TestGreyNoiseBasic(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_noise_basic": {
@@ -306,7 +307,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
         # Ensure that noise.lut_matches is None if there is no enrichment
         # some users want to test if any greynoise enrichment exists
         self.assertIsNotNone(noise.lut_matches)
-        noise_none = p_greynoise_h.GetGreyNoiseObject({})
+        noise_none = p_greynoise_h.GetGreyNoiseObject(PantherEvent({}))
         self.assertIsNone(noise_none.lut_matches)
 
     def test_greynoise_severity(self):
@@ -316,12 +317,12 @@ class TestGreyNoiseBasic(unittest.TestCase):
 
     def test_subscription_level(self):
         """Should be basic"""
-        noise = p_greynoise_h.GreyNoiseBasic({})
+        noise = p_greynoise_h.GreyNoiseBasic(PantherEvent({}))
         self.assertEqual(noise.subscription_level(), "basic")
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
-        noise = p_greynoise_h.GreyNoiseBasic({})
+        noise = p_greynoise_h.GreyNoiseBasic(PantherEvent({}))
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
@@ -367,7 +368,7 @@ class TestGreyNoiseBasic(unittest.TestCase):
 # pylint: disable=too-many-public-methods
 class TestGreyNoiseAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_noise_advanced": {
@@ -409,7 +410,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
             }
         )
 
-        self.event_list = ImmutableCaseInsensitiveDict(
+        self.event_list = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_noise_advanced": {
@@ -495,12 +496,12 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
     def test_subscription_level(self):
         """Should be advanced"""
-        noise = p_greynoise_h.GreyNoiseAdvanced({})
+        noise = p_greynoise_h.GreyNoiseAdvanced(PantherEvent({}))
         self.assertEqual(noise.subscription_level(), "advanced")
 
     def test_ip_address_not_found(self):
         """Should not find anything"""
-        noise = p_greynoise_h.GreyNoiseAdvanced({})
+        noise = p_greynoise_h.GreyNoiseAdvanced(PantherEvent({}))
         ip_address = noise.ip_address("foo")
         self.assertEqual(ip_address, None)
 
@@ -712,7 +713,7 @@ class TestGreyNoiseAdvanced(unittest.TestCase):
 
 class TestRIOTBasic(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_riot_basic": {
@@ -734,7 +735,7 @@ class TestRIOTBasic(unittest.TestCase):
 
     def test_subscription_level(self):
         """Should be basic"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic({})
+        riot = p_greynoise_h.GreyNoiseRIOTBasic(PantherEvent({}))
         self.assertEqual(riot.subscription_level(), "basic")
 
     def test_greynoise_severity(self):
@@ -789,7 +790,7 @@ class TestRIOTBasic(unittest.TestCase):
 
 class TestRIOTAdvanced(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_riot_advanced": {
@@ -812,7 +813,7 @@ class TestRIOTAdvanced(unittest.TestCase):
         )
 
         # for testing array matches
-        self.event_list = ImmutableCaseInsensitiveDict(
+        self.event_list = PantherEvent(
             {
                 "p_enrichment": {
                     "greynoise_riot_advanced": {
@@ -856,7 +857,7 @@ class TestRIOTAdvanced(unittest.TestCase):
 
     def test_subscription_level(self):
         """Should be advanced"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced({})
+        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(PantherEvent({}))
         self.assertEqual(riot.subscription_level(), "advanced")
 
     def test_greynoise_severity(self):
@@ -962,7 +963,7 @@ class TestRIOTAdvanced(unittest.TestCase):
 class TestIpInfoHelpersLocation(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     p_i_h.IPINFO_LOCATION_LUT_NAME: {
@@ -1035,7 +1036,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
 class TestIpInfoHelpersASN(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
@@ -1120,7 +1121,7 @@ class TestFilterCrowdStrikeFdrEventType(unittest.TestCase):
 
 class TestGetCrowdstrikeField(unittest.TestCase):
     def setUp(self):
-        self.input = ImmutableCaseInsensitiveDict(
+        self.input = PantherEvent(
             {
                 "cid": "something",
                 "aid": "else",
@@ -1152,7 +1153,7 @@ class TestGetCrowdstrikeField(unittest.TestCase):
     def test_precedence(self):
         temp_event = self.input.to_dict()
         temp_event["event"]["field"] = "found"
-        temp_event = ImmutableCaseInsensitiveDict(temp_event)
+        temp_event = PantherEvent(temp_event)
         response = p_b_h.get_crowdstrike_field(temp_event, "field")
         self.assertEqual(response, "found")
 
@@ -1160,7 +1161,7 @@ class TestGetCrowdstrikeField(unittest.TestCase):
 class TestIpInfoHelpersPrivacy(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     p_i_h.IPINFO_PRIVACY_LUT_NAME: {
@@ -1221,7 +1222,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
 class TestGeoInfoFromIP(unittest.TestCase):
     def setUp(self):
         self.match_field = "clientIp"
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
@@ -1267,7 +1268,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
         self.assertEqual(expected, geoinfo)
 
     def test_ipinfo_not_enabled_exception(self):
-        event = ImmutableCaseInsensitiveDict({"p_enrichment": {}})
+        event = PantherEvent({"p_enrichment": {}})
         with self.assertRaises(p_i_h.PantherIPInfoException) as exc:
             p_i_h.geoinfo_from_ip(event, "fake_field")
 
@@ -1523,7 +1524,7 @@ class TestDeepWalk(unittest.TestCase):
 
 class TestCloudflareHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "Source": "firewallrules",
                 "ClientIP": "12.12.12.12",
@@ -1635,7 +1636,7 @@ class TestCloudflareHelpers(unittest.TestCase):
 
 class TestAsanaHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "actor": {
                     "actor_type": "user",
@@ -1670,13 +1671,13 @@ class TestAsanaHelpers(unittest.TestCase):
         # Remove the user's email attribute
         tmp_event = self.event.to_dict()
         tmp_event["actor"].pop("email")
-        tmp_event = ImmutableCaseInsensitiveDict(tmp_event)
+        tmp_event = PantherEvent(tmp_event)
         returns = p_a_h.asana_alert_context(tmp_event)
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_EMAIL>")
         self.assertEqual(returns.get("resource_type", ""), "task")
         tmp_event = tmp_event.to_dict()
         tmp_event["resource"] = {"resource_type": "story", "resource_subtype": "added_to_project"}
-        tmp_event = ImmutableCaseInsensitiveDict(tmp_event)
+        tmp_event = PantherEvent(tmp_event)
         returns = p_a_h.asana_alert_context(tmp_event)
         self.assertEqual(returns.get("resource_type", ""), "story__added_to_project")
         # resource with no resource subtype
@@ -1687,14 +1688,14 @@ class TestAsanaHelpers(unittest.TestCase):
             "name": "Users Name",
             "resource_type": "user",
         }
-        tmp_event = ImmutableCaseInsensitiveDict(tmp_event)
+        tmp_event = PantherEvent(tmp_event)
         returns = p_a_h.asana_alert_context(tmp_event)
         self.assertEqual(returns.get("resource_type", ""), "user")
         self.assertEqual(returns.get("resource_name", ""), "Users Name")
         self.assertEqual(returns.get("resource_gid", ""), "1111111111111111")
 
     def test_safe_ac_missing_entries(self):
-        returns = p_a_h.asana_alert_context(ImmutableCaseInsensitiveDict({}))
+        returns = p_a_h.asana_alert_context(PantherEvent({}))
         self.assertEqual(returns.get("actor"), "<NO_ACTOR>")
         self.assertEqual(returns.get("event_type"), "<NO_EVENT_TYPE>")
         self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
@@ -1702,12 +1703,12 @@ class TestAsanaHelpers(unittest.TestCase):
         self.assertEqual(returns.get("resource_gid"), "<NO_RESOURCE_GID>")
         tmp_event = self.event.to_dict()
         tmp_event["resource"]["resource_type"] = None
-        tmp_event = ImmutableCaseInsensitiveDict(tmp_event)
+        tmp_event = PantherEvent(tmp_event)
         returns = p_a_h.asana_alert_context(tmp_event)
         self.assertEqual(returns.get("resource_type"), "<NO_RESOURCE_TYPE>")
 
     def test_external_admin(self):
-        event = ImmutableCaseInsensitiveDict(
+        event = PantherEvent(
             {
                 "actor": {"actor_type": "external_administrator"},
                 "context": {"context_type": "api"},
@@ -1731,7 +1732,7 @@ class TestAsanaHelpers(unittest.TestCase):
 
 class TestSnykHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "content": {"url": "/api/v1/user/me"},
                 "created": "2022-12-27 16:50:46.959",
@@ -1769,7 +1770,7 @@ class TestSnykHelpers(unittest.TestCase):
 
 class TestTinesHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "created_at": "2023-05-01 01:02:03",
                 "id": 7206820,
@@ -1814,7 +1815,7 @@ class TestTinesHelpers(unittest.TestCase):
 
 class TestAuth0Helpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "data": {
                     "client_id": "1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr",
@@ -1870,8 +1871,8 @@ class TestAuth0Helpers(unittest.TestCase):
         )
         self.assertEqual(returns.get("action", ""), "Create a role")
         self.assertEqual(auth0_config_event, True)
-        returns = p_auth0_h.auth0_alert_context(ImmutableCaseInsensitiveDict({}))
-        auth0_config_event = p_auth0_h.is_auth0_config_event({})
+        returns = p_auth0_h.auth0_alert_context(PantherEvent({}))
+        auth0_config_event = p_auth0_h.is_auth0_config_event(PantherEvent({}))
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
         self.assertEqual(auth0_config_event, False)
@@ -1879,7 +1880,7 @@ class TestAuth0Helpers(unittest.TestCase):
 
 class TestTailscaleHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "event": {
                     "action": "CREATE",
@@ -1912,8 +1913,10 @@ class TestTailscaleHelpers(unittest.TestCase):
         )
         self.assertEqual(returns.get("action", ""), "CREATE")
         self.assertEqual(tailscale_admin_console_event, True)
-        returns = p_tscale_h.tailscale_alert_context(ImmutableCaseInsensitiveDict({}))
-        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event({})
+        returns = p_tscale_h.tailscale_alert_context(PantherEvent({}))
+        tailscale_admin_console_event = p_tscale_h.is_tailscale_admin_console_event(
+            PantherEvent({})
+        )
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
         self.assertEqual(tailscale_admin_console_event, False)
@@ -1987,7 +1990,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
 
 class TestNotionHelpers(unittest.TestCase):
     def setUp(self):
-        self.event = ImmutableCaseInsensitiveDict(
+        self.event = PantherEvent(
             {
                 "event": {
                     "id": "...",
@@ -2019,7 +2022,7 @@ class TestNotionHelpers(unittest.TestCase):
             },
         )
         self.assertEqual(returns.get("action", ""), "workspace.content_exported")
-        returns = p_notion_h.notion_alert_context(ImmutableCaseInsensitiveDict({}))
+        returns = p_notion_h.notion_alert_context(PantherEvent({}))
         self.assertEqual(returns.get("actor", ""), "<NO_ACTOR_FOUND>")
         self.assertEqual(returns.get("action", ""), "<NO_ACTION_FOUND>")
 
@@ -2027,10 +2030,10 @@ class TestNotionHelpers(unittest.TestCase):
 class TestLookupTableHelpers(unittest.TestCase):
     # pylint: disable=protected-access
     def setUp(self):
-        self.simple_event_no_pmatch = ImmutableCaseInsensitiveDict(
+        self.simple_event_no_pmatch = PantherEvent(
             {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
         )
-        self.simple_event = ImmutableCaseInsensitiveDict(
+        self.simple_event = PantherEvent(
             {
                 "p_enrichment": {
                     "tor_exit_nodes": {
@@ -2051,7 +2054,7 @@ class TestLookupTableHelpers(unittest.TestCase):
             }
         )
         # match against array field
-        self.list_event = ImmutableCaseInsensitiveDict(
+        self.list_event = PantherEvent(
             {
                 "p_enrichment": {
                     "tor_exit_nodes": {
@@ -2109,7 +2112,7 @@ class TestLookupTableHelpers(unittest.TestCase):
 class TestAzureSigninHelpers(unittest.TestCase):
     def setUp(self):
         # pylint: disable=line-too-long
-        self.event_noninteractive = ImmutableCaseInsensitiveDict(
+        self.event_noninteractive = PantherEvent(
             {
                 "Level": 4,
                 "callerIpAddress": "12.12.12.12",
@@ -2213,7 +2216,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "time": "2023-07-24 07:13:50.894",
             }
         )
-        self.event_signin = ImmutableCaseInsensitiveDict(
+        self.event_signin = PantherEvent(
             {
                 "Level": 4,
                 "callerIpAddress": "12.12.12.12",
@@ -2353,7 +2356,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "resourceId": "b0d1813f-efb7-4d74-b573-50f2931a6837",
             },
         )
-        returns = p_asi_h.azure_signin_alert_context({})
+        returns = p_asi_h.azure_signin_alert_context(PantherEvent({}))
         self.assertEqual(
             returns,
             {

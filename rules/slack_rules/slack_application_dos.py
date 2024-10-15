@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_base_helpers import slack_alert_context
 
 DENIAL_OF_SERVICE_ACTIONS = [
     "bulk_session_reset_by_admin",
@@ -16,7 +16,7 @@ def rule(event):
 
 
 def dedup(event):
-    return f"Slack.AuditLogs.ApplicationDoS{deep_get(event, 'entity', 'user', 'name')}"
+    return f"Slack.AuditLogs.ApplicationDoS{event.deep_get('entity', 'user', 'name')}"
 
 
 def alert_context(event):

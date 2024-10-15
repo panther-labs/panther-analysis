@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 DISCOVERY_EVENTS = [
     "ListDocuments",
@@ -29,14 +29,14 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'userIdentity', 'principalId')}] "
+        f"User [{event.deep_get('userIdentity', 'principalId')}] "
         f"performed a [{event.get('eventName')}] "
         f"action in AWS account [{event.get('recipientAccountId')}]."
     )
 
 
 def dedup(event):
-    return deep_get(event, "userIdentity", "principalId", default="NO_PRINCIPAL_ID_FOUND")
+    return event.deep_get("userIdentity", "principalId", default="NO_PRINCIPAL_ID_FOUND")
 
 
 def alert_context(event):

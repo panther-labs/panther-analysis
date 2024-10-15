@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
@@ -6,7 +6,7 @@ def rule(event):
         event.get("eventSource", "") == "rds.amazonaws.com"
         and event.get("eventName", "") == "RestoreDBInstanceFromDBSnapshot"
     ):
-        if deep_get(event, "responseElements", "publiclyAccessible"):
+        if event.deep_get("responseElements", "publiclyAccessible"):
             return True
     return False
 

@@ -1,8 +1,5 @@
-from panther_base_helpers import deep_walk
-
-
 def rule(event):
-    data_values = deep_walk(event, "supporting_data", "data_values")
+    data_values = event.deep_walk("supporting_data", "data_values")
     if data_values and data_values[0] == 403:
         return True
     return False

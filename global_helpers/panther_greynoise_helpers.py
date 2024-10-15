@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
-from panther_base_helpers import deep_get
 from panther_lookuptable_helpers import LookupTableMatches
 
 
@@ -285,13 +284,13 @@ class GreyNoiseRIOTAdvanced(GreyNoiseRIOTBasic):
 
 # pylint: disable=invalid-name
 def GetGreyNoiseObject(event):
-    if deep_get(event, "p_enrichment", "greynoise_noise_advanced"):
+    if event.deep_get("p_enrichment", "greynoise_noise_advanced"):
         return GreyNoiseAdvanced(event)
     return GreyNoiseBasic(event)
 
 
 def GetGreyNoiseRiotObject(event):
-    if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
+    if event.deep_get("p_enrichment", "greynoise_riot_advanced"):
         return GreyNoiseRIOTAdvanced(event)
     return GreyNoiseRIOTBasic(event)
 

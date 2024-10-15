@@ -1,18 +1,15 @@
-from panther_base_helpers import deep_get
-
 DESTRUCTIVE_STATEMENTS = ["UPDATE", "DELETE", "DROP_TABLE", "ALTER_TABLE", "TRUNCATE_TABLE"]
 
 
 def rule(event):
     if all(
         [
-            deep_get(event, "resource", "type", default="<RESOURCE_NOT_FOUND>").startswith(
+            event.deep_get("resource", "type", default="<RESOURCE_NOT_FOUND>").startswith(
                 "bigquery"
             ),
-            deep_get(event, "protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
+            event.deep_get("protoPayload", "metadata", "jobChange", "job", "jobConfig", "type")
             == "QUERY",
-            deep_get(
-                event,
+            event.deep_get(
                 "protoPayload",
                 "metadata",
                 "jobChange",
@@ -27,21 +24,20 @@ def rule(event):
     ):
         return True
 
-    if deep_get(event, "protoPayload", "metadata", "tableDeletion"):
+    if event.deep_get("protoPayload", "metadata", "tableDeletion"):
         return True
 
-    if deep_get(event, "protoPayload", "metadata", "datasetDeletion"):
+    if event.deep_get("protoPayload", "metadata", "datasetDeletion"):
         return True
 
     return False
 
 
 def title(event):
-    actor = deep_get(
-        event, "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
     )
-    statement = deep_get(
-        event,
+    statement = event.deep_get(
         "protoPayload",
         "metadata",
         "jobChange",
@@ -51,8 +47,7 @@ def title(event):
         "statementType",
         default="<STATEMENT_NOT_FOUND>",
     )
-    table = deep_get(
-        event,
+    table = event.deep_get(
         "protoPayload",
         "metadata",
         "jobChange",
@@ -60,14 +55,13 @@ def title(event):
         "jobConfig",
         "queryConfig",
         "destinationTable",
-    ) or deep_get(event, "protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>")
+    ) or event.deep_get("protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>")
     return f"GCP: [{actor}] performed a destructive BigQuery [{statement}] query on [{table}]."
 
 
 def alert_context(event):
     return {
-        "query": deep_get(
-            event,
+        "query": event.deep_get(
             "protoPayload",
             "metadata",
             "jobChange",
@@ -77,15 +71,13 @@ def alert_context(event):
             "query",
             default="<QUERY_NOT_FOUND>",
         ),
-        "actor": deep_get(
-            event,
+        "actor": event.deep_get(
             "protoPayload",
             "authenticationInfo",
             "principalEmail",
             default="<ACTOR_NOT_FOUND>",
         ),
-        "statement": deep_get(
-            event,
+        "statement": event.deep_get(
             "protoPayload",
             "metadata",
             "jobChange",
@@ -95,8 +87,7 @@ def alert_context(event):
             "statementType",
             default="<STATEMENT_NOT_FOUND>",
         ),
-        "table": deep_get(
-            event,
+        "table": event.deep_get(
             "protoPayload",
             "metadata",
             "jobChange",
@@ -105,5 +96,5 @@ def alert_context(event):
             "queryConfig",
             "destinationTable",
         )
-        or deep_get(event, "protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>"),
+        or event.deep_get("protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>"),
     }

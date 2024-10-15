@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 # AWS CloudTrail API eventNames for EC2 Image Actions
 EC2_IMAGE_ACTIONS = [
     "CopyFpgaImage",
@@ -24,9 +22,9 @@ def rule(event):
         #  though their userIdentity will be more normal.
         #  Example cloudtrail event in the "Terminate instance From WebUI with assumedRole" test
         event.get("sourceIPAddress", "").endswith(".amazonaws.com")
-        or deep_get(event, "userIdentity", "type", default="") == "AWSService"
-        or deep_get(event, "userIdentity", "invokedBy", default="") == "AWS Internal"
-        or deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
+        or event.deep_get("userIdentity", "type", default="") == "AWSService"
+        or event.deep_get("userIdentity", "invokedBy", default="") == "AWS Internal"
+        or event.deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
     ):
         return False
     # Dry run operations get logged as SES Internal in the sourceIPAddress
@@ -43,7 +41,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event, 'userIdentity', 'sessionContext', 'sessionIssuer', 'userName')}] "
+        f"[{event.deep_get('userIdentity', 'sessionContext', 'sessionIssuer', 'userName')}] "
         f"triggered a CloudTrail action [{event.get('eventName')}] "
         f"within AWS Account ID: [{event.get('recipientAccountId')}]"
     )
