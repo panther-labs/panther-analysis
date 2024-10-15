@@ -1,13 +1,15 @@
 AnalysisType: rule
 Filename: gcp_user_added_to_privileged_group.py
 RuleID: "GCP.User.Added.To.Privileged.Group"
-DisplayName: "GCP VPC Flow Logs Disabled"
-Enabled: true
+DisplayName: "GCP User Added to Privileged Group"
+Enabled: false
 LogTypes:
   - GCP.AuditLog
 Severity: Low
+Tags:
+  - Configuration Required
 Reports:
-  MITRA ATT&CK:
+  MITRE ATT&CK:
     - TA0004:T1078.004 # Privilege Escalation: Valid Accounts: Cloud Accounts
     - TA0004:T1484.001 # Privilege Escalation: Domain or Tenant Policy Modification: Group Policy Modification
 Description: A user was added to a group with special previleges

@@ -9,21 +9,19 @@ GROUP_EMAIL = ""
 
 
 def rule(event):
-    events = event.deep_get("protoPayload", "metadata", "event")
-    if len(events) != 1:
-        return False
+    events = event.deep_get("protoPayload", "metadata", "event", default=[])
 
-    event_ = events[0]
-    if event_.get("eventname") != "ADD_GROUP_MEMBER":
-        return False
-
-    # Get the username
-    params = key_value_list_to_dict(event_.get("parameter", []), "name", "value")
-    global USER_EMAIL, GROUP_EMAIL  # pylint: disable=global-statement
-    USER_EMAIL = params.get("USER_EMAIL", "<UNKNOWN USER>")
-    GROUP_EMAIL = params.get("GROUP_EMAIL", "<UNKNOWN GROUP>")
-
-    return GROUP_EMAIL in get_privileged_groups()
+    for event_ in events:
+        if event_.get("eventname") != "ADD_GROUP_MEMBER":
+            continue
+        # Get the username
+        params = key_value_list_to_dict(event_.get("parameter", []), "name", "value")
+        global USER_EMAIL, GROUP_EMAIL  # pylint: disable=global-statement
+        USER_EMAIL = params.get("USER_EMAIL")
+        GROUP_EMAIL = params.get("GROUP_EMAIL")
+        if GROUP_EMAIL in get_privileged_groups():
+            return True
+    return False
 
 
 def title(event):
