@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 # API calls that are indicative of CloudTrail changes
@@ -14,7 +14,7 @@ def rule(event):
 
 
 def title(event):
-    return f"CloudTrail [{deep_get(event, 'requestParameters', 'name')}] was created/updated"
+    return f"CloudTrail [{event.deep_get('requestParameters', 'name')}] was created/updated"
 
 
 def alert_context(event):

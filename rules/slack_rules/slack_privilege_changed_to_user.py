@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_base_helpers import slack_alert_context
 
 
 def rule(event):
@@ -6,8 +6,8 @@ def rule(event):
 
 
 def title(event):
-    username = deep_get(event, "entity", "user", "name", default="<unknown-entity>")
-    email = deep_get(event, "entity", "user", "email", default="<unknown-email>")
+    username = event.deep_get("entity", "user", "name", default="<unknown-entity>")
+    email = event.deep_get("entity", "user", "email", default="<unknown-email>")
 
     return f"Slack {username}'s ({email}) role changed to User"
 

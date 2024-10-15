@@ -1,11 +1,8 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     return all(
         [
-            deep_get(event, "event_type", "_tag", default="") == "app_link_team",
-            deep_get(event, "event_type", "description", default="") == "Linked app for team",
+            event.deep_get("event_type", "_tag", default="") == "app_link_team",
+            event.deep_get("event_type", "description", default="") == "Linked app for team",
         ]
     )
 
@@ -39,8 +36,8 @@ def title(event):
     # find the intersection and use that for the key
     actor_key = set(tuple(event.get("actor", {}).keys())).intersection(get_actor_type())
     if len(actor_key) == 1:
-        display_name = deep_get(
-            event, "actor", tuple(actor_key)[0], "display_name", default="<Unknown>"
+        display_name = event.deep_get(
+            "actor", tuple(actor_key)[0], "display_name", default="<Unknown>"
         )
     # Explicitly use "<Unknown>" if we find any length of keys != 1
     else:
@@ -64,13 +61,13 @@ def alert_context(event):
     additional_user_details = user_details(event)
     return {
         "additional_user_details": additional_user_details,
-        "app_display_name": deep_get(
-            event, "details", "app_info", "display_name", default="<Unknown app display name>"
+        "app_display_name": event.deep_get(
+            "details", "app_info", "display_name", default="<Unknown app display name>"
         ),
-        "ip_address": deep_get(
-            event, "origin", "geo_location", "ip_address", default="<Unknown IP address>"
+        "ip_address": event.deep_get(
+            "origin", "geo_location", "ip_address", default="<Unknown IP address>"
         ),
-        "request_id": deep_get(
-            event, "origin", "access_method", "request_id", default="<Unknown request ID>"
+        "request_id": event.deep_get(
+            "origin", "access_method", "request_id", default="<Unknown request ID>"
         ),
     }

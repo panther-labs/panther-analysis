@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 EC2_CRUD_ACTIONS = {
     "AssociateIamInstanceProfile",
     "AssociateInstanceEventWindow",
@@ -47,9 +45,9 @@ def rule(event):
         #  though their userIdentity will be more normal.
         #  Example cloudtrail event in the "Terminate instance From WebUI with assumedRole" test
         event.get("sourceIPAddress", "").endswith(".amazonaws.com")
-        or deep_get(event, "userIdentity", "type", default="") == "AWSService"
-        or deep_get(event, "userIdentity", "invokedBy", default="") == "AWS Internal"
-        or deep_get(event, "userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
+        or event.deep_get("userIdentity", "type", default="") == "AWSService"
+        or event.deep_get("userIdentity", "invokedBy", default="") == "AWS Internal"
+        or event.deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com")
     ):
         return False
     # Dry run operations get logged as SES Internal in the sourceIPAddress
@@ -64,8 +62,8 @@ def rule(event):
 
 
 def title(event):
-    items = deep_get(
-        event, "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
+    items = event.deep_get(
+        "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
     )
     return (
         f"AWS Event [{event.get('eventName')}] Instance ID "
@@ -74,8 +72,8 @@ def title(event):
 
 
 def alert_context(event):
-    items = deep_get(
-        event, "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
+    items = event.deep_get(
+        "requestParameters", "instancesSet", "items", default=[{"instanceId": "none"}]
     )
     return {
         "awsRegion": event.get("awsRegion"),

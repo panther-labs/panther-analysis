@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 def rule(_):
     return True
 
@@ -8,6 +5,6 @@ def rule(_):
 def title(event):
     return (
         "Okta Login for "
-        f"[{deep_get(event, 'actor', 'alternateId', default = '<email_not_found>')}]"
+        f"[{event.deep_get('actor', 'alternateId', default = '<email_not_found>')}]"
         " from unmanaged IP Address."
     )

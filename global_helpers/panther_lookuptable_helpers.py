@@ -13,7 +13,7 @@ class LookupTableMatches:
         self._p_matched = {}
 
     def _register(self, event, lookuptable_name: str):
-        self.lut_matches = deep_get(event, ENRICHMENT_KEY, lookuptable_name)
+        self.lut_matches = event.deep_get(ENRICHMENT_KEY, lookuptable_name)
 
     def _lookup(self, match_field: str, *keys) -> list or str:
         match = deep_get(self.lut_matches, match_field)

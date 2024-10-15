@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 
 
 def rule(event):
@@ -8,8 +8,8 @@ def rule(event):
     ):
         return False
 
-    mfa_used = deep_get(event, "additionalEventData", "MFAUsed", default="")
-    console_login = deep_get(event, "responseElements", "ConsoleLogin", default="")
+    mfa_used = event.deep_get("additionalEventData", "MFAUsed", default="")
+    console_login = event.deep_get("responseElements", "ConsoleLogin", default="")
 
     if mfa_used == "Yes" and console_login == "Failure":
         return True
@@ -17,8 +17,8 @@ def rule(event):
 
 
 def title(event):
-    arn = deep_get(event, "userIdenity", "arn", default="No ARN")
-    username = deep_get(event, "userIdentity", "userName", default="No Username")
+    arn = event.deep_get("userIdenity", "arn", default="No ARN")
+    username = event.deep_get("userIdentity", "userName", default="No Username")
 
     return f"Failed MFA login from [{arn}] [{username}]"
 

@@ -7,9 +7,9 @@ def rule(event):
     if not filter_include_event(event):
         return False
 
-    data_description = deep_get(event, "data", "description", default="<NO_DATA_DESCRIPTION_FOUND>")
-    request_path = deep_get(
-        event, "data", "details", "request", "path", default="<NO_REQUEST_PATH_FOUND>"
+    data_description = event.deep_get("data", "description", default="<NO_DATA_DESCRIPTION_FOUND>")
+    request_path = event.deep_get(
+        "data", "details", "request", "path", default="<NO_REQUEST_PATH_FOUND>"
     )
 
     return all(
@@ -22,13 +22,13 @@ def rule(event):
 
 
 def title(event):
-    user = deep_get(
-        event, "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
+    user = event.deep_get(
+        "data", "details", "request", "auth", "user", "email", default="<NO_USER_FOUND>"
     )
-    p_source_label = deep_get(event, "p_source_label", default="<NO_P_SOURCE_LABEL_FOUND>")
-    request_bindings = deep_get(event, "data", "details", "request", "body", "bindings", default=[])
-    response_bindings = deep_get(
-        event, "data", "details", "response", "body", "bindings", default=[]
+    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL_FOUND>")
+    request_bindings = event.deep_get("data", "details", "request", "body", "bindings", default=[])
+    response_bindings = event.deep_get(
+        "data", "details", "response", "body", "bindings", default=[]
     )
 
     actions_added_list = []

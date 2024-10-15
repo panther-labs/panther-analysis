@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 SUPPORTED_VERSIONS = [
     "10.15.1",
     "10.15.2",
@@ -10,7 +8,7 @@ SUPPORTED_VERSIONS = [
 def rule(event):
     return (
         event.get("name") == "pack_vuln-management_os_version"
-        and deep_get(event, "columns", "platform") == "darwin"
-        and deep_get(event, "columns", "version") not in SUPPORTED_VERSIONS
+        and event.deep_get("columns", "platform") == "darwin"
+        and event.deep_get("columns", "version") not in SUPPORTED_VERSIONS
         and event.get("action") == "added"
     )

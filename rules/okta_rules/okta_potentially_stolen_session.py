@@ -2,7 +2,7 @@ import json
 from datetime import timedelta
 from difflib import SequenceMatcher
 
-from panther_base_helpers import deep_get, okta_alert_context
+from panther_base_helpers import okta_alert_context
 from panther_detection_helpers.caching import get_string_set, put_string_set
 
 FUZZ_RATIO_MIN = 0.95
@@ -17,15 +17,15 @@ def rule(event):
     # ensure previous session info is avaialable in the alert_context for investigation
     global PREVIOUS_SESSION
 
-    session_id = deep_get(event, "authenticationContext", "externalSessionId", default="unknown")
-    dt_hash = deep_get(event, "debugContext", "debugData", "dtHash", default="unknown")
+    session_id = event.deep_get("authenticationContext", "externalSessionId", default="unknown")
+    dt_hash = event.deep_get("debugContext", "debugData", "dtHash", default="unknown")
 
     # Some events by Okta admins may appear to have changed IPs
     # and user agents due to internal Okta behavior:
     # https://support.okta.com/help/s/article/okta-integrations-showing-as-rawuseragent-with-okta-ips
     # As such, we ignore certain client ids known to originate from Okta:
     # https://developer.okta.com/docs/api/openapi/okta-myaccount/myaccount/tag/OktaApplications/
-    if deep_get(event, "client", "id") in [
+    if event.deep_get("client", "id") in [
         "okta.b58d5b75-07d4-5f25-bf59-368a1261a405"  # Admin Console
     ]:
         return False
@@ -50,18 +50,18 @@ def rule(event):
         put_string_set(
             key,
             [
-                str(deep_get(event, "securityContext", "asNumber")),
-                deep_get(event, "client", "ipAddress"),
+                str(event.deep_get("securityContext", "asNumber")),
+                event.deep_get("client", "ipAddress"),
                 # clearly label the user agent string so we can find it during the comparison
-                "user_agent:" + deep_get(event, "client", "userAgent", "rawUserAgent"),
-                deep_get(event, "client", "userAgent", "browser"),
-                deep_get(event, "client", "userAgent", "os"),
+                "user_agent:" + event.deep_get("client", "userAgent", "rawUserAgent"),
+                event.deep_get("client", "userAgent", "browser"),
+                event.deep_get("client", "userAgent", "os"),
                 event.get("p_event_time"),
                 "sign_on_mode:"
-                + deep_get(event, "debugContext", "debugData", "signOnMode", default="unknown"),
+                + event.deep_get("debugContext", "debugData", "signOnMode", default="unknown"),
                 "threat_suspected:"
-                + deep_get(
-                    event, "debugContext", "debugData", "threat_suspected", default="unknown"
+                + event.deep_get(
+                    "debugContext", "debugData", "threat_suspected", default="unknown"
                 ),
             ],
             epoch_seconds=event.event_time_epoch() + SESSION_TIMEOUT,
@@ -79,13 +79,13 @@ def rule(event):
 
         diff_ratio = SequenceMatcher(
             None,
-            deep_get(event, "client", "userAgent", "rawUserAgent", default="ua_not_found"),
+            event.deep_get("client", "userAgent", "rawUserAgent", default="ua_not_found"),
             prev_ua,
         ).ratio()
 
         # is this session being used from a new IP and a different browser
         if (
-            str(deep_get(event, "client", "ipAddress", default="ip_not_found"))
+            str(event.deep_get("client", "ipAddress", default="ip_not_found"))
             not in PREVIOUS_SESSION
             and diff_ratio < FUZZ_RATIO_MIN
         ):
@@ -99,7 +99,7 @@ def rule(event):
 def title(event):
     return (
         f"Potentially Stolen Okta Session - "
-        f"{deep_get(event, 'actor', 'displayName', default='Unknown_user')}"
+        f"{event.deep_get('actor', 'displayName', default='Unknown_user')}"
     )
 
 

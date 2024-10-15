@@ -7,8 +7,8 @@ def rule(event):
     # Defaults to False (no alert) unless method is exec and principal not allowed
     if not all(
         [
-            deep_walk(event, "protoPayload", "methodName") == "io.k8s.core.v1.pods.exec.create",
-            deep_walk(event, "resource", "type") == "k8s_cluster",
+            event.deep_walk("protoPayload", "methodName") == "io.k8s.core.v1.pods.exec.create",
+            event.deep_walk("resource", "type") == "k8s_cluster",
         ]
     ):
         return False

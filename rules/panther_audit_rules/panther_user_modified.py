@@ -1,5 +1,4 @@
 import panther_event_type_helpers as event_type
-from panther_base_helpers import deep_get
 
 PANTHER_USER_ACTIONS = [
     event_type.USER_ACCOUNT_MODIFIED,
@@ -13,18 +12,18 @@ def rule(event):
 
 
 def title(event):
-    change_target = deep_get(event, "actionParams", "dynamic", "input", "email")
+    change_target = event.deep_get("actionParams", "dynamic", "input", "email")
     if change_target is None:
-        change_target = deep_get(event, "actionParams", "input", "email")
+        change_target = event.deep_get("actionParams", "input", "email")
     if change_target is None:
-        change_target = deep_get(event, "actionParams", "email", default="<UNKNOWN_USER>")
+        change_target = event.deep_get("actionParams", "email", default="<UNKNOWN_USER>")
     return f"The user account " f"{change_target} " f"was modified by {event.udm('actor_user')}"
 
 
 def alert_context(event):
-    change_target = deep_get(event, "actionParams", "dynamic", "input", "email")
+    change_target = event.deep_get("actionParams", "dynamic", "input", "email")
     if change_target is None:
-        change_target = deep_get(event, "actionParams", "input", "email", default="<UNKNOWN_USER>")
+        change_target = event.deep_get("actionParams", "input", "email", default="<UNKNOWN_USER>")
     return {
         "user": event.udm("actor_user"),
         "change_target": change_target,

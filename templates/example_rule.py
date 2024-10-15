@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, pattern_match
+from panther_base_helpers import pattern_match
 
 
 ## Required
@@ -6,7 +6,7 @@ from panther_base_helpers import deep_get, pattern_match
 # The logic to determine if an alert should send.
 # return True = Alert, False = Do not Alert
 def rule(event):
-    return event.get("field") == "value" and deep_get(event, "field", "nestedValue")
+    return event.get("field") == "value" and event.deep_get("field", "nestedValue")
 
 
 ## Optional Functions

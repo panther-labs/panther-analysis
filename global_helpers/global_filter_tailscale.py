@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get  # pylint: disable=unused-import
-
-
 def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     """
     filter_include_event provides a global include filter for all Tailscale detections
@@ -17,7 +14,7 @@ def filter_include_event(event) -> bool:  # pylint: disable=unused-argument
     #
     # # example: event.origin
     # # if we don't know the event_origin, we want default behavior to be to alert on this event.
-    # event_origin = deep_get(event, "event", "origin", default="")
+    # event_origin = event.deep_get("event", "origin", default="")
     # return event_origin in ["ADMIN_CONSOLE", ""]
     #
     return True

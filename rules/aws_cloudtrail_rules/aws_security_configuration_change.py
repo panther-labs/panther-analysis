@@ -2,7 +2,7 @@ import json
 from fnmatch import fnmatch
 from unittest.mock import MagicMock
 
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_base_helpers import aws_rule_context
 from panther_default import aws_cloudtrail_success
 
 SECURITY_CONFIG_ACTIONS = {
@@ -34,8 +34,7 @@ def rule(event):
 
     for entry in ALLOW_LIST:
         if fnmatch(
-            deep_get(
-                event,
+            event.deep_get(
                 "userIdentity",
                 "sessionContext",
                 "sessionIssuer",
@@ -48,14 +47,14 @@ def rule(event):
                 return False
 
     if event.get("eventName") == "UpdateDetector":
-        return not deep_get(event, "requestParameters", "enable", default=True)
+        return not event.deep_get("requestParameters", "enable", default=True)
 
     return event.get("eventName") in SECURITY_CONFIG_ACTIONS
 
 
 def title(event):
-    user = deep_get(event, "userIdentity", "userName") or deep_get(
-        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
+    user = event.deep_get("userIdentity", "userName") or event.deep_get(
+        "userIdentity", "sessionContext", "sessionIssuer", "userName"
     )
 
     return f"Sensitive AWS API call {event.get('eventName')} made by {user}"

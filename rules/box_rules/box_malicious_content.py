@@ -18,8 +18,8 @@ def rule(event):
 def title(event):
     if event.get("event_type") == "FILE_MARKED_MALICIOUS":
         return (
-            f"File [{deep_get(event, 'source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
-            f"[{deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], "
+            f"File [{event.deep_get('source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
+            f"[{event.deep_get('source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], "
             f"was marked malicious."
         )
 

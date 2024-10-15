@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, okta_alert_context
+from panther_base_helpers import okta_alert_context
 
 OKTA_SUPPORT_RESET_EVENTS = [
     "user.account.reset_password",
@@ -12,10 +12,10 @@ def rule(event):
     if event.get("eventType") not in OKTA_SUPPORT_RESET_EVENTS:
         return False
     return (
-        deep_get(event, "actor", "alternateId") == "system@okta.com"
-        and deep_get(event, "transaction", "id") == "unknown"
-        and deep_get(event, "userAgent", "rawUserAgent") is None
-        and deep_get(event, "client", "geographicalContext", "country") is None
+        event.deep_get("actor", "alternateId") == "system@okta.com"
+        and event.deep_get("transaction", "id") == "unknown"
+        and event.deep_get("userAgent", "rawUserAgent") is None
+        and event.deep_get("client", "geographicalContext", "country") is None
     )
 
 

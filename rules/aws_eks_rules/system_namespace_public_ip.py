@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import deep_get, eks_panther_obj_ref
+from panther_base_helpers import eks_panther_obj_ref
 
 # Explicitly ignore eks:node-manager and eks:addon-manager
 #  which are run as Lambdas and originate from public IPs
@@ -22,7 +22,7 @@ def rule(event):
     if (
         p_eks.get("actor") in AMZ_PUBLICS
         and ":assumed-role/AWSWesleyClusterManagerLambda"
-        in deep_get(event, "user", "extra", "arn", default=["not found"])[0]
+        in event.deep_get("user", "extra", "arn", default=["not found"])[0]
     ):
         return False
     if (

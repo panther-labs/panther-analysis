@@ -1,10 +1,7 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
     # Return True to match the log event and trigger an alert.
     setting_name = (
-        deep_get(event, "parameters", "SETTING_NAME", default="NO_SETTING_NAME")
+        event.deep_get("parameters", "SETTING_NAME", default="NO_SETTING_NAME")
         .split("-")[0]
         .strip()
     )
