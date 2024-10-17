@@ -1,6 +1,7 @@
 # panther-analysis Style Guide
 
 This style guide highlights essential best practices for writing python rules and alert metadata. For a more detailed guide, visit [Writing Python Detections](https://docs.panther.com/detections/rules/python) in the Panther documentation.
+For specialized guidelines on writing correlation rules, see [CORRELATION_RULES_STYLE_GUIDE](https://github.com/panther-labs/panther-analysis/blob/style_guides/CORRELATION_RULES_STYLE_GUIDE.md)
 
 ## Metadata best practices
 
