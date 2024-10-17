@@ -1,5 +1,5 @@
 import panther_event_type_helpers as event_type
-from panther_base_helpers import zendesk_get_roles
+from panther_zendesk_helpers import zendesk_get_roles
 
 
 def rule(event):

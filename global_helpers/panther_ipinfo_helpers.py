@@ -1,3 +1,4 @@
+from math import atan2, cos, radians, sin, sqrt
 from typing import Union
 
 from panther_base_helpers import deep_get
@@ -177,3 +178,43 @@ def geoinfo_from_ip(event, match_field: str):
         "postal": location.postal_code(match_field),
         "timezone": location.timezone(match_field),
     }
+
+
+def geoinfo_from_ip_formatted(event, match_field: str) -> str:
+    """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
+    geoinfo = geoinfo_from_ip(event, match_field)
+    return (
+        f"{geoinfo.get('ip')} in {geoinfo.get('city')}, "
+        f"{geoinfo.get('region')} in {geoinfo.get('country')}"
+    )
+
+
+def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
+    """
+    compute the number of kilometers between two ipinfo_location enrichments
+    This uses a haversine computation which is imperfect and holds the benefit
+    of being supportable via stdlib. At polar opposites, haversine might be
+    0.3-0.5% off
+    See also https://en.wikipedia.org/wiki/Haversine_formula
+    See also https://stackoverflow.com/a/19412565
+    See also https://www.sunearthtools.com/tools/distance.php
+    """
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_one.keys())):
+        # input ipinfo_loc_one doesn't have lat and lng keys
+        return None
+    if not set({"lat", "lng"}).issubset(set(ipinfo_loc_two.keys())):
+        # input ipinfo_loc_two doesn't have lat and lng keys
+        return None
+    lat_1 = radians(float(ipinfo_loc_one.get("lat")))
+    lng_1 = radians(float(ipinfo_loc_one.get("lng")))
+    lat_2 = radians(float(ipinfo_loc_two.get("lat")))
+    lng_2 = radians(float(ipinfo_loc_two.get("lng")))
+    # radius of the earth in kms
+    radius = 6372.795477598
+    lng_diff = lng_2 - lng_1
+    lat_diff = lat_2 - lat_1
+
+    step_1 = sin(lat_diff / 2) ** 2 + cos(lat_1) * cos(lat_2) * sin(lng_diff / 2) ** 2
+    step_2 = 2 * atan2(sqrt(step_1), sqrt(1 - step_1))
+    distance = radius * step_2
+    return distance

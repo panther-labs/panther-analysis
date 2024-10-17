@@ -1,7 +1,6 @@
 import datetime
 
-from panther_base_helpers import deep_get
-from panther_oss_helpers import resolve_timestamp_string
+from panther_base_helpers import deep_get, resolve_timestamp_string
 
 MAX_TIME_BETWEEN_LOGS = datetime.timedelta(hours=24)
 

@@ -1,6 +1,6 @@
 from ipaddress import ip_network
 
-from panther_base_helpers import IN_PCI_SCOPE
+from panther_config_defaults import IN_PCI_SCOPE
 
 
 def policy(resource):
