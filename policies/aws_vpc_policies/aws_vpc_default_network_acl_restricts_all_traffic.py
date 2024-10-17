@@ -1,5 +1,5 @@
+from panther_aws_helpers import BadLookup, resource_lookup
 from panther_config_defaults import IN_PCI_SCOPE
-from panther_oss_helpers import BadLookup, resource_lookup
 
 
 def policy(resource):

@@ -9,6 +9,8 @@ from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
 
+from dateutil import parser
+
 # # # # # # # # # # # # # #
 #       Exceptions        #
 # # # # # # # # # # # # # #
@@ -198,3 +200,130 @@ def listify(maybe_list):
         return [maybe_list]
     # either a list or string
     return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list
+
+
+# Auto Time Resolution Parameters
+EPOCH_REGEX = r"([0-9]{9,12}(\.\d+)?)"
+TIME_FORMATS = [
+    "%Y-%m-%d %H:%M:%S",  # Panther p_event_time Timestamp
+    "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
+    "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
+    "%Y-%m-%dT%H:%M:%S*%f%z",
+    "%Y %b %d %H:%M:%S.%f %Z",
+    "%b %d %H:%M:%S %z %Y",
+    "%d/%b/%Y:%H:%M:%S %z",
+    "%b %d, %Y %I:%M:%S %p",
+    "%b %d %Y %H:%M:%S",
+    "%b %d %H:%M:%S %Y",
+    "%b %d %H:%M:%S %z",
+    "%b %d %H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f%z",
+    "%Y-%m-%d %H:%M:%S %z",
+    "%Y-%m-%d %H:%M:%S%z",
+    "%Y-%m-%d %H:%M:%S,%f",
+    "%Y/%m/%d*%H:%M:%S",
+    "%Y %b %d %H:%M:%S.%f*%Z",
+    "%Y %b %d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S,%f%z",
+    "%Y-%m-%d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S.%f%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d*%H:%M:%S:%f",
+    "%Y-%m-%d*%H:%M:%S",
+    "%y-%m-%d %H:%M:%S,%f %z",
+    "%y-%m-%d %H:%M:%S,%f",
+    "%y-%m-%d %H:%M:%S",
+    "%y/%m/%d %H:%M:%S",
+    "%y%m%d %H:%M:%S",
+    "%Y%m%d %H:%M:%S.%f",
+    "%m/%d/%y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S*%f",
+    "%m/%d/%y %H:%M:%S %z",
+    "%m/%d/%Y %H:%M:%S %z",
+    "%H:%M:%S",
+    "%H:%M:%S.%f",
+    "%H:%M:%S,%f",
+    "%d/%b %H:%M:%S,%f",
+    "%d/%b/%Y:%H:%M:%S",
+    "%d/%b/%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S.%f",
+    "%d %b %Y %H:%M:%S",
+    "%d %b %Y %H:%M:%S*%f",
+    "%m%d_%H:%M:%S",
+    "%m%d_%H:%M:%S.%f",
+    "%m/%d/%Y %I:%M:%S %p:%f",
+    "%m/%d/%Y %I:%M:%S %p",
+]
+
+
+def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
+    """Auto Time Resolution"""
+    if not timestamp:
+        return None
+
+    # Removes weird single-quotes used in some timestamp formats
+    ts_format = timestamp.replace("'", "")
+    # Attempt to resolve timestamp format
+    for each_format in TIME_FORMATS:
+        try:
+            return datetime.strptime(ts_format, each_format)
+        except (ValueError, TypeError):
+            continue
+    try:
+        return parser.parse(timestamp)
+    except (ValueError, TypeError, parser.ParserError):
+        pass
+
+    # Attempt to resolve epoch format
+    # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
+    # and we only want the first 12 digits.
+    match = re.match(EPOCH_REGEX, timestamp)
+    if match.group(0) != "":
+        try:
+            return datetime.utcfromtimestamp(float(match.group(0)))
+        except (ValueError, TypeError):
+            return None
+    return None
+
+
+# returns the difference between time1 and later time 2 in human-readable time period string
+def time_delta(time1, time2: str) -> str:
+    time1_truncated = nano_to_micro(time1)
+    time2_truncated = nano_to_micro(time2)
+    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
+        time1_truncated
+    )
+    days = delta_timedelta.days
+    hours, remainder = divmod(delta_timedelta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    delta = ""
+    if days > 0:
+        delta = f"{days} day(s) "
+    if hours > 0:
+        delta = "".join([delta, f"{hours} hour(s) "])
+    if minutes > 0:
+        delta = "".join([delta, f"{minutes} minute(s) "])
+    if seconds > 0:
+        delta = "".join([delta, f"{seconds} second(s)"])
+    return delta
+
+
+def nano_to_micro(time_str: str) -> str:
+    parts = time_str.split(":")
+    # pylint: disable=consider-using-f-string
+    parts[-1] = "{:06f}".format(float(parts[-1]))
+    return ":".join(parts)
+
+
+# adds parsing delay to an alert_context
+def add_parse_delay(event, context: dict) -> dict:
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
+    context["parseDelay"] = f"{parsing_delay}"
+    return context

@@ -1,10 +1,24 @@
 import base64
 import binascii
-from typing import List
+import os
+from typing import Any, Dict, List
 
+import boto3
 from panther_config import config
 
+
+class BadLookup(Exception):
+    """Error returned when a resource lookup fails."""
+
+
+class PantherBadInput(Exception):
+    """Error returned when a Panther helper function is provided bad input."""
+
+
 AWS_ACCOUNTS = config.AWS_ACCOUNTS
+_RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
+FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
+FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
 
 
 def aws_strip_role_session_id(user_identity_arn):
@@ -162,3 +176,50 @@ def lookup_aws_account_name(account_id):
         str: The AWS account ID (unnamed account)
     """
     return AWS_ACCOUNTS.get(account_id, f"{account_id} (unnamed account)")
+
+
+def get_s3_arn_by_name(name: str) -> str:
+    """This function is used to construct an s3 bucket ARN from its name."""
+    if name == "":
+        raise PantherBadInput("s3 name cannot be blank")
+    return "arn:aws:s3:::" + name
+
+
+def s3_lookup_by_name(name: str) -> Dict[str, Any]:
+    """This function is used to get an S3 bucket resource from just its name."""
+    return resource_lookup(get_s3_arn_by_name(name))
+
+
+def resource_table() -> boto3.resource:
+    """Lazily build resource table"""
+    # pylint: disable=global-statement
+    global _RESOURCE_TABLE
+    if not _RESOURCE_TABLE:
+        # pylint: disable=no-member
+        _RESOURCE_TABLE = boto3.resource(
+            "dynamodb",
+            endpoint_url="https://dynamodb" + FIPS_SUFFIX if FIPS_ENABLED else None,
+        ).Table("panther-resources")
+    return _RESOURCE_TABLE
+
+
+def resource_lookup(resource_id: str) -> Dict[str, Any]:
+    """This function is used to get a resource from the resources-api based on its resourceID."""
+    # Validate input so we can provide meaningful error messages to users
+    if resource_id == "":
+        raise PantherBadInput("resourceId cannot be blank")
+
+    # Get the item from dynamo
+    response = resource_table().get_item(Key={"id": resource_id})
+
+    # Check if dynamo failed
+    status_code = response["ResponseMetadata"]["HTTPStatusCode"]
+    if status_code != 200:
+        raise BadLookup("dynamodb - " + str(status_code) + " HTTPStatusCode")
+
+    # Check if the item was found
+    if "Item" not in response:
+        raise BadLookup(resource_id + " not found")
+
+    # Return just the attributes of the item
+    return response["Item"]["attributes"]

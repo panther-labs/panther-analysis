@@ -1,7 +1,7 @@
 import json
 
 from botocore.exceptions import NoCredentialsError
-from panther_oss_helpers import BadLookup, resource_lookup
+from panther_aws_helpers import BadLookup, resource_lookup
 
 # This is a list of the account numbers included in the organization
 # Example:

@@ -1,6 +1,5 @@
-from panther_aws_helpers import aws_regions
+from panther_aws_helpers import BadLookup, aws_regions, resource_lookup
 from panther_base_helpers import deep_get
-from panther_oss_helpers import BadLookup, resource_lookup
 
 BAD_PERMISSIONS = {
     "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",

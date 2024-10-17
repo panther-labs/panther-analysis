@@ -180,7 +180,7 @@ def geoinfo_from_ip(event, match_field: str):
     }
 
 
-def geoinfo_from_ip_formatted(event, match_field: str) -> str:  # pylint: disable=invalid-name
+def geoinfo_from_ip_formatted(event, match_field: str) -> str:
     """Formatting wrapper for geoinfo_from_ip for use in human-readable text"""
     geoinfo = geoinfo_from_ip(event, match_field)
     return (
