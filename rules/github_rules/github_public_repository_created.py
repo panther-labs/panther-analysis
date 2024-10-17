@@ -1,5 +1,5 @@
 from global_filter_github import filter_include_event
-from panther_base_helpers import github_alert_context
+from panther_github_helpers import github_alert_context
 
 
 def rule(event):

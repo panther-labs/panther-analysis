@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 LEGAL_HOLD_POLICY_ACTIONS = {
     "legal_hold_policy_entities_deleted": "Slack Legal Hold Policy Entities Deleted",

@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 ACCESS_EXPANDED_ACTIONS = [
     "app_scopes_expanded",

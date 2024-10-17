@@ -1,4 +1,4 @@
-from panther_oss_helpers import BadLookup, resource_lookup
+from panther_aws_helpers import BadLookup, resource_lookup
 
 
 def policy(resource):

@@ -92,7 +92,7 @@ Panther's [dynamic auxiliary functions](https://docs.panther.com/detections/rule
 Check for `alert_context` functions in `global_helpers` for the LogType you are developing against.  Alert context can be extended in specific rules, for example:
 
 ```python
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 def alert_context(event):
     return aws_rule_context(event) | {'another_field': 'another_value'}

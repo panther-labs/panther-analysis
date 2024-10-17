@@ -1,6 +1,6 @@
 import re
 
-from panther_base_helpers import okta_alert_context
+from panther_okta_helpers import okta_alert_context
 
 ADMIN_PATTERN = re.compile(r"[aA]dministrator")
 
