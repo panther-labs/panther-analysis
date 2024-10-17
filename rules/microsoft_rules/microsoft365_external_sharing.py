@@ -1,7 +1,7 @@
 import re
 from fnmatch import fnmatch
 
-from panther_base_helpers import m365_alert_context
+from panther_msft_helpers import m365_alert_context
 
 email_regex = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 

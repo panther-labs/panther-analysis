@@ -1,4 +1,4 @@
-from panther_base_helpers import crowdstrike_detection_alert_context
+from panther_crowdstrike_fdr_helpers import crowdstrike_detection_alert_context
 
 CREDENTIAL_DUMPING_TOOLS = {
     "mimikatz.exe",

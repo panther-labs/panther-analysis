@@ -1,4 +1,4 @@
-from gcp_base_helpers import gcp_alert_context
+from panther_gcp_helpers import gcp_alert_context
 
 METHODS_TO_CHECK = [
     "io.k8s.core.v1.pods.create",

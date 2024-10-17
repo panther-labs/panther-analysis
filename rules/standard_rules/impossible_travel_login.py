@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 from json import dumps, loads
 
 import panther_event_type_helpers as event_type
-from panther_base_helpers import deep_get
+from panther_base_helpers import deep_get, resolve_timestamp_string
 from panther_detection_helpers.caching import get_string_set, put_string_set
+from panther_ipinfo_helpers import km_between_ipinfo_loc
 from panther_lookuptable_helpers import LookupTableMatches
-from panther_oss_helpers import km_between_ipinfo_loc, resolve_timestamp_string
 
 # pylint: disable=global-variable-undefined
 
