@@ -2,7 +2,7 @@ from panther_config import config
 
 
 def rule(event):
-    if event.deep_get("id", "applicationName") != "user_accounts":
+    if event.deep_get("id", "applicationName") not in ("user_accounts", "login"):
         return False
 
     if event.get("name") == "email_forwarding_out_of_domain":
