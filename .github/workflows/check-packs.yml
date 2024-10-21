@@ -1,4 +1,5 @@
 on:
+  workflow_dispatch:
   pull_request:
 
 permissions:
@@ -52,7 +53,7 @@ jobs:
             ```diff
             ${{ steps.check-packs.outputs.errors }}
             ```
-          comment_tag: check-packs
+          comment-tag: check-packs
       - name: Delete comment
         uses: thollander/actions-comment-pull-request@e2c37e53a7d2227b61585343765f73a9ca57eda9
         if: ${{ !steps.check-packs.outputs.errors }}
@@ -64,4 +65,4 @@ jobs:
             ```diff
             ${{ steps.check-packs.outputs.errors }}
             ```
-          comment_tag: check-packs
+          comment-tag: check-packs
