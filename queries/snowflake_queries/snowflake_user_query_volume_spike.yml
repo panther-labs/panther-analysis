@@ -1,0 +1,23 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_user_query_volume_spike.py
+RuleID: "Snowflake.UserDailyQueryVolumeSpike"
+DisplayName: "Snowflake User Daily Query Volume Spike"
+Enabled: true
+ScheduledQueries:
+  - "Snowflake User Daily Query Volume Spike"
+Severity: Low
+Description: >
+  Returns instances where a user's cumulative daily query volume is much larger than
+  normal. Could indicate exfiltration attempts.
+Runbook: Review the user's query history for the past day. Identify any large queries
+  and determine if any data was accessed that shouldn't be.
+Tags:
+  - Snowflake
+  - Behavior Analysis
+Tests:
+  - Name: High Query Volume
+    ExpectedResult: true
+    Log: {"p_source_id": "26c3f2be-005e-443a-90cb-f623522f37a2", "p_source_label": "SF
+        Prod", "daily_bytes": 1376806.35210866, "mean": 729289.7142857143, "std_dev": 206110.99016770572,
+      "tend": "2024-10-21 22:09:13.47Z", "tstart": "2024-10-20 22:09:13.47Z", "USER_NAME": "ZEEBLE_BROMBUS",
+      "zscore": 3.141592}
