@@ -62,19 +62,15 @@ def _check_acl_change_event(actor_email, acl_change_event):
         # This is a dangerous share, check exceptions:
 
         for pattern, details in EXCEPTION_PATTERNS.items():
-            doc_title_match = pattern_match(doc_title.lower(), pattern)
-            all_titles_allowed = pattern == "all"
-            proper_title = doc_title_match or all_titles_allowed
+            proper_title = pattern_match(doc_title.lower(), pattern) or pattern == "all"
 
-            allowed_to_send_match = pattern_match_list(actor_email, details.get("allowed_to_send"))
-            all_allowed_to_send_match = details.get("allowed_to_send") == {"all"}
-            proper_sender = allowed_to_send_match or all_allowed_to_send_match
+            proper_sender = pattern_match_list(
+                actor_email, details.get("allowed_to_send")
+            ) or details.get("allowed_to_send") == {"all"}
 
-            allowed_to_receive_match = pattern_match_list(
+            proper_receiver = pattern_match_list(
                 target_user, details.get("allowed_to_receive")
-            )
-            all_allowed_to_receive_match = details.get("allowed_to_receive") == {"all"}
-            proper_receiver = allowed_to_receive_match or all_allowed_to_receive_match
+            ) or details.get("allowed_to_receive") == {"all"}
 
             if (
                 proper_title
