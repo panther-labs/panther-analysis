@@ -1,0 +1,56 @@
+AnalysisType: rule
+Filename: snowflake_brute_force_by_username.py
+RuleID: "Snowflake.Stream.BruteForceByUsername"
+DisplayName: Snowflake Brute Force Attacks by User
+Enabled: true
+LogTypes:
+  - Snowflake.LoginHistory
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110
+Description: Detect brute force attacks by monitorign failed logins from the same
+  IP address
+DedupPeriodMinutes: 60
+Threshold: 5
+Tags:
+  - Snowflake
+  - '[MITRE] Credential Access'
+  - '[MITRE] Brute Force'
+Tests:
+  - Name: Successful Login
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-10-08 14:38:46.061000000",
+        "p_log_type": "Snowflake.LoginHistory",
+        "p_source_label": "Snowflake Prod",
+        "CLIENT_IP": "1.1.1.1",
+        "EVENT_ID": "393754014361778",
+        "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
+        "EVENT_TYPE": "LOGIN",
+        "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
+        "IS_SUCCESS": "YES",
+        "RELATED_EVENT_ID": "0",
+        "REPORTED_CLIENT_TYPE": "OTHER",
+        "REPORTED_CLIENT_VERSION": "1.11.1",
+        "USER_NAME": "ckent@dailyplanet.org"
+      }
+  - Name: Unsuccessful Login
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-08 14:38:46.061000000",
+        "p_log_type": "Snowflake.LoginHistory",
+        "p_source_label": "Snowflake Prod",
+        "CLIENT_IP": "1.2.3.4",
+        "EVENT_ID": "393754014361778",
+        "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
+        "EVENT_TYPE": "LOGIN",
+        "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
+        "IS_SUCCESS": "NO",
+        "RELATED_EVENT_ID": "0",
+        "REPORTED_CLIENT_TYPE": "OTHER",
+        "REPORTED_CLIENT_VERSION": "1.11.1",
+        "USER_NAME": "luthor@lexcorp.com"
+      }
