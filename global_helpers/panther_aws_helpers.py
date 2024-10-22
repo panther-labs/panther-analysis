@@ -35,6 +35,7 @@ def aws_rule_context(event: dict):
         "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
         "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
         "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
+        "requestParameters": event.get("requestParameters", "<MISSING_REQUEST_PARAMETERS>"),
         "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
         "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
         "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
