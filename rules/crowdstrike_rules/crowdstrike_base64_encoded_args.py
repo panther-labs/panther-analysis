@@ -1,4 +1,5 @@
-from panther_base_helpers import crowdstrike_process_alert_context, is_base64
+from panther_base_helpers import is_base64
+from panther_crowdstrike_fdr_helpers import crowdstrike_process_alert_context
 
 DECODED = ""
 

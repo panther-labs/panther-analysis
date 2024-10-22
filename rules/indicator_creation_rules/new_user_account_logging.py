@@ -1,8 +1,8 @@
 from datetime import timedelta
 
 import panther_event_type_helpers as event_type
+from panther_base_helpers import resolve_timestamp_string
 from panther_detection_helpers.caching import put_string_set
-from panther_oss_helpers import resolve_timestamp_string
 
 # Days an account is considered new
 TTL = timedelta(days=3)

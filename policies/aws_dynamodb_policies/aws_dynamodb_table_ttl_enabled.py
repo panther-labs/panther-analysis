@@ -1,4 +1,5 @@
-from panther_base_helpers import IN_PCI_SCOPE, deep_get
+from panther_base_helpers import deep_get
+from panther_config_defaults import IN_PCI_SCOPE
 
 
 def policy(resource):

@@ -1,6 +1,6 @@
 import json
 
-from panther_base_helpers import m365_alert_context
+from panther_msft_helpers import m365_alert_context
 
 
 def rule(event):

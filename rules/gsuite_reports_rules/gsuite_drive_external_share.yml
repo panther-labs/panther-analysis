@@ -48,7 +48,7 @@ Tests:
                   { "name": "old_visibility", "value": "private" },
                   { "name": "doc_id", "value": "1111111111111111111" },
                   { "name": "doc_type", "value": "document" },
-                  { "name": "doc_title", "value": "Document Title Primary" },
+                  { "name": "doc_title", "value": "1 Document Title Primary" },
                   { "name": "visibility", "value": "shared_externally" },
                   {
                     "name": "originating_app_id",
@@ -86,7 +86,7 @@ Tests:
                 [
                   { "name": "primary_event", "boolValue": true },
                   { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "alice@external.com" },
+                  { "name": "target_domain", "value": "external.com" },
                   { "name": "old_visibility", "value": "private" },
                   { "name": "doc_id", "value": "1111111111111111111" },
                   { "name": "doc_type", "value": "document" },
@@ -129,11 +129,11 @@ Tests:
                   { "name": "primary_event", "boolValue": true },
                   { "name": "billable", "boolValue": true },
                   { "name": "visibility_change", "value": "external" },
-                  { "name": "target_domain", "value": "acme.com" },
+                  { "name": "target_user", "value": "samuel@abc.com" },
                   { "name": "old_visibility", "value": "private" },
                   { "name": "doc_id", "value": "1111111111111111111" },
                   { "name": "doc_type", "value": "document" },
-                  { "name": "doc_title", "value": "Document Title Pattern" },
+                  { "name": "doc_title", "value": "1 Document Title Pattern" },
                   { "name": "visibility", "value": "shared_externally" },
                   {
                     "name": "originating_app_id",
@@ -145,6 +145,52 @@ Tests:
                   {
                     "name": "new_value",
                     "multiValue": ["people_within_domain_with_link"],
+                  },
+                ],
+            },
+          ],
+      }
+  - Name: Share Allowed by Exception - 2
+    LogType: GSuite.Reports
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "admin#reports#activity",
+        "id":
+          {
+            "time": "2020-07-07T15:50:49.617Z",
+            "uniqueQualifier": "1111111111111111111",
+            "applicationName": "drive",
+            "customerId": "C010qxghg",
+          },
+        "actor":
+          { "email": "alice@abc.com", "profileId": "1111111111111111111" },
+        "events":
+          [
+            {
+              "type": "acl_change",
+              "name": "change_user_access",
+              "parameters":
+                [
+                  { "name": "primary_event", "boolValue": true },
+                  { "name": "billable", "boolValue": true },
+                  { "name": "visibility_change", "value": "external" },
+                  { "name": "target_user", "value": "samuel@acme.com" },
+                  { "name": "old_visibility", "value": "private" },
+                  { "name": "doc_id", "value": "1111111111111111111" },
+                  { "name": "doc_type", "value": "document" },
+                  { "name": "doc_title", "value": "2 Document Title Pattern" },
+                  { "name": "visibility", "value": "shared_externally" },
+                  {
+                    "name": "originating_app_id",
+                    "value": "1111111111111111111",
+                  },
+                  { "name": "owner_is_shared_drive", "boolValue": false },
+                  { "name": "owner_is_team_drive", "boolValue": false },
+                  { "name": "old_value", "multiValue": [ "none" ] },
+                  {
+                    "name": "new_value",
+                    "multiValue": [ "people_within_domain_with_link" ],
                   },
                 ],
             },

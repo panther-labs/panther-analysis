@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from panther_base_helpers import okta_alert_context
+from panther_okta_helpers import okta_alert_context
 
 DETECTION_EVENTS = [
     "app.oauth2.client_id_rate_limit_warning",
