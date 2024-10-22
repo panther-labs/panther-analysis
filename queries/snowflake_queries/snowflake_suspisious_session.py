@@ -7,8 +7,10 @@ def title(event):
 
 
 def dedup(event):
-    return "-".join((
-        event.get("client_application" "<UNKNOWN APP>"),
-        event.get("client_os" "<UNKNOWN OS>"),
-        event.get("client_os_version" "<UNKNOWN VERSION>")
-    ))
+    return "-".join(
+        (
+            event.get("client_application", "<UNKNOWN APP>"),
+            event.get("client_os", "<UNKNOWN OS>"),
+            event.get("client_os_version", "<UNKNOWN VERSION>"),
+        )
+    )
