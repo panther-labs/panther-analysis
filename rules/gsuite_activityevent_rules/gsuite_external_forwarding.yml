@@ -21,7 +21,7 @@ Runbook: >
 SummaryAttributes:
   - p_any_emails
 Tests:
-  - Name: Forwarding to External Address
+  - Name: Forwarding to External Address - applicationName = user_accounts
     ExpectedResult: true
     Log:
       {
@@ -31,6 +31,17 @@ Tests:
         "name": "email_forwarding_out_of_domain",
         "parameters":
           { "email_forwarding_destination_address": "HSimpson@gmail.com" },
+      }
+
+  - Name: Forwarding to External Address - applicationName = login
+    ExpectedResult: true
+    Log:
+      {
+        "id": { "applicationName": "login", "customerId": "D12345" },
+        "actor": { "email": "homer.simpson@springfield.io" },
+        "type": "email_forwarding_change",
+        "name": "email_forwarding_out_of_domain",
+        "parameters": { "email_forwarding_destination_address": "HSimpsone@gmail.com" }
       }
 
   - Name: Forwarding to External Address - Allowed Domain
