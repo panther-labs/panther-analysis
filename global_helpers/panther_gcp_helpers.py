@@ -44,3 +44,22 @@ def gcp_alert_context(event):
         "resourceName": event.deep_get("protoPayload", "resourceName", default=""),
         "serviceName": event.deep_get("protoPayload", "serviceName", default=""),
     }
+
+
+def get_binding_deltas(event):
+    """A GCP helper function to return the binding deltas from audit events
+
+    Binding deltas provide context on a permission change, including the
+    action, role, and member associated with the request.
+    """
+    if event.get("protoPayload", {}).get("methodName") != "SetIamPolicy":
+        return []
+
+    service_data = event.get("protoPayload", {}).get("serviceData")
+    if not service_data:
+        return []
+
+    binding_deltas = service_data.get("policyDelta", {}).get("bindingDeltas")
+    if not binding_deltas:
+        return []
+    return binding_deltas

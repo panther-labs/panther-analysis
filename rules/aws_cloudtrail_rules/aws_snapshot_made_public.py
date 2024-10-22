@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 
-from panther_base_helpers import aws_rule_context, deep_get
-from panther_default import aws_cloudtrail_success
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_base_helpers import deep_get
 
 IS_SINGLE_USER_SHARE = False  # Used to adjust severity
 

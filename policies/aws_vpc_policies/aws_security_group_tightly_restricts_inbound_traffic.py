@@ -1,4 +1,4 @@
-from panther_base_helpers import IN_PCI_SCOPE
+from panther_config_defaults import IN_PCI_SCOPE
 
 MAX_PORTS_PER_PERMISSION = 10
 RESTRICTED_PORTS = [

@@ -1,5 +1,5 @@
-from crowdstrike_event_streams_helpers import cs_alert_context
 from panther_base_helpers import key_value_list_to_dict
+from panther_crowdstrike_event_streams_helpers import cs_alert_context
 
 
 def rule(event):

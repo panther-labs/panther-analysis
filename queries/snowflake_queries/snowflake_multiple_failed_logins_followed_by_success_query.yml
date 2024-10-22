@@ -3,10 +3,7 @@ QueryName: "Query.Snowflake.Multiple.Logins.Followed.By.Success"
 Enabled: false
 Description: >
   Monitor for brute force user activity.
-AthenaQuery: |
-  /* athena query not supported */
-  SELECT count(1)
-SnowflakeQuery: |
+Query: |
   --return multiple failed logins followed by a success
 
   WITH login_attempts as (

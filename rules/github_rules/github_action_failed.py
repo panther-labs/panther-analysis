@@ -2,7 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from global_filter_github import filter_include_event
-from panther_base_helpers import github_alert_context
+from panther_github_helpers import github_alert_context
 
 # The keys for MONITORED_ACTIONS are gh_org/repo_name
 # The values for MONITORED_ACTIONS are a list of ["action_names"]

@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 IDP_CHANGE_ACTIONS = {
     "idp_configuration_added": "Slack IDP Configuration Added",

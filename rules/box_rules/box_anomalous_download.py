@@ -1,4 +1,5 @@
-from panther_base_helpers import box_parse_additional_details, deep_get
+from panther_base_helpers import deep_get
+from panther_box_helpers import box_parse_additional_details
 
 
 def rule(event):

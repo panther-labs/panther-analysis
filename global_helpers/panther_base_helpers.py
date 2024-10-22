@@ -1,4 +1,3 @@
-import json
 import re
 from base64 import b64decode
 from binascii import Error as AsciiError
@@ -10,7 +9,7 @@ from functools import reduce
 from ipaddress import ip_address, ip_network
 from typing import Any, List, Optional, Sequence, Union
 
-from panther_config import config
+from dateutil import parser
 
 # # # # # # # # # # # # # #
 #       Exceptions        #
@@ -22,278 +21,8 @@ class PantherUnexpectedAlert(Exception):
 
 
 # # # # # # # # # # # # # #
-#   Compliance Helpers    #
-# # # # # # # # # # # # # #
-
-# Expects a map with a Key 'Tags' that maps to a map of key/value string pairs, or None if no
-# tags are present.
-# All Panther defined resources meet this requirement.
-CDE_TAG_KEY = "environment"
-CDE_TAG_VALUE = "pci"
-
-
-# Defaults to True to assume something is in scope if it is not tagged
-def in_pci_scope_tags(resource):
-    if resource.get("Tags") is None:
-        return True
-    return resource["Tags"].get(CDE_TAG_KEY) == CDE_TAG_VALUE
-
-
-PCI_NETWORKS = config.PCI_NETWORKS
-
-
-# Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
-# Returns True if any ip in the range is marked as in scope
-def is_pci_scope_cidr(ip_range):
-    return any(ip_network(ip_range).overlaps(pci_network) for pci_network in PCI_NETWORKS)
-
-
-DMZ_NETWORKS = config.DMZ_NETWORKS
-
-
-# Expects a string in cidr notation (e.g. '10.0.0.0/24') indicating the ip range being checked
-# Returns True if any ip in the range is marked as DMZ space.
-def is_dmz_cidr(ip_range):
-    """This function determines whether a given IP range is within the defined DMZ IP range."""
-    return any(ip_network(ip_range).overlaps(dmz_network) for dmz_network in DMZ_NETWORKS)
-
-
-# Defaults to False to assume something is not a DMZ if it is not tagged
-def is_dmz_tags(resource, dmz_tags):
-    """This function determines whether a given resource is tagged as existing in a DMZ."""
-    if resource["Tags"] is None:
-        return False
-    for key, value in dmz_tags:
-        if resource["Tags"].get(key) == value:
-            return True
-    return False
-
-
-# Function variables here so that implementation details of these functions can be changed without
-# having to rename the function in all locations its used, or having an outdated name on the actual
-# function being used, etc.
-IN_PCI_SCOPE = in_pci_scope_tags
-
-# # # # # # # # # # # # # #
-#      GSuite Helpers     #
-# # # # # # # # # # # # # #
-
-GSUITE_PARAMETER_VALUES = [
-    "value",
-    "intValue",
-    "boolValue",
-    "multiValue",
-    "multiIntValue",
-    "messageValue",
-    "multiMessageValue",
-]
-
-
-# GSuite parameters are formatted as a list of dictionaries, where each dictionary has a 'name' key
-# that maps to the name of the parameter, and one key from GSUITE_PARAMETER_VALUES that maps to the
-# value of the parameter. This means to lookup the value of a particular parameter, you must
-# traverse the entire list of parameters to find it and then know (or guess) what type of value it
-# contains. This helper function handles that for us.
-#
-# Example parameters list:
-# parameters = [
-#   {
-#       "name": "event_id",
-#       "value": "abc123"
-#   },
-#   {
-#       "name": "start_time",
-#       "intValue": 63731901000
-#   },
-#   {
-#       "name": "end_time",
-#       "intValue": 63731903000
-#   },
-#   {
-#       "name": "things",
-#       "multiValue": [ "DRIVE" , "MEME"]
-#   }
-# ]
-def gsuite_parameter_lookup(parameters, key):
-    for param in parameters:
-        if param["name"] != key:
-            continue
-        for value in GSUITE_PARAMETER_VALUES:
-            if value in param:
-                return param[value]
-        return None
-    return None
-
-
-# GSuite event details are formatted as a list of dictionaries. Each entry has a 'type' and 'name'.
-#
-# In order to find the event details of interest, you must loop through
-# the list searching for a particular type and name.
-#
-# This helper function handles the looping functionality that is common in many of the gsuite rules
-def gsuite_details_lookup(detail_type, detail_names, event):
-    for details in event.get("events", {}):
-        if details.get("type") == detail_type and details.get("name") in detail_names:
-            return details
-    # not found, return empty dict
-    return {}
-
-
-# # # # # # # # # # # # # #
-#      Zendesk Helpers     #
-# # # # # # # # # # # # # #
-
-# key names
-ZENDESK_CHANGE_DESCRIPTION = "change_description"
-ZENDESK_APP_ROLE_ASSIGNED = re.compile(
-    r"(?P<app>.*) role changed from (?P<old_role>.+) to (?P<new_role>.*)", re.IGNORECASE
-)
-ZENDESK_ROLE_ASSIGNED = re.compile(
-    r"Role changed from (?P<old_role>.+) to (?P<new_role>[^$]+)", re.IGNORECASE
-)
-
-
-def zendesk_get_roles(event):
-    old_role = ""
-    new_role = ""
-    role_change = event.get(ZENDESK_CHANGE_DESCRIPTION, "")
-    if "\n" in role_change:
-        for app_change in role_change.split("\n"):
-            matches = ZENDESK_APP_ROLE_ASSIGNED.match(app_change)
-            if matches:
-                if old_role:
-                    old_role += " ; "
-                old_role += matches.group("app") + ":" + matches.group("old_role")
-                if new_role:
-                    new_role += " ; "
-                new_role += matches.group("app") + ":" + matches.group("new_role")
-    else:
-        matches = ZENDESK_ROLE_ASSIGNED.match(role_change)
-        if matches:
-            old_role = matches.group("old_role")
-            new_role = matches.group("new_role")
-    if not old_role:
-        old_role = "<UNKNOWN_APP>:<UNKNOWN_ROLE>"
-    if not new_role:
-        new_role = "<UNKNOWN_APP>:<UNKNOWN_ROLE>"
-    return old_role, new_role
-
-
-# # # # # # # # # # # # # #
 #      Generic Helpers    #
 # # # # # # # # # # # # # #
-
-
-# 'additional_details' from box logs varies by event_type.
-# This helper wraps the process of extracting those details.
-def box_parse_additional_details(event: dict):
-    additional_details = event.get("additional_details", {})
-    if isinstance(additional_details, (str, bytes)):
-        try:
-            return json.loads(additional_details)
-        except ValueError:
-            return {}
-    return additional_details
-
-
-def okta_alert_context(event: dict):
-    """Returns common context for automation of Okta alerts"""
-    return {
-        "event_type": event.get("eventtype", ""),
-        "severity": event.get("severity", ""),
-        "actor": event.get("actor", {}),
-        "client": event.get("client", {}),
-        "request": event.get("request", {}),
-        "outcome": event.get("outcome", {}),
-        "target": event.get("target", []),
-        "debug_context": event.get("debugcontext", {}),
-        "authentication_context": event.get("authenticationcontext", {}),
-        "security_context": event.get("securitycontext", {}),
-        "ips": event.get("p_any_ip_addresses", []),
-    }
-
-
-def crowdstrike_detection_alert_context(event: dict):
-    """Returns common context for Crowdstrike detections"""
-    return {
-        "aid": get_crowdstrike_field(event, "aid", default=""),
-        "user": get_crowdstrike_field(event, "UserName", default=""),
-        "console-link": get_crowdstrike_field(event, "FalconHostLink", default=""),
-        "commandline": get_crowdstrike_field(event, "CommandLine", default=""),
-        "parentcommandline": get_crowdstrike_field(event, "ParentCommandLine", default=""),
-        "filename": get_crowdstrike_field(event, "FileName", default=""),
-        "filepath": get_crowdstrike_field(event, "FilePath", default=""),
-        "description": get_crowdstrike_field(event, "DetectDescription", default=""),
-        "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
-    }
-
-
-def crowdstrike_process_alert_context(event: dict):
-    """Returns common process context for Crowdstrike detections"""
-    return {
-        "aid": get_crowdstrike_field(event, "aid", default=""),
-        "CommandLine": get_crowdstrike_field(event, "CommandLine", default=""),
-        "TargetProcessId": get_crowdstrike_field(event, "TargetProcessId", default=""),
-        "RawProcessId": get_crowdstrike_field(event, "RawProcessId", default=""),
-        "ParentBaseFileName": get_crowdstrike_field(event, "ParentBaseFileName", default=""),
-        "ParentProcessId": get_crowdstrike_field(event, "ParentProcessId", default=""),
-        "ImageFileName": get_crowdstrike_field(event, "ImageFileName", default=""),
-        "SHA256Hash": get_crowdstrike_field(event, "SHA256HashData", default=""),
-        "platform": get_crowdstrike_field(event, "event_platform", default=""),
-    }
-
-
-def crowdstrike_network_detection_alert_context(event: dict):
-    """Returns common network context for Crowdstrike detections"""
-    return {
-        "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),
-        "LocalPort": get_crowdstrike_field(event, "LocalPort", default=""),
-        "RemoteAddressIP4": get_crowdstrike_field(event, "RemoteAddressIP4", default=""),
-        "RemotePort": get_crowdstrike_field(event, "RemotePort", default=""),
-        "Protocol": get_crowdstrike_field(event, "Protocol", default=""),
-        "event_simpleName": get_crowdstrike_field(event, "event_simpleName", default=""),
-        "aid": get_crowdstrike_field(event, "aid", default=""),
-        "ContextProcessId": get_crowdstrike_field(event, "ContextProcessId", default=""),
-    }
-
-
-def filter_crowdstrike_fdr_event_type(event, name: str) -> bool:
-    """
-    Checks if the event belongs to the Crowdstrike.FDREvent log type
-    and the event type is not the name parameter.
-    """
-    if event.get("p_log_type") != "Crowdstrike.FDREvent":
-        return False
-    return event.get("fdr_event_type", "") != name
-
-
-def get_crowdstrike_field(event, field_name, default=None):
-    return (
-        event.deep_get(field_name)
-        or event.deep_get("event", field_name)
-        or event.deep_get("unknown_payload", field_name)
-        or default
-    )
-
-
-def slack_alert_context(event):
-    return {
-        "actor-name": event.deep_get("actor", "user", "name", default="<MISSING_NAME>"),
-        "actor-email": event.deep_get("actor", "user", "email", default="<MISSING_EMAIL>"),
-        "actor-ip": event.deep_get("context", "ip_address", default="<MISSING_IP>"),
-        "user-agent": event.deep_get("context", "ua", default="<MISSING_UA>"),
-    }
-
-
-def github_alert_context(event):
-    return {
-        "action": event.get("action", ""),
-        "actor": event.get("actor", ""),
-        "actor_location": event.deep_get("actor_location", "country_code"),
-        "org": event.get("org", ""),
-        "repo": event.get("repo", ""),
-        "user": event.get("user", ""),
-    }
 
 
 def deep_get(dictionary: dict, *keys, default=None):
@@ -381,59 +110,6 @@ def get_val_from_list(list_of_dicts, return_field_key, field_cmp_key, field_cmp_
     return values_of_return_field
 
 
-def aws_strip_role_session_id(user_identity_arn):
-    # The ARN structure is arn:aws:sts::123456789012:assumed-role/RoleName/<sessionId>
-    arn_parts = user_identity_arn.split("/")
-    if arn_parts:
-        return "/".join(arn_parts[:2])
-    return user_identity_arn
-
-
-def aws_rule_context(event: dict):
-    return {
-        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
-        "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
-        "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
-        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
-        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
-        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
-        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
-    }
-
-
-def aws_guardduty_context(event: dict):
-    return {
-        "description": event.get("description", "<MISSING DESCRIPTION>"),
-        "severity": event.get("severity", "<MISSING SEVERITY>"),
-        "id": event.get("id", "<MISSING ID>"),
-        "type": event.get("type", "<MISSING TYPE>"),
-        "resource": event.get("resource", {}),
-        "service": event.get("service", {}),
-    }
-
-
-def eks_panther_obj_ref(event):
-    user = event.deep_get("user", "username", default="<NO_USERNAME>")
-    source_ips = event.get("sourceIPs", ["0.0.0.0"])  # nosec
-    verb = event.get("verb", "<NO_VERB>")
-    obj_name = event.deep_get("objectRef", "name", default="<NO_OBJECT_NAME>")
-    obj_ns = event.deep_get("objectRef", "namespace", default="<NO_OBJECT_NAMESPACE>")
-    obj_res = event.deep_get("objectRef", "resource", default="<NO_OBJECT_RESOURCE>")
-    obj_subres = event.deep_get("objectRef", "subresource", default="")
-    p_source_label = event.get("p_source_label", "<NO_P_SOURCE_LABEL>")
-    if obj_subres:
-        obj_res = "/".join([obj_res, obj_subres])
-    return {
-        "actor": user,
-        "ns": obj_ns,
-        "object": obj_name,
-        "resource": obj_res,
-        "sourceIPs": source_ips,
-        "verb": verb,
-        "p_source_label": p_source_label,
-    }
-
-
 def is_ip_in_network(ip_addr, networks):
     """Check that a given IP is within a list of IP ranges"""
     return any(ip_address(ip_addr) in ip_network(network) for network in networks)
@@ -449,51 +125,23 @@ def pattern_match_list(string_to_match: str, patterns: Sequence[str]):
     return any(fnmatch(string_to_match, p) for p in patterns)
 
 
-def get_binding_deltas(event):
-    """A GCP helper function to return the binding deltas from audit events
-
-    Binding deltas provide context on a permission change, including the
-    action, role, and member associated with the request.
-    """
-    if event.get("protoPayload", {}).get("methodName") != "SetIamPolicy":
-        return []
-
-    service_data = event.get("protoPayload", {}).get("serviceData")
-    if not service_data:
-        return []
-
-    # Reference: bit.ly/2WsJdZS
-    binding_deltas = service_data.get("policyDelta", {}).get("bindingDeltas")
-    if not binding_deltas:
-        return []
-    return binding_deltas
-
-
-def msft_graph_alert_context(event):
-    return {
-        "category": event.get("category", ""),
-        "description": event.get("description", ""),
-        "userStates": event.get("userStates", []),
-        "fileStates": event.get("fileStates", []),
-        "hostStates": event.get("hostStates", []),
-    }
-
-
-def m365_alert_context(event):
-    return {
-        "operation": event.get("Operation", ""),
-        "organization_id": event.get("OrganizationId", ""),
-        "client_ip": event.get("ClientIp", ""),
-        "extended_properties": event.get("ExtendedProperties", []),
-        "modified_properties": event.get("ModifiedProperties", []),
-        "application": event.get("Application", ""),
-        "actor": event.get("Actor", []),
-    }
-
-
-def defang_ioc(ioc):
+def defang_ioc(ioc: str) -> str:
     """return defanged IOC from 1.1.1.1 to 1[.]1[.]1[.]1"""
+    ioc = ioc.replace("http://", "hxxp://")
+    ioc = ioc.replace("https://", "hxxps://")
     return ioc.replace(".", "[.]")
+
+
+# IOC Helper functions:
+def ioc_match(indicators: list, known_iocs: set) -> list:
+    """Matches a set of indicators against known Indicators of Compromise
+
+    :param indicators: List of potential indicators of compromise
+    :param known_iocs: Set of known indicators of compromise
+    :return: List of any indicator matches
+    """
+    # Check through the IP IOCs
+    return [ioc for ioc in (indicators or []) if ioc in known_iocs]
 
 
 def panther_nanotime_to_python_datetime(panther_time: str) -> datetime:
@@ -538,3 +186,144 @@ def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> di
     # example: [{'key': 'a', 'value': 1}, {'key': 'b', 'value': 2}]
     # becomes: {'a': 1, 'b': 2}
     return {item[key]: item[value] for item in list_objects}
+
+
+# When a single item is loaded from json, it is loaded as a single item
+# When a list of items is loaded from json, it is loaded as a list of that item
+# When we want to iterate over something that could be a single item or a list
+# of items we can use listify and just continue as if it's always a list
+def listify(maybe_list):
+    try:
+        iter(maybe_list)
+    except TypeError:
+        # not a list
+        return [maybe_list]
+    # either a list or string
+    return [maybe_list] if isinstance(maybe_list, (str, bytes, dict)) else maybe_list
+
+
+# Auto Time Resolution Parameters
+EPOCH_REGEX = r"([0-9]{9,12}(\.\d+)?)"
+TIME_FORMATS = [
+    "%Y-%m-%d %H:%M:%S",  # Panther p_event_time Timestamp
+    "%Y-%m-%dT%H:%M:%SZ",  # AWS Timestamp
+    "%Y-%m-%dT%H:%M:%S.%fZ",  # Panther Timestamp
+    "%Y-%m-%dT%H:%M:%S*%f%z",
+    "%Y %b %d %H:%M:%S.%f %Z",
+    "%b %d %H:%M:%S %z %Y",
+    "%d/%b/%Y:%H:%M:%S %z",
+    "%b %d, %Y %I:%M:%S %p",
+    "%b %d %Y %H:%M:%S",
+    "%b %d %H:%M:%S %Y",
+    "%b %d %H:%M:%S %z",
+    "%b %d %H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f%z",
+    "%Y-%m-%d %H:%M:%S %z",
+    "%Y-%m-%d %H:%M:%S%z",
+    "%Y-%m-%d %H:%M:%S,%f",
+    "%Y/%m/%d*%H:%M:%S",
+    "%Y %b %d %H:%M:%S.%f*%Z",
+    "%Y %b %d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S,%f%z",
+    "%Y-%m-%d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S.%f%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S.%f",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d*%H:%M:%S:%f",
+    "%Y-%m-%d*%H:%M:%S",
+    "%y-%m-%d %H:%M:%S,%f %z",
+    "%y-%m-%d %H:%M:%S,%f",
+    "%y-%m-%d %H:%M:%S",
+    "%y/%m/%d %H:%M:%S",
+    "%y%m%d %H:%M:%S",
+    "%Y%m%d %H:%M:%S.%f",
+    "%m/%d/%y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S",
+    "%m/%d/%Y*%H:%M:%S*%f",
+    "%m/%d/%y %H:%M:%S %z",
+    "%m/%d/%Y %H:%M:%S %z",
+    "%H:%M:%S",
+    "%H:%M:%S.%f",
+    "%H:%M:%S,%f",
+    "%d/%b %H:%M:%S,%f",
+    "%d/%b/%Y:%H:%M:%S",
+    "%d/%b/%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S",
+    "%d-%b-%Y %H:%M:%S.%f",
+    "%d %b %Y %H:%M:%S",
+    "%d %b %Y %H:%M:%S*%f",
+    "%m%d_%H:%M:%S",
+    "%m%d_%H:%M:%S.%f",
+    "%m/%d/%Y %I:%M:%S %p:%f",
+    "%m/%d/%Y %I:%M:%S %p",
+]
+
+
+def resolve_timestamp_string(timestamp: str) -> Optional[datetime]:
+    """Auto Time Resolution"""
+    if not timestamp:
+        return None
+
+    # Removes weird single-quotes used in some timestamp formats
+    ts_format = timestamp.replace("'", "")
+    # Attempt to resolve timestamp format
+    for each_format in TIME_FORMATS:
+        try:
+            return datetime.strptime(ts_format, each_format)
+        except (ValueError, TypeError):
+            continue
+    try:
+        return parser.parse(timestamp)
+    except (ValueError, TypeError, parser.ParserError):
+        pass
+
+    # Attempt to resolve epoch format
+    # Since datetime.utcfromtimestamp supports 9 through 12 digit epoch timestamps
+    # and we only want the first 12 digits.
+    match = re.match(EPOCH_REGEX, timestamp)
+    if match.group(0) != "":
+        try:
+            return datetime.utcfromtimestamp(float(match.group(0)))
+        except (ValueError, TypeError):
+            return None
+    return None
+
+
+# returns the difference between time1 and later time 2 in human-readable time period string
+def time_delta(time1, time2: str) -> str:
+    time1_truncated = nano_to_micro(time1)
+    time2_truncated = nano_to_micro(time2)
+    delta_timedelta = resolve_timestamp_string(time2_truncated) - resolve_timestamp_string(
+        time1_truncated
+    )
+    days = delta_timedelta.days
+    hours, remainder = divmod(delta_timedelta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    delta = ""
+    if days > 0:
+        delta = f"{days} day(s) "
+    if hours > 0:
+        delta = "".join([delta, f"{hours} hour(s) "])
+    if minutes > 0:
+        delta = "".join([delta, f"{minutes} minute(s) "])
+    if seconds > 0:
+        delta = "".join([delta, f"{seconds} second(s)"])
+    return delta
+
+
+def nano_to_micro(time_str: str) -> str:
+    parts = time_str.split(":")
+    # pylint: disable=consider-using-f-string
+    parts[-1] = "{:06f}".format(float(parts[-1]))
+    return ":".join(parts)
+
+
+# adds parsing delay to an alert_context
+def add_parse_delay(event, context: dict) -> dict:
+    parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
+    context["parseDelay"] = f"{parsing_delay}"
+    return context

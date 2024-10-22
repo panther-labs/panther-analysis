@@ -11,7 +11,7 @@ Recommended steps to enable:
     5. Run a Data Replay test to identify unknown domains that should be in ALLOWED_DOMAINS
 """
 
-from panther_base_helpers import filter_crowdstrike_fdr_event_type
+from panther_crowdstrike_fdr_helpers import filter_crowdstrike_fdr_event_type
 
 # *** Change this to match your company name ***
 COMPANY_NAME = "company_name_here"

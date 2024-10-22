@@ -1,7 +1,7 @@
 import json
 
+from panther_aws_helpers import BadLookup, resource_lookup
 from panther_base_helpers import deep_get
-from panther_oss_helpers import BadLookup, resource_lookup
 
 # TODO: Once Detection Pipelines are merged, implement downgraded (INFO) case for multiple
 #       global resource recorders.

@@ -1,6 +1,7 @@
 # panther-analysis Style Guide
 
 This style guide highlights essential best practices for writing python rules and alert metadata. For a more detailed guide, visit [Writing Python Detections](https://docs.panther.com/detections/rules/python) in the Panther documentation.
+For specialized guidelines on writing correlation rules, see [CORRELATION_RULES_STYLE_GUIDE](https://github.com/panther-labs/panther-analysis/blob/style_guides/CORRELATION_RULES_STYLE_GUIDE.md)
 
 ## Metadata best practices
 
@@ -91,7 +92,7 @@ Panther's [dynamic auxiliary functions](https://docs.panther.com/detections/rule
 Check for `alert_context` functions in `global_helpers` for the LogType you are developing against.  Alert context can be extended in specific rules, for example:
 
 ```python
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 def alert_context(event):
     return aws_rule_context(event) | {'another_field': 'another_value'}

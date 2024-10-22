@@ -1,4 +1,4 @@
-from panther_base_helpers import get_crowdstrike_field
+from panther_crowdstrike_fdr_helpers import get_crowdstrike_field
 
 
 def rule(event):
