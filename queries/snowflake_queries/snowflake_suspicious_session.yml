@@ -1,6 +1,6 @@
 AnalysisType: scheduled_rule
 Filename: snowflake_suspicious_session.py
-RuleID: Snowflake.SuspiciousSession.UnusualApp
+RuleID: "Snowflake.SuspiciousSession.UnusualApp"
 DisplayName: Suspicious Snowflake Sessions - Unusual Application
 Enabled: true
 ScheduledQueries:
@@ -16,3 +16,15 @@ Tags:
   - Snowflake
   - Behavior Analysis
   - Initial Access:Valid Accounts:Cloud Accounts
+Tests:
+  - Name: New Session
+    ExpectedResult: true
+    Log:
+      {
+        "p_source_id": "26c3f2be-005e-443a-90cb-f623522f37a2",
+        "p_source_label": "SF Prod",
+        "client_application": "Snowflake Web App",
+        "first_seen": "2024-10-09 14:48:33.284",
+        "last_seen": "2024-10-09 15:01:13.492",
+        "n_sessions": 83
+      }
