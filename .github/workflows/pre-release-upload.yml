@@ -1,13 +1,13 @@
 on:
-  pull_request:
-    branches:
-      - main
+  pull_request_review:
+    types: [submitted]
 
 permissions:
   contents: read
 
 jobs:
   upload:
+    if: github.head_ref == 'main'
     name: Pre-Release Upload to GA
     runs-on: ubuntu-latest
     env:
