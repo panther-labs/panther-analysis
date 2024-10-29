@@ -8,7 +8,7 @@ Please familiarize yourself with these helpful resources on writing high-quality
 
 - The blog post Panther's founder, Jack Naglieri, wrote on [The Anatomy of a High Quality SIEM Rule](https://jacknaglieri.substack.com/p/hq-siem-rules)
 - Panther's [Detection Documentation](https://docs.panther.com/detections)
-- The `panther-analysis` [Style Guide](https://github.com/panther-labs/panther-analysis/blob/main/STYLE_GUIDE.md)
+- The `panther-analysis` [Style Guide](https://github.com/panther-labs/panther-analysis/blob/main/style_guides/STYLE_GUIDE.md)
 
 Especially excellent contributions will be considered for a quarterly prize! We will announce a winner in the **Panther-Analysis Seasonal Newsletter**, where we share updates and celebrate contributions to Panther’s open-source ruleset.
 
