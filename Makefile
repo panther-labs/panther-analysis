@@ -1,4 +1,4 @@
-dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
+dirs := $(shell ls | egrep 'policies|rules|global_helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
 TEST_ARGS :=
 

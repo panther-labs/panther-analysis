@@ -49,6 +49,7 @@ def aws_guardduty_context(event: dict):
         "type": event.get("type", "<MISSING TYPE>"),
         "resource": event.get("resource", {}),
         "service": event.get("service", {}),
+        "accountId": event.get("accountId", "<MISSING ACCOUNT ID>"),
     }
 
 
