@@ -7,7 +7,7 @@ permissions:
 jobs:
   test:
     if: github.event.pull_request.head.repo.fork == true
-    name: Test (Unuthenticated)
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
@@ -35,7 +35,7 @@ jobs:
 
   test-authenticated:
     if: github.event.pull_request.head.repo.fork == false
-    name: Test (Authenticated)
+    name: Test
     runs-on: ubuntu-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
