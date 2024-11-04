@@ -1,21 +1,24 @@
 AnalysisType: rule
-Filename: snowflake_login_without_mfa.py
-RuleID: Snowflake.Stream.LoginWithoutMFA
-DisplayName: Snowflake Login Without MFA
-Enabled: false
+Filename: snowflake_stream_brute_force_by_username.py
+RuleID: "Snowflake.Stream.BruteForceByUsername"
+DisplayName: Snowflake Brute Force Attacks by User
+Enabled: true
 LogTypes:
   - Snowflake.LoginHistory
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1556
-Description: Detect Snowflake logins without multifactor authentication
+    - TA0006:T1110
+Description: Detect brute force attacks by monitorign failed logins from the same
+  IP address
+DedupPeriodMinutes: 60
+Threshold: 5
 Tags:
   - Snowflake
-  - '[MITRE] Defense Evasion'
-  - '[MITRE] Modify Authentication Process'
+  - '[MITRE] Credential Access'
+  - '[MITRE] Brute Force'
 Tests:
-  - Name: Login With MFA
+  - Name: Successful Login
     ExpectedResult: false
     Log:
       {
@@ -31,10 +34,9 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
-        "SECOND_AUTHENTICATION_FACTOR": "OTP",
         "USER_NAME": "ckent@dailyplanet.org"
       }
-  - Name: Login Without MFA
+  - Name: Unsuccessful Login
     ExpectedResult: true
     Log:
       {
@@ -46,7 +48,7 @@ Tests:
         "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
         "EVENT_TYPE": "LOGIN",
         "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
-        "IS_SUCCESS": "YES",
+        "IS_SUCCESS": "NO",
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",

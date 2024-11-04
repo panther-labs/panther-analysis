@@ -1,25 +1,18 @@
 AnalysisType: rule
-Filename: snowflake_brute_force_by_username.py
-RuleID: "Snowflake.Stream.BruteForceByUsername"
-DisplayName: Snowflake Brute Force Attacks by User
+Filename: snowflake_stream_login_success.py
+RuleID: Snowflake.Stream.LoginSuccess
+DisplayName: Snowflake Successful Login
 Enabled: true
 LogTypes:
   - Snowflake.LoginHistory
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0006:T1110
-Description: Detect brute force attacks by monitorign failed logins from the same
-  IP address
-DedupPeriodMinutes: 60
-Threshold: 5
+Severity: Info
+CreateAlert: false
+Description: Track successful login signals for correlation.
 Tags:
   - Snowflake
-  - '[MITRE] Credential Access'
-  - '[MITRE] Brute Force'
 Tests:
   - Name: Successful Login
-    ExpectedResult: false
+    ExpectedResult: true
     Log:
       {
         "p_event_time": "2024-10-08 14:38:46.061000000",
@@ -37,7 +30,7 @@ Tests:
         "USER_NAME": "ckent@dailyplanet.org"
       }
   - Name: Unsuccessful Login
-    ExpectedResult: true
+    ExpectedResult: false
     Log:
       {
         "p_event_time": "2024-10-08 14:38:46.061000000",

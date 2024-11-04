@@ -1,18 +1,22 @@
 AnalysisType: rule
-Filename: snowflake_login_success.py
-RuleID: Snowflake.Stream.LoginSuccess
-DisplayName: Snowflake Successful Login
-Enabled: true
+Filename: snowflake_stream_login_without_mfa.py
+RuleID: Snowflake.Stream.LoginWithoutMFA
+DisplayName: Snowflake Login Without MFA
+Enabled: false
 LogTypes:
   - Snowflake.LoginHistory
-Severity: Info
-CreateAlert: false
-Description: Track successful login signals for correlation.
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1556
+Description: Detect Snowflake logins without multifactor authentication
 Tags:
   - Snowflake
+  - '[MITRE] Defense Evasion'
+  - '[MITRE] Modify Authentication Process'
 Tests:
-  - Name: Successful Login
-    ExpectedResult: true
+  - Name: Login With MFA
+    ExpectedResult: false
     Log:
       {
         "p_event_time": "2024-10-08 14:38:46.061000000",
@@ -27,10 +31,11 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
+        "SECOND_AUTHENTICATION_FACTOR": "OTP",
         "USER_NAME": "ckent@dailyplanet.org"
       }
-  - Name: Unsuccessful Login
-    ExpectedResult: false
+  - Name: Login Without MFA
+    ExpectedResult: true
     Log:
       {
         "p_event_time": "2024-10-08 14:38:46.061000000",
@@ -41,7 +46,7 @@ Tests:
         "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
         "EVENT_TYPE": "LOGIN",
         "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
-        "IS_SUCCESS": "NO",
+        "IS_SUCCESS": "YES",
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
