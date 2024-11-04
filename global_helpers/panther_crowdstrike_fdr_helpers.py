@@ -1,4 +1,4 @@
-def crowdstrike_detection_alert_context(event: dict):
+def crowdstrike_detection_alert_context(event):
     """Returns common context for Crowdstrike detections"""
     return {
         "aid": get_crowdstrike_field(event, "aid", default=""),
@@ -13,7 +13,7 @@ def crowdstrike_detection_alert_context(event: dict):
     }
 
 
-def crowdstrike_process_alert_context(event: dict):
+def crowdstrike_process_alert_context(event):
     """Returns common process context for Crowdstrike detections"""
     return {
         "aid": get_crowdstrike_field(event, "aid", default=""),
@@ -28,7 +28,7 @@ def crowdstrike_process_alert_context(event: dict):
     }
 
 
-def crowdstrike_network_detection_alert_context(event: dict):
+def crowdstrike_network_detection_alert_context(event):
     """Returns common network context for Crowdstrike detections"""
     return {
         "LocalAddressIP4": get_crowdstrike_field(event, "LocalAddressIP4", default=""),

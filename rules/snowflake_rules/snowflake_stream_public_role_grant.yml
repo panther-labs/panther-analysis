@@ -1,0 +1,60 @@
+AnalysisType: rule
+Filename: snowflake_stream_public_role_grant.py
+RuleID: Snowflake.Stream.PublicRoleGrant
+DisplayName: Snowflake Grant to Public Role
+Enabled: true
+LogTypes:
+  - Snowflake.GrantsToRoles
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078.001
+Description: Detect additional grants to the public role.
+Runbook: Determine if this is a necessary grant for the public role, which should
+  be kept to the fewest possible.
+Tags:
+  - Snowflake
+  - '[MITRE] Privilege Escalation'
+  - '[MITRE] Valid Accounts'
+  - '[MITRE] Valid Accounts: Default Accounts'
+Tests:
+  - Name: SELECT Granted to Public
+    ExpectedResult: true
+    Log:
+      {
+        "p_source_label": "DailyPlanet-Snowflake",
+        "CREATED_ON": "2024-10-10 12:56:35.822 -0700",
+        "MODIFIED_ON": "2024-10-10 12:56:35.822 -0700",
+        "PRIVILEGE": "SELECT",
+        "GRANTED_ON": "TABLE",
+        "NAME": "MYTABLE",
+        "TABLE_CATALOG": "TEST_DB",
+        "TABLE_SCHEMA": "PUBLIC",
+        "GRANTED_TO": "ROLE",
+        "GRANTEE_NAME": "PUBLIC",
+        "GRANT_OPTION": false,
+        "GRANTED_BY": "ACCOUNTADMIN",
+        "DELETED_ON": "",
+        "GRANTED_BY_ROLE_TYPE": "ROLE",
+        "OBJECT_INSTANCE": ""
+      }
+  - Name: Privilege Granted to Non-PUBLIC Role
+    ExpectedResult: false
+    Log:
+      {
+        "p_source_label": "DailyPlanet-Snowflake",
+        "CREATED_ON": "2024-10-10 12:56:35.822 -0700",
+        "MODIFIED_ON": "2024-10-10 12:56:35.822 -0700",
+        "PRIVILEGE": "SELECT",
+        "GRANTED_ON": "TABLE",
+        "NAME": "MYTABLE",
+        "TABLE_CATALOG": "TEST_DB",
+        "TABLE_SCHEMA": "PUBLIC",
+        "GRANTED_TO": "ROLE",
+        "GRANTEE_NAME": "APP_READONLY",
+        "GRANT_OPTION": false,
+        "GRANTED_BY": "ACCOUNTADMIN",
+        "DELETED_ON": "",
+        "GRANTED_BY_ROLE_TYPE": "ROLE",
+        "OBJECT_INSTANCE": ""
+      }

@@ -1,0 +1,40 @@
+AnalysisType: rule
+Filename: snowflake_stream_table_copied_into_stage.py
+RuleID: Snowflake.Stream.TableCopiedIntoStage
+DisplayName: Snowflake Table Copied Into Stage
+Enabled: true
+LogTypes:
+  - Snowflake.QueryHistory
+Severity: Info
+CreateAlert: false
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1041      # Exfiltration Over C2 Channel
+Description: A table was copied into a stage.
+Reference: 
+  https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Tags:
+  - Snowflake
+  - '[MITRE] Exfiltration'
+  - '[MITRE] Exfiltration Over C2 Channel'
+Tests:
+  - Name: Copy from Table into Stage
+    ExpectedResult: true
+    Log:
+      {
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "COPY INTO @mystage/result/data_\nFROM mytable FILE_FORMAT =
+      (FORMAT_NAME='CSV' COMPRESSION='GZIP');",
+        "QUERY_TYPE": "UNLOAD",
+        "USER_NAME": "LEX_LUTHOR"
+      }
+  - Name: Copy from Stage into Table
+    ExpectedResult: false
+    Log:
+      {
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "COPY INTO mytable\nFROM @mystage/result/data_ FILE_FORMAT =
+      (FORMAT_NAME='CSV' COMPRESSION='GZIP');",
+        "QUERY_TYPE": "UNLOAD",
+        "USER_NAME": "LEX_LUTHOR"
+      }

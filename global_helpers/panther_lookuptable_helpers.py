@@ -27,7 +27,7 @@ class LookupTableMatches:
     def p_matched(self):
         return self._p_matched
 
-    def p_matches(self, event: dict, p_match: str = "") -> dict:
+    def p_matches(self, event, p_match: str = "") -> dict:
         """Collect enrichments by searching for a value match in the p_match field
 
         Parameters:
