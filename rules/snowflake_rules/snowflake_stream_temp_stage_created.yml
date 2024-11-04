@@ -1,0 +1,62 @@
+AnalysisType: rule
+Filename: snowflake_stream_temp_stage_created.py
+RuleID: Snowflake.Stream.TempStageCreated
+DisplayName: Snowflake Temporary Stage Created
+Enabled: true
+LogTypes:
+  - Snowflake.QueryHistory
+Severity: Info
+CreateAlert: false
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1041      # Exfiltration Over C2 Channel
+Description: A temporary stage was created.
+Reference: 
+  https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Tags:
+  - Snowflake
+  - '[MITRE] Exfiltration'
+  - '[MITRE] Exfiltration Over C2 Channel'
+Tests:
+  - Name: Successful Temp Stage Created
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-09 21:06:03.631000000",
+        "p_log_type": "Snowflake.QueryHistory",
+        "p_source_id": "132d65cd-d6e4-4981-a209-a1d5902afd59",
+        "p_source_label": "SF-Ben",
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "CREATE TEMP STAGE my_temp_stage;",
+        "QUERY_TYPE": "CREATE",
+        "USER_NAME": "LEX_LUTHOR",
+        "WAREHOUSE_NAME": "ADMIN_WH"
+      }
+  - Name: Successful Temp Stage Created or Replaced
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-09 21:06:03.631000000",
+        "p_log_type": "Snowflake.QueryHistory",
+        "p_source_id": "132d65cd-d6e4-4981-a209-a1d5902afd59",
+        "p_source_label": "SF-Ben",
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "CREATE OR REPLACE TEMP STAGE my_temp_stage;",
+        "QUERY_TYPE": "CREATE",
+        "USER_NAME": "LEX_LUTHOR",
+        "WAREHOUSE_NAME": "ADMIN_WH"
+      }
+  - Name: Unsuccessful Temp Stage Created
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-10-09 21:06:03.631000000",
+        "p_log_type": "Snowflake.QueryHistory",
+        "p_source_id": "132d65cd-d6e4-4981-a209-a1d5902afd59",
+        "p_source_label": "SF-Ben",
+        "EXECUTION_STATUS": "FAIL",
+        "QUERY_TEXT": "CREATE TEMP STAGE my_temp_stage;",
+        "QUERY_TYPE": "CREATE",
+        "USER_NAME": "LEX_LUTHOR",
+        "WAREHOUSE_NAME": "ADMIN_WH"
+      }
