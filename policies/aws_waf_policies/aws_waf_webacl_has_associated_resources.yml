@@ -1,0 +1,50 @@
+AnalysisType: policy
+Filename: aws_waf_webacl_has_associated_resources.py
+PolicyID: "AWS.WAF.WebACLHasAssociatedResources"
+DisplayName: "AWS WAF WebACL Has Associated Resources"
+Enabled: true
+ResourceTypes:
+  - AWS.WAF.Regional.WebACL
+  - AWS.WAF.WebACL
+Tags:
+  - AWS
+  - Security Control
+  - Optimization
+Severity: Medium
+Description: >
+  This policy ensures that AWS WAF WebACLs are associated with at least one resource (ALB, CloudFront Distribution, or API Gateway). If a WebACL is not associated with any resources, it is inactive and not providing any protection.
+Runbook: >
+  Associate the WAF WebACL with at least one resource, such as an Application Load Balancer (ALB), CloudFront Distribution, or API Gateway. WebACLs that are not associated with resources do not protect any traffic.
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-associate.html
+Tests:
+  - Name: WebACL Associated with Resources
+    ExpectedResult: true
+    Resource:
+      {
+        "ResourceType": "AWS.WAF.WebACL",
+        "AssociatedResources":
+          [
+            "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/my-app",
+            "arn:aws:cloudfront::123456789012:distribution/EXAMPLE"
+          ]
+      }
+
+  - Name: WebACL Not Associated with Resources
+    ExpectedResult: false
+    Resource:
+      {
+        "ResourceType": "AWS.WAF.WebACL",
+        "AssociatedResources": []
+      }
+
+  - Name: WebACL Associated with Single Resource
+    ExpectedResult: true
+    Resource:
+      {
+        "ResourceType": "AWS.WAF.WebACL",
+        "AssociatedResources":
+          [
+            "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/my-app"
+          ]
+      } 
+      
