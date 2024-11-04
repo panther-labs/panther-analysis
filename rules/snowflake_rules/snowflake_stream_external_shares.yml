@@ -1,0 +1,54 @@
+AnalysisType: rule
+Filename: snowflake_stream_external_shares.py
+RuleID: Snowflake.Stream.ExternalShares
+DisplayName: Snowflake External Data Share
+Enabled: true
+LogTypes:
+  - Snowflake.DataTransferHistory
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Description: Detect when an external share has been initiated from one source cloud
+  to another target cloud.
+Runbook: Determine if this occurred as a result of a valid business request.
+Tags:
+  - Configuration Required
+  - Snowflake
+  - '[MITRE] Exfiltration'
+  - '[MITRE] Transfer Data to Cloud Account'
+Tests:
+  - Name: Allowed Share
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_data_share_hosting_accounts
+        returnValue: '{DP_EUROPE}, {DP_ASIA}, {DP_AMERICA}'
+    Log:
+      {
+        "ORGANIZATION_NAME": "DAILY_PLANET",
+        "ACCOUNT_NAME": "DP_EUROPE",
+        "REGION": "US-EAST-2",
+        "SOURCE_CLOUD": "AWS",
+        "SOURCE_REGION": "US-EAST-2",
+        "TARGET_CLOUD": "AWS",
+        "TARGET_REGION": "EU-WEST-1",
+        "BYTES_TRANSFERRED": 61235879,
+        "TRANSFER_TYPE": "COPY"
+      }
+  - Name: Disallowed Share
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_data_share_hosting_accounts
+        returnValue: '{DP_EUROPE}, {DP_ASIA}, {DP_AMERICA}'
+    Log:
+      {
+        "ORGANIZATION_NAME": "LEXCORP",
+        "ACCOUNT_NAME": "LEX_SECRET_ACCOUNT",
+        "REGION": "US-EAST-2",
+        "SOURCE_CLOUD": "AWS",
+        "SOURCE_REGION": "US-EAST-2",
+        "TARGET_CLOUD": "AWS",
+        "TARGET_REGION": "EU-WEST-1",
+        "BYTES_TRANSFERRED": 61235879,
+        "TRANSFER_TYPE": "COPY"
+      }

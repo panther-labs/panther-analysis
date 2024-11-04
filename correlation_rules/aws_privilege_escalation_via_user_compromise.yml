@@ -16,12 +16,13 @@ Detection:
         - ID: User Backdoored TO User Accessed ON IP Addr
           From: User Backdoored
           To: User Accessed
+          WithinTimeFrameMinutes: 60
           Match:
             - On: p_alert_context.ip_accessKeyId
       Schedule:
-        RateMinutes: 60
+        RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 90
+      LookbackWindowMinutes: 2160
 Tests:
     - Name: Access Key Created and Used from Same IP
       ExpectedResult: true
