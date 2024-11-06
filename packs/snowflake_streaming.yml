@@ -1,0 +1,23 @@
+AnalysisType: pack
+PackID: PantherManaged.SnowflakeStreaming
+DisplayName: "Panther Snowflake Real-Time Rules"
+Description: Group of all streaming (real-time) Snowflake detections
+PackDefinition:
+  IDs:
+    # Correlation Rules
+    - Snowflake.PotentialBruteForceSuccess
+    # Helpers
+    - panther_snowflake_helpers
+    # Rules
+    - Snowflake.Stream.AccountAdminGranted
+    - Snowflake.Stream.BruteForceByIp
+    - Snowflake.Stream.BruteForceByUsername
+    - Snowflake.Stream.ExternalShares
+    - Snowflake.Stream.FileDownloaded
+    - Snowflake.Stream.LoginSuccess
+    - Snowflake.Stream.LoginWithoutMFA
+    - Snowflake.Stream.PublicRoleGrant
+    - Snowflake.Stream.TableCopiedIntoStage
+    - Snowflake.Stream.TempStageCreated
+    - Snowflake.Stream.UserCreated
+    - Snowflake.Stream.UserEnabled

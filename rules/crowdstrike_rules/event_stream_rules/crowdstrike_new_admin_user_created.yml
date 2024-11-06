@@ -19,11 +19,12 @@ Detection:
       - ID: AcountCreated FOLLOWED BY AdminRoleAssigned ON target AND actor
         From: AccountCreated
         To: AdminRoleAssigned
+        WithinTimeFrameMinutes: 45
         Match:
           - On: p_alert_context.actor_target
-    LookbackWindowMinutes: 45
+    LookbackWindowMinutes: 2160
     Schedule:
-      RateMinutes: 30
+      RateMinutes: 1440
       TimeoutMinutes: 1
 Tests:
   - Name: User Creation, Followed By Role Assignment

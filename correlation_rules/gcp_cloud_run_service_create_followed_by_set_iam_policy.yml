@@ -21,11 +21,12 @@ Detection:
         - ID: ServiceCreated FOLLOWED BY SetIAMPolicy
           From: ServiceCreated
           To: SetIAMPolicy
+          WithinTimeFrameMinutes: 90
           Match:
             - On: p_alert_context.caller_ip
-      LookbackWindowMinutes: 90
+      LookbackWindowMinutes: 2160
       Schedule:
-        RateMinutes: 60 
+        RateMinutes: 1440 
         TimeoutMinutes: 5
 Tests:
     - Name: GCP Service Run, Followed By IAM Policy Change From Same IP
