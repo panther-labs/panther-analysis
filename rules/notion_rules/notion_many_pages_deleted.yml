@@ -1,16 +1,17 @@
 AnalysisType: rule
 Filename: notion_many_pages_deleted.py
 RuleID: "Notion.Many.Pages.Deleted"
-DisplayName: "Notion Many Pages Deleted"
-Enabled: true
+DisplayName: "Notion Many Pages Deleted [Deprecated]"
+Enabled: false
 LogTypes:
   - Notion.AuditLogs
 Tags:
   - Notion
   - Data Security
   - Data Destruction
+  - Deprecated
 Severity: Medium
-Description: A Notion User deleted multiple pages.
+Description: (Deprecated due to false-positive rate) A Notion User deleted multiple pages.
 DedupPeriodMinutes: 60
 Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.
 Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
