@@ -40,8 +40,8 @@ jobs:
         id: check-packs
         run: |
           # Get the output for the PR comment body
-          panther_analysis_tool check-packs 2> errors.txt
-          echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
+          panther_analysis_tool check-packs 2> errors.txt || true
+          echo ::set-output name=errors::`cat errors.txt`
 
           # Run again to get the exit code
           panther_analysis_tool check-packs
