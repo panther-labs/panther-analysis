@@ -1,6 +1,12 @@
 import json
 
-REQUIRED_CONDITIONS = {"aws:SourceArn", "aws:SourceAccount", "aws:SourceOrgID", "aws:SourceOrgPaths"}
+REQUIRED_CONDITIONS = {
+    "aws:SourceArn",
+    "aws:SourceAccount",
+    "aws:SourceOrgID",
+    "aws:SourceOrgPaths",
+}
+
 
 def policy(resource):
     bucket_policy = resource.get("Policy")
