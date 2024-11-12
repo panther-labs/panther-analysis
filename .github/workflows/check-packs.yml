@@ -64,3 +64,9 @@ jobs:
         with:
           mode: delete
           comment-tag: check-packs
+      - name: Fail Action
+        if: failure()
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('There were issues with packs. Please resolve them.')
