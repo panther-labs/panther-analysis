@@ -21,8 +21,8 @@ def rule(event):
     if (
         action == "UPDATE"
         and category == "BACKUP_AND_RESTORE"
-        and golden_restore_point_pre == True
-        and golden_restore_point_post == False
+        and golden_restore_point_pre is True
+        and golden_restore_point_post is False
     ):
         return True
     return False
