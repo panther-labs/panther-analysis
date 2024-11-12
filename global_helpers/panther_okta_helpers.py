@@ -1,4 +1,4 @@
-def okta_alert_context(event: dict):
+def okta_alert_context(event):
     """Returns common context for automation of Okta alerts"""
     return {
         "event_type": event.get("eventtype", ""),

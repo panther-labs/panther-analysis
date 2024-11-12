@@ -19,11 +19,12 @@ Detection:
       - ID: User Created FOLLOWED BY User Deleted
         From: AccountCreated
         To: AccountDeleted
+        WithinTimeFrameMinutes: 720 # 12 hours
         Match:
           - On: p_alert_context.target_name
-    LookbackWindowMinutes: 720 # 12 hours
+    LookbackWindowMinutes: 2160
     Schedule:
-      RateMinutes: 480 # 8 hours
+      RateMinutes: 1440
       TimeoutMinutes: 1
 Tests:
   - Name: User Creation, Followed By Deletion
