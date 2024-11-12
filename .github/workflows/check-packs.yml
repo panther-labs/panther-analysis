@@ -36,11 +36,15 @@ jobs:
         run: pip install panther_analysis_tool
 
       - name: Check packs
-        continue-on-error: true
         id: check-packs
         run: |
           # Get the output for the PR comment body
-          panther_analysis_tool check-packs 2> $GITHUB_OUTPUT
+          panther_analysis_tool check-packs 2> errors.txt || true
+          echo ::set-output name=errors::`cat errors.txt`
+
+      - name: Check packs (Exit Code)
+        run: |
+          exit $(panther_analysis_tool check-packs)
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v3
@@ -54,15 +58,10 @@ jobs:
             ${{ steps.check-packs.outputs.errors }}
             ```
           comment-tag: check-packs
+
       - name: Delete comment
         uses: thollander/actions-comment-pull-request@v3
         if: success()
         with:
           mode: delete
           comment-tag: check-packs
-      - name: Fail Action
-        if: failure()
-        uses: actions/github-script@v3
-        with:
-          script: |
-            core.setFailed('There were issues with packs. Please resolve them.')
