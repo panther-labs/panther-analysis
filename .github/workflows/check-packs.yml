@@ -40,11 +40,7 @@ jobs:
         id: check-packs
         run: |
           # Get the output for the PR comment body
-          panther_analysis_tool check-packs 2> errors.txt || true
-          echo ::set-output name=errors::`cat errors.txt`
-
-          # Run again to get the exit code
-          exit $(panther_analysis_tool check-packs)
+          panther_analysis_tool check-packs 2> $GITHUB_OUTPUT
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v3
