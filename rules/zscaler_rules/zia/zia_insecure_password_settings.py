@@ -25,8 +25,8 @@ def rule(event):
     )
     if (
         auth_frequency == "PERMANENT_COOKIE"
-        or password_expiry == "NEVER"
-        or password_strength == "NONE"
+        or password_expiry == "NEVER"  # nosec bandit B105
+        or password_strength == "NONE"  # nosec bandit B105
     ):
         return True
     return False
