@@ -44,11 +44,11 @@ jobs:
           echo ::set-output name=errors::`cat errors.txt`
 
           # Run again to get the exit code
-          panther_analysis_tool check-packs
+          exit $(panther_analysis_tool check-packs)
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v3
-        if: success()
+        if: failure()
         with:
           mode: upsert
           message: |
@@ -60,7 +60,7 @@ jobs:
           comment-tag: check-packs
       - name: Delete comment
         uses: thollander/actions-comment-pull-request@v3
-        if: failure()
+        if: success()
         with:
           mode: delete
           comment-tag: check-packs
