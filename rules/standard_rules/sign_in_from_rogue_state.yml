@@ -260,6 +260,259 @@ Tests:
         "uuid": "c35900e7-5b17-11ef-ad6d-cf78a9534d8d",
         "version": "0"
       }
+  - Name: Sign-In with no Enrichment Data
+    ExpectedResult: false
+    Log: 
+      {
+        "actor": {
+          "alternateId": "dude.lightbulb@example.co",
+          "displayName": "Dude Lightbulb",
+          "id": "EXAMPLE_USER_ID",
+          "type": "User"
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "EXAMPLE_SESSION_ID"
+        },
+        "client": {
+          "device": "Computer",
+          "geographicalContext": {
+            "city": "Winnipeg",
+            "country": "Canada",
+            "geolocation": {
+              "lat": 49.922,
+              "lon": -96.965
+            },
+            "postalCode": "R2C",
+            "state": "Manitoba"
+          },
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "debugContext": {
+          "debugData": {
+            "authnRequestId": "xxx",
+            "deviceFingerprint": "xxx",
+            "dtHash": "xxx",
+            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New
+      Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New
+      State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New
+      City\":\"NEGATIVE\"}}",
+            "oktaUserAgentExtended": "okta-auth-js/7.7.0 okta-signin-widget-7.21.0",
+            "origin": "https://example.okta.com",
+            "requestId": "xxx",
+            "requestUri": "/idp/idx/identify",
+            "threatSuspected": "false",
+            "url": "/idp/idx/identify?"
+          }
+        },
+        "displayMessage": "User login to Okta",
+        "eventType": "user.session.start",
+        "legacyEventType": "core.user_auth.login_success",
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "p_event_time": "2024-08-15 15:05:09.154000000",
+        "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2024-08-15 15:08:22.176160519",
+        "p_row_id": "526383f6c367e7f3db88959621afee19",
+        "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
+        "p_source_label": "My Log Source",
+        "p_udm": {
+          "source": {
+            "address": "1.1.1.1",
+            "ip": "1.1.1.1"
+          },
+          "user": {
+            "email": "dude.lightbulb@example.co",
+            "full_name": "Dude Lightbulb",
+            "id": "OTHER_EXAMPLE_USER_ID",
+            "provider_id": "EXAMPLE_USER_ID"
+          }
+        },
+        "published": "2024-08-15 15:05:09.154000000",
+        "request": {
+          "ipChain": [
+            {
+              "geographicalContext": {
+                "city": "Winnipeg",
+                "country": "Canada",
+                "geolocation": {
+                  "lat": 49.922,
+                  "lon": -96.965
+                },
+                "postalCode": "R2C",
+                "state": "Manitoba"
+              },
+              "ip": "1.1.1.1",
+              "version": "V4"
+            }
+          ]
+        },
+        "securityContext": {
+          "asNumber": 7122,
+          "asOrg": "SAMPLE_ISP",
+          "domain": "isp.net",
+          "isProxy": false,
+          "isp": "SAMPLE_ISP"
+        },
+        "severity": "INFO",
+        "target": [
+          {
+            "alternateId": "My Okta App",
+            "displayName": "My Okta App",
+            "id": "xxx",
+            "type": "AppInstance"
+          }
+        ],
+        "transaction": {
+          "detail": {},
+          "id": "32caf8cb5819a0928702b4b835e163a0",
+          "type": "WEB"
+        },
+        "uuid": "c35900e7-5b17-11ef-ad6d-cf78a9534d8d",
+        "version": "0"
+      }
+  - Name: Sign-In From Country That Doesn't Exist
+    ExpectedResult: false
+    Log: 
+      {
+        "actor": {
+          "alternateId": "dude.lightbulb@example.co",
+          "displayName": "Dude Lightbulb",
+          "id": "EXAMPLE_USER_ID",
+          "type": "User"
+        },
+        "authenticationContext": {
+          "authenticationStep": 0,
+          "externalSessionId": "EXAMPLE_SESSION_ID"
+        },
+        "client": {
+          "device": "Computer",
+          "geographicalContext": {
+            "city": "Winnipeg",
+            "country": "Canada",
+            "geolocation": {
+              "lat": 49.922,
+              "lon": -96.965
+            },
+            "postalCode": "R2C",
+            "state": "Manitoba"
+          },
+          "ipAddress": "1.1.1.1",
+          "userAgent": {
+            "browser": "CHROME",
+            "os": "Mac OS X",
+            "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          },
+          "zone": "null"
+        },
+        "debugContext": {
+          "debugData": {
+            "authnRequestId": "xxx",
+            "deviceFingerprint": "xxx",
+            "dtHash": "xxx",
+            "logOnlySecurityData": "{\"risk\":{\"level\":\"LOW\"},\"behaviors\":{\"New
+      Geo-Location\":\"NEGATIVE\",\"New Device\":\"NEGATIVE\",\"New IP\":\"NEGATIVE\",\"New
+      State\":\"NEGATIVE\",\"New Country\":\"NEGATIVE\",\"Velocity\":\"NEGATIVE\",\"New
+      City\":\"NEGATIVE\"}}",
+            "oktaUserAgentExtended": "okta-auth-js/7.7.0 okta-signin-widget-7.21.0",
+            "origin": "https://example.okta.com",
+            "requestId": "xxx",
+            "requestUri": "/idp/idx/identify",
+            "threatSuspected": "false",
+            "url": "/idp/idx/identify?"
+          }
+        },
+        "displayMessage": "User login to Okta",
+        "eventType": "user.session.start",
+        "legacyEventType": "core.user_auth.login_success",
+        "outcome": {
+          "result": "SUCCESS"
+        },
+        "p_enrichment": {
+          "ipinfo_location": {
+            "client.ipAddress": {
+              "city": "Winnipeg",
+              "country": "FAKE_COUNTRY",
+              "lat": "49.8844",
+              "lng": "-97.14704",
+              "p_match": "1.1.1.1",
+              "postal_code": "R3B",
+              "region": "Manitoba",
+              "region_code": "MB",
+              "timezone": "America/Winnipeg"
+            }
+          }
+        },
+        "p_event_time": "2024-08-15 15:05:09.154000000",
+        "p_log_type": "Okta.SystemLog",
+        "p_parse_time": "2024-08-15 15:08:22.176160519",
+        "p_row_id": "526383f6c367e7f3db88959621afee19",
+        "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
+        "p_source_label": "My Log Source",
+        "p_udm": {
+          "source": {
+            "address": "1.1.1.1",
+            "ip": "1.1.1.1"
+          },
+          "user": {
+            "email": "dude.lightbulb@example.co",
+            "full_name": "Dude Lightbulb",
+            "id": "OTHER_EXAMPLE_USER_ID",
+            "provider_id": "EXAMPLE_USER_ID"
+          }
+        },
+        "published": "2024-08-15 15:05:09.154000000",
+        "request": {
+          "ipChain": [
+            {
+              "geographicalContext": {
+                "city": "Winnipeg",
+                "country": "Canada",
+                "geolocation": {
+                  "lat": 49.922,
+                  "lon": -96.965
+                },
+                "postalCode": "R2C",
+                "state": "Manitoba"
+              },
+              "ip": "1.1.1.1",
+              "version": "V4"
+            }
+          ]
+        },
+        "securityContext": {
+          "asNumber": 7122,
+          "asOrg": "SAMPLE_ISP",
+          "domain": "isp.net",
+          "isProxy": false,
+          "isp": "SAMPLE_ISP"
+        },
+        "severity": "INFO",
+        "target": [
+          {
+            "alternateId": "My Okta App",
+            "displayName": "My Okta App",
+            "id": "xxx",
+            "type": "AppInstance"
+          }
+        ],
+        "transaction": {
+          "detail": {},
+          "id": "32caf8cb5819a0928702b4b835e163a0",
+          "type": "WEB"
+        },
+        "uuid": "c35900e7-5b17-11ef-ad6d-cf78a9534d8d",
+        "version": "0"
+      }
   - Name: Asana - Rogue State Sign-In
     ExpectedResult: true
     Mocks:

@@ -18,7 +18,13 @@ def rule(event):
         return False
 
     # Get contry of request origin and compare to identified rogue state list
-    return bool(is_rogue_state(get_country(event).alpha_2))
+    country = get_country(event)
+    if country is None:
+        # We weren't able to find a matching country, therefore we don't have enough information
+        #   to alert on
+        return False
+    #   Wrapping in 'bool' so that we can use mocking for 'is_rogue_state'
+    return bool(is_rogue_state(country.alpha_2))
 
 
 def title(event):
@@ -40,7 +46,7 @@ def get_country(event) -> str:
     """Returns the country code from an event's IPinfo data."""
     location_data = event.deep_get("p_enrichment", "ipinfo_location", event.udm_path("source_ip"))
     if not location_data:
-        return ""  # Ignore event if we have no enrichment to analyze
+        return None  # Ignore event if we have no enrichment to analyze
     return pycountry.countries.get(alpha_2=location_data.get("country").upper())
 
 
