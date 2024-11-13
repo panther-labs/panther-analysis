@@ -1,5 +1,4 @@
 from panther_zscaler_helpers import zia_alert_context, zia_success
-from pygments.lexer import default
 
 
 def rule(event):
