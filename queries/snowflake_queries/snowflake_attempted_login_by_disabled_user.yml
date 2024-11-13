@@ -1,0 +1,42 @@
+AnalysisType: scheduled_rule
+Filename: snowflake_attempted_login_by_disabled_user.py
+RuleID: "Snowflake.Stream.AttemptedLoginByDisabledUser"
+Enabled: true
+ScheduledQueries:
+  - Snowflake Attempted Login With Disabled User
+Severity: Low
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078.004
+Description: >
+  Detects when a login is attempted by a disabled user account.
+Tags:
+  - Snowflake
+  - Behavior Analysis
+  - Initial Access:Valid Accounts:Cloud Accounts
+Tests:
+  - Name: Login by Disabled User
+    ExpectedResult: true
+    Log:
+      {
+        "p_source_label": "SF-Prod",
+        "user": {
+          "CREATED_ON": "2024-10-09 19:43:05.083000000",
+          "DEFAULT_ROLE": "PANTHER_AUDIT_VIEW_ROLE",
+          "DISABLED": true,
+          "DISPLAY_NAME":
+          "FORMER_ADMIN",
+          "EXT_AUTHN_DUO": false,
+          "HAS_MFA": false,
+          "HAS_PASSWORD": true,
+          "HAS_RSA_PUBLIC_KEY": false,
+          "LAST_SUCCESS_LOGIN": "2024-10-09 20:59:00.043000000",
+          "LOGIN_NAME": "FORMER_ADMIN",
+          "MUST_CHANGE_PASSWORD": false,
+          "NAME": "FORMER_ADMIN",
+          "OWNER": "ACCOUNTADMIN",
+          "SNOWFLAKE_LOCK": false,
+          "USER_ID": "51"
+        },
+        "USER_NAME": "FORMER_ADMIN"
+      }
