@@ -1,0 +1,61 @@
+AnalysisType: rule
+RuleID: ZIA.Logs.Downloaded
+Description: This rule detects when ZIA Audit Logs were downloaded.
+DisplayName: ZIA Logs Downloaded
+Runbook: Verify that this change was planned. If not, make sure no sensitive information was leaked.
+Reference: https://help.zscaler.com/zia/about-audit-logs
+Enabled: true
+Filename: zia_logs_downloaded.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1654 # Log Enumeration
+LogTypes:
+  - Zscaler.ZIA.AdminAuditLog
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: Logs downloaded
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "DOWNLOAD",
+          "adminid": "admin@test.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "AUDIT_LOGS",
+          "clientip": "1.2.3.4",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": { },
+          "preaction": { },
+          "recordid": "363",
+          "resource": "None",
+          "result": "SUCCESS",
+          "subcategory": "AUDIT_LOGS",
+          "time": "2024-11-04 16:31:24.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Other event
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "action": "SIGN_IN",
+          "adminid": "admin@test.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "LOGIN",
+          "clientip": "1.2.3.4",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": { },
+          "preaction": { },
+          "recordid": "354",
+          "resource": "None",
+          "result": "SUCCESS",
+          "subcategory": "LOGIN",
+          "time": "2024-11-04 16:27:37.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
