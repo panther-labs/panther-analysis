@@ -38,7 +38,7 @@ def map_source_to_name(event: Any) -> str:
     )
 
 
-def cloudflare_fw_alert_context(event: dict = None):
+def cloudflare_fw_alert_context(event=None):
     keep_keys = [
         "Action",
         "ClientIP",
@@ -57,7 +57,7 @@ def cloudflare_fw_alert_context(event: dict = None):
     return context_dict
 
 
-def cloudflare_http_alert_context(event: dict = None):
+def cloudflare_http_alert_context(event=None):
     keep_keys = [
         "BotScore",
         "BotScoreSrc",

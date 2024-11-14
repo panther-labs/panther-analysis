@@ -7,9 +7,33 @@ def wiz_success(event):
 def wiz_alert_context(event):
     return {
         "action": event.get("action", ""),
-        "user": event.get("user", ""),
+        "actor": wiz_actor(event),
         "source_ip": event.get("sourceip", ""),
         "event_id": event.get("id", ""),
-        "service_account": event.get("serviceaccount", ""),
         "action_parameters": event.get("actionparameters", ""),
+    }
+
+
+def wiz_actor(event):
+    user = event.get("user")
+    serviceaccount = event.get("serviceAccount")
+
+    if user is not None:
+        return {
+            "type": "user",
+            "id": user.get("id"),
+            "name": user.get("name"),
+        }
+
+    if serviceaccount is not None:
+        return {
+            "type": "serviceaccount",
+            "id": serviceaccount.get("id"),
+            "name": serviceaccount.get("name"),
+        }
+
+    return {
+        "type": "unknown",
+        "id": "<Unknown ID>",
+        "name": "<Unknown Name>",
     }

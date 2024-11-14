@@ -1,0 +1,43 @@
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    if: github.head_ref == 'main'
+    name: Pre-Release Upload to GA
+    runs-on: ubuntu-latest
+    env:
+      API_HOST: ${{ secrets.GA_API_HOST }}
+      API_TOKEN: ${{ secrets.GA_API_TOKEN }}
+    steps:
+      - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+          
+      - name: Validate Secrets
+        if: ${{ env.GA_API_HOST == '' || env.GA_API_TOKEN == '' }}
+        run: |
+          echo "API_HOST or API_TOKEN not set"
+          exit 0
+
+      - name: Checkout panther-analysis
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+
+      - name: Set python version
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b #v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Setup venv
+        run: make venv
+
+      - name: upload
+        run: |
+          pipenv run panther_analysis_tool upload --api-host ${{ env.GA_API_HOST }} --api-token ${{ env.GA_API_TOKEN }}
