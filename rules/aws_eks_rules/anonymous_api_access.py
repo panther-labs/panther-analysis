@@ -2,9 +2,16 @@ from panther_aws_helpers import eks_panther_obj_ref
 
 
 def rule(event):
+    if event.deep_get("annotations", "authorization.k8s.io/decision") != "allow":
+        return False
+    src_ip = event.get("sourceIPs", ["0.0.0.0"])
+    if src_ip == ["127.0.0.1"]:
+        return False
+    if event.get("userAgent", "") == "ELB-HealthChecker/2.0" and src_ip[0].startswith("10.0."):
+        return False
+
     # Check if the username is set to "system:anonymous", which indicates anonymous access
-    p_eks = eks_panther_obj_ref(event)
-    if p_eks.get("actor") == "system:anonymous":
+    if event.deep_get("user", "username") == "system:anonymous":
         return True
     return False
 
@@ -13,14 +20,14 @@ def title(event):
     p_eks = eks_panther_obj_ref(event)
     return (
         f"Anonymous API access detected on Kubernetes API server "
-        f"from [{p_eks.get('sourceIPs')[0]}] to [{p_eks.get('resource')}] "
-        f"in namespace [{p_eks.get('ns')}] on [{p_eks.get('p_source_label')}]"
+        f"from [{p_eks.get('sourceIPs')[0]}] to [{event.get('requestURI', 'NO_URI')}] "
+        f"on [{p_eks.get('p_source_label')}]"
     )
 
 
 def dedup(event):
     p_eks = eks_panther_obj_ref(event)
-    return f"anonymous_access_{p_eks.get('p_source_label')}_{p_eks.get('sourceIPs')[0]}"
+    return f"anonymous_access_{p_eks.get('p_source_label')}_{event.get('userAgent')}"
 
 
 def alert_context(event):
