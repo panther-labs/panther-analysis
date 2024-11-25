@@ -1,0 +1,231 @@
+AnalysisType: rule
+Filename: aws_cloudtrail_event_selectors_disabled.py
+RuleID: "AWS.CloudTrail.EventSelectorsDisabled"
+DisplayName: "CloudTrail Event Delectors Disabled"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Security Control
+  - Defense Evasion:Impair Defenses
+Reports:
+  CIS:
+    - 3.5
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: Medium
+Description: >
+  A CloudTrail Trail was modified.
+Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-cloudtrail-modified
+Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-update-a-trail-console.html
+SummaryAttributes:
+  - eventName
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+Tests:
+  - Name: Event Selector Disabled
+    ExpectedResult: true
+    Log: {
+      "p_event_time": "2024-11-25 17:51:21.000000000",
+      "p_log_type": "AWS.CloudTrail",
+      "p_parse_time": "2024-11-25 17:55:54.253083422",
+      "awsRegion": "us-west-2",
+      "eventCategory": "Management",
+      "eventID": "4ca1cb25-7633-496b-8f92-6de876228c3f",
+      "eventName": "PutEventSelectors",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventTime": "2024-11-25 17:51:21.000000000",
+      "eventType": "AwsApiCall",
+      "eventVersion": "1.11",
+      "managementEvent": true,
+      "readOnly": false,
+      "recipientAccountId": "111122223333",
+      "requestID": "a8c6184a-89b1-4fc1-a6fa-324748d48b64",
+      "requestParameters": {
+        "eventSelectors": [
+          {
+            "dataResources": [
+              {
+                "type": "AWS::S3::Object",
+                "values": []
+              },
+              {
+                "type": "AWS::Lambda::Function",
+                "values": []
+              }
+            ],
+            "excludeManagementEventSources": [],
+            "includeManagementEvents": false,
+            "readWriteType": "ReadOnly"
+          }
+        ],
+        "trailName": "sample-cloudtrail-name"
+      },
+      "responseElements": {
+        "eventSelectors": [
+          {
+            "dataResources": [
+              {
+                "type": "AWS::S3::Object",
+                "values": []
+              },
+              {
+                "type": "AWS::Lambda::Function",
+                "values": []
+              }
+            ],
+            "excludeManagementEventSources": [],
+            "includeManagementEvents": false,
+            "readWriteType": "ReadOnly"
+          }
+        ],
+        "trailARN": "arn:aws:cloudtrail:us-west-2:111122223333:trail/sample-cloudtrail-name"
+      },
+      "sourceIPAddress": "1.2.3.4",
+      "tlsDetails": {
+        "cipherSuite": "TLS_AES_128_GCM_SHA256",
+        "clientProvidedHostHeader": "cloudtrail.us-west-2.amazonaws.com",
+        "tlsVersion": "TLSv1.3"
+      },
+      "userAgent": "sample-user-agent",
+      "userIdentity": {
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
+        "accountId": "111122223333",
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
+        "principalId": "EXAMPLEPRINCIPLEID:leroy.jenkins",
+        "sessionContext": {
+          "attributes": {
+            "creationDate": "2024-11-25T16:53:42Z",
+            "mfaAuthenticated": "false"
+          },
+          "sessionIssuer": {
+            "accountId": "111122223333",
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+            "principalId": "EXAMPLEPRINCIPLEID",
+            "type": "Role",
+            "userName": "SampleRole"
+          }
+        },
+        "type": "AssumedRole"
+      }
+    }
+  - Name: Event Selector Enabled
+    ExpectedResult: false
+    Log: {
+      "p_event_time": "2024-11-25 17:51:21.000000000",
+      "p_log_type": "AWS.CloudTrail",
+      "p_parse_time": "2024-11-25 17:55:54.253083422",
+      "awsRegion": "us-west-2",
+      "eventCategory": "Management",
+      "eventID": "4ca1cb25-7633-496b-8f92-6de876228c3f",
+      "eventName": "PutEventSelectors",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventTime": "2024-11-25 17:51:21.000000000",
+      "eventType": "AwsApiCall",
+      "eventVersion": "1.11",
+      "managementEvent": true,
+      "readOnly": false,
+      "recipientAccountId": "111122223333",
+      "requestID": "a8c6184a-89b1-4fc1-a6fa-324748d48b64",
+      "requestParameters": {
+        "eventSelectors": [
+          {
+            "dataResources": [],
+            "excludeManagementEventSources": [],
+            "includeManagementEvents": true,
+            "readWriteType": "All"
+          }
+        ],
+        "trailName": "sample-cloudtrail-name"
+      },
+      "responseElements": {
+        "eventSelectors": [
+          {
+            "dataResources": [],
+            "excludeManagementEventSources": [],
+            "includeManagementEvents": true,
+            "readWriteType": "All"
+          }
+        ],
+        "trailARN": "arn:aws:cloudtrail:us-west-2:111122223333:trail/sample-cloudtrail-name"
+      },
+      "sourceIPAddress": "1.2.3.4",
+      "tlsDetails": {
+        "cipherSuite": "TLS_AES_128_GCM_SHA256",
+        "clientProvidedHostHeader": "cloudtrail.us-west-2.amazonaws.com",
+        "tlsVersion": "TLSv1.3"
+      },
+      "userAgent": "sample-user-agent",
+      "userIdentity": {
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
+        "accountId": "111122223333",
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
+        "principalId": "EXAMPLEPRINCIPLEID:leroy.jenkins",
+        "sessionContext": {
+          "attributes": {
+            "creationDate": "2024-11-25T16:53:42Z",
+            "mfaAuthenticated": "false"
+          },
+          "sessionIssuer": {
+            "accountId": "111122223333",
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+            "principalId": "EXAMPLEPRINCIPLEID",
+            "type": "Role",
+            "userName": "SampleRole"
+          }
+        },
+        "type": "AssumedRole"
+      }
+    }
+  - Name: Uninteresting Event Type
+    ExpectedResult: false
+    Log: {
+      "p_event_time": "2024-11-25 17:50:24.000000000",
+      "p_log_type": "AWS.CloudTrail",
+      "p_parse_time": "2024-11-25 17:55:54.172592534",
+      "awsRegion": "us-west-2",
+      "eventCategory": "Management",
+      "eventID": "63fb143a-c494-4510-8e9e-34172e4872c3",
+      "eventName": "GetEventSelectors",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventTime": "2024-11-25 17:50:24.000000000",
+      "eventType": "AwsApiCall",
+      "eventVersion": "1.11",
+      "managementEvent": true,
+      "readOnly": true,
+      "recipientAccountId": "111122223333",
+      "requestID": "cad6aff4-1558-49c5-ae4a-c512058751f1",
+      "requestParameters": {
+        "trailName": "sample-cloudtrail-name"
+      },
+      "sourceIPAddress": "1.2.3.4",
+      "tlsDetails": {
+        "cipherSuite": "TLS_AES_128_GCM_SHA256",
+        "clientProvidedHostHeader": "cloudtrail.us-west-2.amazonaws.com",
+        "tlsVersion": "TLSv1.3"
+      },
+      "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.1.2 (+https://www.terraform.io) terraform-provider-aws/3.76.1 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go/1.44.157 (go1.19.3; darwin; arm64) stratus-red-team_83c9a458-ffab-4d43-8b02-9691311e8c0a HashiCorp-terraform-exec/0.17.3",
+      "userIdentity": {
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
+        "accountId": "111122223333",
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
+        "principalId": "EXAMPLEPRINCIPLEID:leroy.jenkins",
+        "sessionContext": {
+          "attributes": {
+            "creationDate": "2024-11-25T16:53:42Z",
+            "mfaAuthenticated": "false"
+          },
+          "sessionIssuer": {
+            "accountId": "111122223333",
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+            "principalId": "EXAMPLEPRINCIPLEID",
+            "type": "Role",
+            "userName": "SampleRole"
+          }
+        },
+        "type": "AssumedRole"
+      }
+    }
