@@ -8,7 +8,7 @@ def rule(event):
 def title(event):
     account = event.deep_get("userIdentity", "accountId", default="<UNKNOWN ACCOUNT>")
     region = event.get("awsRegion", "<UNKNOWN REGION>")
-    return f"VPC Flow logs have been deleted in account {account} in {region}"
+    return f"VPC Flow logs have been deleted in {lookup_aws_account_name(account)} in {region}"
 
 
 def alert_context(event):
