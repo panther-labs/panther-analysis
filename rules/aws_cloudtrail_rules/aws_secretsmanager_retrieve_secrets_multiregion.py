@@ -9,7 +9,7 @@ WITHIN_TIMEFRAME_MINUTES = 10
 def rule(event):
     if event.get("eventName") != "GetSecretValueBatch":
         return False
-    user = event.deep_get("userIdentity", "principalId", default="<NO_USER>")
+    user = event.deep_get("additionalEventData", "UserName", default="<NO_USER>")
     key = f"{RULE_ID}-{user}"
     unique_regions = add_to_string_set(key, event.get("awsRegion"), WITHIN_TIMEFRAME_MINUTES * 60)
     if len(unique_regions) >= UNIQUE_REGION_THRESHOLD:
@@ -18,11 +18,11 @@ def rule(event):
 
 
 def dedup(event):
-    return event.deep_get("userIdentity", "principalId", default="<NO_USER>")
+    return event.deep_get("additionalEventData", "UserName", default="<NO_USER>")
 
 
 def title(event):
-    user = event.deep_get("userIdentity", "principalId", default="<NO_USER>")
+    user = event.deep_get("additionalEventData", "UserName", default="<NO_USER>")
     return f"[{user}] attempted to retrieve secrets from AWS Secrets Manager"
 
 

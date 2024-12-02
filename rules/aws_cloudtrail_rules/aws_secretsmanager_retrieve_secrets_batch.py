@@ -8,11 +8,11 @@ def rule(event):
 
 
 def dedup(event):
-    return event.deep_get("userIdentity", "principalId", default="<NO_USER>")
+    return event.deep_get("additionalEventData", "UserName", default="<NO_USER>")
 
 
 def title(event):
-    user = event.deep_get("userIdentity", "principalId", default="<NO_USER>")
+    user = event.deep_get("additionalEventData", "UserName", default="<NO_USER>")
     return f"[{user}] attempted to retrieve secrets from AWS Secrets Manager"
 
 
