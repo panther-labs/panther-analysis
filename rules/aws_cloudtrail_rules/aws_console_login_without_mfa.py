@@ -40,7 +40,7 @@ def rule(event):
     # This functionality is not enabled by default, in order to start logging new user creations
     # Enable indicator_creation_rules/new_account_logging to start logging new users
     new_user_string = (
-        event.deep_get("userIdentity", "userName", default="<MISSING_USER_NAME>")
+        event.deep_get("additionalEventData", "UserName", default="<MISSING_USER_NAME>")
         + "-"
         + event.deep_get("userIdentity", "principalId", default="<MISSING_ID>")
     )
@@ -81,7 +81,7 @@ def title(event):
     if event.deep_get("userIdentity", "type") == "Root":
         user_string = "the root user"
     else:
-        user = event.deep_get("userIdentity", "userName") or event.deep_get(
+        user = event.deep_get("additionalEventData", "UserName") or event.deep_get(
             "userIdentity", "sessionContext", "sessionIssuer", "userName"
         )
         type_ = event.deep_get(

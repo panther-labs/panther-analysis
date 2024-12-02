@@ -70,7 +70,7 @@ def rule(event):
 
 def title(event):
     # TODO(): Update this rule to use data models
-    user = event.deep_get("userIdentity", "userName") or event.deep_get(
+    user = event.deep_get("additionalEventData", "UserName") or event.deep_get(
         "userIdentity",
         "sessionContext",
         "sessionIssuer",

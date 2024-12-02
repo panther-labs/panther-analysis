@@ -14,7 +14,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event.deep_get("userIdentity", "userName")
+    return event.deep_get("additionalEventData", "UserName")
 
 
 def title(event):

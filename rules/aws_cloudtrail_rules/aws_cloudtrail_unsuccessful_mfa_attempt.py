@@ -18,7 +18,7 @@ def rule(event):
 
 def title(event):
     arn = event.deep_get("userIdenity", "arn", default="No ARN")
-    username = event.deep_get("userIdentity", "userName", default="No Username")
+    username = event.deep_get("additionalEventData", "UserName", default="No Username")
 
     return f"Failed MFA login from [{arn}] [{username}]"
 

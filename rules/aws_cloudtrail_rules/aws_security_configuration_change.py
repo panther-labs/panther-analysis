@@ -52,7 +52,7 @@ def rule(event):
 
 
 def title(event):
-    user = event.deep_get("userIdentity", "userName") or event.deep_get(
+    user = event.deep_get("additionalEventData", "UserName") or event.deep_get(
         "userIdentity", "sessionContext", "sessionIssuer", "userName"
     )
 

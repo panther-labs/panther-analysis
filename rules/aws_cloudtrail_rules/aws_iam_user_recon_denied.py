@@ -46,7 +46,7 @@ def dedup(event):
 def title(event):
     user_type = event.deep_get("userIdentity", "type")
     if user_type == "IAMUser":
-        user = event.deep_get("userIdentity", "userName")
+        user = event.deep_get("additionalEventData", "UserName")
     # root user
     elif user_type == "Root":
         user = user_type
