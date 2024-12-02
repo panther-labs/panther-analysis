@@ -37,3 +37,22 @@ def load_ip_address(event):
         except ipaddress.AddressValueError:
             return None
     return source_ip
+
+
+def get_user(event):
+    user_type = event.deep_get("userIdentity", "type")
+    if user_type == "Root":
+        return event.deep_get(
+            "userIdentity",
+            "userName",
+            default=event.deep_get("userIdentity", "accountId"),
+        )
+    if user_type in ("IAMUser", "Directory", "Unknown", "SAMLUser", "WebIdentityUser"):
+        return event.deep_get("userIdentity", "userName", default="Unknown")
+    if user_type in ("AssumedRole", "Role", "FederatedUser"):
+        return event.deep_get("sessionContext", "sessionIssuer", "userName", default="Unknown")
+    if user_type == "IdentityCenterUser":
+        return event.deep_get("additionalEventData", "UserName", default="Unknown")
+    if user_type in ("AWSService", "AWSAccount"):
+        return event.get("sourceIdentity", "Unknown")
+    return "Unknown"
