@@ -334,8 +334,7 @@ def pantherflow_investigation(event, interval="30m"):
     logtype = event.get("p_log_type", "").lower().replace(".", "_")
     timestamp = event.get("p_event_time", "")
 
-    query = f"""
-union panther_signals.public.correlation_signals
+    query = f"""union panther_signals.public.correlation_signals
     , panther_logs.public.{logtype}
 | where p_event_time between datetime('{timestamp}') - time.parse_timespan('{interval}') .. datetime('{timestamp}') + time.parse_timespan('{interval}')
 """
@@ -344,10 +343,10 @@ union panther_signals.public.correlation_signals
     for key, value in event.items():
         if key.startswith("p_any_") and key != "p_any_aws_account_ids":
             if first:
-                query += f"| where arrays.overlap({key}, {value})\n"
+                query += f"| where arrays.overlap({key}, {value.copy()})\n"
                 first = False
             else:
-                query += f"     or arrays.overlap({key}, {value})\n"
-    query += "| sort p_event_time\n"
-
+                query += f"     or arrays.overlap({key}, {value.copy()})\n"
+    query += "| sort p_event_time"
+    print(query)
     return query
