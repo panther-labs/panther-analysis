@@ -38,6 +38,7 @@ def aws_rule_context(event):
         "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
         "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
         "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
+        "additionalEventData": event.get("additionalEventData", "<MISSING_ADDITIONAL_EVENT_DATA>"),
     }
 
 

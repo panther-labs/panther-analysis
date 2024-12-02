@@ -29,14 +29,14 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{event.deep_get('userIdentity', 'principalId')}] "
+        f"User [{event.deep_get('additionalEventData', 'UserName')}] "
         f"performed a [{event.get('eventName')}] "
         f"action in AWS account [{event.get('recipientAccountId')}]."
     )
 
 
 def dedup(event):
-    return event.deep_get("userIdentity", "principalId", default="NO_PRINCIPAL_ID_FOUND")
+    return event.deep_get("additionalEventData", "UserName", default="NO_USERNAME_FOUND")
 
 
 def alert_context(event):

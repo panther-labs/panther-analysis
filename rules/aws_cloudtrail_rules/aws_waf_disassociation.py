@@ -16,5 +16,5 @@ def alert_context(event):
         "recipientAccountId": event.get("recipientAccountId"),
         "requestID": event.get("requestID"),
         "requestParameters": event.deep_get("requestParameters", "resourceArn"),
-        "userIdentity": event.deep_get("userIdentity", "principalId"),
+        "UserName": event.deep_get("additionalEventData", "UserName"),
     }
