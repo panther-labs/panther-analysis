@@ -4,7 +4,7 @@ Enabled: false
 Query: |
   SELECT
     requestParameters:roleArn AS role,
-    ARRAY_AGG(distinct userIdentity:principalId) AS users,
+    ARRAY_AGG(distinct userIdentity:credentialId) AS users,
     ARRAY_AGG(distinct userIdentity:type) AS types
   FROM
     panther_logs.public.aws_cloudtrail
