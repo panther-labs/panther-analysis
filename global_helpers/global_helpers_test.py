@@ -2393,6 +2393,7 @@ class TestZoomHelpers(unittest.TestCase):
 
 class TestPantherFlowInvestigation(unittest.TestCase):
     def test_pantherflow_investigation(self):
+        # pylint: disable=line-too-long
         event = {
             "p_any_ip_addresses": ["12.34.56.78"],
             "p_source_file": {

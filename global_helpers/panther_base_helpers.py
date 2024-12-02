@@ -348,5 +348,5 @@ def pantherflow_investigation(event, interval="30m"):
             else:
                 query += f"     or arrays.overlap({key}, {value.copy()})\n"
     query += "| sort p_event_time"
-    print(query)
+
     return query
