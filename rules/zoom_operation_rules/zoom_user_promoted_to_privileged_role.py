@@ -6,7 +6,9 @@ PRIVILEGED_ROLES = ("Admin", "Co-Owner", "Owner", "Billing Admin")
 def extract_values(event):
     operator = event.get("operator", "<operator-not-found>")
     operation_detail = event.get("operation_detail", "")
-    email = re.search(r"[\w.+-c]+@[\w-]+\.[\w.-]+", operation_detail)[0] or "<email-not-found>"
+    email = (
+        re.search(r"[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}", operation_detail)[0] or "<email-not-found>"
+    )
     fromto = re.findall(r"from ([-\s\w]+) to ([-\s\w]+)", operation_detail) or [
         ("<from-role-not-found>", "<to-role-not-found>")
     ]
