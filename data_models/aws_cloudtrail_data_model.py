@@ -41,6 +41,8 @@ def load_ip_address(event):
 
 def get_user(event):
     user_type = event.deep_get("userIdentity", "type")
+    if event.get("eventType") == "AwsServiceEvent":
+        return event.deep_get("userIdentity", "invokedBy", default="Unknown")
     if user_type == "Root":
         return event.deep_get(
             "userIdentity",
