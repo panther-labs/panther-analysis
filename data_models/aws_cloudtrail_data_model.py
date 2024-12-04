@@ -42,20 +42,24 @@ def load_ip_address(event):
 def get_actor_user(event):
     user_type = deep_get(event, "userIdentity", "type")
     if event.get("eventType") == "AwsServiceEvent":
-        return deep_get(event, "userIdentity", "invokedBy", default="Unknown")
-    if user_type == "Root":
-        return deep_get(
+        actor_user = deep_get(event, "userIdentity", "invokedBy", default="Unknown")
+    elif user_type == "Root":
+        actor_user = deep_get(
             event,
             "userIdentity",
             "userName",
             default=deep_get(event, "userIdentity", "accountId"),
         )
-    if user_type in ("IAMUser", "Directory", "Unknown", "SAMLUser", "WebIdentityUser"):
-        return deep_get(event, "userIdentity", "userName", default="Unknown")
-    if user_type in ("AssumedRole", "Role", "FederatedUser"):
-        return deep_get(event, "sessionContext", "sessionIssuer", "userName", default="Unknown")
-    if user_type == "IdentityCenterUser":
-        return deep_get(event, "additionalEventData", "UserName", default="Unknown")
-    if user_type in ("AWSService", "AWSAccount"):
-        return event.get("sourceIdentity", "Unknown")
-    return "Unknown"
+    elif user_type in ("IAMUser", "Directory", "Unknown", "SAMLUser", "WebIdentityUser"):
+        actor_user = deep_get(event, "userIdentity", "userName", default="Unknown")
+    elif user_type in ("AssumedRole", "Role", "FederatedUser"):
+        actor_user = deep_get(
+            event, "sessionContext", "sessionIssuer", "userName", default="Unknown"
+        )
+    elif user_type == "IdentityCenterUser":
+        actor_user = deep_get(event, "additionalEventData", "UserName", default="Unknown")
+    elif user_type in ("AWSService", "AWSAccount"):
+        actor_user = event.get("sourceIdentity", "Unknown")
+    else:
+        actor_user = "Unknown"
+    return actor_user
