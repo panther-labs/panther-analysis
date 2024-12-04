@@ -2,8 +2,6 @@ from panther_aws_helpers import eks_panther_obj_ref
 
 
 def rule(event):
-    if event.deep_get("annotations", "authorization.k8s.io/decision") != "allow":
-        return False
     src_ip = event.get("sourceIPs", ["0.0.0.0"])  # nosec
     if src_ip == ["127.0.0.1"]:
         return False
@@ -23,6 +21,14 @@ def title(event):
         f"from [{p_eks.get('sourceIPs')[0]}] to [{event.get('requestURI', 'NO_URI')}] "
         f"on [{p_eks.get('p_source_label')}]"
     )
+
+
+def severity(event):
+    if event.deep_get("annotations", "authorization.k8s.io/decision") != "allow":
+        return "INFO"
+    if event.get("requestURI") == "/version":
+        return "INFO"
+    return "DEFAULT"
 
 
 def dedup(event):
