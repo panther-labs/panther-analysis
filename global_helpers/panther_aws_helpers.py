@@ -4,6 +4,7 @@ import os
 from typing import Any, Dict, List
 
 import boto3
+from panther_base_helpers import pantherflow_investigation
 from panther_config import config
 
 
@@ -38,6 +39,7 @@ def aws_rule_context(event):
         "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
         "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
         "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
+        "PantherFlow Investigation": pantherflow_investigation(event),
     }
 
 
