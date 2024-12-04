@@ -24,6 +24,8 @@ class PantherUnexpectedAlert(Exception):
 #      Generic Helpers    #
 # # # # # # # # # # # # # #
 
+EMAIL_REGEX = re.compile(r"[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}")
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map

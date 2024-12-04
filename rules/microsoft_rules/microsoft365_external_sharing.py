@@ -1,9 +1,8 @@
 import re
 from fnmatch import fnmatch
 
+from panther_base_helpers import EMAIL_REGEX
 from panther_msft_helpers import m365_alert_context
-
-email_regex = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
 ALLOWED_DOMAINS = ["mycompany.com", "alloweddomain.com"]  # should be in lowercase
 
@@ -28,7 +27,7 @@ def rule(event):
         target = event.get("TargetUserOrGroupName", "")
         if target.lower() in ALLOWED_USERS:
             return False
-        if re.fullmatch(email_regex, target):
+        if re.fullmatch(EMAIL_REGEX, target):
             if target.split("@")[1].lower() not in ALLOWED_DOMAINS:
                 return True
     return False
