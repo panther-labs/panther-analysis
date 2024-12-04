@@ -30,7 +30,7 @@ def severity(event):
     # Else, fallback on the numerical value, falling back on MEDIUM if we still don't have a value
     sevval = event.deep_get("event", "Severity") // 20
     return {0: "INFO", 1: "LOW", 2: "MEDIUM", 3: "HIGH", 4: "CRITICAL", 5: "CRITICAL"}.get(
-        sevval, "MEDIUM"
+        sevval, "DEFAULT"
     )
 
 
