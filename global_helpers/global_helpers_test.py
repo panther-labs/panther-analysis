@@ -2439,5 +2439,33 @@ class TestPantherFlowInvestigation(unittest.TestCase):
         self.assertEqual(p_b_h.pantherflow_investigation(event), query)
 
 
+class TestEmailRegex(unittest.TestCase):
+    def test_email_regex(self):
+        email_regex = p_b_h.EMAIL_REGEX
+        valid_emails = [
+            "asfe@acme.com",
+            "afef-awef@feaf.efaef.aef-aefc.org",
+            "ifjlid%fesfdj+123@gmail.com",
+            "a@b.co",
+            "alfij.fjii-fjids+123@fsjd-sdf-sjkj.co.co.co.uk",
+        ]
+        invalid_emails = [
+            "asfe@acme",
+            "dff@.com",
+            "a@b",
+            "a@b.",
+            "a@b.c",
+            "a@b.c.",
+            "a@b.c.c",
+            "asdf?2d@gmail.com",
+            "asdf@",
+            "a.b@g&g.com",
+        ]
+        for email in valid_emails:
+            self.assertTrue(email_regex.match(email))
+        for email in invalid_emails:
+            self.assertFalse(email_regex.match(email))
+
+
 if __name__ == "__main__":
     unittest.main()
