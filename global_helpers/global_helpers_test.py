@@ -2391,5 +2391,53 @@ class TestZoomHelpers(unittest.TestCase):
         )
 
 
+class TestPantherFlowInvestigation(unittest.TestCase):
+    def test_pantherflow_investigation(self):
+        # pylint: disable=line-too-long
+        event = {
+            "p_any_ip_addresses": ["12.34.56.78"],
+            "p_source_file": {
+                "aws_s3_bucket": "threat-research-trail-trail-bucket-0ipb5nzxam",
+                "aws_s3_key": "AWSLogs/123456789123/CloudTrail/us-east-1/2024/11/25/123456789123_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
+            },
+            "p_any_trace_ids": ["ASIAQWERTYUIOPASDFGH"],
+            "p_any_actor_ids": ["AROAQWERTYUIOPASDFGH", "AROAQWERTYUIOPASDFGH:bob.ross"],
+            "p_any_aws_account_ids": ["123456789123"],
+            "p_any_aws_arns": [
+                "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
+                "arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross",
+                "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin",
+            ],
+            "p_any_usernames": ["AWSReservedSSO_DevAdmin", "bob.ross"],
+            "p_event_time": "2024-11-25 15:00:21.000000",
+            "p_log_type": "AWS.CloudTrail",
+            "p_parse_time": "2024-11-25 15:05:54.123385",
+            "p_row_id": "d66379c617d1f7b3b2e7ce9623c104",
+            "p_schema_version": 0,
+            "p_source_id": "d0a1e235-6548-4e7f-952a-35063b304007",
+            "p_source_label": "threat-research-trail-us-east-1",
+            "p_udm": {
+                "source": {"address": "12.34.56.78", "ip": "12.34.56.78"},
+                "user": {
+                    "arns": [
+                        "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
+                        "arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross",
+                    ]
+                },
+            },
+        }
+        event = ImmutableCaseInsensitiveDict(event)
+        query = """union panther_signals.public.correlation_signals
+    , panther_logs.public.aws_cloudtrail
+| where p_event_time between datetime('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. datetime('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
+| where arrays.overlap(p_any_ip_addresses, ['12.34.56.78'])
+     or arrays.overlap(p_any_trace_ids, ['ASIAQWERTYUIOPASDFGH'])
+     or arrays.overlap(p_any_actor_ids, ['AROAQWERTYUIOPASDFGH', 'AROAQWERTYUIOPASDFGH:bob.ross'])
+     or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross', 'arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
+     or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'bob.ross'])
+| sort p_event_time"""
+        self.assertEqual(p_b_h.pantherflow_investigation(event), query)
+
+
 if __name__ == "__main__":
     unittest.main()
