@@ -4,7 +4,7 @@ from panther_base_helpers import deep_get
 # Use this to record the names of your S3 buckets that have cloudtrail logs
 #   If a bucket name isn't mentioned here, we still make a best guess as to whether or not it
 #   contains CloudTrail data, but the confidence rating will be lower, and so will the severity
-CLOUDTRAIL_BUCKETS = "example_cloudtrail_bucket_name"
+CLOUDTRAIL_BUCKETS = ("example_cloudtrail_bucket_name",)
 
 # This is the minimum length fo time CloudTrail logs should remain in an S3 bucket.
 #   We set this to 7 initially, since this is the recommended amount of time logs ingested by
