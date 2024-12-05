@@ -39,6 +39,8 @@ def load_ip_address(event):
     return source_ip
 
 
+# get actor user from correct field based on identity type
+# https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html#cloudtrail-event-reference-user-identity-fields
 def get_actor_user(event):
     user_type = deep_get(event, "userIdentity", "type")
     if event.get("eventType") == "AwsServiceEvent":
