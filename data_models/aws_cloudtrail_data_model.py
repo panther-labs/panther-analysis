@@ -56,7 +56,12 @@ def get_actor_user(event):
         actor_user = deep_get(event, "userIdentity", "userName", default=f"Unknown{user_type}")
     elif user_type in ("AssumedRole", "Role", "FederatedUser"):
         actor_user = deep_get(
-            event, "sessionContext", "sessionIssuer", "userName", default=f"Unknown{user_type}"
+            event,
+            "userIdentity",
+            "sessionContext",
+            "sessionIssuer",
+            "userName",
+            default=f"Unknown{user_type}",
         )
     elif user_type == "IdentityCenterUser":
         actor_user = deep_get(
