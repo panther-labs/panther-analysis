@@ -43,9 +43,7 @@ def load_ip_address(event):
 # https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html#cloudtrail-event-reference-user-identity-fields
 def get_actor_user(event):
     user_type = deep_get(event, "userIdentity", "type")
-    if event.get("eventType") == "AwsServiceEvent":
-        actor_user = deep_get(event, "userIdentity", "invokedBy", default="UnknownAwsServiceEvent")
-    elif user_type == "Root":
+    if user_type == "Root":
         actor_user = deep_get(
             event,
             "userIdentity",
@@ -69,6 +67,8 @@ def get_actor_user(event):
         )
     elif user_type in ("AWSService", "AWSAccount"):
         actor_user = event.get("sourceIdentity", f"Unknown{user_type}")
+    elif event.get("eventType") == "AwsServiceEvent":
+        actor_user = deep_get(event, "userIdentity", "invokedBy", default="UnknownAwsServiceEvent")
     else:
         actor_user = "UnknownUser"
     return actor_user
