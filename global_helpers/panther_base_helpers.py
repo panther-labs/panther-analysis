@@ -1,7 +1,6 @@
 import re
 from base64 import b64decode
 from binascii import Error as AsciiError
-from collections import OrderedDict
 from collections.abc import Mapping
 from datetime import datetime
 from fnmatch import fnmatch
@@ -73,7 +72,7 @@ def deep_walk(
         return default if _empty_list(obj) else obj
 
     current_key = keys[0]
-    found: OrderedDict = OrderedDict()
+    found_list: list[Any] = []
 
     if isinstance(obj, Mapping):
         next_key = obj.get(current_key, None)
@@ -87,12 +86,10 @@ def deep_walk(
             value = deep_walk(item, *keys, default=default, return_val=return_val)
             if value is not None:
                 if isinstance(value, Sequence) and not isinstance(value, str):
-                    for sub_item in value:
-                        found[sub_item] = None
+                    found_list.extend(value)
                 else:
-                    found[value] = None
+                    found_list.append(value)
 
-    found_list: list[Any] = list(found.keys())
     if not found_list:
         return default
     return {
