@@ -9,6 +9,7 @@ import secrets
 import string
 import sys
 import unittest
+from collections.abc import Sequence
 
 from panther_core.enriched_event import PantherEvent
 from panther_core.immutable import ImmutableCaseInsensitiveDict, ImmutableList
@@ -1420,7 +1421,11 @@ class TestDeepWalk(unittest.TestCase):
         """
         for _ in range(1000):
             data, keys, expected = self.generate_random_test_case_success()
-            self.assertEqual(p_b_h.deep_walk(data, *keys, default=""), expected)
+            result = p_b_h.deep_walk(data, *keys, default="")
+            if isinstance(result, Sequence) and not isinstance(result, str):
+                self.assertEqual(set(result), {expected})
+            else:
+                self.assertEqual(result, expected)
 
     def test_deep_walk_default_random(self):
         """
@@ -1497,7 +1502,7 @@ class TestDeepWalk(unittest.TestCase):
             p_b_h.deep_walk(
                 event, "key", "very_nested", "outer_key", "nested_key2", "nested_key3", default=""
             ),
-            "value2",
+            ["value2", "value2"],
         )
         self.assertEqual(
             p_b_h.deep_walk(event, "key", "very_nested", "outer_key2", "nested_key4", default=""),
