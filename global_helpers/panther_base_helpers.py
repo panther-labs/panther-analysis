@@ -24,6 +24,8 @@ class PantherUnexpectedAlert(Exception):
 #      Generic Helpers    #
 # # # # # # # # # # # # # #
 
+EMAIL_REGEX = re.compile(r"[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}")
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
@@ -327,3 +329,26 @@ def add_parse_delay(event, context: dict) -> dict:
     parsing_delay = time_delta(event.get("p_event_time"), event.get("p_parse_time"))
     context["parseDelay"] = f"{parsing_delay}"
     return context
+
+
+# generate a PantherFlow investigation from an event
+def pantherflow_investigation(event, interval="30m"):
+    logtype = event.get("p_log_type", "").lower().replace(".", "_")
+    timestamp = event.get("p_event_time", "")
+
+    query = f"""union panther_signals.public.correlation_signals
+    , panther_logs.public.{logtype}
+| where p_event_time between datetime('{timestamp}') - time.parse_timespan('{interval}') .. datetime('{timestamp}') + time.parse_timespan('{interval}')
+"""
+
+    first = True
+    for key, value in event.items():
+        if key.startswith("p_any_") and key != "p_any_aws_account_ids":
+            if first:
+                query += f"| where arrays.overlap({key}, {value.copy()})\n"
+                first = False
+            else:
+                query += f"     or arrays.overlap({key}, {value.copy()})\n"
+    query += "| sort p_event_time"
+
+    return query
