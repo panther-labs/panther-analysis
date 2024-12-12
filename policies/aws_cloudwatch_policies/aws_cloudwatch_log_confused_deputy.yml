@@ -1,0 +1,37 @@
+AnalysisType: policy
+Filename: aws_cloudwatch_log_confused_deputy.py
+PolicyID: "AWS.CloudWatchLog.ConfusedDeputyProtection"
+DisplayName: "AWS CloudWatch Log Resource Policy Confused Deputy Protection"
+Enabled: true
+ResourceTypes:
+  - AWS.CloudWatch.LogGroup
+Tags:
+  - AWS
+  - Security Control
+  - Panther
+Severity: High
+Description: >
+  Ensures that AWS CloudWatch Log resource policies with service principals contain conditions to prevent cross-service confused deputy issues. Without these conditions (such as aws:SourceArn, aws:SourceAccount, aws:SourceOrgID, or aws:SourceOrgPaths), attackers may exploit the policy to gain unauthorized access to resources.
+Runbook: >
+  Update the CloudWatch Log resource policy to include at least one of the following conditions for service principals:
+  aws:SourceArn, aws:SourceAccount, aws:SourceOrgID, or aws:SourceOrgPaths. Refer to AWS documentation for proper usage.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html
+Tests:
+  - Name: Log Policy Without Required Conditions
+    ExpectedResult: false
+    Resource:
+      {
+        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},"Action":"logs:PutLogEvents","Resource":"arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/my-function:*"}]}',
+      }
+  - Name: Log Policy With Required Conditions
+    ExpectedResult: true
+    Resource:
+      {
+        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},"Action":"logs:PutLogEvents","Resource":"arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/my-function:*","Condition":{"ArnLike":{"aws:SourceArn":"arn:aws:lambda:us-east-1:123456789012:function:my-function"}}}]}',
+      }
+  - Name: Log Policy Without Service Principal
+    ExpectedResult: true
+    Resource:
+      {
+        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:role/MyRole"},"Action":"logs:PutLogEvents","Resource":"arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/my-function:*"}]}',
+      }
