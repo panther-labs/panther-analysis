@@ -7,6 +7,7 @@ REQUIRED_CONDITIONS = {
     "aws:SourceOrgPaths",
 }
 
+
 def policy(resource):
     key_policy = resource.get("Policy")
     policy_statements = json.loads(key_policy).get("Statement", [])
