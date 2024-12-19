@@ -332,6 +332,8 @@
 
 [ S3 Bucket Deleted](../rules/aws_cloudtrail_rules/aws_s3_bucket_deleted.py)
 
+[ AWS S3 Bucket Policy Confused Deputy](../policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.py)
+
 ## VPC
 
 [ AWS Security Group - Only DMZ Publicly Accessible](../policies/aws_vpc_policies/aws_only_dmz_security_groups_publicly_accessible.py)
@@ -373,3 +375,7 @@
 [ AWS WAF Has XSS Predicate](../policies/aws_waf_policies/aws_waf_has_xss_predicate.py)
 
 [ AWS WAF Rule Ordering](../policies/aws_waf_policies/aws_waf_rule_ordering.py)
+
+[ AWS WAF Logging Configured](../policies/aws_waf_policies/aws_waf_logging_configured.py)
+
+[ AWS WAF WebACL Has Associated Resources](../policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.py)
