@@ -16,7 +16,7 @@ def rule(event):
         return "New Device=POSITIVE" in behaviors and "New IP=POSITIVE" in behaviors
 
     log_only_security_data = event.deep_get("debugContext", "debugData", "logOnlySecurityData")
-    if type(log_only_security_data) is str:
+    if isinstance(log_only_security_data, str):
         log_only_security_data = json.loads(log_only_security_data)
     return (
         deep_get(log_only_security_data, "behaviors", "New Device") == "POSITIVE"
