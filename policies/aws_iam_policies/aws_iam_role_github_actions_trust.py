@@ -3,10 +3,9 @@ def policy(resource):
     is_valid = False
 
     for statement in assume_role_policy:
-        if (
-            statement.get("Effect") != "Allow"
-            or "sts:AssumeRoleWithWebIdentity" not in statement.get("Action", [])
-        ):
+        if statement.get(
+            "Effect"
+        ) != "Allow" or "sts:AssumeRoleWithWebIdentity" not in statement.get("Action", []):
             continue
 
         principal = statement.get("Principal", {}).get("Federated")
@@ -17,13 +16,10 @@ def policy(resource):
 
         # Validate the conditions only if the Principal is valid for GitHub Actions
         conditions = statement.get("Condition", {})
-        audience = conditions.get("StringEquals", {}).get(
-            "token.actions.githubusercontent.com:aud"
-        )
-        subject = (
-            conditions.get("StringLike", {}).get("token.actions.githubusercontent.com:sub", "")
-            or conditions.get("StringEquals", {}).get("token.actions.githubusercontent.com:sub", "")
-        )
+        audience = conditions.get("StringEquals", {}).get("token.actions.githubusercontent.com:aud")
+        subject = conditions.get("StringLike", {}).get(
+            "token.actions.githubusercontent.com:sub", ""
+        ) or conditions.get("StringEquals", {}).get("token.actions.githubusercontent.com:sub", "")
 
         if (
             audience != "sts.amazonaws.com"
