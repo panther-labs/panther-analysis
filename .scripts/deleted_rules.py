@@ -10,7 +10,7 @@ import subprocess
 import panther_analysis_tool.command.bulk_delete as pat_delete
 import panther_analysis_tool.util as pat_util
 
-diff_pattern = re.compile(r'^-(?:RuleID|PolicyID|QueryName):\s*"?([\w.]+)"?')
+diff_pattern = re.compile(r'^-(?:RuleID|PolicyID|QueryName):\s*"?(.+?)["\n]')
 
 
 def get_deleted_ids() -> set[str]:
