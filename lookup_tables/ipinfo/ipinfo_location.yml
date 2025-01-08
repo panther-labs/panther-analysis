@@ -17,7 +17,7 @@ LogTypeMap:
     - LogType: Amazon.EKS.Audit
       Selectors:
         - "$.sourceIPs"
-        - "$.spec.clusterIP"
+        - "$.responseObject.spec.clusterIP"
         - "$.requestObject.spec.clusterIP"
     - LogType: Anomali.Indicator
       Selectors:
