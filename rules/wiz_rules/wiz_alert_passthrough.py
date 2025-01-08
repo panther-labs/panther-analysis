@@ -13,12 +13,17 @@ def title(event):
 
 
 def severity(event):
-    # if event.get("severity") == "INFORMATIONAL":
-    #     return "INFO"
     return event.get("severity")
 
 
 def dedup(event):
+    # For lower-severity events, dedup based on specific source rule to reduce overall alert volume
+    if event.get("severity") in ("INFO", "LOW"):
+        dedup_str = str(event.deep_get("sourceRule", "id"))
+        if dedup_str:
+            return dedup_str
+    # If the severity is higher, or for some reason we couldn't generate a dedup string based on
+    #   the source rule, then use the alert severity + the resource ID itself.
     return event.deep_get(
         "entitySnapshot", "externalId", default="<RESOURCE_NOT_FOUND>"
     ) + event.get("severity", "<SEVERITY_NOT_FOUND>")

@@ -1,4 +1,4 @@
-dirs := $(shell ls | egrep 'policies|rules|helpers|models|templates|queries' | xargs)
+dirs := $(shell ls | egrep 'policies|rules|global_helpers|models|templates|queries' | xargs)
 UNAME := $(shell uname)
 TEST_ARGS :=
 
@@ -32,6 +32,9 @@ deps-update:
 global-helpers-unit-test:
 	pipenv run python -m unittest global_helpers/*_test.py
 
+data-models-unit-test:
+	pipenv run python -m unittest data_models/*_test.py
+
 lint: lint-pylint lint-fmt
 
 lint-pylint:
@@ -59,7 +62,7 @@ fmt:
 install:
 	pipenv sync --dev
 
-test: global-helpers-unit-test
+test: global-helpers-unit-test data-models-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
 check-deprecated:

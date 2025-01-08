@@ -1,0 +1,75 @@
+AnalysisType: rule
+RuleID: ZIA.Trust.Modification
+Description: This rule detects when SAML authentication was enabled/disabled.
+DisplayName: ZIA Trust Modification
+Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Reference: https://help.zscaler.com/zia/configuring-saml
+Enabled: true
+Filename: zia_trust_modification.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1484.002 # Domain or Tenant Policy Modification: Trust Modification
+LogTypes:
+  - Zscaler.ZIA.AdminAuditLog
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: Administration > Administration Management > Enable SAML Authentication
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "UPDATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ADMINISTRATOR_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "certFilename": "abc.crt",
+            "productId": 0,
+            "samlEnabled": true
+          },
+          "preaction": {
+            "productId": 0,
+            "samlEnabled": false
+          },
+          "recordid": "332",
+          "resource": "None",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_SAML",
+          "time": "2024-10-22 22:13:23.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Administration > Administration Management > Disable SAML Authentication
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "UPDATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ADMINISTRATOR_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "certFilename": "abc.crt",
+            "productId": 0,
+            "samlEnabled": false
+          },
+          "preaction": {
+            "productId": 0,
+            "samlEnabled": true
+          },
+          "recordid": "332",
+          "resource": "None",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_SAML",
+          "time": "2024-10-22 22:13:23.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }

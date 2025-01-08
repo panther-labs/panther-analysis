@@ -5,7 +5,10 @@ from panther_zendesk_helpers import zendesk_get_roles
 def rule(event):
     if event.get("source_type") == "user" and event.get("action") == "update":
         # admin roles have their own handling
-        if event.udm("event_type") != event_type.ADMIN_ROLE_ASSIGNED:
+        if (
+            event.udm("event_type") != event_type.ADMIN_ROLE_ASSIGNED
+            and "role changed" in event.get("change_description", "").lower()
+        ):
             _, new_role = zendesk_get_roles(event)
             return bool(new_role)
     return False

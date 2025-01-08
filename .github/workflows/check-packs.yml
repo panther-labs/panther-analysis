@@ -1,5 +1,8 @@
 on:
+  workflow_dispatch:
   pull_request:
+      branches:
+        - develop
 
 permissions:
   contents: read
@@ -11,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+      - uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
         with:
           disable-sudo: true
           egress-policy: block
@@ -22,10 +25,10 @@ jobs:
             pypi.org:443
 
       - name: Checkout panther-analysis
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 #v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
       - name: Set python version
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 #v5.2.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b #v5.3.0
         with:
           python-version: "3.11"
 
@@ -33,17 +36,19 @@ jobs:
         run: pip install panther_analysis_tool
 
       - name: Check packs
-        continue-on-error: true
         id: check-packs
         run: |
+          # Get the output for the PR comment body
           panther_analysis_tool check-packs 2> errors.txt || true
+          echo ::set-output name=errors::`cat errors.txt`
 
-          # run again to get exit code
-          panther_analysis_tool check-packs || echo "errors=`cat errors.txt`" >> $GITHUB_OUTPUT
+      - name: Check packs (Exit Code)
+        run: |
+          exit $(panther_analysis_tool check-packs)
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@e2c37e53a7d2227b61585343765f73a9ca57eda9
-        if: ${{ steps.check-packs.outputs.errors }}
+        uses: thollander/actions-comment-pull-request@v3
+        if: failure()
         with:
           mode: upsert
           message: |
@@ -52,16 +57,11 @@ jobs:
             ```diff
             ${{ steps.check-packs.outputs.errors }}
             ```
-          comment_tag: check-packs
+          comment-tag: check-packs
+
       - name: Delete comment
-        uses: thollander/actions-comment-pull-request@e2c37e53a7d2227b61585343765f73a9ca57eda9
-        if: ${{ !steps.check-packs.outputs.errors }}
+        uses: thollander/actions-comment-pull-request@v3
+        if: success()
         with:
           mode: delete
-          message: |
-            :scream:
-            looks like some things could be wrong with the packs
-            ```diff
-            ${{ steps.check-packs.outputs.errors }}
-            ```
-          comment_tag: check-packs
+          comment-tag: check-packs

@@ -16,11 +16,12 @@ Detection:
       - ID: GHASChange NOT FOLLOWED BY RepoArchived
         From: RepoArchived
         To: GHASChange
+        WithinTimeFrameMinutes: 60
         Match:
           - On: p_alert_context.repo
-    LookbackWindowMinutes: 90
+    LookbackWindowMinutes: 2160
     Schedule:
-      RateMinutes: 60
+      RateMinutes: 1440
       TimeoutMinutes: 10
 Tests:
     - Name: Security Change on Repo, Followed By Same Repo Archived
