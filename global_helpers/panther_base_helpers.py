@@ -417,7 +417,8 @@ def crowdstrike_process_alert_context(event: dict):
 
 def crowdstrike_network_detection_alert_context(event: dict):
     """Global `crowdstrike_network_detection_alert_context` is DEPRECATED.
-    Instead, use `from panther_crowdstrike_fdr_helpers import crowdstrike_network_detection_alert_context`.
+    Instead, use `from panther_crowdstrike_fdr_helpers
+    import crowdstrike_network_detection_alert_context`.
     """
     return panther_base_helpers_old.crowdstrike_network_detection_alert_context(event)
 
