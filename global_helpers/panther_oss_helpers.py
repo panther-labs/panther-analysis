@@ -141,16 +141,16 @@ def km_between_ipinfo_loc(ipinfo_loc_one: dict, ipinfo_loc_two: dict):
     return panther_ipinfo_helpers.km_between_ipinfo_loc(ipinfo_loc_one, ipinfo_loc_two)
 
 
-def geoinfo_from_ip(ip: str) -> dict:
+def geoinfo_from_ip(event, match_field: str):
     """Global `geoinfo_from_ip` is DEPRECATED.
     Instead, use `from panther_ipinfo_helpers.caching import geoinfo_from_ip`."""
-    return panther_ipinfo_helpers.geoinfo_from_ip(ip)
+    return panther_ipinfo_helpers.geoinfo_from_ip(event, match_field)
 
 
-def geoinfo_from_ip_formatted(ip: str) -> str:
+def geoinfo_from_ip_formatted(event, match_field: str) -> str:
     """Global `geoinfo_from_ip_formatted` is DEPRECATED.
     Instead, use `from panther_ipinfo_helpers.caching import geoinfo_from_ip_formatted`."""
-    return panther_ipinfo_helpers.geoinfo_from_ip_formatted(ip)
+    return panther_ipinfo_helpers.geoinfo_from_ip_formatted(event, match_field)
 
 
 def time_delta(time1, time2: str) -> str:
