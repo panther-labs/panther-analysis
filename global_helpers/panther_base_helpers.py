@@ -24,6 +24,8 @@ class PantherUnexpectedAlert(Exception):
 #      Generic Helpers    #
 # # # # # # # # # # # # # #
 
+EMAIL_REGEX = re.compile(r"[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}")
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
@@ -336,7 +338,7 @@ def pantherflow_investigation(event, interval="30m"):
 
     query = f"""union panther_signals.public.correlation_signals
     , panther_logs.public.{logtype}
-| where p_event_time between datetime('{timestamp}') - time.parse_timespan('{interval}') .. datetime('{timestamp}') + time.parse_timespan('{interval}')
+| where p_event_time between time.parse_timestamp('{timestamp}') - time.parse_timespan('{interval}') .. time.parse_timestamp('{timestamp}') + time.parse_timespan('{interval}')
 """
 
     first = True
