@@ -1,0 +1,34 @@
+AnalysisType: rule
+Filename: example_rule.py
+RuleID: "LogFamily.LogType.DetectionName"
+DisplayName: "Human Readable Detection Name"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail # https://docs.panther.com/data-onboarding/supported-logs
+Tags: # (Optional)
+  - Tag
+Reports: # (Optional)
+  MITRE ATT&CK:
+    - "TA0027:T1475" # Tactic ID:Technique ID (https://attack.mitre.org/tactics/enterprise/)
+  PCI:
+    - "1.2.3" # Check ID
+Severity: Medium # "Info", "Low", "Medium", "High", "Critical"
+Description: > # (Optional)
+  A description of the detection's impact and why it exists
+Runbook: > # (Optional)
+  How to handle this particular alert
+Reference: A URL to an explanation of this type of detection or attack # (Optional)
+DedupPeriodMinutes: 15 # The amount of time in minutes for grouping alerts (Optional, defaults to 60)
+Threshold: 1 # The minimum number of event matches prior to an alert sending (Optional, defaults to 1)
+SummaryAttributes: # A list of fields in the event to create top 5 summaries for (Optional)
+  - fieldName
+  - FieldName:nestedFieldName
+InlineFilters: # https://docs.panther.com/detections/rules/inline-filters#yaml-inlinefilter-syntax
+  - KeyPath: environment
+    Condition: StartsWith
+    Value: "Sandbox"
+Tests: # Unit tests for the Detection. Best practice is to include a positive and negative case (Optional)
+  - Name: Name # The title of the test
+    ExpectedResult: false # If the sample event should generate an alert or not
+    Log: # object
+      { "JSON": "string" }
