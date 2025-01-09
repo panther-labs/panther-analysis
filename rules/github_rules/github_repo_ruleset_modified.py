@@ -33,7 +33,7 @@ def severity(event):
         return "MEDIUM"
     if event.get("action").endswith("destroy"):
         return "HIGH"
-    return "INFO"
+    return "DEFAULT"
 
 
 def alert_context(event):
