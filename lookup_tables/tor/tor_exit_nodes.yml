@@ -211,7 +211,6 @@ LogTypeMap:
         - "$.protoPayload.requestMetadata.callerIP"
         - "$.httpRequest.remoteIP"
         - "$.httpRequest.serverIP"
-        - "$.requestMetadata.callerIP"
     - LogType: GCP.HTTPLoadBalancer
       Selectors:
         - "$.jsonPayload.removeIp"
@@ -437,54 +436,32 @@ LogTypeMap:
         - "Session_IP_Address"
     - LogType: Zeek.Conn
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.DHCP
       Selectors:
         - "requested_addr"
     - LogType: Zeek.DNS
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.DPD
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.HTTP
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.Notice
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.NTP
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.SIP
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.Software
       Selectors:
         - "host"
     - LogType: Zeek.Ssh
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.Ssl
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.Tunnel
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zeek.Weird
       Selectors:
-        - "$.id.orig_h"
-        - "$.id.resp_h"
     - LogType: Zendesk.Audit
       Selectors:
         - "ip_address"
