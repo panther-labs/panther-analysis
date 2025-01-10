@@ -38,6 +38,8 @@ jobs:
         run: python3 ./.scripts/generate_indexes.py
       - name: Commit Indexes
         run: |
+          git config user.email "noreply@panther.com"
+          git config user.name "Panther Bot"
           git add ./indexes
           git commit -m "Update indexes"
           git push
