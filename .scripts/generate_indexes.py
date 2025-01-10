@@ -227,14 +227,10 @@ def save_website_json(detections, query_lookup, logtype_lookup, json_path):
         # Clean up analysis type e.g. rule -> Rule and scheduled_rule -> Scheduled Rule
         json_slice['AnalysisType'] = ' '.join([x.capitalize() for x in json_slice['AnalysisType'].split('_')])
         if 'LogTypes' not in d or len(d['LogTypes']) == 0:
-            print("Extracting")
-            print(json_slice)
             json_slice['LogTypes'] = extract_log_types_from_yaml(d, query_lookup, logtype_lookup)
-            print(json_slice)
 
         detection_types[json_slice['AnalysisType']] += 1
         if 'LogTypes' in json_slice:
-            print(json_slice)
             json_slice['LogTypes'].sort()
         json_export.append(json_slice)
     name_map = {}
