@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: read, write
 
 jobs:
   release:
@@ -32,6 +32,15 @@ jobs:
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b #v5.3.0
         with:
           python-version: "3.11"
+      - name: Install dependencies
+        run: pip3 install -r ./scripts/.requirements.txt
+      - name: Generate indexes
+        run: python3 ./scripts/generate_indexes.py
+      - name: Commit Indexes
+        run: |
+          git add ./indexes
+          git commit -m "Update indexes"
+          git push
       - name: Create new panther-analysis release
         run: |
           export AWS_REGION=${{ secrets.AWS_REGION }}
