@@ -42,7 +42,7 @@ jobs:
           git config user.name "Panther Bot"
           git add ./indexes
           git commit -m "Update indexes"
-          git push
+          git push --no-sign
       - name: Create new panther-analysis release
         run: |
           export AWS_REGION=${{ secrets.AWS_REGION }}
