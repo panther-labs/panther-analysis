@@ -1,7 +1,7 @@
 on:
   pull_request:
-      branches:
-        - develop
+    branches:
+      - develop
 
 permissions:
   contents: read
@@ -33,4 +33,3 @@ jobs:
       - name: Check for Removed Rules
         run: |
           pipenv run make check-deprecated
-
