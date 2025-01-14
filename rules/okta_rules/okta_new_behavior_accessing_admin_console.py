@@ -1,3 +1,6 @@
+import json
+
+from panther_base_helpers import deep_get
 from panther_okta_helpers import okta_alert_context
 
 
@@ -12,15 +15,12 @@ def rule(event):
     if behaviors:
         return "New Device=POSITIVE" in behaviors and "New IP=POSITIVE" in behaviors
 
+    log_only_security_data = event.deep_get("debugContext", "debugData", "logOnlySecurityData")
+    if isinstance(log_only_security_data, str):
+        log_only_security_data = json.loads(log_only_security_data)
     return (
-        event.deep_get(
-            "debugContext", "debugData", "logOnlySecurityData", "behaviors", "New Device"
-        )
-        == "POSITIVE"
-        and event.deep_get(
-            "debugContext", "debugData", "logOnlySecurityData", "behaviors", "New IP"
-        )
-        == "POSITIVE"
+        deep_get(log_only_security_data, "behaviors", "New Device") == "POSITIVE"
+        and deep_get(log_only_security_data, "behaviors", "New IP") == "POSITIVE"
     )
 
 
