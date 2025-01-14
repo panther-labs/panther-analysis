@@ -2,6 +2,11 @@ name: Panther Analysis Release
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to release from"
+        required: true
+        default: "main"
 
 permissions:
   contents: read
