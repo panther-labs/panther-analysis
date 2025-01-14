@@ -11,21 +11,6 @@ jobs:
     name: Build Dockerfile
     runs-on: ubuntu-latest
     steps:
-      - uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
-        with:
-          disable-sudo: true
-          egress-policy: block
-          allowed-endpoints: >
-            9236a389bd48b984df91adc1bc924620.r2.cloudflarestorage.com:443
-            auth.docker.io:443
-            cgr.dev:443
-            files.pythonhosted.org:443
-            github.com:443
-            packages.wolfi.dev:443
-            production.cloudflare.docker.com:443
-            pypi.org:443
-            registry-1.docker.io:443
-            www.python.org:443
       - name: Checkout panther-analysis
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
       - uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf #v3.2.0
