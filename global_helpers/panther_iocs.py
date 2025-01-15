@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long
 
+import panther_base_helpers
 
 # Example sources:
 # - https://www.fastly.com/blog/new-data-and-insights-into-log4shell-attacks-cve-2021-44228
@@ -538,3 +539,15 @@ XZ_AMIS = {
     "ami-09b81f0f9f2acfcdf",  # fedora-coreos-40.20240331.1.0-x86_64 us-west-2
     "ami-083bb1ae22e9bf463",  # fedora-coreos-40.20240329.10.0-aarch64 us-west-2
 }
+
+
+def ioc_match(indicators: list, known_iocs: set) -> list:
+    """Global `ioc_match` is DEPRECATED.
+    Instead, use `from panther_base_helpers import ioc_match`."""
+    return panther_base_helpers.ioc_match(indicators, known_iocs)
+
+
+def sanitize_domain(domain: str) -> str:
+    """Global `sanitize_domain` is DEPRECATED.
+    Instead, use `from panther_base_helpers import defang_ioc`."""
+    return panther_base_helpers.defang_ioc(domain)
