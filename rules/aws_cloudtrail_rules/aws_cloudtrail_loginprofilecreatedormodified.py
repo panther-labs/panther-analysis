@@ -12,7 +12,8 @@ def rule(event):
     if not aws_cloudtrail_success(event):
         return False
 
-    # Check when someone other than the user themselves creates or modifies a login profile with no password reset needed
+    # Check when someone other than the user themselves creates or modifies a login profile
+    # with no password reset needed
     return (
         event.get("eventSource", "") == "iam.amazonaws.com"
         and event.get("eventName", "") in PROFILE_EVENTS
