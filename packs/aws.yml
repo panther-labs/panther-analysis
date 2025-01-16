@@ -141,6 +141,7 @@ PackDefinition:
     - AWS.WAF.LoggingConfigured
     - AWS.WAF.WebACLHasAssociatedResources
     # Other rules
+    - Amazon.EKS.AnonymousAPIAccess
     - AWS.CloudTrail.Account.Discovery
     - AWS.CloudTrail.CloudWatchLogs
     - AWS.CloudTrail.LogEncryption
@@ -148,8 +149,10 @@ PackDefinition:
     - AWS.CloudTrail.S3Bucket.AccessLogging
     - AWS.CMK.KeyRotation
     - AWS.DynamoDB.TableTTLEnabled
+    - AWS.EC2.DownloadInstanceUserData
+    - AWS.EC2.LaunchUnusualEC2Instances
+    - AWS.EC2.MultiInstanceConnect
     - AWS.EC2.Vulnerable.XZ.Image.Launched
-    - Amazon.EKS.AnonymousAPIAccess
     - AWS.IAM.Policy.DoesNotGrantAdminAccess
     - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
     - AWS.IAM.Resource.DoesNotHaveInlinePolicy
