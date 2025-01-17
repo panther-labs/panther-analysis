@@ -299,7 +299,6 @@ def write_alpha_index(detections, query_lookup, logtype_lookup, root_dir):
     output = "# Alpha Index\n\n"
     letter_buckets = group_by(sorted(logtype_mapping.keys()), key=lambda x: x[0].upper())
     letters = sorted(letter_buckets.keys())
-    #log_type.replace('.', '').replace(' ', '-').lower()
     for letter in letters:
         output += f"- [{letter}](#{letter})\n"
 
@@ -313,6 +312,8 @@ def write_alpha_index(detections, query_lookup, logtype_lookup, root_dir):
             logtype_mapping[log_type] = sorted(logtype_mapping[log_type], key=lambda x: x['DisplayName'].lower())
             for detection in logtype_mapping[log_type]:
                 output += f"- [{detection['DisplayName']}](../{detection['YAMLPath']})\n"
+                if len(detection['Description']) > 3:
+                    output += f"  - {detection['Description']}\n"
             output += "\n\n"
 
     with open(root_dir / 'indexes' / 'alpha-index.md', 'w') as fp:
@@ -341,6 +342,8 @@ def write_alpha_index(detections, query_lookup, logtype_lookup, root_dir):
             logtype_mapping[log_type] = sorted(logtype_mapping[log_type], key=lambda x: x['DisplayName'].lower())
             for detection in logtype_mapping[log_type]:
                 output += f"- [{detection['DisplayName']}](../{detection['YAMLPath']})\n"
+                if len(detection['Description']) > 3:
+                    output += f"  - {detection['Description']}\n"
             output += "\n\n"
         with open(root_dir / 'indexes' / f'{index_file}.md', 'w') as fp:
             fp.write(output)
