@@ -1,0 +1,1 @@
+Files in this directory are automatically generated from the YAML metadata.
