@@ -12,9 +12,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"SentinelOne - [{event.deep_get('data', 'confidencelevel', default='')}] level "
-        f"[{event.deep_get('data', 'threatclassification' ,default='')}] threat detected from "
-        f"[{event.deep_get('data', 'threatclassificationsource', default= '')}]."
+        f"SentinelOne - [{event.deep_get('data', 'confidencelevel', default='')}] level threat "
+        f"[{event.deep_get('data', 'filedisplayname' ,default='NO FILE NAME')}] detected on "
+        f"[{event.deep_get('data', 'computername', default= 'NO COMPUTER NAME')}]."
     )
 
 
@@ -24,8 +24,8 @@ def dedup(event):
 
 def severity(event):
     if event.deep_get("data", "confidencelevel", default="") == "malicious":
-        return "CRITICAL"
-    return "HIGH"
+        return "HIGH"
+    return "DEFAULT"
 
 
 def alert_context(event):
