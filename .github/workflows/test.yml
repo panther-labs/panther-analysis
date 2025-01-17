@@ -26,6 +26,7 @@ jobs:
 
       - name: test
         run: |
+          make data-models-unit-test global-helpers-unit-test
           pipenv run panther_analysis_tool test --show-failures-only
 
   test-authenticated:
