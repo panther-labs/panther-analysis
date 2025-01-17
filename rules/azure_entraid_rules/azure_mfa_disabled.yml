@@ -1,0 +1,220 @@
+AnalysisType: rule
+Filename: azure_mfa_disabled.py
+RuleID: "Azure.Audit.MFADisabled"
+DisplayName: "Azure MFA Disabled"
+Enabled: true
+LogTypes:
+  - Azure.Audit
+Severity: High
+Description: >
+  This detection looks for MFA being disabled in conditional access policy
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1556
+    - TA0001:T1078
+Runbook: >
+  Verify if the change was authorized and investigate the user activity. If unauthorized, re-enable MFA, revoke access.
+  
+Reference: https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
+SummaryAttributes:
+  - properties:ServicePrincipalName
+  - properties:UserPrincipalName
+  - properties:ipAddress
+Tests:
+  - Name: MFA Disabled Successful
+    ExpectedResult: true
+    Log:
+      {
+          "time": "2024-11-27T03:31:26.7088498Z",
+          "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+          "operationName": "Update conditional access policy",
+          "operationVersion": "1.0",
+          "category": "AuditLogs",
+          "tenantId": "123456789",
+          "resultSignature": "None",
+          "durationMs": 0,
+          "callerIpAddress": "1.2.3.4.5",
+          "correlationId": "123456789",
+          "Level": 4,
+          "properties": {
+              "tenantId": "123456789",
+              "resultType": "",
+              "resultDescription": "",
+              "operationName": "Update conditional access policy",
+              "identity": "",
+              "tenantGeo": "NA",
+              "id": "IPCGraph_123456789",
+              "category": "Policy",
+              "correlationId": "123456789",
+              "result": "success",
+              "resultReason": null,
+              "activityDisplayName": "Update conditional access policy",
+              "activityDateTime": "2024-11-27T03:31:26.7088498+00:00",
+              "loggedByService": "Conditional Access",
+              "operationType": "Update",
+              "userAgent": null,
+              "initiatedBy": {
+                  "user": {
+                      "id": "123456789b",
+                      "displayName": null,
+                      "userPrincipalName": "Kratos@onmicrosoft.com",
+                      "ipAddress": "1.2.3.4.5",
+                      "roles": []
+                  }
+              },
+              "targetResources": [
+                  {
+                      "id": "123456789",
+                      "displayName": "MFA",
+                      "type": "Policy",
+                      "modifiedProperties": [
+                          {
+                              "displayName": "ConditionalAccessPolicy",
+                              "oldValue": "{\"id\":\"123456789\",\"displayName\":\"MFA\",\"createdDateTime\":\"2024-11-21T16:48:48.1196443+00:00\",\"modifiedDateTime\":\"2024-11-21T16:56:13.9120766+00:00\",\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\":[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"includeAuthenticationContextClassReferences\":[],\"applicationFilter\":null},\"users\":{\"includeUsers\":[\"All\"],\"excludeUsers\":[],\"includeGroups\":[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[]},\"userRiskLevels\":[],\"signInRiskLevels\":[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\":[]},\"grantControls\":{\"operator\":\"OR\",\"builtInControls\":[\"MFA\"],\"customAuthenticationFactors\":[],\"termsOfUse\":[]},\"sessionControls\":{\"signInFrequency\":{\"value\":90,\"type\":\"days\",\"authenticationType\":\"primaryAndSecondaryAuthentication\",\"frequencyInterval\":\"timeBased\",\"isEnabled\":true}}}",
+                              "newValue": "{\"id\":\"123456789\",\"displayName\":\"MFA\",\"createdDateTime\":\"2024-11-21T16:48:48.1196443+00:00\",\"modifiedDateTime\":\"2024-11-27T03:31:25.4989035+00:00\",\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\":[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"includeAuthenticationContextClassReferences\":[],\"applicationFilter\":null},\"users\":{\"includeUsers\":[\"All\"],\"excludeUsers\":[],\"includeGroups\":[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[]},\"userRiskLevels\":[],\"signInRiskLevels\":[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\":[]},\"sessionControls\":{\"signInFrequency\":{\"value\":90,\"type\":\"days\",\"authenticationType\":\"primaryAndSecondaryAuthentication\",\"frequencyInterval\":\"timeBased\",\"isEnabled\":true}}}"
+                          }
+                      ],
+                      "administrativeUnits": []
+                  }
+              ],
+              "additionalDetails": [
+                  {
+                      "key": "Category",
+                      "value": "Conditional Access"
+                  }
+              ]
+          }
+      }
+  - Name: MFA Enabled
+    ExpectedResult: false
+    Log:
+        {
+          "time": "2024-11-27T03:31:26.7088498Z",
+          "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+          "operationName": "Update conditional access policy",
+          "operationVersion": "1.0",
+          "category": "AuditLogs",
+          "tenantId": "123456789",
+          "resultSignature": "None",
+          "durationMs": 0,
+          "callerIpAddress": "1.2.3.4.5",
+          "correlationId": "123456789",
+          "Level": 4,
+          "properties": {
+              "tenantId": "123456789",
+              "resultType": "",
+              "resultDescription": "",
+              "operationName": "Update conditional access policy",
+              "identity": "",
+              "tenantGeo": "NA",
+              "id": "IPCGraph_123456789",
+              "category": "Policy",
+              "correlationId": "123456789",
+              "result": "success",
+              "resultReason": null,
+              "activityDisplayName": "Update conditional access policy",
+              "activityDateTime": "2024-11-27T03:31:26.7088498+00:00",
+              "loggedByService": "Conditional Access",
+              "operationType": "Update",
+              "userAgent": null,
+              "initiatedBy": {
+                  "user": {
+                      "id": "123456789b",
+                      "displayName": null,
+                      "userPrincipalName": "Kratos@onmicrosoft.com",
+                      "ipAddress": "1.2.3.4.5",
+                      "roles": []
+                  }
+              },
+              "targetResources": [
+                  {
+                      "id": "123456789",
+                      "displayName": "MFA",
+                      "type": "Policy",
+                      "modifiedProperties": [
+                          {
+                              "displayName": "ConditionalAccessPolicy",
+                              "oldValue": "{\"id\":\"123456789\",\"displayName\":\"MFA\",\"createdDateTime\":\"2024-11-21T16:48:48.1196443+00:00\",\"modifiedDateTime\":\"2024-11-27T03:31:25.4989035+00:00\",\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\":[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"includeAuthenticationContextClassReferences\":[],\"applicationFilter\":null},\"users\":{\"includeUsers\":[\"All\"],\"excludeUsers\":[],\"includeGroups\":[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[]},\"userRiskLevels\":[],\"signInRiskLevels\":[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\":[]},\"sessionControls\":{\"signInFrequency\":{\"value\":90,\"type\":\"days\",\"authenticationType\":\"primaryAndSecondaryAuthentication\",\"frequencyInterval\":\"timeBased\",\"isEnabled\":true}}}",
+                              "newValue": "{\"id\":\"123456789\",\"displayName\":\"MFA\",\"createdDateTime\":\"2024-11-21T16:48:48.1196443+00:00\",\"modifiedDateTime\":\"2024-11-21T16:56:13.9120766+00:00\",\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\":[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"includeAuthenticationContextClassReferences\":[],\"applicationFilter\":null},\"users\":{\"includeUsers\":[\"All\"],\"excludeUsers\":[],\"includeGroups\":[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[]},\"userRiskLevels\":[],\"signInRiskLevels\":[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\":[]},\"grantControls\":{\"operator\":\"OR\",\"builtInControls\":[\"MFA\"],\"customAuthenticationFactors\":[],\"termsOfUse\":[]},\"sessionControls\":{\"signInFrequency\":{\"value\":90,\"type\":\"days\",\"authenticationType\":\"primaryAndSecondaryAuthentication\",\"frequencyInterval\":\"timeBased\",\"isEnabled\":true}}}",
+                          }
+                      ],
+                      "administrativeUnits": []
+                  }
+              ],
+              "additionalDetails": [
+                  {
+                      "key": "Category",
+                      "value": "Conditional Access"
+                  }
+              ]
+          }
+      }
+  - Name: MFA Disabled from another log
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-11-27T03:31:26.2934305Z",
+        "resourceId": "/tenants/123456/providers/Microsoft.aadiam",
+        "operationName": "Update policy",
+        "operationVersion": "1.0",
+        "category": "AuditLogs",
+        "tenantId": "123456",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "1.2.3.4.5",
+        "correlationId": "123456",
+        "Level": 4,
+        "properties": {
+            "tenantId": "123456",
+            "resultType": "",
+            "resultDescription": "",
+            "operationName": "Update policy",
+            "identity": "",
+            "tenantGeo": "NA",
+            "id": "Directory_123145",
+            "category": "Policy",
+            "correlationId": "1235134516",
+            "result": "success",
+            "resultReason": "",
+            "activityDisplayName": "Update policy",
+            "activityDateTime": "2024-11-27T03:31:26.2934305+00:00",
+            "loggedByService": "Core Directory",
+            "operationType": "Update",
+            "userAgent": null,
+            "initiatedBy": {
+                "user": {
+                    "id": "1324512355",
+                    "displayName": null,
+                    "userPrincipalName": "Kratos@onmicrosoft.com",
+                    "ipAddress": "1.2.3.4.5",
+                    "roles": []
+                }
+            },
+            "targetResources": [
+                {
+                    "id": "12351254",
+                    "displayName": "MFA",
+                    "type": "Policy",
+                    "modifiedProperties": [
+                        {
+                            "displayName": "PolicyDetail",
+                            "oldValue": "[\"{\\\"Version\\\":1,\\\"CreatedDateTime\\\":\\\"2024-11-21T16:48:48.1196443Z\\\",\\\"ModifiedDateTime\\\":\\\"2024-11-21T16:56:13.9120766Z\\\",\\\"State\\\":\\\"Enabled\\\",\\\"Conditions\\\":{\\\"Applications\\\":{\\\"Include\\\":[{\\\"Applications\\\":[\\\"None\\\"]}]},\\\"Users\\\":{\\\"Include\\\":[{\\\"Users\\\":[\\\"All\\\"]}]}},\\\"Controls\\\":[{\\\"Control\\\":[\\\"Mfa\\\"]}],\\\"SessionControls\\\":[\\\"SignInFrequency\\\"],\\\"SignInFrequencyTimeSpan\\\":\\\"90.00:00:00\\\",\\\"SignInFrequencyType\\\":10,\\\"EnforceAllPoliciesForEas\\\":true,\\\"IncludeOtherLegacyClientTypeForEvaluation\\\":true}\"]",
+                            "newValue": "[\"{\\\"Version\\\":1,\\\"CreatedDateTime\\\":\\\"2024-11-21T16:48:48.1196443Z\\\",\\\"ModifiedDateTime\\\":\\\"2024-11-27T03:31:25.4989035Z\\\",\\\"State\\\":\\\"Enabled\\\",\\\"Conditions\\\":{\\\"Applications\\\":{\\\"Include\\\":[{\\\"Applications\\\":[\\\"None\\\"]}]},\\\"Users\\\":{\\\"Include\\\":[{\\\"Users\\\":[\\\"All\\\"]}]}},\\\"SessionControls\\\":[\\\"SignInFrequency\\\"],\\\"SignInFrequencyTimeSpan\\\":\\\"90.00:00:00\\\",\\\"SignInFrequencyType\\\":10,\\\"EnforceAllPoliciesForEas\\\":true,\\\"IncludeOtherLegacyClientTypeForEvaluation\\\":true}\"]"
+                        },
+                        {
+                            "displayName": "Included Updated Properties",
+                            "oldValue": null,
+                            "newValue": "\"PolicyDetail\""
+                        }
+                    ],
+                    "administrativeUnits": []
+                }
+            ],
+            "additionalDetails": [
+                {
+                    "key": "User-Agent",
+                    "value": "Microsoft Azure Graph Client Library 1.0"
+                }
+            ]
+        }
+    }
