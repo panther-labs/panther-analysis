@@ -35,4 +35,7 @@ def alert_context(event):
             "responseElements", "accessKey", "accessKeyId", default="<NO_ACCESS_KEY_ID>"
         )
     )
+    base["request_username"] = event.deep_get(
+        "requestParameters", "userName", default="USERNAME_NOT_FOUND"
+    )
     return base
