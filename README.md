@@ -37,7 +37,7 @@ cd panther-analysis
 
 ### Repo Structure
 
-Each folder contains detections in the format of `<log/resource type>_<detecton_type>`:
+Folders containing detections are organized according to log type in the format of `<log/resource type>_<detecton_type>`:
 
 - **Rules** analyze [logs](https://docs.panther.com/data-onboarding/supported-logs) to detect malicious activity
 - **Policies** represent the desired secure state of a [resource](https://docs.panther.com/cloud-scanning) to detect security misconfigurations
@@ -104,12 +104,15 @@ pipenv run panther_analysis_tool zip --filter Severity=Critical
 ### Upload detections to your Panther instance
 
 ```bash
-# Note: Set your AWS access keys and region env variables before running the `upload` command
+# Note: API token and host can also be set as environment variables:
+#   - PANTHER_API_TOKEN
+#   - PANTHER_API_HOST
 
-export AWS_REGION=us-east-1
 pipenv run panther_analysis_tool upload [-h] [--path PATH] [--out OUT]
                                   [--filter KEY=VALUE [KEY=VALUE ...]]
                                   [--debug]
+                                  --api-key YOUR_PANTHER_API_KEY
+                                  --api-token YOUR_PANTHER_API_HOST
 ```
 
 Global helper functions are defined in the `global_helpers` folder. This is a hard coded location and cannot change. However, you may create as many files as you'd like under this path. Simply import them into your detections by the specified `GlobalID`.
