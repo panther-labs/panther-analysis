@@ -1,7 +1,5 @@
-from panther_detection_helpers.caching import check_account_age
-
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
-
+from panther_detection_helpers.caching import check_account_age
 
 
 def rule(event):
