@@ -142,10 +142,12 @@ PackDefinition:
     - AWS.WAF.WebACLHasAssociatedResources
     # Other rules
     - AWS.CloudTrail.Account.Discovery
+    - AWS.CloudTrail.AttemptToLeaveOrg
     - AWS.CloudTrail.CloudWatchLogs
     - AWS.CloudTrail.LogEncryption
     - AWS.CloudTrail.LogValidation
     - AWS.CloudTrail.S3Bucket.AccessLogging
+    - AWS.CloudTrail.SES.CheckIdentityVerifications
     - AWS.CMK.KeyRotation
     - AWS.DynamoDB.TableTTLEnabled
     - AWS.EC2.Vulnerable.XZ.Image.Launched
@@ -174,6 +176,7 @@ PackDefinition:
     - VPCFlow.Port.Scanning
     # Correlation Rules
     - AWS.Privilege.Escalation.Via.User.Compromise
+    - AWS.CloudTrail.SES.SESEnumeration
     - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP
     - AWS.User.Takeover.Via.Password.Reset
     # Signal Rules
@@ -182,6 +185,9 @@ PackDefinition:
     - AWS.CloudTrail.UserAccessKeyAuth
     - AWS.CloudTrail.LoginProfileCreatedOrModified
     - AWS.Console.Login
+    - AWS.CloudTrail.SES.CheckSESSendingEnabled
+    - AWS.CloudTrail.SES.CheckSendQuota
+    - AWS.CloudTrail.SES.ListIdentities
     - Retrieve.SSO.access.token
     - Sign-in.with.AWS.CLI.prompt
     # Queries
