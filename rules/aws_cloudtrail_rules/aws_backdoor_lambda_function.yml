@@ -1,0 +1,142 @@
+AnalysisType: rule
+Filename: aws_backdoor_lambda_function.py
+RuleID: "AWS.Potential.Backdoor.Lambda"
+DisplayName: "AWS Potential Backdoor Lambda Function Through Resource-Based Policy"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1078
+Severity: Medium
+Description: >
+  Identifies when a permission is added to a Lambda function, which could indicate a potential security risk.
+Runbook: Make sure that the permission is legitimate and necessary. If not, remove the permission
+Reference: https://docs.aws.amazon.com/lambda/latest/dg/API_AddPermission.html
+Tests:
+  - Name: Lambda Add Permission Event
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "tester",
+          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+          "accountId": "123456789012",
+          "accessKeyId": "1",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:role/tester",
+              "accountId": "123456789012",
+              "userName": "Tester"
+            },
+            "webIdFederationData": {},
+            "attributes": {
+              "mfaAuthenticated": "true",
+              "creationDate": "2019-01-01T00:00:00Z"
+            }
+          }
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "AddPermission20150331",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": {
+          "functionName": "my-lambda-function"
+        },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012"
+      }
+  - Name: Lambda Add Permission Event v2
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "tester",
+          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+          "accountId": "123456789012",
+          "accessKeyId": "1",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:role/tester",
+              "accountId": "123456789012",
+              "userName": "Tester"
+            },
+            "webIdFederationData": {},
+            "attributes": {
+              "mfaAuthenticated": "true",
+              "creationDate": "2019-01-01T00:00:00Z"
+            }
+          }
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "AddPermission20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": {
+          "functionName": "my-lambda-function"
+        },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012"
+      }
+  - Name: Lambda Remove Permission Event
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "tester",
+          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+          "accountId": "123456789012",
+          "accessKeyId": "1",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "1111",
+              "arn": "arn:aws:iam::123456789012:role/tester",
+              "accountId": "123456789012",
+              "userName": "Tester"
+            },
+            "webIdFederationData": {},
+            "attributes": {
+              "mfaAuthenticated": "true",
+              "creationDate": "2019-01-01T00:00:00Z"
+            }
+          }
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "RemovePermission",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters": {
+          "functionName": "my-lambda-function"
+        },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012"
+      }
