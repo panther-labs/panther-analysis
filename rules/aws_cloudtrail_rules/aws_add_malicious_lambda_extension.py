@@ -18,7 +18,7 @@ def title(event):
     )
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user', default='USER_NOT_FOUND')}] "
-        f"updated Lambda function configuration with layers for [{lambda_name}] aaa {event.deep_get('responseParameters', 'layers')}"
+        f"updated Lambda function configuration with layers for [{lambda_name}]"
     )
 
 
