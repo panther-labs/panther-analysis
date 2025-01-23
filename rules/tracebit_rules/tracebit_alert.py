@@ -7,7 +7,7 @@ def title(event):
 
 
 def dedup(event):
-    # Deduplicate alerts based on the alert_id because there can be multiple alert logs for a single alert
+    # Deduplicate alerts on the alert_id since there can be multiple alert logs for a single alert
     return event.get("alert_id")
 
 
