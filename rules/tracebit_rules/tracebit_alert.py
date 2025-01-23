@@ -21,3 +21,7 @@ def severity(event):
     if event.get("severity") == "High":
         return "HIGH"
     return "DEFAULT"
+
+
+def alert_context(event):
+    return event.get("canary", {})
