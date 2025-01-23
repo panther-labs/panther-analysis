@@ -1,0 +1,107 @@
+AnalysisType: rule
+Filename: user_accesing_admin_portal.py
+RuleID: "Okta.UserAccessingAdminApp"
+DisplayName: "Custom: Okta User Accessing Admin App"
+Enabled: true
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+Severity: Medium
+
+Tests:
+  - Name: User Accesing Admin App
+    ExpectedResult: true
+    Log:
+      {
+      "actor": {
+        "alternateId": "bennett.comfort@computercompany.io",
+        "displayName": "Bennett Comfort",
+        "id": "00u2bn8syI78S4crs5d6",
+        "type": "User"
+      },
+      "authenticationContext": {
+        "authenticationStep": 0,
+        "externalSessionId": "102usTyoe2sT5qdobBSU3LSmQ",
+        "rootSessionId": "102usTyoe2sT5qdobBSU3LSmQ"
+      },
+      "client": {
+        "device": "Computer",
+        "geographicalContext": {
+          "city": "New York",
+          "country": "United States",
+          "geolocation": {
+            "lat": 40.7279,
+            "lon": -73.9966
+          },
+          "postalCode": "10012",
+          "state": "New York"
+        },
+        "ipAddress": "74.72.151.76",
+        "userAgent": {
+          "browser": "CHROME",
+          "os": "Mac OS X",
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        },
+        "zone": "null"
+      },
+      "debugContext": {
+        "debugData": {
+          "dtHash": "463f86cce63ae2f8b14a62d673123afd2f60ae5330228fe8709bc607f99e676b",
+          "idpType": "OKTA",
+          "requestId": "87d7b4ba31933fc0fd57adb7333503fd",
+          "requestUri": "/admin/sso/callback",
+          "threatSuspected": "false",
+          "traceId": "2c5d0939-f9d3-49cc-acc9-da74d411bd49",
+          "url": "/admin/sso/callback?code=******&state=e6bxMKP1DYIReIn4ZT1IwDgHkGf9oi6s"
+        }
+      },
+      "displayMessage": "User accessing Okta admin app",
+      "eventType": "user.session.access_admin_app",
+      "legacyEventType": "app.admin.sso.login.success",
+      "outcome": {
+        "result": "SUCCESS"
+      },
+      "published": "2025-01-20 14:30:24.369000000",
+      "request": {
+        "ipChain": [
+          {
+            "geographicalContext": {
+              "city": "New York",
+              "country": "United States",
+              "geolocation": {
+                "lat": 40.7279,
+                "lon": -73.9966
+              },
+              "postalCode": "10012",
+              "state": "New York"
+            },
+            "ip": "74.72.151.76",
+            "version": "V4"
+          }
+        ]
+      },
+      "securityContext": {
+        "asNumber": 12271,
+        "asOrg": "charter communications inc",
+        "domain": "spectrum.com",
+        "isProxy": false,
+        "isp": "charter communications inc"
+      },
+      "severity": "INFO",
+      "target": [
+        {
+          "alternateId": "bennett.comfort@computercompany.io",
+          "displayName": "Bennett Comfort",
+          "id": "00u2bn8syI78S4crs5d6",
+          "type": "AppUser"
+        }
+      ],
+      "transaction": {
+        "detail": {},
+        "id": "87d7b4ba31933fc0fd57adb7333503fd",
+        "type": "WEB"
+      },
+      "uuid": "15fc8e75-d73b-11ef-a5bb-a58f9935f4ed",
+      "version": "0"
+    }

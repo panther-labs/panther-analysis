@@ -1,0 +1,59 @@
+AnalysisType: rule
+Filename: teleport_user_running_download_command.py
+RuleID: "Custom.Teleport.User.Running.Download.Commands"
+DisplayName: "(Custom).Teleoprt User Running Download commands"
+Enabled: true
+LogTypes:
+  - Custom.TeleportGlobal
+Tags:
+  - custom
+  - poc
+Severity: Medium
+
+Tests:
+  - Name: "Run"
+    ExpectedResult: true
+    Log: 
+      {
+      "event_data": {
+        "argv": [
+          "stuff"
+        ],
+        "cgroup_id": 45109,
+        "cluster_name": "bdotnet.teleport.sh",
+        "code": "T4000I",
+        "ei": 0,
+        "event": "session.command",
+        "login": "root",
+        "namespace": "default",
+        "path": "/usr/bin/wget",
+        "pid": 53462,
+        "ppid": 53127,
+        "program": "wget",
+        "return_code": 0,
+        "server_hostname": "ip-172-31-25-78",
+        "server_id": "5d520df5-b00b-4ac5-8e72-8b4d7e1d78e8",
+        "server_version": "16.4.11",
+        "sid": "43a0023f-ca13-4cc8-b7bd-d293271e60a8",
+        "time": "2025-01-23T00:09:04.87Z",
+        "uid": "d671cb53-1068-4887-b190-4c350a62e995",
+        "user": "bennett@bdotnet.dev"
+      },
+      "event_time": 1737590944870,
+      "event_type": "session.command",
+      "p_event_time": "2025-01-23 00:12:43.871042541",
+      "p_log_type": "Custom.TeleportGlobal",
+      "p_parse_time": "2025-01-23 00:12:43.871042541",
+      "p_row_id": "ceeea53969e4dab8c8b8b2a924f503",
+      "p_schema_version": 1,
+      "p_source_file": {
+        "aws_s3_bucket": "teleport-longterm-5bfd3dcb-4f8b-463d-923b-681137f0ed2a",
+        "aws_s3_key": "events/2025-01-23/0194907d-7c22-7baa-a013-244343dbc757.parquet"
+      },
+      "p_source_id": "b762133c-8928-429b-8ef2-0170490a1ef3",
+      "p_source_label": "Teleport Systemlog S3",
+      "p_udm": {},
+      "session_id": "43a0023f-ca13-4cc8-b7bd-d293271e60a8",
+      "uid": "d671cb53-1068-4887-b190-4c350a62e995",
+      "user": "bennett@bdotnet.dev"
+    }
