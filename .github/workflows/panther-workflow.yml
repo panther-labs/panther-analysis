@@ -1,0 +1,56 @@
+name: Panther Analysis CI/CD workflow
+
+permissions:
+  contents: read
+
+on:  
+  push:
+    branches:
+      - main
+
+jobs: 
+  run_unit_tests:    
+    runs-on: ubuntu-latest
+    name: Run unit tests on detections using the panther_analysis_tool
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+      
+      - name: Set python version  
+        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
+        with:
+          python-version: '3.11'
+      
+      - name: Install pipenv
+        run: pip install pipenv
+      
+      - name: Install python dependencies and panther_analysis_tool
+        run: make venv
+      
+      - name: Run unit tests for all detections
+        run: pipenv run panther_analysis_tool test
+      
+  panther_analysis_tool_upload:        
+    runs-on: ubuntu-latest
+    name: Upload detections to panther console using panther_analysis_tool
+    needs: [run_unit_tests]
+    env:
+      PANTHER_API_TOKEN: ${{ secrets.API_TOKEN }}
+      PANTHER_API_HOST: "https://api.se-105.runpanther.net/public/graphql"
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+      
+      - name: Set python version  
+        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d #v5.1.0
+        with:
+          python-version: '3.11'
+      
+      - name: Install pipenv
+        run: pip install pipenv
+      
+      - name: Install python dependencies and panther_analysis_tool
+        run: make venv
+      
+      - name: Upload Enabled detections to your Panther instance
+        run: pipenv run panther_analysis_tool upload --filter Enabled=true --skip-tests
