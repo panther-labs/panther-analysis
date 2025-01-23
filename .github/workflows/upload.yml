@@ -14,10 +14,6 @@ jobs:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
     steps:
-      - uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
-        with:
-          egress-policy: audit
-          
       - name: Validate Secrets
         if: ${{ env.API_HOST == '' || env.API_TOKEN == '' }}
         run: |
@@ -40,4 +36,4 @@ jobs:
 
       - name: upload
         run: |
-          pipenv run panther_analysis_tool upload --api-host https://zclj1gp1w8.execute-api.us-west-2.amazonaws.com/v1/public/graphql --api-token z0ddJzwbym7WtgGVtelpp8wIgMmNSSvq4ABlIb6a
+          pipenv run panther_analysis_tool upload --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }}
