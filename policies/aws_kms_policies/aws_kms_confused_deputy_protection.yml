@@ -1,0 +1,79 @@
+AnalysisType: policy
+Filename: aws_kms_confused_deputy_protection.py
+PolicyID: "AWS.KMS.ConfusedDeputyProtection"
+DisplayName: "AWS KMS Key Confused Deputy Protection"
+Enabled: true
+ResourceTypes:
+  - AWS.KMS.Key
+Tags:
+  - AWS
+  - Security Control
+  - Best Practices
+Severity: Medium
+Description: >
+  Ensures that KMS Key Policies include conditions such as `aws:SourceArn`, 
+  `aws:SourceAccount`, `aws:SourceOrgID`, or `aws:SourceOrgPaths` to prevent 
+  the confused deputy problem when using service principals.
+Runbook: >
+  Update the KMS Key Policy to include one or more of the following conditions: 
+  `aws:SourceArn`, `aws:SourceAccount`, `aws:SourceOrgID`, or `aws:SourceOrgPaths`. 
+  Refer to AWS documentation for examples of secure KMS Key Policies.
+Reference: >
+  https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-examples.html#key-policy-cdp
+Tests:
+  - Name: KMS Key Policy Without Required Conditions
+    ExpectedResult: false
+    Resource:
+      {
+        "Policy": '{
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {"Service": "cloudtrail.amazonaws.com"},
+              "Action": "kms:Encrypt",
+              "Resource": "*"
+            }
+          ]
+        }'
+      }
+
+  - Name: KMS Key Policy With Required Conditions
+    ExpectedResult: true
+    Resource:
+      {
+        "Policy": '{
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {"Service": "cloudtrail.amazonaws.com"},
+              "Action": "kms:Encrypt",
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceArn": "arn:aws:cloudtrail:us-east-1:123456789012:trail/MyCloudTrail",
+                  "aws:SourceAccount": "123456789012"
+                }
+              }
+            }
+          ]
+        }'
+      }
+
+  - Name: KMS Key Policy Without Service Principal
+    ExpectedResult: true
+    Resource:
+      {
+        "Policy": '{
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {"AWS": "arn:aws:iam::123456789012:root"},
+              "Action": "kms:Encrypt",
+              "Resource": "*"
+            }
+          ]
+        }'
+      }
