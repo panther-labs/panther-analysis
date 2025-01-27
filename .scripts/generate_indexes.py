@@ -1,6 +1,9 @@
 """
 Analyzes all YAML files in the panther-analysis directory and generates a
-detections-coverage.json file with markdown indexes in the indexes directory
+detections-coverage.json file with markdown indexes in the indexes directory.
+
+IMPORTANT: It's assumed that this script will never write outside of the indexes directory.
+Breaking this assumption could cause an infinite GitHub Actions loop.
 """
 
 import collections, json, hashlib, pathlib, yaml, os, itertools
@@ -292,7 +295,7 @@ def write_alpha_index(detections, query_lookup, logtype_lookup, root_dir):
                 logtype_mapping[log_type] = []
             logtype_mapping[log_type].append(winner)
         if 'standard_rules' in winner['YAMLPath']:
-            winner['Headings'] = headings
+            winner['Headings'] = list(sorted(headings))
             standard_rules.append(winner)
         json_export.append(name_map[name][0])
 
