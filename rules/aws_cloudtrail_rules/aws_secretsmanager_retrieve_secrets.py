@@ -1,8 +1,12 @@
-from panther_aws_helpers import aws_rule_context
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 
 def rule(event):
-    if event.get("eventName") == "GetSecretValue":
+    if (
+        event.get("eventName") == "GetSecretValue"
+        and not aws_cloudtrail_success(event)
+        and event.get("errorCode") == "AccessDenied"
+    ):
         return True
     return False
 
