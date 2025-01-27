@@ -1,5 +1,4 @@
-from panther_azure_helpers import azure_rule_context, azure_success
-from panther_base_helpers import deep_walk
+from panther_msft_helpers import azure_rule_context, azure_success
 
 POLICY_OPERATION = "policy"
 
@@ -8,15 +7,10 @@ IGNORE_ACTIONS = ["Add", "Added"]
 
 def rule(event):
     operation = event.get("operationName", default="")
-    if not azure_success or not operation.endswith(POLICY_OPERATION):
+    if not azure_success(event) or not operation.endswith(POLICY_OPERATION):
         return False
     # Ignore added policies
-    if any(
-        (
-            event.deep_get("properties", "operationName", default="").startswith(ignore)
-            for ignore in IGNORE_ACTIONS
-        )
-    ):
+    if any((operation.startswith(ignore) for ignore in IGNORE_ACTIONS)):
         return False
 
     return True
@@ -27,7 +21,7 @@ def title(event):
     actor_name = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default=""
     )
-    policy = deep_walk(event, "properties", "targetResources", "displayName", default="")
+    policy = event.deep_walk("properties", "targetResources", "displayName", default="")
 
     return f"{operation_name} by {actor_name} on the policy {policy}"
 

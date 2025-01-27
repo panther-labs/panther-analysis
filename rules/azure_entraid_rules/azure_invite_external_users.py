@@ -1,20 +1,15 @@
-from panther_azure_helpers import azure_rule_context
-from panther_base_helpers import deep_walk
+from panther_msft_helpers import azure_rule_context, azure_success
 
 
 def rule(event):
-    result = event.deep_get("properties", "result", default="")
-    if result != "success":
-        return False
-
-    if event.get("operationName") != "Invite external user":
+    if not azure_success(event) or event.get("operationName") != "Invite external user":
         return False
 
     user_who_sent_invite = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default=""
     )
-    user_who_received_invite = deep_walk(
-        event, "properties", "additionalDetails", "value", return_val="last", default=""
+    user_who_received_invite = event.deep_walk(
+        "properties", "additionalDetails", "value", return_val="last", default=""
     )
     domain = user_who_sent_invite.split("@")[-1]
 
@@ -27,8 +22,8 @@ def title(event):
     user_who_sent_invite = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default=""
     )
-    user_who_received_invite = deep_walk(
-        event, "properties", "additionalDetails", "value", return_val="last", default=""
+    user_who_received_invite = event.deep_walk(
+        "properties", "additionalDetails", "value", return_val="last", default=""
     )
 
     return (

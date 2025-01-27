@@ -1,7 +1,7 @@
 import json
 
-from panther_azure_helpers import azure_rule_context
 from panther_base_helpers import deep_walk
+from panther_msft_helpers import azure_rule_context
 
 
 def get_mfa(policy):
@@ -16,8 +16,7 @@ def rule(event):
     if event.get("operationName", default="") != "Update conditional access policy":
         return False
 
-    old_value = deep_walk(
-        event,
+    old_value = event.deep_walk(
         "properties",
         "targetResources",
         "modifiedProperties",
@@ -25,8 +24,7 @@ def rule(event):
         return_val="first",
         default="",
     )
-    new_value = deep_walk(
-        event,
+    new_value = event.deep_walk(
         "properties",
         "targetResources",
         "modifiedProperties",
@@ -45,7 +43,7 @@ def title(event):
     actor_name = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default=""
     )
-    policy = deep_walk(event, "properties", "targetResources", "displayName", default="")
+    policy = event.deep_walk("properties", "targetResources", "displayName", default="")
 
     return f"mfa disabled by {actor_name} on the policy {policy}"
 
