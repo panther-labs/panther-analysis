@@ -2429,7 +2429,7 @@ class TestPantherFlowInvestigation(unittest.TestCase):
         event = ImmutableCaseInsensitiveDict(event)
         query = """union panther_signals.public.correlation_signals
     , panther_logs.public.aws_cloudtrail
-| where p_event_time between datetime('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. datetime('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
+| where p_event_time between time.parse_timestamp('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. time.parse_timestamp('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
 | where arrays.overlap(p_any_ip_addresses, ['12.34.56.78'])
      or arrays.overlap(p_any_trace_ids, ['ASIAQWERTYUIOPASDFGH'])
      or arrays.overlap(p_any_actor_ids, ['AROAQWERTYUIOPASDFGH', 'AROAQWERTYUIOPASDFGH:bob.ross'])

@@ -16,6 +16,7 @@ PackDefinition:
     - AWS.IAM.AccessKeyCompromised
     - AWS.KMS.CustomerManagedKeyLoss
     - AWS.KMS.RestrictsUsage
+    - AWS.Lambda.PublicAccess
     - AWS.Macie.Evasion
     - AWS.RDS.Instance.PublicAccess
     - AWS.RDS.Instance.SnapshotPublicAccess
@@ -71,6 +72,7 @@ PackDefinition:
     - AWS.IAM.PolicyModified
     - AWS.IAM.User.MFA
     - AWS.IAMUser.ReconAccessDenied
+    - AWS.IAM.Role.GitHubActionsTrust
     - AWS.Password.Unused
     - AWS.PasswordPolicy.ComplexityGuidelines
     - AWS.PasswordPolicy.PasswordAgeLimit
@@ -141,6 +143,9 @@ PackDefinition:
     - AWS.WAF.HasXSSPredicate
     - AWS.WAF.LoggingConfigured
     - AWS.WAF.WebACLHasAssociatedResources
+    # Bedrock rules
+    - AWS.Bedrock.DeleteModelInvocationLoggingConfiguration
+    - AWS.Bedrock.GuardrailUpdateDelete
     # Other rules
     - Amazon.EKS.AnonymousAPIAccess
     - AWS.CloudTrail.Account.Discovery
@@ -212,3 +217,4 @@ PackDefinition:
     - panther_iocs
     - panther_ipinfo_helpers
     - panther_lookuptable_helpers
+    - panther_base_helpers_old

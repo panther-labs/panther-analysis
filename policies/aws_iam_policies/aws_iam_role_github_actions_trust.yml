@@ -1,0 +1,224 @@
+AnalysisType: policy
+Filename: aws_iam_role_github_actions_trust.py
+PolicyID: "AWS.IAM.Role.GitHubActionsTrust"
+DisplayName: "AWS IAM Role Trust Relationship for GitHub Actions"
+Enabled: true
+ResourceTypes:
+  - AWS.IAM.Role
+Tags:
+  - AWS
+  - GitHub Actions
+  - Identity & Access Management
+Severity: High
+Description: >
+  This policy ensures that IAM roles used with GitHub Actions are securely configured to prevent unauthorized access to AWS resources. 
+  It validates trust relationships by checking for proper audience (aud) restrictions, ensuring it is set to sts.amazonaws.com, and subject (sub) conditions, 
+  confirming they are scoped to specific repositories or environments. Misconfigurations, such as overly permissive wildcards or missing conditions, 
+  can allow unauthorized repositories to assume roles, leading to potential data breaches or compliance violations. 
+  By enforcing these checks, the policy mitigates risks of exploitation, enhances security posture, and protects critical AWS resources from external threats.
+Runbook: >
+  To fix roles flagged by this policy:
+  1. Update the trust relationship of the flagged IAM role in the AWS Management Console or CLI.
+  2. Add a Condition block with 'StringLike' or 'StringEquals' for 'token.actions.githubusercontent.com:sub'.
+  3. Ensure the audience is set to 'sts.amazonaws.com'.
+  4. Avoid overly permissive wildcards in the sub condition.
+Reference: >
+  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html
+  - https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-cloud-providers
+  - https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+Tests:
+  - Name: Valid GitHub Actions Trust Relationship
+    ExpectedResult: true
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:org/repo:*"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Missing Audience Condition
+    ExpectedResult: false
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Condition": {
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:org/repo:*"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Missing Subject Restriction
+    ExpectedResult: false
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Overly Permissive Wildcard in Subject
+    ExpectedResult: false
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "*"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Valid Subject Restriction with Specific Environment
+    ExpectedResult: true
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                  "token.actions.githubusercontent.com:sub": "repo:org/repo:environment:prod"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Invalid Principal as Wildcard
+    ExpectedResult: false
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "*"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:org/repo:*"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Non-GitHub OIDC Principal
+    ExpectedResult: false
+    Resource:
+      {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Principal": {
+                "Federated": "arn:aws:iam::123456789012:oidc-provider/accounts.google.com"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": "repo:org/repo:*"
+                }
+              }
+            }
+          ]
+        }
+      }
+
+  - Name: Non-GitHub IAM Role
+    ExpectedResult: true
+    Resource:
+      {
+      "AccountId": "123412341233",
+      "Arn": "arn:aws:iam::123412341233:role/DevAdministrator",
+      "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::12341523456:root\",\"arn:aws:iam::123412341233:root\"]},\"Action\":\"sts:AssumeRole\",\"Condition\":{\"Bool\":{\"aws:MultiFactorAuthPresent\":\"true\",\"aws:SecureTransport\":\"true\"},\"NumericLessThan\":{\"aws:MultiFactorAuthAge\":\"28800\"}}}]}",
+      "ManagedPolicyARNs": [
+        "arn:aws:iam::aws:policy/AdministratorAccess"
+      ],
+      "ManagedPolicyNames": [
+        "AdministratorAccess"
+      ],
+      "MaxSessionDuration": 28800,
+      "Name": "DevAdministrator",
+      "Path": "/",
+      "Region": "global",
+      "ResourceId": "arn:aws:iam::123412341233:role/DevAdministrator",
+      "ResourceType": "AWS.IAM.Role",
+      "TimeCreated": "2023-11-08T23:50:46Z"
+    }

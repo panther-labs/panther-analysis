@@ -15,7 +15,8 @@ def title(event):
     # use unified data model field in title
     log_type = event.get("p_log_type")
     title_str = (
-        f"{log_type}: User [{event.udm('actor_user')}] has exceeded the failed logins threshold"
+        f"{log_type}: Login attempts from IP [{event.udm('source_ip')}] "
+        "have exceeded the failed logins threshold"
     )
     if log_type == "AWS.CloudTrail":
         title_str += f" in [{lookup_aws_account_name(event.get('recipientAccountId'))}]"
