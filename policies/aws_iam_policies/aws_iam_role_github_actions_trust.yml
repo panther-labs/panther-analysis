@@ -200,3 +200,25 @@ Tests:
           ]
         }
       }
+
+  - Name: Non-GitHub IAM Role
+    ExpectedResult: true
+    Resource:
+      {
+      "AccountId": "123412341233",
+      "Arn": "arn:aws:iam::123412341233:role/DevAdministrator",
+      "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::12341523456:root\",\"arn:aws:iam::123412341233:root\"]},\"Action\":\"sts:AssumeRole\",\"Condition\":{\"Bool\":{\"aws:MultiFactorAuthPresent\":\"true\",\"aws:SecureTransport\":\"true\"},\"NumericLessThan\":{\"aws:MultiFactorAuthAge\":\"28800\"}}}]}",
+      "ManagedPolicyARNs": [
+        "arn:aws:iam::aws:policy/AdministratorAccess"
+      ],
+      "ManagedPolicyNames": [
+        "AdministratorAccess"
+      ],
+      "MaxSessionDuration": 28800,
+      "Name": "DevAdministrator",
+      "Path": "/",
+      "Region": "global",
+      "ResourceId": "arn:aws:iam::123412341233:role/DevAdministrator",
+      "ResourceType": "AWS.IAM.Role",
+      "TimeCreated": "2023-11-08T23:50:46Z"
+    }
