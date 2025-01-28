@@ -1,13 +1,14 @@
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types:
+      - closed
 
 permissions:
   contents: read
 
 jobs:
   validate:
-    if: github.event.review.state == 'approved' && github.event.pull_request.head.repo.fork == false
+    if: github.event.pull_request.merged == true
     name: Validate
     runs-on: ubuntu-latest
     env:
