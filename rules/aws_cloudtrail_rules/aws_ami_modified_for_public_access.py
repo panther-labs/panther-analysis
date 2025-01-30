@@ -14,7 +14,9 @@ def rule(event):
     for item in added_perms:
         if item.get("group") == "all":
             return True
-        if check_account_age(item.get("userId") + "-" + event.udm("user_account_id")):  # checking if the account is new
+        if check_account_age(
+            item.get("userId", "") + "-" + event.udm("user_account_id", default="")
+        ):  # checking if the account is new
             return True
 
     return False

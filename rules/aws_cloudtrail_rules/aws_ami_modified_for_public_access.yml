@@ -76,6 +76,9 @@ Tests:
       }
   - Name: AMI Not Made Public
     ExpectedResult: false
+    Mocks:
+        - objectName: check_account_age
+          returnValue: False
     Log:
       {
         "awsRegion": "us-west-2",
@@ -125,6 +128,9 @@ Tests:
       }
   - Name: AMI Launch Permissions Not Modified
     ExpectedResult: false
+    Mocks:
+        - objectName: check_account_age
+          returnValue: False
     Log:
       {
         "awsRegion": "us-west-2",
