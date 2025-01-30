@@ -65,9 +65,11 @@ install:
 test: global-helpers-unit-test data-models-unit-test
 	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
+# Used by Panther team to update deprecated.txt
 check-deprecated:
 	pipenv run python3 ./.scripts/deleted_rules.py check
 
+# Used by Panther customers to delete detection content in deprecated.txt from their Panther instance
 remove-deprecated:
 	pipenv run python3 ./.scripts/deleted_rules.py remove
 
