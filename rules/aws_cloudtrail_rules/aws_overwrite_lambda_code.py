@@ -14,7 +14,7 @@ def title(event):
         "responseElements", "functionName", default="LAMBDA_NAME_NOT_FOUND"
     )
     return (
-        f"[AWS.CloudTrail] User [{event.udm('actor_user', default='USER_NOT_FOUND')}] "
+        f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
         f"updated Lambda function code for [{lambda_name}]"
     )
 
