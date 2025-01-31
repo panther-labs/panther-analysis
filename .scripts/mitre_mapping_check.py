@@ -25,6 +25,7 @@ def main(path: Path) -> bool:
 
     # Load Repo
     analysis_items = load_analysis_specs([path], ignore_files=ignore_files)
+    has_err_loading_file = False
 
     items_with_invalid_mappings = []  # Record all items with bad tags
     for analysis_item in analysis_items:
@@ -42,8 +43,9 @@ def main(path: Path) -> bool:
             if bad_tags:
                 items_with_invalid_mappings.append({"rel_path": rel_path, "bad_tags": bad_tags})
         except Exception:
-            print("Unable to test file: " + rel_path)
+            print("❗ Unable to test file: " + rel_path)
             print(traceback.format_exc())
+            has_err_loading_file = True
 
     if items_with_invalid_mappings:
         print("❌ Some items had invalid MITRE mapping formats:")
@@ -63,7 +65,7 @@ def main(path: Path) -> bool:
     else:
         print("✅ No invalid MITRE mappings found! You're in the clear! 👍")
 
-    return bool(items_with_invalid_mappings)
+    return bool(items_with_invalid_mappings or has_err_loading_file)
 
 
 if __name__ == "__main__":
