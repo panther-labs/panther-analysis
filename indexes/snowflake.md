@@ -1,27 +1,50 @@
-# Users and Authentication
+## Snowflake
 
-[ Snowflake Brute Force Attacks by Username](../queries/snowflake_queries/snowflake_brute_force_username_query.yml)
+- [Snowflake Account Admin Granted](../queries/snowflake_queries/snowflake_account_admin_assigned.yml)
+  - Detect when account admin is granted.
+- [Snowflake Brute Force Attacks by IP](../queries/snowflake_queries/snowflake_brute_force_ip.yml)
+  - Detect brute force attacks by monitoring for failed logins from the same IP address
+- [Snowflake Brute Force Attacks by User](../rules/snowflake_rules/snowflake_stream_brute_force_by_username.yml)
+  - Detect brute force attacks by monitorign failed logins from the same IP address
+- [Snowflake Brute Force Attacks by Username](../queries/snowflake_queries/snowflake_brute_force_username.yml)
+  - Detect brute force attacks by monitoring for failed logins by the same username
+- [Snowflake Brute Force Login Success](../correlation_rules/snowflake_potential_brute_force_success.yml)
+  - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+- [Snowflake Client IP](../queries/snowflake_queries/snowflake_0108977_ip.yml)
+  - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
+- [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
+  - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+  - In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
+- [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
+  - Detect when an external share has been initiated from one source cloud to another target cloud.
+- [Snowflake External Share](../queries/snowflake_queries/snowflake_external_shares.yml)
+  - Detect when an external share has been initiated from one source cloud to another target cloud.
+- [Snowflake File Downloaded](../queries/snowflake_queries/snowflake_file_downloaded_signal.yml)
+  - A file was downloaded from a stage
+- [Snowflake Grant to Public Role](../rules/snowflake_rules/snowflake_stream_public_role_grant.yml)
+  - Detect additional grants to the public role.
+- [Snowflake Login Without MFA](../queries/snowflake_queries/snowflake_login_without_mfa.yml)
+  - Detect snowflake logins without multifactor authentication
+- [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
+  - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+- [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
+  - Track successful login signals for correlation.
+- [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)
+  - A table was copied into a stage
+- [Snowflake Temporary Stage Created](../queries/snowflake_queries/snowflake_temp_stage_created_signal.yml)
+  - A temporary stage was created
+- [Snowflake User Access](../queries/snowflake_queries/snowflake_0109877_suspected_user_access.yml)
+  - Return sessions of suspected clients as part of ongoing cyber threat activity reported May 31st, 2024
+- [Snowflake User Created](../queries/snowflake_queries/snowflake_user_created.yml)
+  - Detect new users created in snowflake
+- [Snowflake User Daily Query Volume Spike](../queries/snowflake_queries/snowflake_user_query_volume_spike_query.yml)
+  - Returns instances where a user's cumulative daily query volume is much larger than normal. Could indicate exfiltration attempts.
+- [Snowflake User Daily Query Volume Spike - Threat Hunting](../queries/snowflake_queries/snowflake_user_query_volume_spike_threat_hunting.yml)
+  - This query returns the most voluminous queries executed by a specific user over the past 48 hours.
+- [Snowflake User Enabled](../queries/snowflake_queries/snowflake_user_enabled.yml)
+  - Detect users being re-enabled in your environment
+- [Snowflake user with key-based auth logged in with password auth](../queries/snowflake_queries/snowflake_key_user_password_login.yml)
+  - Detect when a user that has key-based authentication configured logs in with a password
 
-[ Snowflake User Created](../queries/snowflake_queries/snowflake_user_created_query.yml)
 
-[ Snowflake Brute Force Attacks by IP ](../queries/snowflake_queries/snowflake_brute_force_ip_query.yml)
-
-[ Snowflake User Enabled](../queries/snowflake_queries/snowflake_user_enabled_query.yml)
-
-[ Snowflake Account Admin Granted](../queries/snowflake_queries/snowflake_account_admin_assigned_query.yml)
-
-[ Snowflake user with key-based auth logged in with password auth](../queries/snowflake_queries/snowflake_key_user_password_login_query.yml)
-
-[ Snowflake Login Without MFA](../queries/snowflake_queries/snowflake_login_without_mfa_query.yml)
-
-[ Unusual Volume of Snowflake Logins Detected](../queries/snowflake_queries/snowflake_unusual_login_volume_query.yml)
-
-[ Snowflake Grant to Public Role](../queries/snowflake_queries/snowflake_public_role_grant_query.yml)
-
-## Secure Configuration and Admin Actions
-
-[ Privileged Object Changes](../queries/snowflake_queries/snowflake_privileged_object_changes_query.yml)
-
-[ Snowflake network policy modified](../queries/snowflake_queries/snowflake_network_policy_modified_query.yml)
-
-[Snowflake SCIM Token Created](../queries/snowflake_queries/snowflake_scim_token_created_query.yml)

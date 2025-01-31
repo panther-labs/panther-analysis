@@ -1,0 +1,115 @@
+AnalysisType: rule
+Filename: aws_iam_attach_admin_user_policy.py
+RuleID: "AWS.IAM.AttachAdminUserPolicy"
+DisplayName: "IAM User Policy Attached with Administrator Access"
+Enabled: true
+CreateAlert: false
+LogTypes:
+  - AWS.CloudTrail
+Reports:
+  CIS:
+    - 1.1
+  MITRE ATT&CK:
+    - TA0007:T1078
+Severity: Info
+Description: >
+  An IAM user policy was attached with Administrator Access, which could indicate a potential security risk.
+Runbook: Check if the user policy was attached by an authorized user. If not, investigate the user policy attachment.
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
+Tests:
+  - Name: IAM User Policy Attached with Administrator Access
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/tester",
+                    "accountId": "123456789012",
+                    "userName": "Tester",
+                  },
+                "webIdFederationData": {},
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
+                  },
+              },
+          },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "AttachUserPolicy",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters":
+          {
+            "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess",
+            "userName": "new-user"
+          },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+      }
+  - Name: IAM User Policy Attached without Administrator Access
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "tester",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/tester",
+                    "accountId": "123456789012",
+                    "userName": "Tester",
+                  },
+                "webIdFederationData": {},
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2019-01-01T00:00:00Z",
+                  },
+              },
+          },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "iam.amazonaws.com",
+        "eventName": "AttachUserPolicy",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "console.amazonaws.com",
+        "requestParameters":
+          {
+            "policyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess",
+            "userName": "new-user"
+          },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+      }
