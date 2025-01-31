@@ -1,0 +1,139 @@
+AnalysisType: rule
+Filename: aws_ec2_download_instance_user_data.py
+RuleID: "AWS.EC2.DownloadInstanceUserData"
+DisplayName: AWS EC2 Download Instance User Data
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1580 # Discovery: Cloud Infrastructure Discovery
+Description: >
+  An entity has accessed the user data scripts of multiple EC2 instances.
+Threshold: 5
+Reference: >
+  https://hackingthe.cloud/aws/general-knowledge/introduction_user_data/
+Runbook: >
+  An entity has accessed the user data scripts of multiple EC2 instances. This is
+  often an attempt to find unsecured credentials. Ensure the EC2 instances accessed
+  do not have any sensitive information stored in the user data.
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_instance_ids
+Tags:
+  - AWS CloudTrail
+  - EC2
+  - Discovery
+  - Cloud Infrastructure Discovery
+  - Discovery - Cloud Infrastructure Discovery
+Tests:
+  - Name: Unsuccessful Attempt
+    ExpectedResult: true
+    Mocks:
+      - objectName: lookup_aws_account_name
+        returnValue: 'IT Prod Account'
+    Log:
+      {
+        "p_event_time": "2024-12-11 21:49:07.000000",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2024-12-11 21:55:54.289594",
+        "awsRegion": "us-west-2",
+        "errorCode": "Client.UnauthorizedOperation",
+        "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::111122223333:assumed-role/SampleRole/sample-session is not authorized to perform: ec2:DescribeInstanceAttribute on resource: arn:aws:ec2:us-west-2:111122223333:instance/* because no identity-based policy allows the ec2:DescribeInstanceAttribute action. Encoded authorization failure message: 2RCBDBB0PcDpowyBFV7UpJobr-4iGb1MWqjKES--SAO_ca79pxBjKLQQ-sBGm2_m8jjcTAITBlNRa1WCVabq3VCghw9mbj0XZ3-2ZfsVyUrQWiTSUqYh9CUFVnWOmp710QzzKLj-Dy5Aup-bkSCbadoQe6HMevGPiSGeklgwBQc4jLO3oIbPTsujAijnaVr4CUIRBkD4KI8H2ZshEgJOujlpkg47FYqU8bVPNEIv9OwsQ9g4dRMB_cJ7C43kpURWIuiWkFpN8Q84RubskMNB3IfkHGR_Y63Z3LLzOCbPgT4S2zt97PBryCs-lUWSdA2ZCq9dcOtoHQq3Ed-3eB4o7FdZ0cJawa2i6oeUGzzPC2JtBQBcCqExMS8CXENosA0LY9cRUOSo4xc439wzlNpUbMI6K_y1AZWWN0f1QzLW1GkhtlUaLZFvLTwMqTVhClznln2ntmAJ_6iVVlvYco5x6Z4oNn8pMVPk76Iq8yM9o_2-tXmt0st7y_9B83eTSFOTbRnwgHabQXuMyzFKAA3xtuMcbcpB-Ij8c70lkv-eVQeJnfqRd_zbbnsMhxBybfjQyirKjY8bfLg",
+        "eventCategory": "Management",
+        "eventID": "fa67e0b9-9837-4c84-baa0-78a271821d3e",
+        "eventName": "DescribeInstanceAttribute",
+        "eventSource": "ec2.amazonaws.com",
+        "eventTime": "2024-12-11 21:49:07.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.10",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "f2362cc7-4396-4be5-950c-16c36dddde76",
+        "requestParameters": {
+          "attribute": "userData",
+          "instanceId": "i-12345678"
+        },
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "sample-user-agent",
+        "userIdentity": {
+          "accessKeyId": "SAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/sample-session",
+          "principalId": "SAMPLE_PRINCIPAL_ID:sample-session",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2024-12-11T21:49:04Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Successful Attempt
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-12-12 21:44:35.000000",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2024-12-12 21:50:54.711099",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "6dbc00d3-1230-492a-ad34-4e3e49aba847",
+        "eventName": "DescribeInstanceAttribute",
+        "eventSource": "ec2.amazonaws.com",
+        "eventTime": "2024-12-12 21:44:35.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.10",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "26b6b895-900d-44aa-b286-b8d828c31aed",
+        "requestParameters": {
+          "attribute": "userData",
+          "instanceId": "i-1234567890abcdefa"
+        },
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "sample-user-agent",
+        "userIdentity": {
+          "accessKeyId": "SAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/sample-session",
+          "principalId": "SAMPLE_PRINCIPAL_ID:sample-session",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2024-12-12T21:43:11Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
