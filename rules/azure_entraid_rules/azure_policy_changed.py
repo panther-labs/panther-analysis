@@ -17,7 +17,7 @@ def rule(event):
 
 
 def title(event):
-    operation_name = event.get("operationName", default="")
+    operation_name = event.get("operationName", default="<UNKNOWN OPERATION>")
     actor_name = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default="<UNKNOWN ACTOR>"
     )
