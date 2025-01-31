@@ -47,7 +47,7 @@ def get_target_name(event, target_type="User"):
     target_resources = deep_walk(event, "properties", "targetResources", default="")
     for resource in target_resources:
         if resource.get("type") == target_type:
-            return resource.get("displayName", "No displayName found")
+            return resource.get("displayName", "NO DISPLAY NAME FOUND")
 
     return "NO DISPLAY NAME FOUND"
 
