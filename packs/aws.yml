@@ -64,6 +64,7 @@ PackDefinition:
     - AWS.CloudTrail.Password.Policy.Discovery
     - AWS.Console.LoginWithoutMFA
     - AWS.EC2.SecurityGroupModified
+    - AWS.IAM.BackdoorRole
     - AWS.IAM.Backdoor.User.Keys
     - AWS.IAM.CredentialsUpdated
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
@@ -79,7 +80,6 @@ PackDefinition:
     - AWS.PasswordPolicy.PasswordReuse
     - AWS.Potentially.Stolen.Service.Role.Scheduled
     - AWS.Suspicious.SAML.Activity
-    - AWS.User.Login.Profile.Modified
     # General Policies and Rules
     - Amazon.EKS.Audit.Multiple403
     - Amazon.EKS.Audit.SystemNamespaceFromPublicIP
@@ -188,6 +188,8 @@ PackDefinition:
     - VPC.DNS.Tunneling
     - VPCFlow.Port.Scanning
     # Correlation Rules
+    - AWS.Administrative.IAM.User.Created
+    - AWS.Backdoor.Administrative.IAM.Role.Created
     - AWS.Privilege.Escalation.Via.User.Compromise
     - AWS.CloudTrail.SES.SESEnumeration
     - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP
@@ -198,6 +200,10 @@ PackDefinition:
     - AWS.CloudTrail.UserAccessKeyAuth
     - AWS.CloudTrail.LoginProfileCreatedOrModified
     - AWS.Console.Login
+    - AWS.IAM.AttachAdminRolePolicy
+    - AWS.IAM.AttachAdminUserPolicy
+    - AWS.IAM.CreateRole
+    - AWS.IAM.CreateUser
     - AWS.CloudTrail.SES.CheckSESSendingEnabled
     - AWS.CloudTrail.SES.CheckSendQuota
     - AWS.CloudTrail.SES.ListIdentities
