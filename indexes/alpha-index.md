@@ -86,6 +86,8 @@
   - An Amazon Bedrock Model Invocation Logging Configuration was deleted. Use model invocation logging to collect metadata, requests, and responses for all model invocations in your account. Deleting a model invocation logging configuration can have security implications to your AI workloads.
 - [AWS CloudTrail Account Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_account_discovery.yml)
   - Adversaries may attempt to get a listing of accounts on a system or within an environment. This information can help adversaries determine which accounts exist to aid in follow-on behavior.
+- [AWS CloudTrail Attempt To Leave Org](../rules/aws_cloudtrail_rules/aws_cloudtrail_attempt_to_leave_org.yml)
+  - Detects when an actor attempts to remove an AWS account from an Organization. Security configurations are often defined at the organizational level. Leaving the organization can disrupt or totally shut down these controls.
 - [AWS CloudTrail CloudWatch Logs](../policies/aws_cloudtrail_policies/aws_cloudtrail_cloudwatch_logs.yml)
   - CloudTrail supports sending data and management events to CloudWatch Logs. This setup can be used for real-time processing of all CloudTrail data events.
 - [AWS CloudTrail Log Encryption](../policies/aws_cloudtrail_policies/aws_cloudtrail_log_encryption.yml)
@@ -102,6 +104,13 @@
   - This policy validates that the bucket receiving CloudTrail Logs is configured with S3 Access Logging. This audits all creation, modification, or deletion to CloudTrail audit logs.
 - [AWS CloudTrail S3 Bucket Public](../policies/aws_cloudtrail_policies/aws_cloudtrail_s3_bucket_public.yml)
   - This policy validates that CloudTrail S3 buckets are not publicly accessible.
+- [AWS CloudTrail SES Check Identity Verifications](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_identity_verifications.yml)
+- [AWS CloudTrail SES Check Send Quota](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.yml)
+  - Detect when someone checks how many emails can be delivered via SES
+- [AWS CloudTrail SES Check SES Sending Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_ses_sending_enabled.yml)
+  - Detect when a user inquires whether SES Sending is enabled.
+- [AWS CloudTrail SES Enumeration](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_enumeration.yml)
+- [AWS CloudTrail SES List Identities](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_list_identities.yml)
 - [AWS Compromised IAM Key Quarantine](../rules/aws_cloudtrail_rules/aws_iam_compromised_key_quarantine.yml)
   - Detects when an IAM user has the AWSCompromisedKeyQuarantineV2 policy attached to their account.
 - [AWS Config Service Created](../rules/aws_cloudtrail_rules/aws_config_service_created.yml)
