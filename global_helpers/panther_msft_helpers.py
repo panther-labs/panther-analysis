@@ -54,6 +54,4 @@ def get_target_name(event, target_type="User"):
 
 def azure_success(event):
     result = event.deep_get("properties", "result", default="")
-    if result != "success":
-        return False
-    return True
+    return result == "success"
