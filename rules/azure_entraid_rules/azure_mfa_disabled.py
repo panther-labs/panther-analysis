@@ -45,7 +45,7 @@ def title(event):
     )
     policy = event.deep_walk("properties", "targetResources", "displayName", default="")
 
-    return f"mfa disabled by {actor_name} on the policy {policy}"
+    return f"MFA disabled by {actor_name} on the policy {policy}"
 
 
 def alert_context(event):
