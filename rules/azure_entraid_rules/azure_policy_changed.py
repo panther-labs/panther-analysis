@@ -19,7 +19,7 @@ def rule(event):
 def title(event):
     operation_name = event.get("operationName", default="")
     actor_name = event.deep_get(
-        "properties", "initiatedBy", "user", "userPrincipalName", default=""
+        "properties", "initiatedBy", "user", "userPrincipalName", default="<UNKNOWN ACTOR>"
     )
     policy = event.deep_walk("properties", "targetResources", "displayName", default="")
 
