@@ -1,0 +1,25 @@
+AnalysisType: scheduled_rule
+Filename: ec2_discovery_commands.py
+RuleID: "AWS.EC2.DiscoveryCommandsExecuted"
+DisplayName: "AWS EC2 Discovery Commands Executed"
+Enabled: true
+ScheduledQueries:
+  - AWS EC2 Discovery Commands Executed
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1526 # Discoery: Cloud Service Discovery
+Description: Multiple different discovery commands were executed by the same EC2 instance.
+  This could indicate a compromised instance.
+DedupPeriodMinutes: 90
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.discovery.ec2-enumerate-from-instance/
+Runbook: Investigate other activity from the instance. Revoke permissions from the
+  instance until the credentials have been rotated. Determine who was accessing the
+  instance and monitor the account for other activity.
+Tags:
+  - AWS
+  - CloudTrail
+  - EC2
+  - Discovery
+  - Cloud Service Discovery
