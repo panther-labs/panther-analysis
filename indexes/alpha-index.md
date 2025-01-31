@@ -80,6 +80,8 @@
   - Detects AWS Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
+- [AWS Backdoor Administrative IAM Role Created](../correlation_rules/aws_create_backdoor_admin_iam_role.yml)
+  - Identifies when CreateRole and AttachAdminRolePolicy CloudTrail events occur in a short period of time. This sequence could indicate a potential security breach.
 - [AWS Bedrock Guardrail Updated or Deleted](../rules/aws_cloudtrail_rules/aws_bedrock_guardrail_update_delete.yml)
   - An Amazon Bedrock Guardrail was updated or deleted. Amazon Bedrock Guardrails are used to implement application-specific safeguards based on your use cases and responsible AI policies. Updating or deleting a guardrail can have security implications to your AI workloads.
 - [AWS Bedrock Model Invocation Logging Configuration Deleted](../rules/aws_cloudtrail_rules/aws_bedrock_deletemodelinvocationloggingconfiguration.yml)
@@ -189,13 +191,13 @@
   - Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
 - [AWS User Login Profile Created or Modified](../rules/aws_cloudtrail_rules/aws_cloudtrail_loginprofilecreatedormodified.yml)
   - An attacker with iam:UpdateLoginProfile permission on other users can change the password used to login to the AWS console. May be legitimate account administration.
-- [AWS User Login Profile Modified](../rules/aws_cloudtrail_rules/aws_user_login_profile_modified.yml)
-  - An attacker with iam:UpdateLoginProfile permission on other users can change the password used to login to the AWS console. May be legitimate account administration.
 - [AWS User Takeover Via Password Reset](../correlation_rules/aws_user_takeover_via_password_reset.yml)
 - [AWS VPC Flow Logs Removed](../rules/aws_cloudtrail_rules/aws_vpc_flow_logs_deleted.yml)
   - Detects when logs for a VPC have been removed.
 - [AWS WAF Disassociation](../rules/aws_cloudtrail_rules/aws_waf_disassociation.yml)
   - Detection to alert when a WAF disassociates from a source.
+- [AWS.Administrative.IAM.User.Created](../correlation_rules/aws_create_admin_iam_user.yml)
+  - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS.CloudTrail.UserAccessKeyAuth](../rules/aws_cloudtrail_rules/aws_cloudtrail_useraccesskeyauth.yml)
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
@@ -227,6 +229,8 @@
   - Unauthorized ECR Create, Read, Update, or Delete event occurred.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
+- [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
+  - An IAM role policy was attached with Administrator Access, which could indicate a potential security risk.
 - [IAM Assume Role Blocklist Ignored](../rules/aws_cloudtrail_rules/aws_iam_assume_role_blocklist_ignored.yml)
   - A user assumed a role that was explicitly blocklisted for manual user assumption.
 - [IAM Change](../rules/aws_cloudtrail_rules/aws_iam_anything_changed.yml)
@@ -235,6 +239,14 @@
   - An IAM Entity (Group, Policy, Role, or User) was created manually. IAM entities should be created in code to ensure that permissions are tracked and managed correctly.
 - [IAM Policy Modified](../rules/aws_cloudtrail_rules/aws_iam_policy_modified.yml)
   - An IAM Policy was changed.
+- [IAM Role Created](../rules/aws_cloudtrail_rules/aws_iam_create_role.yml)
+  - An IAM role was created.
+- [IAM Role Policy Updated to Allow Internet Access](../rules/aws_cloudtrail_rules/aws_iam_backdoor_role.yml)
+  - An IAM role policy was updated to allow internet access, which could indicate a backdoor.
+- [IAM User Created](../rules/aws_cloudtrail_rules/aws_iam_create_user.yml)
+  - An IAM user was created, which could indicate a new user creation or policy update.
+- [IAM User Policy Attached with Administrator Access](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_user_policy.yml)
+  - An IAM user policy was attached with Administrator Access, which could indicate a potential security risk.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml)
