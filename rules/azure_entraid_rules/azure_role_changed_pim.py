@@ -12,7 +12,7 @@ def rule(event):
 def title(event):
     operation_name = event.get("operationName", default="")
     actor_name = event.deep_get(
-        "properties", "initiatedBy", "user", "userPrincipalName", default=""
+        "properties", "initiatedBy", "user", "userPrincipalName", default="<UNKNOWN USER>"
     )
     target_name = get_target_name(event)
     role = event.deep_walk(
