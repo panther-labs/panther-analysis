@@ -4,6 +4,7 @@ display properly in Panther's UI. """
 
 import re
 import sys
+import traceback
 from pathlib import Path
 
 from panther_analysis_tool.analysis_utils import load_analysis_specs
@@ -16,7 +17,11 @@ def main(path: Path) -> bool:
     # Ignore any schema test files
     #   Schema tests can't be loaded by panther_analysis_tool because each file contains multiple
     #   YAML documents.
-    ignore_files = list(path.glob("**/*_tests.y*ml"))
+    # Also ignore any JSON files stored under indexes, since they aren't analysis items but get
+    #   caught by the load_analysis_specs function
+    ignore_files = []
+    ignore_files += list(path.glob("**/*_tests.y*ml"))
+    ignore_files += list(path.glob("indexes/*"))
 
     # Load Repo
     analysis_items = load_analysis_specs([path], ignore_files=ignore_files)
@@ -26,15 +31,19 @@ def main(path: Path) -> bool:
         rel_path = analysis_item[0]  # Relative path to YAML file
         spec = analysis_item[2]  # YAML spec as a dict
 
-        bad_tags = []  # Record the invalid tags for this analysis item
-        if reports := spec.get("Reports"):
-            if mitre := reports.get("MITRE ATT&CK"):
-                for mapping in mitre:
-                    if not MITRE_PATTERN.match(mapping):
-                        bad_tags.append(mapping)
+        try:
+            bad_tags = []  # Record the invalid tags for this analysis item
+            if reports := spec.get("Reports"):
+                if mitre := reports.get("MITRE ATT&CK"):
+                    for mapping in mitre:
+                        if not MITRE_PATTERN.match(mapping):
+                            bad_tags.append(mapping)
 
-        if bad_tags:
-            items_with_invalid_mappings.append({"rel_path": rel_path, "bad_tags": bad_tags})
+            if bad_tags:
+                items_with_invalid_mappings.append({"rel_path": rel_path, "bad_tags": bad_tags})
+        except Exception:
+            print("Unable to test file: " + rel_path)
+            print(traceback.format_exc())
 
     if items_with_invalid_mappings:
         print("❌ Some items had invalid MITRE mapping formats:")
