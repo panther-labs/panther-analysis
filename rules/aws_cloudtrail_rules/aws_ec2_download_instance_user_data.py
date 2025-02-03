@@ -8,11 +8,10 @@ def rule(event: PantherEvent) -> bool:
 
 def title(event: PantherEvent) -> str:
     account_id = lookup_aws_account_name(event.get("recipientAccountId", "UNKNOWN AWS ACCOUNT"))
-    return f"EC2 Instance User Data has been accessed in bulk in AWS Account '{account_id}'"
-
-
-def dedup(event: PantherEvent) -> str:
-    return event.deep_get("userIdentity", "principalId", default="UNKNOWN_PRINCIPAL_ID")
+    actor_user = event.udm("actor_user")
+    return (
+        f"EC2 Instance User Data accessed in bulk by [{actor_user}] in AWS Account [{account_id}]"
+    )
 
 
 def severity(event: PantherEvent) -> str:
