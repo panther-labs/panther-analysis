@@ -104,3 +104,44 @@ Tests:
       Role: arn:aws:iam::123456789:role/some-name
       Timeout: 10
       Version: $LATEST
+  - Name: AWS Lambda No Policy
+    ExpectedResult: true
+    Resource:
+      AccountId: "123456789"
+      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
+      CodeSha256: azertyuiopqsdfghjklm
+      CodeSize: 1234
+      Description: Some description
+      Handler: some-name.lambda_handler
+      LastModified: 2024-09-13T15:23:51.000+0000
+      MemorySize: 128
+      Name: some-name
+      Region: us-west-2
+      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
+      ResourceType: AWS.Lambda.Function
+      RevisionId: 123456789-1234-1234-1234-123456789123
+      Role: arn:aws:iam::123456789:role/some-name
+      Timeout: 10
+      Version: $LATEST
+  - Name: AWS Lambda Unauthenticated Public Access 
+    ExpectedResult: false
+    Resource:
+      AccountId: "123456789"
+      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
+      CodeSha256: azertyuiopqsdfghjklm
+      CodeSize: 1234
+      Description: Some description
+      Handler: some-name.lambda_handler
+      LastModified: 2024-09-13T15:23:51.000+0000
+      MemorySize: 128
+      Name: some-name
+      Policy:
+        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Allow","Principal":{"AWS":"*"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name","Condition":{"StringEquals":{"lambda:FunctionUrlAuthType":"NONE"}}}]}'
+        RevisionId: 123456789-1234-1234-1234-123456789123
+      Region: us-west-2
+      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
+      ResourceType: AWS.Lambda.Function
+      RevisionId: 123456789-1234-1234-1234-123456789123
+      Role: arn:aws:iam::123456789:role/some-name
+      Timeout: 10
+      Version: $LATEST
