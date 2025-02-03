@@ -15,6 +15,11 @@ def title(event):
     elif event.get("action").endswith("create"):
         action = "created"
 
+    title_str = (
+        f"Github repository ruleset for [{event.get('repo', '<UNKNOWN_REPO>')}]"
+        f" {action} by [{event.get('actor','<UNKNOWN_ACTOR>')}]"
+    )
+
     if event.get("ruleset_source_type", default="<UNKNOWN_SOURCE_TYPE>") == "Organization":
         title_str = (
             f"Github repository ruleset for Organization [{event.get('org', '<UNKNOWN_ORG>')}]"
