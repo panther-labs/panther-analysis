@@ -175,6 +175,12 @@
   - An S3 Bucket was modified.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
+- [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
+  - An attacker attempted to retrieve a high number of Secrets Manager secrets by batch, through secretsmanager:BatchGetSecretValue (released Novemeber 2023).  An attacker may attempt to retrieve a high number of secrets by batch, to avoid detection and generate fewer calls. Note that the batch size is limited to 20 secrets.
+- [AWS Secrets Manager Batch Retrieve Secrets Catch-All](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_catchall.yml)
+  - An attacker attempted to retrieve a high number of Secrets Manager secrets by batch, through secretsmanager:BatchGetSecretValue (released Novemeber 2023).  An attacker may attempt to retrieve a high number of secrets by batch, to avoid detection and generate fewer calls. Note that the batch size is limited to 20 secrets. Although BatchGetSecretValue requires a list of secret IDs or a filter, an attacker may use a catch-all filter to retrieve all secrets by batch. This rule identifies BatchGetSecretValue events with a catch-all filter.
+- [AWS Secrets Manager Retrieve Secrets Multi-Region](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_multiregion.yml)
+  - An attacker attempted to retrieve a high number of Secrets Manager secrets by batch, through secretsmanager:BatchGetSecretValue (released Novemeber 2023).  An attacker may attempt to retrieve a high number of secrets by batch, to avoid detection and generate fewer calls. Note that the batch size is limited to 20 secrets. This rule identifies BatchGetSecretValue events for multiple regions in a short period of time.
 - [AWS SecurityHub Finding Evasion](../rules/aws_cloudtrail_rules/aws_securityhub_finding_evasion.yml)
   - Detections modification of findings in SecurityHub
 - [AWS Snapshot Made Public](../rules/aws_cloudtrail_rules/aws_snapshot_made_public.yml)
@@ -221,6 +227,8 @@
   - An EC2 Network Gateway was modified.
 - [EC2 Route Table Modified](../rules/aws_cloudtrail_rules/aws_ec2_route_table_modified.yml)
   - An EC2 Route Table was modified.
+- [EC2 Secrets Manager Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets.yml)
+  - An attacker attempted to retrieve a high number of Secrets Manager secrets, through secretsmanager:GetSecretValue.
 - [EC2 Security Group Modified](../rules/aws_cloudtrail_rules/aws_ec2_security_group_modified.yml)
   - An EC2 Security Group was modified.
 - [EC2 VPC Modified](../rules/aws_cloudtrail_rules/aws_ec2_vpc_modified.yml)
