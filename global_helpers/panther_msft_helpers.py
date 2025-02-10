@@ -1,5 +1,6 @@
 from panther_base_helpers import deep_get, deep_walk
 
+
 def msft_graph_alert_context(event):
     return {
         "category": event.get("category", ""),
@@ -20,6 +21,7 @@ def m365_alert_context(event):
         "application": event.get("Application", ""),
         "actor": event.get("Actor", []),
     }
+
 
 def azure_rule_context(event: dict):
     return {

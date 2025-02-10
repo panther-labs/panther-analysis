@@ -21,7 +21,9 @@ def title(event):
     actor_name = event.deep_get(
         "properties", "initiatedBy", "user", "userPrincipalName", default="<UNKNOWN ACTOR>"
     )
-    policy = event.deep_walk("properties", "targetResources", "displayName", default="<UNKNOWN POLICY>")
+    policy = event.deep_walk(
+        "properties", "targetResources", "displayName", default="<UNKNOWN POLICY>"
+    )
 
     return f"{operation_name} by {actor_name} on the policy {policy}"
 
