@@ -138,3 +138,47 @@ Tests:
           "type": "AssumedRole"
         }
       }
+  - Name: Panther Cloud Security Scanning
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "21764f21-382a-4863-8573-908558a839ab",
+        "eventName": "DescribeInstanceAttribute",
+        "eventSource": "ec2.amazonaws.com",
+        "eventTime": "2025-02-09 20:29:17.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.10",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "123412341234",
+        "requestID": "cb8b2a56-d76d-40c2-af25-58c1547d9a48",
+        "requestParameters": {
+          "attribute": "userData",
+          "instanceId": "i-1234123412341234"
+        },
+        "sourceIPAddress": "cloudformation.amazonaws.com",
+        "userAgent": "cloudformation.amazonaws.com",
+        "userIdentity": {
+          "accountId": "123412341234",
+          "arn": "arn:aws:sts::123412341234:assumed-role/PantherAuditRole-us-east-1/12341234123412341234",
+          "invokedBy": "cloudformation.amazonaws.com",
+          "principalId": "AROA1234123412341234:12341234123412341234",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-09T20:29:15Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "123412341234",
+              "arn": "arn:aws:iam::123412341234:role/PantherAuditRole-us-east-1",
+              "principalId": "AROA1234123412341234",
+              "type": "Role",
+              "userName": "PantherAuditRole-us-east-1"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
