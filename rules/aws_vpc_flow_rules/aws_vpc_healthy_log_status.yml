@@ -10,19 +10,21 @@ Tags:
   - AWS
   - DataModel
   - Security Control
-Severity: Low
+Severity: Info
+CreateAlert: false
+DedupPeriodMinutes: 1440
 Description: >
-  Checks for the log status `SKIP-DATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html#flow-log-records
+  Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+Reference: https://www.reddit.com/r/aws/comments/zt1xhg/vpc_flow_logs_when_is_logstatus_skipdata_a_concern/?rdt=41505
 Runbook: >
   Determine if the cause of the issue is capacity constraints, and consider adjusting VPC Flow Log configurations accordingly.
 Tests:
   - Name: Healthy Log Status
     ExpectedResult: false
-    Log: { "log-status": "OK", "p_log_type": "AWS.VPCFlow" }
+    Log: { "status": "OK", "p_log_type": "AWS.VPCFlow" }
   - Name: Unhealthy Log Status
     ExpectedResult: true
-    Log: { "log-status": "SKIPDATA", "p_log_type": "AWS.VPCFlow" }
+    Log: { "status": "SKIPDATA", "p_log_type": "AWS.VPCFlow" }
   - Name: Healthy Log Status - OCSF
     ExpectedResult: false
     Log: { "status_code": "OK", "p_log_type": "OCSF.NetworkActivity" }

@@ -646,7 +646,7 @@
 ## AWS VPCFlow
 
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
-  - Checks for the log status `SKIP-DATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+  - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
@@ -1378,7 +1378,7 @@
 - [AWS DNS Crypto Domain](../rules/aws_vpc_flow_rules/aws_dns_crypto_domain.yml)
   - Identifies clients that may be performing DNS lookups associated with common currency mining pools.
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
-  - Checks for the log status `SKIP-DATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+  - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
