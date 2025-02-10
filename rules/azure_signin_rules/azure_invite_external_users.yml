@@ -1,0 +1,294 @@
+AnalysisType: rule
+Filename: azure_invite_external_users.py
+RuleID: "Azure.Audit.InviteExternalUsers"
+DisplayName: "Azure Invite External Users"
+Enabled: true
+LogTypes:
+  - Azure.Audit
+Severity: Low
+Description: >
+  This detection looks for a Azure users inviting external users
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+Runbook: >
+  Verify the user permissions and investigate the external user details. If unauthorized, revoke access and block further invites. Update security policies.
+
+Reference: https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
+SummaryAttributes:
+  - properties:ServicePrincipalName
+  - properties:UserPrincipalName
+  - properties:initiatedBy:user:ipAddress
+Tests:
+  - Name: Successful Invite external user
+    ExpectedResult: true
+    Log:
+      {
+        "callerIpAddress": "1.1.1.1",
+        "category": "AuditLogs",
+        "correlationId": "123456789",
+        "durationMs": 0,
+        "Level": 4,
+        "operationName": "Invite external user",
+        "operationVersion": "1.0",
+        "properties": {
+          "activityDateTime": "2024-09-23 14:33:09.049661100",
+          "activityDisplayName": "Invite external user",
+          "additionalDetails": [
+            {
+              "key": "oid",
+              "value": "123456789"
+            },
+            {
+              "key": "tid",
+              "value": "0123456789"
+            },
+            {
+              "key": "ipaddr",
+              "value": "1.2.3.4"
+            },
+            {
+              "key": "wids",
+              "value": "123456789"
+            },
+            {
+              "key": "InvitationId",
+              "value": "123456789"
+            },
+            {
+              "key": "invitedUserEmailAddress",
+              "value": "Kratos@climbingolympusrn.com"
+            }
+          ],
+          "category": "UserManagement",
+          "correlationId": "123456789",
+          "id": "Invited Users_123456789",
+          "initiatedBy": {
+            "user": {
+              "id": "123456789",
+              "ipAddress": "1.2.3.4",
+              "roles": [],
+              "userPrincipalName": "Zeus@mtolympus.com"
+            }
+          },
+          "loggedByService": "Invited Users",
+          "operationType": "Add",
+          "result": "success",
+          "targetResources": [
+            {
+              "administrativeUnits": [],
+              "displayName": "Zeus.Theboss",
+              "id": "123456789",
+              "type": "User"
+            }
+          ]
+        },
+        "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+        "resultSignature": "None",
+        "tenantId": "123456789",
+        "time": "2024-12-10 14:33:09.049661100"
+      }
+  - Name: Same org successful invite    
+    ExpectedResult: false
+    Log:
+      {
+        "callerIpAddress": "1.1.1.1",
+        "category": "AuditLogs",
+        "correlationId": "123456789",
+        "durationMs": 0,
+        "Level": 4,
+        "operationName": "Invite external user",
+        "operationVersion": "1.0",
+        "properties": {
+          "activityDateTime": "2024-09-23 14:33:09.049661100",
+          "activityDisplayName": "Invite external user",
+          "additionalDetails": [
+            {
+              "key": "oid",
+              "value": "123456789"
+            },
+            {
+              "key": "tid",
+              "value": "0123456789"
+            },
+            {
+              "key": "ipaddr",
+              "value": "1.2.3.4"
+            },
+            {
+              "key": "wids",
+              "value": "123456789"
+            },
+            {
+              "key": "InvitationId",
+              "value": "123456789"
+            },
+            {
+              "key": "invitedUserEmailAddress",
+              "value": "Kratos@mtolympus.com"
+            }
+          ],
+          "category": "UserManagement",
+          "correlationId": "123456789",
+          "id": "Invited Users_123456789",
+          "initiatedBy": {
+            "user": {
+              "id": "123456789",
+              "ipAddress": "1.2.3.4",
+              "roles": [],
+              "userPrincipalName": "Zeus@mtolympus.com"
+            }
+          },
+          "loggedByService": "Invited Users",
+          "operationType": "Add",
+          "result": "success",
+          "targetResources": [
+            {
+              "administrativeUnits": [],
+              "displayName": "Zeus.Theboss",
+              "id": "123456789",
+              "type": "User"
+            }
+          ]
+        },
+        "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+        "resultSignature": "None",
+        "tenantId": "123456789",
+        "time": "2024-12-10 14:33:09.049661100"
+      }
+  - Name: Unsuccessful invite    
+    ExpectedResult: false
+    Log:
+      {
+        "callerIpAddress": "1.1.1.1",
+        "category": "AuditLogs",
+        "correlationId": "123456789",
+        "durationMs": 0,
+        "Level": 4,
+        "operationName": "Invite external user",
+        "operationVersion": "1.0",
+        "properties": {
+          "activityDateTime": "2024-09-23 14:33:09.049661100",
+          "activityDisplayName": "Invite external user",
+          "additionalDetails": [
+            {
+              "key": "oid",
+              "value": "123456789"
+            },
+            {
+              "key": "tid",
+              "value": "0123456789"
+            },
+            {
+              "key": "ipaddr",
+              "value": "1.2.3.4"
+            },
+            {
+              "key": "wids",
+              "value": "123456789"
+            },
+            {
+              "key": "InvitationId",
+              "value": "123456789"
+            },
+            {
+              "key": "invitedUserEmailAddress",
+              "value": "Kratos@mtolympus.com"
+            }
+          ],
+          "category": "UserManagement",
+          "correlationId": "123456789",
+          "id": "Invited Users_123456789",
+          "initiatedBy": {
+            "user": {
+              "id": "123456789",
+              "ipAddress": "1.2.3.4",
+              "roles": [],
+              "userPrincipalName": "Zeus@mtolympus.com"
+            }
+          },
+          "loggedByService": "Invited Users",
+          "operationType": "Add",
+          "result": "failed",
+          "targetResources": [
+            {
+              "administrativeUnits": [],
+              "displayName": "Zeus.Theboss",
+              "id": "123456789",
+              "type": "User"
+            }
+          ]
+        },
+        "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+        "resultSignature": "None",
+        "tenantId": "123456789",
+        "time": "2024-12-10 14:33:09.049661100"
+      }
+  - Name: Not external invite  
+    ExpectedResult: false
+    Log:
+      {
+        "callerIpAddress": "1.1.1.1",
+        "category": "AuditLogs",
+        "correlationId": "123456789",
+        "durationMs": 0,
+        "Level": 4,
+        "operationName": "Invite Internal User",
+        "operationVersion": "1.0",
+        "properties": {
+          "activityDateTime": "2024-09-23 14:33:09.049661100",
+          "activityDisplayName": "Invite external user",
+          "additionalDetails": [
+            {
+              "key": "oid",
+              "value": "123456789"
+            },
+            {
+              "key": "tid",
+              "value": "0123456789"
+            },
+            {
+              "key": "ipaddr",
+              "value": "1.2.3.4"
+            },
+            {
+              "key": "wids",
+              "value": "123456789"
+            },
+            {
+              "key": "InvitationId",
+              "value": "123456789"
+            },
+            {
+              "key": "invitedUserEmailAddress",
+              "value": "Kratos@mtolympus.com"
+            }
+          ],
+          "category": "UserManagement",
+          "correlationId": "123456789",
+          "id": "Invited Users_123456789",
+          "initiatedBy": {
+            "user": {
+              "id": "123456789",
+              "ipAddress": "1.2.3.4",
+              "roles": [],
+              "userPrincipalName": "Zeus@mtolympus.com"
+            }
+          },
+          "loggedByService": "Invited Users",
+          "operationType": "Add",
+          "result": "success",
+          "targetResources": [
+            {
+              "administrativeUnits": [],
+              "displayName": "Zeus.Theboss",
+              "id": "123456789",
+              "type": "User"
+            }
+          ]
+        },
+        "resourceId": "/tenants/123456789/providers/Microsoft.aadiam",
+        "resultSignature": "None",
+        "tenantId": "123456789",
+        "time": "2024-12-10 14:33:09.049661100"
+      }
