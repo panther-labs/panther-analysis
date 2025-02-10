@@ -249,3 +249,25 @@ Tests:
         "ruleset_source_type": "Repository",
         "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       }
+  - Name: Github - Ruleset Modified for entire Organization
+    ExpectedResult: true
+    Log:
+      {
+        "action": "repository_ruleset.update",
+        "actor": "dog",
+        "actor_id": "999999999",
+        "actor_is_bot": false,
+        "actor_location": { "country_code": "US" },
+        "business": "bizname",
+        "business_id": "12345",
+        "created_at": "2024-12-17 00:00:00000000",
+        "operation_type": "modify",
+        "org": "some-org",
+        "org_id": 12345678,
+        "ruleset_enforcement": "disabled",
+        "ruleset_id": "1082915",
+        "ruleset_name": "Name of org-wide ruleset",
+        "ruleset_old_enforcement": "evaluate",
+        "ruleset_source_type": "Organization",
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+      }
