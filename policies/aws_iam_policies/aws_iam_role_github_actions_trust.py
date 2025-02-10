@@ -2,6 +2,8 @@ import json
 
 from panther_base_helpers import deep_get
 
+ALLOWED_ORG_REPO_PAIRS = ["org/repo", "allowed-org-example/allowed-repo-example"]
+
 
 def policy(resource):
     # check if resource.AssumRolePolicyDocument is a string, and if so convert to json
@@ -43,7 +45,13 @@ def policy(resource):
                 [
                     "oidc-provider/token.actions.githubusercontent.com" not in principal,
                     audience != "sts.amazonaws.com",
-                    ("*" in subject and not subject.startswith("repo:org/repo:*")),
+                    (
+                        "*" in subject
+                        and not any(
+                            subject.startswith(f"repo:{org_repo}:*")
+                            for org_repo in ALLOWED_ORG_REPO_PAIRS
+                        )
+                    ),
                 ]
             ):
                 return False
