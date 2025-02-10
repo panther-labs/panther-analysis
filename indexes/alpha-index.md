@@ -757,10 +757,18 @@
 
 ## Azure
 
+- [Azure Invite External Users](../rules/azure_signin_rules/azure_invite_external_users.yml)
+  - This detection looks for a Azure users inviting external users
 - [Azure Many Failed SignIns](../rules/azure_signin_rules/azure_failed_signins.yml)
   - This detection looks for a number of failed sign-ins for the same ServicePrincipalName or UserPrincipalName
+- [Azure MFA Disabled](../rules/azure_signin_rules/azure_mfa_disabled.yml)
+  - This detection looks for MFA being disabled in conditional access policy
+- [Azure Policy Changed](../rules/azure_signin_rules/azure_policy_changed.yml)
+  - This detection looks for policy changes in AuditLogs
 - [Azure RiskLevel Passthrough](../rules/azure_signin_rules/azure_risklevel_passthrough.yml)
   - This detection surfaces an alert based on riskLevelAggregated, riskLevelDuringSignIn, and riskState.riskLevelAggregated and riskLevelDuringSignIn are only expected for Azure AD Premium P2 customers.
+- [Azure Role Changed PIM](../rules/azure_signin_rules/azure_role_changed_pim.yml)
+  - This detection looks for a change in member's PIM roles in EntraID
 - [Azure SignIn via Legacy Authentication Protocol](../rules/azure_signin_rules/azure_legacyauth.yml)
   - This detection looks for Successful Logins that have used legacy authentication protocols
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
