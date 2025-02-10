@@ -655,6 +655,8 @@
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
 - [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity.yml)
   - Searches for potential port scanning activity in VPC Flow logs
+- [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
+  - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
 
 ## AWS WAF
@@ -1866,6 +1868,8 @@
   - This rule detects updates and deletions of image integrity validators.
 - [Wiz Integration Updated Or Deleted](../rules/wiz_rules/wiz_integration_updated_or_deleted.yml)
   - This rule detects updates and deletions of Wiz integrations.
+- [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
+  - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 - [Wiz Revoke User Sessions](../rules/wiz_rules/wiz_revoke_user_sessions.yml)
   - This rule detects user sessions revoked.
 - [Wiz Rotate Service Account Secret](../rules/wiz_rules/wiz_rotate_service_account_secret.yml)
