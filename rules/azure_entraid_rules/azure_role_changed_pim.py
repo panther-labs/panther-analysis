@@ -16,7 +16,7 @@ def title(event):
     )
     target_name = get_target_name(event)
     role = event.deep_walk(
-        "properties", "targetResources", "displayName", return_val="first", default=""
+        "properties", "targetResources", "displayName", return_val="first", default="<UNKNOWN_ROLE>"
     )
     return f"{actor_name} added {target_name} as {role} successfully with {operation_name}"
 
