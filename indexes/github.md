@@ -1,35 +1,58 @@
-## User Rules
+## GitHub
 
-[ GitHub User Role Updated](../rules/github_rules/github_user_role_updated.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [GitHub Action Failed](../rules/github_rules/github_action_failed.yml)
+  - A monitored github action has failed.
+- [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)
+  - Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
+- [GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.yml)
+  - Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.yml)
+  - Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Dependabot Vulnerability Dismissed](../rules/github_rules/github_repo_vulnerability_dismissed.yml)
+  - Creates an alert if a dependabot alert is dismissed without being fixed.
+- [GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.yml)
+  - Detects changes to GitHub org authentication changes.
+- [GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.yml)
+  - Detects changes to a GitHub Org IP Allow List
+- [Github Organization App Integration Installed](../rules/github_rules/github_organization_app_integration_installed.yml)
+  - An application integration was installed to your organization's Github account by someone in your organization.
+- [Github Public Repository Created](../rules/github_rules/github_public_repository_created.yml)
+  - A public Github repository was created.
+- [GitHub Repository Archived](../rules/github_rules/github_repo_archived.yml)
+  - Detects when a repository is archived.
+- [GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.yml)
+  - Detects when a repository collaborator is added or removed.
+- [GitHub Repository Created](../rules/github_rules/github_repo_created.yml)
+  - Detects when a repository is created.
+- [GitHub Repository Ruleset Modified](../rules/github_rules/github_repo_ruleset_modified.yml)
+  - Disabling repository ruleset controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [Github Repository Transfer](../rules/github_rules/github_repository_transfer.yml)
+  - A user accepted a request to receive a transferred Github repository, a  Github repository was transferred to another repository network, or a user sent a request to transfer a repository to another user or organization.
+- [GitHub Repository Visibility Change](../rules/github_rules/github_repo_visibility_change.yml)
+  - Detects when an organization repository visibility changes.
+- [GitHub Secret Scanning Alert Created](../rules/github_rules/github_secret_scanning_alert_created.yml)
+  - GitHub detected a secret and created a secret scanning alert.
+- [GitHub Security Change, includes GitHub Advanced Security](../rules/github_rules/github_advanced_security_change.yml)
+  - The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
+- [GitHub Team Modified](../rules/github_rules/github_team_modified.yml)
+  - Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.
+- [GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.yml)
+  - Detects when a GitHub user access key is created.
+- [GitHub User Added or Removed from Org](../rules/github_rules/github_org_modified.yml)
+  - Detects when a user is added or removed from a GitHub Org.
+- [GitHub User Added to Org Moderators](../rules/github_rules/github_org_moderators_add.yml)
+  - Detects when a user is added to a GitHub org's list of moderators.
+- [GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.yml)
+  - Detects when a user initially accesses a private organization repository.
+- [GitHub User Role Updated](../rules/github_rules/github_user_role_updated.yml)
+  - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
+- [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
+  - Detects when a webhook is added, modified, or deleted
+- [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
+  - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
+  - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
 
-[ GitHub Team Modified](../rules/github_rules/github_team_modified.py)
 
-[ GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.py)
-
-[ GitHub Team Modified](../rules/github_rules/github_team_modified.py)
-
-[ GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.py)
-
-[ GitHub User Added or Removed from Org](../rules/github_rules/github_org_modified.py)
-
-[ GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.py)
-
-## Repository Rules
-
-[ GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.py)
-
-[ GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.py)
-
-[ GitHub Repository Created](../rules/github_rules/github_repo_created.py)
-
-[ GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.py)
-
-[ GitHub Web Hook Modified](../rules/github_rules/github_repo_hook_modified.py)
-
-[ GitHub Repository Visibility Change](../rules/github_rules/github_repo_visibility_change.py)
-
-## Organization Rules
-
-[ GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.py)
-
-[ GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.py)

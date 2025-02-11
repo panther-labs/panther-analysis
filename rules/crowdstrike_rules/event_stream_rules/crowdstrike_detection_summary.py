@@ -42,6 +42,12 @@ def reference(event: PantherEvent):
 def alert_context(event: PantherEvent):
     context = cs_alert_context(event)
     context.update(
-        {"FalconLink": event.deep_get("event", "FalconHostLink", default="<NO LINK PROVIDED>")}
+        {
+            "FalconLink": event.deep_get("event", "FalconHostLink", default="<NO LINK PROVIDED>"),
+            "CompositeId": event.deep_get("event", "CompositeId", default="<NO ID PROVIDED>"),
+            "FileName": event.deep_get("event", "FileName", default="<NO FILENAME PROVIDED>"),
+            "FilePath": event.deep_get("event", "FilePath", default="<NO FILEPATH PROVIDED>"),
+            "UserName": event.deep_get("event", "UserName", default="<NO USERNAME PROVIDED>"),
+        }
     )
     return context

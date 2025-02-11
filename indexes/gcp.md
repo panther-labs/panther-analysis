@@ -1,11 +1,107 @@
-[ GCS Bucket Made Public](../rules/gcp_audit_rules/gcp_gcs_public.py)
+## GCP
 
-[ GCP Resource in Unused Region](../rules/gcp_audit_rules/gcp_unused_regions.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [Exec into Pod](../rules/gcp_k8s_rules/gcp_k8s_exec_into_pod.yml)
+  - Alerts when users exec into pod. Possible to specify specific projects and allowed users.
+- [GCP Access Attempts Violating IAP Access Controls](../rules/gcp_http_lb_rules/gcp_access_attempts_violating_iap_access_controls.yml)
+  - GCP Access Attempts Violating IAP Access Controls
+- [GCP Access Attempts Violating VPC Service Controls](../rules/gcp_audit_rules/gcp_access_attempts_violating_vpc_service_controls.yml)
+  - An access attempt violating VPC service controls (such as Perimeter controls) has been made.
+- [GCP BigQuery Large Scan](../rules/gcp_audit_rules/gcp_bigquery_large_scan.yml)
+  - Detect any BigQuery query that is doing a very large scan (> 1 GB).
+- [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
+  - Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.
+- [GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
+  - Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server it is running on.
+- [GCP Cloud Run Set IAM Policy](../rules/gcp_audit_rules/gcp_cloud_run_set_iam_policy.yml)
+  - Detects new roles granted to users to Cloud Run Services. This could potentially allow the user to perform actions within the project and its resources, which could pose a security risk.
+- [GCP Cloud Storage Buckets Modified Or Deleted](../rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.yml)
+  - Detects GCP cloud storage bucket updates and deletes.
+- [GCP CloudBuild Potential Privilege Escalation](../rules/gcp_audit_rules/gcp_cloudbuild_potential_privilege_escalation.yml)
+  - Detects privilege escalation attacks designed to gain access to the Cloud Build Service Account. A user with permissions to start a new build with Cloud Build can gain access to the Cloud Build Service Account and abuse it for more access to the environment.
+- [GCP cloudfunctions functions create](../rules/gcp_audit_rules/gcp_cloudfunctions_functions_create.yml)
+  - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
+- [GCP cloudfunctions functions update](../rules/gcp_audit_rules/gcp_cloudfunctions_functions_update.yml)
+  - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
+- [GCP compute.instances.create Privilege Escalation](../rules/gcp_audit_rules/gcp_computeinstances_create_privilege_escalation.yml)
+  - Detects compute.instances.create method for privilege escalation in GCP.
+- [GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.yml)
+  - A Gmail account is being used instead of a corporate email
+- [GCP Destructive Queries](../rules/gcp_audit_rules/gcp_destructive_queries.yml)
+  - Detect any destructive BigQuery queries or jobs such as update, delete, drop, alter or truncate.
+- [GCP DNS Zone Modified or Deleted](../rules/gcp_audit_rules/gcp_dns_zone_modified_or_deleted.yml)
+  - Detection for GCP DNS zones that are deleted, patched, or updated.
+- [GCP Firewall Rule Created](../rules/gcp_audit_rules/gcp_firewall_rule_created.yml)
+  - This rule detects creations of GCP firewall rules.
+- [GCP Firewall Rule Deleted](../rules/gcp_audit_rules/gcp_firewall_rule_deleted.yml)
+  - This rule detects deletions of GCP firewall rules.
+- [GCP Firewall Rule Modified](../rules/gcp_audit_rules/gcp_firewall_rule_modified.yml)
+  - This rule detects modifications to GCP firewall rules.
+- [GCP GCS IAM Permission Changes](../rules/gcp_audit_rules/gcp_gcs_iam_changes.yml)
+  - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
+- [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
+  - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
+- [GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.yml)
+  - A custom role has been created, deleted, or updated.
+- [GCP IAM serviceAccounts getAccessToken Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_service_accounts_get_access_token_privilege_escalation.yml)
+  - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
+- [GCP IAM serviceAccounts signBlob](../rules/gcp_audit_rules/gcp_iam_service_accounts_sign_blob.yml)
+  - The iam.serviceAccounts.signBlob permission "allows signing of arbitrary payloads" in GCP. This means we can create a signed blob that requests an access token from the Service Account we are targeting.
+- [GCP IAM serviceAccounts.signJwt Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_serviceaccounts_signjwt.yml)
+  - Detects iam.serviceAccounts.signJwt method for privilege escalation in GCP. This method works by signing well-formed JSON web tokens (JWTs). The script for this method will sign a well-formed JWT and request a new access token belonging to the Service Account with it.
+- [GCP iam.roles.update Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_roles_update_privilege_escalation.yml)
+  - If your user is assigned a custom IAM role, then iam.roles.update will allow you to update the “includedPermissons” on that role. Because it is assigned to you, you will gain the additional privileges, which could be anything you desire.
+- [GCP Inbound SSO Profile Created](../rules/gcp_audit_rules/gcp_inbound_sso_profile_created_or_updated.yml)
+- [GCP K8s IOCActivity](../rules/gcp_k8s_rules/gcp_k8s_ioc_activity.yml)
+  - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
+- [GCP K8s New Daemonset Deployed](../rules/gcp_k8s_rules/gcp_k8s_new_daemonset_deployed.yml)
+  - Detects Daemonset creation in GCP Kubernetes clusters.
+- [GCP K8s Pod Attached To Node Host Network](../rules/gcp_k8s_rules/gcp_k8s_pod_attached_to_node_host_network.yml)
+  - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
+- [GCP K8S Pod Create Or Modify Host Path Volume Mount](../rules/gcp_k8s_rules/gcp_k8s_pod_create_or_modify_host_path_vol_mount.yml)
+  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
+- [GCP K8s Pod Using Host PID Namespace](../rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml)
+  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
+- [GCP K8S Privileged Pod Created](../rules/gcp_k8s_rules/gcp_k8s_privileged_pod_created.yml)
+  - Alerts when a user creates privileged pod. These particular pods have full access to the host’s namespace and devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks. In the event of a successful container escape where a user is operating with root privileges, the attacker retains this role on the node.
+- [GCP K8S Service Type NodePort Deployed](../rules/gcp_k8s_rules/gcp_k8s_service_type_node_port_deployed.yml)
+  - This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+- [GCP Log Bucket or Sink Deleted](../rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.yml)
+  - This rule detects deletions of GCP Log Buckets or Sinks.
+- [GCP Logging Settings Modified](../rules/gcp_audit_rules/gcp_logging_settings_modified.yml)
+  - Detects any changes made to logging settings
+- [GCP Logging Sink Modified](../rules/gcp_audit_rules/gcp_logging_sink_modified.yml)
+  - This rule detects modifications to GCP Log Sinks.
+- [GCP Org or Folder Policy Was Changed Manually](../rules/gcp_audit_rules/gcp_iam_org_folder_changes.yml)
+  - Alert if a GCP Org or Folder Policy Was Changed Manually.
+- [GCP Permissions Granted to Create or Manage Service Account Key](../rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml)
+  - Permissions granted to impersonate a service account. This includes predefined service account IAM roles granted at the parent project, folder or organization-level.
+- [GCP Resource in Unused Region](../rules/gcp_audit_rules/gcp_unused_regions.yml)
+  - Adversaries may create cloud instances in unused geographic service regions in order to evade detection.
+- [GCP Service Account Access Denied](../rules/gcp_audit_rules/gcp_service_account_access_denied.yml)
+  - This rule detects deletions of GCP Log Buckets or Sinks.
+- [GCP Service Account or Keys Created ](../rules/gcp_audit_rules/gcp_service_account_or_keys_created.yml)
+  - Detects when a service account or key is created manually by a user instead of an automated workflow.
+- [GCP serviceusage.apiKeys.create Privilege Escalation](../rules/gcp_audit_rules/gcp_serviceusage_apikeys_create_privilege_escalation.yml)
+  - Detects serviceusage.apiKeys.create method for privilege escalation in GCP. By default, API Keys are created with no restrictions, which means they have access to the entire GCP project they were created in. We can capitalize on that fact by creating a new API key that may have more privileges than our own user.
+- [GCP SQL Config Changes](../rules/gcp_audit_rules/gcp_sql_config_changes.yml)
+  - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
+- [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
+  - There is a feature of Cloud Storage, “interoperability”, that provides a way for Cloud Storage to interact with storage offerings from other cloud providers, like AWS S3. As part of that, there are HMAC keys that can be created for both Service Accounts and regular users. We can escalate Cloud Storage permissions by creating an HMAC key for a higher-privileged Service Account.
+- [GCP User Added to IAP Protected Service](../rules/gcp_audit_rules/gcp_user_added_to_iap_protected_service.yml)
+  - A user has been granted access to a IAP protected service.
+- [GCP User Added to Privileged Group](../rules/gcp_audit_rules/gcp_user_added_to_privileged_group.yml)
+  - A user was added to a group with special previleges
+- [GCP VPC Flow Logs Disabled](../rules/gcp_audit_rules/gcp_vpc_flow_logs_disabled.yml)
+  - VPC flow logs were disabled for a subnet.
+- [GCP Workforce Pool Created or Updated](../rules/gcp_audit_rules/gcp_workforce_pool_created_or_updated.yml)
+- [GCP Workload Identity Pool Created or Updated](../rules/gcp_audit_rules/gcp_workload_identity_pool_created_or_updated.yml)
+- [GCP.Iam.ServiceAccountKeys.Create](../rules/gcp_audit_rules/gcp_iam_service_account_key_create.yml)
+  - If your user is assigned a custom IAM role, then iam.roles.update will allow you to update the “includedPermissons” on that role. Because it is assigned to you, you will gain the additional privileges, which could be anything you desire.
+- [GCP.Privilege.Escalation.By.Deployments.Create](../rules/gcp_audit_rules/gcp_privilege_escalation_by_deployments_create.yml)
+  - Detects privilege escalation in GCP by taking over the deploymentsmanager.deployments.create permission
+- [GCS Bucket Made Public](../rules/gcp_audit_rules/gcp_gcs_public.yml)
+  - Adversaries may access data objects from improperly secured cloud storage.
 
-[ GCP SQL Config Changes](../rules/gcp_audit_rules/gcp_sql_config_changes.py)
 
-[ GCP GCS IAM Permission Changes](../rules/gcp_audit_rules/gcp_gcs_iam_changes.py)
-
-[ GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.py)
-
-[ GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.py)

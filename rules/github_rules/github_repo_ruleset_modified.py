@@ -19,6 +19,12 @@ def title(event):
         f"Github repository ruleset for [{event.get('repo', '<UNKNOWN_REPO>')}]"
         f" {action} by [{event.get('actor','<UNKNOWN_ACTOR>')}]"
     )
+
+    if event.get("ruleset_source_type", default="<UNKNOWN_SOURCE_TYPE>") == "Organization":
+        title_str = (
+            f"Github repository ruleset for Organization [{event.get('org', '<UNKNOWN_ORG>')}]"
+            f" {action} by [{event.get('actor','<UNKNOWN_ACTOR>')}]"
+        )
     return title_str
 
 
@@ -38,6 +44,7 @@ def severity(event):
 
 def alert_context(event):
     ctx = github_alert_context(event)
+    ctx["user"] = event.get("actor", "")
     ctx["actor_is_bot"] = event.get("actor_is_bot", "")
     ctx["actor_user_agent"] = event.get("user_agent", "")
     ctx["business"] = event.get("business", "")

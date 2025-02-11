@@ -1,0 +1,43 @@
+name: Generate Indexes
+
+on:
+  # Since this workflow runs on push to develop and also pushes to develop, we need ensure that it does not loop This
+  # is done by ignoring changes to the indexes directory. The script below must never write outside of this directory.
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - 'indexes/**'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-indexes:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+        with:
+          fetch-depth: 0
+          token: ${{ env.GITHUB_TOKEN || github.token }}
+      - name: Install Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 #v5.4.0
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip3 install -r ./.scripts/requirements.txt
+      - name: Generate indexes
+        run: python3 ./.scripts/generate_indexes.py
+      - name: Commit Indexes
+        continue-on-error: true # This is to ensure that the workflow does not fail if there are no changes to commit
+        run: |
+          git config --global user.email "github-service-account-automation@panther.io"
+          git config --global user.name "panther-bot-automation"
+          git add ./indexes
+          git commit -m "Update indexes"
+          git push --no-sign
