@@ -1,7 +1,7 @@
 FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/wolfi-base
 
 ARG TARGETPLATFORM
-ARG PYTHON_VERSION="3.11.9"
+ARG PYTHON_VERSION="3.11.11"
 
 RUN apk update \
     && apk add --no-cache \
