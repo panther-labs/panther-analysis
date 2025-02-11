@@ -15,6 +15,9 @@ def rule(event):
 
 
 def title(event):
+    # For INFO-level events, just group them all together since they're not that interesting
+    if severity(event) == "INFO":
+        return "Failed Annonymous EKS Acces Attempt(s) Detected"
     p_eks = eks_panther_obj_ref(event)
     return (
         f"Anonymous API access detected on Kubernetes API server "
@@ -32,6 +35,9 @@ def severity(event):
 
 
 def dedup(event):
+    # For INFO-level events, just group them all together since they're not that interesting
+    if severity(event) == "INFO":
+        return "no dedup"
     p_eks = eks_panther_obj_ref(event)
     return f"anonymous_access_{p_eks.get('p_source_label')}_{event.get('userAgent')}"
 
