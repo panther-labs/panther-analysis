@@ -134,8 +134,8 @@
 
 ## Okta
 
-- [ako_testing_indexes_2_testing_second_time](../rules/okta_rules/ako_testing_indexes_2.yml)
-  - Testing indexes_2 generating workflow for AKo
+- [ako_testing_indexes_3_testing_third_time](../rules/okta_rules/ako_testing_indexes_2.yml)
+  - Testing indexes_3 generating workflow for AKo
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
