@@ -201,11 +201,11 @@ def extract_log_types_from_yaml(yaml, query_lookup, logtype_lookup):
 # We use this to prefer showing the Scheduled Rules over their associated Query when they share the same name
 def entry_scoring(entry):
     score = 0
-    if entry['AnalysisType'] == 'Scheduled Query':
+    if entry['AnalysisType'] in ('Scheduled Query', 'scheduled_query'):
         score += 3
-    if entry['AnalysisType'] == 'Scheduled Rule':
+    if entry['AnalysisType'] in ('Scheduled Rule', 'scheduled_rule'):
         score += 2
-    if entry['AnalysisType'] == 'Rule':
+    if entry['AnalysisType'] in ('Rule', 'rule'):
         score += 1
     return score
 
@@ -214,7 +214,8 @@ def group_by(iterable, key=None):
     if key is None:
         key = lambda x: x
     result = {}
-    groups = itertools.groupby(iterable, key=key)
+    data = sorted(iterable, key=key)
+    groups = itertools.groupby(data, key=key)
     for k, g in groups:
         result[k] = list(g)
     return result
@@ -282,7 +283,7 @@ def write_alpha_index(detections, query_lookup, logtype_lookup, root_dir):
         valid_detections.append(json_slice)
 
     # Dedupe detections by DisplayName
-    name_map = group_by(valid_detections, key=lambda x: x['DisplayName'].lower())
+    name_map = group_by(valid_detections, key=lambda x: x['DisplayName'].lower().strip())
     standard_rules = []
     json_export = []
     for name in name_map:
