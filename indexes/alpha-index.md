@@ -124,8 +124,8 @@
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
 - [AWS DNS Logs Deleted](../rules/aws_cloudtrail_rules/aws_dns_logs_deleted.yml)
   - Detects when logs for a DNS Resolver have been removed.
-- [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands_query.yml)
-  - Multiple different discovery commands were executed by the same EC2 instance.
+- [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands.yml)
+  - Multiple different discovery commands were executed by the same EC2 instance. This could indicate a compromised instance.
 - [AWS EC2 Download Instance User Data](../rules/aws_cloudtrail_rules/aws_ec2_download_instance_user_data.yml)
   - An entity has accessed the user data scripts of multiple EC2 instances.
 - [AWS EC2 EBS Encryption Disabled](../rules/aws_cloudtrail_rules/aws_ec2_ebs_encryption_disabled.yml)
@@ -158,7 +158,7 @@
   - A Network ACL entry that allows access from anywhere was added.
 - [AWS Potential Backdoor Lambda Function Through Resource-Based Policy](../rules/aws_cloudtrail_rules/aws_backdoor_lambda_function.yml)
   - Identifies when a permission is added to a Lambda function, which could indicate a potential security risk.
-- [AWS Potentially Stolen Service Role](../queries/aws_queries/aws_potentially_compromised_service_role_query.yml)
+- [AWS Potentially Stolen Service Role](../queries/aws_queries/aws_potentially_compromised_service_role.yml)
   - A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
 - [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
@@ -407,33 +407,33 @@
   - This detection identifies if a public sourceIP is generating multiple 403s with the Kubernetes API server.
 - [EKS Audit Log Reporting system Namespace is Used From A Public IP](../rules/aws_eks_rules/system_namespace_public_ip.yml)
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
-- [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity.yml)
+- [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
-- [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified.yml)
+- [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified_query.yml)
   - This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
-- [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space_query.yml)
+- [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space.yml)
   - This detection monitors for any pod created in pre-configured or default namespaces. Only Cluster Admins should be creating pods in the kube-system namespace, and it is best practice not to run any cluster critical infrastructure here. The kube-public namespace is intended to be readable by unauthenticated users. The default namespace is shipped with the cluster and it is best practice not to deploy production workloads here. These namespaces may be used to evade defenses or hide attacker infrastructure.
 - [New Admission Controller Created](../queries/kubernetes_queries/kubernetes_admission_controller_created_query.yml)
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
 - [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed.yml)
   - This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
-- [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network.yml)
+- [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network_query.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
-- [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace_query.yml)
+- [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace.yml)
   - This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
-- [Pod Created or Modified Using the Host PID Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_pid_namespace_query.yml)
-  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
+- [Pod Created or Modified Using the Host PID Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_pid_namespace.yml)
+  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the hosts processes. This can offer a powerful escape hatch to the underlying host.
 - [Pod Created with Overly Permissive Linux Capabilities](../queries/kubernetes_queries/kubernetes_overly_permissive_linux_capabilities.yml)
   - This detection monitors for a pod created with overly permissive linux capabilities. Excessive pod permissions and capabilities can be a launch point for privilege escalation or container breakout.
-- [Pod creation or modification to a Host Path Volume Mount](../queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount.yml)
+- [Pod creation or modification to a Host Path Volume Mount](../queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount_query.yml)
   - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
 - [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created.yml)
   - This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
-- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration.yml)
+- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml)
   - This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.
 - [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request.yml)
   - This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
-- [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution_query.yml)
+- [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution.yml)
   - This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions.
 
 
@@ -653,8 +653,8 @@
   - VPC Flow Logs observed inbound traffic violating the port blocklist.
 - [VPC Flow Logs Unapproved Outbound DNS Traffic](../rules/aws_vpc_flow_rules/aws_vpc_unapproved_outbound_dns.yml)
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
-- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity.yml)
-  - Searches for potential port scanning activity in VPC Flow logs
+- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
+  - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
@@ -1409,7 +1409,7 @@
 
 ## Okta
 
-- [ako_testing_indexes_2](../rules/okta_rules/ako_testing_indexes_2.yml)
+- [ako_testing_indexes_2_testing_second_time](../rules/okta_rules/ako_testing_indexes_2.yml)
   - Testing indexes_2 generating workflow for AKo
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
@@ -1694,10 +1694,10 @@
 
 ## Snowflake
 
-- [Snowflake Account Admin Granted](../queries/snowflake_queries/snowflake_account_admin_assigned.yml)
+- [Snowflake Account Admin Granted](../rules/snowflake_rules/snowflake_stream_account_admin_assigned.yml)
   - Detect when account admin is granted.
-- [Snowflake Brute Force Attacks by IP](../queries/snowflake_queries/snowflake_brute_force_ip.yml)
-  - Detect brute force attacks by monitoring for failed logins from the same IP address
+- [Snowflake Brute Force Attacks by IP](../rules/snowflake_rules/snowflake_stream_brute_force_by_ip.yml)
+  - Detect brute force attacks by monitorign failed logins from the same IP address
 - [Snowflake Brute Force Attacks by User](../rules/snowflake_rules/snowflake_stream_brute_force_by_username.yml)
   - Detect brute force attacks by monitorign failed logins from the same IP address
 - [Snowflake Brute Force Attacks by Username](../queries/snowflake_queries/snowflake_brute_force_username.yml)
@@ -1714,30 +1714,30 @@
   - Detect when an external share has been initiated from one source cloud to another target cloud.
 - [Snowflake External Share](../queries/snowflake_queries/snowflake_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
-- [Snowflake File Downloaded](../queries/snowflake_queries/snowflake_file_downloaded_signal.yml)
-  - A file was downloaded from a stage
+- [Snowflake File Downloaded](../rules/snowflake_rules/snowflake_stream_file_downloaded.yml)
+  - A file was downloaded from a stage.
 - [Snowflake Grant to Public Role](../rules/snowflake_rules/snowflake_stream_public_role_grant.yml)
   - Detect additional grants to the public role.
-- [Snowflake Login Without MFA](../queries/snowflake_queries/snowflake_login_without_mfa.yml)
-  - Detect snowflake logins without multifactor authentication
+- [Snowflake Login Without MFA](../rules/snowflake_rules/snowflake_stream_login_without_mfa.yml)
+  - Detect Snowflake logins without multifactor authentication
 - [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
   - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
 - [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
   - Track successful login signals for correlation.
-- [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)
-  - A table was copied into a stage
-- [Snowflake Temporary Stage Created](../queries/snowflake_queries/snowflake_temp_stage_created_signal.yml)
-  - A temporary stage was created
+- [Snowflake Table Copied Into Stage](../rules/snowflake_rules/snowflake_stream_table_copied_into_stage.yml)
+  - A table was copied into a stage.
+- [Snowflake Temporary Stage Created](../rules/snowflake_rules/snowflake_stream_temp_stage_created.yml)
+  - A temporary stage was created.
 - [Snowflake User Access](../queries/snowflake_queries/snowflake_0109877_suspected_user_access.yml)
   - Return sessions of suspected clients as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake User Created](../queries/snowflake_queries/snowflake_user_created.yml)
-  - Detect new users created in snowflake
-- [Snowflake User Daily Query Volume Spike](../queries/snowflake_queries/snowflake_user_query_volume_spike_query.yml)
+- [Snowflake User Created](../rules/snowflake_rules/snowflake_stream_user_created.yml)
+  - Detect new users created in Snowflake.
+- [Snowflake User Daily Query Volume Spike](../queries/snowflake_queries/snowflake_user_query_volume_spike.yml)
   - Returns instances where a user's cumulative daily query volume is much larger than normal. Could indicate exfiltration attempts.
 - [Snowflake User Daily Query Volume Spike - Threat Hunting](../queries/snowflake_queries/snowflake_user_query_volume_spike_threat_hunting.yml)
   - This query returns the most voluminous queries executed by a specific user over the past 48 hours.
-- [Snowflake User Enabled](../queries/snowflake_queries/snowflake_user_enabled.yml)
-  - Detect users being re-enabled in your environment
+- [Snowflake User Enabled](../rules/snowflake_rules/snowflake_stream_user_enabled.yml)
+  - Detects users being re-enabled in your environment.
 - [Snowflake user with key-based auth logged in with password auth](../queries/snowflake_queries/snowflake_key_user_password_login.yml)
   - Detect when a user that has key-based authentication configured logs in with a password
 
