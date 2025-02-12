@@ -76,8 +76,8 @@
   - ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
 - [AWS Access Key Uploaded to Github](../rules/aws_cloudtrail_rules/aws_key_compromised.yml)
   - A users static AWS API key was uploaded to a public github repo.
-- [AWS Authentication From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml)
-  - Detects AWS Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Backdoor Administrative IAM Role Created](../correlation_rules/aws_create_backdoor_admin_iam_role.yml)
@@ -407,31 +407,31 @@
   - This detection identifies if a public sourceIP is generating multiple 403s with the Kubernetes API server.
 - [EKS Audit Log Reporting system Namespace is Used From A Public IP](../rules/aws_eks_rules/system_namespace_public_ip.yml)
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
-- [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity.yml)
+- [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
-- [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified.yml)
+- [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified_query.yml)
   - This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
 - [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space_query.yml)
   - This detection monitors for any pod created in pre-configured or default namespaces. Only Cluster Admins should be creating pods in the kube-system namespace, and it is best practice not to run any cluster critical infrastructure here. The kube-public namespace is intended to be readable by unauthenticated users. The default namespace is shipped with the cluster and it is best practice not to deploy production workloads here. These namespaces may be used to evade defenses or hide attacker infrastructure.
 - [New Admission Controller Created](../queries/kubernetes_queries/kubernetes_admission_controller_created_query.yml)
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
-- [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed.yml)
+- [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed_query.yml)
   - This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
-- [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network.yml)
+- [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network_query.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace_query.yml)
   - This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
 - [Pod Created or Modified Using the Host PID Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_pid_namespace_query.yml)
   - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
-- [Pod Created with Overly Permissive Linux Capabilities](../queries/kubernetes_queries/kubernetes_overly_permissive_linux_capabilities.yml)
+- [Pod Created with Overly Permissive Linux Capabilities](../queries/kubernetes_queries/kubernetes_overly_permissive_linux_capabilities_query.yml)
   - This detection monitors for a pod created with overly permissive linux capabilities. Excessive pod permissions and capabilities can be a launch point for privilege escalation or container breakout.
-- [Pod creation or modification to a Host Path Volume Mount](../queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount.yml)
+- [Pod creation or modification to a Host Path Volume Mount](../queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount_query.yml)
   - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
-- [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created.yml)
+- [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created_query.yml)
   - This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
-- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration.yml)
+- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml)
   - This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.
-- [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request.yml)
+- [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request_query.yml)
   - This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
 - [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution_query.yml)
   - This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions.
@@ -653,8 +653,8 @@
   - VPC Flow Logs observed inbound traffic violating the port blocklist.
 - [VPC Flow Logs Unapproved Outbound DNS Traffic](../rules/aws_vpc_flow_rules/aws_vpc_unapproved_outbound_dns.yml)
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
-- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity.yml)
-  - Searches for potential port scanning activity in VPC Flow logs
+- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
+  - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
@@ -866,8 +866,8 @@
   - Looks for OnePassword Logins from IP Addresses that aren't seen in CrowdStrike's AIP List.
 - [1Password Login From CrowdStrike Unmanaged Device Query (crowdstrike_fdrevent table)](../queries/onepassword_queries/onepass_login_from_crowdstrike_unmanaged_device_FDREvent.yml)
   - Looks for OnePassword Logins from IP Addresses that aren't seen in CrowdStrike's AIP List. (crowdstrike_fdrevent table)
-- [AWS Authentication From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml)
-  - Detects AWS Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [Connection to Embargoed Country](../rules/crowdstrike_rules/crowdstrike_connection_to_embargoed_country.yml)
@@ -936,8 +936,8 @@
   - Detects processes that contain known browser credential files in arguments. (crowdstrike_fdrevent table)
 - [Malicious SSO DNS Lookup](../rules/standard_rules/malicious_sso_dns_lookup.yml)
   - The rule looks for DNS requests to sites potentially posing as SSO domains.
-- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device.yml)
-  - Detects Okta Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
 
@@ -960,8 +960,8 @@
   - An application was linked to your Dropbox Account
 - [Dropbox Many Deletes](../queries/dropbox_queries/Dropbox_Many_Deletes_Query.yml)
   - Dropbox Many Deletes
-- [Dropbox Many Downloads](../queries/dropbox_queries/Dropbox_Many_Downloads.yml)
-  - Detects when a dropbox user downloads many documents.
+- [Dropbox Many Downloads](../queries/dropbox_queries/Dropbox_Many_Downloads_Query.yml)
+  - Dropbox Many Downloads
 - [Dropbox User Disabled 2FA](../rules/dropbox_rules/dropbox_user_disabled_2fa.yml)
   - Dropbox user has disabled 2fa login
 
@@ -1439,8 +1439,8 @@
   - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
 - [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
   - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
-- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device.yml)
-  - Detects Okta Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
 - [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
