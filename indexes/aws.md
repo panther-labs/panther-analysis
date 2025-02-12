@@ -30,8 +30,8 @@
   - ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
 - [AWS Access Key Uploaded to Github](../rules/aws_cloudtrail_rules/aws_key_compromised.yml)
   - A users static AWS API key was uploaded to a public github repo.
-- [AWS Authentication From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml)
-  - Detects AWS Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Backdoor Administrative IAM Role Created](../correlation_rules/aws_create_backdoor_admin_iam_role.yml)
@@ -78,8 +78,8 @@
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
 - [AWS DNS Logs Deleted](../rules/aws_cloudtrail_rules/aws_dns_logs_deleted.yml)
   - Detects when logs for a DNS Resolver have been removed.
-- [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands.yml)
-  - Multiple different discovery commands were executed by the same EC2 instance. This could indicate a compromised instance.
+- [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands_query.yml)
+  - Multiple different discovery commands were executed by the same EC2 instance.
 - [AWS EC2 Download Instance User Data](../rules/aws_cloudtrail_rules/aws_ec2_download_instance_user_data.yml)
   - An entity has accessed the user data scripts of multiple EC2 instances.
 - [AWS EC2 EBS Encryption Disabled](../rules/aws_cloudtrail_rules/aws_ec2_ebs_encryption_disabled.yml)
@@ -112,7 +112,7 @@
   - A Network ACL entry that allows access from anywhere was added.
 - [AWS Potential Backdoor Lambda Function Through Resource-Based Policy](../rules/aws_cloudtrail_rules/aws_backdoor_lambda_function.yml)
   - Identifies when a permission is added to a Lambda function, which could indicate a potential security risk.
-- [AWS Potentially Stolen Service Role](../queries/aws_queries/aws_potentially_compromised_service_role.yml)
+- [AWS Potentially Stolen Service Role](../queries/aws_queries/aws_potentially_compromised_service_role_query.yml)
   - A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
 - [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
@@ -365,29 +365,29 @@
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
 - [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified_query.yml)
   - This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
-- [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space.yml)
+- [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space_query.yml)
   - This detection monitors for any pod created in pre-configured or default namespaces. Only Cluster Admins should be creating pods in the kube-system namespace, and it is best practice not to run any cluster critical infrastructure here. The kube-public namespace is intended to be readable by unauthenticated users. The default namespace is shipped with the cluster and it is best practice not to deploy production workloads here. These namespaces may be used to evade defenses or hide attacker infrastructure.
 - [New Admission Controller Created](../queries/kubernetes_queries/kubernetes_admission_controller_created_query.yml)
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
-- [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed.yml)
+- [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed_query.yml)
   - This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
 - [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network_query.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
-- [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace.yml)
+- [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace_query.yml)
   - This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
-- [Pod Created or Modified Using the Host PID Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_pid_namespace.yml)
-  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the hosts processes. This can offer a powerful escape hatch to the underlying host.
-- [Pod Created with Overly Permissive Linux Capabilities](../queries/kubernetes_queries/kubernetes_overly_permissive_linux_capabilities.yml)
+- [Pod Created or Modified Using the Host PID Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_pid_namespace_query.yml)
+  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
+- [Pod Created with Overly Permissive Linux Capabilities](../queries/kubernetes_queries/kubernetes_overly_permissive_linux_capabilities_query.yml)
   - This detection monitors for a pod created with overly permissive linux capabilities. Excessive pod permissions and capabilities can be a launch point for privilege escalation or container breakout.
 - [Pod creation or modification to a Host Path Volume Mount](../queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount_query.yml)
   - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
-- [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created.yml)
+- [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created_query.yml)
   - This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
 - [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml)
   - This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.
-- [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request.yml)
+- [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request_query.yml)
   - This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
-- [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution.yml)
+- [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution_query.yml)
   - This detection monitors for any pod execution in a kubernetes cluster. Pod execution should never be done in a production cluster, and can indicate a user performing unauthorized actions.
 
 

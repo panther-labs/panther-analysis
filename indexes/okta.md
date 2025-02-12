@@ -42,8 +42,8 @@
   - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
 - [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
   - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
-- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device.yml)
-  - Detects Okta Logins from IP addresses not found in CrowdStrike's AIP list. May indicate unmanaged device being used, or faulty CrowdStrike Sensor.
+- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
 - [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
