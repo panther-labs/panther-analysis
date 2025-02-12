@@ -1,8 +1,6 @@
 name: Generate Indexes
 
 on:
-  # Since this workflow runs on push to develop and also pushes to develop, we need ensure that it does not loop This
-  # is done by ignoring changes to the indexes directory. The script below must never write outside of this directory.
   push:
     branches:
       - develop
@@ -31,6 +29,13 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip3 install -r ./.scripts/requirements.txt
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
       - name: Generate indexes
         run: python3 ./.scripts/generate_indexes.py
       - name: Commit Indexes
@@ -38,6 +43,8 @@ jobs:
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
+          git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
+          git checkout ${{ github.event.pull_request.head.ref }}
           git add ./indexes
-          git commit -m "Update indexes"
-          git push --no-sign
+          git commit -S -m "Update indexes"
+          git push origin ${{ github.event.pull_request.head.ref }}
