@@ -52,8 +52,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
@@ -134,8 +132,6 @@
 
 ## Okta
 
-- [ako_testing_indexes_3_testing_third_time](../rules/okta_rules/ako_testing_indexes_2.yml)
-  - Testing indexes_3 generating workflow for AKo
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
@@ -222,8 +218,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
@@ -344,8 +338,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
   - User enabled or disabled zendesk support user assumption.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)

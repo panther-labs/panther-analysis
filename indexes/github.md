@@ -2,8 +2,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [GitHub Action Failed](../rules/github_rules/github_action_failed.yml)
   - A monitored github action has failed.
 - [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)

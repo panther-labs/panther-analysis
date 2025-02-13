@@ -2,8 +2,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Exec into Pod](../rules/gcp_k8s_rules/gcp_k8s_exec_into_pod.yml)
   - Alerts when users exec into pod. Possible to specify specific projects and allowed users.
 - [GCP Access Attempts Violating IAP Access Controls](../rules/gcp_http_lb_rules/gcp_access_attempts_violating_iap_access_controls.yml)

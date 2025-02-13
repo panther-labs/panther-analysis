@@ -13,17 +13,6 @@ Assigning an admin role manually could be a sign of privilege escalation
   - Zendesk
 
 
-[ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)  
-Testing indexes generating workflow for AKo
-  - Asana
-  - Atlassian
-  - GCP
-  - GitHub
-  - Google Workspace
-  - OneLogin
-  - Zendesk
-
-
 [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)  
 An actor user was denied login access more times than the configured threshold.
   - AWS CloudTrail

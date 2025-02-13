@@ -680,8 +680,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Asana Service Account Created](../rules/asana_rules/asana_service_account_created.yml)
   - An Asana service account was created by someone in your organization.
 - [Asana Team Privacy Public](../rules/asana_rules/asana_team_privacy_public.yml)
@@ -718,8 +716,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Atlassian admin impersonated another user](../rules/atlassian_rules/user_logged_in_as_user.yml)
   - Reports when an Atlassian user logs in (impersonates) another user.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
@@ -1016,8 +1012,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Exec into Pod](../rules/gcp_k8s_rules/gcp_k8s_exec_into_pod.yml)
   - Alerts when users exec into pod. Possible to specify specific projects and allowed users.
 - [GCP Access Attempts Violating IAP Access Controls](../rules/gcp_http_lb_rules/gcp_access_attempts_violating_iap_access_controls.yml)
@@ -1125,8 +1119,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [GitHub Action Failed](../rules/github_rules/github_action_failed.yml)
   - A monitored github action has failed.
 - [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)
@@ -1193,8 +1185,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
@@ -1409,8 +1399,6 @@
 
 ## Okta
 
-- [ako_testing_indexes_3_testing_third_time](../rules/okta_rules/ako_testing_indexes_2.yml)
-  - Testing indexes_3 generating workflow for AKo
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta, both log sources configured, and Actor Profiles enabled.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
@@ -1497,8 +1485,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
@@ -1934,8 +1920,6 @@
 
 - [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
   - Assigning an admin role manually could be a sign of privilege escalation
-- [ako_testing_indexes](../rules/standard_rules/ako_testing_indexes.yml)
-  - Testing indexes generating workflow for AKo
 - [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
   - User enabled or disabled zendesk support user assumption.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
