@@ -19,6 +19,9 @@ Runbook: >
   An entity has accessed the user data scripts of multiple EC2 instances. This is
   often an attempt to find unsecured credentials. Ensure the EC2 instances accessed
   do not have any sensitive information stored in the user data.
+
+  Cloud security scanning tools may trigger false positives.  Add an exclude filter for
+  the scanning tool's service account to prevent false positives.
 SummaryAttributes:
   - userAgent
   - sourceIpAddress
