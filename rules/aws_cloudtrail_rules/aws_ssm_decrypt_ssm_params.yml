@@ -1,0 +1,456 @@
+AnalysisType: rule
+Filename: aws_ssm_decrypt_ssm_params.py
+RuleID: "AWS.SSM.DecryptSSMParams"
+DisplayName: AWS Decrypt SSM Parameters
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - XXX
+Description: >
+  Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
+Threshold: 10
+Reference: >
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.credential-access.ssm-retrieve-securestring-parameters/
+Runbook: >
+  Determine if the secrets accessed contain sensitive information. Consider suspecing access for the user identity until their intentions are verified. If any IAM credentials or similar were compromised, rotate them.
+SummaryAttributes:
+  - sourceIpAddress
+  - p_alert_context.accessedParams
+Tags:
+  - AWS CloudTrail
+Tests:
+  - Name: Single Secret Accessed in Single Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]'
+      - objectName: put_string_set
+        returnValue: ''
+    Log:
+      {
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "587e6d58-a653-4fd9-859f-367dc1bad98c",
+        "eventName": "GetParameter",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-14 19:43:09.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "a1f28efd-9f5b-4a13-9878-86f57de594dc",
+        "requestParameters": {
+          "name": "/credentials/stratus-red-team/credentials-25",
+          "withDecryption": true
+        },
+        "resources": [
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-25"
+          }
+        ],
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "example-user-agent",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-14T19:42:05Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Multiple Secrets Accessed in Same Event
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '[]'
+      - objectName: put_string_set
+        returnValue: ''
+    Log:
+      {
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "ce59873d-6a27-4fa4-afc1-088fceba71e4",
+        "eventName": "GetParameters",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-14 19:42:57.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "b6cb0ea5-2366-47c3-a4e5-acc31bc6882a",
+        "requestParameters": {
+          "names": [
+            "/credentials/stratus-red-team/credentials-10",
+            "/credentials/stratus-red-team/credentials-11",
+            "/credentials/stratus-red-team/credentials-12",
+            "/credentials/stratus-red-team/credentials-15",
+            "/credentials/stratus-red-team/credentials-24",
+            "/credentials/stratus-red-team/credentials-30",
+            "/credentials/stratus-red-team/credentials-31",
+            "/credentials/stratus-red-team/credentials-32",
+            "/credentials/stratus-red-team/credentials-36",
+            "/credentials/stratus-red-team/credentials-40",
+            "/credentials/stratus-red-team/credentials-41",
+          ],
+          "withDecryption": true
+        },
+        "resources": [
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-10"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-11"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-12"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-15"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-24"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-30"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-31"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-32"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-36"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-40"
+          }
+        ],
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "example-user-agent",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-14T19:42:05Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Multiple Secrets Accessed in Same Event With Prior Cached Parameters
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["a", "b", "c", "d", "e", "f"]'
+      - objectName: put_string_set
+        returnValue: ''
+    Log:
+      {
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "ce59873d-6a27-4fa4-afc1-088fceba71e4",
+        "eventName": "GetParameters",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-14 19:42:57.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "b6cb0ea5-2366-47c3-a4e5-acc31bc6882a",
+        "requestParameters": {
+          "names": [
+            "/credentials/stratus-red-team/credentials-10",
+            "/credentials/stratus-red-team/credentials-11",
+            "/credentials/stratus-red-team/credentials-12",
+            "/credentials/stratus-red-team/credentials-15",
+            "/credentials/stratus-red-team/credentials-24"
+          ],
+          "withDecryption": true
+        },
+        "resources": [
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-10"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-11"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-12"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-15"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-24"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-30"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-31"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-32"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-36"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-40"
+          }
+        ],
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "example-user-agent",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-14T19:42:05Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Accessed Parameters Aren't Encrypted
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '[]'
+      - objectName: put_string_set
+        returnValue: ''
+    Log:
+      {
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "ce59873d-6a27-4fa4-afc1-088fceba71e4",
+        "eventName": "GetParameters",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-14 19:42:57.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "b6cb0ea5-2366-47c3-a4e5-acc31bc6882a",
+        "requestParameters": {
+          "names": [
+            "/credentials/stratus-red-team/credentials-10",
+            "/credentials/stratus-red-team/credentials-11",
+            "/credentials/stratus-red-team/credentials-12",
+            "/credentials/stratus-red-team/credentials-15",
+            "/credentials/stratus-red-team/credentials-24",
+            "/credentials/stratus-red-team/credentials-30",
+            "/credentials/stratus-red-team/credentials-31",
+            "/credentials/stratus-red-team/credentials-32",
+            "/credentials/stratus-red-team/credentials-36",
+            "/credentials/stratus-red-team/credentials-40",
+            "/credentials/stratus-red-team/credentials-41",
+          ]
+        },
+        "resources": [
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-10"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-11"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-12"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-15"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-24"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-30"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-31"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-32"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-36"
+          },
+          {
+            "accountId": "111122223333",
+            "arn": "arn:aws:ssm:us-west-2:111122223333:parameter/credentials/stratus-red-team/credentials-40"
+          }
+        ],
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "example-user-agent",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-14T19:42:05Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Unrelated Event
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "6c6de06f-eb03-44cd-a95f-928a780ce28a",
+        "eventName": "DescribeParameters",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-14 19:43:07.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "111122223333",
+        "requestID": "9ea104aa-d9af-415f-9c56-b7bb98c7c73f",
+        "requestParameters": {
+          "parameterFilters": [
+            {
+              "key": "Name",
+              "option": "Equals",
+              "values": [
+                "/credentials/stratus-red-team/credentials-1"
+              ]
+            }
+          ]
+        },
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "example-user-agent",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-14T19:42:05Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
