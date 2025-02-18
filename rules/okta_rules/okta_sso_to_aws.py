@@ -6,3 +6,9 @@ def rule(event):
             "AWS IAM Identity Center" in event.deep_walk("target", "displayName", default=[]),
         ]
     )
+
+
+def alert_context(event):
+    return {
+        "actor": event.deep_get("actor", "alternateId", default="").split("@")[0],
+    }

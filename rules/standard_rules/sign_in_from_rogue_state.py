@@ -52,10 +52,6 @@ def get_country(event) -> str:
 
 def get_account_name(event) -> str:
     """Returns the account name."""
-    if account_name := event.deep_get("p_udm", "user", "email"):
-        return account_name
-    if account_name := event.deep_get("p_udm", "user", "name"):
-        return account_name
     if account_name := event.udm("actor_user"):
         return account_name
     return "UNKNWON ACCOUNT"

@@ -21,8 +21,6 @@ Reports:
     - TA0001:T1078.004
 Description: Detects when an entity signs in from a nation associated with cyber attacks
 DedupPeriodMinutes: 60
-SummaryAttributes:
-  - p_udm.source.address
 Tags:
   - DataModel
   - Configuration Required
@@ -87,18 +85,6 @@ Tests:
           }
         },
         "p_log_type": "Okta.SystemLog",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "e10bd09e-1e7a-4c2c-b74e-99a011ab84ee",
-            "provider_id": "EXAMPLE_ACTOR_ID"
-          }
-        },
         "request": {
           "ipChain": [
             {
@@ -205,18 +191,6 @@ Tests:
         "p_row_id": "526383f6c367e7f3db88959621afee19",
         "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
         "p_source_label": "My Log Source",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "OTHER_EXAMPLE_USER_ID",
-            "provider_id": "EXAMPLE_USER_ID"
-          }
-        },
         "published": "2024-08-15 15:05:09.154000000",
         "request": {
           "ipChain": [
@@ -324,18 +298,6 @@ Tests:
         "p_row_id": "526383f6c367e7f3db88959621afee19",
         "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
         "p_source_label": "My Log Source",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "OTHER_EXAMPLE_USER_ID",
-            "provider_id": "EXAMPLE_USER_ID"
-          }
-        },
         "published": "2024-08-15 15:05:09.154000000",
         "request": {
           "ipChain": [
@@ -458,18 +420,6 @@ Tests:
         "p_row_id": "526383f6c367e7f3db88959621afee19",
         "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
         "p_source_label": "My Log Source",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "OTHER_EXAMPLE_USER_ID",
-            "provider_id": "EXAMPLE_USER_ID"
-          }
-        },
         "published": "2024-08-15 15:05:09.154000000",
         "request": {
           "ipChain": [
@@ -878,18 +828,6 @@ Tests:
         "p_row_id": "526383f6c367e7f3db88959621afee19",
         "p_source_id": "d0907120-58a3-4e40-acfa-e631693f9066",
         "p_source_label": "My Log Source",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "OTHER_EXAMPLE_USER_ID",
-            "provider_id": "EXAMPLE_USER_ID"
-          }
-        },
         "published": "2024-08-15 15:05:09.154000000",
         "request": {
           "ipChain": [
@@ -1010,18 +948,6 @@ Tests:
         "p_schema_version": 0,
         "p_source_id": "9f722ac4-3715-4db8-a0b4-a62f34599f90",
         "p_source_label": "1Password",
-        "p_udm": {
-          "source": {
-            "address": "1.1.1.1",
-            "ip": "1.1.1.1"
-          },
-          "user": {
-            "email": "dude.lightbulb@example.co",
-            "full_name": "Dude Lightbulb",
-            "id": "EXAMPLE_USER_ID",
-            "provider_id": "EXAMPLE_PROVIDER_ID"
-          }
-        },
         "session_uuid": "EXAMPLE_SESSION_ID",
         "target_user": {
           "email": "dude.lightbulb@example.co",
@@ -1064,7 +990,6 @@ Tests:
         "p_schema_version": 0,
         "p_source_id": "afedae15-43e8-45d1-85e6-8f525e176d3e",
         "p_source_label": "Zoom",
-        "p_udm": {},
         "time": "2023-08-14 16:17:05",
         "type": "Sign in",
         "version": "5.15.7.21404"

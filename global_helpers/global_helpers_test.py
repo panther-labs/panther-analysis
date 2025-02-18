@@ -2416,15 +2416,6 @@ class TestPantherFlowInvestigation(unittest.TestCase):
             "p_schema_version": 0,
             "p_source_id": "d0a1e235-6548-4e7f-952a-35063b304007",
             "p_source_label": "threat-research-trail-us-east-1",
-            "p_udm": {
-                "source": {"address": "12.34.56.78", "ip": "12.34.56.78"},
-                "user": {
-                    "arns": [
-                        "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
-                        "arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross",
-                    ]
-                },
-            },
         }
         event = ImmutableCaseInsensitiveDict(event)
         query = """union panther_signals.public.correlation_signals
