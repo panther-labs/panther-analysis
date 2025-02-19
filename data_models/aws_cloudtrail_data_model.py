@@ -1,7 +1,7 @@
 import ipaddress
 
 import panther_event_type_helpers as event_type
-from panther_aws_helpers import get_actor_user
+from panther_aws_helpers import get_actor_user  # pylint: disable=unused-import
 from panther_base_helpers import deep_get
 
 

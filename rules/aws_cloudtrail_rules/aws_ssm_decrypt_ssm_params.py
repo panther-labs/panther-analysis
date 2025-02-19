@@ -9,6 +9,7 @@ PARAM_THRESHOLD = 10
 
 all_param_names = set()
 
+
 def rule(event: PantherEvent) -> bool:
     # Exclude events of the wrong type
     if not (
@@ -16,14 +17,14 @@ def rule(event: PantherEvent) -> bool:
         and event.deep_get("requestParameters", "withDecryption")
     ):
         return False
-    
+
     # Determine if this actor accessed any other params in this account
     key = get_cache_key(event)
     cached_params = get_cached_param_names(key)
     accessed_params = get_param_names(event)
 
     # Determine if the cache needs updating with new entries
-    global all_param_names
+    global all_param_names  # pylint: disable=global-statement
     all_param_names = cached_params | accessed_params
     if all_param_names - cached_params:
         # Only set the TTL if this is the first time we're adding to the cache
@@ -51,19 +52,17 @@ def severity(event: PantherEvent) -> str:
 def alert_context(event: PantherEvent) -> dict:
     global all_param_names
     context = aws_rule_context(event)
-    context.update({
-        "accessedParams": list(all_param_names)
-    })
+    context.update({"accessedParams": list(all_param_names)})
     return context
 
 
 def get_cache_key(event) -> str:
-    """Use the field values in the event to generate a cache key unique to this actor and 
+    """Use the field values in the event to generate a cache key unique to this actor and
     account ID."""
     actor = event.udm("actor_user")
     account = event.get("recipientAccountId")
-    RULE_ID = "AWS.SSM.DecryptSSMParams"
-    return f"{RULE_ID}-{account}-{actor}"
+    rule_id = "AWS.SSM.DecryptSSMParams"
+    return f"{rule_id}-{account}-{actor}"
 
 
 def get_param_names(event) -> set[str]:
@@ -72,8 +71,9 @@ def get_param_names(event) -> set[str]:
     params = set(event.deep_get("requestParameters", "names", default=[]))
     if single_param := event.deep_get("requestParameters", "name"):
         params.add(single_param)
-    
+
     return params
+
 
 def get_cached_param_names(key: str) -> set[str]:
     """Get any previously cached parameter names. Included automatic converstion from string in

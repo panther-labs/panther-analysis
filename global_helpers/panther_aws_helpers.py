@@ -227,10 +227,12 @@ def resource_lookup(resource_id: str) -> Dict[str, Any]:
     # Return just the attributes of the item
     return response["Item"]["attributes"]
 
+
 # get actor user from correct field based on identity type
 # https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html#cloudtrail-event-reference-user-identity-fields
 def get_actor_user(event):
-    # IMPORTANT: We can't use event.deep_get here because this function gets called in the UDM module.
+    # IMPORTANT: We can't use event.deep_get here because this function gets called in the UDM
+    #   module.
     user_type = deep_get(event, "userIdentity", "type")
     if user_type == "Root":
         actor_user = deep_get(

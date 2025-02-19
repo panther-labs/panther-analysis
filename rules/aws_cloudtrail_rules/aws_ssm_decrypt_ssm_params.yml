@@ -8,7 +8,7 @@ LogTypes:
 Severity: Medium
 Reports:
   MITRE ATT&CK:
-    - XXX
+    - TA0006:T1555
 Description: >
   Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
 Threshold: 10
@@ -21,6 +21,7 @@ SummaryAttributes:
   - p_alert_context.accessedParams
 Tags:
   - AWS CloudTrail
+  - 'Credential Access: Credentials from Password Stores'
 Tests:
   - Name: Single Secret Accessed in Single Event
     ExpectedResult: true
