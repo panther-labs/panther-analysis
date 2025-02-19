@@ -1,3 +1,5 @@
+import json
+
 from panther_aws_helpers import aws_rule_context
 from panther_detection_helpers.caching import add_to_string_set
 
@@ -12,6 +14,8 @@ def rule(event):
     user = event.udm("actor_user")
     key = f"{RULE_ID}-{user}"
     unique_regions = add_to_string_set(key, event.get("awsRegion"), WITHIN_TIMEFRAME_MINUTES * 60)
+    if isinstance(unique_regions, str):
+        unique_regions = json.loads(unique_regions)
     if len(unique_regions) >= UNIQUE_REGION_THRESHOLD:
         return True
     return False
