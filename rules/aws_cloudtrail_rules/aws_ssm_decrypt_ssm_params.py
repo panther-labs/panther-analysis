@@ -62,7 +62,8 @@ def get_cache_key(event) -> str:
     account ID."""
     actor = event.udm("actor_user")
     account = event.get("recipientAccountId")
-    return f"{account}-{actor}"
+    RULE_ID = "AWS.SSM.DecryptSSMParams"
+    return f"{RULE_ID}-{account}-{actor}"
 
 
 def get_param_names(event) -> set[str]:
