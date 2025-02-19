@@ -1,0 +1,78 @@
+AnalysisType: scheduled_rule
+Filename: aws_ssm_multiple_sessions.py
+RuleID: "AWS.SSM.MultipleSessions"
+DisplayName: "AWS SSM Multiple Sessions"
+Enabled: true
+ScheduledQueries:
+  - AWS SSM Multiple Sessions
+Severity: Low
+Reports:
+  MITRE ATT&CK:
+    - TA0002:1203 # Execution: Exploitation for Client Execution
+Description: >
+  Detect when an actor launches multiple distinct SSM sessions within a single hour period.
+Reference: >
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.execution.ssm-start-session/
+Runbook:
+  Identify the instances for which sessions were started. Monitor instance and session activity. If possible, reach out to the user to determine the reason for multiple sessions.
+SummaryAttributes:
+  - requestParameters.target
+Tags:
+    - AWS CloudTrail
+    - AWS SSM
+    - 'Execution: Exploitation for Client Execution'
+Tests:
+  - Name: Sample Result
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2025-02-19 20:13:49",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2025-02-19 20:15:54.4",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "c61c9a5d-4d9c-45ee-8c46-9845ea001e97",
+        "eventName": "StartSession",
+        "eventSource": "ssm.amazonaws.com",
+        "eventTime": "2025-02-19 20:13:49",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.10",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "111122223333",
+        "requestID": "8e6cef5f-2610-43fb-898b-48acd3aa6240",
+        "requestParameters": {
+          "target": "i-047fce8bf4806e5ee"
+        },
+        "responseElements": {
+          "sessionId": "bobson.dugnutt-4njnyxxl8yn676nsla8j6l4bra",
+          "tokenValue": "Value hidden due to security reasons."
+        },
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.2"
+        },
+        "userAgent": "sample-user-agent",
+        "userIdentity": {
+          "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-02-19T16:29:24Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
