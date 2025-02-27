@@ -1,5 +1,7 @@
 from panther_base_helpers import deep_get
 
+EXPECTED_DOMAIN = "@your-domain.tld"
+
 
 def rule(event):
     if event.deep_get("protoPayload", "methodName") != "SetIamPolicy":
@@ -17,13 +19,13 @@ def rule(event):
     for delta in binding_deltas:
         if delta.get("action") != "ADD":
             continue
-        if delta.get("member", "").endswith("@gmail.com"):
-            return True
-    return False
+        if delta.get("member", "").endswith(EXPECTED_DOMAIN):
+            return False
+    return True
 
 
 def title(event):
     return (
-        f"A GCP IAM account has been created with a Gmail email in "
+        f"A GCP IAM account has been created with an unexpected email domain in "
         f"{event.deep_get('resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )
