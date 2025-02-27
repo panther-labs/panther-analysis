@@ -16,7 +16,7 @@ Reports:
   CIS:
     - 1.1
 Severity: Low
-Description: A Gmail account is being used instead of a corporate email
+Description: Unexpected domain is being used instead of a corporate email
 Runbook: Remove the user
 Reference: https://cloud.google.com/iam/docs/service-account-overview
 SummaryAttributes:
@@ -203,7 +203,7 @@ Tests:
         "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T03:51:35.977314225Z",
       }
-  - Name: Runpanther account added
+  - Name: Expected account added
     ExpectedResult: false
     Log:
       {
@@ -247,7 +247,7 @@ Tests:
                         {
                           "action": "ADD",
                           "role": "roles/viewer",
-                          "member": "user:username@runpanther.com",
+                          "member": "user:username@your-domain.tld",
                         },
                       ],
                   },
