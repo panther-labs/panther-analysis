@@ -1,0 +1,111 @@
+AnalysisType: rule
+DedupPeriodMinutes: 60
+DisplayName: AWS Suspicious S3 File Activities
+Enabled: true
+Filename: aws_s3_suspicious_files_activities.py
+RuleID: "AWS.S3.SuspiciousFileActivities"
+Severity: Medium
+LogTypes:
+  - AWS.CloudTrail
+Description: >
+  This rule detects suspicious file activities in S3 buckets such as DeleteObject, DeleteObjects, GetObject, and CopyObject. These activities can be indicative of ransomware attacks or unauthorized data access.
+Runbook: >
+  Investigate the user and the actions performed on the S3 bucket to ensure they were authorized. Unauthorized actions can lead to data loss or exposure.
+  Steps to investigate:
+  1. Identify the user who performed the action.
+  2. Verify if the action was authorized.
+  3. Check for any other suspicious activities performed by the same user.
+  4. If unauthorized, take necessary actions to secure the S3 bucket and prevent further unauthorized access.
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/logging-with-cloudtrail.html
+Tests:
+  - Name: Suspicious S3 File Activity - DeleteObject
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/Alice",
+          "accountId": "123456789012",
+          "accessKeyId": "EXAMPLEKEY",
+          "userName": "Alice"
+        },
+        "eventTime": "2023-10-01T12:34:56Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "DeleteObject",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "192.0.2.0",
+        "userAgent": "aws-sdk-go/1.15.12 (go1.12.6; linux; amd64)",
+        "requestParameters": {
+          "bucketName": "example-bucket",
+          "key": "example-object"
+        },
+        "responseElements": null,
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 0
+        },
+        "requestID": "EXAMPLE123456789",
+        "eventID": "EXAMPLE-1234-5678-9012-EXAMPLE",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::example-bucket/example-object"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "123456789012",
+        "sharedEventID": "EXAMPLE-1234-5678-9012-EXAMPLE",
+        "vpcEndpointId": "vpce-1a2b3c4d"
+      }
+  - Name: Other Activity
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/Bob",
+          "accountId": "123456789012",
+          "accessKeyId": "EXAMPLEKEY",
+          "userName": "Bob"
+        },
+        "eventTime": "2023-10-01T12:34:56Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "ListBucket",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "192.0.2.0",
+        "userAgent": "aws-sdk-go/1.15.12 (go1.12.6; linux; amd64)",
+        "requestParameters": {
+          "bucketName": "example-bucket"
+        },
+        "responseElements": null,
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 0
+        },
+        "requestID": "EXAMPLE123456789",
+        "eventID": "EXAMPLE-1234-5678-9012-EXAMPLE",
+        "readOnly": true,
+        "resources": [
+          {
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::example-bucket"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "123456789012",
+        "sharedEventID": "EXAMPLE-1234-5678-9012-EXAMPLE",
+        "vpcEndpointId": "vpce-1a2b3c4d"
+      }
