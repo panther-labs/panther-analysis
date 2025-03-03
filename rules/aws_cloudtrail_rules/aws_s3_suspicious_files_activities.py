@@ -19,7 +19,8 @@ def rule(event):
 def title(event):
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
-        f"performed [{event.get('eventName')}] on [{event.deep_get('requestParameters', 'bucketName')}] bucket"
+        f"performed [{event.get('eventName')}] on "
+        f"[{event.deep_get('requestParameters', 'bucketName')}] bucket"
     )
 
 
