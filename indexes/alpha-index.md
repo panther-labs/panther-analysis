@@ -449,6 +449,8 @@
 
 ## AWS GuardDuty
 
+- [AWS GuardDuty Critical Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_critical_sev_findings.yml)
+  - A critical-severity GuardDuty finding has been identified.
 - [AWS GuardDuty Enabled](../policies/aws_guardduty_policies/aws_guardduty_enabled.yml)
   - GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior.
 - [AWS GuardDuty High Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_high_sev_findings.yml)
@@ -1273,7 +1275,7 @@
 ## Microsoft365
 
 - [Microsoft Exchange External Forwarding](../rules/microsoft_rules/microsoft_exchange_external_forwarding.yml)
-  - Detects creation of forwarding rule to external domains
+  - Detects when a user creates email forwarding rules to external organizations in Microsoft Exchange Online. This can indicate data exfiltration attempts, where an attacker sets up forwarding to collect emails outside the organization. The rule detects both mailbox forwarding (Set-Mailbox) and inbox rules (New-InboxRule).The detection includes: 1. External organization forwarding based on domain comparison 2. Suspicious forwarding patterns like:   - Forwarding without keeping a copy   - Deleting messages after forwarding   - Stopping rule processing after forwarding3. Multiple forwarding destinations 4. Various forwarding methods (SMTP, redirect, forward as attachment)
 - [Microsoft365 Brute Force Login by User](../rules/microsoft_rules/microsoft365_brute_force_login_by_user.yml)
   - A Microsoft365 user was denied login access several times
 - [Microsoft365 External Document Sharing](../rules/microsoft_rules/microsoft365_external_sharing.yml)
