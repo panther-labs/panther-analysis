@@ -1,4 +1,4 @@
-from panther_msft_helpers import m365_alert_context
+from panther_msft_helpers import m365_alert_context, is_external_address
 
 FORWARDING_PARAMETERS = {
     "ForwardingSmtpAddress",
@@ -13,42 +13,6 @@ SUSPICIOUS_PATTERNS = {
     "DeleteMessage": "True",  # Delete after forwarding
     "StopProcessingRules": "True",  # Stop processing other rules
 }
-
-
-def is_external_address(address, primary_domain, onmicrosoft_domain):
-    """Check if an email address is external to the organization.
-
-    Args:
-        address (str): The email address or SMTP address to check
-        primary_domain (str): The organization's primary domain (e.g. contoso.com)
-        onmicrosoft_domain (str): The tenant domain (e.g. contoso.onmicrosoft.com)
-
-    Returns:
-        bool: True if the address is external, False if internal
-    """
-    if not address or (not primary_domain and not onmicrosoft_domain):
-        return True
-
-    # Clean up and normalize the address
-    address = address.lower()
-    if address.startswith("smtp:"):
-        address = address[5:]
-
-    # Check each address (might be multiple addresses separated by semicolon)
-    for addr in address.split(";"):
-        try:
-            domain = addr.strip().split("@")[1].lower()
-            # Skip if internal (matches onmicrosoft domain or primary domain/subdomain)
-            if (onmicrosoft_domain and domain == onmicrosoft_domain.lower()) or (
-                primary_domain
-                and (domain == primary_domain or domain.endswith("." + primary_domain))
-            ):
-                continue
-            return True
-        except (IndexError, AttributeError):
-            return True
-
-    return False
 
 
 def rule(event):
