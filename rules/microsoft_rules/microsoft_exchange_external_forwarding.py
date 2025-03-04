@@ -1,4 +1,4 @@
-from panther_msft_helpers import m365_alert_context, is_external_address
+from panther_msft_helpers import is_external_address, m365_alert_context
 
 FORWARDING_PARAMETERS = {
     "ForwardingSmtpAddress",
