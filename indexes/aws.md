@@ -403,6 +403,8 @@
 
 ## AWS GuardDuty
 
+- [AWS GuardDuty Critical Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_critical_sev_findings.yml)
+  - A critical-severity GuardDuty finding has been identified.
 - [AWS GuardDuty Enabled](../policies/aws_guardduty_policies/aws_guardduty_enabled.yml)
   - GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior.
 - [AWS GuardDuty High Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_high_sev_findings.yml)
