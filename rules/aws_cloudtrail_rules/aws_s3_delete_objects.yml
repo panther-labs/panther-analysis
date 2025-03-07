@@ -1,16 +1,21 @@
 AnalysisType: rule
 DedupPeriodMinutes: 60
-DisplayName: AWS Suspicious S3 File Activities
+DisplayName: AWS S3 Delete Objects Detection
 Enabled: true
-Filename: aws_s3_suspicious_files_activities.py
-RuleID: "AWS.S3.SuspiciousFileActivities"
+Filename: aws_s3_delete_objects.py
+RuleID: "AWS.CloudTrail.S3DeleteObjects"
+Threshold: 10
 Severity: Medium
 LogTypes:
   - AWS.CloudTrail
+Tags:
+  - AWS
+  - S3
+  - CloudTrail
 Description: >
-  This rule detects suspicious file activities in S3 buckets such as DeleteObject, DeleteObjects, GetObject, and CopyObject. These activities can be indicative of ransomware attacks or unauthorized data access.
+  This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 Runbook: >
-  Investigate the user and the actions performed on the S3 bucket to ensure they were authorized. Unauthorized actions can lead to data loss or exposure.
+  Investigate the user and the actions performed on the S3 bucket to ensure they were authorized. Unauthorized deletions can lead to data loss.
   Steps to investigate:
   1. Identify the user who performed the action.
   2. Verify if the action was authorized.
@@ -18,7 +23,7 @@ Runbook: >
   4. If unauthorized, take necessary actions to secure the S3 bucket and prevent further unauthorized access.
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/logging-with-cloudtrail.html
 Tests:
-  - Name: Suspicious S3 File Activity - DeleteObject
+  - Name: DeleteObjects
     LogType: AWS.CloudTrail
     ExpectedResult: true
     Log:
@@ -34,7 +39,7 @@ Tests:
         },
         "eventTime": "2023-10-01T12:34:56Z",
         "eventSource": "s3.amazonaws.com",
-        "eventName": "DeleteObject",
+        "eventName": "DeleteObjects",
         "awsRegion": "us-east-1",
         "sourceIPAddress": "192.0.2.0",
         "userAgent": "aws-sdk-go/1.15.12 (go1.12.6; linux; amd64)",
@@ -64,7 +69,7 @@ Tests:
         "sharedEventID": "EXAMPLE-1234-5678-9012-EXAMPLE",
         "vpcEndpointId": "vpce-1a2b3c4d"
       }
-  - Name: Other Activity
+  - Name: Other Event
     LogType: AWS.CloudTrail
     ExpectedResult: false
     Log:

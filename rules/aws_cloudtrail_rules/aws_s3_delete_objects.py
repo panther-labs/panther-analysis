@@ -1,25 +1,18 @@
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
-SUSPICIOUS_EVENTS = {
-    "DeleteObject",
-    "DeleteObjects",
-    "GetObject",
-    "CopyObject",
-}
-
 
 def rule(event):
     return (
         aws_cloudtrail_success(event)
         and event.get("eventSource") == "s3.amazonaws.com"
-        and event.get("eventName") in SUSPICIOUS_EVENTS
+        and event.get("eventName") == "DeleteObjects"
     )
 
 
 def title(event):
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
-        f"performed [{event.get('eventName')}] on "
+        f"deleted many objects on "
         f"[{event.deep_get('requestParameters', 'bucketName')}] bucket"
     )
 
