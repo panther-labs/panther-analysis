@@ -1,7 +1,5 @@
 from panther_gcp_helpers import gcp_alert_context
 
-EXPECTED_DOMAIN = "@your-domain.tld"
-
 
 def rule(event):
     if event.deep_get("protoPayload", "response", "error"):
@@ -11,8 +9,13 @@ def rule(event):
     if method != "InsertProjectOwnershipInvite":
         return False
 
+    authenticated = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default=""
+    )
+    expected_domain = authenticated.split("@")[-1]
+
     if event.deep_get("protoPayload", "request", "member", default="MEMBER_NOT_FOUND").endswith(
-        EXPECTED_DOMAIN
+        f"@{expected_domain}"
     ):
         return False
 

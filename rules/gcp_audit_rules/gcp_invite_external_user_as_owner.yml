@@ -24,6 +24,9 @@ Tests:
           "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
           "methodName": "InsertProjectOwnershipInvite",
           "resourceName": "projects/target-project",
+          "authenticationInfo": {
+            "principalEmail": "user@runpanther.com"
+          },
           "request": {
             "member": "user:attacker@gmail.com",
             "projectId": "target-project",
@@ -54,8 +57,11 @@ Tests:
           "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
           "methodName": "InsertProjectOwnershipInvite",
           "resourceName": "projects/target-project",
+          "authenticationInfo": {
+            "principalEmail": "user@runpanther.com"
+          },
           "request": {
-            "member": "user:internal-user@your-domain.tld",
+            "member": "user:internal-user@runpanther.com",
             "projectId": "target-project",
             "@type": "type.googleapis.com/google.internal.cloud.resourcemanager.InsertProjectOwnershipInviteRequest"
           },
