@@ -1,0 +1,24 @@
+AnalysisType: rule
+Filename: okta_new_location.py
+RuleID: Okta.NewLocation
+DisplayName: Okta New Location
+Enabled: false
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+  - Okta
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1539
+Severity: High
+Description: This rule looks for a user logging into Okta from a location not seen in the past 90 days.
+Runbook: Confirm the session is used on two devices, one of which is unknown. Lock the users Okta account and clear the users sessions in down stream apps.
+Reference: https://sec.okta.com/sessioncookietheft
+DedupPeriodMinutes: 1440
+Threshold: 1
+SummaryAttributes:
+  - eventType
+  - severity
+  - p_any_ip_addresses
+  - p_any_domain_names

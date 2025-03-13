@@ -1,0 +1,26 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.LocationBehavior"
+Enabled: true
+Description: >
+  Calculate a running inventory of Okta user login IPs and locations
+SnowflakeQuery: >
+  SELECT
+    actor:alternateId as id,
+    COUNT(*) as total,
+    COUNT(DISTINCT client:geographicalContext.country) as num_country,
+    ARRAY_AGG(DISTINCT client:geographicalContext.country) as country,
+    COUNT(DISTINCT client:geographicalContext.state) as num_state,
+    ARRAY_AGG(DISTINCT client:geographicalContext.state) as state,
+    COUNT(DISTINCT client:geographicalContext.city) as num_city,
+    ARRAY_AGG(DISTINCT client:geographicalContext.city) as city,
+    COUNT(DISTINCT client:ip_address) as num_ipAddress,
+    ARRAY_AGG(DISTINCT client:ip_address) as ipAddress
+  FROM
+    panther_logs.public.okta_systemlog
+  WHERE
+    p_occurs_since('90days')
+    AND eventType in ('user.authentication.sso', 'user.session.start')
+  GROUP BY 1
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5

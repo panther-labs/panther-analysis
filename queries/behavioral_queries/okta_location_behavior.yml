@@ -1,0 +1,16 @@
+AnalysisType: scheduled_rule
+Filename: okta_location_behavior.py
+RuleID: "Okta.LocationBehavior"
+Description: >
+  Calculate a running inventory of Okta user login IPs and locations
+DisplayName: "Okta Location Behavior"
+Enabled: true
+Tags:
+  - Privilege Escalation:Valid Accounts
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078
+ScheduledQueries:
+  - Query.Okta.LocationBehavior
+Severity: Info
+DedupPeriodMinutes: 1
