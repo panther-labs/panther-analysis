@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "Snowflake.Data.Exfiltration"
+RuleID: "Snowflake.Stream.DataExfiltration"
 DisplayName: "Snowflake Data Exfiltration"
 Enabled: true
 Severity: Critical
@@ -11,22 +11,22 @@ Reports:
 Detection:
   - Sequence:
       - ID: SnowflakeTempStageCreated
-        RuleID: Snowflake.TempStageCreated
+        RuleID: Snowflake.Stream.TempStageCreated
       - ID: SnowflakeCopyIntoStage
-        RuleID: Snowflake.CopyIntoStage
+        RuleID: Snowflake.Stream.TableCopiedIntoStage
       - ID: SnowflakeFileDownloaded
-        RuleID: Snowflake.FileDownloaded
+        RuleID: Snowflake.Stream.FileDownloaded
     Transitions:
       - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on stage
         From: SnowflakeTempStageCreated
         To: SnowflakeCopyIntoStage
         Match:
-          - On: stage
+          - On: p_alert_context.stage
       - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on path
         From: SnowflakeCopyIntoStage
         To: SnowflakeFileDownloaded
         Match:
-          - On: stage
+          - On: p_alert_context.stage
     Schedule:
       RateMinutes: 1440
       TimeoutMinutes: 15
@@ -37,19 +37,19 @@ Tests:
       RuleOutputs:
         - ID: SnowflakeTempStageCreated
           Matches:
-            stage:
+            p_alert_context.stage:
                 LOGS.PUBLIC.data_exfil:
                     - "2006-01-02T15:04:05Z"
                     - "2006-01-02T15:04:06Z"
         - ID: SnowflakeCopyIntoStage
           Matches:
-            stage:
+            p_alert_context.stage:
                 LOGS.PUBLIC.data_exfil:
                     - "2006-01-02T15:04:05Z"
                     - "2006-01-02T15:04:06Z"
         - ID: SnowflakeFileDownloaded
           Matches:
-            stage:
+            p_alert_context.stage:
                 LOGS.PUBLIC.data_exfil:
                     - "2006-01-02T15:04:05Z"
                     - "2006-01-02T15:04:06Z"
@@ -58,13 +58,13 @@ Tests:
       RuleOutputs:
         - ID: SnowflakeTempStageCreated
           Matches:
-            stage:
+            p_alert_context.stage:
                 LOGS.PUBLIC.data_exfil:
                     - "2006-01-02T15:04:05Z"
                     - "2006-01-02T15:04:06Z"
         - ID: SnowflakeCopyIntoStage
           Matches:
-            stage:
+            p_alert_context.stage:
                 LOGS.PUBLIC.data_exfil:
                     - "2006-01-02T15:04:05Z"
                     - "2006-01-02T15:04:06Z"
