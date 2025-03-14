@@ -408,3 +408,302 @@ Tests:
           },
         "vpcEndpointId": "vpce-1111",
       }
+  - Name: Invalid JSON Policy (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-01",
+        "eventName": "PutBucketPolicy",
+        "eventSource": "s3.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "bucketPolicy": "invalid-json-policy"
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: Multiple Conditions All Restrictive (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-02",
+        "eventName": "PutResourcePolicy",
+        "eventSource": "secretsmanager.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "resourcePolicy": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "secretsmanager:GetSecretValue",
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:PrincipalOrgID": "o-test123456",
+                  "aws:SourceVpc": "vpc-12345678"
+                },
+                "IpAddress": {
+                  "aws:SourceIp": "10.0.0.0/8"
+                }
+              }
+            }]
+          }
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: Public Finding Keywords (Should Alert)
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-03",
+        "eventName": "CreateElasticsearchDomain",
+        "eventSource": "es.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "accessPolicies": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "es:*",
+              "Resource": "*",
+              "Sid": "PublicInternetAccess"
+            }]
+          }
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: Wildcard Principal No Conditions (Should Alert)
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-04",
+        "eventName": "PutKeyPolicy",
+        "eventSource": "kms.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "policy": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "kms:Decrypt",
+              "Resource": "*"
+            }]
+          }
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: Mixed Conditions Some Restrictive (Should Alert)
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-05",
+        "eventName": "SetQueueAttributes",
+        "eventSource": "sqs.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "attributes": {
+            "Policy": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": "sqs:*",
+                  "Resource": "*",
+                  "Condition": {
+                    "StringEquals": {
+                      "aws:PrincipalOrgID": "o-test123456"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": "sqs:SendMessage",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: All Restrictive Conditions Types (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventID": "test-06",
+        "eventName": "PutBucketPolicy",
+        "eventSource": "s3.amazonaws.com",
+        "eventTime": "2024-01-01 00:00:00.000",
+        "eventType": "AwsApiCall",
+        "requestParameters": {
+          "bucketPolicy": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:PrincipalOrgID": "o-test123456"
+                },
+                "StringLike": {
+                  "aws:SourceVpc": "vpc-*"
+                },
+                "IpAddress": {
+                  "aws:SourceIp": ["10.0.0.0/8", "172.16.0.0/12"]
+                }
+              }
+            }]
+          }
+        },
+        "userIdentity": {
+          "type": "AssumedRole",
+          "userName": "TestRole"
+        }
+      }
+  - Name: Secrets Manager Restricted Access (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "eventName": "PutResourcePolicy",
+        "eventSource": "secretsmanager.amazonaws.com",
+        "eventTime": "2025-03-05 19:48:47.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "requestID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "requestParameters": {
+          "blockPublicPolicy": true,
+          "resourcePolicy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": \"*\",\n    \"Action\": \"secretsmanager:GetSecretValue\",\n    \"Resource\": \"arn:aws:secretsmanager:us-west-2:123456789012:secret:paloma/example-secret-xxxxxx\",\n    \"Condition\": {\n      \"StringEquals\": {\n        \"aws:PrincipalOrgID\": \"o-xxxxxxxxxx\"\n      },\n      \"ForAnyValue:StringLike\": {\n        \"aws:PrincipalArn\": [\"arn:aws:iam::*:role/ExampleDeploymentRole*\", \"arn:aws:iam::*:role/ExampleCodeBuild-*\"]\n      }\n    }\n  }, \n  {\n    \"Effect\": \"Allow\",\n    \"Principal\": \"*\",\n    \"Action\": \"secretsmanager:GetSecretValue\",\n    \"Resource\": \"arn:aws:secretsmanager:us-west-2:123456789012:secret:paloma/example-secret-xxxxxx\",\n    \"Condition\": {\n      \"StringEquals\": {\n        \"aws:PrincipalOrgID\": \"o-xxxxxxxxxx\"\n      },\n      \"ForAnyValue:StringLike\": {\n        \"aws:PrincipalArn\": [\"arn:aws:iam::*:role/ExampleDeploymentRole*\", \"arn:aws:iam::*:role/ExampleCodeBuild-*\"]\n      }\n    }\n  },\n  {\n    \"Effect\": \"Allow\",\n    \"Principal\": {\n      \"AWS\": [\"arn:aws:iam::123456789012:role/ExampleRoleAssumption1\", \"arn:aws:iam::123456789012:role/ExampleRoleAssumption2\"]\n    },\n    \"Action\": [\"secretsmanager:Get*\", \"secretsmanager:Describe*\", \"secretsmanager:List*\"],\n    \"Resource\": \"arn:aws:secretsmanager:us-west-2:123456789012:secret:paloma/example-secret-xxxxxx\"\n  }]\n}",
+          "secretId": "arn:aws:secretsmanager:us-west-2:123456789012:secret:paloma/example-secret-xxxxxx"
+        },
+        "responseElements": {
+          "arn": "arn:aws:secretsmanager:us-west-2:123456789012:secret:paloma/example-secret-xxxxxx",
+          "name": "paloma/example-secret"
+        },
+        "sessionCredentialFromConsole": true,
+        "sourceIPAddress": "10.0.0.1",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "secretsmanager.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLEACCESSKEYID",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx/example.user",
+          "principalId": "AROAXXXXXXXXXXXXXXXXX:example.user",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-03-05T19:41:35Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx",
+              "principalId": "AROAXXXXXXXXXXXXXXXXX",
+              "type": "Role",
+              "userName": "AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      } 
+  - Name: KMS Key Restricted Access (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "eventName": "PutKeyPolicy",
+        "eventSource": "kms.amazonaws.com",
+        "eventTime": "2025-03-05 21:19:44.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "requestID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "requestParameters": {
+          "bypassPolicyLockoutSafetyCheck": false,
+          "keyId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+          "policy": "{\n    \"Version\": \"2008-10-17\",\n    \"Statement\": [\n        {\n            \"Effect\": \"Allow\",\n            \"Principal\": {\n                \"AWS\": \"arn:aws:iam::123456789012:root\"\n            },\n            \"Action\": \"kms:*\",\n            \"Resource\": \"*\"\n        },\n        {\n            \"Effect\": \"Allow\",\n            \"Principal\": {\n                \"AWS\": [\n                    \"arn:aws:iam::123456789012:role/ExampleRoleAssumption1\",\n                    \"arn:aws:iam::123456789012:role/ExampleRoleAssumption2\"\n                ]\n            },\n            \"Action\": [\n                \"kms:Decrypt\",\n                \"kms:DescribeKey\"\n            ],\n            \"Resource\": \"*\"\n        },\n        {\n            \"Effect\": \"Allow\",\n            \"Principal\": \"*\",\n            \"Action\": \"kms:Decrypt\",\n            \"Resource\": \"*\",\n            \"Condition\": {\n                \"StringEquals\": {\n                    \"aws:PrincipalOrgID\": \"o-xxxxxxxxxx\"\n                },\n                \"ForAnyValue:StringLike\": {\n                    \"aws:PrincipalArn\": [\n                        \"arn:aws:iam::*:role/ExampleDeploymentRole*\",\n                        \"arn:aws:iam::*:role/ExampleCodeBuild-*\"\n                    ]\n                }\n            }\n        },\n        {\n            \"Effect\": \"Allow\",\n            \"Principal\": \"*\",\n            \"Action\": \"kms:Decrypt\",\n            \"Resource\": \"*\",\n            \"Condition\": {\n                \"StringEquals\": {\n                    \"aws:PrincipalOrgID\": \"o-yyyyyyyyyy\"\n                },\n                \"ForAnyValue:StringLike\": {\n                    \"aws:PrincipalArn\": [\n                        \"arn:aws:iam::*:role/ExampleDeploymentRole*\",\n                        \"arn:aws:sts::*:role/ExampleCodeBuild-*\",\n                        \"arn:aws:sts::*:assumed-role/ExampleDeploymentRole*\",\n                        \"arn:aws:sts::*:assumed-role/ExampleCodeBuild-*\"\n                    ]\n                }\n            }\n        }\n    ]\n}",
+          "policyName": "default"
+        },
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "arn": "arn:aws:kms:us-west-2:123456789012:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "type": "AWS::KMS::Key"
+          }
+        ],
+        "responseElements": {
+          "keyId": "arn:aws:kms:us-west-2:123456789012:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        },
+        "sessionCredentialFromConsole": true,
+        "sourceIPAddress": "10.0.0.1",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_256_GCM_SHA384",
+          "clientProvidedHostHeader": "kms.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "accessKeyId": "EXAMPLEACCESSKEYID",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx/example.user",
+          "principalId": "AROAXXXXXXXXXXXXXXXXX:example.user",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-03-05T21:15:00Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "123456789012",
+              "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx",
+              "principalId": "AROAXXXXXXXXXXXXXXXXX",
+              "type": "Role",
+              "userName": "AWSReservedSSO_ExampleRole_xxxxxxxxxxxxxxxx"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
