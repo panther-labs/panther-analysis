@@ -24,14 +24,18 @@
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
 - [GCP cloudfunctions functions update](../rules/gcp_audit_rules/gcp_cloudfunctions_functions_update.yml)
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
+- [GCP Compute IAM Policy Update Detection](../rules/gcp_audit_rules/gcp_compute_set_iam_policy.yml)
+  - This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
 - [GCP compute.instances.create Privilege Escalation](../rules/gcp_audit_rules/gcp_computeinstances_create_privilege_escalation.yml)
   - Detects compute.instances.create method for privilege escalation in GCP.
 - [GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.yml)
-  - A Gmail account is being used instead of a corporate email
+  - Unexpected domain is being used instead of a corporate email
 - [GCP Destructive Queries](../rules/gcp_audit_rules/gcp_destructive_queries.yml)
   - Detect any destructive BigQuery queries or jobs such as update, delete, drop, alter or truncate.
 - [GCP DNS Zone Modified or Deleted](../rules/gcp_audit_rules/gcp_dns_zone_modified_or_deleted.yml)
   - Detection for GCP DNS zones that are deleted, patched, or updated.
+- [GCP External User Ownership Invite](../rules/gcp_audit_rules/gcp_invite_external_user_as_owner.yml)
+  - This rule detects when an external user is invited as an owner of a GCP project using the InsertProjectOwnershipInvite event.
 - [GCP Firewall Rule Created](../rules/gcp_audit_rules/gcp_firewall_rule_created.yml)
   - This rule detects creations of GCP firewall rules.
 - [GCP Firewall Rule Deleted](../rules/gcp_audit_rules/gcp_firewall_rule_deleted.yml)
@@ -85,6 +89,8 @@
   - Detects when a service account or key is created manually by a user instead of an automated workflow.
 - [GCP serviceusage.apiKeys.create Privilege Escalation](../rules/gcp_audit_rules/gcp_serviceusage_apikeys_create_privilege_escalation.yml)
   - Detects serviceusage.apiKeys.create method for privilege escalation in GCP. By default, API Keys are created with no restrictions, which means they have access to the entire GCP project they were created in. We can capitalize on that fact by creating a new API key that may have more privileges than our own user.
+- [GCP Snapshot Creation Detection](../rules/gcp_audit_rules/gcp_snapshot_insert.yml)
+  - This rule detects when someone with an unexpected email domain creates a snapshot of a Compute Disk.
 - [GCP SQL Config Changes](../rules/gcp_audit_rules/gcp_sql_config_changes.yml)
   - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
 - [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
