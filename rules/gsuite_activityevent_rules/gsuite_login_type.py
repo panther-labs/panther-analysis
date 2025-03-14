@@ -1,10 +1,11 @@
 # allow-list of approved login types
+# comment or uncomment approved login types as needed
 APPROVED_LOGIN_TYPES = {
     "exchange",
     "google_password",
     "reauth",
     "saml",
-    "unknown",
+    # "unknown",
 }
 
 # allow-list any application names here
