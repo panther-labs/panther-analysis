@@ -23,4 +23,4 @@ def alert_context(event):
     # pylint: disable=global-statement
     global STAGE
     path = PATH_EXPR.match(event.get("QUERY_TEXT", ""))
-    return {"actor": event.get("USER_NAME"), "path": path.group(1), "stage": STAGE.group(1)}
+    return {"actor": event.get("USER_NAME"), "path": path.group(1), "stage": STAGE.group(1).lower()}

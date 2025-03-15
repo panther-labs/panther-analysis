@@ -30,4 +30,4 @@ def rule(event):
 def alert_context(event):
     # pylint: disable=global-statement
     global STAGE
-    return query_history_alert_context(event) | {"stage": STAGE.group(1)}
+    return query_history_alert_context(event) | {"stage": STAGE.group(1).lower()}
