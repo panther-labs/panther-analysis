@@ -1,7 +1,7 @@
 import re
 
-STAGE_EXPR = re.compile(r"COPY\s+INTO\s+(?:\$\$|\')?@([\w\.]+)", flags=re.I)
-PATH_EXPR = re.compile(r"COPY\s+INTO\s+(?:\$\$|\')?@([\w\./]+)(?:\$\$|\')?\s+FROM", flags=re.I)
+STAGE_EXPR = re.compile(r"COPY\s+INTO\s+(?:\$\$|')?@([\w\.]+)", flags=re.I)
+PATH_EXPR = re.compile(r"COPY\s+INTO\s+(?:\$\$|')?@([\w\./]+)(?:\$\$|')?\s+FROM", flags=re.I)
 
 STAGE = ""
 

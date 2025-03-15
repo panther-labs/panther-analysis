@@ -2,8 +2,8 @@ import re
 
 from panther_snowflake_helpers import query_history_alert_context
 
-PATH_EXPR = re.compile(r"GET\s+(\$\$|')?@([a-zA-Z0-9_\./]+)(\$\$|')?\s", flags=re.I)
-STAGE_EXPR = re.compile(r"GET\s+(\$\$|')?@([a-zA-Z0-9_\.]+)", flags=re.I)
+PATH_EXPR = re.compile(r"GET\s+(?:\$\$|')?@([a-zA-Z0-9_\./]+)(?:\$\$|')?\s", flags=re.I)
+STAGE_EXPR = re.compile(r"GET\s+(?:\$\$|')?@([a-zA-Z0-9_\.]+)", flags=re.I)
 
 PATH = ""
 STAGE = ""
@@ -34,6 +34,6 @@ def alert_context(event):
     global STAGE
     STAGE = STAGE_EXPR.match(event.get("QUERY_TEXT", ""))
     return query_history_alert_context(event) | {
-        "path": PATH.group(2),
-        "stage": None if not STAGE else STAGE.group(2).lower(),
+        "path": PATH.group(1),
+        "stage": None if not STAGE else STAGE.group(1).lower(),
     }
