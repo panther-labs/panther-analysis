@@ -5,17 +5,61 @@ from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 
 
-# Check that the IAM policy allows resource accessibility via the Internet
-def policy_is_internet_accessible(json_policy):
-    if json_policy is None:
+# Check if a policy (string or JSON) allows resource accessibility via the Internet
+# pylint: disable=too-complex
+def policy_is_internet_accessible(policy):
+    """
+    Check if a policy (string or JSON) allows resource accessibility via the Internet.
+
+    Args:
+        policy: A policy object that can be either a string or a JSON object
+
+    Returns:
+        bool: True if the policy allows internet access, False otherwise
+    """
+    # Handle empty policies (None, empty strings, empty dicts, etc.)
+    if not policy:
         return False
-    return Policy(json_policy).is_internet_accessible()
+
+    # Handle string policies by converting to JSON
+    if isinstance(policy, str):
+        try:
+            policy = json.loads(policy)
+        except json.JSONDecodeError:
+            return False
+
+    # Check if the policy has a wildcard principal but also has organization ID restrictions
+    # which should not be considered internet accessible
+    policy_obj = Policy(policy)
+
+    # If policyuniverse thinks it's not internet accessible, trust that
+    if not policy_obj.is_internet_accessible():
+        return False
+
+    # For policies with multiple statements, we need to check each statement individually
+    # If ANY statement is truly internet accessible, the policy is internet accessible
+    has_internet_accessible_statement = False
+
+    for statement in policy_obj.statements:
+        if statement.effect != "Allow" or "*" not in statement.principals:
+            continue
+
+        # Check if there are organization ID conditions which restrict access
+        has_org_condition = False
+        for condition in statement.condition_entries:
+            if condition.category == "organization":
+                has_org_condition = True
+                break
+
+        # If this statement has a wildcard principal but no organization ID restrictions,
+        # it's truly internet accessible
+        if not has_org_condition:
+            has_internet_accessible_statement = True
+            break
+
+    return has_internet_accessible_statement
 
 
-# Normally this check helps avoid overly complex functions that are doing too many things,
-# but in this case we explicitly want to handle 10 different cases in 10 different ways.
-# Any solution that avoids too many return statements only increases the complexity of this rule.
-# pylint: disable=too-many-return-statements, too-complex
 def rule(event):
     if not aws_cloudtrail_success(event):
         return False
@@ -25,47 +69,42 @@ def rule(event):
     if not parameters:
         return False
 
-    policy = ""
+    event_name = event.get("eventName", "")
 
-    # S3
-    if event["eventName"] == "PutBucketPolicy":
-        return policy_is_internet_accessible(parameters.get("bucketPolicy"))
+    # Special case for SNS topic attributes that need additional attribute name check
+    if event_name == "SetTopicAttributes" and parameters.get("attributeName", "") == "Policy":
+        policy_value = parameters.get("attributeValue", {})
+        return policy_is_internet_accessible(policy_value)
 
-    # ECR
-    if event["eventName"] == "SetRepositoryPolicy":
-        policy = parameters.get("policyText", {})
+    # Map of event names to policy locations in parameters
+    policy_location_map = {
+        # S3
+        "PutBucketPolicy": lambda p: p.get("bucketPolicy", {}),
+        # ECR
+        "SetRepositoryPolicy": lambda p: p.get("policyText", {}),
+        # Elasticsearch
+        "CreateElasticsearchDomain": lambda p: p.get("accessPolicies", {}),
+        "UpdateElasticsearchDomainConfig": lambda p: p.get("accessPolicies", {}),
+        # KMS
+        "CreateKey": lambda p: p.get("policy", {}),
+        "PutKeyPolicy": lambda p: p.get("policy", {}),
+        # S3 Glacier
+        "SetVaultAccessPolicy": lambda p: deep_get(p, "policy", "policy", default={}),
+        # SNS & SQS
+        "SetQueueAttributes": lambda p: deep_get(p, "attributes", "Policy", default={}),
+        "CreateTopic": lambda p: deep_get(p, "attributes", "Policy", default={}),
+        # SecretsManager
+        "PutResourcePolicy": lambda p: p.get("resourcePolicy", {}),
+    }
 
-    # Elasticsearch
-    if event["eventName"] in ["CreateElasticsearchDomain", "UpdateElasticsearchDomainConfig"]:
-        policy = parameters.get("accessPolicies", {})
-
-    # KMS
-    if event["eventName"] in ["CreateKey", "PutKeyPolicy"]:
-        policy = parameters.get("policy", {})
-
-    # S3 Glacier
-    if event["eventName"] == "SetVaultAccessPolicy":
-        policy = deep_get(parameters, "policy", "policy", default={})
-
-    # SNS & SQS
-    if event["eventName"] in ["SetQueueAttributes", "CreateTopic"]:
-        policy = deep_get(parameters, "attributes", "Policy", default={})
-
-    # SNS
-    if (
-        event["eventName"] == "SetTopicAttributes"
-        and parameters.get("attributeName", "") == "Policy"
-    ):
-        policy = parameters.get("attributeValue", {})
-
-    # SecretsManager
-    if event["eventName"] == "PutResourcePolicy":
-        policy = parameters.get("resourcePolicy", {})
-
-    if not policy:
+    # Get the policy extraction function for this event name
+    policy_extractor = policy_location_map.get(event_name)
+    if not policy_extractor:
         return False
 
-    return policy_is_internet_accessible(json.loads(policy))
+    # Extract the policy using the appropriate function
+    policy = policy_extractor(parameters)
+    return policy_is_internet_accessible(policy)
 
 
 def title(event):
