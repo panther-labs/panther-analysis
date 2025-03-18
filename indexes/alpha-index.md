@@ -122,6 +122,8 @@
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
+- [AWS Decrypt SSM Parameters](../rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml)
+  - Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
 - [AWS DNS Logs Deleted](../rules/aws_cloudtrail_rules/aws_dns_logs_deleted.yml)
   - Detects when logs for a DNS Resolver have been removed.
 - [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands_query.yml)
@@ -193,6 +195,10 @@
   - An AWS storage snapshot was made public.
 - [AWS Software Discovery](../rules/aws_cloudtrail_rules/aws_software_discovery.yml)
   - A user is obtaining a list of security software, configurations, defensive tools, and sensors that are in AWS.
+- [AWS SSM Distributed Command](../rules/aws_cloudtrail_rules/aws_ssm_distributed_command.yml)
+  - Detect an attacker utilizing AWS Systems Manager (SSM) to execute commands through SendCommand on multiple EC2 instances.
+- [AWS SSM Multiple Sessions](../queries/aws_queries/aws_ssm_multiple_sessions_query.yml)
+  - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
