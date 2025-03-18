@@ -1,0 +1,70 @@
+AnalysisType: correlation_rule
+RuleID: "Snowflake.Stream.DataExfiltration"
+DisplayName: "Snowflake Data Exfiltration"
+Enabled: true
+Severity: Critical
+Description: In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
+Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Reports:
+    MITRE ATT&CK:
+        - TA0010:T1041  # Exfiltration Over C2 Channel
+Detection:
+  - Sequence:
+      - ID: SnowflakeTempStageCreated
+        RuleID: Snowflake.Stream.TempStageCreated
+      - ID: SnowflakeCopyIntoStage
+        RuleID: Snowflake.Stream.TableCopiedIntoStage
+      - ID: SnowflakeFileDownloaded
+        RuleID: Snowflake.Stream.FileDownloaded
+    Transitions:
+      - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on stage
+        From: SnowflakeTempStageCreated
+        To: SnowflakeCopyIntoStage
+        Match:
+          - On: p_alert_context.stage
+      - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on path
+        From: SnowflakeCopyIntoStage
+        To: SnowflakeFileDownloaded
+        Match:
+          - On: p_alert_context.stage
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 15
+    LookbackWindowMinutes: 2160
+Tests:
+    - Name: Data Exfiltration
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: SnowflakeTempStageCreated
+          Matches:
+            p_alert_context.stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+        - ID: SnowflakeCopyIntoStage
+          Matches:
+            p_alert_context.stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+        - ID: SnowflakeFileDownloaded
+          Matches:
+            p_alert_context.stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+    - Name: Data Staged but not Downloaded
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: SnowflakeTempStageCreated
+          Matches:
+            p_alert_context.stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"
+        - ID: SnowflakeCopyIntoStage
+          Matches:
+            p_alert_context.stage:
+                LOGS.PUBLIC.data_exfil:
+                    - "2006-01-02T15:04:05Z"
+                    - "2006-01-02T15:04:06Z"

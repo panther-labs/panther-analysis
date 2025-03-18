@@ -23,8 +23,25 @@ Tests:
     Log:
       {
         "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "COPY INTO @mystage/result/data_\nFROM mytable FILE_FORMAT =
-      (FORMAT_NAME='CSV' COMPRESSION='GZIP');",
+        "QUERY_TEXT": "COPY INTO '@PANTHER_LOGS.PUBLIC.data_exfil/DATA.csv'
+          FROM (SELECT * FROM PANTHER_LOGS.PUBLIC.amazon_eks_audit LIMIT 100)
+          FILE_FORMAT = ( 
+          TYPE='CSV' 
+          COMPRESSION=GZIP
+          FIELD_DELIMITER=',' 
+          ESCAPE=NONE 
+          ESCAPE_UNENCLOSED_FIELD=NONE 
+          date_format='AUTO' 
+          time_format='AUTO' 
+          timestamp_format='AUTO'
+          binary_format='UTF-8' 
+          null_if='' 
+          EMPTY_FIELD_AS_NULL = FALSE 
+          )  
+          overwrite=TRUE 
+          single=FALSE 
+          max_file_size=5368709120 
+          header=TRUE",
         "QUERY_TYPE": "UNLOAD",
         "USER_NAME": "LEX_LUTHOR"
       }
