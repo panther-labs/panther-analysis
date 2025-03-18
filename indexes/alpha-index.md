@@ -175,6 +175,12 @@
   - Some AWS resource was made publicly accessible over the internet. Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
 - [AWS S3 Bucket Policy Modified](../rules/aws_cloudtrail_rules/aws_s3_bucket_policy_modified.yml)
   - An S3 Bucket was modified.
+- [AWS S3 Copy Object with Client-Side Encryption](../rules/aws_cloudtrail_rules/aws_s3_copy_object_with_client_side_encryption.yml)
+  - This rule detects when objects are copied in an S3 bucket with client-side encryption. Such actions can be indicative of unauthorized data access or other suspicious activities.
+- [AWS S3 Delete Object Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_object.yml)
+  - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
+  - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
