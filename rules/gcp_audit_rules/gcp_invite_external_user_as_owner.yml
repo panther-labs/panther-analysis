@@ -1,0 +1,81 @@
+AnalysisType: rule
+DedupPeriodMinutes: 60
+DisplayName: GCP External User Ownership Invite
+Enabled: true
+Filename: gcp_invite_external_user_as_owner.py
+RuleID: "GCP.Project.ExternalUserOwnershipInvite"
+Severity: High
+LogTypes:
+  - GCP.AuditLog
+Description: >
+  This rule detects when an external user is invited as an owner of a GCP project using the InsertProjectOwnershipInvite event.
+Runbook: >
+  Investigate the invitation to ensure it was authorized. Unauthorized invitations can lead to security risks. If the invitation was unauthorized, revoke the user's access to the project.
+Reference: https://cloud.google.com/resource-manager/docs/project-ownership
+Tests:
+  - Name: External User Ownership Invite
+    LogType: GCP.AuditLog
+    ExpectedResult: true
+    Log:
+      {
+        "insertId": "1abcd23efg456",
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "methodName": "InsertProjectOwnershipInvite",
+          "resourceName": "projects/target-project",
+          "authenticationInfo": {
+            "principalEmail": "user@runpanther.com"
+          },
+          "request": {
+            "member": "user:attacker@gmail.com",
+            "projectId": "target-project",
+            "@type": "type.googleapis.com/google.internal.cloud.resourcemanager.InsertProjectOwnershipInviteRequest"
+          },
+          "response": {
+            "@type": "type.googleapis.com/google.internal.cloud.resourcemanager.InsertProjectOwnershipInviteResponse"
+          },
+          "serviceName": "cloudresourcemanager.googleapis.com"
+        },
+        "resource": {
+          "labels": {
+            "project_id": "target-project"
+          },
+          "type": "gce_project"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2023-10-01T12:34:56.789Z"
+      }
+  - Name: Internal User Ownership Invite
+    LogType: GCP.AuditLog
+    ExpectedResult: false
+    Log:
+      {
+        "insertId": "2hijk34lmn789",
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "methodName": "InsertProjectOwnershipInvite",
+          "resourceName": "projects/target-project",
+          "authenticationInfo": {
+            "principalEmail": "user@runpanther.com"
+          },
+          "request": {
+            "member": "user:internal-user@runpanther.com",
+            "projectId": "target-project",
+            "@type": "type.googleapis.com/google.internal.cloud.resourcemanager.InsertProjectOwnershipInviteRequest"
+          },
+          "response": {
+            "@type": "type.googleapis.com/google.internal.cloud.resourcemanager.InsertProjectOwnershipInviteResponse"
+          },
+          "serviceName": "cloudresourcemanager.googleapis.com"
+        },
+        "resource": {
+          "labels": {
+            "project_id": "target-project"
+          },
+          "type": "gce_project"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2023-10-01T12:45:56.789Z"
+      }
