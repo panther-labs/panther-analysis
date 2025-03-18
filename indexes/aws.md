@@ -271,6 +271,8 @@
   - AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK to protect extra sensitive log data.
 - [AWS CloudWatch Logs Data Retention](../policies/aws_cloudwatch_policies/aws_cloudwatch_loggroup_data_retention.yml)
   - By default, logs are kept indefinitely and never expire. You can adjust the retention policy for each log group, keeping the indefinite retention, or choosing a specific retention period.
+- [AWS Resource Policy Confused Deputy Protection](../policies/aws_resource_policy_policies/aws_resource_policy_confused_deputy.yml)
+  - Ensures that resource policies (S3 bucket policies, KMS key policies, CloudWatch Logs resource policies, etc.) with service principals  include conditions to prevent the confused deputy problem. This includes checking for required condition keys like aws:SourceArn  or aws:SourceAccount, as well as service-specific controls like aws:PrincipalIsAWSService.Note that some AWS services may have additional service-specific controls: - KMS: Can use encryption context keys for additional security - CloudWatch Logs: May use service-specific condition keys - S3: May use bucket-specific condition keys - Lambda: Can use lambda:FunctionUrlAuthType for function URL invocations - Secrets Manager: Can use secretsmanager:ResourceTag condition keys - SQS: Can use sqs:* condition keys for queue operations - SNS: Can use sns:* condition keys for topic operations - API Gateway: Can use execute-api:* condition keys for API operations
 - [Sensitive AWS CloudWatch Log Encryption](../policies/aws_cloudwatch_policies/aws_cloudwatch_loggroup_sensitive_encrypted.yml)
   - AWS automatically performs server-side encryption of logs, but you can encrypt with your own CMK to protect extra sensitive log data.
 
@@ -487,12 +489,16 @@
   - This policy validates that customer master keys (CMKs) have automatic key rotation enabled.
 - [AWS KMS Key Restricts Usage](../policies/aws_kms_policies/aws_kms_key_policy_restricts_usage.yml)
   - This policy validates that KMS Keys restrict what entities can use them and how. This is to ensure that encryption keys are limited in who can use them in order to prevent unapproved decryption.
+- [AWS Resource Policy Confused Deputy Protection](../policies/aws_resource_policy_policies/aws_resource_policy_confused_deputy.yml)
+  - Ensures that resource policies (S3 bucket policies, KMS key policies, CloudWatch Logs resource policies, etc.) with service principals  include conditions to prevent the confused deputy problem. This includes checking for required condition keys like aws:SourceArn  or aws:SourceAccount, as well as service-specific controls like aws:PrincipalIsAWSService.Note that some AWS services may have additional service-specific controls: - KMS: Can use encryption context keys for additional security - CloudWatch Logs: May use service-specific condition keys - S3: May use bucket-specific condition keys - Lambda: Can use lambda:FunctionUrlAuthType for function URL invocations - Secrets Manager: Can use secretsmanager:ResourceTag condition keys - SQS: Can use sqs:* condition keys for queue operations - SNS: Can use sns:* condition keys for topic operations - API Gateway: Can use execute-api:* condition keys for API operations
 
 
 ## AWS Lambda
 
 - [AWS Lambda Public Access](../policies/aws_lambda_policies/aws_lambda_public_access.yml)
   - This policy ensures that the function policy attached to the Lambda resource prohibits public access
+- [AWS Resource Policy Confused Deputy Protection](../policies/aws_resource_policy_policies/aws_resource_policy_confused_deputy.yml)
+  - Ensures that resource policies (S3 bucket policies, KMS key policies, CloudWatch Logs resource policies, etc.) with service principals  include conditions to prevent the confused deputy problem. This includes checking for required condition keys like aws:SourceArn  or aws:SourceAccount, as well as service-specific controls like aws:PrincipalIsAWSService.Note that some AWS services may have additional service-specific controls: - KMS: Can use encryption context keys for additional security - CloudWatch Logs: May use service-specific condition keys - S3: May use bucket-specific condition keys - Lambda: Can use lambda:FunctionUrlAuthType for function URL invocations - Secrets Manager: Can use secretsmanager:ResourceTag condition keys - SQS: Can use sqs:* condition keys for queue operations - SNS: Can use sns:* condition keys for topic operations - API Gateway: Can use execute-api:* condition keys for API operations
 
 
 ## AWS PasswordPolicy
@@ -541,6 +547,8 @@
 
 ## AWS S3
 
+- [AWS Resource Policy Confused Deputy Protection](../policies/aws_resource_policy_policies/aws_resource_policy_confused_deputy.yml)
+  - Ensures that resource policies (S3 bucket policies, KMS key policies, CloudWatch Logs resource policies, etc.) with service principals  include conditions to prevent the confused deputy problem. This includes checking for required condition keys like aws:SourceArn  or aws:SourceAccount, as well as service-specific controls like aws:PrincipalIsAWSService.Note that some AWS services may have additional service-specific controls: - KMS: Can use encryption context keys for additional security - CloudWatch Logs: May use service-specific condition keys - S3: May use bucket-specific condition keys - Lambda: Can use lambda:FunctionUrlAuthType for function URL invocations - Secrets Manager: Can use secretsmanager:ResourceTag condition keys - SQS: Can use sqs:* condition keys for queue operations - SNS: Can use sns:* condition keys for topic operations - API Gateway: Can use execute-api:* condition keys for API operations
 - [AWS S3 Bucket Action Restrictions](../policies/aws_s3_policies/aws_s3_bucket_action_restrictions.yml)
   - Ensures that the S3 bucket policy does not allow any action on the bucket, in accordance with the principal of least privilege.
 - [AWS S3 Bucket Encryption](../policies/aws_s3_policies/aws_s3_bucket_encryption.yml)
@@ -569,8 +577,6 @@
   - Ensures access to S3 buckets is forced to use a secure (HTTPS) connection.
 - [AWS S3 Bucket Versioning](../policies/aws_s3_policies/aws_s3_bucket_versioning.yml)
   - Checks that object versioning is enabled in the S3 bucket.
-- [S3 Bucket Policy Confused Deputy Protection for Service Principals](../policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.yml)
-  - Ensures that S3 bucket policies with service principals include conditions to prevent the confused deputy problem.
 
 
 ## AWS S3ServerAccess
