@@ -13,5 +13,5 @@ def title(event: PantherEvent) -> str:
 def alert_context(event: PantherEvent) -> dict:
     return {
         "actor": event.deep_get("actor", "email", default="<UNKNOWN ACTOR>"),
-        "document_name": event.deep_get("parameters", "doc_title", default="<UNKNOWN DOCUMENT>")
+        "document_name": event.deep_get("parameters", "doc_title", default="<UNKNOWN DOCUMENT>"),
     }
