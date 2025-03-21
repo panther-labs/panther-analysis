@@ -27,7 +27,7 @@ def alert_context(event):
     prv_scopes = event.deep_get("details", "previous_scopes", default=[])
 
     context["scopes_added"] = [x for x in new_scopes if x not in prv_scopes]
-    context["scoped_removed"] = [x for x in prv_scopes if x not in new_scopes]
+    context["scopes_removed"] = [x for x in prv_scopes if x not in new_scopes]
 
     return context
 
