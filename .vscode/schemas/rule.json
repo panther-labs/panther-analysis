@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "rule"
+        },
+        {
+          "type": "string",
+          "const": "scheduled_rule"
+        }
+      ]
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Filename": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "RuleID": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "LogTypes": {
+      "allOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "ScheduledQueries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Severity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "Info"
+        },
+        {
+          "type": "string",
+          "const": "Low"
+        },
+        {
+          "type": "string",
+          "const": "Medium"
+        },
+        {
+          "type": "string",
+          "const": "High"
+        },
+        {
+          "type": "string",
+          "const": "Critical"
+        }
+      ]
+    },
+    "Description": {
+      "type": "string"
+    },
+    "DedupPeriodMinutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 1440
+    },
+    "InlineFilters": {
+      "type": "object"
+    },
+    "DisplayName": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "OnlyUseBaseRiskScore": {
+      "type": "boolean"
+    },
+    "OutputIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reference": {
+      "type": "string"
+    },
+    "Runbook": {
+      "type": "string"
+    },
+    "SummaryAttributes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Threshold": {
+      "type": "integer"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reports": {
+      "type": "object",
+      "properties": {
+        "<class 'str'>": {
+          "type": "string"
+        }
+      }
+    },
+    "Tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "LogType": {
+            "type": "string"
+          },
+          "ExpectedResult": {
+            "type": "boolean"
+          },
+          "Log": {
+            "type": "object"
+          },
+          "Mocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "objectName": {
+                  "type": "string"
+                },
+                "returnValue": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "DynamicSeverities": {
+      "type": "object"
+    },
+    "AlertTitle": {
+      "type": "string"
+    },
+    "AlertContext": {
+      "type": "object"
+    },
+    "GroupBy": {
+      "type": "object"
+    },
+    "CreateAlert": {
+      "type": "boolean"
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "AnalysisType": {
+            "const": "rule"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "AnalysisType",
+          "Enabled",
+          "RuleID",
+          "LogTypes",
+          "Severity"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "AnalysisType": {
+            "const": "scheduled_rule"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "AnalysisType",
+          "Enabled",
+          "RuleID",
+          "ScheduledQueries",
+          "Severity"
+        ]
+      }
+    }
+  ]
+}

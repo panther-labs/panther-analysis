@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "rule"
+        }
+      ]
+    },
+    "RuleID": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "BaseDetection": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Severity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "Info"
+        },
+        {
+          "type": "string",
+          "const": "Low"
+        },
+        {
+          "type": "string",
+          "const": "Medium"
+        },
+        {
+          "type": "string",
+          "const": "High"
+        },
+        {
+          "type": "string",
+          "const": "Critical"
+        }
+      ]
+    },
+    "Description": {
+      "type": "string"
+    },
+    "DedupPeriodMinutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 1440
+    },
+    "InlineFilters": {
+      "type": "object"
+    },
+    "DisplayName": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "OnlyUseBaseRiskScore": {
+      "type": "boolean"
+    },
+    "OutputIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reference": {
+      "type": "string"
+    },
+    "Runbook": {
+      "type": "string"
+    },
+    "SummaryAttributes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Threshold": {
+      "type": "integer"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reports": {
+      "type": "object",
+      "properties": {
+        "<class 'str'>": {
+          "type": "string"
+        }
+      }
+    },
+    "DynamicSeverities": {
+      "type": "object"
+    },
+    "AlertTitle": {
+      "type": "string"
+    },
+    "AlertContext": {
+      "type": "object"
+    },
+    "GroupBy": {
+      "type": "object"
+    },
+    "Tests": {
+      "type": "object"
+    },
+    "CreateAlert": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "AnalysisType",
+    "RuleID",
+    "BaseDetection"
+  ],
+  "additionalProperties": false
+}

@@ -122,6 +122,8 @@
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
+- [AWS Decrypt SSM Parameters](../rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml)
+  - Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
 - [AWS DNS Logs Deleted](../rules/aws_cloudtrail_rules/aws_dns_logs_deleted.yml)
   - Detects when logs for a DNS Resolver have been removed.
 - [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands_query.yml)
@@ -173,6 +175,12 @@
   - Some AWS resource was made publicly accessible over the internet. Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
 - [AWS S3 Bucket Policy Modified](../rules/aws_cloudtrail_rules/aws_s3_bucket_policy_modified.yml)
   - An S3 Bucket was modified.
+- [AWS S3 Copy Object with Client-Side Encryption](../rules/aws_cloudtrail_rules/aws_s3_copy_object_with_client_side_encryption.yml)
+  - This rule detects when objects are copied in an S3 bucket with client-side encryption. Such actions can be indicative of unauthorized data access or other suspicious activities.
+- [AWS S3 Delete Object Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_object.yml)
+  - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
+  - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
@@ -187,6 +195,10 @@
   - An AWS storage snapshot was made public.
 - [AWS Software Discovery](../rules/aws_cloudtrail_rules/aws_software_discovery.yml)
   - A user is obtaining a list of security software, configurations, defensive tools, and sensors that are in AWS.
+- [AWS SSM Distributed Command](../rules/aws_cloudtrail_rules/aws_ssm_distributed_command.yml)
+  - Detect an attacker utilizing AWS Systems Manager (SSM) to execute commands through SendCommand on multiple EC2 instances.
+- [AWS SSM Multiple Sessions](../queries/aws_queries/aws_ssm_multiple_sessions_query.yml)
+  - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
@@ -1036,14 +1048,18 @@
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
 - [GCP cloudfunctions functions update](../rules/gcp_audit_rules/gcp_cloudfunctions_functions_update.yml)
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
+- [GCP Compute IAM Policy Update Detection](../rules/gcp_audit_rules/gcp_compute_set_iam_policy.yml)
+  - This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
 - [GCP compute.instances.create Privilege Escalation](../rules/gcp_audit_rules/gcp_computeinstances_create_privilege_escalation.yml)
   - Detects compute.instances.create method for privilege escalation in GCP.
 - [GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.yml)
-  - A Gmail account is being used instead of a corporate email
+  - Unexpected domain is being used instead of a corporate email
 - [GCP Destructive Queries](../rules/gcp_audit_rules/gcp_destructive_queries.yml)
   - Detect any destructive BigQuery queries or jobs such as update, delete, drop, alter or truncate.
 - [GCP DNS Zone Modified or Deleted](../rules/gcp_audit_rules/gcp_dns_zone_modified_or_deleted.yml)
   - Detection for GCP DNS zones that are deleted, patched, or updated.
+- [GCP External User Ownership Invite](../rules/gcp_audit_rules/gcp_invite_external_user_as_owner.yml)
+  - This rule detects when an external user is invited as an owner of a GCP project using the InsertProjectOwnershipInvite event.
 - [GCP Firewall Rule Created](../rules/gcp_audit_rules/gcp_firewall_rule_created.yml)
   - This rule detects creations of GCP firewall rules.
 - [GCP Firewall Rule Deleted](../rules/gcp_audit_rules/gcp_firewall_rule_deleted.yml)
@@ -1097,6 +1113,8 @@
   - Detects when a service account or key is created manually by a user instead of an automated workflow.
 - [GCP serviceusage.apiKeys.create Privilege Escalation](../rules/gcp_audit_rules/gcp_serviceusage_apikeys_create_privilege_escalation.yml)
   - Detects serviceusage.apiKeys.create method for privilege escalation in GCP. By default, API Keys are created with no restrictions, which means they have access to the entire GCP project they were created in. We can capitalize on that fact by creating a new API key that may have more privileges than our own user.
+- [GCP Snapshot Creation Detection](../rules/gcp_audit_rules/gcp_snapshot_insert.yml)
+  - This rule detects when someone with an unexpected email domain creates a snapshot of a Compute Disk.
 - [GCP SQL Config Changes](../rules/gcp_audit_rules/gcp_sql_config_changes.yml)
   - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
 - [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
@@ -1703,7 +1721,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.

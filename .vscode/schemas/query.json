@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "type": "string",
+      "enum": [
+        "saved_query",
+        "scheduled_query"
+      ]
+    },
+    "QueryName": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "Query": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "string"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Lookback": {
+      "type": "boolean"
+    },
+    "LookbackWindowSeconds": {
+      "type": "integer"
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "CronExpression": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        },
+        "TimeoutMinutes": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "AnalysisType": {
+            "const": "saved_query"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "AnalysisType",
+          "QueryName",
+          "Query"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "AnalysisType": {
+            "const": "scheduled_query"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "AnalysisType",
+          "QueryName",
+          "Enabled",
+          "Query",
+          "Schedule"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

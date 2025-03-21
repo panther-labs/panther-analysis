@@ -1,4 +1,4 @@
-name: sync-panther-analysis-from-upstream
+name: Sync Panther Analysis from Upstream
 
 on:
   schedule:
@@ -15,10 +15,24 @@ jobs:
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
+      - name: Set token
+        id: set_token
+        run: |
+          # Check if PANTHER_SYNC_UPSTREAM secret is available by trying to substitute it
+          PANTHER_SYNC_UPSTREAM="${{ secrets.PANTHER_SYNC_UPSTREAM }}"
+          if [ -n "$PANTHER_SYNC_UPSTREAM" ]; then
+            echo "Using PANTHER_SYNC_UPSTREAM for authentication"
+            echo "token=${{ secrets.PANTHER_SYNC_UPSTREAM }}" >> $GITHUB_OUTPUT
+          else
+            echo "PANTHER_SYNC_UPSTREAM not found, using default GITHUB_TOKEN"
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7.0.1
         id: set_upstream
         name: Check Upstream
         with:
+          github-token: ${{ steps.set_token.outputs.token }}
           script: |
             const fs = require('fs');
             const upstreamLatest = await github.rest.repos.getLatestRelease({
@@ -32,7 +46,7 @@ jobs:
       - uses: peterjgrainger/action-create-branch@10c7d268152480ae859347db45dc69086cef1d9c #v3.0.0
         id: create_a_branch
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.set_token.outputs.token }}
         with:
           branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
@@ -40,7 +54,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
         with:
           ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.set_token.outputs.token }}
       # Sync this branch with upstream
       - name: Sync upstream changes into PR branch
         id: sync
@@ -49,7 +63,7 @@ jobs:
           # target_sync_branch == the branch in your fork that you want to sync to upstream
           target_sync_branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           # REQUIRED 'target_repo_token' exactly like this!
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          target_repo_token: ${{ steps.set_token.outputs.token }}
           #  NOTE NOTE NOTE NOTE
           # If you want to run this job and sync to upstream's master instead of releases
           #  change the usptream_sync_branch to master
@@ -63,6 +77,7 @@ jobs:
         name: Create a PR to bring upstream changes into the local repo primary branch
         if: steps.sync.outputs.has_new_commits == 'true'
         with:
+          github-token: ${{ steps.set_token.outputs.token }}
           result-encoding: string
           script: |
             const fs = require('fs');
