@@ -201,6 +201,8 @@
   - An EC2 VPC was modified.
 - [ECR CRUD Actions](../rules/aws_cloudtrail_rules/aws_ecr_crud.yml)
   - Unauthorized ECR Create, Read, Update, or Delete event occurred.
+- [External Principal Accessing AWS Resources Via VPC Endpoint](../rules/aws_cloudtrail_rules/aws_vpce_external_principal.yml)
+  - This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint. While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
@@ -253,16 +255,22 @@
   - The root account has been logged into.
 - [Root Password Changed](../rules/aws_cloudtrail_rules/aws_root_password_changed.yml)
   - Someone manually changed the Root console login password.
+- [S3 Access Via VPC Endpoint From External IP](../rules/aws_cloudtrail_rules/aws_vpce_s3_external_ip.yml)
+  - Detects S3 data access through VPC endpoints from external/public IP addresses, which could indicate data exfiltration attempts.This rule can be customized with the following overrides:- S3_DATA_ACCESS_OPERATIONS: List of S3 operations to monitor
 - [S3 Bucket Deleted](../rules/aws_cloudtrail_rules/aws_s3_bucket_deleted.yml)
   - A S3 Bucket, Policy, or Website was deleted
 - [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
   - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
+- [Sensitive API Calls Via VPC Endpoint](../rules/aws_cloudtrail_rules/aws_vpce_sensitive_api_calls.yml)
+  - Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [StopInstance FOLLOWED BY ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
   - Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.
 - [Unused AWS Region](../rules/aws_cloudtrail_rules/aws_unused_region.yml)
   - CloudTrail logged non-read activity from a verboten AWS region.
+- [VPC Endpoint Access Denied](../rules/aws_cloudtrail_rules/aws_vpce_access_denied.yml)
+  - Detects when access is denied due to VPC Endpoint policies, which could indicate attempted unauthorized access to AWS resources.
 
 
 ## AWS CloudWatch
