@@ -9,6 +9,10 @@ ACCESS_EXPANDED_ACTIONS = [
 
 
 def rule(event):
+    # if the action is app_scopes_expanded, check the scopes_added in p_alert_context not to be empty
+    if event.get("action") == "app_scopes_expanded":
+        if event.get("p_alert_context", {}).get("scopes_added", {}) == []:
+            return False
     return event.get("action") in ACCESS_EXPANDED_ACTIONS
 
 
