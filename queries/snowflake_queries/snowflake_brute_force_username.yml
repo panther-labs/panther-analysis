@@ -6,7 +6,7 @@ Description: >
 DisplayName: "Snowflake Brute Force Attacks by Username"
 Enabled: false
 ScheduledQueries:
-  - Query.Snowflake.BruteForceByUsername
+  - Query.Snowflake.FailedLogins
 Tags:
   - Snowflake
   - Credential Access:Brute Force
@@ -14,8 +14,20 @@ Reports:
   MITRE ATT&CK:
     - TA0006:T1110
 Severity: Medium
+SummaryAttributes:
+  - client_ip
+  - error_message
+  - error_code
+  - reported_client_type
 Tests:
   - Name: Value Returned By Query
     ExpectedResult: true
     Log:
       user_name: "testuser"
+      error_message: JWT_TOKEN_INVALID_PUBLIC_KEY_FINGERPRINT_MISMATCH
+      count_by_username: 100
+  - Name: Common Error Message
+    ExpectedResult: true
+    Log:
+      user_name: "testuser"
+      count_by_username: 100
