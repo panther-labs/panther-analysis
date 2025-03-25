@@ -6,8 +6,10 @@ def rule(event):
 
 
 def title(event):
-    return (f"AWS CloudTrail region [{event.deep_get('requestParameters', 'RegionName')}] "
-            f"enabled by user [{event.udm('actor_user')}]")
+    return (
+        f"AWS CloudTrail region [{event.deep_get('requestParameters', 'RegionName')}] "
+        f"enabled by user [{event.udm('actor_user')}]"
+    )
 
 
 def alert_context(event):
