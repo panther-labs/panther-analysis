@@ -667,6 +667,8 @@
 
 ## AWS VPCFlow
 
+- [Anomalous VPC Traffic to Destination Port](../queries/aws_queries/anomalous_vpc_traffic_to_dest_port_query.yml)
+  - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
@@ -1611,6 +1613,8 @@
   - A Panther user's role has been modified. This could mean password, email, or role has changed for the user.
 - [Detection content has been deleted from Panther](../rules/panther_audit_rules/panther_detection_deleted.yml)
   - Detection content has been removed from Panther.
+- [New Unique Values - Panther Audit Login from New IP](../queries/panther_queries/new_login_ip_query.yml)
+  - Find instances of users signing in to Panther from an IP they previously haven't used.
 - [Panther SAML configuration has been modified](../rules/panther_audit_rules/panther_saml_modified.yml)
   - An Admin has modified Panther's SAML configuration.
 - [Snowflake User Daily Query Volume Spike - Threat Hunting](../queries/snowflake_queries/snowflake_user_query_volume_spike_threat_hunting.yml)

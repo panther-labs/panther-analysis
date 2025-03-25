@@ -621,6 +621,8 @@
 
 ## AWS VPCFlow
 
+- [Anomalous VPC Traffic to Destination Port](../queries/aws_queries/anomalous_vpc_traffic_to_dest_port_query.yml)
+  - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
