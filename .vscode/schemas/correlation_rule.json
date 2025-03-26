@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "correlation_rule"
+        }
+      ]
+    },
+    "RuleID": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Detection": {
+      "type": "object"
+    },
+    "Severity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "Info"
+        },
+        {
+          "type": "string",
+          "const": "Low"
+        },
+        {
+          "type": "string",
+          "const": "Medium"
+        },
+        {
+          "type": "string",
+          "const": "High"
+        },
+        {
+          "type": "string",
+          "const": "Critical"
+        }
+      ]
+    },
+    "Description": {
+      "type": "string"
+    },
+    "DisplayName": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "OnlyUseBaseRiskScore": {
+      "type": "boolean"
+    },
+    "OutputIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reference": {
+      "type": "string"
+    },
+    "Runbook": {
+      "type": "string"
+    },
+    "SummaryAttributes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reports": {
+      "type": "object",
+      "properties": {
+        "<class 'str'>": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateAlert": {
+      "type": "boolean"
+    },
+    "Tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "ExpectedResult": {
+            "type": "boolean"
+          },
+          "RuleOutputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ID": {
+                  "type": "string"
+                },
+                "Matches": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "AnalysisType",
+    "RuleID",
+    "Enabled",
+    "Detection",
+    "Severity"
+  ],
+  "additionalProperties": false
+}

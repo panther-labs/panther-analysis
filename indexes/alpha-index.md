@@ -122,6 +122,8 @@
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
+- [AWS Decrypt SSM Parameters](../rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml)
+  - Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
 - [AWS DNS Logs Deleted](../rules/aws_cloudtrail_rules/aws_dns_logs_deleted.yml)
   - Detects when logs for a DNS Resolver have been removed.
 - [AWS EC2 Discovery Commands Executed](../queries/aws_queries/ec2_discovery_commands_query.yml)
@@ -173,6 +175,12 @@
   - Some AWS resource was made publicly accessible over the internet. Checks ECR, Elasticsearch, KMS, S3, S3 Glacier, SNS, SQS, and Secrets Manager.
 - [AWS S3 Bucket Policy Modified](../rules/aws_cloudtrail_rules/aws_s3_bucket_policy_modified.yml)
   - An S3 Bucket was modified.
+- [AWS S3 Copy Object with Client-Side Encryption](../rules/aws_cloudtrail_rules/aws_s3_copy_object_with_client_side_encryption.yml)
+  - This rule detects when objects are copied in an S3 bucket with client-side encryption. Such actions can be indicative of unauthorized data access or other suspicious activities.
+- [AWS S3 Delete Object Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_object.yml)
+  - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
+  - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
@@ -187,6 +195,10 @@
   - An AWS storage snapshot was made public.
 - [AWS Software Discovery](../rules/aws_cloudtrail_rules/aws_software_discovery.yml)
   - A user is obtaining a list of security software, configurations, defensive tools, and sensors that are in AWS.
+- [AWS SSM Distributed Command](../rules/aws_cloudtrail_rules/aws_ssm_distributed_command.yml)
+  - Detect an attacker utilizing AWS Systems Manager (SSM) to execute commands through SendCommand on multiple EC2 instances.
+- [AWS SSM Multiple Sessions](../queries/aws_queries/aws_ssm_multiple_sessions_query.yml)
+  - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
@@ -647,6 +659,8 @@
 
 ## AWS VPCFlow
 
+- [Anomalous VPC Traffic to Destination Port](../queries/aws_queries/anomalous_vpc_traffic_to_dest_port_query.yml)
+  - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
@@ -1591,6 +1605,8 @@
   - A Panther user's role has been modified. This could mean password, email, or role has changed for the user.
 - [Detection content has been deleted from Panther](../rules/panther_audit_rules/panther_detection_deleted.yml)
   - Detection content has been removed from Panther.
+- [New Unique Values - Panther Audit Login from New IP](../queries/panther_queries/new_login_ip_query.yml)
+  - Find instances of users signing in to Panther from an IP they previously haven't used.
 - [Panther SAML configuration has been modified](../rules/panther_audit_rules/panther_saml_modified.yml)
   - An Admin has modified Panther's SAML configuration.
 - [Snowflake User Daily Query Volume Spike - Threat Hunting](../queries/snowflake_queries/snowflake_user_query_volume_spike_threat_hunting.yml)

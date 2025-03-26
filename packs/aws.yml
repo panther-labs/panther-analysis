@@ -136,6 +136,9 @@ PackDefinition:
     - AWS.S3.Bucket.NameDNSCompliance
     - AWS.S3.BucketDeleted
     - AWS.S3.BucketPolicyModified
+    - AWS.S3.CopyObjectWithClientSideEncryption
+    - AWS.S3.DeleteObject
+    - AWS.S3.DeleteObjects
     - AWS.S3.ServerAccess.Error
     - AWS.SecurityHub.Finding.Evasion
     - AWS.VPC.FlowLogs
@@ -211,10 +214,14 @@ PackDefinition:
     - Retrieve.SSO.access.token
     - Sign-in.with.AWS.CLI.prompt
     # Stratus Red Team Rules
+    - AWS SSM Multiple Sessions
     - AWS.SecretsManager.RetrieveSecretsMultiRegion
     - AWS.SecretsManager.RetrieveSecrets
     - AWS.SecretsManager.BatchRetrieveSecrets
     - AWS.SecretsManager.BatchRetrieveSecretsCatchAll
+    - AWS.SSM.DecryptSSMParams
+    - AWS.SSM.DistributedCommand
+    - AWS.SSM.MultipleSessions
     # Queries
     - AWS EC2 Discovery Commands Executed
     - AWS Potentially Stolen Service Role
