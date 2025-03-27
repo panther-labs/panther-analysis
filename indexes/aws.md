@@ -54,6 +54,8 @@
   - This policy ensures that at least one CloudTrail has management (control plane) operations logged.
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
+- [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
+  - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
   - Detects when an S3 bucket containing CloudTrail logs has been modified to delete data after a short period of time.
 - [AWS CloudTrail S3 Bucket Access Logging](../policies/aws_cloudtrail_policies/aws_cloudtrail_s3_bucket_access_logging.yml)
@@ -201,6 +203,8 @@
   - An EC2 VPC was modified.
 - [ECR CRUD Actions](../rules/aws_cloudtrail_rules/aws_ecr_crud.yml)
   - Unauthorized ECR Create, Read, Update, or Delete event occurred.
+- [External Principal Accessing AWS Resources Via VPC Endpoint](../rules/aws_cloudtrail_rules/aws_vpce_external_principal.yml)
+  - This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint. While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
@@ -253,16 +257,22 @@
   - The root account has been logged into.
 - [Root Password Changed](../rules/aws_cloudtrail_rules/aws_root_password_changed.yml)
   - Someone manually changed the Root console login password.
+- [S3 Access Via VPC Endpoint From External IP](../rules/aws_cloudtrail_rules/aws_vpce_s3_external_ip.yml)
+  - Detects S3 data access through VPC endpoints from external/public IP addresses, which could indicate data exfiltration attempts.This rule can be customized with the following overrides:- S3_DATA_ACCESS_OPERATIONS: List of S3 operations to monitor
 - [S3 Bucket Deleted](../rules/aws_cloudtrail_rules/aws_s3_bucket_deleted.yml)
   - A S3 Bucket, Policy, or Website was deleted
 - [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
   - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
+- [Sensitive API Calls Via VPC Endpoint](../rules/aws_cloudtrail_rules/aws_vpce_sensitive_api_calls.yml)
+  - Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [StopInstance FOLLOWED BY ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
   - Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.
 - [Unused AWS Region](../rules/aws_cloudtrail_rules/aws_unused_region.yml)
   - CloudTrail logged non-read activity from a verboten AWS region.
+- [VPC Endpoint Access Denied](../rules/aws_cloudtrail_rules/aws_vpce_access_denied.yml)
+  - Detects when access is denied due to VPC Endpoint policies, which could indicate attempted unauthorized access to AWS resources.
 
 
 ## AWS CloudWatch
@@ -619,6 +629,8 @@
 
 ## AWS VPCFlow
 
+- [Anomalous VPC Traffic to Destination Port](../queries/aws_queries/anomalous_vpc_traffic_to_dest_port_query.yml)
+  - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)

@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "policy"
+        }
+      ]
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Filename": {
+      "type": "string"
+    },
+    "PolicyID": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "ResourceTypes": {
+      "allOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "Severity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "Info"
+        },
+        {
+          "type": "string",
+          "const": "Low"
+        },
+        {
+          "type": "string",
+          "const": "Medium"
+        },
+        {
+          "type": "string",
+          "const": "High"
+        },
+        {
+          "type": "string",
+          "const": "Critical"
+        }
+      ]
+    },
+    "ActionDelaySeconds": {
+      "type": "integer"
+    },
+    "AutoRemediationID": {
+      "type": "string"
+    },
+    "AutoRemediationParameters": {
+      "type": "object"
+    },
+    "Description": {
+      "type": "string"
+    },
+    "DisplayName": {
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^[^<>&\\\"%]+$"
+        }
+      ]
+    },
+    "OnlyUseBaseRiskScore": {
+      "type": "boolean"
+    },
+    "OutputIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reference": {
+      "type": "string"
+    },
+    "Runbook": {
+      "type": "string"
+    },
+    "Suppressions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Reports": {
+      "type": "object",
+      "properties": {
+        "<class 'str'>": {
+          "type": "string"
+        }
+      }
+    },
+    "Tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "ResourceType": {
+            "type": "string"
+          },
+          "ExpectedResult": {
+            "type": "boolean"
+          },
+          "Resource": {
+            "type": "object"
+          },
+          "Mocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "objectName": {
+                  "type": "string"
+                },
+                "returnValue": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "AnalysisType",
+    "Enabled",
+    "Filename",
+    "PolicyID",
+    "Severity"
+  ],
+  "additionalProperties": false
+}
