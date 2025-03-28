@@ -1,0 +1,111 @@
+AnalysisType: rule
+Filename: aws_vpce_sensitive_api_calls.py
+RuleID: "AWS.CloudTrail.VPCE.SensitiveAPICalls"
+DisplayName: "Sensitive API Calls Via VPC Endpoint"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Severity: Medium
+Tags:
+  - AWS
+  - VPC
+  - CloudTrail
+  - Network Boundary Bridging
+  - Cloud Service Discovery
+  - Account Manipulation
+  - Impair Defenses
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1526 # Cloud Service Discovery
+    - TA0003:T1098 # Account Manipulation
+    - TA0005:T1562 # Impair Defenses
+    - TA0005:T1599 # Network Boundary Bridging
+Description: Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
+Runbook: >
+  1. Identify the principal making the sensitive API call and the specific service affected
+  2. Determine if this action is expected from this principal
+  3. Check if the API call is one that typically requires additional scrutiny (e.g., logging configuration changes)
+  4. Investigate whether the VPC Endpoint is configured to properly restrict access
+  5. Review additional API calls from the same principal for suspicious patterns
+  6. If unexpected activity is confirmed, consider temporarily restricting the principal's access
+  7. Document findings and take appropriate remediation steps based on investigation
+Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
+SummaryAttributes:
+  - userIdentity.principalId
+  - userIdentity.accountId
+  - sourceIPAddress
+  - eventSource
+  - eventName
+Tests:
+  - Name: CloudTrail API Call Via VPC Endpoint
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "eventCategory": "NetworkActivity",
+        "eventType": "AwsVpceEvent",
+        "eventTime": "2023-03-01T00:00:00Z",
+        "awsRegion": "us-east-1",
+        "eventSource": "cloudtrail.amazonaws.com",
+        "eventName": "UpdateTrail",
+        "sourceIPAddress": "10.0.0.1",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AROAEXAMPLE:session-name",
+          "accountId": "111111111111"
+        },
+        "requestParameters": {
+          "name": "management-events",
+          "isMultiRegionTrail": false
+        },
+        "responseElements": null,
+        "vpcEndpointId": "vpce-1234abcd",
+        "vpcEndpointAccountId": "111111111111",
+        "recipientAccountId": "111111111111"
+      }
+  - Name: Regular S3 API Call (Not Sensitive)
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "eventCategory": "NetworkActivity",
+        "eventType": "AwsVpceEvent",
+        "eventTime": "2023-03-01T00:00:00Z",
+        "awsRegion": "us-east-1",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "GetObject",
+        "sourceIPAddress": "10.0.0.1",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AROAEXAMPLE:session-name",
+          "accountId": "111111111111"
+        },
+        "requestParameters": {
+          "bucketName": "example-bucket",
+          "key": "example-file.txt"
+        },
+        "responseElements": null,
+        "vpcEndpointId": "vpce-1234abcd",
+        "vpcEndpointAccountId": "111111111111",
+        "recipientAccountId": "111111111111"
+      }
+  - Name: API Call Without VPC Endpoint
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "eventCategory": "Management",
+        "eventType": "AwsApiCall",
+        "eventTime": "2023-03-01T00:00:00Z",
+        "awsRegion": "us-east-1",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "ListAllMyBuckets",
+        "sourceIPAddress": "203.0.113.1",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AROAEXAMPLE:session-name",
+          "accountId": "111111111111"
+        },
+        "requestParameters": {},
+        "responseElements": null
+      } 

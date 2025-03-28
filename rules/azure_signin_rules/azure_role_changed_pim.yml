@@ -6,7 +6,7 @@ Enabled: true
 LogTypes:
   - Azure.Audit
 Severity: Medium
-DedupPeriodMinutes: 0
+DedupPeriodMinutes: 5
 Description: >
   This detection looks for a change in member's PIM roles in EntraID
 Reports:
@@ -25,6 +25,7 @@ Tests:
     ExpectedResult: true
     Log:
         {
+            "p_row_id": "2316902d-b9a4-4f37-a1a5-5ed03993110f",
             "category": "AuditLogs",
             "correlationId": "1234155",
             "durationMs": 0,
