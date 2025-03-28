@@ -12,7 +12,7 @@ Reports:
 Description: >
   Detect when an attacker pushes an SSH public key to multiple EC2 instances.
 DedupPeriodMinutes: 60
-Threshold: 2
+Threshold: 1
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.lateral-movement.ec2-instance-connect/
 Runbook: >
@@ -29,7 +29,12 @@ Tags:
   - SSH
   - Lateral Movement:Remote Services
 Tests:
-  - Name: Public SSH Key Sent Successfully
+  - Name: Public SSH Key Sent Successfully to Multiple Instances
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["i-other-id"]'
+      - objectName: put_string_set
+        returnValue: ''
     ExpectedResult: true
     Log:
       {
@@ -82,6 +87,68 @@ Tests:
               "userName": "SampleRole"
             },
             "webIdFederationData": {}
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Public SSH Key Sent Successfully to Same Instance
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["i-abcdef01234567890"]'
+      - objectName: put_string_set
+        returnValue: ''
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2025-01-13 19:58:59.000000000",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2025-01-13 20:05:54.575569351",
+        "awsRegion": "us-west-2",
+        "eventCategory": "Management",
+        "eventID": "d6d05dd2-d03d-4dce-a88c-02b6a567d889",
+        "eventName": "SendSSHPublicKey",
+        "eventSource": "ec2-instance-connect.amazonaws.com",
+        "eventTime": "2025-01-13 19:58:59.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "111122223333",
+        "requestID": "25eac5d1-cd24-4156-a49b-f2bf3a20ec9d",
+        "requestParameters": {
+          "instanceId": "i-abcdef01234567890",
+          "instanceOSUser": "ec2-user",
+          "sSHPublicKey": "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        },
+        "responseElements": {
+          "requestId": "25eac5d1-cd24-4156-a49b-f2bf3a20ec9d",
+          "success": true
+        },
+        "sourceIPAddress": "1.2.3.4",
+        "tlsDetails": {
+          "cipherSuite": "TLS_AES_128_GCM_SHA256",
+          "clientProvidedHostHeader": "ec2-instance-connect.us-west-2.amazonaws.com",
+          "tlsVersion": "TLSv1.3"
+        },
+        "userAgent": "stratus-red-team_8b255a24-d33d-4750-bd4b-4007124741df",
+        "userIdentity": {
+          "accessKeyId": "SAMPLE_ACCESS_KEY",
+          "accountId": "111122223333",
+          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
+          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-01-13T19:21:25Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "111122223333",
+              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+              "principalId": "SAMPLE_PRINCIPAL_ID",
+              "type": "Role",
+              "userName": "SampleRole"
+            },
+            "webIdFederationData": { }
           },
           "type": "AssumedRole"
         }
