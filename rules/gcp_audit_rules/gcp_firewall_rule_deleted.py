@@ -1,12 +1,10 @@
-import re
-
 from panther_gcp_helpers import gcp_alert_context
-
 
 RULE_DELETED_PARTS = [
     ".Firewall.Delete",
     ".compute.firewalls.delete",
 ]
+
 
 def rule(event):
     method = event.deep_get("protoPayload", "methodName", default="")

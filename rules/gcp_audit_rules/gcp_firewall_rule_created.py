@@ -1,10 +1,10 @@
 from panther_gcp_helpers import gcp_alert_context
 
-
 RULE_CREATED_PARTS = [
     ".Firewall.Create",
     ".compute.firewalls.insert",
 ]
+
 
 def rule(event):
     method = event.deep_get("protoPayload", "methodName", default="")

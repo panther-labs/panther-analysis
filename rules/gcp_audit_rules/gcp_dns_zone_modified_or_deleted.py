@@ -25,5 +25,6 @@ def dedup(event):
     )
     return actor
 
+
 def alert_context(event):
     return gcp_alert_context(event)
