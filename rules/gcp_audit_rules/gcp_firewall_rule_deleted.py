@@ -3,10 +3,14 @@ import re
 from panther_gcp_helpers import gcp_alert_context
 
 
+RULE_DELETED_PARTS = [
+    ".Firewall.Delete",
+    ".compute.firewalls.delete",
+]
+
 def rule(event):
-    method_pattern = r"(?:\w+\.)*v\d\.(?:Firewall\.Delete)|(compute\.firewalls\.delete)"
-    match = re.search(method_pattern, event.deep_get("protoPayload", "methodName", default=""))
-    return match is not None
+    method = event.deep_get("protoPayload", "methodName", default="")
+    return any(part in method for part in RULE_DELETED_PARTS)
 
 
 def title(event):
@@ -27,6 +31,13 @@ def title(event):
     if resource_id != "<RESOURCE_ID_NOT_FOUND>":
         return f"[GCP]: [{actor}] deleted firewall rule with resource ID [{resource_id}]"
     return f"[GCP]: [{actor}] deleted firewall rule for resource [{resource}]"
+
+
+def dedup(event):
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+    return actor
 
 
 def alert_context(event):
