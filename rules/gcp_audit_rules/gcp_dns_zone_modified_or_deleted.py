@@ -19,5 +19,12 @@ def title(event):
     return f"[GCP]: [{actor}] modified managed DNS zone [{resource}]"
 
 
+def dedup(event):
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+    return actor
+
+
 def alert_context(event):
     return gcp_alert_context(event)

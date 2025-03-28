@@ -1,12 +1,15 @@
-import re
-
 from panther_gcp_helpers import gcp_alert_context
+
+RULE_MODIFIED_PARTS = [
+    ".Firewall.Update",
+    ".compute.firewalls.patch",
+    ".compute.firewalls.update",
+]
 
 
 def rule(event):
-    method_pattern = r"(?:\w+\.)*v\d\.(?:Firewall\.Update)|(compute\.firewalls\.(patch|update))"
-    match = re.search(method_pattern, event.deep_get("protoPayload", "methodName", default=""))
-    return match is not None
+    method = event.deep_get("protoPayload", "methodName", default="")
+    return any(part in method for part in RULE_MODIFIED_PARTS)
 
 
 def title(event):
@@ -15,6 +18,13 @@ def title(event):
     )
     resource = event.deep_get("protoPayload", "resourceName", default="<RESOURCE_NOT_FOUND>")
     return f"[GCP]: [{actor}] modified firewall rule on [{resource}]"
+
+
+def dedup(event):
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+    return actor
 
 
 def alert_context(event):
