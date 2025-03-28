@@ -10,13 +10,16 @@ def rule(event: PantherEvent) -> bool:
         return False
 
     key = event.deep_get("requestParameters", "sSHPublicKey")
-    cached_instance_ids = get_cached_instance_ids(key)
-    if len(cached_instance_ids) == 0:
+    if not key:
         return False
     target_instance_id = event.deep_get("requestParameters", "instanceId")
+    cached_instance_ids = get_cached_instance_ids(key)
+    if len(cached_instance_ids) == 0:
+        put_string_set(key, set(target_instance_id), epoch_seconds=3600)
+        return False
     if target_instance_id not in cached_instance_ids:
         cached_instance_ids.add(target_instance_id)
-        put_string_set(key, cached_instance_ids, epoch_seconds=3600)
+        put_string_set(key, cached_instance_ids)
         return True
     return False
 
