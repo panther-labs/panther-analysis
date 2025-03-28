@@ -4,7 +4,7 @@ RuleID: "Azure.Audit.RiskLevelPassthrough"
 DisplayName: "Azure RiskLevel Passthrough"
 Enabled: true
 Threshold: 1
-DedupPeriodMinutes: 10
+DedupPeriodMinutes: 40
 LogTypes:
   - Azure.Audit
 Severity: Medium
@@ -14,7 +14,7 @@ Description: >
 
   riskLevelAggregated and riskLevelDuringSignIn are only
   expected for Azure AD Premium P2 customers.
-Reference: https://learn.microsoft.com/en-us/azure/active-directory/identity-protection/howto-identity-protection-risk-feedback
+Reference: https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110
