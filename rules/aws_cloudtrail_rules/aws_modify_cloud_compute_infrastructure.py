@@ -75,9 +75,12 @@ def title(event):
 
 def dedup(event):
     items = event.deep_get(
-        "requestParameters", "instancesSet", "items", default=[{"instanceId": "INSTANCE_ID_NOT_FOUND"}]
+        "requestParameters",
+        "instancesSet",
+        "items",
+        default=[{"instanceId": "INSTANCE_ID_NOT_FOUND"}],
     )
-    return items[0].get("instanceId")
+    return items[0].get("instanceId", "INSTANCE_ID_NOT_FOUND")
 
 
 def alert_context(event):
