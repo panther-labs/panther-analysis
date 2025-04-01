@@ -2,6 +2,8 @@ on:
   pull_request:
     paths:
       - "Dockerfile"
+      - "Pipfile.lock"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,12 +15,29 @@ jobs:
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+
       - uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25 #v3.4.0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        with:
+          role-to-assume: arn:aws:iam::349240696275:role/DockerCI
+          aws-region: us-west-2
+          role-session-name: docker
+      
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@f7ce87c1d6bead3e36075b2ce75da1f6cc28aaca #v3.9.0
+
       - name: Build Image
-        run: docker buildx build --load -f Dockerfile -t panther-analysis:latest .
+        env:
+          ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-base
+        run: docker buildx build --push -f Dockerfile -t panther-analysis:latest .
+
       - name: Test Image
         run: |
           docker run --rm -t panther-analysis:latest pipenv run panther_analysis_tool --version
