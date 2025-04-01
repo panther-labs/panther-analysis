@@ -11,7 +11,7 @@ ACCESS_EXPANDED_ACTIONS = [
 def rule(event):
     if event.get("action") not in ACCESS_EXPANDED_ACTIONS:
         return False
-    
+
     # Check to confirm that app scopes actually expanded or not
     if event.get("action") == "app_scopes_expanded":
         changes = get_scope_changes(event)
@@ -19,11 +19,13 @@ def rule(event):
             return False
     return True
 
+
 def title(event):
     return (
         f"Slack App [{event.deep_get('entity', 'app', 'name')}] "
         f"Access Expanded by [{event.deep_get('actor', 'user', 'name')}]"
     )
+
 
 def alert_context(event):
     context = slack_alert_context(event)
@@ -38,6 +40,7 @@ def alert_context(event):
 
     return context
 
+
 def get_scope_changes(event) -> dict[str, list[str]]:
     changes = {}
 
@@ -48,6 +51,7 @@ def get_scope_changes(event) -> dict[str, list[str]]:
     changes["removed"] = [x for x in prv_scopes if x not in new_scopes]
 
     return changes
+
 
 def severity(event):
     # Used to escalate to High/Critical if the app is granted admin privileges
