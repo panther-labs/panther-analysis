@@ -30,10 +30,6 @@ def title(event):
 def alert_context(event):
     context = slack_alert_context(event)
 
-    # Diff previous and new scopes
-    new_scopes = event.deep_get("details", "new_scopes", default=[])
-    prv_scopes = event.deep_get("details", "previous_scopes", default=[])
-
     changes = get_scope_changes(event)
     context["scopes_added"] = changes["added"]
     context["scopes_removed"] = changes["removed"]
