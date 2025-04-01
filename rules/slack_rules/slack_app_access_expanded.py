@@ -9,7 +9,15 @@ ACCESS_EXPANDED_ACTIONS = [
 
 
 def rule(event):
-    return event.get("action") in ACCESS_EXPANDED_ACTIONS
+    if event.get("action") not in ACCESS_EXPANDED_ACTIONS:
+        return False
+
+    # Check to confirm that app scopes actually expanded or not
+    if event.get("action") == "app_scopes_expanded":
+        changes = get_scope_changes(event)
+        if not changes["added"]:
+            return False
+    return True
 
 
 def title(event):
@@ -22,14 +30,23 @@ def title(event):
 def alert_context(event):
     context = slack_alert_context(event)
 
-    # Diff previous and new scopes
+    changes = get_scope_changes(event)
+    context["scopes_added"] = changes["added"]
+    context["scopes_removed"] = changes["removed"]
+
+    return context
+
+
+def get_scope_changes(event) -> dict[str, list[str]]:
+    changes = {}
+
     new_scopes = event.deep_get("details", "new_scopes", default=[])
     prv_scopes = event.deep_get("details", "previous_scopes", default=[])
 
-    context["scopes_added"] = [x for x in new_scopes if x not in prv_scopes]
-    context["scoped_removed"] = [x for x in prv_scopes if x not in new_scopes]
+    changes["added"] = [x for x in new_scopes if x not in prv_scopes]
+    changes["removed"] = [x for x in prv_scopes if x not in new_scopes]
 
-    return context
+    return changes
 
 
 def severity(event):
