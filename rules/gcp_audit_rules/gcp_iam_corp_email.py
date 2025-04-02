@@ -18,11 +18,23 @@ def rule(event):
     if not binding_deltas:
         return False
 
+    all_service_accounts = True
+
     for delta in binding_deltas:
-        if delta.get("action") != "ADD":
-            continue
-        if delta.get("member", "").endswith(f"@{expected_domain}"):
+        member = delta.get("member", "")
+        if delta.get("action") == "ADD" and member.endswith(f"@{expected_domain}"):
             return False
+
+        if not (
+            member.startswith("serviceAccount:")
+            and "@gcp-sa-" in member
+            and member.endswith(".iam.gserviceaccount.com")
+        ):
+            all_service_accounts = False
+
+    if authenticated == "service-agent-manager@system.gserviceaccount.com" and all_service_accounts:
+        return False
+
     return True
 
 
