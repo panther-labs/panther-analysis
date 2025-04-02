@@ -1,6 +1,7 @@
 on:
   pull_request:
   merge_group:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -34,6 +35,8 @@ jobs:
     if: github.event.pull_request.head.repo.fork == false
     name: Test
     runs-on: ubuntu-latest
+    container:
+      image: 49240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community:panther-analysis-latest
     env:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
@@ -47,16 +50,16 @@ jobs:
       - name: Checkout panther-analysis
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
-      - name: Set python version
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 #v5.4.0
-        with:
-          python-version: "3.11"
+      # - name: Set python version
+      #   uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 #v5.4.0
+      #   with:
+      #     python-version: "3.11"
 
-      - name: Install pipenv
-        run: pip install pipenv
+      # - name: Install pipenv
+      #   run: pip install pipenv
 
-      - name: Setup venv
-        run: make venv
+      # - name: Setup venv
+      #   run: make venv
 
       - name: test
         run: |
