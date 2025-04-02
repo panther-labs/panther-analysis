@@ -36,30 +36,6 @@ jobs:
           make data-models-unit-test global-helpers-unit-test
           pipenv run panther_analysis_tool test --show-failures-only
 
-  login-to-ecr:
-    if: github.event.pull_request.head.repo.fork == false
-    name: Configure ECR Credentials
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Login to AWS
-        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
-        with:
-          role-to-assume: arn:aws:iam::349240696275:role/DockerCI
-          aws-region: us-west-2
-          role-session-name: docker
-      - name: Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
-        with:
-          # It is necessary to pass this in order for the password to be shared with the test job, 
-          #   HOWEVER if does mean the passowrd may be printed if debug logging is enabled.
-          mask-password: 'false'
-    outputs:
-      username: ${{ steps.login-ecr.outputs.docker_username_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
-      password: ${{ steps.login-ecr.outputs.docker_password_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
-
   test-authenticated:
     if: github.event.pull_request.head.repo.fork == false
     name: Test
