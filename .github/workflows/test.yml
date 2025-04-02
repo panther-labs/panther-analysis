@@ -68,8 +68,8 @@ jobs:
     container:
       image: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community:${{ github.event.inputs.image_tag || 'panther-analysis-latest' }}
       credentials:
-        username: ${{ needs.login-ecr.outputs.username }}
-        password: ${{ needs.login-ecr.outputs.password }}
+        username: ${{ needs.login-ecr.outputs.docker_username_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
+        password: ${{ needs.login-ecr.outputs.docker_password_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
     env:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
