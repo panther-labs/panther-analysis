@@ -31,6 +31,18 @@ jobs:
           make data-models-unit-test global-helpers-unit-test
           pipenv run panther_analysis_tool test --show-failures-only
 
+  login-to-ecr:
+    if: github.event.pull_request.head.repo.fork == false
+    name: Configure ECR Credentials
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        with:
+          role-to-assume: arn:aws:iam::349240696275:role/DockerCI
+          aws-region: us-west-2
+          role-session-name: docker
+
   test-authenticated:
     if: github.event.pull_request.head.repo.fork == false
     name: Test
