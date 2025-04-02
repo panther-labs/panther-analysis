@@ -13,7 +13,7 @@ def rule(event):
 
 def title(event):
     user = event.udm("actor_user")
-    return f"[{user}] attempted to retrieve a large number of secrets from AWS Secrets Manager"
+    return f"[{user}] attempted to retrieve a secret from AWS Secrets Manager"
 
 
 def alert_context(event):
