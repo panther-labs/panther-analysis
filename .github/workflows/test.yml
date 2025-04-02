@@ -52,6 +52,10 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        with:
+          # It is necessary to pass this in order for the password to be shared with the test job, 
+          #   HOWEVER if does mean the passowrd may be printed if debug logging is enabled.
+          mask-password: 'false'
     outputs:
       username: ${{ steps.login-ecr.outputs.docker_username_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
       password: ${{ steps.login-ecr.outputs.docker_password_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
