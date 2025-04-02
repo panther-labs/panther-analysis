@@ -37,8 +37,8 @@ jobs:
 
       - name: Build Image
         env:
-          ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-base
-        run: docker buildx build --push -f Dockerfile -t ${ECR_REPO}/panther-analysis:latest .
+          ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-analysis
+        run: docker buildx build --push -f Dockerfile -t ${ECR_REPO}:latest .
 
       - name: Test Image
         run: |
