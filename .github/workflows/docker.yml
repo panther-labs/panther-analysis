@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    env:
+      ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
@@ -36,12 +38,10 @@ jobs:
         uses: docker/setup-buildx-action@f7ce87c1d6bead3e36075b2ce75da1f6cc28aaca #v3.9.0
 
       - name: Build Image
-        env:
-          ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community
         run: |
           export VERSION=$(date +"%Y-%m-%d")
           docker buildx build --push --cache-to type=gha,scope=${{ github.run_id }} --cache-from type=gha,scope=${{ github.run_id }} -f Dockerfile -t ${ECR_REPO}:panther-analysis-latest -t ${ECR_REPO}:panther-analysis-${VERSION} .
 
       - name: Test Image
         run: |
-          docker run --rm -t panther-analysis:latest pipenv run panther_analysis_tool --version
+          docker run --rm -t ${ECR_REPO}:panther-analysis-latest pipenv run panther_analysis_tool --version
