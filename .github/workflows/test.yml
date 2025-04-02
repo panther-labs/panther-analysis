@@ -35,6 +35,8 @@ jobs:
     if: github.event.pull_request.head.repo.fork == false
     name: Configure ECR Credentials
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Login to AWS
         uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
