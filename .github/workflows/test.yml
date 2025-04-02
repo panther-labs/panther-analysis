@@ -72,4 +72,4 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag || 'panther-analysis-latest' }}
         run: |
           docker pull $ECR_REGISTRY/panther-community:$IMAGE_TAG
-          docker run --rm $ECR_REGISTRY/panther-community:$IMAGE_TAG pipenv run panther_analysis_tool test --api-host $API_HOST --api-token $API_TOKEN --show-failures-only
+          docker run --rm -v $(pwd):/workspace -w /workspace $ECR_REGISTRY/panther-community:$IMAGE_TAG pipenv run panther_analysis_tool test --api-host $API_HOST --api-token $API_TOKEN --show-failures-only
