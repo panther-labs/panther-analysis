@@ -38,7 +38,7 @@ jobs:
       - name: Build Image
         env:
           ECR_REPO: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-analysis
-        run: docker buildx build --push -f Dockerfile -t ${ECR_REPO}:latest .
+        run: docker buildx build --push --cache-to type=gha,scope=${{ github.run_id }} --cache-from type=gha,scope=${{ github.run_id }} -f Dockerfile -t ${ECR_REPO}:latest .
 
       - name: Test Image
         run: |
