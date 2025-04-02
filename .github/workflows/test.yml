@@ -2,6 +2,11 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'ECR image tag to use (default: panther-analysis-latest)'
+        required: false
+        default: 'panther-analysis-latest'
 
 permissions:
   contents: read
@@ -44,13 +49,23 @@ jobs:
           role-to-assume: arn:aws:iam::349240696275:role/DockerCI
           aws-region: us-west-2
           role-session-name: docker
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+    outputs:
+      username: ${{ steps.login-ecr.outputs.docker_username_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
+      password: ${{ steps.login-ecr.outputs.docker_password_349240696275_dkr_ecr_us_west_2_amazonaws_com }}
 
   test-authenticated:
     if: github.event.pull_request.head.repo.fork == false
     name: Test
+    needs: login-to-ecr
     runs-on: ubuntu-latest
     container:
-      image: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community:panther-analysis-latest
+      image: 349240696275.dkr.ecr.us-west-2.amazonaws.com/panther-community:${{ github.event.inputs.image_tag || 'panther-analysis-latest' }}
+      credentials:
+        username: ${{ needs.login-ecr.outputs.username }}
+        password: ${{ needs.login-ecr.outputs.password }}
     env:
       API_HOST: ${{ secrets.API_HOST }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
