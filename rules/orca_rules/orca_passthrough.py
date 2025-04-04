@@ -1,20 +1,23 @@
 from panther_core import PantherEvent
 
 
-def rule(_) -> bool:
-    return True
+def rule(event) -> bool:
+    return event.deep_get("state", "status") == "open"
 
 
 def title(event: PantherEvent) -> str:
-    alert_type = event.get("asset_type_string", "<UNKNOWN ALERT SOURCE>")
+    alert_type = event.get("asset_type_string")
     # Use the first non-null field for the title of the alert
     alert_desc = (
         event.deep_get("data", "title")
         or event.get("type_string")
-        or event.get("description")
         or "<UNKNOWN ALERT TITLE>"
     )
     return f"{alert_type}: {alert_desc}" if alert_type else alert_desc
+
+
+def description(event):
+    return event.get("description") or "DEFAULT"
 
 
 def dedup(event: PantherEvent) -> str:
@@ -51,7 +54,6 @@ def alert_context(event: PantherEvent) -> dict:
             "type": event.get("cloud_provider", "<UNKNOWN_CLOUD_PROVIDER>"),
         },
         "details": event.deep_get("data", "details", default=""),
-        "recommendation": runbook(event),
         "orca_alert_id": event.deep_get("state", "alert_id", default="<UNKNOWN ALERT ID>"),
         "org_id": event.get("organization_id", "<UNKNOWN ORG ID>"),
     }
