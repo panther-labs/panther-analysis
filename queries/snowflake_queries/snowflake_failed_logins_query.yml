@@ -1,0 +1,26 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Snowflake.FailedLogins"
+Enabled: false
+Description: >
+  Detect brute force attempts by monitoring for failed logins to snowflake.
+Query: |
+  --return all failed failed logins in the previous 24 hours
+
+  --this was adapted from a SnowAlert query
+
+  SELECT
+    client_ip,
+    user_name,
+    reported_client_type,
+    error_code,
+    error_message,
+    count(distinct event_id) over (partition by client_ip) as count_by_ip,
+    count(distinct event_id) over (partition by user_name) as count_by_username
+  FROM snowflake.account_usage.login_history
+  WHERE
+    p_occurs_since(1d, , event_timestamp)
+    AND event_type = 'LOGIN'
+    AND error_code is NOT NULL
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 2

@@ -72,6 +72,8 @@
   - A Google Workspace User configured a new domain application from the Google Workspace Apps Marketplace.
 - [Google Workspace Apps New Mobile App Installed](../rules/gsuite_activityevent_rules/google_workspace_apps_new_mobile_app_installed.yml)
   - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
+- [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
+  - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
   - A User or Admin Has Modified A Calendar To Be Public
 - [GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.yml)
