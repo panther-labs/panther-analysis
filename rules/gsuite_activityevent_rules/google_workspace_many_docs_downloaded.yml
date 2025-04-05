@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: google_workspace_many_docs_downloaded.py
+RuleID: "Google.Workspace.ManyDocsDownloaded"
+DisplayName: Google Workspace Many Docs Downloaded
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567
+Description: >
+  Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+DedupPeriodMinutes: 5
+Threshold: 20
+Reference: >
+  https://support.google.com/drive/answer/2423534?hl=en&co=GENIE.Platform%3DDesktop
+SummaryAttributes:
+  - p_any_usernames
+  - parameters:doc_title
+Tags:
+  - GSuite ActivityEvent
+Tests:
+  - Name: Document Downloaded
+    ExpectedResult: true
+    Log:
+      {
+        "actor": {
+          "email": "wiley.coyote@acme.com",
+          "profileId": "112233445566778899001"
+        },
+        "id": {
+          "applicationName": "drive",
+          "customerId": "CUSTID",
+          "time": "2025-03-21 21:29:49.364000000",
+          "uniqueQualifier": "-1234567891234567890"
+        },
+        "ipAddress": "1.1.1.1",
+        "kind": "admin#reports#activity",
+        "name": "download",
+        "parameters": {
+          "billable": true,
+          "doc_id": "123456789aBcDeFgHiJkLmNoPqRsTuVwXyZ0-a1B2c3D",
+          "doc_title": "My Sensitive Document",
+          "doc_type": "spreadsheet",
+          "owner": "HR",
+          "owner_is_shared_drive": true,
+          "owner_is_team_drive": true,
+          "owner_team_drive_id": "123456789aB_a1B2c3D",
+          "primary_event": true,
+          "shared_drive_id": "123456789aB_a1B2c3D",
+          "team_drive_id": "123456789aB_a1B2c3D",
+          "visibility": "shared_internally"
+        },
+        "type": "access"
+      }
+  - Name: Document Viewed
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "email": "wiley.coyote@acme.com",
+          "profileId": "112233445566778899001"
+        },
+        "id": {
+          "applicationName": "drive",
+          "customerId": "CUSTID",
+          "time": "2025-03-21 21:29:49.364000000",
+          "uniqueQualifier": "-1234567891234567890"
+        },
+        "ipAddress": "1.1.1.1",
+        "kind": "admin#reports#activity",
+        "name": "view",
+        "parameters": {
+          "billable": true,
+          "doc_id": "123456789aBcDeFgHiJkLmNoPqRsTuVwXyZ0-a1B2c3D",
+          "doc_title": "My Sensitive Document",
+          "doc_type": "spreadsheet",
+          "owner": "HR",
+          "owner_is_shared_drive": true,
+          "owner_is_team_drive": true,
+          "owner_team_drive_id": "123456789aB_a1B2c3D",
+          "primary_event": true,
+          "shared_drive_id": "123456789aB_a1B2c3D",
+          "team_drive_id": "123456789aB_a1B2c3D",
+          "visibility": "shared_internally"
+        },
+        "type": "access"
+      }
