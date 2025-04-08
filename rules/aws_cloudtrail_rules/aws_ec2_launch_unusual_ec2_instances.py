@@ -12,13 +12,10 @@ UNUSUAL_INSTANCE_TYPES = {
 
 
 def rule(event: PantherEvent) -> bool:
-    instance_type = get_instance_type(event)
-    return all(
-        (
-            event.get("eventName") == "RunInstances",
-            event.get("eventSource") == "ec2.amazonaws.com",
-            instance_type in get_unusual_instance_types(),
-        )
+    return (
+            event.get("eventSource") == "ec2.amazonaws.com" and
+            event.get("eventName") == "RunInstances" and
+            get_instance_type(event) in get_unusual_instance_types()
     )
 
 
