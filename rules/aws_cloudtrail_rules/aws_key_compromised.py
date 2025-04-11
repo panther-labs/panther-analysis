@@ -12,7 +12,7 @@ def rule(event):
     if event.get("eventName") != "PutUserPolicy":
         return False
 
-    request_params = event.get("requestParameters", {})
+    request_params = event.get("requestParameters") or {}
     if request_params.get("policyName") not in EXPOSED_CRED_POLICIES:
         return False
     return True
