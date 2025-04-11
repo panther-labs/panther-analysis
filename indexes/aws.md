@@ -28,8 +28,6 @@
   - An Amazon Machine Image (AMI) was modified to allow it to be launched by anyone. Any sensitive configuration or application data stored in the AMI's block devices is at risk.
 - [Anomalous AccessDenied Requests](../queries/aws_queries/anomalous_access_denied_query.yml)
   - ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
-- [AWS Access Key Uploaded to Github](../rules/aws_cloudtrail_rules/aws_key_compromised.yml)
-  - A users static AWS API key was uploaded to a public github repo.
 - [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
@@ -106,6 +104,8 @@
   - Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)
 - [AWS ECR Events](../rules/aws_cloudtrail_rules/aws_ecr_events.yml)
   - An ECR event occurred outside of an expected account or region
+- [AWS IAM Access Key Compromise Detection](../rules/aws_cloudtrail_rules/aws_key_compromised.yml)
+  - This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.
 - [AWS IAM Group Read Only Events](../rules/aws_cloudtrail_rules/aws_iam_group_read_only_events.yml)
   - This rule captures multiple read/list events related to IAM group management in AWS Cloudtrail.
 - [AWS Macie Disabled/Updated](../rules/aws_cloudtrail_rules/aws_macie_evasion.yml)
