@@ -9,9 +9,7 @@ def title(event: PantherEvent) -> str:
     alert_type = event.get("asset_type_string")
     # Use the first non-null field for the title of the alert
     alert_desc = (
-        event.deep_get("data", "title")
-        or event.get("type_string")
-        or "<UNKNOWN ALERT TITLE>"
+        event.deep_get("data", "title") or event.get("type_string") or "<UNKNOWN ALERT TITLE>"
     )
     return f"{alert_type}: {alert_desc}" if alert_type else alert_desc
 
