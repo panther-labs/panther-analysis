@@ -98,3 +98,18 @@ def alert_context(event):
         )
         or event.deep_get("protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>"),
     }
+
+def dedup(event):
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+    table = event.deep_get(
+        "protoPayload",
+        "metadata",
+        "jobChange",
+        "job",
+        "jobConfig",
+        "queryConfig",
+        "destinationTable",
+    ) or event.deep_get("protoPayload", "metadata", "resourceName", default="<TABLE_NOT_FOUND>")
+    return f"{actor}:{table}"
