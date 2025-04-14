@@ -442,15 +442,6 @@
         "YAMLPath": "policies/aws_iam_policies/aws_access_key_rotation.yml"
     },
     {
-        "AnalysisType": "Rule",
-        "Description": "A users static AWS API key was uploaded to a public github repo.",
-        "DisplayName": "AWS Access Key Uploaded to Github",
-        "LogTypes": [
-            "AWS.CloudTrail"
-        ],
-        "YAMLPath": "rules/aws_cloudtrail_rules/aws_key_compromised.yml"
-    },
-    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that AWS IAM user accounts do not have access keys that were created during account creation. This results in excess keys being generated, and unnecessary management work in auditing and rotating these keys.",
         "DisplayName": "AWS Access Keys At Account Creation",
@@ -1192,6 +1183,15 @@
             "AWS.GuardDuty"
         ],
         "YAMLPath": "rules/aws_guardduty_rules/aws_guardduty_med_sev_findings.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.",
+        "DisplayName": "AWS IAM Access Key Compromise Detection",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_key_compromised.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5341,6 +5341,15 @@
             "OneLogin.Events"
         ],
         "YAMLPath": "rules/onelogin_rules/onelogin_password_changed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raise Orca alerts in Panther",
+        "DisplayName": "Orca Passthrough",
+        "LogTypes": [
+            "Orca.Alert"
+        ],
+        "YAMLPath": "rules/orca_rules/orca_passthrough.yml"
     },
     {
         "AnalysisType": "Rule",
