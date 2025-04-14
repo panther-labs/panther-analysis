@@ -28,5 +28,12 @@ def title(event):
     )
 
 
+def dedup(event):
+    actor = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<ACTOR_NOT_FOUND>"
+    )
+    return actor
+
+
 def alert_context(event):
     return gcp_alert_context(event)

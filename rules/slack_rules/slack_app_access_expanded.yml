@@ -98,6 +98,73 @@ Tests:
           },
         "id": "9d9b76ce-47bb-4838-a96a-1b5fd4d1b564",
       }
+  - Name: App Scopes Expanded Same Scopes
+    ExpectedResult: false
+    Log:
+      {
+        "action": "app_scopes_expanded",
+        "actor":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "user@example.com",
+                "id": "A012B3CDEFG",
+                "name": "username",
+                "team": "T01234N56GB",
+              },
+          },
+        "context":
+          {
+            "ip_address": "1.2.3.4",
+            "location":
+              {
+                "domain": "test-workspace",
+                "id": "T01234N56GB",
+                "name": "test-workspace",
+                "type": "workspace",
+              },
+            "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+          },
+        "date_create": "2022-07-28 16:48:14",
+        "details":
+          {
+            "granular_bot_token": true,
+            "is_internal_integration": false,
+            "is_token_rotation_enabled_app": false,
+            "new_scopes":
+              [
+                "chat:write",
+                "im:write",
+                "links:read",
+                "links:write",
+                "users:read",
+                "files:write",
+                "reactions:read"
+              ],
+            "previous_scopes":
+              [
+                "chat:write",
+                "im:write",
+                "links:read",
+                "links:write",
+                "users:read",
+                "files:write",
+                "reactions:read"
+              ],
+          },
+        "entity":
+          {
+            "type": "workspace",
+            "workspace":
+              {
+                "domain": "test-workspace-1",
+                "id": "T01234N56GB",
+                "name": "test-workspace-1",
+              },
+          },
+        "id": "9d9b76ce-47bb-4838-a96a-1b5fd4d1b564",
+      }
   - Name: App Resources Added
     ExpectedResult: true
     Log:
