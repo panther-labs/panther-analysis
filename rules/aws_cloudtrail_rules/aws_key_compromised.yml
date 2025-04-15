@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_key_compromised.py
 RuleID: "AWS.IAM.AccessKeyCompromised"
-DisplayName: "AWS Access Key Uploaded to Github"
+DisplayName: "AWS IAM Access Key Compromise Detection"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
@@ -12,11 +12,11 @@ Tags:
   - AWS
   - Credential Access:Unsecured Credentials
 Severity: High
-Description: A users static AWS API key was uploaded to a public github repo.
-Runbook: Determine the key owner, disable/delete key, and delete the user to resolve the AWS case. If user needs a new IAM give them a stern talking to first.
+Description: This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.
+Runbook: Determine the IAM user who owns the key, rotate/disable/delete the key, and then investigate which actions were taken by the compromised key to determine scope and if any remediation is needed.
 Reference: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
 Tests:
-  - Name: An AWS Access Key was Uploaded to Github
+  - Name: An AWS IAM Access Key was Compromised
     ExpectedResult: true
     Log:
       {
@@ -39,7 +39,7 @@ Tests:
           {
             "policyDocument": '{"Version":"2012-10-17","Statement":[{"Sid":"Stmt1538161409","Effect":"Deny","Action":["lambda:CreateFunction","iam:AttachUserPolicy","iam:PutUserPolicy","organizations:InviteAccountToOrganization","ec2:RunInstances","iam:DetachUserPolicy","iam:CreateUser","lightsail:Create*","lightsail:Update*","ec2:StartInstances","ec2:RequestSpotInstances","iam:ChangePassword","iam:CreateLoginProfile","organizations:CreateOrganization","organizations:CreateAccount","lightsail:Delete*","iam:AttachGroupPolicy","iam:CreateAccessKey","iam:UpdateUser","iam:UpdateAccountPasswordPolicy","iam:DeleteUserPolicy","iam:PutUserPermissionsBoundary","iam:UpdateAccessKey","lightsail:DownloadDefaultKeyPair","iam:CreateInstanceProfile","lightsail:Start*","lightsail:GetInstanceAccessDetails","iam:CreateRole","iam:PutGroupPolicy","iam:AttachRolePolicy"],"Resource":["*"]}]}',
             "userName": "compromised_user",
-            "policyName": "AWSExposedCredentialPolicy_DO_NOT_REMOVE",
+            "policyName": "AWSCompromisedKeyQuarantineV3",
           },
         "eventID": "1c2a53d1-58cc-41b3-85b8-bd7565370e0d",
         "eventType": "AwsApiCall",

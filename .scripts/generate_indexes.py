@@ -6,7 +6,14 @@ IMPORTANT: It's assumed that this script will never write outside of the indexes
 Breaking this assumption could cause an infinite GitHub Actions loop.
 """
 
-import collections, json, hashlib, pathlib, yaml, os, itertools
+import collections
+import hashlib
+import itertools
+import json
+import os
+import pathlib
+
+import yaml
 
 
 def generate_indexes(directory):
@@ -251,7 +258,7 @@ def save_website_json(detections, query_lookup, logtype_lookup, json_path):
     json_export = list(sorted(json_export, key=lambda x: x['DisplayName'].lower()))
     print("Writing detections-web-export.json...")
     with open(json_path, 'w') as fp:
-        json.dump(json_export, fp, sort_keys=True)
+        json.dump(json_export, fp, sort_keys=True, indent=4)
     print(f"Total: {sum(detection_types.values())}")
 
 # Splits the first part of a log type off to form a heading

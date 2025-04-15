@@ -37,6 +37,8 @@ def rule(event):
     # Disqualify any eventSource that is not ec2
     if event.get("eventSource", "") != "ec2.amazonaws.com":
         return False
+    if event.get("readOnly"):
+        return False
     # Disqualify AWS Service-Service operations, which can appear in a variety of forms
     if (
         # FYI there is a weird quirk in the sourceIPAddress field of CloudTrail
@@ -69,6 +71,16 @@ def title(event):
         f"AWS Event [{event.get('eventName')}] Instance ID "
         f"[{items[0].get('instanceId')}] AWS Account ID [{event.get('recipientAccountId')}]"
     )
+
+
+def dedup(event):
+    items = event.deep_get(
+        "requestParameters",
+        "instancesSet",
+        "items",
+        default=[{"instanceId": "INSTANCE_ID_NOT_FOUND"}],
+    )
+    return items[0].get("instanceId", "INSTANCE_ID_NOT_FOUND")
 
 
 def alert_context(event):
