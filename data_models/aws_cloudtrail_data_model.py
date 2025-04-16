@@ -39,5 +39,6 @@ def load_ip_address(event):
             return None
     return source_ip
 
+
 def get_actor_user(event):
     return aws_helpers_get_actor_user(event)
