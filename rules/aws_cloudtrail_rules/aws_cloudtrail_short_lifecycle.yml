@@ -5,7 +5,7 @@ DisplayName: "AWS CloudTrail Retention Lifecycle Too Short"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
-Severity: Medium
+Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562.008 # Defense Evasion: Disable or Modify Cloud Logs
@@ -21,6 +21,7 @@ Tags:
   - Disable or Modify Cloud Logs
   - Defense Evasion:Impair Defenses
   - Security Control
+  - Beta
 Tests:
   - Name: 1-Day Lifecycle Rule on Known CT Bucket
     ExpectedResult: true
