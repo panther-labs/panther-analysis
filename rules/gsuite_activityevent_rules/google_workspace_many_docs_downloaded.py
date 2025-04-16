@@ -6,8 +6,8 @@ def rule(event: PantherEvent) -> bool:
 
 
 def title(event: PantherEvent) -> str:
-    actor = event.deep_get("actor", "email", default="<UNKNWON ACTOR>")
-    return f"{actor} downloaded an escessive number of documents."
+    actor = event.deep_get("actor", "email", default="<UNKNOWN ACTOR>")
+    return f"{actor} downloaded an excessive number of documents."
 
 
 def alert_context(event: PantherEvent) -> dict:
