@@ -229,3 +229,88 @@ Tests:
         "type": "AssumedRole"
       }
     }
+  - Name: Absent includeManagementEvents Field
+    ExpectedResult: true
+    Log: {
+      "p_event_time": "2024-11-25 17:51:21.000000000",
+      "p_log_type": "AWS.CloudTrail",
+      "p_parse_time": "2024-11-25 17:55:54.253083422",
+      "awsRegion": "us-west-2",
+      "eventCategory": "Management",
+      "eventID": "4ca1cb25-7633-496b-8f92-6de876228c3f",
+      "eventName": "PutEventSelectors",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventTime": "2024-11-25 17:51:21.000000000",
+      "eventType": "AwsApiCall",
+      "eventVersion": "1.11",
+      "managementEvent": true,
+      "readOnly": false,
+      "recipientAccountId": "111122223333",
+      "requestID": "a8c6184a-89b1-4fc1-a6fa-324748d48b64",
+      "requestParameters": {
+        "eventSelectors": [
+          {
+            "dataResources": [
+              {
+                "type": "AWS::S3::Object",
+                "values": []
+              },
+              {
+                "type": "AWS::Lambda::Function",
+                "values": []
+              }
+            ],
+            "excludeManagementEventSources": [],
+            "includeManagementEvents": false,
+            "readWriteType": "ReadOnly"
+          }
+        ],
+        "trailName": "sample-cloudtrail-name"
+      },
+      "responseElements": {
+        "eventSelectors": [
+          {
+            "dataResources": [
+              {
+                "type": "AWS::S3::Object",
+                "values": []
+              },
+              {
+                "type": "AWS::Lambda::Function",
+                "values": []
+              }
+            ],
+            "excludeManagementEventSources": [],
+            "readWriteType": "ReadOnly"
+          }
+        ],
+        "trailARN": "arn:aws:cloudtrail:us-west-2:111122223333:trail/sample-cloudtrail-name"
+      },
+      "sourceIPAddress": "1.2.3.4",
+      "tlsDetails": {
+        "cipherSuite": "TLS_AES_128_GCM_SHA256",
+        "clientProvidedHostHeader": "cloudtrail.us-west-2.amazonaws.com",
+        "tlsVersion": "TLSv1.3"
+      },
+      "userAgent": "sample-user-agent",
+      "userIdentity": {
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
+        "accountId": "111122223333",
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
+        "principalId": "EXAMPLEPRINCIPLEID:leroy.jenkins",
+        "sessionContext": {
+          "attributes": {
+            "creationDate": "2024-11-25T16:53:42Z",
+            "mfaAuthenticated": "false"
+          },
+          "sessionIssuer": {
+            "accountId": "111122223333",
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
+            "principalId": "EXAMPLEPRINCIPLEID",
+            "type": "Role",
+            "userName": "SampleRole"
+          }
+        },
+        "type": "AssumedRole"
+      }
+    }
