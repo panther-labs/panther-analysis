@@ -5,7 +5,7 @@ DisplayName: "AWS VPC Flow Logs Removed"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
-Severity: Low
+Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562.008 # Defense Evasion: Disable or Modify Cloud Logs
@@ -21,6 +21,7 @@ Tags:
   - Disable or Modify Cloud Logs
   - Defense Evasion:Impair Defenses
   - Security Control
+  - Beta
 Tests:
   - Name: Logs Deleted
     ExpectedResult: true

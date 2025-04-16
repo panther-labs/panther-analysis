@@ -5,13 +5,13 @@ DisplayName: "AWS DNS Logs Deleted"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
-Severity: Low
+Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562.008 # Defense Evasion: Disable or Modify Cloud Logs
 Description: "Detects when logs for a DNS Resolver have been removed."
 Reference: 
-  hhttps://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.dns-delete-logs/
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.dns-delete-logs/
 Runbook: Determine if the log removal to is legitimate.
 Tags:
   - AWS
@@ -21,6 +21,7 @@ Tags:
   - Disable or Modify Cloud Logs
   - Defense Evasion:Impair Defenses
   - Security Control
+  - Beta
 Tests:
   - Name: Logs Deleted
     ExpectedResult: true
