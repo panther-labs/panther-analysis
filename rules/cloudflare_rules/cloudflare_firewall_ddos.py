@@ -8,13 +8,8 @@ def rule(event):
     return event.get("Source", "") == "l7ddos"
 
 
-def title(event):
-    return (
-        "Cloudflare: Detected L7 DDoS"
-        f"from [{event.get('ClientIP', '<NO_CLIENTIP>')}] "
-        f"to [{event.get('ClientRequestHost', '<NO_REQ_HOST>')}] "
-        f"and took action [{event.get('Action', '<NO_ACTION>')}]"
-    )
+def title(_):
+    return "Cloudflare: Detected L7 DDoS"
 
 
 def alert_context(event):
