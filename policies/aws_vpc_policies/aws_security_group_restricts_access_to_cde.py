@@ -2,6 +2,8 @@ from ipaddress import ip_network
 
 from panther_config_defaults import IN_PCI_SCOPE
 
+# NOTE: Make sure to adjust IN_PCI_SCOPE
+
 
 def policy(resource):
     # Only apply this policy to security groups in scope for PCI

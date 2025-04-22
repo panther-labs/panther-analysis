@@ -2,6 +2,7 @@ import json
 
 from panther_base_helpers import deep_get
 
+# Add/remove pairs as desired
 ALLOWED_ORG_REPO_PAIRS = ["org/repo", "allowed-org-example/allowed-repo-example"]
 
 

@@ -1,5 +1,7 @@
 from panther_config_defaults import IN_PCI_SCOPE
 
+# NOTE: Make sure to adjust IN_PCI_SCOPE
+
 # This is generic policy that checks outbound traffic rules on a Network ACL.
 # It is recommended you add additional logic for your own use cases.
 
