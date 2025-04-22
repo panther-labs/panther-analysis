@@ -31,7 +31,7 @@ def is_ip_whitelisted(event): # pylint: disable=unused-argument
 
 def rule(event):
     # too-many-return-statements due to error checking
-    # pylint: disable=global-statement,too-many-return-statements,too-complex,too-many-statements
+    # pylint: disable=global-statement,too-many-return-statements,too-complex,too-many-statements,too-many-branches
     global EVENT_CITY_TRACKING
     global CACHE_KEY
     global IS_VPN
