@@ -26,7 +26,7 @@ def gen_key(event):
     return f"{rule_name.replace(' ', '')}..{actor}"
 
 # a user-defined function that checks for client's whitelisted IP addresses
-def is_ip_whitelisted(event):
+def is_ip_whitelisted(event): # pylint: disable=unused-argument
     return False
 
 def rule(event):
