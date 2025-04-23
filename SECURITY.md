@@ -16,7 +16,7 @@ Please do not disclose any potential vulnerabilities in public repositories, iss
 
 ## Scope
 
-This security policy applies to all the code and files within this repository and its dependencies, which Panther Labs actively maintain. 
+This security policy applies to all the code and files within this repository and its dependencies, which Panther Labs actively maintain.
 
 If you encounter a security issue in a dependency we do not directly maintain, please follow responsible disclosure practices and report it to the respective project.
 
