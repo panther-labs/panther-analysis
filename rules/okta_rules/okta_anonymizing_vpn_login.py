@@ -20,7 +20,7 @@ def title(event):
     ]:
         if source_value:
             ip_context[key] = source_value
-    
+
     if service := event.deep_get("p_enrichment", "ipinfo_privacy", "client.ipAddress", "service"):
         ip_context["Service"] = service
 
