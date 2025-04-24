@@ -17,7 +17,7 @@ def title(event: PantherEvent) -> str:
 
 def dedup(event: PantherEvent) -> str:
     # Dedup events based on the principal ID
-    return event.deep_get("userIdentity", "principalId")
+    return event.udm("actor_user")
 
 
 def severity(event: PantherEvent) -> str:
