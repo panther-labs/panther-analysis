@@ -8,11 +8,24 @@ def rule(event):
 
 
 def title(event):
+    ip_context = {}
+    if event.deep_get("client", "ipAddress"):
+        ip_context["IP"] = event.deep_get("client", "ipAddress")
+    if event.deep_get("securityContext", "asOrg"):
+        ip_context["AS Org"] = event.deep_get("securityContext", "asOrg")
+    if event.deep_get("securityContext", "isp"):
+        ip_context["ISP"] = event.deep_get("securityContext", "isp")
+    if event.deep_get("securityContext", "domain"):
+        ip_context["Domain"] = event.deep_get("securityContext", "domain")
+    if event.deep_get("p_enrichment", "ipinfo_privacy", "client.ipAddress", "service"):
+        ip_context["Service"] = event.deep_get(
+            "p_enrichment", "ipinfo_privacy", "client.ipAddress", "service"
+        )
+
     return (
         f"{event.deep_get('actor', 'displayName', default='<displayName-not-found>')} "
         f"<{event.deep_get('actor', 'alternateId', default='alternateId-not-found')}> "
-        f"attempted to sign-in from anonymizing VPN with domain "
-        f"[{event.deep_get('securityContext', 'domain', default='<domain-not-found>')}]"
+        f"attempted to sign-in from anonymizing VPN - {ip_context}"
     )
 
 
