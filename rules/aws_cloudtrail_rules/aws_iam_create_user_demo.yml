@@ -1,7 +1,7 @@
 AnalysisType: rule
-Filename: aws_iam_create_user.py
-RuleID: "AWS.IAM.CreateUser"
-DisplayName: "IAM User Created"
+Filename: aws_iam_create_user_demo.py
+RuleID: "AWS.IAM.CreateUser.Demo"
+DisplayName: "IAM User Created (Demo)"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
@@ -9,12 +9,26 @@ Reports:
   CIS:
     - 1.1
   MITRE ATT&CK:
-    - TA0007:T1078
+    - TA0003:T1136 # Persistence:Create Account
+Tags:
+  # Service/Platform tags
+  - aws.iam
+  # Behaviors/Actions tags
+  - resource.create
+  - auth.role_escalation
+  # Compliance tags
+  - compliance.soc2
+  - compliance.pci_dss
+  - compliance.iso27001
+  - compliance.nist_csf
+  # MITRE tags
+  - persistence.T1136_create_account.001_local_account
 Severity: Info
 CreateAlert: false
 Description: >
   An IAM user was created, which could indicate a new user creation or policy update.
-Runbook: Check if the user was created by an authorized user. If not, investigate the user creation.
+Runbook: >
+  Identify who created the IAM user ({userIdentity.arn}) and validate if they are authorized to do so. Check for suspicious follow-up activities like admin policy attachments or access key creation within 1 hour. If unauthorized, immediately disable the user and investigate any actions taken using CloudTrail logs.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 Tests:
   - Name: IAM User Created

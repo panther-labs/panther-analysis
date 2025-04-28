@@ -78,9 +78,7 @@ def eks_panther_obj_ref(event):
 
 
 def aws_cloudtrail_success(event):
-    if event.get("errorCode", "") or event.get("errorMessage", ""):
-        return False
-    return True
+    return not (event.get("errorCode", "") or event.get("errorMessage", ""))
 
 
 def aws_event_tense(event_name):
