@@ -1,9 +1,10 @@
 AnalysisType: rule
-Filename: aws_iam_attach_admin_user_policy.py
-RuleID: "AWS.IAM.AttachAdminUserPolicy"
-DisplayName: "IAM User Policy Attached with Administrator Access"
+Filename: aws_iam_attach_admin_user_policy_demo.py
+RuleID: "AWS.IAM.AttachAdminUserPolicy.Demo"
+DisplayName: "IAM User Policy Attached with Administrator Access (Demo)"
 Enabled: true
 CreateAlert: false
+Severity: Info
 LogTypes:
   - AWS.CloudTrail
 Reports:
@@ -11,10 +12,22 @@ Reports:
     - 1.1
   MITRE ATT&CK:
     - TA0007:T1078
-Severity: Info
+Tags:
+  - demo
+  # Service/Platform tags
+  - aws.iam
+  # Behaviors/Actions tags
+  - auth.role_escalation
+  - resource.permission_change
+  # Compliance tags
+  - compliance.soc2
+  # MITRE tags
+  - privilege_escalation.T1078_valid_accounts.001_default_accounts
+  - persistence.T1098_account_manipulation.001_additional_cloud_credentials
 Description: >
   An IAM user policy was attached with Administrator Access, which could indicate a potential security risk.
-Runbook: Check if the user policy was attached by an authorized user. If not, investigate the user policy attachment.
+Runbook: >
+  Verify if the administrator policy attachment was authorized and part of a legitimate request. Check for other privilege escalation activities from the same actor ({userIdentity.arn}) and review all actions taken by the target user after receiving admin access. If unauthorized, immediately detach the admin policy and rotate any existing access keys.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   - Name: IAM User Policy Attached with Administrator Access

@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_aws_helpers import aws_cloudtrail_success
 
 
 def rule(event):
@@ -22,20 +22,14 @@ def title(event):
     )
 
 
-def dedup(event):
-    return f"{event.deep_get('userIdentity','arn')}"
-
 
 def alert_context(event):
-    base = aws_rule_context(event)
-    base["ip_accessKeyId"] = (
-        event.get("sourceIpAddress", "<NO_IP_ADDRESS>")
-        + ":"
-        + event.deep_get(
-            "responseElements", "accessKey", "accessKeyId", default="<NO_ACCESS_KEY_ID>"
-        )
-    )
-    base["request_username"] = event.deep_get(
-        "requestParameters", "userName", default="USERNAME_NOT_FOUND"
-    )
-    return base
+    context = {
+        "target": event.deep_get("requestParameters", "userName", default=""),
+        "actor": event.deep_get("userIdentity", "arn", default=""),
+        "timestamp": event.get("eventTime", ""),
+        "parameters": event.deep_get("requestParameters", default={}),
+        "access_key_id": event.deep_get("responseElements", "accessKey", "accessKeyId", default=""),
+        "action": event.get("eventName", ""),
+    }
+    return context
