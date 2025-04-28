@@ -1,0 +1,67 @@
+AnalysisType: rule
+Filename: panther_jack_failed_logins.py
+RuleID: "Panther.Jack.Failed.Logins"
+DisplayName: "Multiple Failed Login Attempts by Jack"
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: Medium
+Tags:
+  - auth.login_failure
+  - brute_force.attempt
+  - initial_access.T1110_brute_force.003_password_spraying
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1110.003
+Description: Detects when Jack has 5 or more failed login attempts within an hour, which could indicate a brute force attempt or compromised credentials.
+Threshold: 5
+DedupPeriodMinutes: 60
+Runbook: |
+  1. Contact Jack to verify if these were legitimate login attempts
+  2. If unauthorized, investigate source IPs and user agents for suspicious patterns
+  3. Consider implementing additional security controls like IP-based rate limiting
+Reference: https://docs.panther.com/guides/panther-audit-logs
+SummaryAttributes:
+  - p_any_ip_addresses
+  - userAgent
+Tests:
+  - Name: Failed Login Attempt
+    ExpectedResult: true
+    Log:
+      {
+        "actionName": "USER_LOGIN_FAILED",
+        "actionResult": "FAILED",
+        "actor": {
+          "attributes": {
+            "email": "jack@runpanther.io",
+            "emailVerified": true
+          },
+          "id": "PantherSSO_jack@runpanther.io",
+          "name": "Jack",
+          "type": "USER"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-21 10:00:00.000",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      }
+  - Name: Different User Failed Login
+    ExpectedResult: false
+    Log:
+      {
+        "actionName": "USER_LOGIN_FAILED",
+        "actionResult": "FAILED",
+        "actor": {
+          "attributes": {
+            "email": "other.user@runpanther.io",
+            "emailVerified": true
+          },
+          "id": "PantherSSO_other.user@runpanther.io",
+          "name": "Other User",
+          "type": "USER"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-21 10:00:00.000",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      }

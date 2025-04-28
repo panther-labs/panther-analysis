@@ -1,0 +1,125 @@
+AnalysisType: rule
+Filename: panther_api_key_write_usage.py
+RuleID: "Panther.APIKey.WriteOperation"
+DisplayName: "Write Operation Performed Using Panther API Key"
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: Medium  # Default severity, can be overridden by severity() function
+Tags:
+  - execution.T1059_command_shell
+  - persistence.T1136_account_creation
+  - auth.role_escalation
+  - policy.change
+  - compliance.soc2
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1059  # Command and Scripting Interpreter
+    - TA0003:T1098  # Account Manipulation
+Description: >
+  Monitors write-based operations performed using Panther API keys. This includes creating, updating, 
+  or deleting detections, data models, global helpers, user roles, and modifying system settings.
+  High-risk operations like modifying SAML settings or user roles will trigger high severity alerts.
+Runbook: >
+  1. Verify if the API key usage was authorized and expected
+  2. Check the specific operation performed and its parameters
+  3. If unauthorized, rotate the API key immediately
+  4. Review API key access patterns and adjust permissions if needed
+Reference: https://docs.panther.com/panther-developer-workflows/api/about
+DedupPeriodMinutes: 60
+Threshold: 1
+SummaryAttributes:
+  - p_any_ip_addresses
+  - action_name
+  - token_name
+Tests:
+  - Name: API Key Creates Detection
+    ExpectedResult: true
+    Log:
+      {
+        "actionName": "CREATE_DETECTION",
+        "actionDescription": "Creates a new detection rule",
+        "actionParams": {
+          "input": {
+            "name": "New Detection Rule",
+            "enabled": true
+          }
+        },
+        "actionResult": "SUCCEEDED",
+        "actor": {
+          "id": "api_key_123",
+          "name": "automation-key",
+          "type": "TOKEN"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-20T10:00:00Z"
+      }
+  - Name: API Key Updates SAML Settings
+    ExpectedResult: true
+    Log:
+      {
+        "actionName": "UPDATE_SAML_SETTINGS",
+        "actionDescription": "Updates SAML configuration",
+        "actionParams": {},
+        "actionResult": "SUCCEEDED",
+        "actor": {
+          "id": "api_key_456",
+          "name": "admin-key",
+          "type": "TOKEN"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-20T11:00:00Z"
+      }
+  - Name: User Updates Detection (Not API Key)
+    ExpectedResult: false
+    Log:
+      {
+        "actionName": "UPDATE_DETECTION",
+        "actionDescription": "Updates an existing detection",
+        "actionParams": {},
+        "actionResult": "SUCCEEDED",
+        "actor": {
+          "id": "user123",
+          "name": "John Doe",
+          "type": "USER"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-20T12:00:00Z"
+      }
+  - Name: Failed API Key Operation
+    ExpectedResult: false
+    Log:
+      {
+        "actionName": "CREATE_DETECTION",
+        "actionDescription": "Creates a new detection rule",
+        "actionParams": {},
+        "actionResult": "FAILED",
+        "actor": {
+          "id": "api_key_789",
+          "name": "automation-key",
+          "type": "TOKEN"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-20T13:00:00Z"
+      }
+  - Name: Read Operation with API Key
+    ExpectedResult: false
+    Log:
+      {
+        "actionName": "GET_DETECTION",
+        "actionDescription": "Retrieves a detection rule",
+        "actionParams": {},
+        "actionResult": "SUCCEEDED",
+        "actor": {
+          "id": "api_key_123",
+          "name": "automation-key",
+          "type": "TOKEN"
+        },
+        "p_log_type": "Panther.Audit",
+        "sourceIP": "1.2.3.4",
+        "timestamp": "2024-03-20T14:00:00Z"
+      } 
