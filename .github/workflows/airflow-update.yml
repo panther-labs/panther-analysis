@@ -2,13 +2,12 @@
 name: Airflow Update
 
 on:
-  push:
-#  workflow_dispatch:
-#    inputs:
-#      branch:
-#        description: "Branch to update Airflow from"
-#        required: true
-#        default: "main"
+ workflow_dispatch:
+   inputs:
+     branch:
+       description: "Branch to update Airflow from"
+       required: true
+       default: "main"
 
 permissions:
   contents: write
