@@ -59,6 +59,7 @@ def alert_context(event):
             "event_source": event.get("eventSource", "unknown"),
             "api_call": event.get("eventName", "unknown"),
             "resources": event.get("resources", []),
+            "actor_user": event.udm("actor_user"),
         }
     )
 

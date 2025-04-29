@@ -16,7 +16,7 @@ def rule(event):
 
 def title(event):
     lambda_name = event.deep_get(
-        "responseElements", "functionName", default="LAMBDA_NAME_NOT_FOUND"
+        "requestParameters", "functionName", default="LAMBDA_NAME_NOT_FOUND"
     )
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
