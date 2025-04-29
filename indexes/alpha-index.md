@@ -1414,6 +1414,7 @@
 - [Okta](#okta)
 - [OneLogin](#onelogin)
 - [OnePassword](#onepassword)
+- [Orca](#orca)
 - [Osquery](#osquery)
 
 
@@ -1571,6 +1572,12 @@
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
   - Detects when unusual or undesirable 1Password clients access your 1Password account
+
+
+## Orca
+
+- [Orca Passthrough](../rules/orca_rules/orca_passthrough.yml)
+  - Re-raise Orca alerts in Panther
 
 
 ## Osquery

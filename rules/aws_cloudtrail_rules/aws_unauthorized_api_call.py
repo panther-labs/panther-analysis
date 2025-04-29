@@ -23,7 +23,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event.deep_get("userIdentity", "principalId", default="<UNKNOWN_PRINCIPAL>")
+    return event.udm("actor_user")
 
 
 def title(event):
