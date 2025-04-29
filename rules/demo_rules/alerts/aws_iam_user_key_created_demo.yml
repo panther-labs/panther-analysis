@@ -17,7 +17,7 @@ LogTypes:
   - AWS.CloudTrail
 RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
 OutputIds:
-  - "Jack-DM"
+  - "d4735112-507e-43a9-96a0-8c850e722c3b"
 Threshold: 1
 Tags:
   - demo
@@ -29,8 +29,6 @@ Tags:
   - compliance.soc2
   # MITRE tags
   - persistence.T1098_account_manipulation.001_additional_cloud_credentials
-Runbook: >
-  Investigate why access keys were created for a user ({responseElements.accessKey.userName}) by another identity ({userIdentity.arn}). Review CloudTrail for any API activity using the new access key ({responseElements.accessKey.accessKeyId}) and check for data access or privilege escalation attempts. If unauthorized, immediately deactivate the access key and rotate any other credentials for the affected user.
 Tests:
   - ExpectedResult: false
     Log:

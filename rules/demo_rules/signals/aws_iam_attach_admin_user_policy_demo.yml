@@ -26,8 +26,6 @@ Tags:
   - persistence.T1098_account_manipulation.001_additional_cloud_credentials
 Description: >
   An IAM user policy was attached with Administrator Access, which could indicate a potential security risk.
-Runbook: >
-  Verify if the administrator policy attachment was authorized and part of a legitimate request. Check for other privilege escalation activities from the same actor ({userIdentity.arn}) and review all actions taken by the target user after receiving admin access. If unauthorized, immediately detach the admin policy and rotate any existing access keys.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 Tests:
   - Name: IAM User Policy Attached with Administrator Access

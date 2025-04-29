@@ -28,8 +28,6 @@ Severity: Info
 CreateAlert: false
 Description: >
   An IAM user was created, which could indicate a new user creation or policy update.
-Runbook: >
-  Identify who created the IAM user ({userIdentity.arn}) and validate if they are authorized to do so. Check for suspicious follow-up activities like admin policy attachments or access key creation within 1 hour. If unauthorized, immediately disable the user and investigate any actions taken using CloudTrail logs.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 Tests:
   - Name: IAM User Created

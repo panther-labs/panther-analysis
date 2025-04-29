@@ -22,6 +22,11 @@ def title(event):
     )
 
 
+def runbook(event):
+    return f"""
+    Query CloudTrail activity from the new access key ({event.deep_get("responseElements", "accessKey", "accessKeyId", default="key not found")}) at least 2 hours after the alert was triggered and check for data access or other privilege escalation attempts using the aws_cloudtrail table.
+    """
+
 
 def alert_context(event):
     context = {

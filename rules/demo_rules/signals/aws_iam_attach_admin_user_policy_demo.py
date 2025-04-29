@@ -21,3 +21,9 @@ def alert_context(event):
         "action": event.get("eventName", ""),
     }
     return context
+
+
+def runbook(event):
+    return f"""
+    Check for other privilege escalation activities in the aws_cloudtrail table for the same actor ({event.deep_get("userIdentity", "arn", default="")}) and review all actions taken by the target user after receiving admin access since the alert was triggered. If unauthorized, immediately detach the admin policy and rotate any existing access keys.
+    """
