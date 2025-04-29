@@ -127,6 +127,11 @@ def extract_account_id(uniq_id: str):
     return str(account_id)
 
 
+# backwards compatibility for old aws_key_account_id
+def aws_key_account_id(aws_key: str):
+    return extract_account_id(aws_key)
+
+
 def aws_regions() -> List[str]:
     """return a list of AWS regions"""
     return [
