@@ -23,7 +23,7 @@ def rule(event):
 
 
 def dedup(event):
-    return event.udm("actor_user") or "ACTOR_USER_NOT_FOUND"
+    return event.udm("actor_user")
 
 
 def title(event):
