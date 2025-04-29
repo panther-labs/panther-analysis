@@ -42,7 +42,7 @@ def rule(event):
     new_user_string = (
         event.deep_get("userIdentity", "userName", default="<MISSING_USER_NAME>")
         + "-"
-        + event.deep_get("userIdentity", "principalId", default="<MISSING_ID>")
+        + event.udm("actor_user")
     )
     is_new_user = check_account_age(new_user_string)
     if isinstance(is_new_user, str):
