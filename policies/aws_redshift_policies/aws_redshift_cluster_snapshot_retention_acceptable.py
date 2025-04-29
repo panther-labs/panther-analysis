@@ -1,5 +1,7 @@
 from panther_config_defaults import IN_PCI_SCOPE
 
+# NOTE: Make sure to adjust IN_PCI_SCOPE
+
 # Retention period in days
 MIN_RETENTION_DAYS = 3
 MAX_RETENTION_DAYS = 90
