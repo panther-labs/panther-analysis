@@ -1,0 +1,18 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: make-lint
+        name: make lint
+        entry: make lint
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+    -   id: make-test
+        name: make test
+        entry: make test
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        # Consider adding 'always_run: true' if tests should run even when no .py files change,
+        # but be aware this will slow down commits significantly.
