@@ -60,18 +60,12 @@ This repository uses pre-commit hooks to automatically format and lint code befo
 
 ### Setup
 
-1.  **Install pre-commit:**
-    If you installed dependencies using `make install` or `pipenv install --dev`, `pre-commit` should already be installed. If not, you can install it:
-    ```bash
-    pipenv install --dev pre-commit
-    # or pip install pre-commit if you aren't using pipenv
-    ```
+Running `make install` (as described in the "Configure your Python environment" section) installs all necessary dependencies, including `pre-commit`.
 
-2.  **Install the Git hooks:**
-    This command reads the `.pre-commit-config.yaml` file and installs the defined hooks into your `.git/hooks` directory.
-    ```bash
-    make install-pre-commit-hooks
-    ```
+After the initial setup, you need to install the Git hooks once by running:
+```bash
+make install-pre-commit-hooks
+```
 
 ### Usage
 
