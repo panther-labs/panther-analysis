@@ -81,8 +81,13 @@ fmt: ## Format code using isort and black
 	pipenv run isort --profile=black $(dirs)
 	pipenv run black --line-length=100 $(dirs)
 
-## run-pre-commit-hooks: Run pre-commit hooks on all files
-run-pre-commit-hooks: ## Run pre-commit hooks on all files
+## run-pre-commit-hooks: Run pre-commit hooks on changed files
+run-pre-commit-hooks: ## Run pre-commit hooks on changed files
+	@echo "Running pre-commit hooks on changed files..."
+	pipenv run pre-commit run --files $(git ls-files -v -m)
+
+## run-pre-commit-hooks: Run pre-commit hooks on changed files
+run-pre-commit-hooks-all-files: ## Run pre-commit hooks on all files
 	@echo "Running pre-commit hooks on all files..."
 	pipenv run pre-commit run --all-files
 
