@@ -21,16 +21,8 @@ def rule(event):
 
 def title(event):
     return (
-        f"Cloudflare: High Volume of Bot Requests - "
-        f"from [{event.get('ClientIP', '<NO_CLIENTIP>')}] "
+        f"Cloudflare: High Volume of Bot Requests "
         f"to [{event.get('ClientRequestHost', '<NO_REQ_HOST>')}]"
-    )
-
-
-def dedup(event):
-    return (
-        f"{event.get('ClientIP', '<NO_CLIENTIP>')}:"
-        f"{event.get('ClientRequestHost', '<NO_REQ_HOST>')}"
     )
 
 
