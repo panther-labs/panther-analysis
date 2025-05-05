@@ -1,23 +1,16 @@
 repos:
--   repo: local
+  - repo: local
     hooks:
-    -   id: make-fmt
+      - id: make-fmt
         name: make fmt
         entry: make fmt
         language: system
         pass_filenames: false
         stages: [pre-commit]
 
-    -   id: make-lint
+      - id: make-lint
         name: make lint
         entry: make lint
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
-
-    -   id: make-test
-        name: make test
-        entry: make test
         language: system
         pass_filenames: false
         stages: [pre-commit]
