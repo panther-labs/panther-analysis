@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
@@ -59,10 +60,11 @@ def alert_context(event: PantherEvent) -> dict:
 def get_cache_key(event) -> str:
     """Use the field values in the event to generate a cache key unique to this actor and
     account ID."""
+    offset = dt.datetime.fromisoformat(event["p_event_time"]).timestamp() // 3600 * 3600
     actor = event.udm("actor_user")
     account = event.get("recipientAccountId")
     rule_id = "AWS.SSM.DecryptSSMParams"
-    return f"{rule_id}-{account}-{actor}"
+    return f"{rule_id}-{account}-{actor}-{offset}"
 
 
 def get_param_names(event) -> set[str]:
