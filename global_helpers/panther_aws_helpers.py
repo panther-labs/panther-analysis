@@ -252,7 +252,7 @@ def get_actor_user(event):
             "userName",
             default=f"Unknown{user_type}",
         )
-        # If the assumed role uses SSO, the session username is generic so return name from principalId
+        # If SSO assumed role, the session username is generic, return name from principalId
         if actor_user.startswith("AWSReservedSSO_"):
             actor_user = (
                 deep_get(event, "userIdentity", "principalId", default=f"Unknown{user_type}")
