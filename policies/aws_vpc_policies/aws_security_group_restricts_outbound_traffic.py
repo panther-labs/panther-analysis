@@ -1,5 +1,7 @@
 from panther_config_defaults import IN_PCI_SCOPE
 
+# NOTE: Make sure to adjust IN_PCI_SCOPE
+
 # This is a generic policy that checks outbound permissions on Security Groups.
 # You may wish to add additional logic specific to your use case.
 

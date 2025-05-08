@@ -54,6 +54,36 @@ make install
 pipenv shell # Optional, this will spawn a subshell containing pipenv environment variables. Running pipenv run before commands becomes optional after this step
 ```
 
+## Code Formatting and Linting (Pre-commit Hooks)
+
+This repository uses pre-commit hooks to automatically format and lint code before it is committed. This ensures code consistency and helps catch potential errors early.
+
+### Setup
+
+Running `make install` (as described in the "Configure your Python environment" section) installs all necessary dependencies, including `pre-commit`.
+
+After the initial setup, you need to install the Git hooks once by running:
+```bash
+make install-pre-commit-hooks
+```
+
+### Usage
+
+Once installed, the pre-commit hooks will run automatically each time you run `git commit`.
+
+-   If any formatting changes are made or linting errors are found, the commit will be aborted.
+-   Review the changes made by the formatter (e.g., `black`, `isort`).
+-   Fix any reported linting errors (e.g., by `flake8`, `pylint`).
+-   Stage the changes (`git add .`) and run `git commit` again.
+
+You can also run the hooks manually on all files using the Make command:
+
+```bash
+make run-pre-commit-hooks
+```
+
+This is useful for checking the entire codebase or after making changes to the pre-commit configuration.
+
 ### Install dependencies and run your first test
 
 ```bash

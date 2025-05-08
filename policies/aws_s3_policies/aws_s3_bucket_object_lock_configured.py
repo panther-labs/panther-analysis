@@ -1,6 +1,8 @@
 from panther_base_helpers import deep_get
 from panther_config_defaults import IN_PCI_SCOPE
 
+# NOTE: Make sure to adjust IN_PCI_SCOPE
+
 RETENTION_PERIOD_DAYS = 365
 
 

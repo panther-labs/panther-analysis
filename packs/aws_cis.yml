@@ -3,16 +3,13 @@ PackID: PantherManaged.AWS.CIS
 Description: Group of all AWS detections for CIS compliance
 PackDefinition:
   IDs:
-    - AWS.ACM.HasSecureAlgorithms
     - AWS.DynamoDB.TableTTLEnabled
-    - AWS.EC2.CDEVolumeEncrypted
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.IAM.Entity.InlinePolicyDoesNotGrantNetworkAdminAccess
     - AWS.IAM.Policy.DoesNotGrantAdminAccess
     - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
     - AWS.IAM.Resource.DoesNotHaveInlinePolicy
     - AWS.IAM.Role.RestrictsUsage
-    - AWS.IAM.User.NotInConflictingGroups
     - AWS.KMS.RestrictsUsage
     - AWS.CMK.KeyRotation
     - AWS.NetworkACL.RestrictedSSH
@@ -25,11 +22,9 @@ PackDefinition:
     - AWS.Redshift.Cluster.SnapshotRetentionAcceptable
     - AWS.S3.BucketObjectLockConfigured
     - AWS.SecurityGroup.OnlyDMZPubliclyAccessible
-    - AWS.SecurityGroup.RestrictsAccessToCDE
     - AWS.SecurityGroup.RestrictsInboundTraffic
     - AWS.SecurityGroup.RestrictsInterSecurityGroupTraffic
     - AWS.SecurityGroup.RestrictsOutboundTraffic
-    - AWS.SecurityGroup.RestrictsTrafficLeavingCDE
     - AWS.SecurityGroup.TightlyRestrictsInboundTraffic
     - AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
     - AWS.VPC.DefaultNetworkACLRestrictsAllTraffic
