@@ -5,6 +5,8 @@ from unittest.mock import MagicMock
 from panther_config import config
 from panther_config_defaults import is_dmz_tags
 
+# NOTE: Make sure to adjust DMZ_TAGS
+
 DMZ_TAGS = config.DMZ_TAGS
 
 
