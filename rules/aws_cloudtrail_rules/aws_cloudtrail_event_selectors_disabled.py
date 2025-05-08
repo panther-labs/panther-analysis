@@ -12,7 +12,7 @@ def rule(event):
     #    deep_walk only returns a list if there's more than 1 entry in the nested array, so we must
     #    enforce it to be a list.
     includes = event.deep_walk("requestParameters", "eventSelectors", "includeManagementEvents")
-    
+
     if includes is None:
         includes = []
 
