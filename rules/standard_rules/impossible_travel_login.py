@@ -26,9 +26,15 @@ def gen_key(event):
     return f"{rule_name.replace(' ', '')}..{actor}"
 
 
+# a user-defined function that checks for client's whitelisted IP addresses
+def is_ip_whitelisted(event):  # pylint: disable=unused-argument
+    return False
+
+
 def rule(event):
     # too-many-return-statements due to error checking
     # pylint: disable=global-statement,too-many-return-statements,too-complex,too-many-statements
+    # pylint: disable=too-many-branches
     global EVENT_CITY_TRACKING
     global CACHE_KEY
     global IS_VPN
@@ -40,6 +46,10 @@ def rule(event):
     IS_VPN = False
     IS_PRIVATE_RELAY = False
     IS_SATELLITE_NETWORK = False
+
+    # check if the IP address is in the client's whitelisted IP addresses
+    if is_ip_whitelisted(event):
+        return False
 
     # Only evaluate successful logins
     if event.udm("event_type") != event_type.SUCCESSFUL_LOGIN:
