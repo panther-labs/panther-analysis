@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
@@ -9,7 +10,8 @@ def rule(event: PantherEvent) -> bool:
     if not (aws_cloudtrail_success(event) and event.get("eventName") == "SendSSHPublicKey"):
         return False
 
-    key = event.deep_get("requestParameters", "sSHPublicKey")
+    offset = dt.datetime.fromisoformat(event["p_event_time"]).timestamp() // 3600 * 3600
+    key = f"{event.deep_get('requestParameters', 'sSHPublicKey')}-{offset}"
     if not key:
         return False
     target_instance_id = event.deep_get("requestParameters", "instanceId")

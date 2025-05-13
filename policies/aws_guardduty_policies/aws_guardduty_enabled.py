@@ -1,3 +1,4 @@
+# Add/remove regions as desired
 REGIONS_REQUIRED = {
     "us-west-2",
 }

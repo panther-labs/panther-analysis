@@ -10,7 +10,7 @@ import subprocess
 import panther_analysis_tool.command.bulk_delete as pat_delete
 import panther_analysis_tool.util as pat_util
 
-diff_pattern = re.compile(r'^-(?:RuleID|PolicyID|QueryName):\s*"?(.+?)["\n]')
+diff_pattern = re.compile(r'^[+-](?:RuleID|PolicyID|QueryName):\s*"?(.+?)["\n]')
 
 
 def get_deleted_ids() -> set[str]:
@@ -19,13 +19,20 @@ def get_deleted_ids() -> set[str]:
     if result.stderr:
         raise Exception(result.stderr.decode("utf-8"))
 
-    ids = set()
+    # Track specific IDs that are added and deleted
+    added_ids = set()
+    deleted_ids = set()
+    
     for line in result.stdout.decode("utf-8").split("\n"):
         if m := diff_pattern.match(line):
-            # Add the ID to the list
-            ids.add(m.group(1))
+            id_value = m.group(1)
+            if line.startswith("+"):
+                added_ids.add(id_value)
+            elif line.startswith("-"):
+                deleted_ids.add(id_value)
 
-    return ids
+    # Only consider an ID as deleted if it was deleted but not added back
+    return deleted_ids - added_ids
 
 
 def get_deprecated_ids() -> set[str]:

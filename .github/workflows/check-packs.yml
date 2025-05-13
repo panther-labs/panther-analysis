@@ -30,7 +30,9 @@ jobs:
         run: |
           # Get the output for the PR comment body
           panther_analysis_tool check-packs 2> errors.txt || true
-          echo ::set-output name=errors::`cat errors.txt`
+          echo 'errors<<EOF' >> $GITHUB_OUTPUT # Use a delimiter
+          cat errors.txt >> $GITHUB_OUTPUT      # Append the content
+          echo 'EOF' >> $GITHUB_OUTPUT          # Close the delimiter
 
       - name: Check packs (Exit Code)
         run: |
