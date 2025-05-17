@@ -1,3 +1,9 @@
+## 🧠 Learning Notes by Mel Masterson (May 2025)
+
+- Cloned the repo to explore how Panther manages detection logic using Python and JSON schemas.
+- Will test rule deployment and YAML alert tuning locally.
+
+
 <p align="center">
   <a href="https://panther.com"><picture>
     <source media="(prefers-color-scheme: dark)" srcset=".img/panther-logo-github-highres-light.png" width=75%>
