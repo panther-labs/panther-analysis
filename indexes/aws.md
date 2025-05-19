@@ -8,6 +8,12 @@
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
 
 
+## AWS BedrockModelInvocation
+
+- [test bedrock model invocation rule](../rules/aws_bedrock_rules/test_bedrock_model_invocation_rule.yml)
+  - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
+
+
 ## AWS CloudFormation
 
 - [AWS CloudFormation Stack Drift](../policies/aws_cloudformation_policies/aws_cloudformation_stack_drifted.yml)
