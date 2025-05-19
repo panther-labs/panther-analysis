@@ -16,6 +16,7 @@
 # A
 
 - [AWS ACM](#aws-acm)
+- [AWS BedrockModelInvocation](#aws-bedrockmodelinvocation)
 - [AWS CloudFormation](#aws-cloudformation)
 - [AWS CloudTrail](#aws-cloudtrail)
 - [AWS CloudWatch](#aws-cloudwatch)
@@ -52,6 +53,12 @@
   - This policy checks if an ACM certificate renewal is pending or has failed and is in use by any other resources within the account.
 - [AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml)
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
+
+
+## AWS BedrockModelInvocation
+
+- [test bedrock model invocation rule](../rules/aws_bedrock_rules/test_bedrock_model_invocation_rule.yml)
+  - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
 
 
 ## AWS CloudFormation
