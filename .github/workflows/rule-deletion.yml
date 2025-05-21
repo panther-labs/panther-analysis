@@ -1,0 +1,171 @@
+name: Detect Panther Rule Deletions (Test Mode)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'rules_soteria/**'
+      - 'rules_client/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'rules_soteria/**'
+      - 'rules_client/**'
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        description: 'Base reference for comparison (default: previous commit on main)'
+        required: false
+        type: string
+
+jobs:
+  detect_rule_deletions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Set comparison base
+        id: set_base
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # For PRs, compare against the PR base
+            echo "base_ref=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+            echo "Using PR base: ${{ github.event.pull_request.base.sha }}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.base_ref }}" ]]; then
+            # For manual runs with specified base
+            echo "base_ref=${{ github.event.inputs.base_ref }}" >> $GITHUB_OUTPUT
+            echo "Using specified base: ${{ github.event.inputs.base_ref }}"
+          else
+            # For pushes, use the previous commit
+            echo "base_ref=$(git rev-parse HEAD^1)" >> $GITHUB_OUTPUT
+            echo "Using previous commit: $(git rev-parse HEAD^1)"
+          fi
+      
+      - name: Detect rule deletions
+        id: detect_deletions
+        run: |
+          # Create a directory for reports
+          mkdir -p reports
+          
+          # Initialize files for tracking rule changes
+          touch reports/removed_rules.txt reports/added_rules.txt
+          
+          echo "## Git Diff Output" > reports/git_diff.md
+          echo "\`\`\`" >> reports/git_diff.md
+          git diff --name-status ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ >> reports/git_diff.md
+          echo "\`\`\`" >> reports/git_diff.md
+          
+          # Process all changed files in rule directories
+          echo "Processing changes in rule directories..."
+          git diff --name-status ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ | while read status file; do
+            # Skip non-YAML files
+            [[ "$file" != *.yml ]] && continue
+            
+            echo "Processing $status $file"
+            
+            if [[ "$status" == "D" ]]; then
+              # File was deleted - extract rule ID from previous commit
+              echo "  File was deleted, extracting rule ID from previous version"
+              rule_id=$(git show "${{ steps.set_base.outputs.base_ref }}:$file" | grep -oP 'RuleID:\s*\K[^\s]+' || echo "")
+              if [[ -n "$rule_id" ]]; then
+                echo "  Found rule ID: $rule_id"
+                echo "$rule_id" >> reports/removed_rules.txt
+              else
+                echo "  No rule ID found in file"
+              fi
+            elif [[ "$status" == "A" || "$status" == "M" ]]; then
+              # File was added or modified - extract rule ID from current commit
+              echo "  File was added or modified, extracting current rule ID"
+              rule_id=$(grep -oP 'RuleID:\s*\K[^\s]+' "$file" || echo "")
+              if [[ -n "$rule_id" ]]; then
+                echo "  Found rule ID: $rule_id"
+                echo "$rule_id" >> reports/added_rules.txt
+              else
+                echo "  No rule ID found in file"
+              fi
+            fi
+          done
+          
+          # Find rules that were truly deleted (removed but not added elsewhere)
+          echo "Identifying truly deleted rules..."
+          touch reports/truly_deleted.txt
+          while read rule; do
+            if ! grep -q "^$rule$" reports/added_rules.txt; then
+              echo "Rule $rule was truly deleted (not found elsewhere)"
+              echo "$rule" >> reports/truly_deleted.txt
+            else
+              echo "Rule $rule was moved or renamed (found in added/modified files)"
+            fi
+          done < reports/removed_rules.txt
+          
+          # Count the deletions
+          deleted_count=$(wc -l < reports/truly_deleted.txt | tr -d ' ')
+          echo "deleted_count=$deleted_count" >> $GITHUB_OUTPUT
+          
+          # Create a detailed report
+          echo "## Rule Deletion Report" > reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          echo "### Summary" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          echo "- **Commit Range**: ${{ steps.set_base.outputs.base_ref }} to $(git rev-parse HEAD)" >> reports/deletion_report.md
+          echo "- **Files Changed**: $(git diff --name-only ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ | wc -l | tr -d ' ')" >> reports/deletion_report.md
+          echo "- **Rules Removed**: $(wc -l < reports/removed_rules.txt | tr -d ' ')" >> reports/deletion_report.md
+          echo "- **Rules Added/Modified**: $(wc -l < reports/added_rules.txt | tr -d ' ')" >> reports/deletion_report.md
+          echo "- **Rules Truly Deleted**: $deleted_count" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          
+          echo "### Truly Deleted Rules" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          if [[ -s reports/truly_deleted.txt ]]; then
+            echo "The following rules were deleted and not found elsewhere:" >> reports/deletion_report.md
+            echo "\`\`\`" >> reports/deletion_report.md
+            cat reports/truly_deleted.txt >> reports/deletion_report.md
+            echo "\`\`\`" >> reports/deletion_report.md
+          else
+            echo "No rules were truly deleted." >> reports/deletion_report.md
+          fi
+          
+          echo "" >> reports/deletion_report.md
+          echo "### Detailed File Changes" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          echo "#### Deleted Files" >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+          git diff --name-only --diff-filter=D ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          
+          echo "#### Added Files" >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+          git diff --name-only --diff-filter=A ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+          echo "" >> reports/deletion_report.md
+          
+          echo "#### Modified Files" >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+          git diff --name-only --diff-filter=M ${{ steps.set_base.outputs.base_ref }} HEAD -- rules_soteria/ rules_client/ >> reports/deletion_report.md
+          echo "\`\`\`" >> reports/deletion_report.md
+      
+      - name: Generate JSON output
+        id: generate_json
+        run: |
+          # Create a JSON file with the deletion information
+          cat > reports/deletions.json << EOF
+          {
+            "deleted_rules": $(cat reports/truly_deleted.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+          }
+          EOF
+          
+          # Output the JSON for use in other jobs if needed
+          echo "deleted_rules=$(cat reports/truly_deleted.txt | jq -R -s 'split("\n") | map(select(length > 0))' -c)" >> $GITHUB_OUTPUT
+      
+      - name: Upload reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: rule-deletion-reports
+          path: reports/
+      
+      - name: Post summary
+        run: cat reports/deletion_report.md >> $GITHUB_STEP_SUMMARY
