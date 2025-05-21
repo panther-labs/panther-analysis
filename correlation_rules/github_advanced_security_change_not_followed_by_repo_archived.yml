@@ -14,8 +14,8 @@ Detection:
         Absence: true
     Transitions:
       - ID: GHASChange NOT FOLLOWED BY RepoArchived
-        From: RepoArchived
-        To: GHASChange
+        From: GHASChange
+        To: RepoArchived
         WithinTimeFrameMinutes: 60
         Match:
           - On: p_alert_context.repo
