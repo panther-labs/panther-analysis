@@ -11,6 +11,7 @@ SUSPICIOUS_LOGIN_TYPES = {
     "suspicious_programmatic_login",
 }
 
+
 def rule(event):
     if event.deep_get("id", "applicationName") != "login":
         return False
