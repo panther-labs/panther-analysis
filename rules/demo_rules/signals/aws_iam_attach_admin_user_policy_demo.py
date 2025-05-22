@@ -1,6 +1,11 @@
 from panther_aws_helpers import aws_cloudtrail_success
 
 
+SENSITIVE_POLICIES = {
+    "AdministratorAccess",  # Full admin access
+    "FullAccess",   # Full access to resources within a particular domain (S3, EC2, etc.)
+}
+
 def rule(event):
     if not aws_cloudtrail_success(event):
         return False
@@ -9,7 +14,7 @@ def rule(event):
         return False
 
     policy = event.deep_get("requestParameters", "policyArn", default="")
-    return policy.endswith("AdministratorAccess")
+    return any(policy.endswith(p) for p in SENSITIVE_POLICIES)
 
 
 def alert_context(event):

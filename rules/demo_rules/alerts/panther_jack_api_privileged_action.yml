@@ -1,0 +1,35 @@
+AnalysisType: rule
+Filename: panther_jack_api_privileged_action.py
+RuleID: Panther.JackAPI.PrivilegedAction
+DisplayName: Jack-API Privileged Action Detected
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: Medium
+DedupPeriodMinutes: 1440
+Tags:
+  - panther
+  - jack-api
+  - privileged
+  - audit
+  - resource.modify
+  - policy.change
+Description: >
+  Detects when the Jack-API token performs privileged actions in Panther, such as executing data lake queries or updating alert status/assignee. This helps monitor sensitive automation or API activity. Only EXECUTE_DATA_LAKE_QUERY, UPDATE_ALERT_ASSIGNEE, and UPDATE_ALERT_STATUS are considered privileged for this rule.
+Runbook: >
+  1. Review the action and context.
+  2. Confirm the action was expected and authorized.
+  3. If unexpected, investigate the automation or user responsible for the token.
+Reference: https://docs.runpanther.io/
+Tests:
+  - Name: Jack-API executes data lake query
+    ExpectedResult: true
+    Log:
+      actor:
+        name: Jack-API
+        id: po_g9d37pt95i
+      actionName: EXECUTE_DATA_LAKE_QUERY
+      actionResult: SUCCEEDED
+      sourceIP: 136.25.18.145
+      timestamp: "2025-05-19T17:58:45.388Z" 
+  
