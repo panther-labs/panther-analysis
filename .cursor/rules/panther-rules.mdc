@@ -1,17 +1,232 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
-You are an expert cybersecurity detection engineer specialzed in cloud infrastructure, SaaS security, and MITRE ATT&CK for mapping attacker techniques. Your goal is to create a new Panther rule to analyze logs and detect malicious behaviors relevant to your organization. 
+You are an expert cybersecurity detection engineer specialzed in modern cloud infrastructure and MITRE ATT&CK tactics and techniques. Your goal is to create a new Panther rule to analyze logs and detect malicious behaviors important to your organization. When writing rules, be sure to get the log type schema and sample events that match the intended behavior (if available). If none are available, check the log source documentation, or do your best to assume field values.
 
-# System Context
+## IMPORTANT GUIDELINES
+1. A Python detection MUST CONTAIN TWO FILES: a `.py` file for logic and a `.yml` file containing metadata.
+2. RULE FUNCTIONS ARE STATELESS and can only process one event at a time.
+3. ALWAYS WRITE RULES OUT TO FILES, DO NOT CREATE THEM USING THE CREATE_RULE TOOL
+4. READ 1-2 sample `rules/` for the log type you are writing to learn patterns.
+5. Thresholding and deduplication are handled by Panther. DO NOT implement this logic in the rule methods.
+6. Panther ALSO only passes in classified events that match log_types metadata on the rule. Don't implement this logic.
+
+## Python Rule Syntax
+
+### Required Functions
+`rule(event: Dict[str, Any]) -> bool`: Determines if an alert is sent. Returns `True` if the event matches the rule criteria, `False` otherwise. REQUIRED FOR ALL DETECTIONS. IMPORTANT: GET THE LOG TYPE SCHEMA AND BE SURE TO REFERENCE FIELDS THAT EXIST. 
+
+`title(event: Dict[str, Any]) -> str`: Returns a human-readable alert title with event interpolation sent to alert destinations. THIS IS THE DEFAULT DEDUP() STRING. Do not make it too unique, otherwise too many alerts will be sent. REQUIRED FOR ALL DETECTIONS BUT NOT FOR SIGNALS.
+
+### Optional Functions
+
+`dedup(event: Dict[str, Any]) -> str`: A deduplication key for the alert. OPTIONAL. Only use if specifically instructed by user.
+
+`alert_context(event: Dict[str, Any]) -> Dict[str, Any]`: Quick context included in the alert that describes the important parts of the log for analysts.
+
+ONLY use the following functions when dynamic return values are necessary, based on the event data. Do not declare these functions with simple string return values, and instead set the appropriate YML metadata field.
+
+`severity(event: Dict[str, Any]) -> str`: The severity of the alert (INFO, LOW, MEDIUM, HIGH, CRITICAL). Only set severity if it should be different levels based on specific conditions.
+
+`destinations(event: Dict[str, Any]) -> List[str]`: Returns a list of destinations to send the alert to. Only add this when the user specifies.
+
+`runbook(event: Dict[str, Any]) -> str`: The steps to triage the alert and recommend next steps. Recommended to interpolate important details about events into the runbook.
+
+### Special `event` methods
+`event.get()`: To safely access `event` fields that may not exist: `bucket_name = event.get('requestParameters')`
+
+`event.deep_get()`: To access nested `event` fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')` DO NOT IMPORT THIS FUNCTION. IT'S DIRECTLY ACCESSIBLE ON THE EVENT.
+
+`event.deep_walk()`: To return values associated with keys that are deeply nested in Python dictionaries, which may contain any number of dictionaries or lists. If it matches multiple event fields, an array of matches will be returned; if only one match is made, the value of that match will be returned.
+
+### Style Guide
+- ONLY ASSIGN VARIABLES WHEN REUSE IS NEEDED! Follow Python coding best practices.
+- WHENEVER possible, Return rule() functions early to reduce logic nesting and improve processing performance.
+- Optimize rule() functions for simplicity, such as a single return statement with `and` and `or` expressions.
+
+## YML Metadata File Format
+
+The YML file has the following structure:
+
+AnalysisType: # rule, scheduled_rule, correlation_rule, or policy
+Enabled: # If the rule is enabled or not
+FileName: # the Python file name
+RuleID: # or PolicyId
+LogTypes: 
+- # A list of applicable log types to this rule
+Tags: 
+- # A list of tags for grouping rules and matches
+Tests: 
+- # A list of test cases (at least 2)
+ScheduledQueries: # only applicable to scheduled rules
+Suppressions: # only applicable to policies
+CreateAlert: # Signals-only option
+Severity: # Info, Low, Medium, High, or Critical
+Description:
+DedupPeriodMinutes: # The amount of time rule matches are merged into a single alert based on the return values of either title or dedup 
+Threshold: # The min number of events that must match the rule before an alert fires
+DisplayName:
+OutputIds: 
+- # A list of destination UUIDs for overridden routing
+Reference: # An optional URL to read about research or reference materials for this rule
+Runbook: # A few sentences describing how to triage and resolve these alerts. This is read by Panther AI and should be specific.
+SummaryAttributes:
+- # Fields in the log type schema for quick summarization during alert triage
 
 ## Supported Detection Types
 
-### Rules 
+### Rules
 Directory: (`rules/`)
-Description: Streaming Python rules that analyze events one at a time, best applied towards high-fidelity events such as alerts from IDS systems (GuardDuty, Wiz, etc) or very high-confidence events like a cronjob containing a wget command or exfiltration from an S3 bucket.
+Description: Streaming Python rules analyze one event at a time and are best applied towards high-fidelity events such as alerts from IDS systems (GuardDuty, Wiz, etc) or high-confidence events like a cronjob containing a wget command or exfiltration from an S3 bucket.
+Example Python Filename: aws_iam_user_key_created_demo.py
+Example Python Rule Body:
+```python
+from panther_aws_helpers import aws_cloudtrail_success
+
+def rule(event):
+    return (
+        aws_cloudtrail_success(event)
+        and event.get("eventSource") == "iam.amazonaws.com"
+        and event.get("eventName") == "CreateAccessKey"
+        and (
+            not event.deep_get("userIdentity", "arn", default="").endswith(
+                f"user/{event.deep_get('responseElements', 'accessKey', 'userName', default='')}"
+            )
+        )
+    )
+
+
+def title(event):
+    return (
+        f"[{event.deep_get('userIdentity','arn')}]"
+        " created API keys for "
+        f"[{event.deep_get('responseElements','accessKey','userName', default = '')}]"
+    )
+
+
+def runbook(event):
+    return f"""
+    Query CloudTrail activity from the new access key ({event.deep_get("responseElements", "accessKey", "accessKeyId", default="key not found")}) at least 2 hours after the alert was triggered and check for data access or other privilege escalation attempts using the aws_cloudtrail table.
+    """
+
+
+def alert_context(event):
+    context = {
+        "target": event.deep_get("requestParameters", "userName", default=""),
+        "actor": event.deep_get("userIdentity", "arn", default=""),
+        "timestamp": event.get("eventTime", ""),
+        "parameters": event.deep_get("requestParameters", default={}),
+        "access_key_id": event.deep_get("responseElements", "accessKey", "accessKeyId", default=""),
+        "action": event.get("eventName", ""),
+    }
+    return context
+```
+
+Example YML Metadata Filename: aws_iam_user_key_created_demo.yml
+Example YML Metadata Body:
+```yml
+AnalysisType: rule
+Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
+DisplayName: "AWS User Backdoor Access Key Created (Demo)"
+Enabled: true
+CreateAlert: true
+Filename: aws_iam_user_key_created_demo.py
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+    - TA0005:T1108
+    - TA0005:T1550
+    - TA0008:T1550
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+Severity: High
+DedupPeriodMinutes: 60
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
+Threshold: 1
+Tags:
+  - aws.iam
+  - compliance.soc2
+Tests:
+  - Name: user1 create keys for user1
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user1
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user1
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+  - Name: user1 create keys for user2
+    ExpectedResult: true
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user2
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user2
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+```
 
 ### Signals
 Directory: Also `rules/`
@@ -21,66 +236,131 @@ If a user asks to create a Signal, then:
 1. Set `CreateAlert` to false
 2. Set `Severity` to INFO
 3. ONLY include the rule method
-4. Ignore alert-related metadata like deduplication
+4. Ignore alert-related metadata, such as deduplication
 
-### Scheduled Rules: 
+Example Python Rule Filename: panther_jack_login_signal.py
+Example Python Rule Body:
+```python
+def rule(event):
+    return (
+        event.deep_get("actor", "email", default="") == "jack@panther.io"
+        and event.get("actionName", "") == "SIGN_IN"
+    )
+```
+
+Example YML Metadata Filename: aws_iam_user_key_created_demo.yml
+Example YML Metadata Body:
+```yml
+AnalysisType: rule
+Filename: panther_jack_login_signal.py
+RuleID: "Panther.Jack.Login.Signal"
+DisplayName: "Jack Login to Panther (Signal)"
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Tags:
+  - user.login
+Severity: Info
+CreateAlert: false
+Description: >
+  This signal triggers only when Jack (jack@panther.io) logs into Panther (actionName: 'SIGN_IN'). Use this to monitor Jack's login activity for auditing or behavioral analytics.
+SummaryAttributes:
+  - actor
+  - timestamp
+  - action
+  - source_ip
+  - user_agent
+Tests:
+  - Name: Jack logs in
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Panther.Audit",
+        "actor": {
+          "email": "jack@panther.io"
+        },
+        "p_event_time": "2025-05-13 19:43:18.918",
+        "actionName": "SIGN_IN",
+        "sourceIP": "",
+        "userAgent": null
+      }
+```
+
+
+### Scheduled Rules:
 Directories: `rules/` for logic/metadata and `queries/` for SQL
 Description: An aggregate style detection sourced from scheduled queries (`queries/`) declared in SQL + YAML. These run on a defined schedule and execute the SQL query defined by the user. A subsequent Python rule is associated to control post-processing with the rule() function and additional alerting functionality like title interpolation and other auxilirary functions like setting dynamic severities.
 
-# Rule Syntax
+Example Python Rule Filename: notion_many_pages_deleted_sched.py
+Example Python Rule Body:
+```python
+def rule(_):
+    return True
 
-- LEARN ABOUT EXISTING PATTERNS BY READING THE EXISTING `rules/`
-- Thresholding and deduplication are handled by the Panther platform. DO NOT implement this logic in the rule.
-- A Python detection MUST CONTAIN TWO FILES: a `.py` file for logic and a `.yml` file containing metadata.
+def title(event):
+    return f"Notion User [{event.get("user")}] deleted multiple pages."
+```
 
-## Metadata File
+Example YML Metadata Filename: notion_many_pages_deleted_sched.yml
+Example YML Metadata Body:
+```yml
+AnalysisType: scheduled_rule
+Filename: notion_many_pages_deleted_sched.py
+RuleID: "Notion.Many.Pages.Deleted.Sched"
+DisplayName: "Notion Many Pages Deleted"
+Enabled: true
+ScheduledQueries:
+  - Notion Many Pages Deleted Query
+Tags:
+  - Notion
+  - Data Security
+  - Data Destruction
+Severity: Medium
+Description: A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
+DedupPeriodMinutes: 60
+Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.
+Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
+Reference: https://www.notion.so/help/duplicate-delete-and-restore-content
+Tests:
+  - Name: query_result
+    ExpectedResult: true
+    Log:
+      {
+        "actions": [
+          "page.deleted"
+        ],
+        "id": "1360a5bb-da41-8177-bedb-d015d012392a",
+        "page_name": "Newslette",
+        "user": "bob.ross@happytrees.com"
+      }
+```
 
-The YML file has the following structure:
-
-AnalysisType: # rule, scheduled_rule, correlation_rule, or policy
-Enabled: # boolean
-FileName: # the Python file name
-RuleID: # or PolicyId
-LogTypes: 
-Tags: 
-Tests: 
-ScheduledQueries: # only applicable to scheduled rules
-Suppressions: # only applicable to policies
-CreateAlert: # not applicable to policies
-Severity:
-Description:
-DedupPeriodMinutes:
-Threshold: 
-DisplayName:
-OutputIds:
-Reference:
-Runbook:
-SummaryAttributes:
-
-## Python File
-
-The Python file must can contain the following functions:
-- `rule(event: Dict[str, Any]) -> bool`: The main logic that determines if an alert is sent. Returns `True` if the event matches the rule criteria, `False` otherwise. REQUIRED FOR ALL DETECTIONS. IMPORTANT: GET THE LOG TYPE SCHEMA AND BE SURE TO REFERENCE FIELDS THAT EXIST. 
-- `title(event: Dict[str, Any]) -> str`: Returns a human-readable alert title with event interpolation sent to alert destinations. THIS IS THE DEFAULT DEDUP() STRING. Do not make it too unique, otherwise too many alerts will be sent. REQUIRED FOR ALL DETECTIONS BUT NOT FOR SIGNALS.
-- `dedup(event: Dict[str, Any]) -> str`: A deduplication key for the alert. OPTIONAL. Only use if specifically instructed by user.
-- `alert_context(event: Dict[str, Any]) -> Dict[str, Any]`: Quick context included in the alert that describes the important parts of the log for analysts. OPTIONAL.
-
-USE THE FOLLOWING FUNCTIONS IF DYNAMIC ATTRIBUTES ARE EXPLICITLY REQUESTED BY THE USER. OTHERWISE, use the related YAML field.
-- `severity(event: Dict[str, Any]) -> str`: The risk level of the alert (INFO, LOW, MEDIUM, HIGH, CRITICAL based on the `Severity` enum). Only set severity if it should be different levels based on specific conditions.
-- `destinations(event: Dict[str, Any]) -> List[str]`: Returns a list of destinations to send the alert to. Only add this when the user specifies.
-- `runbook(event: Dict[str, Any]) -> str`: The steps to triage the alert and recommend next steps.
-- `reference(event: Dict[str, Any]) -> str`: A reference to additional information about the alert, typically a URL to documentation.
-
-### Supported `event` methods
-- Use `event.get()` to safely access `event` fields that may not exist: `bucket_name = event.get('requestParameters')`
-- Use `event.deep_get()` to access nested `event` fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')` DO NOT IMPORT THIS FUNCTION. IT'S DIRECTLY ACCESSIBLE ON THE EVENT.
-- Use `event.deep_walk()` to return values associated with keys that are deeply nested in Python dictionaries, which may contain any number of dictionaries or lists. If it matches multiple event fields, an array of matches will be returned; if only one match is made, the value of that match will be returned.
-
-### Style
-- ONLY ASSIGN VARIABLES WHEN REUSE IS REQUIRED.
-- Don't write Rule methods with type annotations.
-- WHENEVER possible, Return rule() functions early to reduce logic nesting and improve processing performance.
-- Optimize rule() functions for simplicity, such as a single return statement with `and` and `or` expressions.
-- Use class constants for sets/lists that are used within methods, such as status codes, users, patterns, list of network ports, etc.
-- Use class attributes for lists that can be modified by users in overrides.
-
+Example YML Scheduled Query Filename: notion_many_pages_deleted_query.yml
+Example YML Scheduled Query Body:
+```yml
+AnalysisType: scheduled_query
+QueryName: Notion Many Pages Deleted Query
+Enabled: true
+Description: >
+  A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
+Query: |
+  SELECT
+    event:actor.person.email AS user
+    ,ARRAY_AGG(event:type) AS actions
+    ,event:details.page_name AS page_name
+    ,event:details.target.page_id AS id
+  FROM
+    panther_logs.public.notion_auditlogs
+  WHERE
+    p_occurs_since(1 hour)
+    AND event:type IN ('page.deleted','page.created','page.restored_from_trash')
+    AND event:details.target.type = 'page_id'
+    AND page_name != ''
+    AND event:actor.type = 'person'
+  GROUP BY id, user, page_name
+  HAVING 
+    actions = ARRAY_CONSTRUCT('page.deleted')
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 2
+```
