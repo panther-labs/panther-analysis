@@ -18,7 +18,7 @@ def rule(event):
     if event.get("name") in SUSPICIOUS_LOGIN_TYPES:
         return True
 
-    if event.deep_get("parameters", "is_suspicious") == True:
+    if event.deep_get("parameters", "is_suspicious") is True:
         return True
 
     return False
