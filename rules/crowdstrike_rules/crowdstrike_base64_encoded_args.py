@@ -12,6 +12,11 @@ COMMAND_LINE_TOOLS = {
     "rundll32.exe",
 }
 
+# List of known benign decoded arguments to ignore
+KNOWN_BENIGN_DECODED = {
+    "echo cstest",
+}
+
 
 def rule(event):
     # If there is no process name available (or the CrowdStrike data model is missing) don't alert
@@ -42,6 +47,9 @@ def rule(event):
         global DECODED
         DECODED = is_base64(arg)
         if DECODED:
+            # Ignore known benign decoded arguments
+            if DECODED.strip().lower() in KNOWN_BENIGN_DECODED:
+                continue
             return True
 
     return False
