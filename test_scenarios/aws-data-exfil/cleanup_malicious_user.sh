@@ -9,7 +9,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Set variables for the resources to clean up
-USER_NAME="data-pipeline-svc"
+USER_NAME="security-tools-svc"
 S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 
 echo "${YELLOW}[*] Cleaning up test scenario: Removing user $USER_NAME and associated resources using default AWS profile${NC}"

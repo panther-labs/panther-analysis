@@ -3,7 +3,7 @@
 # File: test_scenarios/aws-data-exfil/create_malicious_user.sh
 
 # Set variables for the "legitimate looking" resources
-USER_NAME="data-pipeline-svc"
+USER_NAME="security-tools-svc"
 S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 
 echo "Creating test scenario: Malicious insider creating privileged data service account"
