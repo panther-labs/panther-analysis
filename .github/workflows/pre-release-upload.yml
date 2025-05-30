@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   upload:
-    if: github.head_ref == 'main'
+    if: github.head_ref == 'main' && github.repository == 'panther-labs/panther-analysis'
     name: Pre-Release Upload to GA
     runs-on: ubuntu-latest
     env:
