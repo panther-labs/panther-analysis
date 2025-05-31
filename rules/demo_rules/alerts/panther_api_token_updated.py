@@ -1,8 +1,7 @@
 def rule(event):
     """Detect API token update events in Panther."""
     return (
-        event.get("actionName") == "UPDATE_API_TOKEN"
-        and event.get("actionResult") == "SUCCEEDED"
+        event.get("actionName") == "UPDATE_API_TOKEN" and event.get("actionResult") == "SUCCEEDED"
     )
 
 
@@ -28,4 +27,4 @@ def alert_context(event):
 
 def dedup(event):
     """Deduplicate by token id (or name if id is missing)."""
-    return event.deep_get("actor", "id") or event.deep_get("actor", "name") 
+    return event.deep_get("actor", "id") or event.deep_get("actor", "name")
