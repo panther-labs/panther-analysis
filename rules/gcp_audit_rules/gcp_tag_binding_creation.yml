@@ -1,0 +1,28 @@
+AnalysisType: rule
+Category: Privilege Escalation
+Description: >
+  Detects the creation of tag bindings in GCP, which could be part of a privilege
+  escalation attempt using tag-based access control.
+DisplayName: GCP Tag Binding Creation
+Enabled: true
+Filename: gcp_tag_binding_creation.py
+LogTypes:
+  - GCP.AuditLog
+CreateAlert: false
+Runbook: >
+  Verify if the user has legitimate business need for creating this tag binding. If unauthorized, revoke the tag binding and review IAM policies.
+Severity: MEDIUM
+Tags:
+  - attack.privilege_escalation
+  - attack.t1548
+  - gcp
+  - iam
+  - tagbinding
+Tests:
+  - Name: Tag Binding Creation
+    ExpectedResult: true
+    Log: {"protoPayload": {"methodName": "TagBindings.CreateTagBinding", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"}
+
+  - Name: Normal Operation
+    ExpectedResult: false
+    Log: {"protoPayload": {"methodName": "compute.instances.list", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"} 

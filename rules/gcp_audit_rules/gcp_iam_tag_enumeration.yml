@@ -1,0 +1,32 @@
+AnalysisType: rule
+Category: Reconnaissance
+Description: >
+  Detects enumeration of IAM policies and tags in GCP, which could be a precursor
+  to privilege escalation attempts via tag-based access control.
+DisplayName: GCP IAM and Tag Enumeration
+Enabled: true
+Filename: gcp_iam_tag_enumeration.py
+LogTypes:
+  - GCP.AuditLog
+CreateAlert: false
+Runbook: >
+  Review if the user has legitimate business need for these enumeration operations. If unauthorized, review and update IAM policies.
+Severity: LOW
+Tags:
+  - attack.reconnaissance
+  - attack.t1548
+  - gcp
+  - iam
+  - tagbinding
+Tests:
+  - Name: IAM Policy Enumeration
+    ExpectedResult: true
+    Log: {"protoPayload": {"methodName": "GetIamPolicy", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"}
+
+  - Name: Tag Keys Enumeration
+    ExpectedResult: true
+    Log: {"protoPayload": {"methodName": "TagKeys.ListTagKeys", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"}
+
+  - Name: Normal Operation
+    ExpectedResult: false
+    Log: {"protoPayload": {"methodName": "compute.instances.list", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"} 

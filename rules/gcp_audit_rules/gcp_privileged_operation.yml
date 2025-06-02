@@ -1,0 +1,28 @@
+AnalysisType: rule
+Category: Privilege Escalation
+Description: >
+  Detects privileged operations in GCP that could be part of a privilege
+  escalation attempt, especially when following tag binding creation.
+DisplayName: GCP Privileged Operation
+Enabled: true
+Filename: gcp_privileged_operation.py
+LogTypes:
+  - GCP.AuditLog
+CreateAlert: false
+Runbook: >
+  Check if the user has legitimate business need for this privileged operation. If unauthorized, revoke any recently created tag bindings and review IAM policies.
+Severity: HIGH
+Tags:
+  - attack.privilege_escalation
+  - attack.t1548
+  - gcp
+  - iam
+  - tagbinding
+Tests:
+  - Name: Privileged Operation
+    ExpectedResult: true
+    Log: {"protoPayload": {"methodName": "compute.instances.setIamPolicy", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"}
+
+  - Name: Normal Operation
+    ExpectedResult: false
+    Log: {"protoPayload": {"methodName": "compute.instances.list", "authenticationInfo": {"principalEmail": "test@example.com"}, "resourceName": "projects/test-project"}, "resource": {"labels": {"project_id": "test-project"}}, "timestamp": "2024-01-01T00:00:00Z"} 
