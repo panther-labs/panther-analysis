@@ -128,7 +128,7 @@ Query: |-
         from logs right outer join dimensions
         on (dimensions.t1 < logs.p_event_time and logs.p_event_time <= dimensions.t2)
         and logs.{{ entity_field }} = dimensions.{{ entity_field }}
-        where dimensions.t1 >= (select max(t1) from tbins)
+        where dimensions.t1 >= (select min(p_event_time) from logs)
         group by
             dimensions.t1,
             dimensions.t2,
