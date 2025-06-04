@@ -3469,6 +3469,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects enumeration of IAM policies and tags in GCP, which could be a precursor to privilege escalation attempts via tag-based access control.",
+        "DisplayName": "GCP IAM and Tag Enumeration",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A custom role has been created, deleted, or updated.",
         "DisplayName": "GCP IAM Role Has Changed",
         "LogTypes": [
@@ -3630,6 +3639,24 @@
         "YAMLPath": "rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation",
+        "DisplayName": "GCP Privilege Escalation via TagBinding",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "correlation_rules/gcp_tag_escalation_correlation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.",
+        "DisplayName": "GCP Privileged Operation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_privileged_operation.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Adversaries may create cloud instances in unused geographic service regions in order to evade detection.",
         "DisplayName": "GCP Resource in Unused Region",
@@ -3691,6 +3718,15 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects the creation of tag bindings in GCP, which could be part of a privilege escalation attempt using tag-based access control.",
+        "DisplayName": "GCP Tag Binding Creation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_tag_binding_creation.yml"
     },
     {
         "AnalysisType": "Rule",

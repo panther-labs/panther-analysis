@@ -46,6 +46,8 @@
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
+- [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
+  - Detects enumeration of IAM policies and tags in GCP, which could be a precursor to privilege escalation attempts via tag-based access control.
 - [GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.yml)
   - A custom role has been created, deleted, or updated.
 - [GCP IAM serviceAccounts getAccessToken Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_service_accounts_get_access_token_privilege_escalation.yml)
@@ -81,6 +83,10 @@
   - Alert if a GCP Org or Folder Policy Was Changed Manually.
 - [GCP Permissions Granted to Create or Manage Service Account Key](../rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml)
   - Permissions granted to impersonate a service account. This includes predefined service account IAM roles granted at the parent project, folder or organization-level.
+- [GCP Privilege Escalation via TagBinding](../correlation_rules/gcp_tag_escalation_correlation.yml)
+  - Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation
+- [GCP Privileged Operation](../rules/gcp_audit_rules/gcp_privileged_operation.yml)
+  - Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.
 - [GCP Resource in Unused Region](../rules/gcp_audit_rules/gcp_unused_regions.yml)
   - Adversaries may create cloud instances in unused geographic service regions in order to evade detection.
 - [GCP Service Account Access Denied](../rules/gcp_audit_rules/gcp_service_account_access_denied.yml)
@@ -95,6 +101,8 @@
   - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
 - [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
   - There is a feature of Cloud Storage, “interoperability”, that provides a way for Cloud Storage to interact with storage offerings from other cloud providers, like AWS S3. As part of that, there are HMAC keys that can be created for both Service Accounts and regular users. We can escalate Cloud Storage permissions by creating an HMAC key for a higher-privileged Service Account.
+- [GCP Tag Binding Creation](../rules/gcp_audit_rules/gcp_tag_binding_creation.yml)
+  - Detects the creation of tag bindings in GCP, which could be part of a privilege escalation attempt using tag-based access control.
 - [GCP User Added to IAP Protected Service](../rules/gcp_audit_rules/gcp_user_added_to_iap_protected_service.yml)
   - A user has been granted access to a IAP protected service.
 - [GCP User Added to Privileged Group](../rules/gcp_audit_rules/gcp_user_added_to_privileged_group.yml)
