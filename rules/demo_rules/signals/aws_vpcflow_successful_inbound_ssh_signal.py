@@ -10,4 +10,4 @@ def rule(event):
             not event.get("srcAddr", "").startswith("172.")
             and event.get("dstAddr", "").startswith("172.")
         )
-    ) 
+    )

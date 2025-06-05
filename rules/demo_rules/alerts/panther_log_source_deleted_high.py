@@ -1,14 +1,16 @@
 from typing import Any, Dict
 
+
 def rule(event: Dict[str, Any]) -> bool:
     return (
-        event.get("actionName") == "DELETE_LOG_SOURCE"
-        and event.get("actionResult") == "SUCCEEDED"
+        event.get("actionName") == "DELETE_LOG_SOURCE" and event.get("actionResult") == "SUCCEEDED"
     )
+
 
 def title(event: Dict[str, Any]) -> str:
     actor = event.get("actor", {}).get("name", event.get("actor", {}).get("id", "unknown"))
     return f"Log Source Deleted in Panther by [{actor}]"
+
 
 def runbook(event: Dict[str, Any]) -> str:
     actor = event.get("actor", {}).get("name", event.get("actor", {}).get("id", "unknown"))
@@ -19,4 +21,4 @@ def runbook(event: Dict[str, Any]) -> str:
 2. Confirm if the log source deletion was authorized and expected.
 3. If unauthorized, investigate for potential misconfiguration or malicious activity.
 4. Restore the deleted log source if necessary to maintain visibility.
-""" 
+"""
