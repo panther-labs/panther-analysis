@@ -11,6 +11,7 @@ Description: >
   This may indicate a server spun up outside of normal processes, potentially for malicious purposes.
 Tags:
   - aws.ec2
+  - demo
   - resource.create
   - compliance.soc2
   - discovery.T1535_cloud_services
@@ -26,24 +27,34 @@ InlineFilters:
     Condition: Equals
     Value: RunInstances
 Tests:
-  - Name: No tags present
+  # tagSpecificationSet: both tags present (should not alert)
+  - Name: tagSpecificationSet - both tags present
+    ExpectedResult: false
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      requestParameters:
+        tagSpecificationSet:
+          items:
+            - tags:
+                - key: team_owner
+                  value: security
+                - key: deployment_segment
+                  value: prod
+  # tagSpecificationSet: missing one tag (should alert)
+  - Name: tagSpecificationSet - missing deployment_segment
     ExpectedResult: true
     Log:
       eventSource: ec2.amazonaws.com
       eventName: RunInstances
       requestParameters:
-        tagSpecification: []
-  - Name: Missing required tags
-    ExpectedResult: true
-    Log:
-      eventSource: ec2.amazonaws.com
-      eventName: RunInstances
-      requestParameters:
-        tagSpecification:
-          - tags:
-              - key: Name
-                value: test-instance
-  - Name: Both required tags present
+        tagSpecificationSet:
+          items:
+            - tags:
+                - key: team_owner
+                  value: security
+  # tagSpecification: both tags present (should not alert)
+  - Name: tagSpecification - both tags present
     ExpectedResult: false
     Log:
       eventSource: ec2.amazonaws.com
@@ -54,4 +65,80 @@ Tests:
               - key: team_owner
                 value: security
               - key: deployment_segment
-                value: prod 
+                value: prod
+  # tagSpecification: missing one tag (should alert)
+  - Name: tagSpecification - missing team_owner
+    ExpectedResult: true
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      requestParameters:
+        tagSpecification:
+          - tags:
+              - key: deployment_segment
+                value: prod
+  # responseElements.instancesSet: both tags present (should not alert)
+  - Name: responseElements.instancesSet - both tags present
+    ExpectedResult: false
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      responseElements:
+        instancesSet:
+          items:
+            - tagSet:
+                items:
+                  - key: team_owner
+                    value: security
+                  - key: deployment_segment
+                    value: prod
+  # responseElements.instancesSet: missing one tag (should alert)
+  - Name: responseElements.instancesSet - missing deployment_segment
+    ExpectedResult: true
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      responseElements:
+        instancesSet:
+          items:
+            - tagSet:
+                items:
+                  - key: team_owner
+                    value: security
+  # No tags present anywhere (should alert)
+  - Name: No tags present
+    ExpectedResult: true
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      requestParameters:
+        tagSpecification: []
+  # All tag locations present, both tags present (should not alert)
+  - Name: All tag locations, both tags present
+    ExpectedResult: false
+    Log:
+      eventSource: ec2.amazonaws.com
+      eventName: RunInstances
+      requestParameters:
+        tagSpecificationSet:
+          items:
+            - tags:
+                - key: team_owner
+                  value: security
+                - key: deployment_segment
+                  value: prod
+        tagSpecification:
+          - tags:
+              - key: team_owner
+                value: security
+              - key: deployment_segment
+                value: prod
+      responseElements:
+        instancesSet:
+          items:
+            - tagSet:
+                items:
+                  - key: team_owner
+                    value: security
+                  - key: deployment_segment
+                    value: prod 

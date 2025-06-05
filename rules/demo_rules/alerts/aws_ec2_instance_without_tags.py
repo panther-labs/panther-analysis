@@ -2,11 +2,26 @@ from typing import Any, Dict
 
 
 def rule(event: Dict[str, Any]) -> bool:
+    tag_keys = set()
+
+    # 1. requestParameters.tagSpecificationSet.items[*].tags
+    tag_spec_set = event.deep_get("requestParameters", "tagSpecificationSet", "items", default=[])
+    for spec in tag_spec_set:
+        for tag in spec.get("tags", []):
+            tag_keys.add(tag.get("key"))
+
+    # 2. requestParameters.tagSpecification[*].tags
     tag_spec = event.deep_get("requestParameters", "tagSpecification", default=[])
-    tags = []
     for spec in tag_spec:
-        tags.extend(spec.get("tags", []))
-    tag_keys = {tag.get("key") for tag in tags}
+        for tag in spec.get("tags", []):
+            tag_keys.add(tag.get("key"))
+
+    # 3. responseElements.instancesSet.items[*].tagSet.items
+    instances = event.deep_get("responseElements", "instancesSet", "items", default=[])
+    for instance in instances:
+        for tag in instance.get("tagSet", {}).get("items", []):
+            tag_keys.add(tag.get("key"))
+
     # Alert if either required tag is missing
     return not ("team_owner" in tag_keys and "deployment_segment" in tag_keys)
 
