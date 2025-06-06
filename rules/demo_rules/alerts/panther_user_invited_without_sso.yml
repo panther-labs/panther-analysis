@@ -8,11 +8,14 @@ Severity: High
 Description: >
   Detects when a user is invited to Panther by another user (not via SSO). This may indicate a potential bypass of SSO onboarding controls and should be reviewed for compliance and security.
 Tags:
-  - panther.mdc
-  - user.invite
+  - panther
+  - auth.login_success
+  - resource.create
+  - compliance.soc2
   - compliance.change_management
-  - high_severity
-  - mdc
+  - compliance.nist_csf
+  - compliance.iso27001
+  - persistence.T1136_account_creation.001_local_account
 Detection:
   - KeyPath: actionName
     Condition: Equals

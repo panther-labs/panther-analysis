@@ -11,6 +11,8 @@ NC='\033[0m' # No Color
 # Set variables for the resources to clean up
 USER_NAME="security-tools-svc"
 S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+EC2_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+IAM_ADMIN_POLICY="arn:aws:iam::aws:policy/IAMFullAccess"
 
 echo "${YELLOW}[*] Cleaning up test scenario: Removing user $USER_NAME and associated resources using default AWS profile${NC}"
 
@@ -19,6 +21,18 @@ echo "${GREEN}[+] Detaching S3 admin policy from $USER_NAME...${NC}"
 aws iam detach-user-policy \
     --user-name $USER_NAME \
     --policy-arn $S3_ADMIN_POLICY
+
+# Detach the EC2 admin policy
+echo "${GREEN}[+] Detaching EC2 admin policy from $USER_NAME...${NC}"
+aws iam detach-user-policy \
+    --user-name $USER_NAME \
+    --policy-arn $EC2_ADMIN_POLICY
+
+# Detach the IAM admin policy
+echo "${GREEN}[+] Detaching IAM admin policy from $USER_NAME...${NC}"
+aws iam detach-user-policy \
+    --user-name $USER_NAME \
+    --policy-arn $IAM_ADMIN_POLICY
 
 # Delete all access keys for the user
 echo "${GREEN}[+] Deleting all access keys for $USER_NAME...${NC}"

