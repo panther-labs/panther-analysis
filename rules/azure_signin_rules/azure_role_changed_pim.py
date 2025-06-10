@@ -21,5 +21,10 @@ def title(event):
     return f"{actor_name} added {target_name} as {role} successfully with {operation_name}"
 
 
+def dedup(event):
+    # Ensure every event is a separate alert
+    return event.get("p_row_id", "<UNKNWON_ROW_ID>")
+
+
 def alert_context(event):
     return azure_rule_context(event)

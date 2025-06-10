@@ -1,4 +1,4 @@
-""" Global helpers for Snowflake streaming detections. """
+"""Global helpers for Snowflake streaming detections."""
 
 
 def query_history_alert_context(event):

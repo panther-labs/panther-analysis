@@ -19,6 +19,7 @@ Query: |
     DATEDIFF(HOUR, event_timestamp, CURRENT_TIMESTAMP) < 24
     AND event_type = 'LOGIN'
     AND error_code is NOT NULL
+    AND error_code != 394304 -- Ignore JWT Fingerprint Mismatch
   GROUP BY client_ip, reported_client_type
   HAVING counts >= 5;
 Schedule:
