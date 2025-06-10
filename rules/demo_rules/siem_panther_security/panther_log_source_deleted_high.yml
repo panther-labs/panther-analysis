@@ -6,6 +6,10 @@ Filename: panther_log_source_deleted_high.py
 LogTypes:
   - Panther.Audit
 Severity: High
+InlineFilters:
+  - KeyPath: actionResult
+    Condition: Equals
+    Value: SUCCEEDED
 Description: >
   Detects when a log source is deleted in Panther. Deletion of log sources can result in loss of visibility and may indicate malicious or unauthorized configuration changes.
 Tags:
