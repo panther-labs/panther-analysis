@@ -7,6 +7,10 @@ LogTypes:
   - Panther.Audit
 Severity: Low
 DedupPeriodMinutes: 1440
+InlineFilters:
+  - KeyPath: actionResult
+    Condition: Equals
+    Value: SUCCEEDED
 Tags:
   - panther
   - key.rotate

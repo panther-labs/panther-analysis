@@ -1,8 +1,6 @@
 def rule(event):
     """Detect API token update events in Panther."""
-    return (
-        event.get("actionName") == "UPDATE_API_TOKEN" and event.get("actionResult") == "SUCCEEDED"
-    )
+    return event.get("actionName") == "UPDATE_API_TOKEN"
 
 
 def title(event):

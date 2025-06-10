@@ -1,5 +1,3 @@
-# Monitors changes to Panther detections over a 24-hour period
-
 DETECTION_CHANGE_ACTIONS = [
     # Detection Operations
     "CREATE_DETECTION",
@@ -27,9 +25,10 @@ DETECTION_CHANGE_ACTIONS = [
 
 
 def rule(event):
-    if event.get("actionName") not in DETECTION_CHANGE_ACTIONS:
-        return False
-    return event.get("actionResult") == "SUCCEEDED"
+    return (
+        event.get("actionName") in DETECTION_CHANGE_ACTIONS
+        and event.get("actionResult") == "SUCCEEDED"
+    )
 
 
 def alert_context(event):
@@ -60,7 +59,3 @@ def alert_context(event):
         "result": event.get("actionResult"),
         "version": event.get("pantherVersion"),
     }
-
-
-def severity(event):
-    return "INFO"

@@ -7,6 +7,17 @@ LogTypes:
 Severity: High
 Description: >
   Detects when a user is invited to Panther by another user (not via SSO). This may indicate a potential bypass of SSO onboarding controls and should be reviewed for compliance and security.
+Runbook: >
+  1. Review the actor who invited the user and confirm if the invitation was expected and authorized.
+  2. Ensure the user was not intended to be onboarded via SSO.
+  3. If unauthorized, disable the account and investigate for potential policy violations or malicious activity.
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+SummaryAttributes:
+  - actor.name
+  - actor.id
+  - actionParams
+  - sourceIP
+  - timestamp 
 Tags:
   - panther
   - demo
@@ -16,7 +27,7 @@ Tags:
   - compliance.change_management
   - compliance.nist_csf
   - compliance.iso27001
-  - persistence.T1136_account_creation.001_local_account
+  - persistence.create_account.cloud_account
 Detection:
   - KeyPath: actionName
     Condition: Equals
@@ -27,6 +38,9 @@ Detection:
   - KeyPath: actor.name
     Condition: DoesNotEqual
     Value: System
+  - KeyPath: actionResult
+    Condition: Equals
+    Value: SUCCEEDED
 Tests:
   - Name: User invited without SSO (positive)
     ExpectedResult: true
@@ -55,14 +69,3 @@ Tests:
       sourceIP: ""
       timestamp: "2025-06-04T20:21:48.246Z"
       p_log_type: Panther.Audit
-Runbook: >
-  1. Review the actor who invited the user and confirm if the invitation was expected and authorized.
-  2. Ensure the user was not intended to be onboarded via SSO.
-  3. If unauthorized, disable the account and investigate for potential policy violations or malicious activity.
-Reference: https://docs.panther.com/system-configuration/panther-audit-logs
-SummaryAttributes:
-  - actor.name
-  - actor.id
-  - actionParams
-  - sourceIP
-  - timestamp 

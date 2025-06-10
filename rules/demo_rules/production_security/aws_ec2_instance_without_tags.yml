@@ -14,9 +14,9 @@ Tags:
   - demo
   - resource.create
   - compliance.soc2
-  - discovery.T1535_cloud_services
+  - discovery.cloud_services
   - policy.change
-  - defense_evasion.T1098_account_manipulation
+  - defense_evasion.account_manipulation
 OutputIds:
   - "d4735112-507e-43a9-96a0-8c850e722c3b"
 InlineFilters:
@@ -26,6 +26,10 @@ InlineFilters:
   - KeyPath: eventName
     Condition: Equals
     Value: RunInstances
+  - KeyPath: errorCode
+    Condition: IsNull
+  - KeyPath: errorMessage
+    Condition: IsNull
 Tests:
   # tagSpecificationSet: both tags present (should not alert)
   - Name: tagSpecificationSet - both tags present
