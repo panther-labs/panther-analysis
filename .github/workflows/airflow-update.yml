@@ -16,6 +16,7 @@ permissions:
 jobs:
   update-airflow:
     runs-on: ubuntu-latest
+    if: github.repository == 'panther-labs/panther-analysis'
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@v4
