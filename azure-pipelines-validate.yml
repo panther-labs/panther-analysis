@@ -21,10 +21,10 @@ jobs:
   - checkout: self
     displayName: 'Checkout panther-analysis'
   
-  - task: actions/setup-python@v5
+  - task: UsePythonVersion@0
     displayName: 'Set Python version'
     inputs:
-      python-version: '$(pythonVersion)'
+      versionSpec: '$(pythonVersion)'
   
   - script: |
       pip install pipenv
