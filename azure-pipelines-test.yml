@@ -1,0 +1,72 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  pythonVersion: '3.11'
+
+jobs:
+- job: TestUnauthenticated
+  displayName: 'Test (Unauthenticated)'
+  condition: eq(variables['System.PullRequest.IsFork'], 'True')
+  
+  steps:
+  - checkout: self
+    displayName: 'Checkout panther-analysis'
+  
+  - task: UsePythonVersion@0
+    displayName: 'Set Python version'
+    inputs:
+      versionSpec: '$(pythonVersion)'
+      addToPath: true
+  
+  - script: |
+      pip install pipenv
+    displayName: 'Install pipenv'
+  
+  - script: |
+      make venv
+    displayName: 'Setup virtual environment'
+  
+  - script: |
+      pipenv run panther_analysis_tool test --show-failures-only
+    displayName: 'Run tests (unauthenticated)'
+
+- job: TestAuthenticated
+  displayName: 'Test (Authenticated)'
+  condition: ne(variables['System.PullRequest.IsFork'], 'True')
+  
+  steps:
+  - checkout: self
+    displayName: 'Checkout panther-analysis'
+  
+  - task: UsePythonVersion@0
+    displayName: 'Set Python version'
+    inputs:
+      versionSpec: '$(pythonVersion)'
+      addToPath: true
+  
+  - script: |
+      pip install pipenv
+    displayName: 'Install pipenv'
+  
+  - script: |
+      make venv
+    displayName: 'Setup virtual environment'
+  
+  - script: |
+      if [ -z "$(API_HOST)" ] || [ -z "$(API_TOKEN)" ]; then
+        echo "API_HOST or API_TOKEN not set"
+        exit 0
+      fi
+      pipenv run panther_analysis_tool test --api-host $(API_HOST) --api-token $(API_TOKEN) --show-failures-only
+    displayName: 'Run tests (authenticated)'
+    env:
+      API_HOST: $(API_HOST)
+      API_TOKEN: $(API_TOKEN)

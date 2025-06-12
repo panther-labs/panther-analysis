@@ -1,0 +1,46 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  pythonVersion: '3.11'
+
+jobs:
+- job: Validate
+  displayName: 'Validate Panther Analysis'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  
+  steps:
+  - checkout: self
+    displayName: 'Checkout panther-analysis'
+  
+  - task: UsePythonVersion@0
+    displayName: 'Set Python version'
+    inputs:
+      versionSpec: '$(pythonVersion)'
+      addToPath: true
+  
+  - script: |
+      pip install pipenv
+    displayName: 'Install pipenv'
+  
+  - script: |
+      make venv
+    displayName: 'Setup virtual environment'
+  
+  - script: |
+      if [ -z "$(API_HOST)" ] || [ -z "$(API_TOKEN)" ]; then
+        echo "API_HOST or API_TOKEN not set"
+        exit 0
+      fi
+      pipenv run panther_analysis_tool validate --api-host $(API_HOST) --api-token $(API_TOKEN)
+    displayName: 'Validate analysis'
+    env:
+      API_HOST: $(API_HOST)
+      API_TOKEN: $(API_TOKEN)
