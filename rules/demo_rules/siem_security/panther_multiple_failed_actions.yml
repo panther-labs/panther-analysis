@@ -1,0 +1,108 @@
+AnalysisType: rule
+Enabled: true
+RuleID: Panther.MultipleFailedActions
+LogTypes:
+  - Panther.Audit
+Severity: Low
+CreateAlert: true
+DisplayName: Multiple Failed Actions by Actor
+AlertTitle: "Multiple {{.actionName}} failures by {{.actor.name}}"
+Description: >
+  Detects when there are more than 3 failed actions within 15 minutes by the same actor for the same action type.
+  This may indicate brute force attempts, permission issues, or potential malicious activity.
+Detection:
+  - KeyPath: actionResult
+    Condition: Equals
+    Value: FAILED
+GroupBy:
+  - KeyPath: actor.id
+  - KeyPath: actionName
+DedupPeriodMinutes: 15
+Threshold: 3
+Tags:
+  - panther
+  - demo
+  - brute_force
+  - failed_authentication
+  - security_monitoring
+  - compliance.soc2
+  - mitre_attack.t1110
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+Runbook: |
+  1. Review the actor details and source IP address for the failed actions
+  2. Investigate the specific action being attempted repeatedly
+  3. Check if this represents legitimate user behavior or potential attack
+  4. If malicious, consider temporarily disabling the actor's account
+  5. Review system logs around the same timeframe for additional context
+  6. If legitimate, check for permission or configuration issues
+SummaryAttributes:
+  - actor.id
+  - actor.name
+  - actionName
+  - sourceIP
+  - timestamp
+Tests:
+  - Name: Failed uber search execution
+    ExpectedResult: true
+    Log:
+      actionName: EXECUTE_UBER_SEARCH
+      actionResult: FAILED
+      actor:
+        attributes:
+          email: gilad.lev@panther.io
+          emailVerified: false
+          roleId: 85fa5eb4-3fff-46c3-bc5a-84ec5c56286b
+          roleName: Admin
+        id: PantherSSO_gilad.lev@panther.io
+        name: gilad.lev@panther.io
+        type: USER
+      sourceIP: 47.230.51.23
+      timestamp: "2025-06-09T14:17:12.619Z"
+      errors:
+        - message: "input: [{\"msg\":\"error near TableExpressionTerminal: \\\",\\\"\",\"startLine\":1,\"startCol\":181,\"endLine\":1,\"endCol\":182}]"
+      pantherVersion: "1.113.138"
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      p_log_type: Panther.Audit
+  - Name: Successful action should not alert
+    ExpectedResult: false
+    Log:
+      actionName: GET_NOTIFICATIONS
+      actionResult: SUCCEEDED
+      actor:
+        attributes:
+          email: jack@panther.io
+          emailVerified: false
+          roleId: 85fa5eb4-3fff-46c3-bc5a-84ec5c56286b
+          roleName: Admin
+        id: PantherSSO_jack@panther.io
+        name: jack@panther.io
+        type: USER
+      sourceIP: 4.4.191.10
+      timestamp: "2025-06-10T21:28:28.504Z"
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      pantherVersion: "1.113.140"
+      p_log_type: Panther.Audit
+  - Name: Failed detection retrieval
+    ExpectedResult: true
+    Log:
+      actionName: GET_DETECTION
+      actionResult: FAILED
+      actor:
+        attributes:
+          email: jack@panther.io
+          emailVerified: false
+          roleId: 85fa5eb4-3fff-46c3-bc5a-84ec5c56286b
+          roleName: Admin
+        id: PantherSSO_jack@panther.io
+        name: jack@panther.io
+        type: USER
+      sourceIP: 73.92.98.192
+      timestamp: "2025-06-09T15:38:27.431Z"
+      errors:
+        - message: "Error getting detection: input: detection [My.Rule.2] not found"
+      pantherVersion: "1.113.138"
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      p_log_type: Panther.Audit 
