@@ -98,11 +98,10 @@ def get_instance_info(event: PantherEvent) -> dict:
             "id": event.deep_get(
                 "resource", "labels", "instance_id", default="UNKNOWN INSTANCE ID"
             ),
-            # Will look like: projects/project-name/zones/zone-name/instances/instance-name/SerialPort/port-num
+            # Will look like:
+            # projects/projectName/zones/zoneName/instances/instanceName/SerialPort/portNum
             "name": event.deep_get(
                 "protoPayload", "resourceName", default="/UNKNOWN INSTANCE NAME//"
             ).split("/")[-3],
         }
-    return context | {
-        "principal_and_resource_name": f"{context['principal']}:{context['resourceName']}"
-    }
+    return context
