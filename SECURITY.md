@@ -21,3 +21,4 @@ This security policy applies to all the code and files within this repository an
 If you encounter a security issue in a dependency we do not directly maintain, please follow responsible disclosure practices and report it to the respective project.
 
 Thank you for being so helpful in making this project more secure.
+
