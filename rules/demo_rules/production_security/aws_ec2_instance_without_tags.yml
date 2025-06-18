@@ -27,9 +27,9 @@ InlineFilters:
     Condition: Equals
     Value: RunInstances
   - KeyPath: errorCode
-    Condition: IsNull
+    Condition: IsNullOrEmpty
   - KeyPath: errorMessage
-    Condition: IsNull
+    Condition: IsNullOrEmpty
 Tests:
   # tagSpecificationSet: both tags present (should not alert)
   - Name: tagSpecificationSet - both tags present
