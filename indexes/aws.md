@@ -10,6 +10,8 @@
 
 ## AWS BedrockModelInvocation
 
+- [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrock_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
+  - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
 - [test bedrock model invocation rule](../rules/aws_bedrock_rules/test_bedrock_model_invocation_rule.yml)
   - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
 
