@@ -10,6 +10,8 @@
 
 ## AWS BedrockModelInvocation
 
+- [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrock_rules/aws_bedrock_model_invocation_abnormal_token_usage.yml)
+  - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
 - [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrock_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
   - Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
 
