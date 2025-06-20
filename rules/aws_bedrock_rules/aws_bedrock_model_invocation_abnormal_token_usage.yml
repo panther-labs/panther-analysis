@@ -1,0 +1,165 @@
+AnalysisType: rule
+Filename: aws_bedrock_model_invocation_abnormal_token_usage.py
+RuleID: "AWS.Bedrock.Model.Invocation.Abnormal.Token.Usage"
+DisplayName: "AWS Bedrock Model Invocation Abnormal Token Usage"
+Enabled: true
+LogTypes:
+    - AWS.BedrockModelInvocation
+Tags:
+    - AWS Bedrock
+    - Beta
+Severity: Info
+Reports:
+    MITRE ATT&CK:
+        - TA0040:T1496.004
+Description: Identify abnormal usage of the Bedrock model that could lead to Guardrail blocking the interaction.
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.impact.bedrock-invoke-model/
+InlineFilters:
+    - All: []
+Tests:
+    - Name: Converse Operation Unusual Token Patterns
+      ExpectedResult: true
+      Log:
+        accountId: "111111111111"
+        identity:
+            arn: arn:aws:sts::111111111111:assumed-role/role_details/suspicious.user
+        input:
+            inputBodyJson:
+                messages:
+                    - content:
+                        - text: I have a very suspicious question.
+                      role: user
+            inputContentType: application/json
+            inputTokenCount: 0
+        modelId: anthropic.claude-3-haiku-20240307-v1:0
+        operation: Converse
+        output:
+            outputBodyJson:
+                metrics:
+                    latencyMs: 249
+                output:
+                    message:
+                        content:
+                            - text: You shouldn't ask this question
+                        role: assistant
+                usage:
+                    inputTokens: 0
+                    outputTokens: 0
+                    totalTokens: 2000
+            outputContentType: application/json
+            outputTokenCount: 0
+        region: us-west-2
+        requestId: bb98d9a8-bd9a-47ca-976b-f165ef1f8b67
+        schemaType: ModelInvocationLog
+        schemaVersion: "1.0"
+        timestamp: "2025-05-15 14:17:22.000000000"
+    - Name: Converse Operation with Abnormal Token Usage
+      ExpectedResult: true
+      Log:
+        accountId: "111111111111"
+        identity:
+            arn: arn:aws:sts::111111111111:assumed-role/role_details/suspicious.user
+        input:
+            inputBodyJson:
+                messages:
+                    - content:
+                        - text: I have a very suspicious question.
+                      role: user
+            inputContentType: application/json
+            inputTokenCount: 0
+        modelId: anthropic.claude-3-haiku-20240307-v1:0
+        operation: Converse
+        output:
+            outputBodyJson:
+                metrics:
+                    latencyMs: 249
+                output:
+                    message:
+                        content:
+                            - text: You shouldn't ask this question
+                        role: assistant
+                usage:
+                    inputTokens: 0
+                    outputTokens: 0
+                    totalTokens: 5000
+            outputContentType: application/json
+            outputTokenCount: 0
+        region: us-west-2
+        requestId: bb98d9a8-bd9a-47ca-976b-f165ef1f8b67
+        schemaType: ModelInvocationLog
+        schemaVersion: "1.0"
+        timestamp: "2025-05-15 14:17:22.000000000"
+    - Name: Perform Another Operation
+      ExpectedResult: false
+      Log:
+        accountId: "111111111111"
+        identity:
+            arn: arn:aws:sts::111111111111:assumed-role/role_details/regular.user
+        input:
+            inputBodyJson:
+                messages:
+                    - content:
+                        - text: I have a rather normal question.
+                      role: user
+            inputContentType: application/json
+            inputTokenCount: 0
+        modelId: anthropic.claude-3-haiku-20240307-v1:0
+        operation: ListModels
+        output:
+            outputBodyJson:
+                metrics:
+                    latencyMs: 249
+                output:
+                    message:
+                        content:
+                            - text: I can respond to this question
+                        role: assistant
+                usage:
+                    inputTokens: 0
+                    outputTokens: 0
+                    totalTokens: 0
+            outputContentType: application/json
+            outputTokenCount: 0
+        region: us-west-2
+        requestId: bb98d9a8-bd9a-47ca-976b-f165ef1f8b67
+        schemaType: ModelInvocationLog
+        schemaVersion: "1.0"
+        timestamp: "2025-05-15 14:17:22.000000000"
+    - Name: Regular Converse Operation with Normal Token Usage
+      ExpectedResult: false
+      Log:
+        accountId: "111111111111"
+        identity:
+            arn: arn:aws:sts::111111111111:assumed-role/role_details/regular.user
+        input:
+            inputBodyJson:
+                messages:
+                    - content:
+                        - text: I have a rather normal question.
+                      role: user
+            inputContentType: application/json
+            inputTokenCount: 0
+        modelId: anthropic.claude-3-haiku-20240307-v1:0
+        operation: Converse
+        output:
+            outputBodyJson:
+                metrics:
+                    latencyMs: 249
+                output:
+                    message:
+                        content:
+                            - text: I can respond to this question
+                        role: assistant
+                usage:
+                    inputTokens: 0
+                    outputTokens: 0
+                    totalTokens: 0
+            outputContentType: application/json
+            outputTokenCount: 0
+        region: us-west-2
+        requestId: bb98d9a8-bd9a-47ca-976b-f165ef1f8b67
+        schemaType: ModelInvocationLog
+        schemaVersion: "1.0"
+        timestamp: "2025-05-15 14:17:22.000000000"
