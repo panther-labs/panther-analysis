@@ -160,6 +160,65 @@ Tests:
       timestamp: "2023-04-21 19:52:32.722"
       treeid: "4295752857"
     Name: Non Suspicious Event
+  - ExpectedResult: false
+    Log:
+      {
+        "aid": "843e1a0b77d5406e9b41e1ffd9881a1f",
+        "aip": "64.252.59.99",
+        "cid": "e4a46c2a445744f7860dcf62bf1b6ad4",
+        "ConfigBuild": "1007.3.0019607.15",
+        "ConfigStateHash": "557954845",
+        "Entitlements": "15",
+        "event": {
+          "AuthenticationId": "999",
+          "AuthenticodeHashData": "5c5e94c37ac89d675c54f64d99b66480300de21e3a306049494cfd91c2226ee2",
+          "CommandLine": "\"C:\\Windows\\system32\\cmd.exe\" /d /c C:\\Windows\\system32\\hpatchmonTask.cmd",
+          "ConfigBuild": "1007.3.0019607.15",
+          "ConfigStateHash": "557954845",
+          "EffectiveTransmissionClass": "3",
+          "Entitlements": "15",
+          "EventOrigin": "1",
+          "ImageFileName": "\\Device\\HarddiskVolume3\\Windows\\System32\\cmd.exe",
+          "ImageSubsystem": "3",
+          "IntegrityLevel": "16384",
+          "MD5HashData": "59a3f41dd84517fcf809bd65fff5e721",
+          "ParentAuthenticationId": "999",
+          "ParentBaseFileName": "svchost.exe",
+          "ParentProcessId": "124606242543",
+          "ProcessCreateFlags": "525316",
+          "ProcessEndTime": "",
+          "ProcessParameterFlags": "24577",
+          "ProcessStartTime": "1750090252.197",
+          "ProcessSxsFlags": "64",
+          "RawProcessId": "6352",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "ae4943e5f3f763688e10601f090b4cae3ce19f0b427007884b40d27d7fb9274d",
+          "SessionId": "0",
+          "SignInfoFlags": "32768",
+          "SourceProcessId": "124606242543",
+          "SourceThreadId": "9339710701681",
+          "Tags": "40, 53, 874, 924, 10445360464024, 10445360464025, 10445360464026, 10445360464258, 10445360464273, 10445360464274, 10995116279184, 12094627905582, 12094627906234",
+          "TargetProcessId": "125548398530",
+          "TokenType": "1",
+          "UserSid": "S-1-5-18",
+          "WindowFlags": "128",
+          "aid": "843e1a0b77d5406e9b41e1ffd9881a1f",
+          "aip": "64.252.59.99",
+          "cid": "e4a46c2a445744f7860dcf62bf1b6ad4",
+          "event_platform": "Win",
+          "event_simpleName": "ProcessRollup2",
+          "id": "7b255ead-e869-4023-93ca-45224d7d269d",
+          "name": "ProcessRollup2V19",
+          "timestamp": "1750090254089"
+        },
+        "event_platform": "Win",
+        "event_simpleName": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "id": "7b255ead-e869-4023-93ca-45224d7d269d",
+        "name": "ProcessRollup2V19",
+        "timestamp": "2025-06-16 16:10:54.089000000"
+      }
+    Name: AKo testing
 DedupPeriodMinutes: 60
 LogTypes:
   - Crowdstrike.FDREvent
