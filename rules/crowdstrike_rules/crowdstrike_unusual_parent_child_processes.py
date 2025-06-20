@@ -1,7 +1,6 @@
 from panther_crowdstrike_fdr_helpers import crowdstrike_detection_alert_context
 
 SUSPICIOUS_PARENT_CHILD_COMBINATIONS_WINDOWS = {
-    ("svchost.exe", "cmd.exe"),
     ("winword.exe", "cmd.exe"),
     ("winword.exe", "powershell.exe"),
     ("excel.exe", "cmd.exe"),
@@ -18,6 +17,9 @@ def rule(event):
             child_process_name = (
                 event.deep_get("event", "ImageFileName", default="").lower().split("\\")[-1]
             )
+            command_line = event.deep_get("event", "CommandLine", default="")
+            if parent_process_name == "svchost.exe" and child_process_name == "cmd.exe":
+                return command_line == '"cmd.exe" /C sc control hptpsmarthealthservice 211'
             return (
                 parent_process_name,
                 child_process_name,
