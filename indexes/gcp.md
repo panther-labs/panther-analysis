@@ -83,7 +83,7 @@
   - Alert if a GCP Org or Folder Policy Was Changed Manually.
 - [GCP Permissions Granted to Create or Manage Service Account Key](../rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml)
   - Permissions granted to impersonate a service account. This includes predefined service account IAM roles granted at the parent project, folder or organization-level.
-- [GCP Privilege Escalation via TagBinding](../correlation_rules/gcp_tag_escalation_correlation.yml)
+- [GCP Privilege Escalation via TagBinding](../correlation_rules/gcp_tag_escalation.yml)
   - Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation
 - [GCP Privileged Operation](../rules/gcp_audit_rules/gcp_privileged_operation.yml)
   - Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.
