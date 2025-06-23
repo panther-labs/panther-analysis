@@ -1,16 +1,17 @@
 from panther_gcp_helpers import gcp_alert_context
 
-
-def rule(event):
-    non_iam_privileged_operations = [
+PRIVILEGED_OPERATIONS = [
+        "iam.serviceAccounts.getAccessToken",
         "orgpolicy.policy.set",
         "storage.hmacKeys.create",
         "serviceusage.apiKeys.create",
         "serviceusage.apiKeys.list",
     ]
 
+
+def rule(event):
     method_name = event.deep_get("protoPayload", "methodName", default="")
-    return method_name.endswith("setIamPolicy") or method_name in non_iam_privileged_operations
+    return method_name.endswith("setIamPolicy") or method_name in PRIVILEGED_OPERATIONS
 
 
 def title(event):
