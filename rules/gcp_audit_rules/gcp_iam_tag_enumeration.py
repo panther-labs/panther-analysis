@@ -10,7 +10,7 @@ def rule(event):
     ]
 
     method_name = event.deep_get("protoPayload", "methodName", default="")
-    return method_name in enum_iam_tags
+    return any(tag in method_name for tag in enum_iam_tags)
 
 
 def title(event):
