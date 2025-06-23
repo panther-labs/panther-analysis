@@ -1,12 +1,12 @@
 from panther_gcp_helpers import gcp_alert_context
 
 PRIVILEGED_OPERATIONS = [
-        "iam.serviceAccounts.getAccessToken",
-        "orgpolicy.policy.set",
-        "storage.hmacKeys.create",
-        "serviceusage.apiKeys.create",
-        "serviceusage.apiKeys.list",
-    ]
+    "iam.serviceAccounts.getAccessToken",
+    "orgpolicy.policy.set",
+    "storage.hmacKeys.create",
+    "serviceusage.apiKeys.create",
+    "serviceusage.apiKeys.list",
+]
 
 
 def rule(event):
