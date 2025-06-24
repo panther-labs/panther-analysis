@@ -1,5 +1,3 @@
-import panther_base_helpers
-
 def rule(event):
     # Only process InvokeModel and Converse operations
     if event.get("operation") not in ["InvokeModel", "Converse"]:
