@@ -10,7 +10,7 @@ def rule(event):
     "guardrail", 
     "actionReason", 
     default="<UNKNOWN ACTION REASON>"
-    )     
+    ) 
     return stop_reason =="guardrail_intervened" or action_reason.startswith("Guardrail blocked")
 
 def title(event):
@@ -39,5 +39,6 @@ def title(event):
     # Handle the case when both values are known
     return (
         f"The model [{model_id}] was invoked with the operation [{operation_name}] "
-        f"by the account [{account_id}]. Stop reason [{stop_reason}]. Action reason [{action_reason}]."
+        f"by the account [{account_id}]. Stop reason [{stop_reason}]. "
+        f"Action reason [{action_reason}]."
     )
