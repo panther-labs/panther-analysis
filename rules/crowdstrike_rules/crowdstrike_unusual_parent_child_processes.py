@@ -19,7 +19,10 @@ def rule(event):
             )
             command_line = event.deep_get("event", "CommandLine", default="")
             if parent_process_name == "svchost.exe" and child_process_name == "cmd.exe":
-                return command_line == '"cmd.exe" /C sc control hptpsmarthealthservice 211'
+                return not (
+                    command_line == '"cmd.exe" /C sc control hptpsmarthealthservice 211'
+                    or command_line.endswith("hpatchmonTask.cmd")
+                )
             return (
                 parent_process_name,
                 child_process_name,
