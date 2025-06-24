@@ -17,4 +17,3 @@ def title(event):
         return f"The model [{model_id}] was invoked with the operation [{operation_name}] by the account [{account_id}]. Stop reason [{stop_reason}]."
     if stop_reason == "<UNKNOWN REASON>":
         return f"The model [{model_id}] was invoked with the operation [{operation_name}] by the account [{account_id}]. Action reason [{action_reason}]."
-    
