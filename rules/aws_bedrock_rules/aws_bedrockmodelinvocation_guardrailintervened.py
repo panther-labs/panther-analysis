@@ -10,7 +10,7 @@ def rule(event):
     "guardrail", 
     "actionReason", 
     default="<UNKNOWN ACTION REASON>"
-    ) 
+    )
     return stop_reason =="guardrail_intervened" or action_reason.startswith("Guardrail blocked")
 
 def title(event):
