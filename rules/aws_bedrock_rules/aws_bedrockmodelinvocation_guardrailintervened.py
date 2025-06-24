@@ -1,6 +1,3 @@
-from panther_aws_helpers import aws_rule_context
-import panther_base_helpers
-
 def rule(event):
     if (event.get("operation") != "InvokeModel" and event.get("operation") != "Converse"):
         return False
@@ -8,10 +5,7 @@ def rule(event):
     stop_reason = event.deep_get("output","outputBodyJSON","stopReason",default="<UNKNOWN REASON>")
     action_reason = event.deep_get("output","outputBodyJSON","amazon-bedrock-trace","guardrail","actionReason",default="<UNKNOWN ACTION REASON>")
         
-    if stop_reason =="guardrail_intervened" or action_reason.startswith("Guardrail blocked"):
-        return True
-    else:    
-        return False
+    return stop_reason =="guardrail_intervened" or action_reason.startswith("Guardrail blocked")
 
 def title(event):
     model_id = event.get("modelId")
