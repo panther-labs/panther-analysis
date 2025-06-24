@@ -10,8 +10,8 @@ def rule(event):
         
     if stop_reason =="guardrail_intervened" or action_reason.startswith("Guardrail blocked"):
         return True
-    
-    return False
+    else:    
+        return False
 
 def title(event):
     model_id = event.get("modelId")
