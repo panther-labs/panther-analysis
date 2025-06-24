@@ -11,7 +11,11 @@ PRIVILEGED_OPERATIONS = [
 
 def rule(event):
     method_name = event.deep_get("protoPayload", "methodName", default="")
-    return method_name.endswith("setIamPolicy") or method_name in PRIVILEGED_OPERATIONS
+    return (
+        method_name.endswith("setIamPolicy")
+        or method_name.endswith("setIamPermissions")
+        or method_name in PRIVILEGED_OPERATIONS
+    )
 
 
 def title(event):
