@@ -9,6 +9,11 @@ SUSPICIOUS_PARENT_CHILD_COMBINATIONS_WINDOWS = {
     ("outlook.exe", "powershell.exe"),
 }
 
+COMMAND_LINE_EXCEPTIONS = [
+    '"cmd.exe" /C sc control hptpsmarthealthservice 211',
+    '"C:\\Windows\\system32\\cmd.exe" /d /c C:\\Windows\\system32\\hpatchmonTask.cmd',
+]
+
 
 def rule(event):
     if event.get("fdr_event_type", "") == "ProcessRollup2":
@@ -19,10 +24,7 @@ def rule(event):
             )
             command_line = event.deep_get("event", "CommandLine", default="")
             if parent_process_name == "svchost.exe" and child_process_name == "cmd.exe":
-                return not (
-                    command_line == '"cmd.exe" /C sc control hptpsmarthealthservice 211'
-                    or command_line.endswith("hpatchmonTask.cmd")
-                )
+                return not command_line in COMMAND_LINE_EXCEPTIONS
             return (
                 parent_process_name,
                 child_process_name,
