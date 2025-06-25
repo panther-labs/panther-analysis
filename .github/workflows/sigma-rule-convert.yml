@@ -3,7 +3,6 @@ name: Sigma Rule Convert
 on:
   pull_request:
     branches:
-      # - develop
       - lindy/sigma-workflows
 
 permissions:
@@ -38,6 +37,6 @@ jobs:
       - name: Check for Removed Rules
         run: |
           pipenv run make check-deprecated
-          
+
       - name: Install dependencies
         run: poetry install
