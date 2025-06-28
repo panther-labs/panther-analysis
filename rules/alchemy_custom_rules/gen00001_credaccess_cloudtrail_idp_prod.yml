@@ -1,0 +1,197 @@
+AnalysisType: rule
+Filename: gen00001_credaccess_cloudtrail_idp_prod.py
+RuleID: gen00001.credaccess.cloudtrail.idp.prod
+DisplayName: gen00001_credaccess_cloudtrail_idp_prod
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - TA0011:T1133
+    - TA0006:T1136.003
+    - TA0006:T1556.006
+Severity: Critical
+Tags:
+  - Beta
+CreateAlert: true
+Description: >
+  Identifies when a user (not Atlantis or Pulumi) adds or deletes an IAM IDP SAML, which could indicate a potential security risk.
+Runbook: Make sure that the user is authorized and got approval from Security to add or delete an IAM IDP SAML. If not, investigate the event further.
+Reference: https://www.notion.so/alchemotion/gen00001_credaccess_cloudtrail_idp_prod-21e069f2006680968badd3d246fa5ebe
+Tests:
+  - Name: Pulumi Creates a new OpenID Connect Provider
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "b65a1065-eeb5-4902-8580-20eac98cdc1e",
+        "eventName": "CreateOpenIDConnectProvider",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2025-06-24 23:34:46",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "905418441132",
+        "requestID": "00ff5947-be66-4842-9dc7-1ef4b4baea40",
+        "requestParameters": {
+          "openIDConnectProviderArn": "arn:aws:iam::905418441132:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/66CE9BD86C1F904421E6C0BB2C6DA94C"
+        },
+        "sourceIPAddress": "44.241.59.217",
+        "userAgent": "APN/1.0 Pulumi/1.0 Pulumi/1.0 Pulumi-Aws/0.11+compatible (+https://pulumi.com) aws-sdk-go-v2/1.36.3 ua/2.1 os/linux lang/go#1.23.8 md/GOOS#linux md/GOARCH#amd64 api/iam#1.41.0 m/g",
+        "userIdentity": {
+          "accessKeyId": "ASIA5FTZFAGWES2VRZM4",
+          "accountId": "905418441132",
+          "arn": "arn:aws:sts::905418441132:assumed-role/pulumi/pulumi",
+          "principalId": "AROA5FTZFAGWEEHWRJXS5:pulumi",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-06-24T23:19:21Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "905418441132",
+              "arn": "arn:aws:iam::905418441132:role/pulumi",
+              "principalId": "AROA5FTZFAGWEEHWRJXS5",
+              "type": "Role",
+              "userName": "pulumi"
+            },
+            "webIdFederationData": {
+              "attributes": {},
+              "federatedProvider": "arn:aws:iam::905418441132:oidc-provider/api.pulumi.com/oidc"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Pulumi Deletes a new OpenID Connect Provider
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "b65a1065-eeb5-4902-8580-20eac98cdc1e",
+        "eventName": "DeleteOpenIDConnectProvider",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2025-06-24 23:34:46",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "905418441132",
+        "requestID": "00ff5947-be66-4842-9dc7-1ef4b4baea40",
+        "requestParameters": {
+          "openIDConnectProviderArn": "arn:aws:iam::905418441132:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/66CE9BD86C1F904421E6C0BB2C6DA94C"
+        },
+        "sourceIPAddress": "44.241.59.217",
+        "userAgent": "APN/1.0 Pulumi/1.0 Pulumi/1.0 Pulumi-Aws/0.11+compatible (+https://pulumi.com) aws-sdk-go-v2/1.36.3 ua/2.1 os/linux lang/go#1.23.8 md/GOOS#linux md/GOARCH#amd64 api/iam#1.41.0 m/g",
+        "userIdentity": {
+          "accessKeyId": "ASIA5FTZFAGWES2VRZM4",
+          "accountId": "905418441132",
+          "arn": "arn:aws:sts::905418441132:assumed-role/pulumi/pulumi",
+          "principalId": "AROA5FTZFAGWEEHWRJXS5:pulumi",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-06-24T23:19:21Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "905418441132",
+              "arn": "arn:aws:iam::905418441132:role/pulumi",
+              "principalId": "AROA5FTZFAGWEEHWRJXS5",
+              "type": "Role",
+              "userName": "pulumi"
+            },
+            "webIdFederationData": {
+              "attributes": {},
+              "federatedProvider": "arn:aws:iam::905418441132:oidc-provider/api.pulumi.com/oidc"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Atlantis Creates a new SAML Provider
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "b65a1065-eeb5-4902-8580-20eac98cdc1e",
+        "eventName": "CreateSAMLProvider",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2025-06-24 23:34:46",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "905418441132",
+        "requestID": "00ff5947-be66-4842-9dc7-1ef4b4baea40",
+        "requestParameters": {
+          "openIDConnectProviderArn": "arn:aws:iam::905418441132:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/66CE9BD86C1F904421E6C0BB2C6DA94C"
+        },
+        "sourceIPAddress": "44.241.59.217",
+        "userAgent": "APN/1.0 HashiCorp/1.0 Terraform/1.9.8 (+https://www.terraform.io) terraform-provider-aws/5.100.0 (+https://registry.terraform.io/providers/hashicorp/aws) aws-sdk-go-v2/1.36.3 ua/2.1 os/linux lang/go#1.23.10 md/GOOS#linux md/GOARCH#amd64 exec-env/AWS_ECS_FARGATE api/iam#1.42.0 m/i",
+        "userIdentity": {
+          "accessKeyId": "ASIA5FTZFAGWES2VRZM4",
+          "accountId": "905418441132",
+          "arn": "arn:aws:sts::905418441132:assumed-role/pulumi/pulumi",
+          "principalId": "AROA5FTZFAGWEEHWRJXS5:pulumi",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-06-24T23:19:21Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "905418441132",
+              "arn": "arn:aws:iam::905418441132:role/AtlantisRole",
+              "principalId": "AROA5FTZFAGWEEHWRJXS5",
+              "type": "Role",
+              "userName": "AtlantisRole"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
+  - Name: User Creates a new OpenID Connect Provider
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "b65a1065-eeb5-4902-8580-20eac98cdc1e",
+        "eventName": "CreateOpenIDConnectProvider",
+        "eventSource": "iam.amazonaws.com",
+        "eventTime": "2025-06-24 23:34:46",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "905418441132",
+        "requestID": "00ff5947-be66-4842-9dc7-1ef4b4baea40",
+        "requestParameters": {
+          "openIDConnectProviderArn": "arn:aws:iam::905418441132:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/66CE9BD86C1F904421E6C0BB2C6DA94C"
+        },
+        "sourceIPAddress": "44.241.59.217",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+        "userIdentity": {
+          "accessKeyId": "ASIA5FTZFAGWES2VRZM4",
+          "accountId": "905418441132",
+          "arn": "arn:aws:sts::209202477790:assumed-role/AWSReservedSSO_CreepEngUser_3d4f99cb0afeaaf4/somecreep@alchemy.com",
+          "principalId": "AROA5FTZFAGWEEHWRJXS5:pulumi",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-06-24T23:19:21Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "905418441132",
+              "arn": "arn:aws:iam::905418441132:role/AtlantisRole",
+              "principalId": "AROA5FTZFAGWEEHWRJXS5",
+              "type": "Role",
+              "userName": "AWSReservedSSO_InfraEngUser_3d4f99cb0afeaaf4"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
