@@ -19,7 +19,7 @@ def title(event):
     project_id = event.deep_get("resource", "labels", "project_id", default="<PROJECT_NOT_FOUND>")
 
     return (
-        f"GCP: [{actor}] created or updated workforce pool "
+        f"GCP: [{actor}] created or updated workload identity pool "
         f"[{workload_identity_pool}] in project [{project_id}]"
     )
 
