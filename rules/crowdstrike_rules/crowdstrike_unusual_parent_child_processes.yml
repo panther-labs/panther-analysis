@@ -160,6 +160,65 @@ Tests:
       timestamp: "2023-04-21 19:52:32.722"
       treeid: "4295752857"
     Name: Non Suspicious Event
+  - ExpectedResult: false
+    Log:
+      {
+        "aid": "aid-a1b2c3d4e5f6",
+        "aip": "1.2.3.4",
+        "cid": "cid-a1b2c3d4e5f6",
+        "ConfigBuild": "1007.x.xxxxxxxx.xx",
+        "ConfigStateHash": "xxxxxxxxx",
+        "Entitlements": "xx",
+        "event": {
+          "AuthenticationId": "999",
+          "AuthenticodeHashData": "[SOME_HASH]",
+          "CommandLine": "\"C:\\Windows\\system32\\cmd.exe\" /d /c C:\\Windows\\system32\\hpatchmonTask.cmd",
+          "ConfigBuild": "1007.x.xxxxxxxx.xx",
+          "ConfigStateHash": "xxxxxxxxx",
+          "EffectiveTransmissionClass": "x",
+          "Entitlements": "xx",
+          "EventOrigin": "1",
+          "ImageFileName": "\\Device\\HarddiskVolume\\Windows\\System32\\cmd.exe",
+          "ImageSubsystem": "3",
+          "IntegrityLevel": "16384",
+          "MD5HashData": "[SOME_HASH]",
+          "ParentAuthenticationId": "999",
+          "ParentBaseFileName": "svchost.exe",
+          "ParentProcessId": "100000000001",
+          "ProcessCreateFlags": "525316",
+          "ProcessEndTime": "",
+          "ProcessParameterFlags": "24577",
+          "ProcessStartTime": "1700000000.000",
+          "ProcessSxsFlags": "64",
+          "RawProcessId": "1234",
+          "SHA1HashData": "0000000000000000000000000000000000000000",
+          "SHA256HashData": "[SOME_HASH]",
+          "SessionId": "0",
+          "SignInfoFlags": "32768",
+          "SourceProcessId": "100000000001",
+          "SourceThreadId": "900000000001",
+          "Tags": "40, 53, [SOME_TAGS]",
+          "TargetProcessId": "100000000002",
+          "TokenType": "1",
+          "UserSid": "S-1-5-18",
+          "WindowFlags": "128",
+          "aid": "aid-a1b2c3d4e5f6",
+          "aip": "1.2.3.4",
+          "cid": "cid-a1b2c3d4e5f6",
+          "event_platform": "Win",
+          "event_simpleName": "ProcessRollup2",
+          "id": "12345678-abcd-1234-abcd-1234567890ab",
+          "name": "ProcessRollup2V19",
+          "timestamp": "1700000000000"
+        },
+        "event_platform": "Win",
+        "event_simpleName": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "id": "12345678-abcd-1234-abcd-1234567890ab",
+        "name": "ProcessRollup2V19",
+        "timestamp": "2025-01-01 12:00:00.000000000"
+      }
+    Name: Windows update
 DedupPeriodMinutes: 60
 LogTypes:
   - Crowdstrike.FDREvent
