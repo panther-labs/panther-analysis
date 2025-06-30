@@ -303,3 +303,4 @@ Otherwise, running `npm uninstall prettier` will remove Prettier.
 # License
 
 This repository is licensed under [Apache License, Version 2.0](https://github.com/panther-labs/panther-analysis/blob/main/LICENSE.txt).
+
