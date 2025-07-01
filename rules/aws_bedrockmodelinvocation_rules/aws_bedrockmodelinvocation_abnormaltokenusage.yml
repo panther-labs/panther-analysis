@@ -15,6 +15,7 @@ Reports:
     MITRE ATT&CK:
         - TA0040:T1496.004
 Description: Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.
+Runbook: Verify the alert details by checking token usage, model ID, and account information to confirm unusual activity, examine user access patterns to identify potential credential compromise, and look for evidence of prompt injection, unusual repetition, or attempts to bypass usage limits. Apply stricter usage quotas to the affected account, block suspicious IP addresses, and enhance the guardrails that are in place.
 DedupPeriodMinutes: 60
 Threshold: 1
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.impact.bedrock-invoke-model/
