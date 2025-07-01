@@ -22,9 +22,8 @@ def rule(event):
     )
 
 
-def title(event):
-    aid = event.get("aid", "<UNKNOWN_AID>")
-    return f"Crowdstrike: plutil was used to modify a plist file on device [{aid}]"
+def title(event):  # pylint: disable=unused-argument
+    return "Crowdstrike: plutil was used to modify a plist file on one or more devices"
 
 
 def alert_context(event):
