@@ -22,7 +22,7 @@ def rule(event):
     )
 
 
-def title(event):  # pylint: disable=unused-argument
+def title(_):
     return "Crowdstrike: plutil was used to modify a plist file on one or more devices"
 
 
