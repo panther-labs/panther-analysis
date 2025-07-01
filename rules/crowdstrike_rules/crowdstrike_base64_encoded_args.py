@@ -31,6 +31,7 @@ def rule(event):
 
     # Split arguments from process path
     command_line_args = event.udm("cmd", default="")
+    command_line_args = command_line_args.replace("\u2013", "-")
     command_line_args = command_line_args.replace('"', " ")
     command_line_args = command_line_args.replace("'", " ")
     command_line_args = command_line_args.replace("=", " ")

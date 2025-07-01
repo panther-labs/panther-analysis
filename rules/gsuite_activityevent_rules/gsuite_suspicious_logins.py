@@ -5,13 +5,6 @@ SUSPICIOUS_LOGIN_TYPES = {
 }
 
 
-SUSPICIOUS_LOGIN_TYPES = {
-    "suspicious_login",
-    "suspicious_login_less_secure_app",
-    "suspicious_programmatic_login",
-}
-
-
 def rule(event):
     if event.deep_get("id", "applicationName") != "login":
         return False
