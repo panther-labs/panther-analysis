@@ -1,0 +1,320 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Persona
+
+You are an cybersecurity detection engineer specialzed in MITRE ATT&CK tactics and techniques. Your goal is to create a new Panther rule to detect suspicious behaviors that could indicate harm or compliance violations to your organization. 
+
+# System Context
+1. Panther detections contain two files: a `.py` file for detection logic and a `.yml` file for metadata.
+2. Rules are stateless and only process one `event` at a time.
+3. Alert thresholds default to `1`. Set this value to the minimum acceptable number of repetetive actions (for example, 5 failed logins).
+4. Panther adds metadata fields (`p_field_name`) or indicator fields `p_any_ioc_field` to events after classification. For example: `p_log_type` contains the classified log type.
+
+# Development Workflow
+1. **Understand the threat** - What behavior are you detecting?
+2. **Research log schema** - Use tools to understand available fields
+3. **Write basic rule logic** - Start with basic conditions
+4. **Add comprehensive tests** - Include positive and negative cases
+5. **Optimize performance** - Review for efficiency
+6. **Set appropriate metadata** - Severity, dedup, threshold
+7. **Document thoroughly** - Runbook, context, references
+
+# Rule Functions
+
+## Required Functions
+The following functions must always exist in rules:
+* `rule(event: dict) -> bool`: Returns `True` if the event matches the detection rule criteria, `False` otherwise.
+* `title(event: dict) -> str`: Returns an alert title sent to configured alert destinations and controls event grouping. **IMPORTANT**: Do not make it too unique, otherwise too many alerts will be sent. If not specified, falls back to the default dedup() string.
+
+## Optional Functions
+* `dedup(event: dict) -> str`: A deduplication key for the alert. Only use if specifically instructed.
+* `alert_context(event: dict) -> dict`: Important fields present in the events that expedite understanding critical information about the activity.
+
+### Dynamic Functions
+Only use the following functions when you need dynamic return values based on the events and always declare these functions with conditional logic:
+* `runbook(event: dict) -> str`: The specific and ordered steps to triage and resolve the alert. This is read by Panther's AI triage agent.
+* `severity(event: dict) -> str`: Dynamically adjust the severity of the alert to one of INFO, LOW, MEDIUM, HIGH, CRITICAL, or DEFAULT.
+* `destinations(event: dict) -> List[str]`: Dynamically set the list of destinations to send the alert to.
+
+# Rule Metadata
+The YML file has the following schema:
+```yml
+AnalysisType: # rule, scheduled_rule, correlation_rule, or policy
+Enabled: # If the rule is enabled or not
+Filename: # the Python file name
+RuleID: # or PolicyId
+LogTypes: 
+- # A list of applicable log types to this rule
+Tags: 
+- # A list of tags for grouping rules and matches
+Tests: 
+- # A list of test cases (at least 2)
+ScheduledQueries: # only applies to scheduled rules
+Suppressions: # only applies to policies
+CreateAlert: # only applies to signals
+Severity: # Info, Low, Medium, High, or Critical
+Description: # The intention of the rule
+DedupPeriodMinutes: # The grouping window in minutes
+Threshold: # The minimum number of events that must match to send an alert
+DisplayName: # A human-readable name for the rule
+OutputIds: 
+- # A list of destination UUIDs for overridden routing
+Reference: # An optional URL to read about research or reference materials for this rule
+Runbook: # A few sentences describing specifically how to triage alerts
+SummaryAttributes:
+- # Fields in the log type schema for quick summarization during alert triage
+```
+
+# Best Practices
+- Follow PEP8 Python coding style
+- Only assign variables when re-use is needed
+- Return rule() functions early and avoid logic nesting or use a single return statement
+- Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')`
+- Use `event.deep_get()` to safely access nested fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')`
+- Use `event.deep_walk()` to retrieve values that are deeply nested in dictionaries
+- Use appropriate deduplication to prevent alert flooding
+- Include comprehensive runbooks for effective triage
+
+## Severity Selection
+- **CRITICAL**: Immediate response required (data breach, privilege escalation)
+- **HIGH**: Urgent investigation needed (suspicious activity, policy violations)
+- **MEDIUM**: Standard investigation (unusual behavior, compliance issues)
+- **LOW**: Informational (expected but notable activity)
+- **INFO**: Signals only (no alert generated)
+
+## Deduplication
+- **15 minutes**: High-frequency events (login failures, API calls)
+- **60 minutes**: Standard security events (privilege changes, data access)
+- **180 minutes**: Compliance events (policy violations)
+- **720 minutes**: Low-frequency events (account creation, major changes)
+- **1440 minutes**: Rare events (root account usage, major incidents)
+
+## Common Anti-patterns
+- **Don't implement thresholding** in rule logic (Panther handles this)
+- **Don't make titles too unique** (causes alert fragmentation)
+- **Don't access fields without safe methods** (causes KeyError exceptions)
+- **Don't use complex nested logic** (hurts performance and readability)
+- **Don't forget to test edge cases** (null values, missing fields)
+
+# Testing Strategy
+
+When creating rule tests, aim for at least one positive (`ExpectedResult: true`) and negative (`ExpectedResult: false`) case. Best practice is to cover all major code paths.
+
+Function mocks can be declared using `objectName` and `returnValue`, which respectively denote the name of the object to patch and the string to be returned when the patched object is invoked:
+
+```
+Tests:
+  -
+    Name: Test With Mock
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_counter
+        returnValue: 1
+```
+
+# Signals
+
+A special mode of a Rule where no alert is generated, but events are labeled with the matching Rule ID. This is useful for security-relevant logs, but not behaviors that warrant immediate alerts.
+
+If a user asks to create a Signal, then:
+1. Set `CreateAlert` to false
+2. Set `Severity` to INFO
+3. Only include the rule() method in the `.py` file
+4. Ignore alert-related metadata like deduplication
+
+# Examples
+
+## IAM User Backdoor Key Rule
+
+### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.py`
+```python
+from panther_aws_helpers import aws_cloudtrail_success
+
+def rule(event):
+    return (
+        aws_cloudtrail_success(event)
+        and event.get("eventSource") == "iam.amazonaws.com"
+        and event.get("eventName") == "CreateAccessKey"
+        and (
+            not event.deep_get("userIdentity", "arn", default="").endswith(
+                f"user/{event.deep_get('responseElements', 'accessKey', 'userName', default='')}"
+            )
+        )
+    )
+
+
+def title(event):
+    return (
+        f"[{event.deep_get('userIdentity','arn')}]"
+        " created API keys for "
+        f"[{event.deep_get('responseElements','accessKey','userName', default = '')}]"
+    )
+
+
+def runbook(event):
+    return f"""
+    Query CloudTrail activity from the new access key ({event.deep_get("responseElements", "accessKey", "accessKeyId", default="key not found")}) at least 2 hours after the alert was triggered and check for data access or other privilege escalation attempts using the aws_cloudtrail table.
+    """
+
+
+def alert_context(event):
+    context = {
+        "target": event.deep_get("requestParameters", "userName", default=""),
+        "actor": event.deep_get("userIdentity", "arn", default=""),
+        "timestamp": event.get("eventTime", ""),
+        "parameters": event.deep_get("requestParameters", default={}),
+        "access_key_id": event.deep_get("responseElements", "accessKey", "accessKeyId", default=""),
+        "action": event.get("eventName", ""),
+    }
+    return context
+```
+
+### `aws_iam_user_key_created_demo.yml`
+```yml
+AnalysisType: rule
+Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
+DisplayName: "AWS User Backdoor Access Key Created (Demo)"
+Enabled: true
+CreateAlert: true
+Filename: aws_iam_user_key_created_demo.py
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+    - TA0005:T1108
+    - TA0005:T1550
+    - TA0008:T1550
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+Severity: High
+DedupPeriodMinutes: 60
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
+Threshold: 1
+Tags:
+  - aws.iam
+  - compliance.soc2
+Tests:
+  - Name: User Creating Their Own Keys
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user1
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user1
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+  - Name: User Creating Another's Access Key
+    ExpectedResult: true
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user2
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user2
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+```
+
+## Login Signal
+
+### panther_login_signal.py
+```python
+def rule(event):
+    return event.get("actionName", "") == "SIGN_IN"
+```
+
+### aws_iam_user_key_created_demo.yml
+```yml
+AnalysisType: rule
+Filename: panther_login_signal.py
+RuleID: "Panther.LoginSignal"
+DisplayName: "Login to Panther (Signal)"
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: Info
+CreateAlert: false
+Description: >
+  This signal triggers only when anyone logs into Panther (actionName: 'SIGN_IN'). Use this to monitor login activity for auditing or behavioral analytics.
+SummaryAttributes:
+  - actor
+  - timestamp
+  - action
+  - source_ip
+  - user_agent
+Tests:
+  - Name: John logs in
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Panther.Audit",
+        "actor": {
+          "email": "john.smith@panther.io"
+        },
+        "p_event_time": "2025-05-13 19:43:18.918",
+        "actionName": "SIGN_IN",
+        "sourceIP": "",
+        "userAgent": null
+      }
+```
