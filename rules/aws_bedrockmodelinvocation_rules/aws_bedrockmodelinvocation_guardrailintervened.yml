@@ -16,6 +16,7 @@ Reports:
     MITRE ATT&CK:
         - TA0006:T0018.000
 Description: Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.
+Runbook: Confirm alert details by reviewing the model ID, operation name, account ID, and the specific guardrail intervention reasons provided in the alert description. Analyze the user prompts that triggered the guardrail by examining the Bedrock console logs for the associated requestId, looking for patterns of attempted model poisoning or prompt injection techniques. If suspicious activity is confirmed, temporarily restrict the access of the malicious actor to Bedrock services, preserve all evidence of the interaction, and escalate to the security team for further analysis of potential AI model manipulation attempts. https://atlas.mitre.org/mitigations/AML.M0005
 DedupPeriodMinutes: 60
 Threshold: 1
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.impact.bedrock-invoke-model/, https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html
