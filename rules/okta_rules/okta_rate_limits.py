@@ -22,14 +22,17 @@ def rule(event):
 
 
 def title(event):
+    actor = event.deep_get("actor", "alternateId")
+    if actor == "unknown":
+        actor = event.deep_get("actor", "displayName", default="<id-not-found>")
     return (
         f"Okta Rate Limit Event: [{event.get('eventtype','')}] "
-        f"by [{event.deep_get('actor', 'alternateId', default='<id-not-found>')}]"
+        f"by [{actor}/{event.deep_get('actor', 'type', default='<type-not-found>')}] "
     )
 
 
 def dedup(event):
-    return event.deep_get("actor", "alternateId", default="<id-not-found>")
+    return event.deep_get("actor", "id")
 
 
 def alert_context(event):
