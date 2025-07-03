@@ -14,6 +14,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.repository == 'panther-labs/panther-analysis'
     permissions:
       id-token: write
       contents: read
