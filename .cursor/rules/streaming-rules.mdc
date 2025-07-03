@@ -3,9 +3,7 @@ description:
 globs: 
 alwaysApply: false
 ---
-# Persona
-
-You are an cybersecurity detection engineer specialzed in MITRE ATT&CK tactics and techniques. Your goal is to create a new Panther rule to detect suspicious behaviors that could indicate harm or compliance violations to your organization. 
+Create Panther security detection rules to identify suspicious behaviors or compliance violations.
 
 # System Context
 1. Panther detections contain two files: a `.py` file for detection logic and a `.yml` file for metadata.
@@ -15,105 +13,84 @@ You are an cybersecurity detection engineer specialzed in MITRE ATT&CK tactics a
 
 # Development Workflow
 1. **Understand the threat** - What behavior are you detecting?
-2. **Research log schema** - Use tools to understand available fields
-3. **Write basic rule logic** - Start with basic conditions
-4. **Add comprehensive tests** - Include positive and negative cases
-5. **Optimize performance** - Review for efficiency
-6. **Set appropriate metadata** - Severity, dedup, threshold
-7. **Document thoroughly** - Runbook, context, references
+2. **Research schema and data** - Read log type schemas to validate field names and structures, check data models for field mappings, and sample real log events for accurate testing
+3. **Write logic + tests** - Basic conditions with positive/negative test cases using real log data
+4. **Optimize and configure** - Performance, severity, dedup, documentation
 
 # Rule Functions
 
-## Required Functions
-The following functions must always exist in rules:
-* `rule(event: dict) -> bool`: Returns `True` if the event matches the detection rule criteria, `False` otherwise.
-* `title(event: dict) -> str`: Returns an alert title sent to configured alert destinations and controls event grouping. **IMPORTANT**: Do not make it too unique, otherwise too many alerts will be sent. If not specified, falls back to the default dedup() string.
+## Required
+* `rule(event: dict) -> bool`: Detection logic - returns True if event matches criteria
+* `title(event: dict) -> str`: Alert title for grouping (**avoid making too unique**)
 
-## Optional Functions
-* `dedup(event: dict) -> str`: A deduplication key for the alert. Only use if specifically instructed.
-* `alert_context(event: dict) -> dict`: Important fields present in the events that expedite understanding critical information about the activity.
+## Optional
+* `dedup(event: dict) -> str`: Custom deduplication key
+* `alert_context(event: dict) -> dict`: Key fields for alert context
 
-### Dynamic Functions
-Only use the following functions when you need dynamic return values based on the events and always declare these functions with conditional logic:
-* `runbook(event: dict) -> str`: The specific and ordered steps to triage and resolve the alert. This is read by Panther's AI triage agent.
-* `severity(event: dict) -> str`: Dynamically adjust the severity of the alert to one of INFO, LOW, MEDIUM, HIGH, CRITICAL, or DEFAULT.
-* `destinations(event: dict) -> List[str]`: Dynamically set the list of destinations to send the alert to.
+## Dynamic (use with conditional logic)
+* `runbook(event: dict) -> str`: Triage steps for AI agent
+* `severity(event: dict) -> str`: Dynamic severity (INFO, LOW, MEDIUM, HIGH, CRITICAL)
+* `destinations(event: dict) -> List[str]`: Dynamic alert destinations
+
+## Third-party libraries
+The following third-party Python libraries are available in the runtime environment:
+1. `jsonpath-ng`: JSONPath Implementation
+2. `policyuniverse`: Parse AWS ARNs and Policies
+3. `requests`: Easy HTTP Requests
+
+## Helper functions
+The `global_helpers/` folder contains a set of convinience functions for analyzing specific logs that may be imported and used in rules.
 
 # Rule Metadata
-The YML file has the following schema:
-```yml
-AnalysisType: # rule, scheduled_rule, correlation_rule, or policy
-Enabled: # If the rule is enabled or not
-Filename: # the Python file name
-RuleID: # or PolicyId
-LogTypes: 
-- # A list of applicable log types to this rule
-Tags: 
-- # A list of tags for grouping rules and matches
-Tests: 
-- # A list of test cases (at least 2)
-ScheduledQueries: # only applies to scheduled rules
-Suppressions: # only applies to policies
-CreateAlert: # only applies to signals
-Severity: # Info, Low, Medium, High, or Critical
-Description: # The intention of the rule
-DedupPeriodMinutes: # The grouping window in minutes
-Threshold: # The minimum number of events that must match to send an alert
-DisplayName: # A human-readable name for the rule
-OutputIds: 
-- # A list of destination UUIDs for overridden routing
-Reference: # An optional URL to read about research or reference materials for this rule
-Runbook: # A few sentences describing specifically how to triage alerts
-SummaryAttributes:
-- # Fields in the log type schema for quick summarization during alert triage
-```
+The YML file follows the rule schema definition. For complete field specifications and validation rules, refer to [rule.json](mdc:mcp:.vscode/schemas/rule.json)
+
+**SummaryAttributes:** To use a nested field as a summary attribute, use the Snowflake dot notation in the Summary Attribute field to traverse a path in a JSON object (e.g., `userIdentity.arn` for nested AWS CloudTrail fields).
 
 # Best Practices
 - Follow PEP8 Python coding style
 - Only assign variables when re-use is needed
-- Return rule() functions early and avoid logic nesting or use a single return statement
-- Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')`
+- Order conditions by selectivity: Put the most restrictive conditions first to leverage short-circuit evaluation
+- Use early returns: Exit rule() as soon as a condition fails to avoid unnecessary computation
+- Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')` (event fields are NOT case sensitive)
 - Use `event.deep_get()` to safely access nested fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')`
 - Use `event.deep_walk()` to retrieve values that are deeply nested in dictionaries
 - Use appropriate deduplication to prevent alert flooding
 - Include comprehensive runbooks for effective triage
 
-## Severity Selection
-- **CRITICAL**: Immediate response required (data breach, privilege escalation)
-- **HIGH**: Urgent investigation needed (suspicious activity, policy violations)
-- **MEDIUM**: Standard investigation (unusual behavior, compliance issues)
-- **LOW**: Informational (expected but notable activity)
-- **INFO**: Signals only (no alert generated)
+## Alert Configuration
 
-## Deduplication
-- **15 minutes**: High-frequency events (login failures, API calls)
-- **60 minutes**: Standard security events (privilege changes, data access)
-- **180 minutes**: Compliance events (policy violations)
-- **720 minutes**: Low-frequency events (account creation, major changes)
-- **1440 minutes**: Rare events (root account usage, major incidents)
+**Severity Levels:**
+- **CRITICAL**: Immediate response (data breach, privilege escalation)
+- **HIGH**: Urgent investigation (suspicious activity, policy violations)
+- **MEDIUM**: Standard investigation (unusual behavior, compliance)
+- **LOW/INFO**: Informational or signals only
 
-## Common Anti-patterns
-- **Don't implement thresholding** in rule logic (Panther handles this)
-- **Don't make titles too unique** (causes alert fragmentation)
-- **Don't access fields without safe methods** (causes KeyError exceptions)
-- **Don't use complex nested logic** (hurts performance and readability)
-- **Don't forget to test edge cases** (null values, missing fields)
+**Deduplication Windows:**
+- **15 min**: High-frequency events (login failures, API calls)
+- **60 min**: Standard security events (privilege changes, data access)
+- **180 min**: Compliance events
+- **720 min**: Low-frequency events (account creation)
+- **1440 min**: Rare events (root account usage)
+
+**Anti-patterns to Avoid:**
+- Don't implement thresholding in rule logic (Panther handles this)
+- Don't make titles too unique (causes alert fragmentation)
+- Don't access fields without safe methods (causes KeyError exceptions)
+- Don't use complex nested logic (hurts performance and readability)
 
 # Testing Strategy
 
-When creating rule tests, aim for at least one positive (`ExpectedResult: true`) and negative (`ExpectedResult: false`) case. Best practice is to cover all major code paths.
+Include at least one positive and negative test case. Use real log data when possible.
 
-Function mocks can be declared using `objectName` and `returnValue`, which respectively denote the name of the object to patch and the string to be returned when the patched object is invoked:
-
-```
+**Mock Functions (within test objects):**
+```yaml
 Tests:
-  -
-    Name: Test With Mock
-    LogType: AWS.CloudTrail
+  - Name: Test With Mock
     ExpectedResult: true
     Mocks:
       - objectName: get_counter
         returnValue: 1
+    Log: {...}
 ```
 
 # Signals
@@ -132,13 +109,14 @@ If a user asks to create a Signal, then:
 
 ### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.py`
 ```python
-from panther_aws_helpers import aws_cloudtrail_success
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 def rule(event):
+    # Order conditions by selectivity - most restrictive first
     return (
-        aws_cloudtrail_success(event)
+        event.get("eventName") == "CreateAccessKey"
         and event.get("eventSource") == "iam.amazonaws.com"
-        and event.get("eventName") == "CreateAccessKey"
+        and aws_cloudtrail_success(event)
         and (
             not event.deep_get("userIdentity", "arn", default="").endswith(
                 f"user/{event.deep_get('responseElements', 'accessKey', 'userName', default='')}"
@@ -162,25 +140,17 @@ def runbook(event):
 
 
 def alert_context(event):
-    context = {
-        "target": event.deep_get("requestParameters", "userName", default=""),
-        "actor": event.deep_get("userIdentity", "arn", default=""),
-        "timestamp": event.get("eventTime", ""),
-        "parameters": event.deep_get("requestParameters", default={}),
-        "access_key_id": event.deep_get("responseElements", "accessKey", "accessKeyId", default=""),
-        "action": event.get("eventName", ""),
-    }
-    return context
+    return aws_rule_context(event)
 ```
 
-### `aws_iam_user_key_created_demo.yml`
+### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.yml`
 ```yml
 AnalysisType: rule
 Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
 DisplayName: "AWS User Backdoor Access Key Created (Demo)"
 Enabled: true
 CreateAlert: true
-Filename: aws_iam_user_key_created_demo.py
+Filename: aws_iam_user_backdoor.py
 Reports:
   MITRE ATT&CK:
     - TA0003:T1098
@@ -284,7 +254,7 @@ def rule(event):
     return event.get("actionName", "") == "SIGN_IN"
 ```
 
-### aws_iam_user_key_created_demo.yml
+### panther_login_signal.yml
 ```yml
 AnalysisType: rule
 Filename: panther_login_signal.py
