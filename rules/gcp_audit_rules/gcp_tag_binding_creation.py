@@ -3,7 +3,7 @@ from panther_gcp_helpers import gcp_alert_context
 
 def rule(event):
     method_name = event.deep_get("protoPayload", "methodName", default="")
-    return method_name == "TagBindings.CreateTagBinding"
+    return method_name.endswith("TagBindings.CreateTagBinding")
 
 
 def title(event):
