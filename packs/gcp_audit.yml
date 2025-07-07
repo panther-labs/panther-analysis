@@ -14,6 +14,7 @@ PackDefinition:
     - GCP.Cloud.Run.Service.Created.FOLLOWED.BY.Set.IAM.Policy
     - GCP.Cloud.Run.Set.IAM.Policy
     - GCP.Compute.IAM.Policy.Update
+    - GCP.Compute.SSHConnection
     - GCP.Destructive.Queries
     - GCP.DNS.Zone.Modified.or.Deleted
     - GCP.Firewall.Rule.Created
@@ -47,6 +48,10 @@ PackDefinition:
     - GCP.IAM.serviceAccounts.signJwt.Privilege.Escalation
     - GCP.compute.instances.create.Privilege.Escalation
     - GCP.IAM.serviceAccounts.signBlob
+    - GCP.IAM.Tag.Enumeration  # signal
+    - GCP.Tag.Binding.Creation  # signal
+    - GCP.Privileged.Operation  # signal
+    - GCP.Privilege.Escalation.Via.TagBinding  # CR
     # Data model
     - Standard.GCP.AuditLog
     # Globals used in these rules/policies
