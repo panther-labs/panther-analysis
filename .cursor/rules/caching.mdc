@@ -1,0 +1,95 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Detection engineers writing Panther Python rules that require stateful logic, such as tracking unique values or counting events over time.
+
+# System Context
+- Panther provides a DynamoDB-backed cache for Python detections to store and retrieve state across events.
+- The cache supports string sets (for unique values) and counters (for event counts), with helper functions for each.
+- TTL (Time to Live) can be set for cache entries to control data retention.
+- Caching is only available in the Panther Console (not in local/CI/CD test runs unless mocked).
+
+# String Set Helpers
+- `get_string_set(key)`: Retrieve the current set of strings for a key.
+- `put_string_set(key, values, epoch_seconds=None)`: Overwrite the set.
+- `add_to_string_set(key, value, epoch_seconds=None)`: Add one or more strings.
+- `remove_from_string_set(key, value)`: Remove one or more strings.
+- `reset_string_set(key)`: Empty the set.
+- `set_key_expiration(key, epoch_seconds)`: Set TTL for the set.
+
+**Example:**
+```python
+from panther_detection_helpers.caching import add_to_string_set, get_string_set
+
+def rule(event):
+    if event['eventName'] != 'AssumeRole':
+        return False
+    role_arn = event['requestParameters'].get('roleArn')
+    if not role_arn:
+        return False
+    role_arn_key = f"{role_arn}-UniqueSourceIPs"
+    ip_addr = event['sourceIPAddress']
+    previously_seen_ips = get_string_set(role_arn_key)
+    if len(previously_seen_ips) == 0:
+        add_to_string_set(role_arn_key, ip_addr)
+        return False
+    if ip_addr not in previously_seen_ips:
+        return True
+    return False
+```
+
+# Counter Helpers
+- `get_counter(key)`: Get the current value.
+- `increment_counter(key, amount=1, epoch_seconds=None)`: Increment and return new value.
+- `reset_counter(key)`: Reset to 0.
+- `set_key_expiration(key, epoch_seconds)`: Set TTL for the counter.
+
+**Example:**
+```python
+from panther_detection_helpers.caching import increment_counter, set_key_expiration, reset_counter
+
+def rule(event):
+    if event.get('errorCode') != 'AccessDenied':
+        return False
+    key = f"{event['userIdentity'].get('arn')}-AccessDeniedCounter"
+    hourly_error_count = increment_counter(key)
+    if hourly_error_count == 1:
+        set_key_expiration(key, time.time() + 3600)
+    elif hourly_error_count >= 10:
+        reset_counter(key)
+        return True
+    return False
+```
+
+# TTL (Time to Live)
+- Default TTL is 90 days for all cache entries.
+- Use `epoch_seconds` or `set_key_expiration()` to set a custom expiration.
+- Prefer using the event time (`event.event_time_epoch()`) for TTL calculations to avoid issues with delayed or replayed events.
+
+**Example:**
+```python
+put_string_set(key, [value], epoch_seconds=event.event_time_epoch() + 7*24*3600)
+# or
+set_key_expiration(key, event.event_time_epoch() + 7*24*3600)
+```
+
+# Testing
+- Cache functions interact with DynamoDB in the Panther Console.
+- For local/CI/CD tests, mock cache functions to simulate expected outputs.
+- You can include cache state in `alert_context()` for debugging.
+
+# Best Practices
+- Only call cache functions when necessary (avoid unnecessary latency).
+- Do not use timestamps in cache keys (not reproducible).
+- Use event time for TTL, not processing time.
+- Clean up cache entries with TTL to avoid stale data.
+
+# Common Pitfalls
+- Fetching or updating the cache before checking if the event is relevant.
+- Adding to a string set before checking for duplicates.
+- Not setting TTL, leading to unbounded cache growth.
+
+# References
+- [Panther Docs: Python Rule Caching](mdc:https:/docs.panther.com/detections/rules/python/caching)
