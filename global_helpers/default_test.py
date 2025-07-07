@@ -12,5 +12,10 @@ import panther_aws_helpers as p_aws_h  # pylint: disable=C0413
 class TestAWSKeyAccountId(unittest.TestCase):
     def test_aws_key_account_id(self):
         aws_key_id = "ASIAY34FZKBOKMUTVV7A"
-        account_id = p_aws_h.aws_key_account_id(aws_key_id)
+        account_id = p_aws_h.extract_account_id(aws_key_id)
         self.assertEqual(account_id, "609629065308")
+
+    def test_aws_role_account_id(self):
+        aws_role_arn = "AROASXLWWOM4TZXHTA6HN"
+        account_id = p_aws_h.extract_account_id(aws_role_arn)
+        self.assertEqual(account_id, "187616883513")
