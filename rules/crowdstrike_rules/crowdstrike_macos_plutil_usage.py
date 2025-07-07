@@ -22,6 +22,12 @@ def rule(event):
     )
 
 
+def dedup(event):
+    command_line = event.deep_get("event", "CommandLine", default="<UNKNOWN_COMMAND_LINE>")
+    file_name = command_line.split(" ")[-1]
+    return file_name
+
+
 def title(_):
     return "Crowdstrike: plutil was used to modify a plist file on one or more devices"
 
