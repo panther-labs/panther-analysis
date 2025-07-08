@@ -1,0 +1,62 @@
+AnalysisType: rule
+Filename: gen00002-defev-cloudtrail-stoplogging-prod.py
+RuleID: gen00002.defev.cloudtrail.stoplogging.prod
+DisplayName: gen00001_credaccess_cloudtrail_idp_prod
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+Severity: Critical
+Tags:
+  - Beta
+CreateAlert: true
+Description: >
+  This rule detects when a user attempts to disable or modify Cloud Logging telemetry.
+Runbook: These AWS API calls for CloudTrail are never allowed. If triggered, investigate the event further.
+Reference: https://www.notion.so/alchemotion/gen00002-defev-cloudtrail-stoplogging-prod-22a069f200668054a13fe0c3501ae0ee
+Tests:
+  - Name: Some user decided to stop cloudtrail logging
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "b65a1065-eeb5-4902-8580-20eac98cdc1e",
+        "eventName": "StopLogging",
+        "eventSource": "cloudtrail.amazonaws.com",
+        "eventTime": "2025-06-24 23:34:46",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.11",
+        "managementEvent": true,
+        "readOnly": false,
+        "recipientAccountId": "905418441132",
+        "requestID": "00ff5947-be66-4842-9dc7-1ef4b4baea40",
+        "sourceIPAddress": "44.241.59.217",
+        "userAgent": "APN/1.0 Pulumi/1.0 Pulumi/1.0 Pulumi-Aws/0.11+compatible (+https://pulumi.com) aws-sdk-go-v2/1.36.3 ua/2.1 os/linux lang/go#1.23.8 md/GOOS#linux md/GOARCH#amd64 api/iam#1.41.0 m/g",
+        "userIdentity": {
+          "accessKeyId": "ASIA5FTZFAGWES2VRZM4",
+          "accountId": "905418441132",
+          "arn": "arn:aws:sts::905418441132:assumed-role/pulumi/pulumi",
+          "principalId": "AROA5FTZFAGWEEHWRJXS5:pulumi",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2025-06-24T23:19:21Z",
+              "mfaAuthenticated": "false"
+            },
+            "sessionIssuer": {
+              "accountId": "905418441132",
+              "arn": "arn:aws:iam::905418441132:role/pulumi",
+              "principalId": "AROA5FTZFAGWEEHWRJXS5",
+              "type": "Role",
+              "userName": "pulumi"
+            },
+            "webIdFederationData": {
+              "attributes": {},
+              "federatedProvider": "arn:aws:iam::905418441132:oidc-provider/api.pulumi.com/oidc"
+            }
+          },
+          "type": "AssumedRole"
+        }
+      }
