@@ -1,0 +1,290 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Create Panther security detection rules to identify suspicious behaviors or compliance violations.
+
+# System Context
+1. Panther detections contain two files: a `.py` file for detection logic and a `.yml` file for metadata.
+2. Rules are stateless and only process one `event` at a time.
+3. Alert thresholds default to `1`. Set this value to the minimum acceptable number of repetetive actions (for example, 5 failed logins).
+4. Panther adds metadata fields (`p_field_name`) or indicator fields `p_any_ioc_field` to events after classification. For example: `p_log_type` contains the classified log type.
+
+# Development Workflow
+1. **Understand the threat** - What behavior are you detecting?
+2. **Research schema and data** - Read log type schemas to validate field names and structures, check data models for field mappings, and sample real log events for accurate testing
+3. **Write logic + tests** - Basic conditions with positive/negative test cases using real log data
+4. **Optimize and configure** - Performance, severity, dedup, documentation
+
+# Rule Functions
+
+## Required
+* `rule(event: dict) -> bool`: Detection logic - returns True if event matches criteria
+* `title(event: dict) -> str`: Alert title for grouping (**avoid making too unique**)
+
+## Optional
+* `dedup(event: dict) -> str`: Custom deduplication key
+* `alert_context(event: dict) -> dict`: Key fields for alert context
+
+## Dynamic (use with conditional logic)
+* `runbook(event: dict) -> str`: Triage steps for AI agent
+* `severity(event: dict) -> str`: Dynamic severity (INFO, LOW, MEDIUM, HIGH, CRITICAL)
+* `destinations(event: dict) -> List[str]`: Dynamic alert destinations
+
+## Third-party libraries
+The following third-party Python libraries are available in the runtime environment:
+1. `jsonpath-ng`: JSONPath Implementation
+2. `policyuniverse`: Parse AWS ARNs and Policies
+3. `requests`: Easy HTTP Requests
+
+## Helper functions
+The `global_helpers/` folder contains a set of convinience functions for analyzing specific logs that may be imported and used in rules.
+
+# Rule Metadata
+The YML file follows the rule schema definition. For complete field specifications and validation rules, refer to [rule.json](mdc:mcp:.vscode/schemas/rule.json)
+
+**SummaryAttributes:** To use a nested field as a summary attribute, use the Snowflake dot notation in the Summary Attribute field to traverse a path in a JSON object (e.g., `userIdentity.arn` for nested AWS CloudTrail fields).
+
+# Best Practices
+- Follow PEP8 Python coding style
+- Only assign variables when re-use is needed
+- Order conditions by selectivity: Put the most restrictive conditions first to leverage short-circuit evaluation
+- Use early returns: Exit rule() as soon as a condition fails to avoid unnecessary computation
+- Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')` (event fields are NOT case sensitive)
+- Use `event.deep_get()` to safely access nested fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')`
+- Use `event.deep_walk()` to retrieve values that are deeply nested in dictionaries
+- Use appropriate deduplication to prevent alert flooding
+- Include comprehensive runbooks for effective triage
+
+## Alert Configuration
+
+**Severity Levels:**
+- **CRITICAL**: Immediate response (data breach, privilege escalation)
+- **HIGH**: Urgent investigation (suspicious activity, policy violations)
+- **MEDIUM**: Standard investigation (unusual behavior, compliance)
+- **LOW/INFO**: Informational or signals only
+
+**Deduplication Windows:**
+- **15 min**: High-frequency events (login failures, API calls)
+- **60 min**: Standard security events (privilege changes, data access)
+- **180 min**: Compliance events
+- **720 min**: Low-frequency events (account creation)
+- **1440 min**: Rare events (root account usage)
+
+**Anti-patterns to Avoid:**
+- Don't implement thresholding in rule logic (Panther handles this)
+- Don't make titles too unique (causes alert fragmentation)
+- Don't access fields without safe methods (causes KeyError exceptions)
+- Don't use complex nested logic (hurts performance and readability)
+
+# Testing Strategy
+
+Include at least one positive and negative test case. Use real log data when possible.
+
+**Mock Functions (within test objects):**
+```yaml
+Tests:
+  - Name: Test With Mock
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_counter
+        returnValue: 1
+    Log: {...}
+```
+
+# Signals
+
+A special mode of a Rule where no alert is generated, but events are labeled with the matching Rule ID. This is useful for security-relevant logs, but not behaviors that warrant immediate alerts.
+
+If a user asks to create a Signal, then:
+1. Set `CreateAlert` to false
+2. Set `Severity` to INFO
+3. Only include the rule() method in the `.py` file
+4. Ignore alert-related metadata like deduplication
+
+# Examples
+
+## IAM User Backdoor Key Rule
+
+### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.py`
+```python
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+
+def rule(event):
+    # Order conditions by selectivity - most restrictive first
+    return (
+        event.get("eventName") == "CreateAccessKey"
+        and event.get("eventSource") == "iam.amazonaws.com"
+        and aws_cloudtrail_success(event)
+        and (
+            not event.deep_get("userIdentity", "arn", default="").endswith(
+                f"user/{event.deep_get('responseElements', 'accessKey', 'userName', default='')}"
+            )
+        )
+    )
+
+
+def title(event):
+    return (
+        f"[{event.deep_get('userIdentity','arn')}]"
+        " created API keys for "
+        f"[{event.deep_get('responseElements','accessKey','userName', default = '')}]"
+    )
+
+
+def runbook(event):
+    return f"""
+    Query CloudTrail activity from the new access key ({event.deep_get("responseElements", "accessKey", "accessKeyId", default="key not found")}) at least 2 hours after the alert was triggered and check for data access or other privilege escalation attempts using the aws_cloudtrail table.
+    """
+
+
+def alert_context(event):
+    return aws_rule_context(event)
+```
+
+### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.yml`
+```yml
+AnalysisType: rule
+Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
+DisplayName: "AWS User Backdoor Access Key Created (Demo)"
+Enabled: true
+CreateAlert: true
+Filename: aws_iam_user_backdoor.py
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098
+    - TA0005:T1108
+    - TA0005:T1550
+    - TA0008:T1550
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+Severity: High
+DedupPeriodMinutes: 60
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
+Threshold: 1
+Tags:
+  - aws.iam
+  - compliance.soc2
+Tests:
+  - Name: User Creating Their Own Keys
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user1
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user1
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+  - Name: User Creating Another's Access Key
+    ExpectedResult: true
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Management
+      eventID: "12345"
+      eventName: CreateAccessKey
+      eventSource: iam.amazonaws.com
+      eventTime: "2022-09-27 17:09:18"
+      eventType: AwsApiCall
+      eventVersion: "1.08"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "123456789"
+      requestParameters:
+        userName: user2
+      responseElements:
+        accessKey:
+          accessKeyId: ABCDEFG
+          createDate: Sep 27, 2022 5:09:18 PM
+          status: Active
+          userName: user2
+      sourceIPAddress: cloudformation.amazonaws.com
+      userAgent: cloudformation.amazonaws.com
+      userIdentity:
+        accessKeyId: ABCDEFGH
+        accountId: "123456789"
+        arn: arn:aws:iam::123456789:user/user1
+        invokedBy: cloudformation.amazonaws.com
+        principalId: ABCDEFGH
+        sessionContext:
+          attributes:
+            creationDate: "2022-09-27T17:08:35Z"
+            mfaAuthenticated: "false"
+          sessionIssuer: {}
+          webIdFederationData: {}
+        type: IAMUser
+        userName: user1
+```
+
+## Login Signal
+
+### panther_login_signal.py
+```python
+def rule(event):
+    return event.get("actionName", "") == "SIGN_IN"
+```
+
+### panther_login_signal.yml
+```yml
+AnalysisType: rule
+Filename: panther_login_signal.py
+RuleID: "Panther.LoginSignal"
+DisplayName: "Login to Panther (Signal)"
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: Info
+CreateAlert: false
+Description: >
+  This signal triggers only when anyone logs into Panther (actionName: 'SIGN_IN'). Use this to monitor login activity for auditing or behavioral analytics.
+SummaryAttributes:
+  - actor
+  - timestamp
+  - action
+  - source_ip
+  - user_agent
+Tests:
+  - Name: John logs in
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Panther.Audit",
+        "actor": {
+          "email": "john.smith@panther.io"
+        },
+        "p_event_time": "2025-05-13 19:43:18.918",
+        "actionName": "SIGN_IN",
+        "sourceIP": "",
+        "userAgent": null
+      }
+```
