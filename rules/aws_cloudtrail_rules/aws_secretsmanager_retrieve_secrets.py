@@ -13,8 +13,11 @@ def rule(event):
 
 def title(event):
     user = event.udm("actor_user")
-    return f"[{user}] attempted to retrieve a large number of secrets from AWS Secrets Manager"
+    return f"[{user}] is not authorized to retrieve secrets from AWS Secrets Manager"
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    return aws_rule_context(event) | {
+        "errorCode": event.get("errorCode"),
+        "errorMessage": event.get("errorMessage"),
+    }
