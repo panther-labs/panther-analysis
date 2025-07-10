@@ -37,10 +37,6 @@ def rule(event):
         param_name = param.get("Name", "")
         param_value = param.get("Value", "")
 
-        # Check for suspicious patterns
-        if param_name in SUSPICIOUS_PATTERNS and param_value == SUSPICIOUS_PATTERNS[param_name]:
-            return True
-
         # Check for external forwarding
         if param_name in FORWARDING_PARAMETERS and param_value:
             if is_external_address(param_value, primary_domain, onmicrosoft_domain):
@@ -77,5 +73,21 @@ def title(event):
     )
 
 
+def severity(event):
+    if not is_suspicious_pattern(event):
+        return "LOW"
+    return "DEFAULT"
+
+
 def alert_context(event):
     return m365_alert_context(event)
+
+
+def is_suspicious_pattern(event):
+    parameters = event.get("parameters", [])
+    for param in parameters:
+        param_name = param.get("Name", "")
+        param_value = param.get("Value", "")
+        if param_name in SUSPICIOUS_PATTERNS and param_value == SUSPICIOUS_PATTERNS[param_name]:
+            return True
+    return False
