@@ -1,0 +1,80 @@
+AnalysisType: rule
+Filename: gen00003_privesc_github_patgranted_prod.py
+RuleID: gen00003.privesc.github.patgranted.prod
+DisplayName: gen00003_privesc_github_patgranted_prod
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136
+    - TA0004:T1078
+Severity: High
+Tags:
+  - Beta
+CreateAlert: true
+Description: >
+  This rule detects when a legacy or fine-grained access token is used within OMGWINNING org.
+Runbook: Make sure that the user is authorized and valid for PAT use. Encourage use of fine-grained tokens and bot tokens.
+Reference: https://www.notion.so/alchemotion/gen00003-privesc-github-patgranted-prod-22c069f2006680769b83c0d6d2c2ba8e?source=copy_link
+Tests:
+  - Name: Alchemy bot uses a PAT to grant access 
+    ExpectedResult: true
+    Log:
+      {
+      "p_any_ip_addresses": [
+        "104.30.133.21"
+      ],
+      "p_any_emails": [
+        "eng-github-alchemy-bot@alchemy.com"
+      ],
+      "p_any_actor_ids": [
+        "80712764"
+      ],
+      "p_any_usernames": [
+        "alchemy-bot",
+        "eng-github-alchemy-bot@alchemy.com",
+        "omgwinning-chain-config-full-repo"
+      ],
+      "p_event_time": "2025-07-09 23:37:47.919",
+      "p_log_type": "GitHub.Audit",
+      "p_parse_time": "2025-07-09 23:49:36.223",
+      "p_row_id": "16b5ba8af0c9ebf68497edcf27ab46",
+      "p_schema_version": 0,
+      "p_source_id": "149432d7-377c-440b-93a2-04206caa2594",
+      "p_source_label": "GitHub Platform Telemetry",
+      "p_udm": {
+        "source": {
+          "address": "104.30.133.21",
+          "ip": "104.30.133.21"
+        },
+        "user": {
+          "email": "eng-github-alchemy-bot@alchemy.com",
+          "name": "alchemy-bot",
+          "provider_id": "80712764"
+        }
+      },
+      "_document_id": "XruylsmnlSdWwHmo6PeoNw",
+      "action": "personal_access_token.access_granted",
+      "actor": "alchemy-bot",
+      "actor_id": "80712764",
+      "actor_ip": "104.30.133.21",
+      "actor_is_bot": false,
+      "actor_location": {
+        "country_code": "US"
+      },
+      "at_sign_timestamp": "2025-07-09 23:37:47.919",
+      "business": "alchemy",
+      "business_id": "138487",
+      "created_at": "2025-07-09 23:37:47.919",
+      "external_identity_nameid": "eng-github-alchemy-bot@alchemy.com",
+      "external_identity_username": "eng-github-alchemy-bot@alchemy.com",
+      "operation_type": "create",
+      "org": "OMGWINNING",
+      "org_id": 7953323,
+      "repository_selection": "subset",
+      "request_id": "4A79:33046B:F12D49:F93702:686EFD4B",
+      "token_id": "7519477",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "user_programmatic_access_name": "omgwinning-chain-config-full-repo"
+    }
