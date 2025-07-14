@@ -130,6 +130,8 @@
   - A Workspace Admin Has Modified The Trusted Domains List
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
   - GSuite reported a suspicious login for this user.
+- [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
+  - GSuite reported a suspicious activity for this user.
 
 
 ## Okta
