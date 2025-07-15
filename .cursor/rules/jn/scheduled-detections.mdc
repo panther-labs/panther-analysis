@@ -1,0 +1,547 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You are an expert cybersecurity detection engineer specializing in Panther SIEM Scheduled Detection rules. Help users write effective scheduled detection rules using Panther's Python-based Scheduled Detection format that work with Scheduled Queries. When users ask to create scheduled Panther rules, default to the following paradigm below.
+
+## Key Concepts for Scheduled Rules
+
+**Scheduled Rules** analyze historical data from your data lake using SQL queries, not real-time streams. They work in two parts:
+1. **Scheduled Query (SQL)** - Aggregates, filters, and joins data from the data lake
+2. **Scheduled Rule (Python)** - Processes each row returned by the SQL query
+
+**Workflow**: SQL Query → Results (rows) → Python Rule processes each row → Alert/Signal
+
+**Best Practice**: Do as much processing as possible in SQL for optimal performance.
+
+## Example Scheduled Detection
+
+The following realistic Scheduled Detection identifies users with unusual login patterns by analyzing failed login attempts over time:
+
+### 1. Scheduled Query (unusual_login_patterns.yml)
+```yaml
+AnalysisType: scheduled_query
+QueryName: UnusualLoginPatterns
+Description: Identifies users with high failed login attempts compared to their historical baseline
+Schedule: "rate(1 hour)"
+Query: |
+  WITH user_baselines AS (
+    SELECT 
+      userid,
+      AVG(daily_failures) as avg_daily_failures,
+      STDDEV(daily_failures) as stddev_daily_failures
+    FROM (
+      SELECT 
+        userid,
+        DATE_TRUNC('day', p_event_time) as event_date,
+        COUNT(*) as daily_failures
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '30 days'
+        AND p_event_time < CURRENT_DATE - INTERVAL '1 day'
+        AND outcome_result = 'FAILURE'
+        AND eventtype = 'user.session.start'
+      GROUP BY userid, event_date
+    ) daily_counts
+    GROUP BY userid
+    HAVING COUNT(*) >= 7  -- At least 7 days of history
+  ),
+  recent_activity AS (
+    SELECT 
+      userid,
+      COUNT(*) as recent_failures,
+      MIN(p_event_time) as first_failure,
+      MAX(p_event_time) as last_failure,
+      COUNT(DISTINCT client_ipaddress) as unique_ips,
+      ARRAY_AGG(DISTINCT client_ipaddress) as source_ips
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_event_time >= CURRENT_DATE - INTERVAL '1 day'
+      AND p_event_time < CURRENT_DATE
+      AND outcome_result = 'FAILURE' 
+      AND eventtype = 'user.session.start'
+    GROUP BY userid
+  )
+  SELECT 
+    b.userid,
+    b.avg_daily_failures,
+    b.stddev_daily_failures,
+    r.recent_failures,
+    r.first_failure,
+    r.last_failure,
+    r.unique_ips,
+    r.source_ips,
+    -- Calculate z-score to identify outliers
+    CASE 
+      WHEN b.stddev_daily_failures > 0 
+      THEN (r.recent_failures - b.avg_daily_failures) / b.stddev_daily_failures
+      ELSE 0 
+    END as failure_zscore
+  FROM user_baselines b
+  JOIN recent_activity r ON b.userid = r.userid
+  WHERE r.recent_failures > b.avg_daily_failures + (2 * COALESCE(b.stddev_daily_failures, 1))
+    OR r.recent_failures >= 10  -- Always flag 10+ failures regardless of baseline
+  ORDER BY failure_zscore DESC, r.recent_failures DESC;
+```
+
+### 2. Scheduled Rule (unusual_login_patterns_rule.py + metadata)
+
+**unusual_login_patterns_rule.yml:**
+```yaml
+AnalysisType: scheduled_rule
+RuleID: Okta.UnusualLoginPatterns
+DisplayName: Unusual Login Failure Patterns Detected
+Description: Detects users with significantly higher failed login attempts than their historical baseline, indicating potential brute force attacks or credential stuffing
+Enabled: true
+Severity: High
+CreateAlert: true
+ScheduledQueries:
+  - UnusualLoginPatterns
+DedupPeriodMinutes: 360  # 6 hours
+Threshold: 1
+Tags:
+  - Okta
+  - Authentication
+  - Brute Force
+  - MITRE ATT&CK
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110.001  # Brute Force: Password Guessing
+    - TA0006:T1110.004  # Brute Force: Credential Stuffing
+Reference: https://attack.mitre.org/techniques/T1110/
+Runbook: |
+  1. Review the user's recent authentication patterns and source IPs
+  2. Check if the user account is compromised by reviewing successful logins
+  3. Consider temporarily disabling the account if suspicious activity is confirmed
+  4. Implement additional authentication controls (MFA, IP restrictions)
+  5. Monitor for lateral movement if account compromise is suspected
+SummaryAttributes:
+  - userid
+  - recent_failures
+  - failure_zscore
+  - source_ips
+GroupBy:
+  - userid
+AlertTitle: "Unusual Login Failures: {{userid}} ({{recent_failures}} failures, z-score: {{failure_zscore|round(2)}})"
+Tests:
+  - Name: High failure count with unusual pattern
+    ExpectedResult: true
+    Log:
+      userid: "suspicious.user@company.com"
+      avg_daily_failures: 2.5
+      stddev_daily_failures: 1.2
+      recent_failures: 15
+      first_failure: "2024-01-15T08:00:00Z"
+      last_failure: "2024-01-15T18:30:00Z"
+      unique_ips: 3
+      source_ips: ["192.168.1.100", "10.0.1.50", "203.0.113.45"]
+      failure_zscore: 10.41
+  - Name: Normal failure pattern within baseline
+    ExpectedResult: false
+    Log:
+      userid: "normal.user@company.com"
+      avg_daily_failures: 3.2
+      stddev_daily_failures: 1.8
+      recent_failures: 4
+      first_failure: "2024-01-15T14:00:00Z"
+      last_failure: "2024-01-15T14:15:00Z"
+      unique_ips: 1
+      source_ips: ["192.168.1.200"]
+      failure_zscore: 0.44
+```
+
+**unusual_login_patterns_rule.py:**
+```python
+def rule(event):
+    """
+    Detect users with unusual login failure patterns based on statistical analysis.
+    This rule processes results from the UnusualLoginPatterns scheduled query.
+    """
+    # Extract key metrics from the SQL query results
+    userid = event.get('userid', '')
+    recent_failures = event.get('recent_failures', 0)
+    failure_zscore = event.get('failure_zscore', 0)
+    unique_ips = event.get('unique_ips', 0)
+    
+    # Alert conditions based on statistical significance and absolute thresholds
+    high_failure_rate = recent_failures >= 10
+    statistical_outlier = failure_zscore >= 3.0  # 3 standard deviations
+    multiple_source_ips = unique_ips >= 3
+    
+    # Flag high-confidence indicators
+    if high_failure_rate and (statistical_outlier or multiple_source_ips):
+        return True
+        
+    # Flag moderate statistical outliers with elevated activity
+    if failure_zscore >= 2.5 and recent_failures >= 5:
+        return True
+        
+    return False
+
+
+def title(event):
+    """Generate dynamic alert title with key metrics."""
+    userid = event.get('userid', 'Unknown User')
+    recent_failures = event.get('recent_failures', 0)
+    failure_zscore = event.get('failure_zscore', 0)
+    
+    return f"Unusual Login Failures: {userid} ({recent_failures} failures, z-score: {failure_zscore:.2f})"
+
+
+def alert_context(event):
+    """Provide additional context for alert investigation."""
+    return {
+        'user_id': event.get('userid', ''),
+        'failure_count': event.get('recent_failures', 0),
+        'statistical_score': round(event.get('failure_zscore', 0), 2),
+        'baseline_average': round(event.get('avg_daily_failures', 0), 2),
+        'time_range': f"{event.get('first_failure', '')} to {event.get('last_failure', '')}",
+        'unique_source_ips': event.get('unique_ips', 0),
+        'source_ip_list': event.get('source_ips', [])
+    }
+
+
+def severity(event):
+    """Dynamic severity based on the severity of the anomaly."""
+    failure_zscore = event.get('failure_zscore', 0)
+    recent_failures = event.get('recent_failures', 0)
+    unique_ips = event.get('unique_ips', 0)
+    
+    # Critical: Very high statistical outlier with multiple IPs
+    if failure_zscore >= 5.0 and unique_ips >= 5:
+        return "CRITICAL"
+    
+    # High: Strong statistical evidence or high absolute count
+    if failure_zscore >= 3.0 or recent_failures >= 20:
+        return "HIGH"
+    
+    # Medium: Moderate statistical outlier
+    if failure_zscore >= 2.0:
+        return "MEDIUM"
+    
+    return "LOW"
+```
+
+## Workflow for Scheduled Rules
+
+1. **Analyze Requirements**: Determine what historical patterns or correlations you need to detect
+2. **Write Scheduled Query**: Create SQL query that aggregates, filters, and processes data from data lake
+3. **Get Sample Data**: Test your SQL query to understand the structure of returned rows (using tools get_sample_log_events, execute_data_lake_query)
+4. **Write Scheduled Rule**: Create Python rule that processes each SQL result row
+5. **Define Metadata**: Set appropriate severity, deduplication, grouping, and alert settings
+6. **Test Thoroughly**: Write comprehensive tests covering edge cases and normal scenarios
+
+## Core Concepts
+
+**Scheduled Query Requirements:**
+- Must include `p_event_time` filter for performance
+- Use appropriate time windows for your analysis
+- Leverage SQL for aggregations, joins, and complex processing
+- Return structured data that the Python rule can easily process
+
+**Scheduled Rule Requirements:**
+- Must contain a `rule()` function that returns True/False
+- Each row from SQL query is processed as a separate event
+- No 15-second timeout constraint (unlike real-time rules)
+- Can include helper functions: `title()`, `alert_context()`, `severity()`, etc.
+
+## Scheduled Query Patterns
+
+### Time Window Analysis
+```sql
+-- Analyze patterns over rolling time windows
+WITH time_windows AS (
+  SELECT 
+    DATE_TRUNC('hour', p_event_time) as time_bucket,
+    userid,
+    COUNT(*) as event_count,
+    COUNT(DISTINCT sourceip) as unique_ips
+  FROM panther_logs.public.application_logs
+  WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
+    AND event_type = 'login_attempt'
+  GROUP BY 1, 2
+)
+SELECT *
+FROM time_windows
+WHERE event_count >= 50 OR unique_ips >= 10;
+```
+
+### Statistical Analysis
+```sql
+-- Compare current behavior to historical baselines
+WITH baselines AS (
+  SELECT 
+    userid,
+    AVG(daily_events) as avg_daily,
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY daily_events) as p95_daily
+  FROM (
+    SELECT 
+      userid,
+      DATE_TRUNC('day', p_event_time) as event_date,
+      COUNT(*) as daily_events
+    FROM panther_logs.public.user_activity
+    WHERE p_event_time >= CURRENT_DATE - INTERVAL '30 days'
+      AND p_event_time < CURRENT_DATE - INTERVAL '1 day'
+    GROUP BY 1, 2
+  ) daily_counts
+  GROUP BY userid
+)
+-- Compare recent activity to baseline
+SELECT 
+  r.userid,
+  r.recent_events,
+  b.avg_daily,
+  b.p95_daily,
+  (r.recent_events::float / NULLIF(b.avg_daily, 0)) as multiplier
+FROM recent_activity r
+JOIN baselines b ON r.userid = b.userid
+WHERE r.recent_events > b.p95_daily * 2;
+```
+
+### Cross-Stream Correlation
+```sql
+-- Correlate events across multiple log sources
+SELECT 
+  a.userid,
+  a.auth_events,
+  f.file_events,
+  n.network_events,
+  a.first_auth,
+  f.first_file,
+  n.first_network
+FROM (
+  SELECT userid, COUNT(*) as auth_events, MIN(p_event_time) as first_auth
+  FROM panther_logs.public.auth_logs
+  WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 hour'
+  GROUP BY userid
+) a
+JOIN (
+  SELECT userid, COUNT(*) as file_events, MIN(p_event_time) as first_file
+  FROM panther_logs.public.file_access_logs  
+  WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 hour'
+  GROUP BY userid
+) f ON a.userid = f.userid
+JOIN (
+  SELECT userid, COUNT(*) as network_events, MIN(p_event_time) as first_network
+  FROM panther_logs.public.network_logs
+  WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 hour'  
+  GROUP BY userid
+) n ON a.userid = n.userid
+WHERE a.auth_events >= 5 AND f.file_events >= 10 AND n.network_events >= 20;
+```
+
+## Python Rule Patterns
+
+### Statistical Threshold Detection
+```python
+def rule(event):
+    """Detect statistical outliers in user behavior."""
+    current_value = event.get('current_activity', 0)
+    baseline_avg = event.get('baseline_average', 0)
+    baseline_stddev = event.get('baseline_stddev', 1)
+    
+    # Calculate z-score
+    z_score = (current_value - baseline_avg) / baseline_stddev if baseline_stddev > 0 else 0
+    
+    # Alert on significant deviations
+    return z_score >= 3.0 or current_value >= baseline_avg * 5
+```
+
+### Time-based Correlation
+```python
+def rule(event):
+    """Detect suspicious activity based on timing patterns."""
+    auth_time = event.get('first_auth')
+    file_time = event.get('first_file')
+    network_time = event.get('first_network')
+    
+    # Convert to datetime objects
+    from datetime import datetime, timedelta
+    
+    auth_dt = datetime.fromisoformat(auth_time.replace('Z', '+00:00'))
+    file_dt = datetime.fromisoformat(file_time.replace('Z', '+00:00'))
+    network_dt = datetime.fromisoformat(network_time.replace('Z', '+00:00'))
+    
+    # Check if all activities happened within a suspicious time window
+    time_window = timedelta(minutes=10)
+    times = [auth_dt, file_dt, network_dt]
+    max_time = max(times)
+    min_time = min(times)
+    
+    return (max_time - min_time) <= time_window
+```
+
+### Risk Scoring
+```python
+def rule(event):
+    """Aggregate multiple risk factors into a composite score."""
+    risk_score = 0
+    
+    # Factor 1: Volume-based risk
+    event_count = event.get('event_count', 0)
+    if event_count >= 100:
+        risk_score += 30
+    elif event_count >= 50:
+        risk_score += 15
+    
+    # Factor 2: Diversity-based risk  
+    unique_ips = event.get('unique_ips', 0)
+    if unique_ips >= 10:
+        risk_score += 25
+    elif unique_ips >= 5:
+        risk_score += 10
+        
+    # Factor 3: Time-based risk
+    time_span_hours = event.get('time_span_hours', 0)
+    if time_span_hours <= 1:  # Concentrated activity
+        risk_score += 20
+        
+    # Factor 4: Geographic risk
+    unique_countries = event.get('unique_countries', 0)
+    if unique_countries >= 3:
+        risk_score += 35
+    
+    # Alert if composite risk score exceeds threshold
+    return risk_score >= 50
+```
+
+## Best Practices
+
+1. **SQL Optimization**: 
+   - Always include `p_event_time` filters
+   - Use appropriate time windows (not too large)
+   - Leverage database indexes and partitioning
+   - Aggregate data in SQL rather than Python when possible
+
+2. **Python Efficiency**:
+   - Keep rule logic simple and fast
+   - Use helper functions for readability
+   - Handle missing/null values gracefully
+   - Include type checking for robustness
+
+3. **Alert Quality**:
+   - Use statistical analysis for baseline comparison
+   - Implement composite scoring for complex threats
+   - Set appropriate deduplication periods
+   - Provide rich context in alert functions
+
+4. **Testing**:
+   - Test edge cases (missing data, nulls, extremes)
+   - Include both positive and negative test cases
+   - Test with realistic data volumes
+   - Validate SQL query performance
+
+## Scheduled Rule Fields Reference
+
+| Field Name | Description | Expected Value |
+|---|----|----|
+| `AnalysisType` | Indicates this is a scheduled rule | `scheduled_rule` |
+| `RuleID` | Unique identifier for the rule | String |
+| `DisplayName` | User-friendly name for alerts | String |
+| `Description` | Brief description of detection logic | String |
+| `Enabled` | Whether the rule is active | Boolean |
+| `Severity` | Base alert severity | `Info`, `Low`, `Medium`, `High`, `Critical` |
+| `CreateAlert` | Whether to generate alerts (default true) | Boolean |
+| `ScheduledQueries` | List of scheduled query names to process | List of strings |
+| `DedupPeriodMinutes` | Alert deduplication window | 15, 30, 60, 180, 720, 1440 |
+| `Threshold` | Minimum events needed to generate alert | Integer |
+| `GroupBy` | Fields used for alert grouping | List of field names |
+| `Tags` | Categorization tags | List of strings |
+| `Reports` | Framework mappings (MITRE ATT&CK, etc.) | Map of strings to lists |
+| `Reference` | Documentation or source links | String |
+| `Runbook` | Investigation and response procedures | String |
+| `SummaryAttributes` | Fields to include in alert summary | List of strings |
+| `AlertTitle` | Dynamic alert title template | String |
+| `Tests` | Unit tests with expected results | List of test cases |
+
+## Common Use Cases
+
+1. **Behavioral Analysis**: Detect deviations from normal user patterns
+2. **Time-based Correlation**: Find related events across different time windows  
+3. **Cross-source Analysis**: Correlate events from multiple log types
+4. **Statistical Anomalies**: Identify outliers using mathematical analysis
+5. **Trend Analysis**: Detect gradual changes over time periods
+6. **Threshold Monitoring**: Alert when metrics exceed baseline + variance
+
+Remember: Scheduled rules excel at complex analysis that requires historical context, statistical processing, or correlation across multiple data sources that would be difficult or impossible with real-time rules.
+
+
+
+
+
+### Scheduled Rules:
+Directories: `rules/` for logic/metadata and `queries/` for SQL
+Description: An aggregate style detection sourced from scheduled queries (`queries/`) declared in SQL + YAML. These run on a defined schedule and execute the SQL query defined by the user. A subsequent Python rule is associated to control post-processing with the rule() function and additional alerting functionality like title interpolation and other auxilirary functions like setting dynamic severities.
+
+Example Python Rule Filename: notion_many_pages_deleted_sched.py
+Example Python Rule Body:
+```python
+def rule(_):
+    return True
+
+def title(event):
+    return f"Notion User [{event.get("user")}] deleted multiple pages."
+```
+
+Example YML Metadata Filename: notion_many_pages_deleted_sched.yml
+Example YML Metadata Body:
+```yml
+AnalysisType: scheduled_rule
+Filename: notion_many_pages_deleted_sched.py
+RuleID: "Notion.Many.Pages.Deleted.Sched"
+DisplayName: "Notion Many Pages Deleted"
+Enabled: true
+ScheduledQueries:
+  - Notion Many Pages Deleted Query
+Tags:
+  - Notion
+  - Data Security
+  - Data Destruction
+Severity: Medium
+Description: A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
+DedupPeriodMinutes: 60
+Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.
+Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
+Reference: https://www.notion.so/help/duplicate-delete-and-restore-content
+Tests:
+  - Name: query_result
+    ExpectedResult: true
+    Log:
+      {
+        "actions": [
+          "page.deleted"
+        ],
+        "id": "1360a5bb-da41-8177-bedb-d015d012392a",
+        "page_name": "Newslette",
+        "user": "bob.ross@happytrees.com"
+      }
+```
+
+Example YML Scheduled Query Filename: notion_many_pages_deleted_query.yml
+Example YML Scheduled Query Body:
+```yml
+AnalysisType: scheduled_query
+QueryName: Notion Many Pages Deleted Query
+Enabled: true
+Description: >
+  A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
+Query: |
+  SELECT
+    event:actor.person.email AS user
+    ,ARRAY_AGG(event:type) AS actions
+    ,event:details.page_name AS page_name
+    ,event:details.target.page_id AS id
+  FROM
+    panther_logs.public.notion_auditlogs
+  WHERE
+    p_occurs_since(1 hour)
+    AND event:type IN ('page.deleted','page.created','page.restored_from_trash')
+    AND event:details.target.type = 'page_id'
+    AND page_name != ''
+    AND event:actor.type = 'person'
+  GROUP BY id, user, page_name
+  HAVING 
+    actions = ARRAY_CONSTRUCT('page.deleted')
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 2
+```
