@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detects when a EFS Fileshare Mount is modified or deleted. An adversary
+  breaking any file system using the mount target that is being deleted, which might
+  disrupt instances or applications using those mounts.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Unknown'
+DisplayName: AWS EFS Fileshare Mount Modified or Deleted
+Enabled: true
+Filename: aws_efs_fileshare_mount_modified_or_deleted.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/efs/latest/ug/API_DeleteMountTarget.html
+Reports:
+  MITRE ATT&CK:
+  - T1485
+RuleID: aws_efs_fileshare_mount_modified_or_deleted
+Severity: Medium
+Tags:
+- Sigma
+- impact
+- t1485

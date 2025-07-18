@@ -1,0 +1,24 @@
+AnalysisType: rule
+Description: 'Detects when a new admin role assignment is created. Which could be
+  a sign of privilege escalation or persistence
+
+
+  Status: test
+
+
+  Author: Nikita Khalimonenkov
+
+  False Positives: Legitimate creation of a new admin role assignment'
+DisplayName: Okta Admin Role Assignment Created
+Enabled: true
+Filename: okta_admin_role_assignment_created.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK: []
+RuleID: okta_admin_role_assignment_created
+Severity: Medium
+Tags:
+- Sigma
+- persistence

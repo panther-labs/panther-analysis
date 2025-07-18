@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'Detects modifications to an RDS cluster or its deletion, which may indicate
+  potential data exfiltration attempts, unauthorized access, or exposure of sensitive
+  information.
+
+
+  Status: experimental
+
+
+  Author: Ivan Saakov
+
+  False Positives: Verify if the modification or deletion was performed by an authorized
+  administrator., Confirm if the modification or deletion was part of a planned change
+  or maintenance activity.'
+DisplayName: Modification or Deletion of an AWS RDS Cluster
+Enabled: true
+Filename: aws_rds_dbcluster_actions.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_ModifyDBCluster.html
+Reports:
+  MITRE ATT&CK:
+  - T1020
+RuleID: aws_rds_dbcluster_actions
+Severity: High
+Tags:
+- Sigma
+- exfiltration
+- t1020

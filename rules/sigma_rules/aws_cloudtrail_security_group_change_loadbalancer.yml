@@ -1,0 +1,32 @@
+AnalysisType: rule
+Description: 'Detects changes to the security groups associated with an Elastic Load
+  Balancer (ELB) or Application Load Balancer (ALB).
+
+  This can indicate that a misconfiguration allowing more traffic into the system
+  than required, or could indicate that an attacker is attempting to enable new connections
+  into a VPC or subnet controlled by the account.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: Repurposing of an ELB or ALB to serve a different or additional
+  application, Changes to security groups to allow for new services to be deployed'
+DisplayName: LoadBalancer Security Group Modification
+Enabled: true
+Filename: aws_cloudtrail_security_group_change_loadbalancer.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.gorillastack.com/blog/real-time-events/important-aws-cloudtrail-security-events-tracking/
+Reports:
+  MITRE ATT&CK:
+  - T1190
+RuleID: aws_cloudtrail_security_group_change_loadbalancer
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1190

@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects when an Okta end-user reports activity by their account as being
+  potentially suspicious.
+
+
+  Status: test
+
+
+  Author: kelnage
+
+  False Positives: If an end-user incorrectly identifies normal activity as suspicious.'
+DisplayName: Okta Suspicious Activity Reported by End-user
+Enabled: true
+Filename: okta_suspicious_activity_enduser_report.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK:
+  - T1586.003
+RuleID: okta_suspicious_activity_enduser_report
+Severity: High
+Tags:
+- Sigma
+- resource-development
+- t1586.003

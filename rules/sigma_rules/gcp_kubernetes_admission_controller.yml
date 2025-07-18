@@ -1,0 +1,51 @@
+AnalysisType: rule
+Description: 'Identifies when an admission controller is executed in GCP Kubernetes.
+
+  A Kubernetes Admission controller intercepts, and possibly modifies, requests to
+  the Kubernetes API server.
+
+  The behavior of this admission controller is determined by an admission webhook
+  (MutatingAdmissionWebhook or ValidatingAdmissionWebhook) that the user deploys in
+  the cluster.
+
+  An adversary can use such webhooks as the MutatingAdmissionWebhook for obtaining
+  persistence in the cluster.
+
+  For example, attackers can intercept and modify the pod creation operations in the
+  cluster and add their malicious container to every created pod. An adversary can
+  use the webhook ValidatingAdmissionWebhook, which could be used to obtain access
+  credentials.
+
+  An adversary could use the webhook to intercept the requests to the API server,
+  record secrets, and other sensitive information.
+
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Google Cloud Kubernetes Admission Controller may be done by a system
+  administrator., If known behavior is causing false positives, it can be exempted
+  from the rule.'
+DisplayName: Google Cloud Kubernetes Admission Controller
+Enabled: true
+Filename: gcp_kubernetes_admission_controller.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://cloud.google.com/kubernetes-engine/docs
+Reports:
+  MITRE ATT&CK:
+  - T1078
+  - T1552
+  - T1552.007
+RuleID: gcp_kubernetes_admission_controller
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- t1078
+- credential-access
+- t1552
+- t1552.007

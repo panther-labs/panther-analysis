@@ -1,0 +1,28 @@
+AnalysisType: rule
+Description: 'Detects the creation or patching of potential malicious RoleBinding.
+  This includes RoleBindings and ClusterRoleBinding.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: RoleBindings and ClusterRoleBinding being modified or deleted may
+  be performed by a system administrator. Verify whether the user identity, user agent,
+  and/or hostname should be making changes in your environment., RoleBindings and
+  ClusterRoleBinding modified or deleted from unfamiliar users should be investigated.
+  If known behavior is causing false positives, it can be exempted from the rule.'
+DisplayName: Google Cloud Kubernetes RoleBinding
+Enabled: true
+Filename: gcp_kubernetes_rolebinding.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://github.com/elastic/detection-rules/pull/1267
+Reports:
+  MITRE ATT&CK: []
+RuleID: gcp_kubernetes_rolebinding
+Severity: Medium
+Tags:
+- Sigma
+- credential-access

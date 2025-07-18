@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: 'Detects when a new identity provider is created for Okta.
+
+
+  Status: test
+
+
+  Author: kelnage
+
+  False Positives: When an admin creates a new, authorised identity provider.'
+DisplayName: Okta Identity Provider Created
+Enabled: true
+Filename: okta_identity_provider_created.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK:
+  - T1098.001
+RuleID: okta_identity_provider_created
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- t1098.001

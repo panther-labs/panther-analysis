@@ -1,0 +1,34 @@
+AnalysisType: rule
+Description: 'Detects the import of SSH key pairs into AWS EC2, which may indicate
+  an attacker attempting to gain unauthorized access to instances. This activity could
+  lead to initial access, persistence, or privilege escalation, potentially compromising
+  sensitive data and operations.
+
+
+
+  Status: experimental
+
+
+  Author: Ivan Saakov
+
+  False Positives: Legitimate administrative actions by authorized users importing
+  keys for valid purposes., Automated processes for infrastructure setup may trigger
+  this alert., Verify the user identity, user agent, and source IP address to ensure
+  they are expected.'
+DisplayName: AWS Key Pair Import Activity
+Enabled: true
+Filename: aws_ec2_import_key_pair_activity.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportKeyPair.html
+Reports:
+  MITRE ATT&CK:
+  - T1078
+RuleID: aws_ec2_import_key_pair_activity
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1078
+- persistence
+- privilege-escalation

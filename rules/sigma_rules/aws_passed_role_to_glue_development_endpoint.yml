@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects possible suspicious glue development endpoint activity.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Glue Development Endpoint Activity may be performed by a system
+  administrator. Verify whether the user identity, user agent, and/or hostname should
+  be making changes in your environment., If known behavior is causing false positives,
+  it can be exempted from the rule.'
+DisplayName: AWS Glue Development Endpoint Activity
+Enabled: true
+Filename: aws_passed_role_to_glue_development_endpoint.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://rhinosecuritylabs.com/aws/aws-privilege-escalation-methods-mitigation/
+Reports:
+  MITRE ATT&CK: []
+RuleID: aws_passed_role_to_glue_development_endpoint
+Severity: Low
+Tags:
+- Sigma
+- privilege-escalation

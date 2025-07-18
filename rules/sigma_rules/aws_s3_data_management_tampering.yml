@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'Detects when a user tampers with S3 data management in Amazon Web Services.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: A S3 configuration change may be done by a system or network administrator.
+  Verify whether the user identity, user agent, and/or hostname should be making changes
+  in your environment. S3 configuration change from unfamiliar users or hosts should
+  be investigated. If known behavior is causing false positives, it can be exempted
+  from the rule.'
+DisplayName: AWS S3 Data Management Tampering
+Enabled: true
+Filename: aws_s3_data_management_tampering.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/elastic/detection-rules/pull/1145/files
+Reports:
+  MITRE ATT&CK:
+  - T1537
+RuleID: aws_s3_data_management_tampering
+Severity: Low
+Tags:
+- Sigma
+- exfiltration
+- t1537

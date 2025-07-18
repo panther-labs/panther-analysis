@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects if the push protection feature is disabled for an organization,
+  enterprise, repositories or custom pattern rules.
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Allowed administrative activities.'
+DisplayName: Github Push Protection Disabled
+Enabled: true
+Filename: github_push_protection_disabled.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/enterprise-cloud@latest/code-security/secret-scanning/push-protection-for-repositories-and-organizations
+Reports:
+  MITRE ATT&CK:
+  - T1562.001
+RuleID: github_push_protection_disabled
+Severity: High
+Tags:
+- Sigma
+- defense-evasion
+- t1562.001

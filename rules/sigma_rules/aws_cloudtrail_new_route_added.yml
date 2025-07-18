@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detects the addition of a new network route to a route table in AWS.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: New VPC Creation requiring setup of a new route table, New subnets
+  added requiring routing setup'
+DisplayName: New Network Route Added
+Enabled: true
+Filename: aws_cloudtrail_new_route_added.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.gorillastack.com/blog/real-time-events/important-aws-cloudtrail-security-events-tracking/
+Reports:
+  MITRE ATT&CK:
+  - T1190
+RuleID: aws_cloudtrail_new_route_added
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1190

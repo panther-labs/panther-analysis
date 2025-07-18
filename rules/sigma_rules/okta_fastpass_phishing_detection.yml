@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: 'Detects when Okta FastPass prevents a known phishing site.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Unlikely'
+DisplayName: Okta FastPass Phishing Detection
+Enabled: true
+Filename: okta_fastpass_phishing_detection.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://sec.okta.com/fastpassphishingdetection
+Reports:
+  MITRE ATT&CK:
+  - T1566
+RuleID: okta_fastpass_phishing_detection
+Severity: High
+Tags:
+- Sigma
+- initial-access
+- t1566

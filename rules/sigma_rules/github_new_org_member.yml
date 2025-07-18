@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: 'Detects when a new member is added or invited to a github organization.
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Organization approved new members'
+DisplayName: New Github Organization Member Added
+Enabled: true
+Filename: github_new_org_member.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/reviewing-the-audit-log-for-your-organization#dependabot_alerts-category-actions
+Reports:
+  MITRE ATT&CK:
+  - T1136.003
+RuleID: github_new_org_member
+Severity: Info
+Tags:
+- Sigma
+- persistence
+- t1136.003

@@ -1,0 +1,34 @@
+AnalysisType: rule
+Description: 'Detects when an account makes changes to the ingress or egress rules
+  of a security group.
+
+  This can indicate that an attacker is attempting to open up new attack vectors in
+  the account, that they are trying to exfiltrate data over the network, or that they
+  are trying to allow machines in that VPC/Subnet to contact a C&C server.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: New VPCs and Subnets being setup requiring a different security
+  profile to those already defined, A single port being opened for a new service that
+  is known to be deploying, Administrators closing unused ports to reduce the attack
+  surface'
+DisplayName: Ingress/Egress Security Group Modification
+Enabled: true
+Filename: aws_cloudtrail_security_group_change_ingress_egress.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.gorillastack.com/blog/real-time-events/important-aws-cloudtrail-security-events-tracking/
+Reports:
+  MITRE ATT&CK:
+  - T1190
+RuleID: aws_cloudtrail_security_group_change_ingress_egress
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1190

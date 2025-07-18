@@ -1,0 +1,33 @@
+AnalysisType: rule
+Description: 'Detects when an instance identity has taken an action that isn''t inside
+  SSM.
+
+  This can indicate that a compromised EC2 instance is being used as a pivot point.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: A team has configured an EC2 instance to use instance profiles
+  that grant the option for the EC2 instance to talk to other AWS Services'
+DisplayName: Malicious Usage Of IMDS Credentials Outside Of AWS Infrastructure
+Enabled: true
+Filename: aws_cloudtrail_imds_malicious_usage.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-identity-roles.html
+Reports:
+  MITRE ATT&CK:
+  - T1078
+  - T1078.002
+RuleID: aws_cloudtrail_imds_malicious_usage
+Severity: High
+Tags:
+- Sigma
+- privilege-escalation
+- defense-evasion
+- t1078
+- t1078.002

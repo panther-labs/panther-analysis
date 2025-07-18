@@ -1,0 +1,35 @@
+AnalysisType: rule
+Description: 'Identifies the suspicious use of AssumeRole. Attackers could move laterally
+  and escalate privileges.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: AssumeRole may be done by a system or network administrator. Verify
+  whether the user identity, user agent, and/or hostname should be making changes
+  in your environment., AssumeRole from unfamiliar users or hosts should be investigated.
+  If known behavior is causing false positives, it can be exempted from the rule.,
+  Automated processes that uses Terraform may lead to false positives.'
+DisplayName: AWS STS AssumeRole Misuse
+Enabled: true
+Filename: aws_sts_assumerole_misuse.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/elastic/detection-rules/pull/1214
+Reports:
+  MITRE ATT&CK:
+  - T1548
+  - T1550
+  - T1550.001
+RuleID: aws_sts_assumerole_misuse
+Severity: Low
+Tags:
+- Sigma
+- lateral-movement
+- privilege-escalation
+- t1548
+- t1550
+- t1550.001

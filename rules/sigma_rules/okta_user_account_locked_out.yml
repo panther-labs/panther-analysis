@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: 'Detects when an user account is locked out.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Unknown'
+DisplayName: Okta User Account Locked Out
+Enabled: true
+Filename: okta_user_account_locked_out.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK:
+  - T1531
+RuleID: okta_user_account_locked_out
+Severity: Medium
+Tags:
+- Sigma
+- impact
+- t1531

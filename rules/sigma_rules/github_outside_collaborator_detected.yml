@@ -1,0 +1,36 @@
+AnalysisType: rule
+Description: 'Detects when an organization member or an outside collaborator is added
+  to or removed from a project board or has their permission level changed or when
+  an owner removes an outside collaborator from an organization or when two-factor
+  authentication is required in an organization and an outside collaborator does not
+  use 2FA or disables 2FA.
+
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Validate the actor if permitted to access the repo., Validate the
+  Multifactor Authentication changes.'
+DisplayName: Github Outside Collaborator Detected
+Enabled: true
+Filename: github_outside_collaborator_detected.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/reviewing-the-audit-log-for-your-organization#audit-log-actions
+Reports:
+  MITRE ATT&CK:
+  - T1098.001
+  - T1098.003
+  - T1213.003
+RuleID: github_outside_collaborator_detected
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- collection
+- t1098.001
+- t1098.003
+- t1213.003

@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects when S3 bucket versioning is disabled. Threat actors use this
+  technique during AWS ransomware incidents prior to deleting S3 objects.
+
+
+  Status: test
+
+
+  Author: Sean Johnstone | Unit 42
+
+  False Positives: AWS administrator legitimately disabling bucket versioning'
+DisplayName: AWS S3 Bucket Versioning Disable
+Enabled: true
+Filename: aws_disable_bucket_versioning.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://invictus-ir.medium.com/ransomware-in-the-cloud-7f14805bbe82
+Reports:
+  MITRE ATT&CK:
+  - T1490
+RuleID: aws_disable_bucket_versioning
+Severity: Medium
+Tags:
+- Sigma
+- impact
+- t1490

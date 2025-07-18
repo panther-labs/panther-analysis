@@ -1,0 +1,46 @@
+AnalysisType: rule
+Description: 'A self-hosted runner is a system that you deploy and manage to execute
+  jobs from GitHub Actions on GitHub.com.
+
+  This rule detects changes to self-hosted runners configurations in the environment.
+  The self-hosted runner configuration changes once detected,
+
+  it should be validated from GitHub UI because the log entry may not provide full
+  context.
+
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Allowed self-hosted runners changes in the environment., A self-hosted
+  runner is automatically removed from GitHub if it has not connected to GitHub Actions
+  for more than 14 days., An ephemeral self-hosted runner is automatically removed
+  from GitHub if it has not connected to GitHub Actions for more than 1 day.'
+DisplayName: Github Self Hosted Runner Changes Detected
+Enabled: true
+Filename: github_self_hosted_runner_changes_detected.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners#about-self-hosted-runners
+Reports:
+  MITRE ATT&CK:
+  - T1526
+  - T1213.003
+  - T1078.004
+RuleID: github_self_hosted_runner_changes_detected
+Severity: Low
+Tags:
+- Sigma
+- impact
+- discovery
+- collection
+- defense-evasion
+- persistence
+- privilege-escalation
+- initial-access
+- t1526
+- t1213.003
+- t1078.004

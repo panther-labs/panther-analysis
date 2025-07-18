@@ -1,0 +1,23 @@
+AnalysisType: rule
+Description: 'Detects new user account creation
+
+
+  Status: test
+
+
+  Author: Nasreddine Bencherchali (Nextron Systems)
+
+  False Positives: Legitimate and authorized user creation'
+DisplayName: New Okta User Created
+Enabled: true
+Filename: okta_user_created.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/event-types/
+Reports:
+  MITRE ATT&CK: []
+RuleID: okta_user_created
+Severity: Info
+Tags:
+- Sigma
+- credential-access

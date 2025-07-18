@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detects the deployment of workloads that are deployed by using the break-glass
+  flag to override Binary Authorization controls.
+
+
+
+  Status: test
+
+
+  Author: Bryan Lim
+
+  False Positives: Unknown'
+DisplayName: GCP Break-glass Container Workload Deployed
+Enabled: true
+Filename: gcp_breakglass_container_workload_deployed.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://cloud.google.com/binary-authorization
+Reports:
+  MITRE ATT&CK:
+  - T1548
+RuleID: gcp_breakglass_container_workload_deployed
+Severity: Medium
+Tags:
+- Sigma
+- defense-evasion
+- t1548

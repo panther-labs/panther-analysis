@@ -1,0 +1,25 @@
+AnalysisType: rule
+Description: 'Detects disabling, deleting and updating of a Trail
+
+
+  Status: test
+
+
+  Author: vitaliy0x1
+
+  False Positives: Valid change in a Trail'
+DisplayName: AWS CloudTrail Important Change
+Enabled: true
+Filename: aws_cloudtrail_disable_logging.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html
+Reports:
+  MITRE ATT&CK:
+  - T1562.001
+RuleID: aws_cloudtrail_disable_logging
+Severity: Medium
+Tags:
+- Sigma
+- defense-evasion
+- t1562.001

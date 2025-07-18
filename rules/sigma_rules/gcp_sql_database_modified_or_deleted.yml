@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detect when a Cloud SQL DB has been modified or deleted.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: SQL Database being modified or deleted may be performed by a system
+  administrator., Verify whether the user identity, user agent, and/or hostname should
+  be making changes in your environment., SQL Database modified or deleted from unfamiliar
+  users should be investigated. If known behavior is causing false positives, it can
+  be exempted from the rule.'
+DisplayName: Google Cloud SQL Database Modified or Deleted
+Enabled: true
+Filename: gcp_sql_database_modified_or_deleted.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1beta4/users/update
+Reports:
+  MITRE ATT&CK: []
+RuleID: gcp_sql_database_modified_or_deleted
+Severity: Medium
+Tags:
+- Sigma
+- impact

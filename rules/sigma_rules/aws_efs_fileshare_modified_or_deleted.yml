@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'Detects when a EFS Fileshare is modified or deleted.
+
+  You can''t delete a file system that is in use.
+
+  If the file system has any mount targets, the adversary must first delete them,
+  so deletion of a mount will occur before deletion of a fileshare.
+
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Unknown'
+DisplayName: AWS EFS Fileshare Modified or Deleted
+Enabled: true
+Filename: aws_efs_fileshare_modified_or_deleted.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/efs/latest/ug/API_DeleteFileSystem.html
+Reports:
+  MITRE ATT&CK: []
+RuleID: aws_efs_fileshare_modified_or_deleted
+Severity: Medium
+Tags:
+- Sigma
+- impact

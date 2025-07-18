@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'An attempt to export an AWS EC2 instance has been detected. A VM Export
+  might indicate an attempt to extract information from an instance.
+
+
+  Status: test
+
+
+  Author: Diogo Braz'
+DisplayName: AWS EC2 VM Export Failure
+Enabled: true
+Filename: aws_ec2_vm_export_failure.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport.html#export-instance
+Reports:
+  MITRE ATT&CK:
+  - T1005
+  - T1537
+RuleID: aws_ec2_vm_export_failure
+Severity: Low
+Tags:
+- Sigma
+- collection
+- t1005
+- exfiltration
+- t1537

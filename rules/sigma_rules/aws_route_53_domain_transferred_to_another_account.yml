@@ -1,0 +1,31 @@
+AnalysisType: rule
+Description: 'Detects when a request has been made to transfer a Route 53 domain to
+  another AWS account.
+
+
+  Status: test
+
+
+  Author: Elastic, Austin Songer @austinsonger
+
+  False Positives: A domain may be transferred to another AWS account by a system
+  or network administrator. Verify whether the user identity, user agent, and/or hostname
+  should be making changes in your environment. Domain transfers from unfamiliar users
+  or hosts should be investigated. If known behavior is causing false positives, it
+  can be exempted from the rule.'
+DisplayName: AWS Route 53 Domain Transferred to Another Account
+Enabled: true
+Filename: aws_route_53_domain_transferred_to_another_account.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/elastic/detection-rules/blob/c76a39796972ecde44cb1da6df47f1b6562c9770/rules/integrations/aws/persistence_route_53_domain_transferred_to_another_account.toml
+Reports:
+  MITRE ATT&CK:
+  - T1098
+RuleID: aws_route_53_domain_transferred_to_another_account
+Severity: Low
+Tags:
+- Sigma
+- persistence
+- credential-access
+- t1098

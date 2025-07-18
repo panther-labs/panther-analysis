@@ -1,0 +1,38 @@
+AnalysisType: rule
+Description: 'Identifies when suspicious SAML activity has occurred in AWS. An adversary
+  could gain backdoor access via SAML.
+
+
+  Status: test
+
+
+  Author: Austin Songer
+
+  False Positives: Automated processes that uses Terraform may lead to false positives.,
+  SAML Provider could be updated by a system administrator. Verify whether the user
+  identity, user agent, and/or hostname should be making changes in your environment.,
+  SAML Provider being updated from unfamiliar users should be investigated. If known
+  behavior is causing false positives, it can be exempted from the rule.'
+DisplayName: AWS Suspicious SAML Activity
+Enabled: true
+Filename: aws_susp_saml_activity.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/IAM/latest/APIReference/API_UpdateSAMLProvider.html
+Reports:
+  MITRE ATT&CK:
+  - T1078
+  - T1548
+  - T1550
+  - T1550.001
+RuleID: aws_susp_saml_activity
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1078
+- lateral-movement
+- t1548
+- privilege-escalation
+- t1550
+- t1550.001

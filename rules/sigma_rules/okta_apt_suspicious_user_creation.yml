@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'Detects new user account creation or activation with specific names
+  related to the Okta Support System 2023 breach.
+
+  This rule can be enhanced by filtering out known and legitimate username used in
+  your environnement.
+
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Unknown'
+DisplayName: Okta 2023 Breach Indicator Of Compromise
+Enabled: true
+Filename: okta_apt_suspicious_user_creation.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://www.beyondtrust.com/blog/entry/okta-support-unit-breach
+Reports:
+  MITRE ATT&CK: []
+RuleID: okta_apt_suspicious_user_creation
+Severity: Medium
+Tags:
+- Sigma
+- credential-access
+- emerging-threats

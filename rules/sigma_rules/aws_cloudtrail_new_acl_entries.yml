@@ -1,0 +1,28 @@
+AnalysisType: rule
+Description: 'Detects that network ACL entries have been added to a route table which
+  could indicate that new attack vectors have been opened up in the AWS account.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: Legitimate use of ACLs to enable customer and staff access from
+  the public internet into a public VPC'
+DisplayName: New Network ACL Entry Added
+Enabled: true
+Filename: aws_cloudtrail_new_acl_entries.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.gorillastack.com/blog/real-time-events/important-aws-cloudtrail-security-events-tracking/
+Reports:
+  MITRE ATT&CK:
+  - T1190
+RuleID: aws_cloudtrail_new_acl_entries
+Severity: Low
+Tags:
+- Sigma
+- initial-access
+- t1190

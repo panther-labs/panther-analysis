@@ -1,0 +1,36 @@
+AnalysisType: rule
+Description: 'Detects potentially suspicious events involving "GetSigninToken".
+
+  An adversary using the "aws_consoler" tool can leverage this console API to create
+  temporary federated credential that help obfuscate which AWS credential is compromised
+  (the original access key) and enables the adversary to pivot from the AWS CLI to
+  console sessions without the need for MFA using the new access key issued in this
+  request.
+
+
+
+  Status: test
+
+
+  Author: Chester Le Bron (@123Le_Bron)
+
+  False Positives: GetSigninToken events will occur when using AWS SSO portal to login
+  and will generate false positives if you do not filter for the expected user agent(s),
+  see filter. Non-SSO configured roles would be abnormal and should be investigated.'
+DisplayName: AWS Console GetSigninToken Potential Abuse
+Enabled: true
+Filename: aws_console_getsignintoken.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/NetSPI/aws_consoler
+Reports:
+  MITRE ATT&CK:
+  - T1021.007
+  - T1550.001
+RuleID: aws_console_getsignintoken
+Severity: Medium
+Tags:
+- Sigma
+- lateral-movement
+- t1021.007
+- t1550.001

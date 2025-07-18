@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects when an the Administrator role is assigned to an user or group.
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Administrator roles could be assigned to users or group by other
+  admin users.'
+DisplayName: Okta Admin Role Assigned to an User or Group
+Enabled: true
+Filename: okta_admin_role_assigned_to_user_or_group.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK:
+  - T1098.003
+RuleID: okta_admin_role_assigned_to_user_or_group
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- t1098.003

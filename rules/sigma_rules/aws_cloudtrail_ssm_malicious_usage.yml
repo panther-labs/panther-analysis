@@ -1,0 +1,32 @@
+AnalysisType: rule
+Description: 'Detect when System Manager successfully executes commands against an
+  instance.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: There are legitimate uses of SSM to send commands to EC2 instances,
+  Legitimate users may have to use SSM to perform actions against machines in the
+  Cloud to update or maintain them'
+DisplayName: Potential Malicious Usage of CloudTrail System Manager
+Enabled: true
+Filename: aws_cloudtrail_ssm_malicious_usage.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/elastic/detection-rules/blob/v8.6.0/rules/integrations/aws/initial_access_via_system_manager.toml
+Reports:
+  MITRE ATT&CK:
+  - T1566
+  - T1566.002
+RuleID: aws_cloudtrail_ssm_malicious_usage
+Severity: High
+Tags:
+- Sigma
+- privilege-escalation
+- initial-access
+- t1566
+- t1566.002

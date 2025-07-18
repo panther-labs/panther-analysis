@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detects when changes are made to the SSH certificate configuration of
+  the organization.
+
+
+  Status: test
+
+
+  Author: Romain Gaillard (@romain-gaillard)
+
+  False Positives: Allowed administrative activities.'
+DisplayName: Github SSH Certificate Configuration Changed
+Enabled: true
+Filename: github_ssh_certificate_config_changed.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-git-access-to-your-organizations-repositories/about-ssh-certificate-authorities
+Reports:
+  MITRE ATT&CK:
+  - T1078.004
+RuleID: github_ssh_certificate_config_changed
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- privilege-escalation
+- t1078.004

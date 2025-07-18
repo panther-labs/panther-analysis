@@ -1,0 +1,27 @@
+AnalysisType: rule
+Description: 'Detects an instance of an SES identity being deleted via the "DeleteIdentity"
+  event. This may be an indicator of an adversary removing the account that carried
+  out suspicious or malicious activities
+
+
+  Status: test
+
+
+  Author: Janantha Marasinghe
+
+  False Positives: Unknown'
+DisplayName: SES Identity Has Been Deleted
+Enabled: true
+Filename: aws_delete_identity.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://unit42.paloaltonetworks.com/compromised-cloud-compute-credentials/
+Reports:
+  MITRE ATT&CK:
+  - T1070
+RuleID: aws_delete_identity
+Severity: Medium
+Tags:
+- Sigma
+- defense-evasion
+- t1070

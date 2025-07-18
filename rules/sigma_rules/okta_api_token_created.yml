@@ -1,0 +1,23 @@
+AnalysisType: rule
+Description: 'Detects when a API token is created
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Legitimate creation of an API token by authorized users'
+DisplayName: Okta API Token Created
+Enabled: true
+Filename: okta_api_token_created.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://developer.okta.com/docs/reference/api/system-log/
+Reports:
+  MITRE ATT&CK: []
+RuleID: okta_api_token_created
+Severity: Medium
+Tags:
+- Sigma
+- persistence

@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects the modification of an EC2 snapshot''s permissions to enable
+  access from another account
+
+
+  Status: test
+
+
+  Author: Darin Smith
+
+  False Positives: Valid change to a snapshot''s permissions'
+DisplayName: AWS Snapshot Backup Exfiltration
+Enabled: true
+Filename: aws_snapshot_backup_exfiltration.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.justice.gov/file/1080281/download
+Reports:
+  MITRE ATT&CK:
+  - T1537
+RuleID: aws_snapshot_backup_exfiltration
+Severity: Medium
+Tags:
+- Sigma
+- exfiltration
+- t1537

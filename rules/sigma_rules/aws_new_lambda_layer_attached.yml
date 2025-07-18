@@ -1,0 +1,33 @@
+AnalysisType: rule
+Description: 'Detects when a user attached a Lambda layer to an existing Lambda function.
+
+  A malicious Lambda layer could execute arbitrary code in the context of the function''s
+  IAM role.
+
+  This would give an adversary access to resources that the function has access to.
+
+
+
+  Status: test
+
+
+  Author: Austin Songer
+
+  False Positives: Lambda Layer being attached may be performed by a system administrator.
+  Verify whether the user identity, user agent, and/or hostname should be making changes
+  in your environment., Lambda Layer being attached from unfamiliar users should be
+  investigated. If known behavior is causing false positives, it can be exempted from
+  the rule.'
+DisplayName: AWS New Lambda Layer Attached
+Enabled: true
+Filename: aws_new_lambda_layer_attached.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/lambda/latest/dg/API_UpdateFunctionConfiguration.html
+Reports:
+  MITRE ATT&CK: []
+RuleID: aws_new_lambda_layer_attached
+Severity: Low
+Tags:
+- Sigma
+- privilege-escalation

@@ -1,0 +1,33 @@
+AnalysisType: rule
+Description: 'Identifies disabling of default Amazon Elastic Block Store (EBS) encryption
+  in the current region.
+
+  Disabling default encryption does not change the encryption status of your existing
+  volumes.
+
+
+
+  Status: stable
+
+
+  Author: Sittikorn S
+
+  False Positives: System Administrator Activities, DEV, UAT, SAT environment. You
+  should apply this rule with PROD account only.'
+DisplayName: AWS EC2 Disable EBS Encryption
+Enabled: true
+Filename: aws_ec2_disable_encryption.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DisableEbsEncryptionByDefault.html
+Reports:
+  MITRE ATT&CK:
+  - T1486
+  - T1565
+RuleID: aws_ec2_disable_encryption
+Severity: Medium
+Tags:
+- Sigma
+- impact
+- t1486
+- t1565

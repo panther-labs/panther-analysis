@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects updates of the GuardDuty list of trusted IPs, perhaps to disable
+  security alerts against malicious IPs.
+
+
+  Status: test
+
+
+  Author: faloker
+
+  False Positives: Valid change in the GuardDuty (e.g. to ignore internal scanners)'
+DisplayName: AWS GuardDuty Important Change
+Enabled: true
+Filename: aws_guardduty_disruption.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://github.com/RhinoSecurityLabs/pacu/blob/866376cd711666c775bbfcde0524c817f2c5b181/pacu/modules/guardduty__whitelist_ip/main.py#L9
+Reports:
+  MITRE ATT&CK:
+  - T1562.001
+RuleID: aws_guardduty_disruption
+Severity: High
+Tags:
+- Sigma
+- defense-evasion
+- t1562.001

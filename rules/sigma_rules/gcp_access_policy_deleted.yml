@@ -1,0 +1,31 @@
+AnalysisType: rule
+Description: 'Detects when an access policy that is applied to a GCP cloud resource
+  is deleted.
+
+  An adversary would be able to remove access policies to gain access to a GCP cloud
+  resource.
+
+
+
+  Status: test
+
+
+  Author: Bryan Lim
+
+  False Positives: Legitimate administrative activities'
+DisplayName: GCP Access Policy Deleted
+Enabled: true
+Filename: gcp_access_policy_deleted.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://cloud.google.com/access-context-manager/docs/audit-logging
+Reports:
+  MITRE ATT&CK:
+  - T1098
+RuleID: gcp_access_policy_deleted
+Severity: Medium
+Tags:
+- Sigma
+- persistence
+- privilege-escalation
+- t1098

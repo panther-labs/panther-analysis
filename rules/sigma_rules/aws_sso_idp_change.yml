@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: 'Detects a change in the AWS Identity Center (FKA AWS SSO) identity provider.
+
+  A change in identity provider allows an attacker to establish persistent access
+  or escalate privileges via user impersonation.
+
+
+
+  Status: test
+
+
+  Author: Michael McIntyre @wtfender
+
+  False Positives: Authorized changes to the AWS account''s identity provider'
+DisplayName: AWS Identity Center Identity Provider Change
+Enabled: true
+Filename: aws_sso_idp_change.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/singlesignon/latest/userguide/app-enablement.html
+Reports:
+  MITRE ATT&CK:
+  - T1556
+RuleID: aws_sso_idp_change
+Severity: High
+Tags:
+- Sigma
+- persistence
+- t1556

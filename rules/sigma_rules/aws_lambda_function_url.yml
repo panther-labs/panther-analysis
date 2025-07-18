@@ -1,0 +1,34 @@
+AnalysisType: rule
+Description: 'Detects when a user creates a Lambda function URL configuration, which
+  could be used to expose the function to the internet and potentially allow unauthorized
+  access to the function''s IAM role for AWS API calls.
+
+  This could give an adversary access to the privileges associated with the Lambda
+  service role that is attached to that function.
+
+
+
+  Status: experimental
+
+
+  Author: Ivan Saakov
+
+  False Positives: Creating a Lambda function URL configuration may be performed by
+  a system administrator. Verify whether the user identity, user agent, and/or hostname
+  should be making changes in your environment., Creating a Lambda function URL configuration
+  from unfamiliar users should be investigated. If known behavior is causing false
+  positives, it can be exempted from the rule.'
+DisplayName: New AWS Lambda Function URL Configuration Created
+Enabled: true
+Filename: aws_lambda_function_url.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunctionUrlConfig.html
+Reports:
+  MITRE ATT&CK: []
+RuleID: aws_lambda_function_url
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- privilege-escalation

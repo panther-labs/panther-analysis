@@ -1,0 +1,31 @@
+AnalysisType: rule
+Description: 'Detects changes to the security group entries for RDS databases.
+
+  This can indicate that a misconfiguration has occurred which potentially exposes
+  the database to the public internet, a wider audience within the VPC or that removal
+  of valid rules has occurred which could impact the availability of the database
+  to legitimate services and users.
+
+
+
+  Status: test
+
+
+  Author: jamesc-grafana
+
+  False Positives: Creation of a new Database that needs new security group rules'
+DisplayName: RDS Database Security Group Modification
+Enabled: true
+Filename: aws_cloudtrail_security_group_change_rds.py
+LogTypes:
+- AWS.CloudTrail
+Reference: https://www.gorillastack.com/blog/real-time-events/important-aws-cloudtrail-security-events-tracking/
+Reports:
+  MITRE ATT&CK:
+  - T1190
+RuleID: aws_cloudtrail_security_group_change_rds
+Severity: Medium
+Tags:
+- Sigma
+- initial-access
+- t1190

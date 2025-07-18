@@ -1,0 +1,24 @@
+AnalysisType: rule
+Description: 'Detects access to Okta admin functions through proxy.
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal @faisalusuf
+
+  False Positives: False positives are expected if administrators access these function
+  through proxy legitimatly. Apply additional filters if necessary'
+DisplayName: Okta Admin Functions Access Through Proxy
+Enabled: true
+Filename: okta_admin_activity_from_proxy_query.py
+LogTypes:
+- Okta.SystemLog
+Reference: https://www.beyondtrust.com/blog/entry/okta-support-unit-breach
+Reports:
+  MITRE ATT&CK: []
+RuleID: okta_admin_activity_from_proxy_query
+Severity: Medium
+Tags:
+- Sigma
+- credential-access

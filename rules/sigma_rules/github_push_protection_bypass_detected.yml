@@ -1,0 +1,26 @@
+AnalysisType: rule
+Description: 'Detects when a user bypasses the push protection on a secret detected
+  by secret scanning.
+
+
+  Status: test
+
+
+  Author: Muhammad Faisal (@faisalusuf)
+
+  False Positives: Allowed administrative activities.'
+DisplayName: Github Push Protection Bypass Detected
+Enabled: true
+Filename: github_push_protection_bypass_detected.py
+LogTypes:
+- GitHub.Audit
+Reference: https://docs.github.com/en/enterprise-cloud@latest/code-security/secret-scanning/push-protection-for-repositories-and-organizations
+Reports:
+  MITRE ATT&CK:
+  - T1562.001
+RuleID: github_push_protection_bypass_detected
+Severity: Low
+Tags:
+- Sigma
+- defense-evasion
+- t1562.001

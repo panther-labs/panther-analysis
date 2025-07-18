@@ -1,0 +1,28 @@
+AnalysisType: rule
+Description: 'Detects  when a firewall rule is modified or deleted in Google Cloud
+  Platform (GCP).
+
+
+  Status: test
+
+
+  Author: Austin Songer @austinsonger
+
+  False Positives: Firewall rules being modified or deleted may be performed by a
+  system administrator. Verify that the firewall configuration change was expected.,
+  Exceptions can be added to this rule to filter expected behavior.'
+DisplayName: Google Cloud Firewall Modified or Deleted
+Enabled: true
+Filename: gcp_firewall_rule_modified_or_deleted.py
+LogTypes:
+- GCP.AuditLog
+Reference: https://cloud.google.com/kubernetes-engine/docs/how-to/audit-logging
+Reports:
+  MITRE ATT&CK:
+  - T1562
+RuleID: gcp_firewall_rule_modified_or_deleted
+Severity: Medium
+Tags:
+- Sigma
+- defense-evasion
+- t1562
