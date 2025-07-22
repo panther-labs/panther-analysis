@@ -1,0 +1,100 @@
+name: Sync Panther Analysis from Upstream - Alchemy
+
+on:
+  schedule:
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
+  workflow_dispatch: # or on button click
+
+permissions: write-all
+
+jobs:
+  check_upstream:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout OMGWINNING Panter Analysis
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #4.2.2
+        with: 
+          token: ${{ secrets.GIT_ENV_API_TOKEN }}
+
+      - name: Fetch latest release from panther-labs/panther-analysis
+        id: get_release
+        run: |
+          release_json=$(curl -s https://api.github.com/repos/panther-labs/panther-analysis/releases/latest)
+          tag_name=$(echo "$release_json" | jq -r '.tag_name')
+          echo "Latest tag: $tag_name"
+
+          tag_ref_json=$(curl -s https://api.github.com/repos/panther-labs/panther-analysis/git/ref/tags/$tag_name)
+          object_url=$(echo "$tag_ref_json" | jq -r '.object.url')
+          echo "Tag object URL: $object_url"
+
+          tag_object=$(curl -s $object_url)
+          object_type=$(echo "$tag_object" | jq -r '.type')
+
+          if [ "$object_type" = "tag" ]; then
+            commit_sha=$(echo "$tag_object" | jq -r '.object.sha')
+          else
+            commit_sha=$(echo "$tag_object" | jq -r '.sha')
+          fi
+
+          echo "Resolved commit SHA: $commit_sha"
+          echo "commit_sha=$commit_sha" >> $GITHUB_OUTPUT
+
+      - name: Use SHA
+        run: echo "Release commit SHA is ${{ steps.get_release.outputs.commit_sha }}"
+
+      - name: Checkout Panter Analysis Latest Release
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #4.2.2
+
+        with:
+          repository: panther-labs/panther-analysis
+          ref: ${{steps.get_release.outputs.commit_sha}}
+          path: panther-analysis-latest-release
+          token: ${{ secrets.GIT_ENV_API_TOKEN }}
+
+      - name: Set up Git user
+        run: |
+          git config --global user.email "sa-gh-alchemy-github-bot@alchemy.com"
+          git config --global user.name "sa-gh-alchemy-github-bot"
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@82a020f1f7f605c65dd2449b392a52c3fcfef7ef #6.0.0
+        with:
+          gpg_private_key: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Set python version
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 #5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Check disabled rules
+        run: |
+          pip install pyyaml
+          python .scripts/perserve_disabled_rules.py
+
+      - name: Clean up code and commit
+        run: |
+          rm -rf panther-analysis-latest-release
+          git add -A
+          git status
+          git commit -m "Sync from upstream"
+          git push origin HEAD:sync-from-upstream-${GITHUB_RUN_ID}
+
+
+      - name: Create PR with GitHub CLI
+        run: |
+          gh pr create \
+            --title "Update Panther with latest sync from Panther Analysis upstream" \
+            --body "Automated update from Panther Analysis repository" \
+            --base develop \
+            --head sync-from-upstream-${GITHUB_RUN_ID}
+        env:
+          GH_TOKEN: ${{ secrets.GIT_ENV_API_TOKEN }}
+
+
+
