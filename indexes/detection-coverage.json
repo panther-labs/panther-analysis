@@ -536,6 +536,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.",
+        "DisplayName": "AWS Bedrock Model Invocation Abnormal Token Usage",
+        "LogTypes": [
+            "AWS.BedrockModelInvocation"
+        ],
+        "YAMLPath": "rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.",
+        "DisplayName": "AWS Bedrock Model Invocation GuardRail Intervened",
+        "LogTypes": [
+            "AWS.BedrockModelInvocation"
+        ],
+        "YAMLPath": "rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An Amazon Bedrock Model Invocation Logging Configuration was deleted. Use model invocation logging to collect metadata, requests, and responses for all model invocations in your account. Deleting a model invocation logging configuration can have security implications to your AI workloads.",
         "DisplayName": "AWS Bedrock Model Invocation Logging Configuration Deleted",
         "LogTypes": [
@@ -6307,6 +6325,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "GSuite reported a suspicious activity for this user.",
+        "DisplayName": "Suspicious is_suspicious tag",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml"
     },
     {
         "AnalysisType": "Scheduled Query",

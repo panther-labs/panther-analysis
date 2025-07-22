@@ -8,6 +8,14 @@
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
 
 
+## AWS BedrockModelInvocation
+
+- [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml)
+  - Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.
+- [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
+  - Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.
+
+
 ## AWS CloudFormation
 
 - [AWS CloudFormation Stack Drift](../policies/aws_cloudformation_policies/aws_cloudformation_stack_drifted.yml)

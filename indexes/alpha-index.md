@@ -16,6 +16,7 @@
 # A
 
 - [AWS ACM](#aws-acm)
+- [AWS BedrockModelInvocation](#aws-bedrockmodelinvocation)
 - [AWS CloudFormation](#aws-cloudformation)
 - [AWS CloudTrail](#aws-cloudtrail)
 - [AWS CloudWatch](#aws-cloudwatch)
@@ -52,6 +53,14 @@
   - This policy checks if an ACM certificate renewal is pending or has failed and is in use by any other resources within the account.
 - [AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml)
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
+
+
+## AWS BedrockModelInvocation
+
+- [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml)
+  - Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.
+- [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
+  - Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.
 
 
 ## AWS CloudFormation
@@ -1305,6 +1314,8 @@
   - A Workspace Admin Has Modified The Trusted Domains List
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
   - GSuite reported a suspicious login for this user.
+- [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
+  - GSuite reported a suspicious activity for this user.
 
 
 # M
