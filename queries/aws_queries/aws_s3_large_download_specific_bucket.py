@@ -1,4 +1,3 @@
-from panther_aws_helpers import aws_rule_context
 from panther_core import PantherEvent
 
 
@@ -21,10 +20,9 @@ def severity(event: PantherEvent) -> str:
 
     if total_mb >= 1000:  # 1GB+
         return "CRITICAL"
-    elif total_mb >= 500:  # 500MB+
+    if total_mb >= 500:  # 500MB+
         return "HIGH"
-    else:  # 100MB+
-        return "MEDIUM"
+    return "MEDIUM"
 
 
 def alert_context(event: PantherEvent) -> dict:
