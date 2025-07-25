@@ -1,0 +1,20 @@
+name: Changed Files
+description: Determine modified files
+outputs:
+  all_changed_files:
+    description: 'All the changed files'
+    value: ${{ steps.changed_files.outputs.all_changed_files }}
+runs:
+  using: composite
+  steps:
+    - name: Retrieve changed files
+      id: changed_files
+      uses: tj-actions/changed-files@d6babd6899969df1a11d14c368283ea4436bca78
+    - name: List affected files
+      if: ${{ steps.changed_files.outputs.all_changed_files != '' }}
+      run: |
+        echo "Affected files:"
+        for file in ${{ steps.changed_files.outputs.all_changed_files }}; do
+          echo "- ${file}"
+        done
+      shell: bash
