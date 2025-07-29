@@ -3,14 +3,13 @@ Filename: aws_s3_large_download_specific_bucket.py
 RuleID: "AWS.S3.LargeDownload"
 DisplayName: "AWS S3 Large Download"
 Enabled: false
+CreateAlert: false
 ScheduledQueries:
   - AWS S3 Large Download
-Severity: Medium
+Severity: Info
 Tags:
-  - AWS
-  - S3
+  - Beta
   - Data Exfiltration
-  - CloudTrail
 Reports:
   MITRE ATT&CK:
     - "TA0010:T1537"  # Exfiltration: Transfer Data to Cloud Account

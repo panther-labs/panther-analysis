@@ -1,12 +1,9 @@
-from panther_core import PantherEvent
-
-
 def rule(_) -> bool:
     """Always return True since the query already filtered for violations"""
     return True
 
 
-def title(event: PantherEvent) -> str:
+def title(event) -> str:
     user_arn = event.get("user_arn", "unknown")
     bucket_name = event.get("bucket_name", "unknown")
     total_mb = round(event.get("total_bytes_downloaded", 0) / (1024 * 1024), 2)
@@ -14,18 +11,7 @@ def title(event: PantherEvent) -> str:
     return f"Large S3 download detected: {user_arn} downloaded {total_mb}MB from {bucket_name}"
 
 
-def severity(event: PantherEvent) -> str:
-    total_bytes = event.get("total_bytes_downloaded", 0)
-    total_mb = total_bytes / (1024 * 1024)
-
-    if total_mb >= 1000:  # 1GB+
-        return "CRITICAL"
-    if total_mb >= 500:  # 500MB+
-        return "HIGH"
-    return "MEDIUM"
-
-
-def alert_context(event: PantherEvent) -> dict:
+def alert_context(event) -> dict:
     total_bytes = event.get("total_bytes_downloaded", 0)
     total_mb = round(total_bytes / (1024 * 1024), 2)
 
