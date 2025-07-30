@@ -1896,6 +1896,15 @@
         "YAMLPath": "rules/aws_s3_rules/aws_s3_insecure_access.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.",
+        "DisplayName": "AWS S3 Large Download",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Checks for S3 access attempts where the requester is not an authenticated AWS user.",
         "DisplayName": "AWS S3 Unauthenticated Access",
@@ -6325,6 +6334,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "GSuite reported a suspicious activity for this user.",
+        "DisplayName": "Suspicious is_suspicious tag",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml"
     },
     {
         "AnalysisType": "Scheduled Query",

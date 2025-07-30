@@ -1,0 +1,45 @@
+AnalysisType: rule
+Filename: gsuite_is_suspicious_tag.py
+RuleID: "GSuite.IsSuspiciousTag"
+DisplayName: "Suspicious is_suspicious tag"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Beta
+Severity: Info # Will be Medium in the future
+Description: >
+  GSuite reported a suspicious activity for this user.
+Reference: https://support.google.com/a/answer/7102416?hl=en
+Runbook: >
+  Checkout the details of the activity and verify this behavior with the user to ensure the account wasn't compromised.
+SummaryAttributes:
+  - actor:email
+Tests:
+  - Name: Normal Login Event
+    ExpectedResult: false
+    Log:
+      {
+        "id": { "applicationName": "login" },
+        "kind": "admin#reports#activity",
+        "type": "account_warning",
+        "name": "login_success",
+        "parameters": { "affected_email_address": "denethor@lotr.com" },
+      }
+
+  - Name: Login Success But Flagged Suspicious
+    ExpectedResult: true
+    Log:
+      {
+        "id": { "applicationName": "login" },
+        "actor": {
+          "email": bobert@ext.runpanther.io"},
+        "kind": "admin#reports#activity",
+        "type": "login",
+        "name": "login_success",
+        "parameters": {
+          "affected_email_address": "bobert@ext.runpanther.io",
+          "is_suspicious": true
+        }
+      }

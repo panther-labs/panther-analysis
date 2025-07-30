@@ -278,14 +278,45 @@ Tests:
       originatingserver: QWERTY (1.2.3.4)
       parameters:
         - Name: Identity
-          Value: homer.simpson@simpsons.org
+          Value: john@justice.org
         - Name: ForwardingSmtpAddress
-          Value: smtp:marge.simpson@simpsons.org
+          Value: smtp:bruce@justice.org
         - Name: DeliverToMailboxAndForward
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@simpsons.org
+      userid: john@justice.org
       userkey: "12345"
+      usertype: 2
+      workload: Exchange
+  - Name: Internal Forwarding with Suspicious Pattern
+    ExpectedResult: false
+    Log:
+      clientip: "1.2.3.4:10736"
+      creationtime: "2025-07-07 09:11:11.000000000"
+      externalaccess: false
+      id: 111-22-33
+      objectid: "ABC001.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/444-55-66\\Move GitHub emails"
+      operation: New-InboxRule
+      organizationid: 11-aa-bb
+      organizationname: simpsons.onmicrosoft.com
+      originatingserver: QWERTY (1.2.3.4)
+      parameters:
+        - Name: AlwaysDeleteOutlookRulesBlob
+          Value: "False"
+        - Name: Force
+          Value: "False"
+        - Name: MoveToFolder
+          Value: "MYFolder"
+        - Name: Name
+          Value: "Move emails to another folder"
+        - Name: FromAddressContainsWords
+          Value: "specialsender"
+        - Name: StopProcessingRules
+          Value: "True"
+      recordtype: 1
+      resultstatus: "True"
+      userid: homer.simpson@simpsons.onmicrosoft
+      userkey: homer.simpson@simpsons.onmicrosoft
       usertype: 2
       workload: Exchange
