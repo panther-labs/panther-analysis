@@ -52,66 +52,66 @@ Tests:
   - Name: Large download triggers alert
     ExpectedResult: true
     Log:
-      user_arn: "arn:aws:iam::123456789012:user/data-engineer"
+      user_arn: "arn:aws:iam::111111111111:user/data-engineer"
       user_name: "data-engineer"
       user_type: "IAMUser"
       bucket_name: "sensitive-data-bucket"
-      source_ip: "192.168.1.100"
+      source_ip: "3.3.3.3"
       user_agent: "aws-cli/2.0.0"
       total_bytes_downloaded: 78643200  # 75MB
       object_count: 75
       first_download_time: "2025-01-15 14:30:00"
       last_download_time: "2025-01-15 14:34:30"
       sample_objects: ["logs/2025/01/15/file1.log", "logs/2025/01/15/file2.log"]
-      account_id: "123456789012"
+      account_id: "111111111111"
 
   - Name: Critical threshold triggers high severity
     ExpectedResult: true
     Log:
-      user_arn: "arn:aws:iam::123456789012:user/suspicious-user" 
+      user_arn: "arn:aws:iam::111111111111:user/suspicious-user" 
       user_name: "suspicious-user"
       user_type: "IAMUser"
       bucket_name: "sensitive-data-bucket"
-      source_ip: "10.0.0.1"
+      source_ip: "2.2.2.2"
       user_agent: "python-requests/2.28.0"
       total_bytes_downloaded: 1073741824  # 1GB
       object_count: 200
       first_download_time: "2025-01-15 15:00:00"
       last_download_time: "2025-01-15 15:04:59"
       sample_objects: ["data/model1.bin", "data/model2.bin", "logs/training.log"]
-      account_id: "123456789012"
+      account_id: "111111111111"
 
   - Name: Medium download triggers medium severity
     ExpectedResult: true
     Log:
-      user_arn: "arn:aws:iam::123456789012:user/analyst"
+      user_arn: "arn:aws:iam::111111111111:user/analyst"
       user_name: "analyst"
       user_type: "IAMUser"
       bucket_name: "sensitive-data-bucket"
-      source_ip: "203.0.113.45"
+      source_ip: "1.1.1.1"
       user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
       total_bytes_downloaded: 104857600  # 100MB
       object_count: 40
       first_download_time: "2025-01-15 16:01:00"
       last_download_time: "2025-01-15 16:03:15"
       sample_objects: ["analytics/report1.json", "analytics/report2.json"]
-      account_id: "123456789012"
+      account_id: "111111111111"
 
   - Name: AssumedRole large download triggers alert
     ExpectedResult: true
     Log:
-      user_arn: "arn:aws:sts::123456789012:assumed-role/DataAnalyst/session123"
+      user_arn: "arn:aws:sts::111111111111:assumed-role/sample-role-nervous-banzai/sample-role-frosty-mendeleev"
       user_name: "DataAnalyst"
       user_type: "AssumedRole"
       bucket_name: "analytics-bucket"
-      source_ip: "10.0.1.50"
+      source_ip: "1.2.3.4"
       user_agent: "boto3/1.26.0"
       total_bytes_downloaded: 62914560  # 60MB
       object_count: 30
       first_download_time: "2025-01-15 17:00:00"
       last_download_time: "2025-01-15 17:05:00"
       sample_objects: ["reports/quarterly.csv", "reports/monthly.json"]
-      account_id: "123456789012"
+      account_id: "111111111111"
 
   - Name: FederatedUser large download triggers alert
     ExpectedResult: true
