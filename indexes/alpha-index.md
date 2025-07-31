@@ -1054,7 +1054,7 @@
 - [GCP Access Attempts Violating IAP Access Controls](../rules/gcp_http_lb_rules/gcp_access_attempts_violating_iap_access_controls.yml)
   - GCP Access Attempts Violating IAP Access Controls
 - [GCP Access Attempts Violating VPC Service Controls](../rules/gcp_audit_rules/gcp_access_attempts_violating_vpc_service_controls.yml)
-  - An access attempt violating VPC service controls (such as Perimeter controls) has been made.
+  - A large number of access attempts violating VPC service controls (such as Perimeter controls) have been made.
 - [GCP BigQuery Large Scan](../rules/gcp_audit_rules/gcp_bigquery_large_scan.yml)
   - Detect any BigQuery query that is doing a very large scan (> 1 GB).
 - [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
