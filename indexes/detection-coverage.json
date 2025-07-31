@@ -1959,6 +1959,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_multiregion.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects suspicious AWS Secrets Manager activity including reconnaissance (ListSecrets),  targeted investigation (DescribeSecret), and secret retrieval (GetSecretValue).  Monitors for enumeration patterns that may indicate an attacker mapping available secrets  for lateral movement.",
+        "DisplayName": "AWS Secrets Manager Suspicious Activity",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that only Security Groups designated as DMZs allow inbound traffic from public IP space. This helps ensure no traffic is bypassing the DMZ.",
         "DisplayName": "AWS Security Group - Only DMZ Publicly Accessible",
@@ -3187,15 +3196,6 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_ec2_route_table_modified.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "An attacker attempted to retrieve a high number of Secrets Manager secrets, through secretsmanager:GetSecretValue.",
-        "DisplayName": "EC2 Secrets Manager Retrieve Secrets",
-        "LogTypes": [
-            "AWS.CloudTrail"
-        ],
-        "YAMLPath": "rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets.yml"
     },
     {
         "AnalysisType": "Rule",
