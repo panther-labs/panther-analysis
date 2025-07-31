@@ -352,3 +352,10 @@ def pantherflow_investigation(event, interval="30m"):
     query += "| sort p_event_time"
 
     return query
+
+
+def dbprint(*values: object, sep: str = " ", end: str = "\n"):  # pylint: disable=unused-argument
+    """This is a placeholder function for printing to stdout when using pat debug. The debugging
+    comamnd will patch this to `print`. We introduce this function so users can print potentially
+    sensitive fields when debugging unit tests, and not worry about it being logged when Panther
+    the rule on production logs."""
