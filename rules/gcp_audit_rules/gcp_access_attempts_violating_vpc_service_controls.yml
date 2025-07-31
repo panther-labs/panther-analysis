@@ -1,10 +1,14 @@
 AnalysisType: rule
-Description: An access attempt violating VPC service controls (such as Perimeter controls) has been made.
+Description: A large number of access attempts violating VPC service controls (such as Perimeter controls) have been made.
 DisplayName: "GCP Access Attempts Violating VPC Service Controls"
 Enabled: true
 Filename: gcp_access_attempts_violating_vpc_service_controls.py
 Reference: https://cloud.google.com/vpc-service-controls/docs/troubleshooting#debugging
-Severity: Medium
+Runbook: >
+  Determine why this principal is making access attempts violating VPC service controls.
+  Determine if this is expected behavior, and if so, create a ticket to update the VPC service controls
+  or add a filter to this rule to exclude this principal.
+Severity: Low
 Tests:
   - ExpectedResult: false
     Log:
@@ -137,8 +141,8 @@ Tests:
       severity: ERROR
       timestamp: "2023-03-09T16:28:40.890430163Z"
     Name: VPC control violation
-DedupPeriodMinutes: 60
+DedupPeriodMinutes: 1440
 LogTypes:
   - GCP.AuditLog
 RuleID: "GCP.Access.Attempts.Violating.VPC.Service.Controls"
-Threshold: 1
+Threshold: 1000
