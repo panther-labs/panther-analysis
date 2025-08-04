@@ -24,6 +24,15 @@ def rule(event):
     ):
         return False
 
+    # Exclude system service accounts in kube-system namespace
+    principal = event.deep_get("protoPayload", "authenticationInfo", "principalEmail", default="")
+    resource_name = event.deep_get("protoPayload", "resourceName", default="")
+    if (
+        principal.startswith("system:serviceaccount:kube-system:")
+        and "namespaces/kube-system/pods/" in resource_name
+    ):
+        return False
+
     volume_mount_path = event.deep_walk(
         "protoPayload", "request", "spec", "volumes", "hostPath", "path"
     )
@@ -35,11 +44,7 @@ def rule(event):
     ):
         return False
 
-    authorization_info = event.deep_walk("protoPayload", "authorizationInfo")
-    if not authorization_info:
-        return False
-
-    for auth in authorization_info:
+    for auth in event.deep_walk("protoPayload", "authorizationInfo") or []:
         if (
             auth.get("permission")
             in (
