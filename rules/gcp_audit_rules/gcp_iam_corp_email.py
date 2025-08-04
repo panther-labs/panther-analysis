@@ -1,4 +1,14 @@
+from fnmatch import fnmatch
+
 from panther_base_helpers import deep_get
+from panther_config import config
+
+# These patterns indicate members which might be added by default by some GCP services
+ACCEPTED_MEMBER_PATTERNS = [
+    "serviceAccount:*@*.gserviceaccount.com",
+    "serviceAccount:*.svc.id.goog[*",
+    "principalSet://iam.googleapis.com/projects/*/workloadIdentityPools/*",
+]
 
 
 def rule(event):
@@ -21,7 +31,10 @@ def rule(event):
     for delta in binding_deltas:
         if delta.get("action") != "ADD":
             continue
-        if delta.get("member", "").endswith(f"@{expected_domain}"):
+        member = delta.get("member", "")
+        if is_ignorable_member(member):
+            return False
+        if member.endswith(f"@{expected_domain}"):
             return False
     return True
 
@@ -31,3 +44,11 @@ def title(event):
         f"A GCP IAM account has been created with an unexpected email domain in "
         f"{event.deep_get('resource', 'labels', 'project_id', default='<UNKNOWN_PROJECT>')}"
     )
+
+
+def is_ignorable_member(member: str) -> bool:
+    if any(member.endswith(f"@{domain}") for domain in config.ORGANIZATION_DOMAINS):
+        return True
+    if any(fnmatch(member, pattern) for pattern in ACCEPTED_MEMBER_PATTERNS):
+        return True
+    return False
