@@ -342,3 +342,173 @@ Tests:
           },
         "timestamp": "2024-02-13 13:13:24.079140000",
       }
+  - Name: GCP Service Account Creating Privileged Pod (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {},
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo": { "principalEmail": "container-engine-robot@some-project.iam.gserviceaccount.com" },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "io.k8s.core.v1.pods.create",
+                  "resource": "core/v1/namespaces/kube-system/pods/gke-metrics-agent",
+                },
+              ],
+            "methodName": "io.k8s.core.v1.pods.create",
+            "request":
+              {
+                "@type": "core.k8s.io/v1.Pod",
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata":
+                  { "name": "gke-metrics-agent", "namespace": "kube-system" },
+                "spec":
+                  {
+                    "containers":
+                      [
+                        {
+                          "image": "gke.gcr.io/gke-metrics-agent:latest",
+                          "imagePullPolicy": "Always",
+                          "name": "gke-metrics-agent",
+                          "resources": {},
+                          "securityContext": { "privileged": true },
+                        },
+                      ],
+                    "securityContext": {},
+                  },
+                "status": {},
+              },
+            "requestMetadata": { "callerIP": "10.0.0.1" },
+            "resourceName": "core/v1/namespaces/kube-system/pods/gke-metrics-agent",
+            "response":
+              {
+                "@type": "core.k8s.io/v1.Pod",
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {},
+                "spec":
+                  {
+                    "containers":
+                      [
+                        {
+                          "image": "gke.gcr.io/gke-metrics-agent:latest",
+                          "imagePullPolicy": "Always",
+                          "name": "gke-metrics-agent",
+                          "resources": {},
+                          "securityContext": { "privileged": true },
+                        },
+                      ],
+                    "securityContext": {},
+                    "serviceAccount": "gke-metrics-agent",
+                    "serviceAccountName": "gke-metrics-agent",
+                    "terminationGracePeriodSeconds": 30,
+                  },
+                "status": {},
+              },
+            "serviceName": "k8s.io",
+            "status": {},
+          },
+        "receiveTimestamp": "2024-02-13 12:45:20.058795785",
+        "resource":
+          {
+            "labels":
+              {
+                "cluster_name": "some-project-cluster",
+                "location": "us-west1",
+                "project_id": "some-project",
+              },
+            "type": "k8s_cluster",
+          },
+        "timestamp": "2024-02-13 12:45:06.073905000",
+      }
+  - Name: Privileged Pod in System Namespace (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {},
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo": { "principalEmail": "system:serviceaccount:kube-system:deployment-controller" },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "io.k8s.core.v1.pods.create",
+                  "resource": "core/v1/namespaces/gke-system/pods/network-agent",
+                },
+              ],
+            "methodName": "io.k8s.core.v1.pods.create",
+            "request":
+              {
+                "@type": "core.k8s.io/v1.Pod",
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata":
+                  { "name": "network-agent", "namespace": "gke-system" },
+                "spec":
+                  {
+                    "containers":
+                      [
+                        {
+                          "image": "gke.gcr.io/network-agent:latest",
+                          "imagePullPolicy": "Always",
+                          "name": "network-agent",
+                          "resources": {},
+                          "securityContext": { "privileged": true },
+                        },
+                      ],
+                    "securityContext": {},
+                  },
+                "status": {},
+              },
+            "requestMetadata": { "callerIP": "10.0.0.2" },
+            "resourceName": "core/v1/namespaces/gke-system/pods/network-agent",
+            "response":
+              {
+                "@type": "core.k8s.io/v1.Pod",
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {},
+                "spec":
+                  {
+                    "containers":
+                      [
+                        {
+                          "image": "gke.gcr.io/network-agent:latest",
+                          "imagePullPolicy": "Always",
+                          "name": "network-agent",
+                          "resources": {},
+                          "securityContext": { "privileged": true },
+                        },
+                      ],
+                    "securityContext": {},
+                    "serviceAccount": "network-agent",
+                    "serviceAccountName": "network-agent",
+                    "terminationGracePeriodSeconds": 30,
+                  },
+                "status": {},
+              },
+            "serviceName": "k8s.io",
+            "status": {},
+          },
+        "receiveTimestamp": "2024-02-13 12:45:20.058795785",
+        "resource":
+          {
+            "labels":
+              {
+                "cluster_name": "some-project-cluster",
+                "location": "us-west1",
+                "project_id": "some-project",
+              },
+            "type": "k8s_cluster",
+          },
+        "timestamp": "2024-02-13 12:45:06.073905000",
+      }
