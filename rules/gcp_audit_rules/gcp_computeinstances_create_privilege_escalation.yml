@@ -1,18 +1,25 @@
 AnalysisType: rule
 LogTypes:
   - GCP.AuditLog
-Description: Detects compute.instances.create method for privilege escalation in GCP.
+Description: >
+  Detects compute.instances.create method for privilege escalation in GCP. This rule identifies when users
+  create compute instances with service accounts that may lead to privilege escalation. Known good service accounts
+  (GKE, Kubernetes, compute automation) are excluded to reduce false positives.
 DisplayName: "GCP compute.instances.create Privilege Escalation"
 RuleID: "GCP.compute.instances.create.Privilege.Escalation"
 Enabled: true
 Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
-Runbook: Confirm this was authorized and necessary behavior.
+Runbook: >
+  1. Validate whether this compute instance creation with service account was authorized.
+  2. Check if the service account attached has excessive privileges.
+  3. Verify if the user creating the instance has a legitimate need for the service account permissions.
+  4. If unauthorized, revoke the instance access and investigate for compromise.
 Reports:
   MITRE ATT&CK:
     - TA0004:T1548 # Abuse Elevation Control Mechanism
 Severity: High
 Filename: gcp_computeinstances_create_privilege_escalation.py
-DedupPeriodMinutes: 60
+DedupPeriodMinutes: 1440
 Threshold: 1
 Tests:
   - Name: GCP compute.instances - Potential Privilege Escalation
