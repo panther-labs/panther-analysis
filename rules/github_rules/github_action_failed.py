@@ -1,7 +1,6 @@
 import json
 from unittest.mock import MagicMock
 
-from global_filter_github import filter_include_event
 from panther_github_helpers import github_alert_context
 
 # The keys for MONITORED_ACTIONS are gh_org/repo_name
@@ -10,8 +9,7 @@ MONITORED_ACTIONS = {}
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     global MONITORED_ACTIONS  # pylint: disable=global-statement
     if isinstance(MONITORED_ACTIONS, MagicMock):
         MONITORED_ACTIONS = json.loads(MONITORED_ACTIONS())  # pylint: disable=not-callable

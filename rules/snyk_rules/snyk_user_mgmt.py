@@ -1,4 +1,3 @@
-from global_filter_snyk import filter_include_event
 from panther_snyk_helpers import snyk_alert_context
 
 ACTIONS = [
@@ -23,8 +22,7 @@ ACTIONS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     action = event.get("event", "<NO_EVENT>")
     # for org.user.add/group.user.add via SAML/SCIM
     # the attributes .userId and .content.publicUserId
