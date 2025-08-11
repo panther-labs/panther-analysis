@@ -1,4 +1,3 @@
-from global_filter_notion import filter_include_event
 from panther_base_helpers import deep_get
 from panther_notion_helpers import notion_alert_context
 
@@ -7,8 +6,7 @@ event_types = ("page.permissions.guest_role_added", "page.permissions.guest_role
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     return event.deep_get("event", "type", default="<NO_EVENT_TYPE_FOUND>") in event_types
 
 

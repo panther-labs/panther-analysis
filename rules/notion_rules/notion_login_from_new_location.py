@@ -2,7 +2,6 @@ import datetime
 import json
 import time
 
-from global_filter_notion import filter_include_event
 from panther_detection_helpers.caching import get_dictionary, put_dictionary
 from panther_ipinfo_helpers import IPInfoLocation
 from panther_notion_helpers import notion_alert_context
@@ -12,8 +11,6 @@ DEFAULT_CACHE_PERIOD = 2419200
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
 
     # Only focused on login events
     if event.deep_walk("event", "type") != "user.login":

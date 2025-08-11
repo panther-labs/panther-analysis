@@ -1,10 +1,7 @@
-from global_filter_notion import filter_include_event
 from panther_notion_helpers import notion_alert_context
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
 
     allowed_event_types = {
         "user.settings.login_method.email_updated",
