@@ -1,6 +1,6 @@
 import ipaddress
 
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 
 # Define S3 data access operations
 S3_DATA_ACCESS_OPERATIONS = [
@@ -66,7 +66,6 @@ def alert_context(event):
     context.update(
         {
             "account_id": account_id,
-            "account_name": lookup_aws_account_name(account_id) if account_id else "unknown",
             "principal_id": event.deep_get("userIdentity", "principalId", default="unknown"),
             "actor_user": event.udm("actor_user"),
             "source_ip": event.get("sourceIPAddress", "unknown"),

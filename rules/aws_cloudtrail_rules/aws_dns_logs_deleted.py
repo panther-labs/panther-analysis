@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 
 def rule(event):
@@ -10,7 +10,7 @@ def rule(event):
 def title(event):
     account = event.deep_get("userIdentity", "accountId", default="<UNKNOWN ACCOUNT>")
     region = event.get("awsRegion", "<UNKNOWN REGION>")
-    return f"DNS logs have been deleted in {lookup_aws_account_name(account)} in {region}"
+    return f"DNS logs have been deleted in {account} in {region}"
 
 
 def alert_context(event):

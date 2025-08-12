@@ -1,6 +1,6 @@
 import logging
 
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 from panther_detection_helpers.caching import check_account_age
 
 # Set to True for environments that permit direct role assumption via external IDP
@@ -89,13 +89,8 @@ def title(event):
         ).lower()
         user_string = f"{type_} {user}"
     account_id = event.get("recipientAccountId")
-    account_name = lookup_aws_account_name(account_id)
-    if account_id == account_name:
-        account_string = f"unnamed account ({account_id})"
-    else:
-        account_string = f"{account_name} account ({account_id})"
 
-    return f"AWS login detected without MFA for [{user_string}] in [{account_string}]"
+    return f"AWS login detected without MFA for [{user_string}] in [{account_id}]"
 
 
 def alert_context(event):
