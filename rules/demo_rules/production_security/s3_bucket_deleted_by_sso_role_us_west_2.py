@@ -1,4 +1,5 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_aws_helpers import aws_cloudtrail_success
+
 
 def is_sso_like_role(event):
     # Check for SSO-like role in sessionIssuer ARN or role name
@@ -14,6 +15,7 @@ def is_sso_like_role(event):
         or "AWSReservedSSO" in session_issuer_arn
     )
 
+
 def rule(event):
     return (
         event.get("eventSource") == "s3.amazonaws.com"
@@ -23,10 +25,12 @@ def rule(event):
         and is_sso_like_role(event)
     )
 
+
 def title(event):
     actor = event.udm("actor_user") or "unknown actor"
     bucket = event.deep_get("requestParameters", "bucketName", default="unknown bucket")
     return f"SSO-like role [{actor}] deleted S3 bucket [{bucket}] in us-west-2"
+
 
 def alert_context(event):
     return {
@@ -39,8 +43,14 @@ def alert_context(event):
         "region": event.get("awsRegion", ""),
     }
 
+
 def runbook(event):
     actor = event.udm("actor_user") or "unknown actor"
     bucket = event.deep_get("requestParameters", "bucketName", default="unknown bucket")
-    return f"""
-1. Review CloudTrail events for [{actor}] and S3 bucket [{bucket}] in us-west-2 around the time of this alert.\n2. Confirm if the SSO role deletion was expected and authorized.\n3. Investigate any follow-up actions performed by the SSO role.\n4. If unauthorized, restore the bucket if possible and review SSO permissions.\n""" 
+    return (
+        f"1. Review CloudTrail events for [{actor}] and S3 bucket [{bucket}] in us-west-2 "
+        f"around the time of this alert.\n"
+        f"2. Confirm if the SSO role deletion was expected and authorized.\n"
+        f"3. Investigate any follow-up actions performed by the SSO role.\n"
+        f"4. If unauthorized, restore the bucket if possible and review SSO permissions.\n"
+    )

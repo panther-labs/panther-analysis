@@ -24,7 +24,12 @@ def rule(event):
 def runbook(event):
     user_arn = event.deep_get("userIdentity", "arn", "arn-not-found")
     aws_account = event.deep_get("recipientAccountId", "account-not-found")
-    return f"Macie is managed by Terraform. If it's disabled by an IAM user, this is likely a malicious insider. Check all aws_cloudtrail logs for the user [{user_arn}] in the hour around this alert and look for other security services accessed/changed in AWS account [{aws_account}]."
+    return (
+        f"Macie is managed by Terraform. If it's disabled by an IAM user, this is likely a "
+        f"malicious insider. Check all aws_cloudtrail logs for the user [{user_arn}] in the "
+        f"hour around this alert and look for other security services accessed/changed in "
+        f"AWS account [{aws_account}]."
+    )
 
 
 def title(event):

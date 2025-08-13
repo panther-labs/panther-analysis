@@ -9,5 +9,3 @@ def rule(event):
         and event.deep_get("requestParameters", "bucketName") == "jn-model-training-data-5233"
         and event.deep_get("userIdentity", "type") != "AWSService"
     )
-
-

@@ -1,3 +1,5 @@
+import json
+
 from panther_detection_helpers.caching import add_to_string_set
 
 RULE_ID = "S3.HighVolumeGetObject.CC.CorpSecretData"
@@ -19,18 +21,21 @@ def rule(event):
     cache_key = f"{RULE_ID}:{requester}:{key}"
     count = add_to_string_set(cache_key, event.get("requestid", ""), WINDOW_SECONDS)
     try:
-        import json
         if isinstance(count, str):
             count = json.loads(count)
-    except Exception:
-        pass
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"Error parsing count: {error}")
+        return False
     return len(count) >= THRESHOLD
+
 
 def title(event):
     return (
-        f"High volume of S3 GetObject requests to objects with 'cc' in name in bucket 'corp-secret-data' "
+        f"High volume of S3 GetObject requests to objects with 'cc' in name in "
+        f"bucket 'corp-secret-data' "
         f"by [{event.get('requester', 'unknown')}]"
     )
+
 
 def alert_context(event):
     return {
@@ -44,9 +49,11 @@ def alert_context(event):
         "operation": event.get("operation"),
     }
 
-def runbook(event):
+
+def runbook(_):
     return (
-        "Investigate the requester and object key for signs of data exfiltration or unauthorized access. "
+        "Investigate the requester and object key for signs of data exfiltration or "
+        "unauthorized access. "
         "Review the context of the requests, requester identity, and any related activity. "
         "If suspicious, rotate credentials and review bucket/object permissions."
-    ) 
+    )

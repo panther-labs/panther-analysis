@@ -7,6 +7,7 @@ LARGE_TRANSFER_THRESHOLD = 104857600  # 100MB
 # destination_ip: dstAddr
 # bytes: bytes (raw field)
 
+
 def rule(event):
     # Only process if bytes field exists and is above threshold
     bytes_sent = event.get("bytes")
@@ -29,10 +30,14 @@ def rule(event):
 
     return False
 
+
 def title(event):
     return (
-        f"Large Data Transfer from Internal to External IP: [{event.udm('source_ip')}] -> [{event.udm('destination_ip')}] for {event.get('bytes', '?')} bytes"
+        f"Large Data Transfer from Internal to External IP: "
+        f"[{event.udm('source_ip')}] -> [{event.udm('destination_ip')}] for "
+        f"{event.get('bytes', '?')} bytes"
     )
+
 
 def alert_context(event):
     return {
@@ -45,9 +50,10 @@ def alert_context(event):
         "log_status": event.get("status") or event.get("log_status"),
     }
 
-def runbook(event):
+
+def runbook(_):
     return (
         "Investigate the source host for signs of compromise or unauthorized data transfer. "
         "Validate if the transfer was expected. Review the destination IP reputation and context. "
         "If suspicious, isolate the host and perform forensic analysis."
-    ) 
+    )
