@@ -1,0 +1,114 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+When writing rule Tags in `.yml` metadata, select from the following categories (as relevant to the request):
+
+## Service/Platform
+
+### Cloud – AWS
+aws.iam      aws.ec2      aws.s3      aws.rds          aws.lambda
+aws.eks      aws.cloudtrail aws.guardduty aws.cloudfront aws.kms
+### Cloud – Azure
+azure.ad     azure.vm      azure.blob   azure.sql       azure.keyvault
+azure.aks    azure.monitor azure.defender
+### Cloud – Google
+gcp.iam      gcp.compute  gcp.storage  gcp.bigquery    gcp.functions
+gcp.gke      gcp.cloudarmor
+### SaaS / IDP
+okta         azure_ad_sso google_workspace office365 slack
+github       gitlab       atlassian     snowflake      databricks
+### Containers / IaC
+k8s.api      docker       terraform     helm           ansible
+### Endpoint & Infra
+windows      macos        linux        ios            android
+paloalto     cisco_asa    fortinet     vmware_vsphere
+### Edge / CDN / WAF
+cloudflare   fastly       akamai
+
+## Behaviors/Actions
+
+### Authentication & identity
+auth.login_success
+auth.login_failure
+auth.mfa_prompt
+auth.password_reset
+auth.anomalous_location
+auth.role_escalation
+### Resource lifecycle
+resource.create
+resource.modify
+resource.delete
+resource.permission_change
+resource.tag_change
+### Configuration / Policy
+config.baseline_deviation
+policy.change
+policy.disable_security
+### Network activity
+network.connection
+network.dns_query
+network.port_scan
+network.dns_tunnel
+network.exploit_attempt
+### Process & file
+process.start
+process.stop
+file.read
+file.write
+file.delete
+registry.modify
+### Data movement
+data.upload_internal
+data.download_external
+data.exfil_high
+### Threat‑centric
+malware.detected
+ransomware.activity
+lateral_movement.attempt
+brute_force.attempt
+phishing.email_detected
+vuln.scan_detected
+### Cloud‑native extras
+container.start
+container.exec
+image.pull
+key.create
+key.rotate
+
+## Compliance
+
+compliance.soc2
+compliance.pci_dss
+compliance.hipaa
+compliance.iso27001
+compliance.iso27017
+compliance.nist_csf
+compliance.nist_80053
+compliance.fedramp
+compliance.hitrust
+compliance.gdpr
+compliance.ccpa_cpra
+compliance.nydfs_500
+compliance.dora
+compliance.cis_controls
+
+## MITRE
+
+Tactic | Sample tags (techniques & sub‑techniques)
+reconnaissance | reconnaissance.active_scanning.scanning_ip_block • reconnaissance.phishing_for_information.compromised_site
+resource_development | resource_development.develop_capabilities.malware • resource_development.stage_capabilities.upload_tool
+initial_access | initial_access.phishing.spearphishing_link • initial_access.exploit_public_facing_application
+execution | execution.command_shell.windows_cmd • execution.exploitation_for_client_execution
+persistence | persistence.create_or_modify_system_process.windows_service • persistence.account_creation.local_account
+privilege_escalation | privilege_escalation.exploitation_for_privilege_escalation • privilege_escalation.abuse_elevation_control_mechanism.sudo_and_su
+defense_evasion | defense_evasion.masquerading.match_legitimate_name_or_location
+credential_access | credential_access.os_credential_dumping.security_account_manager
+discovery | discovery.account_discovery.domain_account
+lateral_movement | lateral_movement.remote_services.rdp
+collection | collection.input_capture.keylogging
+command_and_control | command_and_control.application_layer_protocol.web_protocols
+exfiltration | exfiltration.exfiltration_over_web_service.exfiltration_to_code_repository • exfiltration.exfiltration_over_web_service.exfiltration_to_cloud_storage
+impact | impact.data_encrypted_for_impact
+

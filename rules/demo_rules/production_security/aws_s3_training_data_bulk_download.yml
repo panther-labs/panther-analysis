@@ -1,0 +1,142 @@
+AnalysisType: rule
+Description: Tracks access patterns to the ML training data bucket for monitoring and auditing purposes. This signal creates visibility into S3 GetObject events for the training data bucket to help establish baseline access patterns and identify potential security-relevant activity.
+DisplayName: "AWS S3 Training Data Access Signal"
+Enabled: true
+CreateAlert: false
+Filename: aws_s3_training_data_bulk_download.py
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1530
+    - TA0010:T1041
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/cloudtrail-logging.html
+Severity: Info
+DedupPeriodMinutes: 15
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.S3.TrainingData.BulkDownload"
+Threshold: 5
+Tags:
+  - demo
+  # Service/Platform tags
+  - aws.s3
+  # Behaviors/Actions tags
+  - data.download_external
+  - collection.data_from_cloud_storage
+  # Compliance tags
+  - compliance.soc2
+  # MITRE tags
+  - collection.T1530_data_from_cloud_storage
+  - exfiltration.T1041_exfiltration_over_c2_channel
+SummaryAttributes:
+  - requestParameters
+  - sourceIPAddress
+  - userAgent
+  - userIdentity
+  - p_any_aws_arns
+  - p_any_ip_addresses
+Tests:
+  - Name: Training data access by user
+    ExpectedResult: true
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Data
+      eventID: "test-123-456"
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: "2025-06-16 12:00:00"
+      eventType: AwsApiCall
+      eventVersion: "1.11"
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: "123456789012"
+      requestParameters:
+        bucketName: jn-model-training-data-5233
+        key: models/training-dataset-v1.parquet
+        Host: jn-model-training-data-5233.s3.us-east-1.amazonaws.com
+      responseElements:
+        x-amz-request-id: "EXAMPLE123456789"
+      sourceIPAddress: 203.0.113.12
+      userAgent: aws-cli/2.1.34 Python/3.8.5
+      userIdentity:
+        accessKeyId: AKIAIOSFODNN7EXAMPLE
+        accountId: "123456789012"
+        arn: arn:aws:iam::123456789012:user/data-scientist
+        principalId: AIDACKCEVSQ6C2EXAMPLE
+        type: IAMUser
+        userName: data-scientist
+  - Name: Training data access by AWS service (should not trigger)
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Data
+      eventID: "test-789-012"
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: "2025-06-16 12:00:00"
+      eventType: AwsApiCall
+      eventVersion: "1.11"
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: "123456789012"
+      requestParameters:
+        bucketName: jn-model-training-data-5233
+        key: models/training-dataset-v1.parquet
+      sourceIPAddress: s3.amazonaws.com
+      userAgent: s3.amazonaws.com
+      userIdentity:
+        invokedBy: s3.amazonaws.com
+        type: AWSService
+  - Name: Different bucket access (should not trigger)
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Data
+      eventID: "test-345-678"
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: "2025-06-16 12:00:00"
+      eventType: AwsApiCall
+      eventVersion: "1.11"
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: "123456789012"
+      requestParameters:
+        bucketName: other-bucket-name
+        key: some-other-file.txt
+      sourceIPAddress: 203.0.113.12
+      userAgent: aws-cli/2.1.34 Python/3.8.5
+      userIdentity:
+        accessKeyId: AKIAIOSFODNN7EXAMPLE
+        accountId: "123456789012"
+        arn: arn:aws:iam::123456789012:user/data-scientist
+        principalId: AIDACKCEVSQ6C2EXAMPLE
+        type: IAMUser
+        userName: data-scientist
+  - Name: Failed access attempt (should not trigger)
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventCategory: Data
+      eventID: "test-901-234"
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: "2025-06-16 12:00:00"
+      eventType: AwsApiCall
+      eventVersion: "1.11"
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: "123456789012"
+      errorCode: AccessDenied
+      errorMessage: Access Denied
+      requestParameters:
+        bucketName: jn-model-training-data-5233
+        key: models/sensitive-data.parquet
+      sourceIPAddress: 203.0.113.12
+      userAgent: aws-cli/2.1.34 Python/3.8.5
+      userIdentity:
+        accessKeyId: AKIAIOSFODNN7EXAMPLE
+        accountId: "123456789012"
+        arn: arn:aws:iam::123456789012:user/unauthorized-user
+        principalId: AIDACKCEVSQ6C2EXAMPLE
+        type: IAMUser
+        userName: unauthorized-user

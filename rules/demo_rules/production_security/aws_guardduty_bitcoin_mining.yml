@@ -1,0 +1,107 @@
+AnalysisType: rule
+Filename: aws_guardduty_bitcoin_mining.py
+RuleID: "AWS.GuardDuty.BitcoinMining"
+DisplayName: "AWS GuardDuty Bitcoin Mining Activity Detected"
+Enabled: true
+LogTypes:
+  - AWS.GuardDuty
+Severity: High
+DedupPeriodMinutes: 60
+Description: >
+  Detects when AWS GuardDuty reports an EC2 instance is likely being used for unauthorized bitcoin or cryptocurrency mining, based on findings 'CryptoCurrency:EC2/BitcoinTool.B' or 'CryptoCurrency:EC2/BitcoinTool.B!DNS'.
+Tags:
+  - aws.guardduty
+  - crypto.mining
+  - compliance.soc2
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496 # Impact: Resource Hijacking
+Reference: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-ec2.html
+Runbook: |
+  1. Review the EC2 instance in the finding for unauthorized cryptocurrency mining activity.
+  2. Isolate the instance from the network to prevent further abuse.
+  3. Capture forensic evidence (memory, disk snapshot) if needed.
+  4. Terminate or remediate the instance as appropriate.
+  5. Review IAM activity and network logs for lateral movement or persistence.
+  6. If mining is expected, consider suppressing this finding for the instance.
+SummaryAttributes:
+  - severity
+  - type
+  - title
+  - resource:instanceDetails:instanceId
+  - accountId
+  - region
+Threshold: 1
+Tests:
+  - Name: Detects Bitcoin Mining (Positive)
+    ExpectedResult: true
+    Log:
+      schemaVersion: "2.0"
+      accountId: "123456789012"
+      region: "us-east-1"
+      partition: "aws"
+      arn: "arn:aws:guardduty:us-east-1:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/abcdef123456"
+      id: "abcdef123456"
+      type: "CryptoCurrency:EC2/BitcoinTool.B"
+      resource:
+        instanceDetails:
+          instanceId: "i-0abc123def456"
+      severity: 8.0
+      createdAt: "2025-07-11T20:59:01.571Z"
+      updatedAt: "2025-07-11T20:59:01.571Z"
+      title: "Bitcoin mining activity detected"
+      description: "An EC2 instance is querying an IP address associated with bitcoin mining."
+      service:
+        serviceName: "guardduty"
+        detectorId: "111111bbbbbbbbbb5555555551111111"
+        resourceRole: "TARGET"
+        archived: false
+        count: 1
+  - Name: Not Bitcoin Mining (Negative)
+    ExpectedResult: false
+    Log:
+      schemaVersion: "2.0"
+      accountId: "123456789012"
+      region: "us-east-1"
+      partition: "aws"
+      arn: "arn:aws:guardduty:us-east-1:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/abcdef654321"
+      id: "abcdef654321"
+      type: "Recon:EC2/PortProbeUnprotectedPort"
+      resource:
+        instanceDetails:
+          instanceId: "i-0abc123def456"
+      severity: 8.0
+      createdAt: "2025-07-11T20:59:01.571Z"
+      updatedAt: "2025-07-11T20:59:01.571Z"
+      title: "Port probe detected"
+      description: "An EC2 instance is being probed on an unprotected port."
+      service:
+        serviceName: "guardduty"
+        detectorId: "111111bbbbbbbbbb5555555551111111"
+        resourceRole: "TARGET"
+        archived: false
+        count: 1
+  - Name: Low Severity Bitcoin Mining (Negative)
+    ExpectedResult: false
+    Log:
+      schemaVersion: "2.0"
+      accountId: "123456789012"
+      region: "us-east-1"
+      partition: "aws"
+      arn: "arn:aws:guardduty:us-east-1:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/abcdef789012"
+      id: "abcdef789012"
+      type: "CryptoCurrency:EC2/BitcoinTool.B!DNS"
+      resource:
+        instanceDetails:
+          instanceId: "i-0abc123def456"
+      severity: 3.0
+      createdAt: "2025-07-11T20:59:01.571Z"
+      updatedAt: "2025-07-11T20:59:01.571Z"
+      title: "Bitcoin mining activity detected"
+      description: "An EC2 instance is querying a domain associated with bitcoin mining."
+      service:
+        serviceName: "guardduty"
+        detectorId: "111111bbbbbbbbbb5555555551111111"
+        resourceRole: "TARGET"
+        archived: false
+        count: 1 
