@@ -7,6 +7,7 @@ This script will:
 2. Rename them to add the _demo suffix
 3. Update the corresponding YAML files' Filename field to match
 4. Rename YAML files to match the new Python filenames
+5. Update RuleIDs to add .Demo suffix for clear identification
 """
 
 import os
@@ -116,6 +117,55 @@ def rename_yaml_file_if_needed(yaml_file):
     return yaml_file
 
 
+def get_yaml_files_needing_ruleid_update(demo_rules_dir):
+    """Find all YAML files that need their RuleID field updated."""
+    files_to_update = []
+    
+    for yaml_file in demo_rules_dir.rglob("*.yml"):
+        try:
+            with open(yaml_file, 'r') as f:
+                content = yaml.safe_load(f)
+                
+            if 'RuleID' in content:
+                rule_id = content['RuleID']
+                # Check if RuleID doesn't have .Demo suffix
+                if not rule_id.endswith('.Demo'):
+                    files_to_update.append((yaml_file, rule_id))
+        except Exception as e:
+            print(f"Warning: Could not read {yaml_file}: {e}")
+    
+    return files_to_update
+
+
+def update_yaml_ruleid_field(yaml_file, old_ruleid):
+    """Update the RuleID field in a YAML file."""
+    try:
+        with open(yaml_file, 'r') as f:
+            content = f.read()
+        
+        # Add .Demo suffix to RuleID
+        new_ruleid = f"{old_ruleid}.Demo"
+        
+        # Replace the RuleID field (handle both quoted and unquoted values)
+        updated_content = re.sub(
+            r'^RuleID:\s*["\']?' + re.escape(old_ruleid) + r'["\']?',
+            f'RuleID: "{new_ruleid}"',
+            content,
+            flags=re.MULTILINE
+        )
+        
+        if updated_content != content:
+            with open(yaml_file, 'w') as f:
+                f.write(updated_content)
+            print(f"Updated RuleID in {yaml_file.name}: {old_ruleid} -> {new_ruleid}")
+            return new_ruleid
+        
+    except Exception as e:
+        print(f"Error updating RuleID in {yaml_file}: {e}")
+    
+    return None
+
+
 def main():
     """Main function to fix all demo naming issues."""
     print("🔧 Demo Rules Naming Convention Fixer")
@@ -174,6 +224,22 @@ def main():
         print()
     else:
         print("✅ All YAML files already have _demo suffix")
+        print()
+    
+    # Step 4: Update RuleIDs to add .Demo suffix
+    yaml_files_needing_ruleid_update = get_yaml_files_needing_ruleid_update(demo_rules_dir)
+    
+    if yaml_files_needing_ruleid_update:
+        print(f"📋 Found {len(yaml_files_needing_ruleid_update)} YAML files with RuleIDs needing .Demo suffix:")
+        for yaml_file, rule_id in yaml_files_needing_ruleid_update:
+            print(f"  - {yaml_file.relative_to(demo_rules_dir)}: {rule_id}")
+        print()
+        
+        for yaml_file, old_ruleid in yaml_files_needing_ruleid_update:
+            update_yaml_ruleid_field(yaml_file, old_ruleid)
+        print()
+    else:
+        print("✅ All RuleIDs already have .Demo suffix")
         print()
     
     print("🎉 Demo naming convention fix completed!")
