@@ -1,3 +1,5 @@
+import json
+
 from panther_aws_helpers import aws_cloudtrail_success
 from panther_detection_helpers.caching import add_to_string_set, get_string_set
 
@@ -59,7 +61,6 @@ def check_suspicious_activity(event, user_arn, event_name):
 
     # Handle string response from cache
     if isinstance(activities, str):
-        import json
 
         try:
             activities = json.loads(activities)
@@ -79,10 +80,9 @@ def severity(event):
     event_name = event.get("eventName")
     if event_name == "GetSecretValue":
         return "HIGH"  # Actual secret exfiltration
-    elif event_name == "DescribeSecret":
+    if event_name == "DescribeSecret":
         return "MEDIUM"  # Targeted reconnaissance
-    else:  # ListSecrets
-        return "LOW"  # General reconnaissance
+    return "LOW"  # General reconnaissance (ListSecrets)
 
 
 def alert_context(event):
@@ -110,7 +110,6 @@ def get_activity_summary(user_arn):
 
         # Handle string response from cache (for testing)
         if isinstance(activities, str):
-            import json
 
             try:
                 activities = json.loads(activities)

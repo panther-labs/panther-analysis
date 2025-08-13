@@ -1,3 +1,5 @@
+import json
+
 from panther_aws_helpers import aws_cloudtrail_success
 from panther_detection_helpers.caching import add_to_string_set, get_string_set
 
@@ -51,8 +53,6 @@ def rule(event):
 
     # Handle cache response format
     if isinstance(activities, str):
-        import json
-
         try:
             activities = json.loads(activities)
         except (json.JSONDecodeError, TypeError):
@@ -79,8 +79,6 @@ def severity(event):
     activities = get_string_set(cache_key)
 
     if isinstance(activities, str):
-        import json
-
         try:
             activities = json.loads(activities)
         except (json.JSONDecodeError, TypeError):
@@ -91,12 +89,11 @@ def severity(event):
     # Dynamic severity based on scale
     if count >= 100:
         return "Critical"
-    elif count >= 50:
+    if count >= 50:
         return "High"
-    elif event_name.startswith("Delete"):
+    if event_name.startswith("Delete"):
         return "High"  # Deletions are inherently more serious
-    else:
-        return "Medium"
+    return "Medium"
 
 
 def alert_context(event):
@@ -110,7 +107,6 @@ def alert_context(event):
         activities = get_string_set(cache_key)
 
         if isinstance(activities, str):
-            import json
 
             try:
                 activities = json.loads(activities)

@@ -6,7 +6,10 @@ def rule(event):
 
 
 def title(event):
-    return f"[{event.udm('actor_user')}] attempted to batch retrieve a large number of secrets from AWS Secrets Manager"
+    return (
+        f"[{event.udm('actor_user')}] attempted to batch retrieve a large number of "
+        f"secrets from AWS Secrets Manager"
+    )
 
 
 def alert_context(event):
