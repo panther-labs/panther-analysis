@@ -170,6 +170,17 @@ def aws_regions() -> List[str]:
     ]
 
 
+def lookup_aws_account_name(account_id):
+    """Lookup the AWS account name, return the ID if not found
+    Deprecated: this function remains for backwards compatibility
+    Args:
+        account_id (str): The AWS account ID
+    Returns:
+        str: The AWS account ID
+    """
+    return account_id
+
+
 def get_s3_arn_by_name(name: str) -> str:
     """This function is used to construct an s3 bucket ARN from its name."""
     if name == "":
