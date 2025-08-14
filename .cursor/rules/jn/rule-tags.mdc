@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+description: Apply this rule when writing any rule metadata
 alwaysApply: false
 ---
 When writing rule Tags in `.yml` metadata, select from the following categories (as relevant to the request):
@@ -8,69 +7,97 @@ When writing rule Tags in `.yml` metadata, select from the following categories 
 ## Service/Platform
 
 ### Cloud – AWS
+
 aws.iam      aws.ec2      aws.s3      aws.rds          aws.lambda
 aws.eks      aws.cloudtrail aws.guardduty aws.cloudfront aws.kms
+
 ### Cloud – Azure
+
 azure.ad     azure.vm      azure.blob   azure.sql       azure.keyvault
 azure.aks    azure.monitor azure.defender
+
 ### Cloud – Google
+
 gcp.iam      gcp.compute  gcp.storage  gcp.bigquery    gcp.functions
 gcp.gke      gcp.cloudarmor
+
 ### SaaS / IDP
+
 okta         azure_ad_sso google_workspace office365 slack
 github       gitlab       atlassian     snowflake      databricks
+
 ### Containers / IaC
+
 k8s.api      docker       terraform     helm           ansible
+
 ### Endpoint & Infra
+
 windows      macos        linux        ios            android
 paloalto     cisco_asa    fortinet     vmware_vsphere
+
 ### Edge / CDN / WAF
+
 cloudflare   fastly       akamai
 
 ## Behaviors/Actions
 
 ### Authentication & identity
+
 auth.login_success
 auth.login_failure
 auth.mfa_prompt
 auth.password_reset
 auth.anomalous_location
 auth.role_escalation
+
 ### Resource lifecycle
+
 resource.create
 resource.modify
 resource.delete
 resource.permission_change
 resource.tag_change
+
 ### Configuration / Policy
+
 config.baseline_deviation
 policy.change
 policy.disable_security
+
 ### Network activity
+
 network.connection
 network.dns_query
 network.port_scan
 network.dns_tunnel
 network.exploit_attempt
+
 ### Process & file
+
 process.start
 process.stop
 file.read
 file.write
 file.delete
 registry.modify
+
 ### Data movement
+
 data.upload_internal
 data.download_external
 data.exfil_high
+
 ### Threat‑centric
+
 malware.detected
 ransomware.activity
 lateral_movement.attempt
 brute_force.attempt
 phishing.email_detected
 vuln.scan_detected
+
 ### Cloud‑native extras
+
 container.start
 container.exec
 image.pull
@@ -111,4 +138,3 @@ collection | collection.input_capture.keylogging
 command_and_control | command_and_control.application_layer_protocol.web_protocols
 exfiltration | exfiltration.exfiltration_over_web_service.exfiltration_to_code_repository • exfiltration.exfiltration_over_web_service.exfiltration_to_cloud_storage
 impact | impact.data_encrypted_for_impact
-
