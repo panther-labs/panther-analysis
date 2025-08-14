@@ -1,0 +1,305 @@
+# Demo Rules Clone Configuration
+# This file manages which rules to clone from upstream directories into demo_rules/
+
+metadata:
+  version: "1.0"
+  last_updated: "2025-08-14T10:30:00Z"
+  description: "Configuration for managing demo rules cloned from upstream panther-analysis"
+
+clone_settings:
+  default_category: "production_security"  # Default subdirectory in demo_rules/
+  rule_id_suffix: ".Demo"                  # Suffix to add to RuleIDs to avoid conflicts
+  filename_suffix: "_demo"                 # Suffix to add to filenames
+  auto_update: false                       # Whether to automatically update on source changes
+
+# Categories available for organizing demo rules
+categories:
+  - name: "production_security"
+    description: "Production-ready security detections for demos"
+  - name: "siem_security" 
+    description: "SIEM-focused security detections"
+
+# Rules to clone and manage (auto-generated from existing demo rules)
+rules:
+  # === Rules with identifiable upstream sources ===
+  
+  # AWS CloudTrail Rules
+  - rule_id: "AWS.Console.LoginWithoutMFA"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:42.395733Z"
+    notes: "Existing demo rule - Console login without MFA detection"
+    
+  - rule_id: "AWS.CloudTrail.Stopped"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:43.960345Z"
+    notes: "Existing demo rule - CloudTrail stopped detection"
+    
+  - rule_id: "AWS.Console.Login"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:48.338314Z"
+    notes: "Existing demo rule - Basic console login detection"
+    
+  - rule_id: "AWS.Console.RootLogin"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:49.953342Z"
+    notes: "Existing demo rule - Root user login detection"
+    
+  - rule_id: "AWS.Console.RootLoginFailed"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:09.277799Z"
+    notes: "Existing demo rule - Failed root login detection"
+    
+  - rule_id: "AWS.Console.Sign-In"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:46.404473Z"
+    notes: "Existing demo rule - Console sign-in detection"
+    
+  # AWS IAM Rules
+  - rule_id: "AWS.IAM.CreateUser"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:46.980290Z"
+    notes: "Existing demo rule - IAM user creation detection"
+    
+  - rule_id: "AWS.IAM.AttachAdminUserPolicy"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:37.122962Z"
+    notes: "Existing demo rule - Admin policy attachment detection"
+    
+  - rule_id: "AWS.IAM.BackdoorRole"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:21.897111Z"
+    notes: "Existing demo rule - IAM backdoor role detection"
+    
+  - rule_id: "AWS.IAM.Backdoor.User.Keys"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:17.314656Z"
+    notes: "Existing demo rule - IAM backdoor user keys detection"
+    
+  # AWS GuardDuty Rules
+  - rule_id: "AWS.GuardDuty.HighSeverityFinding"
+    source_path: "aws_guardduty_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:07.775282Z"
+    notes: "Existing demo rule - High severity GuardDuty findings"
+    
+  - rule_id: "AWS.GuardDuty.MediumSeverityFinding"
+    source_path: "aws_guardduty_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:45.230997Z"
+    notes: "Existing demo rule - Medium severity GuardDuty findings"
+    
+  - rule_id: "AWS.GuardDuty.LowSeverityFinding"
+    source_path: "aws_guardduty_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:10.647224Z"
+    notes: "Existing demo rule - Low severity GuardDuty findings"
+    
+  - rule_id: "AWS.GuardDuty.CriticalSeverityFinding"
+    source_path: "aws_guardduty_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:39.095366Z"
+    notes: "Existing demo rule - Critical severity GuardDuty findings"
+    
+  # AWS Secrets Manager Rules
+  - rule_id: "AWS.SecretsManager.RetrieveSecrets"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:40.945011Z"
+    notes: "Existing demo rule - Secrets Manager retrieval detection"
+    
+  - rule_id: "AWS.SecretsManager.RetrieveSecretsMultiRegion"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:06.505920Z"
+    notes: "Existing demo rule - Multi-region secrets retrieval"
+    
+  - rule_id: "AWS.SecretsManager.BatchRetrieveSecretsCatchAll"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:59.191847Z"
+    notes: "Existing demo rule - Batch secrets retrieval detection"
+    
+  # Other AWS Rules
+  - rule_id: "AWS.CloudTrail.ResourceMadePublic"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:12.714070Z"
+    notes: "Existing demo rule - Resource made public detection"
+    
+  - rule_id: "AWS.Macie.Evasion"
+    source_path: "aws_cloudtrail_rules"
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:57.382060Z"
+    notes: "Existing demo rule - Macie evasion detection"
+
+  # === Custom demo rules (no upstream source) ===
+  
+  # Panther SIEM-specific rules
+  - rule_id: "Panther.Detection.Changes.Daily"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:22.956629Z"
+    notes: "Custom demo rule - Panther detection changes"
+    
+  - rule_id: "Panther.MultipleFailedActions"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:25.925084Z"
+    notes: "Custom demo rule - Multiple failed actions"
+    
+  - rule_id: "Panther.User.Invited.WithoutSSO"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:28.973961Z"
+    notes: "Custom demo rule - User invited without SSO"
+    
+  - rule_id: "Panther.AdminRole.Assignment"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:31.892875Z"
+    notes: "Custom demo rule - Admin role assignment"
+    
+  - rule_id: "Panther.APIToken.Updated"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:34.819285Z"
+    notes: "Custom demo rule - API token updated"
+    
+  - rule_id: "Panther.LogSource.Deleted"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:37.725198Z"
+    notes: "Custom demo rule - Log source deleted"
+    
+  - rule_id: "Panther.MultipleDetectionsDeletedHigh"
+    source_path: null  # Custom demo rule
+    target_category: "siem_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:40.839794Z"
+    notes: "Custom demo rule - Multiple detections deleted"
+    
+  # Custom AWS demo rules
+  - rule_id: "AWS.EC2OrLambda.Created"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:52.925696Z"
+    notes: "Custom demo rule - EC2 or Lambda created"
+    
+  - rule_id: "AWS.S3.BucketDeleted.SSO.uswest2"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:13:55.949434Z"
+    notes: "Custom demo rule - S3 bucket deleted by SSO in us-west-2"
+    
+  - rule_id: "AWS.GuardDuty.BitcoinMining"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:02.207588Z"
+    notes: "Custom demo rule - GuardDuty bitcoin mining detection"
+    
+  - rule_id: "Network.LargeDataTransferToExternal"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:05.107998Z"
+    notes: "Custom demo rule - Large data transfer to external"
+    
+  - rule_id: "AWS.EC2.Instance.Launch.NoTags"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:15.667125Z"
+    notes: "Custom demo rule - EC2 instance launch without tags"
+    
+  - rule_id: "AWS.S3.MassExfiltrationDeletion"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:20.372343Z"
+    notes: "Custom demo rule - S3 mass exfiltration deletion"
+    
+  - rule_id: "AWS.S3.LargeDownload"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:25.044187Z"
+    notes: "Custom demo rule - Large S3 download"
+    
+  - rule_id: "AWS.CrossRegion.Activity"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:28.000403Z"
+    notes: "Custom demo rule - Cross-region activity"
+    
+  - rule_id: "AWS.VPCFlow.SuccessfulInboundSSH.Signal"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:31.219549Z"
+    notes: "Custom demo rule - Successful inbound SSH signal"
+    
+  - rule_id: "S3.HighVolumeGetObject.CC.CorpSecretData"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:34.209049Z"
+    notes: "Custom demo rule - High volume S3 GetObject on corp secret data"
+    
+  - rule_id: "AWS.IAM.Backdoor.UserKeys"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:44.487353Z"
+    notes: "Custom demo rule - IAM backdoor user keys (variant)"
+    
+  - rule_id: "AWS.S3.AccessTrainingData"
+    source_path: null  # Custom demo rule
+    target_category: "production_security"
+    enabled: true
+    last_cloned: "2025-08-14T20:14:49.430274Z"
+    notes: "Custom demo rule - S3 access to training data"
+
+# Rules that exist but are disabled (won't be cloned)
+disabled_rules:
+  - rule_id: "AWS.S3.BucketDeleted"
+    reason: "Too noisy for demo environment"
+    disabled_date: "2024-01-15T10:30:00Z"
