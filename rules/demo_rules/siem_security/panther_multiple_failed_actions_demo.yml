@@ -17,8 +17,9 @@ Detection:
 GroupBy:
   - KeyPath: actor.id
   - KeyPath: actionName
-DedupPeriodMinutes: 180 # 3 hours
-Threshold: 3
+  - KeyPath: actor.type
+Threshold: 10
+DedupPeriodMinutes: 60
 Tags:
   - panther
   - demo
