@@ -11,6 +11,7 @@ EVENT_THRESHOLDS = {
     "ListSecrets": 2,  # Broad reconnaissance
     "DescribeSecret": 3,  # Targeted investigation
     "GetSecretValue": 5,  # Secret exfiltration
+    "BatchGetSecretValue": 1,  # Single batch operation is suspicious
 }
 
 
@@ -49,6 +50,13 @@ def check_suspicious_activity(event, user_arn, event_name):
             return False
         activity = f"{secret_id}-{region}"
 
+    elif event_name == "BatchGetSecretValue":
+        # Track batch operations by requestID (high-risk activity)
+        request_id = str(event.get("requestID"))
+        if not request_id:
+            return False
+        activity = request_id
+
     else:
         return False
 
@@ -78,7 +86,7 @@ def title(event):
 def severity(event):
     """Dynamic severity based on event type"""
     event_name = event.get("eventName")
-    if event_name == "GetSecretValue":
+    if event_name in ["GetSecretValue", "BatchGetSecretValue"]:
         return "HIGH"  # Actual secret exfiltration
     if event_name == "DescribeSecret":
         return "MEDIUM"  # Targeted reconnaissance
@@ -137,6 +145,9 @@ def analyze_attack_progression(user_arn):
 
     if summary.get("getsecretvalue_count", 0) > 0:
         indicators.append("secret_exfiltration")
+
+    if summary.get("batchgetsecretvalue_count", 0) > 0:
+        indicators.append("batch_secret_exfiltration")
 
     # Multi-stage attack indicator
     if len(indicators) > 1:

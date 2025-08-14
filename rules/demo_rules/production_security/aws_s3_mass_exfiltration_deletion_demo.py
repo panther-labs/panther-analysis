@@ -25,6 +25,11 @@ def rule(event):
     if event.get("eventSource") != "s3.amazonaws.com":
         return False
 
+    # Only monitor IAM Users, not service accounts or roles
+    user_type = event.deep_get("userIdentity", "type")
+    if user_type != "IAMUser":
+        return False
+
     # Get user ARN for tracking
     user_arn = event.deep_get("userIdentity", "arn")
     if not user_arn:
