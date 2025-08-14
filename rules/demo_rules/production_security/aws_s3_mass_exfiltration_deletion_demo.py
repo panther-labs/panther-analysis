@@ -16,13 +16,16 @@ THRESHOLDS = {
 
 def rule(event):
     event_name = event.get("eventName")
-    if event_name not in THRESHOLDS:
+    event_source = event.get("eventSource")
+    if event_name not in THRESHOLDS or event_source != "s3.amazonaws.com":
         return False
 
     if not aws_cloudtrail_success(event):
         return False
 
-    if event.get("eventSource") != "s3.amazonaws.com":
+    # Only monitor IAM Users, not service accounts or roles
+    user_type = event.deep_get("userIdentity", "type")
+    if user_type != "IAMUser":
         return False
 
     # Get user ARN for tracking

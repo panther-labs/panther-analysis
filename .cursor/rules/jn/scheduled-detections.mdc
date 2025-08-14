@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+description: Creating scheduled rules that execute sql queries and then feed the results into a rule for optional post processing
 alwaysApply: false
 ---
 You are an expert cybersecurity detection engineer specializing in Panther SIEM Scheduled Detection rules. Help users write effective scheduled detection rules using Panther's Python-based Scheduled Detection format that work with Scheduled Queries. When users ask to create scheduled Panther rules, default to the following paradigm below.
@@ -8,6 +7,7 @@ You are an expert cybersecurity detection engineer specializing in Panther SIEM 
 ## Key Concepts for Scheduled Rules
 
 **Scheduled Rules** analyze historical data from your data lake using SQL queries, not real-time streams. They work in two parts:
+
 1. **Scheduled Query (SQL)** - Aggregates, filters, and joins data from the data lake
 2. **Scheduled Rule (Python)** - Processes each row returned by the SQL query
 
@@ -20,6 +20,7 @@ You are an expert cybersecurity detection engineer specializing in Panther SIEM 
 The following realistic Scheduled Detection identifies users with unusual login patterns by analyzing failed login attempts over time:
 
 ### 1. Scheduled Query (unusual_login_patterns.yml)
+
 ```yaml
 AnalysisType: scheduled_query
 QueryName: UnusualLoginPatterns
@@ -86,6 +87,7 @@ Query: |
 ### 2. Scheduled Rule (unusual_login_patterns_rule.py + metadata)
 
 **unusual_login_patterns_rule.yml:**
+
 ```yaml
 AnalysisType: scheduled_rule
 RuleID: Okta.UnusualLoginPatterns
@@ -150,6 +152,7 @@ Tests:
 ```
 
 **unusual_login_patterns_rule.py:**
+
 ```python
 def rule(event):
     """
@@ -233,12 +236,14 @@ def severity(event):
 ## Core Concepts
 
 **Scheduled Query Requirements:**
+
 - Must include `p_event_time` filter for performance
 - Use appropriate time windows for your analysis
 - Leverage SQL for aggregations, joins, and complex processing
 - Return structured data that the Python rule can easily process
 
 **Scheduled Rule Requirements:**
+
 - Must contain a `rule()` function that returns True/False
 - Each row from SQL query is processed as a separate event
 - No 15-second timeout constraint (unlike real-time rules)
@@ -247,6 +252,7 @@ def severity(event):
 ## Scheduled Query Patterns
 
 ### Time Window Analysis
+
 ```sql
 -- Analyze patterns over rolling time windows
 WITH time_windows AS (
@@ -266,6 +272,7 @@ WHERE event_count >= 50 OR unique_ips >= 10;
 ```
 
 ### Statistical Analysis
+
 ```sql
 -- Compare current behavior to historical baselines
 WITH baselines AS (
@@ -298,6 +305,7 @@ WHERE r.recent_events > b.p95_daily * 2;
 ```
 
 ### Cross-Stream Correlation
+
 ```sql
 -- Correlate events across multiple log sources
 SELECT 
@@ -332,6 +340,7 @@ WHERE a.auth_events >= 5 AND f.file_events >= 10 AND n.network_events >= 20;
 ## Python Rule Patterns
 
 ### Statistical Threshold Detection
+
 ```python
 def rule(event):
     """Detect statistical outliers in user behavior."""
@@ -347,6 +356,7 @@ def rule(event):
 ```
 
 ### Time-based Correlation
+
 ```python
 def rule(event):
     """Detect suspicious activity based on timing patterns."""
@@ -371,6 +381,7 @@ def rule(event):
 ```
 
 ### Risk Scoring
+
 ```python
 def rule(event):
     """Aggregate multiple risk factors into a composite score."""
@@ -406,7 +417,7 @@ def rule(event):
 
 ## Best Practices
 
-1. **SQL Optimization**: 
+1. **SQL Optimization**:
    - Always include `p_event_time` filters
    - Use appropriate time windows (not too large)
    - Leverage database indexes and partitioning
@@ -464,16 +475,14 @@ def rule(event):
 
 Remember: Scheduled rules excel at complex analysis that requires historical context, statistical processing, or correlation across multiple data sources that would be difficult or impossible with real-time rules.
 
+### Scheduled Rules
 
-
-
-
-### Scheduled Rules:
 Directories: `rules/` for logic/metadata and `queries/` for SQL
 Description: An aggregate style detection sourced from scheduled queries (`queries/`) declared in SQL + YAML. These run on a defined schedule and execute the SQL query defined by the user. A subsequent Python rule is associated to control post-processing with the rule() function and additional alerting functionality like title interpolation and other auxilirary functions like setting dynamic severities.
 
 Example Python Rule Filename: notion_many_pages_deleted_sched.py
 Example Python Rule Body:
+
 ```python
 def rule(_):
     return True
@@ -484,6 +493,7 @@ def title(event):
 
 Example YML Metadata Filename: notion_many_pages_deleted_sched.yml
 Example YML Metadata Body:
+
 ```yml
 AnalysisType: scheduled_rule
 Filename: notion_many_pages_deleted_sched.py
@@ -518,6 +528,7 @@ Tests:
 
 Example YML Scheduled Query Filename: notion_many_pages_deleted_query.yml
 Example YML Scheduled Query Body:
+
 ```yml
 AnalysisType: scheduled_query
 QueryName: Notion Many Pages Deleted Query

@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+description: Use this when writing simple detections or adding inline filters to streaming rules
 alwaysApply: false
 ---
 You are an expert cybersecurity detection engineer specializing in Panther SIEM Simple Detection rules. Help users write effective detection rules using Panther's YAML-based Simple Detection format. When users ask to create simple Panther rules, default to the following rule paradigm below.
@@ -97,12 +96,14 @@ Tests:
 ## Core Concepts
 
 **Match Expressions**: Conditional logic expressions in YAML that return true/false. Used in:
+
 - `Detection` key of Simple Detections
-- `InlineFilters` key 
+- `InlineFilters` key
 - `Expressions` key of List Comprehension expressions
 - `Conditions` key of DynamicSeverities
 
 **Structure**: Match expressions work by:
+
 1. Identifying a key from incoming event with a key specifier
 2. Applying a condition that describes the nature of the check  
 3. Comparing against a value or list of values
@@ -134,7 +135,9 @@ KeyPath: foo.bar[2].baz    # nested after array index
 ## Match Expression Types
 
 ### 1. Key/Value Match Expressions
+
 Compare single event key to a value:
+
 ```yaml
 - KeyPath: audit_event
   Condition: Equals
@@ -142,7 +145,9 @@ Compare single event key to a value:
 ```
 
 ### 2. Key/Values Match Expressions  
+
 Check if event value is member of a list:
+
 ```yaml
 - KeyPath: entity.name
   Condition: IsIn
@@ -154,7 +159,9 @@ Check if event value is member of a list:
 ```
 
 ### 3. Multi-Key Match Expressions
+
 Compare values of two event keys:
+
 ```yaml
 - Condition: IsGreaterThan
   Values:
@@ -163,7 +170,9 @@ Compare values of two event keys:
 ```
 
 ### 4. List Comprehension Match Expressions
+
 Evaluate conditions against list elements:
+
 ```yaml
 - KeyPath: entity.moons
   Condition: AnyElement
@@ -177,14 +186,18 @@ Evaluate conditions against list elements:
 ```
 
 ### 5. Existence Match Expressions
+
 Check if keys exist:
+
 ```yaml
 - KeyPath: entity.atmosphere
   Condition: Exists
 ```
 
 ### 6. Absolute Match Expressions
+
 Always return true/false:
+
 ```yaml
 - Condition: AlwaysTrue
 ```
@@ -192,6 +205,7 @@ Always return true/false:
 ## Common Conditions
 
 ### Scalar Conditions (use with `Value`)
+
 - `Equals` / `DoesNotEqual`
 - `IEquals` / `IDoesNotEqual` (case insensitive)
 - `StartsWith` / `DoesNotStartWith` / `IStartsWith` / `IDoesNotStartWith`
@@ -202,15 +216,18 @@ Always return true/false:
 - IP Address conditions: `IsIPAddress`, `IsIPv4Address`, `IsIPv6Address`, `IsIPAddressPrivate`, `IsIPAddressPublic`, `IsIPAddressInCIDR`
 
 ### List Conditions (use with `Values`)
+
 - `IsIn` / `IsNotIn`
 
 ### List Comprehension Conditions
+
 - `AnyElement` - any element matches
 - `AllElements` - all elements match  
 - `OnlyOneElement` - exactly one element matches
 - `NoElement` - no elements match
 
 ### List of Conditions that may be used with `InlineFilters`
+
 - Equals
 - DoesNotEqual
 - IsGreaterThan
@@ -263,6 +280,7 @@ Detection:
 ```
 
 **Available Combinators:**
+
 - `All` (AND) - all expressions must be true
 - `Any` (OR) - any expression must be true  
 - `OnlyOne` (XOR) - exactly one expression must be true
@@ -293,6 +311,7 @@ Value: "some text" # string (explicit quotes)
 ## Common Detection Patterns
 
 ### Failed Login Detection
+
 ```yaml
 Detection:
   - KeyPath: eventName
@@ -304,6 +323,7 @@ Detection:
 ```
 
 ### Privilege Escalation
+
 ```yaml
 Detection:
   - Any:
@@ -319,6 +339,7 @@ Detection:
 ```
 
 ### Unusual Source IP
+
 ```yaml
 Detection:
   - KeyPath: sourceIPAddress

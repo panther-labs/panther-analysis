@@ -19,9 +19,9 @@ Reports:
 Severity: Medium
 Description: >
   Detects mass S3 object downloads (GetObject) or deletions (DeleteObject/DeleteObjects) 
-  that may indicate data exfiltration, ransomware attacks, or malicious data destruction.
-  Monitors for patterns where users access or delete large numbers of objects in short 
-  timeframes, which is abnormal for legitimate use cases.
+  by IAM Users that may indicate data exfiltration, ransomware attacks, or malicious data destruction.
+  Monitors for patterns where human users access or delete large numbers of objects in short 
+  timeframes, which is abnormal for legitimate use cases. Excludes service accounts and assumed roles.
 DedupPeriodMinutes: 60
 Runbook: |
   1. **Immediate Actions:**
@@ -178,6 +178,34 @@ Tests:
         arn: arn:aws:iam::123456789012:user/test-user
         accountId: '123456789012'
         userName: test-user
+
+  - Name: AssumedRole operations do not trigger (service accounts excluded)
+    ExpectedResult: false
+    Mocks:
+      - objectName: add_to_string_set
+        returnValue: '["obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8", "obj9", "obj10", "obj11", "obj12", "obj13", "obj14", "obj15", "obj16", "obj17", "obj18", "obj19", "obj20"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-service
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: '904233115233'
+      requestParameters:
+        bucketName: processed-data-bucket
+        key: logs/file.json.gz
+      sourceIPAddress: 10.0.1.100
+      userAgent: aws-sdk-go/1.49.0
+      userIdentity:
+        type: AssumedRole
+        principalId: AROA5FCD6LZQ257LYRY4Z:snowflake
+        arn: arn:aws:sts::904233115233:assumed-role/panther-snowflake-logprocessing-role-us-west-2/snowflake
+        accountId: '904233115233'
 
   - Name: Non-S3 event does not trigger
     ExpectedResult: false

@@ -6,7 +6,7 @@ LogTypes:
 Severity: Low
 CreateAlert: true
 DisplayName: Multiple Failed Actions by Actor
-AlertTitle: "Multiple {{.actionName}} failures by {{.actor.name}}"
+AlertTitle: "Multiple {actionName} failures by {actor.name}"
 Description: >
   Detects when there are more than 3 failed actions within 15 minutes by the same actor for the same action type.
   This may indicate brute force attempts, permission issues, or potential malicious activity.
@@ -17,7 +17,7 @@ Detection:
 GroupBy:
   - KeyPath: actor.id
   - KeyPath: actionName
-DedupPeriodMinutes: 15
+DedupPeriodMinutes: 180 # 3 hours
 Threshold: 3
 Tags:
   - panther
