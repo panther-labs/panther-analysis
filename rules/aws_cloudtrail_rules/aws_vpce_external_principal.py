@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -47,13 +47,7 @@ def alert_context(event):
     context.update(
         {
             "event_account": event_account,
-            "event_account_name": (
-                lookup_aws_account_name(event_account) if event_account else "unknown"
-            ),
             "principal_account": principal_account,
-            "principal_account_name": (
-                lookup_aws_account_name(principal_account) if principal_account else "unknown"
-            ),
             "principal_id": event.deep_get("userIdentity", "principalId", default="unknown"),
             "source_ip": event.get("sourceIPAddress", "unknown"),
             "event_source": event.get("eventSource", "unknown"),

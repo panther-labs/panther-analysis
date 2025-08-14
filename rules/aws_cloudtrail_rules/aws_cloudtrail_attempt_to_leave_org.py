@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 from panther_core import PantherEvent
 
 
@@ -7,7 +7,7 @@ def rule(event: PantherEvent) -> bool:
 
 
 def title(event: PantherEvent) -> str:
-    account_name = lookup_aws_account_name(event.get("recipientAccountId"))
+    account_name = event.get("recipientAccountId")
     actor = event.udm("actor_user")
     # Return a more informative message if the attempt was unsuccessful
     if not aws_cloudtrail_success(event):

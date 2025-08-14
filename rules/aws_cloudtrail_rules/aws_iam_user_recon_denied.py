@@ -1,6 +1,6 @@
 from ipaddress import ip_address
 
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 
 # service/event patterns to monitor
 RECON_ACTIONS = {
@@ -56,7 +56,7 @@ def title(event):
         "Reconnaissance activity denied to user "
         f"[{user}] "
         "in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 

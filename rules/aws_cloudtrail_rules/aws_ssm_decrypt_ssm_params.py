@@ -1,7 +1,7 @@
 import datetime as dt
 import json
 
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 from panther_core import PantherEvent
 from panther_detection_helpers.caching import get_string_set, put_string_set
 
@@ -39,7 +39,7 @@ def rule(event: PantherEvent) -> bool:
 
 def title(event: PantherEvent) -> str:
     actor = event.udm("actor_user")
-    account_name = lookup_aws_account_name(event.get("recipientAccountId"))
+    account_name = event.get("recipientAccountId")
     return f"Excessive SSM parameter decryption by [{actor}] in [{account_name}]"
 
 
