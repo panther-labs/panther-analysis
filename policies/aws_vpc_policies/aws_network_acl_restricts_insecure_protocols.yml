@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_network_acl_restricts_insecure_protocols.py
 PolicyID: "AWS.NetworkACL.RestrictsInsecureProtocols"
 DisplayName: "AWS Network ACL Restricts Insecure Protocols"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.EC2.NetworkACL
 Tags:
@@ -14,7 +14,7 @@ Reports:
     - 8.2.1
   MITRE ATT&CK:
     - TA0011:T1095
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that Network ACLs block the usage of ports typically associated with insecure or unencrypted protocols.
 Runbook: Add Network ACL entries to block ports typically associated with insecure protocols.
