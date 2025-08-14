@@ -80,7 +80,7 @@ class TestEksPantherObjRef(unittest.TestCase):
                 "stageTimestamp": "2022-11-29 00:09:04.394",
                 "user": {
                     "extra": {
-                        "accessKeyId": ["ASIARLIVEKVNNXXXXXXX"],
+                        "accessKeyId": ["ASIAXXXXXXXXXXXXXXXX"],
                         "arn": [
                             "arn:aws:sts::123412341234:assumed-role/KubeAdministrator/1669660343296132000"
                         ],
@@ -2401,7 +2401,7 @@ class TestPantherFlowInvestigation(unittest.TestCase):
                 "aws_s3_bucket": "threat-research-trail-trail-bucket-0ipb5nzxam",
                 "aws_s3_key": "AWSLogs/123456789123/CloudTrail/us-east-1/2024/11/25/123456789123_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
             },
-            "p_any_trace_ids": ["ASIAQWERTYUIOPASDFGH"],
+            "p_any_trace_ids": ["ASIAXXXXXXXXXXXXXXXX"],
             "p_any_actor_ids": ["AROAQWERTYUIOPASDFGH", "AROAQWERTYUIOPASDFGH:bob.ross"],
             "p_any_aws_account_ids": ["123456789123"],
             "p_any_aws_arns": [
@@ -2423,7 +2423,7 @@ class TestPantherFlowInvestigation(unittest.TestCase):
     , panther_logs.public.aws_cloudtrail
 | where p_event_time between time.parse_timestamp('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. time.parse_timestamp('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
 | where arrays.overlap(p_any_ip_addresses, ['12.34.56.78'])
-     or arrays.overlap(p_any_trace_ids, ['ASIAQWERTYUIOPASDFGH'])
+     or arrays.overlap(p_any_trace_ids, ['ASIAXXXXXXXXXXXXXXXX'])
      or arrays.overlap(p_any_actor_ids, ['AROAQWERTYUIOPASDFGH', 'AROAQWERTYUIOPASDFGH:bob.ross'])
      or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross', 'arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
      or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'bob.ross'])
