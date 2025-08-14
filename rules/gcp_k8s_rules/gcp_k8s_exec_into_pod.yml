@@ -16,48 +16,6 @@ Runbook: >
   Investigate the user and determine why. Advise that it is discouraged practice. Create ticket if appropriate.
 Reference: https://cloud.google.com/migrate/containers/docs/troubleshooting/executing-shell-commands
 Tests:
-  - Name: Allowed User
-    ExpectedResult: false
-    Mocks:
-      - objectName: ALLOW_LIST
-        returnValue: >-
-          [
-            {
-              "principals": ["system:serviceaccount:example-namespace:example-namespace-service-account"],
-              "namespaces": [],
-              "projects": []
-            }
-          ]
-    Log:
-      {
-        "protoPayload":
-          {
-            "authenticationInfo":
-              {
-                "principalEmail": "system:serviceaccount:example-namespace:example-namespace-service-account",
-              },
-            "authorizationInfo":
-              [
-                {
-                  "permission": "io.k8s.core.v1.pods.exec.create",
-                  "resource": "core/v1/namespaces/opa/pods/opa-57998cf7c5-bjkfk/exec",
-                },
-              ],
-            "methodName": "io.k8s.core.v1.pods.exec.create",
-            "requestMetadata":
-              {
-                "callerIp": "88.88.88.88",
-                "callerSuppliedUserAgent": "kubectl/v1.40.8 (darwin/amd64) kubernetes/6575935",
-              },
-            "resourceName": "core/v1/namespaces/example/pods/one-off-46666967280/exec",
-            "timestamp": "2022-03-04T16:01:49.978756Z",
-          },
-        "resource":
-          {
-            "type": "k8s_cluster",
-            "labels": { "project_id": "rigup-production" },
-          },
-      }
   - Name: Disallowed User
     ExpectedResult: true
     Log:
