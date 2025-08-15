@@ -1,0 +1,117 @@
+AnalysisType: scheduled_rule
+Description: >
+  Detects potential EC2 compute resource abuse including cryptocurrency mining,
+  unauthorized high-performance computing, bulk instance launches, and resource
+  hoarding through analysis of daily compute usage patterns.
+DisplayName: EC2 Compute Abuse Summary (Daily)
+Enabled: true
+Filename: ec2_compute_abuse_summary_daily.py
+RuleID: Demo.AI.EC2ComputeAbuseSummary.Daily
+Severity: High
+ScheduledQueries:
+  - EC2 Compute Abuse Summary Daily Query
+Tags:
+  - AI-Optimized
+  - Compute-Abuse
+  - Cryptomining-Detection
+  - Resource-Monitoring
+  - Behavior-Baselines
+  - Demo
+  - Scheduled
+Reports:
+  MITRE ATT&CK:
+    - "TA0005:T1496"    # Resource Hijacking
+    - "TA0040:T1578"    # Modify Cloud Compute Infrastructure
+    - "TA0007:T1580"    # Cloud Infrastructure Discovery
+Tests:
+  - Name: GPU Instance Launch (Crypto Mining)
+    ExpectedResult: true
+    Log:
+      time_window: "2025-08-15 00:00:00"
+      actor_arn: "arn:aws:sts::123456789012:assumed-role/CompromisedRole/attacker"
+      actor_name: "suspicious-user"
+      total_ec2_activities: 5
+      instances_launched: 3
+      instances_terminated: 0
+      gpu_instances: 3
+      high_performance_instances: 0
+      memory_optimized_instances: 0
+      total_instances_requested: 3
+      instance_types_used: ["p3.8xlarge", "p3.16xlarge"]
+      amis_used: ["ami-12345678"]
+      source_ips: ["203.0.113.45", "198.51.100.67"]
+      unique_ips: 2
+      regions_used: ["us-east-1", "us-west-2"]
+      unique_regions: 2
+      max_risk_score: 9.0
+      total_risk_score: 27.0
+      abuse_indicators: ["gpu_instance_usage", "multiple_source_locations"]
+
+  - Name: Bulk Instance Creation
+    ExpectedResult: true
+    Log:
+      time_window: "2025-08-15 00:00:00"
+      actor_arn: "arn:aws:iam::123456789012:user/resource-hoarder"
+      actor_name: "resource-hoarder"
+      total_ec2_activities: 25
+      instances_launched: 25
+      instances_terminated: 0
+      gpu_instances: 0
+      high_performance_instances: 25
+      memory_optimized_instances: 0
+      total_instances_requested: 50
+      instance_types_used: ["c5.24xlarge", "c5n.18xlarge"]
+      amis_used: ["ami-87654321"]
+      source_ips: ["192.0.2.123"]
+      unique_ips: 1
+      regions_used: ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"]
+      unique_regions: 4
+      max_risk_score: 8.0
+      total_risk_score: 200.0
+      abuse_indicators: ["bulk_instance_creation", "multi_region_deployment", "high_frequency_launches"]
+
+  - Name: Memory-Intensive Abuse Pattern
+    ExpectedResult: true
+    Log:
+      time_window: "2025-08-15 00:00:00"
+      actor_arn: "arn:aws:sts::123456789012:assumed-role/DataProcessingRole/processor"
+      actor_name: "data-processor"
+      total_ec2_activities: 8
+      instances_launched: 8
+      instances_terminated: 0
+      gpu_instances: 0
+      high_performance_instances: 0
+      memory_optimized_instances: 8
+      total_instances_requested: 16
+      instance_types_used: ["x1.32xlarge", "r5.24xlarge"]
+      amis_used: ["ami-11223344"]
+      source_ips: ["10.0.1.100", "10.0.2.200", "203.0.113.89"]
+      unique_ips: 3
+      regions_used: ["us-east-1"]
+      unique_regions: 1
+      max_risk_score: 7.0
+      total_risk_score: 56.0
+      abuse_indicators: ["excessive_memory_usage", "multiple_source_locations"]
+
+  - Name: Normal EC2 Activity (No Alert)
+    ExpectedResult: false
+    Log:
+      time_window: "2025-08-15 00:00:00"
+      actor_arn: "arn:aws:iam::123456789012:user/normal-developer"
+      actor_name: "normal-developer"
+      total_ec2_activities: 2
+      instances_launched: 1
+      instances_terminated: 1
+      gpu_instances: 0
+      high_performance_instances: 0
+      memory_optimized_instances: 0
+      total_instances_requested: 1
+      instance_types_used: ["t3.micro"]
+      amis_used: ["ami-99887766"]
+      source_ips: ["203.0.113.10"]
+      unique_ips: 1
+      regions_used: ["us-east-1"]
+      unique_regions: 1
+      max_risk_score: 2.0
+      total_risk_score: 3.0
+      abuse_indicators: []

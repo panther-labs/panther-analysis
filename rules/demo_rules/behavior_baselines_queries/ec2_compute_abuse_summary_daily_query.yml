@@ -1,0 +1,130 @@
+AnalysisType: scheduled_query
+QueryName: "EC2 Compute Abuse Summary Daily Query"
+Enabled: true
+Description: >
+  Daily analysis of EC2 compute resource usage patterns to detect potential abuse including
+  cryptocurrency mining, unauthorized high-performance computing, bulk instance launches, and
+  resource hoarding. Identifies suspicious actors, instance types, and deployment patterns.
+Tags:
+  - AI-Optimized
+  - Compute-Abuse
+  - Behavior-Baselines
+  - Resource-Monitoring
+  - Cryptomining-Detection
+Query: |
+  WITH ec2_activities AS (
+    SELECT 
+      DATE_TRUNC('day', p_event_time) as time_window,
+      p_event_time,
+      userIdentity:arn as actor_arn,
+      COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown') as actor_name,
+      eventName,
+      sourceIPAddress,
+      awsRegion,
+      -- Instance Details
+      responseElements:instancesSet:items[0]:instanceId as instance_id,
+      responseElements:instancesSet:items[0]:instanceType as instance_type,
+      responseElements:instancesSet:items[0]:imageId as ami_id,
+      requestParameters:instanceType as requested_instance_type,
+      requestParameters:imageId as requested_ami_id,
+      requestParameters:minCount as min_count,
+      requestParameters:maxCount as max_count,
+      -- Compute Classification
+      CASE 
+        WHEN requestParameters:instanceType LIKE 'p%' OR requestParameters:instanceType LIKE 'g%' THEN 'gpu_compute'
+        WHEN requestParameters:instanceType LIKE 'c%' OR requestParameters:instanceType LIKE 'm5%' THEN 'high_performance'
+        WHEN requestParameters:instanceType LIKE 'x%' OR requestParameters:instanceType LIKE 'r%' THEN 'memory_optimized'
+        WHEN requestParameters:instanceType LIKE 't%' THEN 'burstable'
+        ELSE 'general_purpose'
+      END as compute_class,
+      -- Risk Scoring
+      CASE 
+        WHEN eventName = 'RunInstances' AND requestParameters:instanceType LIKE 'p%' THEN 9.0  -- GPU instances (crypto mining)
+        WHEN eventName = 'RunInstances' AND requestParameters:instanceType LIKE 'c5n.24xlarge' THEN 8.0  -- Largest compute instances
+        WHEN eventName = 'RunInstances' AND requestParameters:instanceType LIKE 'x%' THEN 7.0  -- Memory-intensive instances
+        WHEN eventName = 'RunInstances' AND COALESCE(requestParameters:maxCount, 1) > 10 THEN 6.0  -- Bulk instance launches
+        WHEN eventName = 'RunInstances' AND requestParameters:instanceType LIKE 'c%' THEN 5.0  -- Compute-optimized
+        WHEN eventName = 'TerminateInstances' THEN 2.0  -- Instance termination
+        WHEN eventName = 'StopInstances' THEN 1.0  -- Instance stopping
+        ELSE 0.0
+      END as event_risk_score
+    FROM panther_logs.public.aws_cloudtrail
+    WHERE p_occurs_since('24h')
+      AND eventSource = 'ec2.amazonaws.com'
+      AND eventName IN ('RunInstances', 'TerminateInstances', 'StopInstances', 'StartInstances')
+      AND errorCode IS NULL
+  ),
+  actor_compute_analysis AS (
+    SELECT 
+      time_window,
+      actor_arn,
+      actor_name,
+      -- Activity Summary
+      COUNT(*) as total_ec2_activities,
+      COUNT(CASE WHEN eventName = 'RunInstances' THEN 1 END) as instances_launched,
+      COUNT(CASE WHEN eventName = 'TerminateInstances' THEN 1 END) as instances_terminated,
+      COUNT(CASE WHEN eventName = 'StopInstances' THEN 1 END) as instances_stopped,
+      COUNT(CASE WHEN eventName = 'StartInstances' THEN 1 END) as instances_started,
+      -- Compute Resource Analysis
+      COUNT(CASE WHEN compute_class = 'gpu_compute' THEN 1 END) as gpu_instances,
+      COUNT(CASE WHEN compute_class = 'high_performance' THEN 1 END) as high_performance_instances,
+      COUNT(CASE WHEN compute_class = 'memory_optimized' THEN 1 END) as memory_optimized_instances,
+      SUM(COALESCE(max_count, 1)) as total_instances_requested,
+      -- Resource Details
+      ARRAY_AGG(DISTINCT CASE WHEN requested_instance_type IS NOT NULL THEN requested_instance_type END) as instance_types_used,
+      ARRAY_AGG(DISTINCT CASE WHEN requested_ami_id IS NOT NULL THEN requested_ami_id END) as amis_used,
+      ARRAY_AGG(DISTINCT awsRegion) as regions_used,
+      COUNT(DISTINCT awsRegion) as unique_regions,
+      ARRAY_AGG(DISTINCT sourceIPAddress) as source_ips,
+      COUNT(DISTINCT sourceIPAddress) as unique_ips,
+      -- Risk Assessment
+      MAX(event_risk_score) as max_risk_score,
+      SUM(event_risk_score) as total_risk_score,
+      -- Timeline
+      MIN(p_event_time) as first_activity,
+      MAX(p_event_time) as last_activity
+    FROM ec2_activities
+    GROUP BY time_window, actor_arn, actor_name
+  )
+  SELECT 
+    time_window,
+    actor_arn,
+    actor_name,
+    total_ec2_activities,
+    instances_launched,
+    instances_terminated,
+    instances_stopped,
+    instances_started,
+    gpu_instances,
+    high_performance_instances,
+    memory_optimized_instances,
+    total_instances_requested,
+    instance_types_used,
+    amis_used,
+    regions_used,
+    unique_regions,
+    source_ips,
+    unique_ips,
+    ROUND(max_risk_score, 1) as max_risk_score,
+    ROUND(total_risk_score, 1) as total_risk_score,
+    first_activity,
+    last_activity,
+    -- Investigation Indicators
+    ARRAY_CONSTRUCT_COMPACT(
+      CASE WHEN gpu_instances > 0 THEN 'gpu_instance_usage' END,
+      CASE WHEN total_instances_requested > 20 THEN 'bulk_instance_creation' END,
+      CASE WHEN unique_regions > 3 THEN 'multi_region_deployment' END,
+      CASE WHEN unique_ips > 2 THEN 'multiple_source_locations' END,
+      CASE WHEN instances_launched > 10 THEN 'high_frequency_launches' END,
+      CASE WHEN max_risk_score >= 8.0 THEN 'high_risk_instance_types' END,
+      CASE WHEN memory_optimized_instances > 5 THEN 'excessive_memory_usage' END,
+      CASE WHEN high_performance_instances > 5 THEN 'excessive_compute_usage' END
+    ) as abuse_indicators
+  FROM actor_compute_analysis
+  WHERE max_risk_score >= 5.0  -- Focus on potentially abusive compute usage
+     OR gpu_instances > 0  -- Always include GPU usage
+     OR total_instances_requested > 15  -- Always include bulk launches
+  ORDER BY total_risk_score DESC, gpu_instances DESC, total_instances_requested DESC
+Schedule:
+  RateMinutes: 1440  # 24 hours
+  TimeoutMinutes: 15
