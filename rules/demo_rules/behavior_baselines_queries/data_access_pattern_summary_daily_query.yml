@@ -1,0 +1,125 @@
+AnalysisType: scheduled_query
+QueryName: "Data Access Pattern Summary Daily Query"
+Enabled: true
+Description: >
+  Daily analysis of data access patterns across S3, Secrets Manager, and other AWS data services.
+  Identifies large downloads, bulk operations, sensitive data access, and cross-account activities.
+Tags:
+  - AI-Optimized
+  - Data-Protection
+  - Behavior-Baselines
+  - Insider-Threat
+Query: |
+  WITH user_data_access AS (
+    SELECT 
+      DATE_TRUNC('day', p_event_time) as time_window,
+      userIdentity:arn as user_arn,
+      COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown') as username,
+      sourceIPAddress,
+      -- S3 Activity
+      eventName,
+      requestParameters:bucketName as bucket_name,
+      requestParameters:key as object_key,
+      COALESCE(responseElements:bytesTransferred, 0) as bytes_transferred,
+      CASE 
+        WHEN requestParameters:bucketName LIKE '%prod%' OR requestParameters:bucketName LIKE '%sensitive%' 
+             OR requestParameters:bucketName LIKE '%pii%' OR requestParameters:bucketName LIKE '%customer%'
+        THEN 'sensitive'
+        ELSE 'standard'
+      END as data_classification,
+      -- Secrets Activity
+      requestParameters:secretId as secret_name,
+      awsRegion,
+      CASE 
+        WHEN requestParameters:secretId LIKE '%prod%' OR requestParameters:secretId LIKE '%master%'
+             OR requestParameters:secretId LIKE '%admin%' OR requestParameters:secretId LIKE '%api-key%'
+        THEN 'high_value'
+        ELSE 'standard'
+      END as secret_classification,
+      CASE WHEN eventSource = 's3.amazonaws.com' THEN 's3' 
+           WHEN eventSource = 'secretsmanager.amazonaws.com' THEN 'secrets' 
+           ELSE 'other' END as service_type,
+      p_event_time
+    FROM panther_logs.public.aws_cloudtrail
+    WHERE p_occurs_since('24h')
+      AND eventSource IN ('s3.amazonaws.com', 'secretsmanager.amazonaws.com')
+      AND eventName IN ('GetObject', 'PutObject', 'DeleteObject', 'CopyObject', 'RestoreObject',
+                       'GetSecretValue', 'BatchGetSecretValue', 'DescribeSecret', 'ListSecrets')
+      AND errorCode IS NULL
+  ),
+  user_risk_analysis AS (
+    SELECT 
+      time_window,
+      user_arn,
+      username,
+      -- Volume and Activity Metrics
+      COUNT(*) as total_requests,
+      COUNT(CASE WHEN service_type = 's3' THEN 1 END) as s3_requests,
+      COUNT(CASE WHEN service_type = 'secrets' THEN 1 END) as secret_requests,
+      ROUND(SUM(bytes_transferred)/1073741824, 2) as total_gb_accessed,
+      COUNT(CASE WHEN bytes_transferred > 1073741824 THEN 1 END) as large_download_count, -- >1GB
+      COUNT(CASE WHEN data_classification = 'sensitive' THEN 1 END) as sensitive_bucket_access,
+      COUNT(CASE WHEN secret_classification = 'high_value' THEN 1 END) as high_value_secret_access,
+      COUNT(CASE WHEN eventName = 'BatchGetSecretValue' THEN 1 END) as bulk_secret_operations,
+      -- Resource Details
+      ARRAY_AGG(DISTINCT CASE WHEN bucket_name IS NOT NULL THEN bucket_name END) as buckets_accessed,
+      ARRAY_AGG(DISTINCT CASE WHEN secret_name IS NOT NULL THEN secret_name END) as secrets_accessed,
+      ARRAY_AGG(DISTINCT sourceIPAddress) as source_ips,
+      COUNT(DISTINCT sourceIPAddress) as unique_ips,
+      COUNT(DISTINCT awsRegion) as regions_accessed,
+      -- Risk Scoring
+      CASE 
+        WHEN SUM(bytes_transferred) > 10737418240 THEN 8.0  -- > 10GB
+        WHEN SUM(bytes_transferred) > 5368709120 THEN 6.0   -- > 5GB
+        WHEN SUM(bytes_transferred) > 1073741824 THEN 4.0   -- > 1GB
+        ELSE 1.0
+      END +
+      CASE 
+        WHEN COUNT(CASE WHEN data_classification = 'sensitive' THEN 1 END) > 50 THEN 7.0
+        WHEN COUNT(CASE WHEN data_classification = 'sensitive' THEN 1 END) > 20 THEN 5.0
+        WHEN COUNT(CASE WHEN data_classification = 'sensitive' THEN 1 END) > 0 THEN 3.0
+        ELSE 0.0
+      END +
+      CASE 
+        WHEN COUNT(CASE WHEN secret_classification = 'high_value' THEN 1 END) > 10 THEN 6.0
+        WHEN COUNT(CASE WHEN secret_classification = 'high_value' THEN 1 END) > 0 THEN 4.0
+        ELSE 0.0
+      END +
+      CASE WHEN COUNT(CASE WHEN eventName = 'BatchGetSecretValue' THEN 1 END) > 0 THEN 5.0 ELSE 0.0 END
+      as risk_score
+    FROM user_data_access
+    GROUP BY time_window, user_arn, username
+  )
+  SELECT 
+    time_window,
+    user_arn,
+    username,
+    total_requests,
+    s3_requests,
+    secret_requests,
+    total_gb_accessed,
+    large_download_count,
+    sensitive_bucket_access,
+    high_value_secret_access,
+    bulk_secret_operations,
+    buckets_accessed,
+    secrets_accessed,
+    source_ips,
+    unique_ips,
+    regions_accessed,
+    ROUND(risk_score, 1) as risk_score,
+    -- Risk Indicators for Investigation
+    ARRAY_CONSTRUCT_COMPACT(
+      CASE WHEN total_gb_accessed > 10.0 THEN 'high_volume_download' END,
+      CASE WHEN sensitive_bucket_access > 20 THEN 'excessive_sensitive_access' END,
+      CASE WHEN high_value_secret_access > 5 THEN 'bulk_high_value_secrets' END,
+      CASE WHEN bulk_secret_operations > 0 THEN 'batch_secret_retrieval' END,
+      CASE WHEN unique_ips > 3 THEN 'multiple_source_ips' END,
+      CASE WHEN regions_accessed > 2 THEN 'cross_region_activity' END
+    ) as risk_indicators
+  FROM user_risk_analysis
+  WHERE risk_score > 3.0  -- Focus on potentially suspicious users
+  ORDER BY risk_score DESC, total_gb_accessed DESC
+Schedule:
+  RateMinutes: 1440  # 24 hours
+  TimeoutMinutes: 10
