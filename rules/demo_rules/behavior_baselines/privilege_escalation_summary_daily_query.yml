@@ -20,6 +20,11 @@ Query: |
       userIdentity:type as user_type,
       sourceIPAddress,
       awsRegion,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      p_any_aws_account_ids,
       -- Target Resources
       requestParameters:userName as target_user,
       requestParameters:roleName as target_role,
@@ -66,6 +71,35 @@ Query: |
       )
       AND errorCode IS NULL
   ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      eventName,
+      actor_arn,
+      actor_name,
+      user_type,
+      sourceIPAddress,
+      awsRegion,
+      target_user,
+      target_role,
+      policy_arn,
+      policy_name,
+      policy_document,
+      assumed_role_arn,
+      activity_type,
+      risk_score,
+      involves_admin_privileges,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator,
+      f_account.value::string as account_id_indicator
+    FROM iam_privilege_activities,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email,
+    LATERAL FLATTEN(input => p_any_aws_account_ids, outer => true) f_account
+  ),
   actor_risk_analysis AS (
     SELECT 
       time_window,
@@ -94,10 +128,15 @@ Query: |
       COUNT(DISTINCT sourceIPAddress) as unique_ips,
       ARRAY_AGG(DISTINCT awsRegion) as regions_used,
       COUNT(DISTINCT awsRegion) as unique_regions,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      ARRAY_AGG(DISTINCT account_id_indicator) WITHIN GROUP (ORDER BY account_id_indicator) as p_any_aws_account_ids,
       -- Activity Timeline
       MIN(p_event_time) as first_activity,
       MAX(p_event_time) as last_activity
-    FROM iam_privilege_activities
+    FROM flattened_indicators
     GROUP BY time_window, actor_arn, actor_name, user_type
   )
   SELECT 
@@ -123,6 +162,11 @@ Query: |
     unique_ips,
     regions_used,
     unique_regions,
+    -- Panther indicator fields for enhanced threat hunting across real-time and historical analysis
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    p_any_aws_account_ids,
     first_activity,
     last_activity,
     -- Investigation Flags

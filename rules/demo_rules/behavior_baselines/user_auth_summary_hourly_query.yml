@@ -22,6 +22,11 @@ Query: |
       sourceIPAddress,
       userAgent,
       awsRegion,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      p_any_aws_account_ids,
       errorCode,
       errorMessage,
       additionalEventData:MFAUsed as mfa_used,
@@ -48,6 +53,33 @@ Query: |
       AND eventName IN ('ConsoleLogin', 'CheckMfa', 'AssumeRoleWithSAML', 'AssumeRoleWithWebIdentity')
       AND userIdentity:type != 'Root'
   ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      user_arn,
+      username,
+      principal_id,
+      eventName,
+      sourceIPAddress,
+      userAgent,
+      awsRegion,
+      errorCode,
+      errorMessage,
+      mfa_used,
+      login_to,
+      auth_type,
+      event_risk_score,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator,
+      f_account.value::string as account_id_indicator
+    FROM auth_events,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email,
+    LATERAL FLATTEN(input => p_any_aws_account_ids, outer => true) f_account
+  ),
   user_auth_analysis AS (
     SELECT 
       time_window,
@@ -67,6 +99,11 @@ Query: |
       COUNT(DISTINCT userAgent) as unique_user_agents,
       COUNT(DISTINCT awsRegion) as unique_regions,
       ARRAY_AGG(DISTINCT awsRegion) as regions_used,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      ARRAY_AGG(DISTINCT account_id_indicator) WITHIN GROUP (ORDER BY account_id_indicator) as p_any_aws_account_ids,
       -- Risk Assessment
       MAX(event_risk_score) as max_event_risk,
       AVG(event_risk_score) as avg_event_risk,
@@ -78,7 +115,7 @@ Query: |
       -- Failure Analysis  
       ARRAY_AGG(DISTINCT CASE WHEN errorCode IS NOT NULL THEN errorCode END) as error_codes_seen,
       ARRAY_AGG(DISTINCT CASE WHEN errorMessage IS NOT NULL THEN errorMessage END) as error_messages
-    FROM auth_events
+    FROM flattened_indicators
     GROUP BY time_window, user_arn, username, principal_id
   )
   SELECT 
@@ -97,6 +134,11 @@ Query: |
     unique_user_agents,
     unique_regions,
     regions_used,
+    -- Panther indicator fields for enhanced threat hunting across real-time and historical analysis
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    p_any_aws_account_ids,
     ROUND(max_event_risk, 1) as max_event_risk,
     ROUND(avg_event_risk, 1) as avg_event_risk,
     ROUND(total_risk_score, 1) as total_risk_score,
