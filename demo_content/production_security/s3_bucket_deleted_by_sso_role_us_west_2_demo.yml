@@ -1,0 +1,160 @@
+AnalysisType: rule
+Filename: s3_bucket_deleted_by_sso_role_us_west_2_demo.py
+RuleID: "AWS.S3.BucketDeleted.SSO.uswest2.Demo"
+DisplayName: "S3 Bucket Deleted by SSO-like Role in us-west-2"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Severity: High
+DedupPeriodMinutes: 60
+Description: |
+  Detects when an S3 bucket is deleted in region us-west-2 by an SSO-like role (AWS SSO or similar). This may indicate unauthorized or risky administrative activity.
+Runbook: |
+  1. Review CloudTrail events for the actor and S3 bucket in us-west-2 around the time of this alert.
+  2. Confirm if the SSO role deletion was expected and authorized.
+  3. Investigate any follow-up actions performed by the SSO role.
+  4. If unauthorized, restore the bucket if possible and review SSO permissions.
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjects.html
+SummaryAttributes:
+  - userIdentity:arn
+  - requestParameters:bucketName
+  - sourceIPAddress
+  - userAgent
+  - eventTime
+  - awsRegion
+Threshold: 1
+Tags:
+  - aws.s3
+  - sso
+  - compliance.soc2
+  - data-destruction
+  - detection.privilege_escalation
+Tests:
+  - Name: S3 Bucket deleted by SSO-like role in us-west-2 (should alert)
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "tester"
+        arn: "arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_abc123/tester"
+        accountId: "111111111111"
+        accessKeyId: "1"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "1111"
+            arn: "arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_abc123"
+            accountId: "111111111111"
+            userName: "AWSReservedSSO_DevAdmin_abc123"
+          webIdFederationData: {}
+          attributes:
+            mfaAuthenticated: "true"
+            creationDate: "2024-01-01T00:00:00Z"
+      eventTime: "2024-01-01T00:00:00Z"
+      eventSource: "s3.amazonaws.com"
+      eventName: "DeleteBucket"
+      awsRegion: "us-west-2"
+      sourceIPAddress: "8.8.8.8"
+      userAgent: "aws-cli/2.0"
+      requestParameters:
+        bucketName: "test-bucket"
+      recipientAccountId: "111111111111"
+      eventType: "AwsApiCall"
+      eventID: "evt-1"
+  - Name: S3 Bucket deleted by non-SSO role in us-west-2 (should not alert)
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "tester"
+        arn: "arn:aws:sts::111111111111:assumed-role/SomeOtherRole/tester"
+        accountId: "111111111111"
+        accessKeyId: "1"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "1111"
+            arn: "arn:aws:iam::111111111111:role/SomeOtherRole"
+            accountId: "111111111111"
+            userName: "SomeOtherRole"
+          webIdFederationData: {}
+          attributes:
+            mfaAuthenticated: "true"
+            creationDate: "2024-01-01T00:00:00Z"
+      eventTime: "2024-01-01T00:00:00Z"
+      eventSource: "s3.amazonaws.com"
+      eventName: "DeleteBucket"
+      awsRegion: "us-west-2"
+      sourceIPAddress: "8.8.8.8"
+      userAgent: "aws-cli/2.0"
+      requestParameters:
+        bucketName: "test-bucket"
+      recipientAccountId: "111111111111"
+      eventType: "AwsApiCall"
+      eventID: "evt-2"
+  - Name: S3 Bucket deleted by SSO-like role in another region (should not alert)
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "tester"
+        arn: "arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_abc123/tester"
+        accountId: "111111111111"
+        accessKeyId: "1"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "1111"
+            arn: "arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/us-east-1/AWSReservedSSO_DevAdmin_abc123"
+            accountId: "111111111111"
+            userName: "AWSReservedSSO_DevAdmin_abc123"
+          webIdFederationData: {}
+          attributes:
+            mfaAuthenticated: "true"
+            creationDate: "2024-01-01T00:00:00Z"
+      eventTime: "2024-01-01T00:00:00Z"
+      eventSource: "s3.amazonaws.com"
+      eventName: "DeleteBucket"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "8.8.8.8"
+      userAgent: "aws-cli/2.0"
+      requestParameters:
+        bucketName: "test-bucket"
+      recipientAccountId: "111111111111"
+      eventType: "AwsApiCall"
+      eventID: "evt-3"
+  - Name: S3 Object deleted by SSO-like role in us-west-2 (should not alert)
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "tester"
+        arn: "arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_abc123/tester"
+        accountId: "111111111111"
+        accessKeyId: "1"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "1111"
+            arn: "arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_abc123"
+            accountId: "111111111111"
+            userName: "AWSReservedSSO_DevAdmin_abc123"
+          webIdFederationData: {}
+          attributes:
+            mfaAuthenticated: "true"
+            creationDate: "2024-01-01T00:00:00Z"
+      eventTime: "2024-01-01T00:00:00Z"
+      eventSource: "s3.amazonaws.com"
+      eventName: "DeleteObject"
+      awsRegion: "us-west-2"
+      sourceIPAddress: "8.8.8.8"
+      userAgent: "aws-cli/2.0"
+      requestParameters:
+        bucketName: "test-bucket"
+      recipientAccountId: "111111111111"
+      eventType: "AwsApiCall"
+      eventID: "evt-4" 

@@ -1,0 +1,53 @@
+AnalysisType: rule
+RuleID: "Panther.LogSource.Deleted.Demo"
+DisplayName: Log Source Deleted in Panther
+Enabled: true
+Filename: panther_log_source_deleted_high_demo.py
+LogTypes:
+  - Panther.Audit
+Severity: High
+Description: >
+  Detects when a log source is deleted in Panther. Deletion of log sources can result in loss of visibility and may indicate malicious or unauthorized configuration changes.
+Tags:
+  - panther
+  - resource.delete
+  - compliance.change_management
+  - impact.data_destruction
+  - demo
+Tests:
+  - Name: Log source deleted (positive)
+    ExpectedResult: true
+    Log:
+      actionName: DELETE_LOG_SOURCE
+      actionResult: SUCCEEDED
+      actor:
+        id: "PantherSSO_jane.doe@company.com"
+        type: USER
+        name: "jane.doe@company.com"
+      sourceIP: "203.0.113.1"
+      timestamp: "2025-06-05T15:30:00Z"
+      pantherVersion: "1.113.130"
+  - Name: Log source deletion failed (negative)
+    ExpectedResult: false
+    Log:
+      actionName: DELETE_LOG_SOURCE
+      actionResult: FAILED
+      actor:
+        id: "PantherSSO_jane.doe@company.com"
+        type: USER
+        name: "jane.doe@company.com"
+      sourceIP: "203.0.113.1"
+      timestamp: "2025-06-05T15:31:00Z"
+      pantherVersion: "1.113.130"
+  - Name: Non-deletion action (negative)
+    ExpectedResult: false
+    Log:
+      actionName: CREATE_LOG_SOURCE
+      actionResult: SUCCEEDED
+      actor:
+        id: "PantherSSO_john.smith@company.com"
+        type: USER
+        name: "john.smith@company.com"
+      sourceIP: "203.0.113.2"
+      timestamp: "2025-06-05T15:32:00Z"
+      pantherVersion: "1.113.130" 

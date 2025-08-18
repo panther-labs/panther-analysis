@@ -1,0 +1,167 @@
+AnalysisType: scheduled_query
+QueryName: "User Authentication Summary Hourly Query"
+Enabled: true
+Description: >
+  Hourly aggregation of user authentication events into structured summaries for AI consumption.
+  Provides login attempt counts, success/failure ratios, IP geolocation analysis, MFA status,
+  and behavioral risk indicators to eliminate the need for repeated correlation logic.
+Tags:
+  - AI-Optimized
+  - Authentication
+  - Behavior-Baselines
+  - Structured-Data
+Query: |
+  WITH auth_events AS (
+    SELECT 
+      DATE_TRUNC('hour', p_event_time) as time_window,
+      p_event_time,
+      userIdentity:arn as user_arn,
+      COALESCE(userIdentity:userName, 'unknown') as username,
+      COALESCE(userIdentity:principalId, 'unknown') as principal_id,
+      eventName,
+      sourceIPAddress,
+      userAgent,
+      awsRegion,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      p_any_aws_account_ids,
+      errorCode,
+      errorMessage,
+      additionalEventData:MFAUsed as mfa_used,
+      additionalEventData:LoginTo as login_to,
+      -- Authentication Classification
+      CASE 
+        WHEN eventName = 'ConsoleLogin' AND errorCode IS NULL THEN 'successful_console_login'
+        WHEN eventName = 'ConsoleLogin' AND errorCode IS NOT NULL THEN 'failed_console_login'
+        WHEN eventName IN ('AssumeRoleWithSAML', 'AssumeRoleWithWebIdentity') THEN 'federated_login'
+        WHEN eventName = 'CheckMfa' THEN 'mfa_check'
+        ELSE 'other_auth'
+      END as auth_type,
+      -- Risk Scoring per Event
+      CASE 
+        WHEN errorCode IN ('SigninFailure', 'InvalidUserID.NotFound') THEN 7.0  -- Failed login attempts
+        WHEN additionalEventData:MFAUsed = 'No' AND eventName = 'ConsoleLogin' THEN 5.0  -- Console without MFA
+        WHEN eventName = 'ConsoleLogin' AND errorCode IS NULL THEN 2.0  -- Successful console login
+        WHEN eventName IN ('AssumeRoleWithSAML', 'AssumeRoleWithWebIdentity') THEN 1.0  -- Federated login
+        ELSE 0.0
+      END as event_risk_score
+    FROM panther_logs.public.aws_cloudtrail
+    WHERE p_occurs_since('1h')
+      AND eventSource = 'signin.amazonaws.com'  
+      AND eventName IN ('ConsoleLogin', 'CheckMfa', 'AssumeRoleWithSAML', 'AssumeRoleWithWebIdentity')
+      AND userIdentity:type != 'Root'
+  ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      user_arn,
+      username,
+      principal_id,
+      eventName,
+      sourceIPAddress,
+      userAgent,
+      awsRegion,
+      errorCode,
+      errorMessage,
+      mfa_used,
+      login_to,
+      auth_type,
+      event_risk_score,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator,
+      f_account.value::string as account_id_indicator
+    FROM auth_events,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email,
+    LATERAL FLATTEN(input => p_any_aws_account_ids, outer => true) f_account
+  ),
+  user_auth_analysis AS (
+    SELECT 
+      time_window,
+      user_arn,
+      username,
+      principal_id,
+      -- Activity Metrics
+      COUNT(*) as total_auth_attempts,
+      COUNT(CASE WHEN auth_type = 'successful_console_login' THEN 1 END) as successful_console_logins,
+      COUNT(CASE WHEN auth_type = 'failed_console_login' THEN 1 END) as failed_console_logins,
+      COUNT(CASE WHEN auth_type = 'federated_login' THEN 1 END) as federated_logins,
+      COUNT(CASE WHEN mfa_used = 'Yes' THEN 1 END) as mfa_protected_logins,
+      COUNT(CASE WHEN mfa_used = 'No' THEN 1 END) as non_mfa_logins,
+      -- Geographic and Network Analysis
+      COUNT(DISTINCT sourceIPAddress) as unique_source_ips,
+      ARRAY_AGG(DISTINCT sourceIPAddress) as source_ip_list,
+      COUNT(DISTINCT userAgent) as unique_user_agents,
+      COUNT(DISTINCT awsRegion) as unique_regions,
+      ARRAY_AGG(DISTINCT awsRegion) as regions_used,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      ARRAY_AGG(DISTINCT account_id_indicator) WITHIN GROUP (ORDER BY account_id_indicator) as p_any_aws_account_ids,
+      -- Risk Assessment
+      MAX(event_risk_score) as max_event_risk,
+      AVG(event_risk_score) as avg_event_risk,
+      SUM(event_risk_score) as total_risk_score,
+      -- Timeline Analysis
+      MIN(p_event_time) as first_auth_attempt,
+      MAX(p_event_time) as last_auth_attempt,
+      COUNT(CASE WHEN EXTRACT(hour FROM p_event_time) BETWEEN 0 AND 6 THEN 1 END) as off_hours_attempts,
+      -- Failure Analysis  
+      ARRAY_AGG(DISTINCT CASE WHEN errorCode IS NOT NULL THEN errorCode END) as error_codes_seen,
+      ARRAY_AGG(DISTINCT CASE WHEN errorMessage IS NOT NULL THEN errorMessage END) as error_messages
+    FROM flattened_indicators
+    GROUP BY time_window, user_arn, username, principal_id
+  )
+  SELECT 
+    time_window,
+    user_arn,
+    username,
+    principal_id,
+    total_auth_attempts,
+    successful_console_logins,
+    failed_console_logins,
+    federated_logins,
+    mfa_protected_logins,
+    non_mfa_logins,
+    unique_source_ips,
+    source_ip_list,
+    unique_user_agents,
+    unique_regions,
+    regions_used,
+    -- Panther indicator fields for enhanced threat hunting across real-time and historical analysis
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    p_any_aws_account_ids,
+    ROUND(max_event_risk, 1) as max_event_risk,
+    ROUND(avg_event_risk, 1) as avg_event_risk,
+    ROUND(total_risk_score, 1) as total_risk_score,
+    first_auth_attempt,
+    last_auth_attempt,
+    off_hours_attempts,
+    error_codes_seen,
+    error_messages,
+    -- Investigation Indicators
+    ARRAY_CONSTRUCT_COMPACT(
+      CASE WHEN failed_console_logins > 3 THEN 'excessive_failed_logins' END,
+      CASE WHEN failed_console_logins > 0 AND unique_source_ips > 1 THEN 'failed_login_multiple_ips' END,
+      CASE WHEN non_mfa_logins > 0 THEN 'console_access_without_mfa' END,
+      CASE WHEN unique_regions > 2 THEN 'multi_region_authentication' END,
+      CASE WHEN unique_source_ips > 3 THEN 'multiple_source_locations' END,
+      CASE WHEN off_hours_attempts > 0 THEN 'off_hours_activity' END,
+      CASE WHEN total_auth_attempts > 10 THEN 'high_frequency_attempts' END
+    ) as suspicious_indicators
+  FROM user_auth_analysis
+  WHERE total_risk_score > 2.0  -- Focus on users with some level of suspicious activity
+    OR failed_console_logins > 0  -- Always include failed logins
+    OR unique_source_ips > 2      -- Always include multi-IP users
+  ORDER BY total_risk_score DESC, failed_console_logins DESC, unique_source_ips DESC
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5

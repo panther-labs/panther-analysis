@@ -1,0 +1,267 @@
+AnalysisType: rule
+Filename: aws_s3_mass_exfiltration_deletion_demo.py
+RuleID: AWS.S3.MassExfiltrationDeletion.Demo
+DisplayName: AWS S3 Mass Exfiltration or Deletion
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - S3
+  - Data Exfiltration 
+  - Ransomware
+  - Data Destruction
+Reports:
+  MITRE ATT&CK:
+    - "TA0010:T1537"  # Transfer Data to Cloud Account
+    - "TA0040:T1485"  # Data Destruction
+    - "TA0040:T1486"  # Data Encrypted for Impact
+Severity: Medium
+Description: >
+  Detects mass S3 object downloads (GetObject) or deletions (DeleteObject/DeleteObjects) 
+  by IAM Users that may indicate data exfiltration, ransomware attacks, or malicious data destruction.
+  Monitors for patterns where human users access or delete large numbers of objects in short 
+  timeframes, which is abnormal for legitimate use cases. Excludes service accounts and assumed roles.
+DedupPeriodMinutes: 60
+Runbook: |
+  1. **Immediate Actions:**
+     - Review the alert context to understand scope (how many objects, which bucket)
+     - Check if the activity is from a legitimate user or compromised account
+     - If ransomware suspected, isolate affected systems immediately
+  
+  2. **Investigation Steps:**
+     - Verify user identity and recent authentication events
+     - Check for privilege escalation (new user, recent policy changes)
+     - Review user agent and source IP for signs of automated tools
+     - Examine S3 access logs for complete activity timeline
+     - Check if downloaded objects contain sensitive data
+     - For deletions: verify if S3 versioning/backup exists for recovery
+  
+  3. **Containment:**
+     - If unauthorized: revoke user credentials immediately  
+     - Apply temporary S3 bucket policies to restrict access
+     - Enable S3 MFA delete if not already configured
+     - Consider enabling GuardDuty Malware Protection for uploaded objects
+  
+  4. **Recovery (for deletions):**
+     - Check S3 version history for object recovery
+     - Review Cross-Region Replication or backup systems
+     - Restore from backups if available
+     - Document scope of data loss
+  
+  5. **Prevention:**
+     - Implement S3 access monitoring and alerting
+     - Enable S3 Object Lock for critical data
+     - Review IAM policies for least privilege
+     - Consider S3 Access Points for controlled access
+
+Tests:
+  - Name: GetObject mass exfiltration triggers alert
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["obj1", "obj2", "obj3"]'
+      - objectName: add_to_string_set  
+        returnValue: '["obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8", "obj9", "obj10", "obj11", "obj12", "obj13", "obj14", "obj15", "obj16", "obj17", "obj18", "obj19", "obj20"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: '123456789012'
+      requestParameters:
+        bucketName: sensitive-data-bucket
+        key: confidential/file20.txt
+      responseElements: null
+      sourceIPAddress: 136.25.18.145
+      userAgent: aws-cli/2.27.50
+      userIdentity:
+        type: IAMUser
+        principalId: AIDA5FCD6LZQ6RI43QBCO
+        arn: arn:aws:iam::123456789012:user/charles-larousse-dreyfus
+        accountId: '123456789012'
+        userName: charles-larousse-dreyfus
+
+  - Name: DeleteObject mass deletion triggers alert
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["obj1", "obj2", "obj3"]'
+      - objectName: add_to_string_set
+        returnValue: '["obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8", "obj9", "obj10", "obj11", "obj12", "obj13", "obj14", "obj15"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-2
+      eventName: DeleteObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:35:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: false
+      recipientAccountId: '123456789012'
+      requestParameters:
+        bucketName: sensitive-data-bucket
+        key: evidence/log15.txt
+      responseElements: null
+      sourceIPAddress: 136.25.18.145
+      userAgent: '[stratus-red-team_714dee8e]'
+      userIdentity:
+        type: IAMUser
+        principalId: AIDA5FCD6LZQ6RI43QBCO
+        arn: arn:aws:iam::123456789012:user/charles-larousse-dreyfus
+        accountId: '123456789012'
+        userName: charles-larousse-dreyfus
+
+  - Name: Single GetObject does not trigger
+    ExpectedResult: false
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '[]'
+      - objectName: add_to_string_set
+        returnValue: '["obj1"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-3
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: '123456789012'
+      requestParameters:
+        bucketName: normal-bucket
+        key: regular-file.txt
+      sourceIPAddress: 192.168.1.100
+      userAgent: aws-sdk-java/1.12.0
+      userIdentity:
+        type: IAMUser
+        principalId: AIDA5FCD6LZQ6RI43QBCO
+        arn: arn:aws:iam::123456789012:user/legitimate-user
+        accountId: '123456789012'
+        userName: legitimate-user
+
+  - Name: Failed S3 operation does not trigger
+    ExpectedResult: false
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-4
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      errorCode: AccessDenied
+      errorMessage: Access Denied
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: '123456789012'
+      requestParameters:
+        bucketName: restricted-bucket
+        key: secret-file.txt
+      sourceIPAddress: 192.168.1.100
+      userAgent: aws-sdk-java/1.12.0
+      userIdentity:
+        type: IAMUser
+        principalId: AIDA5FCD6LZQ6RI43QBCO
+        arn: arn:aws:iam::123456789012:user/test-user
+        accountId: '123456789012'
+        userName: test-user
+
+  - Name: AssumedRole operations do not trigger (service accounts excluded)
+    ExpectedResult: false
+    Mocks:
+      - objectName: add_to_string_set
+        returnValue: '["obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8", "obj9", "obj10", "obj11", "obj12", "obj13", "obj14", "obj15", "obj16", "obj17", "obj18", "obj19", "obj20"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-service
+      eventName: GetObject
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: true
+      recipientAccountId: '904233115233'
+      requestParameters:
+        bucketName: processed-data-bucket
+        key: logs/file.json.gz
+      sourceIPAddress: 10.0.1.100
+      userAgent: aws-sdk-go/1.49.0
+      userIdentity:
+        type: AssumedRole
+        principalId: AROA5FCD6LZQ257LYRY4Z:snowflake
+        arn: arn:aws:sts::904233115233:assumed-role/panther-snowflake-logprocessing-role-us-west-2/snowflake
+        accountId: '904233115233'
+
+  - Name: Non-S3 event does not trigger
+    ExpectedResult: false
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Management
+      eventID: example-event-id-5
+      eventName: GetObject
+      eventSource: iam.amazonaws.com
+      eventTime: '2025-01-15 10:30:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: true
+      readOnly: true
+      recipientAccountId: '123456789012'
+      sourceIPAddress: 192.168.1.100
+      userIdentity:
+        type: IAMUser
+        arn: arn:aws:iam::123456789012:user/test-user
+
+  - Name: DeleteObjects batch deletion triggers alert
+    ExpectedResult: true
+    Mocks:
+      - objectName: get_string_set
+        returnValue: '["batch1", "batch2"]'
+      - objectName: add_to_string_set
+        returnValue: '["batch1", "batch2", "batch3", "batch4", "batch5"]'
+    Log:
+      awsRegion: us-west-2
+      eventCategory: Data
+      eventID: example-event-id-6
+      eventName: DeleteObjects
+      eventSource: s3.amazonaws.com
+      eventTime: '2025-01-15 10:40:00'
+      eventType: AwsApiCall
+      eventVersion: '1.09'
+      managementEvent: false
+      readOnly: false
+      recipientAccountId: '123456789012'
+      requestParameters:
+        bucketName: target-bucket
+        delete:
+          objects:
+            - key: file1.txt
+            - key: file2.txt
+            - key: file3.txt
+      responseElements:
+        deleted:
+          - key: file1.txt
+          - key: file2.txt
+          - key: file3.txt
+      sourceIPAddress: 136.25.18.145
+      userAgent: ransomware-tool
+      userIdentity:
+        type: IAMUser
+        principalId: AIDA5FCD6LZQ6RI43QBCO
+        arn: arn:aws:iam::123456789012:user/compromised-user
+        accountId: '123456789012'
+        userName: compromised-user

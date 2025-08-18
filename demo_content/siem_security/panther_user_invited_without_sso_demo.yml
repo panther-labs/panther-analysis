@@ -1,0 +1,71 @@
+AnalysisType: rule
+RuleID: "Panther.User.Invited.WithoutSSO.Demo"
+DisplayName: User Invited to Panther Without SSO
+Enabled: true
+LogTypes:
+  - Panther.Audit
+Severity: High
+Description: >
+  Detects when a user is invited to Panther by another user (not via SSO). This may indicate a potential bypass of SSO onboarding controls and should be reviewed for compliance and security.
+Runbook: >
+  1. Review the actor who invited the user and confirm if the invitation was expected and authorized.
+  2. Ensure the user was not intended to be onboarded via SSO.
+  3. If unauthorized, disable the account and investigate for potential policy violations or malicious activity.
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+SummaryAttributes:
+  - actor.name
+  - actor.id
+  - actionParams
+  - sourceIP
+  - timestamp 
+Tags:
+  - panther
+  - demo
+  - auth.login_success
+  - resource.create
+  - compliance.soc2
+  - compliance.change_management
+  - compliance.nist_csf
+  - compliance.iso27001
+  - persistence.create_account.cloud_account
+Detection:
+  - KeyPath: actionName
+    Condition: Equals
+    Value: CREATE_USER
+  - KeyPath: actionDescription
+    Condition: Equals
+    Value: Invites a new user
+  - KeyPath: actor.name
+    Condition: DoesNotEqual
+    Value: System
+  - KeyPath: actionResult
+    Condition: Equals
+    Value: SUCCEEDED
+Tests:
+  - Name: User invited without SSO (positive)
+    ExpectedResult: true
+    Log:
+      actionName: CREATE_USER
+      actionDescription: Invites a new user
+      actionResult: SUCCEEDED
+      actor:
+        id: PantherSSO_jason.zandona@panther.io
+        name: jason.zandona@panther.io
+        type: USER
+      sourceIP: 76.137.197.238
+      timestamp: "2025-04-26T03:32:00.058Z"
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+      p_log_type: Panther.Audit
+  - Name: User created by SSO (negative)
+    ExpectedResult: false
+    Log:
+      actionName: CREATE_USER
+      actionDescription: User created automatically by Single Sign-On.
+      actionResult: SUCCEEDED
+      actor:
+        id: 00000000-0000-4000-8000-000000000000
+        name: System
+        type: USER
+      sourceIP: ""
+      timestamp: "2025-06-04T20:21:48.246Z"
+      p_log_type: Panther.Audit

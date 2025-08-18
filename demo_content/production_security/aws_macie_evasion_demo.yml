@@ -1,0 +1,209 @@
+AnalysisType: rule
+Filename: aws_macie_evasion_demo.py
+RuleID: "AWS.Macie.Evasion.Demo"
+OutputIds:
+  - "d4735112-507e-43a9-96a0-8c850e722c3b"
+DisplayName: "AWS Macie Disabled/Updated (Demo)"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - aws.macie
+  - demo
+  - policy.change
+  - defense_evasion.impair_defenses
+  - compliance.soc2
+Reports:
+  MITRE ATT&CK:
+    - "TA0005:T1562"
+Severity: High
+Description: >
+  This rule detects potentially suspicious or high-risk administrative actions taken against Amazon Macie within an AWS environment. It monitors for API events such as disabling Macie, archiving findings, modifying or deleting findings filters, disassociating accounts, and other session or membership changes. These actions may indicate attempts to evade data security monitoring, disrupt sensitive data discovery, or impair organizational visibility into data risks. By alerting on these specific Macie-related events, the rule helps security teams quickly identify and investigate possible evasion or tampering activities targeting Amazon Macie's data protection capabilities.
+Reference: https://aws.amazon.com/macie/
+DedupPeriodMinutes: 60
+Threshold: 2
+SummaryAttributes:
+  - awsRegion
+  - eventName
+  - p_any_aws_arns
+  - p_any_ip_addresses
+  - userIdentity:type
+  - userIdentity:arn
+Tests:
+  - Name: ListMembers
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-west-1",
+        "eventCategory": "Management",
+        "eventID": "5b3e4cf6-c37d-4c8c-9016-b8444a37ceaa",
+        "eventName": "ListMembers",
+        "eventSource": "macie2.amazonaws.com",
+        "eventTime": "2022-09-27 18:11:33",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_any_aws_account_ids": ["123456789012"],
+        "p_any_aws_arns":
+          [
+            "arn:aws:iam::123456789012:role/Admin",
+            "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+          ],
+        "p_any_ip_addresses": ["178.253.78.209"],
+        "p_any_trace_ids": ["AAAASSSST64ZTHFY7777"],
+        "p_event_time": "2022-09-27 18:11:33",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2022-09-27 18:16:43.428",
+        "p_row_id": "665d45a409cad7d68ff7bbd4138d02",
+        "p_source_id": "b00eb354-da7a-49dd-9cc6-32535e32096a",
+        "p_source_label": "CloudTrail Test",
+        "readOnly": true,
+        "recipientAccountId": "123456789012",
+        "requestID": "2164bbea-3eb0-444b-8e10-8ba53b3460b6",
+        "requestParameters": { "maxResults": "1", "onlyAssociated": "true" },
+        "sourceIPAddress": "178.253.78.209",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+        "userIdentity":
+          {
+            "accessKeyId": "AAAASSSST64ZTHFY7777",
+            "accountId": "123456789012",
+            "arn": "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+            "principalId": "AAAAA44444LE6DYFKKKKK:Jack",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-09-27T17:56:01Z",
+                    "mfaAuthenticated": "true",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "123456789012",
+                    "arn": "arn:aws:iam::123456789012:role/Admin",
+                    "principalId": "AAAAA44444LE6DYFKKKKK",
+                    "type": "Role",
+                    "userName": "Admin",
+                  },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
+          },
+      }
+  - Name: UpdateSession # The title of the test
+    ExpectedResult: true # If the sample event should generate an alert or not
+    Log:
+      {
+        "awsRegion": "us-east-2",
+        "eventCategory": "Management",
+        "eventID": "63033dfd-08c9-42f3-80ae-dca45e86ae84",
+        "eventName": "UpdateMacieSession",
+        "eventSource": "macie2.amazonaws.com",
+        "eventTime": "2022-09-27 19:59:08",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_any_aws_account_ids": ["123456789012"],
+        "p_any_aws_arns":
+          [
+            "arn:aws:iam::123456789012:role/Admin",
+            "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+          ],
+        "p_any_ip_addresses": ["46.91.25.204"],
+        "p_any_trace_ids": ["ASIASWJRT64Z42HFV6QX"],
+        "p_event_time": "2022-09-27 19:59:08",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2022-09-27 20:02:43.816",
+        "p_row_id": "665d45a409cad7d68ff7bbd4138123",
+        "p_source_id": "b00eb354-da7a-49dd-9cc6-32535e32096a",
+        "p_source_label": "CloudTrail Test",
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "requestID": "1b9981dc-21d2-4f77-92b0-69e23c8a40de",
+        "requestParameters": { "findingPublishingFrequency": "SIX_HOURS" },
+        "sourceIPAddress": "46.91.25.204",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+        "userIdentity":
+          {
+            "accessKeyId": "ASIASWJRT64Z42HFV6QX",
+            "accountId": "123456789012",
+            "arn": "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+            "principalId": "AAAAA44444LE6DYFKKKKK:Jack",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-09-27T17:56:01Z",
+                    "mfaAuthenticated": "true",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "123456789012",
+                    "arn": "arn:aws:iam::123456789012:role/Admin",
+                    "principalId": "AAAAA44444LE6DYFKKKKK",
+                    "type": "Role",
+                    "userName": "Admin",
+                  },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
+          },
+      }
+  - Name: UpdateSession (Macie v1 event) # The title of the test
+    ExpectedResult: true # If the sample event should generate an alert or not
+    Log:
+      {
+        "awsRegion": "us-east-2",
+        "eventCategory": "Management",
+        "eventID": "63033dfd-08c9-42f3-80ae-dca45e86ae84",
+        "eventName": "UpdateMacieSession",
+        "eventSource": "macie.amazonaws.com",
+        "eventTime": "2022-09-27 19:59:08",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "p_any_aws_account_ids": ["123456789012"],
+        "p_any_aws_arns":
+          [
+            "arn:aws:iam::123456789012:role/Admin",
+            "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+          ],
+        "p_any_ip_addresses": ["46.91.25.204"],
+        "p_any_trace_ids": ["ASIASWJRT64Z42HFV6QX"],
+        "p_event_time": "2022-09-27 19:59:08",
+        "p_log_type": "AWS.CloudTrail",
+        "p_parse_time": "2022-09-27 20:02:43.816",
+        "p_row_id": "665d45a409cad7d68ff7bbd4138123",
+        "p_source_id": "b00eb354-da7a-49dd-9cc6-32535e32096a",
+        "p_source_label": "CloudTrail Test",
+        "readOnly": false,
+        "recipientAccountId": "123456789012",
+        "requestID": "1b9981dc-21d2-4f77-92b0-69e23c8a40de",
+        "requestParameters": { "findingPublishingFrequency": "SIX_HOURS" },
+        "sourceIPAddress": "46.91.25.204",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
+        "userIdentity":
+          {
+            "accessKeyId": "ASIASWJRT64Z42HFV6QX",
+            "accountId": "123456789012",
+            "arn": "arn:aws:sts::123456789012:assumed-role/Admin/Jack",
+            "principalId": "AAAAA44444LE6DYFKKKKK:Jack",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "creationDate": "2022-09-27T17:56:01Z",
+                    "mfaAuthenticated": "true",
+                  },
+                "sessionIssuer":
+                  {
+                    "accountId": "123456789012",
+                    "arn": "arn:aws:iam::123456789012:role/Admin",
+                    "principalId": "AAAAA44444LE6DYFKKKKK",
+                    "type": "Role",
+                    "userName": "Admin",
+                  },
+                "webIdFederationData": {},
+              },
+            "type": "AssumedRole",
+          },
+      }
