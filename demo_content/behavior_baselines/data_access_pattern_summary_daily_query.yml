@@ -16,6 +16,11 @@ Query: |
       userIdentity:arn as user_arn,
       COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown') as username,
       sourceIPAddress,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      p_any_aws_account_ids,
       -- S3 Activity
       eventName,
       requestParameters:bucketName as bucket_name,
@@ -47,6 +52,31 @@ Query: |
                        'GetSecretValue', 'BatchGetSecretValue', 'DescribeSecret', 'ListSecrets')
       AND errorCode IS NULL
   ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      user_arn,
+      username,
+      sourceIPAddress,
+      bucket_name,
+      secret_name,
+      bytes_transferred,
+      data_classification,
+      secret_classification,
+      service_type,
+      eventName,
+      awsRegion,
+      p_event_time,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator,
+      f_account.value::string as account_id_indicator
+    FROM user_data_access,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email,
+    LATERAL FLATTEN(input => p_any_aws_account_ids, outer => true) f_account
+  ),
   user_risk_analysis AS (
     SELECT 
       time_window,
@@ -67,6 +97,11 @@ Query: |
       ARRAY_AGG(DISTINCT sourceIPAddress) as source_ips,
       COUNT(DISTINCT sourceIPAddress) as unique_ips,
       COUNT(DISTINCT awsRegion) as regions_accessed,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      ARRAY_AGG(DISTINCT account_id_indicator) WITHIN GROUP (ORDER BY account_id_indicator) as p_any_aws_account_ids,
       -- Risk Scoring
       CASE 
         WHEN SUM(bytes_transferred) > 10737418240 THEN 8.0  -- > 10GB
@@ -87,7 +122,7 @@ Query: |
       END +
       CASE WHEN COUNT(CASE WHEN eventName = 'BatchGetSecretValue' THEN 1 END) > 0 THEN 5.0 ELSE 0.0 END
       as risk_score
-    FROM user_data_access
+    FROM flattened_indicators
     GROUP BY time_window, user_arn, username
   )
   SELECT 
@@ -107,6 +142,11 @@ Query: |
     source_ips,
     unique_ips,
     regions_accessed,
+    -- Panther indicator fields for enhanced threat hunting across real-time and historical analysis
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    p_any_aws_account_ids,
     ROUND(risk_score, 1) as risk_score,
     -- Risk Indicators for Investigation
     ARRAY_CONSTRUCT_COMPACT(

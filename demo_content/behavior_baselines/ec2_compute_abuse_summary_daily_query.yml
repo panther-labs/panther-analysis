@@ -21,6 +21,11 @@ Query: |
       eventName,
       sourceIPAddress,
       awsRegion,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      p_any_aws_account_ids,
       -- Instance Details
       responseElements:instancesSet:items[0]:instanceId as instance_id,
       responseElements:instancesSet:items[0]:instanceType as instance_type,
@@ -54,6 +59,34 @@ Query: |
       AND eventName IN ('RunInstances', 'TerminateInstances', 'StopInstances', 'StartInstances')
       AND errorCode IS NULL
   ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      actor_arn,
+      actor_name,
+      eventName,
+      sourceIPAddress,
+      awsRegion,
+      instance_id,
+      instance_type,
+      ami_id,
+      requested_instance_type,
+      requested_ami_id,
+      min_count,
+      max_count,
+      compute_class,
+      event_risk_score,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator,
+      f_account.value::string as account_id_indicator
+    FROM ec2_activities,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email,
+    LATERAL FLATTEN(input => p_any_aws_account_ids, outer => true) f_account
+  ),
   actor_compute_analysis AS (
     SELECT 
       time_window,
@@ -77,13 +110,18 @@ Query: |
       COUNT(DISTINCT awsRegion) as unique_regions,
       ARRAY_AGG(DISTINCT sourceIPAddress) as source_ips,
       COUNT(DISTINCT sourceIPAddress) as unique_ips,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      ARRAY_AGG(DISTINCT account_id_indicator) WITHIN GROUP (ORDER BY account_id_indicator) as p_any_aws_account_ids,
       -- Risk Assessment
       MAX(event_risk_score) as max_risk_score,
       SUM(event_risk_score) as total_risk_score,
       -- Timeline
       MIN(p_event_time) as first_activity,
       MAX(p_event_time) as last_activity
-    FROM ec2_activities
+    FROM flattened_indicators
     GROUP BY time_window, actor_arn, actor_name
   )
   SELECT 
@@ -105,6 +143,11 @@ Query: |
     unique_regions,
     source_ips,
     unique_ips,
+    -- Panther indicator fields for enhanced threat hunting across real-time and historical analysis
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    p_any_aws_account_ids,
     ROUND(max_risk_score, 1) as max_risk_score,
     ROUND(total_risk_score, 1) as total_risk_score,
     first_activity,
