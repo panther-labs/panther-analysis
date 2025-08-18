@@ -147,3 +147,4 @@ from panther_aws_helpers import aws_rule_context
 - Implement proper error handling for external API calls
 - Follow principle of least privilege in helper functions
 - ALWAYS MAKE CHANGES ON BRANCHES AND NOT MAIN
+- Always organize content in @rules/demo_rules/ using intuitive folders

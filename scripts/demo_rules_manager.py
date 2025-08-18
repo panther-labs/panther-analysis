@@ -31,55 +31,75 @@ import json
 
 
 class RuleDiscovery:
-    """Discovers and maps all rules in the panther-analysis repository."""
+    """Discovers and maps all rules and policies in the panther-analysis repository."""
     
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
         self.rule_map = {}
+        self.policy_map = {}
         
     def discover_all_rules(self) -> Dict[str, List[Tuple[Path, Path]]]:
         """
         Scan the entire repo and build a mapping of RuleID -> [(py_file, yml_file), ...]
         Returns dict where keys are RuleIDs and values are lists of (python_file, yaml_file) tuples.
         """
-        print("🔍 Discovering all rules in repository...")
-        rule_map = {}
+        return self._discover_detections('RuleID', 'rule')
+    
+    def discover_all_policies(self) -> Dict[str, List[Tuple[Path, Path]]]:
+        """
+        Scan the entire repo and build a mapping of PolicyID -> [(py_file, yml_file), ...]
+        Returns dict where keys are PolicyIDs and values are lists of (python_file, yaml_file) tuples.
+        """
+        return self._discover_detections('PolicyID', 'policy')
+    
+    def _discover_detections(self, id_field: str, detection_type: str) -> Dict[str, List[Tuple[Path, Path]]]:
+        """
+        Generic method to discover rules or policies based on ID field.
+        """
+        print(f"🔍 Discovering all {detection_type}s in repository...")
+        detection_map = {}
         
-        # Search all rule directories
-        rules_dir = self.repo_root / "rules"
-        if not rules_dir.exists():
-            print(f"Error: Rules directory not found at {rules_dir}")
-            return rule_map
-            
-        for yaml_file in rules_dir.rglob("*.yml"):
-            # Skip demo rules to avoid circular references
-            if "demo_rules" in str(yaml_file):
+        # Search both rules and policies directories
+        search_dirs = [self.repo_root / "rules", self.repo_root / "policies"]
+        
+        for search_dir in search_dirs:
+            if not search_dir.exists():
                 continue
                 
-            try:
-                with open(yaml_file, 'r') as f:
-                    content = yaml.safe_load(f)
+            for yaml_file in search_dir.rglob("*.yml"):
+                # Skip demo content to avoid circular references
+                if "demo_rules" in str(yaml_file) or "demo_content" in str(yaml_file):
+                    continue
                     
-                if 'RuleID' in content:
-                    rule_id = content['RuleID']
-                    filename = content.get('Filename', '')
-                    
-                    # Find corresponding Python file
-                    if filename:
-                        py_file = yaml_file.parent / filename
-                        if py_file.exists():
-                            if rule_id not in rule_map:
-                                rule_map[rule_id] = []
-                            rule_map[rule_id].append((py_file, yaml_file))
-                        else:
-                            print(f"Warning: Python file {py_file} not found for {yaml_file}")
-                            
-            except Exception as e:
-                print(f"Warning: Could not read {yaml_file}: {e}")
+                try:
+                    with open(yaml_file, 'r') as f:
+                        content = yaml.safe_load(f)
+                        
+                    if id_field in content:
+                        detection_id = content[id_field]
+                        filename = content.get('Filename', '')
+                        
+                        # Find corresponding Python file
+                        if filename:
+                            py_file = yaml_file.parent / filename
+                            if py_file.exists():
+                                if detection_id not in detection_map:
+                                    detection_map[detection_id] = []
+                                detection_map[detection_id].append((py_file, yaml_file))
+                            else:
+                                print(f"Warning: Python file {py_file} not found for {yaml_file}")
+                                
+                except Exception as e:
+                    print(f"Warning: Could not read {yaml_file}: {e}")
         
-        self.rule_map = rule_map
-        print(f"✅ Discovered {len(rule_map)} unique rules across {sum(len(v) for v in rule_map.values())} files")
-        return rule_map
+        # Store in appropriate map
+        if detection_type == 'rule':
+            self.rule_map = detection_map
+        else:
+            self.policy_map = detection_map
+            
+        print(f"✅ Discovered {len(detection_map)} unique {detection_type}s across {sum(len(v) for v in detection_map.values())} files")
+        return detection_map
     
     def analyze_mitre_coverage(self) -> Dict:
         """
@@ -197,13 +217,33 @@ class RuleDiscovery:
         Find a specific rule by ID, optionally using a path hint for faster lookup.
         Returns (python_file, yaml_file) tuple or None if not found.
         """
-        if not self.rule_map:
-            self.discover_all_rules()
+        return self._find_detection(rule_id, hint_path, 'rule')
+    
+    def find_policy(self, policy_id: str, hint_path: Optional[str] = None) -> Optional[Tuple[Path, Path]]:
+        """
+        Find a specific policy by ID, optionally using a path hint for faster lookup.
+        Returns (python_file, yaml_file) tuple or None if not found.
+        """
+        return self._find_detection(policy_id, hint_path, 'policy')
+    
+    def _find_detection(self, detection_id: str, hint_path: Optional[str], detection_type: str) -> Optional[Tuple[Path, Path]]:
+        """
+        Generic method to find rules or policies.
+        """
+        # Ensure we have discovered the appropriate type
+        if detection_type == 'rule':
+            if not self.rule_map:
+                self.discover_all_rules()
+            detection_map = self.rule_map
+        else:
+            if not self.policy_map:
+                self.discover_all_policies()
+            detection_map = self.policy_map
             
-        if rule_id not in self.rule_map:
+        if detection_id not in detection_map:
             return None
             
-        candidates = self.rule_map[rule_id]
+        candidates = detection_map[detection_id]
         
         # If hint path provided, try to use it
         if hint_path and len(candidates) > 1:
@@ -251,20 +291,31 @@ class ConfigManager:
     
     def add_rule(self, rule_id: str, category: str = None, enabled: bool = True, notes: str = ""):
         """Add a new rule to the configuration."""
-        if 'rules' not in self.config:
-            self.config['rules'] = []
+        return self._add_detection(rule_id, 'rule', category, enabled, notes)
+    
+    def add_policy(self, policy_id: str, category: str = None, enabled: bool = True, notes: str = ""):
+        """Add a new policy to the configuration."""
+        return self._add_detection(policy_id, 'policy', category, enabled, notes)
+    
+    def _add_detection(self, detection_id: str, detection_type: str, category: str = None, enabled: bool = True, notes: str = ""):
+        """Generic method to add a rule or policy to configuration."""
+        config_key = "policies" if detection_type == "policy" else "rules"
+        if config_key not in self.config:
+            self.config[config_key] = []
             
-        # Check if rule already exists
-        for rule in self.config['rules']:
-            if rule['rule_id'] == rule_id:
-                print(f"Rule {rule_id} already exists in configuration")
+        # Check if detection already exists
+        for detection in self.config[config_key]:
+            detection_key = 'rule_id' if detection_type == 'rule' else 'policy_id'
+            if detection[detection_key] == detection_id:
+                print(f"{detection_type.title()} {detection_id} already exists in configuration")
                 return False
                 
         # Get default category from settings
-        default_category = self.config.get('clone_settings', {}).get('default_category', 'production_security')
+        default_category = self.config.get('clone_settings', {}).get('default_category', 'aws_cloud_security')
         
-        new_rule = {
-            'rule_id': rule_id,
+        detection_key = 'rule_id' if detection_type == 'rule' else 'policy_id'
+        new_detection = {
+            detection_key: detection_id,
             'source_path': None,  # Auto-discover
             'target_category': category or default_category,
             'enabled': enabled,
@@ -272,18 +323,33 @@ class ConfigManager:
             'notes': notes
         }
         
-        self.config['rules'].append(new_rule)
+        self.config[config_key].append(new_detection)
         return True
     
     def get_enabled_rules(self) -> List[Dict]:
         """Get list of enabled rules from configuration."""
         return [rule for rule in self.config.get('rules', []) if rule.get('enabled', True)]
     
+    def get_enabled_policies(self) -> List[Dict]:
+        """Get list of enabled policies from configuration."""
+        return [policy for policy in self.config.get('policies', []) if policy.get('enabled', True)]
+    
     def update_rule_timestamp(self, rule_id: str):
         """Update the last_cloned timestamp for a rule."""
-        for rule in self.config.get('rules', []):
-            if rule['rule_id'] == rule_id:
-                rule['last_cloned'] = datetime.utcnow().isoformat() + 'Z'
+        self._update_detection_timestamp(rule_id, 'rule')
+    
+    def update_policy_timestamp(self, policy_id: str):
+        """Update the last_cloned timestamp for a policy."""
+        self._update_detection_timestamp(policy_id, 'policy')
+    
+    def _update_detection_timestamp(self, detection_id: str, detection_type: str):
+        """Generic method to update timestamp for rule or policy."""
+        config_key = "policies" if detection_type == "policy" else "rules"
+        detection_key = 'rule_id' if detection_type == 'rule' else 'policy_id'
+        
+        for detection in self.config.get(config_key, []):
+            if detection[detection_key] == detection_id:
+                detection['last_cloned'] = datetime.utcnow().isoformat() + 'Z'
                 break
 
 
@@ -297,16 +363,29 @@ class RuleCloner:
         
     def clone_rule(self, rule_id: str, source_py: Path, source_yml: Path, target_category: str) -> bool:
         """
-        Clone a rule from source to demo_rules with proper renaming.
+        Clone a rule from source to demo_content with proper renaming.
         Returns True if successful, False otherwise.
         """
+        return self._clone_detection(rule_id, source_py, source_yml, target_category, 'rule')
+    
+    def clone_policy(self, policy_id: str, source_py: Path, source_yml: Path, target_category: str) -> bool:
+        """
+        Clone a policy from source to demo_content with proper renaming.
+        Returns True if successful, False otherwise.
+        """
+        return self._clone_detection(policy_id, source_py, source_yml, target_category, 'policy')
+    
+    def _clone_detection(self, detection_id: str, source_py: Path, source_yml: Path, target_category: str, detection_type: str) -> bool:
+        """
+        Generic method to clone a rule or policy.
+        """
         try:
-            # Determine target directory
-            target_dir = self.demo_rules_dir / target_category
+            # Determine target directory - use demo_content now
+            target_dir = self.demo_rules_dir.parent.parent / "demo_content" / target_category
             target_dir.mkdir(parents=True, exist_ok=True)
             
             # Generate demo filenames
-            rule_id_suffix = self.clone_settings.get('rule_id_suffix', '.Demo')
+            id_suffix = self.clone_settings.get('rule_id_suffix', '.Demo') if detection_type == 'rule' else self.clone_settings.get('policy_id_suffix', '.Demo')
             filename_suffix = self.clone_settings.get('filename_suffix', '_demo')
             
             base_name = source_py.stem
@@ -321,18 +400,18 @@ class RuleCloner:
             print(f"📁 Copied: {source_py.name} -> {demo_py_name}")
             
             # Copy and modify YAML file
-            self._copy_and_modify_yaml(source_yml, target_yml, demo_py_name, rule_id, rule_id_suffix)
+            self._copy_and_modify_yaml(source_yml, target_yml, demo_py_name, detection_id, id_suffix, detection_type)
             print(f"📁 Copied: {source_yml.name} -> {demo_yml_name}")
             
             return True
             
         except Exception as e:
-            print(f"❌ Error cloning rule {rule_id}: {e}")
+            print(f"❌ Error cloning {detection_type} {detection_id}: {e}")
             return False
     
     def _copy_and_modify_yaml(self, source_yml: Path, target_yml: Path, 
-                            new_filename: str, original_rule_id: str, rule_id_suffix: str):
-        """Copy YAML file and modify Filename and RuleID fields."""
+                            new_filename: str, original_detection_id: str, id_suffix: str, detection_type: str):
+        """Copy YAML file and modify Filename and RuleID/PolicyID fields."""
         with open(source_yml, 'r') as f:
             content = f.read()
         
@@ -344,11 +423,12 @@ class RuleCloner:
             flags=re.MULTILINE
         )
         
-        # Update RuleID field
-        new_rule_id = f"{original_rule_id}{rule_id_suffix}"
+        # Update RuleID or PolicyID field
+        id_field = 'RuleID' if detection_type == 'rule' else 'PolicyID'
+        new_detection_id = f"{original_detection_id}{id_suffix}"
         content = re.sub(
-            r'^RuleID:\s*["\']?' + re.escape(original_rule_id) + r'["\']?',
-            f'RuleID: "{new_rule_id}"',
+            r'^' + id_field + r':\s*["\']?' + re.escape(original_detection_id) + r'["\']?',
+            f'{id_field}: "{new_detection_id}"',
             content,
             flags=re.MULTILINE
         )
@@ -372,12 +452,14 @@ class DemoRulesManager:
         self.cloner = RuleCloner(self.demo_rules_dir, self.config)
     
     def discover_command(self):
-        """Discover and display all rules in the repository with MITRE analysis."""
+        """Discover and display all rules and policies in the repository with MITRE analysis."""
         rule_map = self.discovery.discover_all_rules()
+        policy_map = self.discovery.discover_all_policies()
         mitre_stats = self.discovery.analyze_mitre_coverage()
         
         print(f"\n📊 Discovery Summary:")
         print(f"Total unique rules: {len(rule_map)}")
+        print(f"Total unique policies: {len(policy_map)}")
         
         # Show rules with multiple implementations
         multi_impl = {k: v for k, v in rule_map.items() if len(v) > 1}
@@ -493,26 +575,35 @@ class DemoRulesManager:
         self.config_manager.save_config()
         print(f"\n✅ Successfully cloned {success_count}/{len(enabled_rules)} rules")
     
-    def add_command(self, rule_id: str, category: str = None):
-        """Add a new rule to configuration and clone it."""
-        print(f"➕ Adding rule {rule_id} to configuration...")
+    def add_command(self, detection_id: str, category: str = None, detection_type: str = 'rule'):
+        """Add a new rule or policy to configuration and clone it."""
+        print(f"➕ Adding {detection_type} {detection_id} to configuration...")
         
-        if not self.config_manager.add_rule(rule_id, category):
-            return
+        if detection_type == 'rule':
+            if not self.config_manager.add_rule(detection_id, category):
+                return
+            source_files = self.discovery.find_rule(detection_id)
+            clone_method = self.cloner.clone_rule
+            update_method = self.config_manager.update_rule_timestamp
+        else:
+            if not self.config_manager.add_policy(detection_id, category):
+                return
+            source_files = self.discovery.find_policy(detection_id)
+            clone_method = self.cloner.clone_policy
+            update_method = self.config_manager.update_policy_timestamp
             
-        # Find and clone the rule
-        source_files = self.discovery.find_rule(rule_id)
+        # Find and clone the detection
         if not source_files:
-            print(f"❌ Rule {rule_id} not found in repository")
+            print(f"❌ {detection_type.title()} {detection_id} not found in repository")
             return
             
         source_py, source_yml = source_files
-        target_category = category or self.config.get('clone_settings', {}).get('default_category', 'production_security')
+        target_category = category or self.config.get('clone_settings', {}).get('default_category', 'aws_cloud_security')
         
-        if self.cloner.clone_rule(rule_id, source_py, source_yml, target_category):
-            self.config_manager.update_rule_timestamp(rule_id)
+        if clone_method(detection_id, source_py, source_yml, target_category):
+            update_method(detection_id)
             self.config_manager.save_config()
-            print(f"✅ Successfully added and cloned {rule_id}")
+            print(f"✅ Successfully added and cloned {detection_id}")
     
     def status_command(self, rule_id: str = None):
         """Show status of all configured rules or a specific rule."""
@@ -649,11 +740,13 @@ class DemoRulesManager:
             print(f"\n❌ Upstream source not found")
     
     def _show_all_rules_status(self):
-        """Show status of all configured rules."""
+        """Show status of all configured rules and policies."""
         enabled_rules = self.config_manager.get_enabled_rules()
+        enabled_policies = self.config_manager.get_enabled_policies()
         disabled_rules = self.config.get('disabled_rules', [])
+        disabled_policies = self.config.get('disabled_policies', [])
         
-        print(f"📋 Demo Rules Status")
+        print(f"📋 Demo Rules and Policies Status")
         print("=" * 50)
         
         print(f"\n✅ Enabled Rules ({len(enabled_rules)}):")
@@ -671,10 +764,30 @@ class DemoRulesManager:
                 print(f"    Notes: {rule['notes']}")
             print()
         
+        print(f"\n✅ Enabled Policies ({len(enabled_policies)}):")
+        for policy in enabled_policies:
+            policy_id = policy['policy_id']
+            category = policy['target_category']
+            last_cloned = policy.get('last_cloned', 'Never')
+            if last_cloned and last_cloned != 'Never':
+                last_cloned = last_cloned[:19].replace('T', ' ')
+            
+            print(f"  {policy_id}")
+            print(f"    Category: {category}")
+            print(f"    Last Cloned: {last_cloned}")
+            if policy.get('notes'):
+                print(f"    Notes: {policy['notes']}")
+            print()
+        
         if disabled_rules:
             print(f"❌ Disabled Rules ({len(disabled_rules)}):")
             for rule in disabled_rules:
                 print(f"  {rule['rule_id']} - {rule.get('reason', 'No reason provided')}")
+                
+        if disabled_policies:
+            print(f"❌ Disabled Policies ({len(disabled_policies)}):")
+            for policy in disabled_policies:
+                print(f"  {policy['policy_id']} - {policy.get('reason', 'No reason provided')}")
     
     def _check_demo_rule_exists(self, rule_id: str, category: str) -> bool:
         """Check if demo rule files exist in the target directory."""
@@ -914,30 +1027,36 @@ Safe to run multiple times - will only clone new/missing rules.
     # Add command
     add_parser = subparsers.add_parser(
         'add',
-        help='Add new rule to configuration and clone it immediately',
+        help='Add new rule or policy to configuration and clone it immediately',
         description="""
-Add a new rule to the demo_rules_config.yml configuration and clone it
+Add a new rule or policy to the demo_rules_config.yml configuration and clone it
 immediately to the specified category directory.
 
 This command:
-- Adds the rule to the configuration file
-- Discovers the rule's source location automatically
-- Clones the rule with proper _demo naming conventions
+- Adds the rule or policy to the configuration file
+- Discovers the detection's source location automatically
+- Clones the detection with proper _demo naming conventions
 - Updates configuration with clone timestamp
 
-This is the primary way to add individual rules to your demo environment.
+This is the primary way to add individual rules or policies to your demo environment.
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     add_parser.add_argument(
-        'rule_id', 
-        help='Rule ID to add (e.g., AWS.CloudTrail.ConsoleLogin)'
+        'detection_id', 
+        help='Rule ID or Policy ID to add (e.g., AWS.CloudTrail.ConsoleLogin or AWS.S3.PublicRead)'
     )
     add_parser.add_argument(
         '--category', 
-        help='Target category directory (default: production_security)',
-        choices=['production_security', 'siem_security'],
+        help='Target category directory (default: aws_cloud_security)',
         default=None
+    )
+    add_parser.add_argument(
+        '--type', 
+        help='Detection type: rule or policy (default: rule)',
+        choices=['rule', 'policy'],
+        default='rule',
+        dest='detection_type'
     )
     
     # Update command
@@ -1072,7 +1191,7 @@ proper naming conventions, or after manual file modifications.
     elif args.command == 'clone':
         manager.clone_command()
     elif args.command == 'add':
-        manager.add_command(args.rule_id, args.category)
+        manager.add_command(args.detection_id, args.category, args.detection_type)
     elif args.command == 'status':
         manager.status_command(args.rule_id)
     elif args.command == 'mitre':
