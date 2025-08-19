@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_security_group_tightly_restricts_inbound_traffic.py
 PolicyID: "AWS.SecurityGroup.TightlyRestrictsInboundTraffic"
 DisplayName: "AWS Security Group Tightly Restricts Inbound Traffic"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.EC2.SecurityGroup
 Tags:
@@ -16,7 +16,7 @@ Reports:
     - 8.2.1
   MITRE ATT&CK:
     - TA0001:T1190
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that Security Groups have restrictive permission sets that both limit the total number of open ports, as well as limiting ports typically associated with insecure protocols.
 Runbook: >

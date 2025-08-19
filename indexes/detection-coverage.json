@@ -1896,6 +1896,15 @@
         "YAMLPath": "rules/aws_s3_rules/aws_s3_insecure_access.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.",
+        "DisplayName": "AWS S3 Large Download",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Checks for S3 access attempts where the requester is not an authenticated AWS user.",
         "DisplayName": "AWS S3 Unauthenticated Access",
@@ -2349,15 +2358,6 @@
             "Box.Event"
         ],
         "YAMLPath": "rules/box_rules/box_event_triggered_externally.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "A user has shared an item and it is accessible to anyone with the share link (internal or external to the company). This rule requires that the boxsdk[jwt] be installed in the environment.",
-        "DisplayName": "Box item shared externally",
-        "LogTypes": [
-            "Box.Event"
-        ],
-        "YAMLPath": "rules/box_rules/box_item_shared_externally.yml"
     },
     {
         "AnalysisType": "Rule",

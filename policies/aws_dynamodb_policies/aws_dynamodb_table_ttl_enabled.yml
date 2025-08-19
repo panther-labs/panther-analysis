@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_dynamodb_table_ttl_enabled.py
 PolicyID: "AWS.DynamoDB.TableTTLEnabled"
 DisplayName: "AWS DynamoDB Table TTL"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.DynamoDB.Table
 Tags:
@@ -10,13 +10,12 @@ Tags:
   - Database
   - PCI
   - Collection:Data From Cloud Storage Object
-  - Configuration Required
 Reports:
   PCI:
     - 3.1
   MITRE ATT&CK:
     - TA0009:T1530
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that all DynamoDB tables have a TTL field configured.
 Runbook: >

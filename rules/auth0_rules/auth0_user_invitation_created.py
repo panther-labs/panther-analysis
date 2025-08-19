@@ -1,13 +1,12 @@
 import re
 
-from global_filter_auth0 import filter_include_event
 from panther_auth0_helpers import auth0_alert_context, is_auth0_config_event
 
 org_re = re.compile(r"^/api/v2/organizations/[^/\s]+/invitations$")
 
 
 def rule(event):
-    if not any([filter_include_event(event), is_auth0_config_event(event)]):
+    if not is_auth0_config_event(event):
         return False
 
     return invitation_type(event) is not None

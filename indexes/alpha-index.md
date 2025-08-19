@@ -192,6 +192,8 @@
   - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
   - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Large Download](../queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml)
+  - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
@@ -823,8 +825,6 @@
   - A user violated the content workflow policy.
 - [Box event triggered by unknown or external user](../rules/box_rules/box_event_triggered_externally.yml)
   - An external user has triggered a box enterprise event.
-- [Box item shared externally](../rules/box_rules/box_item_shared_externally.yml)
-  - A user has shared an item and it is accessible to anyone with the share link (internal or external to the company). This rule requires that the boxsdk[jwt] be installed in the environment.
 - [Box Large Number of Downloads](../rules/box_rules/box_user_downloads.yml)
   - A user has exceeded the threshold for number of downloads within a single time frame.
 - [Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.yml)

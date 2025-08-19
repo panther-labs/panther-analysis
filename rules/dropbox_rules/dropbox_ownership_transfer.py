@@ -1,11 +1,3 @@
-import json
-from unittest.mock import MagicMock
-
-from panther_config import config
-
-DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = config.DROPBOX_TRUSTED_OWNERSHIP_DOMAINS
-
-
 def rule(event):
     return "Transferred ownership " in event.deep_get("event_type", "description", default="")
 
@@ -25,12 +17,11 @@ def title(event):
 
 
 def severity(event):
-    global DROPBOX_TRUSTED_OWNERSHIP_DOMAINS  # pylint: disable=global-statement
-    if isinstance(DROPBOX_TRUSTED_OWNERSHIP_DOMAINS, MagicMock):
-        DROPBOX_TRUSTED_OWNERSHIP_DOMAINS = set(
-            json.loads(DROPBOX_TRUSTED_OWNERSHIP_DOMAINS())
-        )  # pylint: disable=not-callable
-    new_owner = event.deep_get("details", "new_owner_email", default="<NEW_OWNER_NOT_FOUND>")
-    if new_owner.split("@")[-1] not in DROPBOX_TRUSTED_OWNERSHIP_DOMAINS:
-        return "HIGH"
+    new_owner_domain = event.deep_get("details", "new_owner_email", default="@").split("@")[-1]
+    previous_owner_domain = event.deep_get("details", "previous_owner_email", default="@").split(
+        "@"
+    )[-1]
+
+    if new_owner_domain != previous_owner_domain:
+        return "DEFAULT"
     return "LOW"

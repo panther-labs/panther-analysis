@@ -1,7 +1,6 @@
 from json import loads
 
 import panther_event_type_helpers as event_type
-from panther_aws_helpers import lookup_aws_account_name
 from panther_base_helpers import add_parse_delay
 from panther_ipinfo_helpers import PantherIPInfoException, geoinfo_from_ip
 
@@ -18,7 +17,7 @@ def title(event):
         f"{log_type}: User [{event.udm('actor_user')}] has exceeded the failed logins threshold"
     )
     if log_type == "AWS.CloudTrail":
-        title_str += f" in [{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        title_str += f" in [{event.get('recipientAccountId')}]"
     return title_str
 
 

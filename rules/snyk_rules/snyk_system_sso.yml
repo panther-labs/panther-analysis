@@ -30,19 +30,6 @@ Tests:
         "orgId": "21111111-a222-4eee-8ddd-a99999999999",
         "content": { "unknown": "contents" },
       }
-  - Name: Snyk System SSO Setting event happened, excluded by filter
-    ExpectedResult: false
-    Mocks:
-      - objectName: filter_include_event
-        returnValue: false
-    Log:
-      {
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-        "event": "group.sso.edit",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "content": { "unknown": "contents" },
-      }
   - Name: Snyk Group SSO Membership sync
     ExpectedResult: false
     Log:

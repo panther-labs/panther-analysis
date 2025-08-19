@@ -1,0 +1,130 @@
+AnalysisType: scheduled_rule
+Filename: aws_s3_large_download_specific_bucket.py
+RuleID: "AWS.S3.LargeDownload"
+DisplayName: "AWS S3 Large Download"
+Enabled: false
+CreateAlert: false
+ScheduledQueries:
+  - AWS S3 Large Download
+Severity: Info
+Tags:
+  - Beta
+  - Data Exfiltration
+Reports:
+  MITRE ATT&CK:
+    - "TA0010:T1537"  # Exfiltration: Transfer Data to Cloud Account
+Description: >
+  Detects when a user (IAM User, AssumedRole, or FederatedUser) downloads more than the 
+  configured threshold of data from S3 buckets within a time window. Configurable thresholds 
+  and bucket filtering allow customization for different organizational needs. This may 
+  indicate unauthorized data exfiltration or bulk data downloads for analysis.
+DedupPeriodMinutes: 60
+Runbook: |
+  1. **Immediate Actions:**
+     - Verify if the user activity is authorized
+     - Check if the downloads were for legitimate business purposes
+     - Consider temporarily restricting bucket access if suspicious
+  
+  2. **Investigation Steps:**
+     - Review the user's recent authentication events
+     - Check for any privilege escalation or credential compromise
+     - Examine the downloaded objects to determine sensitivity
+     - Review source IP and user agent for signs of automation
+     - Check for other suspicious activities by the same user
+  
+  3. **Containment:**
+     - If unauthorized: revoke user credentials immediately
+     - Apply temporary S3 bucket policies to restrict access
+     - Enable S3 MFA delete and additional monitoring
+  
+  4. **Recovery:**
+     - Document the scope of data accessed
+     - Review S3 access logs for complete activity timeline
+     - Consider rotating any sensitive data that may have been accessed
+  
+  5. **Prevention:**
+     - Implement S3 access monitoring and alerting
+     - Review IAM policies for least privilege
+     - Consider S3 Access Points for controlled access
+     - Enable GuardDuty for enhanced threat detection
+
+Tests:
+  - Name: Large download triggers alert
+    ExpectedResult: true
+    Log:
+      user_arn: "arn:aws:iam::123456789012:user/data-engineer"
+      user_name: "data-engineer"
+      user_type: "IAMUser"
+      bucket_name: "sensitive-data-bucket"
+      source_ip: "192.168.1.100"
+      user_agent: "aws-cli/2.0.0"
+      total_bytes_downloaded: 78643200  # 75MB
+      object_count: 75
+      first_download_time: "2025-01-15 14:30:00"
+      last_download_time: "2025-01-15 14:34:30"
+      sample_objects: ["logs/2025/01/15/file1.log", "logs/2025/01/15/file2.log"]
+      account_id: "123456789012"
+
+  - Name: Critical threshold triggers high severity
+    ExpectedResult: true
+    Log:
+      user_arn: "arn:aws:iam::123456789012:user/suspicious-user" 
+      user_name: "suspicious-user"
+      user_type: "IAMUser"
+      bucket_name: "sensitive-data-bucket"
+      source_ip: "10.0.0.1"
+      user_agent: "python-requests/2.28.0"
+      total_bytes_downloaded: 1073741824  # 1GB
+      object_count: 200
+      first_download_time: "2025-01-15 15:00:00"
+      last_download_time: "2025-01-15 15:04:59"
+      sample_objects: ["data/model1.bin", "data/model2.bin", "logs/training.log"]
+      account_id: "123456789012"
+
+  - Name: Medium download triggers medium severity
+    ExpectedResult: true
+    Log:
+      user_arn: "arn:aws:iam::123456789012:user/analyst"
+      user_name: "analyst"
+      user_type: "IAMUser"
+      bucket_name: "sensitive-data-bucket"
+      source_ip: "203.0.113.45"
+      user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      total_bytes_downloaded: 104857600  # 100MB
+      object_count: 40
+      first_download_time: "2025-01-15 16:01:00"
+      last_download_time: "2025-01-15 16:03:15"
+      sample_objects: ["analytics/report1.json", "analytics/report2.json"]
+      account_id: "123456789012"
+
+  - Name: AssumedRole large download triggers alert
+    ExpectedResult: true
+    Log:
+      user_arn: "arn:aws:sts::123456789012:assumed-role/DataAnalyst/session123"
+      user_name: "DataAnalyst"
+      user_type: "AssumedRole"
+      bucket_name: "analytics-bucket"
+      source_ip: "10.0.1.50"
+      user_agent: "boto3/1.26.0"
+      total_bytes_downloaded: 62914560  # 60MB
+      object_count: 30
+      first_download_time: "2025-01-15 17:00:00"
+      last_download_time: "2025-01-15 17:05:00"
+      sample_objects: ["reports/quarterly.csv", "reports/monthly.json"]
+      account_id: "123456789012"
+
+  - Name: FederatedUser large download triggers alert
+    ExpectedResult: true
+    Log:
+      user_arn: "arn:aws:sts::123456789012:federated-user/contractor@company.com"
+      user_name: "contractor@company.com"
+      user_type: "FederatedUser"
+      bucket_name: "project-data"
+      source_ip: "203.0.113.100"
+      user_agent: "aws-sdk-python/1.28.0"
+      total_bytes_downloaded: 83886080  # 80MB
+      object_count: 150
+      first_download_time: "2025-01-15 18:00:00"
+      last_download_time: "2025-01-15 18:08:00"
+      sample_objects: ["datasets/training.parquet", "datasets/validation.csv"]
+      account_id: "123456789012"

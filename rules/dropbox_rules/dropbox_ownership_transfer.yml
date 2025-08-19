@@ -4,7 +4,7 @@ DisplayName: "Dropbox Document/Folder Ownership Transfer"
 Enabled: true
 Filename: dropbox_ownership_transfer.py
 Reference: https://help.dropbox.com/share/owner
-Severity: High
+Severity: Medium
 Tests:
   - ExpectedResult: true
     Log:
@@ -131,12 +131,6 @@ Tests:
       timestamp: "2023-04-18 18:16:27"
     Name: Other
   - ExpectedResult: true
-    Mocks:
-      - objectName: DROPBOX_TRUSTED_OWNERSHIP_DOMAINS
-        returnValue: >-
-          [
-              "example.com"
-          ]
     Log:
       actor:
         _tag: user
