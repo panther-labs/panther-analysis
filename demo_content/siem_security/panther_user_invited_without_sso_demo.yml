@@ -19,15 +19,17 @@ SummaryAttributes:
   - sourceIP
   - timestamp 
 Tags:
-  - panther
   - demo
-  - auth.login_success
-  - resource.create
   - compliance.soc2
   - compliance.change_management
   - compliance.nist_csf
   - compliance.iso27001
-  - persistence.create_account.cloud_account
+  - mitre.ta0003.persistence
+  - usecase.authentication_monitoring
+  - usecase.privileged_access_monitoring
+  - asset.identity_management
+  - threat.insider
+  - risk.medium
 Detection:
   - KeyPath: actionName
     Condition: Equals
