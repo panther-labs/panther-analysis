@@ -1,0 +1,124 @@
+AnalysisType: rule
+Filename: panther_multiple_detections_disabled_high_demo.py
+RuleID: "Panther.MultipleDetectionsDisabledHigh.Demo"
+LogTypes:
+  - Panther.Audit
+Severity: High
+Enabled: true
+CreateAlert: true
+DisplayName: Multiple Detections Disabled in Short Period
+Description: >
+  Detects when multiple detections (rules, policies, scheduled rules) are disabled in a short period, 
+  which may indicate malicious insider activity, defense evasion, or sabotage. This rule monitors for 
+  UPDATE_DETECTION_STATE actions where the enabled field is set to false, aggregating events by actor 
+  to identify suspicious patterns of detection disabling.
+DedupPeriodMinutes: 60
+Threshold: 2
+Tags:
+  - demo
+  - mitre.ta0005.defense_evasion
+  - mitre.t1562.impair_defenses
+  - usecase.insider_threat_detection
+  - usecase.siem_integrity
+  - asset.detection_controls
+  - threat.insider
+  - impact.availability
+  - risk.high
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Defense Evasion: Impair Defenses
+    - TA0040:T1562  # Impact: Impair Defenses
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+Runbook: |
+  1. Immediately review the actor's recent activity for additional suspicious or destructive actions.
+  2. Identify which specific detections were disabled and assess the security impact.
+  3. Confirm if the disabling was authorized through proper change management processes.
+  4. If unauthorized, immediately:
+     - Disable the user's access to prevent further damage
+     - Re-enable the disabled detections if appropriate
+     - Begin incident response procedures
+     - Check for any malicious activities that may have occurred while detections were disabled.
+  5. Review audit logs for any other administrative changes by the same actor.
+SummaryAttributes:
+  - actor.name
+  - actor.attributes.email
+Tests:
+  - Name: Multiple detections disabled by same user (should alert)
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_DETECTION_STATE
+      actionResult: SUCCEEDED
+      actor:
+        id: user-123
+        name: compromised.user@company.com
+        attributes:
+          email: compromised.user@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: false
+                id: AWS.CloudTrail.Stopped.Demo
+              - enabled: false
+                id: AWS.IAM.BackdoorRole.Demo
+              - enabled: false
+                id: AWS.S3.MassExfiltration.Demo
+      sourceIP: "198.51.100.123"
+      timestamp: "2024-03-15T14:00:00Z"
+  - Name: Single detection disabled (should not trigger aggregation by itself)
+    ExpectedResult: true  
+    Log:
+      actionName: UPDATE_DETECTION_STATE
+      actionResult: SUCCEEDED
+      actor:
+        id: user-456
+        name: admin.user@company.com
+        attributes:
+          email: admin.user@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: false
+                id: AWS.Test.Rule
+      sourceIP: "10.0.1.100"
+      timestamp: "2024-03-15T15:00:00Z"
+  - Name: Detection enabled (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_DETECTION_STATE
+      actionResult: SUCCEEDED
+      actor:
+        id: user-789
+        name: security.admin@company.com
+        attributes:
+          email: security.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: true
+                id: AWS.CloudTrail.Stopped.Demo
+      sourceIP: "10.0.1.200"
+      timestamp: "2024-03-15T16:00:00Z"
+  - Name: Failed detection state update (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_DETECTION_STATE
+      actionResult: FAILED
+      actor:
+        id: user-999
+        name: failed.user@company.com
+        attributes:
+          email: failed.user@company.com
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: false
+                id: AWS.CloudTrail.Stopped.Demo
+      sourceIP: "10.0.1.300"
+      timestamp: "2024-03-15T17:00:00Z"

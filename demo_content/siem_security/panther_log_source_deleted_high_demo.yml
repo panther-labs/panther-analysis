@@ -9,11 +9,14 @@ Severity: High
 Description: >
   Detects when a log source is deleted in Panther. Deletion of log sources can result in loss of visibility and may indicate malicious or unauthorized configuration changes.
 Tags:
-  - panther
-  - resource.delete
-  - compliance.change_management
-  - impact.data_destruction
   - demo
+  - compliance.change_management
+  - mitre.ta0005.defense_evasion
+  - mitre.t1562.impair_defenses
+  - usecase.siem_integrity
+  - asset.logging_infrastructure
+  - impact.availability
+  - risk.high
 Tests:
   - Name: Log source deleted (positive)
     ExpectedResult: true
