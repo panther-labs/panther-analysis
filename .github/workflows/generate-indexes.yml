@@ -13,7 +13,7 @@ permissions:
 jobs:
   generate-indexes:
     runs-on: ubuntu-latest
-    if: github.repository == 'panther-labs/panther-analysis'
+    if: github.repository == 'panther-labs/panther-analysis' && github.actor != 'dependabot[bot]'
     permissions:
       id-token: write
       contents: write
