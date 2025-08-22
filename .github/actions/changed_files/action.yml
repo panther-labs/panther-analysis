@@ -9,7 +9,7 @@ runs:
   steps:
     - name: Retrieve changed files
       id: changed_files
-      uses: tj-actions/changed-files@d6babd6899969df1a11d14c368283ea4436bca78
+      uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
     - name: List affected files
       if: ${{ steps.changed_files.outputs.all_changed_files != '' }}
       run: |
