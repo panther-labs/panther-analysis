@@ -1,0 +1,85 @@
+schema: Custom.CsvConfig
+description: Catch-all schema for CSV config data
+parser:
+  csv:
+    delimiter: ','
+    hasHeader: true
+fields:
+  - name: ip_address
+    type: string
+    indicators:
+      - ip
+  - name: cidr
+    type: string
+    indicators:
+      - ip
+    validate:
+      cidr: any
+  - name: domain
+    type: string
+    indicators:
+      - domain
+  - name: hostname
+    type: string
+    indicators:
+      - hostname
+  - name: url
+    type: string
+    indicators:
+      - url
+  - name: hash
+    type: string
+    indicators:
+      - md5
+      - sha1
+      - sha256
+  - name: aws_arn
+    type: string
+    indicators:
+      - aws_arn
+  - name: aws_account_id
+    type: string
+    indicators:
+      - aws_account_id
+  - name: aws_instance_id
+    type: string
+    indicators:
+      - aws_instance_id
+  - name: aws_tag
+    type: string
+    indicators:
+      - aws_tag
+  - name: trace_id
+    type: string
+    indicators:
+      - trace_id
+  - name: username
+    type: string
+    indicators:
+      - username
+  - name: email
+    type: string
+    indicators:
+      - email
+  - name: net_address
+    type: string
+    indicators:
+      - net_addr
+  - name: mac_address
+    type: string
+    indicators:
+      - mac
+  - name: actor_id
+    type: string
+    indicators:
+      - actor_id
+  - name: serial_number
+    type: string
+    indicators:
+      - serial_number
+  - name: name
+    type: string
+  - name: description
+    type: string
+  - name: key
+    type: string
