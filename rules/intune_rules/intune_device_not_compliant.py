@@ -1,14 +1,39 @@
 from panther_base_helpers import deep_get
 
 
+ACTOR = OPERATION = ""
+
+
 def rule(event):
-    # Alert when the AlertType is "Managed Device Not Compliant"
-    return deep_get(event, "properties", "AlertType") == "Managed Device Not Compliant"
+    # pylint: disable=global-statement
+    global OPERATION
+
+    # Alert on DeviceManagementScript or DeviceHealthScript events
+    OPERATION = event.get("operationName", "")
+    return ("DeviceManagementScript" in OPERATION) or ("DeviceComplianceScript" in OPERATION)
 
 
 def title(event):
-    hostname = deep_get(event, "properties", "DeviceHostName", default="Unknown")
-    return f"InTune reports that the device [{hostname}] is not compliant"
+    # pylint: disable=global-statement
+    global ACTOR
+
+    # Simple title with the native Defender alert title
+    ACTOR = event.get("identity", "")
+
+    # The operation contains the action and the type of script
+    script_type = OPERATION.split(" ")[1]
+    if OPERATION.startswith("create"):
+        action = "created"
+    elif OPERATION.startswith("assign"):
+        action = "assigned"
+    elif OPERATION.startswith("delete"):
+        action = "deleted"
+    elif OPERATION.startswith("patched"):
+        action = "patched"
+    else:
+        action = "modified"
+
+    return f"INTUNE: [{ACTOR}] [{action}] an InTune [{script_type}] script"
 
 
 def alert_context(event):
@@ -17,6 +42,6 @@ def alert_context(event):
         "Operating System": deep_get(
             event, "properties", "DeviceOperatingSystem", default="Unknown"
         ),
-        "User": deep_get(event, "properties", "UserName", default="Unknown"),
+        "User": ACTOR,
         "Description": deep_get(event, "properties", "Description", default="Unknown"),
     }

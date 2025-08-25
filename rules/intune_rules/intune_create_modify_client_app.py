@@ -2,20 +2,29 @@ from base64 import b64decode
 
 from panther_base_helpers import deep_get
 
+ACTOR = OPERATION = ""
+
 
 def rule(event):
+    # pylint: disable=global-statement
+    global OPERATION
+
+    OPERATION = event.get("operationName", "")
+
     # Alert on creation or modification of mobile apps
-    return event.get("operationName").lower() in ["create mobileapp", "patch mobileapp"]
+    return OPERATION.lower() in ["create mobileapp", "patch mobileapp"]
 
 
 def title(event):
-    # Simple title with the native Defender alert title
-    user = event.get("identity", default="Unknown")
+    # pylint: disable=global-statement
+    global ACTOR
 
-    if event.get("operationName").lower().startswith("create"):
-        return f"An InTune mobile app was created by [{user}]"
+    ACTOR = event.get("identity", "")
 
-    return f"An InTune mobile app was modified by [{user}]"
+    if OPERATION.lower().startswith("create"):
+        return f"Intune: [{ACTOR or '<N/A>'}] created a new Intune mobile app."
+
+    return f"Intune: [{ACTOR or '<N/A>'}] modified an Intune mobile app"
 
 
 def alert_context(event):

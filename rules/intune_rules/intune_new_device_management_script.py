@@ -1,42 +1,45 @@
 from panther_base_helpers import deep_get
 
 
+ACTOR = OPERATION = ""
+
+
 def rule(event):
+    # pylint: disable=global-statement
+    global OPERATION
+
     # Alert on DeviceManagementScript or DeviceHealthScript events
-    operation = event.get("operationName")
-    return ("DeviceManagementScript" in operation) or ("DeviceComplianceScript" in operation)
+    OPERATION = event.get("operationName")
+    return ("DeviceManagementScript" in OPERATION) or ("DeviceComplianceScript" in OPERATION)
 
 
 def title(event):
-    # Simple title with the native Defender alert title
-    user = event.get("identity", default="Unknown")
-
-    # The operation contains the action and the type of script
-    operation = event.get("operationName", default="Unknown")
+    # pylint: disable=global-statement
+    global ACTOR
 
     # Retern a generic title if the operation is unknown
-    if operation == "Unknown":
-        return f"A change to InTune device management scripts was performed by [{user}]."
+    if OPERATION == "Unknown":
+        return f"A change to InTune device management scripts was performed by [{ACTOR}]."
 
     # The script type is the second word in the operation
-    script_type = operation.split(" ")[1]
-    if operation.startswith("create"):
+    script_type = OPERATION.split(" ")[1]
+    if OPERATION.startswith("create"):
         action = "created"
-    elif operation.startswith("assign"):
+    elif OPERATION.startswith("assign"):
         action = "assigned"
-    elif operation.startswith("delete"):
+    elif OPERATION.startswith("delete"):
         action = "deleted"
-    elif operation.startswith("patched"):
+    elif OPERATION.startswith("patched"):
         action = "patched"
     else:
         action = "unknown"
 
-    return f"An InTune device [{script_type}] script was [{action}] by [{user}]"
+    return f"An InTune device [{script_type}] script was [{action}] by [{ACTOR}]"
 
 
 def alert_context(event):
     return {
-        "Actor": event.get("identity", default="Unknown"),
-        "Operation": event.get("operationName", default="Unknown"),
+        "Actor": ACTOR,
+        "Operation": OPERATION,
         "Object IDs": deep_get(event, "properties", "TargetObjectIds", default="Unknown"),
     }
