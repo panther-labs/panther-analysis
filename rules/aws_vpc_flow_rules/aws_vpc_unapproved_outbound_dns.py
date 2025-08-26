@@ -23,6 +23,10 @@ def rule(event):
     if ip_network(source_ip).is_global:
         return False
 
+    dest_ip = event.udm("destination_ip") or "192.168.0.1/32"
+    if ip_network(dest_ip).is_private:
+        return False
+
     # No clean way to default to False (no alert), so explicitly check for key
     return (
         bool(event.udm("destination_ip"))
