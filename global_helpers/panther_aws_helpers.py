@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 import boto3
 from panther_base_helpers import deep_get, pantherflow_investigation
+from panther_core import PantherEvent
 
 
 class BadLookup(Exception):
@@ -172,12 +173,14 @@ def aws_regions() -> List[str]:
 
 def lookup_aws_account_name(account_id):
     """Lookup the AWS account name, return the ID if not found
-    Deprecated: this function remains for backwards compatibility
     Args:
         account_id (str): The AWS account ID
     Returns:
         str: The AWS account ID
     """
+    event = PantherEvent({})
+    if account_name := event.lookup("aws_account_names", account_id):
+        return f"{account_name} ({account_id})"
     return account_id
 
 
