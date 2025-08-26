@@ -6,39 +6,39 @@ Severity: Critical
 Description: Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
 Reference: https://docs.github.com/en/code-security/getting-started/auditing-security-alerts
 Detection:
-  - Sequence:
+  - Group:
       - ID: GHASChange
         RuleID: GitHub.Advanced.Security.Change
       - ID: RepoArchived
         RuleID: Github.Repo.Archived
         Absence: true
-    Transitions:
-      - ID: GHASChange NOT FOLLOWED BY RepoArchived
-        From: GHASChange
-        To: RepoArchived
-        WithinTimeFrameMinutes: 60
-        Match:
-          - On: p_alert_context.repo
-    LookbackWindowMinutes: 2160
+    MatchCriteria: 
+      field_name:
+      - GroupID: GHASChange
+        Match: p_alert_context.repo
+      - GroupID: RepoArchived
+        Match: p_alert_context.repo
+    EventEvaluationOrder: Chronological
+    LookbackWindowMinutes: 90
     Schedule:
-      RateMinutes: 1440
+      RateMinutes: 60
       TimeoutMinutes: 10
 Tests:
     - Name: Security Change on Repo, Followed By Same Repo Archived
       ExpectedResult: false
       RuleOutputs:
-        - ID: GHASChange
+        - ID: RepoArchived
           Matches:
             p_alert_context.repo:
               my-org/example-repo:
-                - "2024-06-01T10:00:00Z"
-        - ID: RepoArchived
+                - "2024-06-01T10:00:05Z"
+        - ID: GHASChange
           Matches:
             p_alert_context.repo:
               my-org/example-repo:
                 - "2024-06-01T10:00:01Z"
     - Name: Repo Archived followed by GHAS change on same repo
-      ExpectedResult: true
+      ExpectedResult: false
       RuleOutputs:
         - ID: RepoArchived
           Matches:
