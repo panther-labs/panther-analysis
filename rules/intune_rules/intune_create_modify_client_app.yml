@@ -1,0 +1,391 @@
+AnalysisType: rule
+Filename: intune_create_modify_client_app.py
+RuleID: "Intune.CreateModifyClientApp"
+DisplayName: "Intune Create or Modify Client App"
+Enabled: true
+LogTypes:
+  - MicrosoftIntune.AuditLogs
+Tags:
+  - InTune
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - "TA0002:T1072"
+    - "TA0008:T1021.007"
+    - "TA0005:T1202"
+Description: Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.
+Runbook: Review the actions taken to determine if they are legitimate changes by an administrator. Microsoft does not provide the IP address of the actor or hashes of the deployed applications. The Targets field will contain information on the deployed application to include names and parameters. Note that it is also possible for administrators to configure a PowerShell script to confirm an app is installed. This can also be abused to execute malicious code. If a script is configured, it will be present in base64 encoded form in the ModifiedProperties field.
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://www.ibm.com/think/x-force/detecting-intune-lateral-movement
+Tests:
+  - Name: Add Mobile App
+    ExpectedResult: true
+    Log:
+      {
+        "category": "AuditLogs",
+        "correlationId": "217da327-3767-4813-8f5f-af03ef38562a",
+        "identity": "testuser@test.com",
+        "operationName": "Create MobileApp",
+        "properties":
+          {
+            "ActivityDate": "4/11/2025 6:21:02 PM",
+            "ActivityResultStatus": 1,
+            "ActivityType": 0,
+            "Actor":
+              {
+                "ActorType": 1,
+                "Application": "5926fc8e-304e-4f59-8bed-58ca97cc39a4",
+                "ApplicationName": "Microsoft Intune portal extension",
+                "IsDelegatedAdmin": false,
+                "ObjectId": "3a4518e8-d287-47a1-967e-cfde068d12e9",
+                "PartnerTenantId": "00000000-0000-0000-0000-000000000000",
+                "UPN": "testuser@test.com",
+                "UserPermissions": ["*"],
+              },
+            "AdditionalDetails": "",
+            "AuditEventId": "ead98102-798e-474c-a3ae-2483eac30532",
+            "Category": 5,
+            "TargetDisplayNames": ["yubikey-manager-qt-1.2.6-win64.exe"],
+            "TargetObjectIds": ["22a27bc3-334d-400b-b428-a05911dc29c4"],
+            "Targets":
+              [
+                {
+                  "ModifiedProperties":
+                    [
+                      {
+                        "Name": "InstallCommandLine",
+                        "New": "yubikey-manager-qt-1.2.6-win64.exe /D \"C:\\Program Files\\Yubico\\YubiKey Manager\" /S",
+                      },
+                      {
+                        "Name": "UninstallCommandLine",
+                        "New": "ykman-uninstall.exe /D \"C:\\Program Files\\Yubico\\YubiKey Manager\" /S",
+                      },
+                      { "Name": "ApplicableArchitectures", "New": "X64" },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V8_0",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V8_1",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_0",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1607",
+                        "New": "True",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1703",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1709",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1803",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1809",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1903",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_1909",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_2004",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_2H20",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "MinimumSupportedOperatingSystem.V10_21H1",
+                        "New": "False",
+                      },
+                      { "Name": "MinimumFreeDiskSpaceInMB", "New": "<null>" },
+                      { "Name": "MinimumMemoryInMB", "New": "<null>" },
+                      { "Name": "MinimumNumberOfProcessors", "New": "<null>" },
+                      { "Name": "MinimumCpuSpeedInMHz", "New": "<null>" },
+                      {
+                        "Name": "InstallExperience.RunAsAccount",
+                        "New": "System",
+                      },
+                      {
+                        "Name": "InstallExperience.MaxRunTimeInMinutes",
+                        "New": "60",
+                      },
+                      {
+                        "Name": "InstallExperience.DeviceRestartBehavior",
+                        "New": "Allow",
+                      },
+                      {
+                        "Name": "SetupFilePath",
+                        "New": "yubikey-manager-qt-1.2.6-win64.exe",
+                      },
+                      {
+                        "Name": "MinimumSupportedWindowsRelease",
+                        "New": "1607",
+                      },
+                      { "Name": "DisplayVersion", "New": "" },
+                      { "Name": "AllowAvailableUninstall", "New": "True" },
+                      { "Name": "CommittedContentVersion", "New": "<null>" },
+                      {
+                        "Name": "FileName",
+                        "New": "yubikey-manager-qt-1.2.6-win64.intunewin",
+                      },
+                      { "Name": "Size", "New": "0" },
+                      {
+                        "Name": "Id",
+                        "New": "22a27bc3-334d-400b-b428-a05911dc29c4",
+                      },
+                      {
+                        "Name": "Description",
+                        "New": "yubikey-manager-qt-1.2.6-win64.exe",
+                      },
+                      { "Name": "Publisher", "New": "YubiCo" },
+                      {
+                        "Name": "CreatedDateTime",
+                        "New": "4/11/2025 6:21:02 PM",
+                      },
+                      {
+                        "Name": "LastModifiedDateTime",
+                        "New": "4/11/2025 6:21:02 PM",
+                      },
+                      { "Name": "IsFeatured", "New": "False" },
+                      { "Name": "PrivacyInformationUrl", "New": "" },
+                      { "Name": "InformationUrl", "New": "<null>" },
+                      { "Name": "Owner", "New": "" },
+                      { "Name": "Developer", "New": "" },
+                      { "Name": "Notes", "New": "" },
+                      { "Name": "UploadState", "New": "0" },
+                      { "Name": "PublishingState", "New": "NotPublished" },
+                      { "Name": "IsAssigned", "New": "False" },
+                      { "Name": "DependentAppCount", "New": "0" },
+                      { "Name": "SupersedingAppCount", "New": "0" },
+                      { "Name": "SupersededAppCount", "New": "0" },
+                      {
+                        "Name": "DeviceManagementAPIVersion",
+                        "New": "5025-01-29",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Check32BitOn64System[0]",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.DetectionType[0]",
+                        "New": "Exists",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.DetectionValue[0]",
+                        "New": "<null>",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.FileOrFolderName[0]",
+                        "New": "ykman-gui.exe",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Operator[0]",
+                        "New": "NotConfigured",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Path[0]",
+                        "New": "C:\\Program Files\\Yubico\\YubiKey Manager",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.ReturnCode[0]",
+                        "New": "0",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.ReturnCode[1]",
+                        "New": "1707",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.ReturnCode[2]",
+                        "New": "3010",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.ReturnCode[3]",
+                        "New": "1641",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.ReturnCode[4]",
+                        "New": "1618",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.Type[0]",
+                        "New": "Success",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.Type[1]",
+                        "New": "Success",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.Type[2]",
+                        "New": "SoftReboot",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.Type[3]",
+                        "New": "HardReboot",
+                      },
+                      {
+                        "Name": "$Collection.ReturnCodes.Type[4]",
+                        "New": "Retry",
+                      },
+                      {
+                        "Name": "$Collection.Rules.Check32BitOn64System[0]",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "$Collection.Rules.ComparisonValue[0]",
+                        "New": "<null>",
+                      },
+                      {
+                        "Name": "$Collection.Rules.FileOrFolderName[0]",
+                        "New": "ykman-gui.exe",
+                      },
+                      {
+                        "Name": "$Collection.Rules.OperationType[0]",
+                        "New": "Exists",
+                      },
+                      {
+                        "Name": "$Collection.Rules.Operator[0]",
+                        "New": "NotConfigured",
+                      },
+                      {
+                        "Name": "$Collection.Rules.Path[0]",
+                        "New": "C:\\Program Files\\Yubico\\YubiKey Manager",
+                      },
+                      {
+                        "Name": "$Collection.Rules.RuleType[0]",
+                        "New": "Detection",
+                      },
+                    ],
+                  "Name": "yubikey-manager-qt-1.2.6-win64.exe",
+                },
+              ],
+          },
+        "resultDescription": "None",
+        "resultType": "Success",
+        "tenantId": "11111111-2222-3333-44444-555555555555",
+        "time": "2025-04-11:21:02.3387000Z",
+      }
+  - Name: Mobile app edited to include PowerShell
+    ExpectedResult: true
+    Log:
+      {
+        "category": "AuditLogs",
+        "correlationId": "729bb97b-641a-4da9-b7f0-49cdfd33552b",
+        "identity": "testuser@test.com",
+        "operationName": "Patch MobileApp",
+        "properties":
+          {
+            "ActivityDate": "4/25/2025 12:44:00 AM",
+            "ActivityResultStatus": 1,
+            "ActivityType": 2,
+            "Actor":
+              {
+                "ActorType": 1,
+                "Application": "5926fc8e-304e-4f59-8bed-58ca97cc39a4",
+                "ApplicationName": "Microsoft Intune portal extension",
+                "IsDelegatedAdmin": false,
+                "ObjectId": "5774e54b-f2ad-41f8-a2d5-4bc356342fa6",
+                "PartnerTenantId": "00000000-0000-0000-0000-000000000000",
+                "UPN": "testuser@test.com",
+                "UserPermissions": ["*"],
+              },
+            "AdditionalDetails": "",
+            "AuditEventId": "ef69082e-23d7-428a-9c74-0f2cacad2572",
+            "Category": 5,
+            "TargetDisplayNames": ["yubikey-manager-qt-1.2.6-win64.exe"],
+            "TargetObjectIds": ["22a27bc3-334d-400b-b428-a05911dc29c4"],
+            "Targets":
+              [
+                {
+                  "ModifiedProperties":
+                    [
+                      {
+                        "Name": "DeviceManagementAPIVersion",
+                        "New": "5025-01-29",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Check32BitOn64System[0]",
+                        "Old": "False",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.DetectionType[0]",
+                        "Old": "Exists",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.DetectionValue[0]",
+                        "Old": "<null>",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.FileOrFolderName[0]",
+                        "Old": "ykman-gui.exe",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Operator[0]",
+                        "Old": "NotConfigured",
+                      },
+                      {
+                        "Name": "$Collection.DetectionRules.Path[0]",
+                        "Old": "C:\\Program Files\\Yubico\\YubiKey Manager",
+                      },
+                      {
+                        "Name": "$Collection.Rules.Check32BitOn64System[0]",
+                        "Old": "False",
+                      },
+                      {
+                        "Name": "$Collection.Rules.DisplayName[0]",
+                        "New": "<null>",
+                      },
+                      {
+                        "Name": "$Collection.Rules.EnforceSignatureCheck[0]",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "$Collection.Rules.FileOrFolderName[0]",
+                        "Old": "ykman-gui.exe",
+                      },
+                      {
+                        "Name": "$Collection.Rules.OperationType[0]",
+                        "New": "NotConfigured",
+                      },
+                      {
+                        "Name": "$Collection.Rules.OperationType[1]",
+                        "Old": "Exists",
+                      },
+                      {
+                        "Name": "$Collection.Rules.Path[0]",
+                        "Old": "C:\\Program Files\\Yubico\\YubiKey Manager",
+                      },
+                      {
+                        "Name": "$Collection.Rules.RunAs32Bit[0]",
+                        "New": "False",
+                      },
+                      {
+                        "Name": "$Collection.Rules.ScriptContent[0]",
+                        "New": "V3JpdGUtT3V0cHV0ICJ0ZXN0Ig==",
+                      },
+                    ],
+                  "Name": "yubikey-manager-qt-1.2.6-win64.exe",
+                },
+              ],
+          },
+        "resultDescription": "None",
+        "resultType": "Success",
+        "tenantId": "11111111-2222-3333-4444-55555555555",
+        "time": "2025-04-25T00:44:00.4679000Z",
+      }
