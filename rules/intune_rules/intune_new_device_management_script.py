@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 ACTOR = OPERATION = ""
 
 
@@ -13,16 +10,21 @@ def rule(event):
     return ("DeviceManagementScript" in OPERATION) or ("DeviceComplianceScript" in OPERATION)
 
 
-def title(event):
+def title(_):
     # pylint: disable=global-statement
     global ACTOR
 
-    # Retern a generic title if the operation is unknown
+    # Return a generic title if the operation is unknown
     if OPERATION == "Unknown":
         return f"A change to InTune device management scripts was performed by [{ACTOR}]."
 
     # The script type is the second word in the operation
-    script_type = OPERATION.split(" ")[1]
+    script_type_parts = OPERATION.split(" ")
+    if len(script_type_parts) > 1:
+        script_type = script_type_parts[1]
+    else:
+        script_type = "Unknown"
+
     if OPERATION.startswith("create"):
         action = "created"
     elif OPERATION.startswith("assign"):
@@ -41,5 +43,5 @@ def alert_context(event):
     return {
         "Actor": ACTOR,
         "Operation": OPERATION,
-        "Object IDs": deep_get(event, "properties", "TargetObjectIds", default="Unknown"),
+        "Object IDs": event.deep_get("properties", "TargetObjectIds", default="Unknown"),
     }

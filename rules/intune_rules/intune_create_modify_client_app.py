@@ -1,7 +1,5 @@
 from base64 import b64decode
 
-from panther_base_helpers import deep_get
-
 ACTOR = OPERATION = ""
 
 
@@ -32,14 +30,14 @@ def alert_context(event):
     context = {
         "Actor": event.get("identity", default="Unknown"),
         "Operation": event.get("operationName", default="Unknown"),
-        "Deployed App(s)": deep_get(event, "properties", "TargetDisplayNames", default="Unknown"),
+        "Deployed App(s)": event.deep_get("properties", "TargetDisplayNames", default="Unknown"),
     }
 
     # Intune allows administrators to write PowerShell scripts to verify an app is properly
     # installed. These scripts can be used for malicious purposes. If a new script is added,
     # it will be in a ModifiedProperty section for hte given app, and will be base64 encoded
     scripts = []
-    targets = deep_get(event, "properties", "Targets")
+    targets = event.deep_get("properties", "Targets")
     for target in targets:
         for prop in target["ModifiedProperties"]:
             if "Collection.Rules.ScriptContent" in prop.get("Name") and prop.get("New"):

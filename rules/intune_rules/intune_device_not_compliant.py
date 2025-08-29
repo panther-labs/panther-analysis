@@ -1,6 +1,3 @@
-from panther_base_helpers import deep_get
-
-
 ACTOR = OPERATION = ""
 
 
@@ -20,8 +17,13 @@ def title(event):
     # Simple title with the native Defender alert title
     ACTOR = event.get("identity", "")
 
-    # The operation contains the action and the type of script
-    script_type = OPERATION.split(" ")[1]
+    # The script type is the second word in the operation
+    script_type_parts = OPERATION.split(" ")
+    if len(script_type_parts) > 1:
+        script_type = script_type_parts[1]
+    else:
+        script_type = "Unknown"
+
     if OPERATION.startswith("create"):
         action = "created"
     elif OPERATION.startswith("assign"):
@@ -38,10 +40,10 @@ def title(event):
 
 def alert_context(event):
     return {
-        "Hostname": deep_get(event, "properties", "DeviceHostName", default="Unknown"),
-        "Operating System": deep_get(
-            event, "properties", "DeviceOperatingSystem", default="Unknown"
+        "Hostname": event.deep_get("properties", "DeviceHostName", default="Unknown"),
+        "Operating System": event.deep_get(
+            "properties", "DeviceOperatingSystem", default="Unknown"
         ),
         "User": ACTOR,
-        "Description": deep_get(event, "properties", "Description", default="Unknown"),
+        "Description": event.deep_get("properties", "Description", default="Unknown"),
     }
