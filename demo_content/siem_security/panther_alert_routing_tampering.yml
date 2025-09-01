@@ -1,0 +1,228 @@
+AnalysisType: rule
+Filename: panther_alert_routing_tampering.py
+RuleID: "Panther.AlertRoutingTampering"
+LogTypes:
+  - Panther.Audit
+Severity: Medium
+Enabled: true
+CreateAlert: true
+DisplayName: Suspicious Alert Destination Severity Routing
+Description: >
+  Detects potentially suspicious changes to alert destination severity routing that could 
+  indicate an attempt to hide critical security alerts. Triggers when alert destinations 
+  are configured to only receive low-priority alerts (INFO/LOW severity), which may be 
+  an attempt to bypass critical security monitoring or reduce alert visibility.
+DedupPeriodMinutes: 60
+Tags:
+  - demo
+  - mitre.ta0005.defense_evasion
+  - mitre.t1562.impair_defenses
+  - usecase.insider_threat_detection
+  - usecase.siem_integrity
+  - usecase.alert_management
+  - asset.detection_controls
+  - asset.notification_systems
+  - threat.insider
+  - threat.administrative_abuse
+  - impact.availability
+  - impact.integrity
+  - risk.medium
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Defense Evasion: Impair Defenses
+Reference: https://docs.panther.com/system-configuration/destinations
+Runbook: >
+  1. Verify the legitimacy of the alert destination configuration change
+  2. Check if the user had authorization to make severity routing changes
+  3. Ensure critical and high severity alerts are still being routed to appropriate destinations
+  4. Review other recent administrative actions by the same user
+  5. Confirm that security monitoring coverage has not been compromised
+Tests:
+  - Name: Alert destination set to only INFO severity
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-suspicious
+        name: suspicious.admin@company.com
+        attributes:
+          email: suspicious.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE", "RULE_ERROR", "SCHEDULED_RULE", "SCHEDULED_RULE_ERROR", "POLICY", "SYSTEM_ERROR"]
+            defaultForSeverity: ["INFO"]
+            displayName: "#security-alerts"
+            logTypes: []
+            outputConfig:
+              slackBot:
+                channel: "C1234567890"
+                botToken: "(redacted)"
+            outputId: "alert-dest-123"
+            outputType: "slackbot"
+      sourceIP: "203.0.113.100"
+      timestamp: "2025-08-29T15:30:00Z"
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+  
+  - Name: Alert destination set to only LOW severity
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-insider
+        name: insider.threat@company.com
+        attributes:
+          email: insider.threat@company.com
+          roleName: SecurityAnalyst
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE", "POLICY"]
+            defaultForSeverity: ["LOW"]
+            displayName: "Low Priority Alerts"
+            logTypes: ["AWS.CloudTrail"]
+            outputConfig:
+              email:
+                destinationAddress: "low-priority@company.com"
+            outputId: "low-alerts-456"
+            outputType: "email"
+      sourceIP: "192.168.1.100"
+      timestamp: "2025-08-29T11:15:00Z"
+      userAgent: "curl/7.68.0"
+  
+  - Name: Alert destination set to INFO and LOW only
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-malicious
+        name: malicious.user@company.com
+        attributes:
+          email: malicious.user@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE", "SCHEDULED_RULE", "POLICY"]
+            defaultForSeverity: ["INFO", "LOW"]
+            displayName: "#non-critical-alerts"
+            logTypes: []
+            outputConfig:
+              slackBot:
+                channel: "C0987654321"
+                botToken: "(redacted)"
+            outputId: "non-critical-789"
+            outputType: "slackbot"
+      sourceIP: "198.51.100.150"
+      timestamp: "2025-08-29T08:45:00Z"
+  
+  - Name: Alert destination includes MEDIUM severity (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-legitimate
+        name: security.admin@company.com
+        attributes:
+          email: security.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE", "POLICY"]
+            defaultForSeverity: ["INFO", "LOW", "MEDIUM"]
+            displayName: "#security-notifications"
+            logTypes: []
+            outputConfig:
+              slackBot:
+                channel: "C1122334455"
+                botToken: "(redacted)"
+            outputId: "security-notif-101"
+            outputType: "slackbot"
+      sourceIP: "10.0.1.50"
+      timestamp: "2025-08-29T14:20:00Z"
+  
+  - Name: Alert destination includes HIGH severity (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-authorized
+        name: authorized.admin@company.com
+        attributes:
+          email: authorized.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE", "SCHEDULED_RULE"]
+            defaultForSeverity: ["HIGH", "CRITICAL"]
+            displayName: "#critical-alerts"
+            logTypes: []
+            outputConfig:
+              pagerDuty:
+                integrationKey: "(redacted)"
+            outputId: "critical-pd-202"
+            outputType: "pagerduty"
+      sourceIP: "10.0.1.75"
+      timestamp: "2025-08-29T16:10:00Z"
+  
+  - Name: Failed alert destination update (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_ALERT_DESTINATION
+      actionResult: FAILED
+      actor:
+        id: user-blocked
+        name: blocked.user@company.com
+        attributes:
+          email: blocked.user@company.com
+          roleName: Analyst
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE"]
+            defaultForSeverity: ["INFO"]
+            displayName: "#blocked-change"
+            logTypes: []
+            outputConfig:
+              slackBot:
+                channel: "C9999999999"
+                botToken: "(redacted)"
+            outputId: "blocked-303"
+            outputType: "slackbot"
+      sourceIP: "203.0.113.200"
+      timestamp: "2025-08-29T13:00:00Z"
+  
+  - Name: Different action type (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: CREATE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-normal
+        name: analyst@company.com
+        attributes:
+          email: analyst@company.com
+          roleName: SecurityAnalyst
+      actionParams:
+        dynamic:
+          input:
+            alertTypes: ["RULE"]
+            defaultForSeverity: ["INFO"]
+            displayName: "#new-destination"
+            logTypes: []
+            outputConfig:
+              slackBot:
+                channel: "C5555555555"
+                botToken: "(redacted)"
+            outputId: "new-dest-404"
+            outputType: "slackbot"
+      sourceIP: "10.0.1.100"
+      timestamp: "2025-08-29T12:30:00Z"

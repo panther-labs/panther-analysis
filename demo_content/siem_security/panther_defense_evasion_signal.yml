@@ -1,0 +1,193 @@
+AnalysisType: rule
+Filename: panther_defense_evasion_signal.py
+RuleID: "Panther.DefenseEvasionSignal"
+LogTypes:
+  - Panther.Audit
+Severity: Info
+Enabled: true
+CreateAlert: false
+DisplayName: Panther Defense Evasion Signal
+Description: >
+  Signal that tags critical administrative actions in Panther for correlation and investigation.
+  Monitors high-risk actions including detection deletion/disabling, log source tampering, alert 
+  destination changes, user management, and system configuration modifications that could be 
+  used for defense evasion or compromise security monitoring capabilities when occurring in patterns.
+DedupPeriodMinutes: 15
+Tags:
+  - demo
+  - mitre.ta0005.defense_evasion
+  - mitre.t1562.impair_defenses
+  - mitre.t1070.indicator_removal
+  - usecase.insider_threat_detection
+  - usecase.siem_integrity
+  - usecase.privileged_access_monitoring
+  - asset.detection_controls
+  - asset.logging_infrastructure
+  - asset.authentication_systems
+  - threat.insider
+  - threat.administrative_abuse
+  - impact.availability
+  - impact.integrity
+  - risk.critical
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Defense Evasion: Impair Defenses
+    - TA0005:T1070  # Defense Evasion: Indicator Removal
+    - TA0040:T1485  # Impact: Data Destruction
+    - TA0003:T1078  # Persistence: Valid Accounts
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+Tests:
+  - Name: Detection deletion (critical severity)
+    ExpectedResult: true
+    Log:
+      actionName: DELETE_DETECTION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-malicious
+        name: insider.threat@company.com
+        attributes:
+          email: insider.threat@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detectionId: AWS.CloudTrail.RootLogin.Demo
+      sourceIP: "198.51.100.1"
+      timestamp: "2025-08-29T14:30:00Z"
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X)"
+  
+  - Name: Multiple detections disabled (high severity)
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_DETECTION_STATE
+      actionResult: SUCCEEDED
+      actor:
+        id: user-compromised
+        name: compromised.admin@company.com
+        attributes:
+          email: compromised.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: false
+                id: AWS.CloudTrail.Stopped.Demo
+              - enabled: false
+                id: AWS.IAM.BackdoorRole.Demo
+              - enabled: false
+                id: AWS.S3.MassExfiltration.Demo
+      sourceIP: "203.0.113.50"
+      timestamp: "2025-08-29T02:15:00Z"
+      userAgent: "curl/7.68.0"
+  
+  - Name: Log source deleted (critical severity)
+    ExpectedResult: true
+    Log:
+      actionName: DELETE_LOG_SOURCE
+      actionResult: SUCCEEDED
+      actor:
+        id: user-rogue
+        name: rogue.admin@company.com
+        attributes:
+          email: rogue.admin@company.com
+          roleName: SecurityAnalyst
+      actionParams:
+        dynamic:
+          input:
+            integrationId: aws-cloudtrail-production
+            logTypes:
+              - AWS.CloudTrail
+      sourceIP: "192.0.2.100"
+      timestamp: "2025-08-29T18:45:00Z"
+  
+  - Name: Alert destination deleted (critical severity)
+    ExpectedResult: true
+    Log:
+      actionName: DELETE_ALERT_DESTINATION
+      actionResult: SUCCEEDED
+      actor:
+        id: user-attacker
+        name: attacker@evil.com
+        attributes:
+          email: attacker@evil.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            outputId: critical-alerts-slack-channel
+            displayName: Critical Security Alerts
+            outputType: slackbot
+      sourceIP: "198.51.100.200"
+      timestamp: "2025-08-29T03:22:00Z"
+  
+  - Name: SAML settings modified (critical severity)
+    ExpectedResult: true
+    Log:
+      actionName: UPDATE_SAML_SETTINGS
+      actionResult: SUCCEEDED
+      actor:
+        id: user-insider
+        name: malicious.insider@company.com
+        attributes:
+          email: malicious.insider@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            enabled: false
+            requireSignedAssertions: false
+      sourceIP: "203.0.113.150"
+      timestamp: "2025-08-29T01:30:00Z"
+  
+  - Name: Single detection enabled (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: UPDATE_DETECTION_STATE  
+      actionResult: SUCCEEDED
+      actor:
+        id: user-legitimate
+        name: security.admin@company.com
+        attributes:
+          email: security.admin@company.com
+          roleName: Admin
+      actionParams:
+        dynamic:
+          input:
+            detections:
+              - enabled: true
+                id: AWS.NewRule.Test
+      sourceIP: "10.0.1.100"
+      timestamp: "2025-08-29T10:00:00Z"
+  
+  - Name: Failed critical action (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: DELETE_DETECTION
+      actionResult: FAILED
+      actor:
+        id: user-blocked
+        name: blocked.user@company.com
+        attributes:
+          email: blocked.user@company.com
+          roleName: Analyst
+      actionParams:
+        dynamic:
+          input:
+            detectionId: AWS.CloudTrail.Protected.Rule
+      sourceIP: "198.51.100.50"
+      timestamp: "2025-08-29T11:00:00Z"
+  
+  - Name: Non-critical action (should not alert)
+    ExpectedResult: false
+    Log:
+      actionName: LIST_DETECTIONS
+      actionResult: SUCCEEDED
+      actor:
+        id: user-normal
+        name: analyst@company.com
+        attributes:
+          email: analyst@company.com
+          roleName: Analyst
+      sourceIP: "10.0.1.200"
+      timestamp: "2025-08-29T12:00:00Z"
