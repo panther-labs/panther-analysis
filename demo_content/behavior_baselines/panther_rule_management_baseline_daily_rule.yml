@@ -1,0 +1,59 @@
+AnalysisType: scheduled_rule
+Description: >
+  Generates structured rule management pattern summaries by analyzing Panther detection
+  rule modifications, bulk operations, and administrative activities. Provides pre-processed
+  rule management intelligence including defense evasion indicators, bulk operation tracking,
+  and behavioral patterns for AI-driven SIEM integrity monitoring and defense evasion detection.
+DisplayName: Rule Management Baseline Summary (Daily)
+Enabled: true
+Filename: panther_rule_management_baseline_daily.py
+RuleID: Demo.AI.RuleManagementBaseline.Daily
+Severity: Info
+ScheduledQueries:
+  - Panther Detection Rule Management Baseline Daily
+Tags:
+  - AI-Optimized
+  - Rule-Management
+  - Defense-Evasion-Detection
+  - SIEM-Integrity
+  - Structured-Data
+  - Demo
+  - Scheduled
+  - Behavior-Baselines
+Reports:
+  MITRE ATT&CK:
+    - "TA0005:T1562"    # Defense Evasion: Impair Defenses
+    - "TA0040:T1562"    # Impact: Impair Defenses
+Tests:
+  - Name: Always triggers for demonstration
+    ExpectedResult: true
+    Log:
+      time_window: "2024-03-15 00:00:00"
+      actor_id: "PantherSSO_admin.user@company.com"
+      actor_name: "admin.user@company.com" 
+      actor_email: "admin.user@company.com"
+      actor_role: "Admin"
+      total_rule_operations: 5
+      rule_state_changes: 3
+      rules_created: 1
+      rules_deleted: 0
+      rules_modified: 1
+      total_detections_affected: 8
+      total_rules_disabled: 3
+      bulk_operations: 1
+      max_rules_per_operation: 3
+      avg_rules_per_operation: 1.6
+      unique_source_ips: 1
+      source_ip_list: ["203.0.113.100"]
+      unique_user_agents: 1
+      max_event_risk: 6.0
+      avg_event_risk: 3.2
+      total_risk_score: 16.0
+      first_rule_operation: "2024-03-15T14:00:00Z"
+      last_rule_operation: "2024-03-15T14:30:00Z"
+      off_hours_operations: 0
+      evening_operations: 0
+      unique_rules_affected: 8
+      all_rules_affected: ["AWS.CloudTrail.Stopped.Demo", "AWS.IAM.BackdoorRole.Demo", "AWS.S3.MassExfiltration.Demo"]
+      defense_evasion_indicators: ["multiple_bulk_operations"]
+      activity_classification: "normal_administrative_activity"

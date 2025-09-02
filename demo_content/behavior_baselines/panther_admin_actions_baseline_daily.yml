@@ -1,0 +1,196 @@
+AnalysisType: scheduled_query
+QueryName: "Panther Administrative Actions Baseline Daily"
+Enabled: true
+Description: >
+  Daily aggregation of Panther administrative activities into structured behavioral baselines.
+  Tracks normal patterns of SIEM administrative actions including destination management,
+  user administration, API token management, and configuration changes. Essential for detecting
+  administrative account compromise, privilege escalation, and lateral movement into SIEM platforms.
+Tags:
+  - AI-Optimized
+  - Administrative-Actions
+  - Behavior-Baselines
+  - Privilege-Escalation-Detection
+  - SIEM-Security
+  - Structured-Data
+Query: |
+  WITH admin_events AS (
+    SELECT 
+      DATE_TRUNC('day', p_event_time) as time_window,
+      p_event_time,
+      actionName,
+      actionResult,
+      actor:id as actor_id,
+      actor:name as actor_name,
+      COALESCE(actor:attributes:email, 'unknown') as actor_email,
+      COALESCE(actor:attributes:roleName, 'unknown') as actor_role,
+      sourceIP,
+      userAgent,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      -- Categorize administrative operations (based on actual Panther action names)
+      CASE 
+        WHEN actionName IN ('CREATE_DESTINATION', 'UPDATE_DESTINATION', 'DELETE_DESTINATION', 'LIST_ALERT_DESTINATIONS') THEN 'destination_management'
+        WHEN actionName IN ('CREATE_USER', 'UPDATE_USER', 'DELETE_USER', 'INVITE_USER', 'LIST_USERS', 'GET_USER', 'GET_USER_PREFERENCES', 'LIST_USER_ROLES') THEN 'user_management'
+        WHEN actionName IN ('CREATE_ROLE', 'UPDATE_ROLE', 'DELETE_ROLE', 'ASSIGN_ROLE') THEN 'role_management'
+        WHEN actionName IN ('CREATE_API_TOKEN', 'UPDATE_API_TOKEN', 'DELETE_API_TOKEN', 'LIST_API_TOKENS', 'PUBLIC_API_GET_API_TOKEN', 'PUBLIC_API_LIST_USERS', 'PUBLIC_API_GET_USER', 'PUBLIC_API_GET_USER_ROLE') THEN 'api_token_management'
+        WHEN actionName IN ('UPDATE_GENERAL_SETTINGS', 'GET_GENERAL_SETTINGS', 'UPDATE_LOG_RETENTION', 'UPDATE_ALERT_RETENTION', 'GET_UNIVERSAL_SETTINGS') THEN 'system_configuration'
+        WHEN actionName IN ('CREATE_LOG_SOURCE', 'UPDATE_LOG_SOURCE', 'DELETE_LOG_SOURCE', 'LIST_LOG_SOURCES', 'GET_LOG_SOURCE') THEN 'log_source_management'
+        WHEN actionName IN ('GET_SAML_SETTINGS', 'UPDATE_SAML_SETTINGS') OR actionName LIKE '%SSO%' THEN 'identity_configuration'
+        WHEN actionName IN ('GET_NOTIFICATIONS', 'GET_ORGANIZATION_METRICS', 'GET_ALERT_METRIC_DATA', 'LIST_DASHBOARDS') THEN 'monitoring_operations'
+        WHEN actionName IN ('GET_UBER_SEARCH', 'GENERATE_SIMPLE_SEARCH_QUERY', 'EXECUTE_DATA_LAKE_QUERY', 'GET_DATA_LAKE_QUERY') THEN 'data_analysis'
+        WHEN actionName IN ('GET_ALERT', 'LIST_ALERTS') THEN 'alert_management'
+        WHEN actionName IN ('GET_RULE', 'GET_APP_CONFIG') THEN 'detection_management'
+        WHEN actionName = 'AI_INFERENCE_STREAM' THEN 'ai_operations'
+        ELSE 'other_admin_action'
+      END as operation_category,
+      -- Risk scoring per event
+      CASE 
+        WHEN actionResult = 'FAILED' THEN 2.0
+        WHEN actionName = 'DELETE_DESTINATION' THEN 8.0
+        WHEN actionName = 'UPDATE_DESTINATION' THEN 6.0
+        WHEN actionName = 'DELETE_USER' THEN 7.0
+        WHEN actionName = 'CREATE_API_TOKEN' THEN 5.0
+        WHEN actionName = 'DELETE_API_TOKEN' THEN 3.0
+        WHEN actionName = 'UPDATE_GENERAL_SETTINGS' THEN 6.0
+        WHEN actionName = 'UPDATE_LOG_RETENTION' THEN 7.0
+        WHEN actionName LIKE '%SAML%' OR actionName LIKE '%SSO%' THEN 8.0
+        WHEN actionName = 'CREATE_USER' OR actionName = 'INVITE_USER' THEN 4.0
+        WHEN actionName = 'UPDATE_USER' THEN 3.0
+        WHEN actionName = 'CREATE_DESTINATION' THEN 2.0
+        ELSE 1.0
+      END as event_risk_score
+    FROM panther_logs.public.panther_audit
+    WHERE p_occurs_since('1d')
+      AND actionName NOT IN ('UPDATE_DETECTION_STATE', 'CREATE_DETECTION', 'DELETE_DETECTION', 'UPDATE_DETECTION')
+      AND actionName NOT LIKE '%LOGIN%'
+      AND actionResult = 'SUCCEEDED'
+  ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      actionName,
+      actionResult,
+      actor_id,
+      actor_name,
+      actor_email,
+      actor_role,
+      sourceIP,
+      userAgent,
+      operation_category,
+      event_risk_score,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator
+    FROM admin_events,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email
+  ),
+  actor_admin_analysis AS (
+    SELECT 
+      time_window,
+      actor_id,
+      actor_name,
+      actor_email,
+      actor_role,
+      -- Activity Metrics by Category
+      COUNT(*) as total_admin_operations,
+      COUNT(CASE WHEN operation_category = 'destination_management' THEN 1 END) as destination_operations,
+      COUNT(CASE WHEN operation_category = 'user_management' THEN 1 END) as user_management_operations,
+      COUNT(CASE WHEN operation_category = 'role_management' THEN 1 END) as role_management_operations,
+      COUNT(CASE WHEN operation_category = 'api_token_management' THEN 1 END) as api_token_operations,
+      COUNT(CASE WHEN operation_category = 'system_configuration' THEN 1 END) as system_config_operations,
+      COUNT(CASE WHEN operation_category = 'log_source_management' THEN 1 END) as log_source_operations,
+      COUNT(CASE WHEN operation_category = 'identity_configuration' THEN 1 END) as identity_config_operations,
+      COUNT(CASE WHEN operation_category = 'monitoring_operations' THEN 1 END) as monitoring_operations,
+      COUNT(CASE WHEN operation_category = 'data_analysis' THEN 1 END) as data_analysis_operations,
+      COUNT(CASE WHEN operation_category = 'alert_management' THEN 1 END) as alert_management_operations,
+      COUNT(CASE WHEN operation_category = 'detection_management' THEN 1 END) as detection_management_operations,
+      COUNT(CASE WHEN operation_category = 'ai_operations' THEN 1 END) as ai_operations,
+      -- High-Risk Activity Analysis
+      COUNT(CASE WHEN actionName = 'DELETE_DESTINATION' THEN 1 END) as destinations_deleted,
+      COUNT(CASE WHEN actionName = 'UPDATE_DESTINATION' THEN 1 END) as destinations_modified,
+      COUNT(CASE WHEN actionName = 'DELETE_USER' THEN 1 END) as users_deleted,
+      COUNT(CASE WHEN actionName LIKE '%API_TOKEN%' THEN 1 END) as api_token_actions,
+      -- Geographic and Network Analysis
+      COUNT(DISTINCT sourceIP) as unique_source_ips,
+      ARRAY_AGG(DISTINCT sourceIP) as source_ip_list,
+      COUNT(DISTINCT userAgent) as unique_user_agents,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      -- Risk Assessment
+      MAX(event_risk_score) as max_event_risk,
+      AVG(event_risk_score) as avg_event_risk,
+      SUM(event_risk_score) as total_risk_score,
+      -- Timeline Analysis
+      MIN(p_event_time) as first_admin_operation,
+      MAX(p_event_time) as last_admin_operation,
+      COUNT(CASE WHEN EXTRACT(hour FROM p_event_time) BETWEEN 4 AND 14 THEN 1 END) as off_hours_operations
+    FROM flattened_indicators
+    GROUP BY time_window, actor_id, actor_name, actor_email, actor_role
+  )
+  SELECT 
+    time_window,
+    actor_id,
+    actor_name,
+    actor_email,
+    actor_role,
+    total_admin_operations,
+    destination_operations,
+    user_management_operations,
+    role_management_operations,
+    api_token_operations,
+    system_config_operations,
+    log_source_operations,
+    identity_config_operations,
+    monitoring_operations,
+    data_analysis_operations,
+    alert_management_operations,
+    detection_management_operations,
+    ai_operations,
+    destinations_deleted,
+    destinations_modified,
+    users_deleted,
+    api_token_actions,
+    unique_source_ips,
+    source_ip_list,
+    unique_user_agents,
+    -- Panther indicator fields for enhanced threat hunting
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    ROUND(max_event_risk, 1) as max_event_risk,
+    ROUND(avg_event_risk, 1) as avg_event_risk,
+    ROUND(total_risk_score, 1) as total_risk_score,
+    first_admin_operation,
+    last_admin_operation,
+    off_hours_operations,
+    -- Administrative Compromise Indicators
+    ARRAY_CONSTRUCT_COMPACT(
+      CASE WHEN destinations_deleted > 0 THEN 'alert_suppression_activity' END,
+      CASE WHEN api_token_actions >= 3 THEN 'extensive_api_token_activity' END,
+      CASE WHEN users_deleted > 0 THEN 'user_deletion_activity' END,
+      CASE WHEN unique_source_ips > 2 THEN 'multiple_source_locations' END,
+      CASE WHEN off_hours_operations > 0 THEN 'off_hours_administrative_activity' END,
+      CASE WHEN total_risk_score > 20.0 THEN 'high_cumulative_risk' END
+    ) as compromise_indicators,
+    -- Activity Classification
+    CASE
+      WHEN destinations_deleted > 0 AND users_deleted > 0 THEN 'potential_siem_takeover'
+      WHEN destinations_modified >= 2 AND off_hours_operations > 0 THEN 'suspicious_alert_routing_changes'
+      WHEN api_token_actions >= 3 AND unique_source_ips > 1 THEN 'distributed_programmatic_access'
+      WHEN total_admin_operations >= 15 THEN 'high_volume_administrative_activity'
+      ELSE 'normal_administrative_activity'
+    END as activity_classification
+  FROM actor_admin_analysis
+  WHERE total_risk_score > 2.0
+  ORDER BY total_risk_score DESC, destinations_deleted DESC
+Schedule:
+  RateMinutes: 1440  # Daily execution
+  TimeoutMinutes: 10

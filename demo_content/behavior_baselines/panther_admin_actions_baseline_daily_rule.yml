@@ -1,0 +1,63 @@
+AnalysisType: scheduled_rule
+Description: >
+  Generates structured administrative activity summaries by analyzing Panther SIEM
+  administrative actions including destination management, user administration, API token
+  management, and configuration changes. Provides pre-processed administrative intelligence
+  for SIEM compromise detection, privilege escalation monitoring, and lateral movement analysis.
+DisplayName: Administrative Actions Baseline Summary (Daily)
+Enabled: true
+Filename: panther_admin_actions_baseline_daily.py
+RuleID: Demo.AI.AdminActionsBaseline.Daily
+Severity: Info
+ScheduledQueries:
+  - Panther Administrative Actions Baseline Daily
+Tags:
+  - AI-Optimized
+  - Administrative-Actions
+  - SIEM-Security
+  - Privilege-Escalation-Detection
+  - Structured-Data
+  - Demo
+  - Scheduled
+  - Behavior-Baselines
+Reports:
+  MITRE ATT&CK:
+    - "TA0004:T1078"    # Privilege Escalation: Valid Accounts
+    - "TA0005:T1562"    # Defense Evasion: Impair Defenses
+    - "TA0007:T1087"    # Discovery: Account Discovery
+Tests:
+  - Name: Always triggers for demonstration
+    ExpectedResult: true
+    Log:
+      time_window: "2024-03-15 00:00:00"
+      actor_id: "PantherSSO_ops.user@company.com"
+      actor_name: "ops.user@company.com"
+      actor_email: "ops.user@company.com"
+      actor_role: "AnalystAdmin"
+      total_admin_operations: 8
+      destination_operations: 2
+      user_management_operations: 1
+      role_management_operations: 0
+      api_token_operations: 3
+      system_config_operations: 1
+      log_source_operations: 1
+      identity_config_operations: 0
+      privilege_escalation_actions: 0
+      destinations_deleted: 0
+      destinations_modified: 1
+      users_deleted: 0
+      api_token_actions: 3
+      unique_source_ips: 1
+      source_ip_list: ["203.0.113.200"]
+      unique_user_agents: 1
+      max_event_risk: 5.0
+      avg_event_risk: 2.8
+      total_risk_score: 22.4
+      first_admin_operation: "2024-03-15T09:00:00Z"
+      last_admin_operation: "2024-03-15T17:30:00Z"
+      off_hours_operations: 0
+      evening_operations: 2
+      unique_resources_affected: 5
+      resources_affected: ["alert-destination-1", "api-token-automation", "log-source-s3"]
+      compromise_indicators: ["extensive_api_token_activity"]
+      activity_classification: "normal_administrative_activity"
