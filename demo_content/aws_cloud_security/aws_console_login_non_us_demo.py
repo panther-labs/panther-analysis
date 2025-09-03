@@ -3,7 +3,7 @@ from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
 
 def rule(event):
     """
-    Detects AWS console login attempts from IP addresses located outside the United States.
+    Detects AWS console login attempts from IP addresses located outside California.
     Uses IPInfo location enrichment data to determine geographic location.
     """
     # Only look at Console Login events
@@ -19,12 +19,15 @@ def rule(event):
     if not location_data:
         return False
     
-    # Get country information from IPInfo enrichment
+    # Get country and region information from IPInfo enrichment
     country = location_data.get("country")
+    region = location_data.get("region")
     
-    # Alert if login is from outside the US
-    if country and country.upper() != "US":
-        return True
+    # Alert if login is from outside California
+    # This includes both non-US locations and other US states
+    if country and region:
+        if country.upper() != "US" or region != "California":
+            return True
     
     return False
 
@@ -41,7 +44,7 @@ def title(event):
     account_name = lookup_aws_account_name(event.get("recipientAccountId"))
     
     return (
-        f"AWS Console login from outside US detected: "
+        f"AWS Console login from outside California detected: "
         f"User '{user_name}' logged in from {city}, {region} ({country}) "
         f"in account [{account_name}]"
     )

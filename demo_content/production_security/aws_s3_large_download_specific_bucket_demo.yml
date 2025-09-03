@@ -21,33 +21,9 @@ Description: >
   indicate unauthorized data exfiltration or bulk data downloads for analysis.
 DedupPeriodMinutes: 60
 Runbook: |
-  1. **Immediate Actions:**
-     - Verify if the user activity is authorized
-     - Check if the downloads were for legitimate business purposes
-     - Consider temporarily restricting bucket access if suspicious
-  
-  2. **Investigation Steps:**
-     - Review the user's recent authentication events
-     - Check for any privilege escalation or credential compromise
-     - Examine the downloaded objects to determine sensitivity
-     - Review source IP and user agent for signs of automation
-     - Check for other suspicious activities by the same user
-  
-  3. **Containment:**
-     - If unauthorized: revoke user credentials immediately
-     - Apply temporary S3 bucket policies to restrict access
-     - Enable S3 MFA delete and additional monitoring
-  
-  4. **Recovery:**
-     - Document the scope of data accessed
-     - Review S3 access logs for complete activity timeline
-     - Consider rotating any sensitive data that may have been accessed
-  
-  5. **Prevention:**
-     - Implement S3 access monitoring and alerting
-     - Review IAM policies for least privilege
-     - Consider S3 Access Points for controlled access
-     - Enable GuardDuty for enhanced threat detection
+  1. Query for complete list of objects downloaded (not just the sample) and examine the purpose of the files related to the requestor
+  2. Validate if source_ip appears in threat intelligence or ipinfo enrichments
+  3. Check for other AWS API activity from this user/role during the same timeframe
 
 Tests:
   - Name: Large download triggers alert
