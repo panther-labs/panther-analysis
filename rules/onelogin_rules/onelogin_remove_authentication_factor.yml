@@ -1,23 +1,20 @@
 AnalysisType: rule
-Filename: onelogin_remove_authentication_factor.py
-RuleID: "OneLogin.AuthFactorRemoved"
+Description: >-
+  A user removed an authentication factor or otp device.
 DisplayName: "OneLogin Authentication Factor Removed"
 Enabled: true
+Filename: onelogin_remove_authentication_factor.py
 LogTypes:
   - OneLogin.Events
-Tags:
-  - OneLogin
-  - Identity & Access Management
-  - Defense Evasion:Modify Authentication Process
+Reference: https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010426
 Reports:
   MITRE ATT&CK:
     - TA0005:T1556
+RuleID: "OneLogin.AuthFactorRemoved"
+Runbook: >-
+  Investigate whether this was an intentional action and if other multifactor devices
+  exist.
 Severity: Low
-Description: >
-  A user removed an authentication factor or otp device.
-Reference: https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010426
-Runbook: >
-  Investigate whether this was an intentional action and if other multifactor devices exist.
 SummaryAttributes:
   - account_id
   - event_type_id
@@ -25,28 +22,28 @@ SummaryAttributes:
   - user_id
   - authentication_factor_description
   - otp_device_name
+Tags:
+  - OneLogin
+  - Identity & Access Management
+  - Defense Evasion:Modify Authentication Process
 Tests:
-  - Name: User removed an auth factor
-    LogType: OneLogin.Events
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "172",
-        "actor_user_id": 123456,
-        "actor_user_name": "Bob Cat",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-        "authentication_factor_description": "2FA Name",
-      }
-  - Name: User deactivated an otp deice
+      "actor_user_id": 123456
+      "actor_user_name": "Bob Cat"
+      "authentication_factor_description": "2FA Name"
+      "event_type_id": "172"
+      "user_id": 123456
+      "user_name": "Bob Cat"
     LogType: OneLogin.Events
-    ExpectedResult: true
+    Name: User removed an auth factor
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "24",
-        "actor_user_id": 123456,
-        "actor_user_name": "Bob Cat",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-        "otp_device_name": "2FA Name",
-      }
+      "actor_user_id": 123456
+      "actor_user_name": "Bob Cat"
+      "event_type_id": "24"
+      "otp_device_name": "2FA Name"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    LogType: OneLogin.Events
+    Name: User deactivated an otp deice

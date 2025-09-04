@@ -1,47 +1,60 @@
 AnalysisType: correlation_rule
-RuleID: "Snowflake.PotentialBruteForceSuccess"
-DisplayName: "Snowflake Brute Force Login Success"
-Enabled: true
-Severity: High
-Description: Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+Description: >-
+  Detecting brute force activity and reporting when a user has incorrectly logged
+  in multiple times and then had a successful login.
 Detection:
-  - Sequence:
-      - ID: Multiple Failed Logins
-        RuleID: Snowflake.Stream.BruteForceByIp
-        MinMatchCount: 5
-      - ID: Successful Login
-        RuleID: Snowflake.Stream.LoginSuccess
-    Transitions:
-      - ID: Multiple Failed Logins FOLLOWED BY Successful Login
-        From: Multiple Failed Logins
-        To: Successful Login
-        WithinTimeFrameMinutes: 30
-        Match:
-          - On: CLIENT_IP
+  - LookbackWindowMinutes: 1440
     Schedule:
       RateMinutes: 720
       TimeoutMinutes: 15
-    LookbackWindowMinutes: 1440
+    Sequence:
+      - ID: Multiple Failed Logins
+        MinMatchCount: 5
+        RuleID: Snowflake.Stream.BruteForceByIp
+      - ID: Successful Login
+        RuleID: Snowflake.Stream.LoginSuccess
+    Transitions:
+      - From: Multiple Failed Logins
+        ID: Multiple Failed Logins FOLLOWED BY Successful Login
+        Match:
+          - On: CLIENT_IP
+        To: Successful Login
+        WithinTimeFrameMinutes: 30
+DisplayName: "Snowflake Brute Force Login Success"
+Enabled: true
+RuleID: "Snowflake.PotentialBruteForceSuccess"
+Severity: High
 Tests:
-    - Name: Successful Bulk Login
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: Multiple Failed Logins
-          Matches:
-            CLIENT_IP:
-              "1.1.1.1": [0, 2, 3, 6, 9, 10, 11, 15]
-        - ID: Successful Login
-          Matches:
-            CLIENT_IP:
-              "1.1.1.1": [16]
-    - Name: Successful Login With Single Failure
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: Multiple Failed Logins
-          Matches:
-            CLIENT_IP:
-              "1.1.1.1": [0]
-        - ID: Successful Login
-          Matches:
-            CLIENT_IP:
-              "1.1.1.1": [1]
+  - ExpectedResult: true
+    Name: Successful Bulk Login
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          CLIENT_IP:
+            1.1.1.1:
+              - 0
+              - 2
+              - 3
+              - 6
+              - 9
+              - 10
+              - 11
+              - 15
+      - ID: Successful Login
+        Matches:
+          CLIENT_IP:
+            1.1.1.1:
+              - 16
+  - ExpectedResult: false
+    Name: Successful Login With Single Failure
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          CLIENT_IP:
+            1.1.1.1:
+              - 0
+      - ID: Successful Login
+        Matches:
+          CLIENT_IP:
+            1.1.1.1:
+              - 1

@@ -1,54 +1,49 @@
 AnalysisType: rule
-Filename: gcp_sql_config_changes.py
-RuleID: "GCP.SQL.ConfigChanges"
+DedupPeriodMinutes: 720
+Description: >-
+  Monitoring changes to Sql Instance configuration may reduce time to detect and correct
+  misconfigurations done on sql server.
 DisplayName: "GCP SQL Config Changes"
 Enabled: true
-DedupPeriodMinutes: 720 # 12 hours
+Filename: gcp_sql_config_changes.py
 LogTypes:
   - GCP.AuditLog
-Tags:
-  - GCP
-  - Database
+Reference: https://cloud.google.com/sql/docs/mysql/instance-settings
 Reports:
   CIS:
     - 2.11
+RuleID: "GCP.SQL.ConfigChanges"
+Runbook: >-
+  Validate the Sql Instance configuration change was safe
 Severity: Low
-Description: >
-  Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
-Runbook: Validate the Sql Instance configuration change was safe
-Reference: https://cloud.google.com/sql/docs/mysql/instance-settings
 SummaryAttributes:
   - severity
   - p_any_ip_addresses
   - p_any_domain_names
+Tags:
+  - GCP
+  - Database
 Tests:
-  - Name: Sql Instance Change
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "protoPayload":
-          {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "status": {},
-            "authenticationInfo": { "principalEmail": "user@runpanther.io" },
-            "requestMetadata":
-              {
-                "callerIp": "136.24.229.58",
-                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
-                "requestAttributes":
-                  { "time": "2020-05-15T04:28:42.243082428Z", "auth": {} },
-                "destinationAttributes": {},
-              },
-            "serviceName": "storage.googleapis.com",
-            "methodName": "cloudsql.instances.update",
-          },
-        "resource":
-          {
-            "type": "sql_instance",
-            "labels":
-              {
-                "project_id": "western-verve-123456",
-                "location": "asia-northeast2",
-              },
-          },
-      }
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user@runpanther.io"
+        "methodName": "cloudsql.instances.update"
+        "requestMetadata":
+          "callerIp": "136.24.229.58"
+          "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
+            AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2020-05-15T04:28:42.243082428Z"
+        "serviceName": "storage.googleapis.com"
+        "status": {}
+      "resource":
+        "labels":
+          "location": "asia-northeast2"
+          "project_id": "western-verve-123456"
+        "type": "sql_instance"
+    Name: Sql Instance Change

@@ -1,12 +1,12 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.UserEnabled"
+Description: Monitor for users that are being re-enabled.
 Enabled: false
-Description: >
-  Monitor for users that are being re-enabled.
-Query: |
+Query: >-
   --return enable user events
 
+
   --this was adapted from a Security Feature Checklist query
+
 
   SELECT
     start_time as p_event_time,
@@ -25,6 +25,7 @@ Query: |
           OR query_text ILIKE '%alter user%set disabled =false%'
           OR query_text ILIKE '%alter user%set disabled=false%')
   ORDER BY end_time desc
+QueryName: "Query.Snowflake.UserEnabled"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 3

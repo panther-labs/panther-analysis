@@ -1,114 +1,92 @@
 AnalysisType: rule
-Filename: aws_iam_create_user.py
-RuleID: "AWS.IAM.CreateUser"
+CreateAlert: false
+Description: >-
+  An IAM user was created, which could indicate a new user creation or policy update.
 DisplayName: "IAM User Created"
 Enabled: true
+Filename: aws_iam_create_user.py
 LogTypes:
   - AWS.CloudTrail
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 Reports:
   CIS:
     - 1.1
   MITRE ATT&CK:
     - TA0007:T1078
+RuleID: "AWS.IAM.CreateUser"
+Runbook: >-
+  Check if the user was created by an authorized user. If not, investigate the user
+  creation.
 Severity: Info
-CreateAlert: false
-Description: >
-  An IAM user was created, which could indicate a new user creation or policy update.
-Runbook: Check if the user was created by an authorized user. If not, investigate the user creation.
-Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 Tests:
-  - Name: IAM User Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "Tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "iam.amazonaws.com",
-        "eventName": "CreateUser",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters":
-          {
-            "userName": "new-user"
-          },
-        "responseElements": null,
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: IAM User Not Created
-    ExpectedResult: false
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "CreateUser"
+      "eventSource": "iam.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "userName": "new-user"
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: IAM User Created
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "Tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "iam.amazonaws.com",
-        "eventName": "AttachUserPolicy",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters":
-          {
-            "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess",
-            "userName": "new-user"
-          },
-        "responseElements": null,
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "AttachUserPolicy"
+      "eventSource": "iam.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        "userName": "new-user"
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: IAM User Not Created

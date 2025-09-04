@@ -1,129 +1,111 @@
 AnalysisType: policy
-Filename: aws_ec2_volume_encryption.py
-PolicyID: "AWS.EC2.Volume.Encryption"
+Description: >-
+  You can encrypt both the boot and data volumes of an EC2 instance.
 DisplayName: "AWS EC2 Volume Encryption"
 Enabled: true
+Filename: aws_ec2_volume_encryption.py
+PolicyID: "AWS.EC2.Volume.Encryption"
+Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1005
 ResourceTypes:
   - AWS.EC2.Volume
+Runbook: >-
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-ec2-instance-volumes-are-encrypted
+Severity: High
 Tags:
   - AWS
   - Data Protection
   - Collection:Data From Local System
-Reports:
-  MITRE ATT&CK:
-    - TA0009:T1005
-Severity: High
-Description: >
-  You can encrypt both the boot and data volumes of an EC2 instance.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-ec2-instance-volumes-are-encrypted
-Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html
 Tests:
-  - Name: Volume Encrypted
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Volume Encrypted
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123",
-        "ID": "vol-aaabbbccc123123",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123",
-        "ResourceType": "AWS.EC2.Volume",
-        "TimeCreated": "2019-04-02T17:16:30.000Z",
-        "Attachments":
-          [
-            {
-              "AttachTime": "2019-04-02T17:16:30Z",
-              "DeleteOnTermination": true,
-              "Device": "/dev/sda1",
-              "InstanceId": "instance-aabbcc123",
-              "State": "attached",
-              "VolumeId": "vol-aaabbbccc123123",
-            },
-          ],
-        "AvailabilityZone": "us-west-2b",
-        "Encrypted": true,
-        "Iops": 100,
-        "KmsKeyId": "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012",
-        "Size": 10,
-        "SnapshotId": "snap-abcdefg012345",
-        "State": "in-use",
-        "VolumeId": "vol-aaabbbccc123123",
-        "VolumeType": "gp2",
-        "Snapshots":
-          [
-            {
-              "DataEncryptionKeyId": null,
-              "Description": "Copied for destinationAmi...",
-              "Encrypted": false,
-              "KmsKeyId": null,
-              "OwnerAlias": null,
-              "OwnerId": "123456789012",
-              "Progress": "100%",
-              "SnapshotId": "snapshot-aaabbbccc123123",
-              "StartTime": "2019-04-02T17:16:30Z",
-              "State": "completed",
-              "StateMessage": null,
-              "Tags": null,
-              "VolumeId": "vol-aaabbbccc123123",
-              "VolumeSize": 16,
-              "CreateVolumePermissions":
-                [{ "Group": "GroupName", "UserId": "user-123" }],
-            },
-          ],
-      }
-  - Name: Volume Not Encrypted
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123"
+      "AccountId": "123456789012"
+      "Attachments":
+        - "AttachTime": "2019-04-02T17:16:30Z"
+          "DeleteOnTermination": true
+          "Device": "/dev/sda1"
+          "InstanceId": "instance-aabbcc123"
+          "State": "attached"
+          "VolumeId": "vol-aaabbbccc123123"
+      "AvailabilityZone": "us-west-2b"
+      "Encrypted": true
+      "ID": "vol-aaabbbccc123123"
+      "Iops": 100
+      "KmsKeyId": "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123"
+      "ResourceType": "AWS.EC2.Volume"
+      "Size": 10
+      "SnapshotId": "snap-abcdefg012345"
+      "Snapshots":
+        - "CreateVolumePermissions":
+            - "Group": "GroupName"
+              "UserId": "user-123"
+          "DataEncryptionKeyId":
+          "Description": "Copied for destinationAmi..."
+          "Encrypted": false
+          "KmsKeyId":
+          "OwnerAlias":
+          "OwnerId": "123456789012"
+          "Progress": "100%"
+          "SnapshotId": "snapshot-aaabbbccc123123"
+          "StartTime": "2019-04-02T17:16:30Z"
+          "State": "completed"
+          "StateMessage":
+          "Tags":
+          "VolumeId": "vol-aaabbbccc123123"
+          "VolumeSize": 16
+      "State": "in-use"
+      "Tags": {}
+      "TimeCreated": "2019-04-02T17:16:30.000Z"
+      "VolumeId": "vol-aaabbbccc123123"
+      "VolumeType": "gp2"
+  - ExpectedResult: false
+    Name: Volume Not Encrypted
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123",
-        "ID": "vol-aaabbbccc123123",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123",
-        "ResourceType": "AWS.EC2.Volume",
-        "TimeCreated": "2019-04-02T17:16:30.000Z",
-        "Attachments":
-          [
-            {
-              "AttachTime": "2019-04-02T17:16:30Z",
-              "DeleteOnTermination": true,
-              "Device": "/dev/sda1",
-              "InstanceId": "instance-aabbcc123",
-              "State": "attached",
-              "VolumeId": "vol-aaabbbccc123123",
-            },
-          ],
-        "AvailabilityZone": "us-west-2b",
-        "Encrypted": false,
-        "Iops": 100,
-        "KmsKeyId": null,
-        "Size": 10,
-        "SnapshotId": "snap-abcdefg012345",
-        "State": "in-use",
-        "VolumeId": "vol-aaabbbccc123123",
-        "VolumeType": "gp2",
-        "Snapshots":
-          [
-            {
-              "DataEncryptionKeyId": null,
-              "Description": "Copied for destinationAmi...",
-              "Encrypted": false,
-              "KmsKeyId": null,
-              "OwnerAlias": null,
-              "OwnerId": "123456789012",
-              "Progress": "100%",
-              "SnapshotId": "snapshot-aaabbbccc123123",
-              "StartTime": "2019-04-02T17:16:30Z",
-              "State": "completed",
-              "StateMessage": null,
-              "Tags": null,
-              "VolumeId": "vol-aaabbbccc123123",
-              "VolumeSize": 16,
-              "CreateVolumePermissions":
-                [{ "Group": "GroupName", "UserId": "user-123" }],
-            },
-          ],
-      }
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123"
+      "AccountId": "123456789012"
+      "Attachments":
+        - "AttachTime": "2019-04-02T17:16:30Z"
+          "DeleteOnTermination": true
+          "Device": "/dev/sda1"
+          "InstanceId": "instance-aabbcc123"
+          "State": "attached"
+          "VolumeId": "vol-aaabbbccc123123"
+      "AvailabilityZone": "us-west-2b"
+      "Encrypted": false
+      "ID": "vol-aaabbbccc123123"
+      "Iops": 100
+      "KmsKeyId":
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:volume/vol-aaabbbccc123123"
+      "ResourceType": "AWS.EC2.Volume"
+      "Size": 10
+      "SnapshotId": "snap-abcdefg012345"
+      "Snapshots":
+        - "CreateVolumePermissions":
+            - "Group": "GroupName"
+              "UserId": "user-123"
+          "DataEncryptionKeyId":
+          "Description": "Copied for destinationAmi..."
+          "Encrypted": false
+          "KmsKeyId":
+          "OwnerAlias":
+          "OwnerId": "123456789012"
+          "Progress": "100%"
+          "SnapshotId": "snapshot-aaabbbccc123123"
+          "StartTime": "2019-04-02T17:16:30Z"
+          "State": "completed"
+          "StateMessage":
+          "Tags":
+          "VolumeId": "vol-aaabbbccc123123"
+          "VolumeSize": 16
+      "State": "in-use"
+      "Tags": {}
+      "TimeCreated": "2019-04-02T17:16:30.000Z"
+      "VolumeId": "vol-aaabbbccc123123"
+      "VolumeType": "gp2"

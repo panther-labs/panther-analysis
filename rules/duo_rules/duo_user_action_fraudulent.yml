@@ -1,29 +1,34 @@
 AnalysisType: rule
-Filename: duo_user_action_fraudulent.py
-RuleID: "DUO.User.Action.Fraudulent"
+DedupPeriodMinutes: 15
+Description: >-
+  Alert when a user reports a Duo action as fraudulent.
 DisplayName: "Duo User Action Reported as Fraudulent"
 Enabled: true
-DedupPeriodMinutes: 15
+Filename: duo_user_action_fraudulent.py
 LogTypes:
   - Duo.Authentication
+Reference: https://duo.com/docs/adminapi#authentication-logs
+RuleID: "DUO.User.Action.Fraudulent"
+Runbook: >-
+  Follow up with the user to confirm.
+Severity: Medium
 Tags:
   - Duo
-Severity: Medium
-Description: >
-  Alert when a user reports a Duo action as fraudulent.
-Reference: https://duo.com/docs/adminapi#authentication-logs
-Runbook: Follow up with the user to confirm.
 Tests:
-  - Name: user_marked_fraud
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
-        "application": { "key": "D12345", "name": "Slack" },
-        "event_type": "authentication",
-        "factor": "duo_push",
-        "reason": "user_marked_fraud",
-        "result": "fraud",
-        "user": { "name": "example@example.io" },
-      }
+      "access_device":
+        "ip": "12.12.112.25"
+        "os": "Mac OS X"
+      "application":
+        "key": "D12345"
+        "name": "Slack"
+      "auth_device":
+        "ip": "12.12.12.12"
+      "event_type": "authentication"
+      "factor": "duo_push"
+      "reason": "user_marked_fraud"
+      "result": "fraud"
+      "user":
+        "name": "example@example.io"
+    Name: user_marked_fraud

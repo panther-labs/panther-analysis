@@ -1,21 +1,3 @@
-AnalysisType: rule
-RuleID: "Github.Repo.Archived"
-DisplayName: "GitHub Repository Archived"
-Enabled: true
-CreateAlert: false
-LogTypes:
-  - GitHub.Audit
-Tags:
-  - GitHub
-  - panther-signal
-Reference: https://docs.github.com/en/repositories/archiving-a-github-repository/about-archiving-content-and-data-on-github
-Severity: Info
-Description: Detects when a repository is archived.
-Detection:
-  - Key: action
-    Condition: Equals
-    Value: repo.archived
-AlertTitle: "Repository [{repo}] archived."
 AlertContext:
   - KeyName: action
     KeyValue:
@@ -35,28 +17,42 @@ AlertContext:
   - KeyName: actor_location
     KeyValue:
       KeyPath: actor_location.country_code
+AlertTitle: Repository [{repo}] archived.
+AnalysisType: rule
+CreateAlert: false
+Description: >-
+  Detects when a repository is archived.
+Detection:
+  - Condition: Equals
+    Key: action
+    Value: repo.archived
+DisplayName: "GitHub Repository Archived"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Reference: 
+  https://docs.github.com/en/repositories/archiving-a-github-repository/about-archiving-content-and-data-on-github
+RuleID: "Github.Repo.Archived"
+Severity: Info
+Tags:
+  - GitHub
+  - panther-signal
 Tests:
-  -
+  - ExpectedResult: false
+    Log:
+      "action": "repo.create"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
     Name: GitHub - Repo Created
-    ExpectedResult: false
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "repo.create",        
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
-      }
-  -
+      "action": "repo.archived"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
     Name: GitHub - Repo Archived
-    ExpectedResult: true
-    Log:
-      {
-        "actor": "cat",
-        "action": "repo.archived",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo"
-      }

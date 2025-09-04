@@ -1,71 +1,72 @@
 AnalysisType: rule
-Filename: aws_vpc_unapproved_outbound_dns.py
-RuleID: "AWS.VPC.UnapprovedOutboundDNS"
+Description: >-
+  Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is
+  often used as a means to exfiltrate data or perform command and control for compromised
+  hosts. All DNS traffic should be routed through internal DNS servers or trusted
+  3rd parties.
 DisplayName: "VPC Flow Logs Unapproved Outbound DNS Traffic"
 Enabled: false
+Filename: aws_vpc_unapproved_outbound_dns.py
 LogTypes:
   - AWS.VPCFlow
   - OCSF.NetworkActivity
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
+Reports:
+  MITRE ATT&CK:
+    - TA0011:T1071
+RuleID: "AWS.VPC.UnapprovedOutboundDNS"
+Runbook: >-
+  Investigate the host sending unapproved DNS activity for signs of compromise or
+  other malicious activity. Update network configurations appropriately to ensure
+  all DNS traffic is routed to approved DNS servers.
+Severity: Medium
+SummaryAttributes:
+  - srcaddr
+  - dstaddr
+  - dstport
 Tags:
   - AWS
   - DataModel
   - Configuration Required
   - Security Control
   - Command and Control:Application Layer Protocol
-Reports:
-  MITRE ATT&CK:
-    - TA0011:T1071
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
-Severity: Medium
-Description: >
-  Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
-Runbook: >
-  Investigate the host sending unapproved DNS activity for signs of compromise or other malicious activity. Update network configurations appropriately to ensure all DNS traffic is routed to approved DNS servers.
-SummaryAttributes:
-  - srcaddr
-  - dstaddr
-  - dstport
 Tests:
-  - Name: Approved Outbound DNS Traffic
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "dstPort": 53,
-        "dstAddr": "1.1.1.1",
-        "srcAddr": "10.0.0.1",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Unapproved Outbound DNS Traffic
-    ExpectedResult: true
+      "dstAddr": "1.1.1.1"
+      "dstPort": 53
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "10.0.0.1"
+    Name: Approved Outbound DNS Traffic
+  - ExpectedResult: true
     Log:
-      {
-        "dstPort": 53,
-        "dstAddr": "100.100.100.100",
-        "srcAddr": "10.0.0.1",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Outbound Non-DNS Traffic
-    ExpectedResult: false
+      "dstAddr": "100.100.100.100"
+      "dstPort": 53
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "10.0.0.1"
+    Name: Unapproved Outbound DNS Traffic
+  - ExpectedResult: false
     Log:
-      {
-        "dstPort": 80,
-        "dstAddr": "100.100.100.100",
-        "srcAddr": "10.0.0.1",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Approved Outbound DNS Traffic - OCSF
-    ExpectedResult: false
+      "dstAddr": "100.100.100.100"
+      "dstPort": 80
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "10.0.0.1"
+    Name: Outbound Non-DNS Traffic
+  - ExpectedResult: false
     Log:
-      {
-        "dst_endpoint": { "ip": "1.1.1.1", "port": 53 },
-        "src_endpoint": { "ip": "10.0.0.1" },
-        "p_log_type": "OCSF.NetworkActivity",
-      }
-  - Name: Unapproved Outbound DNS Traffic - OCSF
-    ExpectedResult: true
+      "dst_endpoint":
+        "ip": "1.1.1.1"
+        "port": 53
+      "p_log_type": "OCSF.NetworkActivity"
+      "src_endpoint":
+        "ip": "10.0.0.1"
+    Name: Approved Outbound DNS Traffic - OCSF
+  - ExpectedResult: true
     Log:
-      {
-        "dst_endpoint": { "ip": "100.100.100.100", "port": 53 },
-        "src_endpoint": { "ip": "10.0.0.1" },
-        "p_log_type": "OCSF.NetworkActivity",
-      }
+      "dst_endpoint":
+        "ip": "100.100.100.100"
+        "port": 53
+      "p_log_type": "OCSF.NetworkActivity"
+      "src_endpoint":
+        "ip": "10.0.0.1"
+    Name: Unapproved Outbound DNS Traffic - OCSF

@@ -1,12 +1,9 @@
 AnalysisType: pack
-PackID: PantherManaged.GCP.K8
-DisplayName: "Panther GCP Kubernetes Pack"
 Description: Group of all Google Cloud Platform (GCP) K8 detections
+DisplayName: Panther GCP Kubernetes Pack
 PackDefinition:
   IDs:
-    # DataModel
     - Standard.GCP.AuditLog
-    # Rules
     - GCP.K8s.New.Daemonset.Deployed
     - GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount
     - GCP.K8S.Privileged.Pod.Created
@@ -14,6 +11,6 @@ PackDefinition:
     - GCP.K8s.IOC.Activity
     - GCP.K8s.Pod.Attached.To.Node.Host.Network
     - GCP.K8s.Pod.Using.Host.PID.Namespace
-    # Globals
     - panther_gcp_helpers
     - panther_base_helpers
+PackID: PantherManaged.GCP.K8

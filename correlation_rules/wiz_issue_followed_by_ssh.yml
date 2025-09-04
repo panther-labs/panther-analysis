@@ -1,50 +1,52 @@
 AnalysisType: correlation_rule
-RuleID: "Wiz.Issue.Followed.By.SSH"
+Description: >-
+  Wiz detected a security issue with an EC2 instance followed by an SSH connection
+  to the instance. This sequence could indicate a potential security breach.
+Detection:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 5
+    Sequence:
+      - ID: WizIssue
+        RuleID: Wiz.Alert.Passthrough
+      - ID: SSH Access
+        RuleID: AWS.VPC.SSHAllowedSignal
+    Transitions:
+      - From: WizIssue
+        ID: WizIssue followed by VPC Flow
+        Match:
+          - From: entitySnapshot.externalId
+            To: instanceId
+        To: SSH Access
+        WithinTimeFrameMinutes: 60
 DisplayName: "Wiz Issue Followed By SSH to EC2 Instance"
 Enabled: true
-Severity: High
-Description: Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 Reports:
   MITRE ATT&CK:
-    - TA0008:T1021.004 # Lateral Movement: Remote Services: SSH
-    - TA0001:T1133 # Initial Access: External Remote Services
-Detection:
-    - Sequence:
-        - ID: WizIssue
-          RuleID: Wiz.Alert.Passthrough
-        - ID: SSH Access
-          RuleID: AWS.VPC.SSHAllowedSignal
-      Transitions:
-        - ID: WizIssue followed by VPC Flow
-          From: WizIssue
-          To: SSH Access
-          WithinTimeFrameMinutes: 60
-          Match:
-            - From: entitySnapshot.externalId
-              To: instanceId
-      LookbackWindowMinutes: 2160
-      Schedule:
-        RateMinutes: 1440
-        TimeoutMinutes: 5
+    - TA0008:T1021.004
+    - TA0001:T1133
+RuleID: "Wiz.Issue.Followed.By.SSH"
+Severity: High
 Tests:
-    - Name: Wiz Issue Followed By SSH
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: WizIssue
-          Matches:
-            entitySnapshot.externalId:
-              'i-0d4c7318592c6a2c7':
-                - "2024-06-01T10:00:01Z"
-        - ID: SSH Access
-          Matches:
-            instanceId:
-              'i-0d4c7318592c6a2c7':
-                - "2024-06-01T10:30:01Z"
-    - Name: Wiz Issue Not Followed By SSH
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: WizIssue
-          Matches:
-            entitySnapshot.externalId:
-              'i-0d4c7318592c6a2c7':
-                - "2024-06-01T10:00:01Z"
+  - ExpectedResult: true
+    Name: Wiz Issue Followed By SSH
+    RuleOutputs:
+      - ID: WizIssue
+        Matches:
+          entitySnapshot.externalId:
+            i-0d4c7318592c6a2c7:
+              - '2024-06-01T10:00:01Z'
+      - ID: SSH Access
+        Matches:
+          instanceId:
+            i-0d4c7318592c6a2c7:
+              - '2024-06-01T10:30:01Z'
+  - ExpectedResult: false
+    Name: Wiz Issue Not Followed By SSH
+    RuleOutputs:
+      - ID: WizIssue
+        Matches:
+          entitySnapshot.externalId:
+            i-0d4c7318592c6a2c7:
+              - '2024-06-01T10:00:01Z'

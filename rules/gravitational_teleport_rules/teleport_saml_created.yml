@@ -1,37 +1,37 @@
 AnalysisType: rule
-Filename: teleport_saml_created.py
-RuleID: Teleport.SAMLCreated
-DisplayName: A SAML Connector was created or modified
+DedupPeriodMinutes: 60
+Description: >-
+  A SAML connector was created or modified
+DisplayName: "A SAML Connector was created or modified"
 Enabled: true
+Filename: teleport_saml_created.py
 LogTypes:
   - Gravitational.TeleportAudit
-Tags:
-  - Teleport
-Severity: High
-Description: A SAML connector was created or modified
-DedupPeriodMinutes: 60
+Reference: https://goteleport.com/docs/management/admin/
 Reports:
   MITRE ATT&CK:
     - TA0042:T1585
-Reference: https://goteleport.com/docs/management/admin/
-Runbook: >
-  When a SAML connector is modified, it can potentially change the trust model of the Teleport Cluster. Validate that these changes were expected and correct.
+RuleID: "Teleport.SAMLCreated"
+Runbook: >-
+  When a SAML connector is modified, it can potentially change the trust model of
+  the Teleport Cluster. Validate that these changes were expected and correct.
+Severity: High
 SummaryAttributes:
   - event
   - code
   - user
   - name
+Tags:
+  - Teleport
 Tests:
-  - Name: SAML Auth Connector modified
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "cluster_name": "teleport.example.com",
-        "code": "T8200I",
-        "ei": 0,
-        "event": "saml.created",
-        "name": "okta",
-        "time": "2023-09-19 18:00:00",
-        "uid": "88888888-4444-4444-4444-222222222222",
-        "user": "max.mustermann@zumbeispiel.example",
-      }
+      "cluster_name": "teleport.example.com"
+      "code": "T8200I"
+      "ei": 0
+      "event": "saml.created"
+      "name": "okta"
+      "time": "2023-09-19 18:00:00"
+      "uid": "88888888-4444-4444-4444-222222222222"
+      "user": "max.mustermann@zumbeispiel.example"
+    Name: SAML Auth Connector modified

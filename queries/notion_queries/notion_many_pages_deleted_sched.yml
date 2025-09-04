@@ -1,29 +1,30 @@
 AnalysisType: scheduled_rule
-Filename: notion_many_pages_deleted_sched.py
-RuleID: "Notion.Many.Pages.Deleted.Sched"
+DedupPeriodMinutes: 60
+Description: >-
+  A Notion User deleted multiple pages, which were not created or restored from the
+  trash within the same hour.
 DisplayName: "Notion Many Pages Deleted"
 Enabled: true
+Filename: notion_many_pages_deleted_sched.py
+Reference: https://www.notion.so/help/duplicate-delete-and-restore-content
+RuleID: "Notion.Many.Pages.Deleted.Sched"
+Runbook: >-
+  Possible Data Destruction. Follow up with the Notion User to determine if this was
+  done for a valid business reason.
 ScheduledQueries:
   - Notion Many Pages Deleted Query
+Severity: Medium
 Tags:
   - Notion
   - Data Security
   - Data Destruction
-Severity: Medium
-Description: A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
-DedupPeriodMinutes: 60
-Threshold: 10 # Number of pages deleted; please change this value to suit your organization's needs.
-Runbook: Possible Data Destruction. Follow up with the Notion User to determine if this was done for a valid business reason.
-Reference: https://www.notion.so/help/duplicate-delete-and-restore-content
 Tests:
-  - Name: query_result
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actions": [
-          "page.deleted"
-        ],
-        "id": "1360a5bb-da41-8177-bedb-d015d012392a",
-        "page_name": "Newslette",
-        "user": "bob.ross@happytrees.com"
-      }
+      "actions":
+        - "page.deleted"
+      "id": "1360a5bb-da41-8177-bedb-d015d012392a"
+      "page_name": "Newslette"
+      "user": "bob.ross@happytrees.com"
+    Name: query_result
+Threshold: 10

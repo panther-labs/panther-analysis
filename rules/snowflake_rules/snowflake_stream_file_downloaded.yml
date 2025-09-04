@@ -1,46 +1,43 @@
 AnalysisType: rule
-Filename: snowflake_stream_file_downloaded.py
-RuleID: Snowflake.Stream.FileDownloaded
-DisplayName: Snowflake File Downloaded
+CreateAlert: false
+Description: >-
+  A file was downloaded from a stage.
+DisplayName: "Snowflake File Downloaded"
 Enabled: true
+Filename: snowflake_stream_file_downloaded.py
 LogTypes:
   - Snowflake.QueryHistory
-Severity: Info
-CreateAlert: false
-Reports:
-  MITRE ATT&CK:
-    - TA0010:T1041 # Exfiltration Over C2 Channel
-Description: A file was downloaded from a stage.
 Reference: 
   https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1041
+RuleID: "Snowflake.Stream.FileDownloaded"
+Severity: Info
 Tags:
   - Snowflake
   - '[MITRE] Exfiltration'
   - '[MITRE] Exfiltration Over C2 Channel'
 Tests:
-  - Name: Worksheet File Downloaded
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-10-09 19:38:06.158000000",
-        "p_log_type": "Snowflake.QueryHistory",
-        "p_source_label": "SF-Ben",
-        "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "GET '@~/worksheet_data/metadata' 'file:///'",
-        "QUERY_TYPE": "GET_FILES",
-        "ROLE_NAME": "PUBLIC",
-        "USER_NAME": "CLARK_KENT"
-      }
-  - Name: Other File Downloaded
-    ExpectedResult: true
+      "EXECUTION_STATUS": "SUCCESS"
+      "QUERY_TEXT": "GET '@~/worksheet_data/metadata' 'file:///'"
+      "QUERY_TYPE": "GET_FILES"
+      "ROLE_NAME": "PUBLIC"
+      "USER_NAME": "CLARK_KENT"
+      "p_event_time": "2024-10-09 19:38:06.158000000"
+      "p_log_type": "Snowflake.QueryHistory"
+      "p_source_label": "SF-Ben"
+    Name: Worksheet File Downloaded
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-10-09 19:38:06.158000000",
-        "p_log_type": "Snowflake.QueryHistory",
-        "p_source_label": "SF-Ben",
-        "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "GET @PANTHER_LOGS.PUBLIC.data_exfil/DATA.csv 'file:///Users/lex.luthor/Documents'",
-        "QUERY_TYPE": "GET_FILES",
-        "ROLE_NAME": "PUBLIC",
-        "USER_NAME": "LEX_LUTHOR"
-      }
+      "EXECUTION_STATUS": "SUCCESS"
+      "QUERY_TEXT": "GET @PANTHER_LOGS.PUBLIC.data_exfil/DATA.csv 'file:///Users/lex.luthor/Documents'"
+      "QUERY_TYPE": "GET_FILES"
+      "ROLE_NAME": "PUBLIC"
+      "USER_NAME": "LEX_LUTHOR"
+      "p_event_time": "2024-10-09 19:38:06.158000000"
+      "p_log_type": "Snowflake.QueryHistory"
+      "p_source_label": "SF-Ben"
+    Name: Other File Downloaded

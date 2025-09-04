@@ -1,115 +1,115 @@
 AnalysisType: rule
-Filename: push_security_new_saas_account_created.py
-RuleID: "Push.Security.New.SaaS.Account.Created"
+DedupPeriodMinutes: 60
 DisplayName: "Push Security New SaaS Account Created"
 Enabled: true
+Filename: push_security_new_saas_account_created.py
 LogTypes:
   - PushSecurity.Entities
+RuleID: "Push.Security.New.SaaS.Account.Created"
 Severity: Info
-DedupPeriodMinutes: 60
-Threshold: 1
 Tests:
-  - Name: Account Update
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      id: c478966c-f927-411c-b919-179832d3d50c
-      new:
-        appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
-        appType: ATLASSIAN
-        creationTimestamp: 1.698064423e+09
-        email: john.hill@example.com
-        employeeId: 72d0347a-2663-4ef5-b1c5-df39163f1603
-        id: d6a32ba5-0532-4a66-8137-48cdf409c972
-        lastUsedTimestamp: 1.698669168e+09
-        loginMethods:
-          oidcLogin: GOOGLE_WORKSPACE
-          oktaSwaLogin: true
-          passwordLogin: true
-          samlLogin: OKTA
-          vendorSsoLogin: GOOGLE_WORKSPACE
-        mfaMethods:
-          - APP_TOTP
-          - PUSH_NOTIFICATION
-          - EMAIL_OTP
-          - U2F
-          - HARDWARE_TOTP
-          - PHONE_CALL
-          - SMS_OTP
-          - APP_PASSWORD
-          - GRID_CARD
-          - EXTERNAL_PROVIDER
-          - BACKUP_CODES
-          - WEBAUTHN
-        mfaRegistered: true
-        passwordId: 4c13674f-e88a-4411-bfa2-53a70468a898
-      object: ACCOUNT
-      old:
-        appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
-        appType: ATLASSIAN
-        creationTimestamp: 1.698064423e+09
-        email: john.hill@example.com
-        employeeId: 72d0347a-2663-4ef5-b1c5-df39163f1603
-        id: d6a32ba5-0532-4a66-8137-48cdf409c972
-        lastUsedTimestamp: 1.698669168e+09
-        loginMethods:
-          oidcLogin: GOOGLE_WORKSPACE
-          oktaSwaLogin: true
-          passwordLogin: true
-          samlLogin: OKTA
-          vendorSsoLogin: GOOGLE_WORKSPACE
-        mfaMethods:
-          - APP_TOTP
-          - PUSH_NOTIFICATION
-          - EMAIL_OTP
-          - U2F
-          - HARDWARE_TOTP
-          - PHONE_CALL
-          - SMS_OTP
-          - APP_PASSWORD
-          - GRID_CARD
-          - EXTERNAL_PROVIDER
-          - BACKUP_CODES
-          - WEBAUTHN
-        mfaRegistered: true
-        passwordId: 4c13674f-e88a-4411-bfa2-53a70468a898
-      timestamp: 1.698604061e+09
-      type: UPDATE
-      version: "1"
-  - Name: New Account
-    ExpectedResult: true
+      "id": "c478966c-f927-411c-b919-179832d3d50c"
+      "new":
+        "appId": "2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0"
+        "appType": "ATLASSIAN"
+        "creationTimestamp": 1698064423.0
+        "email": "john.hill@example.com"
+        "employeeId": "72d0347a-2663-4ef5-b1c5-df39163f1603"
+        "id": "d6a32ba5-0532-4a66-8137-48cdf409c972"
+        "lastUsedTimestamp": 1698669168.0
+        "loginMethods":
+          "oidcLogin": "GOOGLE_WORKSPACE"
+          "oktaSwaLogin": true
+          "passwordLogin": true
+          "samlLogin": "OKTA"
+          "vendorSsoLogin": "GOOGLE_WORKSPACE"
+        "mfaMethods":
+          - "APP_TOTP"
+          - "PUSH_NOTIFICATION"
+          - "EMAIL_OTP"
+          - "U2F"
+          - "HARDWARE_TOTP"
+          - "PHONE_CALL"
+          - "SMS_OTP"
+          - "APP_PASSWORD"
+          - "GRID_CARD"
+          - "EXTERNAL_PROVIDER"
+          - "BACKUP_CODES"
+          - "WEBAUTHN"
+        "mfaRegistered": true
+        "passwordId": "4c13674f-e88a-4411-bfa2-53a70468a898"
+      "object": "ACCOUNT"
+      "old":
+        "appId": "2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0"
+        "appType": "ATLASSIAN"
+        "creationTimestamp": 1698064423.0
+        "email": "john.hill@example.com"
+        "employeeId": "72d0347a-2663-4ef5-b1c5-df39163f1603"
+        "id": "d6a32ba5-0532-4a66-8137-48cdf409c972"
+        "lastUsedTimestamp": 1698669168.0
+        "loginMethods":
+          "oidcLogin": "GOOGLE_WORKSPACE"
+          "oktaSwaLogin": true
+          "passwordLogin": true
+          "samlLogin": "OKTA"
+          "vendorSsoLogin": "GOOGLE_WORKSPACE"
+        "mfaMethods":
+          - "APP_TOTP"
+          - "PUSH_NOTIFICATION"
+          - "EMAIL_OTP"
+          - "U2F"
+          - "HARDWARE_TOTP"
+          - "PHONE_CALL"
+          - "SMS_OTP"
+          - "APP_PASSWORD"
+          - "GRID_CARD"
+          - "EXTERNAL_PROVIDER"
+          - "BACKUP_CODES"
+          - "WEBAUTHN"
+        "mfaRegistered": true
+        "passwordId": "4c13674f-e88a-4411-bfa2-53a70468a898"
+      "timestamp": 1698604061.0
+      "type": "UPDATE"
+      "version": "1"
+    Name: Account Update
+  - ExpectedResult: true
     Log:
-      id: c478966c-f927-411c-b919-179832d3d50c
-      new:
-        appId: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
-        appType: ATLASSIAN
-        creationTimestamp: 1.698064423e+09
-        email: john.hill@example.com
-        employeeId: 72d0347a-2663-4ef5-b1c5-df39163f1603
-        id: d6a32ba5-0532-4a66-8137-48cdf409c972
-        lastUsedTimestamp: 1.698669168e+09
-        loginMethods:
-          oidcLogin: GOOGLE_WORKSPACE
-          oktaSwaLogin: true
-          passwordLogin: true
-          samlLogin: OKTA
-          vendorSsoLogin: GOOGLE_WORKSPACE
-        mfaMethods:
-          - APP_TOTP
-          - PUSH_NOTIFICATION
-          - EMAIL_OTP
-          - U2F
-          - HARDWARE_TOTP
-          - PHONE_CALL
-          - SMS_OTP
-          - APP_PASSWORD
-          - GRID_CARD
-          - EXTERNAL_PROVIDER
-          - BACKUP_CODES
-          - WEBAUTHN
-        mfaRegistered: true
-        passwordId: 4c13674f-e88a-4411-bfa2-53a70468a898
-      object: ACCOUNT
-      old: null
-      timestamp: 1.698604061e+09
-      type: CREATE
-      version: "1"
+      "id": "c478966c-f927-411c-b919-179832d3d50c"
+      "new":
+        "appId": "2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0"
+        "appType": "ATLASSIAN"
+        "creationTimestamp": 1698064423.0
+        "email": "john.hill@example.com"
+        "employeeId": "72d0347a-2663-4ef5-b1c5-df39163f1603"
+        "id": "d6a32ba5-0532-4a66-8137-48cdf409c972"
+        "lastUsedTimestamp": 1698669168.0
+        "loginMethods":
+          "oidcLogin": "GOOGLE_WORKSPACE"
+          "oktaSwaLogin": true
+          "passwordLogin": true
+          "samlLogin": "OKTA"
+          "vendorSsoLogin": "GOOGLE_WORKSPACE"
+        "mfaMethods":
+          - "APP_TOTP"
+          - "PUSH_NOTIFICATION"
+          - "EMAIL_OTP"
+          - "U2F"
+          - "HARDWARE_TOTP"
+          - "PHONE_CALL"
+          - "SMS_OTP"
+          - "APP_PASSWORD"
+          - "GRID_CARD"
+          - "EXTERNAL_PROVIDER"
+          - "BACKUP_CODES"
+          - "WEBAUTHN"
+        "mfaRegistered": true
+        "passwordId": "4c13674f-e88a-4411-bfa2-53a70468a898"
+      "object": "ACCOUNT"
+      "old":
+      "timestamp": 1698604061.0
+      "type": "CREATE"
+      "version": "1"
+    Name: New Account
+Threshold: 1

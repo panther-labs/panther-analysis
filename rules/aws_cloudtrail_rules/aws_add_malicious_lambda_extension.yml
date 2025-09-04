@@ -1,111 +1,97 @@
 AnalysisType: rule
-Filename: aws_add_malicious_lambda_extension.py
-RuleID: "AWS.Lambda.UpdateFunctionConfiguration"
+CreateAlert: false
+Description: >-
+  Identifies when a Lambda function configuration is updated with layers, which could
+  indicate a potential security risk.
 DisplayName: "Lambda Update Function Configuration with Layers"
 Enabled: true
+Filename: aws_add_malicious_lambda_extension.py
 LogTypes:
   - AWS.CloudTrail
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-layer-extension/
 Reports:
   MITRE ATT&CK:
     - TA0007:T1078
+RuleID: "AWS.Lambda.UpdateFunctionConfiguration"
+Runbook: >-
+  Make sure that the Lambda function configuration update is expected and authorized.
+  If not, investigate the event further.
 Severity: Info
 Tags:
   - Beta
-CreateAlert: false
-Description: >
-  Identifies when a Lambda function configuration is updated with layers, which could indicate a potential security risk.
-Runbook: Make sure that the Lambda function configuration update is expected and authorized. If not, investigate the event further.
-Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-layer-extension/
 Tests:
-  - Name: Lambda Update Function Configuration with Layers
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "tester",
-          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-          "accountId": "123456789012",
-          "accessKeyId": "1",
-          "sessionContext": {
-            "sessionIssuer": {
-              "type": "Role",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:role/tester",
-              "accountId": "123456789012",
-              "userName": "Tester"
-            },
-            "webIdFederationData": {},
-            "attributes": {
-              "mfaAuthenticated": "true",
-              "creationDate": "2019-01-01T00:00:00Z"
-            }
-          }
-        },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "lambda.amazonaws.com",
-        "eventName": "UpdateFunctionConfiguration20150331v2",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters": {
-          "functionName": "my-lambda-function"
-        },
-        "responseElements": {
-          "layers": [
-            {
-              "arn": "arn:aws:lambda:us-west-2:123456789012:layer:my-layer:1"
-            }
-          ]
-        },
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "p_log_type": "AWS.CloudTrail"
-      }
-  - Name: Lambda Update Function Configuration without Layers
-    ExpectedResult: false
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "UpdateFunctionConfiguration20150331v2"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "functionName": "my-lambda-function"
+      "responseElements":
+        "layers":
+          - "arn": "arn:aws:lambda:us-west-2:123456789012:layer:my-layer:1"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Lambda Update Function Configuration with Layers
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "tester",
-          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-          "accountId": "123456789012",
-          "accessKeyId": "1",
-          "sessionContext": {
-            "sessionIssuer": {
-              "type": "Role",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:role/tester",
-              "accountId": "123456789012",
-              "userName": "Tester"
-            },
-            "webIdFederationData": {},
-            "attributes": {
-              "mfaAuthenticated": "true",
-              "creationDate": "2019-01-01T00:00:00Z"
-            }
-          }
-        },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "lambda.amazonaws.com",
-        "eventName": "UpdateFunctionConfiguration20150331v2",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters": {
-          "functionName": "my-lambda-function"
-        },
-        "responseElements": {},
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "p_log_type": "AWS.CloudTrail"
-      }
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "UpdateFunctionConfiguration20150331v2"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "functionName": "my-lambda-function"
+      "responseElements": {}
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Lambda Update Function Configuration without Layers

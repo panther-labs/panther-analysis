@@ -1,65 +1,74 @@
 AnalysisType: rule
-Filename: new_aws_account_logging.py
-RuleID: "Standard.NewAWSAccountCreated"
+Description: >-
+  A new AWS account was created
 DisplayName: "New AWS Account Created"
 Enabled: true
+Filename: new_aws_account_logging.py
 LogTypes:
   - AWS.CloudTrail
+Reference: 
+  https://docs.aws.amazon.com/organizations/latest/userguide/orgs_security_incident-response.html#:~:text=AWS%20Organizations%20information%20in%20CloudTrail
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136
+RuleID: "Standard.NewAWSAccountCreated"
+Runbook: >-
+  A new AWS account was created, ensure it was created through standard practice and
+  is for a valid purpose.
+Severity: Info
+SummaryAttributes:
+  - p_any_aws_account_ids
 Tags:
   - DataModel
   - Indicator Collection
   - Persistence:Create Account
-Severity: Info
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136
-Description: A new AWS account was created
-Runbook: A new AWS account was created, ensure it was created through standard practice and is for a valid purpose.
-Reference: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_security_incident-response.html#:~:text=AWS%20Organizations%20information%20in%20CloudTrail
-SummaryAttributes:
-  - p_any_aws_account_ids
 Tests:
-  - Name: AWS Account created
-    ExpectedResult: true
+  - ExpectedResult: true
+    Log:
+      "awsRegion": "us-east-1"
+      "eventID": "axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      "eventName": "CreateAccountResult"
+      "eventSource": "organizations.amazonaws.com"
+      "eventTime": "2021-05-20 15:53:47Z"
+      "eventType": "AwsServiceEvent"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_any_aws_account_ids":
+        - "111111111111"
+        - "222222222222"
+      "p_event_time": "2021-05-20 15:53:47Z"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "292442345278"
+      "serviceEventDetails": "{\n  \"createAccountStatus\": {\n    \"accountId\":
+        \"1111111111111111\",\n    \"accountName\": \"****\",\n    \"completedTimestamp\"\
+        : \"May 20, 2021 3:53:47 PM\",\n    \"id\": \"car-aaaaaaaaaaaaaaaaaaaaaaaaaaa\"\
+        ,\n    \"requestedTimestamp\": \"May 20, 2021 3:53:44 PM\",\n    \"state\"\
+        : \"SUCCEEDED\"\n  }\n}"
     Mocks:
       - objectName: put_string_set
-        returnValue: >-
+        returnValue: ''
+    Name: AWS Account created
+  - ExpectedResult: false
     Log:
-      {
-        "awsRegion": "us-east-1",
-        "eventID": "axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "eventName": "CreateAccountResult",
-        "eventSource": "organizations.amazonaws.com",
-        "eventTime": "2021-05-20 15:53:47Z",
-        "eventType": "AwsServiceEvent",
-        "eventVersion": "1.08",
-        "managementEvent": true,
-        "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": ["111111111111", "222222222222"],
-        "p_event_time": "2021-05-20 15:53:47Z",
-        "readOnly": false,
-        "recipientAccountId": "292442345278",
-        "serviceEventDetails": "{\n  \"createAccountStatus\": {\n    \"accountId\": \"1111111111111111\",\n    \"accountName\": \"****\",\n    \"completedTimestamp\": \"May 20, 2021 3:53:47 PM\",\n    \"id\": \"car-aaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"requestedTimestamp\": \"May 20, 2021 3:53:44 PM\",\n    \"state\": \"SUCCEEDED\"\n  }\n}",
-      }
-
-  - Name: Non-Account-Creation Event
-    ExpectedResult: false
+      "awsRegion": "us-east-1"
+      "eventName": "CreateAccount"
+      "eventTime": "2020-11-05 21:21:46Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_any_aws_account_ids":
+        - "222222222222"
+      "p_event_time": "2020-11-05 21:21:46Z"
+      "p_log_type": "AWS.CloudTrail"
+      "recipientAccountId": "111111111111111111111111111"
+      "requestID": "2222222222222222222222222222"
+      "requestParameters": "{\n  \"accountName\": \"****\",\n  \"email\": \"****\"\
+        ,\n  \"roleName\": \"SomeRole\"\n}"
+      "responseElements": "{\n  \"createAccountStatus\": {\n    \"accountName\": \"\
+        ****\",\n    \"id\": \"car-3333333333\",\n    \"requestedTimestamp\": \"Nov
+        5, 2020 9:21:45 PM\",\n    \"state\": \"IN_PROGRESS\"\n  }\n}"
+      "sourceIPAddress": "72.177.120.134"
     Mocks:
       - objectName: put_string_set
-        returnValue: >-
-    Log:
-      {
-        "awsRegion": "us-east-1",
-        "eventName": "CreateAccount",
-        "eventTime": "2020-11-05 21:21:46Z",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.05",
-        "recipientAccountId": "111111111111111111111111111",
-        "requestID": "2222222222222222222222222222",
-        "requestParameters": "{\n  \"accountName\": \"****\",\n  \"email\": \"****\",\n  \"roleName\": \"SomeRole\"\n}",
-        "responseElements": "{\n  \"createAccountStatus\": {\n    \"accountName\": \"****\",\n    \"id\": \"car-3333333333\",\n    \"requestedTimestamp\": \"Nov 5, 2020 9:21:45 PM\",\n    \"state\": \"IN_PROGRESS\"\n  }\n}",
-        "sourceIPAddress": "72.177.120.134",
-        "p_event_time": "2020-11-05 21:21:46Z",
-        "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": ["222222222222"],
-      }
+        returnValue: ''
+    Name: Non-Account-Creation Event

@@ -1,96 +1,85 @@
 AnalysisType: rule
-RuleID: Wiz.Revoke.User.Sessions
-Description: This rule detects user sessions revoked.
-DisplayName: Wiz Revoke User Sessions
-Runbook: Verify that this change was planned. If not, revoke all the sessions of the account and change its credentials
-Reference: https://www.wiz.io/blog/storm-0558-compromised-microsoft-key-enables-authentication-of-countless-micr
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects user sessions revoked.
+DisplayName: "Wiz Revoke User Sessions"
 Enabled: true
 Filename: wiz_revoke_user_sessions.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0040:T1531  # Account Access Removal
 LogTypes:
   - Wiz.Audit
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: 
+  https://www.wiz.io/blog/storm-0558-compromised-microsoft-key-enables-authentication-of-countless-micr
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1531
+RuleID: "Wiz.Revoke.User.Sessions"
+Runbook: >-
+  Verify that this change was planned. If not, revoke all the sessions of the account
+  and change its credentials
+Severity: Medium
 Tests:
-  - Name: RevokeUserSessions
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "id": "07fdb41e-e83d-46e2-814a-6cebc47acf97",
-        "action": "RevokeUserSessions",
-        "requestId": "5fa96b8f-2c85-4c2d-b0f9-d4a4307ea8a7",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-31T17:55:29.239928Z",
-        "actionParameters": {
-          "input": {
-            "id": "<redacted>"
-          },
-          "selection": [
-            "__typename",
-            "_stub"
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
-  - Name: CreateUser
-    ExpectedResult: false
+      "action": "RevokeUserSessions"
+      "actionParameters":
+        "input":
+          "id": "<redacted>"
+        "selection":
+          - "__typename"
+          - "_stub"
+      "id": "07fdb41e-e83d-46e2-814a-6cebc47acf97"
+      "requestId": "5fa96b8f-2c85-4c2d-b0f9-d4a4307ea8a7"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-31T17:55:29.239928Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: RevokeUserSessions
+  - ExpectedResult: false
     Log:
-      {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
-        "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-29T09:40:15.66643Z",
-        "actionParameters": {
-          "input": {
-            "assignedProjectIds": null,
-            "email": "testy@company.com",
-            "expiresAt": null,
-            "name": "Test User",
-            "role": "GLOBAL_ADMIN"
-          },
-          "selection": [
-            "__typename",
-            {
-              "user": [
-                "__typename",
-                "id"
-              ]
-            }
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "8.8.8.8",
-        "serviceAccount": null,
-        "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
-        }
-      }
-  - Name: RevokeUserSessions - Fail
-    ExpectedResult: false
+      "action": "CreateUser"
+      "actionParameters":
+        "input":
+          "assignedProjectIds":
+          "email": "testy@company.com"
+          "expiresAt":
+          "name": "Test User"
+          "role": "GLOBAL_ADMIN"
+        "selection":
+          - "__typename"
+          - "user":
+              - "__typename"
+              - "id"
+      "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14"
+      "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e"
+      "serviceAccount":
+      "sourceIP": "8.8.8.8"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-29T09:40:15.66643Z"
+      "user":
+        "id": "someuser@company.com"
+        "name": "someuser@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: CreateUser
+  - ExpectedResult: false
     Log:
-      {
-        "id": "07fdb41e-e83d-46e2-814a-6cebc47acf97",
-        "action": "RevokeUserSessions",
-        "requestId": "5fa96b8f-2c85-4c2d-b0f9-d4a4307ea8a7",
-        "status": "FAILED",
-        "timestamp": "2024-07-31T17:55:29.239928Z",
-        "actionParameters": { },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
+      "action": "RevokeUserSessions"
+      "actionParameters": {}
+      "id": "07fdb41e-e83d-46e2-814a-6cebc47acf97"
+      "requestId": "5fa96b8f-2c85-4c2d-b0f9-d4a4307ea8a7"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "FAILED"
+      "timestamp": "2024-07-31T17:55:29.239928Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: RevokeUserSessions - Fail
+Threshold: 1

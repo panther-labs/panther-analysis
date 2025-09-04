@@ -1,20 +1,24 @@
 AnalysisType: rule
-Filename: aws_ssm_distributed_command.py
-RuleID: "AWS.SSM.DistributedCommand"
-DisplayName: AWS SSM Distributed Command
+Description: >-
+  Detect an attacker utilizing AWS Systems Manager (SSM) to execute commands through
+  SendCommand on multiple EC2 instances.
+DisplayName: "AWS SSM Distributed Command"
 Enabled: true
+Filename: aws_ssm_distributed_command.py
 LogTypes:
   - AWS.CloudTrail
-Severity: Info
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.execution.ssm-send-command/
 Reports:
   MITRE ATT&CK:
-    - TA0002:T1203 # Execution: Exploitation for Client Execution
-Description: >
-  Detect an attacker utilizing AWS Systems Manager (SSM) to execute commands through SendCommand on multiple EC2 instances.
-Reference: >
-  https://stratus-red-team.cloud/attack-techniques/AWS/aws.execution.ssm-send-command/
-Runbook: >
-  Detetmine who issued the command, the command content and arguments, and which EC2 instances were affected. Determine the risk of an attacker creating a persistent point of access within one of the instances. Review behaviour logs for the EC2 instances (and their associated IAM roles).
+    - TA0002:T1203
+RuleID: "AWS.SSM.DistributedCommand"
+Runbook: >-
+  Detetmine who issued the command, the command content and arguments, and which EC2
+  instances were affected. Determine the risk of an attacker creating a persistent
+  point of access within one of the instances. Review behaviour logs for the EC2 instances
+  (and their associated IAM roles).
+Severity: Info
 SummaryAttributes:
   - p_any_aws_account_ids
   - p_any_aws_arns
@@ -28,383 +32,327 @@ Tags:
   - 'Execution: Exploitation for Client Execution'
   - Beta
 Tests:
-  - Name: Send Command to Many Instances at Once
-    ExpectedResult: true
+  - ExpectedResult: true
+    Log:
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047"
+      "eventName": "SendCommand"
+      "eventSource": "ssm.amazonaws.com"
+      "eventTime": "2025-02-19 16:32:39.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_event_time": "2025-02-19 16:32:39.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-02-19 16:35:54.509896629"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553"
+      "requestParameters":
+        "documentName": "AWS-RunShellScript"
+        "instanceIds":
+          - "i-006e4c07b5fba8ad2"
+          - "i-01bf673280e708b0d"
+          - "i-020001cca1a2f2628"
+        "interactive": false
+        "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
+      "responseElements":
+        "command":
+          "alarmConfiguration":
+            "alarms": []
+            "ignorePollAlarmFailure": false
+          "clientName": ""
+          "clientSourceId": ""
+          "cloudWatchOutputConfig":
+            "cloudWatchLogGroupName": ""
+            "cloudWatchOutputEnabled": false
+          "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0"
+          "comment": ""
+          "completedCount": 0
+          "deliveryTimedOutCount": 0
+          "documentName": "AWS-RunShellScript"
+          "documentVersion": "$DEFAULT"
+          "errorCount": 0
+          "expiresAfter": "Feb 19, 2025, 6:32:39 PM"
+          "hasCancelCommandSignature": false
+          "hasSendCommandSignature": false
+          "instanceIds":
+            - "i-006e4c07b5fba8ad2"
+            - "i-01bf673280e708b0d"
+            - "i-020001cca1a2f2628"
+          "interactive": false
+          "maxConcurrency": "50"
+          "maxErrors": "0"
+          "notificationConfig":
+            "notificationArn": ""
+            "notificationEvents": []
+            "notificationType": ""
+          "outputS3BucketName": ""
+          "outputS3KeyPrefix": ""
+          "outputS3Region": "us-west-2"
+          "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
+          "requestedDateTime": "Feb 19, 2025, 4:32:39 PM"
+          "serviceRole": ""
+          "status": "Pending"
+          "statusDetails": "Pending"
+          "targetCount": 3
+          "targets": []
+          "timeoutSeconds": 3600
+          "triggeredAlarms": []
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "sample-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt"
+        "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-02-19T16:29:24Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
     Mocks:
       - objectName: get_string_set
         returnValue: '[]'
       - objectName: put_string_set
         returnValue: ''
+    Name: Send Command to Many Instances at Once
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2025-02-19 16:32:39.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-02-19 16:35:54.509896629",
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047",
-        "eventName": "SendCommand",
-        "eventSource": "ssm.amazonaws.com",
-        "eventTime": "2025-02-19 16:32:39.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.08",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553",
-        "requestParameters": {
-          "documentName": "AWS-RunShellScript",
-          "instanceIds": [
-            "i-006e4c07b5fba8ad2",
-            "i-01bf673280e708b0d",
-            "i-020001cca1a2f2628"
-          ],
-          "interactive": false,
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047"
+      "eventName": "SendCommand"
+      "eventSource": "ssm.amazonaws.com"
+      "eventTime": "2025-02-19 16:32:39.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_event_time": "2025-02-19 16:32:39.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-02-19 16:35:54.509896629"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553"
+      "requestParameters":
+        "documentName": "AWS-RunShellScript"
+        "instanceIds":
+          - "i-006e4c07b5fba8ad2"
+        "interactive": false
+        "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
+      "responseElements":
+        "command":
+          "alarmConfiguration":
+            "alarms": []
+            "ignorePollAlarmFailure": false
+          "clientName": ""
+          "clientSourceId": ""
+          "cloudWatchOutputConfig":
+            "cloudWatchLogGroupName": ""
+            "cloudWatchOutputEnabled": false
+          "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0"
+          "comment": ""
+          "completedCount": 0
+          "deliveryTimedOutCount": 0
+          "documentName": "AWS-RunShellScript"
+          "documentVersion": "$DEFAULT"
+          "errorCount": 0
+          "expiresAfter": "Feb 19, 2025, 6:32:39 PM"
+          "hasCancelCommandSignature": false
+          "hasSendCommandSignature": false
+          "instanceIds":
+            - "i-006e4c07b5fba8ad2"
+          "interactive": false
+          "maxConcurrency": "50"
+          "maxErrors": "0"
+          "notificationConfig":
+            "notificationArn": ""
+            "notificationEvents": []
+            "notificationType": ""
+          "outputS3BucketName": ""
+          "outputS3KeyPrefix": ""
+          "outputS3Region": "us-west-2"
           "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
-        },
-        "responseElements": {
-          "command": {
-            "alarmConfiguration": {
-              "alarms": [],
-              "ignorePollAlarmFailure": false
-            },
-            "clientName": "",
-            "clientSourceId": "",
-            "cloudWatchOutputConfig": {
-              "cloudWatchLogGroupName": "",
-              "cloudWatchOutputEnabled": false
-            },
-            "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0",
-            "comment": "",
-            "completedCount": 0,
-            "deliveryTimedOutCount": 0,
-            "documentName": "AWS-RunShellScript",
-            "documentVersion": "$DEFAULT",
-            "errorCount": 0,
-            "expiresAfter": "Feb 19, 2025, 6:32:39 PM",
-            "hasCancelCommandSignature": false,
-            "hasSendCommandSignature": false,
-            "instanceIds": [
-              "i-006e4c07b5fba8ad2",
-              "i-01bf673280e708b0d",
-              "i-020001cca1a2f2628"
-            ],
-            "interactive": false,
-            "maxConcurrency": "50",
-            "maxErrors": "0",
-            "notificationConfig": {
-              "notificationArn": "",
-              "notificationEvents": [],
-              "notificationType": ""
-            },
-            "outputS3BucketName": "",
-            "outputS3KeyPrefix": "",
-            "outputS3Region": "us-west-2",
-            "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS",
-            "requestedDateTime": "Feb 19, 2025, 4:32:39 PM",
-            "serviceRole": "",
-            "status": "Pending",
-            "statusDetails": "Pending",
-            "targetCount": 3,
-            "targets": [],
-            "timeoutSeconds": 3600,
-            "triggeredAlarms": []
-          }
-        },
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.2"
-        },
-        "userAgent": "sample-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
-          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-02-19T16:29:24Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            },
-            "webIdFederationData": {}
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: Single Command Send, Many Cached IDs
-    ExpectedResult: true
+          "requestedDateTime": "Feb 19, 2025, 4:32:39 PM"
+          "serviceRole": ""
+          "status": "Pending"
+          "statusDetails": "Pending"
+          "targetCount": 3
+          "targets": []
+          "timeoutSeconds": 3600
+          "triggeredAlarms": []
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "sample-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt"
+        "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-02-19T16:29:24Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
     Mocks:
       - objectName: get_string_set
         returnValue: '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]'
       - objectName: put_string_set
         returnValue: ''
+    Name: Single Command Send, Many Cached IDs
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2025-02-19 16:32:39.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-02-19 16:35:54.509896629",
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047",
-        "eventName": "SendCommand",
-        "eventSource": "ssm.amazonaws.com",
-        "eventTime": "2025-02-19 16:32:39.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.08",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553",
-        "requestParameters": {
-          "documentName": "AWS-RunShellScript",
-          "instanceIds": [
-            "i-006e4c07b5fba8ad2"
-          ],
-          "interactive": false,
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047"
+      "eventName": "SendCommand"
+      "eventSource": "ssm.amazonaws.com"
+      "eventTime": "2025-02-19 16:32:39.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_event_time": "2025-02-19 16:32:39.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-02-19 16:35:54.509896629"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553"
+      "requestParameters":
+        "documentName": "AWS-RunShellScript"
+        "instanceIds":
+          - "i-006e4c07b5fba8ad2"
+        "interactive": false
+        "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
+      "responseElements":
+        "command":
+          "alarmConfiguration":
+            "alarms": []
+            "ignorePollAlarmFailure": false
+          "clientName": ""
+          "clientSourceId": ""
+          "cloudWatchOutputConfig":
+            "cloudWatchLogGroupName": ""
+            "cloudWatchOutputEnabled": false
+          "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0"
+          "comment": ""
+          "completedCount": 0
+          "deliveryTimedOutCount": 0
+          "documentName": "AWS-RunShellScript"
+          "documentVersion": "$DEFAULT"
+          "errorCount": 0
+          "expiresAfter": "Feb 19, 2025, 6:32:39 PM"
+          "hasCancelCommandSignature": false
+          "hasSendCommandSignature": false
+          "instanceIds":
+            - "i-006e4c07b5fba8ad2"
+          "interactive": false
+          "maxConcurrency": "50"
+          "maxErrors": "0"
+          "notificationConfig":
+            "notificationArn": ""
+            "notificationEvents": []
+            "notificationType": ""
+          "outputS3BucketName": ""
+          "outputS3KeyPrefix": ""
+          "outputS3Region": "us-west-2"
           "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
-        },
-        "responseElements": {
-          "command": {
-            "alarmConfiguration": {
-              "alarms": [],
-              "ignorePollAlarmFailure": false
-            },
-            "clientName": "",
-            "clientSourceId": "",
-            "cloudWatchOutputConfig": {
-              "cloudWatchLogGroupName": "",
-              "cloudWatchOutputEnabled": false
-            },
-            "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0",
-            "comment": "",
-            "completedCount": 0,
-            "deliveryTimedOutCount": 0,
-            "documentName": "AWS-RunShellScript",
-            "documentVersion": "$DEFAULT",
-            "errorCount": 0,
-            "expiresAfter": "Feb 19, 2025, 6:32:39 PM",
-            "hasCancelCommandSignature": false,
-            "hasSendCommandSignature": false,
-            "instanceIds": [
-              "i-006e4c07b5fba8ad2"
-            ],
-            "interactive": false,
-            "maxConcurrency": "50",
-            "maxErrors": "0",
-            "notificationConfig": {
-              "notificationArn": "",
-              "notificationEvents": [],
-              "notificationType": ""
-            },
-            "outputS3BucketName": "",
-            "outputS3KeyPrefix": "",
-            "outputS3Region": "us-west-2",
-            "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS",
-            "requestedDateTime": "Feb 19, 2025, 4:32:39 PM",
-            "serviceRole": "",
-            "status": "Pending",
-            "statusDetails": "Pending",
-            "targetCount": 3,
-            "targets": [],
-            "timeoutSeconds": 3600,
-            "triggeredAlarms": []
-          }
-        },
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.2"
-        },
-        "userAgent": "sample-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
-          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-02-19T16:29:24Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            },
-            "webIdFederationData": {}
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: Single Command Send, No Cached IDs
-    ExpectedResult: false
+          "requestedDateTime": "Feb 19, 2025, 4:32:39 PM"
+          "serviceRole": ""
+          "status": "Pending"
+          "statusDetails": "Pending"
+          "targetCount": 3
+          "targets": []
+          "timeoutSeconds": 3600
+          "triggeredAlarms": []
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "sample-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY_ID"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt"
+        "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-02-19T16:29:24Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
     Mocks:
       - objectName: get_string_set
         returnValue: '[]'
       - objectName: put_string_set
         returnValue: ''
+    Name: Single Command Send, No Cached IDs
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2025-02-19 16:32:39.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-02-19 16:35:54.509896629",
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "ceaea85a-6db9-4595-9842-d904fce2f047",
-        "eventName": "SendCommand",
-        "eventSource": "ssm.amazonaws.com",
-        "eventTime": "2025-02-19 16:32:39.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.08",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "c41499e3-c04c-48e7-9da9-ef63d0868553",
-        "requestParameters": {
-          "documentName": "AWS-RunShellScript",
-          "instanceIds": [
-            "i-006e4c07b5fba8ad2"
-          ],
-          "interactive": false,
-          "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS"
-        },
-        "responseElements": {
-          "command": {
-            "alarmConfiguration": {
-              "alarms": [],
-              "ignorePollAlarmFailure": false
-            },
-            "clientName": "",
-            "clientSourceId": "",
-            "cloudWatchOutputConfig": {
-              "cloudWatchLogGroupName": "",
-              "cloudWatchOutputEnabled": false
-            },
-            "commandId": "f49a1fe5-d12b-4ac0-98bc-0e4bd83d70c0",
-            "comment": "",
-            "completedCount": 0,
-            "deliveryTimedOutCount": 0,
-            "documentName": "AWS-RunShellScript",
-            "documentVersion": "$DEFAULT",
-            "errorCount": 0,
-            "expiresAfter": "Feb 19, 2025, 6:32:39 PM",
-            "hasCancelCommandSignature": false,
-            "hasSendCommandSignature": false,
-            "instanceIds": [
-              "i-006e4c07b5fba8ad2"
-            ],
-            "interactive": false,
-            "maxConcurrency": "50",
-            "maxErrors": "0",
-            "notificationConfig": {
-              "notificationArn": "",
-              "notificationEvents": [],
-              "notificationType": ""
-            },
-            "outputS3BucketName": "",
-            "outputS3KeyPrefix": "",
-            "outputS3Region": "us-west-2",
-            "parameters": "HIDDEN_DUE_TO_SECURITY_REASONS",
-            "requestedDateTime": "Feb 19, 2025, 4:32:39 PM",
-            "serviceRole": "",
-            "status": "Pending",
-            "statusDetails": "Pending",
-            "targetCount": 3,
-            "targets": [],
-            "timeoutSeconds": 3600,
-            "triggeredAlarms": []
-          }
-        },
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-          "clientProvidedHostHeader": "ssm.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.2"
-        },
-        "userAgent": "sample-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY_ID",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
-          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-02-19T16:29:24Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            },
-            "webIdFederationData": {}
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: Unrelated Event
-    ExpectedResult: false
-    Log:
-      {
-        "p_event_time": "2025-02-19 18:00:45.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-02-19 18:05:54.395474849",
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "447414b9-8516-4470-9e3a-f55067602ff0",
-        "eventName": "DescribeInstances",
-        "eventSource": "ec2.amazonaws.com",
-        "eventTime": "2025-02-19 18:00:45.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": true,
-        "recipientAccountId": "111122223333",
-        "requestID": "c44720ce-1853-41c8-96b0-06dac0284963",
-        "requestParameters": {
-          "filterSet": {},
-          "instancesSet": {
-            "items": [
-              {
-                "instanceId": "i-09c2e8f99d245cc69"
-              }
-            ]
-          }
-        },
-        "sourceIPAddress": "eks.amazonaws.com",
-        "userAgent": "eks.amazonaws.com",
-        "userIdentity": {
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/SessionId",
-          "invokedBy": "eks.amazonaws.com",
-          "principalId": "SAMPLE_PRINCIPAL_ID:SessionId",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-02-19T17:55:44Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "447414b9-8516-4470-9e3a-f55067602ff0"
+      "eventName": "DescribeInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2025-02-19 18:00:45.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2025-02-19 18:00:45.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-02-19 18:05:54.395474849"
+      "readOnly": true
+      "recipientAccountId": "111122223333"
+      "requestID": "c44720ce-1853-41c8-96b0-06dac0284963"
+      "requestParameters":
+        "filterSet": {}
+        "instancesSet":
+          "items":
+            - "instanceId": "i-09c2e8f99d245cc69"
+      "sourceIPAddress": "eks.amazonaws.com"
+      "userAgent": "eks.amazonaws.com"
+      "userIdentity":
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/SessionId"
+        "invokedBy": "eks.amazonaws.com"
+        "principalId": "SAMPLE_PRINCIPAL_ID:SessionId"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-02-19T17:55:44Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
+    Name: Unrelated Event

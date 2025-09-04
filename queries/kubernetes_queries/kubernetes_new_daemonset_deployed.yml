@@ -1,17 +1,20 @@
 AnalysisType: scheduled_rule
+Description: >-
+  This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A
+  daemonset is a workload that guarantees the presence of exactly one instance of
+  a specific pod on every node in the cluster. This can be a very powerful tool for
+  establishing peristence.
+DisplayName: "New DaemonSet Deployed to Kubernetes"
+Enabled: false
 Filename: kubernetes_new_daemonset_deployed.py
 RuleID: "Kubernetes.DaemonSetDeployed"
-DisplayName: "New DaemonSet Deployed to Kubernetes"
-Description: >
-  This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
-Enabled: false
-Runbook: >
+Runbook: >-
   .
 ScheduledQueries:
   - New DaemonSet Deployed to Kubernetes
 Severity: Medium
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      Anything: any value
+      "Anything": "any value"
+    Name: Value Returned By Query

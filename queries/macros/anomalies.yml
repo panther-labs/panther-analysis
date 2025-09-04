@@ -1,207 +1,258 @@
 AnalysisType: saved_query
+Query: >-
+  -- pragma: template
+
+
+  {% macro statistical_anomaly(subquery, entity_field, agg_field, agg_func, tmag,
+  tunit, zscore) export %}
+
+  mintime as (
+      select
+          FLOOR(DATEDIFF({{tunit}}, p_current_timestamp(), min(p_event_time)) / {{
+  tmag }}) as tmag
+      from {{ subquery }}
+  ),
+
+  tbins as (
+      select
+          dateadd('{{ tunit }}', -1-seq4(), p_current_timestamp()) as t1,
+          dateadd('{{ tunit }}', -seq4(), p_current_timestamp()) as t2
+      from table(generator(rowcount => 10000)) -- Wish I could dynamically set this
+  :(
+  ),
+
+  logs as (
+      select
+          p_event_time,
+          {{ entity_field }},
+          {{ agg_field }},
+      from {{ subquery }}
+  ),
+
+  dimensions as (
+      select * from tbins cross join (
+          select distinct {{ entity_field }} from logs
+      )
+  ),
+
+  data as (
+      select
+          coalesce({{ agg_func }}(logs.{{ agg_field }}), 0) as N,
+          dimensions.t1,
+          dimensions.t2,
+          dimensions.{{ entity_field }}
+      from logs right outer join dimensions
+      on (dimensions.t1 < logs.p_event_time and logs.p_event_time <= dimensions.t2)
+      and logs.{{ entity_field }} = dimensions.{{ entity_field }}
+      where dimensions.t1 > (select min(p_event_time) from subquery)
+      group by
+          dimensions.t1,
+          dimensions.t2,
+          dimensions.{{ entity_field }}
+
+  ),
+
+  stats as (
+      select
+          min(N) as minimim,
+          max(N) as maximum,
+          avg(N) as mean,
+          median(N) as median,
+          stddev(N) as std_dev,
+          {{ entity_field }}
+      from data
+      where t2 < (select max(t2) from tbins)
+      group by
+          {{ entity_field }}
+  ),
+
+  this as (
+      select * from data
+      where t2 > (select max(t1) from tbins)
+  )
+
+  select
+      this.*,
+      (this.N - stats.mean) / stats.std_dev as p_zscore,
+      stats.mean as p_mean,
+      stats.std_dev as p_stddev
+  from this join stats on this.{{ entity_field }} = stats.{{ entity_field }}
+
+  where p_stddev != 0
+
+  and abs(p_zscore) >= {{ zscore }}
+
+  order by p_zscore desc
+
+  {% endmacro %}
+
+
+
+  {% macro new_unique_values(subquery, entity_field, agg_field, interval) export %}
+
+  old_values as (
+      select distinct {{ entity_field }}, {{ agg_field }}
+      from {{ subquery }}
+      where not p_occurs_since({{ interval }})
+  ),
+
+  new_values as (
+      select distinct {{ entity_field }}, {{ agg_field }}
+      from {{ subquery }}
+      where p_occurs_since({{ interval }})
+  )
+
+  select * from new_values
+
+  MINUS
+
+  select * from old_values
+
+  {% endmacro %}
+
+
+
+  {% macro statistical_anomaly_peer(subquery, entity_field, group_field, agg_field,
+  agg_func, tmag, tunit, zscore) export %}
+
+  mintime as (
+      select
+          FLOOR(DATEDIFF({{tunit}}, p_current_timestamp(), min(p_event_time)) / {{
+  tmag }}) as tmag
+      from {{ subquery }}
+  ),
+
+  tbins as (
+      select
+          dateadd('{{ tunit }}', -1-seq4(), p_current_timestamp()) as t1,
+          dateadd('{{ tunit }}', -seq4(), p_current_timestamp()) as t2
+      from table(generator(rowcount => 10000)) -- Wish I could dynamically set this
+  :(
+  ),
+
+  logs as (
+      select
+          p_event_time,
+          {{ entity_field }},
+          {{ group_field }},
+          {{ agg_field }},
+      from {{ subquery }}
+  ),
+
+  dimensions as (
+      select * from tbins cross join (
+          select distinct {{ entity_field }}, {{ group_field }} from logs
+      )
+  ),
+
+  -- Get aggregated value PER TBIN PER ENTITY
+
+  data_entity as (
+      select
+          coalesce({{ agg_func }}(logs.{{ agg_field }}), 0) as N,
+          dimensions.t1,
+          dimensions.t2,
+          dimensions.{{ entity_field }},
+          dimensions.{{ group_field }}
+      from logs right outer join dimensions
+      on (dimensions.t1 < logs.p_event_time and logs.p_event_time <= dimensions.t2)
+      and logs.{{ entity_field }} = dimensions.{{ entity_field }}
+      where dimensions.t1 >= (select min(p_event_time) from logs)
+      group by
+          dimensions.t1,
+          dimensions.t2,
+          dimensions.{{ entity_field }},
+          dimensions.{{ group_field }}
+  ),
+
+  -- Get average value PER TBIN PER GROUP
+
+  data_group as (
+      select
+          avg(N) as N,
+          t1,
+          t2,
+          {{ group_field }}
+      from data_entity
+      group by
+          t1,
+          t2,
+          {{ group_field }}
+  ),
+
+  -- Calculate mean, std. dev., etc PER GROUP
+
+  stats as (
+      select
+          min(N) as minimim,
+          max(N) as maximum,
+          avg(N) as mean,
+          median(N) as median,
+          stddev(N) as std_dev,
+          {{ group_field }}
+      from data_group
+      where t2 < (select max(t2) from tbins)
+      group by
+          {{ group_field }}
+  ),
+
+  this as (
+      select * from data_entity
+      where t2 > (select max(t1) from tbins)
+  )
+
+  select
+      this.*,
+      (this.N - stats.mean) / stats.std_dev as p_zscore,
+      stats.mean as p_mean,
+      stats.std_dev as p_stddev
+  from this join stats on this.{{ group_field }} = stats.{{ group_field }}
+
+  where p_stddev != 0
+
+  and abs(p_zscore) >= {{ zscore }}
+
+  order by p_zscore desc
+
+  {% endmacro %}
+
+
+
+  {% macro new_unique_values_peer(subquery, entity_field, group_field, agg_field,
+  interval) export %}
+
+  group_mappings as (
+      select distinct {{ entity_field }}, {{ group_field }}
+      from {{ subquery }}
+  ),
+
+  old_values as (
+      select distinct {{ group_field }}, {{ agg_field }}
+      from {{ subquery }}
+      where not p_occurs_since({{ interval }})
+  ),
+
+  new_values as (
+      select distinct {{ entity_field }}, {{ agg_field }}
+      from {{ subquery }}
+      where p_occurs_since({{ interval }})
+  ),
+
+  old_values_by_entity as (
+      select
+          old_values.{{ agg_field }},
+          group_mappings.{{ entity_field }}
+      from old_values natural join group_mappings
+  )
+
+  select * from (
+      select {{ entity_field }}, {{ agg_field }} from new_values
+      MINUS
+      select {{ entity_field }}, {{ agg_field }} from old_values_by_entity
+  ) natural join group_mappings
+
+  {% endmacro %}
 QueryName: "anomalies"
 Tags:
   - Anomaly Detection
   - Template
-Query: |-
-    -- pragma: template
-
-    {% macro statistical_anomaly(subquery, entity_field, agg_field, agg_func, tmag, tunit, zscore) export %}
-    mintime as (
-        select
-            FLOOR(DATEDIFF({{tunit}}, p_current_timestamp(), min(p_event_time)) / {{ tmag }}) as tmag
-        from {{ subquery }}
-    ),
-    tbins as (
-        select
-            dateadd('{{ tunit }}', -1-seq4(), p_current_timestamp()) as t1,
-            dateadd('{{ tunit }}', -seq4(), p_current_timestamp()) as t2
-        from table(generator(rowcount => 10000)) -- Wish I could dynamically set this :(
-    ),
-    logs as (
-        select
-            p_event_time,
-            {{ entity_field }},
-            {{ agg_field }},
-        from {{ subquery }}
-    ),
-    dimensions as (
-        select * from tbins cross join (
-            select distinct {{ entity_field }} from logs
-        )
-    ),
-    data as (
-        select
-            coalesce({{ agg_func }}(logs.{{ agg_field }}), 0) as N,
-            dimensions.t1,
-            dimensions.t2,
-            dimensions.{{ entity_field }}
-        from logs right outer join dimensions
-        on (dimensions.t1 < logs.p_event_time and logs.p_event_time <= dimensions.t2)
-        and logs.{{ entity_field }} = dimensions.{{ entity_field }}
-        where dimensions.t1 > (select min(p_event_time) from subquery)
-        group by
-            dimensions.t1,
-            dimensions.t2,
-            dimensions.{{ entity_field }}
-
-    ),
-    stats as (
-        select
-            min(N) as minimim,
-            max(N) as maximum,
-            avg(N) as mean,
-            median(N) as median,
-            stddev(N) as std_dev,
-            {{ entity_field }}
-        from data
-        where t2 < (select max(t2) from tbins)
-        group by
-            {{ entity_field }}
-    ),
-    this as (
-        select * from data
-        where t2 > (select max(t1) from tbins)
-    )
-    select
-        this.*,
-        (this.N - stats.mean) / stats.std_dev as p_zscore,
-        stats.mean as p_mean,
-        stats.std_dev as p_stddev
-    from this join stats on this.{{ entity_field }} = stats.{{ entity_field }}
-    where p_stddev != 0
-    and abs(p_zscore) >= {{ zscore }}
-    order by p_zscore desc
-    {% endmacro %}
-
-
-    {% macro new_unique_values(subquery, entity_field, agg_field, interval) export %}
-    old_values as (
-        select distinct {{ entity_field }}, {{ agg_field }}
-        from {{ subquery }}
-        where not p_occurs_since({{ interval }})
-    ),
-    new_values as (
-        select distinct {{ entity_field }}, {{ agg_field }}
-        from {{ subquery }}
-        where p_occurs_since({{ interval }})
-    )
-    select * from new_values
-    MINUS
-    select * from old_values
-    {% endmacro %}
-
-
-    {% macro statistical_anomaly_peer(subquery, entity_field, group_field, agg_field, agg_func, tmag, tunit, zscore) export %}
-    mintime as (
-        select
-            FLOOR(DATEDIFF({{tunit}}, p_current_timestamp(), min(p_event_time)) / {{ tmag }}) as tmag
-        from {{ subquery }}
-    ),
-    tbins as (
-        select
-            dateadd('{{ tunit }}', -1-seq4(), p_current_timestamp()) as t1,
-            dateadd('{{ tunit }}', -seq4(), p_current_timestamp()) as t2
-        from table(generator(rowcount => 10000)) -- Wish I could dynamically set this :(
-    ),
-    logs as (
-        select
-            p_event_time,
-            {{ entity_field }},
-            {{ group_field }},
-            {{ agg_field }},
-        from {{ subquery }}
-    ),
-    dimensions as (
-        select * from tbins cross join (
-            select distinct {{ entity_field }}, {{ group_field }} from logs
-        )
-    ),
-    -- Get aggregated value PER TBIN PER ENTITY
-    data_entity as (
-        select
-            coalesce({{ agg_func }}(logs.{{ agg_field }}), 0) as N,
-            dimensions.t1,
-            dimensions.t2,
-            dimensions.{{ entity_field }},
-            dimensions.{{ group_field }}
-        from logs right outer join dimensions
-        on (dimensions.t1 < logs.p_event_time and logs.p_event_time <= dimensions.t2)
-        and logs.{{ entity_field }} = dimensions.{{ entity_field }}
-        where dimensions.t1 >= (select min(p_event_time) from logs)
-        group by
-            dimensions.t1,
-            dimensions.t2,
-            dimensions.{{ entity_field }},
-            dimensions.{{ group_field }}
-    ),
-    -- Get average value PER TBIN PER GROUP
-    data_group as (
-        select
-            avg(N) as N,
-            t1,
-            t2,
-            {{ group_field }}
-        from data_entity
-        group by
-            t1,
-            t2,
-            {{ group_field }}
-    ),
-    -- Calculate mean, std. dev., etc PER GROUP
-    stats as (
-        select
-            min(N) as minimim,
-            max(N) as maximum,
-            avg(N) as mean,
-            median(N) as median,
-            stddev(N) as std_dev,
-            {{ group_field }}
-        from data_group
-        where t2 < (select max(t2) from tbins)
-        group by
-            {{ group_field }}
-    ),
-    this as (
-        select * from data_entity
-        where t2 > (select max(t1) from tbins)
-    )
-    select
-        this.*,
-        (this.N - stats.mean) / stats.std_dev as p_zscore,
-        stats.mean as p_mean,
-        stats.std_dev as p_stddev
-    from this join stats on this.{{ group_field }} = stats.{{ group_field }}
-    where p_stddev != 0
-    and abs(p_zscore) >= {{ zscore }}
-    order by p_zscore desc
-    {% endmacro %}
-
-
-    {% macro new_unique_values_peer(subquery, entity_field, group_field, agg_field, interval) export %}
-    group_mappings as (
-        select distinct {{ entity_field }}, {{ group_field }}
-        from {{ subquery }}
-    ),
-    old_values as (
-        select distinct {{ group_field }}, {{ agg_field }}
-        from {{ subquery }}
-        where not p_occurs_since({{ interval }})
-    ),
-    new_values as (
-        select distinct {{ entity_field }}, {{ agg_field }}
-        from {{ subquery }}
-        where p_occurs_since({{ interval }})
-    ),
-    old_values_by_entity as (
-        select
-            old_values.{{ agg_field }},
-            group_mappings.{{ entity_field }}
-        from old_values natural join group_mappings
-    )
-    select * from (
-        select {{ entity_field }}, {{ agg_field }} from new_values
-        MINUS
-        select {{ entity_field }}, {{ agg_field }} from old_values_by_entity
-    ) natural join group_mappings
-    {% endmacro %}

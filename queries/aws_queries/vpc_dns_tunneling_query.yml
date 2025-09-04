@@ -1,9 +1,7 @@
 AnalysisType: scheduled_query
-QueryName: "Query.VPC.DNS.Tunneling"
+Description: Detect activity similar to DNS tunneling traffic in AWS VPC Logs
 Enabled: false
-Description: >
-  Detect activity similar to DNS tunneling traffic in AWS VPC Logs
-Query: |
+Query: >-
   SELECT
     account_id,
     region,
@@ -25,7 +23,9 @@ Query: |
   HAVING
     message_count >= 1000   -- decent amount of activity in an hour
     AND
-    ARRAY_SIZE(query_names) <= 2 -- only a small number of distinct domains (not likely a real dns server!)
+    ARRAY_SIZE(query_names) <= 2 -- only a small number of distinct domains (not likely
+  a real dns server!)
+QueryName: "Query.VPC.DNS.Tunneling"
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 1

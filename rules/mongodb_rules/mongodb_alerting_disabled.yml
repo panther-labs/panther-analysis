@@ -1,51 +1,48 @@
 AnalysisType: rule
-Description:
-  MongoDB provides security alerting policies for notifying admins when certain conditions are met.
-  This rule detects when these policies are disabled or deleted.
+DedupPeriodMinutes: 60
+Description: >-
+  MongoDB provides security alerting policies for notifying admins when certain conditions
+  are met. This rule detects when these policies are disabled or deleted.
 DisplayName: "MongoDB security alerts disabled or deleted"
 Enabled: true
+Filename: mongodb_alerting_disabled.py
 LogTypes:
   - MongoDB.OrganizationEvent
-RuleID: "MongoDB.Alerting.Disabled.Or.Deleted"
-Filename: mongodb_alerting_disabled.py
-Severity: High
+Reference: https://www.mongodb.com/docs/atlas/configure-alerts/
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562.001 # Impair Defenses: Disable or Modify Tools
-Reference: https://www.mongodb.com/docs/atlas/configure-alerts/
-Runbook: Re-enable security alerts
+    - TA0005:T1562.001
+RuleID: "MongoDB.Alerting.Disabled.Or.Deleted"
+Runbook: >-
+  Re-enable security alerts
+Severity: High
 Tests:
-  - Name: Alert added
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "alertConfigId": "alert_id",
-        "created": "2024-04-01 11:57:54.000000000",
-        "currentValue": {},
-        "eventTypeName": "ALERT_CONFIG_ADDED_AUDIT",
-        "id": "alert_id",
-        "isGlobalAdmin": false,
-        "links": [],
-        "orgId": "some_org_id",
-        "remoteAddress": "1.2.3.4",
-        "userId": "user_id",
-        "username": "some_user@company.com",
-      }
-  - Name: Alert deleted
-    ExpectedResult: true
+      "alertConfigId": "alert_id"
+      "created": "2024-04-01 11:57:54.000000000"
+      "currentValue": {}
+      "eventTypeName": "ALERT_CONFIG_ADDED_AUDIT"
+      "id": "alert_id"
+      "isGlobalAdmin": false
+      "links": []
+      "orgId": "some_org_id"
+      "remoteAddress": "1.2.3.4"
+      "userId": "user_id"
+      "username": "some_user@company.com"
+    Name: Alert added
+  - ExpectedResult: true
     Log:
-      {
-        "alertConfigId": "alert_id",
-        "created": "2024-04-01 11:58:52.000000000",
-        "currentValue": {},
-        "eventTypeName": "ALERT_CONFIG_DELETED_AUDIT",
-        "id": "alert_id",
-        "isGlobalAdmin": false,
-        "links": [],
-        "orgId": "some_org_id",
-        "remoteAddress": "1.2.3.4",
-        "userId": "user_id",
-        "username": "some_user@company.com",
-      }
-DedupPeriodMinutes: 60
+      "alertConfigId": "alert_id"
+      "created": "2024-04-01 11:58:52.000000000"
+      "currentValue": {}
+      "eventTypeName": "ALERT_CONFIG_DELETED_AUDIT"
+      "id": "alert_id"
+      "isGlobalAdmin": false
+      "links": []
+      "orgId": "some_org_id"
+      "remoteAddress": "1.2.3.4"
+      "userId": "user_id"
+      "username": "some_user@company.com"
+    Name: Alert deleted
 Threshold: 1

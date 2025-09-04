@@ -1,14 +1,12 @@
 AnalysisType: pack
-PackID: PantherManaged.Snowflake.Account_Usage
-Description: >
-  Group of all Snowflake account_usage audit log detections and threat hunting queries.
-  These queries require that Panther's read-only role has access to the snowflake.account_usage audit database 
-  (this may need to be done by the Snowflake admins).
+Description: Group of all Snowflake account_usage audit log detections and threat
+  hunting queries. These queries require that Panther's read-only role has access
+  to the snowflake.account_usage audit database  (this may need to be done by the
+  Snowflake admins). 
   https://docs.panther.com/search/scheduled-searches/examples#database-monitoring-snowflake
-DisplayName: "Panther Snowflake Account_Usage Pack"
+DisplayName: Panther Snowflake Account_Usage Pack
 PackDefinition:
   IDs:
-    # Queries
     - Query.Snowflake.AccountAdminGranted
     - Query.Snowflake.BruteForceByIp
     - Query.Snowflake.BruteForceByUsername
@@ -25,7 +23,6 @@ PackDefinition:
     - Query.Snowflake.TempStageCreated
     - Query.Snowflake.UserCreated
     - Query.Snowflake.UserEnabled
-    # Rules
     - Snowflake.AccountAdminGranted
     - Snowflake.BruteForceByIp
     - Snowflake.BruteForceByUsername
@@ -42,8 +39,8 @@ PackDefinition:
     - Snowflake.User.Access
     - Snowflake.UserCreated
     - Snowflake.UserEnabled
-    # Threat Hunting Queries
     - Query.Snowflake.ThreatHunting.ConfigurationDrift
     - Query.Snowflake.ThreatHunting.ClientIp
     - Query.Snowflake.ThreatHunting.SuspectedUserAccess
     - Query.Snowflake.ThreatHunting.SuspectedUserActivity
+PackID: PantherManaged.Snowflake.Account_Usage

@@ -1,10 +1,37 @@
 AnalysisType: rule
-Filename: aws_vpce_external_principal.py
-RuleID: AWS.CloudTrail.VPCE.ExternalPrincipal
-DisplayName: External Principal Accessing AWS Resources Via VPC Endpoint
+Description: >-
+  This rule detects when a principal from one AWS account accesses resources in a
+  different AWS account using a VPC Endpoint. While cross-account access may be expected
+  in some cases, it could also indicate unauthorized lateral movement between AWS
+  accounts.
+DisplayName: "External Principal Accessing AWS Resources Via VPC Endpoint"
 Enabled: true
+Filename: aws_vpce_external_principal.py
 LogTypes:
   - AWS.CloudTrail
+Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1599
+    - TA0007:T1526
+    - TA0010:T1048
+RuleID: "AWS.CloudTrail.VPCE.ExternalPrincipal"
+Runbook: >-
+  1. Identify the principal account and the accessed account from the alert context.
+  2. Verify if the cross-account access is expected and authorized:
+     - Check if the principal account is part of your organization
+     - Review IAM policies for the VPC Endpoint to confirm if cross-account access
+  is intentional
+     - Check resource policies for the accessed service to confirm if the principal
+  should have access
+  3. If the access is unexpected:
+     - Review the API calls made by the principal
+     - Check the VPC Endpoint configuration for potential misconfiguration
+     - Consider restricting VPC Endpoint access to prevent unauthorized cross-account
+  access
+     - Investigate for additional signs of unauthorized access
+  4. Document findings and take appropriate remediation steps based on investigation.
+Severity: Medium
 Tags:
   - AWS
   - CloudTrail
@@ -12,104 +39,68 @@ Tags:
   - Network Boundary Bridging
   - Cloud Service Discovery
   - Exfiltration Over Alternative Protocol
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1599 # Network Boundary Bridging
-    - TA0007:T1526 # Cloud Service Discovery
-    - TA0010:T1048 # Exfiltration Over Alternative Protocol
-Severity: Medium
-Description: >
-  This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint.
-  While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
-Runbook: >
-  1. Identify the principal account and the accessed account from the alert context.
-  2. Verify if the cross-account access is expected and authorized:
-     - Check if the principal account is part of your organization
-     - Review IAM policies for the VPC Endpoint to confirm if cross-account access is intentional
-     - Check resource policies for the accessed service to confirm if the principal should have access
-  3. If the access is unexpected:
-     - Review the API calls made by the principal
-     - Check the VPC Endpoint configuration for potential misconfiguration
-     - Consider restricting VPC Endpoint access to prevent unauthorized cross-account access
-     - Investigate for additional signs of unauthorized access
-  4. Document findings and take appropriate remediation steps based on investigation.
-Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
 Tests:
-  - Name: External Principal Access
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "NetworkActivity",
-        "eventType": "AwsVpceEvent",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "AWSAccount",
-          "accountId": "111111111111",
-          "principalId": "AROAEXAMPLE:session-name"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null,
-        "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7",
-        "vpcEndpointAccountId": "222222222222"
-      }
-
-  - Name: Same Account Access
-    ExpectedResult: false
+      "awsRegion": "us-east-1"
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "111111111111"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "AWSAccount"
+      "vpcEndpointAccountId": "222222222222"
+      "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7"
+    Name: External Principal Access
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "NetworkActivity",
-        "eventType": "AwsVpceEvent",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "AWSAccount",
-          "accountId": "222222222222",
-          "principalId": "AROAEXAMPLE:session-name"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null,
-        "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7",
-        "vpcEndpointAccountId": "222222222222"
-      }
-
-  - Name: Non-VPC Event
-    ExpectedResult: false
+      "awsRegion": "us-east-1"
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "222222222222"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "AWSAccount"
+      "vpcEndpointAccountId": "222222222222"
+      "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7"
+    Name: Same Account Access
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "Management",
-        "eventType": "AwsApiCall",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "AWSAccount",
-          "accountId": "111111111111",
-          "principalId": "AROAEXAMPLE:session-name"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null
-      } 
+      "awsRegion": "us-east-1"
+      "eventCategory": "Management"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "111111111111"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "AWSAccount"
+    Name: Non-VPC Event

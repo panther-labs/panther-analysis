@@ -1,203 +1,179 @@
 AnalysisType: rule
-Filename: azure_policy_changed.py
-RuleID: "Azure.Audit.PolicyChanged"
+DedupPeriodMinutes: 10
+Description: >-
+  This detection looks for policy changes in AuditLogs
 DisplayName: "Azure Policy Changed"
 Enabled: true
+Filename: azure_policy_changed.py
 LogTypes:
   - Azure.Audit
-Severity: Low
-DedupPeriodMinutes: 10
-Description: >
-  This detection looks for policy changes in AuditLogs
+Reference: 
+  https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
 Reports:
   MITRE ATT&CK:
     - TA0005:T1526
-Runbook: >
-  Verify if the change was authorized and review the modifications. If unauthorized, revert the policy, notify relevant teams, and investigate the user actions.
-
-Reference: https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
+RuleID: "Azure.Audit.PolicyChanged"
+Runbook: >-
+  Verify if the change was authorized and review the modifications. If unauthorized,
+  revert the policy, notify relevant teams, and investigate the user actions.
+Severity: Low
 SummaryAttributes:
   - properties:ServicePrincipalName
   - properties:UserPrincipalName
   - properties:initiatedBy:user:ipAddress
 Tests:
-  - Name: Policy Changed
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-        {
-            "time": "2024-12-10T02:22:58.7270280Z",
-            "resourceId": "/tenants/123145/providers/Microsoft.aadiam",
-            "operationName": "Delete conditional access policy",
-            "operationVersion": "1.0",
-            "category": "AuditLogs",
-            "tenantId": "12341234",
-            "resultSignature": "None",
-            "durationMs": 0,
-            "callerIpAddress": "1.2.3.4",
-            "correlationId": "1324515",
-            "Level": 4,
-            "properties": {
-                "tenantId": "132455112",
-                "resultType": "",
-                "resultDescription": "",
-                "operationName": "Delete conditional access policy",
-                "identity": "",
-                "tenantGeo": "NA",
-                "id": "IPCGraph_af23466234",
-                "category": "Policy",
-                "correlationId": "23456234",
-                "result": "success",
-                "resultReason": null,
-                "activityDisplayName": "Delete conditional access policy",
-                "activityDateTime": "2024-11-27T02:22:58.727028+00:00",
-                "loggedByService": "Conditional Access",
-                "operationType": "Delete",
-                "userAgent": null,
-                "initiatedBy": {
-                    "user": {
-                        "id": "234526234",
-                        "displayName": null,
-                        "userPrincipalName": "Kratos@mtolympus.com",
-                        "ipAddress": "1.2.3.4",
-                        "roles": []
-                    }
-                },
-                "targetResources": [
-                    {
-                        "id": "5e3cb481-2814-4295-b4cc-2440a6d66c86",
-                        "displayName": "Outside MFA",
-                        "type": "Policy",
-                        "modifiedProperties": [
-                            {
-                                "displayName": "ConditionalAccessPolicy",
-                                "oldValue": "{\"id\":\"5e3cb481-2814-4295-b4cc-2440a6d66c86\",\"displayName\":\"Outside MFA\",\"createdDateTime\":\"2024-11-27T02:22:19.8926587+00:00\",\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\":[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"includeAuthenticationContextClassReferences\":[],\"applicationFilter\":null},\"users\":{\"includeUsers\":[],\"excludeUsers\":[],\"includeGroups\":[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[],\"includeGuestsOrExternalUsers\":{\"guestOrExternalUserTypes\":63,\"externalTenants\":{}}},\"userRiskLevels\":[],\"signInRiskLevels\":[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\":[]},\"grantControls\":{\"operator\":\"OR\",\"builtInControls\":[\"mfa\"],\"customAuthenticationFactors\":[],\"termsOfUse\":[]}}",
-                                "newValue": null
-                            }
-                        ],
-                        "administrativeUnits": []
-                    }
-                ],
-                "additionalDetails": [
-                    {
-                        "key": "Category",
-                        "value": "Conditional Access"
-                    }
-                ]
-            }
-        }
-  - Name: Policy Updated
-    ExpectedResult: true
+      "Level": 4
+      "callerIpAddress": "1.2.3.4"
+      "category": "AuditLogs"
+      "correlationId": "1324515"
+      "durationMs": 0
+      "operationName": "Delete conditional access policy"
+      "operationVersion": "1.0"
+      "properties":
+        "activityDateTime": "2024-11-27T02:22:58.727028+00:00"
+        "activityDisplayName": "Delete conditional access policy"
+        "additionalDetails":
+          - "key": "Category"
+            "value": "Conditional Access"
+        "category": "Policy"
+        "correlationId": "23456234"
+        "id": "IPCGraph_af23466234"
+        "identity": ""
+        "initiatedBy":
+          "user":
+            "displayName":
+            "id": "234526234"
+            "ipAddress": "1.2.3.4"
+            "roles": []
+            "userPrincipalName": "Kratos@mtolympus.com"
+        "loggedByService": "Conditional Access"
+        "operationName": "Delete conditional access policy"
+        "operationType": "Delete"
+        "result": "success"
+        "resultDescription": ""
+        "resultReason":
+        "resultType": ""
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Outside MFA"
+            "id": "5e3cb481-2814-4295-b4cc-2440a6d66c86"
+            "modifiedProperties":
+              - "displayName": "ConditionalAccessPolicy"
+                "newValue":
+                "oldValue": "{\"id\":\"5e3cb481-2814-4295-b4cc-2440a6d66c86\",\"displayName\"\
+                  :\"Outside MFA\",\"createdDateTime\":\"2024-11-27T02:22:19.8926587+00:00\"\
+                  ,\"state\":\"enabled\",\"conditions\":{\"applications\":{\"includeApplications\"\
+                  :[\"None\"],\"excludeApplications\":[],\"includeUserActions\":[],\"\
+                  includeAuthenticationContextClassReferences\":[],\"applicationFilter\"\
+                  :null},\"users\":{\"includeUsers\":[],\"excludeUsers\":[],\"includeGroups\"\
+                  :[],\"excludeGroups\":[],\"includeRoles\":[],\"excludeRoles\":[],\"\
+                  includeGuestsOrExternalUsers\":{\"guestOrExternalUserTypes\":63,\"\
+                  externalTenants\":{}}},\"userRiskLevels\":[],\"signInRiskLevels\"\
+                  :[],\"clientAppTypes\":[\"all\"],\"servicePrincipalRiskLevels\"\
+                  :[]},\"grantControls\":{\"operator\":\"OR\",\"builtInControls\"\
+                  :[\"mfa\"],\"customAuthenticationFactors\":[],\"termsOfUse\":[]}}"
+            "type": "Policy"
+        "tenantGeo": "NA"
+        "tenantId": "132455112"
+        "userAgent":
+      "resourceId": "/tenants/123145/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12341234"
+      "time": "2024-12-10T02:22:58.7270280Z"
+    Name: Policy Changed
+  - ExpectedResult: true
     Log:
-        {
-            "time": "2024-11-21T16:47:21.6424070Z",
-            "resourceId": "/tenants/1234155/providers/Microsoft.aadiam",
-            "operationName": "Update policy",
-            "operationVersion": "1.0",
-            "category": "AuditLogs",
-            "tenantId": "12341235",
-            "resultSignature": "None",
-            "durationMs": 0,
-            "callerIpAddress": "1.2.3.4",
-            "correlationId": "124412123",
-            "Level": 4,
-            "properties": {
-                "tenantId": "123515-5-1235",
-                "resultType": "",
-                "resultDescription": "",
-                "operationName": "Update policy",
-                "identity": "",
-                "tenantGeo": "NA",
-                "id": "Directory_12351123",
-                "category": "Policy",
-                "correlationId": "12341513",
-                "result": "success",
-                "resultReason": "",
-                "activityDisplayName": "Delete policy",
-                "activityDateTime": "2024-11-21T16:47:21.642407+00:00",
-                "loggedByService": "Core Directory",
-                "operationType": "Delete",
-                "userAgent": null,
-                "initiatedBy": {
-                    "user": {
-                        "id": "12345123",
-                        "displayName": null,
-                        "userPrincipalName": "Kratos@onmicrosoft.com",
-                        "ipAddress": "1.2.3.4",
-                        "roles": []
-                    }
-                },
-                "targetResources": [
-                    {
-                        "id": "123451516",
-                        "displayName": "Require multifactor authentication for all users",
-                        "type": "Policy",
-                        "modifiedProperties": [],
-                        "administrativeUnits": []
-                    }
-                ],
-                "additionalDetails": [
-                    {
-                        "key": "User-Agent",
-                        "value": "Microsoft Azure Graph Client Library 1.0"
-                    }
-                ]
-            }
-        }
-  - Name: Policy Added
-    ExpectedResult: false
+      "Level": 4
+      "callerIpAddress": "1.2.3.4"
+      "category": "AuditLogs"
+      "correlationId": "124412123"
+      "durationMs": 0
+      "operationName": "Update policy"
+      "operationVersion": "1.0"
+      "properties":
+        "activityDateTime": "2024-11-21T16:47:21.642407+00:00"
+        "activityDisplayName": "Delete policy"
+        "additionalDetails":
+          - "key": "User-Agent"
+            "value": "Microsoft Azure Graph Client Library 1.0"
+        "category": "Policy"
+        "correlationId": "12341513"
+        "id": "Directory_12351123"
+        "identity": ""
+        "initiatedBy":
+          "user":
+            "displayName":
+            "id": "12345123"
+            "ipAddress": "1.2.3.4"
+            "roles": []
+            "userPrincipalName": "Kratos@onmicrosoft.com"
+        "loggedByService": "Core Directory"
+        "operationName": "Update policy"
+        "operationType": "Delete"
+        "result": "success"
+        "resultDescription": ""
+        "resultReason": ""
+        "resultType": ""
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Require multifactor authentication for all users"
+            "id": "123451516"
+            "modifiedProperties": []
+            "type": "Policy"
+        "tenantGeo": "NA"
+        "tenantId": "123515-5-1235"
+        "userAgent":
+      "resourceId": "/tenants/1234155/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12341235"
+      "time": "2024-11-21T16:47:21.6424070Z"
+    Name: Policy Updated
+  - ExpectedResult: false
     Log:
-        {
-            "time": "2024-11-21T16:47:21.6424070Z",
-            "resourceId": "/tenants/1234155/providers/Microsoft.aadiam",
-            "operationName": "Added policy",
-            "operationVersion": "1.0",
-            "category": "AuditLogs",
-            "tenantId": "12341235",
-            "resultSignature": "None",
-            "durationMs": 0,
-              "ipAddress": "1.2.3.4",
-            "correlationId": "124412123",
-            "Level": 4,
-            "properties": {
-                "tenantId": "123515-5-1235",
-                "resultType": "",
-                "resultDescription": "",
-                "operationName": "Added policy",
-                "identity": "",
-                "tenantGeo": "NA",
-                "id": "Directory_12351123",
-                "category": "Policy",
-                "correlationId": "12341513",
-                "result": "success",
-                "resultReason": "",
-                "activityDisplayName": "Added policy",
-                "activityDateTime": "2024-11-21T16:47:21.642407+00:00",
-                "loggedByService": "Core Directory",
-                "operationType": "Delete",
-                "userAgent": null,
-                "initiatedBy": {
-                    "user": {
-                        "id": "12345123",
-                        "displayName": null,
-                        "userPrincipalName": "Kratos@onmicrosoft.com",
-                        "ipAddress": "1.2.3.4",
-                        "roles": []
-                    }
-                },
-                "targetResources": [
-                    {
-                        "id": "123451516",
-                        "displayName": "Require multifactor authentication for all users",
-                        "type": "Policy",
-                        "modifiedProperties": [],
-                        "administrativeUnits": []
-                    }
-                ],
-                "additionalDetails": [
-                    {
-                        "key": "User-Agent",
-                        "value": "Microsoft Azure Graph Client Library 1.0"
-                    }
-                ]
-            }
-        }
+      "Level": 4
+      "category": "AuditLogs"
+      "correlationId": "124412123"
+      "durationMs": 0
+      "ipAddress": "1.2.3.4"
+      "operationName": "Added policy"
+      "operationVersion": "1.0"
+      "properties":
+        "activityDateTime": "2024-11-21T16:47:21.642407+00:00"
+        "activityDisplayName": "Added policy"
+        "additionalDetails":
+          - "key": "User-Agent"
+            "value": "Microsoft Azure Graph Client Library 1.0"
+        "category": "Policy"
+        "correlationId": "12341513"
+        "id": "Directory_12351123"
+        "identity": ""
+        "initiatedBy":
+          "user":
+            "displayName":
+            "id": "12345123"
+            "ipAddress": "1.2.3.4"
+            "roles": []
+            "userPrincipalName": "Kratos@onmicrosoft.com"
+        "loggedByService": "Core Directory"
+        "operationName": "Added policy"
+        "operationType": "Delete"
+        "result": "success"
+        "resultDescription": ""
+        "resultReason": ""
+        "resultType": ""
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Require multifactor authentication for all users"
+            "id": "123451516"
+            "modifiedProperties": []
+            "type": "Policy"
+        "tenantGeo": "NA"
+        "tenantId": "123515-5-1235"
+        "userAgent":
+      "resourceId": "/tenants/1234155/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12341235"
+      "time": "2024-11-21T16:47:21.6424070Z"
+    Name: Policy Added

@@ -1,125 +1,128 @@
 AnalysisType: policy
-Filename: aws_iam_policy_administrative_privileges.py
-PolicyID: "AWS.IAM.Policy.AdministrativePrivileges"
+Description: >-
+  This policy validates that there are no IAM policies that grant full administrative
+  privileges to IAM users or groups.
 DisplayName: "AWS IAM Policy Administrative Privileges"
 Enabled: true
-ResourceTypes:
-  - AWS.IAM.Policy
-Tags:
-  - AWS
-  - Identity & Access Management
-  - Privilege Escalation:Valid Accounts
+Filename: aws_iam_policy_administrative_privileges.py
+PolicyID: "AWS.IAM.Policy.AdministrativePrivileges"
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Reports:
   CIS:
     - 1.22
   MITRE ATT&CK:
     - TA0004:T1078
-Severity: High
-Description: >
-  This policy validates that there are no IAM policies that grant full administrative
-  privileges to IAM users or groups.
-Runbook: >
+ResourceTypes:
+  - AWS.IAM.Policy
+Runbook: >-
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-iam-policy-does-not-grant-full-administrative-privileges
-Reference: >
-  https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Severity: High
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Privilege Escalation:Valid Accounts
 Tests:
-  - Name: Policy Does Not Grant Full Administrative Privileges
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Policy Does Not Grant Full Administrative Privileges
     Resource:
-      {
-        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
-        "AttachmentCount": 2,
-        "CreateDate": "2019-01-01T00:00:00Z",
-        "DefaultVersionId": "v1",
-        "Description": null,
-        "Entities":
-          {
-            "PolicyGroups": null,
-            "PolicyRoles":
-              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
-            "PolicyUsers":
-              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
-          },
-        "IsAttachable": true,
-        "Path": "/service-role/",
-        "PermissionsBoundaryUsageCount": 0,
-        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n        }\n    ]\n}",
-        "PolicyId": "ABCDEFGHIJKLMNOP",
-        "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z",
-      }
-  - Name: Policy Does Not Grant Full Administrative Privileges Single Statement
-    ExpectedResult: true
+      "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy"
+      "AttachmentCount": 2
+      "CreateDate": "2019-01-01T00:00:00Z"
+      "DefaultVersionId": "v1"
+      "Description":
+      "Entities":
+        "PolicyGroups":
+        "PolicyRoles":
+          - "RoleId": "ABCDEFGHIJKLMNOP"
+            "RoleName": "Example-Role"
+        "PolicyUsers":
+          - "UserId": "ABCDEFGHIJKLMNOP"
+            "UserName": "Bobert"
+      "IsAttachable": true
+      "Path": "/service-role/"
+      "PermissionsBoundaryUsageCount": 0
+      "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n\
+        \        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\"\
+        : \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"\
+        S3*\"\n        }\n    ]\n}"
+      "PolicyId": "ABCDEFGHIJKLMNOP"
+      "PolicyName": "Example-Policy"
+      "UpdateDate": "2019-01-01T00:00:00Z"
+  - ExpectedResult: true
+    Name: Policy Does Not Grant Full Administrative Privileges Single Statement
     Resource:
-      {
-        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
-        "AttachmentCount": 2,
-        "CreateDate": "2019-01-01T00:00:00Z",
-        "DefaultVersionId": "v1",
-        "Description": null,
-        "Entities":
-          {
-            "PolicyGroups": null,
-            "PolicyRoles":
-              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
-            "PolicyUsers":
-              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
-          },
-        "IsAttachable": true,
-        "Path": "/service-role/",
-        "PermissionsBoundaryUsageCount": 0,
-        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n        }\n}",
-        "PolicyId": "ABCDEFGHIJKLMNOP",
-        "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z",
-      }
-  - Name: Policy Grant Full Administrative Access With Multiple Resources
-    ExpectedResult: false
+      "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy"
+      "AttachmentCount": 2
+      "CreateDate": "2019-01-01T00:00:00Z"
+      "DefaultVersionId": "v1"
+      "Description":
+      "Entities":
+        "PolicyGroups":
+        "PolicyRoles":
+          - "RoleId": "ABCDEFGHIJKLMNOP"
+            "RoleName": "Example-Role"
+        "PolicyUsers":
+          - "UserId": "ABCDEFGHIJKLMNOP"
+            "UserName": "Bobert"
+      "IsAttachable": true
+      "Path": "/service-role/"
+      "PermissionsBoundaryUsageCount": 0
+      "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": {\n\
+        \            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\"\
+        ,\n            \"Action\": \"*\",\n            \"Resource\": \"S3*\"\n   \
+        \     }\n}"
+      "PolicyId": "ABCDEFGHIJKLMNOP"
+      "PolicyName": "Example-Policy"
+      "UpdateDate": "2019-01-01T00:00:00Z"
+  - ExpectedResult: false
+    Name: Policy Grant Full Administrative Access With Multiple Resources
     Resource:
-      {
-        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
-        "AttachmentCount": 2,
-        "CreateDate": "2019-01-01T00:00:00Z",
-        "DefaultVersionId": "v1",
-        "Description": null,
-        "Entities":
-          {
-            "PolicyGroups": null,
-            "PolicyRoles":
-              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
-            "PolicyUsers":
-              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
-          },
-        "IsAttachable": true,
-        "Path": "/service-role/",
-        "PermissionsBoundaryUsageCount": 0,
-        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": [\"*\", \"S3*\"]\n        }\n    ]\n}",
-        "PolicyId": "ABCDEFGHIJKLMNOP",
-        "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z",
-      }
-  - Name: Policy Grants Full Administrative Privileges
-    ExpectedResult: false
+      "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy"
+      "AttachmentCount": 2
+      "CreateDate": "2019-01-01T00:00:00Z"
+      "DefaultVersionId": "v1"
+      "Description":
+      "Entities":
+        "PolicyGroups":
+        "PolicyRoles":
+          - "RoleId": "ABCDEFGHIJKLMNOP"
+            "RoleName": "Example-Role"
+        "PolicyUsers":
+          - "UserId": "ABCDEFGHIJKLMNOP"
+            "UserName": "Bobert"
+      "IsAttachable": true
+      "Path": "/service-role/"
+      "PermissionsBoundaryUsageCount": 0
+      "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n\
+        \        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\"\
+        : \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": [\"\
+        *\", \"S3*\"]\n        }\n    ]\n}"
+      "PolicyId": "ABCDEFGHIJKLMNOP"
+      "PolicyName": "Example-Policy"
+      "UpdateDate": "2019-01-01T00:00:00Z"
+  - ExpectedResult: false
+    Name: Policy Grants Full Administrative Privileges
     Resource:
-      {
-        "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy",
-        "AttachmentCount": 2,
-        "CreateDate": "2019-01-01T00:00:00Z",
-        "DefaultVersionId": "v1",
-        "Description": null,
-        "Entities":
-          {
-            "PolicyGroups": null,
-            "PolicyRoles":
-              [{ "RoleId": "ABCDEFGHIJKLMNOP", "RoleName": "Example-Role" }],
-            "PolicyUsers":
-              [{ "UserId": "ABCDEFGHIJKLMNOP", "UserName": "Bobert" }],
-          },
-        "IsAttachable": true,
-        "Path": "/service-role/",
-        "PermissionsBoundaryUsageCount": 0,
-        "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\": \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"*\"\n        }\n    ]\n}",
-        "PolicyId": "ABCDEFGHIJKLMNOP",
-        "PolicyName": "Example-Policy",
-        "UpdateDate": "2019-01-01T00:00:00Z",
-      }
+      "Arn": "arn:aws:iam::123456789012:policy/service-role/example-policy"
+      "AttachmentCount": 2
+      "CreateDate": "2019-01-01T00:00:00Z"
+      "DefaultVersionId": "v1"
+      "Description":
+      "Entities":
+        "PolicyGroups":
+        "PolicyRoles":
+          - "RoleId": "ABCDEFGHIJKLMNOP"
+            "RoleName": "Example-Role"
+        "PolicyUsers":
+          - "UserId": "ABCDEFGHIJKLMNOP"
+            "UserName": "Bobert"
+      "IsAttachable": true
+      "Path": "/service-role/"
+      "PermissionsBoundaryUsageCount": 0
+      "PolicyDocument": "{\n    \"Version\": \"2012-10-17\",\n    \"Statement\": [\n\
+        \        {\n            \"Sid\": \"VisualEditor0\",\n            \"Effect\"\
+        : \"Allow\",\n            \"Action\": \"*\",\n            \"Resource\": \"\
+        *\"\n        }\n    ]\n}"
+      "PolicyId": "ABCDEFGHIJKLMNOP"
+      "PolicyName": "Example-Policy"
+      "UpdateDate": "2019-01-01T00:00:00Z"

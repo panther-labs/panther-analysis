@@ -1,69 +1,57 @@
 AnalysisType: rule
-Filename: osquery_mac_enable_auto_update.py
-RuleID: "Osquery.Mac.AutoUpdateEnabled"
+DedupPeriodMinutes: 1440
+Description: >-
+  Verifies that MacOS has automatic software updates enabled.
 DisplayName: "OSQuery Reports Application Firewall Disabled"
 Enabled: true
+Filename: osquery_mac_enable_auto_update.py
 LogTypes:
   - Osquery.Differential
-Tags:
-  - Osquery
-  - MacOS
-  - Security Control
-  - Defense Evasion:Impair Defenses
+Reference: https://support.apple.com/en-gb/guide/mac-help/mchlpx1065/mac
 Reports:
   CIS:
     - 1.2
   MITRE ATT&CK:
     - TA0005:T1562
-Severity: Medium
-DedupPeriodMinutes: 1440
-Description: >
-  Verifies that MacOS has automatic software updates enabled.
-Runbook: >
+RuleID: "Osquery.Mac.AutoUpdateEnabled"
+Runbook: >-
   Enable the auto updates on the host.
-Reference: https://support.apple.com/en-gb/guide/mac-help/mchlpx1065/mac
+Severity: Medium
 SummaryAttributes:
   - name
   - action
   - p_any_ip_addresses
   - p_any_domain_names
+Tags:
+  - Osquery
+  - MacOS
+  - Security Control
+  - Defense Evasion:Impair Defenses
 Tests:
-  - Name: Auto Updates Disabled
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "columns":
-          {
-            "domain": "com.apple.SoftwareUpdate",
-            "key": "AutomaticCheckEnabled",
-            "value": "false",
-          },
-        "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate",
-      }
-  - Name: Auto Updates Enabled
-    ExpectedResult: false
+      "action": "added"
+      "columns":
+        "domain": "com.apple.SoftwareUpdate"
+        "key": "AutomaticCheckEnabled"
+        "value": "false"
+      "name": "pack/mac-cis/SoftwareUpdate"
+    Name: Auto Updates Disabled
+  - ExpectedResult: false
     Log:
-      {
-        "columns":
-          {
-            "domain": "com.apple.SoftwareUpdate",
-            "key": "AutomaticCheckEnabled",
-            "value": "true",
-          },
-        "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate",
-      }
-  - Name: Wrong Key
-    ExpectedResult: false
+      "action": "added"
+      "columns":
+        "domain": "com.apple.SoftwareUpdate"
+        "key": "AutomaticCheckEnabled"
+        "value": "true"
+      "name": "pack/mac-cis/SoftwareUpdate"
+    Name: Auto Updates Enabled
+  - ExpectedResult: false
     Log:
-      {
-        "columns":
-          {
-            "domain": "com.apple.SoftwareUpdate",
-            "key": "LastFullSuccessfulDate",
-            "value": "false",
-          },
-        "action": "added",
-        "name": "pack/mac-cis/SoftwareUpdate",
-      }
+      "action": "added"
+      "columns":
+        "domain": "com.apple.SoftwareUpdate"
+        "key": "LastFullSuccessfulDate"
+        "value": "false"
+      "name": "pack/mac-cis/SoftwareUpdate"
+    Name: Wrong Key

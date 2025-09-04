@@ -1,20 +1,24 @@
 AnalysisType: saved_query
+Description: Find instances of users signing in to Panther from an IP they previously
+  haven't used.
+Query: >-
+  -- pragma: template
+
+
+  {% import 'anomalies' new_unique_values %}
+
+
+  with subquery as (
+      SELECT
+          *,
+          actor:attributes.email as actoremail
+      FROM panther_logs.public.panther_audit
+      WHERE p_occurs_since('60 day')
+  ),
+
+  {{ new_unique_values('subquery', 'actoremail', 'sourceIP', '1day') }}
 QueryName: "New Unique Values - Panther Audit Login from New IP"
-Description: Find instances of users signing in to Panther from an IP they previously haven't used.
 Tags:
   - Anomaly Detection
   - Example
   - New Unique Values
-Query: |-
-    -- pragma: template
-
-    {% import 'anomalies' new_unique_values %}
-
-    with subquery as (
-        SELECT
-            *,
-            actor:attributes.email as actoremail
-        FROM panther_logs.public.panther_audit
-        WHERE p_occurs_since('60 day')
-    ),
-    {{ new_unique_values('subquery', 'actoremail', 'sourceIP', '1day') }}

@@ -1,81 +1,64 @@
 AnalysisType: rule
-Filename: slack_org_created.py
-RuleID: "Slack.AuditLogs.OrgCreated"
+DedupPeriodMinutes: 60
+Description: >-
+  Detects when a Slack organization is created
 DisplayName: "Slack Organization Created"
 Enabled: true
+Filename: slack_org_created.py
 LogTypes:
   - Slack.AuditLogs
+Reference: https://slack.com/intl/en-gb/help/articles/206845317-Create-a-Slack-workspace
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136
+RuleID: "Slack.AuditLogs.OrgCreated"
+Severity: Low
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_any_emails
 Tags:
   - Slack
   - Persistence
   - Create Account
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136
-Severity: Low
-Description: Detects when a Slack organization is created
-Reference: https://slack.com/intl/en-gb/help/articles/206845317-Create-a-Slack-workspace
-DedupPeriodMinutes: 60
-Threshold: 1
-SummaryAttributes:
-  - p_any_ip_addresses
-  - p_any_emails
 Tests:
-  - Name: Organization Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "action": "organization_created",
-        "actor":
-          {
-            "type": "user",
-            "user":
-              {
-                "email": "user@example.com",
-                "id": "A012B3CDEFG",
-                "name": "username",
-                "team": "T01234N56GB",
-              },
-          },
-        "context":
-          {
-            "ip_address": "1.2.3.4",
-            "location":
-              {
-                "domain": "test-workspace",
-                "id": "T01234N56GB",
-                "name": "test-workspace",
-                "type": "workspace",
-              },
-            "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          },
-      }
-  - Name: Organization Deleted
-    ExpectedResult: false
+      "action": "organization_created"
+      "actor":
+        "type": "user"
+        "user":
+          "email": "user@example.com"
+          "id": "A012B3CDEFG"
+          "name": "username"
+          "team": "T01234N56GB"
+      "context":
+        "ip_address": "1.2.3.4"
+        "location":
+          "domain": "test-workspace"
+          "id": "T01234N56GB"
+          "name": "test-workspace"
+          "type": "workspace"
+        "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+          (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    Name: Organization Created
+  - ExpectedResult: false
     Log:
-      {
-        "action": "organization_deleted",
-        "actor":
-          {
-            "type": "user",
-            "user":
-              {
-                "email": "user@example.com",
-                "id": "A012B3CDEFG",
-                "name": "username",
-                "team": "T01234N56GB",
-              },
-          },
-        "context":
-          {
-            "ip_address": "1.2.3.4",
-            "location":
-              {
-                "domain": "test-workspace",
-                "id": "T01234N56GB",
-                "name": "test-workspace",
-                "type": "workspace",
-              },
-            "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          },
-      }
+      "action": "organization_deleted"
+      "actor":
+        "type": "user"
+        "user":
+          "email": "user@example.com"
+          "id": "A012B3CDEFG"
+          "name": "username"
+          "team": "T01234N56GB"
+      "context":
+        "ip_address": "1.2.3.4"
+        "location":
+          "domain": "test-workspace"
+          "id": "T01234N56GB"
+          "name": "test-workspace"
+          "type": "workspace"
+        "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+          (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    Name: Organization Deleted
+Threshold: 1

@@ -1,227 +1,169 @@
 AnalysisType: rule
-Filename: aws_ec2_security_group_modified.py
-RuleID: "AWS.EC2.SecurityGroupModified"
+DedupPeriodMinutes: 720
+Description: >-
+  An EC2 Security Group was modified.
 DisplayName: "EC2 Security Group Modified"
 Enabled: true
+Filename: aws_ec2_security_group_modified.py
 LogTypes:
   - AWS.CloudTrail
-Tags:
-  - AWS
-  - Security Control
-  - Defense Evasion:Impair Defenses
+Reference: 
+  https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/working-with-security-groups.html
 Reports:
   CIS:
-    - 3.10
+    - 3.1
   MITRE ATT&CK:
     - TA0005:T1562
+RuleID: "AWS.EC2.SecurityGroupModified"
+Runbook: >-
+  https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-ec2-securitygroup-modified
 Severity: Info
-DedupPeriodMinutes: 720 # 12 hours
-Description: >
-  An EC2 Security Group was modified.
-Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-ec2-securitygroup-modified
-Reference: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/working-with-security-groups.html
 SummaryAttributes:
   - eventName
   - userAgent
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+Tags:
+  - AWS
+  - Security Control
+  - Defense Evasion:Impair Defenses
 Tests:
-  - Name: Security Group Modified
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "AuthorizeSecurityGroupIngress",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.ec2.amazonaws.com",
-        "requestParameters":
-          {
-            "groupId": "sg-1",
-            "ipPermissions":
-              {
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "AuthorizeSecurityGroupIngress"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "groupId": "sg-1"
+        "ipPermissions":
+          "items":
+            - "fromPort": 22
+              "groups": {}
+              "ipProtocol": "tcp"
+              "ipRanges":
                 "items":
-                  [
-                    {
-                      "ipProtocol": "tcp",
-                      "fromPort": 22,
-                      "toPort": 22,
-                      "groups": {},
-                      "ipRanges":
-                        {
-                          "items":
-                            [
-                              {
-                                "cidrIp": "127.0.0.1/32",
-                                "description": "SSH for me",
-                              },
-                            ],
-                        },
-                      "ipv6Ranges": {},
-                      "prefixListIds": {},
-                    },
-                  ],
-              },
-          },
-        "responseElements": { "requestID": "1", "_return": true },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: Security Group Not Modified
-    ExpectedResult: false
+                  - "cidrIp": "127.0.0.1/32"
+                    "description": "SSH for me"
+              "ipv6Ranges": {}
+              "prefixListIds": {}
+              "toPort": 22
+      "responseElements":
+        "_return": true
+        "requestID": "1"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.ec2.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Security Group Modified
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "DescribeSecurityGroups",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "securityGroupSet": {},
-            "securityGroupIdSet": {},
-            "filterSet":
-              {
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "DescribeSecurityGroups"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "filterSet":
+          "items":
+            - "name": "vpc-id"
+              "valueSet":
                 "items":
-                  [
-                    {
-                      "name": "vpc-id",
-                      "valueSet": { "items": [{ "value": "vpc-1" }] },
-                    },
-                  ],
-              },
-          },
-        "responseElements": null,
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: Error Mofidying Security Group
-    ExpectedResult: false
+                  - "value": "vpc-1"
+        "securityGroupIdSet": {}
+        "securityGroupSet": {}
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Security Group Not Modified
+  - ExpectedResult: false
     Log:
-      {
-        "errorCode": "RequestExpired",
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "AuthorizeSecurityGroupIngress",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.ec2.amazonaws.com",
-        "requestParameters":
-          {
-            "groupId": "sg-1",
-            "ipPermissions":
-              {
+      "awsRegion": "us-west-2"
+      "errorCode": "RequestExpired"
+      "eventID": "1"
+      "eventName": "AuthorizeSecurityGroupIngress"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "groupId": "sg-1"
+        "ipPermissions":
+          "items":
+            - "fromPort": 22
+              "groups": {}
+              "ipProtocol": "tcp"
+              "ipRanges":
                 "items":
-                  [
-                    {
-                      "ipProtocol": "tcp",
-                      "fromPort": 22,
-                      "toPort": 22,
-                      "groups": {},
-                      "ipRanges":
-                        {
-                          "items":
-                            [
-                              {
-                                "cidrIp": "127.0.0.1/32",
-                                "description": "SSH for me",
-                              },
-                            ],
-                        },
-                      "ipv6Ranges": {},
-                      "prefixListIds": {},
-                    },
-                  ],
-              },
-          },
-        "responseElements": { "requestID": "1", "_return": true },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
+                  - "cidrIp": "127.0.0.1/32"
+                    "description": "SSH for me"
+              "ipv6Ranges": {}
+              "prefixListIds": {}
+              "toPort": 22
+      "responseElements":
+        "_return": true
+        "requestID": "1"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.ec2.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Error Mofidying Security Group

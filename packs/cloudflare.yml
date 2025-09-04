@@ -1,15 +1,13 @@
 AnalysisType: pack
-PackID: PantherManaged.Cloudflare
-DisplayName: "Panther Cloudflare Pack"
 Description: Group of all Cloudflare detections
+DisplayName: Panther Cloudflare Pack
 PackDefinition:
   IDs:
     - Cloudflare.Firewall.L7DDoS
     - Cloudflare.HttpRequest.BotHighVolume
-    # Globals used in these rules/policies
     - panther_base_helpers
     - panther_cloudflare_helpers
     - panther_lookuptable_helpers
-    # Data Models
     - Standard.Cloudflare.Firewall
     - Standard.Cloudflare.HttpReq
+PackID: PantherManaged.Cloudflare

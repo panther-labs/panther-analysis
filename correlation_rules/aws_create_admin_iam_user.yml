@@ -1,64 +1,67 @@
 AnalysisType: correlation_rule
-RuleID: "AWS.Administrative.IAM.User.Created"
+Description: >-
+  Identifies when an Administrative IAM user is creates. This could indicate a potential
+  security breach.
+Detection:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 5
+    Sequence:
+      - ID: CreateUser
+        RuleID: AWS.IAM.CreateUser
+      - ID: AttachAdminUserPolicy
+        RuleID: AWS.IAM.AttachAdminUserPolicy
+    Transitions:
+      - From: CreateUser
+        ID: CreateUser FOLLOWED BY AttachAdminUserPolicy
+        Match:
+          - On: p_alert_context.request_username
+        To: AttachAdminUserPolicy
+        WithinTimeFrameMinutes: 60
 DisplayName: "AWS.Administrative.IAM.User.Created"
 Enabled: true
-Severity: Info
-Tags:
-  - Beta
-Description: Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
-Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.iam-create-admin-user/
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.iam-create-admin-user/
 Reports:
   MITRE ATT&CK:
     - TA0006:T1078
-Detection:
-    - Sequence:
-        - ID: CreateUser
-          RuleID: AWS.IAM.CreateUser
-        - ID: AttachAdminUserPolicy
-          RuleID: AWS.IAM.AttachAdminUserPolicy
-      Transitions:
-        - ID: CreateUser FOLLOWED BY AttachAdminUserPolicy
-          From: CreateUser
-          To: AttachAdminUserPolicy
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.request_username
-      LookbackWindowMinutes: 2160
-      Schedule:
-        RateMinutes: 1440
-        TimeoutMinutes: 5
+RuleID: "AWS.Administrative.IAM.User.Created"
+Severity: Info
+Tags:
+  - Beta
 Tests:
-    - Name: User Created, Followed By Admin Policy Attachment
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: CreateUser
-          Matches:
-            p_alert_context.request_username:
-              'new-user':
-                - "2024-06-01T10:00:01Z"
-        - ID: AttachAdminUserPolicy
-          Matches:
-            p_alert_context.request_username:
-              'new-user':
-                - "2024-06-01T11:00:01Z"
-    - Name: User Created, Not Followed By Admin Policy Attachment
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: CreateUser
-          Matches:
-            p_alert_context.request_username:
-              'new-user':
-                - "2024-06-01T10:00:01Z"
-    - Name: Wrong match
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: CreateUser
-          Matches:
-            p_alert_context.request_username:
-              'new-user':
-                - "2024-06-01T10:00:01Z"
-        - ID: AttachAdminUserPolicy
-          Matches:
-            p_alert_context.request_username:
-              'not-new-user':
-                - "2024-06-01T11:00:01Z"
+  - ExpectedResult: true
+    Name: User Created, Followed By Admin Policy Attachment
+    RuleOutputs:
+      - ID: CreateUser
+        Matches:
+          p_alert_context.request_username:
+            new-user:
+              - '2024-06-01T10:00:01Z'
+      - ID: AttachAdminUserPolicy
+        Matches:
+          p_alert_context.request_username:
+            new-user:
+              - '2024-06-01T11:00:01Z'
+  - ExpectedResult: false
+    Name: User Created, Not Followed By Admin Policy Attachment
+    RuleOutputs:
+      - ID: CreateUser
+        Matches:
+          p_alert_context.request_username:
+            new-user:
+              - '2024-06-01T10:00:01Z'
+  - ExpectedResult: false
+    Name: Wrong match
+    RuleOutputs:
+      - ID: CreateUser
+        Matches:
+          p_alert_context.request_username:
+            new-user:
+              - '2024-06-01T10:00:01Z'
+      - ID: AttachAdminUserPolicy
+        Matches:
+          p_alert_context.request_username:
+            not-new-user:
+              - '2024-06-01T11:00:01Z'

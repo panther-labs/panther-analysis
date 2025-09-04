@@ -1,6 +1,6 @@
 AnalysisType: pack
-PackID: PantherManaged.OneLogin
 Description: Group of all OneLogin detections
+DisplayName: Panther OneLogin Pack
 PackDefinition:
   IDs:
     - OneLogin.ActiveLoginActivity
@@ -13,13 +13,9 @@ PackDefinition:
     - OneLogin.UnauthorizedAccess
     - OneLogin.UserAccountLocked
     - OneLogin.UserAssumption
-    # Correlation Rules
     - OneLogin.HighRiskFailedLogin.FOLLOWED.BY.SuccessfulLogin
-    # Signal Rules
     - OneLogin.Login
-    # Globals used in these detections
     - panther_base_helpers
     - panther_event_type_helpers
-    # Data Model
     - Standard.OneLogin.Events
-DisplayName: "Panther OneLogin Pack"
+PackID: PantherManaged.OneLogin

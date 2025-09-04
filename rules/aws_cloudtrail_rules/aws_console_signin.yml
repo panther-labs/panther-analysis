@@ -1,24 +1,24 @@
 AnalysisType: rule
-Filename: aws_console_signin.py
-RuleID: "AWS.Console.Sign-In"
+CreateAlert: false
+DedupPeriodMinutes: 60
 DisplayName: "SIGNAL - AWS Console SSO Sign-In"
 Enabled: true
-CreateAlert: false
+Filename: aws_console_signin.py
 LogTypes:
-    - AWS.CloudTrail
+  - AWS.CloudTrail
+RuleID: "AWS.Console.Sign-In"
 Severity: Info
-DedupPeriodMinutes: 60
-Threshold: 1
 Tests:
-    - Name: Test-94439c
-      ExpectedResult: true
-      Log:
-        awsRegion: us-east-1
-        eventCategory: Management
-        eventID: 8cb05708-9764-4774-a048-59a4c8e1684d
-        eventName: Authenticate
-        eventSource: sso.amazonaws.com
-        eventTime: "2024-06-03 15:23:22.000000000"
-        eventType: AwsServiceEvent
-        eventVersion: "1.08"
-        managementEvent: true
+  - ExpectedResult: true
+    Log:
+      "awsRegion": "us-east-1"
+      "eventCategory": "Management"
+      "eventID": "8cb05708-9764-4774-a048-59a4c8e1684d"
+      "eventName": "Authenticate"
+      "eventSource": "sso.amazonaws.com"
+      "eventTime": "2024-06-03 15:23:22.000000000"
+      "eventType": "AwsServiceEvent"
+      "eventVersion": "1.08"
+      "managementEvent": true
+    Name: Test-94439c
+Threshold: 1

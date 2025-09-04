@@ -1,31 +1,30 @@
 AnalysisType: rule
-Filename: snowflake_stream_user_created.py
-RuleID: Snowflake.Stream.UserCreated
-DisplayName: Snowflake User Created
+Description: >-
+  Detect new users created in Snowflake.
+DisplayName: "Snowflake User Created"
 Enabled: false
+Filename: snowflake_stream_user_created.py
 LogTypes:
   - Snowflake.QueryHistory
-Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0003:T1136
-Description: Detect new users created in Snowflake.
+RuleID: "Snowflake.Stream.UserCreated"
+Severity: Info
 Tags:
   - Snowflake
   - '[MITRE] Persistence'
   - '[MITRE] Create Account'
 Tests:
-  - Name: User Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-10-09 19:43:05.007000000",
-        "p_log_type": "Snowflake.QueryHistory",
-        "BYTES_DELETED": 0,
-        "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "CREATE USER MERCY\nPASSWORD = '\u263a\u263a\u263a\u263a\u263a'\nDEFAULT_ROLE = PUBLIC;",
-        "QUERY_TYPE": "CREATE_USER",
-        "ROLE_NAME": "ACCOUNTADMIN",
-        "USER_NAME": "LEX_LUTHOR",
-        "WAREHOUSE_NAME": "ADMIN_WH"
-      }
+      "BYTES_DELETED": 0
+      "EXECUTION_STATUS": "SUCCESS"
+      "QUERY_TEXT": "CREATE USER MERCY\nPASSWORD = '☺☺☺☺☺'\nDEFAULT_ROLE = PUBLIC;"
+      "QUERY_TYPE": "CREATE_USER"
+      "ROLE_NAME": "ACCOUNTADMIN"
+      "USER_NAME": "LEX_LUTHOR"
+      "WAREHOUSE_NAME": "ADMIN_WH"
+      "p_event_time": "2024-10-09 19:43:05.007000000"
+      "p_log_type": "Snowflake.QueryHistory"
+    Name: User Created

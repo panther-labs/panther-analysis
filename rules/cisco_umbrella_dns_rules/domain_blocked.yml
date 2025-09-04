@@ -1,43 +1,42 @@
 AnalysisType: rule
-Filename: domain_blocked.py
-RuleID: "CiscoUmbrella.DNS.Blocked"
+DedupPeriodMinutes: 480
+Description: >-
+  Monitor blocked domains
 DisplayName: "Cisco Umbrella Domain Blocked"
 Enabled: true
-DedupPeriodMinutes: 480 # 8 hours
+Filename: domain_blocked.py
 LogTypes:
   - CiscoUmbrella.DNS
-Tags:
-  - DNS
+Reference: 
+  https://support.umbrella.com/hc/en-us/articles/230563627-How-to-determine-if-a-domain-or-resource-is-being-blocked-using-Chrome-Net-Internals
+RuleID: "CiscoUmbrella.DNS.Blocked"
+Runbook: >-
+  Inspect the blocked domain and lookup for malware
 Severity: Low
-Description: Monitor blocked domains
-Runbook: Inspect the blocked domain and lookup for malware
-Reference: https://support.umbrella.com/hc/en-us/articles/230563627-How-to-determine-if-a-domain-or-resource-is-being-blocked-using-Chrome-Net-Internals
 SummaryAttributes:
   - action
   - internalIp
   - externalIp
   - domain
   - responseCode
+Tags:
+  - DNS
 Tests:
-  - Name: Domain Blocked
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "action": "Blocked",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
-        "timestamp": "2020-05-21 19:20:25.000",
-        "responseCode": "NOERROR",
-        "domain": "malware.gvt2.com.",
-      }
-  - Name: Action Allowed
-    ExpectedResult: false
+      "action": "Blocked"
+      "domain": "malware.gvt2.com."
+      "externalIp": "136.24.229.58"
+      "internalIp": "136.24.229.58"
+      "responseCode": "NOERROR"
+      "timestamp": "2020-05-21 19:20:25.000"
+    Name: Domain Blocked
+  - ExpectedResult: false
     Log:
-      {
-        "action": "Allowed",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
-        "timestamp": "2020-05-21 19:20:25.000",
-        "responseCode": "NOERROR",
-        "domain": "beacons3.gvt2.com.",
-      }
+      "action": "Allowed"
+      "domain": "beacons3.gvt2.com."
+      "externalIp": "136.24.229.58"
+      "internalIp": "136.24.229.58"
+      "responseCode": "NOERROR"
+      "timestamp": "2020-05-21 19:20:25.000"
+    Name: Action Allowed

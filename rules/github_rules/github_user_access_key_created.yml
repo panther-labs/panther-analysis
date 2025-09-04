@@ -1,37 +1,35 @@
 AnalysisType: rule
-Filename: github_user_access_key_created.py
-RuleID: "GitHub.User.AccessKeyCreated"
+Description: >-
+  Detects when a GitHub user access key is created.
 DisplayName: "GitHub User Access Key Created"
 Enabled: true
+Filename: github_user_access_key_created.py
 LogTypes:
   - GitHub.Audit
-Tags:
-  - GitHub
-  - Persistence:Valid Accounts
+Reference: 
+  https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 Reports:
   MITRE ATT&CK:
     - TA0003:T1078
-Reference: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+RuleID: "GitHub.User.AccessKeyCreated"
 Severity: Info
-Description: Detects when a GitHub user access key is created.
+Tags:
+  - GitHub
+  - Persistence:Valid Accounts
 Tests:
-  - Name: GitHub - User Access Key Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "public_key.create",
-        "created_at": 1621305118553,
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo",
-      }
-  - Name: GitHub - User Access Key Deleted
-    ExpectedResult: false
+      "action": "public_key.create"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
+    Name: GitHub - User Access Key Created
+  - ExpectedResult: false
     Log:
-      {
-        "actor": "cat",
-        "action": "public_key.delete",
-        "created_at": 1621305118553,
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo",
-      }
+      "action": "public_key.delete"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
+    Name: GitHub - User Access Key Deleted

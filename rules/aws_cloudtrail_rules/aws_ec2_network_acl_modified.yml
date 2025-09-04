@@ -1,188 +1,155 @@
 AnalysisType: rule
-Filename: aws_ec2_network_acl_modified.py
-RuleID: "AWS.EC2.NetworkACLModified"
+Description: >-
+  An EC2 Network ACL was modified.
 DisplayName: "EC2 Network ACL Modified"
 Enabled: true
+Filename: aws_ec2_network_acl_modified.py
 LogTypes:
   - AWS.CloudTrail
-Tags:
-  - AWS
-  - Security Control
-  - Defense Evasion:Impair Defenses
+Reference: 
+  https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html#nacl-tasks
 Reports:
   CIS:
     - 3.11
   MITRE ATT&CK:
     - TA0005:T1562
+RuleID: "AWS.EC2.NetworkACLModified"
+Runbook: >-
+  https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-ec2-network-acl-modified
 Severity: Info
-Description: An EC2 Network ACL was modified.
-Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-ec2-network-acl-modified
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html#nacl-tasks
 SummaryAttributes:
   - eventName
   - userAgent
   - sourceIpAddress
   - recipientAccountId
   - p_any_aws_arns
+Tags:
+  - AWS
+  - Security Control
+  - Defense Evasion:Impair Defenses
 Tests:
-  - Name: Network ACL Modified
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "CreateNetworkAclEntry",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.ec2.amazonaws.com",
-        "requestParameters":
-          {
-            "networkAclId": "acl-1",
-            "ruleNumber": 500,
-            "egress": true,
-            "ruleAction": "allow",
-            "icmpTypeCode": {},
-            "portRange": {},
-            "aclProtocol": "-1",
-            "cidrBlock": "0.0.0.0/0",
-          },
-        "responseElements": { "requestID": "1", "_return": true },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: Network ACL Not Modified
-    ExpectedResult: false
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "CreateNetworkAclEntry"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "aclProtocol": "-1"
+        "cidrBlock": "0.0.0.0/0"
+        "egress": true
+        "icmpTypeCode": {}
+        "networkAclId": "acl-1"
+        "portRange": {}
+        "ruleAction": "allow"
+        "ruleNumber": 500
+      "responseElements":
+        "_return": true
+        "requestID": "1"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.ec2.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+        "type": "AssumedRole"
+    Name: Network ACL Modified
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-                "webIdFederationData": {},
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "DescribeNetworkAcls",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "networkAclIdSet": {},
-            "filterSet":
-              {
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "DescribeNetworkAcls"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "filterSet":
+          "items":
+            - "name": "vpc-id"
+              "valueSet":
                 "items":
-                  [
-                    {
-                      "name": "vpc-id",
-                      "valueSet": { "items": [{ "value": "vpc-1" }] },
-                    },
-                  ],
-              },
-          },
-        "responseElements": null,
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: Error Modifying Network ACL
-    ExpectedResult: false
+                  - "value": "vpc-1"
+        "networkAclIdSet": {}
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Network ACL Not Modified
+  - ExpectedResult: false
     Log:
-      {
-        "errorCode": "InvalidCharacter",
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "CreateNetworkAclEntry",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.ec2.amazonaws.com",
-        "requestParameters":
-          {
-            "networkAclId": "acl-1",
-            "ruleNumber": 500,
-            "egress": true,
-            "ruleAction": "allow",
-            "icmpTypeCode": {},
-            "portRange": {},
-            "aclProtocol": "-1",
-            "cidrBlock": "0.0.0.0/0",
-          },
-        "responseElements": { "requestID": "1", "_return": true },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
+      "awsRegion": "us-west-2"
+      "errorCode": "InvalidCharacter"
+      "eventID": "1"
+      "eventName": "CreateNetworkAclEntry"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "aclProtocol": "-1"
+        "cidrBlock": "0.0.0.0/0"
+        "egress": true
+        "icmpTypeCode": {}
+        "networkAclId": "acl-1"
+        "portRange": {}
+        "ruleAction": "allow"
+        "ruleNumber": 500
+      "responseElements":
+        "_return": true
+        "requestID": "1"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.ec2.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+        "type": "AssumedRole"
+    Name: Error Modifying Network ACL

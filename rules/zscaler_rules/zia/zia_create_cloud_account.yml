@@ -1,202 +1,175 @@
 AnalysisType: rule
-RuleID: ZIA.Cloud.Account.Created
-Description: This rule detects when new cloud account was created.
-DisplayName: ZIA Cloud Account Created
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
-Reference: https://help.zscaler.com/zia/choosing-provisioning-and-authentication-methods
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects when new cloud account was created.
+DisplayName: "ZIA Cloud Account Created"
 Enabled: true
 Filename: zia_create_cloud_account.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136.003 # Persistence: Create Cloud Account
 LogTypes:
   - Zscaler.ZIA.AdminAuditLog
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: https://help.zscaler.com/zia/choosing-provisioning-and-authentication-methods
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003
+RuleID: "ZIA.Cloud.Account.Created"
+Runbook: >-
+  Verify that this change was planned. If not, revert the change and ensure this doesn't
+  happen again.
+Severity: Medium
 Tests:
-  - Name: Administration > User Management > Add User, Service Admin group
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "event": {
-          "action": "CREATE",
-          "adminid": "admin@16991311.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "USER_MANAGEMENT",
-          "clientip": "123.123.123.123",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": {
-            "department": {
-              "id": 16991313,
-              "isDeleted": false,
-              "isForUnauthenticatedUser": false,
-              "isNonEditable": true,
+      "event":
+        "action": "CREATE"
+        "adminid": "admin@16991311.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "USER_MANAGEMENT"
+        "clientip": "123.123.123.123"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction":
+          "department":
+            "id": 16991313
+            "isDeleted": false
+            "isForUnauthenticatedUser": false
+            "isNonEditable": true
+            "name": "Service Admin"
+          "email": "johndoe@dev-company.com"
+          "groups":
+            - "id": 16991312
+              "isNonEditable": true
               "name": "Service Admin"
-            },
-            "email": "johndoe@dev-company.com",
-            "groups": [
-              {
-                "id": 16991312,
-                "isNonEditable": true,
-                "name": "Service Admin"
-              }
-            ],
-            "id": 19752821,
-            "miscflags": 0,
-            "name": "johndoe",
-            "password": "*****",
-            "systemDefinedGroups": []
-          },
-          "preaction": {
-            "department": {
-              "id": 16991313,
-              "isDeleted": false,
-              "isForUnauthenticatedUser": false,
-              "isNonEditable": true,
+          "id": 19752821
+          "miscflags": 0
+          "name": "johndoe"
+          "password": "*****"
+          "systemDefinedGroups": []
+        "preaction":
+          "department":
+            "id": 16991313
+            "isDeleted": false
+            "isForUnauthenticatedUser": false
+            "isNonEditable": true
+            "name": "Service Admin"
+          "email": "johndoe@dev-company.com"
+          "groups":
+            - "id": 16991312
+              "isNonEditable": true
               "name": "Service Admin"
-            },
-            "email": "johndoe@dev-company.com",
-            "groups": [
-              {
-                "id": 16991312,
-                "isNonEditable": true,
-                "name": "Service Admin"
-              }
-            ],
-            "id": 19752821,
-            "miscflags": 0,
-            "name": "johndoe",
-            "password": "*****",
-            "systemDefinedGroups": []
-          },
-          "recordid": "321",
-          "resource": "johndoe",
-          "result": "SUCCESS",
-          "subcategory": "USER",
-          "time": "2024-10-22 21:57:58.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
-  - Name: Administration Management > Administrators > Add Administrator
-    ExpectedResult: true
+          "id": 19752821
+          "miscflags": 0
+          "name": "johndoe"
+          "password": "*****"
+          "systemDefinedGroups": []
+        "recordid": "321"
+        "resource": "johndoe"
+        "result": "SUCCESS"
+        "subcategory": "USER"
+        "time": "2024-10-22 21:57:58.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Administration > User Management > Add User, Service Admin group
+  - ExpectedResult: true
     Log:
-      {
-        "event": {
-          "action": "CREATE",
-          "adminid": "admin@16991311.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "ADMINISTRATOR_MANAGEMENT",
-          "clientip": "123.123.123.123",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": {
-            "adminScope": {
-              "scopeEntities": [],
-              "scopeGroupMemberEntities": [],
-              "type": "ORGANIZATION"
-            },
-            "disabled": false,
-            "email": "ajohndoe@company.com",
-            "id": 19752821,
-            "isExecMobileAppEnabled": true,
-            "isPasswordLoginAllowed": true,
-            "loginName": "johndoe@dev-company.com",
-            "pwdLastModifiedTime": 1729634767,
-            "role": {
-              "deleted": false,
-              "extensions": {
-                "adminRank": "0",
-                "roleType": "EXEC_INSIGHT_AND_ORG_ADMIN"
-              },
-              "id": 24354,
-              "isNameL10nTag": true,
-              "name": "Super Admin"
-            },
-            "userName": "johndoe1123"
-          },
-          "preaction": {
-            "adminScope": {
-              "scopeEntities": [],
-              "scopeGroupMemberEntities": [],
-              "type": "ORGANIZATION"
-            },
-            "disabled": false,
-            "email": "johndoe@company.com",
-            "id": 0,
-            "isAuditor": false,
-            "isDefaultAdmin": false,
-            "isExecMobileAppEnabled": true,
-            "isPasswordExpired": false,
-            "isPasswordLoginAllowed": true,
-            "loginName": "johndoe@dev-company.com",
-            "newLocationCreateAllowed": false,
-            "password": "*****",
-            "pwdLastModifiedTime": 0,
-            "role": {
-              "deleted": false,
-              "id": 24354,
-              "isNameL10nTag": false,
-              "name": "Super Admin"
-            },
-            "userName": "johndoe1123"
-          },
-          "recordid": "326",
-          "resource": "johndoe1123",
-          "result": "SUCCESS",
-          "subcategory": "ADMINISTRATOR_ADMIN_USER",
-          "time": "2024-10-22 22:06:04.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
-  - Name: Administration Management  > Auditors > Add Auditor
-    ExpectedResult: true
+      "event":
+        "action": "CREATE"
+        "adminid": "admin@16991311.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "ADMINISTRATOR_MANAGEMENT"
+        "clientip": "123.123.123.123"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction":
+          "adminScope":
+            "scopeEntities": []
+            "scopeGroupMemberEntities": []
+            "type": "ORGANIZATION"
+          "disabled": false
+          "email": "ajohndoe@company.com"
+          "id": 19752821
+          "isExecMobileAppEnabled": true
+          "isPasswordLoginAllowed": true
+          "loginName": "johndoe@dev-company.com"
+          "pwdLastModifiedTime": 1729634767
+          "role":
+            "deleted": false
+            "extensions":
+              "adminRank": "0"
+              "roleType": "EXEC_INSIGHT_AND_ORG_ADMIN"
+            "id": 24354
+            "isNameL10nTag": true
+            "name": "Super Admin"
+          "userName": "johndoe1123"
+        "preaction":
+          "adminScope":
+            "scopeEntities": []
+            "scopeGroupMemberEntities": []
+            "type": "ORGANIZATION"
+          "disabled": false
+          "email": "johndoe@company.com"
+          "id": 0
+          "isAuditor": false
+          "isDefaultAdmin": false
+          "isExecMobileAppEnabled": true
+          "isPasswordExpired": false
+          "isPasswordLoginAllowed": true
+          "loginName": "johndoe@dev-company.com"
+          "newLocationCreateAllowed": false
+          "password": "*****"
+          "pwdLastModifiedTime": 0
+          "role":
+            "deleted": false
+            "id": 24354
+            "isNameL10nTag": false
+            "name": "Super Admin"
+          "userName": "johndoe1123"
+        "recordid": "326"
+        "resource": "johndoe1123"
+        "result": "SUCCESS"
+        "subcategory": "ADMINISTRATOR_ADMIN_USER"
+        "time": "2024-10-22 22:06:04.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Administration Management > Administrators > Add Administrator
+  - ExpectedResult: true
     Log:
-      {
-        "event": {
-          "action": "CREATE",
-          "adminid": "admin@16991311.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "ADMINISTRATOR_MANAGEMENT",
-          "clientip": "123.123.123.123",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": {
-            "disabled": false,
-            "id": 19752860,
-            "isAuditor": true,
-            "loginName": "arieeel@dev-company.com",
-            "newLocationCreateAllowed": false,
-            "pwdLastModifiedTime": 0,
-            "role": {
-              "deleted": false,
-              "id": 30510,
-              "isNameL10nTag": false,
-              "name": "Auditor"
-            },
-            "userName": "areiiiel"
-          },
-          "preaction": {
-            "adminScope": {
-              "scopeEntities": [],
-              "scopeGroupMemberEntities": [],
-              "type": "ORGANIZATION"
-            },
-            "disabled": false,
-            "id": 0,
-            "isAuditor": true,
-            "loginName": "arieeel@dev-company.com",
-            "newLocationCreateAllowed": false,
-            "password": "*****",
-            "pwdLastModifiedTime": 0,
-            "userName": "areiiiel"
-          },
-          "recordid": "328",
-          "resource": "areiiiel",
-          "result": "SUCCESS",
-          "subcategory": "ADMINISTRATOR_AUDITOR",
-          "time": "2024-10-22 22:10:28.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
+      "event":
+        "action": "CREATE"
+        "adminid": "admin@16991311.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "ADMINISTRATOR_MANAGEMENT"
+        "clientip": "123.123.123.123"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction":
+          "disabled": false
+          "id": 19752860
+          "isAuditor": true
+          "loginName": "arieeel@dev-company.com"
+          "newLocationCreateAllowed": false
+          "pwdLastModifiedTime": 0
+          "role":
+            "deleted": false
+            "id": 30510
+            "isNameL10nTag": false
+            "name": "Auditor"
+          "userName": "areiiiel"
+        "preaction":
+          "adminScope":
+            "scopeEntities": []
+            "scopeGroupMemberEntities": []
+            "type": "ORGANIZATION"
+          "disabled": false
+          "id": 0
+          "isAuditor": true
+          "loginName": "arieeel@dev-company.com"
+          "newLocationCreateAllowed": false
+          "password": "*****"
+          "pwdLastModifiedTime": 0
+          "userName": "areiiiel"
+        "recordid": "328"
+        "resource": "areiiiel"
+        "result": "SUCCESS"
+        "subcategory": "ADMINISTRATOR_AUDITOR"
+        "time": "2024-10-22 22:10:28.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Administration Management  > Auditors > Add Auditor
+Threshold: 1

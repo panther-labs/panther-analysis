@@ -1,54 +1,55 @@
 AnalysisType: rule
-Filename: teleport_company_domain_login_without_saml.py
-RuleID: Teleport.CompanyDomainLoginWithoutSAML
+DedupPeriodMinutes: 60
+Description: >-
+  A User from the company domain(s) Logged in without SAML
 DisplayName: "A User from the company domain(s) Logged in without SAML"
 Enabled: true
+Filename: teleport_company_domain_login_without_saml.py
 LogTypes:
   - Gravitational.TeleportAudit
-Tags:
-  - Teleport
-Severity: Medium
-Description: "A User from the company domain(s) Logged in without SAML"
-DedupPeriodMinutes: 60
+Reference: https://goteleport.com/docs/management/admin/
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562
-Reference: https://goteleport.com/docs/management/admin/
-Runbook: >
+RuleID: "Teleport.CompanyDomainLoginWithoutSAML"
+Runbook: >-
   A User from the company domain(s) Logged in without SAML
+Severity: Medium
 SummaryAttributes:
   - event
   - code
   - user
   - method
   - mfa_device
+Tags:
+  - Teleport
 Tests:
-  - Name: A User from the company domain(s) logged in with SAML
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "attributes": { "firstName": [""], "groups": ["employees"] },
-        "cluster_name": "teleport.example.com",
-        "code": "T1001I",
-        "ei": 0,
-        "event": "user.login",
-        "method": "saml",
-        "success": true,
-        "time": "2023-09-18 00:00:00",
-        "uid": "88888888-4444-4444-4444-222222222222",
-        "user": "jane.doe@example.com",
-      }
-  - Name: A User from the company domain(s) logged in without SAML
-    ExpectedResult: true
+      "attributes":
+        "firstName":
+          - ""
+        "groups":
+          - "employees"
+      "cluster_name": "teleport.example.com"
+      "code": "T1001I"
+      "ei": 0
+      "event": "user.login"
+      "method": "saml"
+      "success": true
+      "time": "2023-09-18 00:00:00"
+      "uid": "88888888-4444-4444-4444-222222222222"
+      "user": "jane.doe@example.com"
+    Name: A User from the company domain(s) logged in with SAML
+  - ExpectedResult: true
     Log:
-      {
-        "cluster_name": "teleport.example.com",
-        "code": "T1001I",
-        "ei": 0,
-        "event": "user.login",
-        "method": "local",
-        "success": true,
-        "time": "2023-09-18 00:00:00",
-        "uid": "88888888-4444-4444-4444-222222222222",
-        "user": "jane.doe@example.com",
-      }
+      "cluster_name": "teleport.example.com"
+      "code": "T1001I"
+      "ei": 0
+      "event": "user.login"
+      "method": "local"
+      "success": true
+      "time": "2023-09-18 00:00:00"
+      "uid": "88888888-4444-4444-4444-222222222222"
+      "user": "jane.doe@example.com"
+    Name: A User from the company domain(s) logged in without SAML

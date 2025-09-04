@@ -1,65 +1,57 @@
 AnalysisType: rule
-Filename: onelogin_user_account_locked.py
-RuleID: "OneLogin.UserAccountLocked"
+Description: >-
+  User locked or suspended from their account.
 DisplayName: "OneLogin User Locked"
 Enabled: true
+Filename: onelogin_user_account_locked.py
 LogTypes:
   - OneLogin.Events
-Tags:
-  - OneLogin
-  - Credential Access:Brute Force
+Reference: https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010420
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110
-Severity: Low
-Description: >
-  User locked or suspended from their account.
-Reference: https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010420
-Runbook: >
+RuleID: "OneLogin.UserAccountLocked"
+Runbook: >-
   Investigate whether this was caused by expected action.
+Severity: Low
 SummaryAttributes:
   - account_id
   - event_type_id
   - user_name
   - user_id
+Tags:
+  - OneLogin
+  - Credential Access:Brute Force
 Tests:
-  - Name: User account locked via api - first method.
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "531",
-        "actor_user_id": 123456,
-        "actor_user_name": "Bob Cat",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
-  - Name: User account locked via api - second method.
-    ExpectedResult: true
+      "actor_user_id": 123456
+      "actor_user_name": "Bob Cat"
+      "event_type_id": "531"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User account locked via api - first method.
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "553",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
-  - Name: User account suspended via api.
-    ExpectedResult: true
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "553"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User account locked via api - second method.
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "551",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
-  - Name: Normal User Activated Event
-    ExpectedResult: false
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "551"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User account suspended via api.
+  - ExpectedResult: false
     Log:
-      {
-        "event_type_id": "11",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "11"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: Normal User Activated Event

@@ -1,58 +1,59 @@
 AnalysisType: correlation_rule
-RuleID: "Crowdstrike.NewAdminUserCreated"
-DisplayName: "Crowdstrike New Admin User Created"
-Enabled: true
-Severity: High
-Description: Detects when a user account is created and assigned admin permissions
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136.003 # Persistence: Create Cloud Account
-    - TA0003:T1098.003 # Persistence: Additional Cloud Roles
-    - TA0004:T1098.003 # Priv Escalation: Additional Cloud Roles
+Description: >-
+  Detects when a user account is created and assigned admin permissions
 Detection:
-  - Sequence:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 1
+    Sequence:
       - ID: AccountCreated
         RuleID: Crowdstrike.NewUserCreated
       - ID: AdminRoleAssigned
         RuleID: Crowdstrike.AdminRoleAssigned
     Transitions:
-      - ID: AcountCreated FOLLOWED BY AdminRoleAssigned ON target AND actor
-        From: AccountCreated
-        To: AdminRoleAssigned
-        WithinTimeFrameMinutes: 45
+      - From: AccountCreated
+        ID: AcountCreated FOLLOWED BY AdminRoleAssigned ON target AND actor
         Match:
           - On: p_alert_context.actor_target
-    LookbackWindowMinutes: 2160
-    Schedule:
-      RateMinutes: 1440
-      TimeoutMinutes: 1
+        To: AdminRoleAssigned
+        WithinTimeFrameMinutes: 45
+DisplayName: "Crowdstrike New Admin User Created"
+Enabled: true
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003
+    - TA0003:T1098.003
+    - TA0004:T1098.003
+RuleID: "Crowdstrike.NewAdminUserCreated"
+Severity: High
 Tests:
-  - Name: User Creation, Followed By Role Assignment
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: User Creation, Followed By Role Assignment
     RuleOutputs:
       - ID: AccountCreated
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            newuser@biz.co-hackerman@biz.co:
               - 0
       - ID: AdminRoleAssigned
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            newuser@biz.co-hackerman@biz.co:
               - 15
-  - Name: User Creation, Not Followed By Role Assignment
-    ExpectedResult: false
+  - ExpectedResult: false
+    Name: User Creation, Not Followed By Role Assignment
     RuleOutputs:
       - ID: AccountCreated
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            newuser@biz.co-hackerman@biz.co:
               - 0
-  - Name: Role Assignment Not Preceded By User Creation
-    ExpectedResult: false
+  - ExpectedResult: false
+    Name: Role Assignment Not Preceded By User Creation
     RuleOutputs:
       - ID: AdminRoleAssigned
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            newuser@biz.co-hackerman@biz.co:
               - 20

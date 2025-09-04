@@ -1,62 +1,56 @@
 AnalysisType: rule
-Filename: notion_workspace_audit_log_exported.py
-RuleID: "Notion.Audit.Log.Exported"
+DedupPeriodMinutes: 60
+Description: >-
+  A Notion User exported audit logs for your organization’s workspace.
 DisplayName: "Notion Audit Log Exported"
 Enabled: true
+Filename: notion_workspace_audit_log_exported.py
 LogTypes:
   - Notion.AuditLogs
+Reference: https://www.notion.so/help/audit-log#export-your-audit-log
+RuleID: "Notion.Audit.Log.Exported"
+Runbook: >-
+  Possible Data Exfiltration. Follow up with the Notion User to determine if this
+  was done for a valid business reason.
+Severity: Medium
 Tags:
   - Notion
   - Data Security
   - Data Exfiltration
-Severity: Medium
-Description: A Notion User exported audit logs for your organization’s workspace.
-DedupPeriodMinutes: 60
-Threshold: 1
-Runbook: Possible Data Exfiltration. Follow up with the Notion User to determine if this was done for a valid business reason.
-Reference: https://www.notion.so/help/audit-log#export-your-audit-log
 Tests:
-  - Name: Other Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "event":
-          {
-            "id": "...",
-            "timestamp": "2023-05-15T19:14:21.031Z",
-            "workspace_id": "..",
-            "actor":
-              {
-                "id": "..",
-                "object": "user",
-                "type": "person",
-                "person": { "email": "homer.simpson@yourcompany.io" },
-              },
-            "ip_address": "...",
-            "platform": "web",
-            "type": "workspace.content_exported",
-            "workspace.content_exported": {},
-          },
-      }
-  - Name: Audit Log Exported
-    ExpectedResult: true
+      "event":
+        "actor":
+          "id": ".."
+          "object": "user"
+          "person":
+            "email": "homer.simpson@yourcompany.io"
+          "type": "person"
+        "id": "..."
+        "ip_address": "..."
+        "platform": "web"
+        "timestamp": "2023-05-15T19:14:21.031Z"
+        "type": "workspace.content_exported"
+        "workspace.content_exported": {}
+        "workspace_id": ".."
+    Name: Other Event
+  - ExpectedResult: true
     Log:
-      {
-        "event":
-          {
-            "id": "...",
-            "timestamp": "2023-05-15T19:14:21.031Z",
-            "workspace_id": "..",
-            "actor":
-              {
-                "object": "user",
-                "id": "..",
-                "type": "person",
-                "person": { "email": "homer.simpson@yourcompany.io" },
-              },
-            "ip_address": "...",
-            "platform": "web",
-            "type": "workspace.audit_log_exported",
-            "details": { "duration_in_days": 30 },
-          },
-      }
+      "event":
+        "actor":
+          "id": ".."
+          "object": "user"
+          "person":
+            "email": "homer.simpson@yourcompany.io"
+          "type": "person"
+        "details":
+          "duration_in_days": 30
+        "id": "..."
+        "ip_address": "..."
+        "platform": "web"
+        "timestamp": "2023-05-15T19:14:21.031Z"
+        "type": "workspace.audit_log_exported"
+        "workspace_id": ".."
+    Name: Audit Log Exported
+Threshold: 1

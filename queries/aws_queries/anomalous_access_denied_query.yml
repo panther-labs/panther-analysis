@@ -1,7 +1,8 @@
 AnalysisType: scheduled_query
-Description: ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
+Description: ARNs with a high Access Denied error rate could indicate an error or
+  compromised credentials attempting to perform reconnaissance.
 Enabled: false
-Query: |
+Query: >-
   SELECT
     userIdentity:arn as arn,
     count(DISTINCT eventName) as distinctEventNames
@@ -11,6 +12,7 @@ Query: |
     errorCode = 'AccessDenied'
     and p_occurs_since('1 day')
   GROUP BY userIdentity:arn
+
   HAVING count(DISTINCT eventName) > 10
 QueryName: "Anomalous AccessDenied Requests"
 Schedule:

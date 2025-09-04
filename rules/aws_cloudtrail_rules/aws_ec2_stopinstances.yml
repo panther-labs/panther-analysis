@@ -1,238 +1,178 @@
 AnalysisType: rule
-RuleID: "AWS.EC2.StopInstances"
+CreateAlert: false
+Description: >-
+  A CloudTrail instances were stopped. It makes further changes of instances possible
 DisplayName: "CloudTrail EC2 StopInstances"
 Enabled: true
-CreateAlert: false
 Filename: aws_ec2_stopinstances.py
 LogTypes:
   - AWS.CloudTrail
+Reference: 
+  https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-examples.html
+RuleID: "AWS.EC2.StopInstances"
+Severity: Info
 Tags:
   - panther-signal
-Severity: Info
-Description: >
-  A CloudTrail instances were stopped. It makes further changes of instances possible
-Reference: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-examples.html
 Tests:
-  -
+  - ExpectedResult: true
+    Log:
+      "awsRegion": "us-east-1"
+      "eventCategory": "Management"
+      "eventID": "9357a8cc-a0eb-46a1-b67e-EXAMPLE19b14"
+      "eventName": "StopInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2023-07-19T21:14:20Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "777788889999"
+      "requestID": "c308a950-e43e-444e-afc1-EXAMPLE73e49"
+      "requestParameters":
+        "force": false
+        "instancesSet":
+          "items":
+            - "instanceId": "i-EXAMPLE56126103cb"
+            - "instanceId": "i-EXAMPLEaff4840c22"
+      "responseElements":
+        "instancesSet":
+          "items":
+            - "currentState":
+                "code": 64
+                "name": "stopping"
+              "instanceId": "i-EXAMPLE56126103cb"
+              "previousState":
+                "code": 16
+                "name": "running"
+            - "currentState":
+                "code": 64
+                "name": "stopping"
+              "instanceId": "i-EXAMPLEaff4840c22"
+              "previousState":
+                "code": 16
+                "name": "running"
+        "requestId": "c308a950-e43e-444e-afc1-EXAMPLE73e49"
+      "sessionCredentialFromConsole": "true"
+      "sourceIPAddress": "192.0.2.0"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64
+        exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.stop-instances"
+      "userIdentity":
+        "accessKeyId": "AKIAI44QH8DHBEXAMPLE"
+        "accountId": "777788889999"
+        "arn": "arn:aws:iam::777788889999:user/Nikki"
+        "principalId": "EXAMPLE6E4XEGITWATV6R"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2023-07-19T21:11:57Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer": {}
+          "webIdFederationData": {}
+        "type": "IAMUser"
+        "userName": "Nikki"
     Name: CloudTrail Instances Were Stopped
-    ExpectedResult: true
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "EXAMPLE6E4XEGITWATV6R",
-          "arn": "arn:aws:iam::777788889999:user/Nikki",
-          "accountId": "777788889999",
-          "accessKeyId": "AKIAI44QH8DHBEXAMPLE",
-          "userName": "Nikki",
-          "sessionContext": {
-            "sessionIssuer": { },
-            "webIdFederationData": { },
-            "attributes": {
-              "creationDate": "2023-07-19T21:11:57Z",
-              "mfaAuthenticated": "false"
-            }
-          }
-        },
-        "eventTime": "2023-07-19T21:14:20Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "StopInstances",
-        "awsRegion": "us-east-1",
-        "sourceIPAddress": "192.0.2.0",
-        "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.stop-instances",
-        "requestParameters": {
-          "instancesSet": {
-            "items": [
-              {
-                "instanceId": "i-EXAMPLE56126103cb"
-              },
-              {
-                "instanceId": "i-EXAMPLEaff4840c22"
-              }
-            ]
-          },
-          "force": false
-        },
-        "responseElements": {
-          "requestId": "c308a950-e43e-444e-afc1-EXAMPLE73e49",
-          "instancesSet": {
-            "items": [
-              {
-                "instanceId": "i-EXAMPLE56126103cb",
-                "currentState": {
-                  "code": 64,
-                  "name": "stopping"
-                },
-                "previousState": {
-                  "code": 16,
-                  "name": "running"
-                }
-              },
-              {
-                "instanceId": "i-EXAMPLEaff4840c22",
-                "currentState": {
-                  "code": 64,
-                  "name": "stopping"
-                },
-                "previousState": {
-                  "code": 16,
-                  "name": "running"
-                }
-              }
-            ]
-          }
-        },
-        "requestID": "c308a950-e43e-444e-afc1-EXAMPLE73e49",
-        "eventID": "9357a8cc-a0eb-46a1-b67e-EXAMPLE19b14",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "managementEvent": true,
-        "recipientAccountId": "777788889999",
-        "eventCategory": "Management",
-        "tlsDetails": {
-          "tlsVersion": "TLSv1.2",
-          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-          "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
-        },
-        "sessionCredentialFromConsole": "true"
-      }
-  -
+      "awsRegion": "us-east-1"
+      "eventCategory": "Management"
+      "eventID": "e755e09c-42f9-4c5c-9064-EXAMPLE228c7"
+      "eventName": "StartInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2023-07-19T21:17:28Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "e4336db0-149f-4a6b-844d-EXAMPLEb9d16"
+      "requestParameters":
+        "instancesSet":
+          "items":
+            - "instanceId": "i-EXAMPLE56126103cb"
+            - "instanceId": "i-EXAMPLEaff4840c22"
+      "responseElements":
+        "instancesSet":
+          "items":
+            - "currentState":
+                "code": 0
+                "name": "pending"
+              "instanceId": "i-EXAMPLEaff4840c22"
+              "previousState":
+                "code": 80
+                "name": "stopped"
+            - "currentState":
+                "code": 0
+                "name": "pending"
+              "instanceId": "i-EXAMPLE56126103cb"
+              "previousState":
+                "code": 80
+                "name": "stopped"
+        "requestId": "e4336db0-149f-4a6b-844d-EXAMPLEb9d16"
+      "sessionCredentialFromConsole": "true"
+      "sourceIPAddress": "192.0.2.0"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64
+        exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.start-instances"
+      "userIdentity":
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE"
+        "accountId": "123456789012"
+        "arn": "arn:aws:iam::123456789012:user/Mateo"
+        "principalId": "EXAMPLE6E4XEGITWATV6R"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2023-07-19T21:11:57Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer": {}
+          "webIdFederationData": {}
+        "type": "IAMUser"
+        "userName": "Mateo"
     Name: CloudTrail Instances Were Started
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "EXAMPLE6E4XEGITWATV6R",
-          "arn": "arn:aws:iam::123456789012:user/Mateo",
-          "accountId": "123456789012",
-          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
-          "userName": "Mateo",
-          "sessionContext": {
-            "sessionIssuer": { },
-            "webIdFederationData": { },
-            "attributes": {
-              "creationDate": "2023-07-19T21:11:57Z",
-              "mfaAuthenticated": "false"
-            }
-          }
-        },
-        "eventTime": "2023-07-19T21:17:28Z",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "StartInstances",
-        "awsRegion": "us-east-1",
-        "sourceIPAddress": "192.0.2.0",
-        "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.start-instances",
-        "requestParameters": {
-          "instancesSet": {
-            "items": [
-              {
-                "instanceId": "i-EXAMPLE56126103cb"
-              },
-              {
-                "instanceId": "i-EXAMPLEaff4840c22"
-              }
-            ]
-          }
-        },
-        "responseElements": {
-          "requestId": "e4336db0-149f-4a6b-844d-EXAMPLEb9d16",
-          "instancesSet": {
-            "items": [
-              {
-                "instanceId": "i-EXAMPLEaff4840c22",
-                "currentState": {
-                  "code": 0,
-                  "name": "pending"
-                },
-                "previousState": {
-                  "code": 80,
-                  "name": "stopped"
-                }
-              },
-              {
-                "instanceId": "i-EXAMPLE56126103cb",
-                "currentState": {
-                  "code": 0,
-                  "name": "pending"
-                },
-                "previousState": {
-                  "code": 80,
-                  "name": "stopped"
-                }
-              }
-            ]
-          }
-        },
-        "requestID": "e4336db0-149f-4a6b-844d-EXAMPLEb9d16",
-        "eventID": "e755e09c-42f9-4c5c-9064-EXAMPLE228c7",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "managementEvent": true,
-        "recipientAccountId": "123456789012",
-        "eventCategory": "Management",
-        "tlsDetails": {
-          "tlsVersion": "TLSv1.2",
-          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-          "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
-        },
-        "sessionCredentialFromConsole": "true"
-      }
-  -
+      "awsRegion": "us-east-1"
+      "errorCode": "SomeErrorCode"
+      "eventCategory": "Management"
+      "eventID": "9357a8cc-a0eb-46a1-b67e-EXAMPLE19b14"
+      "eventName": "StopInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2023-07-19T21:14:20Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "777788889999"
+      "requestID": "c308a950-e43e-444e-afc1-EXAMPLE73e49"
+      "requestParameters":
+        "force": false
+        "instancesSet":
+          "items":
+            - "instanceId": "i-EXAMPLE56126103cb"
+            - "instanceId": "i-EXAMPLEaff4840c22"
+      "sessionCredentialFromConsole": "true"
+      "sourceIPAddress": "192.0.2.0"
+      "tlsDetails":
+        "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.2"
+      "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64
+        exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.stop-instances"
+      "userIdentity":
+        "accessKeyId": "AKIAI44QH8DHBEXAMPLE"
+        "accountId": "777788889999"
+        "arn": "arn:aws:iam::777788889999:user/Nikki"
+        "principalId": "EXAMPLE6E4XEGITWATV6R"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2023-07-19T21:11:57Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer": {}
+          "webIdFederationData": {}
+        "type": "IAMUser"
+        "userName": "Nikki"
     Name: Error Stopping CloudTrail Instances
-    ExpectedResult: false
-    Log:
-      {
-          "eventVersion": "1.05",
-          "errorCode": "SomeErrorCode",
-          "userIdentity": {
-            "type": "IAMUser",
-            "principalId": "EXAMPLE6E4XEGITWATV6R",
-            "arn": "arn:aws:iam::777788889999:user/Nikki",
-            "accountId": "777788889999",
-            "accessKeyId": "AKIAI44QH8DHBEXAMPLE",
-            "userName": "Nikki",
-            "sessionContext": {
-              "sessionIssuer": { },
-              "webIdFederationData": { },
-              "attributes": {
-                "creationDate": "2023-07-19T21:11:57Z",
-                "mfaAuthenticated": "false"
-              }
-            }
-          },
-          "eventTime": "2023-07-19T21:14:20Z",
-          "eventSource": "ec2.amazonaws.com",
-          "eventName": "StopInstances",
-          "awsRegion": "us-east-1",
-          "sourceIPAddress": "192.0.2.0",
-          "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/4.14.255-314-253.539.amzn2.x86_64 exec-env/CloudShell exe/x86_64.amzn.2 prompt/off command/ec2.stop-instances",
-          "requestParameters": {
-            "instancesSet": {
-              "items": [
-                {
-                  "instanceId": "i-EXAMPLE56126103cb"
-                },
-                {
-                  "instanceId": "i-EXAMPLEaff4840c22"
-                }
-              ]
-            },
-            "force": false
-          },
-          "requestID": "c308a950-e43e-444e-afc1-EXAMPLE73e49",
-          "eventID": "9357a8cc-a0eb-46a1-b67e-EXAMPLE19b14",
-          "readOnly": false,
-          "eventType": "AwsApiCall",
-          "managementEvent": true,
-          "recipientAccountId": "777788889999",
-          "eventCategory": "Management",
-          "tlsDetails": {
-            "tlsVersion": "TLSv1.2",
-            "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "clientProvidedHostHeader": "ec2.us-east-1.amazonaws.com"
-          },
-          "sessionCredentialFromConsole": "true"
-      }

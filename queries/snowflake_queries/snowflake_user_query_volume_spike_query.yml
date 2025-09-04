@@ -1,10 +1,8 @@
 AnalysisType: scheduled_query
-QueryName: "Snowflake User Daily Query Volume Spike"
+Description: Returns instances where a user's cumulative daily query volume is much
+  larger than normal. Could indicate exfiltration attempts.
 Enabled: false
-Description: >
-  Returns instances where a user's cumulative daily query volume is much larger than
-  normal. Could indicate exfiltration attempts.
-Query: |
+Query: >-
   with t as (
     select
       dateadd('day', -1-seq4(), p_current_timestamp()) as tstart,
@@ -21,12 +19,15 @@ Query: |
     from panther_logs.public.snowflake_queryhistory
     where p_occurs_since('90d', , end_time)
   ),
+
   dimensions as (
     select distinct user_name, p_source_id from data
   ),
+
   axes as (
     select * from t cross join dimensions
   ),
+
   histogram as (
     select
       sum(data.n_bytes) as daily_bytes,
@@ -48,6 +49,7 @@ Query: |
       axes.user_name
     )
   ),
+
   stats as (
     select
       avg(daily_bytes) as mean,
@@ -61,8 +63,10 @@ Query: |
       p_source_label,
       user_name
   )
+
   select
-    abs(histogram.daily_bytes - stats.mean) / COALESCE(NULLIF(stats.std_dev, 0), 1) as zscore,
+    abs(histogram.daily_bytes - stats.mean) / COALESCE(NULLIF(stats.std_dev, 0), 1)
+  as zscore,
     histogram.*,
     stats.mean,
     stats.std_dev
@@ -72,6 +76,7 @@ Query: |
   where p_occurs_since('12h', histogram, tend)
     and zscore > 3
     and histogram.daily_bytes > 1000000 -- Minimum 1MB threshold
+QueryName: "Snowflake User Daily Query Volume Spike"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 3

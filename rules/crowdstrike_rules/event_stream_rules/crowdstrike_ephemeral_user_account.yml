@@ -1,58 +1,60 @@
 AnalysisType: correlation_rule
-RuleID: "Crowdstrike.EphemeralUserAccount"
-DisplayName: "Crowdstrike Ephemeral User Account"
-Enabled: true
-Severity: High
-Description: Detects when a user account is created and deleted within 12 hours. This aims to detect ephemeral user accounts infiltrators might use to avoid suspicion.
-Reference: ""
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136.003 # Persistence: Create Cloud Account
-    - TA0005:T1070 # Defense Evasion: Indicator Removal
+Description: >-
+  Detects when a user account is created and deleted within 12 hours. This aims to
+  detect ephemeral user accounts infiltrators might use to avoid suspicion.
 Detection:
-  - Sequence:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 1
+    Sequence:
       - ID: AccountCreated
         RuleID: Crowdstrike.NewUserCreated
       - ID: AccountDeleted
         RuleID: Crowdstrike.UserDeleted
     Transitions:
-      - ID: User Created FOLLOWED BY User Deleted
-        From: AccountCreated
-        To: AccountDeleted
-        WithinTimeFrameMinutes: 720 # 12 hours
+      - From: AccountCreated
+        ID: User Created FOLLOWED BY User Deleted
         Match:
           - On: p_alert_context.target_name
-    LookbackWindowMinutes: 2160
-    Schedule:
-      RateMinutes: 1440
-      TimeoutMinutes: 1
+        To: AccountDeleted
+        WithinTimeFrameMinutes: 720
+DisplayName: "Crowdstrike Ephemeral User Account"
+Enabled: true
+Reference: ''
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003
+    - TA0005:T1070
+RuleID: "Crowdstrike.EphemeralUserAccount"
+Severity: High
 Tests:
-  - Name: User Creation, Followed By Deletion
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: User Creation, Followed By Deletion
     RuleOutputs:
       - ID: AccountCreated
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            non.chalant@legitbiz.com:
               - 0
       - ID: AccountDeleted
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
-              - 640 # 9 hours
-  - Name: User Creation, Not Followed By Deletion
-    ExpectedResult: false
+            non.chalant@legitbiz.com:
+              - 640
+  - ExpectedResult: false
+    Name: User Creation, Not Followed By Deletion
     RuleOutputs:
       - ID: AccountCreated
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            non.chalant@legitbiz.com:
               - 0
-  - Name: User Deletion, Not Preceded By Creation
-    ExpectedResult: false
+  - ExpectedResult: false
+    Name: User Deletion, Not Preceded By Creation
     RuleOutputs:
       - ID: AccountDeleted
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
-              - 120 # 2 hours
+            non.chalant@legitbiz.com:
+              - 120

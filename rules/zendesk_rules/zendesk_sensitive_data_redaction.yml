@@ -1,74 +1,71 @@
 AnalysisType: rule
-Filename: zendesk_sensitive_data_redaction.py
-RuleID: "Zendesk.SensitiveDataRedactionOff"
 DedupPeriodMinutes: 60
+Description: >-
+  A user updated account setting that disabled credit card redaction.
 DisplayName: "Zendesk Credit Card Redaction Off"
 Enabled: true
+Filename: zendesk_sensitive_data_redaction.py
 LogTypes:
   - Zendesk.Audit
-Tags:
-  - Zendesk
-  - Collection:Data from Information Repositories
+Reference: 
+  https://support.zendesk.com/hc/en-us/articles/4408822124314-Automatically-redacting-credit-card-numbers-from-tickets
 Reports:
   MITRE ATT&CK:
     - TA0009:T1213
+RuleID: "Zendesk.SensitiveDataRedactionOff"
+Runbook: >-
+  Re-enable credit card redaction.
 Severity: High
-Description: A user updated account setting that disabled credit card redaction.
-Runbook: Re-enable credit card redaction.
-Reference: https://support.zendesk.com/hc/en-us/articles/4408822124314-Automatically-redacting-credit-card-numbers-from-tickets
 SummaryAttributes:
   - p_any_ip_addresses
+Tags:
+  - Zendesk
+  - Collection:Data from Information Repositories
 Tests:
-  - Name: Zendesk - Credit Card Redaction Off
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "actor_name": "John Doe",
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Credit Card Redaction",
-        "action": "create",
-        "change_description": "Disabled",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
-  - Name: Zendesk - Credit Card Redaction On
-    ExpectedResult: true
+      "action": "create"
+      "action_label": "Updated"
+      "actor_id": 123
+      "actor_name": "John Doe"
+      "change_description": "Disabled"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Credit Card Redaction"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: Zendesk - Credit Card Redaction Off
+  - ExpectedResult: true
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "actor_name": "John Doe",
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Credit Card Redaction",
-        "action": "create",
-        "change_description": "Enabled",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
-  - Name: User assumption settings changed
-    ExpectedResult: false
+      "action": "create"
+      "action_label": "Updated"
+      "actor_id": 123
+      "actor_name": "John Doe"
+      "change_description": "Enabled"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Credit Card Redaction"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: Zendesk - Credit Card Redaction On
+  - ExpectedResult: false
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Account Assumption",
-        "action": "update",
-        "change_description": "Changed",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
+      "action": "update"
+      "action_label": "Updated"
+      "actor_id": 123
+      "change_description": "Changed"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Account Assumption"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: User assumption settings changed

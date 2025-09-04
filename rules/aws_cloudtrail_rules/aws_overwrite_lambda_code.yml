@@ -1,154 +1,135 @@
 AnalysisType: rule
-Filename: aws_overwrite_lambda_code.py
-RuleID: "AWS.Lambda.UpdateFunctionCode"
+CreateAlert: false
+Description: >-
+  Identifies when the code of a Lambda function is updated, which could indicate a
+  potential security risk.
 DisplayName: "Lambda Update Function Code"
 Enabled: true
-CreateAlert: false
+Filename: aws_overwrite_lambda_code.py
 LogTypes:
   - AWS.CloudTrail
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-overwrite-code/
 Reports:
   MITRE ATT&CK:
     - TA0007:T1078
+RuleID: "AWS.Lambda.UpdateFunctionCode"
+Runbook: >-
+  Verify the event details and the user that triggered the event. If the event is
+  expected, no action is required. If the event is unexpected, investigate the user
+  and the function that was updated.
 Severity: Info
 Tags:
   - Beta
-Description: >
-  Identifies when the code of a Lambda function is updated, which could indicate a potential security risk.
-Runbook: Verify the event details and the user that triggered the event. If the event is expected, no action is required. If the event is unexpected, investigate the user and the function that was updated.
-Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-overwrite-code/
 Tests:
-  - Name: Lambda Update Function Code Event
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "tester",
-          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-          "accountId": "123456789012",
-          "accessKeyId": "1",
-          "sessionContext": {
-            "sessionIssuer": {
-              "type": "Role",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:role/tester",
-              "accountId": "123456789012",
-              "userName": "Tester"
-            },
-            "webIdFederationData": {},
-            "attributes": {
-              "mfaAuthenticated": "true",
-              "creationDate": "2019-01-01T00:00:00Z"
-            }
-          }
-        },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "lambda.amazonaws.com",
-        "eventName": "UpdateFunctionCode20150331",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters": {
-          "functionName": "my-lambda-function"
-        },
-        "responseElements": {
-          "functionName": "my-lambda-function"
-        },
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "p_log_type": "AWS.CloudTrail"
-      }
-  - Name: Lambda Update Function Code Event v2
-    ExpectedResult: true
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "UpdateFunctionCode20150331"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "functionName": "my-lambda-function"
+      "responseElements":
+        "functionName": "my-lambda-function"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Lambda Update Function Code Event
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "tester",
-          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-          "accountId": "123456789012",
-          "accessKeyId": "1",
-          "sessionContext": {
-            "sessionIssuer": {
-              "type": "Role",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:role/tester",
-              "accountId": "123456789012",
-              "userName": "Tester"
-            },
-            "webIdFederationData": {},
-            "attributes": {
-              "mfaAuthenticated": "true",
-              "creationDate": "2019-01-01T00:00:00Z"
-            }
-          }
-        },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "lambda.amazonaws.com",
-        "eventName": "UpdateFunctionCode20150331v2",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters": {
-          "functionName": "my-lambda-function"
-        },
-        "responseElements": {
-          "functionName": "my-lambda-function"
-        },
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "p_log_type": "AWS.CloudTrail"
-      }
-  - Name: Delete Function Event
-    ExpectedResult: false
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "UpdateFunctionCode20150331v2"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "functionName": "my-lambda-function"
+      "responseElements":
+        "functionName": "my-lambda-function"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Lambda Update Function Code Event v2
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity": {
-          "type": "AssumedRole",
-          "principalId": "tester",
-          "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-          "accountId": "123456789012",
-          "accessKeyId": "1",
-          "sessionContext": {
-            "sessionIssuer": {
-              "type": "Role",
-              "principalId": "1111",
-              "arn": "arn:aws:iam::123456789012:role/tester",
-              "accountId": "123456789012",
-              "userName": "Tester"
-            },
-            "webIdFederationData": {},
-            "attributes": {
-              "mfaAuthenticated": "true",
-              "creationDate": "2019-01-01T00:00:00Z"
-            }
-          }
-        },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "lambda.amazonaws.com",
-        "eventName": "DeleteFunction",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "console.amazonaws.com",
-        "requestParameters": {
-          "functionName": "my-lambda-function"
-        },
-        "responseElements": {
-          "functionName": "my-lambda-function"
-        },
-        "requestID": "1",
-        "eventID": "1",
-        "readOnly": false,
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "p_log_type": "AWS.CloudTrail"
-      }
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "DeleteFunction"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "p_log_type": "AWS.CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "functionName": "my-lambda-function"
+      "responseElements":
+        "functionName": "my-lambda-function"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "console.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "Tester"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Delete Function Event

@@ -1,73 +1,76 @@
 AnalysisType: correlation_rule
-RuleID: "GCP.Cloud.Run.Service.Created.FOLLOWED.BY.Set.IAM.Policy"
+Description: >-
+  Detects run.services.create method for privilege escalation in GCP. The exploit
+  creates a new Cloud Run Service that, when invoked, returns the Service Account's
+  access token by accessing the metadata API of the server it is running on.
+Detection:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 5
+    Sequence:
+      - ID: ServiceCreated
+        RuleID: GCP.Cloud.Run.Service.Created
+      - ID: SetIAMPolicy
+        RuleID: GCP.Cloud.Run.Set.IAM.Policy
+    Transitions:
+      - From: ServiceCreated
+        ID: ServiceCreated FOLLOWED BY SetIAMPolicy
+        Match:
+          - On: p_alert_context.caller_ip
+        To: SetIAMPolicy
+        WithinTimeFrameMinutes: 90
 DisplayName: "GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy"
 Enabled: true
-Severity: High
-Description: Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run 
-  Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server 
-  it is running on.
-Reference: https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
-Runbook: Confirm this was authorized and necessary behavior
+Reference: 
+  https://rhinosecuritylabs.com/gcp/privilege-escalation-google-cloud-platform-part-1/
 Reports:
-    MITRE ATT&CK:
-        - TA0004:T1548  # Abuse Elevation Control Mechanism
-Detection:
-    - Sequence:
-        - ID: ServiceCreated
-          RuleID: GCP.Cloud.Run.Service.Created
-        - ID: SetIAMPolicy
-          RuleID: GCP.Cloud.Run.Set.IAM.Policy
-      Transitions:
-        - ID: ServiceCreated FOLLOWED BY SetIAMPolicy
-          From: ServiceCreated
-          To: SetIAMPolicy
-          WithinTimeFrameMinutes: 90
-          Match:
-            - On: p_alert_context.caller_ip
-      LookbackWindowMinutes: 2160
-      Schedule:
-        RateMinutes: 1440 
-        TimeoutMinutes: 5
+  MITRE ATT&CK:
+    - TA0004:T1548
+RuleID: "GCP.Cloud.Run.Service.Created.FOLLOWED.BY.Set.IAM.Policy"
+Runbook: >-
+  Confirm this was authorized and necessary behavior
+Severity: High
 Tests:
-    - Name: GCP Service Run, Followed By IAM Policy Change From Same IP
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: ServiceCreated
-          Matches:
-            p_alert_context.caller_ip:
-              1.1.1.1:
-                - "2024-06-01T10:00:00Z"
-        - ID: SetIAMPolicy
-          Matches:
-            p_alert_context.caller_ip:
-              1.1.1.1:
-                - "2024-06-01T10:00:01Z"
-    - Name: GCP Service Run, Not Followed By IAM Policy Change
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: ServiceCreated
-          Matches:
-            p_alert_context.caller_ip:
-              1.1.1.1:
-                - "2024-06-01T10:00:00Z"
-    - Name: IAM Policy Change, Not Preceeded By GCP Service Run
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: SetIAMPolicy
-          Matches:
-            p_alert_context.caller_ip:
-              1.1.1.1:
-                - "2024-06-01T10:00:01Z"
-    - Name: GCP Service Run, Followed By IAM Policy Change From Different IP
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: ServiceCreated
-          Matches:
-            p_alert_context.caller_ip:
-              1.1.1.1:
-                - "2024-06-01T10:00:00Z"
-        - ID: SetIAMPolicy
-          Matches:
-            p_alert_context.caller_ip:
-              2.2.2.2:
-                - "2024-06-01T10:00:01Z"
+  - ExpectedResult: true
+    Name: GCP Service Run, Followed By IAM Policy Change From Same IP
+    RuleOutputs:
+      - ID: ServiceCreated
+        Matches:
+          p_alert_context.caller_ip:
+            1.1.1.1:
+              - '2024-06-01T10:00:00Z'
+      - ID: SetIAMPolicy
+        Matches:
+          p_alert_context.caller_ip:
+            1.1.1.1:
+              - '2024-06-01T10:00:01Z'
+  - ExpectedResult: false
+    Name: GCP Service Run, Not Followed By IAM Policy Change
+    RuleOutputs:
+      - ID: ServiceCreated
+        Matches:
+          p_alert_context.caller_ip:
+            1.1.1.1:
+              - '2024-06-01T10:00:00Z'
+  - ExpectedResult: false
+    Name: IAM Policy Change, Not Preceeded By GCP Service Run
+    RuleOutputs:
+      - ID: SetIAMPolicy
+        Matches:
+          p_alert_context.caller_ip:
+            1.1.1.1:
+              - '2024-06-01T10:00:01Z'
+  - ExpectedResult: false
+    Name: GCP Service Run, Followed By IAM Policy Change From Different IP
+    RuleOutputs:
+      - ID: ServiceCreated
+        Matches:
+          p_alert_context.caller_ip:
+            1.1.1.1:
+              - '2024-06-01T10:00:00Z'
+      - ID: SetIAMPolicy
+        Matches:
+          p_alert_context.caller_ip:
+            2.2.2.2:
+              - '2024-06-01T10:00:01Z'

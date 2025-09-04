@@ -1,217 +1,161 @@
 AnalysisType: rule
 DedupPeriodMinutes: 60
-DisplayName: GCP Compute IAM Policy Update Detection
+Description: >-
+  This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
+DisplayName: "GCP Compute IAM Policy Update Detection"
 Enabled: true
 Filename: gcp_compute_set_iam_policy.py
-RuleID: "GCP.Compute.IAM.Policy.Update"
-Severity: Medium
 LogTypes:
   - GCP.AuditLog
-Description: >
-  This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
-Runbook: >
-  Ensure that the IAM policy update was expected. Unauthorized changes can lead to security risks.
 Reference: https://cloud.google.com/compute/docs/access/iam
+RuleID: "GCP.Compute.IAM.Policy.Update"
+Runbook: >-
+  Ensure that the IAM policy update was expected. Unauthorized changes can lead to
+  security risks.
+Severity: Medium
 Tests:
-  - Name: IAM policy update on a Compute Disk
-    LogType: GCP.AuditLog
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "insertId": "1abcd23efg456",
-        "labels": {
-          "compute.googleapis.com/root_trigger_id": "trigger-id-1"
-        },
-        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload": {
-          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "authenticationInfo": {
-            "principalEmail": "user@example.com",
-            "principalSubject": "serviceAccount:user@example.com",
-            "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
-          },
-          "authorizationInfo": [
-            {
-              "granted": true,
-              "permission": "compute.disks.setIamPolicy",
-              "resource": "projects/test-project/zones/us-central1-a/disks/disk-1",
-              "resourceAttributes": {
-                "name": "projects/test-project/zones/us-central1-a/disks/disk-1",
-                "service": "compute",
-                "type": "compute.disks"
-              }
-            }
-          ],
-          "methodName": "v1.compute.disks.setIamPolicy",
-          "request": {
-            "@type": "type.googleapis.com/compute.disks.setIamPolicy",
-            "policy": {
-              "bindings": [
-                {
-                  "members": [
-                    "user:anonymized@example.com"
-                  ],
-                  "role": "roles/owner"
-                }
-              ]
-            }
-          },
-          "requestMetadata": {
-            "callerIP": "192.0.2.1",
-            "callerSuppliedUserAgent": "google-cloud-sdk",
-            "destinationAttributes": {},
-            "requestAttributes": {
-              "auth": {},
-              "time": "2023-10-01T12:34:56.789Z"
-            }
-          },
-          "resourceLocation": {
-            "currentLocations": [
-              "us-central1-a"
-            ]
-          },
-          "resourceName": "projects/test-project/zones/us-central1-a/disks/disk-1",
-          "serviceName": "compute.googleapis.com"
-        },
-        "receiveTimestamp": "2023-10-01T12:34:57.123Z",
-        "resource": {
-          "labels": {
-            "disk_id": "disk-id-1",
-            "project_id": "test-project",
-            "zone": "us-central1-a"
-          },
-          "type": "gce_disk"
-        },
-        "severity": "NOTICE",
-        "timestamp": "2023-10-01T12:34:56.789Z"
-      }
-  - Name: IAM policy update on a Compute Image
+      "insertId": "1abcd23efg456"
+      "labels":
+        "compute.googleapis.com/root_trigger_id": "trigger-id-1"
+      "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user@example.com"
+          "principalSubject": "serviceAccount:user@example.com"
+          "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "compute.disks.setIamPolicy"
+            "resource": "projects/test-project/zones/us-central1-a/disks/disk-1"
+            "resourceAttributes":
+              "name": "projects/test-project/zones/us-central1-a/disks/disk-1"
+              "service": "compute"
+              "type": "compute.disks"
+        "methodName": "v1.compute.disks.setIamPolicy"
+        "request":
+          "@type": "type.googleapis.com/compute.disks.setIamPolicy"
+          "policy":
+            "bindings":
+              - "members":
+                  - "user:anonymized@example.com"
+                "role": "roles/owner"
+        "requestMetadata":
+          "callerIP": "192.0.2.1"
+          "callerSuppliedUserAgent": "google-cloud-sdk"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2023-10-01T12:34:56.789Z"
+        "resourceLocation":
+          "currentLocations":
+            - "us-central1-a"
+        "resourceName": "projects/test-project/zones/us-central1-a/disks/disk-1"
+        "serviceName": "compute.googleapis.com"
+      "receiveTimestamp": "2023-10-01T12:34:57.123Z"
+      "resource":
+        "labels":
+          "disk_id": "disk-id-1"
+          "project_id": "test-project"
+          "zone": "us-central1-a"
+        "type": "gce_disk"
+      "severity": "NOTICE"
+      "timestamp": "2023-10-01T12:34:56.789Z"
     LogType: GCP.AuditLog
-    ExpectedResult: true
+    Name: IAM policy update on a Compute Disk
+  - ExpectedResult: true
     Log:
-      {
-        "insertId": "2hijk34lmn789",
-        "labels": {
-          "compute.googleapis.com/root_trigger_id": "trigger-id-2"
-        },
-        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload": {
-          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "authenticationInfo": {
-            "principalEmail": "user@example.com",
-            "principalSubject": "serviceAccount:user@example.com",
-            "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
-          },
-          "authorizationInfo": [
-            {
-              "granted": true,
-              "permission": "compute.images.setIamPolicy",
-              "resource": "projects/test-project/global/images/image-1",
-              "resourceAttributes": {
-                "name": "projects/test-project/global/images/image-1",
-                "service": "compute",
-                "type": "compute.images"
-              }
-            }
-          ],
-          "methodName": "v1.compute.images.setIamPolicy",
-          "request": {
-            "@type": "type.googleapis.com/compute.images.setIamPolicy",
-            "policy": {
-              "bindings": [
-                {
-                  "members": [
-                    "user:anonymized@example.com"
-                  ],
-                  "role": "roles/owner"
-                }
-              ]
-            }
-          },
-          "requestMetadata": {
-            "callerIP": "192.0.2.2",
-            "callerSuppliedUserAgent": "google-cloud-sdk",
-            "destinationAttributes": {},
-            "requestAttributes": {
-              "auth": {},
-              "time": "2023-10-01T12:45:56.789Z"
-            }
-          },
-          "resourceLocation": {
-            "currentLocations": [
-              "us-central1-a"
-            ]
-          },
-          "resourceName": "projects/test-project/global/images/image-1",
-          "serviceName": "compute.googleapis.com"
-        },
-        "receiveTimestamp": "2023-10-01T12:45:57.123Z",
-        "resource": {
-          "labels": {
-            "image_id": "image-id-1",
-            "project_id": "test-project"
-          },
-          "type": "gce_image"
-        },
-        "severity": "NOTICE",
-        "timestamp": "2023-10-01T12:45:56.789Z"
-      }
-  - Name: Non-IAM policy update on a Compute Disk
+      "insertId": "2hijk34lmn789"
+      "labels":
+        "compute.googleapis.com/root_trigger_id": "trigger-id-2"
+      "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user@example.com"
+          "principalSubject": "serviceAccount:user@example.com"
+          "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "compute.images.setIamPolicy"
+            "resource": "projects/test-project/global/images/image-1"
+            "resourceAttributes":
+              "name": "projects/test-project/global/images/image-1"
+              "service": "compute"
+              "type": "compute.images"
+        "methodName": "v1.compute.images.setIamPolicy"
+        "request":
+          "@type": "type.googleapis.com/compute.images.setIamPolicy"
+          "policy":
+            "bindings":
+              - "members":
+                  - "user:anonymized@example.com"
+                "role": "roles/owner"
+        "requestMetadata":
+          "callerIP": "192.0.2.2"
+          "callerSuppliedUserAgent": "google-cloud-sdk"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2023-10-01T12:45:56.789Z"
+        "resourceLocation":
+          "currentLocations":
+            - "us-central1-a"
+        "resourceName": "projects/test-project/global/images/image-1"
+        "serviceName": "compute.googleapis.com"
+      "receiveTimestamp": "2023-10-01T12:45:57.123Z"
+      "resource":
+        "labels":
+          "image_id": "image-id-1"
+          "project_id": "test-project"
+        "type": "gce_image"
+      "severity": "NOTICE"
+      "timestamp": "2023-10-01T12:45:56.789Z"
     LogType: GCP.AuditLog
-    ExpectedResult: false
+    Name: IAM policy update on a Compute Image
+  - ExpectedResult: false
     Log:
-      {
-        "insertId": "4stuv78wxy345",
-        "labels": {
-          "compute.googleapis.com/root_trigger_id": "trigger-id-4"
-        },
-        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload": {
-          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "authenticationInfo": {
-            "principalEmail": "user@example.com",
-            "principalSubject": "serviceAccount:user@example.com",
-            "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
-          },
-          "authorizationInfo": [
-            {
-              "granted": true,
-              "permission": "compute.disks.create",
-              "resource": "projects/test-project/zones/us-central1-a/disks/disk-2",
-              "resourceAttributes": {
-                "name": "projects/test-project/zones/us-central1-a/disks/disk-2",
-                "service": "compute",
-                "type": "compute.disks"
-              }
-            }
-          ],
-          "methodName": "v1.compute.disks.create",
-          "requestMetadata": {
-            "callerIP": "192.0.2.4",
-            "callerSuppliedUserAgent": "google-cloud-sdk",
-            "destinationAttributes": { },
-            "requestAttributes": {
-              "auth": { },
-              "time": "2023-10-01T13:00:00.000Z"
-            }
-          },
-          "resourceLocation": {
-            "currentLocations": [
-              "us-central1-a"
-            ]
-          },
-          "resourceName": "projects/test-project/zones/us-central1-a/disks/disk-2",
-          "serviceName": "compute.googleapis.com"
-        },
-        "receiveTimestamp": "2023-10-01T13:00:01.000Z",
-        "resource": {
-          "labels": {
-            "disk_id": "disk-id-2",
-            "project_id": "test-project",
-            "zone": "us-central1-a"
-          },
-          "type": "gce_disk"
-        },
-        "severity": "NOTICE",
-        "timestamp": "2023-10-01T13:00:00.000Z"
-      }
+      "insertId": "4stuv78wxy345"
+      "labels":
+        "compute.googleapis.com/root_trigger_id": "trigger-id-4"
+      "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user@example.com"
+          "principalSubject": "serviceAccount:user@example.com"
+          "serviceAccountKeyName": "//iam.googleapis.com/projects/test-project/serviceAccounts/user@example.com/keys/key-id"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "compute.disks.create"
+            "resource": "projects/test-project/zones/us-central1-a/disks/disk-2"
+            "resourceAttributes":
+              "name": "projects/test-project/zones/us-central1-a/disks/disk-2"
+              "service": "compute"
+              "type": "compute.disks"
+        "methodName": "v1.compute.disks.create"
+        "requestMetadata":
+          "callerIP": "192.0.2.4"
+          "callerSuppliedUserAgent": "google-cloud-sdk"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2023-10-01T13:00:00.000Z"
+        "resourceLocation":
+          "currentLocations":
+            - "us-central1-a"
+        "resourceName": "projects/test-project/zones/us-central1-a/disks/disk-2"
+        "serviceName": "compute.googleapis.com"
+      "receiveTimestamp": "2023-10-01T13:00:01.000Z"
+      "resource":
+        "labels":
+          "disk_id": "disk-id-2"
+          "project_id": "test-project"
+          "zone": "us-central1-a"
+        "type": "gce_disk"
+      "severity": "NOTICE"
+      "timestamp": "2023-10-01T13:00:00.000Z"
+    LogType: GCP.AuditLog
+    Name: Non-IAM policy update on a Compute Disk

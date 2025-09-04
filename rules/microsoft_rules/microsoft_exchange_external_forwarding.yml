@@ -1,42 +1,32 @@
 AnalysisType: rule
-Description: >
-  Detects when a user creates email forwarding rules to external organizations in Microsoft Exchange Online.
-  This can indicate data exfiltration attempts, where an attacker sets up forwarding to collect emails outside
-  the organization. The rule detects both mailbox forwarding (Set-Mailbox) and inbox rules (New-InboxRule).
-  
-  The detection includes:
-  1. External organization forwarding based on domain comparison
+DedupPeriodMinutes: 60
+Description: >-
+  Detects when a user creates email forwarding rules to external organizations in
+  Microsoft Exchange Online. This can indicate data exfiltration attempts, where an
+  attacker sets up forwarding to collect emails outside the organization. The rule
+  detects both mailbox forwarding (Set-Mailbox) and inbox rules (New-InboxRule).
+
+  The detection includes: 1. External organization forwarding based on domain comparison
   2. Suspicious forwarding patterns like:
      - Forwarding without keeping a copy
      - Deleting messages after forwarding
      - Stopping rule processing after forwarding
-  3. Multiple forwarding destinations
-  4. Various forwarding methods (SMTP, redirect, forward as attachment)
+  3. Multiple forwarding destinations 4. Various forwarding methods (SMTP, redirect,
+  forward as attachment)
 DisplayName: "Microsoft Exchange External Forwarding"
 Enabled: true
 Filename: microsoft_exchange_external_forwarding.py
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1137.005 # Persistence - Office Application Startup: Outlook Rules
-    - TA0009:T1114.003 # Collection - Email Collection: Email Forwarding Rule
-    - TA0010:T1020 # Exfiltration - Automated Exfiltration
-Reference: https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/outbound-spam-policies-external-email-forwarding?view=o365-worldwide
-Severity: High
-Tags:
-  - Microsoft365
-  - Exchange
-  - Data Exfiltration
-  - Email Security
-DedupPeriodMinutes: 60
 LogTypes:
   - Microsoft365.Audit.Exchange
+Reference: 
+  https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/outbound-spam-policies-external-email-forwarding?view=o365-worldwide
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1137.005
+    - TA0009:T1114.003
+    - TA0010:T1020
 RuleID: "Microsoft365.Exchange.External.Forwarding"
-Threshold: 1
-SummaryAttributes:
-  - userid
-  - parameters
-  - organizationname
-Runbook: >
+Runbook: >-
   1. Investigate the forwarding configuration:
      - Check if the forwarding is legitimate and approved
      - Verify the destination addresses
@@ -49,274 +39,278 @@ Runbook: >
      - Document the business justification
      - Ensure it complies with security policies
      - Monitor for any changes to the forwarding configuration
+Severity: High
+SummaryAttributes:
+  - userid
+  - parameters
+  - organizationname
+Tags:
+  - Microsoft365
+  - Exchange
+  - Data Exfiltration
+  - Email Security
 Tests:
-  - Name: External Organization Forwarding
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: homer.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardingSmtpAddress
-          Value: smtp:peter.griffin@familyguy.com
-        - Name: DeliverToMailboxAndForward
-          Value: "False"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Internal Organization Forwarding
-    ExpectedResult: false
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "homer.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:peter.griffin@familyguy.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "False"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: External Organization Forwarding
+  - ExpectedResult: false
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: marge.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardingSmtpAddress
-          Value: smtp:marge.simpson@simpsons.com
-        - Name: DeliverToMailboxAndForward
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Suspicious Forwarding Pattern
-    ExpectedResult: true
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "marge.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:marge.simpson@simpsons.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Internal Organization Forwarding
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: New-InboxRule
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: "Delete and Forward Rule"
-        - Name: Mailbox
-          Value: homer.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardTo
-          Value: external@example.com
-        - Name: DeleteMessage
-          Value: "True"
-        - Name: StopProcessingRules
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Multiple Forwarding Addresses
-    ExpectedResult: true
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "New-InboxRule"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "Delete and Forward Rule"
+        - "Name": "Mailbox"
+          "Value": "homer.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardTo"
+          "Value": "external@example.com"
+        - "Name": "DeleteMessage"
+          "Value": "True"
+        - "Name": "StopProcessingRules"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Suspicious Forwarding Pattern
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: New-InboxRule
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: "Multiple Forward Rule"
-        - Name: Mailbox
-          Value: homer.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardTo
-          Value: "external1@example.com;external2@example.com;external3@example.com"
-        - Name: DeliverToMailboxAndForward
-          Value: "False"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Invalid Identity Format
-    ExpectedResult: true
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "New-InboxRule"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "Multiple Forward Rule"
+        - "Name": "Mailbox"
+          "Value": "homer.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardTo"
+          "Value": "external1@example.com;external2@example.com;external3@example.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "False"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Multiple Forwarding Addresses
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: Invalid/Path/Format
-        - Name: ForwardingSmtpAddress
-          Value: smtp:hello@familyguy.com
-        - Name: DeliverToMailboxAndForward
-          Value: "False"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Missing Organization Name
-    ExpectedResult: true
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "Invalid/Path/Format"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:hello@familyguy.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "False"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Invalid Identity Format
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: ""
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson
-        - Name: ForwardingSmtpAddress
-          Value: smtp:hello@familyguy.com
-        - Name: DeliverToMailboxAndForward
-          Value: "False"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Subdomain Forwarding (Internal)
-    ExpectedResult: false
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": ""
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/homer.simpson"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:hello@familyguy.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "False"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Missing Organization Name
+  - ExpectedResult: false
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: homer.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardingSmtpAddress
-          Value: smtp:bart.simpson@springfield.simpsons.com
-        - Name: DeliverToMailboxAndForward
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Similar Domain Forwarding (External)
-    ExpectedResult: true
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "homer.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:bart.simpson@springfield.simpsons.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Subdomain Forwarding (Internal)
+  - ExpectedResult: true
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: homer.simpson@simpsons.onmicrosoft.com
-        - Name: ForwardingSmtpAddress
-          Value: smtp:evil@simpsons2.com
-        - Name: DeliverToMailboxAndForward
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.com
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-
-  - Name: Non-Com TLD Organization
-    ExpectedResult: false
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "homer.simpson@simpsons.onmicrosoft.com"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:evil@simpsons2.com"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.com"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Similar Domain Forwarding (External)
+  - ExpectedResult: false
     Log:
-      clientip: 1.2.3.4
-      creationtime: "2022-12-12 22:19:00"
-      externalaccess: false
-      id: 111-22-33
-      objectid: homer.simpson
-      operation: Set-Mailbox
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: Identity
-          Value: homer.simpson@simpsons.org
-        - Name: ForwardingSmtpAddress
-          Value: smtp:marge.simpson@simpsons.org
-        - Name: DeliverToMailboxAndForward
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.org
-      userkey: "12345"
-      usertype: 2
-      workload: Exchange
-  - Name: Internal Forwarding with Suspicious Pattern
-    ExpectedResult: false
+      "clientip": "1.2.3.4"
+      "creationtime": "2022-12-12 22:19:00"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "homer.simpson"
+      "operation": "Set-Mailbox"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "Identity"
+          "Value": "homer.simpson@simpsons.org"
+        - "Name": "ForwardingSmtpAddress"
+          "Value": "smtp:marge.simpson@simpsons.org"
+        - "Name": "DeliverToMailboxAndForward"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.org"
+      "userkey": "12345"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Non-Com TLD Organization
+  - ExpectedResult: false
     Log:
-      clientip: "1.2.3.4:10736"
-      creationtime: "2025-07-07 09:11:11.000000000"
-      externalaccess: false
-      id: 111-22-33
-      objectid: "ABC001.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/444-55-66\\Move GitHub emails"
-      operation: New-InboxRule
-      organizationid: 11-aa-bb
-      organizationname: simpsons.onmicrosoft.com
-      originatingserver: QWERTY (1.2.3.4)
-      parameters:
-        - Name: AlwaysDeleteOutlookRulesBlob
-          Value: "False"
-        - Name: Force
-          Value: "False"
-        - Name: MoveToFolder
-          Value: "MYFolder"
-        - Name: Name
-          Value: "Move emails to another folder"
-        - Name: FromAddressContainsWords
-          Value: "specialsender"
-        - Name: StopProcessingRules
-          Value: "True"
-      recordtype: 1
-      resultstatus: "True"
-      userid: homer.simpson@simpsons.onmicrosoft
-      userkey: homer.simpson@simpsons.onmicrosoft
-      usertype: 2
-      workload: Exchange
+      "clientip": "1.2.3.4:10736"
+      "creationtime": "2025-07-07 09:11:11.000000000"
+      "externalaccess": false
+      "id": "111-22-33"
+      "objectid": "ABC001.prod.outlook.com/Microsoft Exchange Hosted Organizations/simpsons.onmicrosoft.com/444-55-66\\
+        Move GitHub emails"
+      "operation": "New-InboxRule"
+      "organizationid": "11-aa-bb"
+      "organizationname": "simpsons.onmicrosoft.com"
+      "originatingserver": "QWERTY (1.2.3.4)"
+      "parameters":
+        - "Name": "AlwaysDeleteOutlookRulesBlob"
+          "Value": "False"
+        - "Name": "Force"
+          "Value": "False"
+        - "Name": "MoveToFolder"
+          "Value": "MYFolder"
+        - "Name": "Name"
+          "Value": "Move emails to another folder"
+        - "Name": "FromAddressContainsWords"
+          "Value": "specialsender"
+        - "Name": "StopProcessingRules"
+          "Value": "True"
+      "recordtype": 1
+      "resultstatus": "True"
+      "userid": "homer.simpson@simpsons.onmicrosoft"
+      "userkey": "homer.simpson@simpsons.onmicrosoft"
+      "usertype": 2
+      "workload": "Exchange"
+    Name: Internal Forwarding with Suspicious Pattern
+Threshold: 1

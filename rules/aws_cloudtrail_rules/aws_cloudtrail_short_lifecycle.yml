@@ -1,18 +1,23 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_short_lifecycle.py
-RuleID: "AWS.CloudTrail.ShortLifecycle"
+Description: >-
+  Detects when an S3 bucket containing CloudTrail logs has been modified to delete
+  data after a short period of time.
 DisplayName: "AWS CloudTrail Retention Lifecycle Too Short"
 Enabled: true
+Filename: aws_cloudtrail_short_lifecycle.py
 LogTypes:
   - AWS.CloudTrail
-Severity: Info
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.008 # Defense Evasion: Disable or Modify Cloud Logs
-Description: "Detects when an S3 bucket containing CloudTrail logs has been modified to delete data after a short period of time."
 Reference: 
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.cloudtrail-lifecycle-rule/
-Runbook: Verify whether the bucket in question contains CloudTrail data, and if so, why the lifecycle was changed. Potentally add a filter for this bucket to prevent future false positives.
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+RuleID: "AWS.CloudTrail.ShortLifecycle"
+Runbook: >-
+  Verify whether the bucket in question contains CloudTrail data, and if so, why the
+  lifecycle was changed. Potentally add a filter for this bucket to prevent future
+  false positives.
+Severity: Info
 Tags:
   - AWS
   - Cloudtrail
@@ -23,405 +28,331 @@ Tags:
   - Security Control
   - Beta
 Tests:
-  - Name: 1-Day Lifecycle Rule on Known CT Bucket
-    ExpectedResult: true
+  - ExpectedResult: true
+    Log:
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "TLS_AES_128_GCM_SHA256"
+        "SignatureVersion": "SigV4"
+        "bytesTransferredIn": 249
+        "bytesTransferredOut": 0
+        "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a"
+      "eventName": "PutBucketLifecycle"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2024-11-25 22:00:58.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-25 22:00:58.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-25 22:05:54.357893092"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "4XRNRGRFH6RES629"
+      "requestParameters":
+        "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "LifecycleConfiguration":
+          "Rule":
+            "Expiration":
+              "Days": 1
+            "Filter":
+              "Prefix": "*"
+            "ID": "nuke-cloudtrail-logs-after-1-day"
+            "Status": "Enabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "sample-cloudtrail-bucket-name"
+        "lifecycle": ""
+      "resources":
+        - "accountId": "111122223333"
+          "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name"
+          "type": "AWS::S3::Bucket"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "[sample-user-agent]"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-25T16:53:42Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
     Mocks:
       - objectName: is_cloudtrail_bucket
-        returnValue: "true"
+        returnValue: 'true'
+    Name: 1-Day Lifecycle Rule on Known CT Bucket
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-11-25 22:00:58.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-25 22:05:54.357893092",
-        "additionalEventData": {
-          "AuthenticationMethod": "AuthHeader",
-          "CipherSuite": "TLS_AES_128_GCM_SHA256",
-          "SignatureVersion": "SigV4",
-          "bytesTransferredIn": 249,
-          "bytesTransferredOut": 0,
-          "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
-        },
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a",
-        "eventName": "PutBucketLifecycle",
-        "eventSource": "s3.amazonaws.com",
-        "eventTime": "2024-11-25 22:00:58.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "4XRNRGRFH6RES629",
-        "requestParameters": {
-          "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "LifecycleConfiguration": {
-            "Rule": {
-              "Expiration": {
-                "Days": 1
-              },
-              "Filter": {
-                "Prefix": "*"
-              },
-              "ID": "nuke-cloudtrail-logs-after-1-day",
-              "Status": "Enabled"
-            },
-            "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
-          },
-          "bucketName": "sample-cloudtrail-bucket-name",
-          "lifecycle": ""
-        },
-        "resources": [
-          {
-            "accountId": "111122223333",
-            "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name",
-            "type": "AWS::S3::Bucket"
-          }
-        ],
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "[sample-user-agent]",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-25T16:53:42Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: 1-Day Lifecycle Rule on Assumed CT Bucket
-    ExpectedResult: true
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "TLS_AES_128_GCM_SHA256"
+        "SignatureVersion": "SigV4"
+        "bytesTransferredIn": 249
+        "bytesTransferredOut": 0
+        "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a"
+      "eventName": "PutBucketLifecycle"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2024-11-25 22:00:58.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-25 22:00:58.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-25 22:05:54.357893092"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "4XRNRGRFH6RES629"
+      "requestParameters":
+        "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "LifecycleConfiguration":
+          "Rule":
+            "Expiration":
+              "Days": 1
+            "Filter":
+              "Prefix": "*"
+            "ID": "nuke-cloudtrail-logs-after-1-day"
+            "Status": "Enabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "sample-cloudtrail-bucket-name"
+        "lifecycle": ""
+      "resources":
+        - "accountId": "111122223333"
+          "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name"
+          "type": "AWS::S3::Bucket"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "[sample-user-agent]"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-25T16:53:42Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
     Mocks:
       - objectName: is_cloudtrail_bucket
-        returnValue: "" # Return empty string, which Python interprets as 'False'
+        returnValue: ''
+    Name: 1-Day Lifecycle Rule on Assumed CT Bucket
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-11-25 22:00:58.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-25 22:05:54.357893092",
-        "additionalEventData": {
-          "AuthenticationMethod": "AuthHeader",
-          "CipherSuite": "TLS_AES_128_GCM_SHA256",
-          "SignatureVersion": "SigV4",
-          "bytesTransferredIn": 249,
-          "bytesTransferredOut": 0,
-          "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
-        },
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a",
-        "eventName": "PutBucketLifecycle",
-        "eventSource": "s3.amazonaws.com",
-        "eventTime": "2024-11-25 22:00:58.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "4XRNRGRFH6RES629",
-        "requestParameters": {
-          "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "LifecycleConfiguration": {
-            "Rule": {
-              "Expiration": {
-                "Days": 1
-              },
-              "Filter": {
-                "Prefix": "*"
-              },
-              "ID": "nuke-cloudtrail-logs-after-1-day",
-              "Status": "Enabled"
-            },
-            "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
-          },
-          "bucketName": "sample-cloudtrail-bucket-name",
-          "lifecycle": ""
-        },
-        "resources": [
-          {
-            "accountId": "111122223333",
-            "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name",
-            "type": "AWS::S3::Bucket"
-          }
-        ],
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "[sample-user-agent]",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-25T16:53:42Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: Disabled 1-Day Lifecycle Rule on Known CT Bucket
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "TLS_AES_128_GCM_SHA256"
+        "SignatureVersion": "SigV4"
+        "bytesTransferredIn": 249
+        "bytesTransferredOut": 0
+        "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a"
+      "eventName": "PutBucketLifecycle"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2024-11-25 22:00:58.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-25 22:00:58.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-25 22:05:54.357893092"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "4XRNRGRFH6RES629"
+      "requestParameters":
+        "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "LifecycleConfiguration":
+          "Rule":
+            "Expiration":
+              "Days": 1
+            "Filter":
+              "Prefix": "*"
+            "ID": "nuke-cloudtrail-logs-after-1-day"
+            "Status": "Disabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "sample-cloudtrail-bucket-name"
+        "lifecycle": ""
+      "resources":
+        - "accountId": "111122223333"
+          "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name"
+          "type": "AWS::S3::Bucket"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "[sample-user-agent]"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-25T16:53:42Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
     Mocks:
       - objectName: is_cloudtrail_bucket
-        returnValue: "true"
+        returnValue: 'true'
+    Name: Disabled 1-Day Lifecycle Rule on Known CT Bucket
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-11-25 22:00:58.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-25 22:05:54.357893092",
-        "additionalEventData": {
-          "AuthenticationMethod": "AuthHeader",
-          "CipherSuite": "TLS_AES_128_GCM_SHA256",
-          "SignatureVersion": "SigV4",
-          "bytesTransferredIn": 249,
-          "bytesTransferredOut": 0,
-          "x-amz-id-2": "vf6Ehji6uE8ET3EJvRpIQva7eul9KSAUWVlf87sIKBmLQ0HgdGbswZiHYlVvSr1FdP5DiZze4DRZRAFppKpD4A=="
-        },
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "e1ea136d-f372-4cd5-be5f-f317fc80214a",
-        "eventName": "PutBucketLifecycle",
-        "eventSource": "s3.amazonaws.com",
-        "eventTime": "2024-11-25 22:00:58.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "4XRNRGRFH6RES629",
-        "requestParameters": {
-          "Host": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "LifecycleConfiguration": {
-            "Rule": {
-              "Expiration": {
-                "Days": 1
-              },
-              "Filter": {
-                "Prefix": "*"
-              },
-              "ID": "nuke-cloudtrail-logs-after-1-day",
-              "Status": "Disabled"
-            },
-            "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
-          },
-          "bucketName": "sample-cloudtrail-bucket-name",
-          "lifecycle": ""
-        },
-        "resources": [
-          {
-            "accountId": "111122223333",
-            "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name",
-            "type": "AWS::S3::Bucket"
-          }
-        ],
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "sample-cloudtrail-bucket-name.s3.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "[sample-user-agent]",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-25T16:53:42Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: 730-Day Lifecycle Rule on Known CT Bucket
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "TLS_AES_128_GCM_SHA256"
+        "SignatureVersion": "SigV4"
+        "bytesTransferredIn": 309
+        "bytesTransferredOut": 0
+        "x-amz-id-2": "xdjFGuP5MOmtnO6PCaHFNtvmnmUjGLngYLZlKRtdDAihd76he3U1M1QVXbs0q5vZr4Pv7ipRNUU="
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "a8cfbde4-3b77-430a-b2f3-388d5bb75eb3"
+      "eventName": "PutBucketLifecycle"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2024-11-26 17:26:06.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-26 17:26:06.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-26 17:30:54.113261939"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "HAKZ6Z7PDPHET3TQ"
+      "requestParameters":
+        "Host": "s3.us-west-2.amazonaws.com"
+        "LifecycleConfiguration":
+          "Rule":
+            "Expiration":
+              "Days": 730
+            "Filter": ""
+            "ID": "nuke-cloudtrail-logs-after-730-days"
+            "NoncurrentVersionExpiration":
+              "NoncurrentDays": 730
+            "Status": "Enabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "sample-cloudtrail-bucket-name"
+        "lifecycle": ""
+      "resources":
+        - "accountId": "111122223333"
+          "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name"
+          "type": "AWS::S3::Bucket"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "s3.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "[Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36]"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-26T17:23:25Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
     Mocks:
       - objectName: is_cloudtrail_bucket
-        returnValue: "true"
+        returnValue: 'true'
+    Name: 730-Day Lifecycle Rule on Known CT Bucket
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-11-26 17:26:06.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-26 17:30:54.113261939",
-        "additionalEventData": {
-          "AuthenticationMethod": "AuthHeader",
-          "CipherSuite": "TLS_AES_128_GCM_SHA256",
-          "SignatureVersion": "SigV4",
-          "bytesTransferredIn": 309,
-          "bytesTransferredOut": 0,
-          "x-amz-id-2": "xdjFGuP5MOmtnO6PCaHFNtvmnmUjGLngYLZlKRtdDAihd76he3U1M1QVXbs0q5vZr4Pv7ipRNUU="
-        },
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "a8cfbde4-3b77-430a-b2f3-388d5bb75eb3",
-        "eventName": "PutBucketLifecycle",
-        "eventSource": "s3.amazonaws.com",
-        "eventTime": "2024-11-26 17:26:06.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "HAKZ6Z7PDPHET3TQ",
-        "requestParameters": {
-          "Host": "s3.us-west-2.amazonaws.com",
-          "LifecycleConfiguration": {
-            "Rule": {
-              "Expiration": {
-                "Days": 730
-              },
-              "Filter": "",
-              "ID": "nuke-cloudtrail-logs-after-730-days",
-              "NoncurrentVersionExpiration": {
-                "NoncurrentDays": 730
-              },
-              "Status": "Enabled"
-            },
-            "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
-          },
-          "bucketName": "sample-cloudtrail-bucket-name",
-          "lifecycle": ""
-        },
-        "resources": [
-          {
-            "accountId": "111122223333",
-            "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name",
-            "type": "AWS::S3::Bucket"
-          }
-        ],
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "s3.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "[Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36]",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-26T17:23:25Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
-  - Name: Completely Unrelated Event
-    ExpectedResult: false
-    Log:
-      {
-        "p_event_time": "2024-11-26 17:23:59.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-26 17:30:54.112906272",
-        "additionalEventData": {
-          "AuthenticationMethod": "AuthHeader",
-          "CipherSuite": "TLS_AES_128_GCM_SHA256",
-          "SignatureVersion": "SigV4",
-          "bytesTransferredIn": 0,
-          "bytesTransferredOut": 313,
-          "x-amz-id-2": "CaKGcLO+fHGAWCSQD7+2dEACPcs+Az44FEQT3c5iu+YlJ8sFA++rPcYTr5xGx5/iwaxNWzWWaWQ="
-        },
-        "awsRegion": "us-west-2",
-        "errorCode": "NoSuchLifecycleConfiguration",
-        "errorMessage": "The lifecycle configuration does not exist",
-        "eventCategory": "Management",
-        "eventID": "41fd8553-6e3c-4942-ad03-aba324ec109e",
-        "eventName": "GetBucketLifecycle",
-        "eventSource": "s3.amazonaws.com",
-        "eventTime": "2024-11-26 17:23:59.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": true,
-        "recipientAccountId": "111122223333",
-        "requestID": "BTYKZ7VY1EKRSMZM",
-        "requestParameters": {
-          "Host": "s3.us-west-2.amazonaws.com",
-          "bucketName": "sample-cloudtrail-bucket-name",
-          "lifecycle": ""
-        },
-        "resources": [
-          {
-            "accountId": "111122223333",
-            "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name",
-            "type": "AWS::S3::Bucket"
-          }
-        ],
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "s3.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "[Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36]",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-26T17:23:25Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "TLS_AES_128_GCM_SHA256"
+        "SignatureVersion": "SigV4"
+        "bytesTransferredIn": 0
+        "bytesTransferredOut": 313
+        "x-amz-id-2": "CaKGcLO+fHGAWCSQD7+2dEACPcs+Az44FEQT3c5iu+YlJ8sFA++rPcYTr5xGx5/iwaxNWzWWaWQ="
+      "awsRegion": "us-west-2"
+      "errorCode": "NoSuchLifecycleConfiguration"
+      "errorMessage": "The lifecycle configuration does not exist"
+      "eventCategory": "Management"
+      "eventID": "41fd8553-6e3c-4942-ad03-aba324ec109e"
+      "eventName": "GetBucketLifecycle"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2024-11-26 17:23:59.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-26 17:23:59.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-26 17:30:54.112906272"
+      "readOnly": true
+      "recipientAccountId": "111122223333"
+      "requestID": "BTYKZ7VY1EKRSMZM"
+      "requestParameters":
+        "Host": "s3.us-west-2.amazonaws.com"
+        "bucketName": "sample-cloudtrail-bucket-name"
+        "lifecycle": ""
+      "resources":
+        - "accountId": "111122223333"
+          "arn": "arn:aws:s3:::sample-cloudtrail-bucket-name"
+          "type": "AWS::S3::Bucket"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "s3.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "[Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36]"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-26T17:23:25Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
+    Name: Completely Unrelated Event

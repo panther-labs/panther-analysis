@@ -1,17 +1,19 @@
 AnalysisType: scheduled_rule
+Description: >-
+  This detection monitors for any unauthenticated kubernetes api request. Unauthenticated
+  Requests are performed by the anonymous user and have unfederated access to the
+  cluster.
+DisplayName: "Unauthenticated Kubernetes API Request"
+Enabled: false
 Filename: kubernetes_unauthenticated_api_request.py
 RuleID: "Kubernetes.UnauthenticatedAPIRequest"
-DisplayName: "Unauthenticated Kubernetes API Request"
-Description: >
-  This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
-Enabled: false
-Runbook: >
+Runbook: >-
   .
 ScheduledQueries:
   - Unauthenticated Kubernetes API Request
 Severity: Medium
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      Anything: any value
+      "Anything": "any value"
+    Name: Value Returned By Query

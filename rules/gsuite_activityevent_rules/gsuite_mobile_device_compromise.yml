@@ -1,56 +1,56 @@
 AnalysisType: rule
-Filename: gsuite_mobile_device_compromise.py
-RuleID: "GSuite.DeviceCompromise"
+Description: >-
+  GSuite reported a user's device has been compromised.
 DisplayName: "GSuite User Device Compromised"
 Enabled: true
+Filename: gsuite_mobile_device_compromise.py
 LogTypes:
   - GSuite.ActivityEvent
-Tags:
-  - GSuite
-Severity: Medium
-Description: >
-  GSuite reported a user's device has been compromised.
 Reference: https://support.google.com/a/answer/7562165?hl=en&sjid=864417124752637253-EU
-Runbook: >
+RuleID: "GSuite.DeviceCompromise"
+Runbook: >-
   Have the user change their passwords and reset the device.
+Severity: Medium
 SummaryAttributes:
   - actor:email
+Tags:
+  - GSuite
 Tests:
-  - Name: Normal Mobile Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
-        "type": "device_updates",
-        "name": "DEVICE_REGISTER_UNREGISTER_EVENT",
-        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
-      }
-  - Name: Suspicious Activity Shows not Compromised
-    ExpectedResult: false
+      "actor":
+        "callerType": "USER"
+        "email": "homer.simpson@example.io"
+      "id":
+        "applicationName": "mobile"
+      "name": "DEVICE_REGISTER_UNREGISTER_EVENT"
+      "parameters":
+        "USER_EMAIL": "homer.simpson@example.io"
+      "type": "device_updates"
+    Name: Normal Mobile Event
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
-        "type": "device_updates",
-        "name": "DEVICE_COMPROMISED_EVENT",
-        "parameters":
-          {
-            "USER_EMAIL": "homer.simpson@example.io",
-            "DEVICE_COMPROMISED_STATE": "NOT_COMPROMISED",
-          },
-      }
-  - Name: Suspicious Activity Shows Compromised
-    ExpectedResult: true
+      "actor":
+        "callerType": "USER"
+        "email": "homer.simpson@example.io"
+      "id":
+        "applicationName": "mobile"
+      "name": "DEVICE_COMPROMISED_EVENT"
+      "parameters":
+        "DEVICE_COMPROMISED_STATE": "NOT_COMPROMISED"
+        "USER_EMAIL": "homer.simpson@example.io"
+      "type": "device_updates"
+    Name: Suspicious Activity Shows not Compromised
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
-        "type": "device_updates",
-        "name": "DEVICE_COMPROMISED_EVENT",
-        "parameters":
-          {
-            "USER_EMAIL": "homer.simpson@example.io",
-            "DEVICE_COMPROMISED_STATE": "COMPROMISED",
-          },
-      }
+      "actor":
+        "callerType": "USER"
+        "email": "homer.simpson@example.io"
+      "id":
+        "applicationName": "mobile"
+      "name": "DEVICE_COMPROMISED_EVENT"
+      "parameters":
+        "DEVICE_COMPROMISED_STATE": "COMPROMISED"
+        "USER_EMAIL": "homer.simpson@example.io"
+      "type": "device_updates"
+    Name: Suspicious Activity Shows Compromised

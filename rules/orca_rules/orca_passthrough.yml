@@ -1,16 +1,15 @@
 AnalysisType: rule
-Filename: orca_passthrough.py
-RuleID: "Orca.Passthrough"
-DisplayName: Orca Passthrough
+DedupPeriodMinutes: 1440
+Description: >-
+  Re-raise Orca alerts in Panther
+DisplayName: "Orca Passthrough"
 Enabled: true
+Filename: orca_passthrough.py
 LogTypes:
   - Orca.Alert
+Reference: https://docs.orcasecurity.io/docs/alerts
+RuleID: "Orca.Passthrough"
 Severity: Medium
-Description: >
-  Re-raise Orca alerts in Panther
-DedupPeriodMinutes: 1440
-Reference: >
-  https://docs.orcasecurity.io/docs/alerts
 SummaryAttributes:
   - alert_labels
   - asset_name
@@ -19,611 +18,562 @@ Tags:
   - Orca
   - Passthrough
 Tests:
-  - Name: Repo Alert - Use of Weak Hash Algorithm
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2025-03-13 07:37:05.000000000",
-        "p_log_type": "Orca.Alert",
-        "p_parse_time": "2025-03-13 07:45:02.263118919",
-        "p_row_id": "2adeaf6dac909095c0feb0a525b6d902",
-        "p_schema_version": 0,
-        "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f",
-        "p_source_label": "Orca Prod",
-        "account_name": "org-name/repo-name (Project: org-name/repo-name)",
-        "alert_labels": [
-          "CWE-327",
-          "shiftleft:sast",
-          "shiftleft:sast:lang:java",
-          "source:shiftleft"
-        ],
-        "alert_source": "Orca Scan",
-        "asset_category": "CI Source",
-        "asset_name": "org-name/repo-name",
-        "asset_state": "enabled",
-        "asset_type": "cisource",
-        "asset_type_string": "CodeRepository",
-        "asset_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1",
-        "category": "Best practices",
-        "cloud_account_id": "fd01de1b-e355-4d9c-8a0f-142dee95ae6f",
-        "cloud_account_type": "Regular",
-        "cloud_provider": "shiftleft",
-        "cloud_provider_id": "32fe97a4-ec58-4823-9521-b226fd4f51a7",
-        "cloud_vendor_id": "32fe97a4-ec58-4823-9521-b226fd4f51a7",
-        "cluster_name": "org-name/repo-name",
-        "cluster_type": "cisource",
-        "cluster_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1",
-        "configuration": {},
-        "container_id": "coderepository-a026f1a3-7ad4-492f-a9ef-b4213f05eba2-fcd577d6-99d4-4489-9f24-03b45bb6a43c",
-        "context": "data",
-        "description": "The rule detects the use of weak hash algorithms that are vulnerable to hash collisions. Using these algorithms can lead to security risks, including data integrity issues. It is crucial to adopt stronger hash functions to maintain secure cryptographic practices.",
-        "details": "The rule detects the use of weak hash algorithms that are vulnerable to hash collisions. Using these algorithms can lead to security risks, including data integrity issues. It is crucial to adopt stronger hash functions to maintain secure cryptographic practices.",
-        "group_name": "org-name/repo-name",
-        "group_type": "cisource",
-        "group_type_string": "NonGroup",
-        "group_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1",
-        "group_val": "nongroup",
-        "is_compliance": false,
-        "level": 0,
-        "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "organization_name": "Partners",
-        "recommendation": "Replace weak hash algorithms with stronger alternatives such as SHA-256 or SHA-3 to prevent vulnerabilities related to hash collisions and enhance security.",
-        "rule_id": "rc72e2d8cf8",
-        "source": "src/main/java/org/owasp/webgoat/lessons/cryptography/HashingAssignment.java:55",
-        "state": {
-          "alert_id": "orca-123456",
-          "created_at": "2025-03-13 07:37:05.000000000",
-          "high_since": "2025-03-13 07:38:34.000000000",
-          "in_verification": false,
-          "last_seen": "2025-03-13 07:37:05.000000000",
-          "last_updated": "2025-03-13 07:37:05.000000000",
-          "orca_score": 5.8,
-          "risk_level": "medium",
-          "rule_source": "Orca",
-          "score": 3,
-          "severity": "hazardous",
-          "status": "open",
-          "status_time": "2025-03-13 07:37:05.000000000"
-        },
-        "subject_type": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1",
-        "type": "shiftleft_96f8e29d-f941-5559-96e8-0ada0431b3a1",
-        "type_key": "6d9583cc014beabccfe02c0debb64a28b9d73cc4ef87079fdfb2e23b2d9d8c8d6843e21a79f0059d62eadcef5fb5af0da3ad72c7406d688c544d51af6e62396d_0",
-        "type_string": "Use of Weak Hash Algorithms in Cryptography"
-      }
-  - Name: AWS Network Alert - All Outbound Traffic Allowed
-    ExpectedResult: true
+      "account_name": "org-name/repo-name (Project: org-name/repo-name)"
+      "alert_labels":
+        - "CWE-327"
+        - "shiftleft:sast"
+        - "shiftleft:sast:lang:java"
+        - "source:shiftleft"
+      "alert_source": "Orca Scan"
+      "asset_category": "CI Source"
+      "asset_name": "org-name/repo-name"
+      "asset_state": "enabled"
+      "asset_type": "cisource"
+      "asset_type_string": "CodeRepository"
+      "asset_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1"
+      "category": "Best practices"
+      "cloud_account_id": "fd01de1b-e355-4d9c-8a0f-142dee95ae6f"
+      "cloud_account_type": "Regular"
+      "cloud_provider": "shiftleft"
+      "cloud_provider_id": "32fe97a4-ec58-4823-9521-b226fd4f51a7"
+      "cloud_vendor_id": "32fe97a4-ec58-4823-9521-b226fd4f51a7"
+      "cluster_name": "org-name/repo-name"
+      "cluster_type": "cisource"
+      "cluster_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1"
+      "configuration": {}
+      "container_id": "coderepository-a026f1a3-7ad4-492f-a9ef-b4213f05eba2-fcd577d6-99d4-4489-9f24-03b45bb6a43c"
+      "context": "data"
+      "description": "The rule detects the use of weak hash algorithms that are vulnerable
+        to hash collisions. Using these algorithms can lead to security risks, including
+        data integrity issues. It is crucial to adopt stronger hash functions to maintain
+        secure cryptographic practices."
+      "details": "The rule detects the use of weak hash algorithms that are vulnerable
+        to hash collisions. Using these algorithms can lead to security risks, including
+        data integrity issues. It is crucial to adopt stronger hash functions to maintain
+        secure cryptographic practices."
+      "group_name": "org-name/repo-name"
+      "group_type": "cisource"
+      "group_type_string": "NonGroup"
+      "group_unique_id": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1"
+      "group_val": "nongroup"
+      "is_compliance": false
+      "level": 0
+      "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "organization_name": "Partners"
+      "p_event_time": "2025-03-13 07:37:05.000000000"
+      "p_log_type": "Orca.Alert"
+      "p_parse_time": "2025-03-13 07:45:02.263118919"
+      "p_row_id": "2adeaf6dac909095c0feb0a525b6d902"
+      "p_schema_version": 0
+      "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f"
+      "p_source_label": "Orca Prod"
+      "recommendation": "Replace weak hash algorithms with stronger alternatives such
+        as SHA-256 or SHA-3 to prevent vulnerabilities related to hash collisions
+        and enhance security."
+      "rule_id": "rc72e2d8cf8"
+      "source": "src/main/java/org/owasp/webgoat/lessons/cryptography/HashingAssignment.java:55"
+      "state":
+        "alert_id": "orca-123456"
+        "created_at": "2025-03-13 07:37:05.000000000"
+        "high_since": "2025-03-13 07:38:34.000000000"
+        "in_verification": false
+        "last_seen": "2025-03-13 07:37:05.000000000"
+        "last_updated": "2025-03-13 07:37:05.000000000"
+        "orca_score": 5.8
+        "risk_level": "medium"
+        "rule_source": "Orca"
+        "score": 3
+        "severity": "hazardous"
+        "status": "open"
+        "status_time": "2025-03-13 07:37:05.000000000"
+      "subject_type": "CodeRepository_32fe97a4-ec58-4823-9521-b226fd4f51a7_e739eb76-0ae6-624a-6479-d00bc1fe37c1"
+      "type": "shiftleft_96f8e29d-f941-5559-96e8-0ada0431b3a1"
+      "type_key": "6d9583cc014beabccfe02c0debb64a28b9d73cc4ef87079fdfb2e23b2d9d8c8d6843e21a79f0059d62eadcef5fb5af0da3ad72c7406d688c544d51af6e62396d_0"
+      "type_string": "Use of Weak Hash Algorithms in Cryptography"
+    Name: Repo Alert - Use of Weak Hash Algorithm
+  - ExpectedResult: true
     Log:
-      {
-        "p_any_aws_account_ids": [
-          "111111111111"
-        ],
-        "p_event_time": "2025-03-13 04:05:33.000000000",
-        "p_log_type": "Orca.Alert",
-        "p_parse_time": "2025-03-13 05:15:02.300809961",
-        "p_row_id": "7a260fc49c66a2cf988699a5259d09",
-        "p_schema_version": 0,
-        "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f",
-        "p_source_label": "Orca Prod",
-        "p_udm": {},
-        "account_name": "111111111111",
-        "alert_labels": [
-          "mitre: exfiltration",
-          "CSPM"
-        ],
-        "alert_source": "Orca Scan",
-        "asset_category": "Network",
-        "asset_name": "acl-0123456789abcdef0",
-        "asset_regions": [
-          "ap-southeast-2"
-        ],
-        "asset_state": "enabled",
-        "asset_type": "AwsEc2NetworkAcl",
-        "asset_type_string": "AwsEc2NetworkAcl",
-        "asset_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278",
-        "asset_vendor_id": "acl-0123456789abcdef0",
-        "category": "Network misconfigurations",
-        "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "cloud_account_type": "Regular",
-        "cloud_provider": "aws",
-        "cloud_provider_id": "111111111111",
-        "cloud_vendor_id": "111111111111",
-        "cluster_name": "acl-0123456789abcdef0",
-        "cluster_type": "AwsEc2NetworkAcl",
-        "cluster_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278",
-        "configuration": {},
-        "context": "control",
-        "data": {
-          "details": "Ensure there are no Network ACLs with Outbound rule to allow All ICMP IPv4",
-          "mitre_category": "exfiltration",
-          "mitre_technique": [
-            "Transfer Data to Cloud Account (T1537)"
-          ],
-          "mitre_techniques": [
-            "Transfer Data to Cloud Account (T1537)"
-          ],
-          "recommendation": "Edit the Network ACLs outbound rules",
-          "remediation_console": [
-            ">1. Sign in to the AWS Management Console and open the **[VPC console](https://console.aws.amazon.com/vpc)**.",
-            ">2. On the navigation pane, under the **SECURITY** section, select **Network ACLs**.",
-            ">3. On the bottom pane ,select the **Outbound rules** and click on **Edit outbound rules**.",
-            ">4. Review the rules which their type is **All ICMP IPV4**.",
-            ">5. Review the value in the **Source** column and make sure that it's not 0.0.0.0/0. Make sure **Allow/Deny** attribute is set to **Allow**."
-          ],
-          "title": "Network ACL Allow all Outbound ICMP IPv4 Traffic"
-        },
-        "description": "Network ACL Allow all Outbound ICMP IPv4 Traffic",
-        "details": "Ensure there are no Network ACLs with Outbound rule to allow All ICMP IPv4",
-        "findings": [
-          {
-            "Asset Risk Score": "1.0",
-            "Association IDs": [
-              "aclassoc-07bf2bba155bf79c3"
-            ],
-            "Category": "Network",
-            "Category (New)": "Network",
-            "Exposure": "N/A",
-            "First Seen": "2025-03-13T04:05:45+00:00",
-            "Is Default": "Yes",
-            "Last Seen": "2025-03-13T04:05:45+00:00",
-            "Name": "acl-0123456789abcdef0",
-            "Network ACL ID": "acl-0123456789abcdef0",
-            "Network Acl Rules": [
-              "acl-0123456789abcdef0_0"
-            ],
-            "Publicly Allowed Admin Ports": [
-              22,
-              3389
-            ],
-            "Region": "ap-southeast-2",
-            "Sub Category": "Network Security",
-            "SubCategory (New)": "Segregation/Transport",
-            "Subnets": [
-              "my_subnet"
-            ],
-            "UI Unique Field": "acl-0123456789abcdef0",
-            "VPC": "my_vpc"
-          }
-        ],
-        "group_name": "acl-0123456789abcdef0",
-        "group_type": "AwsEc2NetworkAcl",
-        "group_type_string": "NonGroup",
-        "group_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278",
-        "group_val": "nongroup",
-        "is_compliance": false,
-        "is_rule": true,
-        "level": 0,
-        "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "organization_name": "Partners",
-        "recommendation": "Edit the Network ACLs outbound rules",
-        "related_compliances": [
-          "AWS Well-Architected",
-          "CSA CCM Lite v4.0.13",
-          "CSA CCM v4.0.5",
-          "FedRAMP",
-          "HITRUST Level 3 v9.6.0",
-          "ISM (Australian Government Information Security Manual) September 2022",
-          "ISO 27001 2022",
-          "ISO 27002 2022",
-          "MITRE ATT&CK v12",
-          "MITRE ATT&CK v13",
-          "NIST 800-171 (Rev 3)",
-          "NIST 800-53 (Rev 5)",
-          "NIST 800-53 (Rev 5.1.1)",
-          "Orca Best Practices",
-          "Orca Best Practices 2.0.0",
-          "PCI DSS 3.2.1",
-          "PCI DSS 4.0.0",
-          "UK Cyber Essentials",
-          "UK NCSC CAF (National Cyber Security Centre Cyber Assessment Framework)",
-          "US CJIS (Criminal Justice Information Services) 6.0.0",
-          "US CMMC (Cybersecurity Maturity Model Certification) Level 2",
-          "US FFIEC (Federal Financial Institutions Examination Council)",
-          "US MARS-E Volume 1 2.2.0"
-        ],
-        "rule_id": "r3832181aab",
-        "rule_query": "AwsEc2NetworkAcl with NetworkAclRules with Egress and (Protocol = '-1' or Protocol = '1' or Protocol = 'icmp') and CidrBlock = '0.0.0.0/0' and RuleAction = 'allow'",
-        "source": "acl-0123456789abcdef0",
-        "state": {
-          "alert_id": "orca-123456",
-          "created_at": "2025-03-13 04:05:33.000000000",
-          "in_verification": false,
-          "last_seen": "2025-03-13 04:05:33.000000000",
-          "last_updated": "2025-03-13 04:05:33.000000000",
-          "low_since": "2025-03-13 05:06:09.000000000",
-          "orca_score": 3.5,
-          "risk_level": "low",
-          "rule_source": "Orca",
-          "score": 4,
-          "severity": "informational",
-          "status": "open",
-          "status_time": "2025-03-13 04:05:33.000000000"
-        },
-        "subject_type": "AwsEc2NetworkAcl",
-        "type": "nacl_allows_all_outbound_ipv4_icmp",
-        "type_key": "68e26fa3629dc0203ceeb0b1d3c5b185",
-        "type_string": "Network ACL Allow all Outbound ICMP IPv4 Traffic"
-      }
-  - Name: AWS EC2 Alert - SSH Logins
-    ExpectedResult: true
+      "account_name": "111111111111"
+      "alert_labels":
+        - "mitre: exfiltration"
+        - "CSPM"
+      "alert_source": "Orca Scan"
+      "asset_category": "Network"
+      "asset_name": "acl-0123456789abcdef0"
+      "asset_regions":
+        - "ap-southeast-2"
+      "asset_state": "enabled"
+      "asset_type": "AwsEc2NetworkAcl"
+      "asset_type_string": "AwsEc2NetworkAcl"
+      "asset_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278"
+      "asset_vendor_id": "acl-0123456789abcdef0"
+      "category": "Network misconfigurations"
+      "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "cloud_account_type": "Regular"
+      "cloud_provider": "aws"
+      "cloud_provider_id": "111111111111"
+      "cloud_vendor_id": "111111111111"
+      "cluster_name": "acl-0123456789abcdef0"
+      "cluster_type": "AwsEc2NetworkAcl"
+      "cluster_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278"
+      "configuration": {}
+      "context": "control"
+      "data":
+        "details": "Ensure there are no Network ACLs with Outbound rule to allow All
+          ICMP IPv4"
+        "mitre_category": "exfiltration"
+        "mitre_technique":
+          - "Transfer Data to Cloud Account (T1537)"
+        "mitre_techniques":
+          - "Transfer Data to Cloud Account (T1537)"
+        "recommendation": "Edit the Network ACLs outbound rules"
+        "remediation_console":
+          - ">1. Sign in to the AWS Management Console and open the **[VPC console](https://console.aws.amazon.com/vpc)**."
+          - ">2. On the navigation pane, under the **SECURITY** section, select **Network
+            ACLs**."
+          - ">3. On the bottom pane ,select the **Outbound rules** and click on **Edit
+            outbound rules**."
+          - ">4. Review the rules which their type is **All ICMP IPV4**."
+          - ">5. Review the value in the **Source** column and make sure that it's
+            not 0.0.0.0/0. Make sure **Allow/Deny** attribute is set to **Allow**."
+        "title": "Network ACL Allow all Outbound ICMP IPv4 Traffic"
+      "description": "Network ACL Allow all Outbound ICMP IPv4 Traffic"
+      "details": "Ensure there are no Network ACLs with Outbound rule to allow All
+        ICMP IPv4"
+      "findings":
+        - "Asset Risk Score": "1.0"
+          "Association IDs":
+            - "aclassoc-07bf2bba155bf79c3"
+          "Category": "Network"
+          "Category (New)": "Network"
+          "Exposure": "N/A"
+          "First Seen": "2025-03-13T04:05:45+00:00"
+          "Is Default": "Yes"
+          "Last Seen": "2025-03-13T04:05:45+00:00"
+          "Name": "acl-0123456789abcdef0"
+          "Network ACL ID": "acl-0123456789abcdef0"
+          "Network Acl Rules":
+            - "acl-0123456789abcdef0_0"
+          "Publicly Allowed Admin Ports":
+            - 22
+            - 3389
+          "Region": "ap-southeast-2"
+          "Sub Category": "Network Security"
+          "SubCategory (New)": "Segregation/Transport"
+          "Subnets":
+            - "my_subnet"
+          "UI Unique Field": "acl-0123456789abcdef0"
+          "VPC": "my_vpc"
+      "group_name": "acl-0123456789abcdef0"
+      "group_type": "AwsEc2NetworkAcl"
+      "group_type_string": "NonGroup"
+      "group_unique_id": "AwsEc2NetworkAcl_111111111111_e739eb76-8bac-06e9-b9b3-07ef41f75278"
+      "group_val": "nongroup"
+      "is_compliance": false
+      "is_rule": true
+      "level": 0
+      "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "organization_name": "Partners"
+      "p_any_aws_account_ids":
+        - "111111111111"
+      "p_event_time": "2025-03-13 04:05:33.000000000"
+      "p_log_type": "Orca.Alert"
+      "p_parse_time": "2025-03-13 05:15:02.300809961"
+      "p_row_id": "7a260fc49c66a2cf988699a5259d09"
+      "p_schema_version": 0
+      "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f"
+      "p_source_label": "Orca Prod"
+      "p_udm": {}
+      "recommendation": "Edit the Network ACLs outbound rules"
+      "related_compliances":
+        - "AWS Well-Architected"
+        - "CSA CCM Lite v4.0.13"
+        - "CSA CCM v4.0.5"
+        - "FedRAMP"
+        - "HITRUST Level 3 v9.6.0"
+        - "ISM (Australian Government Information Security Manual) September 2022"
+        - "ISO 27001 2022"
+        - "ISO 27002 2022"
+        - "MITRE ATT&CK v12"
+        - "MITRE ATT&CK v13"
+        - "NIST 800-171 (Rev 3)"
+        - "NIST 800-53 (Rev 5)"
+        - "NIST 800-53 (Rev 5.1.1)"
+        - "Orca Best Practices"
+        - "Orca Best Practices 2.0.0"
+        - "PCI DSS 3.2.1"
+        - "PCI DSS 4.0.0"
+        - "UK Cyber Essentials"
+        - "UK NCSC CAF (National Cyber Security Centre Cyber Assessment Framework)"
+        - "US CJIS (Criminal Justice Information Services) 6.0.0"
+        - "US CMMC (Cybersecurity Maturity Model Certification) Level 2"
+        - "US FFIEC (Federal Financial Institutions Examination Council)"
+        - "US MARS-E Volume 1 2.2.0"
+      "rule_id": "r3832181aab"
+      "rule_query": "AwsEc2NetworkAcl with NetworkAclRules with Egress and (Protocol
+        = '-1' or Protocol = '1' or Protocol = 'icmp') and CidrBlock = '0.0.0.0/0'
+        and RuleAction = 'allow'"
+      "source": "acl-0123456789abcdef0"
+      "state":
+        "alert_id": "orca-123456"
+        "created_at": "2025-03-13 04:05:33.000000000"
+        "in_verification": false
+        "last_seen": "2025-03-13 04:05:33.000000000"
+        "last_updated": "2025-03-13 04:05:33.000000000"
+        "low_since": "2025-03-13 05:06:09.000000000"
+        "orca_score": 3.5
+        "risk_level": "low"
+        "rule_source": "Orca"
+        "score": 4
+        "severity": "informational"
+        "status": "open"
+        "status_time": "2025-03-13 04:05:33.000000000"
+      "subject_type": "AwsEc2NetworkAcl"
+      "type": "nacl_allows_all_outbound_ipv4_icmp"
+      "type_key": "68e26fa3629dc0203ceeb0b1d3c5b185"
+      "type_string": "Network ACL Allow all Outbound ICMP IPv4 Traffic"
+    Name: AWS Network Alert - All Outbound Traffic Allowed
+  - ExpectedResult: true
     Log:
-      {
-        "p_any_ip_addresses": [
-          "1.1.1.1",
-          "2.2.2.2"
-        ],
-        "p_any_aws_account_ids": [
-          "111111111111"
-        ],
-        "p_any_domain_names": [
-          "ip-2-2-2-2"
-        ],
-        "p_event_time": "2025-03-13 04:05:33.000000000",
-        "p_log_type": "Orca.Alert",
-        "p_parse_time": "2025-03-13 06:05:02.201708487",
-        "p_row_id": "7a260fc49c66a2cf988699a525c5e102",
-        "p_schema_version": 0,
-        "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f",
-        "p_source_label": "Orca Prod",
-        "p_udm": {},
-        "account_name": "111111111111",
-        "alert_labels": [
-          "mitre: credential access",
-          "OWASP: NHI4:2025"
-        ],
-        "alert_source": "Orca Scan",
-        "asset_auto_updates": "on",
-        "asset_availability_zones": [
-          "ap-southeast-2b"
-        ],
-        "asset_category": "VM",
-        "asset_distribution_major_version": "20",
-        "asset_distribution_name": "Ubuntu",
-        "asset_distribution_version": "20.04",
-        "asset_first_private_dnss": [
-          "ip-2-2-2-2.ap-southeast-2.compute.internal"
-        ],
-        "asset_first_private_ips": [
-          "2.2.2.2"
-        ],
-        "asset_first_public_ips": [
-          "1.1.1.1"
-        ],
-        "asset_hostname": "ip-2-2-2-2",
-        "asset_image_id": "ami-0123456789abcdef",
-        "asset_ingress_ports": [
-          "20-22"
-        ],
-        "asset_labels": [
-          "internet_facing"
-        ],
-        "asset_name": "my_ec2",
-        "asset_num_private_dnss": 1,
-        "asset_num_private_ips": 1,
-        "asset_num_public_ips": 1,
-        "asset_regions": [
-          "ap-southeast-2"
-        ],
-        "asset_regions_names": [
-          "Sydney"
-        ],
-        "asset_role_names": [
-          "ssh"
-        ],
-        "asset_state": "running",
-        "asset_tags_info_list": [
-          "Name|my_ec2"
-        ],
-        "asset_type": "vm",
-        "asset_type_string": "VM",
-        "asset_unique_id": "vm_111111111111_i-abcdef01234567890",
-        "asset_vendor_id": "i-abcdef01234567890",
-        "asset_vpcs": [
-          "vpc-abcdef01234567890"
-        ],
-        "category": "Authentication",
-        "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "cloud_account_type": "Regular",
-        "cloud_provider": "aws",
-        "cloud_provider_id": "111111111111",
-        "cloud_vendor_id": "111111111111",
-        "cluster_name": "my_ec2",
-        "cluster_type": "vm",
-        "cluster_unique_id": "vm_111111111111_i-abcdef01234567890",
-        "configuration": {},
-        "container_id": "main",
-        "context": "data",
-        "data": {
-          "details": "The SSH configuration on the operation system is set to allow username and password authentication. SSH authentication based on username and password is vulnerable to brute force attacks, which could result in asset compromise if successful.",
-          "mitre_category": "credential access",
-          "mitre_technique": [
-            "Brute Force (T1110)"
-          ],
-          "mitre_techniques": [
-            "Brute Force (T1110)"
-          ],
-          "recommendation": "It is recommended to disable SSH password authentication by editing the SSH configuration file (/etc/ssh/sshd_config) from this line \"PasswordAuthentication yes\" to \"PasswordAuthentication no\" and enable key-pair authentication to secure SSH authentication process",
-          "remediation_cli": [
-            ">- Edit the SSH configurations file **/etc/ssh/sshd_config** and set the below parameter:",
-            ">**`PasswordAuthentication no`**"
-          ],
-          "title": "SSH Authentication with username and password"
-        },
-        "description": "SSH Authentication with username and password",
-        "details": "The SSH configuration on the operation system is set to allow username and password authentication. SSH authentication based on username and password is vulnerable to brute force attacks, which could result in asset compromise if successful.",
-        "findings": [
-          {
-            "Applications": [
-              "EC2 Instance Connect",
-              "SQLite",
-              "Rsyslog",
-              "OpenSSH Server"
-            ],
-            "Asset Risk Score": 1,
-            "Auto Updates Status": "on",
-            "Availability Zones": [
-              "ap-southeast-2b"
-            ],
-            "CPU Count": 1,
-            "CPU Family": "Intel",
-            "CPU Frequency": 2300,
-            "CPU Type": "Intel(R) Xeon(R) CPU E5-2686 v4",
-            "CVE Count": "{\"In-2023\": 0, \"In-2024\": 3, \"In-2025\": 4, \"LastYear\": 3, \"TwoYearsAgo\": 0}",
-            "Category": "VM",
-            "Category (New)": "Compute Services",
-            "Console URL Link": "https://ap-southeast-2.console.aws.amazon.com/ec2/home?region=ap-southeast-2#InstanceDetails:instanceId=i-abcdef01234567890",
-            "Creation Time": "2025-03-12T13:55:32+00:00",
-            "Disks": [
-              "{'size_bytes': 8589934592, 'size': '8.0 GB', 'used_bytes': 1916348416, 'used': '1.78 GB', 'volume_id': 'vol-04e00a684c0e419be'}"
-            ],
-            "Distribution Info Site": "https://ubuntu.com/",
-            "Distribution Major Version": "20",
-            "Distribution Name": "Ubuntu",
-            "Distribution Version": "20.04",
-            "Distro Category": "debian",
-            "ESM Status": "disabled",
-            "Exposure": "internet_facing",
-            "First Seen": "2025-03-13T04:05:49+00:00",
-            "Has Malware With High Confidence": "No",
-            "Has Sensitive Credentials": "No",
-            "Hostname": "ip-2-2-2-2",
-            "Image Description": "Canonical, Ubuntu, 20.04, amd64 focal image",
-            "Image ID": "ami-0123456789abcdef",
-            "Image Is Public": "True",
-            "Image Name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20250218.1",
-            "Image Owner ID": "099720109477",
-            "Ingress Ports": [
-              "20-22"
-            ],
-            "Instance Type": "t2.micro",
-            "Is Exposed (Public/Internet Facing)": "Yes",
-            "Is Image Public": "Yes",
-            "Kernel Version": "5.15.0-1077-aws",
-            "Last Seen": "2025-03-13T04:05:49+00:00",
-            "Last Update Time": "2025-01-19T22:00:00+00:00",
-            "MAC Addresses": [
-              "A1:B2:C3:D4:E5:F6"
-            ],
-            "Matched CVEs": 7,
-            "Max CVSS Score": 8.6,
-            "Memory": 1023,
-            "Model Tags": [
-              "Category: Compute"
-            ],
-            "Name": "my_ec2",
-            "OS Bit Mode": 64,
-            "OS End of Support": "2025-05-31",
-            "OS Support Info Site": "https://wiki.ubuntu.com/Releases",
-            "Observations": [
-              "internet_facing"
-            ],
-            "Private DNS": [
-              "ip-2-2-2-2.ap-southeast-2.compute.internal"
-            ],
-            "Private IP Addresses": [
-              "2.2.2.2"
-            ],
-            "Public IP Addresses": [
-              "1.1.1.1"
-            ],
-            "Region": "ap-southeast-2",
-            "Regions": [
-              "ap-southeast-2"
-            ],
-            "Regions Names": [
-              "Sydney"
-            ],
-            "SSH Configuration Files": [
-              "/etc/ssh/sshd_config"
-            ],
-            "State": "running",
-            "Sub Category": "VM",
-            "SubCategory (New)": "Virtual Instances",
-            "Subnet List": [
-              "my_subnet"
-            ],
-            "Tags": [
-              "Name: my_ec2"
-            ],
-            "Total Disks Bytes": 8589934592,
-            "Total Vulnerabilities Found": 1641,
-            "UI Unique Field": "i-abcdef01234567890",
-            "Up Time": "2025-03-12T13:55:39+00:00",
-            "Up Time Hours": 15,
-            "Updated Time": "2025-01-19T22:00:00+00:00",
-            "Vpc List": [
-              "my_vpc"
-            ],
-            "Zones": [
-              "ap-southeast-2b"
-            ],
-            "vCPU Count": 1
-          }
-        ],
-        "group_name": "my_ec2",
-        "group_type": "vm",
-        "group_type_string": "NonGroup",
-        "group_unique_id": "vm_111111111111_i-abcdef01234567890",
-        "group_val": "nongroup",
-        "is_compliance": false,
-        "is_rule": true,
-        "level": 0,
-        "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "organization_name": "Partners",
-        "recommendation": "It is recommended to disable SSH password authentication by editing the SSH configuration file (/etc/ssh/sshd_config) from this line \"PasswordAuthentication yes\" to \"PasswordAuthentication no\" and enable key-pair authentication to secure SSH authentication process",
-        "rule_id": "r0254751929",
-        "rule_query": "Vm with Content.SSHConfigurationFiles.PasswordAuthentication and not Content.SSHConfigurationFiles.AuthenticationMethod like 'publickey'",
-        "severity_contributing_factors": [
-          "The resource is publicly exposed to the internet"
-        ],
-        "source": "my_ec2",
-        "state": {
-          "alert_id": "orca-123456",
-          "created_at": "2025-03-13 04:05:33.000000000",
-          "high_since": "2025-03-13 05:21:03.000000000",
-          "in_verification": false,
-          "last_seen": "2025-03-13 04:05:33.000000000",
-          "last_updated": "2025-03-13 04:05:33.000000000",
-          "orca_score": 6.2,
-          "risk_level": "medium",
-          "rule_source": "Orca",
-          "score": 3,
-          "severity": "hazardous",
-          "status": "open",
-          "status_time": "2025-03-13 04:05:33.000000000"
-        },
-        "subject_type": "AwsEc2Instance",
-        "tags_info_list": [
-          "Name|my_ec2"
-        ],
-        "type": "ssh_user_password_authentication",
-        "type_key": "9ae60ee24bb3c9a757266519efd186bf",
-        "type_string": "SSH Authentication with username and password",
-        "vm_asset_unique_id": "vm_111111111111_i-abcdef01234567890",
-        "vm_id": "i-abcdef01234567890"
-      }
-  - Name: K8 - Vulnerable Software
-    ExpectedResult: true
+      "account_name": "111111111111"
+      "alert_labels":
+        - "mitre: credential access"
+        - "OWASP: NHI4:2025"
+      "alert_source": "Orca Scan"
+      "asset_auto_updates": "on"
+      "asset_availability_zones":
+        - "ap-southeast-2b"
+      "asset_category": "VM"
+      "asset_distribution_major_version": "20"
+      "asset_distribution_name": "Ubuntu"
+      "asset_distribution_version": "20.04"
+      "asset_first_private_dnss":
+        - "ip-2-2-2-2.ap-southeast-2.compute.internal"
+      "asset_first_private_ips":
+        - "2.2.2.2"
+      "asset_first_public_ips":
+        - "1.1.1.1"
+      "asset_hostname": "ip-2-2-2-2"
+      "asset_image_id": "ami-0123456789abcdef"
+      "asset_ingress_ports":
+        - "20-22"
+      "asset_labels":
+        - "internet_facing"
+      "asset_name": "my_ec2"
+      "asset_num_private_dnss": 1
+      "asset_num_private_ips": 1
+      "asset_num_public_ips": 1
+      "asset_regions":
+        - "ap-southeast-2"
+      "asset_regions_names":
+        - "Sydney"
+      "asset_role_names":
+        - "ssh"
+      "asset_state": "running"
+      "asset_tags_info_list":
+        - "Name|my_ec2"
+      "asset_type": "vm"
+      "asset_type_string": "VM"
+      "asset_unique_id": "vm_111111111111_i-abcdef01234567890"
+      "asset_vendor_id": "i-abcdef01234567890"
+      "asset_vpcs":
+        - "vpc-abcdef01234567890"
+      "category": "Authentication"
+      "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "cloud_account_type": "Regular"
+      "cloud_provider": "aws"
+      "cloud_provider_id": "111111111111"
+      "cloud_vendor_id": "111111111111"
+      "cluster_name": "my_ec2"
+      "cluster_type": "vm"
+      "cluster_unique_id": "vm_111111111111_i-abcdef01234567890"
+      "configuration": {}
+      "container_id": "main"
+      "context": "data"
+      "data":
+        "details": "The SSH configuration on the operation system is set to allow
+          username and password authentication. SSH authentication based on username
+          and password is vulnerable to brute force attacks, which could result in
+          asset compromise if successful."
+        "mitre_category": "credential access"
+        "mitre_technique":
+          - "Brute Force (T1110)"
+        "mitre_techniques":
+          - "Brute Force (T1110)"
+        "recommendation": "It is recommended to disable SSH password authentication
+          by editing the SSH configuration file (/etc/ssh/sshd_config) from this line
+          \"PasswordAuthentication yes\" to \"PasswordAuthentication no\" and enable
+          key-pair authentication to secure SSH authentication process"
+        "remediation_cli":
+          - ">- Edit the SSH configurations file **/etc/ssh/sshd_config** and set
+            the below parameter:"
+          - ">**`PasswordAuthentication no`**"
+        "title": "SSH Authentication with username and password"
+      "description": "SSH Authentication with username and password"
+      "details": "The SSH configuration on the operation system is set to allow username
+        and password authentication. SSH authentication based on username and password
+        is vulnerable to brute force attacks, which could result in asset compromise
+        if successful."
+      "findings":
+        - "Applications":
+            - "EC2 Instance Connect"
+            - "SQLite"
+            - "Rsyslog"
+            - "OpenSSH Server"
+          "Asset Risk Score": 1
+          "Auto Updates Status": "on"
+          "Availability Zones":
+            - "ap-southeast-2b"
+          "CPU Count": 1
+          "CPU Family": "Intel"
+          "CPU Frequency": 2300
+          "CPU Type": "Intel(R) Xeon(R) CPU E5-2686 v4"
+          "CVE Count": "{\"In-2023\": 0, \"In-2024\": 3, \"In-2025\": 4, \"LastYear\"\
+            : 3, \"TwoYearsAgo\": 0}"
+          "Category": "VM"
+          "Category (New)": "Compute Services"
+          "Console URL Link": "https://ap-southeast-2.console.aws.amazon.com/ec2/home?region=ap-southeast-2#InstanceDetails:instanceId=i-abcdef01234567890"
+          "Creation Time": "2025-03-12T13:55:32+00:00"
+          "Disks":
+            - "{'size_bytes': 8589934592, 'size': '8.0 GB', 'used_bytes': 1916348416,
+              'used': '1.78 GB', 'volume_id': 'vol-04e00a684c0e419be'}"
+          "Distribution Info Site": "https://ubuntu.com/"
+          "Distribution Major Version": "20"
+          "Distribution Name": "Ubuntu"
+          "Distribution Version": "20.04"
+          "Distro Category": "debian"
+          "ESM Status": "disabled"
+          "Exposure": "internet_facing"
+          "First Seen": "2025-03-13T04:05:49+00:00"
+          "Has Malware With High Confidence": "No"
+          "Has Sensitive Credentials": "No"
+          "Hostname": "ip-2-2-2-2"
+          "Image Description": "Canonical, Ubuntu, 20.04, amd64 focal image"
+          "Image ID": "ami-0123456789abcdef"
+          "Image Is Public": "True"
+          "Image Name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20250218.1"
+          "Image Owner ID": "099720109477"
+          "Ingress Ports":
+            - "20-22"
+          "Instance Type": "t2.micro"
+          "Is Exposed (Public/Internet Facing)": "Yes"
+          "Is Image Public": "Yes"
+          "Kernel Version": "5.15.0-1077-aws"
+          "Last Seen": "2025-03-13T04:05:49+00:00"
+          "Last Update Time": "2025-01-19T22:00:00+00:00"
+          "MAC Addresses":
+            - "A1:B2:C3:D4:E5:F6"
+          "Matched CVEs": 7
+          "Max CVSS Score": 8.6
+          "Memory": 1023
+          "Model Tags":
+            - "Category: Compute"
+          "Name": "my_ec2"
+          "OS Bit Mode": 64
+          "OS End of Support": "2025-05-31"
+          "OS Support Info Site": "https://wiki.ubuntu.com/Releases"
+          "Observations":
+            - "internet_facing"
+          "Private DNS":
+            - "ip-2-2-2-2.ap-southeast-2.compute.internal"
+          "Private IP Addresses":
+            - "2.2.2.2"
+          "Public IP Addresses":
+            - "1.1.1.1"
+          "Region": "ap-southeast-2"
+          "Regions":
+            - "ap-southeast-2"
+          "Regions Names":
+            - "Sydney"
+          "SSH Configuration Files":
+            - "/etc/ssh/sshd_config"
+          "State": "running"
+          "Sub Category": "VM"
+          "SubCategory (New)": "Virtual Instances"
+          "Subnet List":
+            - "my_subnet"
+          "Tags":
+            - "Name: my_ec2"
+          "Total Disks Bytes": 8589934592
+          "Total Vulnerabilities Found": 1641
+          "UI Unique Field": "i-abcdef01234567890"
+          "Up Time": "2025-03-12T13:55:39+00:00"
+          "Up Time Hours": 15
+          "Updated Time": "2025-01-19T22:00:00+00:00"
+          "Vpc List":
+            - "my_vpc"
+          "Zones":
+            - "ap-southeast-2b"
+          "vCPU Count": 1
+      "group_name": "my_ec2"
+      "group_type": "vm"
+      "group_type_string": "NonGroup"
+      "group_unique_id": "vm_111111111111_i-abcdef01234567890"
+      "group_val": "nongroup"
+      "is_compliance": false
+      "is_rule": true
+      "level": 0
+      "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "organization_name": "Partners"
+      "p_any_aws_account_ids":
+        - "111111111111"
+      "p_any_domain_names":
+        - "ip-2-2-2-2"
+      "p_any_ip_addresses":
+        - "1.1.1.1"
+        - "2.2.2.2"
+      "p_event_time": "2025-03-13 04:05:33.000000000"
+      "p_log_type": "Orca.Alert"
+      "p_parse_time": "2025-03-13 06:05:02.201708487"
+      "p_row_id": "7a260fc49c66a2cf988699a525c5e102"
+      "p_schema_version": 0
+      "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f"
+      "p_source_label": "Orca Prod"
+      "p_udm": {}
+      "recommendation": "It is recommended to disable SSH password authentication
+        by editing the SSH configuration file (/etc/ssh/sshd_config) from this line
+        \"PasswordAuthentication yes\" to \"PasswordAuthentication no\" and enable
+        key-pair authentication to secure SSH authentication process"
+      "rule_id": "r0254751929"
+      "rule_query": "Vm with Content.SSHConfigurationFiles.PasswordAuthentication
+        and not Content.SSHConfigurationFiles.AuthenticationMethod like 'publickey'"
+      "severity_contributing_factors":
+        - "The resource is publicly exposed to the internet"
+      "source": "my_ec2"
+      "state":
+        "alert_id": "orca-123456"
+        "created_at": "2025-03-13 04:05:33.000000000"
+        "high_since": "2025-03-13 05:21:03.000000000"
+        "in_verification": false
+        "last_seen": "2025-03-13 04:05:33.000000000"
+        "last_updated": "2025-03-13 04:05:33.000000000"
+        "orca_score": 6.2
+        "risk_level": "medium"
+        "rule_source": "Orca"
+        "score": 3
+        "severity": "hazardous"
+        "status": "open"
+        "status_time": "2025-03-13 04:05:33.000000000"
+      "subject_type": "AwsEc2Instance"
+      "tags_info_list":
+        - "Name|my_ec2"
+      "type": "ssh_user_password_authentication"
+      "type_key": "9ae60ee24bb3c9a757266519efd186bf"
+      "type_string": "SSH Authentication with username and password"
+      "vm_asset_unique_id": "vm_111111111111_i-abcdef01234567890"
+      "vm_id": "i-abcdef01234567890"
+    Name: AWS EC2 Alert - SSH Logins
+  - ExpectedResult: true
     Log:
-      {
-        "p_any_ip_addresses": [
-          "3.3.3.3",
-          "4.4.4.4"
-        ],
-        "p_event_time": "2025-03-13 02:56:19.000000000",
-        "p_log_type": "Orca.Alert",
-        "p_parse_time": "2025-03-13 04:55:02.265883391",
-        "p_row_id": "fead7fb4e8cffece94f58ca525b523",
-        "p_schema_version": 0,
-        "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f",
-        "p_source_label": "Orca Prod",
-        "p_udm": {},
-        "account_name": "kubernetes-test-123456",
-        "alert_labels": [
-          "authentication_bypass",
-          "easy_exploitation",
-          "fix_available",
-          "mitre: initial access"
-        ],
-        "alert_source": "Orca Scan",
-        "asset_availability_zones": [
-          "us-central1-c"
-        ],
-        "asset_category": "VM",
-        "asset_distribution_major_version": "117",
-        "asset_distribution_name": "Google COS",
-        "asset_distribution_version": "117-18613.164.38",
-        "asset_first_private_ips": [
-          "3.3.3.3"
-        ],
-        "asset_first_public_ips": [
-          "4.4.4.4"
-        ],
-        "asset_image_id": "1234567890123456789",
-        "asset_ingress_ports": [
-          "22",
-          "3389"
-        ],
-        "asset_labels": [
-          "public_facing"
-        ],
-        "asset_name": "e2e-test",
-        "asset_num_private_ips": 1,
-        "asset_num_public_ips": 1,
-        "asset_regions": [
-          "us-central1"
-        ],
-        "asset_regions_names": [
-          "Council Bluffs"
-        ],
-        "asset_state": "running",
-        "asset_tags_info_list": [
-          "goog-gke-cluster-id-base32|averylongidnameidontknowhowlongthough",
-          "goog-k8s-cluster-location|us-central1-c",
-          "goog-k8s-cluster-name|e2e-test",
-          "goog-k8s-node-pool-name|pool-5"
-        ],
-        "asset_type": "gke",
-        "asset_type_string": "VM",
-        "asset_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056",
-        "asset_vpcs": [
-          "kubernetes-test-123456/global/networks/default",
-          "kubernetes-test-123456/regions/us-central1/subnetworks/default"
-        ],
-        "category": "Vulnerabilities",
-        "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "cloud_account_type": "Regular",
-        "cloud_provider": "gcp",
-        "cloud_provider_id": "kubernetes-test-123456",
-        "cloud_vendor_id": "kubernetes-test-123456",
-        "cluster_name": "e2e-test",
-        "cluster_type": "gke",
-        "cluster_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056",
-        "configuration": {},
-        "container_id": "main",
-        "context": "data",
-        "cve_list": [
-          "CVE-2024-45337"
-        ],
-        "description": "The following vulnerabilities were found on software: golang.org/x/crypto-0.28.0 0.28.0",
-        "details": "We have found vulnerabilities on software: golang.org/x/crypto-0.28.0 0.28.0",
-        "earliest_cve_detection": "2025-03-13T00:00:00+00:00",
-        "group_name": "e2e-test",
-        "group_type": "gke",
-        "group_type_string": "VM",
-        "group_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056",
-        "group_val": "group",
-        "is_compliance": false,
-        "level": 0,
-        "max_cvss_score": 8.2,
-        "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3",
-        "organization_name": "Partners",
-        "recommendation": "Patch the listed packages",
-        "rule_id": "r81a3c225f3",
-        "source": "golang.org/x/crypto-0.28.0",
-        "state": {
-          "alert_id": "orca-852051",
-          "created_at": "2025-03-13 02:56:19.000000000",
-          "in_verification": false,
-          "last_seen": "2025-03-13 02:56:19.000000000",
-          "last_updated": "2025-03-13 02:56:19.000000000",
-          "low_since": "2025-03-13 04:25:33.000000000",
-          "orca_score": 4.6,
-          "risk_level": "low",
-          "rule_source": "Orca",
-          "score": 4,
-          "severity": "informational",
-          "status": "open",
-          "status_time": "2025-03-13 02:56:19.000000000"
-        },
-        "subject_type": "vm_kubernetes-test-123456_1234567890123456789",
-        "tags_info_list": [
-          "goog-gke-cluster-id-base32|averylongidnameidontknowhowlongthough",
-          "goog-k8s-cluster-location|us-central1-c",
-          "goog-k8s-cluster-name|e2e-test",
-          "goog-k8s-node-pool-name|pool-5"
-        ],
-        "type": "vulnerability",
-        "type_key": "golang.org/x/crypto-0.28.0",
-        "type_string": "Vulnerable Software",
-        "vm_id": "1234567890123456789"
-      }
+      "account_name": "kubernetes-test-123456"
+      "alert_labels":
+        - "authentication_bypass"
+        - "easy_exploitation"
+        - "fix_available"
+        - "mitre: initial access"
+      "alert_source": "Orca Scan"
+      "asset_availability_zones":
+        - "us-central1-c"
+      "asset_category": "VM"
+      "asset_distribution_major_version": "117"
+      "asset_distribution_name": "Google COS"
+      "asset_distribution_version": "117-18613.164.38"
+      "asset_first_private_ips":
+        - "3.3.3.3"
+      "asset_first_public_ips":
+        - "4.4.4.4"
+      "asset_image_id": "1234567890123456789"
+      "asset_ingress_ports":
+        - "22"
+        - "3389"
+      "asset_labels":
+        - "public_facing"
+      "asset_name": "e2e-test"
+      "asset_num_private_ips": 1
+      "asset_num_public_ips": 1
+      "asset_regions":
+        - "us-central1"
+      "asset_regions_names":
+        - "Council Bluffs"
+      "asset_state": "running"
+      "asset_tags_info_list":
+        - "goog-gke-cluster-id-base32|averylongidnameidontknowhowlongthough"
+        - "goog-k8s-cluster-location|us-central1-c"
+        - "goog-k8s-cluster-name|e2e-test"
+        - "goog-k8s-node-pool-name|pool-5"
+      "asset_type": "gke"
+      "asset_type_string": "VM"
+      "asset_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056"
+      "asset_vpcs":
+        - "kubernetes-test-123456/global/networks/default"
+        - "kubernetes-test-123456/regions/us-central1/subnetworks/default"
+      "category": "Vulnerabilities"
+      "cloud_account_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "cloud_account_type": "Regular"
+      "cloud_provider": "gcp"
+      "cloud_provider_id": "kubernetes-test-123456"
+      "cloud_vendor_id": "kubernetes-test-123456"
+      "cluster_name": "e2e-test"
+      "cluster_type": "gke"
+      "cluster_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056"
+      "configuration": {}
+      "container_id": "main"
+      "context": "data"
+      "cve_list":
+        - "CVE-2024-45337"
+      "description": "The following vulnerabilities were found on software: golang.org/x/crypto-0.28.0
+        0.28.0"
+      "details": "We have found vulnerabilities on software: golang.org/x/crypto-0.28.0
+        0.28.0"
+      "earliest_cve_detection": "2025-03-13T00:00:00+00:00"
+      "group_name": "e2e-test"
+      "group_type": "gke"
+      "group_type_string": "VM"
+      "group_unique_id": "gke_kubernetes-test-123456_38e812aa286e43b6a5855faeef89beedf3b8ddc8693540eeb102809e4b403056"
+      "group_val": "group"
+      "is_compliance": false
+      "level": 0
+      "max_cvss_score": 8.2
+      "organization_id": "5f1c59f5-7c6c-4a56-a6ff-94998abdf9c3"
+      "organization_name": "Partners"
+      "p_any_ip_addresses":
+        - "3.3.3.3"
+        - "4.4.4.4"
+      "p_event_time": "2025-03-13 02:56:19.000000000"
+      "p_log_type": "Orca.Alert"
+      "p_parse_time": "2025-03-13 04:55:02.265883391"
+      "p_row_id": "fead7fb4e8cffece94f58ca525b523"
+      "p_schema_version": 0
+      "p_source_id": "d0904c6a-e437-4082-8807-6bdccc0fc16f"
+      "p_source_label": "Orca Prod"
+      "p_udm": {}
+      "recommendation": "Patch the listed packages"
+      "rule_id": "r81a3c225f3"
+      "source": "golang.org/x/crypto-0.28.0"
+      "state":
+        "alert_id": "orca-852051"
+        "created_at": "2025-03-13 02:56:19.000000000"
+        "in_verification": false
+        "last_seen": "2025-03-13 02:56:19.000000000"
+        "last_updated": "2025-03-13 02:56:19.000000000"
+        "low_since": "2025-03-13 04:25:33.000000000"
+        "orca_score": 4.6
+        "risk_level": "low"
+        "rule_source": "Orca"
+        "score": 4
+        "severity": "informational"
+        "status": "open"
+        "status_time": "2025-03-13 02:56:19.000000000"
+      "subject_type": "vm_kubernetes-test-123456_1234567890123456789"
+      "tags_info_list":
+        - "goog-gke-cluster-id-base32|averylongidnameidontknowhowlongthough"
+        - "goog-k8s-cluster-location|us-central1-c"
+        - "goog-k8s-cluster-name|e2e-test"
+        - "goog-k8s-node-pool-name|pool-5"
+      "type": "vulnerability"
+      "type_key": "golang.org/x/crypto-0.28.0"
+      "type_string": "Vulnerable Software"
+      "vm_id": "1234567890123456789"
+    Name: K8 - Vulnerable Software

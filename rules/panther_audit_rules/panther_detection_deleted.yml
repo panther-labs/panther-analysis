@@ -1,109 +1,86 @@
 AnalysisType: rule
-Filename: panther_detection_deleted.py
-RuleID: "Panther.Detection.Deleted"
+Description: >-
+  Detection content has been removed from Panther.
 DisplayName: "Detection content has been deleted from Panther"
 Enabled: true
+Filename: panther_detection_deleted.py
 LogTypes:
   - Panther.Audit
-Severity: Info
-Tags:
-  - DataModel
-  - Defense Evasion:Impair Defenses
+Reference: 
+  https://docs.panther.com/system-configuration/panther-audit-logs/querying-and-writing-detections-for-panther-audit-logs
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562
-Description: Detection content has been removed from Panther.
-Runbook: Ensure this change was approved and appropriate.
-Reference: https://docs.panther.com/system-configuration/panther-audit-logs/querying-and-writing-detections-for-panther-audit-logs
+RuleID: "Panther.Detection.Deleted"
+Runbook: >-
+  Ensure this change was approved and appropriate.
+Severity: Info
 SummaryAttributes:
   - p_any_ip_addresses
+Tags:
+  - DataModel
+  - Defense Evasion:Impair Defenses
 Tests:
-  - Name: Delete 1 Detection
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actionName": "DELETE_DETECTION",
-        "actionParams":
-          {
-            "dynamic":
-              { "input": { "detections": [{ "id": "GitHub.Team.Modified" }] } },
-          },
-        "actionResult": "SUCCEEDED",
-        "actor":
-          {
-            "attributes":
-              {
-                "email": "homer@springfield.gov",
-                "emailVerified": true,
-                "roleId": "11111111",
-              },
-            "id": "1111111",
-            "name": "Homer Simpson",
-            "type": "USER",
-          },
-        "errors": null,
-        "p_log_type": "Panther.Audit",
-        "sourceIP": "1.2.3.4",
-        "timestamp": "2022-04-28 15:30:22.42",
-      }
-  - Name: Delete Many Detections
-    ExpectedResult: true
+      "actionName": "DELETE_DETECTION"
+      "actionParams":
+        "dynamic":
+          "input":
+            "detections":
+              - "id": "GitHub.Team.Modified"
+      "actionResult": "SUCCEEDED"
+      "actor":
+        "attributes":
+          "email": "homer@springfield.gov"
+          "emailVerified": true
+          "roleId": "11111111"
+        "id": "1111111"
+        "name": "Homer Simpson"
+        "type": "USER"
+      "errors":
+      "p_log_type": "Panther.Audit"
+      "sourceIP": "1.2.3.4"
+      "timestamp": "2022-04-28 15:30:22.42"
+    Name: Delete 1 Detection
+  - ExpectedResult: true
     Log:
-      {
-        "actionName": "DELETE_DETECTION",
-        "actionParams":
-          {
-            "dynamic":
-              {
-                "input":
-                  {
-                    "detections":
-                      [
-                        { "id": "Github.Repo.Created" },
-                        { "id": "Okta.Global.MFA.Disabled" },
-                        { "id": "Okta.AdminRoleAssigned" },
-                        { "id": "Okta.BruteForceLogins" },
-                      ],
-                  },
-              },
-          },
-        "actionResult": "SUCCEEDED",
-        "actor":
-          {
-            "attributes":
-              {
-                "email": "homer@springfield.gov",
-                "emailVerified": true,
-                "roleId": "111111",
-              },
-            "id": "1111111",
-            "name": "Homer Simpson",
-            "type": "USER",
-          },
-        "errors": null,
-        "p_log_type": "Panther.Audit",
-        "sourceIP": "1.2.3.4.",
-        "timestamp": "2022-04-28 15:34:43.067",
-      }
-  - Name: Non-Delete event
-    ExpectedResult: false
+      "actionName": "DELETE_DETECTION"
+      "actionParams":
+        "dynamic":
+          "input":
+            "detections":
+              - "id": "Github.Repo.Created"
+              - "id": "Okta.Global.MFA.Disabled"
+              - "id": "Okta.AdminRoleAssigned"
+              - "id": "Okta.BruteForceLogins"
+      "actionResult": "SUCCEEDED"
+      "actor":
+        "attributes":
+          "email": "homer@springfield.gov"
+          "emailVerified": true
+          "roleId": "111111"
+        "id": "1111111"
+        "name": "Homer Simpson"
+        "type": "USER"
+      "errors":
+      "p_log_type": "Panther.Audit"
+      "sourceIP": "1.2.3.4."
+      "timestamp": "2022-04-28 15:34:43.067"
+    Name: Delete Many Detections
+  - ExpectedResult: false
     Log:
-      {
-        "actionName": "GET_GENERAL_SETTINGS",
-        "actionParams": {},
-        "actionResult": "SUCCEEDED",
-        "actor":
-          {
-            "attributes":
-              {
-                "email": "homer@springfield.gov",
-                "emailVerified": true,
-                "roleId": "111111",
-              },
-            "id": "111111",
-            "name": "Homer Simpson",
-            "type": "USER",
-          },
-        "errors": null,
-        "p_log_type": "Panther.Audit",
-      }
+      "actionName": "GET_GENERAL_SETTINGS"
+      "actionParams": {}
+      "actionResult": "SUCCEEDED"
+      "actor":
+        "attributes":
+          "email": "homer@springfield.gov"
+          "emailVerified": true
+          "roleId": "111111"
+        "id": "111111"
+        "name": "Homer Simpson"
+        "type": "USER"
+      "errors":
+      "p_log_type": "Panther.Audit"
+    Name: Non-Delete event

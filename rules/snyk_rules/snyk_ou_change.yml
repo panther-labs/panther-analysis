@@ -1,77 +1,69 @@
 AnalysisType: rule
-Filename: snyk_ou_change.py
-RuleID: "Snyk.OU.Change"
+DedupPeriodMinutes: 60
+Description: >-
+  Detects when Snyk Group or Organization Settings are changed.
 DisplayName: "Snyk Org or Group Settings Change"
 Enabled: true
+Filename: snyk_ou_change.py
 LogTypes:
   - Snyk.GroupAudit
   - Snyk.OrgAudit
-Tags:
-  - Snyk
-Severity: High
-Description: >
-  Detects when Snyk Group or Organization Settings are changed.
-Runbook: >
-  These actions in the Snyk Audit logs indicate that a Organization or
-  Group setting has changed, including Group and Org creation/deletion.
-  Deletion events are marked with HIGH severity
-  Creation events are marked with INFO severity
-  Edit events are marked with MEDIUM Severity
-
 Reference: https://docs.snyk.io/snyk-admin/introduction-to-snyk-administration
-DedupPeriodMinutes: 60
-Threshold: 1
+RuleID: "Snyk.OU.Change"
+Runbook: >-
+  These actions in the Snyk Audit logs indicate that a Organization or Group setting
+  has changed, including Group and Org creation/deletion. Deletion events are marked
+  with HIGH severity Creation events are marked with INFO severity Edit events are
+  marked with MEDIUM Severity
+Severity: High
 SummaryAttributes:
   - event
+Tags:
+  - Snyk
 Tests:
-  - Name: Snyk Org Deletion ( HIGH )
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "event": "org.delete",
-        "content": { "orgName": "expendable-org" },
-        "created": "2023-04-09T23:32:14.649Z",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-      }
-  - Name: Snyk Group Org Remove ( HIGH )
-    ExpectedResult: true
+      "content":
+        "orgName": "expendable-org"
+      "created": "2023-04-09T23:32:14.649Z"
+      "event": "org.delete"
+      "groupId": "8fffffff-1555-4444-b000-b55555555555"
+      "orgId": "21111111-a222-4eee-8ddd-a99999999999"
+      "userId": "05555555-3333-4ddd-8ccc-755555555555"
+    Name: Snyk Org Deletion ( HIGH )
+  - ExpectedResult: true
     Log:
-      {
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "event": "group.org.remove",
-        "content": { "orgName": "expendable-org" },
-        "created": "2023-04-09T23:32:14.649Z",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-      }
-  - Name: Snyk Group Edit ( MEDIUM )
-    ExpectedResult: true
+      "content":
+        "orgName": "expendable-org"
+      "created": "2023-04-09T23:32:14.649Z"
+      "event": "group.org.remove"
+      "groupId": "8fffffff-1555-4444-b000-b55555555555"
+      "orgId": "21111111-a222-4eee-8ddd-a99999999999"
+      "userId": "05555555-3333-4ddd-8ccc-755555555555"
+    Name: Snyk Group Org Remove ( HIGH )
+  - ExpectedResult: true
     Log:
-      {
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "event": "group.edit",
-        "content":
-          { "updatedValues": { "projectTestFrequencySetting": "daily" } },
-        "created": "2023-04-11T23:22:57.667Z",
-      }
-  - Name: Snyk Org Create ( INFO )
-    ExpectedResult: true
+      "content":
+        "updatedValues":
+          "projectTestFrequencySetting": "daily"
+      "created": "2023-04-11T23:22:57.667Z"
+      "event": "group.edit"
+      "groupId": "8fffffff-1555-4444-b000-b55555555555"
+    Name: Snyk Group Edit ( MEDIUM )
+  - ExpectedResult: true
     Log:
-      {
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "event": "org.create",
-        "content": { "newOrgPublicId": "21111111-a222-4eee-8ddd-a99999999999" },
-        "created": "2023-04-11T23:12:33.206Z",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-      }
-  - Name: Snyk Group SSO Membership sync
-    ExpectedResult: false
+      "content":
+        "newOrgPublicId": "21111111-a222-4eee-8ddd-a99999999999"
+      "created": "2023-04-11T23:12:33.206Z"
+      "event": "org.create"
+      "groupId": "8fffffff-1555-4444-b000-b55555555555"
+      "userId": "05555555-3333-4ddd-8ccc-755555555555"
+    Name: Snyk Org Create ( INFO )
+  - ExpectedResult: false
     Log:
-      {
-        "content": {},
-        "created": "2023-03-15 13:13:13.133",
-        "event": "group.sso.membership.sync",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-      }
+      "content": {}
+      "created": "2023-03-15 13:13:13.133"
+      "event": "group.sso.membership.sync"
+      "groupId": "8fffffff-1555-4444-b000-b55555555555"
+    Name: Snyk Group SSO Membership sync
+Threshold: 1

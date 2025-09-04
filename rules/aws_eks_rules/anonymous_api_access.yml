@@ -1,25 +1,25 @@
 AnalysisType: rule
-Filename: anonymous_api_access.py
-RuleID: "Amazon.EKS.AnonymousAPIAccess"
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects anonymous API requests made to the Kubernetes API server. In production
+  environments, anonymous access should be disabled to prevent unauthorized access
+  to the API server.
 DisplayName: "EKS Anonymous API Access Detected"
 Enabled: true
+Filename: anonymous_api_access.py
 LogTypes:
   - Amazon.EKS.Audit
-Severity: Low
-Reports:
-  MITRE ATT&CK:
-    - "TA0001:T1190" # Initial Access: Exploit Public-Facing Application
-Description: >
-  This rule detects anonymous API requests made to the Kubernetes API server.
-  In production environments, anonymous access should be disabled to prevent
-  unauthorized access to the API server.
-DedupPeriodMinutes: 60
 Reference: 
   https://raesene.github.io/blog/2023/03/18/lets-talk-about-anonymous-access-to-Kubernetes/
-Runbook: >
-  Check the EKS cluster configuration and ensure that anonymous access
-  to the Kubernetes API server is disabled. This can be done by verifying the  API
-  server arguments and authentication webhook configuration.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+RuleID: "Amazon.EKS.AnonymousAPIAccess"
+Runbook: >-
+  Check the EKS cluster configuration and ensure that anonymous access to the Kubernetes
+  API server is disabled. This can be done by verifying the  API server arguments
+  and authentication webhook configuration.
+Severity: Low
 SummaryAttributes:
   - user:username
   - p_any_ip_addresses
@@ -30,168 +30,133 @@ Tags:
   - API
   - Initial Access:Exploit Public-Facing Application
 Tests:
-  - Name: Anonymous API Access
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "annotations": {
-          "authorization.k8s.io/decision": "allow",
-          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
-        },
-        "apiVersion": "audit.k8s.io/v1",
-        "auditID": "abcde12345",
-        "kind": "Event",
-        "level": "Request",
-        "objectRef": {
-          "apiVersion": "v1",
-          "name": "test-pod",
-          "namespace": "default",
-          "resource": "pods"
-        },
-        "p_any_aws_account_ids": [
-          "123412341234"
-        ],
-        "p_any_aws_arns": [
-          "arn:aws:iam::123412341234:role/DevAdministrator"
-        ],
-        "p_any_ip_addresses": [
-          "8.8.8.8"
-        ],
-        "p_any_usernames": [
-          "system:anonymous"
-        ],
-        "p_event_time": "2022-11-29 00:09:04.38",
-        "p_log_type": "Amazon.EKS.Audit",
-        "p_parse_time": "2022-11-29 00:10:25.067",
-        "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a",
-        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
-        "p_source_label": "example-cluster-eks-logs",
-        "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
-        "requestURI": "/api/v1/namespaces/default/pods/test-pod",
-        "responseStatus": {
-          "code": 200
-        },
-        "sourceIPs": [
-          "8.8.8.8"
-        ],
-        "stage": "ResponseComplete",
-        "user": {
-          "username": "system:anonymous"
-        },
-        "userAgent": "kubectl/v1.25.4"
-      }
-  - Name: Non-Anonymous API Access
-    ExpectedResult: false
+      "annotations":
+        "authorization.k8s.io/decision": "allow"
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+      "apiVersion": "audit.k8s.io/v1"
+      "auditID": "abcde12345"
+      "kind": "Event"
+      "level": "Request"
+      "objectRef":
+        "apiVersion": "v1"
+        "name": "test-pod"
+        "namespace": "default"
+        "resource": "pods"
+      "p_any_aws_account_ids":
+        - "123412341234"
+      "p_any_aws_arns":
+        - "arn:aws:iam::123412341234:role/DevAdministrator"
+      "p_any_ip_addresses":
+        - "8.8.8.8"
+      "p_any_usernames":
+        - "system:anonymous"
+      "p_event_time": "2022-11-29 00:09:04.38"
+      "p_log_type": "Amazon.EKS.Audit"
+      "p_parse_time": "2022-11-29 00:10:25.067"
+      "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a"
+      "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa"
+      "p_source_label": "example-cluster-eks-logs"
+      "requestReceivedTimestamp": "2022-11-29 00:09:04.38"
+      "requestURI": "/api/v1/namespaces/default/pods/test-pod"
+      "responseStatus":
+        "code": 200
+      "sourceIPs":
+        - "8.8.8.8"
+      "stage": "ResponseComplete"
+      "user":
+        "username": "system:anonymous"
+      "userAgent": "kubectl/v1.25.4"
+    Name: Anonymous API Access
+  - ExpectedResult: false
     Log:
-      {
-        "annotations": {
-          "authorization.k8s.io/decision": "allow",
-          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
-        },
-        "apiVersion": "audit.k8s.io/v1",
-        "auditID": "abcde12345",
-        "kind": "Event",
-        "level": "Request",
-        "objectRef": {
-          "apiVersion": "v1",
-          "name": "test-pod",
-          "namespace": "default",
-          "resource": "pods"
-        },
-        "p_any_aws_account_ids": [
-          "123412341234"
-        ],
-        "p_any_aws_arns": [
-          "arn:aws:iam::123412341234:role/DevAdministrator"
-        ],
-        "p_any_ip_addresses": [
-          "8.8.8.8"
-        ],
-        "p_any_usernames": [
-          "kubernetes-admin"
-        ],
-        "p_event_time": "2022-11-29 00:09:04.38",
-        "p_log_type": "Amazon.EKS.Audit",
-        "p_parse_time": "2022-11-29 00:10:25.067",
-        "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a",
-        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
-        "p_source_label": "example-cluster-eks-logs",
-        "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
-        "requestURI": "/api/v1/namespaces/default/pods/test-pod",
-        "responseStatus": {
-          "code": 200
-        },
-        "sourceIPs": [
-          "8.8.8.8"
-        ],
-        "stage": "ResponseComplete",
-        "user": {
-          "username": "kubernetes-admin"
-        },
-        "userAgent": "kubectl/v1.25.4"
-      }
-  - Name: Anonymous API Access Web Scanner Allowed
-    ExpectedResult: true
+      "annotations":
+        "authorization.k8s.io/decision": "allow"
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+      "apiVersion": "audit.k8s.io/v1"
+      "auditID": "abcde12345"
+      "kind": "Event"
+      "level": "Request"
+      "objectRef":
+        "apiVersion": "v1"
+        "name": "test-pod"
+        "namespace": "default"
+        "resource": "pods"
+      "p_any_aws_account_ids":
+        - "123412341234"
+      "p_any_aws_arns":
+        - "arn:aws:iam::123412341234:role/DevAdministrator"
+      "p_any_ip_addresses":
+        - "8.8.8.8"
+      "p_any_usernames":
+        - "kubernetes-admin"
+      "p_event_time": "2022-11-29 00:09:04.38"
+      "p_log_type": "Amazon.EKS.Audit"
+      "p_parse_time": "2022-11-29 00:10:25.067"
+      "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a"
+      "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa"
+      "p_source_label": "example-cluster-eks-logs"
+      "requestReceivedTimestamp": "2022-11-29 00:09:04.38"
+      "requestURI": "/api/v1/namespaces/default/pods/test-pod"
+      "responseStatus":
+        "code": 200
+      "sourceIPs":
+        - "8.8.8.8"
+      "stage": "ResponseComplete"
+      "user":
+        "username": "kubernetes-admin"
+      "userAgent": "kubectl/v1.25.4"
+    Name: Non-Anonymous API Access
+  - ExpectedResult: true
     Log:
-      {
-        "annotations": {
-          "authorization.k8s.io/decision": "allow",
-          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:public-info-viewer\" of ClusterRole \"system:public-info-viewer\" to Group \"system:unauthenticated\""
-        },
-        "apiVersion": "audit.k8s.io/v1",
-        "auditID": "d976bfc6-a2bc-49d5-bdeb-074441e0b875",
-        "kind": "Event",
-        "level": "Metadata",
-        "requestReceivedTimestamp": "2024-11-13 18:34:10.595141000",
-        "requestURI": "/version",
-        "responseStatus": {
-          "code": 200
-        },
-        "sourceIPs": [
-          "44.238.138.237"
-        ],
-        "stage": "ResponseComplete",
-        "stageTimestamp": "2024-11-13 18:34:10.595494000",
-        "user": {
-          "groups": [
-            "system:unauthenticated"
-          ],
-          "username": "system:anonymous"
-        },
-        "userAgent": "python-requests/2.31.0",
-        "verb": "get"
-      }
-  - Name: Anonymous API Access Web Scanner Denied
-    ExpectedResult: true
+      "annotations":
+        "authorization.k8s.io/decision": "allow"
+        "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding \"system:public-info-viewer\"\
+          \ of ClusterRole \"system:public-info-viewer\" to Group \"system:unauthenticated\""
+      "apiVersion": "audit.k8s.io/v1"
+      "auditID": "d976bfc6-a2bc-49d5-bdeb-074441e0b875"
+      "kind": "Event"
+      "level": "Metadata"
+      "requestReceivedTimestamp": "2024-11-13 18:34:10.595141000"
+      "requestURI": "/version"
+      "responseStatus":
+        "code": 200
+      "sourceIPs":
+        - "44.238.138.237"
+      "stage": "ResponseComplete"
+      "stageTimestamp": "2024-11-13 18:34:10.595494000"
+      "user":
+        "groups":
+          - "system:unauthenticated"
+        "username": "system:anonymous"
+      "userAgent": "python-requests/2.31.0"
+      "verb": "get"
+    Name: Anonymous API Access Web Scanner Allowed
+  - ExpectedResult: true
     Log:
-      {
-        "annotations": {
-          "authorization.k8s.io/decision": "forbid",
-          "authorization.k8s.io/reason": ""
-        },
-        "apiVersion": "audit.k8s.io/v1",
-        "auditID": "edf35e8d-92c3-4507-9bc6-4dd9cf068bcf",
-        "kind": "Event",
-        "level": "Metadata",
-        "requestReceivedTimestamp": "2024-11-13 23:50:32.672347000",
-        "requestURI": "/vendor/phpunit/src/Util/PHP/eval-stdin.php",
-        "responseStatus": {
-          "code": 403,
-          "message": "forbidden: User \"system:anonymous\" cannot get path \"/vendor/phpunit/src/Util/PHP/eval-stdin.php\"",
-          "reason": "Forbidden",
-          "status": "Failure"
-        },
-        "sourceIPs": [
-          "8.216.81.10"
-        ],
-        "stage": "ResponseComplete",
-        "stageTimestamp": "2024-11-13 23:50:32.673504000",
-        "user": {
-          "groups": [
-            "system:unauthenticated"
-          ],
-          "username": "system:anonymous"
-        },
-        "userAgent": "Custom-AsyncHttpClient",
-        "verb": "get"
-      }
+      "annotations":
+        "authorization.k8s.io/decision": "forbid"
+        "authorization.k8s.io/reason": ""
+      "apiVersion": "audit.k8s.io/v1"
+      "auditID": "edf35e8d-92c3-4507-9bc6-4dd9cf068bcf"
+      "kind": "Event"
+      "level": "Metadata"
+      "requestReceivedTimestamp": "2024-11-13 23:50:32.672347000"
+      "requestURI": "/vendor/phpunit/src/Util/PHP/eval-stdin.php"
+      "responseStatus":
+        "code": 403
+        "message": "forbidden: User \"system:anonymous\" cannot get path \"/vendor/phpunit/src/Util/PHP/eval-stdin.php\""
+        "reason": "Forbidden"
+        "status": "Failure"
+      "sourceIPs":
+        - "8.216.81.10"
+      "stage": "ResponseComplete"
+      "stageTimestamp": "2024-11-13 23:50:32.673504000"
+      "user":
+        "groups":
+          - "system:unauthenticated"
+        "username": "system:anonymous"
+      "userAgent": "Custom-AsyncHttpClient"
+      "verb": "get"
+    Name: Anonymous API Access Web Scanner Denied

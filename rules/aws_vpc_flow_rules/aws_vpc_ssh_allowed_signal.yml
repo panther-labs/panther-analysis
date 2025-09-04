@@ -1,63 +1,55 @@
 AnalysisType: rule
-Filename: aws_vpc_ssh_allowed_signal.py
-RuleID: "AWS.VPC.SSHAllowedSignal"
+CreateAlert: false
+Description: >-
+  VPC Flow Logs observed inbound traffic on SSH port. This rule is a signal to be
+  used in correlation rules.
 DisplayName: "Signal - VPC Flow Logs Allowed SSH"
 Enabled: true
-CreateAlert: false
+Filename: aws_vpc_ssh_allowed_signal.py
 LogTypes:
   - AWS.VPCFlow
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1021.004
+RuleID: "AWS.VPC.SSHAllowedSignal"
+Severity: Info
 Tags:
   - AWS
   - Signal
-Reports:
-  MITRE ATT&CK:
-    - TA0008:T1021.004 # Lateral Movement: Remote Services: SSH
-Severity: Info
-Description: >
-  VPC Flow Logs observed inbound traffic on SSH port.
-  This rule is a signal to be used in correlation rules.
 Tests:
-  - Name: Public to Private IP on SSH Allowed
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "dstPort": 22,
-        "dstAddr": "10.0.0.1",
-        "srcAddr": "1.1.1.1",
-        "instanceId": "i-0d4c7318592c6a2c7",
-        "action": "ACCEPT",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Public to Private IP on non-SSH
-    ExpectedResult: false
+      "action": "ACCEPT"
+      "dstAddr": "10.0.0.1"
+      "dstPort": 22
+      "instanceId": "i-0d4c7318592c6a2c7"
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "1.1.1.1"
+    Name: Public to Private IP on SSH Allowed
+  - ExpectedResult: false
     Log:
-      {
-        "dstPort": 443,
-        "dstAddr": "10.0.0.1",
-        "srcAddr": "1.1.1.1",
-        "instanceId": "i-0d4c7318592c6a2c7",
-        "action": "ACCEPT",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Private to Private IP on SSH
-    ExpectedResult: false
+      "action": "ACCEPT"
+      "dstAddr": "10.0.0.1"
+      "dstPort": 443
+      "instanceId": "i-0d4c7318592c6a2c7"
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "1.1.1.1"
+    Name: Public to Private IP on non-SSH
+  - ExpectedResult: false
     Log:
-      {
-        "dstPort": 22,
-        "dstAddr": "10.0.0.1",
-        "srcAddr": "10.10.10.1",
-        "instanceId": "i-0d4c7318592c6a2c7",
-        "action": "ACCEPT",
-        "p_log_type": "AWS.VPCFlow",
-      }
-  - Name: Public to Private IP on SSH Denied
-    ExpectedResult: false
+      "action": "ACCEPT"
+      "dstAddr": "10.0.0.1"
+      "dstPort": 22
+      "instanceId": "i-0d4c7318592c6a2c7"
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "10.10.10.1"
+    Name: Private to Private IP on SSH
+  - ExpectedResult: false
     Log:
-      {
-        "dstPort": 22,
-        "dstAddr": "10.0.0.1",
-        "srcAddr": "1.1.1.1",
-        "instanceId": "i-0d4c7318592c6a2c7",
-        "action": "REJECT",
-        "p_log_type": "AWS.VPCFlow",
-      }
+      "action": "REJECT"
+      "dstAddr": "10.0.0.1"
+      "dstPort": 22
+      "instanceId": "i-0d4c7318592c6a2c7"
+      "p_log_type": "AWS.VPCFlow"
+      "srcAddr": "1.1.1.1"
+    Name: Public to Private IP on SSH Denied

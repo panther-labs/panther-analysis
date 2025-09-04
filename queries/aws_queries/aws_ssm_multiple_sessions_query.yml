@@ -1,17 +1,21 @@
 AnalysisType: scheduled_query
-QueryName: "AWS SSM Multiple Sessions"
+Description: Returns StartSession events by users who triggered more than 2 StartSession
+  events over the past hour.
 Enabled: false
-Description: >
-  Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
-Tags:
-    - AWS CloudTrail
-    - AWS SSM
-    - AWS EC2
-Query: |-
+Query: >-
   select * from panther_logs.public.aws_cloudtrail
+
   where eventName = 'StartSession'
+
   and p_occurs_since(1h, , p_parse_time)
-  qualify count(distinct requestParameters:target) over (partition by userIdentity:arn) > 2
+
+  qualify count(distinct requestParameters:target) over (partition by userIdentity:arn)
+  > 2
+QueryName: "AWS SSM Multiple Sessions"
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 2
+Tags:
+  - AWS CloudTrail
+  - AWS SSM
+  - AWS EC2

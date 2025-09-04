@@ -1,12 +1,13 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.AccountAdminGranted"
+Description: Monitor and detect granting account admin role.
 Enabled: false
-Description: >
-  Monitor and detect granting account admin role.
-Query: |
-  --return instances where active (not deleted) roles are granted within the last 24 hours
+Query: >-
+  --return instances where active (not deleted) roles are granted within the last
+  24 hours
+
 
   --this was adapted from a Security Feature Checklist query
+
 
   SELECT
     created_on as p_event_time,
@@ -14,6 +15,7 @@ Query: |
     grantee_name as granted_to,
     granted_by
   FROM snowflake.account_usage.grants_to_users
+
   WHERE
     p_event_time is NOT NULL
     AND grantee_name is NOT NULL
@@ -21,6 +23,7 @@ Query: |
     AND role ILIKE '%admin%'
     AND deleted_on is NULL
     AND p_occurs_since('1 day')
+QueryName: "Query.Snowflake.AccountAdminGranted"
 Schedule:
   RateMinutes: 1440
   TimeoutMinutes: 3

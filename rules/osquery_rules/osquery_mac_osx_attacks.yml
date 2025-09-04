@@ -1,52 +1,46 @@
 AnalysisType: rule
-Filename: osquery_mac_osx_attacks.py
-RuleID: "Osquery.Mac.OSXAttacks"
+Description: >-
+  Malware has potentially been detected on a macOS system
 DisplayName: "macOS Malware Detected with osquery"
 Enabled: true
+Filename: osquery_mac_osx_attacks.py
 LogTypes:
   - Osquery.Differential
+Reference: https://github.com/osquery/osquery/blob/master/packs/osx-attacks.conf
+Reports:
+  MITRE ATT&CK:
+    - TA0042:T1588
+RuleID: "Osquery.Mac.OSXAttacks"
+Runbook: >-
+  Check the executable against VirusTotal
+Severity: Medium
+SummaryAttributes:
+  - name
+  - hostIdentifier
+  - action
 Tags:
   - Osquery
   - MacOS
   - Malware
   - Resource Development:Develop Capabilities
-Reports:
-  MITRE ATT&CK:
-    - TA0042:T1588
-Severity: Medium
-Description: Malware has potentially been detected on a macOS system
-Runbook: Check the executable against VirusTotal
-Reference: https://github.com/osquery/osquery/blob/master/packs/osx-attacks.conf
-SummaryAttributes:
-  - name
-  - hostIdentifier
-  - action
 Tests:
-  - Name: Valid malware discovered
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "name": "pack_osx-attacks_Leverage-A_1",
-        "action": "added",
-        "hostIdentifier": "test-host",
-        "columns":
-          {
-            "path": "/Users/johnny/Desktop/Siri.app/Contents/MacOS/Siri",
-            "pid": 100,
-            "name": "Siri",
-          },
-      }
-  - Name: Keyboard event taps query is ignored
-    ExpectedResult: false
+      "action": "added"
+      "columns":
+        "name": "Siri"
+        "path": "/Users/johnny/Desktop/Siri.app/Contents/MacOS/Siri"
+        "pid": 100
+      "hostIdentifier": "test-host"
+      "name": "pack_osx-attacks_Leverage-A_1"
+    Name: Valid malware discovered
+  - ExpectedResult: false
     Log:
-      {
-        "name": "pack_osx-attacks_Keyboard_Event_Taps",
-        "action": "added",
-        "hostIdentifier": "test-host",
-        "columns":
-          {
-            "path": "/System/Library/CoreServices/Siri.app/Contents/MacOS/Siri",
-            "pid": 100,
-            "name": "Siri",
-          },
-      }
+      "action": "added"
+      "columns":
+        "name": "Siri"
+        "path": "/System/Library/CoreServices/Siri.app/Contents/MacOS/Siri"
+        "pid": 100
+      "hostIdentifier": "test-host"
+      "name": "pack_osx-attacks_Keyboard_Event_Taps"
+    Name: Keyboard event taps query is ignored

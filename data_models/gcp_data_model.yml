@@ -1,45 +1,45 @@
 AnalysisType: datamodel
-LogTypes:
-  - GCP.AuditLog
 DataModelID: "Standard.GCP.AuditLog"
 DisplayName: "GCP Audit Log"
-Filename: gcp_data_model.py
 Enabled: true
+Filename: gcp_data_model.py
+LogTypes:
+  - GCP.AuditLog
 Mappings:
-  - Name: actor_user
-    Method: get_actor_user
-  - Name: assigned_admin_role
-    Method: get_iam_roles
-  - Name: event_type
-    Method: get_event_type
+  - Method: get_actor_user
+    Name: actor_user
+  - Method: get_iam_roles
+    Name: assigned_admin_role
+  - Method: get_event_type
+    Name: event_type
   - Name: source_ip
     Path: $.protoPayload.requestMetadata.callerIP
-  - Name: user
-    Method: get_modified_users
+  - Method: get_modified_users
+    Name: user
   - Name: annotations
     Path: $.labels
-  - Name: apiGroup
-    Method: get_api_group
-  - Name: apiVersion
-    Method: get_api_version
-  - Name: namespace
-    Method: get_namespace
-  - Name: resource
-    Method: get_resource
-  - Name: name
-    Method: get_name
-  - Name: requestURI
-    Method: get_request_uri
+  - Method: get_api_group
+    Name: apiGroup
+  - Method: get_api_version
+    Name: apiVersion
+  - Method: get_namespace
+    Name: namespace
+  - Method: get_resource
+    Name: resource
+  - Method: get_name
+    Name: name
+  - Method: get_request_uri
+    Name: requestURI
   - Name: responseStatus
     Path: $.protoPayload.status
-  - Name: sourceIPs
-    Method: get_source_ips
-  - Name: username
-    Method: get_actor_user
+  - Method: get_source_ips
+    Name: sourceIPs
+  - Method: get_actor_user
+    Name: username
   - Name: userAgent
     Path: $.protoPayload.requestMetadata.callerSuppliedUserAgent
-  - Name: verb
-    Method: get_verb
+  - Method: get_verb
+    Name: verb
   - Name: requestObject
     Path: $.protoPayload.request
   - Name: responseObject

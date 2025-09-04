@@ -1,147 +1,169 @@
 AnalysisType: policy
-Filename: aws_lambda_public_access.py
-PolicyID: "AWS.Lambda.PublicAccess"
+Description: >-
+  This policy ensures that the function policy attached to the Lambda resource prohibits
+  public access
 DisplayName: "AWS Lambda Public Access"
 Enabled: true
-ResourceTypes:
-  - AWS.Lambda.Function
-Tags:
-  - AWS
-  - Data Protection
+Filename: aws_lambda_public_access.py
+PolicyID: "AWS.Lambda.PublicAccess"
+Reference: 
+  https://docs.aws.amazon.com/config/latest/developerguide/lambda-function-public-access-prohibited.html
 Reports:
   MITRE ATT&CK:
     - TA0001:T1190
+ResourceTypes:
+  - AWS.Lambda.Function
 Severity: High
-Description: >
-  This policy ensures that the function policy attached to the Lambda resource prohibits public access
-Reference: https://docs.aws.amazon.com/config/latest/developerguide/lambda-function-public-access-prohibited.html
+Tags:
+  - AWS
+  - Data Protection
 Tests:
-  - Name: AWS Lambda Public Access
-    ExpectedResult: false
+  - ExpectedResult: false
+    Name: AWS Lambda Public Access
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Policy:
-        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Allow","Principal":{"AWS":"*"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name"}]}'
-        RevisionId: 123456789-1234-1234-1234-123456789123
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
-  - Name: AWS Lambda Condition for Access
-    ExpectedResult: true
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Policy":
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"\
+          Sid\":\"AllowExecutionFromCloudWatch\",\"Effect\":\"Allow\",\"Principal\"\
+          :{\"AWS\":\"*\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:123456789:function:some-name\"\
+          }]}"
+        "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"
+  - ExpectedResult: true
+    Name: AWS Lambda Condition for Access
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Policy:
-        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Allow","Principal":{"AWS":"*"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name","Condition":{"ArnLike":{"AWS:SourceArn":"arn:aws:events:us-west-2:123456789:rule/some-name"}}}]}'
-        RevisionId: 123456789-1234-1234-1234-123456789123
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
-  - Name: AWS Lambda Effect Not Allow
-    ExpectedResult: true
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Policy":
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"\
+          Sid\":\"AllowExecutionFromCloudWatch\",\"Effect\":\"Allow\",\"Principal\"\
+          :{\"AWS\":\"*\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:123456789:function:some-name\"\
+          ,\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:us-west-2:123456789:rule/some-name\"\
+          }}}]}"
+        "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"
+  - ExpectedResult: true
+    Name: AWS Lambda Effect Not Allow
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Policy:
-        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Block","Principal":{"AWS":"*"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name","Condition":{"ArnLike":{"AWS:SourceArn":"arn:aws:events:us-west-2:123456789:rule/some-name"}}}]}'
-        RevisionId: 123456789-1234-1234-1234-123456789123
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
-  - Name: AWS Lambda Principal Specified
-    ExpectedResult: true
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Policy":
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"\
+          Sid\":\"AllowExecutionFromCloudWatch\",\"Effect\":\"Block\",\"Principal\"\
+          :{\"AWS\":\"*\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:123456789:function:some-name\"\
+          ,\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:us-west-2:123456789:rule/some-name\"\
+          }}}]}"
+        "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"
+  - ExpectedResult: true
+    Name: AWS Lambda Principal Specified
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Policy:
-        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Allow","Principal":{"Service":"events.amazonaws.com"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name","Condition":{"ArnLike":{"AWS:SourceArn":"arn:aws:events:us-west-2:123456789:rule/some-name"}}}]}'
-        RevisionId: 123456789-1234-1234-1234-123456789123
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
-  - Name: AWS Lambda No Policy
-    ExpectedResult: true
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Policy":
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"\
+          Sid\":\"AllowExecutionFromCloudWatch\",\"Effect\":\"Allow\",\"Principal\"\
+          :{\"Service\":\"events.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\"\
+          ,\"Resource\":\"arn:aws:lambda:us-west-2:123456789:function:some-name\"\
+          ,\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:us-west-2:123456789:rule/some-name\"\
+          }}}]}"
+        "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"
+  - ExpectedResult: true
+    Name: AWS Lambda No Policy
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
-  - Name: AWS Lambda Unauthenticated Public Access 
-    ExpectedResult: false
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"
+  - ExpectedResult: false
+    Name: AWS Lambda Unauthenticated Public Access
     Resource:
-      AccountId: "123456789"
-      Arn: arn:aws:lambda:us-west-2:123456789:function:some-name
-      CodeSha256: azertyuiopqsdfghjklm
-      CodeSize: 1234
-      Description: Some description
-      Handler: some-name.lambda_handler
-      LastModified: 2024-09-13T15:23:51.000+0000
-      MemorySize: 128
-      Name: some-name
-      Policy:
-        Policy: '{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"AllowExecutionFromCloudWatch","Effect":"Allow","Principal":{"AWS":"*"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:us-west-2:123456789:function:some-name","Condition":{"StringEquals":{"lambda:FunctionUrlAuthType":"NONE"}}}]}'
-        RevisionId: 123456789-1234-1234-1234-123456789123
-      Region: us-west-2
-      ResourceId: arn:aws:lambda:us-west-2:123456789:function:some-name
-      ResourceType: AWS.Lambda.Function
-      RevisionId: 123456789-1234-1234-1234-123456789123
-      Role: arn:aws:iam::123456789:role/some-name
-      Timeout: 10
-      Version: $LATEST
+      "AccountId": "123456789"
+      "Arn": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "CodeSha256": "azertyuiopqsdfghjklm"
+      "CodeSize": 1234
+      "Description": "Some description"
+      "Handler": "some-name.lambda_handler"
+      "LastModified": "2024-09-13T15:23:51.000+0000"
+      "MemorySize": 128
+      "Name": "some-name"
+      "Policy":
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"\
+          Sid\":\"AllowExecutionFromCloudWatch\",\"Effect\":\"Allow\",\"Principal\"\
+          :{\"AWS\":\"*\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:123456789:function:some-name\"\
+          ,\"Condition\":{\"StringEquals\":{\"lambda:FunctionUrlAuthType\":\"NONE\"\
+          }}}]}"
+        "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:lambda:us-west-2:123456789:function:some-name"
+      "ResourceType": "AWS.Lambda.Function"
+      "RevisionId": "123456789-1234-1234-1234-123456789123"
+      "Role": "arn:aws:iam::123456789:role/some-name"
+      "Timeout": 10
+      "Version": "$LATEST"

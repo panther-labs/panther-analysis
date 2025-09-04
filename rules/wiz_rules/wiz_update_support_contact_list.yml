@@ -1,110 +1,90 @@
 AnalysisType: rule
-RuleID: Wiz.Update.Support.Contact.List
-Description: This rule detects updates of Wiz support contact list.
-DisplayName: Wiz Update Support Contact List
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
-Reference: https://www.wiz.io/
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects updates of Wiz support contact list.
+DisplayName: "Wiz Update Support Contact List"
 Enabled: true
 Filename: wiz_update_support_contact_list.py
-Severity: Low
-Reports:
-  MITRE ATT&CK:
-    - TA0035:T1636.003  # Protected User Data: Contact List
 LogTypes:
   - Wiz.Audit
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: https://www.wiz.io/
+Reports:
+  MITRE ATT&CK:
+    - TA0035:T1636.003
+RuleID: "Wiz.Update.Support.Contact.List"
+Runbook: >-
+  Verify that this change was planned. If not, revert the change and ensure this doesn't
+  happen again.
+Severity: Low
 Tests:
-  - Name: UpdateSupportContactList
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c",
-        "action": "UpdateSupportContactList",
-        "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-23T10:16:54.517212Z",
-        "actionParameters": {
-          "input": {
-            "patch": {
-              "contacts": [
-                "test.user@company.com"
-              ]
-            }
-          },
-          "selection": [
-            "__typename",
-            {
-              "supportContactList": [
-                "__typename",
-                {
-                  "contacts": [
-                    "__typename",
-                    "id"
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
-  - Name: CreateUser
-    ExpectedResult: false
+      "action": "UpdateSupportContactList"
+      "actionParameters":
+        "input":
+          "patch":
+            "contacts":
+              - "test.user@company.com"
+        "selection":
+          - "__typename"
+          - "supportContactList":
+              - "__typename"
+              - "contacts":
+                  - "__typename"
+                  - "id"
+      "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c"
+      "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-23T10:16:54.517212Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: UpdateSupportContactList
+  - ExpectedResult: false
     Log:
-      {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
-        "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-29T09:40:15.66643Z",
-        "actionParameters": {
-          "input": {
-            "assignedProjectIds": null,
-            "email": "testy@company.com",
-            "expiresAt": null,
-            "name": "Test User",
-            "role": "GLOBAL_ADMIN"
-          },
-          "selection": [
-            "__typename",
-            {
-              "user": [
-                "__typename",
-                "id"
-              ]
-            }
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "8.8.8.8",
-        "serviceAccount": null,
-        "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
-        }
-      }
-  - Name: UpdateSupportContactList - Fail
-    ExpectedResult: false
+      "action": "CreateUser"
+      "actionParameters":
+        "input":
+          "assignedProjectIds":
+          "email": "testy@company.com"
+          "expiresAt":
+          "name": "Test User"
+          "role": "GLOBAL_ADMIN"
+        "selection":
+          - "__typename"
+          - "user":
+              - "__typename"
+              - "id"
+      "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14"
+      "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e"
+      "serviceAccount":
+      "sourceIP": "8.8.8.8"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-29T09:40:15.66643Z"
+      "user":
+        "id": "someuser@company.com"
+        "name": "someuser@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: CreateUser
+  - ExpectedResult: false
     Log:
-      {
-        "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c",
-        "action": "UpdateSupportContactList",
-        "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21",
-        "status": "FAILED",
-        "timestamp": "2024-07-23T10:16:54.517212Z",
-        "actionParameters": { },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
+      "action": "UpdateSupportContactList"
+      "actionParameters": {}
+      "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c"
+      "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "FAILED"
+      "timestamp": "2024-07-23T10:16:54.517212Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: UpdateSupportContactList - Fail
+Threshold: 1

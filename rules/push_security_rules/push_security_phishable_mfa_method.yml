@@ -1,99 +1,99 @@
 AnalysisType: rule
-Filename: push_security_phishable_mfa_method.py
-RuleID: "Push.Security.Phishable.MFA.Method"
+DedupPeriodMinutes: 60
 DisplayName: "Push Security Phishable MFA Method"
 Enabled: true
+Filename: push_security_phishable_mfa_method.py
 LogTypes:
   - PushSecurity.Entities
+RuleID: "Push.Security.Phishable.MFA.Method"
 Severity: Info
-DedupPeriodMinutes: 60
-Threshold: 1
 Tests:
-  - Name: Dropbox Phishable MFA
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      id: d1e5794f-666d-4cba-abae-c6d889ca1903
-      new:
-        appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
-        appType: DROPBOX
-        creationTimestamp: 1.707775048e+09
-        email: jet.black@issp.com
-        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-        id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
-        lastUsedTimestamp: null
-        loginMethods:
-          oidcLogin: null
-          oktaSwaLogin: false
-          passwordLogin: false
-          samlLogin: null
-        mfaMethods:
-          - SMS
-          - EMAIL_OTP
-        mfaRegistered: false
-        passwordId: null
-      object: ACCOUNT
-      old: null
-  - Name: Google Workspace Phishable MFA
-    ExpectedResult: true
+      "id": "d1e5794f-666d-4cba-abae-c6d889ca1903"
+      "new":
+        "appId": "67ef5c13-b5e6-4945-af7b-c11ac98f630f"
+        "appType": "DROPBOX"
+        "creationTimestamp": 1707775048.0
+        "email": "jet.black@issp.com"
+        "employeeId": "ca6cf7ce-90e6-4eb5-a262-7899bc48c39c"
+        "id": "5e15ce4c-6b93-4fbf-aed9-1890775efa90"
+        "lastUsedTimestamp":
+        "loginMethods":
+          "oidcLogin":
+          "oktaSwaLogin": false
+          "passwordLogin": false
+          "samlLogin":
+        "mfaMethods":
+          - "SMS"
+          - "EMAIL_OTP"
+        "mfaRegistered": false
+        "passwordId":
+      "object": "ACCOUNT"
+      "old":
+    Name: Dropbox Phishable MFA
+  - ExpectedResult: true
     Log:
-      id: d1e5794f-666d-4cba-abae-c6d889ca1903
-      new:
-        appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
-        appType: GOOGLE_WORKSPACE
-        creationTimestamp: 1.707775048e+09
-        email: jet.black@issp.com
-        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-        id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
-        lastUsedTimestamp: null
-        loginMethods:
-          oidcLogin: null
-          oktaSwaLogin: false
-          passwordLogin: false
-          samlLogin: null
-        mfaMethods:
-          - SMS
-          - EMAIL_OTP
-        mfaRegistered: false
-        passwordId: null
-      object: ACCOUNT
-      old: null
-  - Name: No MFA Enabled
-    ExpectedResult: false
+      "id": "d1e5794f-666d-4cba-abae-c6d889ca1903"
+      "new":
+        "appId": "67ef5c13-b5e6-4945-af7b-c11ac98f630f"
+        "appType": "GOOGLE_WORKSPACE"
+        "creationTimestamp": 1707775048.0
+        "email": "jet.black@issp.com"
+        "employeeId": "ca6cf7ce-90e6-4eb5-a262-7899bc48c39c"
+        "id": "5e15ce4c-6b93-4fbf-aed9-1890775efa90"
+        "lastUsedTimestamp":
+        "loginMethods":
+          "oidcLogin":
+          "oktaSwaLogin": false
+          "passwordLogin": false
+          "samlLogin":
+        "mfaMethods":
+          - "SMS"
+          - "EMAIL_OTP"
+        "mfaRegistered": false
+        "passwordId":
+      "object": "ACCOUNT"
+      "old":
+    Name: Google Workspace Phishable MFA
+  - ExpectedResult: false
     Log:
-      id: d1e5794f-666d-4cba-abae-c6d889ca1903
-      new:
-        appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
-        appType: CONTENTFUL
-        creationTimestamp: 1.707775048e+09
-        email: jet.black@issp.com
-        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-        id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
-        lastUsedTimestamp: null
-        loginMethods:
-          oidcLogin: null
-          oktaSwaLogin: false
-          passwordLogin: false
-          samlLogin: null
-        mfaMethods: []
-        mfaRegistered: false
-        passwordId: null
-      object: ACCOUNT
-      old:
-        appId: 67ef5c13-b5e6-4945-af7b-c11ac98f630f
-        appType: CONTENTFUL
-        creationTimestamp: 1.707775048e+09
-        email: jet.black@issp.com
-        employeeId: ca6cf7ce-90e6-4eb5-a262-7899bc48c39c
-        id: 5e15ce4c-6b93-4fbf-aed9-1890775efa90
-        lastUsedTimestamp: null
-        loginMethods:
-          oidcLogin: null
-          oktaSwaLogin: false
-          passwordLogin: false
-          samlLogin: null
-        mfaMethods: []
-        mfaRegistered: false
-        passwordId: null
-      timestamp: 1.707775049e+09
-      type: CREATE
-      version: "1"
+      "id": "d1e5794f-666d-4cba-abae-c6d889ca1903"
+      "new":
+        "appId": "67ef5c13-b5e6-4945-af7b-c11ac98f630f"
+        "appType": "CONTENTFUL"
+        "creationTimestamp": 1707775048.0
+        "email": "jet.black@issp.com"
+        "employeeId": "ca6cf7ce-90e6-4eb5-a262-7899bc48c39c"
+        "id": "5e15ce4c-6b93-4fbf-aed9-1890775efa90"
+        "lastUsedTimestamp":
+        "loginMethods":
+          "oidcLogin":
+          "oktaSwaLogin": false
+          "passwordLogin": false
+          "samlLogin":
+        "mfaMethods": []
+        "mfaRegistered": false
+        "passwordId":
+      "object": "ACCOUNT"
+      "old":
+        "appId": "67ef5c13-b5e6-4945-af7b-c11ac98f630f"
+        "appType": "CONTENTFUL"
+        "creationTimestamp": 1707775048.0
+        "email": "jet.black@issp.com"
+        "employeeId": "ca6cf7ce-90e6-4eb5-a262-7899bc48c39c"
+        "id": "5e15ce4c-6b93-4fbf-aed9-1890775efa90"
+        "lastUsedTimestamp":
+        "loginMethods":
+          "oidcLogin":
+          "oktaSwaLogin": false
+          "passwordLogin": false
+          "samlLogin":
+        "mfaMethods": []
+        "mfaRegistered": false
+        "passwordId":
+      "timestamp": 1707775049.0
+      "type": "CREATE"
+      "version": "1"
+    Name: No MFA Enabled
+Threshold: 1

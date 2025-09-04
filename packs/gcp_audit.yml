@@ -1,6 +1,6 @@
 AnalysisType: pack
-PackID: PantherManaged.GCP.Audit
 Description: Group of all Google Cloud Platform (GCP) Audit detections
+DisplayName: Panther GCP Audit Pack
 PackDefinition:
   IDs:
     - GCP.Access.Attempts.Violating.IAP.Access.Controls
@@ -48,16 +48,14 @@ PackDefinition:
     - GCP.IAM.serviceAccounts.signJwt.Privilege.Escalation
     - GCP.compute.instances.create.Privilege.Escalation
     - GCP.IAM.serviceAccounts.signBlob
-    - GCP.IAM.Tag.Enumeration  # signal
-    - GCP.Tag.Binding.Creation  # signal
-    - GCP.Privileged.Operation  # signal
-    - GCP.Privilege.Escalation.Via.TagBinding  # CR
+    - GCP.IAM.Tag.Enumeration
+    - GCP.Tag.Binding.Creation
+    - GCP.Privileged.Operation
+    - GCP.Privilege.Escalation.Via.TagBinding
     - GSuite.ExternalMailForwarding
     - GSuite.DocOwnershipTransfer
-    # Data model
     - Standard.GCP.AuditLog
-    # Globals used in these rules/policies
     - panther_gcp_helpers
     - panther_base_helpers
     - panther_event_type_helpers
-DisplayName: "Panther GCP Audit Pack"
+PackID: PantherManaged.GCP.Audit

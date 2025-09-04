@@ -1,27 +1,28 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_user_created.py
-RuleID: "Snowflake.UserCreated"
-Description: >
+Description: >-
   Detect new users created in snowflake
 DisplayName: "Snowflake User Created"
 Enabled: false
+Filename: snowflake_user_created.py
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136
+RuleID: "Snowflake.UserCreated"
 ScheduledQueries:
   - Query.Snowflake.UserCreated
 Severity: Info
 Tags:
   - Snowflake
   - Persistence:Create Account
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1136
 Tests:
-  - Name: Return True
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      query_text: "create USER testuser password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺' default_role = 'READONLY' must_change_password = true;"
-      user_name: admin
-  - Name: Unknown User
-    ExpectedResult: true
+      "query_text": "create USER testuser password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺'
+        default_role = 'READONLY' must_change_password = true;"
+      "user_name": "admin"
+    Name: Return True
+  - ExpectedResult: true
     Log:
-      query_text: "create"
-      user_name: admin
+      "query_text": "create"
+      "user_name": "admin"
+    Name: Unknown User

@@ -1,55 +1,53 @@
 AnalysisType: rule
-Filename: zoom_operation_passcode_disabled.py
-RuleID: "Zoom.PasscodeDisabled"
+Description: >-
+  Meeting passcode requirement has been disabled from usergroup
 DisplayName: "Zoom Meeting Passcode Disabled"
 Enabled: true
+Filename: zoom_operation_passcode_disabled.py
 LogTypes:
   - Zoom.Operation
-Tags:
-  - Zoom
-  - Collection:Video Capture
-Severity: Low
-Description: >
-  Meeting passcode requirement has been disabled from usergroup
+Reference: 
+  https://support.zoom.us/hc/en-us/articles/360033559832-Zoom-Meeting-and-Webinar-passcodes
 Reports:
   MITRE ATT&CK:
     - TA0009:T1125
-Reference: https://support.zoom.us/hc/en-us/articles/360033559832-Zoom-Meeting-and-Webinar-passcodes
-Runbook: >
-  Follow up with user or Zoom admin to ensure this meeting room's use case does not allow a passcode.
+RuleID: "Zoom.PasscodeDisabled"
+Runbook: >-
+  Follow up with user or Zoom admin to ensure this meeting room's use case does not
+  allow a passcode.
+Severity: Low
 SummaryAttributes:
   - p_any_emails
+Tags:
+  - Zoom
+  - Collection:Video Capture
 Tests:
-  - Name: Meeting Passcode Disabled
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "time": "2021-11-17 00:37:24Z",
-        "operator": "homer@panther.io",
-        "category_type": "User Group",
-        "action": "Update",
-        "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from On to Off",
-        "p_log_type": "Zoom.Operation",
-      }
-  - Name: Meeting Passcode Enabled
-    ExpectedResult: false
+      "action": "Update"
+      "category_type": "User Group"
+      "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode:
+        from On to Off"
+      "operator": "homer@panther.io"
+      "p_log_type": "Zoom.Operation"
+      "time": "2021-11-17 00:37:24Z"
+    Name: Meeting Passcode Disabled
+  - ExpectedResult: false
     Log:
-      {
-        "time": "2021-11-17 00:37:24Z",
-        "operator": "homer@panther.io",
-        "category_type": "User Group",
-        "action": "Update",
-        "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode: from Off to On",
-        "p_log_type": "Zoom.Operation",
-      }
-  - Name: Add User Group
-    ExpectedResult: false
+      "action": "Update"
+      "category_type": "User Group"
+      "operation_detail": "Edit Group Springfield  - Personal Meeting ID (PMI) Passcode:
+        from Off to On"
+      "operator": "homer@panther.io"
+      "p_log_type": "Zoom.Operation"
+      "time": "2021-11-17 00:37:24Z"
+    Name: Meeting Passcode Enabled
+  - ExpectedResult: false
     Log:
-      {
-        "time": "2021-11-17 00:37:24Z",
-        "operator": "homer@panther.io",
-        "category_type": "User Group",
-        "action": "Add",
-        "operation_detail": "Add Group Engineers",
-        "p_log_type": "Zoom.Operation",
-      }
+      "action": "Add"
+      "category_type": "User Group"
+      "operation_detail": "Add Group Engineers"
+      "operator": "homer@panther.io"
+      "p_log_type": "Zoom.Operation"
+      "time": "2021-11-17 00:37:24Z"
+    Name: Add User Group

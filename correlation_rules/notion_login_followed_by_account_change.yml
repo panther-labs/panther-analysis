@@ -1,55 +1,58 @@
 AnalysisType: correlation_rule
-RuleID: "Notion.Login.FOLLOWED.BY.AccountChange"
+Description: >-
+  A Notion User logged in then changed their account details.
+Detection:
+  - LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 5
+    Sequence:
+      - ID: Login
+        RuleID: Notion.Login
+      - ID: AccountChange
+        RuleID: Notion.AccountChange
+    Transitions:
+      - From: Login
+        ID: Login FOLLOWED BY AccountChange
+        Match:
+          - On: p_alert_context.actor_id
+        To: AccountChange
+        WithinTimeFrameMinutes: 15
 DisplayName: "Notion Login FOLLOWED BY AccountChange"
 Enabled: true
-Severity: Medium
-Description: A Notion User logged in then changed their account details.
 Reference: https://www.notion.so/help/account-settings
-Runbook: Possible account takeover. Follow up with the Notion User to determine if this email change is genuine.
 Reports:
   MITRE ATT&CK:
-    - TA0004:T1098  # Account Manipulation
-Detection:
-    - Sequence:
-        - ID: Login
-          RuleID: Notion.Login
-        - ID: AccountChange
-          RuleID: Notion.AccountChange
-      Transitions:
-        - ID: Login FOLLOWED BY AccountChange
-          From: Login
-          To: AccountChange
-          WithinTimeFrameMinutes: 15
-          Match:
-            - On: p_alert_context.actor_id
-      LookbackWindowMinutes: 2160
-      Schedule:
-        RateMinutes: 1440
-        TimeoutMinutes: 5
+    - TA0004:T1098
+RuleID: "Notion.Login.FOLLOWED.BY.AccountChange"
+Runbook: >-
+  Possible account takeover. Follow up with the Notion User to determine if this email
+  change is genuine.
+Severity: Medium
 Tests:
-    - Name: Login, Followed By AccountChange within short time
-      ExpectedResult: true
-      RuleOutputs:
-        - ID: Login
-          Matches:
-            p_alert_context.actor_id:
-              'i-abcdef0123456789a':
-                - "2024-06-01T10:00:01Z"
-        - ID: AccountChange
-          Matches:
-            p_alert_context.actor_id:
-              'i-abcdef0123456789a':
-                - "2024-06-01T10:01:01Z"
-    - Name: Login, Followed By AccountChange not within short time
-      ExpectedResult: false
-      RuleOutputs:
-        - ID: Login
-          Matches:
-            p_alert_context.actor_id:
-              'i-abcdef0123456789a':
-                - "2024-06-01T10:00:01Z"
-        - ID: AccountChange
-          Matches:
-            p_alert_context.actor_id:
-              'i-abcdef0123456789a':
-                - "2024-06-01T11:01:01Z"
+  - ExpectedResult: true
+    Name: Login, Followed By AccountChange within short time
+    RuleOutputs:
+      - ID: Login
+        Matches:
+          p_alert_context.actor_id:
+            i-abcdef0123456789a:
+              - '2024-06-01T10:00:01Z'
+      - ID: AccountChange
+        Matches:
+          p_alert_context.actor_id:
+            i-abcdef0123456789a:
+              - '2024-06-01T10:01:01Z'
+  - ExpectedResult: false
+    Name: Login, Followed By AccountChange not within short time
+    RuleOutputs:
+      - ID: Login
+        Matches:
+          p_alert_context.actor_id:
+            i-abcdef0123456789a:
+              - '2024-06-01T10:00:01Z'
+      - ID: AccountChange
+        Matches:
+          p_alert_context.actor_id:
+            i-abcdef0123456789a:
+              - '2024-06-01T11:01:01Z'

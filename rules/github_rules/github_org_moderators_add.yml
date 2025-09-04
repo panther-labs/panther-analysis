@@ -1,40 +1,40 @@
 AnalysisType: rule
-Filename: github_org_moderators_add.py
-RuleID: "GitHub.Org.Moderators.Add"
+Description: >-
+  Detects when a user is added to a GitHub org's list of moderators.
 DisplayName: "GitHub User Added to Org Moderators"
 Enabled: true
+Filename: github_org_moderators_add.py
 LogTypes:
   - GitHub.Audit
+Reference: 
+  https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-moderators-in-your-organization
+RuleID: "GitHub.Org.Moderators.Add"
+Severity: Medium
 Tags:
   - GitHub
   - Initial Access:Supply Chain Compromise
-Severity: Medium
-Description: Detects when a user is added to a GitHub org's list of moderators.
-Reference: https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-moderators-in-your-organization
 Tests:
-  - Name: GitHub - Org Moderator Added
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "_document_id": "Ab123",
-        "action": "organization_moderators.add_user",
-        "actor": "sarah78",
-        "actor_location": { "country_code": "US" },
-        "at_sign_timestamp": "2022-12-11 05:17:28.078",
-        "created_at": "2022-12-11 05:17:28.078",
-        "org": "example-io",
-        "user": "john1987",
-      }
-  - Name: GitHub - Org Moderator removed
-    ExpectedResult: false
+      "_document_id": "Ab123"
+      "action": "organization_moderators.add_user"
+      "actor": "sarah78"
+      "actor_location":
+        "country_code": "US"
+      "at_sign_timestamp": "2022-12-11 05:17:28.078"
+      "created_at": "2022-12-11 05:17:28.078"
+      "org": "example-io"
+      "user": "john1987"
+    Name: GitHub - Org Moderator Added
+  - ExpectedResult: false
     Log:
-      {
-        "_document_id": "Ab123",
-        "action": "organization_moderators.remove_user",
-        "actor": "sarah78",
-        "actor_location": { "country_code": "US" },
-        "at_sign_timestamp": "2022-12-11 05:17:28.078",
-        "created_at": "2022-12-11 05:17:28.078",
-        "org": "example-io",
-        "user": "john1987",
-      }
+      "_document_id": "Ab123"
+      "action": "organization_moderators.remove_user"
+      "actor": "sarah78"
+      "actor_location":
+        "country_code": "US"
+      "at_sign_timestamp": "2022-12-11 05:17:28.078"
+      "created_at": "2022-12-11 05:17:28.078"
+      "org": "example-io"
+      "user": "john1987"
+    Name: GitHub - Org Moderator removed

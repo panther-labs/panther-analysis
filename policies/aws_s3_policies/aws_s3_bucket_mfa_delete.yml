@@ -1,120 +1,103 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_mfa_delete.py
-PolicyID: "AWS.S3.Bucket.MFADelete"
+Description: >-
+  Ensures that MFA delete is enabled for a bucket so that all objects can only be
+  deleted by users authenticated with MFA.
 DisplayName: "AWS S3 Bucket MFA Delete"
 Enabled: true
+Filename: aws_s3_bucket_mfa_delete.py
+PolicyID: "AWS.S3.Bucket.MFADelete"
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485
 ResourceTypes:
   - AWS.S3.Bucket
+Runbook: >-
+  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-has-mfa-delete-enabled
+Severity: Low
 Tags:
   - AWS
   - Data Protection
   - Impact:Data Destruction
-Reports:
-  MITRE ATT&CK:
-    - TA0040:T1485
-Severity: Low
-Description: >
-  Ensures that MFA delete is enabled for a bucket so that all objects can only be deleted by users authenticated with MFA.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-has-mfa-delete-enabled
-Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMFADelete.html
 Tests:
-  - Name: Bucket MFA Delete Never Set
-    ExpectedResult: false
+  - ExpectedResult: false
+    Name: Bucket MFA Delete Never Set
     Resource:
-      {
-        "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules":
-          [
-            {
-              "ApplyServerSideEncryptionByDefault":
-                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
-            },
-          ],
-        "Grants": null,
-        "LifecycleRules": null,
-        "Location": "us-east-2",
-        "LoggingPolicy": null,
-        "MFADelete": null,
-        "Name": "bucket-name",
-        "Owner":
-          {
-            "DisplayName": "user.name",
-            "ID": "11112223334445556667778899aaabbbcccdddeeee",
-          },
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:root"},"Action":["s3:ListBucket","s3:PutObject"],"Resource":["arn:aws:s3:::test-bucket/*","arn:aws:s3:::test-bucket"]}]}',
-        "PublicAccessBlockConfiguration":
-          {
-            "BlockPublicAcls": false,
-            "BlockPublicPolicy": false,
-            "IgnorePublicAcls": false,
-            "RestrictPublicBuckets": false,
-          },
-        "Versioning": null,
-      }
-  - Name: Bucket Has MFA Delete Enabled
-    ExpectedResult: true
+      "CreationDate": "2019-01-01T00:00:00Z"
+      "EncryptionRules":
+        - "ApplyServerSideEncryptionByDefault":
+            "KMSMasterKeyID":
+            "SSEAlgorithm": "AES256"
+      "Grants":
+      "LifecycleRules":
+      "Location": "us-east-2"
+      "LoggingPolicy":
+      "MFADelete":
+      "Name": "bucket-name"
+      "Owner":
+        "DisplayName": "user.name"
+        "ID": "11112223334445556667778899aaabbbcccdddeeee"
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"\
+        s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\"\
+        ,\"arn:aws:s3:::test-bucket\"]}]}"
+      "PublicAccessBlockConfiguration":
+        "BlockPublicAcls": false
+        "BlockPublicPolicy": false
+        "IgnorePublicAcls": false
+        "RestrictPublicBuckets": false
+      "Versioning":
+  - ExpectedResult: true
+    Name: Bucket Has MFA Delete Enabled
     Resource:
-      {
-        "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules":
-          [
-            {
-              "ApplyServerSideEncryptionByDefault":
-                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
-            },
-          ],
-        "Grants": null,
-        "LifecycleRules": null,
-        "Location": "us-east-2",
-        "LoggingPolicy": null,
-        "MFADelete": "Enabled",
-        "Name": "bucket-name",
-        "Owner":
-          {
-            "DisplayName": "user.name",
-            "ID": "11112223334445556667778899aaabbbcccdddeeee",
-          },
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:root"},"Action":["s3:ListBucket","s3:PutObject"],"Resource":["arn:aws:s3:::test-bucket/*","arn:aws:s3:::test-bucket"]}]}',
-        "PublicAccessBlockConfiguration":
-          {
-            "BlockPublicAcls": false,
-            "BlockPublicPolicy": false,
-            "IgnorePublicAcls": false,
-            "RestrictPublicBuckets": false,
-          },
-        "Versioning": null,
-      }
-  - Name: Bucket Does Not MFA Delete Enabled
-    ExpectedResult: false
+      "CreationDate": "2019-01-01T00:00:00Z"
+      "EncryptionRules":
+        - "ApplyServerSideEncryptionByDefault":
+            "KMSMasterKeyID":
+            "SSEAlgorithm": "AES256"
+      "Grants":
+      "LifecycleRules":
+      "Location": "us-east-2"
+      "LoggingPolicy":
+      "MFADelete": "Enabled"
+      "Name": "bucket-name"
+      "Owner":
+        "DisplayName": "user.name"
+        "ID": "11112223334445556667778899aaabbbcccdddeeee"
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"\
+        s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\"\
+        ,\"arn:aws:s3:::test-bucket\"]}]}"
+      "PublicAccessBlockConfiguration":
+        "BlockPublicAcls": false
+        "BlockPublicPolicy": false
+        "IgnorePublicAcls": false
+        "RestrictPublicBuckets": false
+      "Versioning":
+  - ExpectedResult: false
+    Name: Bucket Does Not MFA Delete Enabled
     Resource:
-      {
-        "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules":
-          [
-            {
-              "ApplyServerSideEncryptionByDefault":
-                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
-            },
-          ],
-        "Grants": null,
-        "LifecycleRules": null,
-        "Location": "us-east-2",
-        "LoggingPolicy": null,
-        "MFADelete": "Disabled",
-        "Name": "bucket-name",
-        "Owner":
-          {
-            "DisplayName": "user.name",
-            "ID": "11112223334445556667778899aaabbbcccdddeeee",
-          },
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:root"},"Action":["s3:ListBucket","s3:PutObject"],"Resource":["arn:aws:s3:::test-bucket/*","arn:aws:s3:::test-bucket"]}]}',
-        "PublicAccessBlockConfiguration":
-          {
-            "BlockPublicAcls": false,
-            "BlockPublicPolicy": false,
-            "IgnorePublicAcls": false,
-            "RestrictPublicBuckets": false,
-          },
-        "Versioning": null,
-      }
+      "CreationDate": "2019-01-01T00:00:00Z"
+      "EncryptionRules":
+        - "ApplyServerSideEncryptionByDefault":
+            "KMSMasterKeyID":
+            "SSEAlgorithm": "AES256"
+      "Grants":
+      "LifecycleRules":
+      "Location": "us-east-2"
+      "LoggingPolicy":
+      "MFADelete": "Disabled"
+      "Name": "bucket-name"
+      "Owner":
+        "DisplayName": "user.name"
+        "ID": "11112223334445556667778899aaabbbcccdddeeee"
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":[\"\
+        s3:ListBucket\",\"s3:PutObject\"],\"Resource\":[\"arn:aws:s3:::test-bucket/*\"\
+        ,\"arn:aws:s3:::test-bucket\"]}]}"
+      "PublicAccessBlockConfiguration":
+        "BlockPublicAcls": false
+        "BlockPublicPolicy": false
+        "IgnorePublicAcls": false
+        "RestrictPublicBuckets": false
+      "Versioning":

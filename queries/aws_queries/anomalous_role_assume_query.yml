@@ -1,7 +1,7 @@
 AnalysisType: scheduled_query
 Description: RoleAssumes with multiple Useragents could indicate compromised credentials.
 Enabled: false
-Query: |
+Query: >-
   SELECT
     requestParameters:roleArn as roleArn,
     userIdentity:principalId as principalId,
@@ -16,7 +16,9 @@ Query: |
     and userAgent != 'AWS Internal'
     and requestParameters:roleArn != 'null'
   GROUP BY requestParameters:roleArn, userIdentity:principalId
+
   HAVING count(DISTINCT userAgent) > 1
+
   ORDER BY count(DISTINCT userAgent) DESC
 QueryName: "RoleAssumes by Multiple Useragents"
 Schedule:

@@ -1,24 +1,24 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_attempt_to_leave_org.py
-RuleID: "AWS.CloudTrail.AttemptToLeaveOrg"
-DisplayName: AWS CloudTrail Attempt To Leave Org
+Description: >-
+  Detects when an actor attempts to remove an AWS account from an Organization. Security
+  configurations are often defined at the organizational level. Leaving the organization
+  can disrupt or totally shut down these controls.
+DisplayName: "AWS CloudTrail Attempt To Leave Org"
 Enabled: true
+Filename: aws_cloudtrail_attempt_to_leave_org.py
 LogTypes:
   - AWS.CloudTrail
-Severity: Info  
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.organizations-leave/
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562.008 # Defense Evasion: Impair Defenses - Disable or Modify Cloud Logs
-    - TA0005:T1666 # Defense Evasion: Modify Cloud Resource Hierarchy
-Description: >
-  Detects when an actor attempts to remove an AWS account from an Organization. Security
-  configurations are often defined at the organizational level. Leaving the organization can
-  disrupt or totally shut down these controls.
-Reference: >
-  https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.organizations-leave/
-Runbook: >
-  Determine if the attempt was successful. Monitor and potentially suspect the user account which 
-  attempted the action. Determine if the root account is compromised.
+    - TA0005:T1562.008
+    - TA0005:T1666
+RuleID: "AWS.CloudTrail.AttemptToLeaveOrg"
+Runbook: >-
+  Determine if the attempt was successful. Monitor and potentially suspect the user
+  account which  attempted the action. Determine if the root account is compromised.
+Severity: Info
 SummaryAttributes:
   - p_any_ip_addresses
   - p_any_aws_account_ids
@@ -30,52 +30,48 @@ Tags:
   - Modify Cloud Resource Hierarchy
   - Beta
 Tests:
-  - Name: Failed Attempt to Leave Org
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2025-01-20 15:59:33.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-01-20 16:05:54.322564138",
-        "awsRegion": "us-east-1",
-        "errorCode": "AccessDenied",
-        "errorMessage": "User: arn:aws:sts::111122223333:assumed-role/SampleRole/SampleSession is not authorized to perform: organizations:LeaveOrganization on resource: * because no identity-based policy allows the organizations:LeaveOrganization action",
-        "eventCategory": "Management",
-        "eventID": "f52c1358-4ddb-4453-a676-3f4dbc64d713",
-        "eventName": "LeaveOrganization",
-        "eventSource": "organizations.amazonaws.com",
-        "eventTime": "2025-01-20 15:59:33.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.09",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "67dce4b9-c7d1-4c91-a686-d34bbd5365eb",
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "organizations.us-east-1.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "example-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/SampleSession",
-          "principalId": "SAMPLE_PRINCIPAL_ID:SampleSession",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-01-20T15:59:30Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
+      "awsRegion": "us-east-1"
+      "errorCode": "AccessDenied"
+      "errorMessage": "User: arn:aws:sts::111122223333:assumed-role/SampleRole/SampleSession
+        is not authorized to perform: organizations:LeaveOrganization on resource:
+        * because no identity-based policy allows the organizations:LeaveOrganization
+        action"
+      "eventCategory": "Management"
+      "eventID": "f52c1358-4ddb-4453-a676-3f4dbc64d713"
+      "eventName": "LeaveOrganization"
+      "eventSource": "organizations.amazonaws.com"
+      "eventTime": "2025-01-20 15:59:33.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.09"
+      "managementEvent": true
+      "p_event_time": "2025-01-20 15:59:33.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-01-20 16:05:54.322564138"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "67dce4b9-c7d1-4c91-a686-d34bbd5365eb"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "organizations.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "example-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/SampleSession"
+        "principalId": "SAMPLE_PRINCIPAL_ID:SampleSession"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-01-20T15:59:30Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
+    Name: Failed Attempt to Leave Org

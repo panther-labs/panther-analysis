@@ -1,207 +1,144 @@
 AnalysisType: rule
-LogTypes:
-  - GCP.AuditLog
-Description:
-  Detects new roles granted to users to Cloud Run Services. This could potentially allow the user to perform
-  actions within the project and its resources, which could pose a security risk.
+DedupPeriodMinutes: 60
+Description: >-
+  Detects new roles granted to users to Cloud Run Services. This could potentially
+  allow the user to perform actions within the project and its resources, which could
+  pose a security risk.
 DisplayName: "GCP Cloud Run Set IAM Policy"
-RuleID: "GCP.Cloud.Run.Set.IAM.Policy"
 Enabled: true
 Filename: gcp_cloud_run_set_iam_policy.py
+LogTypes:
+  - GCP.AuditLog
 Reference: https://cloud.google.com/run/docs/securing/managing-access
-Runbook: Confirm this was authorized and necessary behavior
+RuleID: "GCP.Cloud.Run.Set.IAM.Policy"
+Runbook: >-
+  Confirm this was authorized and necessary behavior
 Severity: High
-DedupPeriodMinutes: 60
-Threshold: 1
 Tests:
-  - Name: GCP Run IAM Policy Set
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "insertId": "l3jvzyd2s2s",
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload":
-          {
-            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo":
-              {
-                "principalEmail": "some.user@company.com",
-                "principalSubject": "user:some.user@company.com",
-              },
-            "authorizationInfo":
-              [
-                {
-                  "granted": true,
-                  "permission": "run.services.setIamPolicy",
-                  "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-                  "resourceAttributes": {},
-                },
-                {
-                  "granted": true,
-                  "permission": "run.services.setIamPolicy",
-                  "resourceAttributes": {},
-                },
-              ],
-            "methodName": "google.cloud.run.v1.Services.SetIamPolicy",
-            "request":
-              {
-                "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
-                "policy":
-                  {
-                    "bindings":
-                      [
-                        {
-                          "members": ["user:some.user@company.com"],
-                          "role": "roles/run.invoker",
-                        },
-                      ],
-                  },
-                "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-              },
-            "requestMetadata":
-              {
-                "callerIP": "1.2.3.4",
-                "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
-                "destinationAttributes": {},
-                "requestAttributes":
-                  { "auth": {}, "time": "2024-02-02T09:44:26.173186Z" },
-              },
-            "resourceLocation": { "currentLocations": ["us-west1"] },
-            "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-            "response":
-              {
-                "@type": "type.googleapis.com/google.iam.v1.Policy",
-                "bindings":
-                  [
-                    {
-                      "members": ["user:some.user@company.com"],
-                      "role": "roles/run.invoker",
-                    },
-                  ],
-                "etag": "BwYQYvUoBxs=",
-              },
-            "serviceName": "run.googleapis.com",
-          },
-        "receiveTimestamp": "2024-02-02 09:44:26.653891982",
-        "resource":
-          {
-            "labels":
-              {
-                "configuration_name": "",
-                "location": "us-west1",
-                "project_id": "some-project",
-                "revision_name": "",
-                "service_name": "",
-              },
-            "type": "cloud_run_revision",
-          },
-        "severity": "NOTICE",
-        "timestamp": "2024-02-02 09:44:26.029835000",
-      }
-  - Name: GCP Run IAM Policy Not Set
-    ExpectedResult: false
+      "insertId": "l3jvzyd2s2s"
+      "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "some.user@company.com"
+          "principalSubject": "user:some.user@company.com"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "run.services.setIamPolicy"
+            "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+            "resourceAttributes": {}
+          - "granted": true
+            "permission": "run.services.setIamPolicy"
+            "resourceAttributes": {}
+        "methodName": "google.cloud.run.v1.Services.SetIamPolicy"
+        "request":
+          "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest"
+          "policy":
+            "bindings":
+              - "members":
+                  - "user:some.user@company.com"
+                "role": "roles/run.invoker"
+          "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "requestMetadata":
+          "callerIP": "1.2.3.4"
+          "callerSuppliedUserAgent": "(gzip),gzip(gfe)"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2024-02-02T09:44:26.173186Z"
+        "resourceLocation":
+          "currentLocations":
+            - "us-west1"
+        "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "response":
+          "@type": "type.googleapis.com/google.iam.v1.Policy"
+          "bindings":
+            - "members":
+                - "user:some.user@company.com"
+              "role": "roles/run.invoker"
+          "etag": "BwYQYvUoBxs="
+        "serviceName": "run.googleapis.com"
+      "receiveTimestamp": "2024-02-02 09:44:26.653891982"
+      "resource":
+        "labels":
+          "configuration_name": ""
+          "location": "us-west1"
+          "project_id": "some-project"
+          "revision_name": ""
+          "service_name": ""
+        "type": "cloud_run_revision"
+      "severity": "NOTICE"
+      "timestamp": "2024-02-02 09:44:26.029835000"
+    Name: GCP Run IAM Policy Set
+  - ExpectedResult: false
     Log:
-      {
-        "insertId": "l3jvzyd2s2s",
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload":
-          {
-            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo":
-              {
-                "principalEmail": "some.user@company.com",
-                "principalSubject": "user:some.user@company.com",
-              },
-            "authorizationInfo":
-              [
-                {
-                  "granted": false,
-                  "permission": "run.services.setIamPolicy",
-                  "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-                  "resourceAttributes": {},
-                },
-                {
-                  "granted": false,
-                  "permission": "run.services.setIamPolicy",
-                  "resourceAttributes": {},
-                },
-              ],
-            "methodName": "google.cloud.run.v1.Services.SetIamPolicy",
-            "request":
-              {
-                "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
-                "policy":
-                  {
-                    "bindings":
-                      [
-                        {
-                          "members": ["user:some.user@company.com"],
-                          "role": "roles/run.invoker",
-                        },
-                      ],
-                  },
-                "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-              },
-            "requestMetadata": ...,
-            "resourceLocation": ...,
-            "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-            "serviceName": "run.googleapis.com",
-          },
-        "receiveTimestamp": "2024-02-02 09:44:26.653891982",
-        "resource": ...,
-        "severity": "NOTICE",
-        "timestamp": "2024-02-02 09:44:26.029835000",
-      }
-  - Name: No method provided
-    ExpectedResult: false
+      "insertId": "l3jvzyd2s2s"
+      "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "some.user@company.com"
+          "principalSubject": "user:some.user@company.com"
+        "authorizationInfo":
+          - "granted": false
+            "permission": "run.services.setIamPolicy"
+            "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+            "resourceAttributes": {}
+          - "granted": false
+            "permission": "run.services.setIamPolicy"
+            "resourceAttributes": {}
+        "methodName": "google.cloud.run.v1.Services.SetIamPolicy"
+        "request":
+          "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest"
+          "policy":
+            "bindings":
+              - "members":
+                  - "user:some.user@company.com"
+                "role": "roles/run.invoker"
+          "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "requestMetadata": "..."
+        "resourceLocation": "..."
+        "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "serviceName": "run.googleapis.com"
+      "receiveTimestamp": "2024-02-02 09:44:26.653891982"
+      "resource": "..."
+      "severity": "NOTICE"
+      "timestamp": "2024-02-02 09:44:26.029835000"
+    Name: GCP Run IAM Policy Not Set
+  - ExpectedResult: false
     Log:
-      {
-        "insertId": "l3jvzyd2s2s",
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
-        "protoPayload":
-          {
-            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo":
-              {
-                "principalEmail": "some.user@company.com",
-                "principalSubject": "user:some.user@company.com",
-              },
-            "authorizationInfo":
-              [
-                {
-                  "granted": false,
-                  "permission": "run.services.setIamPolicy",
-                  "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-                  "resourceAttributes": {},
-                },
-                {
-                  "granted": false,
-                  "permission": "run.services.setIamPolicy",
-                  "resourceAttributes": {},
-                },
-              ],
-            "request":
-              {
-                "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
-                "policy":
-                  {
-                    "bindings":
-                      [
-                        {
-                          "members": ["user:some.user@company.com"],
-                          "role": "roles/run.invoker",
-                        },
-                      ],
-                  },
-                "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-              },
-            "requestMetadata": ...,
-            "resourceLocation": ...,
-            "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil",
-            "serviceName": "run.googleapis.com",
-          },
-        "receiveTimestamp": "2024-02-02 09:44:26.653891982",
-        "resource": ...,
-        "severity": "NOTICE",
-        "timestamp": "2024-02-02 09:44:26.029835000",
-      }
+      "insertId": "l3jvzyd2s2s"
+      "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "some.user@company.com"
+          "principalSubject": "user:some.user@company.com"
+        "authorizationInfo":
+          - "granted": false
+            "permission": "run.services.setIamPolicy"
+            "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+            "resourceAttributes": {}
+          - "granted": false
+            "permission": "run.services.setIamPolicy"
+            "resourceAttributes": {}
+        "request":
+          "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest"
+          "policy":
+            "bindings":
+              - "members":
+                  - "user:some.user@company.com"
+                "role": "roles/run.invoker"
+          "resource": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "requestMetadata": "..."
+        "resourceLocation": "..."
+        "resourceName": "projects/some-project/locations/us-west1/services/cloudrun-exfil"
+        "serviceName": "run.googleapis.com"
+      "receiveTimestamp": "2024-02-02 09:44:26.653891982"
+      "resource": "..."
+      "severity": "NOTICE"
+      "timestamp": "2024-02-02 09:44:26.029835000"
+    Name: No method provided
+Threshold: 1

@@ -1,29 +1,28 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_file_downloaded_signal.py
-RuleID: "Snowflake.FileDownloaded"
-Description: >
+CreateAlert: false
+Description: >-
   A file was downloaded from a stage
 DisplayName: "Snowflake File Downloaded"
 Enabled: true
-CreateAlert: false
-Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Filename: snowflake_file_downloaded_signal.py
+Reference: 
+  https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Reports:
-    MITRE ATT&CK:
-        - TA0010:T1041  # Exfiltration Over C2 Channel
+  MITRE ATT&CK:
+    - TA0010:T1041
+RuleID: "Snowflake.FileDownloaded"
 ScheduledQueries:
   - Query.Snowflake.FileDownloaded
 Severity: Info
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-      "execution_status": "SUCCESS",
-      "path": "LOGS.PUBLIC.data_exfil/DATA.csv",
-      "query_text": "GET '@LOGS.PUBLIC.data_exfil/DATA.csv' 'file:///Users/evil.genius/Documents'",
-      "query_type": "GET_FILES",
-      "role_name": "SYSADMIN",
-      "stage": "LOGS.PUBLIC.data_exfil",
-      "start_time": "2024-06-10 19:37:15.698Z",
+      "execution_status": "SUCCESS"
+      "path": "LOGS.PUBLIC.data_exfil/DATA.csv"
+      "query_text": "GET '@LOGS.PUBLIC.data_exfil/DATA.csv' 'file:///Users/evil.genius/Documents'"
+      "query_type": "GET_FILES"
+      "role_name": "SYSADMIN"
+      "stage": "LOGS.PUBLIC.data_exfil"
+      "start_time": "2024-06-10 19:37:15.698Z"
       "user_name": "ADMIN"
-    }
+    Name: Value Returned By Query

@@ -1,11 +1,42 @@
 AnalysisType: rule
-Filename: aws_vpce_s3_external_ip.py
-RuleID: "AWS.CloudTrail.VPCE.S3ExternalIP"
+DedupPeriodMinutes: 60
+Description: >-
+  Detects S3 data access through VPC endpoints from external/public IP addresses,
+  which could indicate data exfiltration attempts.
+
+
+  This rule can be customized with the following overrides:
+
+  - S3_DATA_ACCESS_OPERATIONS: List of S3 operations to monitor
 DisplayName: "S3 Access Via VPC Endpoint From External IP"
 Enabled: true
+Filename: aws_vpce_s3_external_ip.py
 LogTypes:
   - AWS.CloudTrail
+Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
+RuleID: "AWS.CloudTrail.VPCE.S3ExternalIP"
+Runbook: >-
+  1. Identify the principal and the specific S3 objects being accessed
+
+  2. Verify if the external IP address belongs to a legitimate service or entity
+
+  3. Check if the access pattern is expected for this user/role
+
+  4. Review the contents of the S3 objects to determine sensitivity
+
+  5. If unauthorized, determine how the principal obtained access credentials
+
+  6. Revoke access immediately if determined to be malicious
+
+  7. Consider implementing stricter bucket policies and VPC endpoint policies
 Severity: Medium
+SummaryAttributes:
+  - userIdentity.principalId
+  - sourceIPAddress
+  - eventSource
+  - eventName
+  - requestParameters
+  - resources
 Tags:
   - AWS
   - VPC
@@ -14,99 +45,60 @@ Tags:
   - CloudTrail
   - Network Boundary Bridging
   - Exfiltration Over Alternative Protocol
-Description: |
-  Detects S3 data access through VPC endpoints from external/public IP addresses, which could indicate data exfiltration attempts.
-  
-  This rule can be customized with the following overrides:
-  - S3_DATA_ACCESS_OPERATIONS: List of S3 operations to monitor
-Runbook: |
-  1. Identify the principal and the specific S3 objects being accessed
-  2. Verify if the external IP address belongs to a legitimate service or entity
-  3. Check if the access pattern is expected for this user/role
-  4. Review the contents of the S3 objects to determine sensitivity
-  5. If unauthorized, determine how the principal obtained access credentials
-  6. Revoke access immediately if determined to be malicious
-  7. Consider implementing stricter bucket policies and VPC endpoint policies
-Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
-SummaryAttributes:
-  - userIdentity.principalId
-  - sourceIPAddress
-  - eventSource
-  - eventName
-  - requestParameters
-  - resources
-DedupPeriodMinutes: 60
 Tests:
-  - Name: External IP Access
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventType": "AwsVpceEvent",
-        "eventCategory": "NetworkActivity",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "AIDAEXAMPLE",
-          "accountId": "012345678901"
-        },
-        "sourceIPAddress": "8.8.8.8",
-        "requestParameters": {
-          "bucketName": "sensitive-data-bucket",
-          "key": "confidential/file.pdf"
-        },
-        "resources": [
-          {
-            "type": "AWS::S3::Object",
-            "ARN": "arn:aws:s3:::sensitive-data-bucket/confidential/file.pdf"
-          }
-        ],
-        "eventTime": "2023-01-01T12:00:00Z",
-        "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7",
-        "vpcEndpointAccountId": "012345678901",
-        "recipientAccountId": "012345678901"
-      }
-  - Name: Internal IP Access
-    ExpectedResult: false
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-01-01T12:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "recipientAccountId": "012345678901"
+      "requestParameters":
+        "bucketName": "sensitive-data-bucket"
+        "key": "confidential/file.pdf"
+      "resources":
+        - "ARN": "arn:aws:s3:::sensitive-data-bucket/confidential/file.pdf"
+          "type": "AWS::S3::Object"
+      "sourceIPAddress": "8.8.8.8"
+      "userIdentity":
+        "accountId": "012345678901"
+        "principalId": "AIDAEXAMPLE"
+        "type": "IAMUser"
+      "vpcEndpointAccountId": "012345678901"
+      "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7"
+    Name: External IP Access
+  - ExpectedResult: false
     Log:
-      {
-        "eventType": "AwsVpceEvent",
-        "eventCategory": "NetworkActivity",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "AIDAEXAMPLE",
-          "accountId": "012345678901"
-        },
-        "sourceIPAddress": "10.0.0.1",
-        "requestParameters": {
-          "bucketName": "sensitive-data-bucket",
-          "key": "confidential/file.pdf"
-        },
-        "resources": [
-          {
-            "type": "AWS::S3::Object",
-            "ARN": "arn:aws:s3:::sensitive-data-bucket/confidential/file.pdf"
-          }
-        ],
-        "eventTime": "2023-01-01T12:00:00Z",
-        "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7",
-        "vpcEndpointAccountId": "012345678901",
-        "recipientAccountId": "012345678901"
-      }
-  - Name: Not S3 Service
-    ExpectedResult: false
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-01-01T12:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "recipientAccountId": "012345678901"
+      "requestParameters":
+        "bucketName": "sensitive-data-bucket"
+        "key": "confidential/file.pdf"
+      "resources":
+        - "ARN": "arn:aws:s3:::sensitive-data-bucket/confidential/file.pdf"
+          "type": "AWS::S3::Object"
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "012345678901"
+        "principalId": "AIDAEXAMPLE"
+        "type": "IAMUser"
+      "vpcEndpointAccountId": "012345678901"
+      "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7"
+    Name: Internal IP Access
+  - ExpectedResult: false
     Log:
-      {
-        "eventType": "AwsVpceEvent",
-        "eventCategory": "NetworkActivity",
-        "eventSource": "ec2.amazonaws.com",
-        "eventName": "DescribeInstances",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "AIDAEXAMPLE",
-          "accountId": "012345678901"
-        },
-        "sourceIPAddress": "8.8.8.8"
-      } 
+      "eventCategory": "NetworkActivity"
+      "eventName": "DescribeInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventType": "AwsVpceEvent"
+      "sourceIPAddress": "8.8.8.8"
+      "userIdentity":
+        "accountId": "012345678901"
+        "principalId": "AIDAEXAMPLE"
+        "type": "IAMUser"
+    Name: Not S3 Service

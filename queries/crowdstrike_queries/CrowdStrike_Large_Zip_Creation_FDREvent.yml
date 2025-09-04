@@ -1,10 +1,8 @@
-# This file is the part of the Crowdstrike FDREvent migration, and it's the equivalent of
-# https://github.com/panther-labs/panther-analysis/blob/b61db1ecf3967c5f6a44c1782f8891fd5f54384d/queries/crowdstrike_queries/CrowdStrike_Large_Zip_Creation.yml
-#
 AnalysisType: scheduled_query
-Description: Detects creation of large zip files, which can indicate attempts of exfiltration (crowdstrike_fdrevent table)
+Description: Detects creation of large zip files, which can indicate attempts of exfiltration
+  (crowdstrike_fdrevent table)
 Enabled: false
-Query: |
+Query: >-
   select
     ppr.event:CommandLine as parent_commandline,
     zip_proc.*
@@ -32,7 +30,8 @@ Query: |
           and CAST(event:Size as integer) > 10000000
       ) zips
       left join panther_logs.public.crowdstrike_fdrevent pr2
-      on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type = 'ProcessRollup2'
+      on zips.ContextProcessId = pr2.TargetProcessId_decimal and pr2.fdr_event_type
+  = 'ProcessRollup2'
 
       where
       pr2.event:CommandLine like any(
@@ -49,7 +48,8 @@ Query: |
 
     ) zip_proc
     LEFT JOIN panther_logs.public.crowdstrike_fdrevent ppr
-    on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type = 'ProcessRollup2'
+    on zip_proc.process_parentpid = ppr.TargetProcessId_decimal and ppr.fdr_event_type
+  = 'ProcessRollup2'
   where
     (
       (parent_commandline is null) or

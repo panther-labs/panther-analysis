@@ -1,246 +1,254 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_useraccesskeyauth.py
-RuleID: "AWS.CloudTrail.UserAccessKeyAuth"
+CreateAlert: false
+DedupPeriodMinutes: 60
 DisplayName: "AWS.CloudTrail.UserAccessKeyAuth"
 Enabled: true
-LogTypes:
-    - AWS.CloudTrail
-Severity: Info
-DedupPeriodMinutes: 60
-Threshold: 1
+Filename: aws_cloudtrail_useraccesskeyauth.py
 InlineFilters:
-    - All: []
+  - All: []
+LogTypes:
+  - AWS.CloudTrail
+RuleID: "AWS.CloudTrail.UserAccessKeyAuth"
+Severity: Info
 Tests:
-    - Name: Access Key Action Failed
-      ExpectedResult: false
-      Log:
-        awsRegion: us-east-1
-        errorCode: AccessDenied
-        errorMessage: 'User: arn:aws:iam::187901811700:user/exposed.user is not authorized to perform: lambda:ListFunctions on resource: * because no identity-based policy allows the lambda:ListFunctions action'
-        eventCategory: Management
-        eventID: 57b719ad-f2fa-4d18-bd84-29fee11799b1
-        eventName: ListFunctions20150331
-        eventSource: lambda.amazonaws.com
-        eventTime: "2024-06-02 20:16:32.000000000"
-        eventType: AwsApiCall
-        eventVersion: "1.08"
-        managementEvent: true
-        p_any_actor_ids:
-            - AIDASXP6SDP2AJQPWVFII
-        p_any_aws_account_ids:
-            - "187901811700"
-        p_any_aws_arns:
-            - arn:aws:iam::187901811700:user/exposed.user
-        p_any_ip_addresses:
-            - 73.252.165.138
-        p_any_trace_ids:
-            - AKIASXP6SDP2F3JQERZ2
-        p_any_usernames:
-            - exposed.user
-        p_event_time: "2024-06-02 20:16:32.000000000"
-        p_log_type: AWS.CloudTrail
-        p_parse_time: "2024-06-02 20:25:54.290533382"
-        p_row_id: f26228572e3f9acd88e0cadc1fcc8e0a
-        p_schema_version: 0
-        p_source_file:
-            aws_s3_bucket: threat-research-trail-trail-bucket-0ipb5nzxam
-            aws_s3_key: AWSLogs/187901811700/CloudTrail/us-east-1/2024/06/02/187901811700_CloudTrail_us-east-1_20240602T2020Z_12tLndRWeXi4IWKg.json.gz
-        p_source_id: d0a1e235-6548-4e7f-952a-35063b304007
-        p_source_label: threat-research-trail-us-east-1
-        readOnly: true
-        recipientAccountId: "187901811700"
-        requestID: ea7dbdf9-6c03-421e-abf4-f201919f9f26
-        sourceIPAddress: 73.252.165.138
-        tlsDetails:
-            cipherSuite: TLS_AES_128_GCM_SHA256
-            clientProvidedHostHeader: lambda.us-east-1.amazonaws.com
-            tlsVersion: TLSv1.3
-        userAgent: aws-cli/2.15.59 md/awscrt#0.19.19 ua/2.0 os/macos#22.6.0 md/arch#arm64 lang/python#3.11.11 md/pyimpl#CPython cfg/retry-mode#standard md/installer#source md/prompt#off md/command#lambda.list-functions
-        userIdentity:
-            accessKeyId: AKIASXP6SDP2F3JQERZ2
-            accountId: "187901811700"
-            arn: arn:aws:iam::187901811700:user/exposed.user
-            principalId: AIDASXP6SDP2AJQPWVFII
-            type: IAMUser
-            userName: exposed.user
-    - Name: Access Key Action Success
-      ExpectedResult: true
-      Log:
-        awsRegion: us-east-1
-        eventCategory: Management
-        eventID: 4c24450d-007e-4849-9e1b-4954622dbb08
-        eventName: GetCallerIdentity
-        eventSource: sts.amazonaws.com
-        eventTime: "2024-06-02 20:16:22.000000000"
-        eventType: AwsApiCall
-        eventVersion: "1.08"
-        managementEvent: true
-        p_any_actor_ids:
-            - AIDASXP6SDP2AJQPWVFII
-        p_any_aws_account_ids:
-            - "187901811700"
-        p_any_aws_arns:
-            - arn:aws:iam::187901811700:user/exposed.user
-        p_any_ip_addresses:
-            - 73.252.165.138
-        p_any_trace_ids:
-            - AKIASXP6SDP2F3JQERZ2
-        p_any_usernames:
-            - exposed.user
-        p_event_time: "2024-06-02 20:16:22.000000000"
-        p_log_type: AWS.CloudTrail
-        p_parse_time: "2024-06-02 20:25:54.289981899"
-        p_row_id: f26228572e3f9acd88e0cadc1fc88e0a
-        p_schema_version: 0
-        p_source_file:
-            aws_s3_bucket: threat-research-trail-trail-bucket-0ipb5nzxam
-            aws_s3_key: AWSLogs/187901811700/CloudTrail/us-east-1/2024/06/02/187901811700_CloudTrail_us-east-1_20240602T2020Z_12tLndRWeXi4IWKg.json.gz
-        p_source_id: d0a1e235-6548-4e7f-952a-35063b304007
-        p_source_label: threat-research-trail-us-east-1
-        readOnly: true
-        recipientAccountId: "187901811700"
-        requestID: c77ed3ee-8480-41df-98cb-9cf52ce04a1c
-        sourceIPAddress: 73.252.165.138
-        tlsDetails:
-            cipherSuite: TLS_AES_128_GCM_SHA256
-            clientProvidedHostHeader: sts.us-east-1.amazonaws.com
-            tlsVersion: TLSv1.3
-        userAgent: aws-cli/2.15.59 md/awscrt#0.19.19 ua/2.0 os/macos#22.6.0 md/arch#arm64 lang/python#3.11.11 md/pyimpl#CPython cfg/retry-mode#standard md/installer#source md/prompt#off md/command#sts.get-caller-identity
-        userIdentity:
-            accessKeyId: AKIASXP6SDP2F3JQERZ2
-            accountId: "187901811700"
-            arn: arn:aws:iam::187901811700:user/exposed.user
-            principalId: AIDASXP6SDP2AJQPWVFII
-            type: IAMUser
-            userName: exposed.user
-    - Name: Console Login
-      ExpectedResult: false
-      Log:
-        additionalEventData:
-            MFAUsed: "No"
-            MobileVersion: "No"
-        awsRegion: us-west-2
-        eventCategory: Management
-        eventID: 364ad368-42bf-4e05-a500-971ddfe8ebff
-        eventName: ConsoleLogin
-        eventSource: signin.amazonaws.com
-        eventTime: "2024-06-02 19:41:40.000000000"
-        eventType: AwsConsoleSignIn
-        eventVersion: "1.08"
-        managementEvent: true
-        p_any_actor_ids:
-            - AROASXP6SDP2F4WLQVARB
-            - AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
-        p_any_aws_account_ids:
-            - "187901811700"
-        p_any_aws_arns:
-            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6
-            - arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
-            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6
-        p_any_ip_addresses:
-            - 73.252.165.138
-        p_any_trace_ids:
-            - ASIASXP6SDP2HUZY3TOB
-        p_any_usernames:
-            - AWSReservedSSO_DevAdmin_635426549a280cc6
-            - nicholas.hakmiller
-        p_event_time: "2024-06-02 19:41:40.000000000"
-        p_log_type: AWS.CloudTrail
-        p_parse_time: "2024-06-02 19:50:54.391407154"
-        p_row_id: f26228572e3f9acd88e0cadc1f80a502
-        p_schema_version: 0
-        p_source_file:
-            aws_s3_bucket: threat-research-trail-trail-bucket-xhh4yndpq5
-            aws_s3_key: AWSLogs/187901811700/CloudTrail/us-west-2/2024/06/02/187901811700_CloudTrail_us-west-2_20240602T1945Z_ggfzMNc1AHPJypqR.json.gz
-        p_source_id: 469edf86-a0c6-4d13-ba48-47c4060bb804
-        p_source_label: threat-research-trail-us-west-2
-        readOnly: false
-        recipientAccountId: "187901811700"
-        responseElements:
-            ConsoleLogin: Success
-        sourceIPAddress: 73.252.165.138
-        tlsDetails:
-            cipherSuite: TLS_AES_128_GCM_SHA256
-            clientProvidedHostHeader: us-west-2.signin.aws.amazon.com
-            tlsVersion: TLSv1.3
-        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-        userIdentity:
-            accessKeyId: ASIASXP6SDP2HUZY3TOB
-            accountId: "187901811700"
-            arn: arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
-            principalId: AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
-            sessionContext:
-                attributes:
-                    creationDate: "2024-06-02T19:41:40Z"
-                    mfaAuthenticated: "false"
-                sessionIssuer:
-                    accountId: "187901811700"
-                    arn: arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6
-                    principalId: AROASXP6SDP2F4WLQVARB
-                    type: Role
-                    userName: AWSReservedSSO_DevAdmin_635426549a280cc6
-                webIdFederationData: {}
-            type: AssumedRole
-    - Name: No Access Key
-      ExpectedResult: false
-      Log:
-        additionalEventData:
-            MFAUsed: "No"
-            MobileVersion: "No"
-        awsRegion: us-west-2
-        eventCategory: Management
-        eventID: 364ad368-42bf-4e05-a500-971ddfe8ebff
-        eventName: AssumeRole
-        eventSource: signin.amazonaws.com
-        eventTime: "2024-06-02 19:41:40.000000000"
-        eventType: AwsConsoleSignIn
-        eventVersion: "1.08"
-        managementEvent: true
-        p_any_actor_ids:
-            - AROASXP6SDP2F4WLQVARB
-            - AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
-        p_any_aws_account_ids:
-            - "187901811700"
-        p_any_aws_arns:
-            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6
-            - arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
-            - arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6
-        p_any_ip_addresses:
-            - 73.252.165.138
-        p_any_trace_ids:
-            - ASIASXP6SDP2HUZY3TOB
-        p_any_usernames:
-            - nicholas.hakmiller
-        p_event_time: "2024-06-02 19:41:40.000000000"
-        p_log_type: AWS.CloudTrail
-        p_parse_time: "2024-06-02 19:50:54.391407154"
-        p_row_id: f26228572e3f9acd88e0cadc1f80a502
-        p_schema_version: 0
-        p_source_file:
-            aws_s3_bucket: threat-research-trail-trail-bucket-xhh4yndpq5
-            aws_s3_key: AWSLogs/187901811700/CloudTrail/us-west-2/2024/06/02/187901811700_CloudTrail_us-west-2_20240602T1945Z_ggfzMNc1AHPJypqR.json.gz
-        p_source_id: 469edf86-a0c6-4d13-ba48-47c4060bb804
-        p_source_label: threat-research-trail-us-west-2
-        readOnly: false
-        recipientAccountId: "187901811700"
-        responseElements:
-            ConsoleLogin: Success
-        sourceIPAddress: 73.252.165.138
-        tlsDetails:
-            cipherSuite: TLS_AES_128_GCM_SHA256
-            clientProvidedHostHeader: us-west-2.signin.aws.amazon.com
-            tlsVersion: TLSv1.3
-        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
-        userIdentity:
-            accountId: "187901811700"
-            arn: arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller
-            principalId: AROASXP6SDP2F4WLQVARB:nicholas.hakmiller
-            sessionContext:
-                attributes:
-                    creationDate: "2024-06-02T19:41:40Z"
-                    mfaAuthenticated: "false"
-                sessionIssuer:
-                    type: lambda
-                webIdFederationData: {}
-            type: AssumedRole
-CreateAlert: false
+  - ExpectedResult: false
+    Log:
+      "awsRegion": "us-east-1"
+      "errorCode": "AccessDenied"
+      "errorMessage": "User: arn:aws:iam::187901811700:user/exposed.user is not authorized
+        to perform: lambda:ListFunctions on resource: * because no identity-based
+        policy allows the lambda:ListFunctions action"
+      "eventCategory": "Management"
+      "eventID": "57b719ad-f2fa-4d18-bd84-29fee11799b1"
+      "eventName": "ListFunctions20150331"
+      "eventSource": "lambda.amazonaws.com"
+      "eventTime": "2024-06-02 20:16:32.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_any_actor_ids":
+        - "AIDASXP6SDP2AJQPWVFII"
+      "p_any_aws_account_ids":
+        - "187901811700"
+      "p_any_aws_arns":
+        - "arn:aws:iam::187901811700:user/exposed.user"
+      "p_any_ip_addresses":
+        - "73.252.165.138"
+      "p_any_trace_ids":
+        - "AKIASXP6SDP2F3JQERZ2"
+      "p_any_usernames":
+        - "exposed.user"
+      "p_event_time": "2024-06-02 20:16:32.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-06-02 20:25:54.290533382"
+      "p_row_id": "f26228572e3f9acd88e0cadc1fcc8e0a"
+      "p_schema_version": 0
+      "p_source_file":
+        "aws_s3_bucket": "threat-research-trail-trail-bucket-0ipb5nzxam"
+        "aws_s3_key": "AWSLogs/187901811700/CloudTrail/us-east-1/2024/06/02/187901811700_CloudTrail_us-east-1_20240602T2020Z_12tLndRWeXi4IWKg.json.gz"
+      "p_source_id": "d0a1e235-6548-4e7f-952a-35063b304007"
+      "p_source_label": "threat-research-trail-us-east-1"
+      "readOnly": true
+      "recipientAccountId": "187901811700"
+      "requestID": "ea7dbdf9-6c03-421e-abf4-f201919f9f26"
+      "sourceIPAddress": "73.252.165.138"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "lambda.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "aws-cli/2.15.59 md/awscrt#0.19.19 ua/2.0 os/macos#22.6.0 md/arch#arm64
+        lang/python#3.11.11 md/pyimpl#CPython cfg/retry-mode#standard md/installer#source
+        md/prompt#off md/command#lambda.list-functions"
+      "userIdentity":
+        "accessKeyId": "AKIASXP6SDP2F3JQERZ2"
+        "accountId": "187901811700"
+        "arn": "arn:aws:iam::187901811700:user/exposed.user"
+        "principalId": "AIDASXP6SDP2AJQPWVFII"
+        "type": "IAMUser"
+        "userName": "exposed.user"
+    Name: Access Key Action Failed
+  - ExpectedResult: true
+    Log:
+      "awsRegion": "us-east-1"
+      "eventCategory": "Management"
+      "eventID": "4c24450d-007e-4849-9e1b-4954622dbb08"
+      "eventName": "GetCallerIdentity"
+      "eventSource": "sts.amazonaws.com"
+      "eventTime": "2024-06-02 20:16:22.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_any_actor_ids":
+        - "AIDASXP6SDP2AJQPWVFII"
+      "p_any_aws_account_ids":
+        - "187901811700"
+      "p_any_aws_arns":
+        - "arn:aws:iam::187901811700:user/exposed.user"
+      "p_any_ip_addresses":
+        - "73.252.165.138"
+      "p_any_trace_ids":
+        - "AKIASXP6SDP2F3JQERZ2"
+      "p_any_usernames":
+        - "exposed.user"
+      "p_event_time": "2024-06-02 20:16:22.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-06-02 20:25:54.289981899"
+      "p_row_id": "f26228572e3f9acd88e0cadc1fc88e0a"
+      "p_schema_version": 0
+      "p_source_file":
+        "aws_s3_bucket": "threat-research-trail-trail-bucket-0ipb5nzxam"
+        "aws_s3_key": "AWSLogs/187901811700/CloudTrail/us-east-1/2024/06/02/187901811700_CloudTrail_us-east-1_20240602T2020Z_12tLndRWeXi4IWKg.json.gz"
+      "p_source_id": "d0a1e235-6548-4e7f-952a-35063b304007"
+      "p_source_label": "threat-research-trail-us-east-1"
+      "readOnly": true
+      "recipientAccountId": "187901811700"
+      "requestID": "c77ed3ee-8480-41df-98cb-9cf52ce04a1c"
+      "sourceIPAddress": "73.252.165.138"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "sts.us-east-1.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "aws-cli/2.15.59 md/awscrt#0.19.19 ua/2.0 os/macos#22.6.0 md/arch#arm64
+        lang/python#3.11.11 md/pyimpl#CPython cfg/retry-mode#standard md/installer#source
+        md/prompt#off md/command#sts.get-caller-identity"
+      "userIdentity":
+        "accessKeyId": "AKIASXP6SDP2F3JQERZ2"
+        "accountId": "187901811700"
+        "arn": "arn:aws:iam::187901811700:user/exposed.user"
+        "principalId": "AIDASXP6SDP2AJQPWVFII"
+        "type": "IAMUser"
+        "userName": "exposed.user"
+    Name: Access Key Action Success
+  - ExpectedResult: false
+    Log:
+      "additionalEventData":
+        "MFAUsed": "No"
+        "MobileVersion": "No"
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "364ad368-42bf-4e05-a500-971ddfe8ebff"
+      "eventName": "ConsoleLogin"
+      "eventSource": "signin.amazonaws.com"
+      "eventTime": "2024-06-02 19:41:40.000000000"
+      "eventType": "AwsConsoleSignIn"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_any_actor_ids":
+        - "AROASXP6SDP2F4WLQVARB"
+        - "AROASXP6SDP2F4WLQVARB:nicholas.hakmiller"
+      "p_any_aws_account_ids":
+        - "187901811700"
+      "p_any_aws_arns":
+        - "arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6"
+        - "arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller"
+        - "arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6"
+      "p_any_ip_addresses":
+        - "73.252.165.138"
+      "p_any_trace_ids":
+        - "ASIASXP6SDP2HUZY3TOB"
+      "p_any_usernames":
+        - "AWSReservedSSO_DevAdmin_635426549a280cc6"
+        - "nicholas.hakmiller"
+      "p_event_time": "2024-06-02 19:41:40.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-06-02 19:50:54.391407154"
+      "p_row_id": "f26228572e3f9acd88e0cadc1f80a502"
+      "p_schema_version": 0
+      "p_source_file":
+        "aws_s3_bucket": "threat-research-trail-trail-bucket-xhh4yndpq5"
+        "aws_s3_key": "AWSLogs/187901811700/CloudTrail/us-west-2/2024/06/02/187901811700_CloudTrail_us-west-2_20240602T1945Z_ggfzMNc1AHPJypqR.json.gz"
+      "p_source_id": "469edf86-a0c6-4d13-ba48-47c4060bb804"
+      "p_source_label": "threat-research-trail-us-west-2"
+      "readOnly": false
+      "recipientAccountId": "187901811700"
+      "responseElements":
+        "ConsoleLogin": "Success"
+      "sourceIPAddress": "73.252.165.138"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "us-west-2.signin.aws.amazon.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+      "userIdentity":
+        "accessKeyId": "ASIASXP6SDP2HUZY3TOB"
+        "accountId": "187901811700"
+        "arn": "arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller"
+        "principalId": "AROASXP6SDP2F4WLQVARB:nicholas.hakmiller"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-06-02T19:41:40Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "187901811700"
+            "arn": "arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6"
+            "principalId": "AROASXP6SDP2F4WLQVARB"
+            "type": "Role"
+            "userName": "AWSReservedSSO_DevAdmin_635426549a280cc6"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: Console Login
+  - ExpectedResult: false
+    Log:
+      "additionalEventData":
+        "MFAUsed": "No"
+        "MobileVersion": "No"
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "364ad368-42bf-4e05-a500-971ddfe8ebff"
+      "eventName": "AssumeRole"
+      "eventSource": "signin.amazonaws.com"
+      "eventTime": "2024-06-02 19:41:40.000000000"
+      "eventType": "AwsConsoleSignIn"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_any_actor_ids":
+        - "AROASXP6SDP2F4WLQVARB"
+        - "AROASXP6SDP2F4WLQVARB:nicholas.hakmiller"
+      "p_any_aws_account_ids":
+        - "187901811700"
+      "p_any_aws_arns":
+        - "arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_635426549a280cc6"
+        - "arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller"
+        - "arn:aws:iam::187901811700:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_635426549a280cc6"
+      "p_any_ip_addresses":
+        - "73.252.165.138"
+      "p_any_trace_ids":
+        - "ASIASXP6SDP2HUZY3TOB"
+      "p_any_usernames":
+        - "nicholas.hakmiller"
+      "p_event_time": "2024-06-02 19:41:40.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-06-02 19:50:54.391407154"
+      "p_row_id": "f26228572e3f9acd88e0cadc1f80a502"
+      "p_schema_version": 0
+      "p_source_file":
+        "aws_s3_bucket": "threat-research-trail-trail-bucket-xhh4yndpq5"
+        "aws_s3_key": "AWSLogs/187901811700/CloudTrail/us-west-2/2024/06/02/187901811700_CloudTrail_us-west-2_20240602T1945Z_ggfzMNc1AHPJypqR.json.gz"
+      "p_source_id": "469edf86-a0c6-4d13-ba48-47c4060bb804"
+      "p_source_label": "threat-research-trail-us-west-2"
+      "readOnly": false
+      "recipientAccountId": "187901811700"
+      "responseElements":
+        "ConsoleLogin": "Success"
+      "sourceIPAddress": "73.252.165.138"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "us-west-2.signin.aws.amazon.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+      "userIdentity":
+        "accountId": "187901811700"
+        "arn": "arn:aws:sts::187901811700:assumed-role/AWSReservedSSO_DevAdmin_635426549a280cc6/nicholas.hakmiller"
+        "principalId": "AROASXP6SDP2F4WLQVARB:nicholas.hakmiller"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-06-02T19:41:40Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "type": "lambda"
+          "webIdFederationData": {}
+        "type": "AssumedRole"
+    Name: No Access Key
+Threshold: 1

@@ -1,58 +1,59 @@
 AnalysisType: rule
-Filename: github_repo_hook_modified.py
-RuleID: "GitHub.Repo.HookModified"
+Description: >-
+  Deprecated. See GitHub.Webhook.Modified instead.
 DisplayName: "DEPRECATED - GitHub Web Hook Modified"
 Enabled: false
+Filename: github_repo_hook_modified.py
 LogTypes:
   - GitHub.Audit
+Reference: https://docs.github.com/en/webhooks/about-webhooks
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1020
+RuleID: "GitHub.Repo.HookModified"
+Severity: Info
 Tags:
   - GitHub
   - Exfiltration:Automated Exfiltration
   - Deprecated
-Reports:
-  MITRE ATT&CK:
-    - TA0010:T1020
-Reference: https://docs.github.com/en/webhooks/about-webhooks
-Severity: Info
-Description: Deprecated. See GitHub.Webhook.Modified instead.
 Tests:
-  - Name: GitHub - Webhook Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "hook.create",
-        "data":
-          {
-            "hook_id": 111222333444555,
-            "events": ["fork", "public", "pull_request", "push", "repository"],
-          },
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-      }
-  - Name: GitHub - Webhook Deleted
-    ExpectedResult: true
+      "action": "hook.create"
+      "actor": "cat"
+      "data":
+        "events":
+          - "fork"
+          - "public"
+          - "pull_request"
+          - "push"
+          - "repository"
+        "hook_id": 111222333444555
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repository": "my-org/my-repo"
+    Name: GitHub - Webhook Created
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "hook.destroy",
-        "data":
-          {
-            "hook_id": 111222333444555,
-            "events": ["fork", "public", "pull_request", "push", "repository"],
-          },
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-      }
-  - Name: GitHub - Non Webhook Event
-    ExpectedResult: false
+      "action": "hook.destroy"
+      "actor": "cat"
+      "data":
+        "events":
+          - "fork"
+          - "public"
+          - "pull_request"
+          - "push"
+          - "repository"
+        "hook_id": 111222333444555
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repository": "my-org/my-repo"
+    Name: GitHub - Webhook Deleted
+  - ExpectedResult: false
     Log:
-      {
-        "actor": "cat",
-        "action": "org.invite_member",
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-      }
+      "action": "org.invite_member"
+      "actor": "cat"
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repository": "my-org/my-repo"
+    Name: GitHub - Non Webhook Event

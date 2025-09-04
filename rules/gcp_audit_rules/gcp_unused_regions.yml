@@ -1,288 +1,209 @@
 AnalysisType: rule
-Filename: gcp_unused_regions.py
-RuleID: "GCP.UnusedRegions"
+DedupPeriodMinutes: 15
+Description: >-
+  Adversaries may create cloud instances in unused geographic service regions in order
+  to evade detection.
 DisplayName: "GCP Resource in Unused Region"
 Enabled: false
-DedupPeriodMinutes: 15
+Filename: gcp_unused_regions.py
 LogTypes:
   - GCP.AuditLog
+Reference: https://cloud.google.com/docs/geography-and-regions
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1535
+RuleID: "GCP.UnusedRegions"
+Runbook: >-
+  Validate the user making the request and the resource created.
+Severity: Medium
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_domain_names
 Tags:
   - GCP
   - Database
   - Configuration Required
   - Defense Evasion:Unused/Unsupported Cloud Regions
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1535
-Severity: Medium
-Description: >
-  Adversaries may create cloud instances in unused geographic service regions in order to evade detection.
-Runbook: Validate the user making the request and the resource created.
-Reference: https://cloud.google.com/docs/geography-and-regions
-SummaryAttributes:
-  - severity
-  - p_any_ip_addresses
-  - p_any_domain_names
 Tests:
-  - Name: GCE Instance Terminated
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "logName": "projects/western-verve-225918/logs/cloudaudit.googleapis.com%2Factivity",
-        "severity": "NOTICE",
-        "insertId": "81xwjyd5vh0",
-        "resource":
-          {
-            "type": "gce_instance",
-            "labels":
-              {
-                "instance_id": "5423650206360236277",
-                "project_id": "western-verve-225918",
-                "zone": "europe-north1-a",
-              },
-          },
-        "timestamp": "2020-05-15 17:55:19.303000000",
-        "receiveTimestamp": "2020-05-15 17:55:20.210068584",
-        "operation":
-          {
-            "id": "operation-1589565287793-5a5b382538481-3da9816c-ce929997",
-            "producer": "compute.googleapis.com",
-            "last": true,
-          },
-        "protoPayload":
-          {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "serviceName": "compute.googleapis.com",
-            "methodName": "v1.compute.instances.delete",
-            "resourceName": "projects/western-verve-225918/zones/europe-north1-a/instances/instance-3",
-            "authenticationInfo":
-              { "principalEmail": "jack.naglieri@runpanther.io" },
-            "requestMetadata":
-              {
-                "callerIP": "136.24.229.58",
-                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)",
-              },
-            "request":
-              { "@type": "type.googleapis.com/compute.instances.delete" },
-          },
-      }
-  - Name: GCE Create Instance in SouthAmerica
-    ExpectedResult: true
+      "insertId": "81xwjyd5vh0"
+      "logName": "projects/western-verve-225918/logs/cloudaudit.googleapis.com%2Factivity"
+      "operation":
+        "id": "operation-1589565287793-5a5b382538481-3da9816c-ce929997"
+        "last": true
+        "producer": "compute.googleapis.com"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "jack.naglieri@runpanther.io"
+        "methodName": "v1.compute.instances.delete"
+        "request":
+          "@type": "type.googleapis.com/compute.instances.delete"
+        "requestMetadata":
+          "callerIP": "136.24.229.58"
+          "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
+            AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)"
+        "resourceName": "projects/western-verve-225918/zones/europe-north1-a/instances/instance-3"
+        "serviceName": "compute.googleapis.com"
+      "receiveTimestamp": "2020-05-15 17:55:20.210068584"
+      "resource":
+        "labels":
+          "instance_id": "5423650206360236277"
+          "project_id": "western-verve-225918"
+          "zone": "europe-north1-a"
+        "type": "gce_instance"
+      "severity": "NOTICE"
+      "timestamp": "2020-05-15 17:55:19.303000000"
+    Name: GCE Instance Terminated
+  - ExpectedResult: true
     Log:
-      {
-        "protoPayload":
-          {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
-            "requestMetadata":
-              {
-                "callerIp": "136.24.229.58",
-                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
-              },
-            "serviceName": "compute.googleapis.com",
-            "methodName": "beta.compute.instances.insert",
-            "resourceName": "projects/western-verve-123456/zones/asia-northeast1-b/instances/instance-5",
-            "request":
-              { "@type": "type.googleapis.com/compute.instances.insert" },
-          },
-        "insertId": "-5tqx5fd4mj8",
-        "resource":
-          {
-            "type": "gce_instance",
-            "labels":
-              {
-                "instance_id": "8498166540490993880",
-                "project_id": "western-verve-123456",
-                "zone": "southamerica-east1-b",
-              },
-          },
-        "timestamp": "2020-05-15T17:15:42.415Z",
-        "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
-        "operation":
-          {
-            "id": "operation-1589562934964-5a5b2f61631d6-cc67597a-98092474",
-            "producer": "compute.googleapis.com",
-            "last": true,
-          },
-        "receiveTimestamp": "2020-05-15T17:15:43.377082868Z",
-      }
-  - Name: Create GCS in Asia
-    ExpectedResult: true
+      "insertId": "-5tqx5fd4mj8"
+      "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity"
+      "operation":
+        "id": "operation-1589562934964-5a5b2f61631d6-cc67597a-98092474"
+        "last": true
+        "producer": "compute.googleapis.com"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user.name@runpanther.io"
+        "methodName": "beta.compute.instances.insert"
+        "request":
+          "@type": "type.googleapis.com/compute.instances.insert"
+        "requestMetadata":
+          "callerIp": "136.24.229.58"
+          "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
+            AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)"
+        "resourceName": "projects/western-verve-123456/zones/asia-northeast1-b/instances/instance-5"
+        "serviceName": "compute.googleapis.com"
+      "receiveTimestamp": "2020-05-15T17:15:43.377082868Z"
+      "resource":
+        "labels":
+          "instance_id": "8498166540490993880"
+          "project_id": "western-verve-123456"
+          "zone": "southamerica-east1-b"
+        "type": "gce_instance"
+      "severity": "NOTICE"
+      "timestamp": "2020-05-15T17:15:42.415Z"
+    Name: GCE Create Instance in SouthAmerica
+  - ExpectedResult: true
     Log:
-      {
-        "protoPayload":
-          {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "status": {},
-            "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
-            "requestMetadata":
-              {
-                "callerIp": "136.24.229.58",
-                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)",
-                "requestAttributes":
-                  { "time": "2020-05-15T17:25:07.810848781Z", "auth": {} },
-                "destinationAttributes": {},
-              },
-            "serviceName": "storage.googleapis.com",
-            "methodName": "storage.buckets.create",
-            "authorizationInfo":
-              [
-                {
-                  "resource": "projects/_/buckets/jacks-test-bucket-200",
-                  "permission": "storage.buckets.create",
-                  "granted": true,
-                  "resourceAttributes": {},
-                },
-              ],
-            "resourceName": "projects/_/buckets/jacks-test-bucket-200",
-            "serviceData":
-              {
-                "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
-                "policyDelta":
-                  {
-                    "bindingDeltas":
-                      [
-                        {
-                          "action": "ADD",
-                          "role": "roles/storage.legacyBucketOwner",
-                          "member": "projectEditor:western-verve-123456",
-                        },
-                        {
-                          "action": "ADD",
-                          "role": "roles/storage.legacyBucketOwner",
-                          "member": "projectOwner:western-verve-123456",
-                        },
-                        {
-                          "action": "ADD",
-                          "role": "roles/storage.legacyBucketReader",
-                          "member": "projectViewer:western-verve-123456",
-                        },
-                      ],
-                  },
-              },
-            "request":
-              {
-                "defaultObjectAcl":
-                  {
-                    "bindings":
-                      [
-                        {
-                          "role": "roles/storage.legacyObjectReader",
-                          "members": ["projectViewer:western-verve-123456"],
-                        },
-                        {
-                          "members":
-                            [
-                              "projectOwner:western-verve-123456",
-                              "projectEditor:western-verve-123456",
-                            ],
-                          "role": "roles/storage.legacyObjectOwner",
-                        },
-                      ],
-                    "@type": "type.googleapis.com/google.iam.v1.Policy",
-                  },
-              },
-            "resourceLocation": { "currentLocations": ["asia-northeast2"] },
-          },
-        "insertId": "c7rgc9c178",
-        "resource":
-          {
-            "type": "gcs_bucket",
-            "labels":
-              {
-                "bucket_name": "jacks-test-bucket-200",
-                "project_id": "western-verve-123456",
-                "location": "asia-northeast2",
-              },
-          },
-        "timestamp": "2020-05-15T17:25:07.807169539Z",
-        "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
-        "receiveTimestamp": "2020-05-15T17:25:09.393448555Z",
-      }
-  - Name: "BigQuery access log (does not have standard attribute: resource.labels.location)"
-    ExpectedResult: false
+      "insertId": "c7rgc9c178"
+      "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user.name@runpanther.io"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "storage.buckets.create"
+            "resource": "projects/_/buckets/jacks-test-bucket-200"
+            "resourceAttributes": {}
+        "methodName": "storage.buckets.create"
+        "request":
+          "defaultObjectAcl":
+            "@type": "type.googleapis.com/google.iam.v1.Policy"
+            "bindings":
+              - "members":
+                  - "projectViewer:western-verve-123456"
+                "role": "roles/storage.legacyObjectReader"
+              - "members":
+                  - "projectOwner:western-verve-123456"
+                  - "projectEditor:western-verve-123456"
+                "role": "roles/storage.legacyObjectOwner"
+        "requestMetadata":
+          "callerIp": "136.24.229.58"
+          "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
+            AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)"
+          "destinationAttributes": {}
+          "requestAttributes":
+            "auth": {}
+            "time": "2020-05-15T17:25:07.810848781Z"
+        "resourceLocation":
+          "currentLocations":
+            - "asia-northeast2"
+        "resourceName": "projects/_/buckets/jacks-test-bucket-200"
+        "serviceData":
+          "@type": "type.googleapis.com/google.iam.v1.logging.AuditData"
+          "policyDelta":
+            "bindingDeltas":
+              - "action": "ADD"
+                "member": "projectEditor:western-verve-123456"
+                "role": "roles/storage.legacyBucketOwner"
+              - "action": "ADD"
+                "member": "projectOwner:western-verve-123456"
+                "role": "roles/storage.legacyBucketOwner"
+              - "action": "ADD"
+                "member": "projectViewer:western-verve-123456"
+                "role": "roles/storage.legacyBucketReader"
+        "serviceName": "storage.googleapis.com"
+        "status": {}
+      "receiveTimestamp": "2020-05-15T17:25:09.393448555Z"
+      "resource":
+        "labels":
+          "bucket_name": "jacks-test-bucket-200"
+          "location": "asia-northeast2"
+          "project_id": "western-verve-123456"
+        "type": "gcs_bucket"
+      "severity": "NOTICE"
+      "timestamp": "2020-05-15T17:25:07.807169539Z"
+    Name: Create GCS in Asia
+  - ExpectedResult: false
     Log:
-      {
-        "insertId": "v3a96bedw1us",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Fdata_access",
-        "protoPayload":
-          {
-            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
-            "authorizationInfo":
-              [
-                {
-                  "granted": true,
-                  "permission": "bigquery.jobs.create",
-                  "resource": "projects/western-verve-123456",
-                  "resourceAttributes": {},
-                },
-              ],
-            "methodName": "jobservice.insert",
-            "requestMetadata":
-              {
-                "callerIP": "192.0.2.0",
-                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:92.0) Gecko/20100101 Firefox/92.0,gzip(gfe),gzip(gfe)",
-                "destinationAttributes": {},
-                "requestAttributes": {},
-              },
-            "resourceName": "projects/western-verve-123456/jobs",
-            "serviceData":
-              {
-                "@type": "type.googleapis.com/google.cloud.bigquery.logging.v1.AuditData",
-                "jobInsertRequest":
-                  {
-                    "resource":
-                      {
-                        "jobConfiguration":
-                          {
-                            "dryRun": true,
-                            "query":
-                              {
-                                "createDisposition": "CREATE_IF_NEEDED",
-                                "defaultDataset": {},
-                                "destinationTable": {},
-                                "query": "select * from no_such_table",
-                                "queryPriority": "QUERY_INTERACTIVE",
-                                "writeDisposition": "WRITE_EMPTY",
-                              },
-                          },
-                        "jobName":
-                          {
-                            "location": "US",
-                            "projectId": "western-verve-123456",
-                          },
-                      },
-                  },
-                "jobInsertResponse":
-                  {
-                    "resource":
-                      {
-                        "jobConfiguration": {},
-                        "jobName": {},
-                        "jobStatistics": {},
-                        "jobStatus": { "error": {}, "state": "PENDING" },
-                      },
-                  },
-              },
-            "serviceName": "bigquery.googleapis.com",
-            "status":
-              {
-                "code": 11,
-                "message": "Syntax error: Unexpected end of script at [17:7]",
-              },
-          },
-        "receiveTimestamp": "2021-10-19 16:09:26.351861539",
-        "resource":
-          {
-            "labels": { "project_id": "western-verve-123456" },
-            "type": "bigquery_resource",
-          },
-        "severity": "ERROR",
-        "timestamp": "2021-10-19 16:09:26.013200000",
-      }
+      "insertId": "v3a96bedw1us"
+      "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Fdata_access"
+      "protoPayload":
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "user.name@runpanther.io"
+        "authorizationInfo":
+          - "granted": true
+            "permission": "bigquery.jobs.create"
+            "resource": "projects/western-verve-123456"
+            "resourceAttributes": {}
+        "methodName": "jobservice.insert"
+        "requestMetadata":
+          "callerIP": "192.0.2.0"
+          "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15;
+            rv:92.0) Gecko/20100101 Firefox/92.0,gzip(gfe),gzip(gfe)"
+          "destinationAttributes": {}
+          "requestAttributes": {}
+        "resourceName": "projects/western-verve-123456/jobs"
+        "serviceData":
+          "@type": "type.googleapis.com/google.cloud.bigquery.logging.v1.AuditData"
+          "jobInsertRequest":
+            "resource":
+              "jobConfiguration":
+                "dryRun": true
+                "query":
+                  "createDisposition": "CREATE_IF_NEEDED"
+                  "defaultDataset": {}
+                  "destinationTable": {}
+                  "query": "select * from no_such_table"
+                  "queryPriority": "QUERY_INTERACTIVE"
+                  "writeDisposition": "WRITE_EMPTY"
+              "jobName":
+                "location": "US"
+                "projectId": "western-verve-123456"
+          "jobInsertResponse":
+            "resource":
+              "jobConfiguration": {}
+              "jobName": {}
+              "jobStatistics": {}
+              "jobStatus":
+                "error": {}
+                "state": "PENDING"
+        "serviceName": "bigquery.googleapis.com"
+        "status":
+          "code": 11
+          "message": "Syntax error: Unexpected end of script at [17:7]"
+      "receiveTimestamp": "2021-10-19 16:09:26.351861539"
+      "resource":
+        "labels":
+          "project_id": "western-verve-123456"
+        "type": "bigquery_resource"
+      "severity": "ERROR"
+      "timestamp": "2021-10-19 16:09:26.013200000"
+    Name: 'BigQuery access log (does not have standard attribute: resource.labels.location)'

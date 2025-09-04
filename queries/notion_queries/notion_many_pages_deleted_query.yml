@@ -1,13 +1,8 @@
 AnalysisType: scheduled_query
-QueryName: Notion Many Pages Deleted Query
+Description: A Notion User deleted multiple pages, which were not created or restored
+  from the trash within the same hour.
 Enabled: false
-Tags:
-  - Notion
-  - Data Security
-  - Data Destruction
-Description: >
-  A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
-Query: |
+Query: >-
   SELECT
     event:actor.person.email AS user
     ,ARRAY_AGG(event:type) AS actions
@@ -22,8 +17,14 @@ Query: |
     AND page_name != ''
     AND event:actor.type = 'person'
   GROUP BY id, user, page_name
+
   HAVING 
     actions = ARRAY_CONSTRUCT('page.deleted')
+QueryName: "Notion Many Pages Deleted Query"
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 2
+Tags:
+  - Notion
+  - Data Security
+  - Data Destruction

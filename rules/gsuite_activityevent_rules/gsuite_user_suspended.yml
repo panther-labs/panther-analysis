@@ -1,48 +1,49 @@
 AnalysisType: rule
-Filename: gsuite_user_suspended.py
-RuleID: "GSuite.UserSuspended"
+Description: >-
+  A GSuite user was suspended, the account may have been compromised by a spam network.
 DisplayName: "GSuite User Suspended"
 Enabled: true
+Filename: gsuite_user_suspended.py
 LogTypes:
   - GSuite.ActivityEvent
-Tags:
-  - GSuite
-Severity: High
-Description: >
-  A GSuite user was suspended, the account may have been compromised by a spam network.
 Reference: https://support.google.com/drive/answer/40695?hl=en&sjid=864417124752637253-EU
-Runbook: >
-  Investigate the behavior that got the account suspended. Verify with the user that this intended behavior. If not, the account may have been compromised.
+RuleID: "GSuite.UserSuspended"
+Runbook: >-
+  Investigate the behavior that got the account suspended. Verify with the user that
+  this intended behavior. If not, the account may have been compromised.
+Severity: High
 SummaryAttributes:
   - actor:email
+Tags:
+  - GSuite
 Tests:
-  - Name: Normal Login Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "login_success",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
-  - Name: Account Warning Not For User Suspended
-    ExpectedResult: false
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "login_success"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Normal Login Event
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "suspicious_login ",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
-  - Name: Account Warning For Suspended User
-    ExpectedResult: true
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "suspicious_login "
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Account Warning Not For User Suspended
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "account_disabled_spamming",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "account_disabled_spamming"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Account Warning For Suspended User

@@ -1,12 +1,12 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.UserCreated"
+Description: Monitor for new users.
 Enabled: false
-Description: >
-  Monitor for new users.
-Query: |
+Query: >-
   --return create user events
 
+
   --this was adapted from a Security Feature Checklist query
+
 
   SELECT
     start_time as p_event_time,
@@ -22,6 +22,7 @@ Query: |
       AND query_type = 'CREATE_USER'
       AND query_text ILIKE '%create%user%'
   ORDER BY end_time desc
+QueryName: "Query.Snowflake.UserCreated"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 3

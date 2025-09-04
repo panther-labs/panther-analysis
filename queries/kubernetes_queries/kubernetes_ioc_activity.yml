@@ -1,17 +1,18 @@
 AnalysisType: scheduled_rule
+Description: >-
+  This detection monitors for any kubernetes API Request originating from an Indicator
+  of Compromise.
+DisplayName: "IOC Activity in K8 Control Plane"
+Enabled: false
 Filename: kubernetes_ioc_activity.py
 RuleID: "Kubernetes.IOCActivity"
-DisplayName: "IOC Activity in K8 Control Plane"
-Description: >
-  This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
-Enabled: false
-Runbook: >
+Runbook: >-
   .
 ScheduledQueries:
   - IOC Activity in K8 Control Plane
 Severity: Medium
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      Anything: any value
+      "Anything": "any value"
+    Name: Value Returned By Query

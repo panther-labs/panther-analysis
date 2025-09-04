@@ -1,222 +1,186 @@
 AnalysisType: rule
-Filename: mfa_disabled.py
-RuleID: "Standard.MFADisabled"
 DedupPeriodMinutes: 60
+Description: >-
+  Detects when Multi-Factor Authentication (MFA) is disabled
 DisplayName: "MFA Disabled"
 Enabled: true
+Filename: mfa_disabled.py
 LogTypes:
   - Atlassian.Audit
   - GitHub.Audit
   - Zendesk.Audit
   - Okta.SystemLog
-Tags:
-  - DataModel
-  - Defense Evasion:Modify Authentication Process
+Reference: https://en.wikipedia.org/wiki/Multi-factor_authentication
 Reports:
   MITRE ATT&CK:
     - TA0005:T1556
-Reference: https://en.wikipedia.org/wiki/Multi-factor_authentication
+RuleID: "Standard.MFADisabled"
 Severity: High
-Description: Detects when Multi-Factor Authentication (MFA) is disabled
 SummaryAttributes:
   - p_any_ip_addresses
+Tags:
+  - DataModel
+  - Defense Evasion:Modify Authentication Process
 Tests:
-  - Name: GitHub - Org MFA Disabled
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "org.disable_two_factor_requirement",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-      }
-  - Name: GitHub - Org MFA Enabled
-    ExpectedResult: False
+      "action": "org.disable_two_factor_requirement"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repository": "my-org/my-repo"
+    Name: GitHub - Org MFA Disabled
+  - ExpectedResult: false
     Log:
-      {
-        "actor": "cat",
-        "action": "org.enable_two_factor_requirement",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repository": "my-org/my-repo",
-      }
-  - Name: Zendesk - Two-factor disabled
-    ExpectedResult: true
+      "action": "org.enable_two_factor_requirement"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repository": "my-org/my-repo"
+    Name: GitHub - Org MFA Enabled
+  - ExpectedResult: true
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Two-Factor authentication for all admins and agents",
-        "action": "create",
-        "change_description": "Disabled",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
-  - Name: Zendesk - Alternate Two-factor disabled
-    ExpectedResult: true
+      "action": "create"
+      "action_label": "Updated"
+      "actor_id": 123
+      "change_description": "Disabled"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Two-Factor authentication for all admins and agents"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: Zendesk - Two-factor disabled
+  - ExpectedResult: true
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Require Two Factor",
-        "action": "update",
-        "change_description": "Disabled",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
-  - Name: Zendesk - Two-factor Enabled
-    ExpectedResult: false
+      "action": "update"
+      "action_label": "Updated"
+      "actor_id": 123
+      "change_description": "Disabled"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Require Two Factor"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: Zendesk - Alternate Two-factor disabled
+  - ExpectedResult: false
     Log:
-      {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
-        "id": 123456789123,
-        "action_label": "Updated",
-        "actor_id": 123,
-        "source_id": 123,
-        "source_type": "account_setting",
-        "source_label": "Require Two Factor",
-        "action": "create",
-        "change_description": "Enabled",
-        "ip_address": "127.0.0.1",
-        "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit",
-      }
-  - Name: Okta - User resets own MFA ( INFO severity detection for this in Okta rules )
-    ExpectedResult: false
+      "action": "create"
+      "action_label": "Updated"
+      "actor_id": 123
+      "change_description": "Enabled"
+      "created_at": "2021-05-28T18:39:50Z"
+      "id": 123456789123
+      "ip_address": "127.0.0.1"
+      "p_log_type": "Zendesk.Audit"
+      "source_id": 123
+      "source_label": "Require Two Factor"
+      "source_type": "account_setting"
+      "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json"
+    Name: Zendesk - Two-factor Enabled
+  - ExpectedResult: false
     Log:
-      {
-        "eventtype": "user.mfa.factor.deactivate",
-        "version": "0",
-        "severity": "INFO",
-        "displaymessage": "Reset factor for user",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "11111111111",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.1.1.1",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36",
-              },
-            "zone": "null",
-          },
-        "outcome":
-          { "reason": "User reset FIDO_WEBAUTHN factor", "result": "SUCCESS" },
-        "target":
-          [
-            {
-              "alternateId": "homer@springfield.gov",
-              "displayName": "Homer Simpson",
-              "id": "1111111",
-              "type": "User",
-            },
-          ],
-        "authenticationcontext":
-          { "authenticationStep": 0, "externalSessionId": "1111111" },
-        "p_log_type": "Okta.SystemLog",
-      }
-  - Name: Okta - User disables MFA
-    ExpectedResult: true
+      "actor":
+        "alternateId": "homer@springfield.gov"
+        "displayName": "Homer Simpson"
+        "id": "11111111111"
+        "type": "User"
+      "authenticationcontext":
+        "authenticationStep": 0
+        "externalSessionId": "1111111"
+      "client":
+        "device": "Computer"
+        "ipAddress": "1.1.1.1"
+        "userAgent":
+          "browser": "CHROME"
+          "os": "Mac OS X"
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+        "zone": "null"
+      "displaymessage": "Reset factor for user"
+      "eventtype": "user.mfa.factor.deactivate"
+      "outcome":
+        "reason": "User reset FIDO_WEBAUTHN factor"
+        "result": "SUCCESS"
+      "p_log_type": "Okta.SystemLog"
+      "severity": "INFO"
+      "target":
+        - "alternateId": "homer@springfield.gov"
+          "displayName": "Homer Simpson"
+          "id": "1111111"
+          "type": "User"
+      "version": "0"
+    Name: Okta - User resets own MFA ( INFO severity detection for this in Okta rules
+      )
+  - ExpectedResult: true
     Log:
-      {
-        "eventtype": "user.mfa.factor.deactivate",
-        "version": "0",
-        "severity": "INFO",
-        "displaymessage": "Reset factor for user",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "11111111111",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.1.1.1",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36",
-              },
-            "zone": "null",
-          },
-        "outcome": { "result": "SUCCESS" },
-        "target":
-          [
-            {
-              "alternateId": "homer@springfield.gov",
-              "displayName": "Homer Simpson",
-              "id": "1111111",
-              "type": "User",
-            },
-          ],
-        "authenticationcontext":
-          { "authenticationStep": 0, "externalSessionId": "1111111" },
-        "p_log_type": "Okta.SystemLog",
-      }
-
-  - Name: Okta - MFA Enabled
-    ExpectedResult: false
+      "actor":
+        "alternateId": "homer@springfield.gov"
+        "displayName": "Homer Simpson"
+        "id": "11111111111"
+        "type": "User"
+      "authenticationcontext":
+        "authenticationStep": 0
+        "externalSessionId": "1111111"
+      "client":
+        "device": "Computer"
+        "ipAddress": "1.1.1.1"
+        "userAgent":
+          "browser": "CHROME"
+          "os": "Mac OS X"
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+        "zone": "null"
+      "displaymessage": "Reset factor for user"
+      "eventtype": "user.mfa.factor.deactivate"
+      "outcome":
+        "result": "SUCCESS"
+      "p_log_type": "Okta.SystemLog"
+      "severity": "INFO"
+      "target":
+        - "alternateId": "homer@springfield.gov"
+          "displayName": "Homer Simpson"
+          "id": "1111111"
+          "type": "User"
+      "version": "0"
+    Name: Okta - User disables MFA
+  - ExpectedResult: false
     Log:
-      {
-        "eventtype": "user.mfa.factor.update",
-        "version": "0",
-        "severity": "INFO",
-        "displaymessage": "Update factor for user",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "11111111111",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.1.1.1",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36",
-              },
-            "zone": "null",
-          },
-        "outcome":
-          { "reason": "User reset FIDO_WEBAUTHN factor", "result": "SUCCESS" },
-        "target":
-          [
-            {
-              "alternateId": "homer@springfield.gov",
-              "displayName": "Homer Simpson",
-              "id": "1111111",
-              "type": "User",
-            },
-          ],
-        "authenticationcontext":
-          { "authenticationStep": 0, "externalSessionId": "1111111" },
-        "p_log_type": "Okta.SystemLog",
-      }
+      "actor":
+        "alternateId": "homer@springfield.gov"
+        "displayName": "Homer Simpson"
+        "id": "11111111111"
+        "type": "User"
+      "authenticationcontext":
+        "authenticationStep": 0
+        "externalSessionId": "1111111"
+      "client":
+        "device": "Computer"
+        "ipAddress": "1.1.1.1"
+        "userAgent":
+          "browser": "CHROME"
+          "os": "Mac OS X"
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36"
+        "zone": "null"
+      "displaymessage": "Update factor for user"
+      "eventtype": "user.mfa.factor.update"
+      "outcome":
+        "reason": "User reset FIDO_WEBAUTHN factor"
+        "result": "SUCCESS"
+      "p_log_type": "Okta.SystemLog"
+      "severity": "INFO"
+      "target":
+        - "alternateId": "homer@springfield.gov"
+          "displayName": "Homer Simpson"
+          "id": "1111111"
+          "type": "User"
+      "version": "0"
+    Name: Okta - MFA Enabled

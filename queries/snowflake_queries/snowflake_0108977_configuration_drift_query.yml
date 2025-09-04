@@ -1,14 +1,13 @@
 AnalysisType: scheduled_query
+Description: Monitor for configuration drift made by malicious actors as part of ongoing
+  cyber threat activity reported May 31st, 2024
 Enabled: false
-QueryName: "Query.Snowflake.ConfigurationDrift"
-Description: >
-  Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-Tags:
-  - Configuration Required
-Query: |
+Query: >-
   -- https://community.snowflake.com/s/article/Communication-ID-0108977-Additional-Information
 
+
   -- adjust query/limit to narrow as necessary
+
 
   SELECT
       query_text,
@@ -49,6 +48,9 @@ Query: |
     AND p_occurs_since('1 day')
     ORDER BY end_time desc
     LIMIT 100;
+QueryName: "Query.Snowflake.ConfigurationDrift"
 Schedule:
   RateMinutes: 1440
   TimeoutMinutes: 3
+Tags:
+  - Configuration Required

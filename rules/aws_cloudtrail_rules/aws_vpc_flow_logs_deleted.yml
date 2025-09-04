@@ -1,18 +1,22 @@
 AnalysisType: rule
-Filename: aws_vpc_flow_logs_deleted.py
-RuleID: "AWS.VPCFlow.LogsDeleted"
+Description: >-
+  Detects when logs for a VPC have been removed.
 DisplayName: "AWS VPC Flow Logs Removed"
 Enabled: true
+Filename: aws_vpc_flow_logs_deleted.py
 LogTypes:
   - AWS.CloudTrail
-Severity: Info
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.008 # Defense Evasion: Disable or Modify Cloud Logs
-Description: "Detects when logs for a VPC have been removed."
 Reference: 
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.vpc-remove-flow-logs/
-Runbook: Look for an accompanying 'DeleteVpc' event, and confirm that they are related. if there is no matching VPC Deletion event, followup with the log removal to determine if it is legitimate.
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+RuleID: "AWS.VPCFlow.LogsDeleted"
+Runbook: >-
+  Look for an accompanying 'DeleteVpc' event, and confirm that they are related. if
+  there is no matching VPC Deletion event, followup with the log removal to determine
+  if it is legitimate.
+Severity: Info
 Tags:
   - AWS
   - Cloudtrail
@@ -23,65 +27,53 @@ Tags:
   - Security Control
   - Beta
 Tests:
-  - Name: Logs Deleted
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-11-26 19:29:38.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2024-11-26 19:35:54.358700257",
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "d5e6d49c-0be9-4c53-ab8a-c7ca86edd130",
-        "eventName": "DeleteFlowLogs",
-        "eventSource": "ec2.amazonaws.com",
-        "eventTime": "2024-11-26 19:29:38.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.10",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "111122223333",
-        "requestID": "1dcd7d36-72be-4aad-9e9d-93b88e0135ea",
-        "requestParameters": {
-          "DeleteFlowLogsRequest": {
-            "FlowLogId": {
-              "content": "fl-0ef673ef70c4f07cc",
-              "tag": 1
-            }
-          }
-        },
-        "responseElements": {
-          "DeleteFlowLogsResponse": {
-            "requestId": "1dcd7d36-72be-4aad-9e9d-93b88e0135ea",
-            "unsuccessful": "",
-            "xmlns": "http://ec2.amazonaws.com/doc/2016-11-15/"
-          }
-        },
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "sample-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
-          "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2024-11-26T17:05:50Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "d5e6d49c-0be9-4c53-ab8a-c7ca86edd130"
+      "eventName": "DeleteFlowLogs"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2024-11-26 19:29:38.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.10"
+      "managementEvent": true
+      "p_event_time": "2024-11-26 19:29:38.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2024-11-26 19:35:54.358700257"
+      "readOnly": false
+      "recipientAccountId": "111122223333"
+      "requestID": "1dcd7d36-72be-4aad-9e9d-93b88e0135ea"
+      "requestParameters":
+        "DeleteFlowLogsRequest":
+          "FlowLogId":
+            "content": "fl-0ef673ef70c4f07cc"
+            "tag": 1
+      "responseElements":
+        "DeleteFlowLogsResponse":
+          "requestId": "1dcd7d36-72be-4aad-9e9d-93b88e0135ea"
+          "unsuccessful": ""
+          "xmlns": "http://ec2.amazonaws.com/doc/2016-11-15/"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "sample-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins"
+        "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-11-26T17:05:50Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
+    Name: Logs Deleted

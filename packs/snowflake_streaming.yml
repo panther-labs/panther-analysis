@@ -1,18 +1,13 @@
 AnalysisType: pack
-PackID: PantherManaged.SnowflakeStreaming
-DisplayName: "Panther Snowflake Real-Time Rules"
 Description: Group of all streaming (real-time) Snowflake detections
+DisplayName: Panther Snowflake Real-Time Rules
 PackDefinition:
   IDs:
-    # Correlation Rules
     - Snowflake.PotentialBruteForceSuccess
-    # Helpers
     - panther_snowflake_helpers
-    # Queries
     - Snowflake User Daily Query Volume Spike
     - Snowflake User Daily Query Volume Spike - Threat Hunting
     - Suspicious Snowflake Sessions - Unusual Application
-    # Rules
     - Snowflake.Stream.AccountAdminGranted
     - Snowflake.Stream.BruteForceByIp
     - Snowflake.Stream.BruteForceByUsername
@@ -28,3 +23,4 @@ PackDefinition:
     - Snowflake.Stream.UserDailyQueryVolumeSpike
     - Snowflake.Stream.UserEnabled
     - Snowflake.Stream.DataExfiltration
+PackID: PantherManaged.SnowflakeStreaming

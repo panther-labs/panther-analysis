@@ -1,53 +1,54 @@
 AnalysisType: rule
-Description: Atlas only allows client connections to the database deployment from entries in the project's IP access list. This rule detects when 0.0.0.0/0 is added to that list, which allows access from anywhere.
+DedupPeriodMinutes: 60
+Description: >-
+  Atlas only allows client connections to the database deployment from entries in
+  the project's IP access list. This rule detects when 0.0.0.0/0 is added to that
+  list, which allows access from anywhere.
 DisplayName: "MongoDB access allowed from anywhere"
 Enabled: true
+Filename: mongodb_access_allowed_from_anywhere.py
 LogTypes:
   - MongoDB.ProjectEvent
+Reference: https://www.mongodb.com/docs/atlas/security/ip-access-list/
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1556.009
+    - TA0008:T1021.007
 RuleID: "MongoDB.Access.Allowed.From.Anywhere"
-Filename: mongodb_access_allowed_from_anywhere.py
+Runbook: >-
+  Check if this activity was legitimate. If not, delete 0.0.0.0/0 from the list of
+  allowed ips.
 Severity: High
 Tags:
   - MongoDB
   - Persistence
   - Remote Services
   - Modify Authentication Process - Conditional Access Policies
-Reports:
-  MITRE ATT&CK:
-    - TA0003:T1556.009 # Modify Authentication Process - Conditional Access Policies
-    - TA0008:T1021.007 # Remote Services
-Reference: https://www.mongodb.com/docs/atlas/security/ip-access-list/
-Runbook: Check if this activity was legitimate. If not, delete 0.0.0.0/0 from the list of allowed ips.
 Tests:
-  - Name: Allowed access from anywhere
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "created": "2024-04-03 11:13:04.000000000",
-        "currentValue": {},
-        "eventTypeName": "NETWORK_PERMISSION_ENTRY_ADDED",
-        "groupId": "some_group_id",
-        "id": "123abc",
-        "isGlobalAdmin": false,
-        "remoteAddress": "1.2.3.4",
-        "userId": "123abc",
-        "username": "some_user@company.com",
-        "whitelistEntry": "0.0.0.0/0",
-      }
-  - Name: Allowed access from specific ip
-    ExpectedResult: false
+      "created": "2024-04-03 11:13:04.000000000"
+      "currentValue": {}
+      "eventTypeName": "NETWORK_PERMISSION_ENTRY_ADDED"
+      "groupId": "some_group_id"
+      "id": "123abc"
+      "isGlobalAdmin": false
+      "remoteAddress": "1.2.3.4"
+      "userId": "123abc"
+      "username": "some_user@company.com"
+      "whitelistEntry": "0.0.0.0/0"
+    Name: Allowed access from anywhere
+  - ExpectedResult: false
     Log:
-      {
-        "created": "2024-04-03 11:13:04.000000000",
-        "currentValue": {},
-        "eventTypeName": "NETWORK_PERMISSION_ENTRY_ADDED",
-        "groupId": "some_group_id",
-        "id": "123abc",
-        "isGlobalAdmin": false,
-        "remoteAddress": "1.2.3.4",
-        "userId": "123abc",
-        "username": "some_user@company.com",
-        "whitelistEntry": "1.2.3.4/32",
-      }
-DedupPeriodMinutes: 60
+      "created": "2024-04-03 11:13:04.000000000"
+      "currentValue": {}
+      "eventTypeName": "NETWORK_PERMISSION_ENTRY_ADDED"
+      "groupId": "some_group_id"
+      "id": "123abc"
+      "isGlobalAdmin": false
+      "remoteAddress": "1.2.3.4"
+      "userId": "123abc"
+      "username": "some_user@company.com"
+      "whitelistEntry": "1.2.3.4/32"
+    Name: Allowed access from specific ip
 Threshold: 1

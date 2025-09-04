@@ -1,190 +1,157 @@
 AnalysisType: rule
-Filename: aws_s3_bucket_policy_modified.py
-RuleID: "AWS.S3.BucketPolicyModified"
+DedupPeriodMinutes: 720
+Description: >-
+  An S3 Bucket was modified.
 DisplayName: "AWS S3 Bucket Policy Modified"
 Enabled: true
+Filename: aws_s3_bucket_policy_modified.py
 LogTypes:
   - AWS.CloudTrail
-Tags:
-  - AWS
-  - Identity & Access Management
-  - Exfiltration:Exfiltration Over Web Service
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 Reports:
   CIS:
     - 3.8
   MITRE ATT&CK:
     - TA0010:T1567
+RuleID: "AWS.S3.BucketPolicyModified"
+Runbook: >-
+  https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-s3-bucket-policy-modified
 Severity: Info
-DedupPeriodMinutes: 720 # 12 hours
-Description: >
-  An S3 Bucket was modified.
-Runbook: https://docs.runpanther.io/alert-runbooks/built-in-rules/aws-s3-bucket-policy-modified
-Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 SummaryAttributes:
   - eventName
   - userAgent
   - sourceIpAddress
   - p_any_aws_arns
+Tags:
+  - AWS
+  - Identity & Access Management
+  - Exfiltration:Exfiltration Over Web Service
 Tests:
-  - Name: S3 Bucket Policy Modified
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "PutBucketAcl",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "bucketName": "bucket",
-            "acl": [""],
-            "x-amz-acl": ["private"],
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "AuthenticationMethod": "AuthHeader",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: S3 Bucket Policy Modified Error Response
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "SignatureVersion": "SigV4"
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "PutBucketAcl"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "acl":
+          - ""
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+        "x-amz-acl":
+          - "private"
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+        "type": "AssumedRole"
+    Name: S3 Bucket Policy Modified
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "true",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "errorCode": "AccessDenied",
-        "eventName": "PutBucketAcl",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "bucketName": "bucket",
-            "acl": [""],
-            "x-amz-acl": ["private"],
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "AuthenticationMethod": "AuthHeader",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: S3 Bucket Policy Not Modified
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "SignatureVersion": "SigV4"
+      "awsRegion": "us-west-2"
+      "errorCode": "AccessDenied"
+      "eventID": "1"
+      "eventName": "PutBucketAcl"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "acl":
+          - ""
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+        "x-amz-acl":
+          - "private"
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "true"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+        "type": "AssumedRole"
+    Name: S3 Bucket Policy Modified Error Response
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "AssumedRole",
-            "principalId": "1111:tester",
-            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-                "sessionIssuer":
-                  {
-                    "type": "Role",
-                    "principalId": "1111",
-                    "arn": "arn:aws:iam::123456789012:role/tester",
-                    "accountId": "123456789012",
-                    "userName": "tester",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetBucketPolicy",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "bucketName": "bucket",
-            "policy": [""],
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "AuthenticationMethod": "AuthHeader",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "SignatureVersion": "SigV4"
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "GetBucketPolicy"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+        "policy":
+          - ""
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/tester"
+        "principalId": "1111:tester"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/tester"
+            "principalId": "1111"
+            "type": "Role"
+            "userName": "tester"
+        "type": "AssumedRole"
+    Name: S3 Bucket Policy Not Modified

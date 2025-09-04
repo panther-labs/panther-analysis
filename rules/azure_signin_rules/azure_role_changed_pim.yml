@@ -1,396 +1,265 @@
 AnalysisType: rule
-Filename: azure_role_changed_pim.py
-RuleID: "Azure.Audit.RoleChangedPIM"
+DedupPeriodMinutes: 5
+Description: >-
+  This detection looks for a change in member's PIM roles in EntraID
 DisplayName: "Azure Role Changed PIM"
 Enabled: true
+Filename: azure_role_changed_pim.py
 LogTypes:
   - Azure.Audit
-Severity: Medium
-DedupPeriodMinutes: 5
-Description: >
-  This detection looks for a change in member's PIM roles in EntraID
+Reference: 
+  https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
 Reports:
   MITRE ATT&CK:
     - TA0042:T1586
-Runbook: >
-  Verify if the role change was authorized and review the affected user. If unauthorized, revert the role change, notify relevant teams,
-
-Reference: https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication
+RuleID: "Azure.Audit.RoleChangedPIM"
+Runbook: >-
+  Verify if the role change was authorized and review the affected user. If unauthorized,
+  revert the role change, notify relevant teams,
+Severity: Medium
 SummaryAttributes:
   - properties:ServicePrincipalName
   - properties:UserPrincipalName
   - properties:ipAddress
 Tests:
-  - Name: Successfully added PIM role
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-        {
-            "p_row_id": "2316902d-b9a4-4f37-a1a5-5ed03993110f",
-            "category": "AuditLogs",
-            "correlationId": "1234155",
-            "durationMs": 0,
-            "identity": "Ju Cho",
-            "Level": 4,
-            "operationName": "Add member to role in PIM completed (permanent)",
-            "operationVersion": "1.0",
-            "properties": {
-                "activityDateTime": "2024-12-16 16:32:16.087554000",
-                "activityDisplayName": "Add member to role in PIM completed (permanent)",
-                "additionalDetails": [
-                    {
-                        "key": "RoleDefinitionOriginId",
-                        "value": "123451235"
-                    },
-                    {
-                        "key": "RoleDefinitionOriginType",
-                        "value": "BuiltInRole"
-                    },
-                    {
-                        "key": "TemplateId",
-                        "value": "123412351"
-                    },
-                    {
-                        "key": "StartTime",
-                        "value": "2024-12-16T16:32:15.8441686Z"
-                    },
-                    {
-                        "key": "Justification",
-                        "value": "test assign"
-                    },
-                    {
-                        "key": "oid",
-                        "value": "12351534"
-                    },
-                    {
-                        "key": "tid",
-                        "value": "345667733"
-                    },
-                    {
-                        "key": "wids",
-                        "value": "234523454"
-                    },
-                    {
-                        "key": "ipaddr",
-                        "value": "1.2.3.4"
-                    },
-                    {
-                        "key": "RequestId",
-                        "value": "651346123452"
-                    }
-                ],
-                "category": "RoleManagement",
-                "correlationId": "12345",
-                "id": "PIM_123415",
-                "initiatedBy": {
-                    "user": {
-                        "displayName": "Ju Cho",
-                        "id": "12345",
-                        "roles": [],
-                        "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
-                    }
-                },
-                "loggedByService": "PIM",
-                "operationType": "Update",
-                "result": "success",
-                "resultReason": "test assign",
-                "targetResources": [
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Application Administrator",
-                        "id": "12345",
-                        "modifiedProperties": [
-                            {
-                                "displayName": "RoleDefinitionOriginId",
-                                "newValue": "\"12345\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "RoleDefinitionOriginType",
-                                "newValue": "\"BuiltInRole\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "TemplateId",
-                                "newValue": "\"12345\"",
-                                "oldValue": "\"\""
-                            }
-                        ],
-                        "type": "Role"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Request"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Malenia",
-                        "id": "12345",
-                        "type": "User"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Panther",
-                        "id": "12345",
-                        "type": "Directory"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Other"
-                    }
-                ]
-            },
-            "resourceId": "/tenants/12345/providers/Microsoft.aadiam",
-            "resultSignature": "None",
-            "tenantId": "12345",
-            "time": "2024-12-16 16:32:16.087554000"
-        }
-  - Name: requested adding PIM role
-    ExpectedResult: false
+      "Level": 4
+      "category": "AuditLogs"
+      "correlationId": "1234155"
+      "durationMs": 0
+      "identity": "Ju Cho"
+      "operationName": "Add member to role in PIM completed (permanent)"
+      "operationVersion": "1.0"
+      "p_row_id": "2316902d-b9a4-4f37-a1a5-5ed03993110f"
+      "properties":
+        "activityDateTime": "2024-12-16 16:32:16.087554000"
+        "activityDisplayName": "Add member to role in PIM completed (permanent)"
+        "additionalDetails":
+          - "key": "RoleDefinitionOriginId"
+            "value": "123451235"
+          - "key": "RoleDefinitionOriginType"
+            "value": "BuiltInRole"
+          - "key": "TemplateId"
+            "value": "123412351"
+          - "key": "StartTime"
+            "value": "2024-12-16T16:32:15.8441686Z"
+          - "key": "Justification"
+            "value": "test assign"
+          - "key": "oid"
+            "value": "12351534"
+          - "key": "tid"
+            "value": "345667733"
+          - "key": "wids"
+            "value": "234523454"
+          - "key": "ipaddr"
+            "value": "1.2.3.4"
+          - "key": "RequestId"
+            "value": "651346123452"
+        "category": "RoleManagement"
+        "correlationId": "12345"
+        "id": "PIM_123415"
+        "initiatedBy":
+          "user":
+            "displayName": "Ju Cho"
+            "id": "12345"
+            "roles": []
+            "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
+        "loggedByService": "PIM"
+        "operationType": "Update"
+        "result": "success"
+        "resultReason": "test assign"
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Application Administrator"
+            "id": "12345"
+            "modifiedProperties":
+              - "displayName": "RoleDefinitionOriginId"
+                "newValue": "\"12345\""
+                "oldValue": "\"\""
+              - "displayName": "RoleDefinitionOriginType"
+                "newValue": "\"BuiltInRole\""
+                "oldValue": "\"\""
+              - "displayName": "TemplateId"
+                "newValue": "\"12345\""
+                "oldValue": "\"\""
+            "type": "Role"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Request"
+          - "administrativeUnits": []
+            "displayName": "Malenia"
+            "id": "12345"
+            "type": "User"
+          - "administrativeUnits": []
+            "displayName": "Panther"
+            "id": "12345"
+            "type": "Directory"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Other"
+      "resourceId": "/tenants/12345/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12345"
+      "time": "2024-12-16 16:32:16.087554000"
+    Name: Successfully added PIM role
+  - ExpectedResult: false
     Log:
-        {
-            "category": "AuditLogs",
-            "correlationId": "1234155",
-            "durationMs": 0,
-            "identity": "Ju Cho",
-            "Level": 4,
-            "operationName": "Add member to role in PIM requested (permanent)",
-            "operationVersion": "1.0",
-            "properties": {
-                "activityDateTime": "2024-12-16 16:32:16.087554000",
-                "activityDisplayName": "Add member to role in PIM requested (permanent)",
-                "additionalDetails": [
-                    {
-                        "key": "RoleDefinitionOriginId",
-                        "value": "123451235"
-                    },
-                    {
-                        "key": "RoleDefinitionOriginType",
-                        "value": "BuiltInRole"
-                    },
-                    {
-                        "key": "TemplateId",
-                        "value": "123412351"
-                    },
-                    {
-                        "key": "StartTime",
-                        "value": "2024-12-16T16:32:15.8441686Z"
-                    },
-                    {
-                        "key": "Justification",
-                        "value": "test assign"
-                    },
-                    {
-                        "key": "oid",
-                        "value": "12351534"
-                    },
-                    {
-                        "key": "tid",
-                        "value": "345667733"
-                    },
-                    {
-                        "key": "wids",
-                        "value": "234523454"
-                    },
-                    {
-                        "key": "ipaddr",
-                        "value": "1.2.3.4"
-                    },
-                    {
-                        "key": "RequestId",
-                        "value": "651346123452"
-                    }
-                ],
-                "category": "RoleManagement",
-                "correlationId": "12345",
-                "id": "PIM_123415",
-                "initiatedBy": {
-                    "user": {
-                        "displayName": "Ju Cho",
-                        "id": "12345",
-                        "roles": [],
-                        "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
-                    }
-                },
-                "loggedByService": "PIM",
-                "operationType": "Update",
-                "result": "success",
-                "resultReason": "test assign",
-                "targetResources": [
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Application Administrator",
-                        "id": "12345",
-                        "modifiedProperties": [
-                            {
-                                "displayName": "RoleDefinitionOriginId",
-                                "newValue": "\"12345\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "RoleDefinitionOriginType",
-                                "newValue": "\"BuiltInRole\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "TemplateId",
-                                "newValue": "\"12345\"",
-                                "oldValue": "\"\""
-                            }
-                        ],
-                        "type": "Role"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Request"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Malenia",
-                        "id": "12345",
-                        "type": "User"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Panther",
-                        "id": "12345",
-                        "type": "Directory"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Other"
-                    }
-                ]
-            },
-            "resourceId": "/tenants/12345/providers/Microsoft.aadiam",
-            "resultSignature": "None",
-            "tenantId": "12345",
-            "time": "2024-12-16 16:32:16.087554000"
-        }
-  - Name: Add member to role (Non PIM)
-    ExpectedResult: false
+      "Level": 4
+      "category": "AuditLogs"
+      "correlationId": "1234155"
+      "durationMs": 0
+      "identity": "Ju Cho"
+      "operationName": "Add member to role in PIM requested (permanent)"
+      "operationVersion": "1.0"
+      "properties":
+        "activityDateTime": "2024-12-16 16:32:16.087554000"
+        "activityDisplayName": "Add member to role in PIM requested (permanent)"
+        "additionalDetails":
+          - "key": "RoleDefinitionOriginId"
+            "value": "123451235"
+          - "key": "RoleDefinitionOriginType"
+            "value": "BuiltInRole"
+          - "key": "TemplateId"
+            "value": "123412351"
+          - "key": "StartTime"
+            "value": "2024-12-16T16:32:15.8441686Z"
+          - "key": "Justification"
+            "value": "test assign"
+          - "key": "oid"
+            "value": "12351534"
+          - "key": "tid"
+            "value": "345667733"
+          - "key": "wids"
+            "value": "234523454"
+          - "key": "ipaddr"
+            "value": "1.2.3.4"
+          - "key": "RequestId"
+            "value": "651346123452"
+        "category": "RoleManagement"
+        "correlationId": "12345"
+        "id": "PIM_123415"
+        "initiatedBy":
+          "user":
+            "displayName": "Ju Cho"
+            "id": "12345"
+            "roles": []
+            "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
+        "loggedByService": "PIM"
+        "operationType": "Update"
+        "result": "success"
+        "resultReason": "test assign"
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Application Administrator"
+            "id": "12345"
+            "modifiedProperties":
+              - "displayName": "RoleDefinitionOriginId"
+                "newValue": "\"12345\""
+                "oldValue": "\"\""
+              - "displayName": "RoleDefinitionOriginType"
+                "newValue": "\"BuiltInRole\""
+                "oldValue": "\"\""
+              - "displayName": "TemplateId"
+                "newValue": "\"12345\""
+                "oldValue": "\"\""
+            "type": "Role"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Request"
+          - "administrativeUnits": []
+            "displayName": "Malenia"
+            "id": "12345"
+            "type": "User"
+          - "administrativeUnits": []
+            "displayName": "Panther"
+            "id": "12345"
+            "type": "Directory"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Other"
+      "resourceId": "/tenants/12345/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12345"
+      "time": "2024-12-16 16:32:16.087554000"
+    Name: requested adding PIM role
+  - ExpectedResult: false
     Log:
-        {
-            "category": "AuditLogs",
-            "correlationId": "1234155",
-            "durationMs": 0,
-            "identity": "Ju Cho",
-            "Level": 4,
-            "operationName": "Add member to role",
-            "operationVersion": "1.0",
-            "properties": {
-                "activityDateTime": "2024-12-16 16:32:16.087554000",
-                "activityDisplayName": "Add member to role",
-                "additionalDetails": [
-                    {
-                        "key": "RoleDefinitionOriginId",
-                        "value": "123451235"
-                    },
-                    {
-                        "key": "RoleDefinitionOriginType",
-                        "value": "BuiltInRole"
-                    },
-                    {
-                        "key": "TemplateId",
-                        "value": "123412351"
-                    },
-                    {
-                        "key": "StartTime",
-                        "value": "2024-12-16T16:32:15.8441686Z"
-                    },
-                    {
-                        "key": "Justification",
-                        "value": "test assign"
-                    },
-                    {
-                        "key": "oid",
-                        "value": "12351534"
-                    },
-                    {
-                        "key": "tid",
-                        "value": "345667733"
-                    },
-                    {
-                        "key": "wids",
-                        "value": "234523454"
-                    },
-                    {
-                        "key": "ipaddr",
-                        "value": "1.2.3.4"
-                    },
-                    {
-                        "key": "RequestId",
-                        "value": "651346123452"
-                    }
-                ],
-                "category": "RoleManagement",
-                "correlationId": "12345",
-                "id": "PIM_123415",
-                "initiatedBy": {
-                    "user": {
-                        "displayName": "Ju Cho",
-                        "id": "12345",
-                        "roles": [],
-                        "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
-                    }
-                },
-                "loggedByService": "PIM",
-                "operationType": "Update",
-                "result": "success",
-                "resultReason": "test assign",
-                "targetResources": [
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Application Administrator",
-                        "id": "12345",
-                        "modifiedProperties": [
-                            {
-                                "displayName": "RoleDefinitionOriginId",
-                                "newValue": "\"12345\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "RoleDefinitionOriginType",
-                                "newValue": "\"BuiltInRole\"",
-                                "oldValue": "\"\""
-                            },
-                            {
-                                "displayName": "TemplateId",
-                                "newValue": "\"123415\"",
-                                "oldValue": "\"\""
-                            }
-                        ],
-                        "type": "Role"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Request"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Malenia",
-                        "id": "12345",
-                        "type": "User"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "displayName": "Panther",
-                        "id": "12345",
-                        "type": "Directory"
-                    },
-                    {
-                        "administrativeUnits": [],
-                        "id": "12345",
-                        "type": "Other"
-                    }
-                ]
-            },
-            "resourceId": "/tenants/12345/providers/Microsoft.aadiam",
-            "resultSignature": "None",
-            "tenantId": "12345",
-            "time": "2024-12-16 16:32:16.087554000"
-        }
+      "Level": 4
+      "category": "AuditLogs"
+      "correlationId": "1234155"
+      "durationMs": 0
+      "identity": "Ju Cho"
+      "operationName": "Add member to role"
+      "operationVersion": "1.0"
+      "properties":
+        "activityDateTime": "2024-12-16 16:32:16.087554000"
+        "activityDisplayName": "Add member to role"
+        "additionalDetails":
+          - "key": "RoleDefinitionOriginId"
+            "value": "123451235"
+          - "key": "RoleDefinitionOriginType"
+            "value": "BuiltInRole"
+          - "key": "TemplateId"
+            "value": "123412351"
+          - "key": "StartTime"
+            "value": "2024-12-16T16:32:15.8441686Z"
+          - "key": "Justification"
+            "value": "test assign"
+          - "key": "oid"
+            "value": "12351534"
+          - "key": "tid"
+            "value": "345667733"
+          - "key": "wids"
+            "value": "234523454"
+          - "key": "ipaddr"
+            "value": "1.2.3.4"
+          - "key": "RequestId"
+            "value": "651346123452"
+        "category": "RoleManagement"
+        "correlationId": "12345"
+        "id": "PIM_123415"
+        "initiatedBy":
+          "user":
+            "displayName": "Ju Cho"
+            "id": "12345"
+            "roles": []
+            "userPrincipalName": "Radahn@Starscourge.onmicrosoft.com"
+        "loggedByService": "PIM"
+        "operationType": "Update"
+        "result": "success"
+        "resultReason": "test assign"
+        "targetResources":
+          - "administrativeUnits": []
+            "displayName": "Application Administrator"
+            "id": "12345"
+            "modifiedProperties":
+              - "displayName": "RoleDefinitionOriginId"
+                "newValue": "\"12345\""
+                "oldValue": "\"\""
+              - "displayName": "RoleDefinitionOriginType"
+                "newValue": "\"BuiltInRole\""
+                "oldValue": "\"\""
+              - "displayName": "TemplateId"
+                "newValue": "\"123415\""
+                "oldValue": "\"\""
+            "type": "Role"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Request"
+          - "administrativeUnits": []
+            "displayName": "Malenia"
+            "id": "12345"
+            "type": "User"
+          - "administrativeUnits": []
+            "displayName": "Panther"
+            "id": "12345"
+            "type": "Directory"
+          - "administrativeUnits": []
+            "id": "12345"
+            "type": "Other"
+      "resourceId": "/tenants/12345/providers/Microsoft.aadiam"
+      "resultSignature": "None"
+      "tenantId": "12345"
+      "time": "2024-12-16 16:32:16.087554000"
+    Name: Add member to role (Non PIM)

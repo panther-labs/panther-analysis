@@ -1,10 +1,9 @@
 AnalysisType: pack
-PackID: PantherManaged.Kubernetes.Core
-DisplayName: "Panther Core Kubernetes Pack"
-Description: This is a group of detections that act on Kubernetes logs sourced from Amazon EKS.
+Description: This is a group of detections that act on Kubernetes logs sourced from
+  Amazon EKS.
+DisplayName: Panther Core Kubernetes Pack
 PackDefinition:
   IDs:
-    # Kubernetes scheduled queries and rules
     - Kubernetes.CronJobCreatedOrModified
     - Kubernetes.DaemonSetDeployed
     - Kubernetes.IOCActivity
@@ -20,7 +19,6 @@ PackDefinition:
     - Kubernetes.ServiceTypeNodePortDeployed
     - Kubernetes.UnauthenticatedAPIRequest
     - Kubernetes.UnauthorizedPodExecution
-    # Queries
     - IOC Activity in K8 Control Plane
     - Kubernetes Cron Job Created or Modified
     - Kubernetes Pod Created in Pre-Configured or Default Name Spaces
@@ -36,3 +34,4 @@ PackDefinition:
     - Secret Enumeration by a User
     - Unauthenticated Kubernetes API Request
     - Unauthorized Kubernetes Pod Execution
+PackID: PantherManaged.Kubernetes.Core

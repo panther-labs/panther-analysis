@@ -1,336 +1,274 @@
 AnalysisType: policy
-Filename: aws_network_acl_restricted_ssh.py
-PolicyID: "AWS.NetworkACL.RestrictedSSH"
+Description: >-
+  SSH access should only be granted from protected network CIDR ranges.
 DisplayName: "AWS Network ACL Restricts SSH"
 Enabled: true
+Filename: aws_network_acl_restricted_ssh.py
+PolicyID: "AWS.NetworkACL.RestrictedSSH"
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1021
 ResourceTypes:
   - AWS.EC2.NetworkACL
+Runbook: >-
+  Remove the NACL rule granting unprotected SSH access.
+Severity: High
 Tags:
   - AWS
   - Panther
   - Lateral Movement:Remote Services
-Reports:
-  MITRE ATT&CK:
-    - TA0008:T1021
-Severity: High
-Description: >
-  SSH access should only be granted from protected network CIDR ranges.
-Runbook: >
-  Remove the NACL rule granting unprotected SSH access.
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
 Tests:
-  - Name: Secure VPC SSH Access
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Secure VPC SSH Access
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "8.8.8.8/32",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 99,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Global VPC SSH Access
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "8.8.8.8/32"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 99
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: Global VPC SSH Access
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Global IPv6 VPC SSH Access
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: Global IPv6 VPC SSH Access
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": null,
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": "::/0",
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Global VPC SSH Access From Range
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock":
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock": "::/0"
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: Global VPC SSH Access From Range
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 0, "To": 1024 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Global VPC SSH Access From Unrestricted Port Range
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 0
+            "To": 1024
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: Global VPC SSH Access From Unrestricted Port Range
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Selective SSH Access
-    ExpectedResult: true
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: true
+    Name: Selective SSH Access
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": null,
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-            {
-              "CidrBlock": "1.1.1.1/32",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 30,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "deny",
-              "RuleNumber": 50,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Selective SSH Access From Port Range
-    ExpectedResult: true
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "1.1.1.1/32"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 30
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "deny"
+          "RuleNumber": 50
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: true
+    Name: Selective SSH Access From Port Range
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": {},
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": null,
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-            {
-              "CidrBlock": "1.1.1.1/32",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 0, "To": 1024 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 30,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "-1",
-              "RuleAction": "deny",
-              "RuleNumber": 50,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "1.1.1.1/32"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 0
+            "To": 1024
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 30
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "-1"
+          "RuleAction": "deny"
+          "RuleNumber": 50
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags": {}
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"

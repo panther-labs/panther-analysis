@@ -1,18 +1,18 @@
 AnalysisType: datamodel
-LogTypes:
-  - Zendesk.Audit
 DataModelID: "Standard.Zendesk.AuditLog"
 DisplayName: "Zendesk Audit"
-Filename: zendesk_data_model.py
 Enabled: true
+Filename: zendesk_data_model.py
+LogTypes:
+  - Zendesk.Audit
 Mappings:
   - Name: actor_user
     Path: actor_name
-  - Name: assigned_admin_role
-    Method: get_assigned_admin_role
-  - Name: event_type
-    Method: get_event_type
+  - Method: get_assigned_admin_role
+    Name: assigned_admin_role
+  - Method: get_event_type
+    Name: event_type
   - Name: source_ip
     Path: ip_address
-  - Name: user
-    Method: get_user
+  - Method: get_user
+    Name: user

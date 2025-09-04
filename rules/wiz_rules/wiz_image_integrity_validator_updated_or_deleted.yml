@@ -1,97 +1,84 @@
 AnalysisType: rule
-RuleID: Wiz.Image.Integrity.Validator.Updated.Or.Deleted
-Description: This rule detects updates and deletions of image integrity validators.
-DisplayName: Wiz Image Integrity Validator Updated Or Deleted
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
-Reference: https://www.wiz.io/blog/ensuring-supply-chain-security-verify-container-image-integrity-with-the-wiz-admi
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects updates and deletions of image integrity validators.
+DisplayName: "Wiz Image Integrity Validator Updated Or Deleted"
 Enabled: true
 Filename: wiz_image_integrity_validator_updated_or_deleted.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.001  # Impair Defenses: Disable or Modify Tools
 LogTypes:
   - Wiz.Audit
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: 
+  https://www.wiz.io/blog/ensuring-supply-chain-security-verify-container-image-integrity-with-the-wiz-admi
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.001
+RuleID: "Wiz.Image.Integrity.Validator.Updated.Or.Deleted"
+Runbook: >-
+  Verify that this change was planned. If not, revert the change and ensure this doesn't
+  happen again.
+Severity: Medium
 Tests:
-  - Name: DeleteImageIntegrityValidator
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "action": "DeleteImageIntegrityValidator",
-        "actionparameters": {
-          "input": {
-            "id": "12345-5273-4bcb-9bd6-12345"
-          },
-          "selection": [
-            "_stub"
-          ]
-        },
-        "id": "12345-362c-494a-b601-12345",
-        "log_type": "auditLogEntries",
-        "requestid": "12345-6532-4130-bb3a-12345",
-        "serviceaccount": {
-          "id": "test",
-          "name": "test1"
-        },
-        "sourceip": "8.8.8.8",
-        "status": "SUCCESS",
-        "timestamp": "2024-04-16 21:45:03.392",
-        "user": null,
-        "useragent": "Terraform-Provider/1.10.2360"
-      }
-  - Name: CreateUser
-    ExpectedResult: false
+      "action": "DeleteImageIntegrityValidator"
+      "actionparameters":
+        "input":
+          "id": "12345-5273-4bcb-9bd6-12345"
+        "selection":
+          - "_stub"
+      "id": "12345-362c-494a-b601-12345"
+      "log_type": "auditLogEntries"
+      "requestid": "12345-6532-4130-bb3a-12345"
+      "serviceaccount":
+        "id": "test"
+        "name": "test1"
+      "sourceip": "8.8.8.8"
+      "status": "SUCCESS"
+      "timestamp": "2024-04-16 21:45:03.392"
+      "user":
+      "useragent": "Terraform-Provider/1.10.2360"
+    Name: DeleteImageIntegrityValidator
+  - ExpectedResult: false
     Log:
-      {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
-        "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-29T09:40:15.66643Z",
-        "actionParameters": {
-          "input": {
-            "assignedProjectIds": null,
-            "email": "testy@company.com",
-            "expiresAt": null,
-            "name": "Test User",
-            "role": "GLOBAL_ADMIN"
-          },
-          "selection": [
-            "__typename",
-            {
-              "user": [
-                "__typename",
-                "id"
-              ]
-            }
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "8.8.8.8",
-        "serviceAccount": null,
-        "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
-        }
-      }
-  - Name: DeleteImageIntegrityValidator - Fail
-    ExpectedResult: false
+      "action": "CreateUser"
+      "actionParameters":
+        "input":
+          "assignedProjectIds":
+          "email": "testy@company.com"
+          "expiresAt":
+          "name": "Test User"
+          "role": "GLOBAL_ADMIN"
+        "selection":
+          - "__typename"
+          - "user":
+              - "__typename"
+              - "id"
+      "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14"
+      "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e"
+      "serviceAccount":
+      "sourceIP": "8.8.8.8"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-29T09:40:15.66643Z"
+      "user":
+        "id": "someuser@company.com"
+        "name": "someuser@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: CreateUser
+  - ExpectedResult: false
     Log:
-      {
-        "action": "DeleteImageIntegrityValidator",
-        "actionparameters": { },
-        "id": "12345-362c-494a-b601-12345",
-        "log_type": "auditLogEntries",
-        "requestid": "12345-6532-4130-bb3a-12345",
-        "serviceaccount": {
-          "id": "test",
-          "name": "test1"
-        },
-        "sourceip": "8.8.8.8",
-        "status": "FAILED",
-        "timestamp": "2024-04-16 21:45:03.392",
-        "user": null,
-        "useragent": "Terraform-Provider/1.10.2360"
-      }
+      "action": "DeleteImageIntegrityValidator"
+      "actionparameters": {}
+      "id": "12345-362c-494a-b601-12345"
+      "log_type": "auditLogEntries"
+      "requestid": "12345-6532-4130-bb3a-12345"
+      "serviceaccount":
+        "id": "test"
+        "name": "test1"
+      "sourceip": "8.8.8.8"
+      "status": "FAILED"
+      "timestamp": "2024-04-16 21:45:03.392"
+      "user":
+      "useragent": "Terraform-Provider/1.10.2360"
+    Name: DeleteImageIntegrityValidator - Fail
+Threshold: 1

@@ -1,140 +1,108 @@
 AnalysisType: rule
-Filename: gcp_user_added_to_privileged_group.py
-RuleID: "GCP.User.Added.To.Privileged.Group"
+DedupPeriodMinutes: 60
+Description: >-
+  A user was added to a group with special previleges
 DisplayName: "GCP User Added to Privileged Group"
 Enabled: false
+Filename: gcp_user_added_to_privileged_group.py
 LogTypes:
   - GCP.AuditLog
+Reference: 
+  https://github.com/GoogleCloudPlatform/security-analytics/blob/main/src/2.02/2.02.md
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078.004
+    - TA0004:T1484.001
+RuleID: "GCP.User.Added.To.Privileged.Group"
+Runbook: >-
+  Determine if the user had been added to the group for legitimate reasons.
 Severity: Low
 Tags:
   - Configuration Required
-Reports:
-  MITRE ATT&CK:
-    - TA0004:T1078.004 # Privilege Escalation: Valid Accounts: Cloud Accounts
-    - TA0004:T1484.001 # Privilege Escalation: Domain or Tenant Policy Modification: Group Policy Modification
-Description: A user was added to a group with special previleges
-DedupPeriodMinutes: 60
-Threshold: 1
-Reference: 
-  https://github.com/GoogleCloudPlatform/security-analytics/blob/main/src/2.02/2.02.md
-Runbook: Determine if the user had been added to the group for legitimate reasons.
 Tests:
-  - Name: User Added to Privileged Group
-    ExpectedResult: true
+  - ExpectedResult: true
+    Log:
+      "insertId": "285djodxlmu"
+      "logName": "organizations/123/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "admin@example.com"
+        "metadata":
+          "@type": "type.googleapis.com/ccc_hosted_reporting.ActivityProto"
+          "activityId":
+            "timeUsec": "1647987178916000"
+            "uniqQualifier": "-8614641986436885296"
+          "event":
+            - "eventName": "ADD_GROUP_MEMBER"
+              "eventType": "GROUP_SETTINGS"
+              "parameter":
+                - "label": "LABEL_OPTIONAL"
+                  "name": "USER_EMAIL"
+                  "type": "TYPE_STRING"
+                  "value": "test-user@example.com"
+                - "label": "LABEL_OPTIONAL"
+                  "name": "GROUP_EMAIL"
+                  "type": "TYPE_STRING"
+                  "value": "admins@example.com"
+        "methodName": "google.admin.AdminService.addGroupMember"
+        "requestMetadata":
+          "callerIP": "11.22.33.44"
+          "destinationAttributes": {}
+          "requestAttributes": {}
+        "resourceName": "organizations/123/groupSettings"
+        "serviceName": "admin.googleapis.com"
+      "receiveTimestamp": "2022-03-22T22:12:59.439766009Z"
+      "resource":
+        "labels":
+          "method": "google.admin.AdminService.addGroupMember"
+          "service": "admin.googleapis.com"
+        "type": "audited_resource"
+      "severity": "NOTICE"
+      "timestamp": "2022-03-22T22:12:58.916Z"
     Mocks:
       - objectName: get_privileged_groups
         returnValue: '["admins@example.com"]'
+    Name: User Added to Privileged Group
+  - ExpectedResult: false
     Log:
-      {
-        "logName": "organizations/123/logs/cloudaudit.googleapis.com%2Factivity",
-        "severity": "NOTICE",
-        "insertId": "285djodxlmu",
-        "resource": {
-          "type": "audited_resource",
-          "labels": {
-            "method": "google.admin.AdminService.addGroupMember",
-            "service": "admin.googleapis.com"
-          }
-        },
-        "timestamp": "2022-03-22T22:12:58.916Z",
-        "receiveTimestamp": "2022-03-22T22:12:59.439766009Z",
-        "protoPayload": {
-          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "serviceName": "admin.googleapis.com",
-          "methodName": "google.admin.AdminService.addGroupMember",
-          "resourceName": "organizations/123/groupSettings",
-          "authenticationInfo": {
-            "principalEmail": "admin@example.com"
-          },
-          "requestMetadata": {
-            "callerIP": "11.22.33.44",
-            "requestAttributes": {},
-            "destinationAttributes": {}
-          },
-          "metadata": {
-            "@type": "type.googleapis.com/ccc_hosted_reporting.ActivityProto",
-            "activityId": {
-              "timeUsec": "1647987178916000",
-              "uniqQualifier": "-8614641986436885296"
-            },
-            "event": [
-              {
-                "eventName": "ADD_GROUP_MEMBER",
-                "eventType": "GROUP_SETTINGS",
-                "parameter": [
-                  {
-                    "label": "LABEL_OPTIONAL",
-                    "value": "test-user@example.com",
-                    "type": "TYPE_STRING",
-                    "name": "USER_EMAIL"
-                  },
-                  {
-                    "type": "TYPE_STRING",
-                    "value": "admins@example.com",
-                    "label": "LABEL_OPTIONAL",
-                    "name": "GROUP_EMAIL"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
-  - Name: User Added to Non-Privileged Group
-    ExpectedResult: false
-    Log:
-      {
-        "logName": "organizations/123/logs/cloudaudit.googleapis.com%2Factivity",
-        "severity": "NOTICE",
-        "insertId": "285djodxlmu",
-        "resource": {
-          "type": "audited_resource",
-          "labels": {
-            "method": "google.admin.AdminService.addGroupMember",
-            "service": "admin.googleapis.com"
-          }
-        },
-        "timestamp": "2022-03-22T22:12:58.916Z",
-        "receiveTimestamp": "2022-03-22T22:12:59.439766009Z",
-        "protoPayload": {
-          "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "serviceName": "admin.googleapis.com",
-          "methodName": "google.admin.AdminService.addGroupMember",
-          "resourceName": "organizations/123/groupSettings",
-          "authenticationInfo": {
-            "principalEmail": "admin@example.com"
-          },
-          "requestMetadata": {
-            "callerIP": "11.22.33.44",
-            "requestAttributes": {},
-            "destinationAttributes": {}
-          },
-          "metadata": {
-            "@type": "type.googleapis.com/ccc_hosted_reporting.ActivityProto",
-            "activityId": {
-              "timeUsec": "1647987178916000",
-              "uniqQualifier": "-8614641986436885296"
-            },
-            "event": [
-              {
-                "eventName": "ADD_GROUP_MEMBER",
-                "eventType": "GROUP_SETTINGS",
-                "parameter": [
-                  {
-                    "label": "LABEL_OPTIONAL",
-                    "value": "test-user@example.com",
-                    "type": "TYPE_STRING",
-                    "name": "USER_EMAIL"
-                  },
-                  {
-                    "type": "TYPE_STRING",
-                    "value": "normies@example.com",
-                    "label": "LABEL_OPTIONAL",
-                    "name": "GROUP_EMAIL"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
+      "insertId": "285djodxlmu"
+      "logName": "organizations/123/logs/cloudaudit.googleapis.com%2Factivity"
+      "protoPayload":
+        "@type": "type.googleapis.com/google.cloud.audit.AuditLog"
+        "authenticationInfo":
+          "principalEmail": "admin@example.com"
+        "metadata":
+          "@type": "type.googleapis.com/ccc_hosted_reporting.ActivityProto"
+          "activityId":
+            "timeUsec": "1647987178916000"
+            "uniqQualifier": "-8614641986436885296"
+          "event":
+            - "eventName": "ADD_GROUP_MEMBER"
+              "eventType": "GROUP_SETTINGS"
+              "parameter":
+                - "label": "LABEL_OPTIONAL"
+                  "name": "USER_EMAIL"
+                  "type": "TYPE_STRING"
+                  "value": "test-user@example.com"
+                - "label": "LABEL_OPTIONAL"
+                  "name": "GROUP_EMAIL"
+                  "type": "TYPE_STRING"
+                  "value": "normies@example.com"
+        "methodName": "google.admin.AdminService.addGroupMember"
+        "requestMetadata":
+          "callerIP": "11.22.33.44"
+          "destinationAttributes": {}
+          "requestAttributes": {}
+        "resourceName": "organizations/123/groupSettings"
+        "serviceName": "admin.googleapis.com"
+      "receiveTimestamp": "2022-03-22T22:12:59.439766009Z"
+      "resource":
+        "labels":
+          "method": "google.admin.AdminService.addGroupMember"
+          "service": "admin.googleapis.com"
+        "type": "audited_resource"
+      "severity": "NOTICE"
+      "timestamp": "2022-03-22T22:12:58.916Z"
+    Name: User Added to Non-Privileged Group
+Threshold: 1

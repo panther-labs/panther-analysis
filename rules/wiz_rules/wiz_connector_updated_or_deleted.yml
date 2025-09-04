@@ -1,96 +1,84 @@
 AnalysisType: rule
-RuleID: Wiz.Connector.Updated.Or.Deleted
-Description: This rule detects updates and deletions of connectors.
-DisplayName: Wiz Connector Updated Or Deleted
-Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
-Reference: https://help.vulcancyber.com/en/articles/6735270-wiz-connector  # article about integration with Vulcan
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects updates and deletions of connectors.
+DisplayName: "Wiz Connector Updated Or Deleted"
 Enabled: true
 Filename: wiz_connector_updated_or_deleted.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.001  # Impair Defenses: Disable or Modify Tools
 LogTypes:
   - Wiz.Audit
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: https://help.vulcancyber.com/en/articles/6735270-wiz-connector
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.001
+RuleID: "Wiz.Connector.Updated.Or.Deleted"
+Runbook: >-
+  Verify that this change was planned. If not, revert the change and ensure this doesn't
+  happen again.
+Severity: Medium
 Tests:
-  - Name: DeleteConnector
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "id": "c4fe1656-23a3-4b60-a689-d59a337c5551",
-        "action": "DeleteConnector",
-        "requestId": "471b9148-887a-49ff-ad83-162d7e38cf4e",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-09T08:03:09.825336Z",
-        "actionParameters": {
-          "input": {
-            "id": "7a55031b-98f4-4a64-b77c-ad0bc9d7b54b"
-          },
-          "selection": [
-            "__typename",
-            "_stub"
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
-  - Name: CreateUser
-    ExpectedResult: false
+      "action": "DeleteConnector"
+      "actionParameters":
+        "input":
+          "id": "7a55031b-98f4-4a64-b77c-ad0bc9d7b54b"
+        "selection":
+          - "__typename"
+          - "_stub"
+      "id": "c4fe1656-23a3-4b60-a689-d59a337c5551"
+      "requestId": "471b9148-887a-49ff-ad83-162d7e38cf4e"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-09T08:03:09.825336Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: DeleteConnector
+  - ExpectedResult: false
     Log:
-      {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
-        "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
-        "status": "SUCCESS",
-        "timestamp": "2024-07-29T09:40:15.66643Z",
-        "actionParameters": {
-          "input": {
-            "assignedProjectIds": null,
-            "email": "testy@company.com",
-            "expiresAt": null,
-            "name": "Test User",
-            "role": "GLOBAL_ADMIN"
-          },
-          "selection": [
-            "__typename",
-            {
-              "user": [
-                "__typename",
-                "id"
-              ]
-            }
-          ]
-        },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "8.8.8.8",
-        "serviceAccount": null,
-        "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
-        }
-      }
-  - Name: DeleteConnector - Fail
-    ExpectedResult: false
+      "action": "CreateUser"
+      "actionParameters":
+        "input":
+          "assignedProjectIds":
+          "email": "testy@company.com"
+          "expiresAt":
+          "name": "Test User"
+          "role": "GLOBAL_ADMIN"
+        "selection":
+          - "__typename"
+          - "user":
+              - "__typename"
+              - "id"
+      "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14"
+      "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e"
+      "serviceAccount":
+      "sourceIP": "8.8.8.8"
+      "status": "SUCCESS"
+      "timestamp": "2024-07-29T09:40:15.66643Z"
+      "user":
+        "id": "someuser@company.com"
+        "name": "someuser@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: CreateUser
+  - ExpectedResult: false
     Log:
-      {
-        "id": "c4fe1656-23a3-4b60-a689-d59a337c5551",
-        "action": "DeleteConnector",
-        "requestId": "471b9148-887a-49ff-ad83-162d7e38cf4e",
-        "status": "FAILED",
-        "timestamp": "2024-07-09T08:03:09.825336Z",
-        "actionParameters": { },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
-        "serviceAccount": null,
-        "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
-        }
-      }
+      "action": "DeleteConnector"
+      "actionParameters": {}
+      "id": "c4fe1656-23a3-4b60-a689-d59a337c5551"
+      "requestId": "471b9148-887a-49ff-ad83-162d7e38cf4e"
+      "serviceAccount":
+      "sourceIP": "12.34.56.78"
+      "status": "FAILED"
+      "timestamp": "2024-07-09T08:03:09.825336Z"
+      "user":
+        "id": "test.user@company.com"
+        "name": "user@company.com"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    Name: DeleteConnector - Fail
+Threshold: 1

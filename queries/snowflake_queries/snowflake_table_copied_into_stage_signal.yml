@@ -1,29 +1,34 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_table_copied_into_stage_signal.py
-RuleID: "Snowflake.CopyIntoStage"
-Description: >
+CreateAlert: false
+Description: >-
   A table was copied into a stage
 DisplayName: "Snowflake Table Copied Into Stage"
 Enabled: true
-CreateAlert: false
-Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Filename: snowflake_table_copied_into_stage_signal.py
+Reference: 
+  https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Reports:
-    MITRE ATT&CK:
-        - TA0010:T1041  # Exfiltration Over C2 Channel
+  MITRE ATT&CK:
+    - TA0010:T1041
+RuleID: "Snowflake.CopyIntoStage"
 ScheduledQueries:
   - Query.Snowflake.CopyIntoStage
 Severity: Info
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-      "execution_status": "SUCCESS",
-      "path": "LOGS.PUBLIC.data_exfil/DATA.csv",
-      "query_text": "COPY INTO @LOGS.PUBLIC.data_exfil/DATA.csv\nFROM (SELECT * FROM PANTHER_LOGS.PUBLIC.GITLAB_API_VARIANT LIMIT 100)\nFILE_FORMAT = ( \n TYPE='CSV' \n COMPRESSION=GZIP\n FIELD_DELIMITER=',' \n ESCAPE=NONE \n ESCAPE_UNENCLOSED_FIELD=NONE \n date_format='AUTO' \n time_format='AUTO' \n timestamp_format='AUTO'\n binary_format='UTF-8' \n field_optionally_enclosed_by='\"' \n null_if='' \n EMPTY_FIELD_AS_NULL = FALSE \n)  \noverwrite=TRUE \nsingle=FALSE \nmax_file_size=5368709120 \nheader=TRUE",
-      "query_type": "UNLOAD",
-      "role_name": "SYSADMIN",
-      "stage": "LOGS.PUBLIC.data_exfil",
-      "start_time": "2024-06-10 19:15:37.445Z",
+      "execution_status": "SUCCESS"
+      "path": "LOGS.PUBLIC.data_exfil/DATA.csv"
+      "query_text": "COPY INTO @LOGS.PUBLIC.data_exfil/DATA.csv\nFROM (SELECT * FROM
+        PANTHER_LOGS.PUBLIC.GITLAB_API_VARIANT LIMIT 100)\nFILE_FORMAT = ( \n TYPE='CSV'
+        \n COMPRESSION=GZIP\n FIELD_DELIMITER=',' \n ESCAPE=NONE \n ESCAPE_UNENCLOSED_FIELD=NONE
+        \n date_format='AUTO' \n time_format='AUTO' \n timestamp_format='AUTO'\n binary_format='UTF-8'
+        \n field_optionally_enclosed_by='\"' \n null_if='' \n EMPTY_FIELD_AS_NULL
+        = FALSE \n)  \noverwrite=TRUE \nsingle=FALSE \nmax_file_size=5368709120 \n\
+        header=TRUE"
+      "query_type": "UNLOAD"
+      "role_name": "SYSADMIN"
+      "stage": "LOGS.PUBLIC.data_exfil"
+      "start_time": "2024-06-10 19:15:37.445Z"
       "user_name": "ADMIN"
-    }
+    Name: Value Returned By Query

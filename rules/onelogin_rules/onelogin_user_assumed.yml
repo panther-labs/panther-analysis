@@ -1,43 +1,41 @@
 AnalysisType: rule
-Filename: onelogin_user_assumed.py
-RuleID: "OneLogin.UserAssumption"
+Description: >-
+  User assumed another user account
 DisplayName: "OneLogin User Assumed Another User"
 Enabled: true
+Filename: onelogin_user_assumed.py
 LogTypes:
   - OneLogin.Events
-Tags:
-  - OneLogin
-  - Lateral Movement:Use Alternate Authentication Material
+Reference: 
+  https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010594#:~:text=Prerequisites,Actions%20and%20select%20Assume%20User.
 Reports:
   MITRE ATT&CK:
     - TA0008:T1550
-Severity: Low
-Description: User assumed another user account
-Reference: https://onelogin.service-now.com/kb_view_customer.do?sysparm_article=KB0010594#:~:text=Prerequisites,Actions%20and%20select%20Assume%20User.
-Runbook: >
+RuleID: "OneLogin.UserAssumption"
+Runbook: >-
   Investigate whether this was authorized access.
+Severity: Low
 SummaryAttributes:
   - account_id
   - user_name
   - user_id
+Tags:
+  - OneLogin
+  - Lateral Movement:Use Alternate Authentication Material
 Tests:
-  - Name: User assumed their own account
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "event_type_id": "240",
-        "actor_user_id": 123456,
-        "actor_user_name": "Bob Cat",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
-  - Name: User assumed another user's account
-    ExpectedResult: true
+      "actor_user_id": 123456
+      "actor_user_name": "Bob Cat"
+      "event_type_id": "240"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User assumed their own account
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "3",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "3"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User assumed another user's account

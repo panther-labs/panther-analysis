@@ -1,155 +1,132 @@
 AnalysisType: policy
-Filename: aws_network_acl_restricts_insecure_protocols.py
-PolicyID: "AWS.NetworkACL.RestrictsInsecureProtocols"
+Description: >-
+  This policy validates that Network ACLs block the usage of ports typically associated
+  with insecure or unencrypted protocols.
 DisplayName: "AWS Network ACL Restricts Insecure Protocols"
 Enabled: false
+Filename: aws_network_acl_restricts_insecure_protocols.py
+PolicyID: "AWS.NetworkACL.RestrictsInsecureProtocols"
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
+Reports:
+  MITRE ATT&CK:
+    - TA0011:T1095
+  PCI:
+    - 8.2.1
 ResourceTypes:
   - AWS.EC2.NetworkACL
+Runbook: >-
+  Add Network ACL entries to block ports typically associated with insecure protocols.
+Severity: Low
 Tags:
   - AWS
   - PCI
   - Command and Control:Non-Application Layer Protocol
-Reports:
-  PCI:
-    - 8.2.1
-  MITRE ATT&CK:
-    - TA0011:T1095
-Severity: Low
-Description: >
-  This policy validates that Network ACLs block the usage of ports typically associated with insecure or unencrypted protocols.
-Runbook: Add Network ACL entries to block ports typically associated with insecure protocols.
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
 Tests:
-  - Name: Network ACL Restricts Insecure Protocols
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Network ACL Restricts Insecure Protocols
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": { "environment": "pci" },
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "8.8.8.8/32",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 22, "To": 22 },
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: Insecure Ports Not Restricted
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "8.8.8.8/32"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 22
+            "To": 22
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags":
+        "environment": "pci"
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: Insecure Ports Not Restricted
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Region": "ap-southeast-2",
-        "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ID": "acl-111222333",
-        "Tags": { "environment": "pci" },
-        "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "TimeCreated": null,
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-111222333",
-              "NetworkAclId": "acl-111222333",
-              "SubnetId": "subnet-111222333",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 21, "To": 21 },
-              "Protocol": "-1",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": true,
-        "NetworkAclId": "acl-111222333",
-        "OwnerId": "123456789012",
-        "VpcId": "vpc-6aa60b12",
-      }
-  - Name: All Ports Allowed
-    ExpectedResult: false
+      "ARN": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "AccountId": "123456789012"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-111222333"
+          "NetworkAclId": "acl-111222333"
+          "SubnetId": "subnet-111222333"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 21
+            "To": 21
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "ID": "acl-111222333"
+      "IsDefault": true
+      "NetworkAclId": "acl-111222333"
+      "OwnerId": "123456789012"
+      "Region": "ap-southeast-2"
+      "ResourceID": "arn:aws:ec2:ap-southeast-2:123456789012:network-acl/acl-111222333"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags":
+        "environment": "pci"
+      "TimeCreated":
+      "VpcId": "vpc-6aa60b12"
+  - ExpectedResult: false
+    Name: All Ports Allowed
     Resource:
-      {
-        "OwnerId": "123456789012",
-        "Region": "us-west-2",
-        "Associations":
-          [
-            {
-              "NetworkAclId": "acl-1",
-              "NetworkAclAssociationId": "aclassoc-1",
-              "SubnetId": "subnet-1",
-            },
-          ],
-        "Id": "acl-1",
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "RuleNumber": 100,
-              "Ipv6CidrBlock": null,
-              "Protocol": "-1",
-              "PortRange": null,
-              "IcmpTypeCode": null,
-              "RuleAction": "allow",
-            },
-            {
-              "RuleNumber": 32767,
-              "Ipv6CidrBlock": null,
-              "Protocol": "-1",
-              "PortRange": null,
-              "IcmpTypeCode": null,
-              "RuleAction": "deny",
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-            },
-          ],
-        "VpcId": "vpc-1",
-        "IsDefault": true,
-        "Tags": { "environment": "pci" },
-        "AccountId": "123456789012",
-        "ResourceType": "AWS.EC2.NetworkACL",
-        "ResourceId": "arn:aws:ec2:us-west-2:123456789012:network-acl/acl-1",
-        "Arn": "arn:aws:ec2:us-west-2:123456789012:network-acl/acl-1",
-        "TimeCreated": null,
-      }
+      "AccountId": "123456789012"
+      "Arn": "arn:aws:ec2:us-west-2:123456789012:network-acl/acl-1"
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-1"
+          "NetworkAclId": "acl-1"
+          "SubnetId": "subnet-1"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "deny"
+          "RuleNumber": 32767
+      "Id": "acl-1"
+      "IsDefault": true
+      "OwnerId": "123456789012"
+      "Region": "us-west-2"
+      "ResourceId": "arn:aws:ec2:us-west-2:123456789012:network-acl/acl-1"
+      "ResourceType": "AWS.EC2.NetworkACL"
+      "Tags":
+        "environment": "pci"
+      "TimeCreated":
+      "VpcId": "vpc-1"

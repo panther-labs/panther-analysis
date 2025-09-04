@@ -1,41 +1,38 @@
 AnalysisType: rule
-Filename: snowflake_stream_account_admin_assigned.py
-RuleID: "Snowflake.Stream.AccountAdminGranted"
-DisplayName: Snowflake Account Admin Granted
+Description: >-
+  Detect when account admin is granted.
+DisplayName: "Snowflake Account Admin Granted"
 Enabled: true
+Filename: snowflake_stream_account_admin_assigned.py
 LogTypes:
   - Snowflake.GrantsToUsers
-Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0004:T1078
-Description: Detect when account admin is granted.
+RuleID: "Snowflake.Stream.AccountAdminGranted"
+Severity: Medium
 Tags:
   - Snowflake
   - '[MITRE] Privilege Escalation'
   - '[MITRE] Valid Accounts'
 Tests:
-  - Name: Admin Role Assigned
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-10-08 11:24:50.682000000",
-        "p_log_type": "Snowflake.GrantsToUsers",
-        "p_source_label": "Snowflake Prod",
-        "CREATED_ON": "2024-10-08 11:24:50.682000000",
-        "GRANTED_BY": "SNOWFLAKE",
-        "GRANTED_TO": "APPLICATION_ROLE",
-        "GRANTEE_NAME": "TRUST_CENTER_ADMIN"
-      }
-  - Name: Non-Admin Role Assigned
-    ExpectedResult: false
+      "CREATED_ON": "2024-10-08 11:24:50.682000000"
+      "GRANTED_BY": "SNOWFLAKE"
+      "GRANTED_TO": "APPLICATION_ROLE"
+      "GRANTEE_NAME": "TRUST_CENTER_ADMIN"
+      "p_event_time": "2024-10-08 11:24:50.682000000"
+      "p_log_type": "Snowflake.GrantsToUsers"
+      "p_source_label": "Snowflake Prod"
+    Name: Admin Role Assigned
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-10-08 11:24:50.682000000",
-        "p_log_type": "Snowflake.GrantsToUsers",
-        "p_source_label": "Snowflake Prod",
-        "CREATED_ON": "2024-10-08 11:24:50.682000000",
-        "GRANTED_BY": "SNOWFLAKE",
-        "GRANTED_TO": "APPLICATION_ROLE",
-        "GRANTEE_NAME": "TRUST_CENTER_VIEWER"
-      }
+      "CREATED_ON": "2024-10-08 11:24:50.682000000"
+      "GRANTED_BY": "SNOWFLAKE"
+      "GRANTED_TO": "APPLICATION_ROLE"
+      "GRANTEE_NAME": "TRUST_CENTER_VIEWER"
+      "p_event_time": "2024-10-08 11:24:50.682000000"
+      "p_log_type": "Snowflake.GrantsToUsers"
+      "p_source_label": "Snowflake Prod"
+    Name: Non-Admin Role Assigned

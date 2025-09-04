@@ -1,78 +1,71 @@
 AnalysisType: rule
-RuleID: ZIA.Backup.Deleted
-Description: This rule detects when ZIA backup data was deleted.
-DisplayName: ZIA Backup Deleted
-Runbook: Verify that this change was planned. If not, make sure to restore the backup.
-Reference: https://help.zscaler.com/zia/about-backup-and-restore
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects when ZIA backup data was deleted.
+DisplayName: "ZIA Backup Deleted"
 Enabled: true
 Filename: zia_backup_deleted.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.008 # Disable or Modify Cloud Logs
 LogTypes:
   - Zscaler.ZIA.AdminAuditLog
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: https://help.zscaler.com/zia/about-backup-and-restore
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+RuleID: "ZIA.Backup.Deleted"
+Runbook: >-
+  Verify that this change was planned. If not, make sure to restore the backup.
+Severity: Medium
 Tests:
-  - Name: Backup deleted
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "event": {
-          "action": "DELETE",
-          "adminid": "admin@test.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "BACKUP_AND_RESTORE",
-          "clientip": "1.2.3.4",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": { },
-          "preaction": {
-            "adminLogin": "admin@test.zscalerbeta.net",
-            "goldenRestorePoint": false,
-            "id": 163372,
-            "name": "test-restore-2",
-            "time": 1730737925000
-          },
-          "recordid": "366",
-          "resource": "test-restore-2",
-          "result": "SUCCESS",
-          "subcategory": "BACKUP_AND_RESTORE",
-          "time": "2024-11-04 16:32:18.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
-  - Name: Backup created
-    ExpectedResult: false
+      "event":
+        "action": "DELETE"
+        "adminid": "admin@test.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "BACKUP_AND_RESTORE"
+        "clientip": "1.2.3.4"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction": {}
+        "preaction":
+          "adminLogin": "admin@test.zscalerbeta.net"
+          "goldenRestorePoint": false
+          "id": 163372
+          "name": "test-restore-2"
+          "time": 1730737925000
+        "recordid": "366"
+        "resource": "test-restore-2"
+        "result": "SUCCESS"
+        "subcategory": "BACKUP_AND_RESTORE"
+        "time": "2024-11-04 16:32:18.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Backup deleted
+  - ExpectedResult: false
     Log:
-      {
-        "event": {
-          "action": "CREATE",
-          "adminid": "admin@test.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "BACKUP_AND_RESTORE",
-          "clientip": "1.2.3.4",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": {
-            "adminLogin": "admin@test.zscalerbeta.net",
-            "goldenRestorePoint": false,
-            "id": 163372,
-            "name": "test-restore-2",
-            "time": 1730737925000
-          },
-          "preaction": {
-            "goldenRestorePoint": false,
-            "id": 0,
-            "name": "test-restore-2",
-            "time": 0
-          },
-          "recordid": "365",
-          "resource": "test-restore-2",
-          "result": "SUCCESS",
-          "subcategory": "BACKUP_AND_RESTORE",
-          "time": "2024-11-04 16:32:05.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
+      "event":
+        "action": "CREATE"
+        "adminid": "admin@test.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "BACKUP_AND_RESTORE"
+        "clientip": "1.2.3.4"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction":
+          "adminLogin": "admin@test.zscalerbeta.net"
+          "goldenRestorePoint": false
+          "id": 163372
+          "name": "test-restore-2"
+          "time": 1730737925000
+        "preaction":
+          "goldenRestorePoint": false
+          "id": 0
+          "name": "test-restore-2"
+          "time": 0
+        "recordid": "365"
+        "resource": "test-restore-2"
+        "result": "SUCCESS"
+        "subcategory": "BACKUP_AND_RESTORE"
+        "time": "2024-11-04 16:32:05.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Backup created
+Threshold: 1

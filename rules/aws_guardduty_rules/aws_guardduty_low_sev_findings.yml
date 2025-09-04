@@ -1,20 +1,20 @@
 AnalysisType: rule
-Filename: aws_guardduty_low_sev_findings.py
-RuleID: "AWS.GuardDuty.LowSeverityFinding"
+DedupPeriodMinutes: 1440
+Description: >-
+  A low-severity GuardDuty finding has been identified.
 DisplayName: "AWS GuardDuty Low Severity Finding"
 Enabled: true
+Filename: aws_guardduty_low_sev_findings.py
 LogTypes:
   - AWS.GuardDuty
-Tags:
-  - AWS
+Reference: 
+  https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity
+RuleID: "AWS.GuardDuty.LowSeverityFinding"
+Runbook: >-
+  Search related logs to understand the root cause of the activity. Search the Panther
+  Summary Attribute type value in https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html
+  for additional details.
 Severity: Low
-DedupPeriodMinutes: 1440 # 24 hours
-Description: >
-  A low-severity GuardDuty finding has been identified.
-Runbook: >
-  Search related logs to understand the root cause of the activity.
-  Search the Panther Summary Attribute type value in https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html for additional details.
-Reference: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity
 SummaryAttributes:
   - severity
   - type
@@ -22,94 +22,81 @@ SummaryAttributes:
   - p_any_domain_names
   - p_any_aws_arns
   - p_any_aws_account_ids
+Tags:
+  - AWS
 Tests:
-  - Name: Low Sev Finding
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "schemaVersion": "2.0",
-        "accountId": "123456789012",
-        "region": "us-east-1",
-        "partition": "aws",
-        "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a",
-        "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions",
-        "service":
-          {
-            "serviceName": "guardduty",
-            "detectorId": "111111bbbbbbbbbb5555555551111111",
-            "action":
-              {
-                "actionType": "AWS_API_CALL",
-                "awsApiCallAction":
-                  {
-                    "api": "PutRolePolicy",
-                    "serviceName": "iam.amazonaws.com",
-                    "callerType": "Domain",
-                    "domainDetails":
-                      { "domain": "cloudformation.amazonaws.com" },
-                    "affectedResources":
-                      {
-                        "AWS::IAM::Role": "arn:aws:iam::123456789012:role/IAMRole",
-                      },
-                  },
-              },
-            "resourceRole": "TARGET",
-            "additionalInfo": {},
-            "evidence": null,
-            "eventFirstSeen": "2020-02-14T17:59:17Z",
-            "eventLastSeen": "2020-02-14T17:59:17Z",
-            "archived": false,
-            "count": 1,
-          },
-        "severity": 1,
-        "id": "eeb88ab56556eb7771b266670dddee5a",
-        "createdAt": "2020-02-14T18:12:22.316Z",
-        "updatedAt": "2020-02-14T18:12:22.316Z",
-        "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves that is highly permissive.",
-        "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive policy to themselves.",
-      }
-  - Name: Low Sev Finding As Sample Data
-    ExpectedResult: false
+      "accountId": "123456789012"
+      "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a"
+      "createdAt": "2020-02-14T18:12:22.316Z"
+      "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive
+        policy to themselves."
+      "id": "eeb88ab56556eb7771b266670dddee5a"
+      "partition": "aws"
+      "region": "us-east-1"
+      "schemaVersion": "2.0"
+      "service":
+        "action":
+          "actionType": "AWS_API_CALL"
+          "awsApiCallAction":
+            "affectedResources":
+              "AWS::IAM::Role": "arn:aws:iam::123456789012:role/IAMRole"
+            "api": "PutRolePolicy"
+            "callerType": "Domain"
+            "domainDetails":
+              "domain": "cloudformation.amazonaws.com"
+            "serviceName": "iam.amazonaws.com"
+        "additionalInfo": {}
+        "archived": false
+        "count": 1
+        "detectorId": "111111bbbbbbbbbb5555555551111111"
+        "eventFirstSeen": "2020-02-14T17:59:17Z"
+        "eventLastSeen": "2020-02-14T17:59:17Z"
+        "evidence":
+        "resourceRole": "TARGET"
+        "serviceName": "guardduty"
+      "severity": 1
+      "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves
+        that is highly permissive."
+      "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions"
+      "updatedAt": "2020-02-14T18:12:22.316Z"
+    Name: Low Sev Finding
+  - ExpectedResult: false
     Log:
-      {
-        "schemaVersion": "2.0",
-        "accountId": "123456789012",
-        "region": "us-east-1",
-        "partition": "aws",
-        "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a",
-        "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions",
-        "service":
-          {
-            "serviceName": "guardduty",
-            "detectorId": "111111bbbbbbbbbb5555555551111111",
-            "action":
-              {
-                "actionType": "AWS_API_CALL",
-                "awsApiCallAction":
-                  {
-                    "api": "PutRolePolicy",
-                    "serviceName": "iam.amazonaws.com",
-                    "callerType": "Domain",
-                    "domainDetails":
-                      { "domain": "cloudformation.amazonaws.com" },
-                    "affectedResources":
-                      {
-                        "AWS::IAM::Role": "arn:aws:iam::123456789012:role/IAMRole",
-                      },
-                  },
-              },
-            "resourceRole": "TARGET",
-            "additionalInfo": { "sample": true },
-            "evidence": null,
-            "eventFirstSeen": "2020-02-14T17:59:17Z",
-            "eventLastSeen": "2020-02-14T17:59:17Z",
-            "archived": false,
-            "count": 1,
-          },
-        "severity": 1,
-        "id": "eeb88ab56556eb7771b266670dddee5a",
-        "createdAt": "2020-02-14T18:12:22.316Z",
-        "updatedAt": "2020-02-14T18:12:22.316Z",
-        "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves that is highly permissive.",
-        "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive policy to themselves.",
-      }
+      "accountId": "123456789012"
+      "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/111111bbbbbbbbbb5555555551111111/finding/90b82273685661b9318f078d0851fe9a"
+      "createdAt": "2020-02-14T18:12:22.316Z"
+      "description": "Principal AssumedRole:IAMRole attempted to add a highly permissive
+        policy to themselves."
+      "id": "eeb88ab56556eb7771b266670dddee5a"
+      "partition": "aws"
+      "region": "us-east-1"
+      "schemaVersion": "2.0"
+      "service":
+        "action":
+          "actionType": "AWS_API_CALL"
+          "awsApiCallAction":
+            "affectedResources":
+              "AWS::IAM::Role": "arn:aws:iam::123456789012:role/IAMRole"
+            "api": "PutRolePolicy"
+            "callerType": "Domain"
+            "domainDetails":
+              "domain": "cloudformation.amazonaws.com"
+            "serviceName": "iam.amazonaws.com"
+        "additionalInfo":
+          "sample": true
+        "archived": false
+        "count": 1
+        "detectorId": "111111bbbbbbbbbb5555555551111111"
+        "eventFirstSeen": "2020-02-14T17:59:17Z"
+        "eventLastSeen": "2020-02-14T17:59:17Z"
+        "evidence":
+        "resourceRole": "TARGET"
+        "serviceName": "guardduty"
+      "severity": 1
+      "title": "Principal AssumedRole:IAMRole attempted to add a policy to themselves
+        that is highly permissive."
+      "type": "PrivilegeEscalation:IAMUser/AdministrativePermissions"
+      "updatedAt": "2020-02-14T18:12:22.316Z"
+    Name: Low Sev Finding As Sample Data

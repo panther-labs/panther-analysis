@@ -1,34 +1,32 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_0109877_suspected_user_access.py
-RuleID: "Snowflake.User.Access"
-Description: >
-  Return sessions of suspected clients as part of ongoing cyber threat activity reported May 31st, 2024
+Description: >-
+  Return sessions of suspected clients as part of ongoing cyber threat activity reported
+  May 31st, 2024
 DisplayName: "Snowflake User Access"
 Enabled: false
-Runbook: Determine if this occurred as a result of a valid business request.
+Filename: snowflake_0109877_suspected_user_access.py
+RuleID: "Snowflake.User.Access"
+Runbook: >-
+  Determine if this occurred as a result of a valid business request.
 ScheduledQueries:
   - Query.Snowflake.SuspectedUserAccess
 Severity: High
 Tests:
-  - Name: User Access
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "authentication_method": "Password",
-        "client_application_id": "Go 1.6.24",
-        "client_application_version": "1.6.24",
-        "client_build_id": "",
-        "client_environment":
-          {
-            "APPLICATION": "An Application",
-            "OS": "linux",
-            "OS_VERSION": "gc-amd64",
-            "OCSP_MODE": "FAIL_OPEN",
-          },
-        "client_version": "0",
-        "closed_reason": "ABANDONED",
-        "created_on": "2023-11-08 23:40:08.602Z",
-        "login_event_id": 33614596,
-        "session_id": 8605339653,
-        "user_name": "USER NAME",
-      }
+      "authentication_method": "Password"
+      "client_application_id": "Go 1.6.24"
+      "client_application_version": "1.6.24"
+      "client_build_id": ""
+      "client_environment":
+        "APPLICATION": "An Application"
+        "OCSP_MODE": "FAIL_OPEN"
+        "OS": "linux"
+        "OS_VERSION": "gc-amd64"
+      "client_version": "0"
+      "closed_reason": "ABANDONED"
+      "created_on": "2023-11-08 23:40:08.602Z"
+      "login_event_id": 33614596
+      "session_id": 8605339653
+      "user_name": "USER NAME"
+    Name: User Access

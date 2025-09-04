@@ -1,44 +1,42 @@
 AnalysisType: rule
-Filename: suspicious_domains.py
-RuleID: "CiscoUmbrella.DNS.Suspicious"
+DedupPeriodMinutes: 480
+Description: >-
+  Monitor suspicious or known malicious domains
 DisplayName: "Cisco Umbrella Suspicious Domains"
 Enabled: false
-DedupPeriodMinutes: 480 # 8 hours
+Filename: suspicious_domains.py
 LogTypes:
   - CiscoUmbrella.DNS
-Tags:
-  - DNS
-  - Configuration Required
 Reference: https://umbrella.cisco.com/blog/abcs-of-dns
+RuleID: "CiscoUmbrella.DNS.Suspicious"
+Runbook: >-
+  Inspect the domain and check the host for other indicators of compromise
 Severity: Low
-Description: Monitor suspicious or known malicious domains
-Runbook: Inspect the domain and check the host for other indicators of compromise
 SummaryAttributes:
   - action
   - internalIp
   - externalIp
   - domain
   - responseCode
+Tags:
+  - DNS
+  - Configuration Required
 Tests:
-  - Name: Suspicious Domain
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "action": "Allow",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
-        "timestamp": "2020-05-21 19:20:25.000",
-        "responseCode": "NOERROR",
-        "domain": "cron.photoscape.ch.",
-      }
-  - Name: Safe Domain
-    ExpectedResult: false
+      "action": "Allow"
+      "domain": "cron.photoscape.ch."
+      "externalIp": "136.24.229.58"
+      "internalIp": "136.24.229.58"
+      "responseCode": "NOERROR"
+      "timestamp": "2020-05-21 19:20:25.000"
+    Name: Suspicious Domain
+  - ExpectedResult: false
     Log:
-      {
-        "action": "Allowed",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
-        "timestamp": "2020-05-21 19:20:25.000",
-        "responseCode": "NOERROR",
-        "domain": "google.com.",
-      }
+      "action": "Allowed"
+      "domain": "google.com."
+      "externalIp": "136.24.229.58"
+      "internalIp": "136.24.229.58"
+      "responseCode": "NOERROR"
+      "timestamp": "2020-05-21 19:20:25.000"
+    Name: Safe Domain

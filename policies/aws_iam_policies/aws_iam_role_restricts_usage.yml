@@ -1,86 +1,97 @@
 AnalysisType: policy
-Filename: aws_iam_role_restricts_usage.py
-PolicyID: "AWS.IAM.Role.RestrictsUsage"
+Description: >-
+  This policy validates that IAM roles in the account are restrictive in what entities
+  may assume them. This can help prevent malicious actors from assuming roles they
+  should not be assuming.
 DisplayName: "AWS IAM Role Restricts Usage"
 Enabled: true
+Filename: aws_iam_role_restricts_usage.py
+PolicyID: "AWS.IAM.Role.RestrictsUsage"
+Reference: 
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_permissions-to-switch.html
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078
+  PCI:
+    - 2.2.4
 ResourceTypes:
   - AWS.IAM.Role
+Runbook: >-
+  Assign an appropriate assume role policy to the IAM role.
+Severity: Medium
 Tags:
   - AWS
   - Security, Identity & Compliance
   - PCI
   - Privilege Escalation:Valid Accounts
-Reports:
-  PCI:
-    - 2.2.4
-  MITRE ATT&CK:
-    - TA0004:T1078
-Severity: Medium
-Description: >
-  This policy validates that IAM roles in the account are restrictive in what entities may assume them. This can help prevent malicious actors from assuming roles they should not be assuming.
-Runbook: Assign an appropriate assume role policy to the IAM role.
-Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_permissions-to-switch.html
 Tests:
-  - Name: Role Restricts Usage
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Role Restricts Usage
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Arn": "arn:aws:iam::123456789012:role/example-role",
-        "AssumeRolePolicyDocument": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:root"},"Action":"sts:AssumeRole","Condition":{"Bool":{"aws:MultiFactorAuthPresent":"true"}}}]}',
-        "Description": null,
-        "Id": "1111",
-        "InlinePolicies": null,
-        "ManagedPolicyNames": ["example-policy-1", "example-policy-2"],
-        "MaxSessionDuration": 3600,
-        "Name": "example-role",
-        "Path": "/",
-        "PermissionsBoundary": null,
-        "Region": "global",
-        "ResourceId": "arn:aws:iam::123456789012:role/example-role",
-        "ResourceType": "AWS.IAM.Role",
-        "Tags": null,
-        "TimeCreated": "2019-01-01T00:00:00.000Z",
-      }
-  - Name: Role Does Not Restrict Usage
-    ExpectedResult: false
+      "AccountId": "123456789012"
+      "Arn": "arn:aws:iam::123456789012:role/example-role"
+      "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"\
+        Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"\
+        },\"Action\":\"sts:AssumeRole\",\"Condition\":{\"Bool\":{\"aws:MultiFactorAuthPresent\"\
+        :\"true\"}}}]}"
+      "Description":
+      "Id": "1111"
+      "InlinePolicies":
+      "ManagedPolicyNames":
+        - "example-policy-1"
+        - "example-policy-2"
+      "MaxSessionDuration": 3600
+      "Name": "example-role"
+      "Path": "/"
+      "PermissionsBoundary":
+      "Region": "global"
+      "ResourceId": "arn:aws:iam::123456789012:role/example-role"
+      "ResourceType": "AWS.IAM.Role"
+      "Tags":
+      "TimeCreated": "2019-01-01T00:00:00.000Z"
+  - ExpectedResult: false
+    Name: Role Does Not Restrict Usage
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Arn": "arn:aws:iam::123456789012:role/example-role",
-        "AssumeRolePolicyDocument": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"*"},"Action":"sts:AssumeRole"}]}',
-        "Description": null,
-        "Id": "1111",
-        "InlinePolicies": null,
-        "ManagedPolicyNames": ["example-policy-1", "example-policy-2"],
-        "MaxSessionDuration": 3600,
-        "Name": "example-role",
-        "Path": "/",
-        "PermissionsBoundary": null,
-        "Region": "global",
-        "ResourceId": "arn:aws:iam::123456789012:role/example-role",
-        "ResourceType": "AWS.IAM.Role",
-        "Tags": null,
-        "TimeCreated": "2019-01-01T00:00:00.000Z",
-      }
-  - Name: Role Restrict Usage With Deny Statement
-    ExpectedResult: true
+      "AccountId": "123456789012"
+      "Arn": "arn:aws:iam::123456789012:role/example-role"
+      "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"\
+        Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"sts:AssumeRole\"\
+        }]}"
+      "Description":
+      "Id": "1111"
+      "InlinePolicies":
+      "ManagedPolicyNames":
+        - "example-policy-1"
+        - "example-policy-2"
+      "MaxSessionDuration": 3600
+      "Name": "example-role"
+      "Path": "/"
+      "PermissionsBoundary":
+      "Region": "global"
+      "ResourceId": "arn:aws:iam::123456789012:role/example-role"
+      "ResourceType": "AWS.IAM.Role"
+      "Tags":
+      "TimeCreated": "2019-01-01T00:00:00.000Z"
+  - ExpectedResult: true
+    Name: Role Restrict Usage With Deny Statement
     Resource:
-      {
-        "AccountId": "123456789012",
-        "Arn": "arn:aws:iam::123456789012:role/example-role",
-        "AssumeRolePolicyDocument": '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Principal":{"AWS":"*"},"Action":"sts:AssumeRole"}]}',
-        "Description": null,
-        "Id": "1111",
-        "InlinePolicies": null,
-        "ManagedPolicyNames": ["example-policy-1", "example-policy-2"],
-        "MaxSessionDuration": 3600,
-        "Name": "example-role",
-        "Path": "/",
-        "PermissionsBoundary": null,
-        "Region": "global",
-        "ResourceId": "arn:aws:iam::123456789012:role/example-role",
-        "ResourceType": "AWS.IAM.Role",
-        "Tags": null,
-        "TimeCreated": "2019-01-01T00:00:00.000Z",
-      }
+      "AccountId": "123456789012"
+      "Arn": "arn:aws:iam::123456789012:role/example-role"
+      "AssumeRolePolicyDocument": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"\
+        Effect\":\"Deny\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"sts:AssumeRole\"\
+        }]}"
+      "Description":
+      "Id": "1111"
+      "InlinePolicies":
+      "ManagedPolicyNames":
+        - "example-policy-1"
+        - "example-policy-2"
+      "MaxSessionDuration": 3600
+      "Name": "example-role"
+      "Path": "/"
+      "PermissionsBoundary":
+      "Region": "global"
+      "ResourceId": "arn:aws:iam::123456789012:role/example-role"
+      "ResourceType": "AWS.IAM.Role"
+      "Tags":
+      "TimeCreated": "2019-01-01T00:00:00.000Z"

@@ -1,17 +1,19 @@
 AnalysisType: scheduled_rule
+Description: >-
+  This detection monitors for a pod created with overly permissive linux capabilities.
+  Excessive pod permissions and capabilities can be a launch point for privilege escalation
+  or container breakout.
+DisplayName: "Pod Created with Overly Permissive Linux Capabilities"
+Enabled: false
 Filename: kubernetes_overly_permissive_linux_capabilities.py
 RuleID: "Kubernetes.OverlyPermissivePod"
-DisplayName: "Pod Created with Overly Permissive Linux Capabilities"
-Description: >
-  This detection monitors for a pod created with overly permissive linux capabilities. Excessive pod permissions and capabilities can be a launch point for privilege escalation or container breakout.
-Enabled: false
-Runbook: >
+Runbook: >-
   .
 ScheduledQueries:
   - Pod Created with Overly Permissive Linux Capabilities
 Severity: Medium
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      Anything: any value
+      "Anything": "any value"
+    Name: Value Returned By Query

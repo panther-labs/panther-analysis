@@ -1,54 +1,50 @@
 AnalysisType: rule
-Filename: box_untrusted_device.py
-RuleID: "Box.Untrusted.Device"
+CreateAlert: false
+Description: >-
+  A user attempted to login from an untrusted device.
 DisplayName: "Box Untrusted Device Login"
 Enabled: true
+Filename: box_untrusted_device.py
 LogTypes:
   - Box.Event
-Tags:
-  - Box
-  - Initial Access:Valid Accounts
+Reference: 
+  https://support.box.com/hc/en-us/articles/360044194993-Setting-Up-Device-Trust-Security-Requirements
 Reports:
   MITRE ATT&CK:
     - TA0001:T1078
-Severity: Info
-CreateAlert: false
-Description: >
-  A user attempted to login from an untrusted device.
-Reference: https://support.box.com/hc/en-us/articles/360044194993-Setting-Up-Device-Trust-Security-Requirements
-Runbook: >
+RuleID: "Box.Untrusted.Device"
+Runbook: >-
   Investigate whether this is a valid user attempting to login to box.
+Severity: Info
 SummaryAttributes:
   - ip_address
+Tags:
+  - Box
+  - Initial Access:Valid Accounts
 Tests:
-  - Name: Regular Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "DELETE",
-      }
-  - Name: New Login Event
-    ExpectedResult: true
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "DELETE"
+      "type": "event"
+    Name: Regular Event
+  - ExpectedResult: true
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "DEVICE_TRUST_CHECK_FAILED",
-        "source": { "id": "12345678", "type": "user", "login": "user@example" },
-      }
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "DEVICE_TRUST_CHECK_FAILED"
+      "source":
+        "id": "12345678"
+        "login": "user@example"
+        "type": "user"
+      "type": "event"
+    Name: New Login Event

@@ -1,19 +1,16 @@
 AnalysisType: scheduled_query
-QueryName: "AWS EC2 Discovery Commands Executed"
-Enabled: false
 Description: Multiple different discovery commands were executed by the same EC2 instance.
-Tags:
-  - AWS
-  - CloudTrail
-  - EC2
-  - Discovery
-Query: |
+Enabled: false
+Query: >-
   select
     *,
     count(distinct eventName) over (partition by userIdentity:arn) nActions
   from panther_logs.public.aws_cloudtrail
+
   where p_occurs_since(90m)
+
   and SPLIT_PART(userIdentity:arn, '/', -1) like 'i-%'
+
   and ARRAY_CONTAINS(eventName, [
       'GetCallerIdentity',
       'ListBuckets',
@@ -25,7 +22,14 @@ Query: |
       'DescribeTrails',
       'ListDetectors'
   ])
+
   qualify nActions > 2
+QueryName: "AWS EC2 Discovery Commands Executed"
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 1
+Tags:
+  - AWS
+  - CloudTrail
+  - EC2
+  - Discovery

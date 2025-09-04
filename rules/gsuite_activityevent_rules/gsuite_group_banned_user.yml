@@ -1,36 +1,37 @@
 AnalysisType: rule
-Filename: gsuite_group_banned_user.py
-RuleID: "GSuite.GroupBannedUser"
+Description: >-
+  A GSuite user was banned from an enterprise group by moderator action.
 DisplayName: "GSuite User Banned from Group"
 Enabled: true
+Filename: gsuite_group_banned_user.py
 LogTypes:
   - GSuite.ActivityEvent
-Tags:
-  - GSuite
-Severity: Low
-Description: >
-  A GSuite user was banned from an enterprise group by moderator action.
-Reference: https://support.google.com/a/users/answer/9303224?hl=en&sjid=864417124752637253-EU
-Runbook: >
+Reference: 
+  https://support.google.com/a/users/answer/9303224?hl=en&sjid=864417124752637253-EU
+RuleID: "GSuite.GroupBannedUser"
+Runbook: >-
   Investigate the banned user to see if further disciplinary action needs to be taken.
+Severity: Low
 SummaryAttributes:
   - actor:email
+Tags:
+  - GSuite
 Tests:
-  - Name: User Added
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "groups_enterprise" },
-        "actor": { "email": "homer.simpson@example.com" },
-        "type": "moderator_action",
-        "name": "add_member",
-      }
-  - Name: User Banned from Group
-    ExpectedResult: true
+      "actor":
+        "email": "homer.simpson@example.com"
+      "id":
+        "applicationName": "groups_enterprise"
+      "name": "add_member"
+      "type": "moderator_action"
+    Name: User Added
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "groups_enterprise" },
-        "actor": { "email": "homer.simpson@example.com" },
-        "type": "moderator_action",
-        "name": "ban_user_with_moderation",
-      }
+      "actor":
+        "email": "homer.simpson@example.com"
+      "id":
+        "applicationName": "groups_enterprise"
+      "name": "ban_user_with_moderation"
+      "type": "moderator_action"
+    Name: User Banned from Group

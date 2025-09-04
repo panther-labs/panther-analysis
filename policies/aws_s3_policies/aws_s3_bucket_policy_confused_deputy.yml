@@ -1,39 +1,39 @@
 AnalysisType: policy
-Filename: aws_s3_bucket_policy_confused_deputy.py
-PolicyID: "AWS.S3.Bucket.PolicyConfusedDeputyProtection"
+Description: >-
+  Ensures that S3 bucket policies with service principals include conditions to prevent
+  the confused deputy problem.
 DisplayName: "S3 Bucket Policy Confused Deputy Protection for Service Principals"
 Enabled: true
+Filename: aws_s3_bucket_policy_confused_deputy.py
+PolicyID: "AWS.S3.Bucket.PolicyConfusedDeputyProtection"
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html
 ResourceTypes:
   - AWS.S3.Bucket
+Runbook: >-
+  Update the bucket policy to include conditions such as aws:SourceArn, aws:SourceAccount,
+  aws:SourceOrgID, or aws:SourceOrgPaths when a service principal is specified.
+Severity: High
 Tags:
   - AWS
   - Security Control
   - Best Practices
-Severity: High
-Description: >
-  Ensures that S3 bucket policies with service principals include conditions to prevent the confused deputy problem.
-Runbook: >
-  Update the bucket policy to include conditions such as aws:SourceArn, aws:SourceAccount,
-  aws:SourceOrgID, or aws:SourceOrgPaths when a service principal is specified.
-Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html
 Tests:
-  - Name: Compliant Policy with Service Principal and Condition
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Compliant Policy with Service Principal and Condition
     Resource:
-      {
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"cloudtrail.amazonaws.com"},"Action":"s3:PutObject","Resource":"arn:aws:s3:::my-example-bucket/*","Condition":{"StringEquals":{"aws:SourceAccount":"123456789012"}}}]}'
-      }
-
-  - Name: Non-Compliant Policy with Service Principal and No Condition
-    ExpectedResult: false
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"Service\":\"cloudtrail.amazonaws.com\"},\"Action\":\"s3:PutObject\"\
+        ,\"Resource\":\"arn:aws:s3:::my-example-bucket/*\",\"Condition\":{\"StringEquals\"\
+        :{\"aws:SourceAccount\":\"123456789012\"}}}]}"
+  - ExpectedResult: false
+    Name: Non-Compliant Policy with Service Principal and No Condition
     Resource:
-      {
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"cloudtrail.amazonaws.com"},"Action":"s3:PutObject","Resource":"arn:aws:s3:::my-example-bucket/*"}]}'
-      }
-  
-  - Name: Policy without Service Principal
-    ExpectedResult: true
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"Service\":\"cloudtrail.amazonaws.com\"},\"Action\":\"s3:PutObject\"\
+        ,\"Resource\":\"arn:aws:s3:::my-example-bucket/*\"}]}"
+  - ExpectedResult: true
+    Name: Policy without Service Principal
     Resource:
-      {
-        "Policy": '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789012:root"},"Action":"s3:GetObject","Resource":"arn:aws:s3:::my-example-bucket/*"}]}'
-      }
+      "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\"\
+        ,\"Principal\":{\"AWS\":\"arn:aws:iam::123456789012:root\"},\"Action\":\"\
+        s3:GetObject\",\"Resource\":\"arn:aws:s3:::my-example-bucket/*\"}]}"

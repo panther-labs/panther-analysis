@@ -1,21 +1,21 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_account_admin_assigned.py
-RuleID: "Snowflake.AccountAdminGranted"
-Description: >
+Description: >-
   Detect when account admin is granted.
 DisplayName: "Snowflake Account Admin Granted"
 Enabled: false
-Tags:
-  - Snowflake
-  - Privilege Escalation:Valid Accounts
+Filename: snowflake_account_admin_assigned.py
 Reports:
   MITRE ATT&CK:
     - TA0004:T1078
+RuleID: "Snowflake.AccountAdminGranted"
 ScheduledQueries:
   - Query.Snowflake.AccountAdminGranted
 Severity: Medium
+Tags:
+  - Snowflake
+  - Privilege Escalation:Valid Accounts
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      query_text: "grant role accountadmin to user testuser;"
+      "query_text": "grant role accountadmin to user testuser;"
+    Name: Value Returned By Query

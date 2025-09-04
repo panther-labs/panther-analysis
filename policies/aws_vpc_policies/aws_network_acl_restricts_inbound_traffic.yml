@@ -1,127 +1,107 @@
 AnalysisType: policy
-Filename: aws_network_acl_restricts_inbound_traffic.py
-PolicyID: "AWS.NetworkACL.RestrictsInboundTraffic"
+Description: >-
+  This policy validates that Network ACLs restrict inbound traffic in some way.
 DisplayName: "AWS Network ACL Restricts Inbound Traffic"
 Enabled: false
-ResourceTypes:
-  - AWS.EC2.NetworkACL
-Tags:
-  - AWS
-  - PCI
-  - Initial Access:Exploit Public-Facing Application
+Filename: aws_network_acl_restricts_inbound_traffic.py
+PolicyID: "AWS.NetworkACL.RestrictsInboundTraffic"
+Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
 Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
   PCI:
     - 1.3.5
     - 1.2.1
     - 1.1.4
-  MITRE ATT&CK:
-    - TA0001:T1190
-Severity: Medium
-Description: >
-  This policy validates that Network ACLs restrict inbound traffic in some way.
-Runbook: >
+ResourceTypes:
+  - AWS.EC2.NetworkACL
+Runbook: >-
   Add appropriate entries to the Network ACLs' IP permissions list.
-Reference: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-recommended-nacl-rules.html
+Severity: Medium
+Tags:
+  - AWS
+  - PCI
+  - Initial Access:Exploit Public-Facing Application
 Tests:
-  - Name: Network ACL Restricts Inbound Traffic
-    ExpectedResult: true
+  - ExpectedResult: true
+    Name: Network ACL Restricts Inbound Traffic
     Resource:
-      {
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-abc111222333",
-              "NetworkAclId": "acl-def111222333",
-              "SubnetId": "subnet-111222333444",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 1024, "To": 65535 },
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": null,
-              "Protocol": "-1",
-              "RuleAction": "deny",
-              "RuleNumber": 4200,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 80, "To": 80 },
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": false,
-        "NetworkAclId": "acl-abc111222333",
-        "OwnerId": "123456789012",
-        "Tags": { "environment": "pci" },
-        "VpcId": "vpc-abc111222333",
-      }
-  - Name: Network ACL Does Not Restrict Inbound Traffic
-    ExpectedResult: false
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-abc111222333"
+          "NetworkAclId": "acl-def111222333"
+          "SubnetId": "subnet-111222333444"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 1024
+            "To": 65535
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "deny"
+          "RuleNumber": 4200
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 80
+            "To": 80
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "IsDefault": false
+      "NetworkAclId": "acl-abc111222333"
+      "OwnerId": "123456789012"
+      "Tags":
+        "environment": "pci"
+      "VpcId": "vpc-abc111222333"
+  - ExpectedResult: false
+    Name: Network ACL Does Not Restrict Inbound Traffic
     Resource:
-      {
-        "Associations":
-          [
-            {
-              "NetworkAclAssociationId": "aclassoc-abc111222333",
-              "NetworkAclId": "acl-def111222333",
-              "SubnetId": "subnet-111222333444",
-            },
-          ],
-        "Entries":
-          [
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": { "From": 1024, "To": 65535 },
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": true,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": null,
-              "Protocol": "-1",
-              "RuleAction": "deny",
-              "RuleNumber": 4200,
-            },
-            {
-              "CidrBlock": "0.0.0.0/0",
-              "Egress": false,
-              "IcmpTypeCode": null,
-              "Ipv6CidrBlock": null,
-              "PortRange": null,
-              "Protocol": "6",
-              "RuleAction": "allow",
-              "RuleNumber": 100,
-            },
-          ],
-        "IsDefault": false,
-        "NetworkAclId": "acl-abc111222333",
-        "OwnerId": "123456789012",
-        "Tags": { "environment": "pci" },
-        "VpcId": "vpc-abc111222333",
-      }
+      "Associations":
+        - "NetworkAclAssociationId": "aclassoc-abc111222333"
+          "NetworkAclId": "acl-def111222333"
+          "SubnetId": "subnet-111222333444"
+      "Entries":
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+            "From": 1024
+            "To": 65535
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": true
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "-1"
+          "RuleAction": "deny"
+          "RuleNumber": 4200
+        - "CidrBlock": "0.0.0.0/0"
+          "Egress": false
+          "IcmpTypeCode":
+          "Ipv6CidrBlock":
+          "PortRange":
+          "Protocol": "6"
+          "RuleAction": "allow"
+          "RuleNumber": 100
+      "IsDefault": false
+      "NetworkAclId": "acl-abc111222333"
+      "OwnerId": "123456789012"
+      "Tags":
+        "environment": "pci"
+      "VpcId": "vpc-abc111222333"

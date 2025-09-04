@@ -1,48 +1,49 @@
 AnalysisType: rule
-Filename: gsuite_suspicious_logins.py
-RuleID: "GSuite.SuspiciousLogins"
+Description: >-
+  GSuite reported a suspicious login for this user.
 DisplayName: "Suspicious GSuite Login"
 Enabled: true
+Filename: gsuite_suspicious_logins.py
 LogTypes:
   - GSuite.ActivityEvent
-Tags:
-  - GSuite
-Severity: Medium
-Description: >
-  GSuite reported a suspicious login for this user.
 Reference: https://support.google.com/a/answer/7102416?hl=en
-Runbook: >
-  Checkout the details of the login and verify this behavior with the user to ensure the account wasn't compromised.
+RuleID: "GSuite.SuspiciousLogins"
+Runbook: >-
+  Checkout the details of the login and verify this behavior with the user to ensure
+  the account wasn't compromised.
+Severity: Medium
 SummaryAttributes:
   - actor:email
+Tags:
+  - GSuite
 Tests:
-  - Name: Normal Login Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "login_success",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
-  - Name: Account Warning Not For Suspicious Login
-    ExpectedResult: false
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "login_success"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Normal Login Event
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "account_disabled_spamming",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
-  - Name: Account Warning For Suspicious Login
-    ExpectedResult: true
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "account_disabled_spamming"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Account Warning Not For Suspicious Login
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "suspicious_login",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "suspicious_login"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Account Warning For Suspicious Login

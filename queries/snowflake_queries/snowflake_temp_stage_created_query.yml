@@ -1,25 +1,36 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.TempStageCreated"
+Description: 
+  https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Enabled: true
-Description: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
-Query: |
-    SELECT 
-    user_name,
-    role_name,
-    start_time AS p_event_time,
-    query_type,
-    execution_status,
-    regexp_substr(query_text, 'CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)', 1, 1, 'i', 4) as stage,
-    query_text
+Query: >-
+  SELECT 
 
-    FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
-    WHERE query_type = 'CREATE' 
-        AND stage IS NOT NULL 
-        AND p_occurs_since('1 day') 
-        AND execution_status = 'SUCCESS'
-    LIMIT 100
+  user_name,
+
+  role_name,
+
+  start_time AS p_event_time,
+
+  query_type,
+
+  execution_status,
+
+  regexp_substr(query_text, 'CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)',
+  1, 1, 'i', 4) as stage,
+
+  query_text
+
+
+  FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+
+  WHERE query_type = 'CREATE' 
+      AND stage IS NOT NULL 
+      AND p_occurs_since('1 day') 
+      AND execution_status = 'SUCCESS'
+  LIMIT 100
+QueryName: "Query.Snowflake.TempStageCreated"
 Schedule:
-    RateMinutes: 1440
-    TimeoutMinutes: 1
+  RateMinutes: 1440
+  TimeoutMinutes: 1
 Tags:
-    - data exfil
+  - data exfil

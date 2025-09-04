@@ -1,12 +1,12 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.BruteForceByUsername"
+Description: Detect brute force attempts by monitoring for failed logins to snowflake.
 Enabled: false
-Description: >
-  Detect brute force attempts by monitoring for failed logins to snowflake.
-Query: |
+Query: >-
   --return users with more than 5 failed logins in the previous 24 hours
 
+
   --this was adapted from a SnowAlert query
+
 
   SELECT
     user_name,
@@ -15,13 +15,16 @@ Query: |
     ARRAY_AGG(DISTINCT error_message) as error_messages,
     COUNT(event_id) AS counts
   FROM snowflake.account_usage.login_history
+
   WHERE
     DATEDIFF(HOUR, event_timestamp, CURRENT_TIMESTAMP) < 24
     AND event_type = 'LOGIN'
     AND error_code IS NOT NULL
     AND error_code != 394304 -- Ignore JWT Fingerprint Mismatch
   GROUP BY reported_client_type, user_name
+
   HAVING counts >=5;
+QueryName: "Query.Snowflake.BruteForceByUsername"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 2

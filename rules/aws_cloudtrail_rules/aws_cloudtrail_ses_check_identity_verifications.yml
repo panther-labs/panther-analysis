@@ -1,72 +1,62 @@
 AnalysisType: rule
-Filename: aws_cloudtrail_ses_check_identity_verifications.py
-RuleID: "AWS.CloudTrail.SES.CheckIdentityVerifications"
-DisplayName: AWS CloudTrail SES Check Identity Verifications
+CreateAlert: false
+DisplayName: "AWS CloudTrail SES Check Identity Verifications"
 Enabled: true
+Filename: aws_cloudtrail_ses_check_identity_verifications.py
 LogTypes:
   - AWS.CloudTrail
-Severity: Info
-CreateAlert: false
-Reference: >
+Reference: 
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.discovery.ses-enumerate/
+RuleID: "AWS.CloudTrail.SES.CheckIdentityVerifications"
+Severity: Info
 Tags:
   - AWS CloudTrail
   - Beta
 Tests:
-  - Name: GetIdentityVerificationStatus Event
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2025-01-20 16:52:14.000000000",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "2025-01-20 17:00:54.142940079",
-        "additionalEventData": {
-          "SignatureVersion": "4"
-        },
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "05197e93-992f-4476-899a-a6f53c9a462c",
-        "eventName": "GetIdentityVerificationAttributes",
-        "eventSource": "ses.amazonaws.com",
-        "eventTime": "2025-01-20 16:52:14.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.08",
-        "managementEvent": true,
-        "readOnly": true,
-        "recipientAccountId": "111122223333",
-        "requestID": "e3b6e034-97ce-4d43-a7d2-1e718f3ebf32",
-        "requestParameters": {
-          "identities": [
-            "acme.com",
-            "bobson.dugnutt@acme.com",
-            "sleve.mcdichael@yahoo.com",
-          ]
-        },
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails": {
-          "cipherSuite": "TLS_AES_128_GCM_SHA256",
-          "clientProvidedHostHeader": "email.us-west-2.amazonaws.com",
-          "tlsVersion": "TLSv1.3"
-        },
-        "userAgent": "example-user-agent",
-        "userIdentity": {
-          "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt",
-          "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt",
-          "sessionContext": {
-            "attributes": {
-              "creationDate": "2025-01-20T15:58:59Z",
-              "mfaAuthenticated": "false"
-            },
-            "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole",
-              "principalId": "SAMPLE_PRINCIPAL_ID",
-              "type": "Role",
-              "userName": "SampleRole"
-            }
-          },
-          "type": "AssumedRole"
-        }
-      }
+      "additionalEventData":
+        "SignatureVersion": "4"
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "05197e93-992f-4476-899a-a6f53c9a462c"
+      "eventName": "GetIdentityVerificationAttributes"
+      "eventSource": "ses.amazonaws.com"
+      "eventTime": "2025-01-20 16:52:14.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "managementEvent": true
+      "p_event_time": "2025-01-20 16:52:14.000000000"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "2025-01-20 17:00:54.142940079"
+      "readOnly": true
+      "recipientAccountId": "111122223333"
+      "requestID": "e3b6e034-97ce-4d43-a7d2-1e718f3ebf32"
+      "requestParameters":
+        "identities":
+          - "acme.com"
+          - "bobson.dugnutt@acme.com"
+          - "sleve.mcdichael@yahoo.com"
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "email.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "example-user-agent"
+      "userIdentity":
+        "accessKeyId": "SAMPLE_ACCESS_KEY"
+        "accountId": "111122223333"
+        "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/bobson.dugnutt"
+        "principalId": "SAMPLE_PRINCIPAL_ID:bobson.dugnutt"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2025-01-20T15:58:59Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "111122223333"
+            "arn": "arn:aws:iam::111122223333:role/aws-reserved/sso.amazonaws.com/us-west-2/SampleRole"
+            "principalId": "SAMPLE_PRINCIPAL_ID"
+            "type": "Role"
+            "userName": "SampleRole"
+        "type": "AssumedRole"
+    Name: GetIdentityVerificationStatus Event

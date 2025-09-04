@@ -1,14 +1,16 @@
 AnalysisType: scheduled_rule
-RuleID: "AWS.Potentially.Stolen.Service.Role.Scheduled"
+Description: >-
+  A role was assumed by an AWS service, followed by a user within 24 hours.  This
+  could indicate a stolen or compromised AWS service role.
 DisplayName: "AWS Potentially Stolen Service Role"
 Enabled: true
-Tags:
-    - AWS
-Severity: High
+Filename: aws_potentially_compromised_service_role.py
 Reports:
   MITRE ATT&CK:
-    - TA0006:T1528 # Steal Application Access Token
-Description: A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
-Filename: aws_potentially_compromised_service_role.py
+    - TA0006:T1528
+RuleID: "AWS.Potentially.Stolen.Service.Role.Scheduled"
 ScheduledQueries:
-  - "AWS Potentially Stolen Service Role"
+  - AWS Potentially Stolen Service Role
+Severity: High
+Tags:
+  - AWS

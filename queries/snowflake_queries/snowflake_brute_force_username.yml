@@ -1,34 +1,34 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_brute_force_username.py
-RuleID: "Snowflake.BruteForceByUsername"
-Description: >
+Description: >-
   Detect brute force attacks by monitoring for failed logins by the same username
 DisplayName: "Snowflake Brute Force Attacks by Username"
 Enabled: false
-ScheduledQueries:
-  - Query.Snowflake.FailedLogins
-Tags:
-  - Snowflake
-  - Credential Access:Brute Force
+Filename: snowflake_brute_force_username.py
 Reports:
   MITRE ATT&CK:
     - TA0006:T1110
+RuleID: "Snowflake.BruteForceByUsername"
+ScheduledQueries:
+  - Query.Snowflake.FailedLogins
 Severity: Medium
-Threshold: 5
 SummaryAttributes:
   - client_ip
   - error_message
   - error_code
   - reported_client_type
+Tags:
+  - Snowflake
+  - Credential Access:Brute Force
 Tests:
-  - Name: Value Returned By Query
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      user_name: "testuser"
-      error_message: JWT_TOKEN_INVALID_PUBLIC_KEY_FINGERPRINT_MISMATCH
-      count_by_username: 100
-  - Name: Common Error Message
-    ExpectedResult: true
+      "count_by_username": 100
+      "error_message": "JWT_TOKEN_INVALID_PUBLIC_KEY_FINGERPRINT_MISMATCH"
+      "user_name": "testuser"
+    Name: Value Returned By Query
+  - ExpectedResult: true
     Log:
-      user_name: "testuser"
-      count_by_username: 100
+      "count_by_username": 100
+      "user_name": "testuser"
+    Name: Common Error Message
+Threshold: 5

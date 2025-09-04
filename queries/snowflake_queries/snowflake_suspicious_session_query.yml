@@ -1,21 +1,20 @@
 AnalysisType: scheduled_query
-QueryName: Suspicious Snowflake Sessions - Unusual Application
-Enabled: false
 Description: This query can be used for the detection of unusual, non-common applications
   and client characteristics that had been used to connect to the Snowflake account,
   using a comparison to the previous usage baseline.
-Schedule:
-  RateMinutes: 1320
-  TimeoutMinutes: 2
-Tags:
-  - Snowflake
-  - Configuration Required
-Query: |
+Enabled: false
+Query: >-
   -- Adjustments as follows:
+
   --   adjust n_sessions threshold on line 18 as needed
+
   --   adjust baseline lookback period on line 16 as desired
+
   --   adust recent lookpack period on line 19 as desired
-  --   adjust scheduled query period to be 2 hrs shorter than the lookback window on line 19
+
+  --   adjust scheduled query period to be 2 hrs shorter than the lookback window
+  on line 19
+
   select
       CLIENT_ENVIRONMENT:APPLICATION as client_application,
       CLIENT_ENVIRONMENT:OS as client_os,
@@ -26,8 +25,18 @@ Query: |
       p_source_id,
       p_source_label
   from panther_logs.public.snowflake_sessions
+
   where p_occurs_since(90d)
+
   group by client_application, client_os, client_os_version, p_source_id, p_source_label
+
   having n_sessions > 50
       and first_seen > timeadd('day', -10, p_current_timestamp())
   order by n_sessions desc
+QueryName: "Suspicious Snowflake Sessions - Unusual Application"
+Schedule:
+  RateMinutes: 1320
+  TimeoutMinutes: 2
+Tags:
+  - Snowflake
+  - Configuration Required

@@ -1,11 +1,33 @@
 AnalysisType: rule
-Filename: aws_vpce_access_denied.py
-RuleID: "AWS.CloudTrail.VPCE.AccessDenied"
+Description: >-
+  Detects when access is denied due to VPC Endpoint policies, which could indicate
+  attempted unauthorized access to AWS resources.
 DisplayName: "VPC Endpoint Access Denied"
 Enabled: true
+Filename: aws_vpce_access_denied.py
 LogTypes:
   - AWS.CloudTrail
+Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1599
+    - TA0007:T1526
+RuleID: "AWS.CloudTrail.VPCE.AccessDenied"
+Runbook: >-
+  1. Identify the principal (user/role) and source IP that was denied access 2. Determine
+  if this is expected behavior based on your VPC endpoint policies 3. Check if there
+  are multiple failed attempts from the same principal/IP 4. If unexpected, investigate
+  why the principal is attempting to access resources through the VPC endpoint 5.
+  Consider updating your VPC endpoint policies if necessary 6. Document findings and
+  take appropriate remediation steps based on investigation
 Severity: Medium
+SummaryAttributes:
+  - errorCode
+  - errorMessage
+  - sourceIPAddress
+  - eventSource
+  - eventName
+  - userIdentity.principalId
 Tags:
   - AWS
   - VPC
@@ -14,102 +36,70 @@ Tags:
   - Defense Evasion
   - Lateral Movement
   - Impair Defenses
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1599 # Network Boundary Bridging
-    - TA0007:T1526 # Cloud Service Discovery
-Description: Detects when access is denied due to VPC Endpoint policies, which could indicate attempted unauthorized access to AWS resources.
-Runbook: >
-  1. Identify the principal (user/role) and source IP that was denied access
-  2. Determine if this is expected behavior based on your VPC endpoint policies
-  3. Check if there are multiple failed attempts from the same principal/IP
-  4. If unexpected, investigate why the principal is attempting to access resources through the VPC endpoint
-  5. Consider updating your VPC endpoint policies if necessary
-  6. Document findings and take appropriate remediation steps based on investigation
-Reference: https://www.wiz.io/blog/aws-vpc-endpoint-cloudtrail
-SummaryAttributes:
-  - errorCode
-  - errorMessage
-  - sourceIPAddress
-  - eventSource
-  - eventName
-  - userIdentity.principalId
 Tests:
-  - Name: VPC Endpoint Access Denied 
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "NetworkActivity",
-        "eventType": "AwsVpceEvent",
-        "errorCode": "VpceAccessDenied",
-        "errorMessage": "The request was denied due to a VPC endpoint policy",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "AWSAccount",
-          "principalId": "AROAEXAMPLE:session-name",
-          "accountId": "111111111111"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null,
-        "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7",
-        "vpcEndpointAccountId": "222222222222"
-      }
-  - Name: Not VPC Endpoint Event
-    ExpectedResult: false
+      "awsRegion": "us-east-1"
+      "errorCode": "VpceAccessDenied"
+      "errorMessage": "The request was denied due to a VPC endpoint policy"
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "111111111111"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "AWSAccount"
+      "vpcEndpointAccountId": "222222222222"
+      "vpcEndpointId": "vpce-EXAMPLE08c1b6b9b7"
+    Name: VPC Endpoint Access Denied
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "Management",
-        "eventType": "AwsApiCall",
-        "errorCode": "AccessDenied",
-        "errorMessage": "Access Denied",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "AROAEXAMPLE:session-name",
-          "accountId": "111111111111"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null
-      }
-  - Name: VPC Endpoint Event Without Error
-    ExpectedResult: false
+      "awsRegion": "us-east-1"
+      "errorCode": "AccessDenied"
+      "errorMessage": "Access Denied"
+      "eventCategory": "Management"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "111111111111"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "IAMUser"
+    Name: Not VPC Endpoint Event
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.08",
-        "eventCategory": "NetworkActivity",
-        "eventType": "AwsVpceEvent",
-        "eventTime": "2023-03-01T00:00:00Z",
-        "awsRegion": "us-east-1",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetObject",
-        "sourceIPAddress": "10.0.0.1",
-        "userIdentity": {
-          "type": "IAMUser",
-          "principalId": "AROAEXAMPLE:session-name",
-          "accountId": "111111111111"
-        },
-        "recipientAccountId": "222222222222",
-        "requestParameters": {
-          "bucketName": "example-bucket",
-          "key": "sensitive-file.txt"
-        },
-        "responseElements": null
-      } 
+      "awsRegion": "us-east-1"
+      "eventCategory": "NetworkActivity"
+      "eventName": "GetObject"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2023-03-01T00:00:00Z"
+      "eventType": "AwsVpceEvent"
+      "eventVersion": "1.08"
+      "recipientAccountId": "222222222222"
+      "requestParameters":
+        "bucketName": "example-bucket"
+        "key": "sensitive-file.txt"
+      "responseElements":
+      "sourceIPAddress": "10.0.0.1"
+      "userIdentity":
+        "accountId": "111111111111"
+        "principalId": "AROAEXAMPLE:session-name"
+        "type": "IAMUser"
+    Name: VPC Endpoint Event Without Error

@@ -1,12 +1,12 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.External.Shares"
+Description: Monitor for external shares from one cloud source to another.
 Enabled: false
-Description: >
-  Monitor for external shares from one cloud source to another.
-Query: |
+Query: >-
   --return external shares
 
+
   --this was adapted from a Security Feature Checklist query
+
 
   SELECT
     start_time as p_event_time,
@@ -19,6 +19,7 @@ Query: |
       AND target_cloud IS NOT NULL
       AND bytes_transferred > 0
   ORDER BY p_event_time desc
+QueryName: "Query.Snowflake.External.Shares"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 2

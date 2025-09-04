@@ -1,12 +1,12 @@
 AnalysisType: scheduled_query
-QueryName: "Query.Snowflake.Multiple.Logins.Followed.By.Success"
+Description: Monitor for brute force user activity.
 Enabled: false
-Description: >
-  Monitor for brute force user activity.
-Query: |
+Query: >-
   --return multiple failed logins followed by a success
 
+
   WITH login_attempts as (
+
   SELECT
       user_name,
       client_ip,
@@ -21,9 +21,13 @@ Query: |
       AND event_type = 'LOGIN'
       AND client_ip != '0.0.0.0' -- filtering out unnecessary 'elided' snowflake entries
   )
+
   SELECT
+
   *
+
   FROM login_attempts
+
   MATCH_RECOGNIZE(
       PARTITION BY client_ip, user_name
       ORDER BY p_event_time DESC -- backwards in time
@@ -45,6 +49,7 @@ Query: |
         row_with_fail AS error_message is not null
     )
   HAVING num_fails >= 5 -- changeable per environment
+QueryName: "Query.Snowflake.Multiple.Logins.Followed.By.Success"
 Schedule:
-  CronExpression: "0 0 * * *"
+  CronExpression: 0 0 * * *
   TimeoutMinutes: 3

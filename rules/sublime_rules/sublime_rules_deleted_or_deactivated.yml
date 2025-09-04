@@ -1,90 +1,80 @@
+AlertTitle: Sublime rules were deleted or deactivated
 AnalysisType: rule
-Description: A Sublime User disabled or deleted some rule(s).
+DedupPeriodMinutes: 60
+Description: >-
+  A Sublime User disabled or deleted some rule(s).
 DisplayName: "Sublime Rules Deleted Or Deactivated"
 Enabled: true
 Filename: sublime_rules_deleted_or_deactivated.py
-Runbook: Assess if this was done by the user for a valid business reason. Be vigilant to re-enable the rules if it's in the best security interest for your organization's security posture.
-Reference: https://docs.sublime.security/docs/rules-overview
-Severity: Medium
-DedupPeriodMinutes: 60
-AlertTitle: Sublime rules were deleted or deactivated
 LogTypes:
   - Sublime.Audit
-RuleID: "Sublime.Rules.Deleted.Or.Deactivated"
-Threshold: 1
+Reference: https://docs.sublime.security/docs/rules-overview
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1562.001 # Impair Defenses: Disable or Modify Tools
+    - TA0005:T1562.001
+RuleID: "Sublime.Rules.Deleted.Or.Deactivated"
+Runbook: >-
+  Assess if this was done by the user for a valid business reason. Be vigilant to
+  re-enable the rules if it's in the best security interest for your organization's
+  security posture.
+Severity: Medium
 Tests:
   - ExpectedResult: true
+    Log:
+      "created_at": "2024-09-09 19:33:34.237078000"
+      "created_by":
+        "active": true
+        "created_at": "2024-08-28 22:05:15.715644000"
+        "email_address": "john.doe@sublime.security"
+        "first_name": "John"
+        "google_oauth_user_id": ""
+        "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316"
+        "is_enrolled": true
+        "last_name": "Doe"
+        "microsoft_oauth_user_id": ""
+        "role": "admin"
+        "updated_at": "2024-08-28 22:05:15.715644000"
+      "data":
+        "request":
+          "authentication_method": "user_session"
+          "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}"
+          "id": "73444211-31af-42d8-99b4-34a139cf7d4a"
+          "ip": "1.2.3.4"
+          "method": "POST"
+          "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate"
+          "query": {}
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737"
+      "type": "rules.delete"
     Name: Rule Deleted
-    Log:
-      {
-        "created_at": "2024-09-09 19:33:34.237078000",
-        "created_by":
-          {
-            "active": true,
-            "created_at": "2024-08-28 22:05:15.715644000",
-            "email_address": "john.doe@sublime.security",
-            "first_name": "John",
-            "google_oauth_user_id": "",
-            "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-            "is_enrolled": true,
-            "last_name": "Doe",
-            "microsoft_oauth_user_id": "",
-            "role": "admin",
-            "updated_at": "2024-08-28 22:05:15.715644000",
-          },
-        "data":
-          {
-            "request":
-              {
-                "authentication_method": "user_session",
-                "body": '{"mailbox_ids":["493c6e21-7787-419b-bada-7c4f50cbb932"]}',
-                "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
-                "ip": "1.2.3.4",
-                "method": "POST",
-                "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate",
-                "query": {},
-                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-              },
-          },
-        "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737",
-        "type": "rules.delete",
-      }
   - ExpectedResult: false
-    Name: Other Events
     Log:
-      {
-        "created_at": "2024-09-09 19:33:34.237078000",
-        "created_by":
-          {
-            "active": true,
-            "created_at": "2024-08-28 22:05:15.715644000",
-            "email_address": "john.doe@sublime.security",
-            "first_name": "John",
-            "google_oauth_user_id": "",
-            "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316",
-            "is_enrolled": true,
-            "last_name": "Doe",
-            "microsoft_oauth_user_id": "",
-            "role": "admin",
-            "updated_at": "2024-08-28 22:05:15.715644000",
-          },
-        "data":
-          {
-            "request":
-              {
-                "authentication_method": "user_session",
-                "body": '{"mailbox_ids":["493c6e21-7787-419b-bada-7c4f50cbb932"]}',
-                "id": "73444211-31af-42d8-99b4-34a139cf7d4a",
-                "ip": "1.2.3.4",
-                "method": "POST",
-                "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate",
-                "query": {},
-                "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-              },
-          },
-        "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737",
-        "type": "message_source.deactivate",
-      }
+      "created_at": "2024-09-09 19:33:34.237078000"
+      "created_by":
+        "active": true
+        "created_at": "2024-08-28 22:05:15.715644000"
+        "email_address": "john.doe@sublime.security"
+        "first_name": "John"
+        "google_oauth_user_id": ""
+        "id": "cd3aedfe-a61f-4e0e-ba30-14dcc7883316"
+        "is_enrolled": true
+        "last_name": "Doe"
+        "microsoft_oauth_user_id": ""
+        "role": "admin"
+        "updated_at": "2024-08-28 22:05:15.715644000"
+      "data":
+        "request":
+          "authentication_method": "user_session"
+          "body": "{\"mailbox_ids\":[\"493c6e21-7787-419b-bada-7c4f50cbb932\"]}"
+          "id": "73444211-31af-42d8-99b4-34a139cf7d4a"
+          "ip": "1.2.3.4"
+          "method": "POST"
+          "path": "/v1/message-sources/febb5bf4-2ead-47b1-b467-0ac729bf6871/deactivate"
+          "query": {}
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      "id": "084732e5-7704-4bbe-ab5a-77f1aa65a737"
+      "type": "message_source.deactivate"
+    Name: Other Events
+Threshold: 1

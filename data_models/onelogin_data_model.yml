@@ -1,17 +1,17 @@
 AnalysisType: datamodel
-LogTypes:
-  - OneLogin.Events
 DataModelID: "Standard.OneLogin.Events"
 DisplayName: "OneLogin Events"
-Filename: onelogin_data_model.py
 Enabled: true
+Filename: onelogin_data_model.py
+LogTypes:
+  - OneLogin.Events
 Mappings:
   - Name: actor_user
     Path: actor_user_name
   - Name: assigned_admin_role
     Path: privilege_name
-  - Name: event_type
-    Method: get_event_type
+  - Method: get_event_type
+    Name: event_type
   - Name: source_ip
     Path: ipaddr
   - Name: user

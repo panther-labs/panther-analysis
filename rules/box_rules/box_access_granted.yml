@@ -1,55 +1,47 @@
 AnalysisType: rule
-Filename: box_access_granted.py
-RuleID: "Box.Access.Granted"
+Description: >-
+  A user granted access to their box account to Box technical support from account
+  settings.
 DisplayName: "Box Access Granted"
 Enabled: true
+Filename: box_access_granted.py
 LogTypes:
   - Box.Event
-Tags:
-  - Box
-Severity: Low
-Description: >
-  A user granted access to their box account to Box technical support from account settings.
-Reference: https://support.box.com/hc/en-us/articles/7039943421715-Enabling-and-Disabling-Access-for-Box-Support
-Runbook: >
+Reference: 
+  https://support.box.com/hc/en-us/articles/7039943421715-Enabling-and-Disabling-Access-for-Box-Support
+RuleID: "Box.Access.Granted"
+Runbook: >-
   Investigate whether the user purposefully granted access to their account.
+Severity: Low
 SummaryAttributes:
   - p_any_ip_addresses
+Tags:
+  - Box
 Tests:
-  - Name: Regular Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "DELETE",
-      }
-  - Name: Access Granted
-    ExpectedResult: true
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "DELETE"
+      "type": "event"
+    Name: Regular Event
+  - ExpectedResult: true
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "ACCESS_GRANTED",
-        "source":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "user@example",
-            "name": "Bob Cat",
-          },
-      }
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "ACCESS_GRANTED"
+      "source":
+        "id": "12345678"
+        "login": "user@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "type": "event"
+    Name: Access Granted

@@ -1,273 +1,253 @@
 AnalysisType: rule
-Filename: github_repo_ruleset_modified.py
-RuleID: "GitHub.Repo.RulesetModified"
+DedupPeriodMinutes: 60
+Description: >-
+  Disabling repository ruleset controls could indicate malicious use of admin credentials
+  in an attempt to hide activity.
 DisplayName: "GitHub Repository Ruleset Modified"
 Enabled: true
+Filename: github_repo_ruleset_modified.py
 LogTypes:
   - GitHub.Audit
+Reference: 
+  https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+RuleID: "GitHub.Repo.RulesetModified"
+Runbook: >-
+  Verify that ruleset modifications are intended and authorized.
+Severity: Info
 Tags:
   - GitHub
   - Defense Evasion
   - Impair Defenses
   - Disable or Modify Tools
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562 # Impair Defenses: Disable or Modify Tools
-Reference: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
-Severity: Info
-Description: Disabling repository ruleset controls could indicate malicious use of admin credentials in an attempt to hide activity.
-DedupPeriodMinutes: 60
-Threshold: 1
-Runbook: Verify that ruleset modifications are intended and authorized.
 Tests:
-  - Name: GitHub - Ruleset Created
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "action": "repository_ruleset.create",
-        "actor": "dog",
-        "actor_id": "999999999",
-        "actor_is_bot": false,
-        "actor_location": { "country_code": "US" },
-        "business": "bizname",
-        "business_id": "12345",
-        "created_at": "2024-12-17 00:00:00000000",
-        "operation_type": "create",
-        "org": "some-org",
-        "org_id": 12345678,
-        "public_repo": true,
-        "repo": "some-org/ruleset-repo",
-        "repo_id": 123456789,
-        "ruleset_bypass_actors":
-          [
-            {
-              "actor_id": 123456,
-              "actor_type": "Integration",
-              "bypass_mode": "always",
-              "id": 123456,
-            },
-            {
-              "actor_id": 123456,
-              "actor_type": "Team",
-              "bypass_mode": "always",
-              "id": 1234567,
-            },
-          ],
-        "ruleset_conditions":
-          [
-            {
-              "id": 1234567,
-              "parameters": { "exclude": [], "include": ["~DEFAULT_BRANCH"] },
-              "target": "ref_name",
-            },
-          ],
-        "ruleset_enforcement": "enabled",
-        "ruleset_id": "1234567",
-        "ruleset_name": "a-ruleset-name",
-        "ruleset_rules":
-          [
-            {
-              "id": 12345678,
-              "parameters":
-                {
-                  "allowed_merge_methods": ["merge", "squash", "rebase"],
-                  "authorized_dismissal_actors_only": false,
-                  "automatic_copilot_code_review_enabled": false,
-                  "dismiss_stale_reviews_on_push": false,
-                  "ignore_approvals_from_contributors": false,
-                  "require_code_owner_review": false,
-                  "require_last_push_approval": false,
-                  "required_approving_review_count": 1,
-                  "required_review_thread_resolution": false,
-                  "required_reviewers": [],
-                },
-              "type": "pull_request",
-            },
-            { "id": 12345678, "parameters": {}, "type": "deletion" },
-            { "id": 12345678, "parameters": {}, "type": "non_fast_forward" },
-          ],
-        "ruleset_source_type": "Repository",
-        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      }
-  - Name: GitHub - Ruleset Deleted
-    ExpectedResult: true
+      "action": "repository_ruleset.create"
+      "actor": "dog"
+      "actor_id": "999999999"
+      "actor_is_bot": false
+      "actor_location":
+        "country_code": "US"
+      "business": "bizname"
+      "business_id": "12345"
+      "created_at": "2024-12-17 00:00:00000000"
+      "operation_type": "create"
+      "org": "some-org"
+      "org_id": 12345678
+      "public_repo": true
+      "repo": "some-org/ruleset-repo"
+      "repo_id": 123456789
+      "ruleset_bypass_actors":
+        - "actor_id": 123456
+          "actor_type": "Integration"
+          "bypass_mode": "always"
+          "id": 123456
+        - "actor_id": 123456
+          "actor_type": "Team"
+          "bypass_mode": "always"
+          "id": 1234567
+      "ruleset_conditions":
+        - "id": 1234567
+          "parameters":
+            "exclude": []
+            "include":
+              - "~DEFAULT_BRANCH"
+          "target": "ref_name"
+      "ruleset_enforcement": "enabled"
+      "ruleset_id": "1234567"
+      "ruleset_name": "a-ruleset-name"
+      "ruleset_rules":
+        - "id": 12345678
+          "parameters":
+            "allowed_merge_methods":
+              - "merge"
+              - "squash"
+              - "rebase"
+            "authorized_dismissal_actors_only": false
+            "automatic_copilot_code_review_enabled": false
+            "dismiss_stale_reviews_on_push": false
+            "ignore_approvals_from_contributors": false
+            "require_code_owner_review": false
+            "require_last_push_approval": false
+            "required_approving_review_count": 1
+            "required_review_thread_resolution": false
+            "required_reviewers": []
+          "type": "pull_request"
+        - "id": 12345678
+          "parameters": {}
+          "type": "deletion"
+        - "id": 12345678
+          "parameters": {}
+          "type": "non_fast_forward"
+      "ruleset_source_type": "Repository"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    Name: GitHub - Ruleset Created
+  - ExpectedResult: true
     Log:
-      {
-        "action": "repository_ruleset.destroy",
-        "actor": "dog",
-        "actor_id": "999999999",
-        "actor_is_bot": false,
-        "actor_location": { "country_code": "US" },
-        "business": "bizname",
-        "business_id": "12345",
-        "created_at": "2024-12-17 00:00:00000000",
-        "operation_type": "remove",
-        "org": "some-org",
-        "org_id": 12345678,
-        "public_repo": false,
-        "repo": "some-org/ruleset-repo",
-        "repo_id": 123456789,
-        "ruleset_bypass_actors":
-          [
-            {
-              "actor_id": 123456,
-              "actor_type": "Integration",
-              "bypass_mode": "always",
-              "id": 123456,
-            },
-            {
-              "actor_id": 123456,
-              "actor_type": "Team",
-              "bypass_mode": "always",
-              "id": 1234567,
-            },
-          ],
-        "ruleset_conditions":
-          [
-            {
-              "id": 1234567,
-              "parameters": { "exclude": [], "include": ["~DEFAULT_BRANCH"] },
-              "target": "ref_name",
-            },
-          ],
-        "ruleset_enforcement": "enabled",
-        "ruleset_id": "1234567",
-        "ruleset_name": "a-ruleset-name",
-        "ruleset_rules":
-          [
-            {
-              "id": 10994218,
-              "parameters":
-                {
-                  "allowed_merge_methods": ["merge", "squash", "rebase"],
-                  "authorized_dismissal_actors_only": false,
-                  "automatic_copilot_code_review_enabled": true,
-                  "dismiss_stale_reviews_on_push": false,
-                  "ignore_approvals_from_contributors": false,
-                  "require_code_owner_review": false,
-                  "require_last_push_approval": false,
-                  "required_approving_review_count": 1,
-                  "required_review_thread_resolution": false,
-                  "required_reviewers": [],
-                },
-              "type": "pull_request",
-            },
-            { "id": 10994219, "parameters": {}, "type": "deletion" },
-            { "id": 10994220, "parameters": {}, "type": "non_fast_forward" },
-          ],
-        "ruleset_source_type": "Repository",
-        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      }
-
-  - Name: GitHub - Non Webhook Event
-    ExpectedResult: false
+      "action": "repository_ruleset.destroy"
+      "actor": "dog"
+      "actor_id": "999999999"
+      "actor_is_bot": false
+      "actor_location":
+        "country_code": "US"
+      "business": "bizname"
+      "business_id": "12345"
+      "created_at": "2024-12-17 00:00:00000000"
+      "operation_type": "remove"
+      "org": "some-org"
+      "org_id": 12345678
+      "public_repo": false
+      "repo": "some-org/ruleset-repo"
+      "repo_id": 123456789
+      "ruleset_bypass_actors":
+        - "actor_id": 123456
+          "actor_type": "Integration"
+          "bypass_mode": "always"
+          "id": 123456
+        - "actor_id": 123456
+          "actor_type": "Team"
+          "bypass_mode": "always"
+          "id": 1234567
+      "ruleset_conditions":
+        - "id": 1234567
+          "parameters":
+            "exclude": []
+            "include":
+              - "~DEFAULT_BRANCH"
+          "target": "ref_name"
+      "ruleset_enforcement": "enabled"
+      "ruleset_id": "1234567"
+      "ruleset_name": "a-ruleset-name"
+      "ruleset_rules":
+        - "id": 10994218
+          "parameters":
+            "allowed_merge_methods":
+              - "merge"
+              - "squash"
+              - "rebase"
+            "authorized_dismissal_actors_only": false
+            "automatic_copilot_code_review_enabled": true
+            "dismiss_stale_reviews_on_push": false
+            "ignore_approvals_from_contributors": false
+            "require_code_owner_review": false
+            "require_last_push_approval": false
+            "required_approving_review_count": 1
+            "required_review_thread_resolution": false
+            "required_reviewers": []
+          "type": "pull_request"
+        - "id": 10994219
+          "parameters": {}
+          "type": "deletion"
+        - "id": 10994220
+          "parameters": {}
+          "type": "non_fast_forward"
+      "ruleset_source_type": "Repository"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    Name: GitHub - Ruleset Deleted
+  - ExpectedResult: false
     Log:
-      {
-        "actor": "cat",
-        "action": "org.invite_member",
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo",
-      }
-  - Name: Github - Ruleset Modified
-    ExpectedResult: true
+      "action": "org.invite_member"
+      "actor": "cat"
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
+    Name: GitHub - Non Webhook Event
+  - ExpectedResult: true
     Log:
-      {
-        "action": "repository_ruleset.update",
-        "actor": "dog",
-        "actor_id": "999999999",
-        "actor_is_bot": false,
-        "actor_location": { "country_code": "US" },
-        "business": "bizname",
-        "business_id": "12345",
-        "created_at": "2024-12-17 00:00:00000000",
-        "operation_type": "modify",
-        "org": "some-org",
-        "org_id": 12345678,
-        "public_repo": false,
-        "repo": "some-org/ruleset-repo",
-        "repo_id": 123456789,
-        "ruleset_bypass_actors":
-          [
-            {
-              "actor_id": 123456,
-              "actor_type": "Integration",
-              "bypass_mode": "always",
-              "id": 123456,
-            },
-            {
-              "actor_id": 123456,
-              "actor_type": "Team",
-              "bypass_mode": "always",
-              "id": 1234567,
-            },
-          ],
-        "ruleset_conditions":
-          [
-            {
-              "id": 1234567,
-              "parameters": { "exclude": [], "include": ["~DEFAULT_BRANCH"] },
-              "target": "ref_name",
-            },
-          ],
-        "ruleset_enforcement": "enabled",
-        "ruleset_id": "1234567",
-        "ruleset_name": "a-ruleset-name",
-        "ruleset_rules_updated":
-          [
-            {
-              "id": 12345678,
-              "old_parameters":
-                {
-                  "allowed_merge_methods": ["merge", "squash", "rebase"],
-                  "authorized_dismissal_actors_only": false,
-                  "automatic_copilot_code_review_enabled": false,
-                  "dismiss_stale_reviews_on_push": false,
-                  "ignore_approvals_from_contributors": false,
-                  "require_code_owner_review": false,
-                  "require_last_push_approval": false,
-                  "required_approving_review_count": 1,
-                  "required_review_thread_resolution": false,
-                  "required_reviewers": [],
-                },
-              "parameters":
-                {
-                  "allowed_merge_methods": ["merge", "squash", "rebase"],
-                  "authorized_dismissal_actors_only": false,
-                  "automatic_copilot_code_review_enabled": true,
-                  "dismiss_stale_reviews_on_push": false,
-                  "ignore_approvals_from_contributors": false,
-                  "require_code_owner_review": false,
-                  "require_last_push_approval": false,
-                  "required_approving_review_count": 1,
-                  "required_review_thread_resolution": false,
-                  "required_reviewers": [],
-                },
-              "type": "pull_request",
-            },
-          ],
-        "ruleset_source_type": "Repository",
-        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      }
-  - Name: Github - Ruleset Modified for entire Organization
-    ExpectedResult: true
+      "action": "repository_ruleset.update"
+      "actor": "dog"
+      "actor_id": "999999999"
+      "actor_is_bot": false
+      "actor_location":
+        "country_code": "US"
+      "business": "bizname"
+      "business_id": "12345"
+      "created_at": "2024-12-17 00:00:00000000"
+      "operation_type": "modify"
+      "org": "some-org"
+      "org_id": 12345678
+      "public_repo": false
+      "repo": "some-org/ruleset-repo"
+      "repo_id": 123456789
+      "ruleset_bypass_actors":
+        - "actor_id": 123456
+          "actor_type": "Integration"
+          "bypass_mode": "always"
+          "id": 123456
+        - "actor_id": 123456
+          "actor_type": "Team"
+          "bypass_mode": "always"
+          "id": 1234567
+      "ruleset_conditions":
+        - "id": 1234567
+          "parameters":
+            "exclude": []
+            "include":
+              - "~DEFAULT_BRANCH"
+          "target": "ref_name"
+      "ruleset_enforcement": "enabled"
+      "ruleset_id": "1234567"
+      "ruleset_name": "a-ruleset-name"
+      "ruleset_rules_updated":
+        - "id": 12345678
+          "old_parameters":
+            "allowed_merge_methods":
+              - "merge"
+              - "squash"
+              - "rebase"
+            "authorized_dismissal_actors_only": false
+            "automatic_copilot_code_review_enabled": false
+            "dismiss_stale_reviews_on_push": false
+            "ignore_approvals_from_contributors": false
+            "require_code_owner_review": false
+            "require_last_push_approval": false
+            "required_approving_review_count": 1
+            "required_review_thread_resolution": false
+            "required_reviewers": []
+          "parameters":
+            "allowed_merge_methods":
+              - "merge"
+              - "squash"
+              - "rebase"
+            "authorized_dismissal_actors_only": false
+            "automatic_copilot_code_review_enabled": true
+            "dismiss_stale_reviews_on_push": false
+            "ignore_approvals_from_contributors": false
+            "require_code_owner_review": false
+            "require_last_push_approval": false
+            "required_approving_review_count": 1
+            "required_review_thread_resolution": false
+            "required_reviewers": []
+          "type": "pull_request"
+      "ruleset_source_type": "Repository"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    Name: Github - Ruleset Modified
+  - ExpectedResult: true
     Log:
-      {
-        "action": "repository_ruleset.update",
-        "actor": "dog",
-        "actor_id": "999999999",
-        "actor_is_bot": false,
-        "actor_location": { "country_code": "US" },
-        "business": "bizname",
-        "business_id": "12345",
-        "created_at": "2024-12-17 00:00:00000000",
-        "operation_type": "modify",
-        "org": "some-org",
-        "org_id": 12345678,
-        "ruleset_enforcement": "disabled",
-        "ruleset_id": "1082915",
-        "ruleset_name": "Name of org-wide ruleset",
-        "ruleset_old_enforcement": "evaluate",
-        "ruleset_source_type": "Organization",
-        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
-      }
+      "action": "repository_ruleset.update"
+      "actor": "dog"
+      "actor_id": "999999999"
+      "actor_is_bot": false
+      "actor_location":
+        "country_code": "US"
+      "business": "bizname"
+      "business_id": "12345"
+      "created_at": "2024-12-17 00:00:00000000"
+      "operation_type": "modify"
+      "org": "some-org"
+      "org_id": 12345678
+      "ruleset_enforcement": "disabled"
+      "ruleset_id": "1082915"
+      "ruleset_name": "Name of org-wide ruleset"
+      "ruleset_old_enforcement": "evaluate"
+      "ruleset_source_type": "Organization"
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
+    Name: Github - Ruleset Modified for entire Organization
+Threshold: 1

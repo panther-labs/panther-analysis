@@ -1,86 +1,75 @@
 AnalysisType: rule
-Filename: okta_account_support_access.py
-RuleID: "Okta.Support.Access"
+DedupPeriodMinutes: 15
+Description: >-
+  An admin user has granted access to Okta Support to your account
 DisplayName: "Okta Support Access Granted"
 Enabled: true
+Filename: okta_account_support_access.py
 LogTypes:
   - Okta.SystemLog
-Tags:
-  - Identity & Access Management
-  - DataModel
-  - Okta
-  - Initial Access:Trusted Relationship
+Reference: 
+  https://help.okta.com/en/prod/Content/Topics/Settings/settings-support-access.htm
 Reports:
   MITRE ATT&CK:
     - TA0001:T1199
+RuleID: "Okta.Support.Access"
+Runbook: >-
+  Contact Admin to ensure this was sanctioned activity
 Severity: Medium
-Description: An admin user has granted access to Okta Support to your account
-Reference: https://help.okta.com/en/prod/Content/Topics/Settings/settings-support-access.htm
-Runbook: Contact Admin to ensure this was sanctioned activity
-DedupPeriodMinutes: 15
 SummaryAttributes:
   - eventType
   - severity
   - displayMessage
   - p_any_ip_addresses
+Tags:
+  - Identity & Access Management
+  - DataModel
+  - Okta
+  - Initial Access:Trusted Relationship
 Tests:
-  - Name: Support Access Granted
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "published": "2022-03-22 14:21:53.225",
-        "eventType": "user.session.impersonation.grant",
-        "version": "0",
-        "severity": "INFO",
-        "legacyEventType": "core.user.impersonation.grant.enabled",
-        "displayMessage": "Enable impersonation grant",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "111111",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.1.1.1",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
-              },
-            "zone": "null",
-          },
-        "p_log_type": "Okta.SystemLog",
-      }
-  - Name: Login Event
-    ExpectedResult: False
+      "actor":
+        "alternateId": "homer@springfield.gov"
+        "displayName": "Homer Simpson"
+        "id": "111111"
+        "type": "User"
+      "client":
+        "device": "Computer"
+        "ipAddress": "1.1.1.1"
+        "userAgent":
+          "browser": "CHROME"
+          "os": "Mac OS X"
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
+        "zone": "null"
+      "displayMessage": "Enable impersonation grant"
+      "eventType": "user.session.impersonation.grant"
+      "legacyEventType": "core.user.impersonation.grant.enabled"
+      "p_log_type": "Okta.SystemLog"
+      "published": "2022-03-22 14:21:53.225"
+      "severity": "INFO"
+      "version": "0"
+    Name: Support Access Granted
+  - ExpectedResult: false
     Log:
-      {
-        "published": "2022-03-22 14:21:53.225",
-        "eventType": "user.session.start",
-        "version": "0",
-        "severity": "INFO",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "111111",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.1.1.1",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
-              },
-            "zone": "null",
-          },
-        "p_log_type": "Okta.SystemLog",
-      }
+      "actor":
+        "alternateId": "homer@springfield.gov"
+        "displayName": "Homer Simpson"
+        "id": "111111"
+        "type": "User"
+      "client":
+        "device": "Computer"
+        "ipAddress": "1.1.1.1"
+        "userAgent":
+          "browser": "CHROME"
+          "os": "Mac OS X"
+          "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+            (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36"
+        "zone": "null"
+      "eventType": "user.session.start"
+      "p_log_type": "Okta.SystemLog"
+      "published": "2022-03-22 14:21:53.225"
+      "severity": "INFO"
+      "version": "0"
+    Name: Login Event

@@ -1,83 +1,69 @@
 AnalysisType: rule
-Filename: box_user_permission_updates.py
-RuleID: "Box.Large.Number.Permission.Updates"
+DedupPeriodMinutes: 60
+Description: >-
+  A user has exceeded the threshold for number of folder permission changes within
+  a single time frame.
 DisplayName: "Box Large Number of Permission Changes"
 Enabled: true
+Filename: box_user_permission_updates.py
 LogTypes:
   - Box.Event
-Tags:
-  - Box
-  - Privilege Escalation:Abuse Elevation Control Mechanism
+Reference: 
+  https://support.box.com/hc/en-us/articles/360043697254-Understanding-Folder-Permissions
 Reports:
   MITRE ATT&CK:
     - TA0004:T1548
-Severity: Low
-Description: >
-  A user has exceeded the threshold for number of folder permission changes within a single time frame.
-Reference: https://support.box.com/hc/en-us/articles/360043697254-Understanding-Folder-Permissions
-Runbook: >
+RuleID: "Box.Large.Number.Permission.Updates"
+Runbook: >-
   Investigate whether this user's activity is expected.
+Severity: Low
 SummaryAttributes:
   - ip_address
-Threshold: 100
-DedupPeriodMinutes: 60
+Tags:
+  - Box
+  - Privilege Escalation:Abuse Elevation Control Mechanism
 Tests:
-  - Name: Regular Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "DELETE",
-      }
-  - Name: User Permission Change
-    ExpectedResult: true
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "DELETE"
+      "type": "event"
+    Name: Regular Event
+  - ExpectedResult: true
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "CHANGE_FOLDER_PERMISSION",
-        "source":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "user@example",
-            "name": "Bob Cat",
-          },
-      }
-  - Name: User Shares Item
-    ExpectedResult: true
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "CHANGE_FOLDER_PERMISSION"
+      "source":
+        "id": "12345678"
+        "login": "user@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "type": "event"
+    Name: User Permission Change
+  - ExpectedResult: true
     Log:
-      {
-        "type": "event",
-        "additional_details": '{"key": "value"}',
-        "created_by":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "cat@example",
-            "name": "Bob Cat",
-          },
-        "event_type": "ITEM_SHARED_CREATE",
-        "source":
-          {
-            "id": "12345678",
-            "type": "user",
-            "login": "user@example",
-            "name": "Bob Cat",
-          },
-      }
+      "additional_details": "{\"key\": \"value\"}"
+      "created_by":
+        "id": "12345678"
+        "login": "cat@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "event_type": "ITEM_SHARED_CREATE"
+      "source":
+        "id": "12345678"
+        "login": "user@example"
+        "name": "Bob Cat"
+        "type": "user"
+      "type": "event"
+    Name: User Shares Item
+Threshold: 100

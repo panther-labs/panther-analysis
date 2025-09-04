@@ -1,25 +1,24 @@
 AnalysisType: rule
-Filename: thinkst_canary_dcrc.py
-DisplayName: Thinkst Canary DCRC
-RuleID: Thinkst.CanaryDCRC
-Description: "A Canary has disconnected/reconnected."
+DedupPeriodMinutes: 60
+Description: >-
+  A Canary has disconnected/reconnected.
+DisplayName: "Thinkst Canary DCRC"
 Enabled: true
-Severity: High
+Filename: thinkst_canary_dcrc.py
 LogTypes:
   - ThinkstCanary.Alert
-DedupPeriodMinutes: 60
-Threshold: 1
+RuleID: "Thinkst.CanaryDCRC"
+Severity: High
 Tests:
   - ExpectedResult: true
-    Name: Canary Disconnected
     Log:
-      {
-        "CanaryID": "00029666d14d454f",
-        "CanaryIP": "192.168.20.101",
-        "CanaryName": "FS01",
-        "Description": "Canary Disconnected",
-        "IncidentKey": "incident:devicedied:3b04b62c54dcbb64d17131be::1718794923",
-        "Intro": "One of your Canaries (FS01) previously at 192.168.20.101 has disconnected.",
-        "MatchedAnnotations": {},
-        "Timestamp": "2024-06-19 11:02:03 (UTC)",
-      }
+      "CanaryID": "00029666d14d454f"
+      "CanaryIP": "192.168.20.101"
+      "CanaryName": "FS01"
+      "Description": "Canary Disconnected"
+      "IncidentKey": "incident:devicedied:3b04b62c54dcbb64d17131be::1718794923"
+      "Intro": "One of your Canaries (FS01) previously at 192.168.20.101 has disconnected."
+      "MatchedAnnotations": {}
+      "Timestamp": "2024-06-19 11:02:03 (UTC)"
+    Name: Canary Disconnected
+Threshold: 1

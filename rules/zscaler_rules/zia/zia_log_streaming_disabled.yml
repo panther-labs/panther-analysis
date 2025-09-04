@@ -1,159 +1,200 @@
 AnalysisType: rule
-RuleID: ZIA.Log.Streaming.Disabled
-Description: This rule detects when ZIA log streaming was disabled.
-DisplayName: ZIA Log Streaming Disabled
-Runbook: Verify that this change was planned. If not, make sure to restore previous settings.
-Reference: https://help.zscaler.com/zia/about-nss-feeds
+DedupPeriodMinutes: 60
+Description: >-
+  This rule detects when ZIA log streaming was disabled.
+DisplayName: "ZIA Log Streaming Disabled"
 Enabled: true
 Filename: zia_log_streaming_disabled.py
-Severity: Medium
-Reports:
-  MITRE ATT&CK:
-    - TA0005:T1562.008 # Disable or Modify Cloud Logs
 LogTypes:
   - Zscaler.ZIA.AdminAuditLog
-DedupPeriodMinutes: 60
-Threshold: 1
+Reference: https://help.zscaler.com/zia/about-nss-feeds
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008
+RuleID: "ZIA.Log.Streaming.Disabled"
+Runbook: >-
+  Verify that this change was planned. If not, make sure to restore previous settings.
+Severity: Medium
 Tests:
-  - Name: Log streaming disabled (NSS deleted)
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "event": {
-          "action": "DELETE",
-          "adminid": "admin@test.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "NSS",
-          "clientip": "1.2.3.4",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": { },
-          "preaction": {
-            "cloudNss": true,
-            "cloudNssSiemConfiguration": {
-              "connectionHeaders": [
-                "123:123"
-              ],
-              "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786656f20",
-              "lastSuccessFullTest": 0,
-              "maxBatchSize": 512,
-              "nssType": "NSS_FOR_WEB",
-              "oAuthAuthentication": false,
-              "siemType": "OTHER",
-              "testConnectivityCode": 0
-            },
-            "customEscapedCharacter": [
-              "ASCII_44",
-              "ASCII_92",
-              "ASCII_34"
-            ],
-            "duplicateLogs": 0,
-            "epsRateLimit": 0,
-            "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\" : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\",\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\":\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\",\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\":\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\",\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\",\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\",\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\":\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"%s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\",\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\":\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\":\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\",\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\":\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\":\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\":\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\\}\\}\n",
-            "feedStatus": "ENABLED",
-            "id": 2898,
-            "jsonArrayToggle": true,
-            "name": "test-feed-2",
-            "nssFeedType": "JSON",
-            "nssFilter": {
-              "securityFeedFilter": false
-            },
-            "nssLogType": "WEBLOG",
-            "timeZone": "GMT",
-            "userObfuscation": "DISABLED"
-          },
-          "recordid": "371",
-          "resource": "test-feed-2",
-          "result": "SUCCESS",
-          "subcategory": "NSS_FEED",
-          "time": "2024-11-04 16:34:34.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
-  - Name: NSS created
-    ExpectedResult: false
+      "event":
+        "action": "DELETE"
+        "adminid": "admin@test.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "NSS"
+        "clientip": "1.2.3.4"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction": {}
+        "preaction":
+          "cloudNss": true
+          "cloudNssSiemConfiguration":
+            "connectionHeaders":
+              - "123:123"
+            "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786656f20"
+            "lastSuccessFullTest": 0
+            "maxBatchSize": 512
+            "nssType": "NSS_FOR_WEB"
+            "oAuthAuthentication": false
+            "siemType": "OTHER"
+            "testConnectivityCode": 0
+          "customEscapedCharacter":
+            - "ASCII_44"
+            - "ASCII_92"
+            - "ASCII_34"
+          "duplicateLogs": 0
+          "epsRateLimit": 0
+          "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\"
+            : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\"\
+            ,\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\"\
+            :\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\"\
+            ,\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"\
+            urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\"\
+            :\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\"\
+            ,\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\"\
+            ,\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\"\
+            ,\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\"\
+            :\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"\
+            %s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\"\
+            ,\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\"\
+            :\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\"\
+            :\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\"\
+            ,\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"\
+            dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\"\
+            :\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\"\
+            :\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\"\
+            :\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\
+            \\}\\}\n"
+          "feedStatus": "ENABLED"
+          "id": 2898
+          "jsonArrayToggle": true
+          "name": "test-feed-2"
+          "nssFeedType": "JSON"
+          "nssFilter":
+            "securityFeedFilter": false
+          "nssLogType": "WEBLOG"
+          "timeZone": "GMT"
+          "userObfuscation": "DISABLED"
+        "recordid": "371"
+        "resource": "test-feed-2"
+        "result": "SUCCESS"
+        "subcategory": "NSS_FEED"
+        "time": "2024-11-04 16:34:34.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: Log streaming disabled (NSS deleted)
+  - ExpectedResult: false
     Log:
-      {
-        "event": {
-          "action": "CREATE",
-          "adminid": "admin@test.zscalerbeta.net",
-          "auditlogtype": "ZIA",
-          "category": "NSS",
-          "clientip": "1.2.3.4",
-          "errorcode": "None",
-          "interface": "UI",
-          "postaction": {
-            "cloudNss": true,
-            "cloudNssSiemConfiguration": {
-              "clientSecret": "******",
-              "connectionHeaders": [
-                "123:123"
-              ],
-              "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786656f20",
-              "lastSuccessFullTest": 0,
-              "maxBatchSize": 512,
-              "nssType": "NSS_FOR_WEB",
-              "oAuthAuthentication": false,
-              "siemType": "OTHER",
-              "testConnectivityCode": 0
-            },
-            "customEscapedCharacter": [
-              "ASCII_44",
-              "ASCII_92",
-              "ASCII_34"
-            ],
-            "duplicateLogs": 0,
-            "epsRateLimit": 0,
-            "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\" : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\",\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\":\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\",\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\":\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\",\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\",\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\",\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\":\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"%s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\",\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\":\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\":\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\",\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\":\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\":\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\":\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\\}\\}\n",
-            "feedStatus": "ENABLED",
-            "id": 2898,
-            "jsonArrayToggle": true,
-            "name": "test-feed-2",
-            "nssFeedType": "JSON",
-            "nssFilter": {
-              "securityFeedFilter": false
-            },
-            "nssLogType": "WEBLOG",
-            "timeZone": "GMT",
-            "userObfuscation": "DISABLED"
-          },
-          "preaction": {
-            "cloudNss": true,
-            "cloudNssSiemConfiguration": {
-              "connectionHeaders": [
-                "123:123"
-              ],
-              "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786621f20",
-              "maxBatchSize": 524288,
-              "nssType": "NSS_FOR_WEB",
-              "oAuthAuthentication": false,
-              "siemType": "OTHER"
-            },
-            "customEscapedCharacter": [
-              "ASCII_44",
-              "ASCII_92",
-              "ASCII_34"
-            ],
-            "duplicateLogs": 0,
-            "epsRateLimit": 0,
-            "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\" : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\",\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\":\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\",\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\":\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\",\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\",\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\",\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\":\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"%s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\",\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\":\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\":\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\",\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\":\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\":\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\":\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\\}\\}\n",
-            "feedStatus": "ENABLED",
-            "id": 0,
-            "jsonArrayToggle": true,
-            "name": "test-feed-2",
-            "nssFeedType": "JSON",
-            "nssFilter": {
-              "securityFeedFilter": false
-            },
-            "nssLogType": "WEBLOG",
-            "siemConfiguration": { },
-            "timeZone": "GMT"
-          },
-          "recordid": "370",
-          "resource": "test-feed-2",
-          "result": "SUCCESS",
-          "subcategory": "NSS_FEED",
-          "time": "2024-11-04 16:33:48.000000000"
-        },
-        "sourcetype": "zscalernss-audit"
-      }
+      "event":
+        "action": "CREATE"
+        "adminid": "admin@test.zscalerbeta.net"
+        "auditlogtype": "ZIA"
+        "category": "NSS"
+        "clientip": "1.2.3.4"
+        "errorcode": "None"
+        "interface": "UI"
+        "postaction":
+          "cloudNss": true
+          "cloudNssSiemConfiguration":
+            "clientSecret": "******"
+            "connectionHeaders":
+              - "123:123"
+            "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786656f20"
+            "lastSuccessFullTest": 0
+            "maxBatchSize": 512
+            "nssType": "NSS_FOR_WEB"
+            "oAuthAuthentication": false
+            "siemType": "OTHER"
+            "testConnectivityCode": 0
+          "customEscapedCharacter":
+            - "ASCII_44"
+            - "ASCII_92"
+            - "ASCII_34"
+          "duplicateLogs": 0
+          "epsRateLimit": 0
+          "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\"
+            : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\"\
+            ,\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\"\
+            :\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\"\
+            ,\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"\
+            urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\"\
+            :\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\"\
+            ,\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\"\
+            ,\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\"\
+            ,\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\"\
+            :\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"\
+            %s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\"\
+            ,\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\"\
+            :\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\"\
+            :\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\"\
+            ,\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"\
+            dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\"\
+            :\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\"\
+            :\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\"\
+            :\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\
+            \\}\\}\n"
+          "feedStatus": "ENABLED"
+          "id": 2898
+          "jsonArrayToggle": true
+          "name": "test-feed-2"
+          "nssFeedType": "JSON"
+          "nssFilter":
+            "securityFeedFilter": false
+          "nssLogType": "WEBLOG"
+          "timeZone": "GMT"
+          "userObfuscation": "DISABLED"
+        "preaction":
+          "cloudNss": true
+          "cloudNssSiemConfiguration":
+            "connectionHeaders":
+              - "123:123"
+            "connectionURL": "https://logs.company.net/http/a7adc684-f65c-42af-9519-0a0786621f20"
+            "maxBatchSize": 524288
+            "nssType": "NSS_FOR_WEB"
+            "oAuthAuthentication": false
+            "siemType": "OTHER"
+          "customEscapedCharacter":
+            - "ASCII_44"
+            - "ASCII_92"
+            - "ASCII_34"
+          "duplicateLogs": 0
+          "epsRateLimit": 0
+          "feedOutputFormat": "\\{ \"sourcetype\" : \"zscalernss-web\", \"event\"
+            : \\{\"datetime\":\"%d{yy}-%02d{mth}-%02d{dd} %02d{hh}:%02d{mm}:%02d{ss}\"\
+            ,\"reason\":\"%s{reason}\",\"event_id\":\"%d{recordid}\",\"protocol\"\
+            :\"%s{proto}\",\"action\":\"%s{action}\",\"transactionsize\":\"%d{totalsize}\"\
+            ,\"responsesize\":\"%d{respsize}\",\"requestsize\":\"%d{reqsize}\",\"\
+            urlcategory\":\"%s{urlcat}\",\"serverip\":\"%s{sip}\",\"requestmethod\"\
+            :\"%s{reqmethod}\",\"refererURL\":\"%s{ereferer}\",\"useragent\":\"%s{eua}\"\
+            ,\"product\":\"NSS\",\"location\":\"%s{elocation}\",\"ClientIP\":\"%s{cip}\"\
+            ,\"status\":\"%s{respcode}\",\"user\":\"%s{elogin}\",\"url\":\"%s{eurl}\"\
+            ,\"vendor\":\"Zscaler\",\"hostname\":\"%s{ehost}\",\"clientpublicIP\"\
+            :\"%s{cintip}\",\"threatcategory\":\"%s{malwarecat}\",\"threatname\":\"\
+            %s{threatname}\",\"filetype\":\"%s{filetype}\",\"appname\":\"%s{appname}\"\
+            ,\"app_status\":\"%s{app_status}\",\"pagerisk\":\"%d{riskscore}\",\"threatseverity\"\
+            :\"%s{threatseverity}\",\"department\":\"%s{edepartment}\",\"urlsupercategory\"\
+            :\"%s{urlsupercat}\",\"appclass\":\"%s{appclass}\",\"dlpengine\":\"%s{dlpeng}\"\
+            ,\"urlclass\":\"%s{urlclass}\",\"threatclass\":\"%s{malwareclass}\",\"\
+            dlpdictionaries\":\"%s{dlpdict}\",\"fileclass\":\"%s{fileclass}\",\"bwthrottle\"\
+            :\"%s{bwthrottle}\",\"contenttype\":\"%s{contenttype}\",\"unscannabletype\"\
+            :\"%s{unscannabletype}\",\"deviceowner\":\"%s{deviceowner}\",\"devicehostname\"\
+            :\"%s{devicehostname}\",\"keyprotectiontype\":\"%s{keyprotectiontype}\"\
+            \\}\\}\n"
+          "feedStatus": "ENABLED"
+          "id": 0
+          "jsonArrayToggle": true
+          "name": "test-feed-2"
+          "nssFeedType": "JSON"
+          "nssFilter":
+            "securityFeedFilter": false
+          "nssLogType": "WEBLOG"
+          "siemConfiguration": {}
+          "timeZone": "GMT"
+        "recordid": "370"
+        "resource": "test-feed-2"
+        "result": "SUCCESS"
+        "subcategory": "NSS_FEED"
+        "time": "2024-11-04 16:33:48.000000000"
+      "sourcetype": "zscalernss-audit"
+    Name: NSS created
+Threshold: 1

@@ -1,34 +1,40 @@
 AnalysisType: rule
-RuleID: "GCP.K8s.IOC.Activity"
+Description: >-
+  This detection monitors for any kubernetes API Request originating from an Indicator
+  of Compromise.
 DisplayName: "GCP K8s IOCActivity"
 Enabled: true
 Filename: gcp_k8s_ioc_activity.py
 LogTypes:
   - GCP.AuditLog
+Reference: 
+  https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Reports:
+  MITRE ATT&CK:
+    - TA0011:T1573.002
+RuleID: "GCP.K8s.IOC.Activity"
+Runbook: >-
+  Add IP address the request is originated from to banned addresses.
+Severity: Medium
 Tags:
   - GCP
   - Optional
   - Encrypted Channel - Asymmetric Cryptography
   - Command and Control
-Severity: Medium
-Description: This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
-Reports:
-  MITRE ATT&CK:
-    - TA0011:T1573.002 # Encrypted Channel: Asymmetric Cryptography
-Runbook: Add IP address the request is originated from to banned addresses.
-Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
 Tests:
-  - Name: triggers
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "operation": { "producer": "k8s.io" },
-        "p_enrichment": { "tor_exit_nodes": ["1.1.1.1"] },
-      }
-  - Name: ignore
-    ExpectedResult: false
+      "operation":
+        "producer": "k8s.io"
+      "p_enrichment":
+        "tor_exit_nodes":
+          - "1.1.1.1"
+    Name: triggers
+  - ExpectedResult: false
     Log:
-      {
-        "operation": { "producer": "chrome" },
-        "p_enrichment": { "tor_exit_nodes": ["1.1.1.1"] },
-      }
+      "operation":
+        "producer": "chrome"
+      "p_enrichment":
+        "tor_exit_nodes":
+          - "1.1.1.1"
+    Name: ignore

@@ -1,40 +1,42 @@
 AnalysisType: rule
-Filename: gsuite_advanced_protection.py
-RuleID: "GSuite.AdvancedProtection"
+Description: >-
+  A user disabled advanced protection for themselves.
 DisplayName: "GSuite User Advanced Protection Change"
 Enabled: true
+Filename: gsuite_advanced_protection.py
 LogTypes:
   - GSuite.ActivityEvent
-Tags:
-  - GSuite
-  - Defense Evasion:Impair Defenses
+Reference: https://support.google.com/a/answer/9378686?hl=en&sjid=864417124752637253-EU
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562
-Severity: Low
-Description: >
-  A user disabled advanced protection for themselves.
-Reference: https://support.google.com/a/answer/9378686?hl=en&sjid=864417124752637253-EU
-Runbook: >
+RuleID: "GSuite.AdvancedProtection"
+Runbook: >-
   Have the user re-enable Google Advanced Protection
+Severity: Low
 SummaryAttributes:
   - actor:email
+Tags:
+  - GSuite
+  - Defense Evasion:Impair Defenses
 Tests:
-  - Name: Advanced Protection Enabled
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "user_accounts" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.com" },
-        "type": "titanium_change",
-        "name": "titanium_enroll",
-      }
-  - Name: Advanced Protection Disabled
-    ExpectedResult: true
+      "actor":
+        "callerType": "USER"
+        "email": "homer.simpson@example.com"
+      "id":
+        "applicationName": "user_accounts"
+      "name": "titanium_enroll"
+      "type": "titanium_change"
+    Name: Advanced Protection Enabled
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "user_accounts" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.com" },
-        "type": "titanium_change",
-        "name": "titanium_unenroll",
-      }
+      "actor":
+        "callerType": "USER"
+        "email": "homer.simpson@example.com"
+      "id":
+        "applicationName": "user_accounts"
+      "name": "titanium_unenroll"
+      "type": "titanium_change"
+    Name: Advanced Protection Disabled

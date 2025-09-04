@@ -1,30 +1,29 @@
 AnalysisType: scheduled_rule
-Filename: snowflake_suspicious_session.py
-RuleID: "Snowflake.Stream.SuspiciousSession.UnusualApp"
-DisplayName: Suspicious Snowflake Sessions - Unusual Application
+DedupPeriodMinutes: 1440
+Description: >-
+  Detects unusual (non-common) applications and client characteristics that have been
+  used to connect to a Snowflake account
+DisplayName: "Suspicious Snowflake Sessions - Unusual Application"
 Enabled: true
-ScheduledQueries:
-  - "Suspicious Snowflake Sessions - Unusual Application"
-Severity: Low
+Filename: snowflake_suspicious_session.py
 Reports:
   MITRE ATT&CK:
     - TA0001:T1078.004
-Description: Detects unusual (non-common) applications and client characteristics
-  that have been used to connect to a Snowflake account
-DedupPeriodMinutes: 1440
+RuleID: "Snowflake.Stream.SuspiciousSession.UnusualApp"
+ScheduledQueries:
+  - Suspicious Snowflake Sessions - Unusual Application
+Severity: Low
 Tags:
   - Snowflake
   - Behavior Analysis
   - Initial Access:Valid Accounts:Cloud Accounts
 Tests:
-  - Name: New Session
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "p_source_id": "26c3f2be-005e-443a-90cb-f623522f37a2",
-        "p_source_label": "SF Prod",
-        "client_application": "Snowflake Web App",
-        "first_seen": "2024-10-09 14:48:33.284",
-        "last_seen": "2024-10-09 15:01:13.492",
-        "n_sessions": 83
-      }
+      "client_application": "Snowflake Web App"
+      "first_seen": "2024-10-09 14:48:33.284"
+      "last_seen": "2024-10-09 15:01:13.492"
+      "n_sessions": 83
+      "p_source_id": "26c3f2be-005e-443a-90cb-f623522f37a2"
+      "p_source_label": "SF Prod"
+    Name: New Session

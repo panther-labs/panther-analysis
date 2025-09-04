@@ -1,55 +1,52 @@
 AnalysisType: rule
-Filename: snowflake_stream_login_without_mfa.py
-RuleID: Snowflake.Stream.LoginWithoutMFA
-DisplayName: Snowflake Login Without MFA
+DedupPeriodMinutes: 1440
+Description: >-
+  Detect Snowflake logins without multifactor authentication
+DisplayName: "Snowflake Login Without MFA"
 Enabled: false
+Filename: snowflake_stream_login_without_mfa.py
 LogTypes:
   - Snowflake.LoginHistory
-Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0005:T1556
-Description: Detect Snowflake logins without multifactor authentication
-DedupPeriodMinutes: 1440
+RuleID: "Snowflake.Stream.LoginWithoutMFA"
+Severity: Medium
 Tags:
   - Snowflake
   - '[MITRE] Defense Evasion'
   - '[MITRE] Modify Authentication Process'
 Tests:
-  - Name: Login With MFA
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "p_event_time": "2024-10-08 14:38:46.061000000",
-        "p_log_type": "Snowflake.LoginHistory",
-        "p_source_label": "Snowflake Prod",
-        "CLIENT_IP": "1.1.1.1",
-        "EVENT_ID": "393754014361778",
-        "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
-        "EVENT_TYPE": "LOGIN",
-        "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
-        "IS_SUCCESS": "YES",
-        "RELATED_EVENT_ID": "0",
-        "REPORTED_CLIENT_TYPE": "OTHER",
-        "REPORTED_CLIENT_VERSION": "1.11.1",
-        "SECOND_AUTHENTICATION_FACTOR": "OTP",
-        "USER_NAME": "ckent@dailyplanet.org"
-      }
-  - Name: Login Without MFA
-    ExpectedResult: true
+      "CLIENT_IP": "1.1.1.1"
+      "EVENT_ID": "393754014361778"
+      "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000"
+      "EVENT_TYPE": "LOGIN"
+      "FIRST_AUTHENTICATION_FACTOR": "PASSWORD"
+      "IS_SUCCESS": "YES"
+      "RELATED_EVENT_ID": "0"
+      "REPORTED_CLIENT_TYPE": "OTHER"
+      "REPORTED_CLIENT_VERSION": "1.11.1"
+      "SECOND_AUTHENTICATION_FACTOR": "OTP"
+      "USER_NAME": "ckent@dailyplanet.org"
+      "p_event_time": "2024-10-08 14:38:46.061000000"
+      "p_log_type": "Snowflake.LoginHistory"
+      "p_source_label": "Snowflake Prod"
+    Name: Login With MFA
+  - ExpectedResult: true
     Log:
-      {
-        "p_event_time": "2024-10-08 14:38:46.061000000",
-        "p_log_type": "Snowflake.LoginHistory",
-        "p_source_label": "Snowflake Prod",
-        "CLIENT_IP": "1.2.3.4",
-        "EVENT_ID": "393754014361778",
-        "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
-        "EVENT_TYPE": "LOGIN",
-        "FIRST_AUTHENTICATION_FACTOR": "PASSWORD",
-        "IS_SUCCESS": "YES",
-        "RELATED_EVENT_ID": "0",
-        "REPORTED_CLIENT_TYPE": "OTHER",
-        "REPORTED_CLIENT_VERSION": "1.11.1",
-        "USER_NAME": "luthor@lexcorp.com"
-      }
+      "CLIENT_IP": "1.2.3.4"
+      "EVENT_ID": "393754014361778"
+      "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000"
+      "EVENT_TYPE": "LOGIN"
+      "FIRST_AUTHENTICATION_FACTOR": "PASSWORD"
+      "IS_SUCCESS": "YES"
+      "RELATED_EVENT_ID": "0"
+      "REPORTED_CLIENT_TYPE": "OTHER"
+      "REPORTED_CLIENT_VERSION": "1.11.1"
+      "USER_NAME": "luthor@lexcorp.com"
+      "p_event_time": "2024-10-08 14:38:46.061000000"
+      "p_log_type": "Snowflake.LoginHistory"
+      "p_source_label": "Snowflake Prod"
+    Name: Login Without MFA

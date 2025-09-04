@@ -1,45 +1,43 @@
 AnalysisType: rule
-Filename: onelogin_threshold_accounts_modified.py
-RuleID: "OneLogin.ThresholdAccountsModified"
+DedupPeriodMinutes: 10
+Description: >-
+  Possible Denial of Service detected. Threshold for user account password changes
+  exceeded.
 DisplayName: "OneLogin Multiple Accounts Modified"
 Enabled: true
+Filename: onelogin_threshold_accounts_modified.py
 LogTypes:
   - OneLogin.Events
-Tags:
-  - OneLogin
-  - Impact:Account Access Removal
-Severity: Medium
+Reference: https://en.wikipedia.org/wiki/Denial-of-service_attack
 Reports:
   MITRE ATT&CK:
     - TA0040:T1531
-Description: >
-  Possible Denial of Service detected. Threshold for user account password changes exceeded.
-Threshold: 10
-DedupPeriodMinutes: 10
-Reference: https://en.wikipedia.org/wiki/Denial-of-service_attack
-Runbook: Determine if this is normal user-cleanup activity.
+RuleID: "OneLogin.ThresholdAccountsModified"
+Runbook: >-
+  Determine if this is normal user-cleanup activity.
+Severity: Medium
 SummaryAttributes:
   - account_id
   - user_name
   - user_id
+Tags:
+  - OneLogin
+  - Impact:Account Access Removal
 Tests:
-  - Name: Normal User Activated Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "event_type_id": "16",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
-  - Name: User Password Changed Event
-    ExpectedResult: true
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "16"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: Normal User Activated Event
+  - ExpectedResult: true
     Log:
-      {
-        "event_type_id": "11",
-        "actor_user_id": 654321,
-        "actor_user_name": "Mountain Lion",
-        "user_id": 123456,
-        "user_name": "Bob Cat",
-      }
+      "actor_user_id": 654321
+      "actor_user_name": "Mountain Lion"
+      "event_type_id": "11"
+      "user_id": 123456
+      "user_name": "Bob Cat"
+    Name: User Password Changed Event
+Threshold: 10

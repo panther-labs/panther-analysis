@@ -1,45 +1,43 @@
 AnalysisType: rule
-Filename: gsuite_is_suspicious_tag.py
-RuleID: "GSuite.IsSuspiciousTag"
+Description: >-
+  GSuite reported a suspicious activity for this user.
 DisplayName: "Suspicious is_suspicious tag"
 Enabled: true
+Filename: gsuite_is_suspicious_tag.py
 LogTypes:
   - GSuite.ActivityEvent
+Reference: https://support.google.com/a/answer/7102416?hl=en
+RuleID: "GSuite.IsSuspiciousTag"
+Runbook: >-
+  Checkout the details of the activity and verify this behavior with the user to ensure
+  the account wasn't compromised.
+Severity: Info
+SummaryAttributes:
+  - actor:email
 Tags:
   - GSuite
   - Beta
-Severity: Info # Will be Medium in the future
-Description: >
-  GSuite reported a suspicious activity for this user.
-Reference: https://support.google.com/a/answer/7102416?hl=en
-Runbook: >
-  Checkout the details of the activity and verify this behavior with the user to ensure the account wasn't compromised.
-SummaryAttributes:
-  - actor:email
 Tests:
-  - Name: Normal Login Event
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "kind": "admin#reports#activity",
-        "type": "account_warning",
-        "name": "login_success",
-        "parameters": { "affected_email_address": "bobert@ext.runpanther.io" },
-      }
-
-  - Name: Login Success But Flagged Suspicious
-    ExpectedResult: true
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "login_success"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+      "type": "account_warning"
+    Name: Normal Login Event
+  - ExpectedResult: true
     Log:
-      {
-        "id": { "applicationName": "login" },
-        "actor": {
-          "email": bobert@ext.runpanther.io"},
-        "kind": "admin#reports#activity",
-        "type": "login",
-        "name": "login_success",
-        "parameters": {
-          "affected_email_address": "bobert@ext.runpanther.io",
-          "is_suspicious": true
-        }
-      }
+      "actor":
+        "email": "bobert@ext.runpanther.io\""
+      "id":
+        "applicationName": "login"
+      "kind": "admin#reports#activity"
+      "name": "login_success"
+      "parameters":
+        "affected_email_address": "bobert@ext.runpanther.io"
+        "is_suspicious": true
+      "type": "login"
+    Name: Login Success But Flagged Suspicious

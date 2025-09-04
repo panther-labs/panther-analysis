@@ -1,43 +1,41 @@
 AnalysisType: rule
-Filename: snowflake_stream_external_shares.py
-RuleID: Snowflake.Stream.ExternalShares
-DisplayName: Snowflake External Data Share
+Description: >-
+  Detect when an external share has been initiated from one source cloud to another
+  target cloud.
+DisplayName: "Snowflake External Data Share"
 Enabled: true
+Filename: snowflake_stream_external_shares.py
 LogTypes:
   - Snowflake.DataTransferHistory
-Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0010:T1537
-Description: Detect when an external share has been initiated from one source cloud
-  to another target cloud.
-Runbook: Determine if this occurred as a result of a valid business request.
+RuleID: "Snowflake.Stream.ExternalShares"
+Runbook: >-
+  Determine if this occurred as a result of a valid business request.
+Severity: Medium
 Tags:
   - Snowflake
   - '[MITRE] Exfiltration'
   - '[MITRE] Transfer Data to Cloud Account'
 Tests:
-  - Name: Zero byte transfer
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "REGION": "US-EAST-2",
-        "SOURCE_CLOUD": "AWS",
-        "SOURCE_REGION": "US-EAST-2",
-        "TARGET_CLOUD": "AWS",
-        "TARGET_REGION": "EU-WEST-1",
-        "BYTES_TRANSFERRED": 0,
-        "TRANSFER_TYPE": "COPY"
-      }
-  - Name: Disallowed Share
-    ExpectedResult: true
+      "BYTES_TRANSFERRED": 0
+      "REGION": "US-EAST-2"
+      "SOURCE_CLOUD": "AWS"
+      "SOURCE_REGION": "US-EAST-2"
+      "TARGET_CLOUD": "AWS"
+      "TARGET_REGION": "EU-WEST-1"
+      "TRANSFER_TYPE": "COPY"
+    Name: Zero byte transfer
+  - ExpectedResult: true
     Log:
-      {
-        "REGION": "US-EAST-2",
-        "SOURCE_CLOUD": "AWS",
-        "SOURCE_REGION": "US-EAST-2",
-        "TARGET_CLOUD": "AWS",
-        "TARGET_REGION": "EU-WEST-1",
-        "BYTES_TRANSFERRED": 61235879,
-        "TRANSFER_TYPE": "COPY"
-      }
+      "BYTES_TRANSFERRED": 61235879
+      "REGION": "US-EAST-2"
+      "SOURCE_CLOUD": "AWS"
+      "SOURCE_REGION": "US-EAST-2"
+      "TARGET_CLOUD": "AWS"
+      "TARGET_REGION": "EU-WEST-1"
+      "TRANSFER_TYPE": "COPY"
+    Name: Disallowed Share

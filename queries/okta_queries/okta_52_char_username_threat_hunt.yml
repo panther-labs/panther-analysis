@@ -1,10 +1,14 @@
 AnalysisType: saved_query
-QueryName: "Okta Username Above 52 Characters Security Advisory"
-Description: >
-  On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication.
-  Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024.
+Description: On October 30, 2024, a vulnerability was internally identified in generating
+  the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the
+  cache key where we hash a combined string of userId + username + password. Under
+  a specific set of conditions, listed below, this could allow users to authenticate
+  by providing the username with the stored cache key of a previous successful authentication.
+  Customers meeting the pre-conditions should investigate their Okta System Log for
+  unexpected authentications from usernames greater than 52 characters between the
+  period of July 23rd, 2024 to October 30th, 2024. 
   https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
-Query: |
+Query: >-
   SELECT
     p_event_time as p_timeline,
     *
@@ -17,4 +21,6 @@ Query: |
     AND outcome:result = 'SUCCESS'
     AND LEN(actor:alternateId) >= 52
   ORDER by p_event_time ASC NULLS LAST
+
   LIMIT 100
+QueryName: "Okta Username Above 52 Characters Security Advisory"

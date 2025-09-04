@@ -1,63 +1,65 @@
 AnalysisType: rule
-Filename: push_security_phishing_attack.py
-RuleID: "Push.Security.Phishing.Attack"
+DedupPeriodMinutes: 60
 DisplayName: "Push Security Phishing Attack"
 Enabled: true
+Filename: push_security_phishing_attack.py
 LogTypes:
   - PushSecurity.Controls
+RuleID: "Push.Security.Phishing.Attack"
 Severity: High
-DedupPeriodMinutes: 60
-Threshold: 1
 Tests:
-  - Name: Phishing Detected - Block Mode
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      id: c478966c-f927-411c-b919-179832d3d50c
-      new:
-        appType: OKTA
-        browser: CHROME
-        employee:
-          chatopsEnabled: true
-          creationTimestamp: 1.698669223e+09
-          department: Security Engineering
-          email: john.hill@example.com
-          firstName: John
-          id: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
-          lastName: Hill
-          licensed: true
-          location: New York
-        mode: BLOCK
-        os: WINDOWS
-        referrerUrl: https://statics.teams.cdn.office.net/
-        sourceIpAddress: 8.158.25.38
-        url: https://evil.com/okta.php
-        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
-      object: PASSWORD_PHISHING
-      timestamp: 1.698604061e+09
-      version: "1"
-  - Name: Phishing Detected - Monitor Mode
-    ExpectedResult: true
+      "id": "c478966c-f927-411c-b919-179832d3d50c"
+      "new":
+        "appType": "OKTA"
+        "browser": "CHROME"
+        "employee":
+          "chatopsEnabled": true
+          "creationTimestamp": 1698669223.0
+          "department": "Security Engineering"
+          "email": "john.hill@example.com"
+          "firstName": "John"
+          "id": "2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0"
+          "lastName": "Hill"
+          "licensed": true
+          "location": "New York"
+        "mode": "BLOCK"
+        "os": "WINDOWS"
+        "referrerUrl": "https://statics.teams.cdn.office.net/"
+        "sourceIpAddress": "8.158.25.38"
+        "url": "https://evil.com/okta.php"
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+          (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299"
+      "object": "PASSWORD_PHISHING"
+      "timestamp": 1698604061.0
+      "version": "1"
+    Name: Phishing Detected - Block Mode
+  - ExpectedResult: true
     Log:
-      id: c478966c-f927-411c-b919-179832d3d50c
-      new:
-        appType: OKTA
-        browser: CHROME
-        employee:
-          chatopsEnabled: true
-          creationTimestamp: 1.698669223e+09
-          department: Security Engineering
-          email: john.hill@example.com
-          firstName: John
-          id: 2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0
-          lastName: Hill
-          licensed: true
-          location: New York
-        mode: MONITOR
-        os: WINDOWS
-        referrerUrl: https://statics.teams.cdn.office.net/
-        sourceIpAddress: 8.158.25.38
-        url: https://evil.com/okta.php
-        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
-      object: PASSWORD_PHISHING
-      timestamp: 1.698604061e+09
-      version: "1"
+      "id": "c478966c-f927-411c-b919-179832d3d50c"
+      "new":
+        "appType": "OKTA"
+        "browser": "CHROME"
+        "employee":
+          "chatopsEnabled": true
+          "creationTimestamp": 1698669223.0
+          "department": "Security Engineering"
+          "email": "john.hill@example.com"
+          "firstName": "John"
+          "id": "2a2197de-ad2c-47e4-8dcb-fb0f04cf83e0"
+          "lastName": "Hill"
+          "licensed": true
+          "location": "New York"
+        "mode": "MONITOR"
+        "os": "WINDOWS"
+        "referrerUrl": "https://statics.teams.cdn.office.net/"
+        "sourceIpAddress": "8.158.25.38"
+        "url": "https://evil.com/okta.php"
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+          (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299"
+      "object": "PASSWORD_PHISHING"
+      "timestamp": 1698604061.0
+      "version": "1"
+    Name: Phishing Detected - Monitor Mode
+Threshold: 1

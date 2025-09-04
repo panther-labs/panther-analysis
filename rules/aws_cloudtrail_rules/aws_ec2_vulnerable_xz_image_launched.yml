@@ -1,885 +1,662 @@
 AnalysisType: rule
-Description: >
-  Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)
+DedupPeriodMinutes: 60
+Description: >-
+  Detecting EC2 instances launched with AMIs containing potentially vulnerable versions
+  of XZ (CVE-2024-3094)
 DisplayName: "AWS EC2 Vulnerable XZ Image Launched"
 Enabled: true
 Filename: aws_ec2_vulnerable_xz_image_launched.py
+LogTypes:
+  - AWS.CloudTrail
 Reference: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-3094
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.001
+RuleID: "AWS.EC2.Vulnerable.XZ.Image.Launched"
+Runbook: >-
+  - Verify that the AMI is indeed vulnerable to CVE-2024-3094 (xz -V being 5.6.0 or
+  5.6.1) - If the AMI is vulnerable, terminate the instance and launch a new instance
+  with a non-vulnerable AMI
 Severity: Critical
 Tags:
   - AWS
   - Linux
   - Emerging Threats
   - Supply Chain Compromise
-Reports:
-  MITRE ATT&CK:
-    - TA0001:T1195.001
-Runbook: >
-  - Verify that the AMI is indeed vulnerable to CVE-2024-3094 (xz -V being 5.6.0 or 5.6.1)
-  - If the AMI is vulnerable, terminate the instance and launch a new instance with a non-vulnerable AMI
 Tests:
   - ExpectedResult: true
+    Log:
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "cd7919fe-34a2-4d26-b038-23a2556a79fb"
+      "eventName": "RunInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2024-04-02 15:13:06.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.09"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "439a7e66-d8b6-4bad-98d9-214c20161939"
+      "requestParameters":
+        "blockDeviceMapping":
+          "items":
+            - "deviceName": "/dev/sda1"
+              "ebs":
+                "deleteOnTermination": true
+                "encrypted": false
+                "iops": 3000
+                "snapshotId": "snap-00000000000000000"
+                "throughput": 125
+                "volumeSize": 10
+                "volumeType": "gp3"
+        "clientToken": "00000000-0000-0000-0000-000000000000"
+        "disableApiStop": false
+        "disableApiTermination": false
+        "ebsOptimized": true
+        "instanceType": "t3a.micro"
+        "instancesSet":
+          "items":
+            - "imageId": "ami-020a359780bc6f835"
+              "keyName": "a-key"
+              "maxCount": 1
+              "minCount": 1
+        "monitoring":
+          "enabled": false
+        "networkInterfaceSet":
+          "items":
+            - "associatePublicIpAddress": true
+              "deviceIndex": 0
+              "groupSet":
+                "items":
+                  - "groupId": "sg-00000000000000000"
+              "subnetId": "subnet-00000000000000000"
+        "privateDnsNameOptions":
+          "enableResourceNameDnsAAAARecord": false
+          "enableResourceNameDnsARecord": false
+          "hostnameType": "ip-name"
+        "tagSpecificationSet":
+          "items":
+            - "resourceType": "instance"
+              "tags":
+                - "key": "Name"
+                  "value": "test"
+      "responseElements":
+        "groupSet": {}
+        "instancesSet":
+          "items":
+            - "amiLaunchIndex": 0
+              "architecture": "x86_64"
+              "blockDeviceMapping": {}
+              "capacityReservationSpecification":
+                "capacityReservationPreference": "open"
+              "clientToken": "8cda61da-eea9-495c-b178-e7014d9bc212"
+              "cpuOptions":
+                "coreCount": 1
+                "threadsPerCore": 2
+              "currentInstanceBootMode": "legacy-bios"
+              "ebsOptimized": true
+              "enaSupport": true
+              "enclaveOptions":
+                "enabled": false
+              "groupSet":
+                "items":
+                  - "groupId": "sg-00000000000000000"
+                    "groupName": "ssh"
+              "hypervisor": "xen"
+              "imageId": "ami-020a359780bc6f835"
+              "instanceId": "i-00000000000000000"
+              "instanceState":
+                "code": 0
+                "name": "pending"
+              "instanceType": "t3a.micro"
+              "keyName": "a-key"
+              "launchTime": 1712070786000
+              "maintenanceOptions":
+                "autoRecovery": "default"
+              "metadataOptions":
+                "httpEndpoint": "enabled"
+                "httpProtocolIpv4": "enabled"
+                "httpProtocolIpv6": "disabled"
+                "httpPutResponseHopLimit": 1
+                "httpTokens": "optional"
+                "instanceMetadataTags": "disabled"
+                "state": "pending"
+              "monitoring":
+                "state": "disabled"
+              "networkInterfaceSet":
+                "items":
+                  - "attachment":
+                      "attachTime": 1712070786000
+                      "attachmentId": "eni-attach-00000000000000000"
+                      "deleteOnTermination": true
+                      "deviceIndex": 0
+                      "networkCardIndex": 0
+                      "status": "attaching"
+                    "groupSet":
+                      "items":
+                        - "groupId": "sg-00000000000000000"
+                          "groupName": "ssh"
+                    "interfaceType": "interface"
+                    "ipv6AddressesSet": {}
+                    "macAddress": "06:71:c7:76:de:4f"
+                    "networkInterfaceId": "eni-00000000000000000"
+                    "ownerId": "123456789012"
+                    "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+                    "privateIpAddress": "10.0.0.3"
+                    "privateIpAddressesSet":
+                      "item":
+                        - "primary": true
+                          "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+                          "privateIpAddress": "10.0.0.3"
+                    "sourceDestCheck": true
+                    "status": "in-use"
+                    "subnetId": "subnet-00000000000000000"
+                    "tagSet": {}
+                    "vpcId": "vpc-00000000000000000"
+              "placement":
+                "availabilityZone": "us-west-2b"
+                "tenancy": "default"
+              "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+              "privateDnsNameOptions":
+                "enableResourceNameDnsAAAARecord": false
+                "enableResourceNameDnsARecord": false
+                "hostnameType": "ip-name"
+              "privateIpAddress": "10.0.0.3"
+              "productCodes": {}
+              "rootDeviceName": "/dev/sda1"
+              "rootDeviceType": "ebs"
+              "sourceDestCheck": true
+              "stateReason":
+                "code": "pending"
+                "message": "pending"
+              "subnetId": "subnet-00000000000000000"
+              "tagSet":
+                "items":
+                  - "key": "Name"
+                    "value": "test"
+              "virtualizationType": "hvm"
+              "vpcId": "vpc-00000000000000000"
+        "ownerId": "123456789012"
+        "requestId": "439a7e66-d8b6-4bad-98d9-214c20161939"
+        "reservationId": "r-00000000000000000"
+      "sessionCredentialFromConsole": true
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101
+        Firefox/124.0"
+      "userIdentity":
+        "accessKeyId": "ASIASXP6SDP2MXGX4MYC"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name"
+        "principalId": "AROAVKVYIOO7JN7TN7NSA:user.name"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-04-02T14:45:31Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole"
+            "principalId": "AROAVKVYIOO7JN7TN7NSA"
+            "type": "Role"
+            "userName": "ARole"
+        "type": "AssumedRole"
     Name: Single vulnerable AMI Launched
+  - ExpectedResult: true
     Log:
-      {
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "cd7919fe-34a2-4d26-b038-23a2556a79fb",
-        "eventName": "RunInstances",
-        "eventSource": "ec2.amazonaws.com",
-        "eventTime": "2024-04-02 15:13:06.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.09",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "123456789012",
-        "requestID": "439a7e66-d8b6-4bad-98d9-214c20161939",
-        "requestParameters":
-          {
-            "blockDeviceMapping":
-              {
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "762b9172-6148-4c76-aee4-f6fc0fd140af"
+      "eventName": "RunInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2024-04-02 16:46:24.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.09"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "a71ca9b3-be94-4e22-95c5-e93b2280306c"
+      "requestParameters":
+        "blockDeviceMapping":
+          "items":
+            - "deviceName": "/dev/sda1"
+              "ebs":
+                "deleteOnTermination": true
+                "encrypted": false
+                "iops": 3000
+                "snapshotId": "snap-00000000000000000"
+                "throughput": 125
+                "volumeSize": 6
+                "volumeType": "gp3"
+        "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb"
+        "disableApiStop": false
+        "disableApiTermination": false
+        "ebsOptimized": true
+        "instanceType": "t3a.nano"
+        "instancesSet":
+          "items":
+            - "imageId": "ami-092e3b17e435e5e58"
+              "keyName": "a-key"
+              "maxCount": 2
+              "minCount": 2
+        "monitoring":
+          "enabled": false
+        "networkInterfaceSet":
+          "items":
+            - "associatePublicIpAddress": true
+              "deviceIndex": 0
+              "groupSet":
                 "items":
-                  [
-                    {
-                      "deviceName": "/dev/sda1",
-                      "ebs":
-                        {
-                          "deleteOnTermination": true,
-                          "encrypted": false,
-                          "iops": 3000,
-                          "snapshotId": "snap-00000000000000000",
-                          "throughput": 125,
-                          "volumeSize": 10,
-                          "volumeType": "gp3",
-                        },
-                    },
-                  ],
-              },
-            "clientToken": "00000000-0000-0000-0000-000000000000",
-            "disableApiStop": false,
-            "disableApiTermination": false,
-            "ebsOptimized": true,
-            "instanceType": "t3a.micro",
-            "instancesSet":
-              {
+                  - "groupId": "sg-00000000000000000"
+              "subnetId": "subnet-00000000000000000"
+        "privateDnsNameOptions":
+          "enableResourceNameDnsAAAARecord": false
+          "enableResourceNameDnsARecord": false
+          "hostnameType": "ip-name"
+        "tagSpecificationSet":
+          "items":
+            - "resourceType": "instance"
+              "tags":
+                - "key": "Name"
+                  "value": "test"
+      "responseElements":
+        "groupSet": {}
+        "instancesSet":
+          "items":
+            - "amiLaunchIndex": 0
+              "architecture": "x86_64"
+              "blockDeviceMapping": {}
+              "capacityReservationSpecification":
+                "capacityReservationPreference": "open"
+              "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb"
+              "cpuOptions":
+                "coreCount": 1
+                "threadsPerCore": 2
+              "currentInstanceBootMode": "legacy-bios"
+              "ebsOptimized": true
+              "enaSupport": true
+              "enclaveOptions":
+                "enabled": false
+              "groupSet":
                 "items":
-                  [
-                    {
-                      "imageId": "ami-020a359780bc6f835",
-                      "keyName": "a-key",
-                      "maxCount": 1,
-                      "minCount": 1,
-                    },
-                  ],
-              },
-            "monitoring": { "enabled": false },
-            "networkInterfaceSet":
-              {
+                  - "groupId": "sg-00000000000000000"
+                    "groupName": "ssh"
+              "hypervisor": "xen"
+              "imageId": "ami-092e3b17e435e5e58"
+              "instanceId": "i-00000000000000000"
+              "instanceState":
+                "code": 0
+                "name": "pending"
+              "instanceType": "t3a.nano"
+              "keyName": "a-key"
+              "launchTime": 1712076384000
+              "maintenanceOptions":
+                "autoRecovery": "default"
+              "metadataOptions":
+                "httpEndpoint": "enabled"
+                "httpProtocolIpv4": "enabled"
+                "httpProtocolIpv6": "disabled"
+                "httpPutResponseHopLimit": 1
+                "httpTokens": "optional"
+                "instanceMetadataTags": "disabled"
+                "state": "pending"
+              "monitoring":
+                "state": "disabled"
+              "networkInterfaceSet":
                 "items":
-                  [
-                    {
-                      "associatePublicIpAddress": true,
-                      "deviceIndex": 0,
-                      "groupSet":
-                        { "items": [{ "groupId": "sg-00000000000000000" }] },
-                      "subnetId": "subnet-00000000000000000",
-                    },
-                  ],
-              },
-            "privateDnsNameOptions":
-              {
-                "enableResourceNameDnsAAAARecord": false,
-                "enableResourceNameDnsARecord": false,
-                "hostnameType": "ip-name",
-              },
-            "tagSpecificationSet":
-              {
+                  - "attachment":
+                      "attachTime": 1712076384000
+                      "attachmentId": "eni-attach-00000000000000000"
+                      "deleteOnTermination": true
+                      "deviceIndex": 0
+                      "networkCardIndex": 0
+                      "status": "attaching"
+                    "groupSet":
+                      "items":
+                        - "groupId": "sg-00000000000000000"
+                          "groupName": "ssh"
+                    "interfaceType": "interface"
+                    "ipv6AddressesSet": {}
+                    "macAddress": "06:18:9b:64:05:2b"
+                    "networkInterfaceId": "eni-00000000000000000"
+                    "ownerId": "123456789012"
+                    "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal"
+                    "privateIpAddress": "10.0.0.4"
+                    "privateIpAddressesSet":
+                      "item":
+                        - "primary": true
+                          "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal"
+                          "privateIpAddress": "10.0.0.4"
+                    "sourceDestCheck": true
+                    "status": "in-use"
+                    "subnetId": "subnet-00000000000000000"
+                    "tagSet": {}
+                    "vpcId": "vpc-00000000000000000"
+              "placement":
+                "availabilityZone": "us-west-2b"
+                "tenancy": "default"
+              "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal"
+              "privateDnsNameOptions":
+                "enableResourceNameDnsAAAARecord": false
+                "enableResourceNameDnsARecord": false
+                "hostnameType": "ip-name"
+              "privateIpAddress": "10.0.0.4"
+              "productCodes": {}
+              "rootDeviceName": "/dev/sda1"
+              "rootDeviceType": "ebs"
+              "sourceDestCheck": true
+              "stateReason":
+                "code": "pending"
+                "message": "pending"
+              "subnetId": "subnet-00000000000000000"
+              "tagSet":
                 "items":
-                  [
-                    {
-                      "resourceType": "instance",
-                      "tags": [{ "key": "Name", "value": "test" }],
-                    },
-                  ],
-              },
-          },
-        "responseElements":
-          {
-            "groupSet": {},
-            "instancesSet":
-              {
+                  - "key": "Name"
+                    "value": "test"
+              "virtualizationType": "hvm"
+              "vpcId": "vpc-00000000000000000"
+            - "amiLaunchIndex": 1
+              "architecture": "x86_64"
+              "blockDeviceMapping": {}
+              "capacityReservationSpecification":
+                "capacityReservationPreference": "open"
+              "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb"
+              "cpuOptions":
+                "coreCount": 1
+                "threadsPerCore": 2
+              "currentInstanceBootMode": "legacy-bios"
+              "ebsOptimized": true
+              "enaSupport": true
+              "enclaveOptions":
+                "enabled": false
+              "groupSet":
                 "items":
-                  [
-                    {
-                      "amiLaunchIndex": 0,
-                      "architecture": "x86_64",
-                      "blockDeviceMapping": {},
-                      "capacityReservationSpecification":
-                        { "capacityReservationPreference": "open" },
-                      "clientToken": "8cda61da-eea9-495c-b178-e7014d9bc212",
-                      "cpuOptions": { "coreCount": 1, "threadsPerCore": 2 },
-                      "currentInstanceBootMode": "legacy-bios",
-                      "ebsOptimized": true,
-                      "enaSupport": true,
-                      "enclaveOptions": { "enabled": false },
-                      "groupSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "groupId": "sg-00000000000000000",
-                                "groupName": "ssh",
-                              },
-                            ],
-                        },
-                      "hypervisor": "xen",
-                      "imageId": "ami-020a359780bc6f835",
-                      "instanceId": "i-00000000000000000",
-                      "instanceState": { "code": 0, "name": "pending" },
-                      "instanceType": "t3a.micro",
-                      "keyName": "a-key",
-                      "launchTime": 1712070786000,
-                      "maintenanceOptions": { "autoRecovery": "default" },
-                      "metadataOptions":
-                        {
-                          "httpEndpoint": "enabled",
-                          "httpProtocolIpv4": "enabled",
-                          "httpProtocolIpv6": "disabled",
-                          "httpPutResponseHopLimit": 1,
-                          "httpTokens": "optional",
-                          "instanceMetadataTags": "disabled",
-                          "state": "pending",
-                        },
-                      "monitoring": { "state": "disabled" },
-                      "networkInterfaceSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "attachment":
-                                  {
-                                    "attachTime": 1712070786000,
-                                    "attachmentId": "eni-attach-00000000000000000",
-                                    "deleteOnTermination": true,
-                                    "deviceIndex": 0,
-                                    "networkCardIndex": 0,
-                                    "status": "attaching",
-                                  },
-                                "groupSet":
-                                  {
-                                    "items":
-                                      [
-                                        {
-                                          "groupId": "sg-00000000000000000",
-                                          "groupName": "ssh",
-                                        },
-                                      ],
-                                  },
-                                "interfaceType": "interface",
-                                "ipv6AddressesSet": {},
-                                "macAddress": "06:71:c7:76:de:4f",
-                                "networkInterfaceId": "eni-00000000000000000",
-                                "ownerId": "123456789012",
-                                "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                                "privateIpAddress": "10.0.0.3",
-                                "privateIpAddressesSet":
-                                  {
-                                    "item":
-                                      [
-                                        {
-                                          "primary": true,
-                                          "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                                          "privateIpAddress": "10.0.0.3",
-                                        },
-                                      ],
-                                  },
-                                "sourceDestCheck": true,
-                                "status": "in-use",
-                                "subnetId": "subnet-00000000000000000",
-                                "tagSet": {},
-                                "vpcId": "vpc-00000000000000000",
-                              },
-                            ],
-                        },
-                      "placement":
-                        {
-                          "availabilityZone": "us-west-2b",
-                          "tenancy": "default",
-                        },
-                      "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                      "privateDnsNameOptions":
-                        {
-                          "enableResourceNameDnsAAAARecord": false,
-                          "enableResourceNameDnsARecord": false,
-                          "hostnameType": "ip-name",
-                        },
-                      "privateIpAddress": "10.0.0.3",
-                      "productCodes": {},
-                      "rootDeviceName": "/dev/sda1",
-                      "rootDeviceType": "ebs",
-                      "sourceDestCheck": true,
-                      "stateReason":
-                        { "code": "pending", "message": "pending" },
-                      "subnetId": "subnet-00000000000000000",
-                      "tagSet":
-                        { "items": [{ "key": "Name", "value": "test" }] },
-                      "virtualizationType": "hvm",
-                      "vpcId": "vpc-00000000000000000",
-                    },
-                  ],
-              },
-            "ownerId": "123456789012",
-            "requestId": "439a7e66-d8b6-4bad-98d9-214c20161939",
-            "reservationId": "r-00000000000000000",
-          },
-        "sessionCredentialFromConsole": true,
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails":
-          {
-            "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
-            "tlsVersion": "TLSv1.3",
-          },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
-        "userIdentity":
-          {
-            "accessKeyId": "ASIASXP6SDP2MXGX4MYC",
-            "accountId": "123456789012",
-            "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name",
-            "principalId": "AROAVKVYIOO7JN7TN7NSA:user.name",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "creationDate": "2024-04-02T14:45:31Z",
-                    "mfaAuthenticated": "false",
-                  },
-                "sessionIssuer":
-                  {
-                    "accountId": "123456789012",
-                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
-                    "principalId": "AROAVKVYIOO7JN7TN7NSA",
-                    "type": "Role",
-                    "userName": "ARole",
-                  },
-              },
-            "type": "AssumedRole",
-          },
-      }
-  - Name: Multiple vulnerable AMIs Launched
-    ExpectedResult: true
+                  - "groupId": "sg-00000000000000000"
+                    "groupName": "ssh"
+              "hypervisor": "xen"
+              "imageId": "ami-020a359780bc6f835"
+              "instanceId": "i-00000000000000001"
+              "instanceState":
+                "code": 0
+                "name": "pending"
+              "instanceType": "t3a.nano"
+              "keyName": "a-key"
+              "launchTime": 1712076384000
+              "maintenanceOptions":
+                "autoRecovery": "default"
+              "metadataOptions":
+                "httpEndpoint": "enabled"
+                "httpProtocolIpv4": "enabled"
+                "httpProtocolIpv6": "disabled"
+                "httpPutResponseHopLimit": 1
+                "httpTokens": "optional"
+                "instanceMetadataTags": "disabled"
+                "state": "pending"
+              "monitoring":
+                "state": "disabled"
+              "networkInterfaceSet":
+                "items":
+                  - "attachment":
+                      "attachTime": 1712076384000
+                      "attachmentId": "eni-attach-00000000000000000"
+                      "deleteOnTermination": true
+                      "deviceIndex": 0
+                      "networkCardIndex": 0
+                      "status": "attaching"
+                    "groupSet":
+                      "items":
+                        - "groupId": "sg-00000000000000000"
+                          "groupName": "ssh"
+                    "interfaceType": "interface"
+                    "ipv6AddressesSet": {}
+                    "macAddress": "06:b3:32:47:a8:c5"
+                    "networkInterfaceId": "eni-00000000000000000"
+                    "ownerId": "123456789012"
+                    "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal"
+                    "privateIpAddress": "10.0.0.5"
+                    "privateIpAddressesSet":
+                      "item":
+                        - "primary": true
+                          "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal"
+                          "privateIpAddress": "10.0.0.5"
+                    "sourceDestCheck": true
+                    "status": "in-use"
+                    "subnetId": "subnet-00000000000000000"
+                    "tagSet": {}
+                    "vpcId": "vpc-00000000000000000"
+              "placement":
+                "availabilityZone": "us-west-2b"
+                "tenancy": "default"
+              "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal"
+              "privateDnsNameOptions":
+                "enableResourceNameDnsAAAARecord": false
+                "enableResourceNameDnsARecord": false
+                "hostnameType": "ip-name"
+              "privateIpAddress": "10.0.0.5"
+              "productCodes": {}
+              "rootDeviceName": "/dev/sda1"
+              "rootDeviceType": "ebs"
+              "sourceDestCheck": true
+              "stateReason":
+                "code": "pending"
+                "message": "pending"
+              "subnetId": "subnet-00000000000000000"
+              "tagSet":
+                "items":
+                  - "key": "Name"
+                    "value": "test"
+              "virtualizationType": "hvm"
+              "vpcId": "vpc-00000000000000000"
+        "ownerId": "123456789012"
+        "requestId": "a71ca9b3-be94-4e22-95c5-e93b2280306c"
+        "reservationId": "r-00000000000000000"
+      "sessionCredentialFromConsole": true
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101
+        Firefox/124.0"
+      "userIdentity":
+        "accessKeyId": "ASIASXP6SDP2MBQCDGHR"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name"
+        "principalId": "00000000000000000:user.name"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-04-02T16:09:04Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole"
+            "principalId": "00000000000000000"
+            "type": "Role"
+            "userName": "ARole"
+        "type": "AssumedRole"
+    Name: Multiple vulnerable AMIs Launched
+  - ExpectedResult: false
     Log:
-      {
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "762b9172-6148-4c76-aee4-f6fc0fd140af",
-        "eventName": "RunInstances",
-        "eventSource": "ec2.amazonaws.com",
-        "eventTime": "2024-04-02 16:46:24.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.09",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "123456789012",
-        "requestID": "a71ca9b3-be94-4e22-95c5-e93b2280306c",
-        "requestParameters":
-          {
-            "blockDeviceMapping":
-              {
+      "awsRegion": "us-west-2"
+      "eventCategory": "Management"
+      "eventID": "cd7919fe-34a2-4d26-b038-23a2556a79fb"
+      "eventName": "RunInstances"
+      "eventSource": "ec2.amazonaws.com"
+      "eventTime": "2024-04-02 15:13:06.000000000"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.09"
+      "managementEvent": true
+      "readOnly": false
+      "recipientAccountId": "123456789012"
+      "requestID": "439a7e66-d8b6-4bad-98d9-214c20161939"
+      "requestParameters":
+        "blockDeviceMapping":
+          "items":
+            - "deviceName": "/dev/sda1"
+              "ebs":
+                "deleteOnTermination": true
+                "encrypted": false
+                "iops": 3000
+                "snapshotId": "snap-00000000000000000"
+                "throughput": 125
+                "volumeSize": 10
+                "volumeType": "gp3"
+        "clientToken": "00000000-0000-0000-0000-000000000000"
+        "disableApiStop": false
+        "disableApiTermination": false
+        "ebsOptimized": true
+        "instanceType": "t3a.micro"
+        "instancesSet":
+          "items":
+            - "imageId": "ami-08038de0f4f90a9f0"
+              "keyName": "a-key"
+              "maxCount": 1
+              "minCount": 1
+        "monitoring":
+          "enabled": false
+        "networkInterfaceSet":
+          "items":
+            - "associatePublicIpAddress": true
+              "deviceIndex": 0
+              "groupSet":
                 "items":
-                  [
-                    {
-                      "deviceName": "/dev/sda1",
-                      "ebs":
-                        {
-                          "deleteOnTermination": true,
-                          "encrypted": false,
-                          "iops": 3000,
-                          "snapshotId": "snap-00000000000000000",
-                          "throughput": 125,
-                          "volumeSize": 6,
-                          "volumeType": "gp3",
-                        },
-                    },
-                  ],
-              },
-            "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb",
-            "disableApiStop": false,
-            "disableApiTermination": false,
-            "ebsOptimized": true,
-            "instanceType": "t3a.nano",
-            "instancesSet":
-              {
+                  - "groupId": "sg-00000000000000000"
+              "subnetId": "subnet-00000000000000000"
+        "privateDnsNameOptions":
+          "enableResourceNameDnsAAAARecord": false
+          "enableResourceNameDnsARecord": false
+          "hostnameType": "ip-name"
+        "tagSpecificationSet":
+          "items":
+            - "resourceType": "instance"
+              "tags":
+                - "key": "Name"
+                  "value": "test"
+      "responseElements":
+        "groupSet": {}
+        "instancesSet":
+          "items":
+            - "amiLaunchIndex": 0
+              "architecture": "x86_64"
+              "blockDeviceMapping": {}
+              "capacityReservationSpecification":
+                "capacityReservationPreference": "open"
+              "clientToken": "8cda61da-eea9-495c-b178-e7014d9bc212"
+              "cpuOptions":
+                "coreCount": 1
+                "threadsPerCore": 2
+              "currentInstanceBootMode": "legacy-bios"
+              "ebsOptimized": true
+              "enaSupport": true
+              "enclaveOptions":
+                "enabled": false
+              "groupSet":
                 "items":
-                  [
-                    {
-                      "imageId": "ami-092e3b17e435e5e58",
-                      "keyName": "a-key",
-                      "maxCount": 2,
-                      "minCount": 2,
-                    },
-                  ],
-              },
-            "monitoring": { "enabled": false },
-            "networkInterfaceSet":
-              {
+                  - "groupId": "sg-00000000000000000"
+                    "groupName": "ssh"
+              "hypervisor": "xen"
+              "imageId": "ami-08038de0f4f90a9f0"
+              "instanceId": "i-00000000000000000"
+              "instanceState":
+                "code": 0
+                "name": "pending"
+              "instanceType": "t3a.micro"
+              "keyName": "a-key"
+              "launchTime": 1712070786000
+              "maintenanceOptions":
+                "autoRecovery": "default"
+              "metadataOptions":
+                "httpEndpoint": "enabled"
+                "httpProtocolIpv4": "enabled"
+                "httpProtocolIpv6": "disabled"
+                "httpPutResponseHopLimit": 1
+                "httpTokens": "optional"
+                "instanceMetadataTags": "disabled"
+                "state": "pending"
+              "monitoring":
+                "state": "disabled"
+              "networkInterfaceSet":
                 "items":
-                  [
-                    {
-                      "associatePublicIpAddress": true,
-                      "deviceIndex": 0,
-                      "groupSet":
-                        { "items": [{ "groupId": "sg-00000000000000000" }] },
-                      "subnetId": "subnet-00000000000000000",
-                    },
-                  ],
-              },
-            "privateDnsNameOptions":
-              {
-                "enableResourceNameDnsAAAARecord": false,
-                "enableResourceNameDnsARecord": false,
-                "hostnameType": "ip-name",
-              },
-            "tagSpecificationSet":
-              {
+                  - "attachment":
+                      "attachTime": 1712070786000
+                      "attachmentId": "eni-attach-00000000000000000"
+                      "deleteOnTermination": true
+                      "deviceIndex": 0
+                      "networkCardIndex": 0
+                      "status": "attaching"
+                    "groupSet":
+                      "items":
+                        - "groupId": "sg-00000000000000000"
+                          "groupName": "ssh"
+                    "interfaceType": "interface"
+                    "ipv6AddressesSet": {}
+                    "macAddress": "06:71:c7:76:de:4f"
+                    "networkInterfaceId": "eni-00000000000000000"
+                    "ownerId": "123456789012"
+                    "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+                    "privateIpAddress": "10.0.0.3"
+                    "privateIpAddressesSet":
+                      "item":
+                        - "primary": true
+                          "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+                          "privateIpAddress": "10.0.0.3"
+                    "sourceDestCheck": true
+                    "status": "in-use"
+                    "subnetId": "subnet-00000000000000000"
+                    "tagSet": {}
+                    "vpcId": "vpc-00000000000000000"
+              "placement":
+                "availabilityZone": "us-west-2b"
+                "tenancy": "default"
+              "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal"
+              "privateDnsNameOptions":
+                "enableResourceNameDnsAAAARecord": false
+                "enableResourceNameDnsARecord": false
+                "hostnameType": "ip-name"
+              "privateIpAddress": "10.0.0.3"
+              "productCodes": {}
+              "rootDeviceName": "/dev/sda1"
+              "rootDeviceType": "ebs"
+              "sourceDestCheck": true
+              "stateReason":
+                "code": "pending"
+                "message": "pending"
+              "subnetId": "subnet-00000000000000000"
+              "tagSet":
                 "items":
-                  [
-                    {
-                      "resourceType": "instance",
-                      "tags": [{ "key": "Name", "value": "test" }],
-                    },
-                  ],
-              },
-          },
-        "responseElements":
-          {
-            "groupSet": {},
-            "instancesSet":
-              {
-                "items":
-                  [
-                    {
-                      "amiLaunchIndex": 0,
-                      "architecture": "x86_64",
-                      "blockDeviceMapping": {},
-                      "capacityReservationSpecification":
-                        { "capacityReservationPreference": "open" },
-                      "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb",
-                      "cpuOptions": { "coreCount": 1, "threadsPerCore": 2 },
-                      "currentInstanceBootMode": "legacy-bios",
-                      "ebsOptimized": true,
-                      "enaSupport": true,
-                      "enclaveOptions": { "enabled": false },
-                      "groupSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "groupId": "sg-00000000000000000",
-                                "groupName": "ssh",
-                              },
-                            ],
-                        },
-                      "hypervisor": "xen",
-                      "imageId": "ami-092e3b17e435e5e58",
-                      "instanceId": "i-00000000000000000",
-                      "instanceState": { "code": 0, "name": "pending" },
-                      "instanceType": "t3a.nano",
-                      "keyName": "a-key",
-                      "launchTime": 1712076384000,
-                      "maintenanceOptions": { "autoRecovery": "default" },
-                      "metadataOptions":
-                        {
-                          "httpEndpoint": "enabled",
-                          "httpProtocolIpv4": "enabled",
-                          "httpProtocolIpv6": "disabled",
-                          "httpPutResponseHopLimit": 1,
-                          "httpTokens": "optional",
-                          "instanceMetadataTags": "disabled",
-                          "state": "pending",
-                        },
-                      "monitoring": { "state": "disabled" },
-                      "networkInterfaceSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "attachment":
-                                  {
-                                    "attachTime": 1712076384000,
-                                    "attachmentId": "eni-attach-00000000000000000",
-                                    "deleteOnTermination": true,
-                                    "deviceIndex": 0,
-                                    "networkCardIndex": 0,
-                                    "status": "attaching",
-                                  },
-                                "groupSet":
-                                  {
-                                    "items":
-                                      [
-                                        {
-                                          "groupId": "sg-00000000000000000",
-                                          "groupName": "ssh",
-                                        },
-                                      ],
-                                  },
-                                "interfaceType": "interface",
-                                "ipv6AddressesSet": {},
-                                "macAddress": "06:18:9b:64:05:2b",
-                                "networkInterfaceId": "eni-00000000000000000",
-                                "ownerId": "123456789012",
-                                "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal",
-                                "privateIpAddress": "10.0.0.4",
-                                "privateIpAddressesSet":
-                                  {
-                                    "item":
-                                      [
-                                        {
-                                          "primary": true,
-                                          "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal",
-                                          "privateIpAddress": "10.0.0.4",
-                                        },
-                                      ],
-                                  },
-                                "sourceDestCheck": true,
-                                "status": "in-use",
-                                "subnetId": "subnet-00000000000000000",
-                                "tagSet": {},
-                                "vpcId": "vpc-00000000000000000",
-                              },
-                            ],
-                        },
-                      "placement":
-                        {
-                          "availabilityZone": "us-west-2b",
-                          "tenancy": "default",
-                        },
-                      "privateDnsName": "ip-10-0-0-4.us-west-2.compute.internal",
-                      "privateDnsNameOptions":
-                        {
-                          "enableResourceNameDnsAAAARecord": false,
-                          "enableResourceNameDnsARecord": false,
-                          "hostnameType": "ip-name",
-                        },
-                      "privateIpAddress": "10.0.0.4",
-                      "productCodes": {},
-                      "rootDeviceName": "/dev/sda1",
-                      "rootDeviceType": "ebs",
-                      "sourceDestCheck": true,
-                      "stateReason":
-                        { "code": "pending", "message": "pending" },
-                      "subnetId": "subnet-00000000000000000",
-                      "tagSet":
-                        { "items": [{ "key": "Name", "value": "test" }] },
-                      "virtualizationType": "hvm",
-                      "vpcId": "vpc-00000000000000000",
-                    },
-                    {
-                      "amiLaunchIndex": 1,
-                      "architecture": "x86_64",
-                      "blockDeviceMapping": {},
-                      "capacityReservationSpecification":
-                        { "capacityReservationPreference": "open" },
-                      "clientToken": "8945829d-0ef6-470d-bbfd-ea5bb2d82fdb",
-                      "cpuOptions": { "coreCount": 1, "threadsPerCore": 2 },
-                      "currentInstanceBootMode": "legacy-bios",
-                      "ebsOptimized": true,
-                      "enaSupport": true,
-                      "enclaveOptions": { "enabled": false },
-                      "groupSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "groupId": "sg-00000000000000000",
-                                "groupName": "ssh",
-                              },
-                            ],
-                        },
-                      "hypervisor": "xen",
-                      "imageId": "ami-020a359780bc6f835",
-                      "instanceId": "i-00000000000000001",
-                      "instanceState": { "code": 0, "name": "pending" },
-                      "instanceType": "t3a.nano",
-                      "keyName": "a-key",
-                      "launchTime": 1712076384000,
-                      "maintenanceOptions": { "autoRecovery": "default" },
-                      "metadataOptions":
-                        {
-                          "httpEndpoint": "enabled",
-                          "httpProtocolIpv4": "enabled",
-                          "httpProtocolIpv6": "disabled",
-                          "httpPutResponseHopLimit": 1,
-                          "httpTokens": "optional",
-                          "instanceMetadataTags": "disabled",
-                          "state": "pending",
-                        },
-                      "monitoring": { "state": "disabled" },
-                      "networkInterfaceSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "attachment":
-                                  {
-                                    "attachTime": 1712076384000,
-                                    "attachmentId": "eni-attach-00000000000000000",
-                                    "deleteOnTermination": true,
-                                    "deviceIndex": 0,
-                                    "networkCardIndex": 0,
-                                    "status": "attaching",
-                                  },
-                                "groupSet":
-                                  {
-                                    "items":
-                                      [
-                                        {
-                                          "groupId": "sg-00000000000000000",
-                                          "groupName": "ssh",
-                                        },
-                                      ],
-                                  },
-                                "interfaceType": "interface",
-                                "ipv6AddressesSet": {},
-                                "macAddress": "06:b3:32:47:a8:c5",
-                                "networkInterfaceId": "eni-00000000000000000",
-                                "ownerId": "123456789012",
-                                "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal",
-                                "privateIpAddress": "10.0.0.5",
-                                "privateIpAddressesSet":
-                                  {
-                                    "item":
-                                      [
-                                        {
-                                          "primary": true,
-                                          "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal",
-                                          "privateIpAddress": "10.0.0.5",
-                                        },
-                                      ],
-                                  },
-                                "sourceDestCheck": true,
-                                "status": "in-use",
-                                "subnetId": "subnet-00000000000000000",
-                                "tagSet": {},
-                                "vpcId": "vpc-00000000000000000",
-                              },
-                            ],
-                        },
-                      "placement":
-                        {
-                          "availabilityZone": "us-west-2b",
-                          "tenancy": "default",
-                        },
-                      "privateDnsName": "ip-10-0-0-5.us-west-2.compute.internal",
-                      "privateDnsNameOptions":
-                        {
-                          "enableResourceNameDnsAAAARecord": false,
-                          "enableResourceNameDnsARecord": false,
-                          "hostnameType": "ip-name",
-                        },
-                      "privateIpAddress": "10.0.0.5",
-                      "productCodes": {},
-                      "rootDeviceName": "/dev/sda1",
-                      "rootDeviceType": "ebs",
-                      "sourceDestCheck": true,
-                      "stateReason":
-                        { "code": "pending", "message": "pending" },
-                      "subnetId": "subnet-00000000000000000",
-                      "tagSet":
-                        { "items": [{ "key": "Name", "value": "test" }] },
-                      "virtualizationType": "hvm",
-                      "vpcId": "vpc-00000000000000000",
-                    },
-                  ],
-              },
-            "ownerId": "123456789012",
-            "requestId": "a71ca9b3-be94-4e22-95c5-e93b2280306c",
-            "reservationId": "r-00000000000000000",
-          },
-        "sessionCredentialFromConsole": true,
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails":
-          {
-            "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
-            "tlsVersion": "TLSv1.3",
-          },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
-        "userIdentity":
-          {
-            "accessKeyId": "ASIASXP6SDP2MBQCDGHR",
-            "accountId": "123456789012",
-            "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name",
-            "principalId": "00000000000000000:user.name",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "creationDate": "2024-04-02T16:09:04Z",
-                    "mfaAuthenticated": "false",
-                  },
-                "sessionIssuer":
-                  {
-                    "accountId": "123456789012",
-                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
-                    "principalId": "00000000000000000",
-                    "type": "Role",
-                    "userName": "ARole",
-                  },
-              },
-            "type": "AssumedRole",
-          },
-      }
-  - Name: Non-vulnerable AMI Launched
-    ExpectedResult: false
-    Log:
-      {
-        "awsRegion": "us-west-2",
-        "eventCategory": "Management",
-        "eventID": "cd7919fe-34a2-4d26-b038-23a2556a79fb",
-        "eventName": "RunInstances",
-        "eventSource": "ec2.amazonaws.com",
-        "eventTime": "2024-04-02 15:13:06.000000000",
-        "eventType": "AwsApiCall",
-        "eventVersion": "1.09",
-        "managementEvent": true,
-        "readOnly": false,
-        "recipientAccountId": "123456789012",
-        "requestID": "439a7e66-d8b6-4bad-98d9-214c20161939",
-        "requestParameters":
-          {
-            "blockDeviceMapping":
-              {
-                "items":
-                  [
-                    {
-                      "deviceName": "/dev/sda1",
-                      "ebs":
-                        {
-                          "deleteOnTermination": true,
-                          "encrypted": false,
-                          "iops": 3000,
-                          "snapshotId": "snap-00000000000000000",
-                          "throughput": 125,
-                          "volumeSize": 10,
-                          "volumeType": "gp3",
-                        },
-                    },
-                  ],
-              },
-            "clientToken": "00000000-0000-0000-0000-000000000000",
-            "disableApiStop": false,
-            "disableApiTermination": false,
-            "ebsOptimized": true,
-            "instanceType": "t3a.micro",
-            "instancesSet":
-              {
-                "items":
-                  [
-                    {
-                      "imageId": "ami-08038de0f4f90a9f0",
-                      "keyName": "a-key",
-                      "maxCount": 1,
-                      "minCount": 1,
-                    },
-                  ],
-              },
-            "monitoring": { "enabled": false },
-            "networkInterfaceSet":
-              {
-                "items":
-                  [
-                    {
-                      "associatePublicIpAddress": true,
-                      "deviceIndex": 0,
-                      "groupSet":
-                        { "items": [{ "groupId": "sg-00000000000000000" }] },
-                      "subnetId": "subnet-00000000000000000",
-                    },
-                  ],
-              },
-            "privateDnsNameOptions":
-              {
-                "enableResourceNameDnsAAAARecord": false,
-                "enableResourceNameDnsARecord": false,
-                "hostnameType": "ip-name",
-              },
-            "tagSpecificationSet":
-              {
-                "items":
-                  [
-                    {
-                      "resourceType": "instance",
-                      "tags": [{ "key": "Name", "value": "test" }],
-                    },
-                  ],
-              },
-          },
-        "responseElements":
-          {
-            "groupSet": {},
-            "instancesSet":
-              {
-                "items":
-                  [
-                    {
-                      "amiLaunchIndex": 0,
-                      "architecture": "x86_64",
-                      "blockDeviceMapping": {},
-                      "capacityReservationSpecification":
-                        { "capacityReservationPreference": "open" },
-                      "clientToken": "8cda61da-eea9-495c-b178-e7014d9bc212",
-                      "cpuOptions": { "coreCount": 1, "threadsPerCore": 2 },
-                      "currentInstanceBootMode": "legacy-bios",
-                      "ebsOptimized": true,
-                      "enaSupport": true,
-                      "enclaveOptions": { "enabled": false },
-                      "groupSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "groupId": "sg-00000000000000000",
-                                "groupName": "ssh",
-                              },
-                            ],
-                        },
-                      "hypervisor": "xen",
-                      "imageId": "ami-08038de0f4f90a9f0",
-                      "instanceId": "i-00000000000000000",
-                      "instanceState": { "code": 0, "name": "pending" },
-                      "instanceType": "t3a.micro",
-                      "keyName": "a-key",
-                      "launchTime": 1712070786000,
-                      "maintenanceOptions": { "autoRecovery": "default" },
-                      "metadataOptions":
-                        {
-                          "httpEndpoint": "enabled",
-                          "httpProtocolIpv4": "enabled",
-                          "httpProtocolIpv6": "disabled",
-                          "httpPutResponseHopLimit": 1,
-                          "httpTokens": "optional",
-                          "instanceMetadataTags": "disabled",
-                          "state": "pending",
-                        },
-                      "monitoring": { "state": "disabled" },
-                      "networkInterfaceSet":
-                        {
-                          "items":
-                            [
-                              {
-                                "attachment":
-                                  {
-                                    "attachTime": 1712070786000,
-                                    "attachmentId": "eni-attach-00000000000000000",
-                                    "deleteOnTermination": true,
-                                    "deviceIndex": 0,
-                                    "networkCardIndex": 0,
-                                    "status": "attaching",
-                                  },
-                                "groupSet":
-                                  {
-                                    "items":
-                                      [
-                                        {
-                                          "groupId": "sg-00000000000000000",
-                                          "groupName": "ssh",
-                                        },
-                                      ],
-                                  },
-                                "interfaceType": "interface",
-                                "ipv6AddressesSet": {},
-                                "macAddress": "06:71:c7:76:de:4f",
-                                "networkInterfaceId": "eni-00000000000000000",
-                                "ownerId": "123456789012",
-                                "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                                "privateIpAddress": "10.0.0.3",
-                                "privateIpAddressesSet":
-                                  {
-                                    "item":
-                                      [
-                                        {
-                                          "primary": true,
-                                          "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                                          "privateIpAddress": "10.0.0.3",
-                                        },
-                                      ],
-                                  },
-                                "sourceDestCheck": true,
-                                "status": "in-use",
-                                "subnetId": "subnet-00000000000000000",
-                                "tagSet": {},
-                                "vpcId": "vpc-00000000000000000",
-                              },
-                            ],
-                        },
-                      "placement":
-                        {
-                          "availabilityZone": "us-west-2b",
-                          "tenancy": "default",
-                        },
-                      "privateDnsName": "ip-10-0-0-3.us-west-2.compute.internal",
-                      "privateDnsNameOptions":
-                        {
-                          "enableResourceNameDnsAAAARecord": false,
-                          "enableResourceNameDnsARecord": false,
-                          "hostnameType": "ip-name",
-                        },
-                      "privateIpAddress": "10.0.0.3",
-                      "productCodes": {},
-                      "rootDeviceName": "/dev/sda1",
-                      "rootDeviceType": "ebs",
-                      "sourceDestCheck": true,
-                      "stateReason":
-                        { "code": "pending", "message": "pending" },
-                      "subnetId": "subnet-00000000000000000",
-                      "tagSet":
-                        { "items": [{ "key": "Name", "value": "test" }] },
-                      "virtualizationType": "hvm",
-                      "vpcId": "vpc-00000000000000000",
-                    },
-                  ],
-              },
-            "ownerId": "123456789012",
-            "requestId": "439a7e66-d8b6-4bad-98d9-214c20161939",
-            "reservationId": "r-00000000000000000",
-          },
-        "sessionCredentialFromConsole": true,
-        "sourceIPAddress": "1.2.3.4",
-        "tlsDetails":
-          {
-            "cipherSuite": "TLS_AES_128_GCM_SHA256",
-            "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
-            "tlsVersion": "TLSv1.3",
-          },
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
-        "userIdentity":
-          {
-            "accessKeyId": "ASIASXP6SDP2MXGX4MYC",
-            "accountId": "123456789012",
-            "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name",
-            "principalId": "AROAVKVYIOO7JN7TN7NSA:user.name",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "creationDate": "2024-04-02T14:45:31Z",
-                    "mfaAuthenticated": "false",
-                  },
-                "sessionIssuer":
-                  {
-                    "accountId": "123456789012",
-                    "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole",
-                    "principalId": "AROAVKVYIOO7JN7TN7NSA",
-                    "type": "Role",
-                    "userName": "ARole",
-                  },
-              },
-            "type": "AssumedRole",
-          },
-      }
-DedupPeriodMinutes: 60
-LogTypes:
-  - AWS.CloudTrail
-RuleID: "AWS.EC2.Vulnerable.XZ.Image.Launched"
+                  - "key": "Name"
+                    "value": "test"
+              "virtualizationType": "hvm"
+              "vpcId": "vpc-00000000000000000"
+        "ownerId": "123456789012"
+        "requestId": "439a7e66-d8b6-4bad-98d9-214c20161939"
+        "reservationId": "r-00000000000000000"
+      "sessionCredentialFromConsole": true
+      "sourceIPAddress": "1.2.3.4"
+      "tlsDetails":
+        "cipherSuite": "TLS_AES_128_GCM_SHA256"
+        "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com"
+        "tlsVersion": "TLSv1.3"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101
+        Firefox/124.0"
+      "userIdentity":
+        "accessKeyId": "ASIASXP6SDP2MXGX4MYC"
+        "accountId": "123456789012"
+        "arn": "arn:aws:sts::123456789012:assumed-role/ARole/user.name"
+        "principalId": "AROAVKVYIOO7JN7TN7NSA:user.name"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2024-04-02T14:45:31Z"
+            "mfaAuthenticated": "false"
+          "sessionIssuer":
+            "accountId": "123456789012"
+            "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/us-west-2/ARole"
+            "principalId": "AROAVKVYIOO7JN7TN7NSA"
+            "type": "Role"
+            "userName": "ARole"
+        "type": "AssumedRole"
+    Name: Non-vulnerable AMI Launched
 Threshold: 1

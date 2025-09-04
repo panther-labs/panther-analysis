@@ -1,27 +1,24 @@
 AnalysisType: rule
-Filename: aws_root_activity.py
-RuleID: "AWS.Root.Activity"
-DisplayName: "Root Account Activity"
 DedupPeriodMinutes: 60
+Description: >-
+  Root account activity was detected.
+DisplayName: "Root Account Activity"
 Enabled: true
+Filename: aws_root_activity.py
 LogTypes:
   - AWS.CloudTrail
-Tags:
-  - AWS
-  - Identity & Access Management
-  - DemoThreatHunting
-  - Privilege Escalation:Valid Accounts
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 Reports:
   CIS:
     - 3.3
   MITRE ATT&CK:
     - TA0004:T1078
+RuleID: "AWS.Root.Activity"
+Runbook: >-
+  Investigate the usage of the root account. If this root activity was not authorized,
+  immediately change the root credentials and investigate what actions the root account
+  took.
 Severity: High
-Description: >
-  Root account activity was detected.
-Runbook: >
-  Investigate the usage of the root account. If this root activity was not authorized, immediately change the root credentials and investigate what actions the root account took.
-Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
 SummaryAttributes:
   - awsRegion
   - eventName
@@ -30,229 +27,199 @@ SummaryAttributes:
   - p_any_aws_account_ids
   - p_any_aws_arns
   - p_any_ip_addresses
+Tags:
+  - AWS
+  - Identity & Access Management
+  - DemoThreatHunting
+  - Privilege Escalation:Valid Accounts
 Tests:
-  - Name: Root Activity - CreateServiceLinkedRole
-    ExpectedResult: false
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "Root",
-            "principalId": "123456789012",
-            "arn": "arn:aws:iam::123456789012:root",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "CreateServiceLinkedRole",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "bucketName": "bucket",
-            "versioning": [""],
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "VersioningConfiguration":
-              {
-                "Status": "Enabled",
-                "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
-                "MfaDelete": "Enabled",
-              },
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "AuthenticationMethod": "AuthHeader",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: Root Activity
-    ExpectedResult: true
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "SignatureVersion": "SigV4"
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "CreateServiceLinkedRole"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "VersioningConfiguration":
+          "MfaDelete": "Enabled"
+          "Status": "Enabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+        "versioning":
+          - ""
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:iam::123456789012:root"
+        "principalId": "123456789012"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+        "type": "Root"
+    Name: Root Activity - CreateServiceLinkedRole
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "Root",
-            "principalId": "123456789012",
-            "arn": "arn:aws:iam::123456789012:root",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "PutBucketVersioning",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters":
-          {
-            "bucketName": "bucket",
-            "versioning": [""],
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "VersioningConfiguration":
-              {
-                "Status": "Enabled",
-                "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
-                "MfaDelete": "Enabled",
-              },
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
-            "AuthenticationMethod": "AuthHeader",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-      }
-  - Name: IAMUser Activity
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256"
+        "SignatureVersion": "SigV4"
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "PutBucketVersioning"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "VersioningConfiguration":
+          "MfaDelete": "Enabled"
+          "Status": "Enabled"
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/"
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+        "versioning":
+          - ""
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:iam::123456789012:root"
+        "principalId": "123456789012"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+        "type": "Root"
+    Name: Root Activity
+  - ExpectedResult: false
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "IAMUser",
-            "principalId": "1111",
-            "arn": "arn:aws:iam::123456789012:user/tester",
-            "accountId": "123456789012",
-            "accessKeyId": "1",
-            "userName": "tester",
-            "sessionContext":
-              {
-                "attributes":
-                  {
-                    "mfaAuthenticated": "false",
-                    "creationDate": "2019-01-01T00:00:00Z",
-                  },
-              },
-            "invokedBy": "signin.amazonaws.com",
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "s3.amazonaws.com",
-        "eventName": "GetBucketAcl",
-        "awsRegion": "us-west-2",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "signin.amazonaws.com",
-        "requestParameters":
-          {
-            "host": ["bucket.s3.us-west-2.amazonaws.com"],
-            "bucketName": "bucket",
-            "acl": [""],
-          },
-        "responseElements": null,
-        "additionalEventData":
-          {
-            "SignatureVersion": "SigV4",
-            "CipherSuite": "ECDHE-RSA-AES128-SHA",
-            "AuthenticationMethod": "AuthHeader",
-            "vpcEndpointId": "vpce-1",
-          },
-        "requestID": "1",
-        "eventID": "1",
-        "eventType": "AwsApiCall",
-        "recipientAccountId": "123456789012",
-        "vpcEndpointId": "vpce-1",
-      }
-  - Name: Root User Failed Activity
-    ExpectedResult: false
+      "additionalEventData":
+        "AuthenticationMethod": "AuthHeader"
+        "CipherSuite": "ECDHE-RSA-AES128-SHA"
+        "SignatureVersion": "SigV4"
+        "vpcEndpointId": "vpce-1"
+      "awsRegion": "us-west-2"
+      "eventID": "1"
+      "eventName": "GetBucketAcl"
+      "eventSource": "s3.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsApiCall"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestID": "1"
+      "requestParameters":
+        "acl":
+          - ""
+        "bucketName": "bucket"
+        "host":
+          - "bucket.s3.us-west-2.amazonaws.com"
+      "responseElements":
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "signin.amazonaws.com"
+      "userIdentity":
+        "accessKeyId": "1"
+        "accountId": "123456789012"
+        "arn": "arn:aws:iam::123456789012:user/tester"
+        "invokedBy": "signin.amazonaws.com"
+        "principalId": "1111"
+        "sessionContext":
+          "attributes":
+            "creationDate": "2019-01-01T00:00:00Z"
+            "mfaAuthenticated": "false"
+        "type": "IAMUser"
+        "userName": "tester"
+      "vpcEndpointId": "vpce-1"
+    Name: IAMUser Activity
+  - ExpectedResult: false
     Log:
-      {
-        "awsRegion": "redacted",
-        "errorMessage": "Not a valid response for the provided request id: aws_ccV60redacted",
-        "eventID": "redacted",
-        "eventName": "ExternalIdPDirectoryLogin",
-        "eventSource": "signin.amazonaws.com",
-        "eventTime": "redacted",
-        "eventType": "AwsConsoleSignIn",
-        "eventVersion": "1.05",
-        "p_alert_creation_time": "redacted",
-        "p_alert_id": "redacted",
-        "p_alert_update_time": "redacted",
-        "p_any_aws_account_ids": ["redacted"],
-        "p_any_aws_arns": [],
-        "p_any_ip_addresses": ["redacted"],
-        "p_event_time": "redacted",
-        "p_log_type": "AWS.CloudTrail",
-        "p_parse_time": "redacted",
-        "p_row_id": "redacted",
-        "p_rule_error": null,
-        "p_rule_id": "AWS.Root.Activity",
-        "p_rule_reports": { "CIS": ["3.3"] },
-        "p_rule_tags": ["AWS", "Identity & Access Management"],
-        "p_source_id": "redacted",
-        "p_source_label": "CloudTrail",
-        "readOnly": false,
-        "recipientAccountId": "redacted",
-        "requestID": "redacted",
-        "responseElements": { "ExternalIdPDirectoryLogin": "Failure" },
-        "sourceIPAddress": "redacted",
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36",
-        "userIdentity":
-          {
-            "accessKeyId": "",
-            "accountId": "redacted",
-            "arn": "",
-            "principalId": "redacted",
-            "type": "Root",
-          },
-      }
-  - Name: Successful Root Login
-    ExpectedResult: true
+      "awsRegion": "redacted"
+      "errorMessage": "Not a valid response for the provided request id: aws_ccV60redacted"
+      "eventID": "redacted"
+      "eventName": "ExternalIdPDirectoryLogin"
+      "eventSource": "signin.amazonaws.com"
+      "eventTime": "redacted"
+      "eventType": "AwsConsoleSignIn"
+      "eventVersion": "1.05"
+      "p_alert_creation_time": "redacted"
+      "p_alert_id": "redacted"
+      "p_alert_update_time": "redacted"
+      "p_any_aws_account_ids":
+        - "redacted"
+      "p_any_aws_arns": []
+      "p_any_ip_addresses":
+        - "redacted"
+      "p_event_time": "redacted"
+      "p_log_type": "AWS.CloudTrail"
+      "p_parse_time": "redacted"
+      "p_row_id": "redacted"
+      "p_rule_error":
+      "p_rule_id": "AWS.Root.Activity"
+      "p_rule_reports":
+        "CIS":
+          - "3.3"
+      "p_rule_tags":
+        - "AWS"
+        - "Identity & Access Management"
+      "p_source_id": "redacted"
+      "p_source_label": "CloudTrail"
+      "readOnly": false
+      "recipientAccountId": "redacted"
+      "requestID": "redacted"
+      "responseElements":
+        "ExternalIdPDirectoryLogin": "Failure"
+      "sourceIPAddress": "redacted"
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
+      "userIdentity":
+        "accessKeyId": ""
+        "accountId": "redacted"
+        "arn": ""
+        "principalId": "redacted"
+        "type": "Root"
+    Name: Root User Failed Activity
+  - ExpectedResult: true
     Log:
-      {
-        "eventVersion": "1.05",
-        "userIdentity":
-          {
-            "type": "Root",
-            "principalId": "1111",
-            "arn": "arn:aws:iam::123456789012:root",
-            "accountId": "123456789012",
-            "userName": "root",
-          },
-        "eventTime": "2019-01-01T00:00:00Z",
-        "eventSource": "signin.amazonaws.com",
-        "eventName": "ConsoleLogin",
-        "awsRegion": "us-east-1",
-        "sourceIPAddress": "111.111.111.111",
-        "userAgent": "Mozilla",
-        "requestParameters": null,
-        "responseElements": { "ConsoleLogin": "Success" },
-        "additionalEventData":
-          {
-            "LoginTo": "https://console.aws.amazon.com/console/",
-            "MobileVersion": "No",
-            "MFAUsed": "No",
-          },
-        "eventID": "1",
-        "eventType": "AwsConsoleSignIn",
-        "recipientAccountId": "123456789012",
-      }
+      "additionalEventData":
+        "LoginTo": "https://console.aws.amazon.com/console/"
+        "MFAUsed": "No"
+        "MobileVersion": "No"
+      "awsRegion": "us-east-1"
+      "eventID": "1"
+      "eventName": "ConsoleLogin"
+      "eventSource": "signin.amazonaws.com"
+      "eventTime": "2019-01-01T00:00:00Z"
+      "eventType": "AwsConsoleSignIn"
+      "eventVersion": "1.05"
+      "recipientAccountId": "123456789012"
+      "requestParameters":
+      "responseElements":
+        "ConsoleLogin": "Success"
+      "sourceIPAddress": "111.111.111.111"
+      "userAgent": "Mozilla"
+      "userIdentity":
+        "accountId": "123456789012"
+        "arn": "arn:aws:iam::123456789012:root"
+        "principalId": "1111"
+        "type": "Root"
+        "userName": "root"
+    Name: Successful Root Login

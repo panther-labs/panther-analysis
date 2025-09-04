@@ -1,40 +1,41 @@
 AnalysisType: rule
-Filename: github_branch_protection_disabled.py
-RuleID: "GitHub.Branch.ProtectionDisabled"
+Description: >-
+  Disabling branch protection controls could indicate malicious use of admin credentials
+  in an attempt to hide activity.
 DisplayName: "GitHub Branch Protection Disabled"
 Enabled: true
+Filename: github_branch_protection_disabled.py
 LogTypes:
   - GitHub.Audit
-Tags:
-  - GitHub
-  - Initial Access:Supply Chain Compromise
+Reference: 
+  https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 Reports:
   MITRE ATT&CK:
     - TA0001:T1195
+RuleID: "GitHub.Branch.ProtectionDisabled"
+Runbook: >-
+  Verify that branch protection should be disabled on the repository and re-enable
+  as necessary.
 Severity: High
-Description: Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
-Runbook: Verify that branch protection should be disabled on the repository and re-enable as necessary.
-Reference: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
+Tags:
+  - GitHub
+  - Initial Access:Supply Chain Compromise
 Tests:
-  - Name: GitHub - Branch Protection Disabled
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "actor": "cat",
-        "action": "protected_branch.destroy",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo",
-      }
-  - Name: GitHub - Protected Branch Name Updated
-    ExpectedResult: false
+      "action": "protected_branch.destroy"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
+    Name: GitHub - Branch Protection Disabled
+  - ExpectedResult: false
     Log:
-      {
-        "actor": "cat",
-        "action": "protected_branch.update_name",
-        "created_at": 1621305118553,
-        "org": "my-org",
-        "p_log_type": "GitHub.Audit",
-        "repo": "my-org/my-repo",
-      }
+      "action": "protected_branch.update_name"
+      "actor": "cat"
+      "created_at": 1621305118553
+      "org": "my-org"
+      "p_log_type": "GitHub.Audit"
+      "repo": "my-org/my-repo"
+    Name: GitHub - Protected Branch Name Updated

@@ -1,57 +1,41 @@
 AnalysisType: rule
-Filename: snowflake_stream_table_copied_into_stage.py
-RuleID: Snowflake.Stream.TableCopiedIntoStage
-DisplayName: Snowflake Table Copied Into Stage
+CreateAlert: false
+Description: >-
+  A table was copied into a stage.
+DisplayName: "Snowflake Table Copied Into Stage"
 Enabled: true
+Filename: snowflake_stream_table_copied_into_stage.py
 LogTypes:
   - Snowflake.QueryHistory
-Severity: Info
-CreateAlert: false
-Reports:
-  MITRE ATT&CK:
-    - TA0010:T1041      # Exfiltration Over C2 Channel
-Description: A table was copied into a stage.
 Reference: 
   https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1041
+RuleID: "Snowflake.Stream.TableCopiedIntoStage"
+Severity: Info
 Tags:
   - Snowflake
   - '[MITRE] Exfiltration'
   - '[MITRE] Exfiltration Over C2 Channel'
 Tests:
-  - Name: Copy from Table into Stage
-    ExpectedResult: true
+  - ExpectedResult: true
     Log:
-      {
-        "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "COPY INTO '@PANTHER_LOGS.PUBLIC.data_exfil/DATA.csv'
-          FROM (SELECT * FROM PANTHER_LOGS.PUBLIC.amazon_eks_audit LIMIT 100)
-          FILE_FORMAT = ( 
-          TYPE='CSV' 
-          COMPRESSION=GZIP
-          FIELD_DELIMITER=',' 
-          ESCAPE=NONE 
-          ESCAPE_UNENCLOSED_FIELD=NONE 
-          date_format='AUTO' 
-          time_format='AUTO' 
-          timestamp_format='AUTO'
-          binary_format='UTF-8' 
-          null_if='' 
-          EMPTY_FIELD_AS_NULL = FALSE 
-          )  
-          overwrite=TRUE 
-          single=FALSE 
-          max_file_size=5368709120 
-          header=TRUE",
-        "QUERY_TYPE": "UNLOAD",
-        "USER_NAME": "LEX_LUTHOR"
-      }
-  - Name: Copy from Stage into Table
-    ExpectedResult: false
+      "EXECUTION_STATUS": "SUCCESS"
+      "QUERY_TEXT": "COPY INTO '@PANTHER_LOGS.PUBLIC.data_exfil/DATA.csv' FROM (SELECT
+        * FROM PANTHER_LOGS.PUBLIC.amazon_eks_audit LIMIT 100) FILE_FORMAT = ( TYPE='CSV'
+        COMPRESSION=GZIP FIELD_DELIMITER=',' ESCAPE=NONE ESCAPE_UNENCLOSED_FIELD=NONE
+        date_format='AUTO' time_format='AUTO' timestamp_format='AUTO' binary_format='UTF-8'
+        null_if='' EMPTY_FIELD_AS_NULL = FALSE ) overwrite=TRUE single=FALSE max_file_size=5368709120
+        header=TRUE"
+      "QUERY_TYPE": "UNLOAD"
+      "USER_NAME": "LEX_LUTHOR"
+    Name: Copy from Table into Stage
+  - ExpectedResult: false
     Log:
-      {
-        "EXECUTION_STATUS": "SUCCESS",
-        "QUERY_TEXT": "COPY INTO mytable\nFROM @mystage/result/data_ FILE_FORMAT =
-      (FORMAT_NAME='CSV' COMPRESSION='GZIP');",
-        "QUERY_TYPE": "UNLOAD",
-        "USER_NAME": "LEX_LUTHOR"
-      }
+      "EXECUTION_STATUS": "SUCCESS"
+      "QUERY_TEXT": "COPY INTO mytable\nFROM @mystage/result/data_ FILE_FORMAT = (FORMAT_NAME='CSV'
+        COMPRESSION='GZIP');"
+      "QUERY_TYPE": "UNLOAD"
+      "USER_NAME": "LEX_LUTHOR"
+    Name: Copy from Stage into Table
