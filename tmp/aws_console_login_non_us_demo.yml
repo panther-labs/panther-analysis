@@ -1,0 +1,215 @@
+AnalysisType: rule
+Filename: aws_console_login_non_us_demo.py
+RuleID: "AWS.Console.Login.NonUS.Demo"
+DisplayName: "AWS Console Login from Outside US"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+CreateAlert: true
+Description: >
+  Detects successful AWS Management Console login events from IP addresses 
+  located outside the United States using IPInfo location enrichments. This 
+  may indicate unauthorized access from foreign locations or employees 
+  accessing AWS from unexpected geographic regions.
+Tags:
+  - aws.cloudtrail
+  - auth.login_success
+  - auth.anomalous_location
+  - aws
+  - authentication
+  - geographic_anomaly
+  - demo
+Reports:
+  MITRE ATT&CK:
+    - "TA0001:T1078"  # Valid Accounts
+    - "TA0001:T1078.004"  # Valid Accounts: Cloud Accounts
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/console.html
+Runbook: |
+  1. Verify if the login location is expected for the user
+  2. Check if the user is traveling or working from an international location
+  3. Review all AWS actions performed during this session
+  4. If unauthorized, immediately rotate user credentials and enable MFA
+  5. Consider implementing IP-based conditional access policies
+  6. Review other recent login attempts from the same IP or user
+SummaryAttributes:
+  - sourceIPAddress
+  - userAgent
+  - userIdentity.arn
+  - userIdentity.userName
+  - recipientAccountId
+Tests:
+  - Name: "Console Login from Germany"
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: "IAMUser"
+        principalId: "AIDACKCEVSQ6C2EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/john.doe"
+        accountId: "123456789012"
+        userName: "john.doe"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: "signin.amazonaws.com"
+      eventName: "ConsoleLogin"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "85.214.132.117"
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      requestParameters: null
+      responseElements:
+        ConsoleLogin: "Success"
+      additionalEventData:
+        LoginTo: "https://console.aws.amazon.com/console/home"
+        MobileVersion: "No"
+        MfaType: "SMS MFA"
+      eventID: "12345678-1234-1234-1234-123456789012"
+      eventType: "AwsConsoleSignIn"
+      recipientAccountId: "123456789012"
+      p_enrichment:
+        ipinfo_location:
+          sourceIPAddress:
+            city: "Frankfurt"
+            country: "DE"
+            region: "Hesse"
+            timezone: "Europe/Berlin"
+            postal_code: "60311"
+            lat: "50.1109"
+            lng: "8.6821"
+            p_match: "85.214.132.117"
+
+  - Name: "Failed Console Login from Germany (should not alert)"
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: "IAMUser"
+        principalId: "AIDACKCEVSQ6C2EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/john.doe"
+        accountId: "123456789012"
+        userName: "john.doe"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: "signin.amazonaws.com"
+      eventName: "ConsoleLogin"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "85.214.132.117"
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      requestParameters: null
+      responseElements:
+        ConsoleLogin: "Failure"
+      additionalEventData:
+        LoginTo: "https://console.aws.amazon.com/console/home"
+        MobileVersion: "No"
+      eventID: "12345678-1234-1234-1234-123456789012"
+      eventType: "AwsConsoleSignIn"
+      recipientAccountId: "123456789012"
+      p_enrichment:
+        ipinfo_location:
+          sourceIPAddress:
+            city: "Frankfurt"
+            country: "DE"
+            region: "Hesse"
+            timezone: "Europe/Berlin"
+            postal_code: "60311"
+            lat: "50.1109"
+            lng: "8.6821"
+            p_match: "85.214.132.117"
+
+  - Name: "Console Login from US (should not alert)"
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: "IAMUser"
+        principalId: "AIDACKCEVSQ6C2EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/jane.smith"
+        accountId: "123456789012"
+        userName: "jane.smith"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: "signin.amazonaws.com"
+      eventName: "ConsoleLogin"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "203.0.113.42"
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+      requestParameters: null
+      responseElements:
+        ConsoleLogin: "Success"
+      additionalEventData:
+        LoginTo: "https://console.aws.amazon.com/console/home"
+        MobileVersion: "No"
+        MfaType: "TOTP"
+      eventID: "87654321-4321-4321-4321-210987654321"
+      eventType: "AwsConsoleSignIn"
+      recipientAccountId: "123456789012"
+      p_enrichment:
+        ipinfo_location:
+          sourceIPAddress:
+            city: "San Francisco"
+            country: "US"
+            region: "California"
+            timezone: "America/Los_Angeles"
+            postal_code: "94102"
+            lat: "37.7749"
+            lng: "-122.4194"
+            p_match: "203.0.113.42"
+
+  - Name: "Non-ConsoleLogin event (should not alert)"
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: "IAMUser"
+        principalId: "AIDACKCEVSQ6C2EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/api.user"
+        accountId: "123456789012"
+        userName: "api.user"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: "iam.amazonaws.com"
+      eventName: "ListUsers"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "85.214.132.117"
+      userAgent: "aws-cli/2.1.34 Python/3.8.5"
+      requestParameters: {}
+      responseElements: null
+      eventID: "12345678-1234-1234-1234-123456789012"
+      eventType: "AwsApiCall"
+      recipientAccountId: "123456789012"
+      p_enrichment:
+        ipinfo_location:
+          sourceIPAddress:
+            city: "Frankfurt"
+            country: "DE"
+            region: "Hesse"
+            timezone: "Europe/Berlin"
+            postal_code: "60311"
+            lat: "50.1109"
+            lng: "8.6821"
+            p_match: "85.214.132.117"
+
+  - Name: "Console Login without location enrichment (should not alert)"
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: "IAMUser"
+        principalId: "AIDACKCEVSQ6C2EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/internal.user"
+        accountId: "123456789012"
+        userName: "internal.user"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: "signin.amazonaws.com"
+      eventName: "ConsoleLogin"
+      awsRegion: "us-east-1"
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      requestParameters: null
+      responseElements:
+        ConsoleLogin: "Success"
+      additionalEventData:
+        LoginTo: "https://console.aws.amazon.com/console/home"
+        MobileVersion: "No"
+        MfaType: "SMS MFA"
+      eventID: "12345678-1234-1234-1234-123456789012"
+      eventType: "AwsConsoleSignIn"
+      recipientAccountId: "123456789012"

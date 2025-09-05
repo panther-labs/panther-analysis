@@ -1,0 +1,5845 @@
+{
+  "total_rules": 586,
+  "rules_with_mitre": 341,
+  "rules_without_mitre": 245,
+  "coverage_percentage": 58.19112627986348,
+  "tactics": {
+    "TA0001": {
+      "name": "Initial Access",
+      "rules": [
+        "Standard.ImpossibleTravel.Login",
+        "Standard.SignInFromRogueState",
+        "Standard.MaliciousSSODNSLookup",
+        "Netskope.NetskopePersonnelActivity",
+        "GitHub.Branch.PolicyOverride",
+        "GitHub.Branch.ProtectionDisabled",
+        "Github.Repo.CollaboratorChange",
+        "GitHub.Team.Modified",
+        "GitHub.Org.Modified",
+        "Teleport.LocalUserLoginWithoutMFA",
+        "Amazon.EKS.AnonymousAPIAccess",
+        "Box.Shield.Suspicious.Alert",
+        "Box.New.Login",
+        "Box.Untrusted.Device",
+        "GSuite.LoginType",
+        "GSuite.Workspace.GmailSecuritySandboxDisabled",
+        "GSuite.Workspace.GmailPredeliveryScanningDisabled",
+        "Wiz.Rotate.Service.Account.Secret",
+        "Wiz.Service.Account.Change",
+        "AWS.EC2.Vulnerable.XZ.Image.Launched",
+        "AWS.CloudTrail.IAMCompromisedKeyQuarantine",
+        "AWS.Console.LoginWithoutMFA",
+        "AWS.Console.LoginWithoutSAML",
+        "Crowdstrike.DNS.Request",
+        "Azure.Audit.MFADisabled",
+        "Azure.Audit.RiskLevelPassthrough",
+        "Azure.Audit.ManyFailedSignIns",
+        "Azure.Audit.InviteExternalUsers",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Slack.AuditLogs.PotentiallyMaliciousFileShared",
+        "Osquery.Linux.LoginFromNonOffice",
+        "Osquery.Linux.Mac.VulnerableXZliblzma",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails",
+        "GCP.K8S.Service.Type.NodePort.Deployed",
+        "Okta.Support.Reset",
+        "Okta.New.Behavior.Accessing.Admin.Console",
+        "Okta.Support.Access",
+        "Okta.Phishing.Attempt.Blocked.FastPass",
+        "Okta.Identity.Provider.Created.Modified",
+        "Okta.Identity.Provider.SignIn"
+      ],
+      "techniques": [
+        "T1566.001",
+        "T1566",
+        "T1195",
+        "T1528",
+        "T1199",
+        "T1078.004",
+        "T1078",
+        "T1195.001",
+        "T1190"
+      ]
+    },
+    "TA0006": {
+      "name": "Credential Access",
+      "rules": [
+        "Standard.BruteForceByUser",
+        "Standard.BruteForceByIP",
+        "Zendesk.NewAPIToken",
+        "Netskope.AdminLoggedOutLoginFailures",
+        "Netskope.UnauthorizedAPICalls",
+        "GitHub.Secret.Scanning.Alert.Created",
+        "Teleport.AuthErrors",
+        "OneLogin.PasswordAccess",
+        "OneLogin.UserAccountLocked",
+        "OnePassword.Unusual.Client",
+        "OnePassword.Lut.Sensitive.Item",
+        "OnePassword.Sensitive.Item",
+        "Microsoft365.Brute.Force.Login.by.User",
+        "GSuite.DeviceUnlockFailure",
+        "GSuite.Workspace.PasswordEnforceStrongDisabled",
+        "GSuite.Workspace.PasswordReuseEnabled",
+        "GSuite.LeakedPassword",
+        "Wiz.Update.Login.Settings",
+        "AWS.BedrockModelInvocation.GuardRailIntervened",
+        "Snowflake.Stream.BruteForceByUsername",
+        "Snowflake.Stream.BruteForceByIp",
+        "AWS.SecretsManager.BatchRetrieveSecrets",
+        "AWS.SecretsManager.RetrieveSecretsMultiRegion",
+        "AWS.CloudTrail.IAMCompromisedKeyQuarantine",
+        "AWS.Console.RootLoginFailed",
+        "AWS.EC2.ManyPasswordReadAttempts",
+        "AWS.SecretsManager.RetrieveSecrets",
+        "AWS.SSM.DecryptSSMParams",
+        "AWS.IAM.AccessKeyCompromised",
+        "AWS.SecretsManager.BatchRetrieveSecretsCatchAll",
+        "AWS.Unsuccessful.MFA.attempt",
+        "Crowdstrike.API.Key.Created",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.IpAllowlistChanged",
+        "Azure.Audit.RiskLevelPassthrough",
+        "Azure.Audit.ManyFailedSignIns",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.Flagged",
+        "Slack.AuditLogs.SSOSettingsChanged",
+        "Slack.AuditLogs.IDPConfigurationChanged",
+        "Okta.PotentiallyStolenSession",
+        "Okta.Password.Extraction.via.SCIM",
+        "Okta.Anonymizing.VPN.Login",
+        "Okta.APIKeyCreated",
+        "Okta.Rate.Limits",
+        "Okta.Org2org.Creation.Modification",
+        "Okta.PasswordAccess",
+        "Okta.Phishing.Attempt.Blocked.FastPass",
+        "Okta.Identity.Provider.Created.Modified"
+      ],
+      "techniques": [
+        "T1111",
+        "T1556",
+        "T1550",
+        "T1110",
+        "T1098.001",
+        "T1528",
+        "T1555",
+        "T1539",
+        "T1621",
+        "T1552.001",
+        "T1556.009",
+        "T0018.000",
+        "T1552"
+      ]
+    },
+    "TA0005": {
+      "name": "Defense Evasion",
+      "rules": [
+        "Standard.MFADisabled",
+        "MongoDB.Alerting.Disabled.Or.Deleted",
+        "GitHub.Repo.RulesetModified",
+        "GitHub.Advanced.Security.Change",
+        "Teleport.CompanyDomainLoginWithoutSAML",
+        "OneLogin.AuthFactorRemoved",
+        "Sublime.Message.Source.Deleted.Or.Deactivated",
+        "Sublime.Mailbox.Deactivated",
+        "Sublime.Rules.Deleted.Or.Deactivated",
+        "Panther.SAML.Modified",
+        "Panther.Detection.Deleted",
+        "GCP.UnusedRegions",
+        "GSuite.AdvancedProtection",
+        "GSuite.TwoStepVerification",
+        "Wiz.Rule.Change",
+        "Wiz.CICD.Scan.Policy.Updated.Or.Deleted",
+        "Wiz.Update.Scanner.Settings",
+        "Wiz.Image.Integrity.Validator.Updated.Or.Deleted",
+        "Wiz.Connector.Updated.Or.Deleted",
+        "Wiz.Data.Classifier.Updated.Or.Deleted",
+        "Wiz.User.Created.Or.Deleted",
+        "Wiz.Integration.Updated.Or.Deleted",
+        "Snowflake.Stream.LoginWithoutMFA",
+        "AWS.UnusedRegion",
+        "AWS.EC2.GatewayModified",
+        "AWS.Macie.Evasion",
+        "AWS.ConfigService.DisabledDeleted",
+        "AWS.CloudTrail.Stopped",
+        "AWS.CloudTrail.EventSelectorsDisabled",
+        "AWS.CloudTrail.SecurityConfigurationChange",
+        "AWS.CloudTrail.DNSLogsDeleted",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.IPSet.Modified",
+        "AWS.CloudTrail.ShortLifecycle",
+        "AWS.CloudTrail.VPCE.AccessDenied",
+        "AWS.Bedrock.DeleteModelInvocationLoggingConfiguration",
+        "AWS.CloudTrail.EnableRegion",
+        "AWS.EC2.NetworkACLModified",
+        "AWS.VPCFlow.LogsDeleted",
+        "AWS.ECR.CRUD",
+        "AWS.EC2.ManualSecurityGroupChange",
+        "AWS.SecurityHub.Finding.Evasion",
+        "AWS.EC2.SecurityGroupModified",
+        "AWS.EC2.VPCModified",
+        "AWS.Bedrock.GuardrailUpdateDelete",
+        "AWS.CloudTrail.AttemptToLeaveOrg",
+        "AWS.CloudTrail.AttemptToLeaveOrg",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.ECR.EVENTS",
+        "AWS.User.Login.Profile.Modified",
+        "AWS.User.Login.Profile.Modified",
+        "AWS.Modify.Cloud.Compute.Infrastructure",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal",
+        "AWS.LAMBDA.CRUD",
+        "Crowdstrike.UserDeleted",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.API.Key.Deleted",
+        "Crowdstrike.IpAllowlistChanged",
+        "Azure.Audit.MFADisabled",
+        "Azure.Audit.PolicyChanged",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.Data.Forwarder.Stopped",
+        "Slack.AuditLogs.LegalHoldPolicyModified",
+        "Slack.AuditLogs.InformationBarrierModified",
+        "Slack.AuditLogs.PrivateChannelMadePublic",
+        "Slack.AuditLogs.MFASettingsChanged",
+        "Slack.AuditLogs.ServiceOwnerTransferred",
+        "Slack.AuditLogs.EKMConfigChanged",
+        "Slack.AuditLogs.IntuneMDMDisabled",
+        "Slack.AuditLogs.EKMUnenrolled",
+        "Slack.AuditLogs.AppRemoved",
+        "Slack.AuditLogs.DLPModified",
+        "Slack.AuditLogs.DLPModified",
+        "Osquery.Mac.AutoUpdateEnabled",
+        "Osquery.Mac.ApplicationFirewallSettings",
+        "Osquery.OSSECRootkitDetected",
+        "Okta.Global.MFA.Disabled",
+        "ZIA.Insecure.Password.Settings",
+        "ZIA.Backup.Deleted",
+        "ZIA.Log.Streaming.Disabled",
+        "ZIA.Golden.Restore.Point.Dropped"
+      ],
+      "techniques": [
+        "T1600",
+        "T1562",
+        "T1222",
+        "T1599",
+        "T1525",
+        "T1108",
+        "T1556.006",
+        "T1556",
+        "T1578",
+        "T1562.003",
+        "T1078",
+        "T1556.009",
+        "T1562.001",
+        "T1526",
+        "T1562.008",
+        "T1550",
+        "T1564",
+        "T1070.009",
+        "T1014",
+        "T1070",
+        "T1090",
+        "T1666",
+        "T1535"
+      ]
+    },
+    "TA0004": {
+      "name": "Privilege Escalation",
+      "rules": [
+        "Standard.AdminRoleAssigned",
+        "Zendesk.AccountOwnerChanged",
+        "Netskope.AdminUserChange",
+        "Box.Large.Number.Permission.Updates",
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.iam.serviceAccountKeys.create",
+        "GCP.Cloudfunctions.Functions.Update",
+        "GCP.IAM.serviceAccounts.signBlob",
+        "GCP.Storage.Hmac.Keys.Create",
+        "GCP.Cloudfunctions.Functions.Create",
+        "GCP.IAM.CustomRoleChanges",
+        "GCP.compute.instances.create.Privilege.Escalation",
+        "GCP.User.Added.To.Privileged.Group",
+        "GCP.User.Added.To.Privileged.Group",
+        "GCP.Privilege.Escalation.By.Deployments.Create",
+        "GCP.CloudBuild.Potential.Privilege.Escalation",
+        "GCP.IAM.serviceAccounts.signJwt.Privilege.Escalation",
+        "GCP.serviceusage.apiKeys.create.Privilege.Escalation",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "GCP.IAM.serviceAccounts.getAccessToken.Privilege.Escalation",
+        "Wiz.SAML.Identity.Provider.Change",
+        "Snowflake.Stream.PublicRoleGrant",
+        "Snowflake.Stream.AccountAdminGranted",
+        "AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored",
+        "AWS.Console.RootLogin",
+        "AWS.IAM.PolicyModified",
+        "AWS.WAF.Disassociation",
+        "AWS.Root.Activity",
+        "Crowdstrike.AdminRoleAssigned",
+        "Crowdstrike.UserPasswordChange",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.Admin.Grant",
+        "Slack.AuditLogs.AppAccessExpanded",
+        "Slack.AuditLogs.UserPrivilegeEscalation",
+        "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount",
+        "GCP.K8S.Privileged.Pod.Created",
+        "GCP.K8s.Pod.Attached.To.Node.Host.Network",
+        "GCP.K8s.Pod.Using.Host.PID.Namespace",
+        "Okta.AdminRoleAssigned",
+        "Okta.Org2org.Creation.Modification",
+        "ZIA.Additional.Cloud.Roles",
+        "ZIA.Trust.Modification"
+      ],
+      "techniques": [
+        "T1098.001",
+        "T1098",
+        "T1484",
+        "T1611",
+        "T1484.002",
+        "T1078.004",
+        "T1078",
+        "T1098.003",
+        "T1484.001",
+        "T1548",
+        "T1078.001",
+        "T1498"
+      ]
+    },
+    "TA0040": {
+      "name": "Impact",
+      "rules": [
+        "Zendesk.UserSuspension",
+        "Netskope.ManyDeletes",
+        "OneLogin.ThresholdAccountsDeleted",
+        "OneLogin.ThresholdAccountsModified",
+        "Wiz.Revoke.User.Sessions",
+        "AWS.BedrockModelInvocation.AbnormalTokenUsage",
+        "AWS.KMS.CustomerManagedKeyLoss",
+        "AWS.EC2.EBS.Encryption.Disabled",
+        "AWS.EC2.EBS.Encryption.Disabled",
+        "AWS.S3.BucketDeleted",
+        "Crowdstrike.AllowlistRemoved",
+        "Crowdstrike.API.Key.Deleted",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AWS.DNS.Crypto.Domain",
+        "Slack.AuditLogs.OrgDeleted",
+        "Slack.AuditLogs.ServiceOwnerTransferred",
+        "Slack.AuditLogs.EKMSlackbotUnenrolled",
+        "Slack.AuditLogs.AppRemoved",
+        "Slack.AuditLogs.ApplicationDoS",
+        "Slack.AuditLogs.UserPrivilegeChangedToUser",
+        "Okta.Rate.Limits",
+        "ZIA.Account.Access.Removed"
+      ],
+      "techniques": [
+        "T1486",
+        "T1496.004",
+        "T1499.003",
+        "T1496",
+        "T1565",
+        "T1498",
+        "T1531",
+        "T1489",
+        "T1485"
+      ]
+    },
+    "TA0003": {
+      "name": "Persistence",
+      "rules": [
+        "Zendesk.MobileAppAccessUpdated",
+        "MongoDB.org.Membership.Restriction.Disabled",
+        "MongoDB.Access.Allowed.From.Anywhere",
+        "GitHub.User.RoleUpdated",
+        "GitHub.Org.AuthChange",
+        "GitHub.Org.IpAllowlist",
+        "GitHub.User.AccessKeyCreated",
+        "Teleport.SAMLLoginWithoutCompanyDomain",
+        "Teleport.CreateUserAccounts",
+        "Teleport.LongLivedCerts",
+        "Teleport.RoleCreated",
+        "Panther.User.Modified",
+        "Panther.Sensitive.Role",
+        "Microsoft365.Exchange.External.Forwarding",
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.IAM.CorporateEmail",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.IAM.OrgFolderIAMChanges",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "Standard.NewUserAccountCreated",
+        "Standard.NewAWSAccountCreated",
+        "GSuite.Workspace.GmailDefaultRoutingRuleModified",
+        "GSuite.Workspace.TrustedDomainsAllowlist",
+        "Wiz.Update.IP.Restrictions",
+        "Wiz.User.Created.Or.Deleted",
+        "Wiz.User.Role.Updated.Or.Deleted",
+        "Snowflake.Stream.UserCreated",
+        "Snowflake.Stream.UserEnabled",
+        "AWS.RDS.MasterPasswordUpdated",
+        "AWS.CloudTrail.IAMEntityCreatedWithoutCloudFormation",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.CloudTrail.RootPasswordChanged",
+        "AWS.CloudTrail.NetworkACLPermissiveEntry",
+        "AWS.CloudTrail.RootAccessKeyCreated",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.User.Login.Profile.Modified",
+        "AWS.IAM.CredentialsUpdated",
+        "Crowdstrike.AdminRoleAssigned",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.NewUserCreated",
+        "Crowdstrike.UserPasswordChange",
+        "Crowdstrike.IpAllowlistChanged",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.API.Key.Created.Retrieved",
+        "CarbonBlack.Audit.User.Added.Outside.Org",
+        "Slack.AuditLogs.PrivateChannelMadePublic",
+        "Slack.AuditLogs.ServiceOwnerTransferred",
+        "Slack.AuditLogs.SSOSettingsChanged",
+        "Slack.AuditLogs.IDPConfigurationChanged",
+        "Slack.AuditLogs.OrgCreated",
+        "Slack.AuditLogs.AppAdded",
+        "Osquery.Mac.UnwantedChromeExtensions",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails",
+        "GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified",
+        "Okta.Phishing.Attempt.Blocked.FastPass",
+        "Okta.Identity.Provider.Created.Modified",
+        "Okta.Identity.Provider.SignIn",
+        "ZIA.Cloud.Account.Created",
+        "ZIA.Additional.Cloud.Roles"
+      ],
+      "techniques": [
+        "T1556",
+        "T1114",
+        "T1137.005",
+        "T1098.001",
+        "T1098",
+        "T1136",
+        "T1176",
+        "T1078",
+        "T1078.004",
+        "T1098.003",
+        "T1556.009",
+        "T1136.003",
+        "T1053.003",
+        "T1505"
+      ]
+    },
+    "TA0009": {
+      "name": "Collection",
+      "rules": [
+        "Zendesk.SensitiveDataRedactionOff",
+        "Zoom.PasscodeDisabled",
+        "Microsoft365.Exchange.External.Forwarding",
+        "Microsoft365.External.Document.Sharing",
+        "GCP.GCS.Public",
+        "GCP.GCS.IAMChanges",
+        "GSuite.Drive.ExternalFileShare",
+        "GSuite.DriveOverlyVisible",
+        "GSuite.DriveVisibilityChanged",
+        "GSuite.DocOwnershipTransfer",
+        "GSuite.ExternalMailForwarding",
+        "AWS.S3.ServerAccess.Unauthenticated",
+        "AWS.S3.ServerAccess.IPWhitelist",
+        "AWS.S3.ServerAccess.UnknownRequester",
+        "AWS.S3.ServerAccess.Insecure",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.Mac.OSXAttacksKeyboardEvents"
+      ],
+      "techniques": [
+        "T1114",
+        "T1039",
+        "T1213",
+        "T1114.003",
+        "T1056",
+        "T1530",
+        "T1125"
+      ]
+    },
+    "TA0008": {
+      "name": "Lateral Movement",
+      "rules": [
+        "Zendesk.UserAssumption",
+        "MongoDB.Access.Allowed.From.Anywhere",
+        "OneLogin.UserAssumption",
+        "OneLogin.UnauthorizedAccess",
+        "OneLogin.ActiveLoginActivity",
+        "AWS.EC2.MultiInstanceConnect",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.User.Login.Profile.Modified",
+        "AppOmni.Alert.Passthrough",
+        "AWS.VPC.SSHAllowedSignal",
+        "Osquery.SSHListener"
+      ],
+      "techniques": [
+        "T1550",
+        "T1021.007",
+        "T1021.005",
+        "T1021",
+        "T1021.004"
+      ]
+    },
+    "TA0010": {
+      "name": "Exfiltration",
+      "rules": [
+        "GitHub.Webhook.Modified",
+        "GitHub.Repo.HookModified",
+        "Github.Repo.VisibilityChange",
+        "Box.Item.Shared.Externally",
+        "Box.Event.Triggered.Externally",
+        "Box.Shield.Anomalous.Download",
+        "Box.Large.Number.Downloads",
+        "Microsoft365.Exchange.External.Forwarding",
+        "Google.Workspace.ManyDocsDownloaded",
+        "Snowflake.Stream.FileDownloaded",
+        "Snowflake.Stream.TableCopiedIntoStage",
+        "Snowflake.Stream.TempStageCreated",
+        "Snowflake.Stream.ExternalShares",
+        "AWS.CloudTrail.AMIModifiedForPublicAccess",
+        "AWS.RDS.ManualSnapshotCreated",
+        "AWS.EC2.RouteTableModified",
+        "AWS.S3.BucketPolicyModified",
+        "AWS.CloudTrail.CodebuildProjectMadePublic",
+        "AWS.RDS.PublicRestore",
+        "AWS.CloudTrail.SnapshotMadePublic",
+        "AWS.RDS.SnapshotShared",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal",
+        "AWS.CloudTrail.ResourceMadePublic",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Slack.AuditLogs.PrivateChannelMadePublic",
+        "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount"
+      ],
+      "techniques": [
+        "T1048",
+        "T1020",
+        "T1567",
+        "T1041",
+        "T1537"
+      ]
+    },
+    "TA0002": {
+      "name": "Execution",
+      "rules": [
+        "Teleport.SuspiciousCommands",
+        "Teleport.RootLogin",
+        "Teleport.ScheduledJobs",
+        "Box.Malicious.Content",
+        "AWS.EC2.Startup.Script.Change",
+        "AWS.EC2.Monitoring",
+        "AWS.EC2.LaunchUnusualEC2Instances",
+        "AWS.SSM.DistributedCommand",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.SuspiciousCron",
+        "Osquery.Linux.AWSCommandExecuted",
+        "GCP.K8s.New.Daemonset.Deployed",
+        "GCP.K8s.Pod.Using.Host.PID.Namespace"
+      ],
+      "techniques": [
+        "T1059",
+        "T1053",
+        "T1204",
+        "T1203",
+        "T1610"
+      ]
+    },
+    "TA0042": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Teleport.SAMLCreated",
+        "Azure.Audit.RoleChangedPIM",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.Mac.OSXAttacks"
+      ],
+      "techniques": [
+        "T1585",
+        "T1588",
+        "T1586",
+        "T1608"
+      ]
+    },
+    "TA0007": {
+      "name": "Discovery",
+      "rules": [
+        "Teleport.NetworkScanning",
+        "Amazon.EKS.Audit.Multiple403",
+        "GSuite.CalendarMadePublic",
+        "GSuite.Workspace.CalendarExternalSharingSetting",
+        "AWS.CloudTrail.Account.Discovery",
+        "AWS.IAM.AttachAdminRolePolicy",
+        "AWS.IAM.BackdoorRole",
+        "AWS.Potential.Backdoor.Lambda",
+        "AWS.Lambda.UpdateFunctionConfiguration",
+        "AWS.CloudTrail.Created",
+        "AWS.CloudTrail.Password.Policy.Discovery",
+        "AWS.IAM.AttachAdminUserPolicy",
+        "AWS.CloudTrail.VPCE.AccessDenied",
+        "AWS.IAM.CreateRole",
+        "AWS.IAM.CreateUser",
+        "AWS.ConfigService.Created",
+        "AWS.Lambda.UpdateFunctionCode",
+        "AWS.EC2.DownloadInstanceUserData",
+        "AWS.Software.Discovery",
+        "AWS.IAMUser.ReconAccessDenied",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.CloudTrail.UnauthorizedAPICall",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal",
+        "AWS.S3.ServerAccess.Error",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "ZIA.Logs.Downloaded",
+        "ZIA.Password.Expiration"
+      ],
+      "techniques": [
+        "T1538",
+        "T1518",
+        "T1654",
+        "T1580",
+        "T1201",
+        "T1613",
+        "T1046",
+        "T1619",
+        "T1078",
+        "T1087",
+        "T1526"
+      ]
+    },
+    "TA0027": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Amazon.EKS.Audit.SystemNamespaceFromPublicIP"
+      ],
+      "techniques": [
+        "T1475"
+      ]
+    },
+    "TA003": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Microsoft365.MFA.Disabled"
+      ],
+      "techniques": [
+        "T1556"
+      ]
+    },
+    "TA005": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Microsoft365.MFA.Disabled"
+      ],
+      "techniques": [
+        "T1556"
+      ]
+    },
+    "TA006": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Microsoft365.MFA.Disabled"
+      ],
+      "techniques": [
+        "T1556"
+      ]
+    },
+    "TA0035": {
+      "name": "Unknown Tactic",
+      "rules": [
+        "Wiz.Update.Support.Contact.List"
+      ],
+      "techniques": [
+        "T1636.003"
+      ]
+    },
+    "TA0011": {
+      "name": "Command and Control",
+      "rules": [
+        "AWS.VPC.InboundPortWhitelist",
+        "AWS.VPC.UnapprovedOutboundDNS",
+        "AWS.VPC.InboundPortBlacklist",
+        "Slack.AuditLogs.PassthroughAnomaly",
+        "GCP.K8s.IOC.Activity"
+      ],
+      "techniques": [
+        "T1573.002",
+        "T1071",
+        "T1571"
+      ]
+    }
+  },
+  "techniques": {
+    "T1078": {
+      "tactic": "TA0001",
+      "rules": [
+        "Standard.ImpossibleTravel.Login",
+        "Standard.AdminRoleAssigned",
+        "Zendesk.AccountOwnerChanged",
+        "Zendesk.MobileAppAccessUpdated",
+        "GitHub.User.AccessKeyCreated",
+        "Teleport.LocalUserLoginWithoutMFA",
+        "Box.Shield.Suspicious.Alert",
+        "Box.New.Login",
+        "Box.Untrusted.Device",
+        "GCP.IAM.CustomRoleChanges",
+        "GSuite.LoginType",
+        "Snowflake.Stream.AccountAdminGranted",
+        "AWS.IAM.AttachAdminRolePolicy",
+        "AWS.IAM.BackdoorRole",
+        "AWS.Potential.Backdoor.Lambda",
+        "AWS.Lambda.UpdateFunctionConfiguration",
+        "AWS.Console.LoginWithoutMFA",
+        "AWS.Console.RootLogin",
+        "AWS.IAM.AttachAdminUserPolicy",
+        "AWS.IAM.CreateRole",
+        "AWS.IAM.CreateUser",
+        "AWS.Lambda.UpdateFunctionCode",
+        "AWS.Console.LoginWithoutSAML",
+        "AWS.Root.Activity",
+        "Azure.Audit.MFADisabled",
+        "Azure.Audit.RiskLevelPassthrough",
+        "Azure.Audit.ManyFailedSignIns",
+        "Azure.Audit.InviteExternalUsers",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.Linux.LoginFromNonOffice",
+        "Okta.AdminRoleAssigned"
+      ]
+    },
+    "T1110": {
+      "tactic": "TA0006",
+      "rules": [
+        "Standard.BruteForceByUser",
+        "Standard.BruteForceByIP",
+        "Netskope.AdminLoggedOutLoginFailures",
+        "Netskope.UnauthorizedAPICalls",
+        "Teleport.AuthErrors",
+        "OneLogin.UserAccountLocked",
+        "Microsoft365.Brute.Force.Login.by.User",
+        "GSuite.DeviceUnlockFailure",
+        "GSuite.Workspace.PasswordEnforceStrongDisabled",
+        "GSuite.Workspace.PasswordReuseEnabled",
+        "Snowflake.Stream.BruteForceByUsername",
+        "Snowflake.Stream.BruteForceByIp",
+        "AWS.Console.RootLoginFailed",
+        "Azure.Audit.RiskLevelPassthrough",
+        "Azure.Audit.ManyFailedSignIns",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.Flagged",
+        "Okta.Rate.Limits"
+      ]
+    },
+    "T1556": {
+      "tactic": "TA0005",
+      "rules": [
+        "Standard.MFADisabled",
+        "OneLogin.AuthFactorRemoved",
+        "Microsoft365.MFA.Disabled",
+        "Microsoft365.MFA.Disabled",
+        "Microsoft365.MFA.Disabled",
+        "GSuite.TwoStepVerification",
+        "Wiz.Update.Login.Settings",
+        "Snowflake.Stream.LoginWithoutMFA",
+        "Azure.Audit.MFADisabled",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Slack.AuditLogs.SSOSettingsChanged",
+        "Slack.AuditLogs.SSOSettingsChanged",
+        "Slack.AuditLogs.IDPConfigurationChanged",
+        "Slack.AuditLogs.IDPConfigurationChanged",
+        "Okta.Global.MFA.Disabled",
+        "Okta.Password.Extraction.via.SCIM",
+        "Okta.Anonymizing.VPN.Login",
+        "Okta.Org2org.Creation.Modification",
+        "Okta.Phishing.Attempt.Blocked.FastPass",
+        "Okta.Identity.Provider.Created.Modified"
+      ]
+    },
+    "T1078.004": {
+      "tactic": "TA0001",
+      "rules": [
+        "Standard.SignInFromRogueState",
+        "GCP.User.Added.To.Privileged.Group",
+        "Wiz.Rotate.Service.Account.Secret",
+        "Wiz.Service.Account.Change",
+        "AWS.CloudTrail.IAMCompromisedKeyQuarantine",
+        "Okta.New.Behavior.Accessing.Admin.Console",
+        "Okta.Org2org.Creation.Modification",
+        "Okta.Phishing.Attempt.Blocked.FastPass"
+      ]
+    },
+    "T1566": {
+      "tactic": "TA0001",
+      "rules": [
+        "Standard.MaliciousSSODNSLookup",
+        "GSuite.Workspace.GmailSecuritySandboxDisabled",
+        "GSuite.Workspace.GmailPredeliveryScanningDisabled",
+        "Crowdstrike.DNS.Request",
+        "AppOmni.Alert.Passthrough",
+        "Okta.Phishing.Attempt.Blocked.FastPass"
+      ]
+    },
+    "T1531": {
+      "tactic": "TA0040",
+      "rules": [
+        "Zendesk.UserSuspension",
+        "OneLogin.ThresholdAccountsDeleted",
+        "OneLogin.ThresholdAccountsModified",
+        "Wiz.Revoke.User.Sessions",
+        "Crowdstrike.AllowlistRemoved",
+        "Crowdstrike.API.Key.Deleted",
+        "AppOmni.Alert.Passthrough",
+        "Slack.AuditLogs.OrgDeleted",
+        "Slack.AuditLogs.ServiceOwnerTransferred",
+        "Slack.AuditLogs.UserPrivilegeChangedToUser",
+        "ZIA.Account.Access.Removed"
+      ]
+    },
+    "T1213": {
+      "tactic": "TA0009",
+      "rules": [
+        "Zendesk.SensitiveDataRedactionOff",
+        "GSuite.Drive.ExternalFileShare",
+        "GSuite.DriveOverlyVisible",
+        "GSuite.DriveVisibilityChanged",
+        "GSuite.DocOwnershipTransfer",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1528": {
+      "tactic": "TA0006",
+      "rules": [
+        "Zendesk.NewAPIToken",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "Okta.APIKeyCreated"
+      ]
+    },
+    "T1550": {
+      "tactic": "TA0008",
+      "rules": [
+        "Zendesk.UserAssumption",
+        "OneLogin.UserAssumption",
+        "OneLogin.UnauthorizedAccess",
+        "OneLogin.ActiveLoginActivity",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.User.Login.Profile.Modified",
+        "AWS.User.Login.Profile.Modified",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1098": {
+      "tactic": "TA0004",
+      "rules": [
+        "Netskope.AdminUserChange",
+        "GitHub.User.RoleUpdated",
+        "GitHub.Org.AuthChange",
+        "GitHub.Org.IpAllowlist",
+        "Teleport.SAMLLoginWithoutCompanyDomain",
+        "Teleport.LongLivedCerts",
+        "Panther.User.Modified",
+        "Panther.Sensitive.Role",
+        "GSuite.Workspace.GmailDefaultRoutingRuleModified",
+        "GSuite.Workspace.TrustedDomainsAllowlist",
+        "AWS.RDS.MasterPasswordUpdated",
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.CloudTrail.RootPasswordChanged",
+        "AWS.CloudTrail.NetworkACLPermissiveEntry",
+        "AWS.CloudTrail.RootAccessKeyCreated",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.User.Login.Profile.Modified",
+        "AWS.IAM.CredentialsUpdated",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.Admin.Grant",
+        "Slack.AuditLogs.AppAccessExpanded",
+        "Slack.AuditLogs.PrivateChannelMadePublic",
+        "Slack.AuditLogs.ServiceOwnerTransferred",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails",
+        "Okta.Identity.Provider.Created.Modified",
+        "Okta.Identity.Provider.SignIn"
+      ]
+    },
+    "T1485": {
+      "tactic": "TA0040",
+      "rules": [
+        "Netskope.ManyDeletes",
+        "AWS.KMS.CustomerManagedKeyLoss",
+        "AWS.S3.BucketDeleted",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1195": {
+      "tactic": "TA0001",
+      "rules": [
+        "Netskope.NetskopePersonnelActivity",
+        "GitHub.Branch.PolicyOverride",
+        "GitHub.Branch.ProtectionDisabled",
+        "Github.Repo.CollaboratorChange",
+        "GitHub.Team.Modified",
+        "GitHub.Org.Modified",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails"
+      ]
+    },
+    "T1556.009": {
+      "tactic": "TA0003",
+      "rules": [
+        "MongoDB.org.Membership.Restriction.Disabled",
+        "MongoDB.Access.Allowed.From.Anywhere",
+        "GCP.IAM.OrgFolderIAMChanges",
+        "Wiz.Update.IP.Restrictions",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.SingleIpAllowlisted",
+        "Crowdstrike.IpAllowlistChanged",
+        "Crowdstrike.IpAllowlistChanged",
+        "Crowdstrike.IpAllowlistChanged",
+        "ZIA.Insecure.Password.Settings"
+      ]
+    },
+    "T1562.001": {
+      "tactic": "TA0005",
+      "rules": [
+        "MongoDB.Alerting.Disabled.Or.Deleted",
+        "Sublime.Message.Source.Deleted.Or.Deactivated",
+        "Sublime.Mailbox.Deactivated",
+        "Sublime.Rules.Deleted.Or.Deactivated",
+        "Wiz.Rule.Change",
+        "Wiz.CICD.Scan.Policy.Updated.Or.Deleted",
+        "Wiz.Update.Scanner.Settings",
+        "Wiz.Image.Integrity.Validator.Updated.Or.Deleted",
+        "Wiz.Connector.Updated.Or.Deleted",
+        "Wiz.Data.Classifier.Updated.Or.Deleted",
+        "Wiz.Integration.Updated.Or.Deleted",
+        "AWS.Bedrock.GuardrailUpdateDelete",
+        "Slack.AuditLogs.LegalHoldPolicyModified",
+        "Slack.AuditLogs.InformationBarrierModified",
+        "Slack.AuditLogs.IntuneMDMDisabled",
+        "Slack.AuditLogs.DLPModified"
+      ]
+    },
+    "T1021.007": {
+      "tactic": "TA0008",
+      "rules": [
+        "MongoDB.Access.Allowed.From.Anywhere"
+      ]
+    },
+    "T1562": {
+      "tactic": "TA0005",
+      "rules": [
+        "GitHub.Repo.RulesetModified",
+        "GitHub.Advanced.Security.Change",
+        "Teleport.CompanyDomainLoginWithoutSAML",
+        "Panther.SAML.Modified",
+        "Panther.Detection.Deleted",
+        "GSuite.AdvancedProtection",
+        "AWS.EC2.GatewayModified",
+        "AWS.Macie.Evasion",
+        "AWS.ConfigService.DisabledDeleted",
+        "AWS.CloudTrail.Stopped",
+        "AWS.CloudTrail.EventSelectorsDisabled",
+        "AWS.CloudTrail.SecurityConfigurationChange",
+        "AWS.IPSet.Modified",
+        "AWS.EC2.NetworkACLModified",
+        "AWS.EC2.ManualSecurityGroupChange",
+        "AWS.SecurityHub.Finding.Evasion",
+        "AWS.EC2.SecurityGroupModified",
+        "AWS.EC2.VPCModified",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.Mac.AutoUpdateEnabled",
+        "Osquery.Mac.ApplicationFirewallSettings"
+      ]
+    },
+    "T1020": {
+      "tactic": "TA0010",
+      "rules": [
+        "GitHub.Webhook.Modified",
+        "GitHub.Repo.HookModified",
+        "Microsoft365.Exchange.External.Forwarding",
+        "AWS.RDS.PublicRestore"
+      ]
+    },
+    "T1552": {
+      "tactic": "TA0006",
+      "rules": [
+        "GitHub.Secret.Scanning.Alert.Created",
+        "OneLogin.PasswordAccess",
+        "OnePassword.Lut.Sensitive.Item",
+        "OnePassword.Sensitive.Item",
+        "GSuite.LeakedPassword",
+        "AWS.SecretsManager.BatchRetrieveSecrets",
+        "AWS.SecretsManager.RetrieveSecretsMultiRegion",
+        "AWS.SecretsManager.RetrieveSecrets",
+        "AWS.IAM.AccessKeyCompromised",
+        "AWS.SecretsManager.BatchRetrieveSecretsCatchAll",
+        "AppOmni.Alert.Passthrough",
+        "Okta.PasswordAccess"
+      ]
+    },
+    "T1567": {
+      "tactic": "TA0010",
+      "rules": [
+        "Github.Repo.VisibilityChange",
+        "Box.Item.Shared.Externally",
+        "Box.Event.Triggered.Externally",
+        "Box.Shield.Anomalous.Download",
+        "Box.Large.Number.Downloads",
+        "Google.Workspace.ManyDocsDownloaded",
+        "AWS.S3.BucketPolicyModified",
+        "AWS.CloudTrail.CodebuildProjectMadePublic",
+        "AppOmni.Alert.Passthrough",
+        "Slack.AuditLogs.PrivateChannelMadePublic"
+      ]
+    },
+    "T1059": {
+      "tactic": "TA0002",
+      "rules": [
+        "Teleport.SuspiciousCommands",
+        "Teleport.RootLogin",
+        "AWS.EC2.Startup.Script.Change"
+      ]
+    },
+    "T1136": {
+      "tactic": "TA0003",
+      "rules": [
+        "Teleport.CreateUserAccounts",
+        "GCP.IAM.CorporateEmail",
+        "Standard.NewUserAccountCreated",
+        "Standard.NewAWSAccountCreated",
+        "Snowflake.Stream.UserCreated",
+        "Snowflake.Stream.UserEnabled",
+        "AWS.CloudTrail.IAMEntityCreatedWithoutCloudFormation",
+        "AppOmni.Alert.Passthrough",
+        "CarbonBlack.Audit.API.Key.Created.Retrieved",
+        "CarbonBlack.Audit.User.Added.Outside.Org",
+        "Slack.AuditLogs.OrgCreated"
+      ]
+    },
+    "T1585": {
+      "tactic": "TA0042",
+      "rules": [
+        "Teleport.SAMLCreated"
+      ]
+    },
+    "T1053": {
+      "tactic": "TA0002",
+      "rules": [
+        "Teleport.ScheduledJobs",
+        "Osquery.SuspiciousCron"
+      ]
+    },
+    "T1098.001": {
+      "tactic": "TA0003",
+      "rules": [
+        "Teleport.RoleCreated",
+        "Wiz.User.Role.Updated.Or.Deleted",
+        "Crowdstrike.API.Key.Created",
+        "Crowdstrike.UserPasswordChange",
+        "Crowdstrike.UserPasswordChange"
+      ]
+    },
+    "T1046": {
+      "tactic": "TA0007",
+      "rules": [
+        "Teleport.NetworkScanning"
+      ]
+    },
+    "T1190": {
+      "tactic": "TA0001",
+      "rules": [
+        "Amazon.EKS.AnonymousAPIAccess",
+        "AppOmni.Alert.Passthrough",
+        "GitLab.Production.Password.Reset.Multiple.Emails",
+        "GitLab.Audit.Password.Reset.Multiple.Emails",
+        "GCP.K8S.Service.Type.NodePort.Deployed"
+      ]
+    },
+    "T1475": {
+      "tactic": "TA0027",
+      "rules": [
+        "Amazon.EKS.Audit.SystemNamespaceFromPublicIP"
+      ]
+    },
+    "T1613": {
+      "tactic": "TA0007",
+      "rules": [
+        "Amazon.EKS.Audit.Multiple403"
+      ]
+    },
+    "T1204": {
+      "tactic": "TA0002",
+      "rules": [
+        "Box.Malicious.Content",
+        "AWS.EC2.Monitoring",
+        "AppOmni.Alert.Passthrough",
+        "Osquery.Linux.AWSCommandExecuted"
+      ]
+    },
+    "T1548": {
+      "tactic": "TA0004",
+      "rules": [
+        "Box.Large.Number.Permission.Updates",
+        "GCP.iam.serviceAccountKeys.create",
+        "GCP.Cloudfunctions.Functions.Update",
+        "GCP.IAM.serviceAccounts.signBlob",
+        "GCP.Storage.Hmac.Keys.Create",
+        "GCP.Cloudfunctions.Functions.Create",
+        "GCP.compute.instances.create.Privilege.Escalation",
+        "GCP.Privilege.Escalation.By.Deployments.Create",
+        "GCP.CloudBuild.Potential.Privilege.Escalation",
+        "GCP.IAM.serviceAccounts.signJwt.Privilege.Escalation",
+        "GCP.serviceusage.apiKeys.create.Privilege.Escalation",
+        "GCP.IAM.serviceAccounts.getAccessToken.Privilege.Escalation",
+        "AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored",
+        "AWS.IAM.PolicyModified",
+        "AppOmni.Alert.Passthrough",
+        "GCP.K8S.Privileged.Pod.Created"
+      ]
+    },
+    "T1555": {
+      "tactic": "TA0006",
+      "rules": [
+        "OnePassword.Unusual.Client",
+        "AWS.EC2.ManyPasswordReadAttempts",
+        "AWS.SSM.DecryptSSMParams"
+      ]
+    },
+    "T1125": {
+      "tactic": "TA0009",
+      "rules": [
+        "Zoom.PasscodeDisabled"
+      ]
+    },
+    "T1137.005": {
+      "tactic": "TA0003",
+      "rules": [
+        "Microsoft365.Exchange.External.Forwarding"
+      ]
+    },
+    "T1114.003": {
+      "tactic": "TA0009",
+      "rules": [
+        "Microsoft365.Exchange.External.Forwarding"
+      ]
+    },
+    "T1039": {
+      "tactic": "TA0009",
+      "rules": [
+        "Microsoft365.External.Document.Sharing"
+      ]
+    },
+    "T1530": {
+      "tactic": "TA0009",
+      "rules": [
+        "GCP.GCS.Public",
+        "GCP.GCS.IAMChanges",
+        "AWS.S3.ServerAccess.Unauthenticated",
+        "AWS.S3.ServerAccess.IPWhitelist",
+        "AWS.S3.ServerAccess.UnknownRequester",
+        "AWS.S3.ServerAccess.Insecure",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1136.003": {
+      "tactic": "TA0003",
+      "rules": [
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "Wiz.User.Created.Or.Deleted",
+        "Crowdstrike.NewUserCreated",
+        "ZIA.Cloud.Account.Created"
+      ]
+    },
+    "T1098.003": {
+      "tactic": "TA0003",
+      "rules": [
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.Inbound.SSO.Profile.Created",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.Workload.Identity.Pool.Created.or.Updated",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "GCP.Workforce.Pool.Created.or.Updated",
+        "Crowdstrike.AdminRoleAssigned",
+        "Crowdstrike.AdminRoleAssigned",
+        "Slack.AuditLogs.UserPrivilegeEscalation",
+        "ZIA.Additional.Cloud.Roles",
+        "ZIA.Additional.Cloud.Roles"
+      ]
+    },
+    "T1535": {
+      "tactic": "TA0005",
+      "rules": [
+        "GCP.UnusedRegions",
+        "AWS.UnusedRegion",
+        "AWS.CloudTrail.EnableRegion",
+        "AWS.ECR.EVENTS"
+      ]
+    },
+    "T1484.001": {
+      "tactic": "TA0004",
+      "rules": [
+        "GCP.User.Added.To.Privileged.Group"
+      ]
+    },
+    "T1114": {
+      "tactic": "TA0009",
+      "rules": [
+        "GSuite.ExternalMailForwarding",
+        "AppOmni.Alert.Passthrough",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1087": {
+      "tactic": "TA0007",
+      "rules": [
+        "GSuite.CalendarMadePublic",
+        "GSuite.Workspace.CalendarExternalSharingSetting",
+        "AWS.CloudTrail.Account.Discovery",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1636.003": {
+      "tactic": "TA0035",
+      "rules": [
+        "Wiz.Update.Support.Contact.List"
+      ]
+    },
+    "T1484.002": {
+      "tactic": "TA0004",
+      "rules": [
+        "Wiz.SAML.Identity.Provider.Change",
+        "ZIA.Trust.Modification"
+      ]
+    },
+    "T1070.009": {
+      "tactic": "TA0005",
+      "rules": [
+        "Wiz.User.Created.Or.Deleted",
+        "Slack.AuditLogs.AppRemoved"
+      ]
+    },
+    "T1496.004": {
+      "tactic": "TA0040",
+      "rules": [
+        "AWS.BedrockModelInvocation.AbnormalTokenUsage"
+      ]
+    },
+    "T0018.000": {
+      "tactic": "TA0006",
+      "rules": [
+        "AWS.BedrockModelInvocation.GuardRailIntervened"
+      ]
+    },
+    "T1041": {
+      "tactic": "TA0010",
+      "rules": [
+        "Snowflake.Stream.FileDownloaded",
+        "Snowflake.Stream.TableCopiedIntoStage",
+        "Snowflake.Stream.TempStageCreated",
+        "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount"
+      ]
+    },
+    "T1078.001": {
+      "tactic": "TA0004",
+      "rules": [
+        "Snowflake.Stream.PublicRoleGrant"
+      ]
+    },
+    "T1537": {
+      "tactic": "TA0010",
+      "rules": [
+        "Snowflake.Stream.ExternalShares",
+        "AWS.CloudTrail.AMIModifiedForPublicAccess",
+        "AWS.RDS.ManualSnapshotCreated",
+        "AWS.CloudTrail.SnapshotMadePublic",
+        "AWS.RDS.SnapshotShared",
+        "AWS.CloudTrail.ResourceMadePublic",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1048": {
+      "tactic": "TA0010",
+      "rules": [
+        "AWS.EC2.RouteTableModified",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal"
+      ]
+    },
+    "T1195.001": {
+      "tactic": "TA0001",
+      "rules": [
+        "AWS.EC2.Vulnerable.XZ.Image.Launched",
+        "Osquery.Linux.Mac.VulnerableXZliblzma"
+      ]
+    },
+    "T1552.001": {
+      "tactic": "TA0006",
+      "rules": [
+        "AWS.CloudTrail.IAMCompromisedKeyQuarantine"
+      ]
+    },
+    "T1538": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.CloudTrail.Created"
+      ]
+    },
+    "T1021.005": {
+      "tactic": "TA0008",
+      "rules": [
+        "AWS.EC2.MultiInstanceConnect"
+      ]
+    },
+    "T1201": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.CloudTrail.Password.Policy.Discovery",
+        "ZIA.Password.Expiration"
+      ]
+    },
+    "T1562.008": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.CloudTrail.DNSLogsDeleted",
+        "AWS.CloudTrail.ShortLifecycle",
+        "AWS.VPCFlow.LogsDeleted",
+        "AWS.CloudTrail.AttemptToLeaveOrg",
+        "CarbonBlack.Audit.Data.Forwarder.Stopped",
+        "Slack.AuditLogs.EKMConfigChanged",
+        "ZIA.Backup.Deleted",
+        "ZIA.Log.Streaming.Disabled",
+        "ZIA.Golden.Restore.Point.Dropped"
+      ]
+    },
+    "T1108": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.IAM.Backdoor.User.Keys",
+        "AWS.CloudTrail.LoginProfileCreatedOrModified",
+        "AWS.User.Login.Profile.Modified"
+      ]
+    },
+    "T1599": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.CloudTrail.VPCE.AccessDenied",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal"
+      ]
+    },
+    "T1526": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.CloudTrail.VPCE.AccessDenied",
+        "AWS.ConfigService.Created",
+        "AWS.IAMUser.ReconAccessDenied",
+        "AWS.CloudTrail.VPCE.SensitiveAPICalls",
+        "AWS.CloudTrail.UnauthorizedAPICall",
+        "AWS.CloudTrail.VPCE.ExternalPrincipal",
+        "Azure.Audit.PolicyChanged"
+      ]
+    },
+    "T1562.003": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.Bedrock.DeleteModelInvocationLoggingConfiguration"
+      ]
+    },
+    "T1498": {
+      "tactic": "TA0004",
+      "rules": [
+        "AWS.WAF.Disassociation",
+        "Okta.Rate.Limits"
+      ]
+    },
+    "T1486": {
+      "tactic": "TA0040",
+      "rules": [
+        "AWS.EC2.EBS.Encryption.Disabled",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1565": {
+      "tactic": "TA0040",
+      "rules": [
+        "AWS.EC2.EBS.Encryption.Disabled",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1580": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.EC2.DownloadInstanceUserData"
+      ]
+    },
+    "T1525": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.ECR.CRUD",
+        "AWS.LAMBDA.CRUD"
+      ]
+    },
+    "T1518": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.Software.Discovery",
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1621": {
+      "tactic": "TA0006",
+      "rules": [
+        "AWS.Unsuccessful.MFA.attempt"
+      ]
+    },
+    "T1666": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.CloudTrail.AttemptToLeaveOrg"
+      ]
+    },
+    "T1578": {
+      "tactic": "TA0005",
+      "rules": [
+        "AWS.Modify.Cloud.Compute.Infrastructure"
+      ]
+    },
+    "T1610": {
+      "tactic": "TA0002",
+      "rules": [
+        "AWS.EC2.LaunchUnusualEC2Instances",
+        "GCP.K8s.New.Daemonset.Deployed",
+        "GCP.K8s.Pod.Using.Host.PID.Namespace"
+      ]
+    },
+    "T1203": {
+      "tactic": "TA0002",
+      "rules": [
+        "AWS.SSM.DistributedCommand"
+      ]
+    },
+    "T1070": {
+      "tactic": "TA0005",
+      "rules": [
+        "Crowdstrike.UserDeleted",
+        "Crowdstrike.API.Key.Deleted",
+        "Slack.AuditLogs.DLPModified"
+      ]
+    },
+    "T1586": {
+      "tactic": "TA0042",
+      "rules": [
+        "Azure.Audit.RoleChangedPIM"
+      ]
+    },
+    "T1619": {
+      "tactic": "TA0007",
+      "rules": [
+        "AWS.S3.ServerAccess.Error"
+      ]
+    },
+    "T1199": {
+      "tactic": "TA0001",
+      "rules": [
+        "AppOmni.Alert.Passthrough",
+        "Okta.Support.Reset",
+        "Okta.Support.Access",
+        "Okta.Identity.Provider.Created.Modified",
+        "Okta.Identity.Provider.SignIn"
+      ]
+    },
+    "T1090": {
+      "tactic": "TA0005",
+      "rules": [
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1564": {
+      "tactic": "TA0005",
+      "rules": [
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1111": {
+      "tactic": "TA0006",
+      "rules": [
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1539": {
+      "tactic": "TA0006",
+      "rules": [
+        "AppOmni.Alert.Passthrough",
+        "Okta.PotentiallyStolenSession"
+      ]
+    },
+    "T1484": {
+      "tactic": "TA0004",
+      "rules": [
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1608": {
+      "tactic": "TA0042",
+      "rules": [
+        "AppOmni.Alert.Passthrough"
+      ]
+    },
+    "T1571": {
+      "tactic": "TA0011",
+      "rules": [
+        "AWS.VPC.InboundPortWhitelist",
+        "AWS.VPC.InboundPortBlacklist"
+      ]
+    },
+    "T1071": {
+      "tactic": "TA0011",
+      "rules": [
+        "AWS.VPC.UnapprovedOutboundDNS",
+        "Slack.AuditLogs.PassthroughAnomaly"
+      ]
+    },
+    "T1021.004": {
+      "tactic": "TA0008",
+      "rules": [
+        "AWS.VPC.SSHAllowedSignal"
+      ]
+    },
+    "T1496": {
+      "tactic": "TA0040",
+      "rules": [
+        "AWS.DNS.Crypto.Domain"
+      ]
+    },
+    "T1222": {
+      "tactic": "TA0005",
+      "rules": [
+        "Slack.AuditLogs.PrivateChannelMadePublic",
+        "Slack.AuditLogs.ServiceOwnerTransferred"
+      ]
+    },
+    "T1556.006": {
+      "tactic": "TA0005",
+      "rules": [
+        "Slack.AuditLogs.MFASettingsChanged"
+      ]
+    },
+    "T1566.001": {
+      "tactic": "TA0001",
+      "rules": [
+        "Slack.AuditLogs.PotentiallyMaliciousFileShared"
+      ]
+    },
+    "T1489": {
+      "tactic": "TA0040",
+      "rules": [
+        "Slack.AuditLogs.EKMSlackbotUnenrolled",
+        "Slack.AuditLogs.AppRemoved"
+      ]
+    },
+    "T1600": {
+      "tactic": "TA0005",
+      "rules": [
+        "Slack.AuditLogs.EKMUnenrolled"
+      ]
+    },
+    "T1505": {
+      "tactic": "TA0003",
+      "rules": [
+        "Slack.AuditLogs.AppAdded"
+      ]
+    },
+    "T1499.003": {
+      "tactic": "TA0040",
+      "rules": [
+        "Slack.AuditLogs.ApplicationDoS"
+      ]
+    },
+    "T1021": {
+      "tactic": "TA0008",
+      "rules": [
+        "Osquery.SSHListener"
+      ]
+    },
+    "T1176": {
+      "tactic": "TA0003",
+      "rules": [
+        "Osquery.Mac.UnwantedChromeExtensions"
+      ]
+    },
+    "T1056": {
+      "tactic": "TA0009",
+      "rules": [
+        "Osquery.Mac.OSXAttacksKeyboardEvents"
+      ]
+    },
+    "T1588": {
+      "tactic": "TA0042",
+      "rules": [
+        "Osquery.Mac.OSXAttacks"
+      ]
+    },
+    "T1014": {
+      "tactic": "TA0005",
+      "rules": [
+        "Osquery.OSSECRootkitDetected"
+      ]
+    },
+    "T1611": {
+      "tactic": "TA0004",
+      "rules": [
+        "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount",
+        "GCP.K8s.Pod.Attached.To.Node.Host.Network",
+        "GCP.K8s.Pod.Using.Host.PID.Namespace"
+      ]
+    },
+    "T1053.003": {
+      "tactic": "TA0003",
+      "rules": [
+        "GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified"
+      ]
+    },
+    "T1573.002": {
+      "tactic": "TA0011",
+      "rules": [
+        "GCP.K8s.IOC.Activity"
+      ]
+    },
+    "T1654": {
+      "tactic": "TA0007",
+      "rules": [
+        "ZIA.Logs.Downloaded"
+      ]
+    }
+  },
+  "rules_by_mitre": {
+    "Standard.ImpossibleTravel.Login": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.BruteForceByUser": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.MFADisabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.BruteForceByIP": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.AdminRoleAssigned": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.SignInFromRogueState": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078.004"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Standard.MaliciousSSODNSLookup": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1566"
+      ],
+      "source_path": "standard_rules"
+    },
+    "Zendesk.UserSuspension": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Zendesk.AccountOwnerChanged": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Zendesk.MobileAppAccessUpdated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Zendesk.SensitiveDataRedactionOff": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1213"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Zendesk.NewAPIToken": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1528"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Zendesk.UserAssumption": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1550"
+      ],
+      "source_path": "zendesk_rules"
+    },
+    "Netskope.AdminLoggedOutLoginFailures": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "netskope_rules"
+    },
+    "Netskope.AdminUserChange": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "netskope_rules"
+    },
+    "Netskope.ManyDeletes": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1485"
+      ],
+      "source_path": "netskope_rules"
+    },
+    "Netskope.NetskopePersonnelActivity": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "netskope_rules"
+    },
+    "Netskope.UnauthorizedAPICalls": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "netskope_rules"
+    },
+    "MongoDB.org.Membership.Restriction.Disabled": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "mongodb_rules"
+    },
+    "MongoDB.Alerting.Disabled.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "mongodb_rules"
+    },
+    "MongoDB.Access.Allowed.From.Anywhere": {
+      "tactics": [
+        "TA0008",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556.009",
+        "T1021.007"
+      ],
+      "source_path": "mongodb_rules"
+    },
+    "GitHub.User.RoleUpdated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Branch.PolicyOverride": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Org.AuthChange": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Org.IpAllowlist": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Branch.ProtectionDisabled": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Repo.RulesetModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "github_rules"
+    },
+    "Github.Repo.CollaboratorChange": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Team.Modified": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Webhook.Modified": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1020"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Repo.HookModified": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1020"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Secret.Scanning.Alert.Created": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Advanced.Security.Change": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.Org.Modified": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195"
+      ],
+      "source_path": "github_rules"
+    },
+    "Github.Repo.VisibilityChange": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "github_rules"
+    },
+    "GitHub.User.AccessKeyCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "github_rules"
+    },
+    "Teleport.CompanyDomainLoginWithoutSAML": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.SAMLLoginWithoutCompanyDomain": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.SuspiciousCommands": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1059"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.AuthErrors": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.CreateUserAccounts": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.SAMLCreated": {
+      "tactics": [
+        "TA0042"
+      ],
+      "techniques": [
+        "T1585"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.RootLogin": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1059"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.LongLivedCerts": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.ScheduledJobs": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1053"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.RoleCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098.001"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.LocalUserLoginWithoutMFA": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Teleport.NetworkScanning": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1046"
+      ],
+      "source_path": "gravitational_teleport_rules"
+    },
+    "Amazon.EKS.AnonymousAPIAccess": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1190"
+      ],
+      "source_path": "aws_eks_rules"
+    },
+    "Amazon.EKS.Audit.SystemNamespaceFromPublicIP": {
+      "tactics": [
+        "TA0027"
+      ],
+      "techniques": [
+        "T1475"
+      ],
+      "source_path": "aws_eks_rules"
+    },
+    "Amazon.EKS.Audit.Multiple403": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1613"
+      ],
+      "source_path": "aws_eks_rules"
+    },
+    "OneLogin.ThresholdAccountsDeleted": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.PasswordAccess": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.AuthFactorRemoved": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.ThresholdAccountsModified": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.UserAccountLocked": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.UserAssumption": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1550"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.UnauthorizedAccess": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1550"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "OneLogin.ActiveLoginActivity": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1550"
+      ],
+      "source_path": "onelogin_rules"
+    },
+    "Box.Item.Shared.Externally": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Malicious.Content": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1204"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Event.Triggered.Externally": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Shield.Suspicious.Alert": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.New.Login": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Shield.Anomalous.Download": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Untrusted.Device": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Large.Number.Permission.Updates": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "box_rules"
+    },
+    "Box.Large.Number.Downloads": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "box_rules"
+    },
+    "OnePassword.Unusual.Client": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1555"
+      ],
+      "source_path": "onepassword_rules"
+    },
+    "OnePassword.Lut.Sensitive.Item": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "onepassword_rules"
+    },
+    "OnePassword.Sensitive.Item": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "onepassword_rules"
+    },
+    "Zoom.PasscodeDisabled": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1125"
+      ],
+      "source_path": "zoom_operation_rules"
+    },
+    "Sublime.Message.Source.Deleted.Or.Deactivated": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "sublime_rules"
+    },
+    "Sublime.Mailbox.Deactivated": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "sublime_rules"
+    },
+    "Sublime.Rules.Deleted.Or.Deactivated": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "sublime_rules"
+    },
+    "Panther.SAML.Modified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "panther_audit_rules"
+    },
+    "Panther.User.Modified": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "panther_audit_rules"
+    },
+    "Panther.Detection.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "panther_audit_rules"
+    },
+    "Panther.Sensitive.Role": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "panther_audit_rules"
+    },
+    "Microsoft365.MFA.Disabled": {
+      "tactics": [
+        "TA003",
+        "TA006",
+        "TA005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "microsoft_rules"
+    },
+    "Microsoft365.Exchange.External.Forwarding": {
+      "tactics": [
+        "TA0010",
+        "TA0003",
+        "TA0009"
+      ],
+      "techniques": [
+        "T1020",
+        "T1114.003",
+        "T1137.005"
+      ],
+      "source_path": "microsoft_rules"
+    },
+    "Microsoft365.Brute.Force.Login.by.User": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "microsoft_rules"
+    },
+    "Microsoft365.External.Document.Sharing": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1039"
+      ],
+      "source_path": "microsoft_rules"
+    },
+    "GCP.GCS.Public": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Inbound.SSO.Profile.Created": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1136.003",
+        "T1098.003"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.iam.serviceAccountKeys.create": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.UnusedRegions": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1535"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Cloudfunctions.Functions.Update": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.serviceAccounts.signBlob": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Storage.Hmac.Keys.Create": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Cloudfunctions.Functions.Create": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.CustomRoleChanges": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.compute.instances.create.Privilege.Escalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.User.Added.To.Privileged.Group": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078.004",
+        "T1484.001"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Privilege.Escalation.By.Deployments.Create": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.CloudBuild.Potential.Privilege.Escalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.serviceAccounts.signJwt.Privilege.Escalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.GCS.IAMChanges": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.CorporateEmail": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.serviceusage.apiKeys.create.Privilege.Escalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Workload.Identity.Pool.Created.or.Updated": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1136.003",
+        "T1098.003"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.OrgFolderIAMChanges": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.Workforce.Pool.Created.or.Updated": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1136.003",
+        "T1098.003"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GCP.IAM.serviceAccounts.getAccessToken.Privilege.Escalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_audit_rules"
+    },
+    "GSuite.Drive.ExternalFileShare": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1213"
+      ],
+      "source_path": "gsuite_reports_rules"
+    },
+    "GSuite.DriveOverlyVisible": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1213"
+      ],
+      "source_path": "gsuite_reports_rules"
+    },
+    "GSuite.DriveVisibilityChanged": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1213"
+      ],
+      "source_path": "gsuite_reports_rules"
+    },
+    "Standard.NewUserAccountCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "indicator_creation_rules"
+    },
+    "Standard.NewAWSAccountCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "indicator_creation_rules"
+    },
+    "GSuite.DeviceUnlockFailure": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.GmailDefaultRoutingRuleModified": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.DocOwnershipTransfer": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1213"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.PasswordEnforceStrongDisabled": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "Google.Workspace.ManyDocsDownloaded": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.ExternalMailForwarding": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1114"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.LoginType": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.CalendarMadePublic": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1087"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.AdvancedProtection": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.PasswordReuseEnabled": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.TrustedDomainsAllowlist": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.GmailSecuritySandboxDisabled": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1566"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.TwoStepVerification": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.LeakedPassword": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.CalendarExternalSharingSetting": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1087"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "GSuite.Workspace.GmailPredeliveryScanningDisabled": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1566"
+      ],
+      "source_path": "gsuite_activityevent_rules"
+    },
+    "Wiz.Update.IP.Restrictions": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Rotate.Service.Account.Secret": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078.004"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Update.Support.Contact.List": {
+      "tactics": [
+        "TA0035"
+      ],
+      "techniques": [
+        "T1636.003"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Rule.Change": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.CICD.Scan.Policy.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Revoke.User.Sessions": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Update.Login.Settings": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Update.Scanner.Settings": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Image.Integrity.Validator.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Connector.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.SAML.Identity.Provider.Change": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1484.002"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Data.Classifier.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.User.Created.Or.Deleted": {
+      "tactics": [
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1136.003",
+        "T1070.009"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.User.Role.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Integration.Updated.Or.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "Wiz.Service.Account.Change": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078.004"
+      ],
+      "source_path": "wiz_rules"
+    },
+    "AWS.BedrockModelInvocation.AbnormalTokenUsage": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1496.004"
+      ],
+      "source_path": "aws_bedrockmodelinvocation_rules"
+    },
+    "AWS.BedrockModelInvocation.GuardRailIntervened": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T0018.000"
+      ],
+      "source_path": "aws_bedrockmodelinvocation_rules"
+    },
+    "Snowflake.Stream.FileDownloaded": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1041"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.PublicRoleGrant": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078.001"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.BruteForceByUsername": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.LoginWithoutMFA": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.UserCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.TableCopiedIntoStage": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1041"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.AccountAdminGranted": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.TempStageCreated": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1041"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.ExternalShares": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.UserEnabled": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "Snowflake.Stream.BruteForceByIp": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "snowflake_rules"
+    },
+    "AWS.RDS.MasterPasswordUpdated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.AMIModifiedForPublicAccess": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.RDS.ManualSnapshotCreated": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.UnusedRegion": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1535"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.RouteTableModified": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1048"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.Vulnerable.XZ.Image.Launched": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195.001"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SecretsManager.BatchRetrieveSecrets": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SecretsManager.RetrieveSecretsMultiRegion": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.S3.BucketPolicyModified": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.GatewayModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.Account.Discovery": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1087"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Macie.Evasion": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.AttachAdminRolePolicy": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.IAMCompromisedKeyQuarantine": {
+      "tactics": [
+        "TA0001",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552.001",
+        "T1078.004"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.BackdoorRole": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.CodebuildProjectMadePublic": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1567"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Potential.Backdoor.Lambda": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Lambda.UpdateFunctionConfiguration": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.ConfigService.DisabledDeleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.Created": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1538"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Console.RootLoginFailed": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.MultiInstanceConnect": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1021.005"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.IAMAssumeRoleBlacklistIgnored": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.KMS.CustomerManagedKeyLoss": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1485"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.Password.Policy.Discovery": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1201"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Console.LoginWithoutMFA": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.Stopped": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.IAMEntityCreatedWithoutCloudFormation": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.ManyPasswordReadAttempts": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1555"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.EventSelectorsDisabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.SecurityConfigurationChange": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Console.RootLogin": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.AttachAdminUserPolicy": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.PolicyModified": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.DNSLogsDeleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.Backdoor.User.Keys": {
+      "tactics": [
+        "TA0008",
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1550",
+        "T1098",
+        "T1108"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.LoginProfileCreatedOrModified": {
+      "tactics": [
+        "TA0008",
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1550",
+        "T1098",
+        "T1108"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IPSet.Modified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.ShortLifecycle": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.VPCE.AccessDenied": {
+      "tactics": [
+        "TA0007",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1599",
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SecretsManager.RetrieveSecrets": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.RDS.PublicRestore": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1020"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.Startup.Script.Change": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1059"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Bedrock.DeleteModelInvocationLoggingConfiguration": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.003"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SSM.DecryptSSMParams": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1555"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.EnableRegion": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1535"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.WAF.Disassociation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1498"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.EBS.Encryption.Disabled": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1565",
+        "T1486"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.RootPasswordChanged": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.CreateRole": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.CreateUser": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.ConfigService.Created": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Lambda.UpdateFunctionCode": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.NetworkACLModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.DownloadInstanceUserData": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1580"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.VPCFlow.LogsDeleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.AccessKeyCompromised": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.NetworkACLPermissiveEntry": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.ECR.CRUD": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1525"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Software.Discovery": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1518"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.ManualSecurityGroupChange": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SecretsManager.BatchRetrieveSecretsCatchAll": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Unsuccessful.MFA.attempt": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1621"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Console.LoginWithoutSAML": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAMUser.ReconAccessDenied": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.SnapshotMadePublic": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.RootAccessKeyCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.Monitoring": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1204"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SecurityHub.Finding.Evasion": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.SecurityGroupModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.VPCModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Bedrock.GuardrailUpdateDelete": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.AttemptToLeaveOrg": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1666",
+        "T1562.008"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.VPCE.SensitiveAPICalls": {
+      "tactics": [
+        "TA0007",
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562",
+        "T1599",
+        "T1098",
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.S3.BucketDeleted": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1485"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.ECR.EVENTS": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1535"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.User.Login.Profile.Modified": {
+      "tactics": [
+        "TA0008",
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1550",
+        "T1098",
+        "T1108"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.RDS.SnapshotShared": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Modify.Cloud.Compute.Infrastructure": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1578"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.UnauthorizedAPICall": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.VPCE.ExternalPrincipal": {
+      "tactics": [
+        "TA0010",
+        "TA0007",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1599",
+        "T1048",
+        "T1526"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.IAM.CredentialsUpdated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.Root.Activity": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.EC2.LaunchUnusualEC2Instances": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1610"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.SSM.DistributedCommand": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1203"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.CloudTrail.ResourceMadePublic": {
+      "tactics": [
+        "TA0010"
+      ],
+      "techniques": [
+        "T1537"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "AWS.LAMBDA.CRUD": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1525"
+      ],
+      "source_path": "aws_cloudtrail_rules"
+    },
+    "Crowdstrike.DNS.Request": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1566"
+      ],
+      "source_path": "crowdstrike_rules"
+    },
+    "Crowdstrike.UserDeleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1070"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.API.Key.Created": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1098.001"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.AllowlistRemoved": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.AdminRoleAssigned": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098.003"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.SingleIpAllowlisted": {
+      "tactics": [
+        "TA0003",
+        "TA0006",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.NewUserCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136.003"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.API.Key.Deleted": {
+      "tactics": [
+        "TA0040",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1531",
+        "T1070"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.UserPasswordChange": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098.001"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Crowdstrike.IpAllowlistChanged": {
+      "tactics": [
+        "TA0003",
+        "TA0006",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    "Azure.Audit.MFADisabled": {
+      "tactics": [
+        "TA0001",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556",
+        "T1078"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "Azure.Audit.RoleChangedPIM": {
+      "tactics": [
+        "TA0042"
+      ],
+      "techniques": [
+        "T1586"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "Azure.Audit.RiskLevelPassthrough": {
+      "tactics": [
+        "TA0001",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1078",
+        "T1110"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "Azure.Audit.ManyFailedSignIns": {
+      "tactics": [
+        "TA0001",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1078",
+        "T1110"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "Azure.Audit.PolicyChanged": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1526"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "Azure.Audit.InviteExternalUsers": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "azure_signin_rules"
+    },
+    "AWS.S3.ServerAccess.Unauthenticated": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "aws_s3_rules"
+    },
+    "AWS.S3.ServerAccess.Error": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1619"
+      ],
+      "source_path": "aws_s3_rules"
+    },
+    "AWS.S3.ServerAccess.IPWhitelist": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "aws_s3_rules"
+    },
+    "AWS.S3.ServerAccess.UnknownRequester": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "aws_s3_rules"
+    },
+    "AWS.S3.ServerAccess.Insecure": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "source_path": "aws_s3_rules"
+    },
+    "AppOmni.Alert.Passthrough": {
+      "tactics": [
+        "TA0004",
+        "TA0006",
+        "TA0040",
+        "TA0009",
+        "TA0007",
+        "TA0003",
+        "TA0005",
+        "TA0002",
+        "TA0042",
+        "TA0010",
+        "TA0008",
+        "TA0001"
+      ],
+      "techniques": [
+        "T1562",
+        "T1114",
+        "T1566",
+        "T1608",
+        "T1567",
+        "T1531",
+        "T1537",
+        "T1556",
+        "T1518",
+        "T1528",
+        "T1539",
+        "T1078",
+        "T1564",
+        "T1550",
+        "T1110",
+        "T1213",
+        "T1204",
+        "T1136",
+        "T1090",
+        "T1548",
+        "T1190",
+        "T1552",
+        "T1485",
+        "T1111",
+        "T1098",
+        "T1199",
+        "T1484",
+        "T1530",
+        "T1565",
+        "T1087",
+        "T1486"
+      ],
+      "source_path": "appomni_rules"
+    },
+    "AWS.VPC.InboundPortWhitelist": {
+      "tactics": [
+        "TA0011"
+      ],
+      "techniques": [
+        "T1571"
+      ],
+      "source_path": "aws_vpc_flow_rules"
+    },
+    "AWS.VPC.UnapprovedOutboundDNS": {
+      "tactics": [
+        "TA0011"
+      ],
+      "techniques": [
+        "T1071"
+      ],
+      "source_path": "aws_vpc_flow_rules"
+    },
+    "AWS.VPC.InboundPortBlacklist": {
+      "tactics": [
+        "TA0011"
+      ],
+      "techniques": [
+        "T1571"
+      ],
+      "source_path": "aws_vpc_flow_rules"
+    },
+    "AWS.VPC.SSHAllowedSignal": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1021.004"
+      ],
+      "source_path": "aws_vpc_flow_rules"
+    },
+    "AWS.DNS.Crypto.Domain": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1496"
+      ],
+      "source_path": "aws_vpc_flow_rules"
+    },
+    "CarbonBlack.Audit.Data.Forwarder.Stopped": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "carbonblack_rules"
+    },
+    "CarbonBlack.Audit.API.Key.Created.Retrieved": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "carbonblack_rules"
+    },
+    "CarbonBlack.Audit.Admin.Grant": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "carbonblack_rules"
+    },
+    "CarbonBlack.Audit.Flagged": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1110"
+      ],
+      "source_path": "carbonblack_rules"
+    },
+    "CarbonBlack.Audit.User.Added.Outside.Org": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "carbonblack_rules"
+    },
+    "Slack.AuditLogs.LegalHoldPolicyModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.AppAccessExpanded": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.InformationBarrierModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.PassthroughAnomaly": {
+      "tactics": [
+        "TA0011"
+      ],
+      "techniques": [
+        "T1071"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.UserPrivilegeEscalation": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098.003"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.PrivateChannelMadePublic": {
+      "tactics": [
+        "TA0010",
+        "TA0003",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1098",
+        "T1222",
+        "T1567"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.OrgDeleted": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.MFASettingsChanged": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556.006"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.ServiceOwnerTransferred": {
+      "tactics": [
+        "TA0003",
+        "TA0040",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1531",
+        "T1098",
+        "T1222"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.PotentiallyMaliciousFileShared": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1566.001"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.EKMConfigChanged": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.EKMSlackbotUnenrolled": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1489"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.IntuneMDMDisabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.EKMUnenrolled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1600"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.SSOSettingsChanged": {
+      "tactics": [
+        "TA0003",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.IDPConfigurationChanged": {
+      "tactics": [
+        "TA0003",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.OrgCreated": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.AppRemoved": {
+      "tactics": [
+        "TA0040",
+        "TA0005"
+      ],
+      "techniques": [
+        "T1489",
+        "T1070.009"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.AppAdded": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1505"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.DLPModified": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.001",
+        "T1070"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.ApplicationDoS": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1499.003"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Slack.AuditLogs.UserPrivilegeChangedToUser": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "slack_rules"
+    },
+    "Osquery.SSHListener": {
+      "tactics": [
+        "TA0008"
+      ],
+      "techniques": [
+        "T1021"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Mac.AutoUpdateEnabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.SuspiciousCron": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1053"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Linux.LoginFromNonOffice": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Mac.ApplicationFirewallSettings": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Linux.Mac.VulnerableXZliblzma": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1195.001"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Mac.UnwantedChromeExtensions": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1176"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Mac.OSXAttacksKeyboardEvents": {
+      "tactics": [
+        "TA0009"
+      ],
+      "techniques": [
+        "T1056"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Mac.OSXAttacks": {
+      "tactics": [
+        "TA0042"
+      ],
+      "techniques": [
+        "T1588"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.OSSECRootkitDetected": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1014"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "Osquery.Linux.AWSCommandExecuted": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1204"
+      ],
+      "source_path": "osquery_rules"
+    },
+    "GitLab.Production.Password.Reset.Multiple.Emails": {
+      "tactics": [
+        "TA0001",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1190",
+        "T1098",
+        "T1195"
+      ],
+      "source_path": "gitlab_rules"
+    },
+    "GitLab.Audit.Password.Reset.Multiple.Emails": {
+      "tactics": [
+        "TA0001",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1190",
+        "T1098",
+        "T1195"
+      ],
+      "source_path": "gitlab_rules"
+    },
+    "GCP.K8s.New.Daemonset.Deployed": {
+      "tactics": [
+        "TA0002"
+      ],
+      "techniques": [
+        "T1610"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount": {
+      "tactics": [
+        "TA0010",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1611",
+        "T1041"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8S.Privileged.Pod.Created": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1548"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8s.Pod.Attached.To.Node.Host.Network": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1611"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1053.003"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8s.Pod.Using.Host.PID.Namespace": {
+      "tactics": [
+        "TA0002",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1611",
+        "T1610"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8S.Service.Type.NodePort.Deployed": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1190"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "GCP.K8s.IOC.Activity": {
+      "tactics": [
+        "TA0011"
+      ],
+      "techniques": [
+        "T1573.002"
+      ],
+      "source_path": "gcp_k8s_rules"
+    },
+    "Okta.Global.MFA.Disabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.PotentiallyStolenSession": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1539"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Password.Extraction.via.SCIM": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Support.Reset": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1199"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Anonymizing.VPN.Login": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.AdminRoleAssigned": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1078"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.APIKeyCreated": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1528"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.New.Behavior.Accessing.Admin.Console": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1078.004"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Support.Access": {
+      "tactics": [
+        "TA0001"
+      ],
+      "techniques": [
+        "T1199"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Rate.Limits": {
+      "tactics": [
+        "TA0006",
+        "TA0040"
+      ],
+      "techniques": [
+        "T1498",
+        "T1110"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Org2org.Creation.Modification": {
+      "tactics": [
+        "TA0004",
+        "TA0006"
+      ],
+      "techniques": [
+        "T1556",
+        "T1078.004"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.PasswordAccess": {
+      "tactics": [
+        "TA0006"
+      ],
+      "techniques": [
+        "T1552"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Phishing.Attempt.Blocked.FastPass": {
+      "tactics": [
+        "TA0001",
+        "TA0006",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556",
+        "T1078.004",
+        "T1566"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Identity.Provider.Created.Modified": {
+      "tactics": [
+        "TA0001",
+        "TA0006",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1556",
+        "T1098",
+        "T1199"
+      ],
+      "source_path": "okta_rules"
+    },
+    "Okta.Identity.Provider.SignIn": {
+      "tactics": [
+        "TA0001",
+        "TA0003"
+      ],
+      "techniques": [
+        "T1098",
+        "T1199"
+      ],
+      "source_path": "okta_rules"
+    },
+    "ZIA.Account.Access.Removed": {
+      "tactics": [
+        "TA0040"
+      ],
+      "techniques": [
+        "T1531"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Insecure.Password.Settings": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1556.009"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Backup.Deleted": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Logs.Downloaded": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1654"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Log.Streaming.Disabled": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Golden.Restore.Point.Dropped": {
+      "tactics": [
+        "TA0005"
+      ],
+      "techniques": [
+        "T1562.008"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Cloud.Account.Created": {
+      "tactics": [
+        "TA0003"
+      ],
+      "techniques": [
+        "T1136.003"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Additional.Cloud.Roles": {
+      "tactics": [
+        "TA0003",
+        "TA0004"
+      ],
+      "techniques": [
+        "T1098.003"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Password.Expiration": {
+      "tactics": [
+        "TA0007"
+      ],
+      "techniques": [
+        "T1201"
+      ],
+      "source_path": "zscaler_rules/zia"
+    },
+    "ZIA.Trust.Modification": {
+      "tactics": [
+        "TA0004"
+      ],
+      "techniques": [
+        "T1484.002"
+      ],
+      "source_path": "zscaler_rules/zia"
+    }
+  },
+  "uncovered_rules": [
+    {
+      "rule_id": "Standard.DNSBase64",
+      "source_path": "standard_rules"
+    },
+    {
+      "rule_id": "Zendesk.UserRoleChanged",
+      "source_path": "zendesk_rules"
+    },
+    {
+      "rule_id": "Push.Security.New.App.Detected",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.Open.Security.Finding",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.Phishing.Attack",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.MFA.Method.Changed",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.Unauthorized.IdP.Login",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.Authorized.IdP.Login",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.App.Banner.Acknowledged",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.Phishable.MFA.Method",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Push.Security.New.SaaS.Account.Created",
+      "source_path": "push_security_rules"
+    },
+    {
+      "rule_id": "Auth0.MFA.Risk.Assessment.Disabled",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.Post.Login.Action.Flow",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.MFA.Policy.Enabled",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.MFA.Factor.Setting.Enabled",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.User.Joined.Tenant",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.CIC.Credential.Stuffing",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.MFA.Risk.Assessment.Enabled",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.Integration.Installed",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.User.Invitation.Created",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.Custom.Role.Created",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "Auth0.MFA.Policy.Disabled",
+      "source_path": "auth0_rules"
+    },
+    {
+      "rule_id": "MongoDB.User.Roles.Changed",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.Atlas.ApiKeyCreated",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.External.UserInvited.NoConfig",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.Identity.Provider.Activity",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.Logging.Toggled",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.2FA.Disabled",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.User.Created.Or.Deleted",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "MongoDB.External.UserInvited",
+      "source_path": "mongodb_rules"
+    },
+    {
+      "rule_id": "GitHub.Org.Moderators.Add",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Github.Repo.VulnerabilityDismissed",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Github.Public.Repository.Created",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "GitHub.Action.Failed",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Github.Organization.App.Integration.Installed",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Github.Repo.Created",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "GitHub.Repo.InitialAccess",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Github.Repository.Transfer",
+      "source_path": "github_rules"
+    },
+    {
+      "rule_id": "Teleport.LockCreated",
+      "source_path": "gravitational_teleport_rules"
+    },
+    {
+      "rule_id": "Tracebit.Alert",
+      "source_path": "tracebit_rules"
+    },
+    {
+      "rule_id": "GCP.Access.Attempts.Violating.IAP.Access.Controls",
+      "source_path": "gcp_http_lb_rules"
+    },
+    {
+      "rule_id": "OneLogin.HighRiskFailedLogin",
+      "source_path": "onelogin_rules"
+    },
+    {
+      "rule_id": "OneLogin.Login",
+      "source_path": "onelogin_rules"
+    },
+    {
+      "rule_id": "OneLogin.PasswordChanged",
+      "source_path": "onelogin_rules"
+    },
+    {
+      "rule_id": "Box.Content.Workflow.Policy.Violation",
+      "source_path": "box_rules"
+    },
+    {
+      "rule_id": "Box.Access.Granted",
+      "source_path": "box_rules"
+    },
+    {
+      "rule_id": "Zoom.User.Promoted.to.Privileged.Role",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.Sign.In.Requirements.Changed",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.Sign.In.Method.Modified",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.Two.Factor.Authentication.Disabled",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.All.Meetings.Secured.With.One.Option.Disabled",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.New.Meeting.Passcode.Required.Disabled",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "Zoom.Automatic.Sign.Out.Disabled",
+      "source_path": "zoom_operation_rules"
+    },
+    {
+      "rule_id": "SentinelOne.Alert.Passthrough",
+      "source_path": "sentinelone_rules"
+    },
+    {
+      "rule_id": "SentinelOne.Threats",
+      "source_path": "sentinelone_rules"
+    },
+    {
+      "rule_id": "Sublime.Message.Flagged",
+      "source_path": "sublime_rules"
+    },
+    {
+      "rule_id": "Decoy.DynamoDB.Accessed",
+      "source_path": "aws_securityfinding_rules"
+    },
+    {
+      "rule_id": "Decoy.S3.Accessed",
+      "source_path": "aws_securityfinding_rules"
+    },
+    {
+      "rule_id": "Decoy.Secret.Accessed",
+      "source_path": "aws_securityfinding_rules"
+    },
+    {
+      "rule_id": "Decoy.Systems.Manager.Parameter.Accessed",
+      "source_path": "aws_securityfinding_rules"
+    },
+    {
+      "rule_id": "Decoy.IAM.Assumed",
+      "source_path": "aws_securityfinding_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.Create.Admin",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.Bypass.Code.Viewed",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.Bypass.Code.Created",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "DUO.User.Action.Fraudulent",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "DUO.User.Denied.AnomalousPush",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.User.MFA.Bypass.Enabled",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.Lockout",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.Policy.Updated",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "DUO.Admin.Action.MarkedFraudulent",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.SSO.SAML.Requirement.Disabled",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.New.Admin.API.App.Integration",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.App.Integration.Secret.Key.Viewed",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "DUO.User.BypassCode.Used",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Duo.Admin.MFA.Restrictions.Updated",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "DUO.User.Endpoint.Failure",
+      "source_path": "duo_rules"
+    },
+    {
+      "rule_id": "Microsoft.Graph.Passthrough",
+      "source_path": "microsoft_rules"
+    },
+    {
+      "rule_id": "GCP.Project.ExternalUserOwnershipInvite",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.DNS.Zone.Modified.or.Deleted",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Permissions.Granted.to.Create.or.Manage.Service.Account.Key",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Cloud.Run.Set.IAM.Policy",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Cloud.Storage.Buckets.Modified.Or.Deleted",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Compute.Snapshot.UnexpectedDomain",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Compute.IAM.Policy.Update",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Tag.Binding.Creation",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.IAM.Tag.Enumeration",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Privileged.Operation",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Access.Attempts.Violating.VPC.Service.Controls",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.BigQuery.Large.Scan",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Cloud.Run.Service.Created",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Firewall.Rule.Created",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.User.Added.to.IAP.Protected.Service",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Logging.Sink.Modified",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Destructive.Queries",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.iam.roles.update.Privilege.Escalation",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.SQL.ConfigChanges",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Service.Account.Access.Denied",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Compute.SSHConnection",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Service.Account.or.Keys.Created",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.VPC.Flow.Logs.Disabled",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Logging.Settings.Modified",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Firewall.Rule.Deleted",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Firewall.Rule.Modified",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "GCP.Log.Bucket.Or.Sink.Deleted",
+      "source_path": "gcp_audit_rules"
+    },
+    {
+      "rule_id": "Notion.LoginFromBlockedIP",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.LoginFromNewLocation",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.AccountChange",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.SAML.SSO.Configuration.Changed",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Workspace.Public.Page.Added",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.PagePerms.APIPermsChanged",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Workspace.SCIM.Token.Generated",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.SharingSettingsUpdated",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.TeamspaceOwnerAdded",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.PagePerms.GuestPermsChanged",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Workspace.Exported",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Many.Pages.Exported",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Login",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.PageSharedToWeb",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Audit.Log.Exported",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Notion.Many.Pages.Deleted",
+      "source_path": "notion_rules"
+    },
+    {
+      "rule_id": "Tailscale.Machine.Approval.Requirements.Disabled",
+      "source_path": "tailscale_rules"
+    },
+    {
+      "rule_id": "Tailscale.Magic.DNS.Disabled",
+      "source_path": "tailscale_rules"
+    },
+    {
+      "rule_id": "Tailscale.HTTPS.Disabled",
+      "source_path": "tailscale_rules"
+    },
+    {
+      "rule_id": "Cloudflare.Firewall.L7DDoS",
+      "source_path": "cloudflare_rules"
+    },
+    {
+      "rule_id": "Cloudflare.HttpRequest.BotHighVolume",
+      "source_path": "cloudflare_rules"
+    },
+    {
+      "rule_id": "Dropbox.External.Share",
+      "source_path": "dropbox_rules"
+    },
+    {
+      "rule_id": "Dropbox.Admin.sign.in.as.Session",
+      "source_path": "dropbox_rules"
+    },
+    {
+      "rule_id": "Dropbox.User.Disabled.2FA",
+      "source_path": "dropbox_rules"
+    },
+    {
+      "rule_id": "Dropbox.Linked.Team.Application.Added",
+      "source_path": "dropbox_rules"
+    },
+    {
+      "rule_id": "Dropbox.Ownership.Transfer",
+      "source_path": "dropbox_rules"
+    },
+    {
+      "rule_id": "GSuite.SuspiciousLogins",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Google.Workspace.Apps.New.Mobile.App.Installed",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.GovernmentBackedAttack",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Google.Workspace.Admin.Custom.Role",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.GoogleAccess",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.Rule",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.GroupBannedUser",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Google.Workspace.Apps.Marketplace.Allowlist",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.DeviceSuspiciousActivity",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Google.Workspace.Advanced.Protection.Program",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.UserSuspended",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.Workspace.DataExportCreated",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.IsSuspiciousTag",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "GSuite.DeviceCompromise",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Google.Workspace.Apps.Marketplace.New.Domain.Application",
+      "source_path": "gsuite_activityevent_rules"
+    },
+    {
+      "rule_id": "Wiz.Alert.Passthrough",
+      "source_path": "wiz_rules"
+    },
+    {
+      "rule_id": "Salesforce.Admin.Login.As.User",
+      "source_path": "salesforce_rules"
+    },
+    {
+      "rule_id": "AWS.GuardDuty.CriticalSeverityFinding",
+      "source_path": "aws_guardduty_rules"
+    },
+    {
+      "rule_id": "AWS.GuardDuty.MediumSeverityFinding",
+      "source_path": "aws_guardduty_rules"
+    },
+    {
+      "rule_id": "AWS.GuardDuty.HighSeverityFinding",
+      "source_path": "aws_guardduty_rules"
+    },
+    {
+      "rule_id": "AWS.GuardDuty.LowSeverityFinding",
+      "source_path": "aws_guardduty_rules"
+    },
+    {
+      "rule_id": "Snowflake.Stream.LoginSuccess",
+      "source_path": "snowflake_rules"
+    },
+    {
+      "rule_id": "AWS.Console.Login",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.SES.CheckIdentityVerifications",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "Role.Assumed.by.User",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.IAM.Group.Read.Only.Events",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "Retrieve.SSO.access.token",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.S3.DeleteObjects",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.SES.CheckSESSendingEnabled",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.S3.DeleteObject",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.IAMAnythingChanged",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.EC2.Traffic.Mirroring",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.Suspicious.SAML.Activity",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "Sign-in.with.AWS.CLI.prompt",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.UserAccessKeyAuth",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.SES.CheckSendQuota",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "Role.Assumed.by.AWS.Service",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.EC2.StopInstances",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.S3.CopyObjectWithClientSideEncryption",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.Console.Sign-In",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.SES.ListIdentities",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "AWS.CloudTrail.VPCE.S3ExternalIP",
+      "source_path": "aws_cloudtrail_rules"
+    },
+    {
+      "rule_id": "Orca.Passthrough",
+      "source_path": "orca_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Macos.Osascript.Administrator",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.RealTimeResponse.Session",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Macos.Plutil.Usage",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Macos.Add.Trusted.Cert",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Connection.to.Embargoed.Country",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Detection.passthrough",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Unusual.Parent.Child.Processes",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Remote.Access.Tool.Execution",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Reverse.Shell.Tool.Executed",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Credential.Dumping.Tool",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Cryptomining.Tools",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.FDR.LOLBAS",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Systemlog.Tampering",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.WMI.Query.Detection",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.Base64EncodedArgs",
+      "source_path": "crowdstrike_rules"
+    },
+    {
+      "rule_id": "Crowdstrike.EppDetectionSummary",
+      "source_path": "crowdstrike_rules/event_stream_rules"
+    },
+    {
+      "rule_id": "Azure.Audit.LegacyAuth",
+      "source_path": "azure_signin_rules"
+    },
+    {
+      "rule_id": "AWS.VPC.HealthyLogStatus",
+      "source_path": "aws_vpc_flow_rules"
+    },
+    {
+      "rule_id": "CiscoUmbrella.DNS.Suspicious",
+      "source_path": "cisco_umbrella_dns_rules"
+    },
+    {
+      "rule_id": "CiscoUmbrella.DNS.FuzzyMatching",
+      "source_path": "cisco_umbrella_dns_rules"
+    },
+    {
+      "rule_id": "CiscoUmbrella.DNS.Blocked",
+      "source_path": "cisco_umbrella_dns_rules"
+    },
+    {
+      "rule_id": "CarbonBlack.AlertV2.Passthrough",
+      "source_path": "carbonblack_rules"
+    },
+    {
+      "rule_id": "Atlassian.User.LoggedInAsUser",
+      "source_path": "atlassian_rules"
+    },
+    {
+      "rule_id": "Osquery.UnsupportedMacOS",
+      "source_path": "osquery_rules"
+    },
+    {
+      "rule_id": "Osquery.OutdatedAgent",
+      "source_path": "osquery_rules"
+    },
+    {
+      "rule_id": "GCP.K8s.ExecIntoPod",
+      "source_path": "gcp_k8s_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Require.App.Approvals.Disabled",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Team.Privacy.Public",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.New.Admin",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Service.Account.Created",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Form.Link.Auth.Requirement.Disabled",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Password.Requirements.Simple",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.SAML.Optional",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Default.Session.Duration.Never",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Guest.Invite.Permissions.Anyone",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Email.Domain.Added",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Asana.Workspace.Org.Export",
+      "source_path": "asana_rules"
+    },
+    {
+      "rule_id": "Okta.Refresh.Access.Token.Reuse",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.APIKeyRevoked",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.User.MFA.Reset.All",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.User.Account.Locked",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.User.MFA.Factor.Suspend",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.App.Unauthorized.Access.Attempt",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.User.Reported.Suspicious.Activity",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.User.MFA.Reset.Single",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.Group.Admin.Role.Assigned",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.SSO.to.AWS",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.ThreatInsight.Security.Threat.Detected",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.Login.Success",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Okta.Login.Without.Push.Marker",
+      "source_path": "okta_rules"
+    },
+    {
+      "rule_id": "Thinkst.CanaryIncident",
+      "source_path": "thinkstcanary_rules"
+    },
+    {
+      "rule_id": "Thinkst.CanaryTokenIncident",
+      "source_path": "thinkstcanary_rules"
+    },
+    {
+      "rule_id": "Thinkst.CanaryDCRC",
+      "source_path": "thinkstcanary_rules"
+    },
+    {
+      "rule_id": "Tines.Team.Destruction",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Story.Items.Destruction",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Actions.DisabledChanges",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Enqueued.Retrying.Job.Destruction",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.SSO.Settings",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Story.Jobs.Clearance",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Custom.CertificateAuthority",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Global.Resource.Destruction",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Tines.Tenant.AuthToken",
+      "source_path": "tines_rules"
+    },
+    {
+      "rule_id": "Snyk.ServiceAccount.Change",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.Role.Change",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.Project.Settings",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.Org.Settings",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.OU.Change",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.System.PolicySetting",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.System.SSO",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.User.Management",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.Misc.Settings",
+      "source_path": "snyk_rules"
+    },
+    {
+      "rule_id": "Snyk.System.ExternalAccess",
+      "source_path": "snyk_rules"
+    }
+  ]
+}

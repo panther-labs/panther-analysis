@@ -52,7 +52,7 @@ for region in "${US_REGIONS[@]}"; do
     # Secret 1: Log forwarding API credentials
     LOG_FORWARDING_SECRET='{
         "api_endpoint": "https://logs.panther.ai/api/v1/ingest",
-        "api_key": "sk-1234567890abcdef1234567890abcdef12345678",
+        "api_key": "1234567890-abcdef-1234567890abcdef-12345678",
         "organization_id": "org_1234567890abcdef",
         "source_type": "aws_cloudtrail",
         "batch_size": 1000,
