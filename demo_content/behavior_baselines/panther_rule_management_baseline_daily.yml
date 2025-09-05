@@ -1,0 +1,169 @@
+AnalysisType: scheduled_query
+QueryName: "Panther Detection Rule Management Baseline Daily"
+Enabled: true
+Description: >
+  Daily aggregation of Panther detection rule management activities into structured behavioral baselines.
+  Tracks normal patterns of rule modifications, bulk operations, and administrative activities to enable
+  detection of defense evasion attacks where attackers disable security controls. Provides risk scoring
+  and behavioral indicators for anomaly detection systems.
+Tags:
+  - AI-Optimized
+  - Rule-Management
+  - Behavior-Baselines
+  - Defense-Evasion-Detection
+  - SIEM-Integrity
+  - Structured-Data
+Query: |
+  WITH rule_management_events AS (
+    SELECT 
+      DATE_TRUNC('day', p_event_time) as time_window,
+      p_event_time,
+      actionName,
+      actionResult,
+      actor:id as actor_id,
+      actor:name as actor_name,
+      COALESCE(actor:attributes:email, 'unknown') as actor_email,
+      COALESCE(actor:attributes:roleName, 'unknown') as actor_role,
+      sourceIP,
+      userAgent,
+      -- Panther indicator fields for enhanced threat hunting
+      p_any_ip_addresses,
+      p_any_usernames,
+      p_any_emails,
+      -- Extract detection information from action parameters
+      actionParams:dynamic:input:detections as detections_modified,
+      COALESCE(ARRAY_SIZE(actionParams:dynamic:input:detections), 1) as detection_count,
+      -- Categorize rule operations
+      CASE 
+        WHEN actionName = 'UPDATE_DETECTION_STATE' THEN 'rule_state_change'
+        WHEN actionName = 'CREATE_DETECTION' THEN 'rule_creation'
+        WHEN actionName = 'DELETE_DETECTION' THEN 'rule_deletion'
+        WHEN actionName = 'UPDATE_DETECTION' THEN 'rule_modification'
+        ELSE 'other_rule_action'
+      END as operation_type,
+      -- Risk scoring per event
+      CASE 
+        WHEN actionResult = 'FAILED' THEN 1.0
+        WHEN actionName = 'DELETE_DETECTION' THEN 8.0
+        WHEN actionName = 'UPDATE_DETECTION_STATE' AND COALESCE(ARRAY_SIZE(actionParams:dynamic:input:detections), 0) >= 5 THEN 9.0
+        WHEN actionName = 'UPDATE_DETECTION_STATE' AND COALESCE(ARRAY_SIZE(actionParams:dynamic:input:detections), 0) >= 2 THEN 6.0
+        WHEN actionName = 'UPDATE_DETECTION_STATE' THEN 3.0
+        WHEN actionName = 'CREATE_DETECTION' THEN 1.0
+        WHEN actionName = 'UPDATE_DETECTION' THEN 2.0
+        ELSE 0.0
+      END as event_risk_score
+    FROM panther_logs.public.panther_audit
+    WHERE p_occurs_since('1d')
+      AND actionName IN ('UPDATE_DETECTION_STATE', 'CREATE_DETECTION', 'DELETE_DETECTION', 'UPDATE_DETECTION')
+      AND actionResult = 'SUCCEEDED'
+  ),
+  flattened_indicators AS (
+    SELECT 
+      time_window,
+      p_event_time,
+      actionName,
+      actionResult,
+      actor_id,
+      actor_name,
+      actor_email,
+      actor_role,
+      sourceIP,
+      userAgent,
+      detections_modified,
+      detection_count,
+      operation_type,
+      event_risk_score,
+      f_ip.value::string as ip_indicator,
+      f_user.value::string as username_indicator,
+      f_email.value::string as email_indicator
+    FROM rule_management_events,
+    LATERAL FLATTEN(input => p_any_ip_addresses, outer => true) f_ip,
+    LATERAL FLATTEN(input => p_any_usernames, outer => true) f_user,
+    LATERAL FLATTEN(input => p_any_emails, outer => true) f_email
+  ),
+  actor_rule_analysis AS (
+    SELECT 
+      time_window,
+      actor_id,
+      actor_name,
+      actor_email,
+      actor_role,
+      -- Activity Metrics
+      COUNT(*) as total_rule_operations,
+      COUNT(CASE WHEN operation_type = 'rule_state_change' THEN 1 END) as rule_state_changes,
+      COUNT(CASE WHEN operation_type = 'rule_creation' THEN 1 END) as rules_created,
+      COUNT(CASE WHEN operation_type = 'rule_deletion' THEN 1 END) as rules_deleted,
+      COUNT(CASE WHEN operation_type = 'rule_modification' THEN 1 END) as rules_modified,
+      SUM(detection_count) as total_detections_affected,
+      -- Bulk Operation Analysis
+      COUNT(CASE WHEN detection_count >= 5 THEN 1 END) as bulk_operations,
+      MAX(detection_count) as max_rules_per_operation,
+      AVG(detection_count) as avg_rules_per_operation,
+      -- Geographic and Network Analysis
+      COUNT(DISTINCT sourceIP) as unique_source_ips,
+      ARRAY_AGG(DISTINCT sourceIP) as source_ip_list,
+      COUNT(DISTINCT userAgent) as unique_user_agents,
+      -- Flattened indicator fields for enhanced threat hunting
+      ARRAY_AGG(DISTINCT ip_indicator) WITHIN GROUP (ORDER BY ip_indicator) as p_any_ip_addresses,
+      ARRAY_AGG(DISTINCT username_indicator) WITHIN GROUP (ORDER BY username_indicator) as p_any_usernames,
+      ARRAY_AGG(DISTINCT email_indicator) WITHIN GROUP (ORDER BY email_indicator) as p_any_emails,
+      -- Risk Assessment
+      MAX(event_risk_score) as max_event_risk,
+      AVG(event_risk_score) as avg_event_risk,
+      SUM(event_risk_score) as total_risk_score,
+      -- Timeline Analysis
+      MIN(p_event_time) as first_rule_operation,
+      MAX(p_event_time) as last_rule_operation,
+      COUNT(CASE WHEN EXTRACT(hour FROM p_event_time) BETWEEN 0 AND 6 THEN 1 END) as off_hours_operations
+    FROM flattened_indicators
+    GROUP BY time_window, actor_id, actor_name, actor_email, actor_role
+  )
+  SELECT 
+    time_window,
+    actor_id,
+    actor_name,
+    actor_email,
+    actor_role,
+    total_rule_operations,
+    rule_state_changes,
+    rules_created,
+    rules_deleted,
+    rules_modified,
+    total_detections_affected,
+    bulk_operations,
+    max_rules_per_operation,
+    ROUND(avg_rules_per_operation, 1) as avg_rules_per_operation,
+    unique_source_ips,
+    source_ip_list,
+    unique_user_agents,
+    -- Panther indicator fields for enhanced threat hunting
+    p_any_ip_addresses,
+    p_any_usernames,
+    p_any_emails,
+    ROUND(max_event_risk, 1) as max_event_risk,
+    ROUND(avg_event_risk, 1) as avg_event_risk,
+    ROUND(total_risk_score, 1) as total_risk_score,
+    first_rule_operation,
+    last_rule_operation,
+    off_hours_operations,
+    -- Defense Evasion Indicators
+    ARRAY_CONSTRUCT_COMPACT(
+      CASE WHEN rules_deleted > 0 THEN 'rule_deletion_activity' END,
+      CASE WHEN bulk_operations >= 2 THEN 'multiple_bulk_operations' END,
+      CASE WHEN off_hours_operations > 0 THEN 'off_hours_rule_management' END,
+      CASE WHEN unique_source_ips > 2 THEN 'multiple_source_locations' END,
+      CASE WHEN total_risk_score > 15.0 THEN 'high_cumulative_risk' END
+    ) as defense_evasion_indicators,
+    -- Activity Classification
+    CASE
+      WHEN rules_deleted > 0 AND rule_state_changes >= 5 THEN 'destructive_rule_management'
+      WHEN bulk_operations >= 2 THEN 'suspicious_bulk_activity'
+      WHEN total_rule_operations >= 10 THEN 'high_volume_rule_management'
+      ELSE 'normal_administrative_activity'
+    END as activity_classification
+  FROM actor_rule_analysis
+  WHERE total_risk_score > 3.0
+  ORDER BY total_risk_score DESC, rules_deleted DESC
+Schedule:
+  RateMinutes: 1440  # Daily execution
+  TimeoutMinutes: 10

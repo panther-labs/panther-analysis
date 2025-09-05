@@ -11,10 +11,7 @@ def rule(event):
         return False
     
     # Check if any detections were disabled in this action
-    action_params = event.get("actionParams", {})
-    dynamic_params = action_params.get("dynamic", {})
-    input_params = dynamic_params.get("input", {})
-    detections = input_params.get("detections", [])
+    detections = event.deep_get("actionParams", "dynamic", "input", "detections", default=[])
     
     # Count how many detections were disabled (enabled: false)
     disabled_count = sum(1 for detection in detections if not detection.get("enabled", True))
@@ -26,16 +23,13 @@ def rule(event):
 
 def title(event):
     """Generate dynamic alert title with count of disabled detections"""
-    actor_name = event.get("actor", {}).get("name", "Unknown User")    
+    actor_name = event.deep_get("actor", "name", default="Unknown User")    
     return f"{actor_name} disabled a group of detections"
 
 
 def alert_context(event):
     """Provide context about which detections were disabled"""
-    action_params = event.get("actionParams", {})
-    dynamic_params = action_params.get("dynamic", {})
-    input_params = dynamic_params.get("input", {})
-    detections = input_params.get("detections", [])
+    detections = event.deep_get("actionParams", "dynamic", "input", "detections", default=[])
     
     disabled_detections = [
         detection.get("id") for detection in detections 

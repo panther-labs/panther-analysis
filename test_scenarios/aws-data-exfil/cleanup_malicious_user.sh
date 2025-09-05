@@ -9,7 +9,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Set variables for the resources to clean up
-USER_NAME="log-forwarder-svc"
+USER_NAME="backup-service-account"
 S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 EC2_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 IAM_ADMIN_POLICY="arn:aws:iam::aws:policy/IAMFullAccess"

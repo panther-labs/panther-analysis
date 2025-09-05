@@ -1,87 +1,189 @@
 ---
-globs: rules/*/*.py,rules/demo_rules/*/*.py
+globs: rules/*/*.py,demo_content/*/*.py
 alwaysApply: false
 ---
-Create Panther security detection rules to identify suspicious behaviors or compliance violations.
+Write Panther streaming detection rules to create clear and actionable alerts that identify suspicious behaviors or compliance violations.
 
 # System Context
+
 1. Panther detections contain two files: a `.py` file for detection logic and a `.yml` file for metadata.
 2. Rules are stateless and only process one `event` at a time.
 3. Alert thresholds default to `1`. Set this value to the minimum acceptable number of repetetive actions (for example, 5 failed logins).
 4. Panther adds metadata fields (`p_field_name`) or indicator fields `p_any_ioc_field` to events after classification. For example: `p_log_type` contains the classified log type.
 
 # Development Workflow
+
 1. **Understand the threat** - What behavior are you detecting?
-2. **Research schema and data** - Read log type schemas to validate field names and structures, check data models for field mappings, and sample real log events for accurate testing
+2. **Research schema and data** - Use available schema tools to get the log type schemas for validating field names and structures. Check data_models/ for field mappings. Sample real log events for accurate testing using the query_data_lake tool.
 3. **Write logic + tests** - Basic conditions with positive/negative test cases using real log data
 4. **Optimize and configure** - Performance, severity, dedup, documentation
 
 # Rule Functions
 
 ## Required
+
 * `rule(event: dict) -> bool`: Detection logic - returns True if event matches criteria
 * `title(event: dict) -> str`: Alert title for grouping (**avoid making too unique**)
 
 ## Optional
+
 * `dedup(event: dict) -> str`: Custom deduplication key
 * `alert_context(event: dict) -> dict`: Key fields for alert context
 
 ## Dynamic (use with conditional logic)
+
 * `runbook(event: dict) -> str`: Triage steps for AI agent
 * `severity(event: dict) -> str`: Dynamic severity (INFO, LOW, MEDIUM, HIGH, CRITICAL)
 * `destinations(event: dict) -> List[str]`: Dynamic alert destinations
 
 ## Third-party libraries
-The following third-party Python libraries are available in the runtime environment:
+
+ONLY the following *third-party* Python libraries are available in the runtime environment. Do not attempt to import others not listed below:
+
 1. `jsonpath-ng`: JSONPath Implementation
 2. `policyuniverse`: Parse AWS ARNs and Policies
 3. `requests`: Easy HTTP Requests
+4. `boto3`: AWS API
 
 ## Helper functions
+
 The `global_helpers/` folder contains a set of convinience functions for analyzing specific logs that may be imported and used in rules.
 
+## Enrichments
+
+Panther automatically enriches events with additional context data via lookup tables. Enriched data is available under the `p_enrichment` key and provides valuable intelligence for detections.
+
+### Common Enrichment Types
+
+**IPInfo Location:** Geographic data for IP addresses
+
+- **Path:** `p_enrichment.ipinfo_location.{field_name}`
+- **Fields:** `city`, `country`, `region`, `timezone`, `lat`, `lng`, `postal_code`
+
+**Threat Intelligence:** Reputation data for IPs, domains, URLs
+
+- **Path:** `p_enrichment.{provider_name}.{field_name}`
+- **Common providers:** `greynoise`, `virustotal`, `urlscan`
+
+### Accessing Enrichment Data
+
+Use `event.deep_get()` to safely access enrichment data:
+
+```python
+# Get country from IP enrichment
+def rule(event):
+    location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress")
+    if not location_data:
+        return False  # No enrichment available
+    
+    country = location_data.get("country")
+    return country and country.upper() != "US"
+```
+
+### Enrichment Best Practices
+
+1. **Always check if enrichment exists** before using it
+2. **Use enrichment presence as a filter** - events without enrichment may be internal/private IPs
+3. **Combine multiple enrichment sources** for higher confidence detections
+4. **Cache enrichment lookups** in helper variables when used multiple times
+
+### Example: Geographic Anomaly Detection
+
+```python
+# rules/aws_cloudtrail_rules/console_login_foreign_country.py
+def rule(event):
+    # Basic event filtering
+    if event.get("eventName") != "ConsoleLogin":
+        return False
+    
+    if event.deep_get("responseElements", "ConsoleLogin") != "Success":
+        return False
+    
+    # Check for location enrichment
+    location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress")
+    if not location_data:
+        return False
+    
+    # Alert on non-US logins
+    country = location_data.get("country")
+    return country and country.upper() not in ["US", "CA"]  # US and Canada
+
+def title(event):
+    location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress", default={})
+    city = location_data.get("city", "Unknown")
+    country = location_data.get("country", "Unknown")
+    
+    return f"AWS Console login from {city}, {country}"
+
+def alert_context(event):
+    location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress", default={})
+    return {
+        "source_ip": event.get("sourceIPAddress"),
+        "user": event.deep_get("userIdentity", "userName"),
+        "location": {
+            "city": location_data.get("city"),
+            "country": location_data.get("country"),
+            "region": location_data.get("region"),
+            "timezone": location_data.get("timezone")
+        }
+    }
+```
+
 # Rule Metadata
+
 The YML file follows the rule schema definition. For complete field specifications and validation rules, refer to [rule.json](mdc:mcp:.vscode/schemas/rule.json)
 
 **SummaryAttributes:** To use a nested field as a summary attribute, use the Snowflake dot notation in the Summary Attribute field to traverse a path in a JSON object (e.g., `userIdentity.arn` for nested AWS CloudTrail fields).
 
 # Best Practices
-- Follow PEP8 Python coding style
-- Only assign variables when re-use is needed
-- Order conditions by selectivity: Put the most restrictive conditions first to leverage short-circuit evaluation
-- Use early returns: Exit rule() as soon as a condition fails to avoid unnecessary computation
-- Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')` (event fields are NOT case sensitive)
-- Use `event.deep_get()` to safely access nested fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')`
-- Use `event.deep_walk()` to retrieve values that are deeply nested in dictionaries
-- Use appropriate deduplication to prevent alert flooding
-- Include comprehensive runbooks for effective triage
+
+## Coding
+
+* Prioritize rule simplicity and security team comprehension
+* Follow PEP8 Python coding style
+* Only assign variables when re-use is needed
+* Order conditions by selectivity. Put the most restrictive conditions first to leverage short-circuit evaluation
+* Use early returns: Exit rule() as soon as a condition fails to avoid unnecessary computation
+* Use appropriate deduplication to prevent alert flooding
+* Include runbooks that will be read by Panther's AI SOC analyst. Optimize for an LLM.
+* Test the rule: `pipenv run panther_analysis_tool test --filter RuleID=<rule-id>`
+
+## Field access
+
+* Use `event.get()` to safely access fields that may not exist: `bucket_name = event.get('requestParameters')` (event fields are NOT case sensitive)
+* Use `event.deep_get()` to safely access nested fields: `bucket_name = event.deep_get('requestParameters', 'bucketName')`
+* Use `event.deep_walk()` to retrieve values that are deeply nested in dictionaries
 
 ## Alert Configuration
 
 **Severity Levels:**
-- **CRITICAL**: Immediate response (data breach, privilege escalation)
-- **HIGH**: Urgent investigation (suspicious activity, policy violations)
-- **MEDIUM**: Standard investigation (unusual behavior, compliance)
-- **LOW/INFO**: Informational or signals only
+
+* **CRITICAL**: Immediate response (data breach, privilege escalation)
+* **HIGH**: Urgent investigation (suspicious activity, policy violations)
+* **MEDIUM**: Standard investigation (unusual behavior, compliance)
+* **LOW/INFO**: Informational or signals only
 
 **Deduplication Windows:**
-- **15 min**: High-frequency events (login failures, API calls)
-- **60 min**: Standard security events (privilege changes, data access)
-- **180 min**: Compliance events
-- **720 min**: Low-frequency events (account creation)
-- **1440 min**: Rare events (root account usage)
 
-**Anti-patterns to Avoid:**
-- Don't implement thresholding in rule logic (Panther handles this)
-- Don't make titles too unique (causes alert fragmentation)
-- Don't access fields without safe methods (causes KeyError exceptions)
-- Don't use complex nested logic (hurts performance and readability)
+* **15 min**: High-frequency events (login failures, API calls)
+* **60 min**: Standard security events (privilege changes, data access)
+* **180 min**: Compliance events
+* **720 min**: Low-frequency events (account creation)
+* **1440 min**: Rare events (root account usage)
+
+**Anti-patterns:**
+
+* Don't implement thresholding in rule logic (Panther handles this)
+* Don't make titles too unique (causes alert fragmentation)
+* Don't access fields without safe methods (causes KeyError exceptions)
+* Don't use complex nested logic (hurts performance and readability)
 
 # Testing Strategy
 
 Include at least one positive and negative test case. Use real log data when possible.
 
 **Mock Functions (within test objects):**
+
 ```yaml
 Tests:
   - Name: Test With Mock
@@ -97,6 +199,7 @@ Tests:
 A special mode of a Rule where no alert is generated, but events are labeled with the matching Rule ID. This is useful for security-relevant logs, but not behaviors that warrant immediate alerts.
 
 If a user asks to create a Signal, then:
+
 1. Set `CreateAlert` to false
 2. Set `Severity` to INFO
 3. Only include the rule() method in the `.py` file
@@ -107,6 +210,7 @@ If a user asks to create a Signal, then:
 ## IAM User Backdoor Key Rule
 
 ### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.py`
+
 ```python
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
@@ -143,6 +247,7 @@ def alert_context(event):
 ```
 
 ### `rules/aws_cloudtrail_rules/aws_iam_user_backdoor.yml`
+
 ```yml
 AnalysisType: rule
 Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
@@ -248,12 +353,14 @@ Tests:
 ## Login Signal
 
 ### panther_login_signal.py
+
 ```python
 def rule(event):
     return event.get("actionName", "") == "SIGN_IN"
 ```
 
 ### panther_login_signal.yml
+
 ```yml
 AnalysisType: rule
 Filename: panther_login_signal.py

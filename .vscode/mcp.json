@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "Panther-Slow-Rush": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "-e", "PANTHER_INSTANCE_URL",
+        "-e", "PANTHER_API_TOKEN",
+        "--rm",
+        "ghcr.io/panther-labs/mcp-panther:2.0.1"
+      ],
+      "env": {
+        "PANTHER_API_TOKEN": "token",
+        "PANTHER_INSTANCE_URL": "url/"
+      }
+    }
+  }
+}

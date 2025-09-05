@@ -1,0 +1,88 @@
+AnalysisType: rule
+Description: Detects when the same AWS session uses different User-Agent signatures, indicating potential stolen session credentials or session hijacking (simplified version for testing)
+DisplayName: AWS Session Fingerprint Change (Simple)
+Enabled: true
+Filename: aws_session_fingerprint_change_simple_demo.py
+LogTypes:
+  - AWS.CloudTrail
+RuleID: AWS.Session.Fingerprint.Change.Simple.Demo
+Severity: Medium
+Tags:
+  - AWS
+  - CloudTrail
+  - Credential Theft
+  - Session Hijacking
+  - MITRE ATT&CK:T1078
+  - MITRE ATT&CK:T1550
+  - Behavioral Analysis
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: First event in session - no alert (browser)
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventName: ListUsers
+      eventSource: iam.amazonaws.com
+      eventTime: "2023-07-22 20:48:42"
+      eventVersion: "1.08"
+      recipientAccountId: "904233115233"
+      sourceIPAddress: "50.145.40.82"
+      userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+      userIdentity:
+        type: AssumedRole
+        principalId: AROABC123DEFGHIJKLMN:jack
+        arn: arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_bdb4a195f9d8fb11/jack
+        accountId: "904233115233"
+        accessKeyId: ASIABC123DEFGHIJKLMN
+
+  - Name: Same session different tool - should alert (CLI)
+    ExpectedResult: true  
+    Log:
+      awsRegion: us-east-1
+      eventName: CreateSecret
+      eventSource: secretsmanager.amazonaws.com
+      eventTime: "2023-07-22 20:50:24"
+      eventVersion: "1.08"
+      recipientAccountId: "904233115233"
+      sourceIPAddress: "50.145.40.82"
+      userAgent: aws-cli/2.27.50 md/awscrt#0.26.1 ua/2.1 os/macos#24.5.0
+      userIdentity:
+        type: AssumedRole
+        principalId: AROABC123DEFGHIJKLMN:jack
+        arn: arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_bdb4a195f9d8fb11/jack
+        accountId: "904233115233"
+        accessKeyId: ASIABC123DEFGHIJKLMN
+
+  - Name: AWS Service call - no alert
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventName: AssumeRole
+      eventSource: sts.amazonaws.com
+      eventTime: "2023-07-22 20:50:00"
+      eventVersion: "1.08"
+      recipientAccountId: "904233115233"
+      sourceIPAddress: lambda.amazonaws.com
+      userAgent: lambda.amazonaws.com
+      userIdentity:
+        type: AWSService
+        invokedBy: lambda.amazonaws.com
+
+  - Name: Different session - no alert
+    ExpectedResult: false
+    Log:
+      awsRegion: us-east-1
+      eventName: ListUsers
+      eventSource: iam.amazonaws.com
+      eventTime: "2023-07-22 21:00:00"
+      eventVersion: "1.08"
+      recipientAccountId: "904233115233"
+      sourceIPAddress: "50.145.40.82"
+      userAgent: aws-cli/2.27.50 md/awscrt#0.26.1 ua/2.1 os/macos#24.5.0
+      userIdentity:
+        type: AssumedRole
+        principalId: AROABC123DEFGHIJKLMN:alice
+        arn: arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_bdb4a195f9d8fb11/alice
+        accountId: "904233115233"
+        accessKeyId: ASIAXYZ987DIFFERENT

@@ -3,10 +3,9 @@
 # File: test_scenarios/aws-data-exfil/create_malicious_user.sh
 
 # Set variables for the legitimate looking resources
-USER_NAME="siem-ops-svc"
+USER_NAME="backup-service-account"
 S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 EC2_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-IAM_ADMIN_POLICY="arn:aws:iam::aws:policy/IAMFullAccess"
 SECRETS_MANAGER_ADMIN_POLICY="arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 
 echo "Creating test scenario: Malicious insider creating privileged data service account"
@@ -14,7 +13,7 @@ echo "Creating test scenario: Malicious insider creating privileged data service
 # Create what appears to be a service account
 aws iam create-user \
     --user-name $USER_NAME \
-    --tags Key=Environment,Value=production Key=Team,Value=data-engineering Key=Purpose,Value=logging-automation
+    --tags Key=Environment,Value=production Key=Team,Value=data-engineering Key=Purpose,Value=backup-service-account
 
 # Attach AWS-managed S3 admin policy
 aws iam attach-user-policy \
@@ -27,9 +26,9 @@ aws iam attach-user-policy \
     --policy-arn $EC2_ADMIN_POLICY
 
 # Attach AWS-managed IAM admin policy
-aws iam attach-user-policy \
-    --user-name $USER_NAME \
-    --policy-arn $IAM_ADMIN_POLICY
+# aws iam attach-user-policy \
+#     --user-name $USER_NAME \
+#     --policy-arn $IAM_ADMIN_POLICY
 
 # Attach AWS-managed Secrets Manager admin policy
 aws iam attach-user-policy \

@@ -1,0 +1,124 @@
+AnalysisType: rule
+Enabled: true
+Filename: panther_admin_actions_off_hours.py
+RuleID: Demo.Panther.Admin.Actions.OffHours
+LogTypes:
+  - Panther.Audit
+Severity: Medium
+CreateAlert: true
+DisplayName: Panther Administrative Actions During Off-Hours
+Description: >
+  Detects Panther administrative actions (detection changes, user management, system configuration) 
+  performed during off-hours (10pm - 5am Pacific Time). Administrative activities during unusual 
+  hours may indicate unauthorized access, insider threats, or compromised accounts.
+Tags:
+  - demo
+  - compliance.soc2
+  - compliance.change_management
+  - mitre.ta0003.persistence
+  - mitre.ta0004.privilege_escalation
+  - mitre.ta0005.defense_evasion
+  - usecase.privileged_access_monitoring
+  - usecase.insider_threat
+  - asset.identity_management
+  - risk.medium
+  - time_based_detection
+DedupPeriodMinutes: 60
+Threshold: 1
+SummaryAttributes:
+  - actionName
+  - actor.attributes.email
+  - actor.name
+  - sourceIP
+  - p_event_time
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+Runbook: |
+  1. Verify the legitimacy of the administrative action with the user who performed it
+  2. Check if this was part of scheduled maintenance or an emergency response  
+  3. Review the specific action taken and assess potential security impact
+  4. If unauthorized, immediately review what changes were made and consider reverting them
+  5. Check for any other suspicious activity from the same user or IP address
+  6. Consider implementing additional controls for off-hours administrative access
+Tests:
+  - Name: Admin action during off-hours (11pm PT / 6am UTC) - should alert
+    Log:
+      actionName: UPDATE_USER
+      actionResult: SUCCEEDED
+      actor:
+        id: "user-123"
+        name: "John Doe"
+        type: "USER"
+        attributes:
+          email: "john.doe@company.com"
+          role: "Admin"
+      sourceIP: "192.168.1.100"
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      p_event_time: "2024-01-15T06:30:00.000Z"
+      p_log_type: "Panther.Audit"
+    ExpectedResult: true
+
+  - Name: Admin action during off-hours (2am PT / 10am UTC) - should alert  
+    Log:
+      actionName: DELETE_DETECTION
+      actionResult: SUCCEEDED
+      actor:
+        id: "user-456" 
+        name: "Jane Smith"
+        type: "USER"
+        attributes:
+          email: "jane.smith@company.com"
+          role: "Admin"
+      sourceIP: "10.0.1.50"
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+      p_event_time: "2024-07-15T09:15:00.000Z"
+      p_log_type: "Panther.Audit"
+    ExpectedResult: true
+
+  - Name: Admin action during business hours (2pm PT / 9pm UTC) - should not alert
+    Log:
+      actionName: UPDATE_USER
+      actionResult: SUCCEEDED
+      actor:
+        id: "user-789"
+        name: "Bob Wilson"
+        type: "USER"
+        attributes:
+          email: "bob.wilson@company.com"
+          role: "Admin"
+      sourceIP: "172.16.0.200"
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+      p_event_time: "2024-01-15T21:00:00.000Z"
+      p_log_type: "Panther.Audit"
+    ExpectedResult: false
+
+  - Name: Non-administrative action during off-hours - should not alert
+    Log:
+      actionName: GET_ALERT
+      actionResult: SUCCEEDED
+      actor:
+        id: "user-101"
+        name: "Alice Brown"
+        type: "USER"
+        attributes:
+          email: "alice.brown@company.com"
+          role: "Analyst"
+      sourceIP: "192.168.1.150"
+      p_event_time: "2024-01-15T06:30:00.000Z"
+      p_log_type: "Panther.Audit"
+    ExpectedResult: false
+
+  - Name: Failed admin action during off-hours - should not alert
+    Log:
+      actionName: DELETE_USER
+      actionResult: FAILED
+      actor:
+        id: "user-202"
+        name: "Charlie Davis"
+        type: "USER"
+        attributes:
+          email: "charlie.davis@company.com"
+          role: "Admin"
+      sourceIP: "203.0.113.10"
+      p_event_time: "2024-01-15T06:45:00.000Z"
+      p_log_type: "Panther.Audit"
+    ExpectedResult: false
