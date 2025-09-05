@@ -1210,6 +1210,8 @@
   - GitHub detected a secret and created a secret scanning alert.
 - [GitHub Security Change, includes GitHub Advanced Security](../rules/github_rules/github_advanced_security_change.yml)
   - The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
+- [GitHub Supply Chain - Software Installation Tool User Agents](../rules/github_rules/github_supply_chain_suspicious_user_agents.yml)
+  - Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.
 - [GitHub Team Modified](../rules/github_rules/github_team_modified.yml)
   - Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.
 - [GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.yml)
