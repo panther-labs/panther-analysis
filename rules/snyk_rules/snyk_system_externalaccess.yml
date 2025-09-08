@@ -40,19 +40,6 @@ Tests:
         "created": "2023-03-03T20:52:01.628Z",
         "userId": "05555555-3333-4ddd-8ccc-755555555555",
       }
-  - Name: Snyk External Access Allowed By External Parties - Disabled - excluded by filter
-    ExpectedResult: false
-    Mocks:
-      - objectName: filter_include_event
-        returnValue: false
-    Log:
-      {
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "event": "group.request_access_settings.edit",
-        "content": { "after": {}, "before": { "isEnabled": true } },
-        "created": "2023-03-03T20:52:01.628Z",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-      }
   - Name: Snyk Group SSO Membership sync
     ExpectedResult: false
     Log:

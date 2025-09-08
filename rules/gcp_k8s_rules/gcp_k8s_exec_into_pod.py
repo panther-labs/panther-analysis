@@ -2,10 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from panther_base_helpers import deep_walk
-from panther_config import config
 from panther_gcp_helpers import get_k8s_info
-
-GCP_PRODUCTION_PROJECT_IDS = config.GCP_PRODUCTION_PROJECT_IDS
 
 # This is a list of principals that are allowed to exec into pods
 # in various namespaces and projects.
@@ -63,13 +60,6 @@ def rule(event):
             if "@" not in principal:
                 return False
     return True
-
-
-def severity(event):
-    project_id = deep_walk(get_k8s_info(event), "project_id", default="<NO PROJECT_ID>")
-    if project_id in GCP_PRODUCTION_PROJECT_IDS:
-        return "high"
-    return "info"
 
 
 def title(event):

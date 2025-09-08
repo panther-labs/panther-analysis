@@ -1,10 +1,8 @@
-from global_filter_github import filter_include_event
 from panther_github_helpers import github_alert_context
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     return event.get("action").startswith("hook.")
 
 

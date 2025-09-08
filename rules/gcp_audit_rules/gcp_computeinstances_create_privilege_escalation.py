@@ -18,13 +18,14 @@ def rule(event):
     if not method.endswith("compute.instances.insert"):
         return False
 
-    authorization_info = event.deep_get("protoPayload", "authorizationInfo")
-    if not authorization_info:
+    # Skip allowlisted actors
+    principal = event.deep_get("protoPayload", "authenticationInfo", "principalEmail", default="")
+    if principal.endswith("@cloudservices.gserviceaccount.com"):
         return False
 
     granted_permissions = {}
-    for auth in authorization_info:
-        granted_permissions[auth["permission"]] = auth["granted"]
+    for auth in event.deep_walk("protoPayload", "authorizationInfo") or []:
+        granted_permissions[auth.get("permission")] = auth.get("granted")
     for permission in REQUIRED_PERMISSIONS:
         if not granted_permissions.get(permission):
             return False

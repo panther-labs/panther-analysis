@@ -1,9 +1,4 @@
-from panther_aws_helpers import (
-    aws_cloudtrail_success,
-    aws_regions,
-    aws_rule_context,
-    lookup_aws_account_name,
-)
+from panther_aws_helpers import aws_cloudtrail_success, aws_regions, aws_rule_context
 from panther_core import PantherEvent
 
 
@@ -23,10 +18,11 @@ def rule(event: PantherEvent) -> bool:
 
 
 def title(event: PantherEvent) -> str:
-    account_id = lookup_aws_account_name(event.get("recipientAccountId", "UNKNOWN AWS ACCOUNT"))
+    account_id = event.get("recipientAccountId", "UNKNOWN AWS ACCOUNT")
     actor_user = event.udm("actor_user")
     return (
-        f"EC2 Instance User Data accessed in bulk by [{actor_user}] in AWS Account [{account_id}]"
+        f"EC2 Instance User Data accessed in bulk by [{actor_user}] "
+        f"in AWS Account [{account_id}]"
     )
 
 

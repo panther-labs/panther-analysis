@@ -5,7 +5,6 @@ from typing import Any, Dict, List
 
 import boto3
 from panther_base_helpers import deep_get, pantherflow_investigation
-from panther_config import config
 
 
 class BadLookup(Exception):
@@ -16,7 +15,6 @@ class PantherBadInput(Exception):
     """Error returned when a Panther helper function is provided bad input."""
 
 
-AWS_ACCOUNTS = config.AWS_ACCOUNTS
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
 FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
@@ -174,16 +172,13 @@ def aws_regions() -> List[str]:
 
 def lookup_aws_account_name(account_id):
     """Lookup the AWS account name, return the ID if not found
-
+    Deprecated: this function remains for backwards compatibility
     Args:
         account_id (str): The AWS account ID
-
     Returns:
-        str: The name of the AWS account ID
-        or
-        str: The AWS account ID (unnamed account)
+        str: The AWS account ID
     """
-    return AWS_ACCOUNTS.get(account_id, f"{account_id} (unnamed account)")
+    return account_id
 
 
 def get_s3_arn_by_name(name: str) -> str:

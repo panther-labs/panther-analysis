@@ -1,10 +1,8 @@
-from global_filter_tailscale import filter_include_event
 from panther_tailscale_helpers import is_tailscale_admin_console_event, tailscale_alert_context
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     action = event.deep_get("event", "action", default="<NO_ACTION_FOUND>")
     target_property = event.deep_get(
         "event", "target", "property", default="<NO_TARGET_PROPERTY_FOUND>"

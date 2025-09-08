@@ -1,7 +1,3 @@
-from panther_config_defaults import IN_PCI_SCOPE
-
-# NOTE: Make sure to adjust IN_PCI_SCOPE
-
 # This is a list of default ports for insecure protocols. As AWS Network ACLs and Security Groups
 # are not application layer aware, this is the closest approximation that can be made to blocking
 # insecure protocols. Application layer firewalls can provide stronger protections.
@@ -16,8 +12,6 @@ INSECURE_PORTS = {
 
 
 def policy(resource):
-    if not IN_PCI_SCOPE(resource):
-        return True
 
     for entry in resource["Entries"]:
         # Look for ingress rules from any IP.

@@ -1,4 +1,3 @@
-from global_filter_github import filter_include_event
 from panther_detection_helpers.caching import get_string_set, put_string_set
 
 CODE_ACCESS_ACTIONS = [
@@ -9,8 +8,7 @@ CODE_ACCESS_ACTIONS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     # if the actor field is empty, short circuit the rule
     if not event.udm("actor_user"):
         return False

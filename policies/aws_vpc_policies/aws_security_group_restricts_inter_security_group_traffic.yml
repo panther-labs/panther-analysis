@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_security_group_restricts_inter_security_group_traffic.py
 PolicyID: "AWS.SecurityGroup.RestrictsInterSecurityGroupTraffic"
 DisplayName: "AWS Security Group Restricts Inter-SG Traffic"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.EC2.SecurityGroup
 Tags:
@@ -14,7 +14,7 @@ Reports:
     - 1.2.1
   MITRE ATT&CK:
     - TA0008:T1210
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that Security Groups have restrictions on inter Security Group traffic. Administrators may assume there is an implicit level of trust between Security Groups in the same account, but this is not always a good assumption in cases one Security Group contains far more sensitive data that another.
 Runbook: >
