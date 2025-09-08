@@ -2,7 +2,7 @@ from typing import Union
 
 from panther_lookuptable_helpers import LookupTableMatches
 
-MISP_WARNING_LISTS_LUT_NAME = "MISP Warning Lists"
+MISP_WARNING_LISTS_LUT_NAME = "misp_warning_lists"
 
 
 class MISPWarningLists(LookupTableMatches):
