@@ -3,7 +3,9 @@
 
 # pylint: disable=C0302 (too-many-lines)
 
+import contextlib
 import datetime
+import io
 import os
 import secrets
 import string
@@ -1287,6 +1289,15 @@ class TestGeoInfoFromIP(unittest.TestCase):
             exc.exception.args[0],
             "IPInfo is not configured on the provided match_field: fake_field",
         )
+
+
+class TestDbprint(unittest.TestCase):
+    def test_dbprint(self):
+        """Assert that dbprint doesn't print anything to stdout."""
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            p_b_h.dbprint("test")
+        self.assertEqual(buffer.getvalue(), "")
 
 
 class TestDeepGet(unittest.TestCase):
