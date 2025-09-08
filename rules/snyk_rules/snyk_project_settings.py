@@ -1,4 +1,3 @@
-from global_filter_snyk import filter_include_event
 from panther_snyk_helpers import snyk_alert_context
 
 # The bodies of these actions are quite diverse.
@@ -30,8 +29,7 @@ ACTIONS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     if event.deep_get("content", "after", "description") == "No new Code Analysis issues found":
         return False
     action = event.get("event", "<NO_EVENT>")

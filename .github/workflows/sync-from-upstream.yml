@@ -28,7 +28,7 @@ jobs:
             echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7.0.1
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
         id: set_upstream
         name: Check Upstream
         with:
@@ -51,7 +51,7 @@ jobs:
           branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5.0.0
         with:
           ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           token: ${{ steps.set_token.outputs.token }}
@@ -72,7 +72,7 @@ jobs:
           #test_mode: true
           upstream_pull_args: "--allow-unrelated-histories"
       # Create a PR from this branch back to this fork's primary branch
-      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7.0.1
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
         id: create_pr
         name: Create a PR to bring upstream changes into the local repo primary branch
         if: steps.sync.outputs.has_new_commits == 'true'

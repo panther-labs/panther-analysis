@@ -1,5 +1,3 @@
-from panther_config_defaults import IN_PCI_SCOPE
-
 MAX_PORTS_PER_PERMISSION = 10
 RESTRICTED_PORTS = [
     21,  # FTP default
@@ -10,8 +8,6 @@ RESTRICTED_PORTS = [
 
 
 def policy(resource):
-    if not IN_PCI_SCOPE(resource):
-        return True
 
     if resource["IpPermissions"] is None:
         return True

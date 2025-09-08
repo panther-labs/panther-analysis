@@ -1,4 +1,13 @@
+from fnmatch import fnmatch
+
 from panther_base_helpers import deep_get
+
+# These patterns indicate members which might be added by default by some GCP services
+ACCEPTED_MEMBER_PATTERNS = [
+    "serviceAccount:*@*.gserviceaccount.com",
+    "serviceAccount:*.svc.id.goog[*",
+    "principalSet://iam.googleapis.com/projects/*/workloadIdentityPools/*",
+]
 
 
 def rule(event):
@@ -21,7 +30,10 @@ def rule(event):
     for delta in binding_deltas:
         if delta.get("action") != "ADD":
             continue
-        if delta.get("member", "").endswith(f"@{expected_domain}"):
+        member = delta.get("member", "")
+        if any(fnmatch(member, pattern) for pattern in ACCEPTED_MEMBER_PATTERNS):
+            return False
+        if member.endswith(f"@{expected_domain}"):
             return False
     return True
 

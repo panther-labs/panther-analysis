@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_rds_instance_backup_retention_acceptable.py
 PolicyID: "AWS.RDS.InstanceBackupRetentionAcceptable"
 DisplayName: "AWS RDS Instance Has Acceptable Backup Retention Period"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.RDS.Instance
 Tags:
@@ -12,7 +12,7 @@ Tags:
 Reports:
   PCI:
     - 3.1
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that RDS instances are configured with a backup retention period that is acceptable to company policy. This ensures for both compliance and security reasons that records are kept for a minimum period of time, and for compliance and performance reasons that records are not kept indefinitely.
 Runbook: >

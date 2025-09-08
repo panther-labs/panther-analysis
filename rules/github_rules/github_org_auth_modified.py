@@ -1,5 +1,3 @@
-from global_filter_github import filter_include_event
-
 AUTH_CHANGE_EVENTS = [
     "org.saml_disabled",
     "org.saml_enabled",
@@ -12,8 +10,6 @@ AUTH_CHANGE_EVENTS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
 
     if not event.get("action").startswith("org."):
         return False

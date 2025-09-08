@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -12,7 +12,7 @@ def rule(event):
 def title(event):
     return (
         f"AWS root login failed from [{event.get('sourceIPAddress')}] in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 
