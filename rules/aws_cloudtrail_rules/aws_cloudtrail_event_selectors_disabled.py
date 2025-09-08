@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 # API calls that are indicative of CloudTrail changes
 CLOUDTRAIL_EDIT_SELECTORS = {"PutEventSelectors"}
@@ -31,7 +31,7 @@ def dedup(event):
 def title(event):
     return (
         f"Management events have been exluded from CloudTrail [{dedup(event)}] in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 

@@ -2,12 +2,22 @@ import json
 from ipaddress import ip_network
 from unittest.mock import MagicMock
 
-from panther_config import config
-from panther_config_defaults import is_dmz_tags
-
 # NOTE: Make sure to adjust DMZ_TAGS
 
-DMZ_TAGS = config.DMZ_TAGS
+DMZ_TAGS = [
+    # ["environment", "dmz"]
+]
+
+
+# Defaults to False to assume something is not a DMZ if it is not tagged
+def is_dmz_tags(resource, dmz_tags):
+    """This function determines whether a given resource is tagged as existing in a DMZ."""
+    if resource["Tags"] is None:
+        return False
+    for key, value in dmz_tags:
+        if resource["Tags"].get(key) == value:
+            return True
+    return False
 
 
 def policy(resource):
@@ -18,7 +28,7 @@ def policy(resource):
     # DMZ security groups can have inbound permissions from the internet
     global DMZ_TAGS  # pylint: disable=global-statement
     if isinstance(DMZ_TAGS, MagicMock):
-        DMZ_TAGS = {tuple(kv) for kv in json.loads(DMZ_TAGS())}
+        DMZ_TAGS = {tuple(kv) for kv in json.loads(DMZ_TAGS())}  # pylint: disable=not-callable
     if is_dmz_tags(resource, DMZ_TAGS):
         return True
 

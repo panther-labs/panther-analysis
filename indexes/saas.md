@@ -6,8 +6,6 @@
   - A user violated the content workflow policy.
 - [Box event triggered by unknown or external user](../rules/box_rules/box_event_triggered_externally.yml)
   - An external user has triggered a box enterprise event.
-- [Box item shared externally](../rules/box_rules/box_item_shared_externally.yml)
-  - A user has shared an item and it is accessible to anyone with the share link (internal or external to the company). This rule requires that the boxsdk[jwt] be installed in the environment.
 - [Box Large Number of Downloads](../rules/box_rules/box_user_downloads.yml)
   - A user has exceeded the threshold for number of downloads within a single time frame.
 - [Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.yml)

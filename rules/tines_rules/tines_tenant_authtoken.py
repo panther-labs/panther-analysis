@@ -1,4 +1,3 @@
-from global_filter_tines import filter_include_event
 from panther_tines_helpers import tines_alert_context
 
 ACTIONS = [
@@ -11,8 +10,7 @@ ACTIONS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     action = event.get("operation_name", "<NO_OPERATION_NAME>")
     is_tenant_token = event.deep_get("inputs", "inputs", "isServiceToken", default=False)
     return all([action in ACTIONS, is_tenant_token])

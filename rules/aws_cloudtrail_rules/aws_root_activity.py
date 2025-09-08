@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success
 
 EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
 
@@ -17,7 +17,7 @@ def dedup(event):
     return (
         event.get("sourceIPAddress", "<UNKNOWN_IP>")
         + ":"
-        + lookup_aws_account_name(event.get("recipientAccountId"))
+        + event.get("recipientAccountId")
         + ":"
         + str(event.get("readOnly"))
     )
@@ -28,7 +28,7 @@ def title(event):
         "AWS root user activity "
         f"[{event.get('eventName')}] "
         "in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 

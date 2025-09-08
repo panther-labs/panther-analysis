@@ -1,13 +1,13 @@
-from panther_config import config
-
-
 def rule(event):
     if event.deep_get("id", "applicationName") not in ("user_accounts", "login"):
         return False
 
     if event.get("name") == "email_forwarding_out_of_domain":
-        domain = event.deep_get("parameters", "email_forwarding_destination_address").split("@")[-1]
-        if domain not in config.GSUITE_TRUSTED_FORWARDING_DESTINATION_DOMAINS:
+        actor_domain = event.deep_get("actor", "email", default="@").split("@")[-1]
+        target_domain = event.deep_get(
+            "parameters", "email_forwarding_destination_address", default="@"
+        ).split("@")[-1]
+        if actor_domain != target_domain:
             return True
 
     return False

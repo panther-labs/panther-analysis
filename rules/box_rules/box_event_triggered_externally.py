@@ -1,6 +1,6 @@
-from panther_config import config
-
-DOMAINS = {"@" + domain for domain in config.ORGANIZATION_DOMAINS}
+DOMAINS = {
+    # "@example.com"
+}
 
 
 def rule(event):
@@ -10,9 +10,10 @@ def rule(event):
         # user id 2 indicates an anonymous user
         if user.get("id", "") == "2":
             return True
-        return bool(
-            user.get("login") and not any(user.get("login", "").endswith(x) for x in DOMAINS)
-        )
+        if DOMAINS:
+            return bool(
+                user.get("login") and not any(user.get("login", "").endswith(x) for x in DOMAINS)
+            )
     return False
 
 

@@ -1,4 +1,3 @@
-from global_filter_azuresignin import filter_include_event
 from panther_azuresignin_helpers import actor_user, azure_signin_alert_context, is_sign_in_event
 
 
@@ -6,8 +5,6 @@ def rule(event):
     if not is_sign_in_event(event):
         return False
 
-    if not filter_include_event(event):
-        return False
     error_code = event.deep_get("properties", "status", "errorCode", default=0)
     return error_code > 0
 

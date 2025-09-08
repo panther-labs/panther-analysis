@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_only_dmz_security_groups_publicly_accessible.py
 PolicyID: "AWS.SecurityGroup.OnlyDMZPubliclyAccessible"
 DisplayName: "AWS Security Group - Only DMZ Publicly Accessible"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.EC2.SecurityGroup
 Tags:
@@ -15,7 +15,7 @@ Reports:
     - 1.1.4
   MITRE ATT&CK:
     - TA0001:T1190
-Severity: High
+Severity: Medium
 Description: >
   This policy validates that only Security Groups designated as DMZs allow inbound traffic from public IP space. This helps ensure no traffic is bypassing the DMZ.
 Runbook: >

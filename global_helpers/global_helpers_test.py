@@ -25,6 +25,7 @@ import panther_base_helpers as p_b_h  # pylint: disable=C0413
 import panther_box_helpers as p_box_h  # pylint: disable=C0413
 import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_crowdstrike_fdr_helpers as p_cf_fdr_h  # pylint: disable=C0413
+import panther_gcp_helpers as p_gcp_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
@@ -2428,6 +2429,171 @@ class TestPantherFlowInvestigation(unittest.TestCase):
      or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'bob.ross'])
 | sort p_event_time"""
         self.assertEqual(p_b_h.pantherflow_investigation(event), query)
+
+
+class TestGCPHelpersSystemPrincipal(unittest.TestCase):
+    """Test the is_gke_system_principal function for proper security filtering."""
+
+    def test_legitimate_gke_service_accounts(self):
+        """Test that legitimate GKE service accounts are correctly identified."""
+        legitimate_accounts = [
+            # GKE container engine robot
+            "container-engine-robot@my-project-123.iam.gserviceaccount.com",
+            # Service accounts with numeric project IDs
+            "service-123456789@container-engine-robot.iam.gserviceaccount.com",
+            "service-987654321@containerregistry.iam.gserviceaccount.com",
+            # Numeric project cloudservices account
+            "123456789@cloudservices.gserviceaccount.com",
+            # Kubernetes system accounts
+            "system:kube-controller-manager",
+            "system:kube-scheduler",
+            "system:addon-manager",
+            "system:serviceaccount:kube-system:default",
+            "system:serviceaccount:kube-system:fluentd",
+            "system:serviceaccount:gke-system:metrics-server",
+            # Workload identity
+            "my-project.svc.id.goog[kube-system/my-service]",
+            "my-project.svc.id.goog[gke-system/my-service]",
+            # Numeric compute account
+            "123456789-compute@developer.gserviceaccount.com",
+            # GKE with numeric prefix
+            "gke-12345@my-project.iam.gserviceaccount.com",
+        ]
+
+        for account in legitimate_accounts:
+            self.assertTrue(
+                p_gcp_h.is_gke_system_principal(account),
+                f"Failed to identify legitimate account: {account}",
+            )
+
+    def test_attacker_spoofed_accounts(self):
+        """Test that attacker accounts trying to mimic system accounts are rejected."""
+        attacker_accounts = [
+            # Attacker trying to use system keywords
+            "kubernetes-attacker@evil.com",
+            "my-container-engine-robot@attacker.com",
+            "fake-gke-metrics-agent@evil.com",
+            # Wrong domain for container-engine-robot
+            "container-engine-robot@fake-project.com",
+            "container-engine-robot@attacker.iam.com",
+            # Missing system: prefix
+            "kube-controller-manager@attacker.com",
+            "serviceaccount:kube-system:default",
+            # Non-numeric project IDs where required
+            "not-a-number@cloudservices.gserviceaccount.com",
+            "service-not-numeric@container-engine-robot.iam.gserviceaccount.com",
+            "abc-compute@developer.gserviceaccount.com",
+            # Wrong patterns
+            "system:attacker",
+            "system:kube-attacker",
+            # Trying to bypass with similar names
+            "123456789@cloudservices.gserviceaccount.org",
+            "gke-abc@my-project.iam.gserviceaccount.com",  # GKE requires numeric after prefix
+        ]
+
+        for account in attacker_accounts:
+            self.assertFalse(
+                p_gcp_h.is_gke_system_principal(account),
+                f"SECURITY RISK: Incorrectly identified attacker account as legitimate: {account}",
+            )
+
+    def test_empty_and_none_inputs(self):
+        """Test edge cases with empty and None inputs."""
+        self.assertFalse(p_gcp_h.is_gke_system_principal(None))
+        self.assertFalse(p_gcp_h.is_gke_system_principal(""))
+
+    def test_regular_user_accounts(self):
+        """Test that regular user accounts are not identified as system accounts."""
+        regular_accounts = [
+            "user@company.com",
+            "admin@example.org",
+            "developer@myproject.iam.gserviceaccount.com",
+            "my-custom-sa@my-project.iam.gserviceaccount.com",
+        ]
+
+        for account in regular_accounts:
+            self.assertFalse(
+                p_gcp_h.is_gke_system_principal(account),
+                f"Incorrectly identified regular account as system: {account}",
+            )
+
+
+class TestGCPHelpersSystemNamespace(unittest.TestCase):
+    """Test the is_gke_system_namespace function."""
+
+    def test_system_namespaces(self):
+        """Test that system namespaces are correctly identified."""
+        system_resources = [
+            "core/v1/namespaces/kube-system/pods/test-pod",
+            "core/v1/namespaces/kube-public/services/test-service",
+            "core/v1/namespaces/kube-node-lease/leases/test-lease",
+            "core/v1/namespaces/gke-system/pods/network-agent",
+            "core/v1/namespaces/gke-managed-system/deployments/test",
+            "core/v1/namespaces/gmp-system/pods/prometheus",
+            "core/v1/namespaces/gmp-public/configmaps/config",
+            "core/v1/namespaces/config-management-system/pods/reconciler",
+            "core/v1/namespaces/istio-system/services/istio-gateway",
+            "core/v1/namespaces/asm-system/deployments/asm-controller",
+        ]
+
+        for resource in system_resources:
+            self.assertTrue(
+                p_gcp_h.is_gke_system_namespace(resource),
+                f"Failed to identify system namespace in: {resource}",
+            )
+
+    def test_user_namespaces(self):
+        """Test that user namespaces are not identified as system namespaces."""
+        user_resources = [
+            "core/v1/namespaces/default/pods/my-app",
+            "core/v1/namespaces/production/services/web-service",
+            "core/v1/namespaces/staging/deployments/api",
+            "core/v1/namespaces/my-namespace/pods/test",
+            "core/v1/namespaces/kube-system-fake/pods/attacker",
+            "core/v1/namespaces/not-kube-system/pods/test",
+        ]
+
+        for resource in user_resources:
+            self.assertFalse(
+                p_gcp_h.is_gke_system_namespace(resource),
+                f"Incorrectly identified user namespace as system: {resource}",
+            )
+
+    def test_malformed_resource_names(self):
+        """Test handling of malformed resource names."""
+        malformed_resources = [
+            "not/enough/parts",
+            "core/v1/pods/test",  # Missing namespace part
+            "malformed-string",
+            "/////",
+            "core/v1/something/else/entirely",
+        ]
+
+        for resource in malformed_resources:
+            self.assertFalse(
+                p_gcp_h.is_gke_system_namespace(resource),
+                f"Incorrectly parsed malformed resource: {resource}",
+            )
+
+    def test_empty_and_none_inputs(self):
+        """Test edge cases with empty and None inputs."""
+        self.assertFalse(p_gcp_h.is_gke_system_namespace(None))
+        self.assertFalse(p_gcp_h.is_gke_system_namespace(""))
+
+    def test_different_resource_types(self):
+        """Test that the function works with different K8s resource types."""
+        resources = [
+            "core/v1/namespaces/kube-system/pods/test",
+            "apps/v1/namespaces/kube-system/deployments/test",
+            "batch/v1/namespaces/kube-system/jobs/test",
+            "networking.k8s.io/v1/namespaces/kube-system/networkpolicies/test",
+        ]
+
+        for resource in resources:
+            self.assertTrue(
+                p_gcp_h.is_gke_system_namespace(resource),
+                f"Failed to identify system namespace with resource type: {resource}",
+            )
 
 
 class TestEmailRegex(unittest.TestCase):
