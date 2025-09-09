@@ -3406,7 +3406,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects compute.instances.create method for privilege escalation in GCP.",
+        "Description": "Detects compute.instances.create method for privilege escalation in GCP. This rule identifies when users create compute instances with service accounts that may lead to privilege escalation. Known good service accounts (GKE, Kubernetes, compute automation) are excluded to reduce false positives.",
         "DisplayName": "GCP compute.instances.create Privilege Escalation",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3586,7 +3586,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.",
+        "Description": "This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.",
         "DisplayName": "GCP K8S Pod Create Or Modify Host Path Volume Mount",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3865,12 +3865,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.",
+        "DisplayName": "GitHub Commits Skipping Workflows",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_skip_commits.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Creates an alert if a dependabot alert is dismissed without being fixed.",
         "DisplayName": "GitHub Dependabot Vulnerability Dismissed",
         "LogTypes": [
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_repo_vulnerability_dismissed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub pull request titles, descriptions, and commit messages that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity  for PRs that are not cross-fork.",
+        "DisplayName": "GitHub Malicious Pull Request Titles",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_pr_titles.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3907,6 +3925,15 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_public_repository_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.",
+        "DisplayName": "GitHub pull_request_target Workflow Usage",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_pull_request_target_usage.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3979,6 +4006,15 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_advanced_security_change.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.",
+        "DisplayName": "GitHub Supply Chain - Software Installation Tool User Agents",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_supply_chain_suspicious_user_agents.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4997,6 +5033,15 @@
             "Notion.AuditLogs"
         ],
         "YAMLPath": "rules/notion_rules/notion_workspace_settings_public_homepage_added.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598cDetects GitHub activity associated with the NX supply chain compromise (CVE-2024-XXXX).The s1ngularity attack compromised popular NX build system packages affecting ~4M weekly downloads.Attack Details:- Malicious NPM packages published August 26-27, 2025 (22:32-03:37 UTC)- Created repositories: \"s1ngularity-repository\", \"s1ngularity-repository-0/1\" for data exfiltration- Targeted cryptocurrency wallets, SSH keys, GitHub/NPM tokens, .env files- Used triple base64 encoding to upload stolen credentials- First documented case of weaponizing AI CLI tools for reconnaissanceThis query detects repository creation, access, and API activity patterns consistent with the attack.",
+        "DisplayName": "NX Supply Chain - S1ngularity Repository Detection",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
@@ -6024,9 +6069,9 @@
         "Description": "In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim\u2019s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization\u2019s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer\u2019s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.AccountUsage"
+            "Snowflake.QueryHistory"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
     },
     {
         "AnalysisType": "Rule",
