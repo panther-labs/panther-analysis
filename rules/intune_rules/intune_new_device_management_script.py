@@ -10,9 +10,11 @@ def rule(event):
     return ("DeviceManagementScript" in OPERATION) or ("DeviceComplianceScript" in OPERATION)
 
 
-def title(_):
+def title(event):
     # pylint: disable=global-statement
     global ACTOR
+
+    ACTOR = event.get("identity", "")
 
     # Return a generic title if the operation is unknown
     if OPERATION == "Unknown":
