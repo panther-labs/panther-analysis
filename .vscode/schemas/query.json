@@ -58,6 +58,24 @@
           "type": "integer"
         }
       }
+    },
+    "EmailConfig": {
+      "properties": {
+        "PreferAttachment": {
+          "type": "boolean"
+        },
+        "Recipients": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "SendEmpty": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     }
   },
   "allOf": [
