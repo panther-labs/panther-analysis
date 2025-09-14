@@ -1,14 +1,14 @@
 AnalysisType: rule
 Filename: aws_iam_create_user_demo.py
 RuleID: "AWS.IAM.CreateUser.Demo"
-DisplayName: "IAM User Created (Demo)"
+DisplayName: "IAM User Created"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
-Severity: Info
-CreateAlert: false
+Severity: High
+CreateAlert: true
 Description: >
-  An IAM user was created, which could indicate a new user creation or policy update.
+  An IAM user was created. This account should only use IAM roles for access, not IAM users.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 Reports:
   CIS:
@@ -16,7 +16,6 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1136 # Persistence:Create Account
 Tags:
-  - demo
   # Service/Platform tags
   - aws.iam
   # Behaviors/Actions tags
@@ -28,7 +27,8 @@ Tags:
   - compliance.iso27001
   - compliance.nist_csf
   # MITRE tags
-  - persistence.create_account.cloud_account
+  - mitre.persistence
+  - mitre.create_account
 Tests:
   - Name: IAM User Created
     ExpectedResult: true

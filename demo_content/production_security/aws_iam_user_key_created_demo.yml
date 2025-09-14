@@ -1,4 +1,5 @@
 AnalysisType: rule
+RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
 Description: Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
 DisplayName: "AWS User Backdoor Access Key Created (Demo)"
 Enabled: true
@@ -15,20 +16,13 @@ Severity: High
 DedupPeriodMinutes: 60
 LogTypes:
   - AWS.CloudTrail
-RuleID: "AWS.IAM.Backdoor.UserKeys.Demo"
-OutputIds:
-  - "d4735112-507e-43a9-96a0-8c850e722c3b"
 Threshold: 1
 Tags:
-  - demo
-  # Service/Platform tags
+  - mitre.persistence
+  - mitre.create_account
   - aws.iam
-  # Behaviors/Actions tags
   - resource.create
-  # Compliance tags
   - compliance.soc2
-  # MITRE tags
-  - persistence.T1098_account_manipulation.001_additional_cloud_credentials
 Tests:
   - ExpectedResult: false
     Log:
