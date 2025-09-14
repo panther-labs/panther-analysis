@@ -10,18 +10,17 @@ NC='\033[0m' # No Color
 
 # Set variables for the resources to clean up
 USER_NAME="backup-service-account"
-S3_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 EC2_ADMIN_POLICY="arn:aws:iam::aws:policy/AmazonEC2FullAccess"
 IAM_ADMIN_POLICY="arn:aws:iam::aws:policy/IAMFullAccess"
 SECRETS_MANAGER_ADMIN_POLICY="arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 
 echo "${YELLOW}[*] Cleaning up test scenario: Removing user $USER_NAME and associated resources using default AWS profile${NC}"
 
-# Detach the S3 admin policy
-echo "${GREEN}[+] Detaching S3 admin policy from $USER_NAME...${NC}"
-aws iam detach-user-policy \
+# Delete the custom S3 inline policy
+echo "${GREEN}[+] Deleting custom S3 inline policy from $USER_NAME...${NC}"
+aws iam delete-user-policy \
     --user-name $USER_NAME \
-    --policy-arn $S3_ADMIN_POLICY
+    --policy-name "JNBucketsAccess"
 
 # Detach the EC2 admin policy
 echo "${GREEN}[+] Detaching EC2 admin policy from $USER_NAME...${NC}"

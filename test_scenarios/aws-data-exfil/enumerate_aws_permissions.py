@@ -397,11 +397,11 @@ def enumerate_permissions(profile: Optional[str], region: str, dry_run: bool) ->
     username = identity['Arn'].split('/')[-1] if identity['Arn'] else 'unknown'
     
     # Run enumeration steps
-    enumerator.list_user_policies(username)
-    # enumerator.enumerate_s3_buckets()
-    # enumerator.enumerate_ec2_instances()
-    enumerator.test_iam_operations(username)
-    enumerator.enumerate_secrets_manager()
+    # enumerator.list_user_policies(username)
+    enumerator.enumerate_s3_buckets()
+    enumerator.enumerate_ec2_instances()
+    # enumerator.test_iam_operations(username)
+    # enumerator.enumerate_secrets_manager()
     enumerator.print_summary()
 
 
