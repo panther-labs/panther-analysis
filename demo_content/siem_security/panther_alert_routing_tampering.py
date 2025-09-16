@@ -1,9 +1,4 @@
 def rule(event):
-    """
-    Medium severity alert for suspicious changes to alert destination severity routing.
-    Detects when high or critical severities are removed from destinations or when
-    alert destinations are configured to only receive low-priority alerts.
-    """
     # Must be a successful alert destination update
     if (event.get("actionResult") != "SUCCEEDED" or 
         event.get("actionName") != "UPDATE_ALERT_DESTINATION"):
@@ -14,7 +9,7 @@ def rule(event):
     
     # Alert if destination is set to only handle INFO or LOW severity
     # This could indicate an attempt to hide critical alerts
-    if default_for_severity and all(sev in ["INFO", "LOW"] for sev in default_for_severity):
+    if default_for_severity and set(default_for_severity).issubset({"INFO", "LOW"}):
         return True
     
     return False
@@ -41,11 +36,5 @@ def alert_context(event):
         "alert_types": event.deep_get("actionParams", "dynamic", "input", "alertTypes", default=[]),
         "default_for_severity": event.deep_get("actionParams", "dynamic", "input", "defaultForSeverity", default=[]),
         "log_types": event.deep_get("actionParams", "dynamic", "input", "logTypes", default=[]),
-        "output_config": event.deep_get("actionParams", "dynamic", "input", "outputConfig", default={}),
-        "investigation_steps": [
-            "Verify if this change was authorized and documented",
-            "Check if other alert destinations are properly configured for high/critical alerts",
-            "Review recent administrative activity by this user",
-            "Confirm alert routing is working as expected for critical security events"
-        ]
+        "output_config": event.deep_get("actionParams", "dynamic", "input", "outputConfig", default={})
     }

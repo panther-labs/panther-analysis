@@ -31,7 +31,6 @@ Query: |-
     -- Whitelist Panther system activity
     AND NOT (userIdentity:arn LIKE '%panther-snowflake%' AND requestParameters:key LIKE 'luts/%')
     AND NOT (userIdentity:arn LIKE '%panther-replay-detections-engine%' AND requestParameters:bucketName LIKE 'processed-data-%' AND requestParameters:key LIKE 'logs/%')
-    -- AND (requestParameters:bucketName LIKE '%sensitive%' OR requestParameters:bucketName LIKE '%prod%')
   GROUP BY 
     userIdentity:arn,
     COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown'),

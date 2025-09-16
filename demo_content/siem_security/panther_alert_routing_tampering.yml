@@ -9,7 +9,7 @@ CreateAlert: true
 DisplayName: Suspicious Alert Destination Severity Routing
 Description: >
   Detects potentially suspicious changes to alert destination severity routing that could 
-  indicate an attempt to hide critical security alerts. Triggers when alert destinations 
+  hide critical security alerts. Triggers when alert destinations 
   are configured to only receive low-priority alerts (INFO/LOW severity), which may be 
   an attempt to bypass critical security monitoring or reduce alert visibility.
 DedupPeriodMinutes: 60
@@ -32,11 +32,10 @@ Reports:
     - TA0005:T1562  # Defense Evasion: Impair Defenses
 Reference: https://docs.panther.com/system-configuration/destinations
 Runbook: >
-  1. Verify the legitimacy of the alert destination configuration change
-  2. Check if the user had authorization to make severity routing changes
-  3. Ensure critical and high severity alerts are still being routed to appropriate destinations
-  4. Review other recent administrative actions by the same user
-  5. Confirm that security monitoring coverage has not been compromised
+  1. Query panther_audit logs for other administrative actions by the same actor to identify coordinated tampering
+  2. Check if any MEDIUM, HIGH, or CRITICAL alerts were generated after this routing change
+  3. Review the current alert destination configuration to verify if critical/high severity alerts are being routed to any channels
+  4. Check if the actor's role permissions and had recently changed
 Tests:
   - Name: Alert destination set to only INFO severity
     ExpectedResult: true
