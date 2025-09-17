@@ -1331,7 +1331,9 @@
 # M
 
 - [Microsoft365](#microsoft365)
+- [MicrosoftDefenderXDR](#microsoftdefenderxdr)
 - [MicrosoftGraph](#microsoftgraph)
+- [MicrosoftIntune](#microsoftintune)
 - [MongoDB](#mongodb)
 
 
@@ -1347,10 +1349,26 @@
   - A user's MFA has been removed
 
 
+## MicrosoftDefenderXDR
+
+- [Defender Detection Passthrough](../rules/microsoft_defender_rules/defender_detection_passthrough.yml)
+  - Microsoft Defender has detected malicious activity. This activty could be on a host or on a connected platform such as Azure, Microsoft 365, or Intune.
+
+
 ## MicrosoftGraph
 
 - [Microsoft Graph Passthrough](../rules/microsoft_rules/microsoft_graph_passthrough.yml)
   - The Microsoft Graph security API federates queries to all onboarded security providers, including Azure AD Identity Protection, Microsoft 365, Microsoft Defender (Cloud, Endpoint, Identity) and Microsoft Sentinel
+
+
+## MicrosoftIntune
+
+- [Intune Create or Modify Client App](../rules/intune_rules/intune_create_modify_client_app.yml)
+  - Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.
+- [Intune Device Not Compliant](../rules/intune_rules/intune_device_not_compliant.yml)
+  - Microsoft Intune allows administrators to manage devices and enforce compliance with established policies. This detection identifies devices that are not compliant with the established policies.
+- [Intune New Device Management Script](../rules/intune_rules/intune_new_device_management_script.yml)
+  - Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.
 
 
 ## MongoDB
