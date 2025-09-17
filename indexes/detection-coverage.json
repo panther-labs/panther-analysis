@@ -2917,6 +2917,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Microsoft Defender has detected malicious activity. This activty could be on a host or on a connected platform such as Azure, Microsoft 365, or Intune.",
+        "DisplayName": "Defender Detection Passthrough",
+        "LogTypes": [
+            "MicrosoftDefenderXDR.AdvancedHunting"
+        ],
+        "YAMLPath": "rules/microsoft_defender_rules/defender_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An IAM user has a high volume of access denied API calls.",
         "DisplayName": "Detect Reconnaissance from IAM Users",
         "LogTypes": [
@@ -4497,6 +4506,33 @@
             "Okta.SystemLog"
         ],
         "YAMLPath": "rules/standard_rules/impossible_travel_login.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.",
+        "DisplayName": "Intune Create or Modify Client App",
+        "LogTypes": [
+            "MicrosoftIntune.AuditLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_create_modify_client_app.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to manage devices and enforce compliance with established policies. This detection identifies devices that are not compliant with the established policies.",
+        "DisplayName": "Intune Device Not Compliant",
+        "LogTypes": [
+            "MicrosoftIntune.OperationalLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_device_not_compliant.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.",
+        "DisplayName": "Intune New Device Management Script",
+        "LogTypes": [
+            "MicrosoftIntune.AuditLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_new_device_management_script.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
