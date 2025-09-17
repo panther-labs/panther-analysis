@@ -1,4 +1,4 @@
-def rule(event):
+def detect_mac_malware(event):
     if "osx-attacks" not in event.get("name", ""):
         return False
 

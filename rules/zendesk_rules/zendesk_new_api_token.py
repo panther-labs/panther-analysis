@@ -1,6 +1,7 @@
 API_TOKEN_ACTIONS = {
     "create",
     "destroy",
+    "update",
 }
 
 

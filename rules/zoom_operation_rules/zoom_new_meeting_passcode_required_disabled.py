@@ -1,6 +1,6 @@
 def rule(event):
     operation_detail = event.get("operation_detail", "<NO_OPS_DETAIL>")
-    operation_flag = "Security  - Require a passcode when scheduling new meetings: from On to Off"
+    operation_flag = "Security - Require a passcode when scheduling new meetings: from On to Off"
     return all(
         [
             event.get("action", "<NO_ACTION>") == "Update",

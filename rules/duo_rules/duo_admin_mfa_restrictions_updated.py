@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    return "Duo Admin MFA Restrictions Updated " f"by [{event.get('username','<user_not_found>')}]"
+    return f"Duo Security Alert: Admin MFA Restrictions Updated by [{event.get('username','<user_not_found>')}]"
 
 
 def alert_context(event):

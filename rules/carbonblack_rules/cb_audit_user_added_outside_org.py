@@ -1,4 +1,4 @@
-PATTERNS = ("Added user ",)
+PATTERNS = ("Added user ", "Created user ")
 
 
 def rule(event):

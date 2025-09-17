@@ -1,4 +1,4 @@
-ACTION = ""
+ACTION = "Unknown"
 
 
 def rule(event):

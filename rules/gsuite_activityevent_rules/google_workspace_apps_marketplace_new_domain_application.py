@@ -1,4 +1,4 @@
-def rule(event):
+def check_event(event):
     # Return True to match the log event and trigger an alert.
     return (
         event.get("name") == "ADD_APPLICATION"

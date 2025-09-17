@@ -1,5 +1,5 @@
 def rule(event):
-    return "unwanted-chrome-extensions" in event.get("name") and event.get("action") == "added"
+    return "unwanted-chrome-extensions" in event.get("name", "") and event.get("action") == "added"
 
 
 def title(event):

@@ -1,6 +1,6 @@
 def rule(event):
     # Return True to match the log event and trigger an alert.
-    return event.get("name", "") == "ADD_MOBILE_APPLICATION_TO_WHITELIST"
+    return event.get("name", "") == "ADD_MOBILE_APPLICATION_TO_ALLOWLIST"
 
 
 def title(event):

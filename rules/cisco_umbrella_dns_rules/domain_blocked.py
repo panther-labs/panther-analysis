@@ -3,4 +3,4 @@ def rule(event):
 
 
 def title(event):
-    return "Access denied to domain " + event.get("domain", "<UNKNOWN_DOMAIN>")
+    return f"Access denied to domain {event.get('domain', '<UNKNOWN_DOMAIN>')}"

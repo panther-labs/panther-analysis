@@ -1,7 +1,7 @@
 from panther_base_helpers import deep_get
 
 
-def rule(event):
+def check_form_link_auth_disabled(event):
     return event.get("event_type") == "workspace_form_link_authentication_required_disabled"
 
 

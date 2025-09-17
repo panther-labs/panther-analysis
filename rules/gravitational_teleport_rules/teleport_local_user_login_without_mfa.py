@@ -18,7 +18,7 @@ def severity(event):
 
 def title(event):
     return (
-        f"User [{event.get('user', '<UNKNOWN_USER>')}] logged into "
-        f"[{event.get('cluster_name', '<UNNAMED_CLUSTER>')}] locally "
+        f"Teleport Alert: User [{event.get('user', '<UNKNOWN_USER>')}] logged into "
+        f"cluster [{event.get('cluster_name', '<UNNAMED_CLUSTER>')}] locally "
         f"without using MFA"
     )

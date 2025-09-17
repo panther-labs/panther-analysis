@@ -1,4 +1,4 @@
-def rule(event):
+def rule(event): # Check for root login
     return event.get("event") == "session.start" and event.get("login") == "root"
 
 

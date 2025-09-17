@@ -1,5 +1,5 @@
 def rule(event):
-    return event.get("EVENT_TYPE", "<NO_EVENT_TYPE_FOUND>") == "LoginAs"
+    return event.get("EVENT_TYPE") == "LoginAs"
 
 
 def title(event):

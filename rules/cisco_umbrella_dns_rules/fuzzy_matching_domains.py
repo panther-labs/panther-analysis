@@ -4,7 +4,7 @@ DOMAIN = ""  # The domain to monitor for phishing, for example "google.com"
 ALLOW_SET = {
     # List all of your known-good domains here
 }
-SIMILARITY_RATIO = 0.70
+SIMILARITY_RATIO = 0.75
 
 
 def rule(event):

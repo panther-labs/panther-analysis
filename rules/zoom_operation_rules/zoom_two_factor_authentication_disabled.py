@@ -10,8 +10,8 @@ def rule(event):
     )
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"Zoom User [{event.get('operator', '<NO_OPERATOR>')}] disabled your organization's "
-        f"setting to sign in with Two-Factor Authentication."
+        f"ALERT: Zoom User [{event.get('operator', '<NO_OPERATOR>')}] disabled Two-Factor Authentication "
+        f"for your organization."
     )

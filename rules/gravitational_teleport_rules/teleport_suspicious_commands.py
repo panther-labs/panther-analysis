@@ -1,4 +1,4 @@
-SUSPICIOUS_COMMANDS = {"nc", "wget"}
+SUSPICIOUS_COMMANDS = {"nc", "wget", "curl", "telnet"}
 
 
 def rule(event):

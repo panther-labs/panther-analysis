@@ -1,4 +1,4 @@
-def rule(event):
+def check_sign_in_requirements(event):
     operation_detail = event.get("operation_detail", "<NO_OPS_DETAIL>")
     operation_flag_one = "Sign-In Password Requirement"
     operation_flag_two = "On to Off"

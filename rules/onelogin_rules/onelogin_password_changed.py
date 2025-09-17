@@ -5,8 +5,8 @@ def rule(event):
     return str(event.get("event_type_id")) == "11"
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] password changed by user "
-        f"[{event.get('actor_user_name', '<UNKNOWN_USER>')}]"
+        f"OneLogin Alert: Password changed for user [{event.get('user_name', '<UNKNOWN_USER>')}] "
+        f"by [{event.get('actor_user_name', '<UNKNOWN_USER>')}]"
     )

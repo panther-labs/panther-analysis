@@ -1,4 +1,4 @@
-def rule(event):
+def check_saml_modification(event):
     return (
         event.get("actionName") == "UPDATE_SAML_SETTINGS"
         and event.get("actionResult") == "SUCCEEDED"

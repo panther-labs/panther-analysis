@@ -4,7 +4,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{event.get('user', '<UNKNOWN_USER>')}] created Role "
-        f"[{event.get('name', '<UNKNOWN_NAME>')}] "
-        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
+        f"Teleport Alert: New Role [{event.get('name', '<UNKNOWN_NAME>')}] created "
+        f"by user [{event.get('user', '<UNKNOWN_USER>')}] "
+        f"on cluster [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
     )

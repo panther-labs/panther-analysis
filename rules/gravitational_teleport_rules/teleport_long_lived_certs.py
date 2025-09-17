@@ -73,7 +73,7 @@ def validity_interval(event):
 def title(event):
     identity = event.deep_get("identity", "user", default="<Cert with no User!?>")
     return (
-        f"A Certificate for [{identity}] "
-        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}] "
-        f"has been issued for an unusually long time: {validity_interval(event)!r} "
+        f"Teleport Alert: Long-lived Certificate issued for [{identity}] "
+        f"on cluster [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}] "
+        f"with validity period: {validity_interval(event)!r}"
     )

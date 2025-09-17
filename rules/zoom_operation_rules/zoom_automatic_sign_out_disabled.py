@@ -8,8 +8,8 @@ def rule(event):
     )
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"Zoom User [{event.get('operator', '<NO_OPERATOR>')}] turned off your organization's "
-        f"setting to automatically sign users out after a specified time."
+        f"ALERT: Zoom User [{event.get('operator', '<NO_OPERATOR>')}] disabled automatic sign-out "
+        f"for your organization."
     )

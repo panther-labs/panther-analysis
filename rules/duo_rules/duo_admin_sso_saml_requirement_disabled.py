@@ -12,7 +12,7 @@ def rule(event):
 def title(event):
     description = deserialize_administrator_log_event_description(event)
     return (
-        f"Duo: [{event.get('username', '<username_not_found>')}] "
+        f"Duo Security Alert: [{event.get('username', '<username_not_found>')}] "
         "changed SAML authentication requirements for Administrators "
         f"to [{description.get('enforcement_status', '<enforcement_status_not_found>')}]"
     )

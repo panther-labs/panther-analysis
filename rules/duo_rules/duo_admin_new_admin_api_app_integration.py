@@ -11,7 +11,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"Duo: [{event.get('username', '<username_not_found>')}] "
+        f"Duo Security Alert: [{event.get('username', '<username_not_found>')}] "
         "created a new Admin API integration "
         f"to [{event.get('object', '<object_not_found>')}]"
     )

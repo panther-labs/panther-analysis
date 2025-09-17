@@ -1,4 +1,4 @@
-PREFIXES = ("Updated grant: ", "Created grant: ")
+PREFIXES = ("Updated grant: ", "Created grant: ", "Modified grant: ")
 
 
 def rule(event):

@@ -2,7 +2,7 @@ from panther_asana_helpers import asana_alert_context
 from panther_base_helpers import deep_get
 
 
-def rule(event):
+def check_new_admin(event):
     new = deep_get(event, "details", "new_value", default="")
     old = deep_get(event, "details", "old_value", default="")
     return all(

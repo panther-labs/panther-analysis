@@ -1,7 +1,7 @@
 from panther_zoom_helpers import get_zoom_usergroup_context as get_context
 
 
-def rule(event):
+def check_passcode_disabled(event):
     if event.get("category_type") != "User Group":
         return False
 

@@ -1,4 +1,4 @@
-DOMAINS_TO_MONITOR = {"photoscape.ch"}  # Sample malware domain
+DOMAINS_TO_MONITOR = {"photoscape.ch", "malware-example.com"}  # Sample malware domains
 
 
 def rule(event):

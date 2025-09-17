@@ -7,7 +7,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"Duo: [{event.get('username', '<username_not_found>')}] "
+        f"Duo Security Alert: [{event.get('username', '<username_not_found>')}] "
         f"updated [{event.get('object', 'Duo Policy')}]."
     )
 

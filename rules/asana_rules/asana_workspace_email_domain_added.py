@@ -5,7 +5,7 @@ def rule(event):
     return event.get("event_type") == "workspace_associated_email_domain_added"
 
 
-def title(event):
+def generate_alert_title(event):
     workspace = deep_get(event, "resource", "name", default="<WORKSPACE_NOT_FOUND>")
     domain = deep_get(event, "details", "new_value", default="<DOMAIN_NOT_FOUND>")
     actor = deep_get(event, "actor", "email", default="<ACTOR_NOT_FOUND>")

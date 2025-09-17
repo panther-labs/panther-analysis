@@ -6,5 +6,5 @@ def rule(event):
     return False
 
 
-def title(event):
-    return f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] failed a high risk login attempt"
+def generate_alert_title(event):
+    return f"ALERT: High-risk login failure for user [{event.get('user_name', '<UNKNOWN_USER>')}]"

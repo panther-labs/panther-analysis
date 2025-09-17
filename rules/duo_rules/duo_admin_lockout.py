@@ -15,6 +15,6 @@ def title(event):
     except ValueError:
         message = "Invalid Json"
     return (
-        f"Duo Admin [{event.get('username', '<NO_USER_FOUND>')}] is "
+        f"Duo Security Alert: Admin [{event.get('username', '<NO_USER_FOUND>')}] is "
         f"locked out. Reason: [{message}]."
     )

@@ -2,7 +2,7 @@ from panther_duo_helpers import deserialize_administrator_log_event_description,
 
 
 def rule(event):
-    return event.get("action") == "admin_create"
+    return event.get("action") == "admin_create" and event.get("result") == "success"
 
 
 def title(event):

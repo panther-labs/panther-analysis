@@ -8,7 +8,7 @@ def rule(event):
     )
 
 
-def title(event):
+def generate_alert_title(event):
     workspace = deep_get(event, "resource", "name", default="<WORKSPACE_NOT_FOUND>")
     actor = deep_get(event, "actor", "email", default="<ACTOR_NOT_FOUND>")
     return (

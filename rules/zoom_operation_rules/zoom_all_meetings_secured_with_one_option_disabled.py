@@ -1,4 +1,4 @@
-def rule(event):
+def check_zoom_security_option(event):
     operation_detail = event.get("operation_detail", "<NO_OPS_DETAIL>")
     operation_flag = (
         "Require that all meetings are secured with one security option: from On to Off"

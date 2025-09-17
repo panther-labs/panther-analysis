@@ -15,7 +15,7 @@ def title(event):
     admin_username = event.get("username", "Unknown")
     user_email = event_description.get("email", "Unknown")
 
-    return f"Duo Admin [{admin_username}] denied due to an anomalous 2FA push for [{user_email}]"
+    return f"Duo Security Alert: Admin [{admin_username}] denied an anomalous 2FA push for [{user_email}]"
 
 
 def alert_context(event):

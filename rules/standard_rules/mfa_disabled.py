@@ -5,6 +5,6 @@ def rule(event):
     return event.udm("event_type") == event_type.MFA_DISABLED
 
 
-def title(event):
+def generate_alert_title(event):
     # use unified data model field in title
-    return f"{event.get('p_log_type')}: User [{event.udm('actor_user')}] disabled MFA"
+    return f"ALERT: {event.get('p_log_type')} - User [{event.udm('actor_user')}] has disabled MFA"

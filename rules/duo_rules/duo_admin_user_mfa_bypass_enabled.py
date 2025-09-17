@@ -11,9 +11,9 @@ def rule(event):
 
 def title(event):
     return (
-        f"Duo: [{event.get('username', '<username_not_found>')}] "
+        f"Duo Security Alert: [{event.get('username', '<username_not_found>')}] "
         f"updated account [{event.get('object', '<object_not_found>')}] "
-        "to not require two-factor authentication."
+        "to bypass two-factor authentication."
     )
 
 

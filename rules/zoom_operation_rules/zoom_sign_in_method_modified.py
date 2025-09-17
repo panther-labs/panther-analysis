@@ -12,7 +12,7 @@ def rule(event):
     )
 
 
-def title(event):
+def generate_alert_title(event):
     # string manipulation to grab service that allows sign-in from the operation detail
     # and clean it up a bit
     service_detail = ""

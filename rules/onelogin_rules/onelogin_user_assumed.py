@@ -5,8 +5,8 @@ def rule(event):
     ) != event.get("user_id", "UNKNOWN_USER")
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"A user [{event.get('actor_user_name', '<UNKNOWN_USER>')}] assumed another user "
-        f"[{event.get('user_name', '<UNKNOWN_USER>')}] account"
+        f"OneLogin Alert: User [{event.get('actor_user_name', '<UNKNOWN_USER>')}] assumed "
+        f"the account of [{event.get('user_name', '<UNKNOWN_USER>')}]"
     )

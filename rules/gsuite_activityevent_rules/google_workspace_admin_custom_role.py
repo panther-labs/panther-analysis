@@ -7,7 +7,7 @@ def rule(event):
     )
 
 
-def title(event):
+def generate_alert_title(event):
     # (Optional) Return a string which will be shown as the alert title.
     # If no 'dedup' function is defined, the return value of this method
     # will act as deduplication string.

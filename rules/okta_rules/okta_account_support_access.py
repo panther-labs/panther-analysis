@@ -1,6 +1,7 @@
 OKTA_SUPPORT_ACCESS_EVENTS = [
     "user.session.impersonation.grant",
     "user.session.impersonation.initiate",
+    "user.session.impersonation.extend",
 ]
 
 

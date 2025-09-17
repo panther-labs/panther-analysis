@@ -1,4 +1,4 @@
-def rule(event):
+def check_password_change_threshold(event):
     # filter events; event type 11 is an actor_user changed user password
     return str(event.get("event_type_id")) == "11"
 

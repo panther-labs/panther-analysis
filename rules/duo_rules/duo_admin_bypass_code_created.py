@@ -1,6 +1,6 @@
 def rule(event):
     # Return True to match the log event and trigger an alert.
-    return event.get("action", "") == "bypass_create"
+    return event.get("action", "") == "bypass_create" and event.get("result", "") == "success"
 
 
 def title(event):

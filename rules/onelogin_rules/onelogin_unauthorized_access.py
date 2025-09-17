@@ -3,8 +3,8 @@ def rule(event):
     return str(event.get("event_type_id")) == "90"
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"User [{event.get('user_name', '<UNKNOWN_USER>')}] has exceeded the unauthorized "
-        f"application access attempt threshold"
+        f"OneLogin Alert: User [{event.get('user_name', '<UNKNOWN_USER>')}] exceeded "
+        f"unauthorized application access threshold"
     )

@@ -3,8 +3,8 @@ def rule(event):
     return str(event.get("event_type_id")) == "17"
 
 
-def title(event):
+def generate_alert_title(event):
     return (
-        f"User [{event.get('actor_user_name', '<UNKNOWN_USER>')}] "
-        f"has exceeded the user account deletion threshold"
+        f"OneLogin Alert: User [{event.get('actor_user_name', '<UNKNOWN_USER>')}] "
+        f"exceeded account deletion threshold"
     )

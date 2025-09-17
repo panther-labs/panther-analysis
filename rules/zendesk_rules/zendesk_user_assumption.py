@@ -12,5 +12,5 @@ def rule(event):
     )
 
 
-def title(event):
-    return f"A user [{event.udm('actor_user')}] updated zendesk support user assumption settings"
+def generate_alert_title(event):
+    return f"ALERT: Zendesk user [{event.udm('actor_user')}] modified support user assumption settings"

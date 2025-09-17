@@ -16,13 +16,13 @@ def title(event):
         "protoPayload", "metadata", "event", "eventName", default="<EVENT_NAME_NOT_FOUND>"
     )
 
-    resource = organization_id = event.deep_walk(
+    resource = event.deep_walk(
         "protoPayload", "resourceName", default="<RESOURCE_NOT_FOUND>"
     ).split("/")
 
     organization_id = resource[resource.index("organizations") + 1]
 
-    return f"GCP: [{actor}] performed {event_name} in organization {organization_id}"
+    return f"GCP Alert: [{actor}] performed {event_name} in organization {organization_id}"
 
 
 def alert_context(event):

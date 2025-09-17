@@ -1,7 +1,7 @@
 from panther_base_helpers import deep_get
 
 
-def rule(event):
+def check_session_duration(event):
     return (
         event.get("event_type") == "workspace_default_session_duration_changed"
         and deep_get(event, "details", "new_value") == "never"
