@@ -1,0 +1,121 @@
+AnalysisType: rule
+Filename: intune_new_device_management_script.py
+RuleID: "Intune.NewDeviceManagementScript"
+DisplayName: "Intune New Device Management Script"
+Enabled: true
+LogTypes:
+    - MicrosoftIntune.AuditLogs
+Tags:
+    - InTune
+Severity: Medium
+Reports:
+    MITRE ATT&CK:
+        - "TA0002:T1072"
+        - "TA0008:T1021.007"
+        - "TA0005:T1202"
+Description: Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.
+Runbook: Review the actions taken to determine if they are legitimate changes by an administrator. Microsoft does not provide the IP address of the actor or the name of the affected scripts, but more information can be found by navigating to the Intune portal and reviewing the configured scripts. The TargetObjectIds field specifies the ID of the script(s) that were targeted by the given action.  The TargetGroupIDs specify target groups of devices that the script will be assigned to. If the actor deletes a script, it will not be possible to retrieve more information from the portal. Endpoint investigation can be performed by reviewing InTune logs at C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\_IntuneManagementExtension.txt on affected endpoints.
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://cloud.google.com/blog/topics/threat-intelligence/abusing-intune-permissions-entra-id-environments
+Tests:
+    - Name: Add Device Management Script
+      ExpectedResult: true
+      Log:
+          {
+              "category": "AuditLogs",
+              "correlationId": "74631aa2-a9ea-4b5d-8d48-3e008d092325",
+              "identity": "testuser@testdomain.com",
+              "operationName": "assignDeviceManagementScript DeviceManagementScript",
+              "properties":
+                  {
+                      "ActivityDate": "4/1/2025 6:42:09 PM",
+                      "ActivityResultStatus": 1,
+                      "ActivityType": 3,
+                      "Actor":
+                          {
+                              "ActorType": 1,
+                              "Application": "5926fc8e-304e-4f59-8bed-58ca97cc39a4",
+                              "ApplicationName": "Microsoft Intune portal extension",
+                              "IsDelegatedAdmin": false,
+                              "ObjectId": "5774e54b-f2ad-41f8-a2d5-4bc356342fa6",
+                              "PartnerTenantId": "00000000-0000-0000-0000-000000000000",
+                              "UPN": "testuser@testdomain.com",
+                              "UserPermissions": ["*"],
+                          },
+                      "AdditionalDetails": "Key = TargetGroupIDsValue = 36ca05af-f92e-48b6-8f7a-5bf3924a4926\r\nKey = TargetGroupIDsValue = 36ca05af-f92e-48b6-8f7a-5bf3924a4926\r\n",
+                      "AuditEventId": "88abb00c-2752-4c2f-b690-00c6c4f2931b",
+                      "Category": 3,
+                      "TargetDisplayNames": ["<null>"],
+                      "TargetObjectIds":
+                          ["914232cd-e64b-4ecd-9fe2-ecfc5f1aef89"],
+                      "Targets":
+                          [
+                              {
+                                  "ModifiedProperties":
+                                      [
+                                          {
+                                              "Name": "TargetGroupIDs",
+                                              "New": "36ca05af-f92e-48b6-8f7a-5bf3924a4926",
+                                          },
+                                          {
+                                              "Name": "DeviceManagementAPIVersion",
+                                              "New": "5025-02-18",
+                                          },
+                                      ],
+                              },
+                          ],
+                  },
+              "resultDescription": "None",
+              "resultType": "Success",
+              "tenantId": "11111111-2222-3333-4444-555555555555",
+              "time": "2025-04-01T18:42:09.5769000Z",
+          }
+    - Name: Add Device Compliance Script
+      ExpectedResult: true
+      Log:
+          {
+              "category": "AuditLogs",
+              "correlationId": "04ee6f15-684f-4d5b-9cb3-9680cf38c4d6",
+              "identity": "testuser@testdomain.com",
+              "operationName": "createDeviceComplianceScript DeviceComplianceScript",
+              "properties":
+                  {
+                      "ActivityDate": "4/1/2025 7:39:45 PM",
+                      "ActivityResultStatus": 1,
+                      "ActivityType": 0,
+                      "Actor":
+                          {
+                              "ActorType": 1,
+                              "Application": "5926fc8e-304e-4f59-8bed-58ca97cc39a4",
+                              "ApplicationName": "Microsoft Intune portal extension",
+                              "IsDelegatedAdmin": false,
+                              "ObjectId": "5774e54b-f2ad-41f8-a2d5-4bc356342fa6",
+                              "PartnerTenantId": "00000000-0000-0000-0000-000000000000",
+                              "UPN": "testuser@testdomain.com",
+                              "UserPermissions": ["*"],
+                          },
+                      "AdditionalDetails": "",
+                      "AuditEventId": "d66801a7-0893-4ae0-8407-dd871b4e6cfd",
+                      "Category": 3,
+                      "TargetDisplayNames": ["<null>"],
+                      "TargetObjectIds":
+                          ["a0cbb43a-211f-45a0-bb42-6ace6857e914"],
+                      "Targets":
+                          [
+                              {
+                                  "ModifiedProperties":
+                                      [
+                                          {
+                                              "Name": "DeviceManagementAPIVersion",
+                                              "New": "5025-02-18",
+                                          },
+                                      ],
+                              },
+                          ],
+                  },
+              "resultDescription": "None",
+              "resultType": "Success",
+              "tenantId": "11111111-2222-3333-4444-555555555555",
+              "time": "2025-04-01T19:39:45.0755000Z",
+          }
