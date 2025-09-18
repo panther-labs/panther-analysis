@@ -42,6 +42,7 @@
 - [Asana](#asana)
 - [Atlassian](#atlassian)
 - [Auth0](#auth0)
+- [Axonius](#axonius)
 - [Azure](#azure)
 
 
@@ -790,6 +791,18 @@
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.
+
+
+## Axonius
+
+- [Axonius API Key Reset](../rules/axonius_rules/axonius_resetapikey.yml)
+  - Detects an Axonius API Key Reset
+- [Axonius External User Added](../rules/axonius_rules/axonius_add_external_user.yml)
+  - Detects when an external user is added in Axonius
+- [Axonius login from Tor IP](../rules/axonius_rules/axonius_tor_login.yml)
+  - Detects an Axonius login from Tor IP address
+- [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
+  - Detects when an Axonius Webhook is Created
 
 
 ## Azure

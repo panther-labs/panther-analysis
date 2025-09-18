@@ -1,0 +1,30 @@
+AnalysisType: rule
+Filename: axonius_webhook_created.py
+RuleID: Axonius.WebhookCreated
+DisplayName: Axonius Webhook Created
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+Severity: Low
+Description: Detects when an Axonius Webhook is Created
+Runbook: Review if the webhook is approved and appropriate
+Tests:
+  - Name: Webhook Created
+    ExpectedResult: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.Put",
+          "category": "AuditCategory.WebhookManagement",
+          "params": {
+            "config_id": "66db3fc88a93f66a4da0f084",
+            "vendor_name": "Okta"
+          },
+          "type": "user",
+          "user": "admin@axonius.com"
+        },
+        "source": "axonius",
+        "time": 1745944321.285849
+      }
