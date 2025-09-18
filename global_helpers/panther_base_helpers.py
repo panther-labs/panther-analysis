@@ -166,21 +166,20 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
 
 
 def is_base64(b64: str) -> str:
-    # if the string is base64 encoded, return the decoded ASCII string
+    # if the string is base64 encoded, return the decoded string
     # otherwise return an empty string
     # handle false positives for very short strings
     if len(b64) < 12:
         return ""
     # Pad args with "=" to ensure proper decoding
     b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
-    # Check if the matched string can be decoded back into ASCII
+    # Convert to ASCII-only string for b64decode validation (it requires ASCII input)
+    b64_ascii = b64.encode("ascii", errors="ignore").decode("ascii")
+    # Check if the matched string can be decoded back - use latin-1 for maximum compatibility
     try:
-        return b64decode(b64, validate=True).decode("ascii")
-    except AsciiError:
-        pass
-    except UnicodeDecodeError:
-        pass
-    return ""
+        return b64decode(b64_ascii, validate=True).decode("latin-1")
+    except (AsciiError, UnicodeDecodeError, ValueError):
+        return ""
 
 
 def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> dict:
