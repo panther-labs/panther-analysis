@@ -29,7 +29,12 @@ Reports:
     - TA0005:T1562  # Defense Evasion: Impair Defenses
     - TA0040:T1562  # Impact: Impair Defenses
 Reference: https://docs.panther.com/system-configuration/panther-audit-logs
-Runbook: Identify which specific detections were disabled and assess the security impact.
+Runbook: |
+  1. Query panther_audit logs to identify which specific detections were disabled by this actor
+  2. Use list_detections to check current status of affected detection rules
+  3. Query data lake for any missed alerts that would have fired from disabled detections
+  4. Search alert history for patterns of detection tampering by the same actor
+  5. Check if any related alerts were suppressed in the timeframe after disabling
 SummaryAttributes:
   - actor.name
   - actor.attributes.email

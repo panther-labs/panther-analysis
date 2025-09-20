@@ -31,11 +31,12 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562  # Defense Evasion: Impair Defenses
 Reference: https://docs.panther.com/system-configuration/destinations
-Runbook: >
+Runbook: |
   1. Query panther_audit logs for other administrative actions by the same actor to identify coordinated tampering
-  2. Check if any MEDIUM, HIGH, or CRITICAL alerts were generated after this routing change
-  3. Review the current alert destination configuration to verify if critical/high severity alerts are being routed to any channels
-  4. Check if the actor's role permissions and had recently changed
+  2. Use list_alerts to check if any MEDIUM, HIGH, or CRITICAL alerts were generated after this routing change
+  3. Query alert destination configurations to verify critical/high severity alert routing
+  4. Search data lake for any missed high-severity alerts that should have been routed
+  5. Check alert history for patterns of destination tampering by the same actor
 Tests:
   - Name: Alert destination set to only INFO severity
     ExpectedResult: true

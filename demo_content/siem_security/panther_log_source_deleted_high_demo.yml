@@ -17,6 +17,12 @@ Tags:
   - asset.logging_infrastructure
   - impact.availability
   - risk.high
+Runbook: |
+  1. Query panther_audit logs to identify which log source was deleted and by whom
+  2. Use list_log_sources to verify current log source configurations and identify gaps
+  3. Query data lake to assess data loss - check when logs last arrived from the deleted source
+  4. Search for any alerts that may have been missed due to log source deletion
+  5. Review alert history for patterns of log source tampering by the same actor
 Tests:
   - Name: Log source deleted (positive)
     ExpectedResult: true

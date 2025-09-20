@@ -1,0 +1,174 @@
+AnalysisType: rule
+RuleID: "Panther.User.Invited.ExternalEmail.Demo"
+DisplayName: "User Invited to Panther with External Email Address"
+Enabled: true
+LogTypes:
+    - Panther.Audit
+Tags:
+    - asset.identity_management
+    - compliance.change_management
+    - compliance.iso27001
+    - compliance.nist_csf
+    - compliance.soc2
+    - demo
+    - mitre.ta0003.persistence
+    - risk.medium
+    - threat.insider
+    - usecase.authentication_monitoring
+    - usecase.privileged_access_monitoring
+Severity: Medium
+Description: |
+    Detects when a user is invited to Panther with an external email address (not @panther.com or @panther.io).  This may indicate potential security risks, policy violations, or unauthorized access attempts and should be reviewed.
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: |
+    1. Review the actor who invited the user and confirm if the invitation was expected and authorized. 
+    2. Verify the external email address and domain for legitimacy and business justification. 
+    3. Check if the external user requires access and if proper approval was obtained. 
+    4. If unauthorized, revoke the invitation immediately and investigate for policy violations. 
+    5. Consider implementing domain restrictions or approval workflows for external user invitations.
+Reference: https://docs.panther.com/system-configuration/panther-audit-logs
+Detection:
+    - KeyPath: actionName
+      Condition: Equals
+      Value: CREATE_USER
+    - KeyPath: actionDescription
+      Condition: Equals
+      Value: Invites a new user
+    - KeyPath: actionResult
+      Condition: Equals
+      Value: SUCCEEDED
+    - KeyPath: actionParams.dynamic.input.email
+      Condition: DoesNotEndWith
+      Value: "@panther.com"
+    - KeyPath: actionParams.dynamic.input.email
+      Condition: DoesNotEndWith
+      Value: "@panther.io"
+    - KeyPath: actionParams.dynamic.input.email
+      Condition: IsNotNullOrEmpty
+GroupBy:
+    - KeyPath: actionParams.dynamic.input.email
+AlertTitle: External user [{actionParams.dynamic.input.email}] invited to Panther by [{actor.name}]
+SummaryAttributes:
+    - actionParams.dynamic.input.email
+    - actor.id
+    - actor.name
+    - sourceIP
+    - timestamp
+Tests:
+    - Name: External email invitation (positive)
+      ExpectedResult: true
+      Log:
+        actionDescription: Invites a new user
+        actionName: CREATE_USER
+        actionParams:
+            dynamic:
+                input:
+                    email: john.doe@external-company.com
+                    familyName: Doe
+                    givenName: John
+                    role:
+                        kind: ID
+                        value: de8058d5-fbe0-4125-bc2e-8533802ad682
+            static: {}
+        actionResult: SUCCEEDED
+        actor:
+            attributes:
+                email: jack@panther.com
+                emailVerified: true
+                roleId: de8058d5-fbe0-4125-bc2e-8533802ad682
+                roleName: Admin
+            id: 18819340-4021-7089-7a76-dd97fbf940af
+            name: Jack Naglieri
+            type: USER
+        p_log_type: Panther.Audit
+        sourceIP: 76.137.197.238
+        timestamp: "2025-09-16T14:56:02.389Z"
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+    - Name: Panther.com email invitation (negative)
+      ExpectedResult: false
+      Log:
+        actionDescription: Invites a new user
+        actionName: CREATE_USER
+        actionParams:
+            dynamic:
+                input:
+                    email: russell.leighton@panther.com
+                    familyName: Leighton
+                    givenName: Russ
+                    role:
+                        kind: ID
+                        value: de8058d5-fbe0-4125-bc2e-8533802ad682
+            static: {}
+        actionResult: SUCCEEDED
+        actor:
+            attributes:
+                email: jack@panther.com
+                emailVerified: true
+                roleId: de8058d5-fbe0-4125-bc2e-8533802ad682
+                roleName: Admin
+            id: 18819340-4021-7089-7a76-dd97fbf940af
+            name: Jack Naglieri
+            type: USER
+        p_log_type: Panther.Audit
+        sourceIP: 76.137.197.238
+        timestamp: "2025-09-15T16:10:47.629Z"
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+    - Name: Panther.io email invitation (negative)
+      ExpectedResult: false
+      Log:
+        actionDescription: Invites a new user
+        actionName: CREATE_USER
+        actionParams:
+            dynamic:
+                input:
+                    email: nick.koukounakis@panther.io
+                    familyName: Koukounakis
+                    givenName: Niko
+                    role:
+                        kind: ID
+                        value: de8058d5-fbe0-4125-bc2e-8533802ad682
+            static: {}
+        actionResult: SUCCEEDED
+        actor:
+            attributes:
+                email: jack@panther.com
+                emailVerified: true
+                roleId: de8058d5-fbe0-4125-bc2e-8533802ad682
+                roleName: Admin
+            id: 18819340-4021-7089-7a76-dd97fbf940af
+            name: Jack Naglieri
+            type: USER
+        p_log_type: Panther.Audit
+        sourceIP: 76.137.197.238
+        timestamp: "2025-09-15T16:10:30.752Z"
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+    - Name: Failed invitation (negative)
+      ExpectedResult: false
+      Log:
+        actionDescription: Invites a new user
+        actionName: CREATE_USER
+        actionParams:
+            dynamic:
+                input:
+                    email: john.doe@external-company.com
+                    familyName: Doe
+                    givenName: John
+                    role:
+                        kind: ID
+                        value: de8058d5-fbe0-4125-bc2e-8533802ad682
+            static: {}
+        actionResult: FAILED
+        actor:
+            attributes:
+                email: jack@panther.com
+                emailVerified: true
+                roleId: de8058d5-fbe0-4125-bc2e-8533802ad682
+                roleName: Admin
+            id: 18819340-4021-7089-7a76-dd97fbf940af
+            name: Jack Naglieri
+            type: USER
+        p_log_type: Panther.Audit
+        sourceIP: 76.137.197.238
+        timestamp: "2025-09-16T14:56:02.389Z"
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
