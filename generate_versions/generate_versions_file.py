@@ -1,12 +1,12 @@
 import dataclasses
 import hashlib
 import os
+import subprocess
 from typing import Any, Dict, Generator
 
 import yaml
 
 _VERSIONS_FILE_NAME = ".versions.yml"
-_COMMIT_RELEASE_TAG = "<no-release-tag>"
 
 
 @dataclasses.dataclass
@@ -46,7 +46,7 @@ def update_version_item(
 
 
 def update_version_history(
-    version_file_contents: Dict[str, Any], analysis_item: AnalysisItem
+    version_file_contents: Dict[str, Any], analysis_item: AnalysisItem, commit_hash: str
 ):
     versions = version_file_contents["versions"]
     version_item = versions[analysis_item._id] if analysis_item._id in versions else {}
@@ -55,7 +55,7 @@ def update_version_history(
         if "history" in version_item
         else {
             analysis_item.version: {
-                "commit_tag": _COMMIT_RELEASE_TAG,
+                "commit_hash": commit_hash,
                 "yamlFilePath": analysis_item.yamlFilePath,
                 **(
                     {"pyFilePath": analysis_item.pyFilePath}
@@ -68,7 +68,7 @@ def update_version_history(
 
     if analysis_item.version not in history:
         history[analysis_item.version] = {
-            "commit_tag": _COMMIT_RELEASE_TAG,
+            "commit_hash": commit_hash,
             "yamlFilePath": analysis_item.yamlFilePath,
             **(
                 {"pyFilePath": analysis_item.pyFilePath}
@@ -156,19 +156,24 @@ def dump_versions_file(versions: Dict[str, Any]):
         yaml.safe_dump(versions, vf)
 
 
-def generate_version_file():
+def generate_version_file(commit_hash: str):
     versions_file_contents = load_versions_file()
 
     for analysis_item in load_analysis_items():
         update_version_item(versions_file_contents, analysis_item)
-        update_version_history(versions_file_contents, analysis_item)
+        update_version_history(versions_file_contents, analysis_item, commit_hash)
 
     dump_versions_file(versions_file_contents)
 
 
+def get_commit_hash() -> str:
+    result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True)
+    if result.stderr:
+        raise Exception(result.stderr.decode("utf-8"))
+    return result.stdout.decode("utf-8").strip()
+
+
 if __name__ == "__main__":
-    commit_release_tag = str(os.getenv("GIT_TAGS")).strip().split(" ")[0]
-    print(f"Commit release tag: {commit_release_tag}")
-    if commit_release_tag != "":
-        _COMMIT_RELEASE_TAG = commit_release_tag
-    generate_version_file()
+    commit_hash = get_commit_hash()
+    print(f"Commit hash: {commit_hash}")
+    generate_version_file(commit_hash)
