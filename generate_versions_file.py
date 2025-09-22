@@ -145,8 +145,6 @@ def load_versions_file() -> Dict[str, Any]:
         versions = yaml.safe_load(vf)
         if versions is None:
             versions = {}
-        if "version_history" not in versions:
-            versions["version_history"] = {}
         if "versions" not in versions:
             versions["versions"] = {}
 
