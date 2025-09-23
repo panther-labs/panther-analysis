@@ -296,10 +296,17 @@ def get_snowflake_enrichment(event) -> Optional[SnowflakeEnrichment]:
 
 
 def query_history_alert_context(event):
-    return {
+    base_context = {
         "user": event.get("user_name", "<UNKNOWN USER>"),
         "role": event.get("role_name", "<UNKNOWN ROLE>"),
         "source": event.get("p_source_label", "<UNKNOWN SOURCE>"),
         # Not all queries are run in a warehouse; e.g.: getting worksheet files
         "warehouse": event.get("WAREHOUSE_NAME", "<NO WAREHOUSE>"),
-    } | get_snowflake_enrichment(event).get_admin_context(event.get("user_name"))
+    }
+
+    enrichment = get_snowflake_enrichment(event)
+    if enrichment:
+        admin_context = enrichment.get_admin_context(event.get("user_name"))
+        return base_context | admin_context
+
+    return base_context
