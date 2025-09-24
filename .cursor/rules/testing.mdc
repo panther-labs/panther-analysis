@@ -1,0 +1,69 @@
+---
+alwaysApply: true
+---
+
+Use the `panther_analysis_tool` aka `pat` to run tests for detections:
+
+```bash
+pipenv run pat test
+```
+
+## Testing Specific Detections
+
+Test by RuleID:
+```bash
+pipenv run pat test --filter RuleID=Panther.AlertRoutingTampering
+```
+
+Test by severity:
+```bash
+pipenv run pat test --filter Severity=Critical
+pipenv run pat test --filter Severity=High,Critical
+```
+
+Test by log type:
+```bash
+pipenv run pat test --filter LogTypes=AWS.GuardDuty
+pipenv run pat test --filter LogTypes=AWS.CloudTrail
+```
+
+Test by analysis type:
+```bash
+pipenv run pat test --filter AnalysisType=rule
+pipenv run pat test --filter AnalysisType=policy
+pipenv run pat test --filter AnalysisType=rule,policy
+```
+
+Test specific groups by path:
+```bash
+pipenv run pat test --path demo_content/production_security
+pipenv run pat test --path rules/aws_cloudtrail_rules/
+```
+
+## Advanced Testing Options
+
+Test specific unit test cases:
+```bash
+pipenv run pat test --filter RuleID=AWS.IAM.AccessKeyCompromised --test-names "An AWS Access Key was Uploaded to Github"
+```
+
+Test with minimum test coverage requirements:
+```bash
+pipenv run pat test --minimum-tests 2
+```
+
+## Debugging Tests
+
+Debug a single rule test with print statements and breakpoints:
+```bash
+pipenv run pat debug My.RuleID "My unit test name"
+```
+
+## Test Coverage Requirements
+
+When using `--minimum-tests 2` or higher, detections must have:
+- At least the specified number of tests
+- At least one test that returns `True` (detection triggers)
+- At least one test that returns `False` (detection doesn't trigger)
+
+Files cannot be specifically passed as arguments, only the attributes in their metadata YML file, like RuleID.
