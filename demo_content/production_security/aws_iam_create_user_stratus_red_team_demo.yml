@@ -1,0 +1,133 @@
+AnalysisType: rule
+Enabled: true
+RuleID: AWS.IAM.CreateUser.StratusRedTeam.Demo
+LogTypes:
+  - AWS.CloudTrail
+Severity: High
+CreateAlert: true
+DisplayName: IAM User Created with StratusRedTeam Tag
+Description: Detects IAM user creation with StratusRedTeam tag, indicating potential red team testing activity that should be monitored and validated
+Detection:
+  - KeyPath: eventName
+    Condition: Equals
+    Value: CreateUser
+  - KeyPath: eventSource
+    Condition: Equals
+    Value: iam.amazonaws.com
+  - KeyPath: errorCode
+    Condition: IsNull
+  - KeyPath: requestParameters.tags
+    Condition: AnyElement
+    Expressions:
+      - KeyPath: key
+        Condition: Equals
+        Value: StratusRedTeam
+Tags:
+  - AWS
+  - IAM
+  - Red Team
+  - Testing
+  - MITRE ATT&CK
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003  # Persistence:Create Account:Cloud Account
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
+AlertTitle: "IAM user [{requestParameters.userName}] created with StratusRedTeam tag by [{userIdentity.arn}]"
+Runbook: |
+  1. Verify if this is authorized red team testing activity
+  2. Check if the user creation was part of a scheduled security exercise
+  3. Monitor the created user for any follow-up activities like policy attachments or access key creation
+  4. If unauthorized, immediately disable the user and investigate the actor's recent activities
+  5. Review CloudTrail logs for the timeframe around this event for additional suspicious activity
+SummaryAttributes:
+  - requestParameters.userName
+  - userIdentity.arn
+  - sourceIPAddress
+  - eventTime
+GroupBy:
+  - KeyPath: requestParameters.userName
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: IAM User Created with StratusRedTeam tag
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.05"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AROAEXAMPLE:jack"
+        arn: "arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_6605c563ac4b0410/jack"
+        accountId: "904233115233"
+      eventTime: "2025-09-20T21:48:40Z"
+      eventSource: iam.amazonaws.com
+      eventName: CreateUser
+      sourceIPAddress: 52.89.62.74
+      userAgent: "APN/1.0 HashiCorp/1.0 Terraform/1.1.2"
+      requestParameters:
+        userName: johnny-appleseed
+        path: "/"
+        tags:
+          - key: StratusRedTeam
+            value: "true"
+      responseElements:
+        user:
+          arn: "arn:aws:iam::904233115233:user/johnny-appleseed"
+          createDate: "Sep 20, 2025, 9:48:40 PM"
+          path: "/"
+          tags:
+            - key: StratusRedTeam
+              value: "true"
+          userId: "AIDA5FCD6LZQUJA2KSBID"
+          userName: johnny-appleseed
+  - Name: IAM User Created without StratusRedTeam tag (should not alert)
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.05"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AROAEXAMPLE:admin"
+        arn: "arn:aws:sts::904233115233:assumed-role/AdminRole/admin"
+        accountId: "904233115233"
+      eventTime: "2025-09-20T21:48:40Z"
+      eventSource: iam.amazonaws.com
+      eventName: CreateUser
+      sourceIPAddress: 10.0.1.100
+      userAgent: "aws-cli/2.1.34"
+      requestParameters:
+        userName: legitimate-user
+        path: "/"
+        tags:
+          - key: Environment
+            value: "Production"
+      responseElements:
+        user:
+          arn: "arn:aws:iam::904233115233:user/legitimate-user"
+          createDate: "Sep 20, 2025, 9:48:40 PM"
+          path: "/"
+          tags:
+            - key: Environment
+              value: "Production"
+          userId: "AIDA5FCD6LZQUJA2KSBID"
+          userName: legitimate-user
+  - Name: CreateUser event with error (should not alert)
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.05"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AROAEXAMPLE:jack"
+        arn: "arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_6605c563ac4b0410/jack"
+        accountId: "904233115233"
+      eventTime: "2025-09-20T21:48:40Z"
+      eventSource: iam.amazonaws.com
+      eventName: CreateUser
+      sourceIPAddress: 52.89.62.74
+      userAgent: "APN/1.0 HashiCorp/1.0 Terraform/1.1.2"
+      requestParameters:
+        userName: johnny-appleseed
+        path: "/"
+        tags:
+          - key: StratusRedTeam
+            value: "true"
+      errorCode: "InvalidUserException"
+      errorMessage: "The user already exists"

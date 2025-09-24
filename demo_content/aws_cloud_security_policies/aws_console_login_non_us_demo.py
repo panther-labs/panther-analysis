@@ -38,9 +38,9 @@ def title(event):
     """
     location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress", default={})
     city = location_data.get("city", "Unknown")
-    region = location_data.get("region", "Unknown") 
+    region = location_data.get("region", "Unknown")
     country = location_data.get("country", "Unknown")
-    user_name = event.deep_get("userIdentity", "userName") or event.deep_get("userIdentity", "type", default="Unknown")
+    user_name = _get_user_name(event)
     account_name = lookup_aws_account_name(event.get("recipientAccountId"))
     
     return (
@@ -50,29 +50,17 @@ def title(event):
     )
 
 
-def dedup(event):
-    """
-    Deduplication key to group similar events together.
-    Groups by user identity, account, and source IP to avoid alert spam.
-    """
-    return "-".join([
-        event.deep_get("userIdentity", "arn", default="unknown"),
-        event.get("recipientAccountId", "unknown"),
-        event.get("sourceIPAddress", "unknown")
-    ])
-
-
 def alert_context(event):
     """
     Provide additional context for the alert including user details and location information.
     """
     location_data = event.deep_get("p_enrichment", "ipinfo_location", "sourceIPAddress", default={})
-    
+
     context = {
         "sourceIPAddress": event.get("sourceIPAddress"),
         "userIdentityType": event.deep_get("userIdentity", "type"),
         "userIdentityArn": event.deep_get("userIdentity", "arn"),
-        "userName": event.deep_get("userIdentity", "userName"),
+        "userName": _get_user_name(event),
         "eventTime": event.get("eventTime"),
         "userAgent": event.get("userAgent"),
         "mfaUsed": event.deep_get("additionalEventData", "MFAUsed"),
@@ -87,11 +75,48 @@ def alert_context(event):
             "postal_code": location_data.get("postal_code")
         }
     }
+
+    # Add session context for AssumedRole logins
+    if event.deep_get("userIdentity", "type") == "AssumedRole":
+        session_context = event.deep_get("userIdentity", "sessionContext") or {}
+        context["sessionContext"] = {
+            "mfaAuthenticated": session_context.get("attributes", {}).get("mfaAuthenticated"),
+            "creationDate": session_context.get("attributes", {}).get("creationDate"),
+            "sessionIssuer": session_context.get("sessionIssuer")
+        }
     
     # Add AWS-specific context from helper
     context.update(aws_rule_context(event))
     
     return context
+
+
+def _get_user_name(event):
+    """
+    Extract username from event, handling different user identity types.
+    For AssumedRole, extracts the username from the principalId or ARN.
+    """
+    user_identity_type = event.deep_get("userIdentity", "type")
+
+    # Handle AssumedRole case - extract username from principalId or ARN
+    if user_identity_type == "AssumedRole":
+        # Try principalId first (format: AROA...:username)
+        principal_id = event.deep_get("userIdentity", "principalId")
+        if principal_id and ":" in principal_id:
+            return principal_id.split(":")[-1]
+
+        # Fallback to ARN parsing (format: arn:aws:sts::account:assumed-role/RoleName/username)
+        arn = event.deep_get("userIdentity", "arn")
+        if arn and "/" in arn:
+            return arn.split("/")[-1]
+
+    # Handle standard cases (IAMUser, Root, etc.)
+    user_name = event.deep_get("userIdentity", "userName")
+    if user_name:
+        return user_name
+
+    # Fallback to user identity type
+    return user_identity_type or "Unknown"
 
 
 def _get_country_name(country_code):

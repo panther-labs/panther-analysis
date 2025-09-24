@@ -17,7 +17,7 @@ Reports:
 Severity: Medium
 Description: >
   Detects AWS console login attempts from IP addresses located outside California using IPInfo location enrichment data. This may indicate unauthorized access, travel, or policy violations that require investigation.
-Runbook: >
+Runbook: |
   1. Verify the legitimacy of the console login attempt
   2. Check if the user has authorized international travel or remote work
   3. Investigate other recent activities by the same user account
@@ -268,3 +268,54 @@ Tests:
       eventID: "66778899-0011-2233-4455-667788990011"
       eventType: "AwsConsoleSignIn"
       recipientAccountId: "123456789012"
+  - Name: AssumedRole console login from outside California (should alert)
+    ExpectedResult: true
+    Log:
+      additionalEventData:
+        MobileVersion: "No"
+        MFAUsed: "No"
+      awsRegion: "us-west-2"
+      eventCategory: "Management"
+      eventID: "4f5e8637-849c-4980-88ff-3751acd152dd"
+      eventName: "ConsoleLogin"
+      eventSource: "signin.amazonaws.com"
+      eventTime: "2025-09-22 19:19:45.000000000"
+      eventType: "AwsConsoleSignIn"
+      eventVersion: "1.11"
+      managementEvent: true
+      readOnly: false
+      recipientAccountId: "904233115233"
+      responseElements:
+        ConsoleLogin: "Success"
+      sourceIPAddress: "96.255.35.171"
+      tlsDetails:
+        tlsVersion: "TLSv1.3"
+        cipherSuite: "TLS_AES_128_GCM_SHA256"
+        clientProvidedHostHeader: "us-west-2.signin.aws.amazon.com"
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+      userIdentity:
+        type: "AssumedRole"
+        principalId: "AROA5FCD6LZQZLIF36AWU:russell.leighton"
+        arn: "arn:aws:sts::904233115233:assumed-role/AWSReservedSSO_DevAdmin_6605c563ac4b0410/russell.leighton"
+        accountId: "904233115233"
+        accessKeyId: "ASIA5FCD6LZQ74Z7AFWR"
+        sessionContext:
+          attributes:
+            mfaAuthenticated: "false"
+            creationDate: "2025-09-22T19:19:44Z"
+          sessionIssuer:
+            type: "Role"
+            principalId: "AROA5FCD6LZQZLIF36AWU"
+            arn: "arn:aws:iam::904233115233:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_6605c563ac4b0410"
+            accountId: "904233115233"
+            userName: "AWSReservedSSO_DevAdmin_6605c563ac4b0410"
+      p_enrichment:
+        ipinfo_location:
+          sourceIPAddress:
+            country: "US"
+            city: "New York"
+            region: "New York"
+            timezone: "America/New_York"
+            lat: 40.7128
+            lng: -74.0060
+            postal_code: "10001"
