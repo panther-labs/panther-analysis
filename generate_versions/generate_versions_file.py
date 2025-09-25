@@ -2,11 +2,29 @@ import dataclasses
 import hashlib
 import os
 import subprocess
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, Optional
 
+import pydantic
 import yaml
 
 _VERSIONS_FILE_NAME = ".versions.yml"
+
+
+class AnalysisVersionHistoryItem(pydantic.BaseModel):
+    commit_hash: str
+    pyFilePath: Optional[str]
+    yamlFilePath: str
+
+
+class AnalysisVersionItem(pydantic.BaseModel):
+    history: dict[int, AnalysisVersionHistoryItem]
+    sha256: str
+    type: str
+    version: int
+
+
+class VersionsFile(pydantic.BaseModel):
+    versions: dict[str, AnalysisVersionItem]
 
 
 @dataclasses.dataclass
@@ -21,63 +39,46 @@ class AnalysisItem:
     version: int
 
 
-def update_version_item(
-    version_file_contents: Dict[str, Any], analysis_item: AnalysisItem
-):
-    versions = version_file_contents["versions"]
+def update_version_item(version_file: VersionsFile, analysis_item: AnalysisItem):
+    versions = version_file.versions
 
     version_item = (
         versions[analysis_item._id]
         if analysis_item._id in versions
-        else {
-            "version": 1,
-            "sha256": analysis_item.sha256,
-            "type": analysis_item.type,
-        }
+        else AnalysisVersionItem(
+            version=1,
+            sha256=analysis_item.sha256,
+            type=analysis_item.type,
+            history={},
+        )
     )
 
-    if version_item["sha256"] != analysis_item.sha256:
-        version_item["version"] = version_item["version"] + 1
-        version_item["sha256"] = analysis_item.sha256
-        version_item["type"] = analysis_item.type
+    if version_item.sha256 != analysis_item.sha256:
+        version_item.version = version_item.version + 1
+        version_item.sha256 = analysis_item.sha256
+        version_item.type = analysis_item.type
 
-    analysis_item.version = version_item["version"]
+    analysis_item.version = version_item.version
     versions[analysis_item._id] = version_item
 
 
 def update_version_history(
-    version_file_contents: Dict[str, Any], analysis_item: AnalysisItem, commit_hash: str
+    version_file: VersionsFile, analysis_item: AnalysisItem, commit_hash: str
 ):
-    versions = version_file_contents["versions"]
-    version_item = versions[analysis_item._id] if analysis_item._id in versions else {}
-    history = (
-        version_item["history"]
-        if "history" in version_item
-        else {
-            analysis_item.version: {
-                "commit_hash": commit_hash,
-                "yamlFilePath": analysis_item.yamlFilePath,
-                **(
-                    {"pyFilePath": analysis_item.pyFilePath}
-                    if analysis_item.pyFilePath != ""
-                    else {}
-                ),
-            },
-        }
-    )
+    versions = version_file.versions
+    version_item = versions[analysis_item._id]
+    history = version_item.history
 
     if analysis_item.version not in history:
-        history[analysis_item.version] = {
-            "commit_hash": commit_hash,
-            "yamlFilePath": analysis_item.yamlFilePath,
-            **(
-                {"pyFilePath": analysis_item.pyFilePath}
-                if analysis_item.pyFilePath != ""
-                else {}
-            ),
-        }
+        history[analysis_item.version] = AnalysisVersionHistoryItem(
+            commit_hash=commit_hash,
+            yamlFilePath=analysis_item.yamlFilePath,
+            pyFilePath=analysis_item.pyFilePath
+            if analysis_item.pyFilePath != ""
+            else None,
+        )
 
-    version_item["history"] = history
+    version_item.history = history
     versions[analysis_item._id] = version_item
 
 
@@ -89,6 +90,9 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
             and "/queries/" not in root
             and "/simple_rules/" not in root
             and "/correlation_rules/" not in root
+            and "/data_models/" not in root
+            and "/packs/" not in root
+            and "/global_helpers/" not in root
         ):
             continue
 
@@ -130,11 +134,17 @@ def analysis_id(analysis_spec: Dict[str, Any]) -> str:
             return analysis_spec["PolicyID"]
         case "query" | "saved_query" | "scheduled_query":
             return analysis_spec["QueryName"]
+        case "data_model":
+            return analysis_spec["DataModelID"]
+        case "pack":
+            return analysis_spec["PackID"]
+        case "global_helper":
+            return analysis_spec["GlobalID"]
         case _:
             raise ValueError(f"Invalid analysis type: {analysis_spec['AnalysisType']}")
 
 
-def load_versions_file() -> Dict[str, Any]:
+def load_versions_file() -> VersionsFile:
     # Create ".versions.yml" if it doesn't exist
     if not os.path.exists(_VERSIONS_FILE_NAME):
         with open(_VERSIONS_FILE_NAME, "w") as vf:
@@ -148,22 +158,22 @@ def load_versions_file() -> Dict[str, Any]:
         if "versions" not in versions:
             versions["versions"] = {}
 
-    return versions
+    return VersionsFile(**versions)
 
 
-def dump_versions_file(versions: Dict[str, Any]):
+def dump_versions_file(versions: VersionsFile):
     with open(_VERSIONS_FILE_NAME, "w") as vf:
-        yaml.safe_dump(versions, vf)
+        yaml.safe_dump(versions.model_dump(), vf)
 
 
 def generate_version_file(commit_hash: str):
-    versions_file_contents = load_versions_file()
+    versions_file = load_versions_file()
 
     for analysis_item in load_analysis_items():
-        update_version_item(versions_file_contents, analysis_item)
-        update_version_history(versions_file_contents, analysis_item, commit_hash)
+        update_version_item(versions_file, analysis_item)
+        update_version_history(versions_file, analysis_item, commit_hash)
 
-    dump_versions_file(versions_file_contents)
+    dump_versions_file(versions_file)
 
 
 def get_commit_hash() -> str:
