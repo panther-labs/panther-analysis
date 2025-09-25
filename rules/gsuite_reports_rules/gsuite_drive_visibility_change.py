@@ -2,6 +2,7 @@ import json
 from unittest.mock import MagicMock
 
 from panther_gsuite_helpers import gsuite_parameter_lookup as param_lookup
+from panther_gsuite_helpers import gsuite_reports_alert_context
 
 # Add any domain name(s) that you expect to share documents with in the ALLOWED_DOMAINS set
 ALLOWED_DOMAINS = set()
@@ -159,10 +160,7 @@ def rule(event):
 
 
 def alert_context(event):
-    log = event.get("p_row_id")
-    if ALERT_DETAILS[log]["TARGET_USER_EMAILS"] != ["<UNKNOWN_USER>"]:
-        return {"target users": ALERT_DETAILS[log]["TARGET_USER_EMAILS"]}
-    return {}
+    return gsuite_reports_alert_context(event)
 
 
 def dedup(event):
