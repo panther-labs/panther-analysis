@@ -65,14 +65,14 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 
 def flatten_parameters(event):
     result = {}
-    for p in event.get("parameters", []):
-        key = p["name"]
-        if "value" in p:
-            result[key] = p["value"]
-        elif "boolValue" in p:
-            result[key] = p["boolValue"]
-        elif "multiValue" in p:
-            result[key] = p["multiValue"]
+    for param in event.get("parameters", []):
+        key = param["name"]
+        if "value" in param:
+            result[key] = param["value"]
+        elif "boolValue" in param:
+            result[key] = param["boolValue"]
+        elif "multiValue" in param:
+            result[key] = param["multiValue"]
     return result
 
 
