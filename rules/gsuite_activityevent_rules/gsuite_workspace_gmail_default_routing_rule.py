@@ -1,3 +1,6 @@
+from panther_gsuite_helpers import gsuite_activityevent_alert_context
+
+
 def rule(event):
     if all(
         [
@@ -20,3 +23,7 @@ def title(event):
         f"[{change_type}] "
         f"by [{event.deep_get('actor', 'email', default='<UNKNOWN_EMAIL>')}]"
     )
+
+
+def alert_context(event):
+    return gsuite_activityevent_alert_context(event)

@@ -1,3 +1,6 @@
+from panther_gsuite_helpers import gsuite_activityevent_alert_context
+
+
 def rule(event):
     if not all(
         [
@@ -20,3 +23,7 @@ def title(event):
         + f"from [{event.deep_get('parameters', 'OLD_VALUE', default='<NO_OLD_SETTING_FOUND>')}] "
         + f"to [{event.deep_get('parameters', 'NEW_VALUE', default='<NO_NEW_SETTING_FOUND>')}]"
     )
+
+
+def alert_context(event):
+    return gsuite_activityevent_alert_context(event)

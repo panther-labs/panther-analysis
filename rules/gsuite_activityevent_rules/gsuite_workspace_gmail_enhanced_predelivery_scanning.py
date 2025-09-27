@@ -1,3 +1,6 @@
+from panther_gsuite_helpers import gsuite_activityevent_alert_context
+
+
 def rule(event):
     # the shape of the items in parameters can change a bit ( like NEW_VALUE can be an array )
     #  when the applicationName is something other than admin
@@ -24,3 +27,7 @@ def title(event):
         f"for [{event.deep_get('parameters', 'ORG_UNIT_NAME', default='<NO_ORG_UNIT_NAME>')}] "
         f"by [{event.deep_get('actor', 'email', default='<UNKNOWN_EMAIL>')}]"
     )
+
+
+def alert_context(event):
+    return gsuite_activityevent_alert_context(event)

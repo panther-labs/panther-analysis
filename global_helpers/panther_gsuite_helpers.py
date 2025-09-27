@@ -61,3 +61,35 @@ def gsuite_details_lookup(detail_type, detail_names, event):
             return details
     # not found, return empty dict
     return {}
+
+
+def flatten_parameters(event):
+    result = {}
+    for param in event.get("parameters", []):
+        key = param["name"]
+        if "value" in param:
+            result[key] = param["value"]
+        elif "boolValue" in param:
+            result[key] = param["boolValue"]
+        elif "multiValue" in param:
+            result[key] = param["multiValue"]
+    return result
+
+
+def gsuite_activityevent_alert_context(event):
+    return {
+        "actor": event.deep_get("actor", "email", ""),
+        "applicationName": event.deep_get("id", "applicationName", ""),
+        "name": event.get("name", ""),
+        "type": event.get("type", ""),
+        "parameters": event.get("parameters", {}),
+    }
+
+
+def gsuite_reports_alert_context(event):
+    events = event.get("events", [])
+    if len(events) == 1:
+        flat = flatten_parameters(events[0])
+    else:
+        flat = {str(i): flatten_parameters(e) for i, e in enumerate(events)}
+    return flat
