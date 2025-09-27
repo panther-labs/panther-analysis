@@ -2,6 +2,7 @@ AnalysisType: scheduled_query
 QueryName: Pod Created or Modified Using the Host IPC Namespace
 Enabled: false
 Tags:
+  - Kubernetes Core
   - Optional
 Description: >
   This detection monitors for any pod creation or modification using the host IPC Namespace. Deploying pods in the Host IPC Namespace, breaks isolation between the pod and the underlying host meaning the pod has direct access to the same IPC objects and communications channels as the host system.
