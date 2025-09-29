@@ -174,8 +174,7 @@ def rule(event):
     if old_ip == new_ip:
         # Same IP address, no alert
         return False
-    else:
-        return speed > 900  # Boeing 747 cruising speed
+    return speed > 900  # Boeing 747 cruising speed
 
 
 def title(event):
