@@ -169,7 +169,9 @@ def rule(event):
     EVENT_CITY_TRACKING["speed_units"] = "km/h"
     EVENT_CITY_TRACKING["distance"] = int(distance)
     EVENT_CITY_TRACKING["distance_units"] = "km"
-    if deep_get(EVENT_CITY_TRACKING, "previous", "source_ip", default="<NO_PREV_IP>") == deep_get(EVENT_CITY_TRACKING, "current", "source_ip", default="<NO_NEW_IP>"):
+    if deep_get(EVENT_CITY_TRACKING, "previous", "source_ip", default="<NO_PREV_IP>") == deep_get(
+        EVENT_CITY_TRACKING, "current", "source_ip", default="<NO_NEW_IP>"
+    ):
         # Same IP address, no alert
         return False
     return speed > 900  # Boeing 747 cruising speed
