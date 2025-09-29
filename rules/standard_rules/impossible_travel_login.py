@@ -169,8 +169,13 @@ def rule(event):
     EVENT_CITY_TRACKING["speed_units"] = "km/h"
     EVENT_CITY_TRACKING["distance"] = int(distance)
     EVENT_CITY_TRACKING["distance_units"] = "km"
-
-    return speed > 900  # Boeing 747 cruising speed
+    old_ip = deep_get(EVENT_CITY_TRACKING, "previous", "source_ip", default="<NO_PREV_IP>")
+    new_ip = deep_get(EVENT_CITY_TRACKING, "current", "source_ip", default="<NO_NEW_IP>")
+    if old_ip == new_ip:
+        # Same IP address, no alert
+        return False
+    else:
+        return speed > 900  # Boeing 747 cruising speed
 
 
 def title(event):
@@ -180,10 +185,12 @@ def title(event):
     new_city = deep_get(EVENT_CITY_TRACKING, "current", "city", default="<NO_PREV_CITY>")
     speed = deep_get(EVENT_CITY_TRACKING, "speed", default="<NO_SPEED>")
     distance = deep_get(EVENT_CITY_TRACKING, "distance", default="<NO_DISTANCE>")
+    old_ip = deep_get(EVENT_CITY_TRACKING, "previous", "source_ip", default="<NO_PREV_IP>")
+    new_ip = deep_get(EVENT_CITY_TRACKING, "current", "source_ip", default="<NO_NEW_IP>")
     return (
         f"Impossible Travel: [{event.udm('actor_user')}] "
         f"in [{log_source}] went [{speed}] km/h for [{distance}] km "
-        f"between [{old_city}] and [{new_city}]"
+        f"between [{old_city}/{old_ip}] and [{new_city}/{new_ip}]"
     )
 
 
