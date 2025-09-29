@@ -62,6 +62,7 @@ def gsuite_details_lookup(detail_type, detail_names, event):
     # not found, return empty dict
     return {}
 
+
 # Standardized alert context for GSuite activity events
 def gsuite_activityevent_alert_context(event):
     return {
