@@ -1,6 +1,5 @@
 from panther_gsuite_helpers import gsuite_details_lookup as details_lookup
 from panther_gsuite_helpers import gsuite_parameter_lookup as param_lookup
-from panther_gsuite_helpers import gsuite_reports_alert_context
 
 RESOURCE_CHANGE_EVENTS = {
     "create",
@@ -45,7 +44,3 @@ def title(event):
         f" modified a document [{doc_title}] that has overly permissive share"
         f" settings [{share_settings}]"
     )
-
-
-def alert_context(event):
-    return gsuite_reports_alert_context(event)

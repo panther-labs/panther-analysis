@@ -1,7 +1,6 @@
 import datetime
 
 from panther_base_helpers import pattern_match, pattern_match_list
-from panther_gsuite_helpers import gsuite_reports_alert_context
 
 COMPANY_DOMAIN = "your-company-name.com"
 EXCEPTION_PATTERNS = {
@@ -125,7 +124,3 @@ def title(event):
             )
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
     return "No matching events, but DangerousShares still fired"
-
-
-def alert_context(event):
-    return gsuite_reports_alert_context(event)
