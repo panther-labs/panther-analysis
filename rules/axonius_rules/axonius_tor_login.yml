@@ -1,0 +1,71 @@
+AnalysisType: rule
+Filename: axonius_tor_login.py
+RuleID: Axonius.TorLogin
+DisplayName: Axonius login from Tor IP
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+  - Tor
+Severity: Medium
+Description: Detects an Axonius login from Tor IP address
+Runbook: Review the actions taken, check credentials/service user used and escalate.
+Tests:
+  - Name: Benign Login
+    ExpectedResult: False
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "successful"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }
+  - Name: TOR Successful Login
+    ExpectedResult: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "successful"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609,
+        "p_enrichment": {
+            'tor_exit_nodes': true
+        }
+      }
+  - Name: TOR Failed Login
+    ExpectedResult: False
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "172.7.1.1",
+            "status": "fail"
+          },
+          "type": "user",
+          "user": "testr@axonius.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609,
+        "p_enrichment": {
+            'tor_exit_nodes': true
+        }
+      }

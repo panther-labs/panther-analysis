@@ -42,7 +42,7 @@ jobs:
           exit $(panther_analysis_tool check-packs)
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b #v3.0.1
         if: failure()
         with:
           mode: upsert
@@ -55,7 +55,7 @@ jobs:
           comment-tag: check-packs
 
       - name: Delete comment
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b #v3.0.1
         if: success()
         with:
           mode: delete

@@ -22,11 +22,11 @@ def rule(event):
 
 
 def title(event):
-    aid = event.get("aid", "<AID_NOT_FOUND>")
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
     command = event.deep_get("event", "CommandLine", default="<COMMAND_NOT_FOUND>")
     return (
         "Crowdstrike: System log tampering attempt detected on "
-        f"aid [{aid}] with command [{command}]"
+        f"host [{host}] with command [{command}]"
     )
 
 
