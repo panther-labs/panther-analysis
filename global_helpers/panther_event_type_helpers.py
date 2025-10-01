@@ -10,6 +10,7 @@ USER_ACCOUNT_CREATED = "user_account_created"
 # ACCOUNT_CREATED refers to an account not associated with a specific user,
 # such as a billing account
 ACCOUNT_CREATED = "account_created"
+ACCOUNT_DELETED = "account_deleted"
 # USER_ACCOUNT_CREATED refers to an account that is associated with one user or service user
 USER_ACCOUNT_DELETED = "user_account_deleted"
 USER_ACCOUNT_MODIFIED = "user_account_modified"
@@ -21,3 +22,9 @@ USER_ROLE_MODIFIED = "user_role_modified"
 USER_ROLE_DELETED = "user_role_deleted"
 # ADMIN_MFA_DISABLED refers to MFA being disabled for an entire org, account, or similar
 ADMIN_MFA_DISABLED = "admin_mfa_disabled"
+# Cross-platform high-value categories that appear across multiple log sources:
+# PERMISSION_GRANTED/REVOKED appears in: AWS, GCP, GitHub, Okta, Azure
+PERMISSION_GRANTED = "permission_granted"
+PERMISSION_REVOKED = "permission_revoked"
+# SECURITY_CONFIG_CHANGED appears in: AWS, GitHub, Okta, Snyk, Tailscale
+SECURITY_CONFIG_CHANGED = "security_config_changed"
