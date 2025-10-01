@@ -1,7 +1,7 @@
 from panther_core import PantherEvent
 
 
-def rule(event: PantherEvent) -> bool:  # noqa: ARG001
+def rule(event: PantherEvent) -> bool:  # pylint: disable=unused-argument
     return True
 
 

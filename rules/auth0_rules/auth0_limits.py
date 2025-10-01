@@ -17,7 +17,8 @@ EVENT_TITLES = (
     "Rate limit exceeded to the delegation token endpoint by {}",
     "{} IP address is blocked because it attempted too many sign-ups or failed logins: {}",
     "{} is temporarily blocked from logging in because they reached the maximum logins from {}",
-    "{} IP address is blocked because it reached the maximum failed login attempts into a single account: {}",
+    "{} IP address is blocked because it reached the maximum failed login attempts into a "
+    "single account: {}",
 )
 
 
