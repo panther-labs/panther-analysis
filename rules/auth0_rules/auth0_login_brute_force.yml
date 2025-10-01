@@ -1,0 +1,14 @@
+AnalysisType: scheduled_rule
+Filename: auth0_login_brute_force.py
+DisplayName: "Auth0 Brute Force"
+Enabled: true
+Severity: Medium
+Description: Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
+DedupPeriodMinutes: 60
+Threshold: 1
+Reference: https://auth0.com/docs/deploy-monitor/logs/log-event-type-codes
+InlineFilters:
+    - All: []
+ScheduledQueries:
+    - Auth0 Brute Force Detection
+RuleID: "Auth0.Brute.Force"
