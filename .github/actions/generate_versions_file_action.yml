@@ -1,0 +1,52 @@
+name: Generate .versions.yml file on PR Commits
+
+on:
+  pull_request:
+
+jobs:
+  generate-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv install
+
+      - name: Get git tags and run script
+        run: |
+          # Get tags for the current commit
+          echo "Getting git tags for commit: ${{ github.event.pull_request.head.sha }}"
+          TAGS=$(git tag --points-at ${{ github.event.pull_request.head.sha }})
+
+          # Export as environment variable
+          export GIT_TAGS="$TAGS"
+          echo "Git tags: $GIT_TAGS"
+
+          echo "Git tags: ${TAGS:-'(none)'}"
+          python generate_versions_file.py
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Auto-generate .versions.yml file"
+            git push
+          else
+            echo "No changes to commit"
+          fi
