@@ -11,7 +11,8 @@ SUSPICIOUS_EVENT_TYPES = (
 )
 
 EVENT_TITLES = (
-    "The maximum number of requests to the Authentication or Management APIs has been reached for {}",
+    "The maximum number of requests to the Authentication or Management APIs has been "
+    "reached for {}",
     "Too many MFA failures occured for {}",
     "{} has entered a wrong recovery code too many times",
     "Rate limit exceeded to the delegation token endpoint by {}",
