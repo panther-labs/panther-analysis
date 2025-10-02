@@ -61,3 +61,14 @@ def gsuite_details_lookup(detail_type, detail_names, event):
             return details
     # not found, return empty dict
     return {}
+
+
+# Standardized alert context for GSuite activity events
+def gsuite_activityevent_alert_context(event):
+    return {
+        "actor": event.deep_get("actor", "email", ""),
+        "applicationName": event.deep_get("id", "applicationName", ""),
+        "name": event.get("name", ""),
+        "type": event.get("type", ""),
+        "parameters": event.get("parameters", {}),
+    }
