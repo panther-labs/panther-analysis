@@ -93,6 +93,7 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
             and "/data_models" not in root
             and "/packs" not in root
             and "/global_helpers" not in root
+            and "/lookup_tables" not in root
         ):
             continue
 
@@ -140,6 +141,8 @@ def analysis_id(analysis_spec: Dict[str, Any]) -> str:
             return analysis_spec["PackID"]
         case "global":
             return analysis_spec["GlobalID"]
+        case "lookup_table":
+            return analysis_spec["LookupName"]
         case _:
             raise ValueError(f"Invalid analysis type: {analysis_spec['AnalysisType']}")
 
