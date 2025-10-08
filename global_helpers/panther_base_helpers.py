@@ -171,13 +171,19 @@ def is_base64(b64: str) -> str:
     # handle false positives for very short strings
     if len(b64) < 12:
         return ""
+    # Base64 strings should only contain ASCII characters
+    try:
+        b64.encode("ascii")
+    except UnicodeEncodeError:
+        return ""
+    # Base64 uses only: A-Z, a-z, 0-9, +, /, and = for padding
+    if not re.match(r"^[A-Za-z0-9+/]*={0,2}$", b64):
+        return ""
     # Pad args with "=" to ensure proper decoding
     b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
-    # Convert to ASCII-only string for b64decode validation (it requires ASCII input)
-    b64_ascii = b64.encode("ascii", errors="ignore").decode("ascii")
-    # Check if the matched string can be decoded back - use latin-1 for maximum compatibility
+    # Check if the matched string can be decoded back to ASCII
     try:
-        return b64decode(b64_ascii, validate=True).decode("latin-1")
+        return b64decode(b64, validate=True).decode("ascii")
     except (AsciiError, UnicodeDecodeError, ValueError):
         return ""
 
