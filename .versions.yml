@@ -134,6 +134,14 @@ versions:
     sha256: bc0f63ef0918a6aa62c50bd4488a5dbe2d8d076780c83d395c7d00d584d5888f
     type: policy
     version: 1
+  AWS.Administrative.IAM.User.Created:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_create_admin_iam_user.yml
+    sha256: 6798efec18326df8c59633266c93c15404ff4616378bc0733ef6bbe167a744ab
+    type: correlation_rule
+    version: 1
   AWS.ApplicationLoadBalancer.WebACL:
     history:
       1:
@@ -151,6 +159,14 @@ versions:
         yamlFilePath: ./queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device.yml
     sha256: bf1d59a38ea3be65d5b288d1aba7c792f3f6fee09115f69d2ecbcbb94d5a05e5
     type: scheduled_rule
+    version: 1
+  AWS.Backdoor.Administrative.IAM.Role.Created:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_create_backdoor_admin_iam_role.yml
+    sha256: 673a59e69dd72280a38628a0a44779ab8baa5a19dbb30d6538ae289400cf98ea
+    type: correlation_rule
     version: 1
   AWS.Bedrock.DeleteModelInvocationLoggingConfiguration:
     history:
@@ -718,6 +734,14 @@ versions:
     sha256: 6288704416c19d459661e1495dba9272dbdd2a3c6ea1c04f9c114aab7dfaa51a
     type: rule
     version: 1
+  AWS.Console.Sign-In.NOT.PRECEDED.BY.Okta:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_console_sign-in_without_okta.yml
+    sha256: bc6f49703ebea5f394591241844f02d613550356124ebfc15a29c9681c24cde5
+    type: correlation_rule
+    version: 1
   AWS.DNS.Crypto.Domain:
     history:
       1:
@@ -969,6 +993,14 @@ versions:
         yamlFilePath: ./rules/aws_cloudtrail_rules/aws_ec2_startup_script_change.yml
     sha256: 8590ddc5c86891eee811b6096a0516529701f9da1c26c5d8a1d5d9e94ea4441b
     type: rule
+    version: 1
+  AWS.EC2.StopInstance.FOLLOWED.BY.ModifyInstanceAttributes:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml
+    sha256: 1de8c5b8260c0fb1aad64b036fc585e054f3c3f68f490e0c80d0be055b4cf6dc
+    type: correlation_rule
     version: 1
   AWS.EC2.StopInstances:
     history:
@@ -1510,6 +1542,14 @@ versions:
     sha256: 5aac2b8eb4820015f32ae7c2ad797f10548ca0180ad815359ee2ae8f23f4abb6
     type: scheduled_rule
     version: 1
+  AWS.Privilege.Escalation.Via.User.Compromise:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_privilege_escalation_via_user_compromise.yml
+    sha256: fe3eddc7e1e92797be095dc8dd6eb8a018765e54d05206cafce08feb089046d3
+    type: correlation_rule
+    version: 1
   AWS.RDS.Instance.AutoMinorVersionUpgradeEnabled:
     history:
       1:
@@ -1978,6 +2018,14 @@ versions:
     sha256: 0eecb64f3910e15afd5fe32f19a5673cafda4311d78756c4d87bba68ed3626db
     type: scheduled_rule
     version: 1
+  AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml
+    sha256: 4193ed49fb80329938cbdce1e68e948f39d3b7d3c85c85ed3dfc1f5ad7de3f45
+    type: correlation_rule
+    version: 1
   AWS.SecretsManager.BatchRetrieveSecrets:
     history:
       1:
@@ -2149,6 +2197,14 @@ versions:
     sha256: fc1ce9ded52da304a839ebb1eeb4311a773e834b2caab3ca600d833dde2d5df0
     type: rule
     version: 1
+  AWS.User.Takeover.Via.Password.Reset:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/aws_user_takeover_via_password_reset.yml
+    sha256: d68cdc4f4569e6f548456bc5c873986e9fae75e85e83fca186f33c07c49b3664
+    type: correlation_rule
+    version: 1
   AWS.VPC.DefaultNetworkACLRestrictsAllTraffic:
     history:
       1:
@@ -2281,9 +2337,25 @@ versions:
         commit_hash: f40e2829304b30eacdb51f6d9023c89fa8f19b58
         pyFilePath: ./rules/aws_eks_rules/anonymous_api_access.py
         yamlFilePath: ./rules/aws_eks_rules/anonymous_api_access.yml
+      2:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./rules/aws_eks_rules/anonymous_api_access.py
+        yamlFilePath: ./rules/aws_eks_rules/anonymous_api_access.yml
+      3:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./.cache/panther-analysis/rules/aws_eks_rules/anonymous_api_access.py
+        yamlFilePath: ./.cache/panther-analysis/rules/aws_eks_rules/anonymous_api_access.yml
+      4:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./rules/aws_eks_rules/anonymous_api_access.py
+        yamlFilePath: ./rules/aws_eks_rules/anonymous_api_access.yml
+      5:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./.cache/panther-analysis/rules/aws_eks_rules/anonymous_api_access.py
+        yamlFilePath: ./.cache/panther-analysis/rules/aws_eks_rules/anonymous_api_access.yml
     sha256: b417bc92f5c70a59a42c689f24234e6d93ed64a5fd2548f0aa2d1421330ae6e6
     type: rule
-    version: 1
+    version: 5
   Amazon.EKS.Audit.Multiple403:
     history:
       1:
@@ -3368,6 +3440,14 @@ versions:
     sha256: ce3708fef7a1de92d68a146b4532b2bf60c1eca8b3c7e9e26c7780fcf2d5f5de
     type: rule
     version: 1
+  GCP.Cloud.Run.Service.Created.FOLLOWED.BY.Set.IAM.Policy:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml
+    sha256: d1664daa52f11efee644a2348c027d335935570231ec8c20b27b0e7c1fc29129
+    type: correlation_rule
+    version: 1
   GCP.Cloud.Run.Set.IAM.Policy:
     history:
       1:
@@ -3700,6 +3780,14 @@ versions:
         yamlFilePath: ./rules/gcp_audit_rules/gcp_privilege_escalation_by_deployments_create.yml
     sha256: 1436baca6be5d4192d942009fc83b92f7506d3f5b80a7e13db287ab67e2c03b3
     type: rule
+    version: 1
+  GCP.Privilege.Escalation.Via.TagBinding:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/gcp_tag_escalation.yml
+    sha256: 5b78120a2879b4e0adbefbeb919e27cec2b314e2947a3c9c0b2ec95ee2b955fc
+    type: correlation_rule
     version: 1
   GCP.Privileged.Operation:
     history:
@@ -4149,6 +4237,14 @@ versions:
     sha256: 119af3f287fbe23b412136d273f418e0bbef4a1d729ec42ca444734fca6a0e1c
     type: rule
     version: 1
+  GitHub.Advanced.Security.Change.NOT.FOLLOWED.BY.Repo.Archived:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml
+    sha256: b350df477328572169debdccaa13445ec805bb126b220c39ad6f6e93953c1393
+    type: correlation_rule
+    version: 1
   GitHub.Branch.PolicyOverride:
     history:
       1:
@@ -4471,6 +4567,14 @@ versions:
     sha256: fd0a72f739580401d6697dc47e6a989de7818940d3cd86b29d45a157bff74d4c
     type: scheduled_query
     version: 1
+  IPInfo:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/ipinfo.yml
+    sha256: a12a034c6a67bace16314aa0165d8107e42dd4254ef4adbda62a4bcf60778484
+    type: pack
+    version: 1
   Kubernetes Cron Job Created or Modified:
     history:
       1:
@@ -4646,6 +4750,14 @@ versions:
     sha256: 058adec4207610adeffa4ae4b52ba3a5c297a0c6693c68ee7c6c8c02738b464d
     type: scheduled_query
     version: 1
+  Microsoft.Graph:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/msft_graph.yml
+    sha256: 06d7b2fb89d2073a2e4ec99ec1659288a16c424f5961f6bc5f6a0bfe5dfd7b5b
+    type: pack
+    version: 1
   Microsoft.Graph.Passthrough:
     history:
       1:
@@ -4690,6 +4802,14 @@ versions:
         yamlFilePath: ./rules/microsoft_rules/microsoft365_mfa_disabled.yml
     sha256: cda52a847352a69291ab2e6335c64e72ea61c8c2321b0d11448eff65f12dadc1
     type: rule
+    version: 1
+  MispLookupTables:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/misp.yml
+    sha256: 7d318a5dee6eba27ecc8acd42cc1dc9644ff3700d04a076045211c687773732c
+    type: pack
     version: 1
   MongoDB.2FA.Disabled:
     history:
@@ -4901,6 +5021,14 @@ versions:
         yamlFilePath: ./rules/notion_rules/notion_login.yml
     sha256: 4c3f3f566a21b1819721d3b9e413561fb5f88f57adb01a3ea11ab2bc5fada84c
     type: rule
+    version: 1
+  Notion.Login.FOLLOWED.BY.AccountChange:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/notion_login_followed_by_account_change.yml
+    sha256: 5267830f89b9840ea40f59d67e4a88191b1514ec09e7d1b0da9f8e76af811ee4
+    type: correlation_rule
     version: 1
   Notion.LoginFromBlockedIP:
     history:
@@ -5199,6 +5327,14 @@ versions:
     sha256: 7958544654b9f5c1cdc9fd01fe0c96b556cfab2e331c36f33387fdd75983ca41
     type: rule
     version: 1
+  Okta.Login.Without.Push:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/okta_login_without_push.yml
+    sha256: 540219217f38009e706eed7309a0622c644faca0326cf5fc4f1207f5b4fac31a
+    type: correlation_rule
+    version: 1
   Okta.Login.Without.Push.Marker:
     history:
       1:
@@ -5387,6 +5523,14 @@ versions:
         yamlFilePath: ./rules/onelogin_rules/onelogin_high_risk_failed_login.yml
     sha256: 49cf8ceb7f8fddf24d8251adac01193670f80718154893699bd764a864fb83ba
     type: rule
+    version: 1
+  OneLogin.HighRiskFailedLogin.FOLLOWED.BY.SuccessfulLogin:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml
+    sha256: 754f4ba4a812539878e063edac7307a7bd93521ca65d11b29c668cdf63a9e93f
+    type: correlation_rule
     version: 1
   OneLogin.Login:
     history:
@@ -5658,6 +5802,414 @@ versions:
     sha256: 83c1e9f7aaad2431e9c0d1e05d3bbb5052ef3f27b9b3760e9795f6fc1b9eb66f
     type: rule
     version: 1
+  PantherManaged.AWS.CIS:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/aws_cis.yml
+    sha256: 7dc09e06d86490d93fbb59986d114aed517bb0ef4d4ba4ab0e82ac4aa749c117
+    type: pack
+    version: 1
+  PantherManaged.AWS.Core:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/aws.yml
+    sha256: e3ad07056d45f1394afacd461e77866a7f8bc4b9b76ae45595b784c746db79ad
+    type: pack
+    version: 1
+  PantherManaged.AWSDecoy:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/aws_decoy.yml
+    sha256: 8b51c6d22702737330eba006e9ba6d6393c2e60c8740088c43de76b6564c7e08
+    type: pack
+    version: 1
+  PantherManaged.Anomalies:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/anomalies_pack.yml
+    sha256: 75d44666091bce1966c3940fc353b6a3e7cb79783b4b55e3b571ac37868a74db
+    type: pack
+    version: 1
+  PantherManaged.AppOmni:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/appomni.yml
+    sha256: 68dcec46c7f8b77d219873bd7572e04be296810bebb281361ac87cecf8116ed2
+    type: pack
+    version: 1
+  PantherManaged.Asana:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/asana.yml
+    sha256: 16ea376d849f17a6b18ba3de03e17831a2618c4768240bfc52c2c25bef6a79ad
+    type: pack
+    version: 1
+  PantherManaged.Atlassian:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/atlassian.yml
+    sha256: 1e89beceb92deea8b54f1ceed9601ad119a2eb6e45f0f7c4f06336e9e5c15e64
+    type: pack
+    version: 1
+  PantherManaged.Auth0:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/auth0.yml
+    sha256: 6f0c31e76937d62a9e1ec456074d2ad003865de7848a5a7f36bd0fba54e0e620
+    type: pack
+    version: 1
+  PantherManaged.AzureAudit.Signin:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/azure_signin.yml
+    sha256: c769b3299fdac8cfbb66c2d8bab887d3bf663483ffb5e4cdd4eec9396a46b733
+    type: pack
+    version: 1
+  PantherManaged.Box:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/box.yml
+    sha256: aabd13cea2c796115c4ce0e19e766d4da52e0b29f505e43ba6323f0cb3edaf85
+    type: pack
+    version: 1
+  PantherManaged.CarbonBlack:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/carbonblack.yml
+    sha256: e359c821687b71dfbdbbb07e4fb952d00a9181f14387b576d369d132c68a9a4a
+    type: pack
+    version: 1
+  PantherManaged.Cisco.Umbrella:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/cisco_umbrella_dns.yml
+    sha256: f12a2b7343f963136deafc195320ccd8c43a4545f88fcf61bbd6cd3718dbdb81
+    type: pack
+    version: 1
+  PantherManaged.Cloudflare:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/cloudflare.yml
+    sha256: 95337303fc604c0f36bbe4c16c9cb6d4ce91e13596686868a359dfe8cf8bb5f7
+    type: pack
+    version: 1
+  PantherManaged.CredentialSecurity:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/credential_security.yml
+    sha256: e7bff2db27a47a7f1529324fb53d4f132d8daeecdd6a5927321994cb3a044cb8
+    type: pack
+    version: 1
+  PantherManaged.Crowdstrike:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/crowdstrike.yml
+    sha256: be32d3d926a528df699aca3aed088c0e267f9a6062bef17fecb8929df87a0b86
+    type: pack
+    version: 1
+  PantherManaged.CrowdstrikeEventStreams:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/crowdstrike_event_streams.yml
+    sha256: 996ef50fb3daba2be74c50008851f22884bdcbc3fda8fc8039234098c77cbe5f
+    type: pack
+    version: 1
+  PantherManaged.Dropbox:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/dropbox.yml
+    sha256: 07c132c76c864112306430b84c29595c147e9f3f6002b11dfdf9a04ca2ea1c4c
+    type: pack
+    version: 1
+  PantherManaged.Duo:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/duo.yml
+    sha256: 23911a4b62bc5639ea2c03caa3994ed0c4edf1d4093722ce6999b3d8556e043b
+    type: pack
+    version: 1
+  PantherManaged.GCP.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/gcp_audit.yml
+    sha256: 21b8c097fe7d5d6765524efbc6fcb5de234a79e651fc6f656d4d4b62b9faae84
+    type: pack
+    version: 1
+  PantherManaged.GCP.K8:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/gcp_k8.yml
+    sha256: 25cbc41552ab6cfa3d2f190dcf33822390ea0bc5ea9d864f802cf5f030f261a2
+    type: pack
+    version: 1
+  PantherManaged.GSuite.Reports:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/gsuite_reports.yml
+    sha256: 74e311d6bc44c13dafcfd9f20abf8cb11ad820afff797a6fd13ffe114f3650e0
+    type: pack
+    version: 1
+  PantherManaged.GitHub.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/github.yml
+    sha256: 9f487a82b858940b920f60ee4dcc809f85cf51c65eebbe0f92a9d506475f00a4
+    type: pack
+    version: 1
+  PantherManaged.Gravitational.Teleport:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/gravitational_teleport.yml
+    sha256: 213debbd976583eaffec6bc29d05a76e70984c19e870f3f52d914fcaf7ff061b
+    type: pack
+    version: 1
+  PantherManaged.Kubernetes.Core:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/kubernetes.yml
+    sha256: 96f6008f26f3379236ae392cd235d0eb5c560a5dbb0e4f250dc7ae1829a35ae2
+    type: pack
+    version: 1
+  PantherManaged.MongoDb:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/mongodb.yml
+    sha256: 4dfffd0bc71161a851e6d4847549c4b315693c5898008018ebca82a64a39ac19
+    type: pack
+    version: 1
+  PantherManaged.MultiSourceCorrelations:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/multisource_correlations.yml
+    sha256: db19be7238795b2c389025dc6a64222d33b212bc95e403102d9e5d4af92bd52d
+    type: pack
+    version: 1
+  PantherManaged.Netskope:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/netskope.yml
+    sha256: 96574de708f943885bfb3081f6ed67393dbbe7bceb0a86083ef3f4bd6e026a61
+    type: pack
+    version: 1
+  PantherManaged.Notion:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/notion.yml
+    sha256: bacaca8ba47a4331e030c9b1012f700203bd2b2adbd1146f62ab9be9dbb66bda
+    type: pack
+    version: 1
+  PantherManaged.OSQuery:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/osquery.yml
+    sha256: 115f74987eea87855516b7e7f7e028a5f7b44242626e98c020a05bfdc1f7c132
+    type: pack
+    version: 1
+  PantherManaged.Okta:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/okta.yml
+    sha256: 5cb60111e48ededefac7a0f533b2b75d1718dcf750646d1afc5075c572d819b6
+    type: pack
+    version: 1
+  PantherManaged.OneLogin:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/onelogin.yml
+    sha256: a2bc02a5cecde7bdba655285a06066647a4bae12c4381a320108747285bd9f31
+    type: pack
+    version: 1
+  PantherManaged.OnePassword:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/onepassword.yml
+    sha256: 31f5b85305c251033a712c29de1e63bb23ac408daea775cbc4e3c97fa1cf30b6
+    type: pack
+    version: 1
+  PantherManaged.Orca.Alert:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/orca.yml
+    sha256: 62c84d2b6877d371ef4d21dd0707cf2dc20383dd8128278d947cbca93f07e882
+    type: pack
+    version: 1
+  PantherManaged.Panther:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/panther.yml
+    sha256: 2ec9b9e4229626218d3e4d490e05796256013efc6368721f18d82f00fd06ebb2
+    type: pack
+    version: 1
+  PantherManaged.PushSecurity:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/push_security.yml
+    sha256: ec58c6d81d2e8de751282ab3b00d5d09781cf9e80476d0f8ae3d15e957f2e3da
+    type: pack
+    version: 1
+  PantherManaged.Salesforce:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/salesforce.yml
+    sha256: fcc78d4758245a2211ea7f00573287596920dd376e140aa9dd172b715837e3c9
+    type: pack
+    version: 1
+  PantherManaged.SentinelOne:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/sentinelone.yml
+    sha256: 099ec4a436a34de5e4ba66055e91f09a96bab2f7c429fa230ed9d718cd1eff32
+    type: pack
+    version: 1
+  PantherManaged.Slack:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/slack.yml
+    sha256: a220d04408594d16f06a808ae24ec996b21af1adbf45242c0c35981d4ce07abd
+    type: pack
+    version: 1
+  PantherManaged.Snowflake.Account_Usage:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/snowflake.yml
+    sha256: 564eaffb417658f0a4b97bcb14560b624b511d87a575046c279999aded887679
+    type: pack
+    version: 1
+  PantherManaged.SnowflakeStreaming:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/snowflake_streaming.yml
+    sha256: 8ef82ce8fc311a05be44d0d3667dd4eebca3326be16367dec95f223e84b706d5
+    type: pack
+    version: 1
+  PantherManaged.Snyk:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/snyk.yml
+    sha256: e115099df39333f2f93da92d9082e7e6a768fd67273a18885bb0bb1cc0cfa206
+    type: pack
+    version: 1
+  PantherManaged.Sublime:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/sublime.yml
+    sha256: 692f243880ac901db641736fea30b8e96ac1a88a03240854d7a5dd588055b0de
+    type: pack
+    version: 1
+  PantherManaged.Tailscale:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/tailscale.yml
+    sha256: 600d5cc21c1b236df2ff3a6f8a5e7618e91318c89523017cccab0761987f6dd2
+    type: pack
+    version: 1
+  PantherManaged.ThinkstCanary:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/thinkstcanary.yml
+    sha256: ae021e1c37cdc018f27cbbb2e3e4a14ffa6dec240482eaa412704ce2d0ff4d1d
+    type: pack
+    version: 1
+  PantherManaged.Tines:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/tines.yml
+    sha256: 66046962c6294ff1b1769106a34b258e4e48021751171be0b72c57ea628901c0
+    type: pack
+    version: 1
+  PantherManaged.Tracebit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/tracebit.yml
+    sha256: e43437391ce518965f13663770ce78fe4308935786dc039af6137ce040509ec3
+    type: pack
+    version: 1
+  PantherManaged.UniversalDetections:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/standard_ruleset.yml
+    sha256: 67202f6806c17fc38e2a2da93a8f88ce88c9e81771f715fedb686c93287eaade
+    type: pack
+    version: 1
+  PantherManaged.Wiz:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/wiz.yml
+    sha256: c3aff56f9d9ad87798378863b4788862d1668f2c47e6e9274b809cedfb039f48
+    type: pack
+    version: 1
+  PantherManaged.Zendesk.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/zendesk.yml
+    sha256: 4928f1e595baafbfa18e7f093e6d59c8dbfa92d5d8861ecdef87b9e79a1cd4f9
+    type: pack
+    version: 1
+  PantherManaged.ZoomDetections:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/zoom.yml
+    sha256: e3769ce61b3af69eceaa440c0281492983596e896401ce14bbec9d5ea4e61531
+    type: pack
+    version: 1
+  PantherManaged.Zscaler.ZIA:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/zscaler_zia.yml
+    sha256: d5cb1bba422380416689bb22d49630b2e32965453fcf907067c72967ddcf041a
+    type: pack
+    version: 1
   Pod Created or Modified Using the Host IPC Namespace:
     history:
       1:
@@ -5697,6 +6249,14 @@ versions:
         yamlFilePath: ./queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount_query.yml
     sha256: 0f51da6726dec0608fcc4dbb3fe62a6dcda21cb218e35815cd28f36dd01d0a1b
     type: scheduled_query
+    version: 1
+  Potential.Compromised.Okta.Credentials:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/potential_compromised_okta_credentials.yml
+    sha256: 42f90b34511823bd4de58875194ea3dfcf1055c37e49b707f60830d0c0c0d3ed
+    type: correlation_rule
     version: 1
   Privileged Pod Created:
     history:
@@ -6031,6 +6591,14 @@ versions:
     sha256: df9c48f01047027cadff02aff1f9313861cc5ce761ba1d3d39c8d24c681deb07
     type: scheduled_query
     version: 1
+  Secret.Exposed.and.not.Quarantined:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/secret_exposed_and_not_quarantined.yml
+    sha256: eec58c5e8a9db47e2c3f928be561e3bfef2d202463deb34b19cd5d9a16153959
+    type: correlation_rule
+    version: 1
   SentinelOne.Alert.Passthrough:
     history:
       1:
@@ -6326,6 +6894,14 @@ versions:
     sha256: 7aaba01b503e33c3b326049a40ce604278914b5b1b344831f146e5816ffc9332
     type: scheduled_rule
     version: 1
+  Snowflake.Data.Exfiltration:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/snowflake_data_exfiltration.yml
+    sha256: 62919ccda58ff8466b6fbc33493f8040f529ec2ad7a3f3d7018b3306df1854d2
+    type: correlation_rule
+    version: 1
   Snowflake.External.Shares:
     history:
       1:
@@ -6371,6 +6947,14 @@ versions:
     sha256: 8bf38df1639ec6d8da677ea2dc153ae09e6713e4e91e14fbe3600156b8fb9646
     type: scheduled_rule
     version: 1
+  Snowflake.PotentialBruteForceSuccess:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/snowflake_potential_brute_force_success.yml
+    sha256: 3fc5ecbe3f4c51583d9c901f8803633f25b13ce6cf62b2acce436f2198e4aad2
+    type: correlation_rule
+    version: 1
   Snowflake.Stream.AccountAdminGranted:
     history:
       1:
@@ -6397,6 +6981,14 @@ versions:
         yamlFilePath: ./rules/snowflake_rules/snowflake_stream_brute_force_by_username.yml
     sha256: 53fe139989800797c62abe767a2d5da5424b55bcf1114e5fbaa39f78eaef81de
     type: rule
+    version: 1
+  Snowflake.Stream.DataExfiltration:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/snowflake_data_exfiltration_streaming.yml
+    sha256: cc8d7f1e5d37697a83d4ea16b8b5c2a0b4408052daae6531263a67407b9dfc36
+    type: correlation_rule
     version: 1
   Snowflake.Stream.ExternalShares:
     history:
@@ -6623,6 +7215,47 @@ versions:
     sha256: 3d319db65a44e745b961fab2ba4f93233c3a40c58440c346fc0a5b0c644a77c0
     type: rule
     version: 1
+  Standard.AWS.ALB:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/aws_alb_data_model.yml
+    sha256: 9907a3fa2ef0a07e9198405f11a79fe6ad827368c9fe06fdce222c89b78c91b0
+    type: datamodel
+    version: 1
+  Standard.AWS.CloudTrail:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/aws_cloudtrail_data_model.py
+        yamlFilePath: ./data_models/aws_cloudtrail_data_model.yml
+    sha256: e21d5136e839929492f8367b437a533337d52e78f717757fb16ed5450525b4e7
+    type: datamodel
+    version: 1
+  Standard.AWS.S3ServerAccess:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/aws_s3_data_model.yml
+    sha256: 621a6dbdeb1b955c64dcfab13c3bbc3fe37760023fcf195df6dd30890cabb119
+    type: datamodel
+    version: 1
+  Standard.AWS.VPCDns:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/aws_vpcdns_data_model.yml
+    sha256: b02a2a7730803893fa83de0e1cb66182aeab1892e3e09a5a85d063e7f085f04c
+    type: datamodel
+    version: 1
+  Standard.AWS.VPCFlow:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/aws_vpcflow_data_model.yml
+    sha256: 39ac0d07b77f91c0930b357227f6f6bec90c2b049ae8b92e9d88c1b7af995ab4
+    type: datamodel
+    version: 1
   Standard.AdminRoleAssigned:
     history:
       1:
@@ -6631,6 +7264,50 @@ versions:
         yamlFilePath: ./rules/standard_rules/admin_assigned.yml
     sha256: 2169d6becf44d23189832826fd88e6cf5ec7b78160afdcfa1300b2148d89637a
     type: rule
+    version: 1
+  Standard.Amazon.EKS.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/aws_eks_data_model.yml
+    sha256: 97249683049960caf07b980e5012531a482499dcc3cc986de445cf5aa55a11bd
+    type: datamodel
+    version: 1
+  Standard.Asana.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/asana_data_model.py
+        yamlFilePath: ./data_models/asana_data_model.yml
+    sha256: e1adfc687c5d9a38ba4e857e1f7499fcd40c46ca01eac0a5f91f0ad1526506ea
+    type: datamodel
+    version: 1
+  Standard.Atlassian.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/atlassian_data_model.py
+        yamlFilePath: ./data_models/atlassian_data_model.yml
+    sha256: 9b6114d263d34fb33660476ab24656e627d65b979f01a86f33308ed7085ed4f5
+    type: datamodel
+    version: 1
+  Standard.Azure.Audit.SignIn:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/azure_signin_data_model.py
+        yamlFilePath: ./data_models/azure_signin_data_model.yml
+    sha256: f1eb5caebce295676cbae743982b5c57a738e1f8a8ad1725b3bf144a334a926d
+    type: datamodel
+    version: 1
+  Standard.Box.Event:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/box_data_model.py
+        yamlFilePath: ./data_models/box_data_model.yml
+    sha256: d4e191fd5e41e731cde77961f911e4118a4bd978eb7c316df7d440ee1f2ad034
+    type: datamodel
     version: 1
   Standard.BruteForceByIP:
     history:
@@ -6650,6 +7327,40 @@ versions:
     sha256: 41281dcc8f7a66a414128079b77b920f8ff472668888879c5bee4fb0a8d383f2
     type: rule
     version: 1
+  Standard.CiscoUmbrella.DNS:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/cisco_umbrella_data_model.py
+        yamlFilePath: ./data_models/cisco_umbrella_data_model.yml
+    sha256: 0be2e417d4332c215d009b81b95a77e20a4e510751a70b024afa8b2d267b8586
+    type: datamodel
+    version: 1
+  Standard.Cloudflare.Firewall:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/cloudflare_firewall_data_model.yml
+    sha256: 5722605c3b1d1121ba370fd04a2361d875c10e81d922a45fba97f79af1378fb2
+    type: datamodel
+    version: 1
+  Standard.Cloudflare.HttpReq:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/cloudflare_httpreq_data_model.yml
+    sha256: 0a098e0944fdbdfa39a9bf62f10c23e21d75d2f25bdc39d19d0f2732c539aaaf
+    type: datamodel
+    version: 1
+  Standard.Crowdstrike.FDR:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/crowdstrike_fdr_data_model.py
+        yamlFilePath: ./data_models/crowdstrike_fdr_data_model.yml
+    sha256: 0278572b2c4cc44e8421cfe0d8d512e82a4ff908b31f5140f2f8a02082cc3800
+    type: datamodel
+    version: 1
   Standard.DNSBase64:
     history:
       1:
@@ -6658,6 +7369,33 @@ versions:
         yamlFilePath: ./rules/standard_rules/standard_dns_base64.yml
     sha256: f1812f7dc30ef3e932618b28fbb831aeb4cb86d5dc39dd400e91db4334dfb6da
     type: rule
+    version: 1
+  Standard.GCP.AuditLog:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/gcp_data_model.py
+        yamlFilePath: ./data_models/gcp_data_model.yml
+    sha256: c6bb5c6fde5d899d4ec9eb4ca1fc7e381ad690a3c1fa36ca26ea4756c7cd3199
+    type: datamodel
+    version: 1
+  Standard.GSuite.Reports:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/gsuite_data_model.py
+        yamlFilePath: ./data_models/gsuite_data_model.yml
+    sha256: 83ed2b6778136b405a731bf3367b8ab53aff551548493994028c2eeb0bc34dd1
+    type: datamodel
+    version: 1
+  Standard.Github.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/github_data_model.py
+        yamlFilePath: ./data_models/github_data_model.yml
+    sha256: 34e7c56368c2fe058f768593b558e900fe1da3dab9efed9427f1c5a76ad6c5e6
+    type: datamodel
     version: 1
   Standard.ImpossibleTravel.Login:
     history:
@@ -6704,6 +7442,76 @@ versions:
     sha256: cb0280eab96e2f362d331c5c9ab0cc4a8faab479a1888fd80df6321a3923e743
     type: rule
     version: 1
+  Standard.Notion.AuditLogs:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/notion_data_model.py
+        yamlFilePath: ./data_models/notion_data_model.yml
+    sha256: e672fd1b8715f997c8afd8859af81e7276a6adf427a98145ec71b5c264f42d79
+    type: datamodel
+    version: 1
+  Standard.OCSF.DnsActivity:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/ocsf_dnsactivity_data_model.yml
+    sha256: 0eb619524e95d33835231e7e21868917d9e13519e159e0537e806ff74103abef
+    type: datamodel
+    version: 1
+  Standard.OCSF.NetworkActivity:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/ocsf_networkactivity_data_model.yml
+    sha256: d309255d3833279f10e3a33cbeba57ab85e16865be1acc80a3b84f498bbe3227
+    type: datamodel
+    version: 1
+  Standard.Okta.SystemLog:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/okta_data_model.py
+        yamlFilePath: ./data_models/okta_data_model.yml
+    sha256: d77174da7e42ca9050b87afd29ffa65b79b633ed1bb22adca432aa65b4735afc
+    type: datamodel
+    version: 1
+  Standard.OneLogin.Events:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/onelogin_data_model.py
+        yamlFilePath: ./data_models/onelogin_data_model.yml
+    sha256: c7f7862f6af589abf500a7c6258eb170e7153c555fe7da687e8902de89bfbc0a
+    type: datamodel
+    version: 1
+  Standard.OnePassword.ItemUsage:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/onepassword_itemusage_data_model.py
+        yamlFilePath: ./data_models/onepassword_itemusage_data_model.yml
+    sha256: ffde873fa35dd931ed809e30549342b9ef22b505405a5c17b3f22f4d4588738b
+    type: datamodel
+    version: 1
+  Standard.OnePassword.SignInAttempt:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/onepassword_signinattempt_data_model.py
+        yamlFilePath: ./data_models/onepassword_signinattempt_data_model.yml
+    sha256: 3b4d097763dc83061044223b831eeddd15232c9a9c14b01a39e100a5cf08fb7d
+    type: datamodel
+    version: 1
+  Standard.Panther.Audit:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/panther_audit_data_model.py
+        yamlFilePath: ./data_models/panther_audit_data_model.yml
+    sha256: 4289b21a941c67812732664a1885f83d23cd1e50fb606588da1e56864c2f47a2
+    type: datamodel
+    version: 1
   Standard.SignInFromRogueState:
     history:
       1:
@@ -6712,6 +7520,57 @@ versions:
         yamlFilePath: ./rules/standard_rules/sign_in_from_rogue_state.yml
     sha256: 0c7ffa95aadd0c38ffd1ab15b1c8e8b513e0d464eef478ed551a718ff8579699
     type: rule
+    version: 1
+  Standard.Slack.AccessLogs:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/slack_accesslogs_data_model.yml
+    sha256: feeea5379d2ef4ccdd52d91b967ad1ccb9fa4e6630e86676f5d6fabdc45bbeaf
+    type: datamodel
+    version: 1
+  Standard.Slack.AuditLogs:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/slack_auditlogs_data_model.yml
+    sha256: cec6b82617bd38b071abf8c788e11419128d621ed168022c49a8aec46bb84faa
+    type: datamodel
+    version: 1
+  Standard.Slack.IntegrationLogs:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./data_models/slack_integrationlogs_data_model.yml
+    sha256: a2602a0b069148f39c9e4273e37a55f6eceac9fe25ec1fc9bd8e43e7d7b5da88
+    type: datamodel
+    version: 1
+  Standard.Zendesk.AuditLog:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/zendesk_data_model.py
+        yamlFilePath: ./data_models/zendesk_data_model.yml
+    sha256: fde8b7240a0db01a29bc698b4bf11c443d1515f0ad36294918107798fdb1e07d
+    type: datamodel
+    version: 1
+  Standard.Zoom.Activity:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/zoom_activity_data_model.py
+        yamlFilePath: ./data_models/zoom_activity_data_model.yml
+    sha256: 65b0b8a345a94d18f293ce8134c7ed47cbc0fbc67070942a749477cdbd0a5d4b
+    type: datamodel
+    version: 1
+  Standard.Zoom.Operation:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./data_models/zoom_operation_data_model.py
+        yamlFilePath: ./data_models/zoom_operation_data_model.yml
+    sha256: 3d79c2dfaae6a27b5777e41a9985ea3e797e130871ba701d4dc559996e968e63
+    type: datamodel
     version: 1
   Sublime.Mailbox.Deactivated:
     history:
@@ -7009,6 +7868,14 @@ versions:
     sha256: 643d7c1853dd02fbcb803af8b0201cb77bb44eb5468eebb98f20acc166082522
     type: rule
     version: 1
+  TorLookupTables:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/tor.yml
+    sha256: 175b9808ae98c61e7e28dc5716c62b74c235ea7ed8531383a184dd1eb91288d6
+    type: pack
+    version: 1
   Tracebit.Alert:
     history:
       1:
@@ -7017,6 +7884,14 @@ versions:
         yamlFilePath: ./rules/tracebit_rules/tracebit_alert.yml
     sha256: 11708b46ae4287cb90ed4ac34fbbdf69c6a3950ba0cdb33c7b039b6bf57d2582
     type: rule
+    version: 1
+  TrailDiscoverEnrichment:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./packs/traildiscover.yml
+    sha256: 055c38f6f1b6debb6c8a631a89c314e31143e28858b1de87be7f71df3f442edd
+    type: pack
     version: 1
   Unauthenticated Kubernetes API Request:
     history:
@@ -7113,6 +7988,14 @@ versions:
         yamlFilePath: ./rules/wiz_rules/wiz_integration_updated_or_deleted.yml
     sha256: 45caa01d8c80230e0a3a42619d1b0dcaac3af3dea2db17ca4072fcb0ef4a14ac
     type: rule
+    version: 1
+  Wiz.Issue.Followed.By.SSH:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        yamlFilePath: ./correlation_rules/wiz_issue_followed_by_ssh.yml
+    sha256: de57fc60b35b2c440dbe5e1530c7943971136bbb64ab0e73d745d44f457b58be
+    type: correlation_rule
     version: 1
   Wiz.Revoke.User.Sessions:
     history:
@@ -7445,4 +8328,328 @@ versions:
         yamlFilePath: ./queries/macros/anomalies.yml
     sha256: bcb97096ffbab1b5284fc7b35396c79f9fec2048a79c143ea164a1c7bdb0e57e
     type: saved_query
+    version: 1
+  panther_asana_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_asana_helpers.py
+        yamlFilePath: ./global_helpers/panther_asana_helpers.yml
+    sha256: fda1c02f90122b7e8f114201556216d051e9c8e8da80bfbcd0e52c45d2db8688
+    type: global
+    version: 1
+  panther_auth0_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_auth0_helpers.py
+        yamlFilePath: ./global_helpers/panther_auth0_helpers.yml
+    sha256: 4315d3081e5f8b1f01a3a62a53973455af678b869aaed722261ebcef0dd93c72
+    type: global
+    version: 1
+  panther_aws_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_aws_helpers.py
+        yamlFilePath: ./global_helpers/panther_aws_helpers.yml
+    sha256: 6b4f15d300000dd88de9b0097b885304cdfe3fab91043373e2c5b6a248458896
+    type: global
+    version: 1
+  panther_azuresignin_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_azuresignin_helpers.py
+        yamlFilePath: ./global_helpers/panther_azuresignin_helpers.yml
+    sha256: 279c09d07ffe0a8e0717c79bb4340c8b97b189c283a24a0db36e9dc23a06f865
+    type: global
+    version: 1
+  panther_base_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_base_helpers.py
+        yamlFilePath: ./global_helpers/panther_base_helpers.yml
+    sha256: 5bcd834321a3f8252d9d922ddfe652e60da016a7925a5b394f3ac59aba603e80
+    type: global
+    version: 1
+  panther_box_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_box_helpers.py
+        yamlFilePath: ./global_helpers/panther_box_helpers.yml
+    sha256: 6ab01f34ec774b4bbb7636086ef3abab15ee9934c7eb6a667c185c2d0bd5de11
+    type: global
+    version: 1
+  panther_cloudflare_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_cloudflare_helpers.py
+        yamlFilePath: ./global_helpers/panther_cloudflare_helpers.yml
+    sha256: cee6c6530e36fc2a41b0bb5d3823cb3fad76a940397e8f20b2956afa4d3e305d
+    type: global
+    version: 1
+  panther_crowdstrike_event_streams_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_crowdstrike_event_streams_helpers.py
+        yamlFilePath: ./global_helpers/panther_crowdstrike_event_streams_helpers.yml
+    sha256: 8e6f901782d4b7adfa8785d0789e2423fdc036f1a8e5fb824190a9dd6d59cf50
+    type: global
+    version: 1
+  panther_crowdstrike_fdr_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_crowdstrike_fdr_helpers.py
+        yamlFilePath: ./global_helpers/panther_crowdstrike_fdr_helpers.yml
+    sha256: 5853c8b52e70f617608e7ea695ca42d42c627ca4c5323b3776b8df654b40f539
+    type: global
+    version: 1
+  panther_duo_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_duo_helpers.py
+        yamlFilePath: ./global_helpers/panther_duo_helpers.yml
+    sha256: a60d8046a2a269f331673fa4a625d42f12acaa6ba371e8cef89c567adc9b359a
+    type: global
+    version: 1
+  panther_event_type_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_event_type_helpers.py
+        yamlFilePath: ./global_helpers/panther_event_type_helpers.yml
+    sha256: a1e6d1281ae4c8354d0f4c515ca7eab12189b2228958ceab4ff5904d24bfe5fb
+    type: global
+    version: 1
+  panther_gcp_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_gcp_helpers.py
+        yamlFilePath: ./global_helpers/panther_gcp_helpers.yml
+    sha256: 16679ab322bb3e4585d1eaf29aff722d7e4cd2e08d1a700e658855e1e1e21477
+    type: global
+    version: 1
+  panther_github_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_github_helpers.py
+        yamlFilePath: ./global_helpers/panther_github_helpers.yml
+    sha256: 53b0bc9cc6a367eef6d3b831e4fb50e5b38ef651b4a1e17deab0ea1a13ac4d24
+    type: global
+    version: 1
+  panther_greynoise_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_greynoise_helpers.py
+        yamlFilePath: ./global_helpers/panther_greynoise_helpers.yml
+    sha256: 4d01ed9b03fdc780322fee492b9630f3debb69e56a98dccd364e50053cc2e53e
+    type: global
+    version: 1
+  panther_gsuite_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_gsuite_helpers.py
+        yamlFilePath: ./global_helpers/panther_gsuite_helpers.yml
+    sha256: 968e6efad80f1ca25d92d00be2e5ff0685a70a66a138d530c4e6f4ba63f30c43
+    type: global
+    version: 1
+  panther_iocs:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_iocs.py
+        yamlFilePath: ./global_helpers/panther_iocs.yml
+    sha256: 59050940ec0c26fba35772e931d7b24722e0eff45080fe29ce4df39e512656c6
+    type: global
+    version: 1
+  panther_ipinfo_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_ipinfo_helpers.py
+        yamlFilePath: ./global_helpers/panther_ipinfo_helpers.yml
+    sha256: 278f51563121ceefca5374a21ca39385025eaf41d58a5f0ca950bb6f7d8bbe91
+    type: global
+    version: 1
+  panther_lookuptable_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_lookuptable_helpers.py
+        yamlFilePath: ./global_helpers/panther_lookuptable_helpers.yml
+    sha256: 71315d3017299dc231e880282c1851006f7f59b6ae4942bec381a3eeacb83e4b
+    type: global
+    version: 1
+  panther_misp_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_misp_helpers.py
+        yamlFilePath: ./global_helpers/panther_misp_helpers.yml
+    sha256: 3f6fa9817142a62eb5a033a8ba2e238649dbb05282e10056f4c4cb927909467a
+    type: global
+    version: 1
+  panther_mongodb_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_mongodb_helpers.py
+        yamlFilePath: ./global_helpers/panther_mongodb_helpers.yml
+    sha256: 745b5a1b4e8a8eccc5e85e2c77ccd0516dee2bf2f9441e486341c665082a905e
+    type: global
+    version: 1
+  panther_msft_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_msft_helpers.py
+        yamlFilePath: ./global_helpers/panther_msft_helpers.yml
+    sha256: 4d257f404b9a824d40835b16403208f88e7e544d059b53155ddad59cd11e2fdd
+    type: global
+    version: 1
+  panther_notion_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_notion_helpers.py
+        yamlFilePath: ./global_helpers/panther_notion_helper.yml
+    sha256: de137d9786295a64836ffed3eaeca073ce10a69e2443a4365f0b8a8b9d203a78
+    type: global
+    version: 1
+  panther_okta_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_okta_helpers.py
+        yamlFilePath: ./global_helpers/panther_okta_helpers.yml
+    sha256: d193437c0675ee9f0d5744d680d0b3d794f7009f36b4cbab1b43c23253abeda1
+    type: global
+    version: 1
+  panther_slack_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_slack_helpers.py
+        yamlFilePath: ./global_helpers/panther_slack_helpers.yml
+    sha256: 325e00eb7c75da2cf266cf3d53c43182c7c5613c045ebe6f205daced55ca6a64
+    type: global
+    version: 1
+  panther_snowflake_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_snowflake_helpers.py
+        yamlFilePath: ./global_helpers/panther_snowflake_helpers.yml
+    sha256: b42da3fb7d63b38750baba1a8ae0dba326ebf7492ec84e44daf801bbf658de5f
+    type: global
+    version: 1
+  panther_snyk_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_snyk_helpers.py
+        yamlFilePath: ./global_helpers/panther_snyk_helpers.yml
+    sha256: f2241e15ddfc62be8946694cfd40dce0bab06ba66f72d97e53fd0f1e843ce735
+    type: global
+    version: 1
+  panther_sublime_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_sublime_helpers.py
+        yamlFilePath: ./global_helpers/panther_sublime_helpers.yml
+    sha256: 6e26477652007603eb6392f012dbc2e8e13510cbe57aadb7e102d7759e97be14
+    type: global
+    version: 1
+  panther_tailscale_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_tailscale_helpers.py
+        yamlFilePath: ./global_helpers/panther_tailscale_helpers.yml
+    sha256: ee202205e814b3bc227871d5735769b677770e97da3b55550520951809055885
+    type: global
+    version: 1
+  panther_thinkstcanary_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_thinkstcanary_helpers.py
+        yamlFilePath: ./global_helpers/panther_thinkstcanary_helpers.yml
+    sha256: 5b7c15dcf63b055f257c1b02aa66838c7bbc7505808d0924b3801db3c2f8f260
+    type: global
+    version: 1
+  panther_tines_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_tines_helpers.py
+        yamlFilePath: ./global_helpers/panther_tines_helpers.yml
+    sha256: 906de39054727eff91fc188e45ed496833ec8678530d1b554a24622cad2dfb7f
+    type: global
+    version: 1
+  panther_tor_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_tor_helpers.py
+        yamlFilePath: ./global_helpers/panther_tor_helpers.yml
+    sha256: dfbe823ade6b7f5f514af443b7f9eca0a6ec5432a7408dfe63eb2b2dbda24d2c
+    type: global
+    version: 1
+  panther_type_hints:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_type_hints.py
+        yamlFilePath: ./global_helpers/panther_type_hints.yml
+    sha256: d080e4ff5f45852e46b2026ffc067a5b818712d2a7320bc6833c5e2fcec2791b
+    type: global
+    version: 1
+  panther_wiz_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_wiz_helpers.py
+        yamlFilePath: ./global_helpers/panther_wiz_helpers.yml
+    sha256: 1d41595d2ba661719bc0a534245da34043458b0254bc0400ada22ca4647225d7
+    type: global
+    version: 1
+  panther_zendesk_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_zendesk_helpers.py
+        yamlFilePath: ./global_helpers/panther_zendesk_helpers.yml
+    sha256: aca1aeb07ff2e6ad7c062ff822e58da6d4119757014846b14c921dbbb1ed4520
+    type: global
+    version: 1
+  panther_zoom_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_zoom_helpers.py
+        yamlFilePath: ./global_helpers/panther_zoom_helpers.yml
+    sha256: 08dc05b2989d198fbabc2b4fd038b865e39948a1567d717bcdb6c3353fd5a412
+    type: global
+    version: 1
+  panther_zscaler_helpers:
+    history:
+      1:
+        commit_hash: 89d07a497c277108660c4e0b464943a3505d652b
+        pyFilePath: ./global_helpers/panther_zscaler_helpers.py
+        yamlFilePath: ./global_helpers/panther_zscaler_helpers.yml
+    sha256: 4b3da046f876015416c5b12c2f261ecbd7d9c3451f5b39e13a489ad3e8466211
+    type: global
     version: 1

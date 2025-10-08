@@ -12,7 +12,7 @@ _VERSIONS_FILE_NAME = ".versions.yml"
 
 class AnalysisVersionHistoryItem(pydantic.BaseModel):
     commit_hash: str
-    pyFilePath: Optional[str]
+    pyFilePath: Optional[str] = None
     yamlFilePath: str
 
 
@@ -85,14 +85,14 @@ def update_version_history(
 def load_analysis_items() -> Generator[AnalysisItem, None, None]:
     for root, _, files in os.walk("."):
         if (
-            "/rules/" not in root
-            and "/policies/" not in root
-            and "/queries/" not in root
-            and "/simple_rules/" not in root
-            and "/correlation_rules/" not in root
-            and "/data_models/" not in root
-            and "/packs/" not in root
-            and "/global_helpers/" not in root
+            "/rules" not in root
+            and "/policies" not in root
+            and "/queries" not in root
+            and "/simple_rules" not in root
+            and "/correlation_rules" not in root
+            and "/data_models" not in root
+            and "/packs" not in root
+            and "/global_helpers" not in root
         ):
             continue
 
@@ -134,11 +134,11 @@ def analysis_id(analysis_spec: Dict[str, Any]) -> str:
             return analysis_spec["PolicyID"]
         case "query" | "saved_query" | "scheduled_query":
             return analysis_spec["QueryName"]
-        case "data_model":
+        case "datamodel":
             return analysis_spec["DataModelID"]
         case "pack":
             return analysis_spec["PackID"]
-        case "global_helper":
+        case "global":
             return analysis_spec["GlobalID"]
         case _:
             raise ValueError(f"Invalid analysis type: {analysis_spec['AnalysisType']}")
@@ -163,7 +163,7 @@ def load_versions_file() -> VersionsFile:
 
 def dump_versions_file(versions: VersionsFile):
     with open(_VERSIONS_FILE_NAME, "w") as vf:
-        yaml.safe_dump(versions.model_dump(), vf)
+        yaml.safe_dump(versions.model_dump(exclude_none=True), vf)
 
 
 def generate_version_file(commit_hash: str):

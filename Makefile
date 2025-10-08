@@ -124,4 +124,4 @@ docker-lint: ## Run linters within the Docker container
 
 ## generate-versions: Generate versions file
 generate-versions: ## Generate versions file
-	pipenv run python3 ./generate_versions/generate_versions_file.py
+	pipenv run python3 .scripts/generate_versions_file.py

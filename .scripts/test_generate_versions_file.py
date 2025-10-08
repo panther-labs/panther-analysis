@@ -225,3 +225,4 @@ def test_generate_version_file_integration(mock_run, mock_file, mock_exists):
         mock_file.assert_called()
         # Verify yaml dump was called
         mock_file().write.assert_called()
+        mock_file().write.assert_called()
