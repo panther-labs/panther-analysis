@@ -17,8 +17,8 @@ def rule(event):
 
 
 def title(event):
-    aid = event.get("aid", "<UNKNOWN_AID>")
-    return f"Crowdstrike: Osascript run with administrator privileges on [{aid}]"
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
+    return f"Crowdstrike: Osascript run with administrator privileges on [{host}]"
 
 
 def alert_context(event):
