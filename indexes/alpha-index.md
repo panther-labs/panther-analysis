@@ -799,8 +799,8 @@
   - Detects an Axonius API Key Reset
 - [Axonius External User Added](../rules/axonius_rules/axonius_add_external_user.yml)
   - Detects when an external user is added in Axonius
-- [Axonius login from Tor IP](../rules/axonius_rules/axonius_tor_login.yml)
-  - Detects an Axonius login from Tor IP address
+- [Axonius login from Tor IP](../rules/axonius_rules/axonius_too_many_failed_logins.yml)
+  - Detects an Axonius login from a malicious IP address
 - [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
   - Detects when an Axonius Webhook is Created
 
