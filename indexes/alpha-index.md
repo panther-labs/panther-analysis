@@ -768,6 +768,10 @@
 
 ## Auth0
 
+- [Auth0 Attack Protection Monitoring Disabled](../rules/auth0_rules/auth0_attack_protection_disabled.yml)
+  - An attack protection monitoring configuration was changed.
+- [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
+  - A bot detection policy was disabled.
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
@@ -788,6 +792,10 @@
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
+- [Auth0 Push Notification Fatigue](../rules/auth0_rules/auth0_push_notification_fatigue.yml)
+  - Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.
+- [Auth0 Refresh Token Reused](../rules/auth0_rules/auth0_token_reuse.yml)
+  - A refresh token was reused.
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.

@@ -325,6 +325,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "An attack protection monitoring configuration was changed.",
+        "DisplayName": "Auth0 Attack Protection Monitoring Disabled",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_attack_protection_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A bot detection policy was disabled.",
+        "DisplayName": "Auth0 Bot Detection Policy Disabled",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_bot_detection_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
         "LogTypes": [
@@ -412,6 +430,24 @@
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_post_login_action_flow.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.",
+        "DisplayName": "Auth0 Push Notification Fatigue",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_push_notification_fatigue.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A refresh token was reused.",
+        "DisplayName": "Auth0 Refresh Token Reused",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_token_reuse.yml"
     },
     {
         "AnalysisType": "Rule",
