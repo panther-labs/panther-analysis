@@ -12,8 +12,8 @@ _VERSIONS_FILE_NAME = ".versions.yml"
 
 class AnalysisVersionHistoryItem(pydantic.BaseModel):
     commit_hash: str
-    pyFilePath: Optional[str] = None
-    yamlFilePath: str
+    py_file_path: Optional[str] = None
+    yaml_file_path: str
 
 
 class AnalysisVersionItem(pydantic.BaseModel):
@@ -33,8 +33,8 @@ class AnalysisItem:
     type: str
     py: str
     analysis_spec: Dict[str, Any]
-    yamlFilePath: str
-    pyFilePath: str
+    yaml_file_path: str
+    py_file_path: str
     sha256: str
     version: int
 
@@ -72,9 +72,9 @@ def update_version_history(
     if analysis_item.version not in history:
         history[analysis_item.version] = AnalysisVersionHistoryItem(
             commit_hash=commit_hash,
-            yamlFilePath=analysis_item.yamlFilePath,
-            pyFilePath=analysis_item.pyFilePath
-            if analysis_item.pyFilePath != ""
+            yaml_file_path=analysis_item.yaml_file_path,
+            py_file_path=analysis_item.py_file_path
+            if analysis_item.py_file_path != ""
             else None,
         )
 
@@ -113,8 +113,8 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
                         type=analysis_spec["AnalysisType"],
                         py=py,
                         analysis_spec=analysis_spec,
-                        yamlFilePath=os.path.join(root, file),
-                        pyFilePath=os.path.join(root, analysis_spec["Filename"])
+                        yaml_file_path=os.path.join(root, file),
+                        py_file_path=os.path.join(root, analysis_spec["Filename"])
                         if py != ""
                         else "",
                         sha256=create_version_hash(analysis_spec, py),
