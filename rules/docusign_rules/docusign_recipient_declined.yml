@@ -1,0 +1,84 @@
+AnalysisType: rule
+Filename: docusign_recipient_declined.py
+RuleID: "Docusign.Connect.RecipientDeclined"
+DisplayName: "DocuSign Recipient Declined Envelope"
+Enabled: true
+LogTypes:
+  - Docusign.Connect
+Tags:
+  - DocuSign
+  - Recipient
+  - Declined
+  - Business Process
+Severity: Low
+Description: >
+  Detects when a DocuSign recipient declines to sign an envelope. While often legitimate business
+  activity, frequent declines or patterns of declines may indicate issues with document validity,
+  recipient concerns about authenticity, or potential fraud attempts.
+Runbook: |
+  1. Review the envelope contents and recipients
+  2. Check if the decline reason was provided
+  3. Verify if this is expected business behavior
+  4. Monitor for patterns of declines for the same envelope or sender
+  5. Consider reaching out to the recipient for clarification
+  6. Review if the envelope was sent to the correct recipient
+Reference: https://developer.docusign.com/docs/connect/events/
+SummaryAttributes:
+  - data.email
+  - data.envelopeId
+  - data.senderEmail
+Tests:
+  - Name: "Recipient Declined Event"
+    ExpectedResult: true
+    Log:
+      event: "recipient-declined"
+      uri: "/api/v2/accounts/12345/envelopes/abc123/recipients/recipient123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        recipientId: "recipient123"
+        envelopeId: "envelope123"
+        name: "John Doe"
+        email: "sam@lotr.com"
+        senderEmail: "denethor@lotr.com"
+        routingOrder: 1
+        terminationReason: "Recipient declined to sign"
+        envelopeSummary:
+          status: "declined"
+          created: "2024-01-15T09:00:00.000Z"
+  - Name: "Recipient Signed Event"
+    ExpectedResult: false
+    Log:
+      event: "recipient-signed"
+      uri: "/api/v2/accounts/12345/envelopes/abc123/recipients/recipient123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        recipientId: "recipient123"
+        envelopeId: "envelope123"
+        name: "John Doe"
+        email: "sam@lotr.com"
+        routingOrder: 1
+        envelopeSummary:
+          status: "signed"
+          created: "2024-01-15T09:00:00.000Z"
+  - Name: "Different Event Type"
+    ExpectedResult: false
+    Log:
+      event: "envelope-sent"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        envelopeId: "envelope123"
