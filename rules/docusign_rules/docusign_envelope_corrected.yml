@@ -1,0 +1,82 @@
+AnalysisType: rule
+Filename: docusign_envelope_corrected.py
+RuleID: "Docusign.Connect.EnvelopeCorrected"
+DisplayName: "DocuSign Envelope Corrected"
+Enabled: true
+LogTypes:
+  - Docusign.Connect
+Tags:
+  - DocuSign
+  - Envelope
+  - Tampering
+Severity: Low
+Description: >
+  Detects when a DocuSign envelope is corrected after being sent. Frequent corrections could indicate
+  document tampering attempts, process abuse, or suspicious modification of legal documents. Monitor
+  for patterns of correction behavior that may indicate fraud.
+Runbook: |
+  1. Review the envelope contents and what was corrected
+  2. Verify if the correction was legitimate business process
+  3. Check for patterns of envelope corrections by the same user
+  4. Review the original and corrected document versions
+  5. Consider investigating other envelopes sent by the same sender
+  6. Verify recipient authentication for corrected envelopes
+Reference: https://developer.docusign.com/docs/connect/events/
+SummaryAttributes:
+  - data.envelopeId
+  - data.senderEmail
+  - data.email
+Tests:
+  - Name: "Envelope Corrected Event"
+    ExpectedResult: true
+    Log:
+      event: "envelope-corrected"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        envelopeId: "envelope123"
+        recipientId: "recipient123"
+        email: "frodo@lotr.com"
+        senderEmail: "denethor@lotr.com"
+        envelopeSummary:
+          status: "corrected"
+          created: "2024-01-15T09:00:00.000Z"
+        envelopeDocuments:
+          - documentId: "doc1"
+            name: "Contract.pdf"
+            pages: 5
+  - Name: "Envelope Sent Event"
+    ExpectedResult: false
+    Log:
+      event: "envelope-sent"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        envelopeId: "envelope123"
+        senderEmail: "denethor@lotr.com"
+        envelopeSummary:
+          status: "sent"
+          created: "2024-01-15T09:00:00.000Z"
+  - Name: "Different Event Type"
+    ExpectedResult: false
+    Log:
+      event: "recipient-signed"
+      uri: "/api/v2/accounts/12345/envelopes/abc123/recipients/recipient123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        envelopeId: "envelope123"
+        recipientId: "recipient123"
