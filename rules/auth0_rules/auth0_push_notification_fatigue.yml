@@ -6,13 +6,16 @@ Filename: auth0_push_notification_fatigue.py
 Runbook: Assess if this was done by the user for a valid business reason. Be vigilant to re-enable this setting as it's in the best security interest for your organization's security posture.
 Reference: https://github.com/auth0/auth0-customer-detections/tree/main/detections
 Severity: High
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1621
+DedupPeriodMinutes: 30
+LogTypes:
+  - Auth0.Events
+RuleID: "Auth0.PushNotification.Fatigue"
+Threshold: 5
 Tests:
   - ExpectedResult: true
-    Mocks:
-    - {
-        "objectName": "add_to_string_set",
-        "returnValue": '["homer.simpson@yourcompany.com", "homer.simpson@yourcompany.com", "homer.simpson@yourcompany.com", "homer.simpson@yourcompany.com", "homer.simpson@yourcompany.com"]',
-      }
     Log:
       data:
         client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
@@ -113,8 +116,3 @@ Tests:
       p_source_id: b9031579-b2c5-45c2-b15c-632b995a4e36
       p_source_label: Org Auth0 Tenant Label
     Name: Other Event
-DedupPeriodMinutes: 60
-LogTypes:
-  - Auth0.Events
-RuleID: "Auth0.PushNotification.Fatigue"
-Threshold: 5
