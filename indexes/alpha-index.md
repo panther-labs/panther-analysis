@@ -992,8 +992,23 @@
 
 # D
 
+- [Docusign](#docusign)
 - [Dropbox](#dropbox)
 - [Duo](#duo)
+
+
+## Docusign
+
+- [DocuSign Envelope Corrected](../rules/docusign_rules/docusign_envelope_corrected.yml)
+  - Detects when a DocuSign envelope is corrected after being sent. Frequent corrections could indicate document tampering attempts, process abuse, or suspicious modification of legal documents. Monitor for patterns of correction behavior that may indicate fraud.
+- [DocuSign Envelope Voided](../rules/docusign_rules/docusign_envelope_voided.yml)
+  - Detects when a DocuSign envelope is voided. Frequent voiding of envelopes could indicate fraudulent activity, document tampering attempts, or process abuse. Monitor for patterns of voiding behavior.
+- [DocuSign Recipient Authentication Failure](../rules/docusign_rules/docusign_recipient_authentication_failure.yml)
+  - Detects when a DocuSign recipient fails authentication while attempting to access an envelope. This could indicate attempted unauthorized access to sensitive documents or credential compromise.
+- [DocuSign Recipient Declined Envelope](../rules/docusign_rules/docusign_recipient_declined.yml)
+  - Detects when a DocuSign recipient declines to sign an envelope. While often legitimate business activity, frequent declines or patterns of declines may indicate issues with document validity, recipient concerns about authenticity, or potential fraud attempts.
+- [DocuSign Template Management Activity](../rules/docusign_rules/docusign_template_management.yml)
+  - Detects DocuSign template management activities including creation, modification, and deletion. Template changes can affect business processes and should be monitored for unauthorized modifications. Deletions are particularly critical as they may indicate data destruction or process disruption.
 
 
 ## Dropbox
