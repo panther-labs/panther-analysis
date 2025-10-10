@@ -20,8 +20,8 @@ def rule(event):
 
     if (
         data_type != "gd_enrollment_complete"
-        and data_description != "Guardian - Enrollment complete (sms)"
-        and not phone_number
+        or data_description != "Guardian - Enrollment complete (sms)"
+        or not phone_number
     ):
         return False
 
@@ -30,7 +30,10 @@ def rule(event):
 
     if isinstance(user_set, str):
         # This is a unit test
-        user_set = set(json.loads(user_set))
+        if user_set:
+            user_set = set(json.loads(user_set))
+        else:
+            user_set = None
 
     if not user_set:
         add_to_string_set(key, [user_id])
