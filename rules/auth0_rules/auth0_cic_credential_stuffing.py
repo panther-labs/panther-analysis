@@ -3,7 +3,6 @@ from panther_auth0_helpers import auth0_alert_context
 SUSPICIOUS_EVENT_TYPES = (
     "scoa",
     "fcoa",
-    "pwd_leak",
 )
 
 
