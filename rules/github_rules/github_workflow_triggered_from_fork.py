@@ -20,9 +20,9 @@ def title(event):
 
     title_str = (
         f"Workflow [{workflow_name}] was triggered by"
-        f" a forked repository {fork_name}"
-        f" through a commit with id [{commit_id}] "
-        f" pushed by user ({committer})"
+        f" a forked repository [{fork_name}]"
+        f" through a commit with id [{commit_id}]"
+        f" pushed by user [{committer}]"
     )
     return title_str
 
