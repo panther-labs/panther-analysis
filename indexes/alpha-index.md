@@ -1254,6 +1254,8 @@
   - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 - [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
   - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Triggered From Fork](../rules/github_rules/github_workflow_triggered_from_fork.yml)
+  - Detects when GitHub Actions workflows are triggered from forked repositories. Workflows running from forks pose a supply chain security risk as they can access repository secrets and execute arbitrary code. Attackers can fork a repository, add malicious workflow code, and trigger workflows via pull requests to exfiltrate secrets, modify code, or compromise the CI/CD pipeline. This is particularly concerning for public repositories that accept contributions from untrusted sources. Organizations should carefully review workflow permissions and use GitHub's built-in fork protection features like pull_request_target restrictions and environment-based approvals.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
