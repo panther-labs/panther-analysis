@@ -1,0 +1,90 @@
+AnalysisType: rule
+Filename: github_workflow_triggered_from_fork.py
+RuleID: "GitHub.Webhook.WorkflowTriggeredFromFork"
+DisplayName: "GitHub Workflow Triggered From Fork"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+Tags:
+  - CI/CD
+  - Workflow
+Severity: High
+Description: >
+  Detects when GitHub Actions workflows are triggered from forked repositories. Workflows running from forks
+  pose a supply chain security risk as they can access repository secrets and execute arbitrary code.
+  Attackers can fork a repository, add malicious workflow code, and trigger workflows via pull requests to
+  exfiltrate secrets, modify code, or compromise the CI/CD pipeline. This is particularly concerning for
+  public repositories that accept contributions from untrusted sources. Organizations should carefully review
+  workflow permissions and use GitHub's built-in fork protection features like pull_request_target restrictions
+  and environment-based approvals.
+Runbook: >
+  1. Immediately review the workflow run details and the forked repository using the provided html_url in the alert context
+  2. Verify the identity and trustworthiness of the fork owner and committer - check their GitHub profile, contribution history, and reputation
+  3. Examine the commit diff to identify any suspicious changes to workflow files (.github/workflows/), especially new or modified actions that could exfiltrate secrets
+  4. Check if the workflow has access to sensitive secrets (GITHUB_TOKEN, API keys, deployment credentials) - review the workflow file permissions and secret usage
+  5. Determine if the workflow ran with elevated permissions (write access to repository, ability to create releases, etc.)
+  6. If malicious activity is suspected: revoke any potentially compromised secrets, remove the fork's access, close associated pull requests, and investigate any artifacts or deployments created by the workflow
+  7. Review and strengthen repository settings: restrict fork permissions, require approval for workflows from first-time contributors, use environment protection rules
+  8. Consider implementing or reviewing pull_request_target vs pull_request trigger usage to limit fork access to secrets
+Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+Tests:
+  - Name: Workflow Triggered From Fork
+    ExpectedResult: true
+    Log:
+      {
+      "action": "completed",
+      "workflow": {
+        "name": "Your Workflow Name"
+      },
+      "workflow_run": {
+        "head_commit": {
+          "author": {
+            "email": "denethor@lotr.com",
+            "name": "attacker"
+          },
+          "committer": {
+            "email": "denethor@lotr.com",
+            "name": "attacker"
+          },
+          "id": "0000000000f3374660a5dd084d3fc1a8ea98252e",
+          "message": "bad commit",
+          "timestamp": "2025-10-14T14:38:55Z",
+        },
+        "head_repository": {
+          "fork": true,
+          "full_name": "attacker/your-repo"
+      }
+      }
+    }
+  - Name: Workflow Not Triggered From Fork
+    ExpectedResult: false
+    Log:
+      {
+      "action": "completed",
+      "workflow": {
+        "name": "Your Workflow Name"
+      },
+      "workflow_run": {
+        "head_commit": {
+          "author": {
+            "email": "attacker@proton.me",
+            "name": "attacker"
+          },
+          "committer": {
+            "email": "attacker@proton.me",
+            "name": "attacker"
+          },
+          "id": "400403807ece1baab2542f6b362d4a99a69ceb06",
+          "message": "bad commit",
+          "timestamp": "2025-10-14T14:38:55Z",
+          "tree_id": "842e750badb0004a1c6bc3865e76c5ca5a0df401"
+        },
+        "head_repository": {
+          "fork": false,
+          "full_name": "attacker/your-repo"
+      }
+      }
+    }
