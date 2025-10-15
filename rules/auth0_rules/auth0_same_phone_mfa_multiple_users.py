@@ -1,7 +1,7 @@
 import json
 
 from panther_auth0_helpers import auth0_alert_context
-from panther_detection_helpers.caching import add_to_string_set, get_string_set
+from panther_detection_helpers.caching import add_to_string_set
 
 RULE_ID = "Auth0.SamePhone.MultipleUsers.MFA"
 
@@ -26,22 +26,13 @@ def rule(event):
         return False
 
     key = phone_number + "-" + RULE_ID
-    user_set = get_string_set(key)
+    user_set = add_to_string_set(key, [user_id])
 
     if isinstance(user_set, str):
         # This is a unit test
-        if user_set:
-            user_set = set(json.loads(user_set))
-        else:
-            user_set = None
+        user_set = json.loads(user_set) if user_set else []
 
-    if not user_set:
-        add_to_string_set(key, [user_id])
-    else:
-        if user_id not in user_set:
-            add_to_string_set(key, [user_id])
-            return True
-    return False
+    return len(user_set) > 1
 
 
 def title(event):

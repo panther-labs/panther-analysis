@@ -17,10 +17,8 @@ Threshold: 1
 Tests:
   - ExpectedResult: true
     Mocks:
-      - objectName: get_string_set
-        returnValue: '["google-oauth2|999999999999999999999"]'
       - objectName: add_to_string_set
-        returnValue: ''
+        returnValue: '["google-oauth2|999999999999999999999", "google-oauth2|105261262156475850461"]'
     Log:
       data:
         client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
@@ -68,10 +66,8 @@ Tests:
     Name: Shared Phone Number as MFA
   - ExpectedResult: false
     Mocks:
-      - objectName: get_string_set
-        returnValue: >-
       - objectName: add_to_string_set
-        returnValue: >-
+        returnValue: '["google-oauth2|105261262156475850461"]'
     Log:
       data:
         client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
@@ -119,10 +115,8 @@ Tests:
     Name: First Time Phone Number Registration
   - ExpectedResult: false
     Mocks:
-      - objectName: get_string_set
-        returnValue: '["google-oauth2|888888888888888888888"]'
       - objectName: add_to_string_set
-        returnValue: ''
+        returnValue: '["google-oauth2|888888888888888888888"]'
     Log:
       data:
         client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
