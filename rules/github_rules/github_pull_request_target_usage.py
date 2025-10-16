@@ -7,7 +7,10 @@ from panther_github_helpers import (
 
 
 def rule(event):
-    return event.deep_get("workflow_run", "event") == "pull_request_target"
+    return (
+        event.deep_get("workflow_run", "event") == "pull_request_target"
+        and event.get("action") == "completed"
+    )
 
 
 def title(event):
