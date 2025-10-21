@@ -1,3 +1,5 @@
+from panther_gsuite_helpers import gsuite_activityevent_alert_context
+
 USER_SUSPENDED_EVENTS = {
     "account_disabled_generic",
     "account_disabled_spamming_through_relay",
@@ -18,3 +20,7 @@ def title(event):
     if not user:
         user = "<UNKNOWN_USER>"
     return f"User [{user}]'s account was disabled"
+
+
+def alert_context(event):
+    return gsuite_activityevent_alert_context(event)

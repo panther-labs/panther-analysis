@@ -1,0 +1,87 @@
+AnalysisType: rule
+Filename: axonius_too_many_failed_logins.py
+RuleID: Axonius.TooManyFailedLogins
+DisplayName: Axonius login from Tor IP
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+Severity: Medium
+Description: Detects an Axonius login from a malicious IP address
+Runbook: Review the actions taken, check credentials/service user used and escalate.
+Tests:
+  - Name: Successful Login
+    ExpectedResult: False
+    Mocks:
+      - objectName: get_counter
+        returnValue: "0"
+      - objectName: increment_counter
+        returnValue: True
+      - objectName: set_key_expiration
+        returnValue: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "successful"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }
+  - Name: One Failed Login
+    ExpectedResult: False
+    Mocks:
+      - objectName: get_counter
+        returnValue: "0"
+      - objectName: increment_counter
+        returnValue: True
+      - objectName: set_key_expiration
+        returnValue: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "failure"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }
+  - Name: Too Many Failed Login
+    ExpectedResult: True
+    Mocks:
+      - objectName: get_counter
+        returnValue: "6"
+      - objectName: increment_counter
+        returnValue: True
+      - objectName: set_key_expiration
+        returnValue: True
+      - objectName: reset_counter
+        returnValue: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "172.7.1.1",
+            "status": "failure"
+          },
+          "type": "user",
+          "user": "testr@axonius.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }

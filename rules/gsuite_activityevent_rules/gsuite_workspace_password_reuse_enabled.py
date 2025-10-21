@@ -1,3 +1,6 @@
+from panther_gsuite_helpers import gsuite_activityevent_alert_context
+
+
 def rule(event):
     if event.deep_get("id", "applicationName", default="").lower() != "admin":
         return False
@@ -21,3 +24,7 @@ def title(event):
         f"GSuite Workspace Password Reuse Has Been Enabled "
         f"By [{event.deep_get('actor', 'email', default='<NO_ACTOR_FOUND>')}]"
     )
+
+
+def alert_context(event):
+    return gsuite_activityevent_alert_context(event)

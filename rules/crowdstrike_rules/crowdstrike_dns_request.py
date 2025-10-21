@@ -17,9 +17,10 @@ def rule(event):
 
 
 def title(event):
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
     return (
         f"A denylisted domain [{get_crowdstrike_field(event, 'DomainName')}] was "
-        + f"queried by host {event.get('aid')}"
+        + f"queried by host {host}"
     )
 
 

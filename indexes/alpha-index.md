@@ -42,6 +42,7 @@
 - [Asana](#asana)
 - [Atlassian](#atlassian)
 - [Auth0](#auth0)
+- [Axonius](#axonius)
 - [Azure](#azure)
 
 
@@ -767,6 +768,10 @@
 
 ## Auth0
 
+- [Auth0 Attack Protection Monitoring Disabled](../rules/auth0_rules/auth0_attack_protection_disabled.yml)
+  - An attack protection monitoring configuration was changed.
+- [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
+  - A bot detection policy was disabled.
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
@@ -787,9 +792,25 @@
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
+- [Auth0 Push Notification Fatigue](../rules/auth0_rules/auth0_push_notification_fatigue.yml)
+  - Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.
+- [Auth0 Refresh Token Reused](../rules/auth0_rules/auth0_token_reuse.yml)
+  - A refresh token was reused.
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.
+
+
+## Axonius
+
+- [Axonius API Key Reset](../rules/axonius_rules/axonius_resetapikey.yml)
+  - Detects an Axonius API Key Reset
+- [Axonius External User Added](../rules/axonius_rules/axonius_add_external_user.yml)
+  - Detects when an external user is added in Axonius
+- [Axonius login from Tor IP](../rules/axonius_rules/axonius_too_many_failed_logins.yml)
+  - Detects an Axonius login from a malicious IP address
+- [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
+  - Detects when an Axonius Webhook is Created
 
 
 ## Azure
@@ -979,8 +1000,23 @@
 
 # D
 
+- [Docusign](#docusign)
 - [Dropbox](#dropbox)
 - [Duo](#duo)
+
+
+## Docusign
+
+- [DocuSign Envelope Corrected](../rules/docusign_rules/docusign_envelope_corrected.yml)
+  - Detects when a DocuSign envelope is corrected after being sent. Frequent corrections could indicate document tampering attempts, process abuse, or suspicious modification of legal documents. Monitor for patterns of correction behavior that may indicate fraud.
+- [DocuSign Envelope Voided](../rules/docusign_rules/docusign_envelope_voided.yml)
+  - Detects when a DocuSign envelope is voided. Frequent voiding of envelopes could indicate fraudulent activity, document tampering attempts, or process abuse. Monitor for patterns of voiding behavior.
+- [DocuSign Recipient Authentication Failure](../rules/docusign_rules/docusign_recipient_authentication_failure.yml)
+  - Detects when a DocuSign recipient fails authentication while attempting to access an envelope. This could indicate attempted unauthorized access to sensitive documents or credential compromise.
+- [DocuSign Recipient Declined Envelope](../rules/docusign_rules/docusign_recipient_declined.yml)
+  - Detects when a DocuSign recipient declines to sign an envelope. While often legitimate business activity, frequent declines or patterns of declines may indicate issues with document validity, recipient concerns about authenticity, or potential fraud attempts.
+- [DocuSign Template Management Activity](../rules/docusign_rules/docusign_template_management.yml)
+  - Detects DocuSign template management activities including creation, modification, and deletion. Template changes can affect business processes and should be monitored for unauthorized modifications. Deletions are particularly critical as they may indicate data destruction or process disruption.
 
 
 ## Dropbox
@@ -1331,7 +1367,9 @@
 # M
 
 - [Microsoft365](#microsoft365)
+- [MicrosoftDefenderXDR](#microsoftdefenderxdr)
 - [MicrosoftGraph](#microsoftgraph)
+- [MicrosoftIntune](#microsoftintune)
 - [MongoDB](#mongodb)
 
 
@@ -1347,10 +1385,26 @@
   - A user's MFA has been removed
 
 
+## MicrosoftDefenderXDR
+
+- [Defender Detection Passthrough](../rules/microsoft_defender_rules/defender_detection_passthrough.yml)
+  - Microsoft Defender has detected malicious activity. This activty could be on a host or on a connected platform such as Azure, Microsoft 365, or Intune.
+
+
 ## MicrosoftGraph
 
 - [Microsoft Graph Passthrough](../rules/microsoft_rules/microsoft_graph_passthrough.yml)
   - The Microsoft Graph security API federates queries to all onboarded security providers, including Azure AD Identity Protection, Microsoft 365, Microsoft Defender (Cloud, Endpoint, Identity) and Microsoft Sentinel
+
+
+## MicrosoftIntune
+
+- [Intune Create or Modify Client App](../rules/intune_rules/intune_create_modify_client_app.yml)
+  - Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.
+- [Intune Device Not Compliant](../rules/intune_rules/intune_device_not_compliant.yml)
+  - Microsoft Intune allows administrators to manage devices and enforce compliance with established policies. This detection identifies devices that are not compliant with the established policies.
+- [Intune New Device Management Script](../rules/intune_rules/intune_new_device_management_script.yml)
+  - Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.
 
 
 ## MongoDB

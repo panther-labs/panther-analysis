@@ -38,8 +38,8 @@ def title(event):
         event.deep_get("event", "ImageFileName", default="").lower().split("\\")[-1]
     )
     procs = (parent_process_name, child_process_name)
-    aid = event.get("aid", "<AID_NOT_FOUND>")
-    return f"Crowdstrike: Suspicious parent/child combination [{procs}] detected on aid [{aid}]"
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
+    return f"Crowdstrike: Suspicious parent/child combination [{procs}] detected on host [{host}]"
 
 
 def alert_context(event):

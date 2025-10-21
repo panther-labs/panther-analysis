@@ -21,6 +21,7 @@ def rule(event):
         "1Password Browser Extension",
         "1Password for Android",
         "1Password for Linux",
+        "1Password SDK",
     ]
 
     return event.deep_get("client", "app_name") not in client_allowlist

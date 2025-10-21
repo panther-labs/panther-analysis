@@ -1,0 +1,29 @@
+AnalysisType: rule
+Filename: axonius_add_external_user.py
+RuleID: Axonius.AddExternalUser
+DisplayName: Axonius External User Added
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+Severity: Low
+Description: Detects when an external user is added in Axonius
+Runbook: Review if the external user is authorized
+Tests:
+  - Name: External User Created
+    ExpectedResult: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.AddExternalUser",
+          "category": "AuditCategory.UserManagement",
+          "params": {
+            "source": "SAM-XYX",
+            "user_name": "external-user@axonius.com"
+          },
+          "type": "info"
+        },
+        "source": "axonius",
+        "time": 1747795144.253623
+      }
