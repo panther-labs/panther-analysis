@@ -88,16 +88,20 @@ class AnalysisItem:
     version: int
 
 
-def update_version_item(version_file: VersionsFile, analysis_item: AnalysisItem):
+def update_version_item(
+    version_file: VersionsFile, analysis_item: AnalysisItem, commit_hash: str
+):
     """
     Update or create a version item in the versions file.
     If the analysis item doesn't exist in the versions file, it creates a new entry.
     If the analysis item DOES NOT serialize to the same hash as the existing item,
     it increments the version and updates the SHA256 hash.
+    If the item has a new version, it adds a new entry to the version history, with the commit it is from.
 
     Args:
         version_file (VersionsFile): The current versions file.
         analysis_item (AnalysisItem): The analysis item to update or create.
+        commit_hash (str): The commit hash associated with this version.
 
     This function updates the version, SHA256 hash, and type of the analysis item
     in the versions file. If the item doesn't exist, it creates a new entry.
@@ -120,31 +124,11 @@ def update_version_item(version_file: VersionsFile, analysis_item: AnalysisItem)
         version_item.sha256 = analysis_item.sha256
         version_item.type = analysis_item.type
 
-    analysis_item.version = version_item.version
-    versions[analysis_item._id] = version_item
-
-
-def update_version_history(
-    version_file: VersionsFile, analysis_item: AnalysisItem, commit_hash: str
-):
-    """
-    Update the version history for an analysis item.
-    Adds a new entry to the version history of the analysis item,
-    including the commit hash and file paths.
-
-    This function assumes update_version_item has already been called for the analysis item.
-
-    Args:
-        version_file (VersionsFile): The current versions file.
-        analysis_item (AnalysisItem): The analysis item to update history for.
-        commit_hash (str): The commit hash associated with this version.
-    """
-    versions = version_file.versions
-    version_item = versions[analysis_item._id]
+    # update the version history for the item
     history = version_item.history
 
-    if analysis_item.version not in history:
-        history[analysis_item.version] = AnalysisVersionHistoryItem(
+    if version_item.version not in history:
+        history[version_item.version] = AnalysisVersionHistoryItem(
             commit_hash=commit_hash,
             yaml_file_path=analysis_item.yaml_file_path,
             py_file_path=analysis_item.py_file_path
@@ -301,9 +285,7 @@ def generate_version_file(commit_hash: str):
     versions_file = load_versions_file()
 
     for analysis_item in load_analysis_items():
-        update_version_item(versions_file, analysis_item)
-        update_version_history(versions_file, analysis_item, commit_hash)
-
+        update_version_item(versions_file, analysis_item, commit_hash)
     dump_versions_file(versions_file)
 
 

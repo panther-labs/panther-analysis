@@ -14,7 +14,6 @@ from generate_versions_file import (
     generate_version_file,
     get_commit_hash,
     load_versions_file,
-    update_version_history,
     update_version_item,
 )
 
@@ -104,6 +103,7 @@ def test_create_version_hash_different_spec() -> None:
     hash2 = create_version_hash(spec2, py_code)
     assert hash1 != hash2
 
+
 def test_create_version_hash_different_py_code() -> None:
     spec = {"key": "value"}
     py_code1 = "def test(): pass"
@@ -111,6 +111,7 @@ def test_create_version_hash_different_py_code() -> None:
     hash1 = create_version_hash(spec, py_code1)
     hash2 = create_version_hash(spec, py_code2)
     assert hash1 != hash2
+
 
 def test_create_version_hash_spec_comment_changed() -> None:
     spec1 = yaml.safe_load("# comment 1\nkey: value")
@@ -120,6 +121,7 @@ def test_create_version_hash_spec_comment_changed() -> None:
     hash2 = create_version_hash(spec2, py_code)
     assert hash1 == hash2
 
+
 def test_create_version_hash_spec_order_changed() -> None:
     spec1 = yaml.safe_load("key: value\nkey2: value2")
     spec2 = yaml.safe_load("key2: value2\nkey: value")
@@ -128,10 +130,11 @@ def test_create_version_hash_spec_order_changed() -> None:
     hash2 = create_version_hash(spec2, py_code)
     assert hash1 == hash2
 
+
 # Test version management functions
 def test_update_version_with_new_item(sample_analysis_item) -> None:
     versions = VersionsFile(versions={})
-    update_version_item(versions, sample_analysis_item)
+    update_version_item(versions, sample_analysis_item, "abc123")
 
     assert sample_analysis_item._id in versions.versions
     assert versions.versions[sample_analysis_item._id].version == 1
@@ -148,7 +151,7 @@ def test_update_existing_version_item_same_hash(
     sample_versions_file.versions[
         sample_analysis_item._id
     ].sha256 = sample_analysis_item.sha256
-    update_version_item(sample_versions_file, sample_analysis_item)
+    update_version_item(sample_versions_file, sample_analysis_item, "abc123")
 
     assert sample_versions_file.versions[sample_analysis_item._id].version == 1
 
@@ -156,26 +159,34 @@ def test_update_existing_version_item_same_hash(
 def test_update_existing_version_item_different_hash(
     sample_analysis_item, sample_versions_file
 ) -> None:
-    update_version_item(sample_versions_file, sample_analysis_item)
+    newSha = "something different"
+    newCommit = "new commit"
+    sample_analysis_item.sha256 = newSha
+    update_version_item(sample_versions_file, sample_analysis_item, newCommit)
 
-    assert sample_versions_file.versions[sample_analysis_item._id].version == 2
-    assert (
-        sample_versions_file.versions[sample_analysis_item._id].sha256
-        == sample_analysis_item.sha256
-    )
+    item = sample_versions_file.versions[sample_analysis_item._id]
+    assert item.version == 2
+    assert item.sha256 == newSha
+    assert item.type == sample_analysis_item.type
+
+    assert len(item.history) == 2
+    assert item.history[1].commit_hash != newCommit
+    assert item.history[1].yaml_file_path == sample_analysis_item.yaml_file_path
+    assert item.history[1].py_file_path == sample_analysis_item.py_file_path
+
+    assert item.history[2].commit_hash == newCommit
+    assert item.history[2].yaml_file_path == sample_analysis_item.yaml_file_path
+    assert item.history[2].py_file_path == sample_analysis_item.py_file_path
 
 
 def test_update_version_history_with_new_item(sample_analysis_item) -> None:
     versions = VersionsFile(versions={})
-    update_version_item(versions, sample_analysis_item)
-    commit_hash = "test123"
-
-    update_version_history(versions, sample_analysis_item, commit_hash)
+    update_version_item(versions, sample_analysis_item, "abc123")
 
     assert sample_analysis_item._id in versions.versions
     history = versions.versions[sample_analysis_item._id].history
     assert 1 in history
-    assert history[1].commit_hash == commit_hash
+    assert history[1].commit_hash == "abc123"
     assert history[1].yaml_file_path == sample_analysis_item.yaml_file_path
     assert history[1].py_file_path == sample_analysis_item.py_file_path
 
