@@ -1,8 +1,12 @@
+from typing import Any
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 from generate_versions_file import (
     AnalysisItem,
+    AnalysisVersionHistoryItem,
+    AnalysisVersionItem,
+    VersionsFile,
     analysis_id,
     create_version_hash,
     dump_versions_file,
@@ -16,7 +20,7 @@ from generate_versions_file import (
 
 # Test fixtures
 @pytest.fixture
-def sample_analysis_spec():
+def sample_analysis_spec() -> dict[str, Any]:
     return {
         "AnalysisType": "rule",
         "RuleID": "Test.Rule",
@@ -25,14 +29,14 @@ def sample_analysis_spec():
 
 
 @pytest.fixture
-def sample_analysis_item(sample_analysis_spec):
+def sample_analysis_item(sample_analysis_spec) -> AnalysisItem:
     return AnalysisItem(
         _id="Test.Rule",
         type="rule",
         py="def rule(event): return True",
         analysis_spec=sample_analysis_spec,
-        yamlFilePath="rules/test_rule.yml",
-        pyFilePath="rules/test_rule.py",
+        yaml_file_path="rules/test_rule.yml",
+        py_file_path="rules/test_rule.py",
         sha256=create_version_hash(
             sample_analysis_spec, "def rule(event): return True"
         ),
@@ -41,47 +45,47 @@ def sample_analysis_item(sample_analysis_spec):
 
 
 @pytest.fixture
-def sample_versions_file():
-    return {
-        "versions": {
-            "Test.Rule": {
-                "version": 1,
-                "sha256": "abc123",
-                "type": "rule",
-                "history": {
-                    1: {
-                        "commit_hash": "def456",
-                        "yamlFilePath": "rules/test_rule.yml",
-                        "pyFilePath": "rules/test_rule.py",
-                    }
+def sample_versions_file() -> VersionsFile:
+    return VersionsFile(
+        versions={
+            "Test.Rule": AnalysisVersionItem(
+                version=1,
+                sha256="abc123",
+                type="rule",
+                history={
+                    1: AnalysisVersionHistoryItem(
+                        commit_hash="def456",
+                        yaml_file_path="rules/test_rule.yml",
+                        py_file_path="rules/test_rule.py",
+                    )
                 },
-            }
+            )
         }
-    }
+    )
 
 
 # Test AnalysisItem and related functions
-def test_analysis_id_rule(sample_analysis_spec):
+def test_analysis_id_rule(sample_analysis_spec) -> None:
     assert analysis_id(sample_analysis_spec) == "Test.Rule"
 
 
-def test_analysis_id_policy():
+def test_analysis_id_policy() -> None:
     spec = {"AnalysisType": "policy", "PolicyID": "Test.Policy"}
     assert analysis_id(spec) == "Test.Policy"
 
 
-def test_analysis_id_query():
+def test_analysis_id_query() -> None:
     spec = {"AnalysisType": "query", "QueryName": "Test.Query"}
     assert analysis_id(spec) == "Test.Query"
 
 
-def test_analysis_id_invalid():
+def test_analysis_id_invalid() -> None:
     spec = {"AnalysisType": "invalid"}
     with pytest.raises(ValueError):
         analysis_id(spec)
 
 
-def test_create_version_hash():
+def test_create_version_hash() -> None:
     spec = {"key": "value"}
     py_code = "def test(): pass"
     hash1 = create_version_hash(spec, py_code)
@@ -92,94 +96,106 @@ def test_create_version_hash():
 
 
 # Test version management functions
-def test_update_version_item_new(sample_analysis_item):
-    versions = {"versions": {}}
+def test_update_version_with_new_item(sample_analysis_item) -> None:
+    versions = VersionsFile(versions={})
     update_version_item(versions, sample_analysis_item)
 
-    assert sample_analysis_item._id in versions["versions"]
-    assert versions["versions"][sample_analysis_item._id]["version"] == 1
+    assert sample_analysis_item._id in versions.versions
+    assert versions.versions[sample_analysis_item._id].version == 1
     assert (
-        versions["versions"][sample_analysis_item._id]["sha256"]
+        versions.versions[sample_analysis_item._id].sha256
         == sample_analysis_item.sha256
     )
-    assert (
-        versions["versions"][sample_analysis_item._id]["type"]
-        == sample_analysis_item.type
-    )
+    assert versions.versions[sample_analysis_item._id].type == sample_analysis_item.type
 
 
-def test_update_version_item_existing_same_hash(
+def test_update_existing_version_item_same_hash(
     sample_analysis_item, sample_versions_file
-):
-    sample_versions_file["versions"][sample_analysis_item._id]["sha256"] = (
-        sample_analysis_item.sha256
-    )
+) -> None:
+    sample_versions_file.versions[
+        sample_analysis_item._id
+    ].sha256 = sample_analysis_item.sha256
     update_version_item(sample_versions_file, sample_analysis_item)
 
-    assert sample_versions_file["versions"][sample_analysis_item._id]["version"] == 1
+    assert sample_versions_file.versions[sample_analysis_item._id].version == 1
 
 
-def test_update_version_item_existing_different_hash(
+def test_update_existing_version_item_different_hash(
     sample_analysis_item, sample_versions_file
-):
+) -> None:
     update_version_item(sample_versions_file, sample_analysis_item)
 
-    assert sample_versions_file["versions"][sample_analysis_item._id]["version"] == 2
+    assert sample_versions_file.versions[sample_analysis_item._id].version == 2
     assert (
-        sample_versions_file["versions"][sample_analysis_item._id]["sha256"]
+        sample_versions_file.versions[sample_analysis_item._id].sha256
         == sample_analysis_item.sha256
     )
 
 
-def test_update_version_history(sample_analysis_item):
-    versions = {"versions": {}}
+def test_update_version_history_with_new_item(sample_analysis_item) -> None:
+    versions = VersionsFile(versions={})
+    update_version_item(versions, sample_analysis_item)
     commit_hash = "test123"
 
     update_version_history(versions, sample_analysis_item, commit_hash)
 
-    history = versions["versions"][sample_analysis_item._id]["history"]
+    assert sample_analysis_item._id in versions.versions
+    history = versions.versions[sample_analysis_item._id].history
     assert 1 in history
-    assert history[1]["commit_hash"] == commit_hash
-    assert history[1]["yamlFilePath"] == sample_analysis_item.yamlFilePath
-    assert history[1]["pyFilePath"] == sample_analysis_item.pyFilePath
+    assert history[1].commit_hash == commit_hash
+    assert history[1].yaml_file_path == sample_analysis_item.yaml_file_path
+    assert history[1].py_file_path == sample_analysis_item.py_file_path
 
 
 # Test file operations
 @patch("os.path.exists")
 @patch("builtins.open", new_callable=mock_open, read_data="")
-def test_load_versions_file_empty(mock_file, mock_exists):
+def test_load_versions_file_empty(mock_file, mock_exists) -> None:
     mock_exists.return_value = True
     result = load_versions_file()
-    assert isinstance(result, dict)
-    assert "versions" in result
-    assert isinstance(result["versions"], dict)
+    assert isinstance(result, VersionsFile)
+    assert len(result.versions) == 0
 
 
 @patch("os.path.exists")
 @patch(
     "builtins.open",
     new_callable=mock_open,
-    read_data="versions:\n  Test.Rule:\n    version: 1",
+    read_data="versions:\n  Test.Rule:\n    version: 1\n    sha256: abc123\n    type: rule\n    history: {}",
 )
-def test_load_versions_file_with_content(mock_file, mock_exists):
+def test_load_existing_versions_file(mock_file, mock_exists) -> None:
     mock_exists.return_value = True
     result = load_versions_file()
-    assert isinstance(result, dict)
-    assert "versions" in result
-    assert "Test.Rule" in result["versions"]
+    assert isinstance(result, VersionsFile)
+    assert "Test.Rule" in result.versions
+    assert result.versions["Test.Rule"].version == 1
 
 
 @patch("builtins.open", new_callable=mock_open)
-def test_dump_versions_file(mock_file):
-    versions = {"versions": {"Test.Rule": {"version": 1}}}
+def test_dump_versions_file(mock_file) -> None:
+    versions = VersionsFile(
+        versions={
+            "Test.Rule": AnalysisVersionItem(
+                version=1,
+                sha256="abc123",
+                type="rule",
+                history={
+                    1: AnalysisVersionHistoryItem(
+                        commit_hash="def456",
+                        yaml_file_path="rules/test_rule.yml",
+                        py_file_path="rules/test_rule.py",
+                    )
+                },
+            )
+        }
+    )
     dump_versions_file(versions)
     mock_file.assert_called_once_with(".versions.yml", "w")
     mock_file().write.assert_called()
 
 
-# Test get_commit_hash
 @patch("subprocess.run")
-def test_get_commit_hash_success(mock_run):
+def test_get_commit_hash_success(mock_run) -> None:
     mock_run.return_value = MagicMock(
         stdout=b"abc123\n",
         stderr=b"",
@@ -188,7 +204,7 @@ def test_get_commit_hash_success(mock_run):
 
 
 @patch("subprocess.run")
-def test_get_commit_hash_error(mock_run):
+def test_get_commit_hash_error(mock_run) -> None:
     mock_run.return_value = MagicMock(
         stdout=b"",
         stderr=b"fatal: not a git repository",
@@ -201,7 +217,7 @@ def test_get_commit_hash_error(mock_run):
 @patch("os.path.exists")
 @patch("builtins.open", new_callable=mock_open)
 @patch("subprocess.run")
-def test_generate_version_file_integration(mock_run, mock_file, mock_exists):
+def test_generate_version_file_integration(mock_run, mock_file, mock_exists) -> None:
     mock_exists.return_value = True
     mock_run.return_value = MagicMock(stdout=b"test123\n", stderr=b"")
 
@@ -212,8 +228,8 @@ def test_generate_version_file_integration(mock_run, mock_file, mock_exists):
                 type="rule",
                 py="def rule(event): return True",
                 analysis_spec={"AnalysisType": "rule", "RuleID": "Test.Rule"},
-                yamlFilePath="rules/test_rule.yml",
-                pyFilePath="rules/test_rule.py",
+                yaml_file_path="rules/test_rule.yml",
+                py_file_path="rules/test_rule.py",
                 sha256="test_hash",
                 version=1,
             )

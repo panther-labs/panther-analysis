@@ -122,6 +122,10 @@ docker-lint: ## Run linters within the Docker container
 
 .PHONY: help install-pipenv vscode-config ci deps deps-update global-helpers-unit-test data-models-unit-test lint lint-pylint lint-fmt lint-mitre venv pat-update fmt run-pre-commit-hooks install install-pre-commit-hooks test check-deprecated remove-deprecated docker-build docker-test docker-lint
 
-## generate-versions: Generate versions file
+.PHONY: generate-versions
 generate-versions: ## Generate versions file
 	pipenv run python3 .scripts/generate_versions_file.py
+
+.PHONY: test-generate-versions
+test-generate-versions: ## Test generate versions file
+	pipenv run python3 -m pytest .scripts/test_generate_versions_file.py
