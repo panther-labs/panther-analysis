@@ -2,6 +2,7 @@ from typing import Any
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
+import yaml
 from generate_versions_file import (
     AnalysisItem,
     AnalysisVersionHistoryItem,
@@ -94,6 +95,38 @@ def test_create_version_hash() -> None:
     assert isinstance(hash1, str)
     assert len(hash1) == 64  # SHA-256 produces 64 character hex string
 
+
+def test_create_version_hash_different_spec() -> None:
+    spec1 = {"key": "value"}
+    spec2 = {"key2": "value2"}
+    py_code = "def test(): pass"
+    hash1 = create_version_hash(spec1, py_code)
+    hash2 = create_version_hash(spec2, py_code)
+    assert hash1 != hash2
+
+def test_create_version_hash_different_py_code() -> None:
+    spec = {"key": "value"}
+    py_code1 = "def test(): pass"
+    py_code2 = "def test2(): pass"
+    hash1 = create_version_hash(spec, py_code1)
+    hash2 = create_version_hash(spec, py_code2)
+    assert hash1 != hash2
+
+def test_create_version_hash_spec_comment_changed() -> None:
+    spec1 = yaml.safe_load("# comment 1\nkey: value")
+    spec2 = yaml.safe_load("# comment 2\nkey: value")
+    py_code = "def test(): pass"
+    hash1 = create_version_hash(spec1, py_code)
+    hash2 = create_version_hash(spec2, py_code)
+    assert hash1 == hash2
+
+def test_create_version_hash_spec_order_changed() -> None:
+    spec1 = yaml.safe_load("key: value\nkey2: value2")
+    spec2 = yaml.safe_load("key2: value2\nkey: value")
+    py_code = "def test(): pass"
+    hash1 = create_version_hash(spec1, py_code)
+    hash2 = create_version_hash(spec2, py_code)
+    assert hash1 == hash2
 
 # Test version management functions
 def test_update_version_with_new_item(sample_analysis_item) -> None:

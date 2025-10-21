@@ -123,8 +123,20 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
 
 
 def create_version_hash(analysis_spec: Dict[str, Any], py: str) -> str:
-    # TODO: should not be new version if yaml rearranged or comments changed
-    return hashlib.sha256(f"{analysis_spec}{py}".encode("utf-8")).hexdigest()
+    """
+    Create a hash of the analysis spec and py code.
+    The hash is created by sorting the analysis spec keys alphabetically and then concatenating the spec and py code.
+    This ensures that the hash is the same for the same analysis spec and py code, regardless of the order of the keys in the spec.
+
+    Args:
+        analysis_spec: The analysis spec to hash.
+        py: The python code to hash.
+
+    Returns:
+        A hash of the analysis spec and py code.
+    """
+    ordered_spec = dict(sorted(analysis_spec.items()))
+    return hashlib.sha256(f"{ordered_spec}{py}".encode("utf-8")).hexdigest()
 
 
 def analysis_id(analysis_spec: Dict[str, Any]) -> str:
