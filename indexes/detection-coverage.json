@@ -342,8 +342,26 @@
         "YAMLPath": "rules/auth0_rules/auth0_bot_detection_disabled.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour",
+        "DisplayName": "Auth0 Brute Force",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_login_brute_force.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "",
+        "DisplayName": "Auth0 Brute Force Detection",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "queries/auth0_queries/auth0_brute_force.yml"
+    },
+    {
         "AnalysisType": "Rule",
-        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.",
+        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
         "LogTypes": [
             "Auth0.Events"
@@ -370,12 +388,48 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "A tenant member was deleted.",
+        "DisplayName": "Auth0 Delete Tenant Member",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_delete_tenant_member.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects a surge in either failed, successful or suspicious login attempts using leaked passwords over a window of time and a threshold. Exceeding set threshold may indicate potential fraud.",
+        "DisplayName": "Auth0 Fraud Risk by Volume",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_fraud_risk_volume.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An Auth0 integration was installed from the auth0 action library.",
         "DisplayName": "Auth0 Integration Installed",
         "LogTypes": [
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_integration_installed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Leaked Password Login Attempt",
+        "DisplayName": "Auth0 Leaked Password Login Attempt",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_leaked_password_login_attempt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Limit Logs",
+        "DisplayName": "Auth0 Limit Detections",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_limits.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -424,6 +478,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "A new admin invitation was issued.",
+        "DisplayName": "Auth0 New Admin Invited",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_new_admin_invited.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.",
+        "DisplayName": "Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "correlation_rules/auth0_account_takeover.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An Auth0 User updated a post login action flow for your organization's tenant.",
         "DisplayName": "Auth0 Post Login Action Flow Updated",
         "LogTypes": [
@@ -442,12 +514,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects a spike in registered dynamic clients. This can indicate attempts to use such dynamic clients for malicious purposes.",
+        "DisplayName": "Auth0 Rapid Dynamic Client Creation",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_rapid_dynamic_client_creation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A refresh token was reused.",
         "DisplayName": "Auth0 Refresh Token Reused",
         "LogTypes": [
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_token_reuse.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detecs when more than one user shares a phone number with another for MFA purposes. Attackers may register their phone number for multiple compromised accounts.",
+        "DisplayName": "Auth0 Same Phone Number Shared Across Multiple Users as MFA",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_same_phone_mfa_multiple_users.yml"
     },
     {
         "AnalysisType": "Rule",
