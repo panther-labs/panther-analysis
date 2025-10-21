@@ -37,7 +37,7 @@ COMPILED_BASH_PATTERNS = [
 
 
 def rule(event):
-    if not is_pull_request_event(event):
+    if not is_pull_request_event(event) or event.deep_get("action") != "opened":
         return False
 
     if pr_title := event.deep_get("pull_request", "title"):

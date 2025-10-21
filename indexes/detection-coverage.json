@@ -324,26 +324,26 @@
         "YAMLPath": "rules/atlassian_rules/user_logged_in_as_user.yml"
     },
     {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour",
-        "DisplayName": "Auth0 Brute Force",
+        "AnalysisType": "Rule",
+        "Description": "An attack protection monitoring configuration was changed.",
+        "DisplayName": "Auth0 Attack Protection Monitoring Disabled",
         "LogTypes": [
             "Auth0.Events"
         ],
-        "YAMLPath": "rules/auth0_rules/auth0_login_brute_force.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Query",
-        "Description": "",
-        "DisplayName": "Auth0 Brute Force Detection",
-        "LogTypes": [
-            "Auth0.Events"
-        ],
-        "YAMLPath": "queries/auth0_queries/auth0_brute_force.yml"
+        "YAMLPath": "rules/auth0_rules/auth0_attack_protection_disabled.yml"
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.",
+        "Description": "A bot detection policy was disabled.",
+        "DisplayName": "Auth0 Bot Detection Policy Disabled",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_bot_detection_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
         "LogTypes": [
             "Auth0.Events"
@@ -376,24 +376,6 @@
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_integration_installed.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detect Auth0 Leaked Password Login Attempt",
-        "DisplayName": "Auth0 Leaked Password Login Attempt",
-        "LogTypes": [
-            "Auth0.Events"
-        ],
-        "YAMLPath": "rules/auth0_rules/auth0_leaked_password_login_attempt.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detect Auth0 Limit Logs",
-        "DisplayName": "Auth0 Limit Detections",
-        "LogTypes": [
-            "Auth0.Events"
-        ],
-        "YAMLPath": "rules/auth0_rules/auth0_limits.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -448,6 +430,24 @@
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_post_login_action_flow.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.",
+        "DisplayName": "Auth0 Push Notification Fatigue",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_push_notification_fatigue.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A refresh token was reused.",
+        "DisplayName": "Auth0 Refresh Token Reused",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_token_reuse.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4204,24 +4204,6 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_webhook_modified.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.",
-        "DisplayName": "GitHub Workflow Dispatched by GitHub Actions Bot",
-        "LogTypes": [
-            "GitHub.Audit"
-        ],
-        "YAMLPath": "rules/github_rules/github_workflow_dispatch_by_github_bot.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.",
-        "DisplayName": "GitHub Workflow Permissions Modified",
-        "LogTypes": [
-            "GitHub.Audit"
-        ],
-        "YAMLPath": "rules/github_rules/github_workflow_permission_modified.yml"
     },
     {
         "AnalysisType": "Rule",
