@@ -16,5 +16,7 @@ def rule(event):
 
 
 def title(event):
-    user = event.deep_get("actor", "email", default="<UNKNOWN_USER>")
+    user = event.deep_get("actor", "email") or event.deep_get(
+        "parameters", "affected_email_address", default="<UNKNOWN_USER>"
+    )
     return f"A suspicious login was reported for user [{user}]"

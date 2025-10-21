@@ -1,0 +1,29 @@
+AnalysisType: rule
+Description: Detect Auth0 Limit Logs
+DisplayName: "Auth0 Limit Detections"
+Enabled: true
+Filename: auth0_limits.py
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+LogTypes:
+  - Auth0.Events
+RuleID: "Auth0.Limits"
+Tests:
+  - ExpectedResult: true
+    Log:
+      log_id: "90020250930212349746493000000000000001223372122436618809"
+      data:
+        date: "2025-09-30 21:23:49.689000000"
+        type: "limit_wc"
+        description: "User (john@justice.org) attempted 10 consecutive logins unsuccessfully. Brute force protection is enabled for this connection, further attempts are blocked from this IP address for this user."
+        connection: "Username-Password-Authentication"
+        connection_id: "con_BvGURiLLdngYaT0D"
+        client_id: "11Qpq1o8fbGgnZuFJnQCyjuC1ll8YFt0"
+        ip: "1.2.3.4"
+        hostname: "auth.clientdomain.com"
+        user_id: ""
+        user_name: "john@justice.org"
+        log_id: "90020250930212349746493000000000000001223372122436618809"
+        user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+    Name: Limit WC Event

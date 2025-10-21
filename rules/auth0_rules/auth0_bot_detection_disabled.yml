@@ -1,0 +1,121 @@
+AnalysisType: rule
+Description: A bot detection policy was disabled.
+DisplayName: "Auth0 Bot Detection Policy Disabled"
+Enabled: true
+Filename: auth0_bot_detection_disabled.py
+Runbook: Assess if this was done by the user for a valid business reason. Be vigilant to re-enable this setting as it's in the best security interest for your organization's security posture.
+Reference: https://github.com/auth0/auth0-customer-detections/tree/main/detections
+Severity: High
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+DedupPeriodMinutes: 60
+LogTypes:
+  - Auth0.Events
+RuleID: "Auth0.BotDetection.Disabled"
+Threshold: 1
+Tests:
+  - ExpectedResult: true
+    Log:
+      data:
+        client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
+        client_name: ""
+        date: "2025-10-03 14:09:32.149000000"
+        description: "Create or update the anomaly detection captcha"
+        details:
+          request:
+            auth:
+              credentials:
+                jti: 0000000000ecaf1bfbadb06900d22049
+              strategy: jwt
+              user:
+                email: denethor@lotr.com
+                name: Homer Simpson
+                user_id: google-oauth2|105261262156475850461
+            body:
+              enabled: true
+            channel: https://manage.auth0.com/
+            ip: 12.12.12.12
+            method: post
+            path: /v2/attack-protection/bot-detection
+            query: {}
+            userAgent: >-
+              Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+              (KHTML, like Gecko) Chrome/1.2.3.4 Safari/537.36
+          response:
+            body:
+              policy: off
+              password_reset_policy: off
+              passwordless_policy: off
+            statusCode: 200
+        ip: 12.12.12.12
+        log_id: "90020230523204756343781000000000000001223372037583230452"
+        type: sapi
+        user_agent: >-
+          Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,
+          like Gecko) Chrome/1.2.3.4 Safari/537.36
+        user_id: google-oauth2|105261262156475850461
+      log_id: "90020230523204756343781000000000000001223372037583230452"
+      p_any_ip_addresses:
+        - 12.12.12.12
+      p_any_usernames:
+        - google-oauth2|105261262156475850461
+      p_event_time: "2023-05-23 20:47:51.149"
+      p_log_type: Auth0.Events
+      p_parse_time: "2023-05-23 20:49:28.671"
+      p_row_id: 00000000004a745ce33b57be383c543e
+      p_schema_version: 0
+      p_source_id: b9031579-b2c5-45c2-b15c-632b995a4e36
+      p_source_label: Org Auth0 Tenant Label
+    Name: Auth0 Bot Detection Policy Disabled
+  - ExpectedResult: false
+    Log:
+      data:
+        client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
+        client_name: ""
+        date: "2025-10-03 14:09:32.149000000"
+        description: "Create or update the anomaly detection captcha"
+        details:
+          request:
+            auth:
+              credentials:
+                jti: 0000000000ecaf1bfbadb06900d22049
+              strategy: jwt
+              user:
+                email: denethor@lotr.com
+                name: Homer Simpson
+                user_id: google-oauth2|105261262156475850461
+            body:
+              enabled: true
+            channel: https://manage.auth0.com/
+            ip: 12.12.12.12
+            method: post
+            path: /v2/attack-protection/bot-detection
+            query: {}
+            userAgent: >-
+              Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+              (KHTML, like Gecko) Chrome/1.2.3.4 Safari/537.36
+          response:
+            body:
+              policy: on
+            statusCode: 200
+        ip: 12.12.12.12
+        log_id: "90020230523204756343781000000000000001223372037583230452"
+        type: sapi
+        user_agent: >-
+          Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,
+          like Gecko) Chrome/1.2.3.4 Safari/537.36
+        user_id: google-oauth2|105261262156475850461
+      log_id: "90020230523204756343781000000000000001223372037583230452"
+      p_any_ip_addresses:
+        - 12.12.12.12
+      p_any_usernames:
+        - google-oauth2|105261262156475850461
+      p_event_time: "2023-05-23 20:47:51.149"
+      p_log_type: Auth0.Events
+      p_parse_time: "2023-05-23 20:49:28.671"
+      p_row_id: 00000000004a745ce33b57be383c543e
+      p_schema_version: 0
+      p_source_id: b9031579-b2c5-45c2-b15c-632b995a4e36
+      p_source_label: Org Auth0 Tenant Label
+    Name: Enable Bot Detection Feature
