@@ -10,7 +10,41 @@ The script will:
 2. Update the versions and history for each analysis item
 3. Write the updated versions file to disk
 
-The resulting versions file will be in the root of the project at .versions.yml.
+The resulting versions file will be in the root of the project at .versions.yml and will look like this:
+
+```yaml
+versions:
+  a rule id:
+    history:
+      1:
+        commit_hash: 7bef7e91ae1f808f6282837d2a546fd0d4131b4a
+        yaml_file_path: ./rules/name.yml
+        py_file_path: ./rules/name.py
+    sha256: 2beac598a2584938d646fe8ba0db999a8c1533e10b0c5b58f818a727b385502d
+    type: rule
+    version: 1
+  a policy id:
+    history:
+      1:
+        commit_hash: 7bef7e91ae1f808f6282837d2a546fd0d4131b4a
+        yaml_file_path: ./policies/name.yml
+        py_file_path: ./policies/name.py
+    sha256: 2beac598a2584938d646fe8ba0db999a8c1533e10b0c5b58f818a727b385502d
+    type: policy
+    version: 1
+  a query id:
+    history:
+      1:
+        commit_hash: 7bef7e91ae1f808f6282837d2a546fd0d4131b4a
+        yaml_file_path: ./queries/name.yml
+      2:
+        commit_hash: 8f6282837d2a546fd0d4131b4a7bef7e91ae1f80
+        yaml_file_path: ./queries/name.yml
+    sha256: 2beac598a2584938d646fe8ba0db999a8c1533e10b0c5b58f818a727b385502d
+    type: scheduled_query
+    version: 2
+...
+```
 """
 
 import dataclasses
