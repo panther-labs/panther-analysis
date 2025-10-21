@@ -772,14 +772,25 @@
   - An attack protection monitoring configuration was changed.
 - [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
   - A bot detection policy was disabled.
+- [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
+  - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
+- [Auth0 Brute Force Detection](../queries/auth0_queries/auth0_brute_force.yml)
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
-  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
+  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.  https://sec.okta.com/articles/2024/05/detecting-cross-origin-authentication-credential-stuffing-attacks
 - [Auth0 Custom Role Created](../rules/auth0_rules/auth0_custom_role_created.yml)
   - An Auth0 User created a role in your organization's tenant.
+- [Auth0 Delete Tenant Member](../rules/auth0_rules/auth0_delete_tenant_member.yml)
+  - A tenant member was deleted.
+- [Auth0 Fraud Risk by Volume](../rules/auth0_rules/auth0_fraud_risk_volume.yml)
+  - Detects a surge in either failed, successful or suspicious login attempts using leaked passwords over a window of time and a threshold. Exceeding set threshold may indicate potential fraud.
 - [Auth0 Integration Installed](../rules/auth0_rules/auth0_integration_installed.yml)
   - An Auth0 integration was installed from the auth0 action library.
+- [Auth0 Leaked Password Login Attempt](../rules/auth0_rules/auth0_leaked_password_login_attempt.yml)
+  - Detect Auth0 Leaked Password Login Attempt
+- [Auth0 Limit Detections](../rules/auth0_rules/auth0_limits.yml)
+  - Detect Auth0 Limit Logs
 - [Auth0 mfa factor enabled](../rules/auth0_rules/auth0_mfa_factor_setting_enabled.yml)
   - An Auth0 user enabled an mfa factor in your organization's mfa settings.
 - [Auth0 MFA Policy Disabled](../rules/auth0_rules/auth0_mfa_policy_disabled.yml)
@@ -790,12 +801,20 @@
   - An Auth0 User disabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 MFA Risk Assessment Enabled](../rules/auth0_rules/auth0_mfa_risk_assessment_enabled.yml)
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
+- [Auth0 New Admin Invited](../rules/auth0_rules/auth0_new_admin_invited.yml)
+  - A new admin invitation was issued.
+- [Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion](../correlation_rules/auth0_account_takeover.yml)
+  - A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
 - [Auth0 Push Notification Fatigue](../rules/auth0_rules/auth0_push_notification_fatigue.yml)
   - Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.
+- [Auth0 Rapid Dynamic Client Creation](../rules/auth0_rules/auth0_rapid_dynamic_client_creation.yml)
+  - Detects a spike in registered dynamic clients. This can indicate attempts to use such dynamic clients for malicious purposes.
 - [Auth0 Refresh Token Reused](../rules/auth0_rules/auth0_token_reuse.yml)
   - A refresh token was reused.
+- [Auth0 Same Phone Number Shared Across Multiple Users as MFA](../rules/auth0_rules/auth0_same_phone_mfa_multiple_users.yml)
+  - Detecs when more than one user shares a phone number with another for MFA purposes. Attackers may register their phone number for multiple compromised accounts.
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.
