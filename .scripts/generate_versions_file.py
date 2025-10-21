@@ -1,8 +1,23 @@
+"""
+This script generates a versions file for the project.
+The versions file is used to track the versions of the analysis items in the project.
+
+Run with:
+    make generate-versions
+
+The script will:
+1. Load all analysis items from the project directory
+2. Update the versions and history for each analysis item
+3. Write the updated versions file to disk
+
+The resulting versions file will be in the root of the project at .versions.yml.
+"""
+
 import dataclasses
 import hashlib
 import os
 import subprocess
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Generator, Optional
 
 import pydantic
 import yaml
@@ -32,7 +47,7 @@ class AnalysisItem:
     _id: str
     type: str
     py: str
-    analysis_spec: Dict[str, Any]
+    analysis_spec: dict[str, Any]
     yaml_file_path: str
     py_file_path: str
     sha256: str
@@ -40,6 +55,19 @@ class AnalysisItem:
 
 
 def update_version_item(version_file: VersionsFile, analysis_item: AnalysisItem):
+    """
+    Update or create a version item in the versions file.
+    If the analysis item doesn't exist in the versions file, it creates a new entry.
+    If the analysis item DOES NOT serialize to the same hash as the existing item,
+    it increments the version and updates the SHA256 hash.
+
+    Args:
+        version_file (VersionsFile): The current versions file.
+        analysis_item (AnalysisItem): The analysis item to update or create.
+
+    This function updates the version, SHA256 hash, and type of the analysis item
+    in the versions file. If the item doesn't exist, it creates a new entry.
+    """
     versions = version_file.versions
 
     version_item = (
@@ -65,6 +93,18 @@ def update_version_item(version_file: VersionsFile, analysis_item: AnalysisItem)
 def update_version_history(
     version_file: VersionsFile, analysis_item: AnalysisItem, commit_hash: str
 ):
+    """
+    Update the version history for an analysis item.
+    Adds a new entry to the version history of the analysis item,
+    including the commit hash and file paths.
+
+    This function assumes update_version_item has already been called for the analysis item.
+
+    Args:
+        version_file (VersionsFile): The current versions file.
+        analysis_item (AnalysisItem): The analysis item to update history for.
+        commit_hash (str): The commit hash associated with this version.
+    """
     versions = version_file.versions
     version_item = versions[analysis_item._id]
     history = version_item.history
@@ -83,6 +123,14 @@ def update_version_history(
 
 
 def load_analysis_items() -> Generator[AnalysisItem, None, None]:
+    """
+    Load all analysis items from the project directory.
+    Only includes items in /rules, /policies, /queries, /simple_rules,
+    /correlation_rules, /data_models, /packs, /global_helpers, and /lookup_tables.
+
+    Yields:
+        Generator[AnalysisItem, None, None]: A generator of AnalysisItem objects.
+    """
     for root, _, files in os.walk("."):
         if (
             "/rules" not in root
@@ -100,7 +148,7 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
         for file in files:
             if file.endswith(".yml") or file.endswith(".yaml"):
                 with open(os.path.join(root, file), "r") as f:
-                    analysis_spec: Dict[str, Any] = yaml.safe_load(f)
+                    analysis_spec: dict[str, Any] = yaml.safe_load(f)
                     py = ""
                     if "Filename" in analysis_spec:
                         with open(
@@ -122,14 +170,14 @@ def load_analysis_items() -> Generator[AnalysisItem, None, None]:
                     )
 
 
-def create_version_hash(analysis_spec: Dict[str, Any], py: str) -> str:
+def create_version_hash(analysis_spec: dict[str, Any], py: str) -> str:
     """
     Create a hash of the analysis spec and py code.
     The hash is created by sorting the analysis spec keys alphabetically and then concatenating the spec and py code.
     This ensures that the hash is the same for the same analysis spec and py code, regardless of the order of the keys in the spec.
 
     Args:
-        analysis_spec: The analysis spec to hash.
+        analysis_spec (dict[str, Any]): The analysis spec to hash.
         py: The python code to hash.
 
     Returns:
@@ -139,7 +187,19 @@ def create_version_hash(analysis_spec: Dict[str, Any], py: str) -> str:
     return hashlib.sha256(f"{ordered_spec}{py}".encode("utf-8")).hexdigest()
 
 
-def analysis_id(analysis_spec: Dict[str, Any]) -> str:
+def analysis_id(analysis_spec: dict[str, Any]) -> str:
+    """
+    Determine the ID of an analysis item based on its type at `AnalysisType`.
+
+    Args:
+        analysis_spec (dict[str, Any]): The analysis specification.
+
+    Returns:
+        str: The ID of the analysis item.
+
+    Raises:
+        ValueError: If the analysis type is invalid.
+    """
     match analysis_spec["AnalysisType"]:
         case "rule" | "scheduled_rule" | "simple_rule" | "correlation_rule":
             return analysis_spec["RuleID"]
@@ -160,6 +220,13 @@ def analysis_id(analysis_spec: Dict[str, Any]) -> str:
 
 
 def load_versions_file() -> VersionsFile:
+    """
+    Load the versions file or create it if it doesn't exist.
+    Reads the `.versions.yml` file into a VersionsFile object.
+
+    Returns:
+        VersionsFile: The loaded versions file.
+    """
     # Create ".versions.yml" if it doesn't exist
     if not os.path.exists(_VERSIONS_FILE_NAME):
         with open(_VERSIONS_FILE_NAME, "w") as vf:
@@ -177,11 +244,26 @@ def load_versions_file() -> VersionsFile:
 
 
 def dump_versions_file(versions: VersionsFile):
+    """
+    Write the versions file to disk at `.versions.yml`. Any
+    None values are excluded from the file.
+
+    Args:
+        versions (VersionsFile): The versions file to write.
+    """
     with open(_VERSIONS_FILE_NAME, "w") as vf:
         yaml.safe_dump(versions.model_dump(exclude_none=True), vf)
 
 
 def generate_version_file(commit_hash: str):
+    """
+    Generate or update the versions file for all analysis items.
+    This function loads all analysis items, updates their versions and history,
+    and writes the updated information to the versions file.
+
+    Args:
+        commit_hash (str): The current commit hash.
+    """
     versions_file = load_versions_file()
 
     for analysis_item in load_analysis_items():
@@ -192,6 +274,16 @@ def generate_version_file(commit_hash: str):
 
 
 def get_commit_hash() -> str:
+    """
+    Get the current Git commit hash.
+    Runs the 'git rev-parse HEAD' command to get the current commit hash.
+
+    Returns:
+        str: The current Git commit hash.
+
+    Raises:
+        Exception: If there's an error executing the Git command.
+    """
     result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True)
     if result.stderr:
         raise Exception(result.stderr.decode("utf-8"))
