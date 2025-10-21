@@ -52,11 +52,7 @@ def rule(event):
 
 
 def title(event):
-    user = event.deep_get("userIdentity", "userName") or event.deep_get(
-        "userIdentity", "sessionContext", "sessionIssuer", "userName"
-    )
-
-    return f"Sensitive AWS API call {event.get('eventName')} made by {user}"
+    return f"Sensitive AWS API call {event.get('eventName')} made by {event.udm('actor_user')}"
 
 
 def alert_context(event):
