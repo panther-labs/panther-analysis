@@ -50,11 +50,13 @@ versions:
 import dataclasses
 import hashlib
 import os
+import pathlib
 import subprocess
 from typing import Any, Generator, Optional
 
 import pydantic
 import yaml
+from panther_analysis_tool.analysis_utils import load_analysis_specs
 
 _VERSIONS_FILE_NAME = ".versions.yml"
 
@@ -142,50 +144,30 @@ def update_version_item(
 
 def load_analysis_items() -> Generator[AnalysisItem, None, None]:
     """
-    Load all analysis items from the project directory.
-    Only includes items in /rules, /policies, /queries, /simple_rules,
-    /correlation_rules, /data_models, /packs, /global_helpers, and /lookup_tables.
+    Load all analysis items from the current directory.
 
     Yields:
         Generator[AnalysisItem, None, None]: A generator of AnalysisItem objects.
     """
-    for root, _, files in os.walk("."):
-        if (
-            "/rules" not in root
-            and "/policies" not in root
-            and "/queries" not in root
-            and "/simple_rules" not in root
-            and "/correlation_rules" not in root
-            and "/data_models" not in root
-            and "/packs" not in root
-            and "/global_helpers" not in root
-            and "/lookup_tables" not in root
-        ):
-            continue
+    for spec_abs_path, rel_path, spec, _ in load_analysis_specs(["."], []):
+        spec_path = pathlib.Path(rel_path) / pathlib.Path(spec_abs_path).name
+        py_path = pathlib.Path()
+        py = ""
+        if "Filename" in spec:
+            py_path = pathlib.Path(rel_path) / spec["Filename"]
+            with open(py_path, "r") as f:
+                py = f.read()
 
-        for file in files:
-            if file.endswith(".yml") or file.endswith(".yaml"):
-                with open(os.path.join(root, file), "r") as f:
-                    analysis_spec: dict[str, Any] = yaml.safe_load(f)
-                    py = ""
-                    if "Filename" in analysis_spec:
-                        with open(
-                            os.path.join(root, analysis_spec["Filename"]), "r"
-                        ) as f:
-                            py = f.read()
-
-                    yield AnalysisItem(
-                        _id=analysis_id(analysis_spec),
-                        type=analysis_spec["AnalysisType"],
-                        py=py,
-                        analysis_spec=analysis_spec,
-                        yaml_file_path=os.path.join(root, file),
-                        py_file_path=os.path.join(root, analysis_spec["Filename"])
-                        if py != ""
-                        else "",
-                        sha256=create_version_hash(analysis_spec, py),
-                        version=1,
-                    )
+        yield AnalysisItem(
+            _id=analysis_id(spec),
+            type=spec["AnalysisType"],
+            py=py,
+            analysis_spec=spec,
+            yaml_file_path=str(spec_path),
+            py_file_path=str(py_path) if py else "",
+            sha256=create_version_hash(spec, py),
+            version=1,
+        )
 
 
 def create_version_hash(analysis_spec: dict[str, Any], py: str) -> str:
