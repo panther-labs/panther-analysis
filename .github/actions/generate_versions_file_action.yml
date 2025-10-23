@@ -1,0 +1,47 @@
+name: Generate .versions.yml file every time a commit is made to main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-versions:
+    if: github.repository == 'panther-labs/panther-analysis'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv install
+
+      - name: Generate .versions.yml file
+        run: |
+          # Get tags for the current commit
+          echo "Running on commit: ${{ github.event.pull_request.head.sha }}"
+
+          make generate-versions
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Auto-generated .versions.yml file"
+            git push
+          else
+            echo "No changes to commit"
+          fi
