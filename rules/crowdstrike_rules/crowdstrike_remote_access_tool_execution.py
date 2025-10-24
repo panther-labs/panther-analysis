@@ -35,8 +35,7 @@ def title(event):
     tool = (
         event.deep_get("event", "ImageFileName", default="<TOOL_NOT_FOUND>").lower().split("\\")[-1]
     )
-    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
-    return f"Crowdstrike: Remote access tool [{tool}] detected on host [{host}]"
+    return f"Crowdstrike: Remote access tool [{tool}] detected"
 
 
 def alert_context(event):

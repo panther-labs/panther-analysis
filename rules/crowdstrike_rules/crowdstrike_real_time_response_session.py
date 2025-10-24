@@ -16,6 +16,12 @@ def title(event):
     return f"{user_name} started a Crowdstrike Real-Time Response (RTR) shell on {hostname_field}"
 
 
+def severity(event):
+    if get_crowdstrike_field(event, "UserName", default="").lower().endswith("@crowdstrike.com"):
+        return "INFO"
+    return "DEFAULT"
+
+
 def alert_context(event):
     return {
         "Start Time": get_crowdstrike_field(
