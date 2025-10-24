@@ -14,7 +14,7 @@ def rule(event):
 def title(event):
     return (
         f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - "
-        + f"{get_crowdstrike_field(event, 'ComputerName')}"
+        + f"{get_crowdstrike_field(event, 'Hostname')}"
         + f"({get_crowdstrike_field(event, 'UserName')})"
     )
 
@@ -30,5 +30,5 @@ def severity(event):
 def dedup(event):
     return (
         f"{get_crowdstrike_field(event, 'EventUUID')} "
-        + f"- {get_crowdstrike_field(event, 'ComputerName')}"
+        + f"- {get_crowdstrike_field(event, 'Hostname')}"
     )
