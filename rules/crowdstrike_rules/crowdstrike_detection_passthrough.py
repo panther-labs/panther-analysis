@@ -7,7 +7,7 @@ from panther_crowdstrike_fdr_helpers import (
 def rule(event):
     return (
         get_crowdstrike_field(event, "ExternalApiType", default="none")
-        == "Event_DetectionSummaryEvent"
+        == "Event_EppDetectionSummaryEvent"
     )
 
 
