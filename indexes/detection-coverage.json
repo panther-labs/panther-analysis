@@ -4099,7 +4099,7 @@
     },
     {
         "AnalysisType": "Correlation Rule",
-        "Description": "Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous scenarios. The severity depends on what is checked out: CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title, body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a well-known attack vector for supply chain compromise in GitHub Actions, often called a \"pwn request\".",
+        "Description": "Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous attack vectors. This is a well-known technique for supply chain compromise in GitHub Actions, often called a \"pwn request\".",
         "DisplayName": "GitHub pull_request_target Workflow with Checkout Action",
         "LogTypes": [
             "GitHub.Webhook"
