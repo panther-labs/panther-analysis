@@ -2,7 +2,7 @@ AnalysisType: correlation_rule
 RuleID: "GitHub.PullRequestTarget.WITH.Checkout.In.Workflow"
 DisplayName: "GitHub pull_request_target Workflow with Checkout Action"
 Enabled: true
-Severity: High
+Severity: Medium
 Tags:
   - CI/CD
   - Workflow
@@ -17,37 +17,30 @@ Description: >
   Detects when a pull_request_target workflow contains a checkout action, creating a potential
   security risk. pull_request_target workflows run with elevated privileges and have access to
   repository secrets even when triggered by external contributors from forks. When combined with
-  a checkout action, this can create dangerous scenarios. The severity depends on what is checked out:
-  CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs
-  with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title,
-  body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a
-  well-known attack vector for supply chain compromise in GitHub Actions, often called a "pwn request".
+  a checkout action, this can create dangerous attack vectors. This is a well-known technique for
+  supply chain compromise in GitHub Actions, often called a "pwn request". 
 Runbook: |
-  1. URGENT: Review the workflow file immediately to determine the security impact and adjust severity
+  0: Assess Actual Severity
+  Check if this was triggered by a cross-fork PR. Cross-fork PRs are significantly more dangerous as any GitHub user can submit them.
+  1. Review the workflow file immediately to determine the security impact
   2. Check what the checkout action is checking out:
      - Look for 'ref' parameter in the checkout step in .github/workflows/
-     - PR head checkout (CRITICAL): ref: ${{ github.event.pull_request.head.sha }}
-       - Untrusted code executes with secrets - IMMEDIATE ACTION REQUIRED
-     - Base branch checkout (HIGH/MEDIUM): ref: ${{ github.event.pull_request.base.ref }} or ${{ github.base_ref }}
-       - Safer, but still vulnerable if workflow uses PR context data
-     - No ref specified: Defaults to PR head for pull_request_target (CRITICAL)
+     - PR head checkout should be treated as higher severity as untrusted code can be executed with the wokflow secrets (ref: ${{ github.event.pull_request.head.sha }}). If no ref is specified in the workflow, the default is the PR head.
+     - Base branch checkout (ref: ${{ github.event.pull_request.base.ref }}) or ${{ github.base_ref }} can be treated as medium severity. They are generally safer but can still be vulnerable.
   3. Verify if the workflow uses untrusted PR context data (even with base branch checkout):
      - Check for: ${{ github.event.pull_request.title }}, .body, .head_ref, .user.login, etc.
      - These can inject malicious commands even when code is trusted
-     - If found: Keep severity HIGH
+     - If found, carefully review workflow and PR logs to determine malicious intent.
   4. Check if workflow executes code from the checked-out repository:
      - Build scripts, tests, or any arbitrary code execution
      - npm install, pip install, or dependency installations from checked out code
-     - If yes with PR head checkout: CRITICAL
+     - If yes with PR head checkout, this should be treated as a higher severity alert.
   5. Review workflow permissions and secret access:
      - Check GITHUB_TOKEN permissions
      - Identify which secrets are accessible
      - Higher risk if write permissions or sensitive secrets present
-  6. Determine if this is a cross-fork PR (higher risk):
-     - External contributor PRs are more likely to be malicious
   7. Immediate mitigation if vulnerable:
-     - CRITICAL: Disable workflow immediately
-     - HIGH: Review and consider disabling
+     - Review and consider disabling
      - Switch to pull_request event if elevated privileges aren't needed
      - Implement explicit checkout of trusted refs only
      - Sanitize all PR context variables before use
