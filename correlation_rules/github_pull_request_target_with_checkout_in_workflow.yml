@@ -1,0 +1,148 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.PullRequestTarget.WITH.Checkout.In.Workflow"
+DisplayName: "GitHub pull_request_target Workflow with Checkout Action"
+Enabled: true
+Severity: High
+Tags:
+  - CI/CD
+  - Workflow
+  - Supply Chain
+  - Privilege Escalation
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0004:T1134  # Privilege Escalation: Access Token Manipulation
+Description: >
+  Detects when a pull_request_target workflow contains a checkout action, creating a potential
+  security risk. pull_request_target workflows run with elevated privileges and have access to
+  repository secrets even when triggered by external contributors from forks. When combined with
+  a checkout action, this can create dangerous scenarios. The severity depends on what is checked out:
+  CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs
+  with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title,
+  body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a
+  well-known attack vector for supply chain compromise in GitHub Actions, often called a "pwn request".
+Runbook: |
+  1. URGENT: Review the workflow file immediately to determine the security impact and adjust severity
+  2. Check what the checkout action is checking out:
+     - Look for 'ref' parameter in the checkout step in .github/workflows/
+     - PR head checkout (CRITICAL): ref: ${{ github.event.pull_request.head.sha }}
+       - Untrusted code executes with secrets - IMMEDIATE ACTION REQUIRED
+     - Base branch checkout (HIGH/MEDIUM): ref: ${{ github.event.pull_request.base.ref }} or ${{ github.base_ref }}
+       - Safer, but still vulnerable if workflow uses PR context data
+     - No ref specified: Defaults to PR head for pull_request_target (CRITICAL)
+  3. Verify if the workflow uses untrusted PR context data (even with base branch checkout):
+     - Check for: ${{ github.event.pull_request.title }}, .body, .head_ref, .user.login, etc.
+     - These can inject malicious commands even when code is trusted
+     - If found: Keep severity HIGH
+  4. Check if workflow executes code from the checked-out repository:
+     - Build scripts, tests, or any arbitrary code execution
+     - npm install, pip install, or dependency installations from checked out code
+     - If yes with PR head checkout: CRITICAL
+  5. Review workflow permissions and secret access:
+     - Check GITHUB_TOKEN permissions
+     - Identify which secrets are accessible
+     - Higher risk if write permissions or sensitive secrets present
+  6. Determine if this is a cross-fork PR (higher risk):
+     - External contributor PRs are more likely to be malicious
+  7. Immediate mitigation if vulnerable:
+     - CRITICAL: Disable workflow immediately
+     - HIGH: Review and consider disabling
+     - Switch to pull_request event if elevated privileges aren't needed
+     - Implement explicit checkout of trusted refs only
+     - Sanitize all PR context variables before use
+  8. Review PR author and changes for signs of malicious intent
+  9. Check workflow run logs for suspicious activity or exfiltration attempts
+Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+Detection:
+  - Group:
+      - ID: PullRequestTarget
+        RuleID: GitHub.Webhook.PullRequestTargetUsage
+      - ID: WorkflowCheckout
+        RuleID: GitHub.Webhook.WorkflowContainsCheckout
+    MatchCriteria:
+      field_name:
+        - GroupID: PullRequestTarget
+          Match: workflow_run.id
+        - GroupID: WorkflowCheckout
+          Match: workflow_job.run_id
+    EventEvaluationOrder: Chronological
+    LookbackWindowMinutes: 30
+    Schedule:
+      RateMinutes: 15
+      TimeoutMinutes: 5
+Tests:
+  - Name: pull_request_target with checkout in same workflow
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: pull_request_target without checkout
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+
+  - Name: Checkout in workflow but not pull_request_target
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: pull_request_target and checkout in different workflows
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "87654321":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: Multiple workflow jobs with checkout for same pull_request_target run
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+              - "2025-10-15T18:43:00Z"
+
+  - Name: Checkout happens before pull_request_target completion (out of order)
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:45:00Z"
