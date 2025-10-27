@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "Auth0.AdminInvited.FOLLOWED-BY.TenantMemberDeletion"
 DisplayName: "Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion"
-Enabled: false
+Enabled: true
 Tags:
     - Auth0
 Severity: High
@@ -27,7 +27,7 @@ Detection:
       Schedule:
         RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 60
+      LookbackWindowMinutes: 2160
 Tests:
     - Name: New Admin Invited FOLLOWED BY Tenant Member Account Deletion
       ExpectedResult: true
