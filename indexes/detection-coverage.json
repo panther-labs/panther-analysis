@@ -342,8 +342,26 @@
         "YAMLPath": "rules/auth0_rules/auth0_bot_detection_disabled.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour",
+        "DisplayName": "Auth0 Brute Force",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_login_brute_force.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "",
+        "DisplayName": "Auth0 Brute Force Detection",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "queries/auth0_queries/auth0_brute_force.yml"
+    },
+    {
         "AnalysisType": "Rule",
-        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.",
+        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
         "LogTypes": [
             "Auth0.Events"
@@ -376,6 +394,24 @@
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_integration_installed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Leaked Password Login Attempt",
+        "DisplayName": "Auth0 Leaked Password Login Attempt",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_leaked_password_login_attempt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Limit Logs",
+        "DisplayName": "Auth0 Limit Detections",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_limits.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4062,6 +4098,15 @@
         "YAMLPath": "rules/github_rules/github_pull_request_target_usage.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous scenarios. The severity depends on what is checked out: CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title, body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a well-known attack vector for supply chain compromise in GitHub Actions, often called a \"pwn request\".",
+        "DisplayName": "GitHub pull_request_target Workflow with Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Detects when a repository is archived.",
         "DisplayName": "GitHub Repository Archived",
@@ -4204,6 +4249,15 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_webhook_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.",
+        "DisplayName": "GitHub Workflow Contains Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_contains_checkout.yml"
     },
     {
         "AnalysisType": "Rule",

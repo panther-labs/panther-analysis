@@ -772,14 +772,21 @@
   - An attack protection monitoring configuration was changed.
 - [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
   - A bot detection policy was disabled.
+- [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
+  - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
+- [Auth0 Brute Force Detection](../queries/auth0_queries/auth0_brute_force.yml)
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
-  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
+  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.  https://sec.okta.com/articles/2024/05/detecting-cross-origin-authentication-credential-stuffing-attacks
 - [Auth0 Custom Role Created](../rules/auth0_rules/auth0_custom_role_created.yml)
   - An Auth0 User created a role in your organization's tenant.
 - [Auth0 Integration Installed](../rules/auth0_rules/auth0_integration_installed.yml)
   - An Auth0 integration was installed from the auth0 action library.
+- [Auth0 Leaked Password Login Attempt](../rules/auth0_rules/auth0_leaked_password_login_attempt.yml)
+  - Detect Auth0 Leaked Password Login Attempt
+- [Auth0 Limit Detections](../rules/auth0_rules/auth0_limits.yml)
+  - Detect Auth0 Limit Logs
 - [Auth0 mfa factor enabled](../rules/auth0_rules/auth0_mfa_factor_setting_enabled.yml)
   - An Auth0 user enabled an mfa factor in your organization's mfa settings.
 - [Auth0 MFA Policy Disabled](../rules/auth0_rules/auth0_mfa_policy_disabled.yml)
@@ -1230,6 +1237,8 @@
   - A public Github repository was created.
 - [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
   - Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
+- [GitHub pull_request_target Workflow with Checkout Action](../correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml)
+  - Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous scenarios. The severity depends on what is checked out: CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title, body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a well-known attack vector for supply chain compromise in GitHub Actions, often called a "pwn request".
 - [GitHub Repository Archived](../rules/github_rules/github_repo_archived.yml)
   - Detects when a repository is archived.
 - [GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.yml)
@@ -1262,6 +1271,8 @@
   - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 - [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
   - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
+  - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)

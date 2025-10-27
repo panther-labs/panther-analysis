@@ -26,6 +26,8 @@
   - A public Github repository was created.
 - [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
   - Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
+- [GitHub pull_request_target Workflow with Checkout Action](../correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml)
+  - Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous scenarios. The severity depends on what is checked out: CRITICAL if checking out PR head (ref: github.event.pull_request.head.sha) as untrusted code runs with secrets; HIGH if checking out base branch but workflow uses untrusted PR context data (title, body, labels, etc.); MEDIUM if only checking out base branch with no PR context usage. This is a well-known attack vector for supply chain compromise in GitHub Actions, often called a "pwn request".
 - [GitHub Repository Archived](../rules/github_rules/github_repo_archived.yml)
   - Detects when a repository is archived.
 - [GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.yml)
@@ -58,6 +60,8 @@
   - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 - [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
   - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
+  - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
