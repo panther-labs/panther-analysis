@@ -21,7 +21,7 @@ Description: >
   supply chain compromise in GitHub Actions, often called a "pwn request". 
 Runbook: |
   0: Assess Actual Severity
-  Check if this was triggered by a cross-fork PR. Cross-fork PRs are significantly more dangerous as any GitHub user can submit them.
+    - Check if this was triggered by a cross-fork PR. Cross-fork PRs are significantly more dangerous as any GitHub user can submit them.
   1. Review the workflow file immediately to determine the security impact
   2. Check what the checkout action is checking out:
      - Look for 'ref' parameter in the checkout step in .github/workflows/
