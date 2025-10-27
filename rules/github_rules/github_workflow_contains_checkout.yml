@@ -21,7 +21,7 @@ Description: >
   especially with pull_request_target triggers or workflows with elevated permissions,
   checking out untrusted code can pose security risks. This detection helps identify
   workflows that interact with repository code for security review.
-Runbook: >
+Runbook: |
   1. Review the workflow file to understand why checkout is being used
   2. If this is a pull_request_target workflow, verify it follows security best practices:
      - Checkout uses explicit trusted refs (e.g., base branch, not PR head)
