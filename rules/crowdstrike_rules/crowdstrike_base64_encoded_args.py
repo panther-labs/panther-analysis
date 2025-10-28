@@ -1,5 +1,5 @@
 from panther_base_helpers import is_base64
-from panther_crowdstrike_fdr_helpers import crowdstrike_process_alert_context
+from panther_crowdstrike_fdr_helpers import crowdstrike_process_alert_context, get_crowdstrike_field
 
 DECODED = ""
 
@@ -51,8 +51,12 @@ def rule(event):
 def title(event):
     process_name = event.udm("process_name") if event.udm("process_name") else "Unknown"
     process_name = process_name.lower()
-    command_line = event.udm("cmd")
-    return f"Crowdstrike: Execution with base64 encoded args: [{process_name}] - [{command_line}]"
+    parent_process_name = get_crowdstrike_field(event, "ParentBaseFileName", default="Unknown")
+    parent_process_name = parent_process_name.lower()
+    return (
+        "Crowdstrike: Execution with base64 encoded args: "
+        + f"[{parent_process_name}] -> [{process_name}]"
+    )
 
 
 def alert_context(event):
