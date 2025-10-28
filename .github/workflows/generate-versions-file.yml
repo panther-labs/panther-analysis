@@ -1,9 +1,18 @@
-name: Generate .versions.yml file every time a commit is made to main
+name: Generate versions file
+
+permissions:
+  contents: write
+  pull-requests: write
 
 on:
   push:
     branches:
-      - main
+      - "main"
+
+  # uncomment to test workflow on PR
+  # pull_request:
+  #   branches:
+  #     - "*"
 
 jobs:
   generate-versions:
@@ -24,12 +33,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pipenv
-          pipenv install
+          make install
 
       - name: Generate .versions.yml file
         run: |
           # Get tags for the current commit
-          echo "Running on commit: ${{ github.event.pull_request.head.sha }}"
+          echo "Running on commit: ${{ github.sha }}"
 
           make generate-versions
 
@@ -41,7 +50,12 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "Auto-generated .versions.yml file"
-            git push
+
+            branch_name=$(git rev-parse --abbrev-ref HEAD)
+            if [ "$branch_name" = "HEAD" ]; then
+              branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+            fi
+            git push origin HEAD:$branch_name
           else
             echo "No changes to commit"
           fi
