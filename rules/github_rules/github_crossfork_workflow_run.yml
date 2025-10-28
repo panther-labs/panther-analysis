@@ -21,12 +21,12 @@ Tests:
   - Name: "Cross-fork pull request workflow"
     ExpectedResult: true
     Log:
-      action: "completed"
+      action: "requested"
       workflow_run:
         id: 87654321
         name: "Build and Test"
         event: "pull_request"
-        status: "completed"
+        status: "in_progress"
         conclusion: "failure"
         html_url: "https://github.com/example-org/example-repo/actions/runs/87654321"
         head_branch: "malicious-feature"
@@ -52,7 +52,7 @@ Tests:
   - Name: "Cross-fork push workflow"
     ExpectedResult: false
     Log:
-      action: "completed"
+      action: "requested"
       workflow_run:
         id: 87654321
         name: "Build and Test"
@@ -83,7 +83,7 @@ Tests:
   - Name: "Not cross-fork"
     ExpectedResult: false
     Log:
-      action: "completed"
+      action: "requested"
       workflow_run:
         id: 18538851870
         name: "Your-Workflow"
