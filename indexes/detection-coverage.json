@@ -4008,6 +4008,15 @@
         "YAMLPath": "correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "The \u201cdownload artifacts\u201d API, and various custom actions encapsulating it,  doesn\u2019t differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.",
+        "DisplayName": "GitHub Artifact Download from Cross-Fork Workflow",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_artifact_download_from_forked_repo.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.",
         "DisplayName": "GitHub Branch Protection Disabled",
@@ -4033,6 +4042,15 @@
             "GitHub.Webhook"
         ],
         "YAMLPath": "rules/github_rules/github_workflow_skip_commits.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Tracks workflows run in cross-fork pull requests.",
+        "DisplayName": "GitHub Cross-Fork Workflow Run",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_crossfork_workflow_run.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4267,6 +4285,15 @@
             "GitHub.Webhook"
         ],
         "YAMLPath": "rules/github_rules/github_workflow_contains_checkout.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow downloads artifacts.",
+        "DisplayName": "GitHub Workflow Downloading Artifacts",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_artifact_download.yml"
     },
     {
         "AnalysisType": "Rule",
