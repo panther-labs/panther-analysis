@@ -1235,6 +1235,8 @@
   - An application integration was installed to your organization's Github account by someone in your organization.
 - [Github Public Repository Created](../rules/github_rules/github_public_repository_created.yml)
   - A public Github repository was created.
+- [GitHub pull_request_target Workflow on Self-Hosted Runner](../correlation_rules/github_pull_request_target_with_self_hosted_runner.yml)
+  - Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.
 - [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
   - Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
 - [GitHub pull_request_target Workflow with Checkout Action](../correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml)
@@ -1273,6 +1275,8 @@
   - Detects when a webhook is added, modified, or deleted
 - [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
   - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
+- [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
+  - Detects when a GitHub Actions workflow runs on a self-hosted runner.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
