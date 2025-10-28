@@ -1,0 +1,53 @@
+AnalysisType: correlation_rule
+RuleID: "Auth0.AdminInvited.FOLLOWED-BY.TenantMemberDeletion"
+DisplayName: "Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion"
+Enabled: true
+Tags:
+    - Auth0
+Severity: High
+Reports:
+    MITRE ATT&CK:
+        - TA0003:T1098
+        - TA0003:T1136
+Description: A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.
+Detection:
+    - Sequence:
+        - ID: CreateAdmin
+          RuleID: Auth0.NewAdmin.Invitation
+        - ID: DeleteUser
+          RuleID: Auth0.Delete.TenantMember
+          MinMatchCount: 2
+      Transitions:
+        - ID: Create Admin to Member Deletion
+          From: CreateAdmin
+          To: DeleteUser
+          WithinTimeFrameMinutes: 10
+          Match:
+            - On: p_alert_context.actor.email
+      Schedule:
+        RateMinutes: 1440
+        TimeoutMinutes: 5
+      LookbackWindowMinutes: 2160
+Tests:
+    - Name: New Admin Invited FOLLOWED BY Tenant Member Account Deletion
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: CreateAdmin
+          Matches:
+            p_alert_context.actor.email:
+              'homer.simpson@yourcompany.com':
+                - 0
+        - ID: DeleteUser
+          Matches:
+            p_alert_context.actor.email:
+              'homer.simpson@yourcompany.com':
+                - 2
+                - 5
+    - Name: CreateAdmin NOT FOLLOWED BY DeleteUser
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: CreateAdmin
+          Matches:
+            p_alert_context.actor.email:
+              'homer.simpson@company.com':
+                - 0
