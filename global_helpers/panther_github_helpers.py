@@ -37,6 +37,17 @@ def is_cross_fork_pr(event):
         if pr_head_repo and pr_base_repo and pr_head_repo != pr_base_repo:
             return True
 
+    # Check workflow_run event with head_repository (for workflows from forks)
+    # GitHub doesn't always populate pull_requests array, but head_repository is reliable
+    head_repository = event.deep_get("workflow_run", "head_repository")
+    base_repository = event.deep_get("workflow_run", "repository")
+
+    if head_repository and base_repository:
+        head_repo_id = head_repository.get("id")
+        base_repo_id = base_repository.get("id")
+        if head_repo_id and base_repo_id and head_repo_id != base_repo_id:
+            return True
+
     return False
 
 

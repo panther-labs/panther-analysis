@@ -173,3 +173,28 @@ Tests:
         id: 243627255
         full_name: "example-org/example-repo"
         private: true
+
+  - Name: "Cross-fork with head_repository (empty pull_requests)"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 18538851870
+        name: "PR Title Validation"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/18538851870"
+        head_branch: "deathcon"
+        pull_requests: []
+        head_repository:
+          id: 1077071328
+          full_name: "attacker/example-repo"
+          fork: true
+        repository:
+          id: 1072340117
+          full_name: "example-org/example-repo"
+      repository:
+        id: 1072340117
+        full_name: "example-org/example-repo"
+        private: true

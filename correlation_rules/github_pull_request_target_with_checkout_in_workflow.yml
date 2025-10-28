@@ -60,10 +60,10 @@ Detection:
         - GroupID: WorkflowCheckout
           Match: workflow_job.run_id
     EventEvaluationOrder: Chronological
-    LookbackWindowMinutes: 30
+    LookbackWindowMinutes: 90
     Schedule:
-      RateMinutes: 15
-      TimeoutMinutes: 5
+      RateMinutes: 60
+      TimeoutMinutes: 10
 Tests:
   - Name: pull_request_target with checkout in same workflow
     ExpectedResult: true
