@@ -1,5 +1,7 @@
-from panther_base_helpers import is_base64
+import re
+from panther_base_helpers import is_base64, lenient_base64_decode
 from panther_crowdstrike_fdr_helpers import crowdstrike_process_alert_context
+
 
 DECODED = ""
 
@@ -13,39 +15,45 @@ COMMAND_LINE_TOOLS = {
 }
 
 
+
+
 def rule(event):
-    # If there is no process name available (or the CrowdStrike data model is missing) don't alert
-    process_name = event.udm("process_name")
-    if not process_name:
+    if not all([
+        event.get("fdr_event_type") == "ProcessRollup2",
+        event.get("event_platform") == "Win",
+        (event.udm("process_name") or "").lower() in COMMAND_LINE_TOOLS,
+    ]):
         return False
 
-    # Filter by CS event type, Windows platform, and process name
-    if not all(
-        [
-            event.get("fdr_event_type") == "ProcessRollup2",
-            event.get("event_platform") == "Win",
-            process_name.lower() in COMMAND_LINE_TOOLS,
+    cmd = event.udm("cmd", default="").replace("\u2013", "-")
+
+    # find all long base64-like tokens (including URL-safe base64 with - and _)
+    for match in re.findall(r"[A-Za-z0-9+/=_-]{12,}", cmd):
+        # Strip common command-line prefixes (like --flag=, -flag=, etc.)
+        # This handles cases like: --b64=aGVsbG8... or -enc=aGVsbG8...
+        cleaned_match = re.sub(r'^-+[a-zA-Z0-9_-]*=', '', match)
+
+        # Try multiple base64 variants
+        variants = [
+            cleaned_match,  # Try cleaned string first
+            cleaned_match.replace("-", "+").replace("_", "/"),  # URL-safe to standard base64
+            cleaned_match.replace("-", "").replace("_", ""),  # Remove hyphens/underscores (mangled)
         ]
-    ):
-        return False
 
-    # Split arguments from process path
-    command_line_args = event.udm("cmd", default="")
-    command_line_args = command_line_args.replace("\u2013", "-")
-    command_line_args = command_line_args.replace('"', " ")
-    command_line_args = command_line_args.replace("'", " ")
-    command_line_args = command_line_args.replace("=", " ")
-    command_line_args = command_line_args.split(" ")[1:]
+        for variant in variants:
+            # Try strict validation first
+            decoded = is_base64(variant)
+            if not decoded:
+                # Fallback to lenient decoding for corrupted/malformed base64
+                decoded = lenient_base64_decode(variant)
 
-    # Check if Base64 encoded arguments are present in the command line
-    for arg in command_line_args:
-        # pylint: disable=global-statement
-        global DECODED
-        DECODED = is_base64(arg)
-        if DECODED:
-            return True
-
+            if decoded:
+                global DECODED
+                DECODED = decoded
+                return True
     return False
+
+
 
 
 def title(event):
