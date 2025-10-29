@@ -14,12 +14,13 @@ Reports:
     - TA0002:T1072  # Execution: Software Deployment Tools
     - TA0004:T1134  # Privilege Escalation: Access Token Manipulation
 Description: >
-  The “download artifacts” API, and various custom actions encapsulating it, 
-  doesn’t differentiate between artifacts that were uploaded by forked repositories 
+  The "download artifacts" API, and various custom actions encapsulating it,
+  doesn't differentiate between artifacts that were uploaded by forked repositories 
   and base repositories, which could lead privileged workflows to download artifacts
   that were created by forked repositories and that are potentially poisoned.
 Runbook: |
-  1. Consider ensuring that the artifact download job uses the specific run_id for the generated artifact. It is possible specify which run id or commit hash to download the artifact from.
+  1. Consider ensuring that the artifact download job uses the specific run_id for the generated artifact. 
+     It is recommended to specify which run id or commit hash to download the artifact from.
   2. Consider filtering out artifacts created from pull requests.
   3. Consider limiting the possibility for outside collaborators to trigger workflows.
   4. Sanitize cross-fork contents.
