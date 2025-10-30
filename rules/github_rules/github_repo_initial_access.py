@@ -8,6 +8,7 @@ CODE_ACCESS_ACTIONS = [
 
 
 def rule(event):
+
     # if the actor field is empty, short circuit the rule
     # Excluding secret scanning bots
     allowed_users = ["secret-scanning[bot]"]
