@@ -1,0 +1,125 @@
+AnalysisType: rule
+Filename: github_workflow_artifact_download.py
+RuleID: "GitHub.Webhook.WorkflowArtifactDownload"
+DisplayName: "GitHub Workflow Downloading Artifacts"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0005:T1027  # Defense Evasion: Obfuscated Files or Information
+Tags:
+  - CI/CD
+  - Workflow
+  - Artifacts
+CreateAlert: false
+Severity: Info
+Description: Detects when a GitHub Actions workflow downloads artifacts. 
+Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/#pwn-request-with-artifact-upload
+Tests:
+  - Name: "Workflow with artifact download"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003143
+        name: "Deploy"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345678
+        steps:
+          - name: "Setup"
+            status: "completed"
+            conclusion: "success"
+          - name: "Download artifact"
+            status: "completed"
+            conclusion: "success"
+          - name: "Deploy"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow with actions/download-artifact"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003144
+        name: "Process Build"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345679
+        steps:
+          - name: "Checkout"
+            status: "completed"
+            conclusion: "success"
+          - name: "actions/download-artifact@v4"
+            status: "completed"
+            conclusion: "success"
+          - name: "Process"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow with restore artifact step"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003145
+        name: "Test Results"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345680
+        steps:
+          - name: "Restore Artifact from Previous Run"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow without artifact download"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003146
+        name: "Build"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345681
+        steps:
+          - name: "Checkout"
+            status: "completed"
+            conclusion: "success"
+          - name: "Build"
+            status: "completed"
+            conclusion: "success"
+          - name: "Upload artifact"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job in progress"
+    ExpectedResult: false
+    Log:
+      action: "in_progress"
+      workflow_job:
+        id: 52841003147
+        name: "Deploy"
+        status: "in_progress"
+        run_id: 12345682
+        steps:
+          - name: "Download artifact"
+            status: "in_progress"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"

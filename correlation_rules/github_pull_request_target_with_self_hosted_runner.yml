@@ -1,0 +1,137 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.PullRequestTarget.WITH.SelfHostedRunner"
+DisplayName: "GitHub pull_request_target Workflow on Self-Hosted Runner"
+Enabled: true
+Severity: High
+Tags:
+  - CI/CD
+  - Workflow
+  - Supply Chain
+  - Self-Hosted
+  - Infrastructure Compromise
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0008:T1021  # Lateral Movement: Remote Services
+    - TA0004:T1134  # Privilege Escalation: Access Token Manipulation
+Description: >
+  Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows
+  run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks.
+  When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure 
+  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job, 
+  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR
+  is cross-fork or same-repository because self-hosted runners represent infrastructure access.
+  GitHub explicitly warns never to use self-hosted runners with public repositories or workflows
+  that can be triggered by untrusted contributors. This configuration allows any GitHub user with
+  read access to your repository to execute arbitrary code on your infrastructure.
+Runbook: |
+  1. Stop the self-hosted runner:
+     - SSH/access the runner system
+     - Stop the runner service or unregister the runner
+
+  2. Isolate the runner from network:
+     - Block outbound connections via firewall
+     - Disconnect from internal network if possible
+
+  3. Review the workflow:
+     - Disable or delete the workflow file that uses pull_request_target + self-hosted
+     - Or modify to use "runs-on: ubuntu-latest"
+
+  4. Check runner system for compromise:
+     - Review auth logs for unauthorized access
+     - Check network connections: netstat -tunap | grep ESTABLISHED
+     - Look for persistence mechanisms (cron, systemd, rc.local)
+     - Check for suspicious processes or files
+     - Review bash history for malicious commands
+
+  5. Review recent workflow runs:
+     - Check all workflows that ran on this runner in past 7 days
+     - Look for other suspicious activity
+     - Identify if compromise occurred in previous runs
+
+  6. Search for indicators of compromise:
+     - Outbound connections to suspicious IPs/domains
+     - New user accounts or SSH keys on runner system
+     - Modified system files or configurations
+     - Cryptocurrency miners or backdoors
+     - Data staging areas or compressed archives
+Reference: https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#hardening-for-self-hosted-runners
+Detection:
+  - Group:
+      - ID: PullRequestTarget
+        RuleID: GitHub.Webhook.PullRequestTargetUsage
+      - ID: SelfHostedRunner
+        RuleID: GitHub.Webhook.SelfHostedRunnerUsed
+    MatchCriteria:
+      field_name:
+        - GroupID: PullRequestTarget
+          Match: workflow_run.id
+        - GroupID: SelfHostedRunner
+          Match: workflow_job.run_id
+    EventEvaluationOrder: Chronological
+    LookbackWindowMinutes: 90
+    Schedule:
+      RateMinutes: 60
+      TimeoutMinutes: 10
+Tests:
+  - Name: pull_request_target with self-hosted runner
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:31:00Z"
+      - ID: SelfHostedRunner
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:31:06Z"
+
+  - Name: pull_request_target without self-hosted runner
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:31:00Z"
+
+  - Name: Self-hosted runner without pull_request_target
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: SelfHostedRunner
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:31:06Z"
+
+  - Name: pull_request_target and self-hosted in different workflows
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:31:00Z"
+      - ID: SelfHostedRunner
+        Matches:
+          workflow_job.run_id:
+            "87654321":
+              - "2025-10-15T18:31:06Z"
+
+  - Name: Multiple self-hosted jobs in same pull_request_target workflow
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:31:00Z"
+      - ID: SelfHostedRunner
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:31:06Z"
+              - "2025-10-15T18:32:00Z"

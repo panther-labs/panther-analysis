@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: github_malicious_pr_titles.py
 RuleID: "GitHub.Webhook.MaliciousPRTitles"
-DisplayName: "GitHub Malicious Pull Request Titles"
+DisplayName: "GitHub Malicious Pull Request Content"
 Enabled: true
 LogTypes:
   - GitHub.Webhook
@@ -14,11 +14,11 @@ Tags:
   - Supply Chain
 Severity: High
 Description: >
-  Detects malicious patterns in GitHub pull request titles, descriptions, and commit messages
-  that could indicate bash injection attempts or other malicious activity. This rule is designed
-  to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained
-  bash injection payloads that could be executed by vulnerable CI workflows. Lower severity 
-  for PRs that are not cross-fork.
+  Detects malicious patterns in GitHub pull request content (title, body, head ref, head label,
+  default branch) that could indicate bash injection attempts or other malicious activity.
+  This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where
+  PR titles contained bash injection payloads that could be executed by vulnerable CI workflows.
+  Lower severity for PRs that are not cross-fork.
 Runbook: >
   1. Immediately review the pull request content and metadata for malicious patterns
   2. Check if the repository has workflows that process PR titles or descriptions unsafely
@@ -195,6 +195,21 @@ Tests:
           "number": 777,
           "title": "Config eval($malicious_code)",
           "body": "Dynamic config"
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR Body with Eval Command
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 777,
+          "body": "Config eval($malicious_code)",
+          "title": "Dynamic config"
         },
         "repository": {
           "full_name": "target/repo"

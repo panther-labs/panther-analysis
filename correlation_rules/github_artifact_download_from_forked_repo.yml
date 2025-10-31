@@ -1,0 +1,67 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.ArtifactDownload.FROM.CrossFork.Workflow"
+DisplayName: "GitHub Artifact Download from Cross-Fork Workflow"
+Enabled: true
+Severity: Medium
+Tags:
+  - CI/CD
+  - Workflow
+  - Supply Chain
+  - Artifact Poisoning
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0004:T1134  # Privilege Escalation: Access Token Manipulation
+Description: >
+  The "download artifacts" API, and various custom actions encapsulating it,
+  doesn't differentiate between artifacts that were uploaded by forked repositories 
+  and base repositories, which could lead privileged workflows to download artifacts
+  that were created by forked repositories and that are potentially poisoned.
+Runbook: |
+  1. Consider ensuring that the artifact download job uses the specific run_id for the generated artifact. 
+     It is recommended to specify which run id or commit hash to download the artifact from.
+  2. Consider filtering out artifacts created from pull requests.
+  3. Consider limiting the possibility for outside collaborators to trigger workflows.
+  4. Sanitize cross-fork contents.
+Reference: https://www.legitsecurity.com/blog/artifact-poisoning-vulnerability-discovered-in-rust
+Detection:
+  - Group:
+      - ID: CrossForkWorkflowRun
+        RuleID: GitHub.CrossFork.Workflow.Run
+      - ID: ArtifactDownload
+        RuleID: GitHub.Webhook.WorkflowArtifactDownload
+    MatchCriteria:
+      field_name:
+        - GroupID: CrossForkWorkflowRun
+          Match: workflow_run.id
+        - GroupID: ArtifactDownload
+          Match: workflow_job.run_id
+    EventEvaluationOrder: Chronological
+    LookbackWindowMinutes: 90
+    Schedule:
+      RateMinutes: 60
+      TimeoutMinutes: 10
+Tests:
+  - Name: cross-fork workflow with artifact download
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: CrossForkWorkflowRun
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: ArtifactDownload
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: cross-fork workflow without artifact download
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: CrossForkWorkflowRun
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
