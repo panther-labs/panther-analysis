@@ -8,7 +8,7 @@ LogTypes:
   - Atlassian.Audit
   - GCP.AuditLog
   - GitHub.Audit
-  - GSuite.Reports
+  - GSuite.ActivityEvent
   - OneLogin.Events
   - Zendesk.Audit
 Tags:
@@ -93,9 +93,9 @@ Tests:
       {
         "actor": { "email": "bobert@example.com" },
         "id": { "applicationName": "admin" },
-        "events":
-          [{ "type": "DELEGATED_ADMIN_SETTINGS", "name": "RENAME_ROLE" }],
-        "p_log_type": "GSuite.Reports",
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "RENAME_ROLE",
+        "p_log_type": "GSuite.ActivityEvent",
       }
   - Name: GSuite - Privileges Assigned
     ExpectedResult: true
@@ -103,19 +103,14 @@ Tests:
       {
         "actor": { "email": "bobert@example.com" },
         "id": { "applicationName": "admin" },
-        "events":
-          [
-            {
-              "type": "DELEGATED_ADMIN_SETTINGS",
-              "name": "ASSIGN_ROLE",
-              "parameters":
-                [
-                  { "name": "ROLE_NAME", "value": "Some Admin Role" },
-                  { "name": "USER_EMAIL", "value": "bob@example.com" },
-                ],
-            },
-          ],
-        "p_log_type": "GSuite.Reports",
+        "type": "DELEGATED_ADMIN_SETTINGS",
+        "name": "ASSIGN_ROLE",
+        "parameters":
+          {
+            "ROLE_NAME": "Some Admin Role",
+            "USER_EMAIL": "bob@example.com",
+          },
+        "p_log_type": "GSuite.ActivityEvent",
       }
   - Name: OneLogin - Non permissions assigned event
     ExpectedResult: false

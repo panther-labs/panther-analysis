@@ -4,7 +4,7 @@ RuleID: "GSuite.DriveVisibilityChanged"
 DisplayName: "GSuite External Drive Document"
 Enabled: false
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
   - Collection:Data from Information Repositories
@@ -26,413 +26,287 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events": [{ "type": "access", "name": "upload" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
+            },
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "access",
+            "name": "upload"
       }
   - Name: ACL Change without Visibility Change
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [{ "type": "acl_change", "name": "shared_drive_settings_change" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
+            },
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "acl_change",
+            "name": "shared_drive_settings_change"
       }
   - Name: Doc Became Public - Link (Unrestricted)
     ExpectedResult: true
     Log:
       {
-        "actor": { "email": "bobert@gmail.com" },
-        "events":
-          [
-            {
-              "parameters":
-                [
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "doc_title", "value": "my shared document" },
-                  { "name": "target_domain", "value": "all" },
-                  { "name": "visibility", "value": "people_with_link" },
-                  { "name": "new_value", "multiValue": ["people_with_link"] },
-                ],
-              "name": "change_document_visibility",
-              "type": "acl_change",
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@gmail.com"
             },
-            {
-              "parameters":
-                [{ "name": "new_value", "multiValue": ["can_view"] }],
-              "name": "change_document_access_scope",
-              "type": "acl_change",
+            "id": {
+                  "applicationName": "drive"
             },
-          ],
-        "id": { "applicationName": "drive" },
-        "p_row_id": "111222",
+            "type": "acl_change",
+            "name": "change_document_visibility",
+            "parameters": {
+                  "visibility_change": "external",
+                  "doc_title": "my shared document",
+                  "target_domain": "all",
+                  "visibility": "people_with_link",
+                  "new_value": [
+                        "people_with_link"
+                  ]
+            }
       }
   - Name: Doc Became Public - Link (Allowlisted Domain Not Configured)
     ExpectedResult: true
     Log:
       {
-        "actor": { "email": "bobert@example.com" },
-        "events":
-          [
-            {
-              "parameters":
-                [
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "doc_title", "value": "my shared document" },
-                  { "name": "target_domain", "value": "example.com" },
-                  {
-                    "name": "visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "new_value", "multiValue": ["people_with_link"] },
-                ],
-              "name": "change_document_visibility",
-              "type": "acl_change",
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "parameters":
-                [{ "name": "new_value", "multiValue": ["can_view"] }],
-              "name": "change_document_access_scope",
-              "type": "acl_change",
+            "id": {
+                  "applicationName": "drive"
             },
-          ],
-        "id": { "applicationName": "drive" },
-        "p_row_id": "111222",
+            "type": "acl_change",
+            "name": "change_document_visibility",
+            "parameters": {
+                  "visibility_change": "external",
+                  "doc_title": "my shared document",
+                  "target_domain": "example.com",
+                  "visibility": "people_within_domain_with_link",
+                  "new_value": [
+                        "people_with_link"
+                  ]
+            }
       }
-
   - Name: Doc Became Public - Link (Allowlisted Domain Is Configured)
     ExpectedResult: false
     Mocks:
       - objectName: ALLOWED_DOMAINS
-        returnValue: >-
-          [
-            "example.com"
-          ]
+        returnValue: "[\n  \"example.com\"\n]"
     Log:
       {
-        "actor": { "email": "bobert@example.com" },
-        "events":
-          [
-            {
-              "parameters":
-                [
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "doc_title", "value": "my shared document" },
-                  { "name": "target_domain", "value": "example.com" },
-                  {
-                    "name": "visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "new_value", "multiValue": ["people_with_link"] },
-                ],
-              "name": "change_document_visibility",
-              "type": "acl_change",
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "parameters":
-                [{ "name": "new_value", "multiValue": ["can_view"] }],
-              "name": "change_document_access_scope",
-              "type": "acl_change",
+            "id": {
+                  "applicationName": "drive"
             },
-          ],
-        "id": { "applicationName": "drive" },
-        "p_row_id": "111222",
+            "type": "acl_change",
+            "name": "change_document_visibility",
+            "parameters": {
+                  "visibility_change": "external",
+                  "doc_title": "my shared document",
+                  "target_domain": "example.com",
+                  "visibility": "people_within_domain_with_link",
+                  "new_value": [
+                        "people_with_link"
+                  ]
+            }
       }
   - Name: Doc Became Private - Link
     ExpectedResult: false
     Log:
       {
-        "actor": { "email": "bobert@example.com" },
-        "events":
-          [
-            {
-              "parameters":
-                [
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "doc_title", "value": "my shared document" },
-                  { "name": "target_domain", "value": "all" },
-                  { "name": "visibility", "value": "people_with_link" },
-                  { "name": "new_value", "multiValue": ["private"] },
-                ],
-              "name": "change_document_visibility",
-              "type": "acl_change",
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-          ],
-        "id": { "applicationName": "drive" },
-        "p_row_id": "111222",
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "acl_change",
+            "name": "change_document_visibility",
+            "parameters": {
+                  "visibility_change": "external",
+                  "doc_title": "my shared document",
+                  "target_domain": "all",
+                  "visibility": "people_with_link",
+                  "new_value": [
+                        "private"
+                  ]
+            }
       }
   - Name: Doc Became Public - User
     ExpectedResult: true
     Log:
       {
-        "id": { "applicationName": "drive" },
-        "actor": { "email": "bobert@example.com" },
-        "kind": "admin#reports#activity",
-        "ipAddress": "1.1.1.1",
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "primary_event" },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someone@random.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "id": {
+                  "applicationName": "drive"
             },
-          ],
+            "kind": "admin#reports#activity",
+            "ipAddress": "1.1.1.1",
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": {
+                  "primary_event": true,
+                  "visibility_change": "external",
+                  "target_user": "someone@random.com",
+                  "old_value": [
+                        "none"
+                  ],
+                  "new_value": [
+                        "can_view"
+                  ],
+                  "old_visibility": "people_within_domain_with_link",
+                  "doc_title": "Hosted Accounts",
+                  "visibility": "shared_externally"
+            }
       }
   - Name: Doc Became Public - User (Multiple)
     ExpectedResult: true
     Log:
       {
-        "id": { "applicationName": "drive" },
-        "actor": { "email": "bobert@example.com" },
-        "kind": "admin#reports#activity",
-        "ipAddress": "1.1.1.1",
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "primary_event" },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someone@random.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "id": {
+                  "applicationName": "drive"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someoneelse@random.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
-            },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "notbobert@example.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
-            },
-          ],
+            "kind": "admin#reports#activity",
+            "ipAddress": "1.1.1.1",
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": {
+                  "primary_event": true,
+                  "visibility_change": "external",
+                  "target_user": "someone@random.com",
+                  "old_value": [
+                        "none"
+                  ],
+                  "new_value": [
+                        "can_view"
+                  ],
+                  "old_visibility": "people_within_domain_with_link",
+                  "doc_title": "Hosted Accounts",
+                  "visibility": "shared_externally"
+            }
       }
   - Name: Doc Inherits Folder Permissions
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [
-            {
-              "name": "change_user_access_hierarchy_reconciled",
-              "type": "acl_change",
-              "parameters":
-                [{ "name": "visibility_change", "value": "internal" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-          ],
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "acl_change",
+            "name": "change_user_access_hierarchy_reconciled",
+            "parameters": {
+                  "visibility_change": "internal"
+            }
       }
   - Name: Doc Inherits Folder Permissions - Sharing Link
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [
-            {
-              "name": "change_document_access_scope_hierarchy_reconciled",
-              "type": "acl_change",
-              "parameters":
-                [{ "name": "visibility_change", "value": "internal" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-          ],
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "acl_change",
+            "name": "change_document_access_scope_hierarchy_reconciled",
+            "parameters": {
+                  "visibility_change": "internal"
+            }
       }
   - Name: Doc Became Public - Public email provider
     ExpectedResult: true
     Log:
       {
-        "id": { "applicationName": "drive" },
-        "actor": { "email": "bobert@example.com" },
-        "kind": "admin#reports#activity",
-        "ipAddress": "1.1.1.1",
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "primary_event" },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someone@yandex.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "id": {
+                  "applicationName": "drive"
             },
-          ],
+            "kind": "admin#reports#activity",
+            "ipAddress": "1.1.1.1",
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": {
+                  "primary_event": true,
+                  "visibility_change": "external",
+                  "target_user": "someone@yandex.com",
+                  "old_value": [
+                        "none"
+                  ],
+                  "new_value": [
+                        "can_view"
+                  ],
+                  "old_visibility": "people_within_domain_with_link",
+                  "doc_title": "Hosted Accounts",
+                  "visibility": "shared_externally"
+            }
       }
   - Name: Doc Shared With Multiple Users All From ALLOWED_DOMAINS
     ExpectedResult: false
     Mocks:
       - objectName: ALLOWED_DOMAINS
-        returnValue: >-
-          [
-            "example.com", "notexample.com"
-          ]
+        returnValue: "[\n  \"example.com\", \"notexample.com\"\n]"
     Log:
       {
-        "id": { "applicationName": "drive" },
-        "actor": { "email": "bobert@example.com" },
-        "kind": "admin#reports#activity",
-        "ipAddress": "1.1.1.1",
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "primary_event" },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someone@notexample.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
+            "id": {
+                  "applicationName": "drive"
             },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "someoneelse@example.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
-            },
-            {
-              "type": "acl_change",
-              "name": "change_user_access",
-              "parameters":
-                [
-                  { "name": "primary_event", "boolValue": true },
-                  { "name": "visibility_change", "value": "external" },
-                  { "name": "target_user", "value": "notbobert@example.com" },
-                  { "name": "old_value", "multiValue": ["none"] },
-                  { "name": "new_value", "multiValue": ["can_view"] },
-                  {
-                    "name": "old_visibility",
-                    "value": "people_within_domain_with_link",
-                  },
-                  { "name": "doc_title", "value": "Hosted Accounts" },
-                  { "name": "visibility", "value": "shared_externally" },
-                ],
-            },
-          ],
+            "kind": "admin#reports#activity",
+            "ipAddress": "1.1.1.1",
+            "type": "acl_change",
+            "name": "change_user_access",
+            "parameters": {
+                  "primary_event": true,
+                  "visibility_change": "external",
+                  "target_user": "someone@notexample.com",
+                  "old_value": [
+                        "none"
+                  ],
+                  "new_value": [
+                        "can_view"
+                  ],
+                  "old_visibility": "people_within_domain_with_link",
+                  "doc_title": "Hosted Accounts",
+                  "visibility": "shared_externally"
+            }
       }

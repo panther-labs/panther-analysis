@@ -195,7 +195,7 @@ def time_shift_vpcflow_logs(event_time_shift, logs, log_type):
 
 
 def get_event_time(log_type):
-    if log_type == "GSuite.Reports":  #  eventTime: "2020-11-01T08:35:19Z"
+    if log_type == "GSuite.ActivityEvent":  #  eventTime: "2020-11-01T08:35:19Z"
         return {"attrs": ["id", "time"], "format": "%Y-%m-%dT%H:%M:%S.%fZ"}
     if log_type == "AWS.CloudTrail":  #  eventTime: "2020-11-01T08:35:19Z"
         return {"attrs": ["eventTime"], "format": "%Y-%m-%dT%H:%M:%SZ"}
