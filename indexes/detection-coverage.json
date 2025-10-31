@@ -4108,8 +4108,35 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects malicious patterns in GitHub pull request titles, descriptions, and commit messages that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity  for PRs that are not cross-fork.",
-        "DisplayName": "GitHub Malicious Pull Request Titles",
+        "Description": "Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Comment/Review Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_comment_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Commit Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_commit_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.",
+        "DisplayName": "GitHub Malicious Issue/Pages Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_issue_pages.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.",
+        "DisplayName": "GitHub Malicious Pull Request Content",
         "LogTypes": [
             "GitHub.Webhook"
         ],
@@ -4333,21 +4360,6 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when a GitHub Actions workflow downloads artifacts.",
-        "DisplayName": "GitHub Workflow Downloading Artifacts",
-        "LogTypes": [
-            "GitHub.Webhook"
-        ],
-        "YAMLPath": "rules/github_rules/github_workflow_artifact_download.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
-        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
-        "LogTypes": [
-            "GitHub.Webhook"
-        ],
-        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
         "Description": "Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.",
         "DisplayName": "GitHub Workflow Dispatched by GitHub Actions Bot",
         "LogTypes": [
@@ -4357,12 +4369,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow downloads artifacts.",
+        "DisplayName": "GitHub Workflow Downloading Artifacts",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_artifact_download.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.",
         "DisplayName": "GitHub Workflow Permissions Modified",
         "LogTypes": [
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_workflow_permission_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
+        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
     },
     {
         "AnalysisType": "Rule",
