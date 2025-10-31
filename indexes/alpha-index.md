@@ -774,7 +774,6 @@
   - A bot detection policy was disabled.
 - [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
   - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
-- [Auth0 Brute Force Detection](../queries/auth0_queries/auth0_brute_force.yml)
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
