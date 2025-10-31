@@ -1,0 +1,61 @@
+name: Generate versions file
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - "main"
+
+  # uncomment to test workflow on PR
+  # pull_request:
+  #   branches:
+  #     - "*"
+
+jobs:
+  generate-versions:
+    if: github.repository == 'panther-labs/panther-analysis'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          make install
+
+      - name: Generate .versions.yml file
+        run: |
+          # Get tags for the current commit
+          echo "Running on commit: ${{ github.sha }}"
+
+          make generate-versions
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Auto-generated .versions.yml file"
+
+            branch_name=$(git rev-parse --abbrev-ref HEAD)
+            if [ "$branch_name" = "HEAD" ]; then
+              branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+            fi
+            git push origin HEAD:$branch_name
+          else
+            echo "No changes to commit"
+          fi
