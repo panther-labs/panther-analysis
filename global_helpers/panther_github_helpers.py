@@ -1,4 +1,73 @@
+import re
+
 from panther_base_helpers import deep_get
+
+# Bash injection patterns focused on command substitution attacks
+# Based on Nx vulnerability (GHSA-cxm3-wv7p-598c): $(echo "You've been compromised")
+# These patterns detect malicious content in untrusted GitHub inputs like PR titles,
+# issue bodies, commit messages, etc.
+BASH_INJECTION_PATTERNS = [
+    # Command substitution
+    r"\$\([^)]+\)",  # $(command) - requires non-empty command
+    r"`[^`]+`",  # `command` - requires non-empty command
+    # Variable expansion with command substitution
+    r"\$\{[^}]*\$\([^)]+\)[^}]*\}",  # ${var$(cmd)var}
+    r"\$\{[^}]*`[^`]+`[^}]*\}",  # ${var`cmd`var}
+    # Process substitution
+    r"<\([^)]+\)",  # <(command)
+    r">\([^)]+\)",  # >(command)
+    # Direct shell invocation
+    r"/bin/(?:sh|bash|dash|zsh)\s+-c\s+",  # /bin/bash -c "command"
+    r"(?:bash|sh)\s+-c\s+['\"]",  # bash -c "command"
+    # Encoding/obfuscation attempts
+    r"\\x[0-9a-fA-F]{4,}",  # Multiple hex bytes (longer sequences)
+    r"eval\s*\(\s*\$",  # eval($(...)) patterns
+    r"exec\s*\(\s*\$",  # exec($(...)) patterns
+    # Network exfiltration patterns
+    r"(?:curl|wget)\s+[^|>]+\|\s*(?:sh|bash)",  # curl url | bash
+    r"nc\s+[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\s+[0-9]+",  # nc IP PORT
+]
+
+COMPILED_BASH_PATTERNS = [
+    re.compile(pattern, re.IGNORECASE | re.MULTILINE) for pattern in BASH_INJECTION_PATTERNS
+]
+
+
+def contains_bash_injection_pattern(text):
+    """
+    Check if text contains any bash injection patterns.
+
+    Args:
+        text: String to check for bash injection patterns
+
+    Returns:
+        bool: True if any pattern matches, False otherwise
+    """
+    if not text:
+        return False
+    return any(pattern.search(text) for pattern in COMPILED_BASH_PATTERNS)
+
+
+def get_matched_bash_patterns(text):
+    """
+    Get all matched bash injection patterns from text.
+
+    Args:
+        text: String to analyze for bash injection patterns
+
+    Returns:
+        list: List of dicts containing pattern and matches, empty list if none found
+    """
+    if not text:
+        return []
+    return [
+        {
+            "pattern": pattern.pattern,
+            "match": pattern.findall(text),
+        }
+        for pattern in COMPILED_BASH_PATTERNS
+        if pattern.search(text)
+    ]
 
 
 def github_alert_context(event):
