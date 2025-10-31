@@ -774,7 +774,6 @@
   - A bot detection policy was disabled.
 - [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
   - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
-- [Auth0 Brute Force Detection](../queries/auth0_queries/auth0_brute_force.yml)
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
@@ -1241,8 +1240,14 @@
   - Tracks workflows run in cross-fork pull requests.
 - [GitHub Dependabot Vulnerability Dismissed](../rules/github_rules/github_repo_vulnerability_dismissed.yml)
   - Creates an alert if a dependabot alert is dismissed without being fixed.
-- [GitHub Malicious Pull Request Titles](../rules/github_rules/github_malicious_pr_titles.yml)
-  - Detects malicious patterns in GitHub pull request titles, descriptions, and commit messages that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity  for PRs that are not cross-fork.
+- [GitHub Malicious Comment/Review Content](../rules/github_rules/github_malicious_comment_content.yml)
+  - Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Commit Content](../rules/github_rules/github_malicious_commit_content.yml)
+  - Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Issue/Pages Content](../rules/github_rules/github_malicious_issue_pages.yml)
+  - Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.
+- [GitHub Malicious Pull Request Content](../rules/github_rules/github_malicious_pr_titles.yml)
+  - Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.
 - [GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.yml)
   - Detects changes to GitHub org authentication changes.
 - [GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.yml)
@@ -1291,8 +1296,12 @@
   - Detects when a webhook is added, modified, or deleted
 - [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
   - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
 - [GitHub Workflow Downloading Artifacts](../rules/github_rules/github_workflow_artifact_download.yml)
   - Detects when a GitHub Actions workflow downloads artifacts.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
 - [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
   - Detects when a GitHub Actions workflow runs on a self-hosted runner.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
