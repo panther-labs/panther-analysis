@@ -64,10 +64,8 @@ jobs:
           target_sync_branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           # REQUIRED 'target_repo_token' exactly like this!
           target_repo_token: ${{ steps.set_token.outputs.token }}
-          #  NOTE NOTE NOTE NOTE
-          # If you want to run this job and sync to upstream's master instead of releases
-          #  change the usptream_sync_branch to master
-          upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
+          # Sync from upstream's main branch
+          upstream_sync_branch: main
           upstream_sync_repo: panther-labs/panther-analysis
           #test_mode: true
           upstream_pull_args: "--allow-unrelated-histories"
