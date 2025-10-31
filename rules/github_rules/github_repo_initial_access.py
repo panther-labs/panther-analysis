@@ -10,7 +10,11 @@ CODE_ACCESS_ACTIONS = [
 def rule(event):
 
     # if the actor field is empty, short circuit the rule
-    if not event.udm("actor_user"):
+    # Excluding secret scanning bots
+    allowed_users = ["secret-scanning[bot]"]
+    actor = event.udm("actor_user")
+
+    if not actor or any(allowed_user in actor for allowed_user in allowed_users):
         return False
 
     if event.get("action") in CODE_ACCESS_ACTIONS and not event.get("repository_public"):

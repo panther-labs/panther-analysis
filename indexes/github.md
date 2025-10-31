@@ -72,6 +72,10 @@
   - Detects when a GitHub Actions workflow downloads artifacts.
 - [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
   - Detects when a GitHub Actions workflow runs on a self-hosted runner.
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)

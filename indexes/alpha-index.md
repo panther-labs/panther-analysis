@@ -774,7 +774,6 @@
   - A bot detection policy was disabled.
 - [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
   - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
-- [Auth0 Brute Force Detection](../queries/auth0_queries/auth0_brute_force.yml)
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
@@ -1295,6 +1294,10 @@
   - Detects when a GitHub Actions workflow downloads artifacts.
 - [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
   - Detects when a GitHub Actions workflow runs on a self-hosted runner.
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)

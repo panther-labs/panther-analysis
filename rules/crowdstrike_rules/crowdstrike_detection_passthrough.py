@@ -28,7 +28,4 @@ def severity(event):
 
 
 def dedup(event):
-    return (
-        f"{get_crowdstrike_field(event, 'EventUUID')} "
-        + f"- {get_crowdstrike_field(event, 'ComputerName')}"
-    )
+    return f"{get_crowdstrike_field(event, 'EventUUID')} "
