@@ -8,6 +8,7 @@ def rule(event):
 def alert_context(event):
     return slack_alert_context(event)
 
+
 def title(event):
     channel_name = event.deep_get("entity", "channel", "name", default="<unknown_channel>")
     name = event.deep_get("actor", "user", "name", default="<unknown_user>")
