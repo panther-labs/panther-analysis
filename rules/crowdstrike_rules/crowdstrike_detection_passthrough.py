@@ -7,14 +7,14 @@ from panther_crowdstrike_fdr_helpers import (
 def rule(event):
     return (
         get_crowdstrike_field(event, "ExternalApiType", default="none")
-        == "Event_DetectionSummaryEvent"
+        == "Event_EppDetectionSummaryEvent"
     )
 
 
 def title(event):
     return (
         f"Crowdstrike Alert ({get_crowdstrike_field(event, 'Technique')}) - "
-        + f"{get_crowdstrike_field(event, 'ComputerName')}"
+        + f"{get_crowdstrike_field(event, 'Hostname')}"
         + f"({get_crowdstrike_field(event, 'UserName')})"
     )
 
