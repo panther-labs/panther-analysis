@@ -185,7 +185,7 @@ Tests:
         "action": "created",
         "comment": {
           "id": 777888,
-          "body": "Debug with: nc 10.0.0.1 4444",
+          "body": "Debug with: nc 1.2.3.4 4444",
           "user": {
             "login": "attacker"
           }
@@ -195,6 +195,47 @@ Tests:
         },
         "repository": {
           "full_name": "victim/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Comment with Benign Inline Code
+    ExpectedResult: false
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 888999,
+          "body": "You can use `npm install` to install the dependencies",
+          "user": {
+            "login": "helpful-dev"
+          }
+        },
+        "issue": {
+          "number": 101
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Review with Benign Inline Code
+    ExpectedResult: false
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 999000,
+          "body": "Please run `make test` before submitting",
+          "state": "changes_requested",
+          "user": {
+            "login": "reviewer"
+          }
+        },
+        "pull_request": {
+          "number": 102
+        },
+        "repository": {
+          "full_name": "org/repo"
         },
         "p_log_type": "GitHub.Webhook"
       }
