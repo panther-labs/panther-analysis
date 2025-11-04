@@ -15,7 +15,6 @@ def rule(event):
         if contains_bash_injection_pattern(event.deep_get("comment", "body")):
             # Exclude backticks from comments as they are used for links
             patterns = get_matched_bash_patterns(event.deep_get("comment", "body"))
-            print(patterns)
             if patterns and len(patterns) == 1 and patterns[0]["pattern"] == "`[^`]+`":
                 return False
             return True
