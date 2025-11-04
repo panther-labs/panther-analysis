@@ -772,14 +772,24 @@
   - An attack protection monitoring configuration was changed.
 - [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
   - A bot detection policy was disabled.
+- [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
+  - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
-  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
+  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.  https://sec.okta.com/articles/2024/05/detecting-cross-origin-authentication-credential-stuffing-attacks
 - [Auth0 Custom Role Created](../rules/auth0_rules/auth0_custom_role_created.yml)
   - An Auth0 User created a role in your organization's tenant.
+- [Auth0 Delete Tenant Member](../rules/auth0_rules/auth0_delete_tenant_member.yml)
+  - A tenant member was deleted.
+- [Auth0 Fraud Risk by Volume](../rules/auth0_rules/auth0_fraud_risk_volume.yml)
+  - Detects a surge in either failed, successful or suspicious login attempts using leaked passwords over a window of time and a threshold. Exceeding set threshold may indicate potential fraud.
 - [Auth0 Integration Installed](../rules/auth0_rules/auth0_integration_installed.yml)
   - An Auth0 integration was installed from the auth0 action library.
+- [Auth0 Leaked Password Login Attempt](../rules/auth0_rules/auth0_leaked_password_login_attempt.yml)
+  - Detect Auth0 Leaked Password Login Attempt
+- [Auth0 Limit Detections](../rules/auth0_rules/auth0_limits.yml)
+  - Detect Auth0 Limit Logs
 - [Auth0 mfa factor enabled](../rules/auth0_rules/auth0_mfa_factor_setting_enabled.yml)
   - An Auth0 user enabled an mfa factor in your organization's mfa settings.
 - [Auth0 MFA Policy Disabled](../rules/auth0_rules/auth0_mfa_policy_disabled.yml)
@@ -790,12 +800,20 @@
   - An Auth0 User disabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 MFA Risk Assessment Enabled](../rules/auth0_rules/auth0_mfa_risk_assessment_enabled.yml)
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
+- [Auth0 New Admin Invited](../rules/auth0_rules/auth0_new_admin_invited.yml)
+  - A new admin invitation was issued.
+- [Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion](../correlation_rules/auth0_account_takeover.yml)
+  - A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
 - [Auth0 Push Notification Fatigue](../rules/auth0_rules/auth0_push_notification_fatigue.yml)
   - Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.
+- [Auth0 Rapid Dynamic Client Creation](../rules/auth0_rules/auth0_rapid_dynamic_client_creation.yml)
+  - Detects a spike in registered dynamic clients. This can indicate attempts to use such dynamic clients for malicious purposes.
 - [Auth0 Refresh Token Reused](../rules/auth0_rules/auth0_token_reuse.yml)
   - A refresh token was reused.
+- [Auth0 Same Phone Number Shared Across Multiple Users as MFA](../rules/auth0_rules/auth0_same_phone_mfa_multiple_users.yml)
+  - Detecs when more than one user shares a phone number with another for MFA purposes. Attackers may register their phone number for multiple compromised accounts.
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.
@@ -1262,6 +1280,10 @@
   - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 - [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
   - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
@@ -2000,10 +2022,14 @@
   - This rule detects updates and deletions of connectors.
 - [Wiz Data Classifier Updated Or Deleted](../rules/wiz_rules/wiz_data_classifier_updated_or_deleted.yml)
   - This rule detects updates and deletions of data classifiers.
+- [Wiz Defend Alert Passthrough Rule](../rules/wiz_rules/wiz_defend_passthrough.yml)
+  - This rule enriches and contextualizes security alerts generated by Wiz.
 - [Wiz Image Integrity Validator Updated Or Deleted](../rules/wiz_rules/wiz_image_integrity_validator_updated_or_deleted.yml)
   - This rule detects updates and deletions of image integrity validators.
 - [Wiz Integration Updated Or Deleted](../rules/wiz_rules/wiz_integration_updated_or_deleted.yml)
   - This rule detects updates and deletions of Wiz integrations.
+- [Wiz Issue Alert Passthrough Rule](../rules/wiz_rules/wiz_issue_alert_passthrough.yml)
+  - This rule enriches and contextualizes security alerts generated by Wiz.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 - [Wiz Revoke User Sessions](../rules/wiz_rules/wiz_revoke_user_sessions.yml)
