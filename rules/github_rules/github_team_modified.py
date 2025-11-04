@@ -14,16 +14,5 @@ def rule(event):
 
 
 def title(event):
-    action_mappings = {
-        "create": "created team",
-        "destroy": "deleted team",
-        "add_member": f"added member [{event.get('user')}] to team",
-        "remove_member": f"removed member [{event.get('user')}] from team",
-        "add_repository": f"added repository [{event.get('repo')}] to team",
-        "removed_repository": f"removed repository [{event.get('repo')}] from team",
-        "change_parent_team": "changed parent team for team",
-    }
-    action_key = event.get("action").split(".")[1]
-    action = action_mappings.get(action_key, event.get("action"))
     team_name = event.get("team") if "team" in event else "<MISSING_TEAM>"
-    return f"GitHub.Audit: User [{event.udm('actor_user')}] {action} [{team_name}]"
+    return f"GitHub.Audit: [{team_name}] has been modified"

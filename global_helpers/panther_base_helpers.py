@@ -181,11 +181,20 @@ def is_base64(b64: str) -> str:
         return ""
     # Pad args with "=" to ensure proper decoding
     b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
-    # Check if the matched string can be decoded back to ASCII
+    # Decode and try multiple encodings
     try:
-        return b64decode(b64, validate=True).decode("ascii")
-    except (AsciiError, UnicodeDecodeError, ValueError):
+        decoded_bytes = b64decode(b64, validate=True)
+    except (AsciiError, ValueError):
         return ""
+
+    # Try decoding with different encodings in order of likelihood
+    for encoding in ["ascii", "utf-16-le", "utf-8"]:
+        try:
+            return decoded_bytes.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+
+    return ""
 
 
 def key_value_list_to_dict(list_objects: List[dict], key: str, value: str) -> dict:
