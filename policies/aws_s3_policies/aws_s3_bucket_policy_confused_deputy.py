@@ -24,7 +24,10 @@ def policy(resource):
             for condition in conditions.values():
                 if isinstance(condition, dict):
                     flat_condition_keys.update(condition.keys())
+            #convert keys to lower case
+            flat_condition_keys_lower = {key.lower() for key in flat_condition_keys}
+            REQUIRED_CONDITIONS_lower = {key.lower() for key in REQUIRED_CONDITIONS}
             # Check if any required condition key is present
-            if not REQUIRED_CONDITIONS.intersection(flat_condition_keys):
+            if not REQUIRED_CONDITIONS_lower.intersection(flat_condition_keys_lower):
                 return False
     return True
