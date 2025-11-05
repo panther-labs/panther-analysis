@@ -9,7 +9,6 @@ from panther_base_helpers import deep_get
 BASH_INJECTION_PATTERNS = [
     # Command substitution
     r"\$\([^)]+\)",  # $(command) - requires non-empty command
-    r"`[^`]+`",  # `command` - requires non-empty command
     # Variable expansion with command substitution
     r"\$\{[^}]*\$\([^)]+\)[^}]*\}",  # ${var$(cmd)var}
     r"\$\{[^}]*`[^`]+`[^}]*\}",  # ${var`cmd`var}

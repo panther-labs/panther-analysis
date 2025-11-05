@@ -13,19 +13,11 @@ def rule(event):
     # Handle issue_comment events (comments on issues or PRs)
     if event.get("comment") and action in ["created", "edited"]:
         if contains_bash_injection_pattern(event.deep_get("comment", "body")):
-            # Exclude backticks from comments as they are used for links
-            patterns = get_matched_bash_patterns(event.deep_get("comment", "body"))
-            if patterns and len(patterns) == 1 and patterns[0]["pattern"] == "`[^`]+`":
-                return False
             return True
 
     # Handle pull_request_review events
     if event.get("review") and action in ["submitted", "edited"]:
         if contains_bash_injection_pattern(event.deep_get("review", "body")):
-            # Exclude backticks from comments as they are used for links
-            patterns = get_matched_bash_patterns(event.deep_get("review", "body"))
-            if patterns and len(patterns) == 1 and patterns[0]["pattern"] == "`[^`]+`":
-                return False
             return True
     return False
 
