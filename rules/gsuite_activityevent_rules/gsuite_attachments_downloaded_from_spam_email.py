@@ -2,15 +2,19 @@ from panther_gsuite_helpers import gsuite_activityevent_alert_context
 
 
 def rule(event):
-    if event.deep_get("id", "applicationName") != "gmail":
+    if event.deep_get("id", "applicationName", default="<UNKNOWN_APPLICATION>") != "gmail":
         return False
-    return event.deep_get("parameters", "message_info", "is_spam") is True and event.deep_get(
-        "parameters", "event_info", "mail_event_type"
-    ) in (17, 18, 19)
+    return event.deep_get(
+        "parameters", "message_info", "is_spam", default=False
+    ) is True and event.deep_get("parameters", "event_info", "mail_event_type", default=0) in (
+        17,
+        18,
+        19,
+    )
 
 
 def title(event):
-    user = event.deep_get("actor", "email")
+    user = event.deep_get("actor", "email", default="<UNKNOWN_USER>")
     return f"[{user}] has downloaded potentially malicious attachments from a spam email"
 
 

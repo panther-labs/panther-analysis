@@ -13,11 +13,11 @@ MALICIOUS_SMTP_RESPONSES = {
 
 
 def rule(event):
-    if event.deep_get("id", "applicationName") != "gmail":
+    if event.deep_get("id", "applicationName", default="<UNKNOWN_APPLICATION>") != "gmail":
         return False
 
     smtp_response_reason = event.deep_get(
-        "parameters", "message_info", "connection_info", "smtp_response_reason"
+        "parameters", "message_info", "connection_info", "smtp_response_reason", default=0
     )
 
     return smtp_response_reason in MALICIOUS_SMTP_RESPONSES
@@ -26,7 +26,7 @@ def rule(event):
 def title(event):
     user = event.deep_get("actor", "email", default="<UNKNOWN_USER>")
     smtp_response_reason = event.deep_get(
-        "parameters", "message_info", "connection_info", "smtp_response_reason"
+        "parameters", "message_info", "connection_info", "smtp_response_reason", default=0
     )
     reason_description = MALICIOUS_SMTP_RESPONSES.get(
         smtp_response_reason, f"Unknown ({smtp_response_reason})"
@@ -44,7 +44,7 @@ def alert_context(event):
 
     # Add specific SMTP response information
     smtp_response_reason = event.deep_get(
-        "parameters", "message_info", "connection_info", "smtp_response_reason"
+        "parameters", "message_info", "connection_info", "smtp_response_reason", default=0
     )
 
     context.update(
@@ -54,7 +54,7 @@ def alert_context(event):
                 smtp_response_reason, f"Unknown ({smtp_response_reason})"
             ),
             "smtp_reply_code": event.deep_get(
-                "parameters", "message_info", "connection_info", "smtp_reply_code"
+                "parameters", "message_info", "connection_info", "smtp_reply_code", default=0
             ),
         }
     )

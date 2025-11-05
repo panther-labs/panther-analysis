@@ -3,7 +3,7 @@ from panther_gsuite_helpers import gsuite_activityevent_alert_context
 
 def rule(event):
 
-    if event.deep_get("id", "applicationName") != "gmail":
+    if event.deep_get("id", "applicationName", default="<UNKNOWN_APPLICATION>") != "gmail":
         return False
 
     dmarc_passed = event.deep_get(
@@ -11,20 +11,20 @@ def rule(event):
         "message_info",
         "connection_info",
         "dmarc_pass",
-        default="<UNKNOWN_DMARC_PASSED>",
+        default="<UNKNOWN_DMARC_PASS>",
     )
     spf_passed = event.deep_get(
-        "parameters", "message_info", "connection_info", "spf_pass", default="<UNKNOWN_SPF_PASSED>"
+        "parameters", "message_info", "connection_info", "spf_pass", default="<UNKNOWN_SPF_PASS>"
     )
     dkim_passed = event.deep_get(
         "parameters",
         "message_info",
         "connection_info",
         "dkim_pass",
-        default="<UNKNOWN_DKIM_PASSED>",
+        default="<UNKNOWN_DKIM_PASS>",
     )
 
-    event_success = event.deep_get("parameters", "event_info", "success")
+    event_success = event.deep_get("parameters", "event_info", "success", default=False)
 
     if event_success is True:  # Message was delivered despite failures
         if dmarc_passed is False:

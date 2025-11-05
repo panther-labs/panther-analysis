@@ -2,13 +2,13 @@ from panther_gsuite_helpers import gsuite_activityevent_alert_context
 
 
 def rule(event):
-    if event.deep_get("id", "applicationName") != "gmail":
+    if event.deep_get("id", "applicationName", default="<UNKNOWN_APPLICATION>") != "gmail":
         return False
-    return event.deep_get("parameters", "message_info", "is_spam") is True
+    return event.deep_get("parameters", "message_info", "is_spam", default=False) is True
 
 
 def title(event):
-    user = event.deep_get("actor", "email")
+    user = event.deep_get("actor", "email", default="<UNKNOWN_USER>")
     return f"Surge in spam emails received by user [{user}]"
 
 
