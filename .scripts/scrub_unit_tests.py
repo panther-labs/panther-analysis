@@ -2,8 +2,10 @@
 detections."""
 
 import logging
+import os
 import subprocess
 import sys
+from pathlib import Path
 
 from loganon import Anonymizer, all_rules_list
 from ruamel.yaml import YAML
@@ -12,6 +14,43 @@ yaml = YAML(typ="rt")
 anonymizer = Anonymizer(all_rules_list())
 
 logging.basicConfig(level=logging.DEBUG)
+
+# Get the repository root to validate paths
+REPO_ROOT = Path(__file__).parent.parent.resolve()
+
+
+def validate_file_path(file_path: str) -> Path:
+    """
+    Validate and resolve a file path to prevent directory traversal attacks.
+
+    Args:
+        file_path: The file path to validate
+
+    Returns:
+        Resolved Path object
+
+    Raises:
+        ValueError: If the path is invalid or attempts directory traversal
+    """
+    try:
+        # Convert to Path and resolve to absolute path
+        path = Path(file_path).resolve()
+
+        # Ensure the path is within the repository
+        if not str(path).startswith(str(REPO_ROOT)):
+            raise ValueError(f"Path {file_path} is outside repository root")
+
+        # Ensure it's a file (not a directory or special file)
+        if path.exists() and not path.is_file():
+            raise ValueError(f"Path {file_path} is not a regular file")
+
+        # Ensure it ends with .yml for files we process
+        if not str(path).endswith('.yml'):
+            raise ValueError(f"Path {file_path} does not end with .yml")
+
+        return path
+    except (OSError, RuntimeError) as e:
+        raise ValueError(f"Invalid file path {file_path}: {e}")
 
 
 def get_unit_tests(raw_text: str) -> dict[str, tuple[int, int]]:
@@ -85,14 +124,23 @@ def get_unit_tests(raw_text: str) -> dict[str, tuple[int, int]]:
 
 def get_tests_editied_in_commit(fname: str) -> dict[str, tuple[int, int]]:
     """Compares the line numbers for each test log to those changed in the commit."""
+    # Validate the file path to prevent directory traversal
+    validated_path = validate_file_path(fname)
+
     # First, let's get the line numbers for each test log
-    with open(fname, "r") as f:
+    with open(validated_path, "r", encoding="utf-8") as f:
         raw_text = f.read()
         test_info = get_unit_tests(raw_text)
 
     # Next, we fetch the git diff for the file
+    # Use relative path from repo root for git commands
+    relative_path = validated_path.relative_to(REPO_ROOT)
     result = subprocess.run(
-        ["git", "diff", "--diff-filter=AM", "--staged", fname], capture_output=True, text=True
+        ["git", "diff", "--diff-filter=AM", "--staged", "--", str(relative_path)],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=str(REPO_ROOT),
     )
     # Git diff outputs the adjusted lines like
     #   @@ -12,11 +12,116 @@
@@ -132,9 +180,12 @@ def get_files_edited_in_commit():
         ["git", "diff", "--name-only", "--cached", "--diff-filter=AM"],
         capture_output=True,
         text=True,
+        check=False,
+        cwd=str(REPO_ROOT),
     )
     files = result.stdout.splitlines()
-    return files
+    # Return absolute paths for consistency with the rest of the code
+    return [str(REPO_ROOT / f) for f in files]
 
 
 def main(mode: str = "cli"):
@@ -151,7 +202,14 @@ def main(mode: str = "cli"):
             continue
         logging.info(f"Processing {file}")
 
-        with open(file, "r") as f:
+        try:
+            # Validate the file path before processing
+            validated_path = validate_file_path(file)
+        except ValueError as e:
+            logging.error(f"Skipping invalid file path {file}: {e}")
+            continue
+
+        with open(validated_path, "r", encoding="utf-8") as f:
             raw_text = f.read()
             test_info = get_unit_tests(raw_text)
         if mode == "commit":
@@ -168,12 +226,18 @@ def main(mode: str = "cli"):
             raw_lines = raw_lines[:start] + new_text.splitlines() + raw_lines[end:]
         raw_text = "\n".join(raw_lines)
 
-        with open(file, "w") as f:
+        with open(validated_path, "w", encoding="utf-8") as f:
             f.write(raw_text)
 
         if mode == "commit":
             # Now we need to add the file back to the git index
-            subprocess.run(["git", "add", file], check=True)
+            # Use relative path from repo root for git commands
+            relative_path = validated_path.relative_to(REPO_ROOT)
+            subprocess.run(
+                ["git", "add", "--", str(relative_path)],
+                check=True,
+                cwd=str(REPO_ROOT),
+            )
 
         logging.info(f"Done processing {file}; replaced {len(test_info)} tests")
 
