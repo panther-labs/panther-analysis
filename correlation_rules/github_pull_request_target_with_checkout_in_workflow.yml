@@ -1,0 +1,141 @@
+AnalysisType: correlation_rule
+RuleID: "GitHub.PullRequestTarget.WITH.Checkout.In.Workflow"
+DisplayName: "GitHub pull_request_target Workflow with Checkout Action"
+Enabled: true
+Severity: Medium
+Tags:
+  - CI/CD
+  - Workflow
+  - Supply Chain
+  - Privilege Escalation
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0004:T1134  # Privilege Escalation: Access Token Manipulation
+Description: >
+  Detects when a pull_request_target workflow contains a checkout action, creating a potential
+  security risk. pull_request_target workflows run with elevated privileges and have access to
+  repository secrets even when triggered by external contributors from forks. When combined with
+  a checkout action, this can create dangerous attack vectors. This is a well-known technique for
+  supply chain compromise in GitHub Actions, often called a "pwn request". 
+Runbook: |
+  0: Assess Actual Severity
+    - Check if this was triggered by a cross-fork PR. Cross-fork PRs are significantly more dangerous as any GitHub user can submit them.
+  1. Review the workflow file immediately to determine the security impact
+  2. Check what the checkout action is checking out:
+     - Look for 'ref' parameter in the checkout step in .github/workflows/
+     - PR head checkout should be treated as higher severity as untrusted code can be executed with the wokflow secrets (ref: ${{ github.event.pull_request.head.sha }}). If no ref is specified in the workflow, the default is the PR head.
+     - Base branch checkout (ref: ${{ github.event.pull_request.base.ref }}) or ${{ github.base_ref }} can be treated as medium severity. They are generally safer but can still be vulnerable.
+  3. Verify if the workflow uses untrusted PR context data (even with base branch checkout):
+     - Check for: ${{ github.event.pull_request.title }}, .body, .head_ref, .user.login, etc.
+     - These can inject malicious commands even when code is trusted
+     - If found, carefully review workflow and PR logs to determine malicious intent.
+  4. Check if workflow executes code from the checked-out repository:
+     - Build scripts, tests, or any arbitrary code execution
+     - npm install, pip install, or dependency installations from checked out code
+     - If yes with PR head checkout, this should be treated as a higher severity alert.
+  5. Review workflow permissions and secret access:
+     - Check GITHUB_TOKEN permissions
+     - Identify which secrets are accessible
+     - Higher risk if write permissions or sensitive secrets present
+  7. Immediate mitigation if vulnerable:
+     - Review and consider disabling
+     - Switch to pull_request event if elevated privileges aren't needed
+     - Implement explicit checkout of trusted refs only
+     - Sanitize all PR context variables before use
+  8. Review PR author and changes for signs of malicious intent
+  9. Check workflow run logs for suspicious activity or exfiltration attempts
+Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+Detection:
+  - Group:
+      - ID: PullRequestTarget
+        RuleID: GitHub.Webhook.PullRequestTargetUsage
+      - ID: WorkflowCheckout
+        RuleID: GitHub.Webhook.WorkflowContainsCheckout
+    MatchCriteria:
+      field_name:
+        - GroupID: PullRequestTarget
+          Match: workflow_run.id
+        - GroupID: WorkflowCheckout
+          Match: workflow_job.run_id
+    EventEvaluationOrder: Chronological
+    LookbackWindowMinutes: 90
+    Schedule:
+      RateMinutes: 60
+      TimeoutMinutes: 10
+Tests:
+  - Name: pull_request_target with checkout in same workflow
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: pull_request_target without checkout
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+
+  - Name: Checkout in workflow but not pull_request_target
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: pull_request_target and checkout in different workflows
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "87654321":
+              - "2025-10-15T18:42:00Z"
+
+  - Name: Multiple workflow jobs with checkout for same pull_request_target run
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:41:00Z"
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+              - "2025-10-15T18:43:00Z"
+
+  - Name: Checkout happens before pull_request_target completion (out of order)
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: WorkflowCheckout
+        Matches:
+          workflow_job.run_id:
+            "12345678":
+              - "2025-10-15T18:42:00Z"
+      - ID: PullRequestTarget
+        Matches:
+          workflow_run.id:
+            "12345678":
+              - "2025-10-15T18:45:00Z"

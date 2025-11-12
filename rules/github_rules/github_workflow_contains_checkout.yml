@@ -1,0 +1,193 @@
+AnalysisType: rule
+Filename: github_workflow_contains_checkout.py
+RuleID: "GitHub.Webhook.WorkflowContainsCheckout"
+DisplayName: "GitHub Workflow Contains Checkout Action"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+Tags:
+  - CI/CD
+  - Workflow
+  - Supply Chain
+Severity: Info
+CreateAlert: false
+Description: >
+  Detects when a GitHub Actions workflow job contains a checkout step. The checkout action
+  (actions/checkout) pulls repository code into the workflow runner. In certain contexts,
+  especially with pull_request_target triggers or workflows with elevated permissions,
+  checking out untrusted code can pose security risks. This detection helps identify
+  workflows that interact with repository code for security review.
+Reference: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+Tests:
+  - Name: "Workflow job with checkout step completed"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914522
+        name: "Validate PR Title"
+        status: "completed"
+        conclusion: "success"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/12345678/job/52841914522"
+        head_branch: "feature-branch"
+        head_sha: "abc123def456789"
+        run_id: 12345678
+        runner_name: "GitHub Actions"
+        started_at: "2025-10-15T18:41:58Z"
+        completed_at: "2025-10-15T18:47:18Z"
+        steps:
+          - completed_at: "2025-10-15T18:42:00Z"
+            conclusion: "success"
+            name: "Set up job"
+            number: 1
+            started_at: "2025-10-15T18:41:59Z"
+            status: "completed"
+          - completed_at: "2025-10-15T18:42:02Z"
+            conclusion: "success"
+            name: "Checkout code"
+            number: 2
+            started_at: "2025-10-15T18:42:00Z"
+            status: "completed"
+          - completed_at: "2025-10-15T18:42:05Z"
+            conclusion: "success"
+            name: "Run tests"
+            number: 3
+            started_at: "2025-10-15T18:42:02Z"
+            status: "completed"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Workflow job with case-insensitive checkout variation"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914523
+        name: "Build"
+        status: "completed"
+        conclusion: "success"
+        steps:
+          - name: "Setup environment"
+            status: "completed"
+            conclusion: "success"
+          - name: "CHECKOUT Repository"
+            status: "completed"
+            conclusion: "success"
+          - name: "Build project"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job with 'Post Checkout' step"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914524
+        name: "Deploy"
+        status: "completed"
+        conclusion: "success"
+        steps:
+          - name: "Initialize"
+            status: "completed"
+            conclusion: "success"
+          - name: "Post Checkout code"
+            status: "completed"
+            conclusion: "success"
+          - name: "Deploy application"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job without checkout step"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914525
+        name: "Lint"
+        status: "completed"
+        conclusion: "success"
+        steps:
+          - name: "Set up job"
+            status: "completed"
+            conclusion: "success"
+          - name: "Run linter"
+            status: "completed"
+            conclusion: "success"
+          - name: "Complete job"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job requested (not completed)"
+    ExpectedResult: false
+    Log:
+      action: "requested"
+      workflow_job:
+        id: 52841914526
+        name: "Test"
+        status: "queued"
+        steps:
+          - name: "Checkout code"
+            status: "pending"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job with empty steps array"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914527
+        name: "Empty Job"
+        status: "completed"
+        conclusion: "skipped"
+        steps: []
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job with null steps"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841914528
+        name: "Null Steps Job"
+        status: "completed"
+        conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+
+  - Name: "Workflow job in progress with checkout"
+    ExpectedResult: false
+    Log:
+      action: "in_progress"
+      workflow_job:
+        id: 52841914529
+        name: "Build"
+        status: "in_progress"
+        steps:
+          - name: "Checkout code"
+            status: "completed"
+            conclusion: "success"
+          - name: "Build"
+            status: "in_progress"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
