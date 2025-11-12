@@ -8,7 +8,7 @@ def crowdstrike_detection_alert_context(event):
         "parentcommandline": get_crowdstrike_field(event, "ParentCommandLine", default=""),
         "filename": get_crowdstrike_field(event, "FileName", default=""),
         "filepath": get_crowdstrike_field(event, "FilePath", default=""),
-        "description": get_crowdstrike_field(event, "DetectDescription", default=""),
+        "description": get_crowdstrike_field(event, "Description", default=""),
         "action": get_crowdstrike_field(event, "PatternDispositionDescription", default=""),
     }
 
