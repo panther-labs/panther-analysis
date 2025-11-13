@@ -8,7 +8,8 @@ on:
   push:
     branches:
       - "main"
-      - "mcr/EPD-4377-versioning-in-pr"
+      # add branch name here to test workflow on PR
+      # - ""
 
 jobs:
   generate-versions:
@@ -33,9 +34,7 @@ jobs:
 
       - name: Generate .versions.yml file
         run: |
-          # Get tags for the current commit
           echo "Running on commit: ${{ github.sha }}"
-
           make generate-versions
 
       - name: Create Pull Request
