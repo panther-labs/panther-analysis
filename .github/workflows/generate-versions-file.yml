@@ -9,7 +9,7 @@ on:
     branches:
       - "main"
       # add branch name here to test workflow on PR
-      # - ""
+      - "mcr/EPD-4377-versioning-in-pr"
 
 jobs:
   generate-versions:
@@ -37,14 +37,23 @@ jobs:
           echo "Running on commit: ${{ github.sha }}"
           make generate-versions
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6.3.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          gpg_private_key: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7.0.8
+        with:
+          token: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
           commit-message: "Auto-generated .versions.yml file"
           committer: panther-bot-automation <github-service-account-automation@panther.io>
           author: panther-bot-automation <github-service-account-automation@panther.io>
-          signoff: false
+          sign-commits: true
+          base: main
           branch: auto-update-versions-${{ github.sha }}
           delete-branch: true
           title: "Auto-generated .versions.yml file"
