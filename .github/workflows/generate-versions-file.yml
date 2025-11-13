@@ -45,16 +45,25 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
+      - name: Branch and commit changes
+        run: |
+          git config --global user.email "github-service-account-automation@panther.io"
+          git config --global user.name "panther-bot-automation"
+          git switch -c auto-update-versions-${{ github.sha }}
+          git add .
+          git commit -S -m "Auto-generated .versions.yml file"
+          git push origin auto-update-versions-${{ github.sha }}
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.8
         with:
           token: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
-          commit-message: "Auto-generated .versions.yml file"
-          committer: panther-bot-automation <github-service-account-automation@panther.io>
+          # commit-message: "Auto-generated .versions.yml file"
+          # committer: panther-bot-automation <github-service-account-automation@panther.io>
           author: panther-bot-automation <github-service-account-automation@panther.io>
           sign-commits: true
           base: main
-          branch: auto-update-versions-${{ github.sha }}
+          # branch: auto-update-versions-${{ github.sha }}
           delete-branch: true
           title: "Auto-generated .versions.yml file"
           body: |
