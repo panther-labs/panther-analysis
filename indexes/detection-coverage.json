@@ -4387,6 +4387,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
+        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.",
         "DisplayName": "Gmail Malicious SMTP Response",
         "LogTypes": [
@@ -4402,12 +4411,6 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml"
-        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
-        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
-        "LogTypes": [
-            "GitHub.Webhook"
-        ],
-        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
     },
     {
         "AnalysisType": "Rule",
