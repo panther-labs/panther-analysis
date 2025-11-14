@@ -49,10 +49,7 @@ jobs:
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
-          git switch -c auto-update-versions-${{ github.sha }}
-          git add .
-          git commit -S -m "Auto-generated .versions.yml file"
-          git push origin auto-update-versions-${{ github.sha }}
+          git commit -am "Auto-generated .versions.yml file"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.8
@@ -76,3 +73,6 @@ jobs:
             automation
             versions
           draft: false
+          git-config: |
+            commit.gpgsign=true
+            user.signingkey=${{ steps.import_gpg.outputs.keyid }}
