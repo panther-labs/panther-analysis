@@ -49,7 +49,8 @@ jobs:
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
-          git commit -am "Auto-generated .versions.yml file"
+          git add .
+          git commit -m "Auto-generated .versions.yml file"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.8
