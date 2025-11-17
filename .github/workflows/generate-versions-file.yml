@@ -38,12 +38,12 @@ jobs:
 
       - name: Check for changes
         run: |
-          if git diff --exit-code > /dev/null; then
-            echo "No changes to commit"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          else
+          if [ -n "$(git status --porcelain)" ]; then
             echo "Changes detected"
             echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Import GPG key
