@@ -37,6 +37,7 @@ jobs:
           make generate-versions
 
       - name: Check for changes
+        id: check-for-changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             echo "Changes detected"
