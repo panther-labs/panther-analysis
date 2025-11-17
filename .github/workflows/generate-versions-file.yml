@@ -49,6 +49,7 @@ jobs:
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
+          git switch main
           git switch -c auto-update-versions-${{ github.sha }}
           git add .
           git commit -m "Auto-generated .versions.yml file"
