@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - "main"
+      - "mcr/EPD-4377-versioning-in-pr"
 
 jobs:
   generate-versions:
@@ -35,6 +36,16 @@ jobs:
           echo "Running on commit: ${{ github.sha }}"
           make generate-versions
 
+      - name: Check for changes
+        run: |
+          if git diff --exit-code > /dev/null; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec #v6.3.0
         with:
@@ -44,6 +55,7 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Branch and commit changes
+        if: steps.check-for-changes.outputs.has_changes == 'true'
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
@@ -55,6 +67,7 @@ jobs:
 
       # peter-evans/create-pull-request@v7.0.8 was not working with git signing, so using gh cli instead
       - name: Create Pull Request
+        if: steps.check-for-changes.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }} # needed for gh cli
         run: |
