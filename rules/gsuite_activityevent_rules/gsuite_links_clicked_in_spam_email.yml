@@ -1,0 +1,145 @@
+AnalysisType: rule
+Filename: gsuite_links_clicked_in_spam_email.py
+RuleID: "GSuite.Gmail.SpamEmail.LinkClicked"
+DisplayName: "Gsuite Link Clicked in Spam Email"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566.002 # Initial Access: Phishing - Spearphishing Link
+    - TA0011:T1204.001 # Execution: User Execution - Malicious Link
+Severity: High
+Status: Experimental
+Description: Detects when a user click links contained in a received email that is classified as spam.
+Threshold: 1
+DedupPeriodMinutes: 60
+Tests:
+  - Name: Click link from Spam Email
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": [
+          "1.1.1.1"
+        ],
+        "p_any_actor_ids": [
+          "1234567891234"
+        ],
+        "p_any_domain_names": [
+          "evil.com"
+        ],
+        "p_event_time": "2025-11-04 20:44:43.248000000",
+        "p_log_type": "GSuite.ActivityEvent",
+        "p_parse_time": "2025-11-04 20:49:46.688935963",
+        "p_row_id": "0000000000de09c1dc6f0828cbad2ca5",
+        "p_schema_version": 0,
+        "p_source_id": "7ee69d4d-df1b-40b3-b5e8-6826dee34b1c",
+        "p_source_label": "Google Workspace",
+        "p_udm": {
+          "source": {
+            "address": "1.1.1.1",
+            "ip": "1.1.1.1"
+          },
+          "user": {
+            "provider_id": "123456789"
+          }
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "denethor@lotr.com",
+          "profileId": "123456789"
+        },
+        "id": {
+          "applicationName": "gmail",
+          "customerId": "1A2B3C",
+          "time": "2025-11-04 20:44:43.248000000",
+          "uniqueQualifier": "-123456789"
+        },
+        "ipAddress": "1.1.1.1",
+        "kind": "admin#reports#activity",
+        "name": "delivery",
+        "parameters": {
+          "event_info": {
+            "elapsed_time_usec": 368746,
+            "timestamp_usec": 1762289083248347,
+            "mail_event_type" : 15,
+          },
+          "message_info": {
+            "action_type": 19,
+            "is_spam": true,
+            "flattened_destinations": "gmail-for-work-catchall::denethor@lotr.com",
+            "link_domain": [
+              "evil.com"
+            ],
+            "payload_size": 12345,
+            "subject": "You won 1 Million Dollar",
+            "message_set": {
+            "type": 46}
+          },
+        },
+        "type": "delivery_type"
+      }
+  - Name: Other Email Event
+    ExpectedResult: false
+    Log:
+       {
+        "p_any_ip_addresses": [
+          "1.1.1.1"
+        ],
+        "p_any_actor_ids": [
+          "1234567891234"
+        ],
+        "p_any_domain_names": [
+          "evil.com"
+        ],
+        "p_event_time": "2025-11-04 20:44:43.248000000",
+        "p_log_type": "GSuite.ActivityEvent",
+        "p_parse_time": "2025-11-04 20:49:46.688935963",
+        "p_row_id": "165c80e3df1fc1cb9fb49af829c4fe26",
+        "p_schema_version": 0,
+        "p_source_id": "7ee69d4d-df1b-40b3-b5e8-6826dee34b1c",
+        "p_source_label": "Google Workspace",
+        "p_udm": {
+          "source": {
+            "address": "1.1.1.1",
+            "ip": "1.1.1.1"
+          },
+          "user": {
+            "provider_id": "123456789"
+          }
+        },
+        "actor": {
+          "callerType": "USER",
+          "email": "aragorn@lotr.com",
+          "profileId": "123456789"
+        },
+        "id": {
+          "applicationName": "gmail",
+          "customerId": "1A2B3C",
+          "time": "2025-11-04 20:44:43.248000000",
+          "uniqueQualifier": "-123456789"
+        },
+        "ipAddress": "1.1.1.1",
+        "kind": "admin#reports#activity",
+        "name": "delivery",
+        "parameters": {
+          "event_info": {
+            "elapsed_time_usec": 368746,
+            "timestamp_usec": 1762289083248347
+          },
+          "message_info": {
+            "action_type": 19,
+            "flattened_destinations": "gmail-for-work-catchall::aragorn@lotr.com",
+            "link_domain": [
+              "evil.com"
+            ],
+            "payload_size": 12345,
+            "subject": "You won 1 Million Dollar",
+            "message_set": {
+            "type": 1}
+          },
+        },
+        "type": "delivery_type"
+      }

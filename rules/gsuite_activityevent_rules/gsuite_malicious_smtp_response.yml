@@ -1,0 +1,197 @@
+AnalysisType: rule
+Filename: gsuite_malicious_smtp_response.py
+RuleID: "GSuite.Gmail.Malicious.SMTP.Response"
+DisplayName: "Gmail Malicious SMTP Response"
+Enabled: true
+LogTypes:
+  - GSuite.ActivityEvent
+Tags:
+  - GSuite
+  - Gmail
+  - Email Security
+  - Malware
+  - Spam
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566 # Initial Access: Phishing
+Severity: High
+Status: Experimental
+Description: >
+  Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including
+  malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts.
+  This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
+Reference: https://support.google.com/a/answer/12384955
+Runbook: |
+  1. Review the sender's email address and domain
+  2. Check the SMTP response reason and reply code for details
+  3. Investigate the sender's IP address for additional context (geolocation, reputation)
+  4. Review authentication status (SPF, DKIM, DMARC)
+  5. If malware was detected, check if similar messages were received by other users
+  6. Consider adding sender to blocklist if pattern of malicious activity is confirmed
+  7. For DoS attempts, review firewall and rate limiting configurations
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - user_email
+  - sender_address
+  - smtp_response_reason
+Tests:
+  - Name: Malware Detected
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": ["1.1.1.1"],
+        "p_event_time": "2025-11-04 20:44:43.248000000",
+        "p_log_type": "GSuite.ActivityEvent",
+        "actor": {
+          "callerType": "USER",
+          "email": "frodo@lotr.com",
+          "profileId": "123456789"
+        },
+        "id": {
+          "applicationName": "gmail",
+          "customerId": "C01abc123",
+          "time": "2025-11-04 20:44:43.248000000",
+          "uniqueQualifier": "-123456789"
+        },
+        "ipAddress": "1.1.1.1",
+        "kind": "admin#reports#activity",
+        "name": "delivery",
+        "parameters": {
+          "event_info": {
+            "elapsed_time_usec": 368746,
+            "timestamp_usec": 1730751883248347,
+            "success": false
+          },
+          "message_info": {
+            "action_type": 2,
+            "source": {
+              "address": "eve@lexcorp.com",
+              "from_header_address": "eve@lexcorp.com"
+            },
+            "destination": [
+              {
+                "address": "frodo@lotr.com",
+                "service": "gmail-ui"
+              }
+            ],
+            "connection_info": {
+              "client_ip": "1.1.1.1",
+              "is_internal": false,
+              "smtp_response_reason": 3,
+              "smtp_reply_code": 550,
+              "dkim_pass": false,
+              "spf_pass": false,
+              "dmarc_pass": false,
+              "ip_geo_country": "XX"
+            },
+            "subject": "Invoice Attached - Please Review"
+          }
+        },
+        "type": "message_delivery"
+      }
+  - Name: Blatant Spam
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": ["1.2.3.4"],
+        "p_event_time": "2025-11-04 21:10:15.000000000",
+        "p_log_type": "GSuite.ActivityEvent",
+        "actor": {
+          "callerType": "USER",
+          "email": "denethor@lotr.com",
+          "profileId": "987654321"
+        },
+        "id": {
+          "applicationName": "gmail",
+          "customerId": "C01abc123",
+          "time": "2025-11-04 21:10:15.000000000",
+          "uniqueQualifier": "-987654321"
+        },
+        "ipAddress": "1.2.3.4",
+        "kind": "admin#reports#activity",
+        "name": "delivery",
+        "parameters": {
+          "event_info": {
+            "elapsed_time_usec": 250000,
+            "timestamp_usec": 1730753415000000,
+            "success": false
+          },
+          "message_info": {
+            "action_type": 2,
+            "source": {
+              "address": "john@justice.org",
+              "from_header_address": "john@justice.org"
+            },
+            "destination": [
+              {
+                "address": "denethor@lotr.com",
+                "service": "gmail-ui"
+              }
+            ],
+            "connection_info": {
+              "client_ip": "1.2.3.4",
+              "is_internal": false,
+              "smtp_response_reason": 13,
+              "smtp_reply_code": 550,
+              "dkim_pass": false,
+              "spf_pass": true,
+              "dmarc_pass": false
+            },
+            "subject": "WINNER!!! Claim your prize NOW!!!"
+          }
+        },
+        "type": "message_delivery"
+      }
+  - Name: Normal Email - Should Not Alert
+    ExpectedResult: false
+    Log:
+      {
+        "p_any_ip_addresses": ["172.16.0.10"],
+        "p_event_time": "2025-11-04 20:00:00.000000000",
+        "p_log_type": "GSuite.ActivityEvent",
+        "actor": {
+          "callerType": "USER",
+          "email": "gimli@lotr.com",
+          "profileId": "123456789"
+        },
+        "id": {
+          "applicationName": "gmail",
+          "customerId": "C01abc123",
+          "time": "2025-11-04 20:00:00.000000000",
+          "uniqueQualifier": "-123456789"
+        },
+        "ipAddress": "172.16.0.10",
+        "kind": "admin#reports#activity",
+        "name": "delivery",
+        "parameters": {
+          "event_info": {
+            "elapsed_time_usec": 100000,
+            "timestamp_usec": 1730750400000000,
+            "success": true
+          },
+          "message_info": {
+            "action_type": 2,
+            "source": {
+              "address": "clark@justice.org",
+              "from_header_address": "colleague@partner-company.com"
+            },
+            "destination": [
+              {
+                "address": "gimli@lotr.com",
+                "service": "gmail-ui"
+              }
+            ],
+            "connection_info": {
+              "client_ip": "172.16.0.10",
+              "is_internal": false,
+              "smtp_response_reason": 1,
+              "smtp_reply_code": 250,
+              "dkim_pass": true,
+              "spf_pass": true,
+              "dmarc_pass": true
+            },
+            "subject": "Meeting Notes"
+          }
+        },
+        "type": "message_delivery"
+      }
