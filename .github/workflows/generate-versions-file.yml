@@ -52,7 +52,7 @@ jobs:
           git switch -c auto-update-versions-${{ github.sha }}
           git add .
           git commit -m "Auto-generated .versions.yml file"
-          git push origin auto-update-versions-${{ github.sha }}
+          # git push origin auto-update-versions-${{ github.sha }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.8
