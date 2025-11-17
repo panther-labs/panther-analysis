@@ -55,6 +55,8 @@ jobs:
           git push origin auto-update-versions-${{ github.sha }}
 
       - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
         run: |
           gh pr create \
             --title "Auto-generated .versions.yml file" \
