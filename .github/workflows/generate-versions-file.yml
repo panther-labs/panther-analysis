@@ -9,7 +9,7 @@ on:
     branches:
       - "main"
       # add branch name here to test workflow on PR
-      - "mcr/EPD-4377-versioning-in-pr"
+      # - "test-generate-versions"
 
 jobs:
   generate-versions:
@@ -55,9 +55,10 @@ jobs:
           git commit -m "Auto-generated .versions.yml file"
           git push origin auto-update-versions-${{ github.sha }}
 
+      # peter-evans/create-pull-request@v7.0.8 was not working with git signing, so using gh cli instead
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
+          GH_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }} # needed for gh cli
         run: |
           gh pr create \
             --title "Auto-generated .versions.yml file" \
