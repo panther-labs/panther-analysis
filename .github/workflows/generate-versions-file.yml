@@ -8,8 +8,6 @@ on:
   push:
     branches:
       - "main"
-      # add branch name here to test workflow on PR
-      # - "test-generate-versions"
 
 jobs:
   generate-versions:
@@ -38,7 +36,7 @@ jobs:
           make generate-versions
 
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6.3.0
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec #v6.3.0
         with:
           gpg_private_key: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
