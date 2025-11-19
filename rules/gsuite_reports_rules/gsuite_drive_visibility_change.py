@@ -99,9 +99,7 @@ def rule(event):
         ALERT_DETAILS[log]["NEW_VISIBILITY"] = param_lookup(
             event.get("parameters", {}), "visibility"
         )
-        ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(
-            event.get("parameters", {}), "doc_title"
-        )
+        ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(event.get("parameters", {}), "doc_title")
         if param_lookup(event.get("parameters", {}), "new_value") != ["none"]:
             ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
                 event.get("parameters", {}), "new_value"
@@ -123,9 +121,7 @@ def rule(event):
             ALERT_DETAILS[log]["TARGET_USER_EMAILS"] = [
                 param_lookup(event.get("parameters", {}), "target_user")
             ]
-            ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(
-                event.get("parameters", {}), "doc_title"
-            )
+            ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(event.get("parameters", {}), "doc_title")
             ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
                 event.get("parameters", {}), "new_value"
             )

@@ -42,10 +42,12 @@ def gsuite_parameter_lookup(parameters, key):
     # Handle None or empty parameters
     if not parameters:
         return None
-    
+
     # Handle GSuite.ActivityEvent format (dict/object or dict-like object with .get method)
     # This includes both plain dicts and PantherEvent-wrapped dicts
-    if isinstance(parameters, dict) or (hasattr(parameters, 'get') and not isinstance(parameters, list)):
+    if isinstance(parameters, dict) or (
+        hasattr(parameters, "get") and not isinstance(parameters, list)
+    ):
         return parameters.get(key)
 
     # Handle GSuite.Reports format (list)
