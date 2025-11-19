@@ -1,0 +1,106 @@
+AnalysisType: rule
+Filename: github_crossfork_workflow_run.py
+RuleID: "GitHub.CrossFork.Workflow.Run"
+DisplayName: "GitHub Cross-Fork Workflow Run"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0004:T1134 # Privilege Escalation: Access Token Manipulation
+Tags:
+  - CI/CD
+  - Workflow
+CreateAlert: false
+Severity: Info
+Description: Tracks workflows run in cross-fork pull requests.
+Reference: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+Tests:
+  - Name: "Cross-fork pull request workflow"
+    ExpectedResult: true
+    Log:
+      action: "requested"
+      workflow_run:
+        id: 87654321
+        name: "Build and Test"
+        event: "pull_request"
+        status: "in_progress"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/87654321"
+        head_branch: "malicious-feature"
+        pull_requests:
+          - number: 456
+            head:
+              ref: "malicious-feature"
+              repo:
+                id: 999999999
+                name: "example-repo"
+                full_name: "attacker/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: false
+
+  - Name: "Cross-fork push workflow"
+    ExpectedResult: false
+    Log:
+      action: "requested"
+      workflow_run:
+        id: 87654321
+        name: "Build and Test"
+        event: "push"
+        status: "completed"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/87654321"
+        head_branch: "malicious-feature"
+        pull_requests:
+          - number: 456
+            head:
+              ref: "malicious-feature"
+              repo:
+                id: 999999999
+                name: "example-repo"
+                full_name: "attacker/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: false
+
+  - Name: "Not cross-fork"
+    ExpectedResult: false
+    Log:
+      action: "requested"
+      workflow_run:
+        id: 18538851870
+        name: "Your-Workflow"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/18538851870"
+        head_branch: "deathcon"
+        pull_requests: []
+        head_repository:
+          id: 1072340117
+          full_name: "example-org/example-repo"
+          fork: false
+        repository:
+          id: 1072340117
+          full_name: "example-org/example-repo"
+      repository:
+        id: 1072340117
+        full_name: "example-org/example-repo"
+        private: true

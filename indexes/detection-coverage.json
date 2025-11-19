@@ -351,15 +351,6 @@
         "YAMLPath": "rules/auth0_rules/auth0_login_brute_force.yml"
     },
     {
-        "AnalysisType": "Scheduled Query",
-        "Description": "",
-        "DisplayName": "Auth0 Brute Force Detection",
-        "LogTypes": [
-            "Auth0.Events"
-        ],
-        "YAMLPath": "queries/auth0_queries/auth0_brute_force.yml"
-    },
-    {
         "AnalysisType": "Rule",
         "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
@@ -4062,6 +4053,15 @@
         "YAMLPath": "correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "The \"download artifacts\" API, and various custom actions encapsulating it, doesn't differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.",
+        "DisplayName": "GitHub Artifact Download from Cross-Fork Workflow",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_artifact_download_from_forked_repo.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.",
         "DisplayName": "GitHub Branch Protection Disabled",
@@ -4090,6 +4090,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Tracks workflows run in cross-fork pull requests.",
+        "DisplayName": "GitHub Cross-Fork Workflow Run",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_crossfork_workflow_run.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Creates an alert if a dependabot alert is dismissed without being fixed.",
         "DisplayName": "GitHub Dependabot Vulnerability Dismissed",
         "LogTypes": [
@@ -4099,8 +4108,35 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects malicious patterns in GitHub pull request titles, descriptions, and commit messages that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity  for PRs that are not cross-fork.",
-        "DisplayName": "GitHub Malicious Pull Request Titles",
+        "Description": "Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Comment/Review Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_comment_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Commit Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_commit_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.",
+        "DisplayName": "GitHub Malicious Issue/Pages Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_issue_pages.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.",
+        "DisplayName": "GitHub Malicious Pull Request Content",
         "LogTypes": [
             "GitHub.Webhook"
         ],
@@ -4143,6 +4179,15 @@
         "YAMLPath": "rules/github_rules/github_public_repository_created.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.",
+        "DisplayName": "GitHub pull_request_target Workflow on Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_pull_request_target_with_self_hosted_runner.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.",
         "DisplayName": "GitHub pull_request_target Workflow Usage",
@@ -4150,6 +4195,15 @@
             "GitHub.Webhook"
         ],
         "YAMLPath": "rules/github_rules/github_pull_request_target_usage.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous attack vectors. This is a well-known technique for supply chain compromise in GitHub Actions, often called a \"pwn request\".",
+        "DisplayName": "GitHub pull_request_target Workflow with Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4297,6 +4351,69 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.",
+        "DisplayName": "GitHub Workflow Contains Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_contains_checkout.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.",
+        "DisplayName": "GitHub Workflow Dispatched by GitHub Actions Bot",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_dispatch_by_github_bot.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow downloads artifacts.",
+        "DisplayName": "GitHub Workflow Downloading Artifacts",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_artifact_download.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.",
+        "DisplayName": "GitHub Workflow Permissions Modified",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_permission_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
+        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.",
+        "DisplayName": "Gmail Malicious SMTP Response",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.",
+        "DisplayName": "Gmail Potential Spoofed Email Delivered",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Google accessed one of your GSuite resources directly, most likely in response to a support incident.",
         "DisplayName": "Google Accessed a GSuite Resource",
         "LogTypes": [
@@ -4369,6 +4486,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.",
+        "DisplayName": "Gsuite Attachments Downloaded from Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A User or Admin Has Modified A Calendar To Be Public",
         "DisplayName": "GSuite Calendar Has Been Made Public",
         "LogTypes": [
@@ -4405,6 +4531,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects if an email received by a user has bypassed the organization's spam filter.",
+        "DisplayName": "Gsuite Email Bypassed Spam Filter",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A Google drive resource became externally accessible.",
         "DisplayName": "GSuite External Drive Document",
         "LogTypes": [
@@ -4420,6 +4555,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_gov_attack.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user click links contained in a received email that is classified as spam.",
+        "DisplayName": "Gsuite Link Clicked in Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4893,6 +5037,15 @@
             "Zeek.DNS"
         ],
         "YAMLPath": "rules/standard_rules/malicious_sso_dns_lookup.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.",
+        "DisplayName": "Malware Detected in Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6552,6 +6705,15 @@
         "YAMLPath": "rules/snyk_rules/snyk_user_mgmt.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.",
+        "DisplayName": "Spam Email Surge",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_spam_email.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.",
         "DisplayName": "StopInstance FOLLOWED BY ModifyInstanceAttributes",
@@ -6977,6 +7139,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "This rule enriches and contextualizes security alerts generated by Wiz.",
+        "DisplayName": "Wiz Defend Alert Passthrough Rule",
+        "LogTypes": [
+            "Wiz.Detections"
+        ],
+        "YAMLPath": "rules/wiz_rules/wiz_defend_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This rule detects updates and deletions of image integrity validators.",
         "DisplayName": "Wiz Image Integrity Validator Updated Or Deleted",
         "LogTypes": [
@@ -6992,6 +7163,15 @@
             "Wiz.Audit"
         ],
         "YAMLPath": "rules/wiz_rules/wiz_integration_updated_or_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule enriches and contextualizes security alerts generated by Wiz.",
+        "DisplayName": "Wiz Issue Alert Passthrough Rule",
+        "LogTypes": [
+            "Wiz.IssuesWebhook"
+        ],
+        "YAMLPath": "rules/wiz_rules/wiz_issue_alert_passthrough.yml"
     },
     {
         "AnalysisType": "Correlation Rule",

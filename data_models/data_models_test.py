@@ -10,7 +10,7 @@ from panther_core.enriched_event import PantherEvent
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(__file__.replace("data_models", "global_helpers")))
 
-specs, invalid_specs = load_analysis(os.path.dirname(__file__), [], [], [])
+specs, invalid_specs = load_analysis(os.path.dirname(__file__), [], [], [], True)
 log_type_to_data_model, invalid_data_models = setup_data_models(specs.data_models)
 
 
