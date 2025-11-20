@@ -49,7 +49,6 @@ Every detection consists of two files:
 Reusable utility functions organized by platform:
 - `panther_base_helpers`: Core utilities and common functions
 - `panther_aws_helpers`: AWS-specific helper functions
-- `panther_config`: Configuration management system
 - Platform-specific helpers: `panther_okta_helpers`, `panther_github_helpers`, etc.
 
 ### Data Models (`/data_models/`)
@@ -58,8 +57,6 @@ Normalize log data across different sources with field mappings and transformati
 ### Packs (`/packs/`)
 Group related detections for deployment. Each pack is a YAML file listing detection IDs.
 
-### Configuration System
-Hierarchical configuration: `panther_config_defaults` → `panther_config_overrides` → `panther_config`
 
 ## Key Development Patterns
 
@@ -143,6 +140,5 @@ from panther_aws_helpers import aws_rule_context
 
 ### Security Considerations
 - Never hardcode credentials or secrets
-- Use configuration system for environment-specific values
 - Implement proper error handling for external API calls
 - Follow principle of least privilege in helper functions

@@ -1,0 +1,453 @@
+AnalysisType: rule
+Filename: gcp_compute_ssh_connection.py
+RuleID: "GCP.Compute.SSHConnection"
+DisplayName: GCP Compute SSH Connection
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Severity: Info
+CreateAlert: true
+Description: >
+  Detect any SSH connections to a Compute Instance.
+Reference: >
+  https://cloud.google.com/compute/docs/connect/ssh-best-practices/auditing
+Tags:
+  - GCP
+  - GCP.AuditLog
+  - SSH
+  - Compute
+Status: Experimental
+Tests:
+  - Name: Connect with IAP
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": [
+          "1.1.1.1"
+        ],
+        "p_any_emails": [
+          "denethor@lotr.com"
+        ],
+        "p_any_usernames": [
+          "user"
+        ],
+        "p_event_time": "2025-05-27 16:46:46.485356507",
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2025-05-27 19:05:21.311995228",
+        "p_row_id": "00000000001029dcce464e32dded45ed",
+        "p_schema_version": 0,
+        "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+        "p_source_label": "gcp-logsource",
+        "p_udm": {
+          "source": {
+            "address": "1.1.1.1",
+            "ip": "1.1.1.1"
+          },
+          "user": {
+            "email": "denethor@lotr.com"
+          }
+        },
+        "insertId": "1rk2tche2xh0e",
+        "logName": "projects/example-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "operation": {
+          "id": "Q444-UYUD-GBRY-QFUF-AS7Q-6A6E",
+          "producer": "iap.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "denethor@lotr.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "iap.tunnelInstances.accessViaIAP",
+              "resource": "projects/222222222222/iap_tunnel/zones/us-central1-f/instances/1234567890123456789",
+              "resourceAttributes": {
+                "name": "projects/222222222222/iap_tunnel/zones/us-central1-f/instances/1234567890123456789",
+                "service": "iap.googleapis.com",
+                "type": "iap.googleapis.com/TunnelInstance"
+              }
+            }
+          ],
+          "metadata": {
+            "device_id": "",
+            "device_state": "Unknown",
+            "iap_tcp_session_info": {
+              "bytes_received": 6922,
+              "bytes_sent": 2874,
+              "phase": "SESSION_END"
+            },
+            "oauth_client_id": "",
+            "request_id": "1640143122448486764"
+          },
+          "methodName": "AuthorizeUser",
+          "request": {
+            "@type": "type.googleapis.com/cloud.security.gatekeeper.AuthorizeUserRequest",
+            "httpRequest": {
+              "url": ""
+            }
+          },
+          "requestMetadata": {
+            "callerIP": "1.1.1.1",
+            "callerSuppliedUserAgent": "(none supplied)",
+            "destinationAttributes": {
+              "ip": "1.2.3.4",
+              "port": "22"
+            },
+            "requestAttributes": {
+              "auth": {},
+              "time": "2025-05-27T16:46:46.500915047Z"
+            }
+          },
+          "resourceName": "1234567890123456789",
+          "serviceName": "iap.googleapis.com",
+          "status": {}
+        },
+        "receiveTimestamp": "2025-05-27 16:46:48.028847516",
+        "resource": {
+          "labels": {
+            "instance_id": "1234567890123456789",
+            "project_id": "example-project",
+            "zone": "us-central1-f"
+          },
+          "type": "gce_instance"
+        },
+        "severity": "INFO",
+        "timestamp": "2025-05-27 16:46:46.485356507"
+      }
+  - Name: SSH From OS Login Without MFA
+    ExpectedResult: true
+    Log: 
+      {
+        "p_any_emails": [
+          "user@example.com"
+        ],
+        "p_any_usernames": [
+          "user"
+        ],
+        "p_event_time": "2025-05-27 21:12:08.749558000",
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2025-05-27 21:15:21.194027520",
+        "p_row_id": "0a634c6bfeb190d7f3b2a9e326c0d10b",
+        "p_schema_version": 0,
+        "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+        "p_source_label": "gcp-logsource",
+        "p_udm": {
+          "user": {
+            "email": "user@example.com"
+          }
+        },
+        "insertId": "fkz9lkf10luao",
+        "labels": {
+          "instance_id": "1234567890123456789",
+          "zone": "us-central1-f"
+        },
+        "logName": "projects/example-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "user@example.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "resource": "projects/example-project/zones/us-central1-f/instances/example-instance"
+            }
+          ],
+          "methodName": "google.cloud.oslogin.dataplane.OsLoginDataPlaneService.CheckPolicy",
+          "request": {
+            "@type": "type.googleapis.com/google.cloud.oslogin.dataplane.CheckPolicyRequest",
+            "email": "123456789012345678901",
+            "instance": "example-instance",
+            "numericProjectId": "123456789012",
+            "policy": "ADMIN_LOGIN",
+            "projectId": "example-project",
+            "serviceAccount": "example-sa@example-project.iam.gserviceaccount.com",
+            "zone": "us-central1-f"
+          },
+          "resourceName": "projects/example-project/zones/us-central1-f/instances/example-instance",
+          "response": {
+            "@type": "type.googleapis.com/google.cloud.oslogin.dataplane.CheckPolicyResponse",
+            "success": true
+          },
+          "serviceName": "oslogin.googleapis.com"
+        },
+        "receiveTimestamp": "2025-05-27 21:12:09.376480048",
+        "resource": {
+          "labels": {
+            "method": "google.cloud.oslogin.dataplane.OsLoginDataPlaneService.CheckPolicy",
+            "project_id": "example-project",
+            "service": "oslogin.googleapis.com"
+          },
+          "type": "audited_resource"
+        },
+        "severity": "INFO",
+        "timestamp": "2025-05-27 21:12:08.749558000"
+      }
+  - Name: SSH From Remote Machine
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": [
+          "192.168.1.100"
+        ],
+        "p_any_emails": [
+          "user@example.com"
+        ],
+        "p_any_usernames": [
+          "user"
+        ],
+        "p_event_time": "2025-05-27 15:18:22.406665000",
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2025-05-27 15:20:21.064927161",
+        "p_row_id": "6244057f4c79ddd1c9f8d8e226939706",
+        "p_schema_version": 0,
+        "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+        "p_source_label": "gcp-logsource",
+        "p_udm": {
+          "source": {
+            "address": "192.168.1.100",
+            "ip": "192.168.1.100"
+          },
+          "user": {
+            "email": "user@example.com"
+          }
+        },
+        "insertId": "xwyto8dyr64",
+        "labels": {
+          "compute.googleapis.com/root_trigger_id": "9cff1773-d2d3-4e20-a605-3bf753bc9dc2"
+        },
+        "logName": "projects/example-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "id": "operation-1748359087846-6361f925ef323-87f8ece7-5a27a574",
+          "last": true,
+          "producer": "compute.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "user@example.com",
+            "principalSubject": "user:user@example.com"
+          },
+          "metadata": {
+            "@type": "type.googleapis.com/google.cloud.audit.GceProjectAuditMetadata",
+            "projectMetadataDelta": {
+              "modifiedMetadataKeys": [
+                "ssh-keys"
+              ]
+            }
+          },
+          "methodName": "v1.compute.projects.setCommonInstanceMetadata",
+          "request": {
+            "@type": "type.googleapis.com/compute.projects.setCommonInstanceMetadata"
+          },
+          "requestMetadata": {
+            "callerIP": "192.168.1.100",
+            "callerSuppliedUserAgent": "example-user-agent",
+            "destinationAttributes": {},
+            "requestAttributes": {}
+          },
+          "resourceName": "projects/example-project",
+          "serviceName": "compute.googleapis.com"
+        },
+        "receiveTimestamp": "2025-05-27 15:18:23.188347406",
+        "resource": {
+          "labels": {
+            "project_id": "123456789012"
+          },
+          "type": "gce_project"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2025-05-27 15:18:22.406665000"
+      }
+  - Name: SSH From GCP Console
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": [
+          "192.168.1.100"
+        ],
+        "p_any_emails": [
+          "user@example.com"
+        ],
+        "p_any_domain_names": [
+          "www.googleapis.com"
+        ],
+        "p_any_usernames": [
+          "user"
+        ],
+        "p_event_time": "2025-05-27 16:44:43.443688000",
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2025-05-27 19:05:21.363614256",
+        "p_row_id": "fee0f92d7864a191dfa994e326bb8604",
+        "p_schema_version": 0,
+        "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+        "p_source_label": "gcp-logsource",
+        "p_udm": {
+          "source": {
+            "address": "192.168.1.100",
+            "ip": "192.168.1.100"
+          },
+          "user": {
+            "email": "user@example.com"
+          }
+        },
+        "insertId": "-6215lve1hil2",
+        "labels": {
+          "compute.googleapis.com/root_trigger_id": "f1c52ba7-0407-4ec5-b031-8f3232f828f0"
+        },
+        "logName": "projects/example-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "first": true,
+          "id": "operation-1748364283389-63620c80ca7f1-1f0f53ee-d1fa97bd",
+          "producer": "compute.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "user@example.com",
+            "principalSubject": "user:user@example.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "compute.instances.setMetadata",
+              "resource": "projects/example-project/zones/us-central1-f/instances/example-instance",
+              "resourceAttributes": {
+                "name": "projects/example-project/zones/us-central1-f/instances/example-instance",
+                "service": "compute",
+                "type": "compute.instances"
+              }
+            }
+          ],
+          "metadata": {
+            "@type": "type.googleapis.com/google.cloud.audit.GceInstanceAuditMetadata",
+            "instanceMetadataDelta": {
+              "addedMetadataKeys": [
+                "ssh-keys"
+              ]
+            }
+          },
+          "methodName": "v1.compute.instances.setMetadata",
+          "request": {
+            "@type": "type.googleapis.com/compute.instances.setMetadata"
+          },
+          "requestMetadata": {
+            "callerIP": "192.168.1.100",
+            "callerSuppliedUserAgent": "example-user-agent",
+            "destinationAttributes": {},
+            "requestAttributes": {
+              "auth": {},
+              "time": "2025-05-27T16:44:43.801696Z"
+            }
+          },
+          "resourceLocation": {
+            "currentLocations": [
+              "us-central1-f"
+            ]
+          },
+          "resourceName": "projects/example-project/zones/us-central1-f/instances/example-instance",
+          "response": {
+            "@type": "type.googleapis.com/operation",
+            "id": "8662253207148844308",
+            "insertTime": "2025-05-27T09:44:43.751-07:00",
+            "name": "operation-1748364283389-63620c80ca7f1-1f0f53ee-d1fa97bd",
+            "operationType": "setMetadata",
+            "progress": "0",
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/example-project/zones/us-central1-f/operations/operation-1748364283389-63620c80ca7f1-1f0f53ee-d1fa97bd",
+            "selfLinkWithId": "https://www.googleapis.com/compute/v1/projects/example-project/zones/us-central1-f/operations/8662253207148844308",
+            "startTime": "2025-05-27T09:44:43.768-07:00",
+            "status": "RUNNING",
+            "targetId": "1234567890123456789",
+            "targetLink": "https://www.googleapis.com/compute/v1/projects/example-project/zones/us-central1-f/instances/example-instance",
+            "user": "user@example.com",
+            "zone": "https://www.googleapis.com/compute/v1/projects/example-project/zones/us-central1-f"
+          },
+          "serviceName": "compute.googleapis.com"
+        },
+        "receiveTimestamp": "2025-05-27 16:44:44.041407158",
+        "resource": {
+          "labels": {
+            "instance_id": "1234567890123456789",
+            "project_id": "example-project",
+            "zone": "us-central1-f"
+          },
+          "type": "gce_instance"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2025-05-27 16:44:43.443688000"
+      }
+  - Name: Connect to Serial Port
+    ExpectedResult: true
+    Log:
+      {
+        "p_any_ip_addresses": [
+          "192.168.1.100"
+        ],
+        "p_event_time": "2025-05-27 21:27:27.208503055",
+        "p_log_type": "GCP.AuditLog",
+        "p_parse_time": "2025-05-27 21:30:21.036346031",
+        "p_row_id": "ea1fcc08c947a6d0eab1a9e326faa309",
+        "p_schema_version": 0,
+        "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+        "p_source_label": "gcp-logsource",
+        "p_udm": {
+          "source": {
+            "address": "192.168.1.100",
+            "ip": "192.168.1.100"
+          }
+        },
+        "insertId": "199ms9obf4",
+        "logName": "projects/example-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+          "first": true,
+          "id": "1996ae7d794305b3adac0ef09924deb467656fd2",
+          "producer": "us-central1-ssh-serialport.googleapis.com"
+        },
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "methodName": "google.ssh-serialport.v1.connect",
+          "request": {
+            "@type": "type.googleapis.com/google.compute.SerialConsoleSessionBegin",
+            "serialConsoleOptions": [
+              {
+                "name": "port",
+                "value": "1"
+              },
+              {
+                "name": "source",
+                "value": "pantheon"
+              }
+            ],
+            "username": "user_example_com"
+          },
+          "requestMetadata": {
+            "callerIP": "192.168.1.100"
+          },
+          "resourceLocation": {
+            "currentLocations": [
+              "us-central1"
+            ],
+            "originalLocations": [
+              "us-central1"
+            ]
+          },
+          "resourceName": "projects/example-project/zones/us-central1-f/instances/example-instance/SerialPort/1",
+          "serviceName": "us-central1-ssh-serialport.googleapis.com",
+          "status": {
+            "message": "Connection succeeded."
+          }
+        },
+        "receiveTimestamp": "2025-05-27 21:27:27.524944715",
+        "resource": {
+          "labels": {
+            "instance_id": "1234567890123456789",
+            "project_id": "example-project",
+            "zone": "us-central1-f"
+          },
+          "type": "gce_instance"
+        },
+        "severity": "NOTICE",
+        "timestamp": "2025-05-27 21:27:27.208503055"
+      }

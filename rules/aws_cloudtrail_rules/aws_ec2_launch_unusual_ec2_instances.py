@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 from panther_core import PantherEvent
 
 # Configuration Required
@@ -21,7 +21,7 @@ def rule(event: PantherEvent) -> bool:
 
 def title(event: PantherEvent) -> str:
     # The actor in these events is always AutoScalingService
-    account = lookup_aws_account_name(event.get("recipientAccountId"))
+    account = event.get("recipientAccountId")
     instance_type = get_instance_type(event)
     return f"EC2 instance with a suspicious type '{instance_type}' was launched in in {account}"
 

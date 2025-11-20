@@ -325,7 +325,34 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.",
+        "Description": "An attack protection monitoring configuration was changed.",
+        "DisplayName": "Auth0 Attack Protection Monitoring Disabled",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_attack_protection_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A bot detection policy was disabled.",
+        "DisplayName": "Auth0 Bot Detection Policy Disabled",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_bot_detection_disabled.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour",
+        "DisplayName": "Auth0 Brute Force",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_login_brute_force.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.",
         "DisplayName": "Auth0 CIC Credential Stuffing",
         "LogTypes": [
             "Auth0.Events"
@@ -352,12 +379,48 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "A tenant member was deleted.",
+        "DisplayName": "Auth0 Delete Tenant Member",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_delete_tenant_member.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects a surge in either failed, successful or suspicious login attempts using leaked passwords over a window of time and a threshold. Exceeding set threshold may indicate potential fraud.",
+        "DisplayName": "Auth0 Fraud Risk by Volume",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_fraud_risk_volume.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An Auth0 integration was installed from the auth0 action library.",
         "DisplayName": "Auth0 Integration Installed",
         "LogTypes": [
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_integration_installed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Leaked Password Login Attempt",
+        "DisplayName": "Auth0 Leaked Password Login Attempt",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_leaked_password_login_attempt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detect Auth0 Limit Logs",
+        "DisplayName": "Auth0 Limit Detections",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_limits.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -406,12 +469,66 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "A new admin invitation was issued.",
+        "DisplayName": "Auth0 New Admin Invited",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_new_admin_invited.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.",
+        "DisplayName": "Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "correlation_rules/auth0_account_takeover.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An Auth0 User updated a post login action flow for your organization's tenant.",
         "DisplayName": "Auth0 Post Login Action Flow Updated",
         "LogTypes": [
             "Auth0.Events"
         ],
         "YAMLPath": "rules/auth0_rules/auth0_post_login_action_flow.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.",
+        "DisplayName": "Auth0 Push Notification Fatigue",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_push_notification_fatigue.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects a spike in registered dynamic clients. This can indicate attempts to use such dynamic clients for malicious purposes.",
+        "DisplayName": "Auth0 Rapid Dynamic Client Creation",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_rapid_dynamic_client_creation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A refresh token was reused.",
+        "DisplayName": "Auth0 Refresh Token Reused",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_token_reuse.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detecs when more than one user shares a phone number with another for MFA purposes. Attackers may register their phone number for multiple compromised accounts.",
+        "DisplayName": "Auth0 Same Phone Number Shared Across Multiple Users as MFA",
+        "LogTypes": [
+            "Auth0.Events"
+        ],
+        "YAMLPath": "rules/auth0_rules/auth0_same_phone_mfa_multiple_users.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -533,6 +650,24 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_bedrock_guardrail_update_delete.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.",
+        "DisplayName": "AWS Bedrock Model Invocation Abnormal Token Usage",
+        "LogTypes": [
+            "AWS.BedrockModelInvocation"
+        ],
+        "YAMLPath": "rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.",
+        "DisplayName": "AWS Bedrock Model Invocation GuardRail Intervened",
+        "LogTypes": [
+            "AWS.BedrockModelInvocation"
+        ],
+        "YAMLPath": "rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -1878,6 +2013,15 @@
         "YAMLPath": "rules/aws_s3_rules/aws_s3_insecure_access.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.",
+        "DisplayName": "AWS S3 Large Download",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Checks for S3 access attempts where the requester is not an authenticated AWS user.",
         "DisplayName": "AWS S3 Unauthenticated Access",
@@ -2235,6 +2379,42 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects an Axonius API Key Reset",
+        "DisplayName": "Axonius API Key Reset",
+        "LogTypes": [
+            "Axonius.Activity"
+        ],
+        "YAMLPath": "rules/axonius_rules/axonius_resetapikey.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an external user is added in Axonius",
+        "DisplayName": "Axonius External User Added",
+        "LogTypes": [
+            "Axonius.Activity"
+        ],
+        "YAMLPath": "rules/axonius_rules/axonius_add_external_user.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects an Axonius login from a malicious IP address",
+        "DisplayName": "Axonius login from Tor IP",
+        "LogTypes": [
+            "Axonius.Activity"
+        ],
+        "YAMLPath": "rules/axonius_rules/axonius_too_many_failed_logins.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an Axonius Webhook is Created",
+        "DisplayName": "Axonius Webhook Created",
+        "LogTypes": [
+            "Axonius.Activity"
+        ],
+        "YAMLPath": "rules/axonius_rules/axonius_webhook_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This detection looks for a Azure users inviting external users",
         "DisplayName": "Azure Invite External Users",
         "LogTypes": [
@@ -2331,15 +2511,6 @@
             "Box.Event"
         ],
         "YAMLPath": "rules/box_rules/box_event_triggered_externally.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "A user has shared an item and it is accessible to anyone with the share link (internal or external to the company). This rule requires that the boxsdk[jwt] be installed in the environment.",
-        "DisplayName": "Box item shared externally",
-        "LogTypes": [
-            "Box.Event"
-        ],
-        "YAMLPath": "rules/box_rules/box_item_shared_externally.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2899,6 +3070,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Microsoft Defender has detected malicious activity. This activty could be on a host or on a connected platform such as Azure, Microsoft 365, or Intune.",
+        "DisplayName": "Defender Detection Passthrough",
+        "LogTypes": [
+            "MicrosoftDefenderXDR.AdvancedHunting"
+        ],
+        "YAMLPath": "rules/microsoft_defender_rules/defender_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An IAM user has a high volume of access denied API calls.",
         "DisplayName": "Detect Reconnaissance from IAM Users",
         "LogTypes": [
@@ -2935,6 +3115,51 @@
             "Crowdstrike.FDREvent"
         ],
         "YAMLPath": "rules/crowdstrike_rules/crowdstrike_dns_request.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a DocuSign envelope is corrected after being sent. Frequent corrections could indicate document tampering attempts, process abuse, or suspicious modification of legal documents. Monitor for patterns of correction behavior that may indicate fraud.",
+        "DisplayName": "DocuSign Envelope Corrected",
+        "LogTypes": [
+            "Docusign.Connect"
+        ],
+        "YAMLPath": "rules/docusign_rules/docusign_envelope_corrected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a DocuSign envelope is voided. Frequent voiding of envelopes could indicate fraudulent activity, document tampering attempts, or process abuse. Monitor for patterns of voiding behavior.",
+        "DisplayName": "DocuSign Envelope Voided",
+        "LogTypes": [
+            "Docusign.Connect"
+        ],
+        "YAMLPath": "rules/docusign_rules/docusign_envelope_voided.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a DocuSign recipient fails authentication while attempting to access an envelope. This could indicate attempted unauthorized access to sensitive documents or credential compromise.",
+        "DisplayName": "DocuSign Recipient Authentication Failure",
+        "LogTypes": [
+            "Docusign.Connect"
+        ],
+        "YAMLPath": "rules/docusign_rules/docusign_recipient_authentication_failure.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a DocuSign recipient declines to sign an envelope. While often legitimate business activity, frequent declines or patterns of declines may indicate issues with document validity, recipient concerns about authenticity, or potential fraud attempts.",
+        "DisplayName": "DocuSign Recipient Declined Envelope",
+        "LogTypes": [
+            "Docusign.Connect"
+        ],
+        "YAMLPath": "rules/docusign_rules/docusign_recipient_declined.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects DocuSign template management activities including creation, modification, and deletion. Template changes can affect business processes and should be monitored for unauthorized modifications. Deletions are particularly critical as they may indicate data destruction or process disruption.",
+        "DisplayName": "DocuSign Template Management Activity",
+        "LogTypes": [
+            "Docusign.Connect"
+        ],
+        "YAMLPath": "rules/docusign_rules/docusign_template_management.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3379,7 +3604,16 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects compute.instances.create method for privilege escalation in GCP.",
+        "Description": "Detect any SSH connections to a Compute Instance.",
+        "DisplayName": "GCP Compute SSH Connection",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_compute_ssh_connection.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects compute.instances.create method for privilege escalation in GCP. This rule identifies when users create compute instances with service accounts that may lead to privilege escalation. Known good service accounts (GKE, Kubernetes, compute automation) are excluded to reduce false positives.",
         "DisplayName": "GCP compute.instances.create Privilege Escalation",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3469,6 +3703,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects enumeration of IAM policies and tags in GCP, which could be a precursor to privilege escalation attempts via tag-based access control.",
+        "DisplayName": "GCP IAM and Tag Enumeration",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A custom role has been created, deleted, or updated.",
         "DisplayName": "GCP IAM Role Has Changed",
         "LogTypes": [
@@ -3550,7 +3793,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.",
+        "Description": "This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.",
         "DisplayName": "GCP K8S Pod Create Or Modify Host Path Volume Mount",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3630,6 +3873,24 @@
         "YAMLPath": "rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation",
+        "DisplayName": "GCP Privilege Escalation via TagBinding",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "correlation_rules/gcp_tag_escalation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.",
+        "DisplayName": "GCP Privileged Operation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_privileged_operation.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Adversaries may create cloud instances in unused geographic service regions in order to evade detection.",
         "DisplayName": "GCP Resource in Unused Region",
@@ -3691,6 +3952,15 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects the creation of tag bindings in GCP, which could be part of a privilege escalation attempt using tag-based access control.",
+        "DisplayName": "GCP Tag Binding Creation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_tag_binding_creation.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3783,6 +4053,15 @@
         "YAMLPath": "correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "The \"download artifacts\" API, and various custom actions encapsulating it, doesn't differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.",
+        "DisplayName": "GitHub Artifact Download from Cross-Fork Workflow",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_artifact_download_from_forked_repo.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.",
         "DisplayName": "GitHub Branch Protection Disabled",
@@ -3802,12 +4081,66 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.",
+        "DisplayName": "GitHub Commits Skipping Workflows",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_skip_commits.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Tracks workflows run in cross-fork pull requests.",
+        "DisplayName": "GitHub Cross-Fork Workflow Run",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_crossfork_workflow_run.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Creates an alert if a dependabot alert is dismissed without being fixed.",
         "DisplayName": "GitHub Dependabot Vulnerability Dismissed",
         "LogTypes": [
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_repo_vulnerability_dismissed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Comment/Review Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_comment_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).",
+        "DisplayName": "GitHub Malicious Commit Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_commit_content.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.",
+        "DisplayName": "GitHub Malicious Issue/Pages Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_issue_pages.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.",
+        "DisplayName": "GitHub Malicious Pull Request Content",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_malicious_pr_titles.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3844,6 +4177,33 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_public_repository_created.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.",
+        "DisplayName": "GitHub pull_request_target Workflow on Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_pull_request_target_with_self_hosted_runner.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.",
+        "DisplayName": "GitHub pull_request_target Workflow Usage",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_pull_request_target_usage.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous attack vectors. This is a well-known technique for supply chain compromise in GitHub Actions, often called a \"pwn request\".",
+        "DisplayName": "GitHub pull_request_target Workflow with Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3919,6 +4279,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.",
+        "DisplayName": "GitHub Supply Chain - Software Installation Tool User Agents",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_supply_chain_suspicious_user_agents.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.",
         "DisplayName": "GitHub Team Modified",
         "LogTypes": [
@@ -3979,6 +4348,69 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_webhook_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.",
+        "DisplayName": "GitHub Workflow Contains Checkout Action",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_contains_checkout.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.",
+        "DisplayName": "GitHub Workflow Dispatched by GitHub Actions Bot",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_dispatch_by_github_bot.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow downloads artifacts.",
+        "DisplayName": "GitHub Workflow Downloading Artifacts",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_artifact_download.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.",
+        "DisplayName": "GitHub Workflow Permissions Modified",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_workflow_permission_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GitHub Actions workflow runs on a self-hosted runner.",
+        "DisplayName": "GitHub Workflow Using Self-Hosted Runner",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_self_hosted_runner_used.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.",
+        "DisplayName": "Gmail Malicious SMTP Response",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.",
+        "DisplayName": "Gmail Potential Spoofed Email Delivered",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4054,6 +4486,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.",
+        "DisplayName": "Gsuite Attachments Downloaded from Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A User or Admin Has Modified A Calendar To Be Public",
         "DisplayName": "GSuite Calendar Has Been Made Public",
         "LogTypes": [
@@ -4090,6 +4531,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects if an email received by a user has bypassed the organization's spam filter.",
+        "DisplayName": "Gsuite Email Bypassed Spam Filter",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A Google drive resource became externally accessible.",
         "DisplayName": "GSuite External Drive Document",
         "LogTypes": [
@@ -4105,6 +4555,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_gov_attack.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user click links contained in a received email that is classified as spam.",
+        "DisplayName": "Gsuite Link Clicked in Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4400,6 +4859,33 @@
         "YAMLPath": "rules/standard_rules/impossible_travel_login.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.",
+        "DisplayName": "Intune Create or Modify Client App",
+        "LogTypes": [
+            "MicrosoftIntune.AuditLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_create_modify_client_app.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to manage devices and enforce compliance with established policies. This detection identifies devices that are not compliant with the established policies.",
+        "DisplayName": "Intune Device Not Compliant",
+        "LogTypes": [
+            "MicrosoftIntune.OperationalLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_device_not_compliant.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.",
+        "DisplayName": "Intune New Device Management Script",
+        "LogTypes": [
+            "MicrosoftIntune.AuditLogs"
+        ],
+        "YAMLPath": "rules/intune_rules/intune_new_device_management_script.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.",
         "DisplayName": "IOC Activity in K8 Control Plane",
@@ -4551,6 +5037,15 @@
             "Zeek.DNS"
         ],
         "YAMLPath": "rules/standard_rules/malicious_sso_dns_lookup.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.",
+        "DisplayName": "Malware Detected in Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4934,6 +5429,15 @@
             "Notion.AuditLogs"
         ],
         "YAMLPath": "rules/notion_rules/notion_workspace_settings_public_homepage_added.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598cDetects GitHub activity associated with the NX supply chain compromise (CVE-2024-XXXX).The s1ngularity attack compromised popular NX build system packages affecting ~4M weekly downloads.Attack Details:- Malicious NPM packages published August 26-27, 2025 (22:32-03:37 UTC)- Created repositories: \"s1ngularity-repository\", \"s1ngularity-repository-0/1\" for data exfiltration- Targeted cryptocurrency wallets, SSH keys, GitHub/NPM tokens, .env files- Used triple base64 encoding to upload stolen credentials- First documented case of weaponizing AI CLI tools for reconnaissanceThis query detects repository creation, access, and API activity patterns consistent with the attack.",
+        "DisplayName": "NX Supply Chain - S1ngularity Repository Detection",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
@@ -5961,9 +6465,9 @@
         "Description": "In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim\u2019s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization\u2019s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer\u2019s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.AccountUsage"
+            "Snowflake.QueryHistory"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6201,6 +6705,15 @@
         "YAMLPath": "rules/snyk_rules/snyk_user_mgmt.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.",
+        "DisplayName": "Spam Email Surge",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_spam_email.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.",
         "DisplayName": "StopInstance FOLLOWED BY ModifyInstanceAttributes",
@@ -6262,6 +6775,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "GSuite reported a suspicious activity for this user.",
+        "DisplayName": "Suspicious is_suspicious tag",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
@@ -6617,6 +7139,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "This rule enriches and contextualizes security alerts generated by Wiz.",
+        "DisplayName": "Wiz Defend Alert Passthrough Rule",
+        "LogTypes": [
+            "Wiz.Detections"
+        ],
+        "YAMLPath": "rules/wiz_rules/wiz_defend_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This rule detects updates and deletions of image integrity validators.",
         "DisplayName": "Wiz Image Integrity Validator Updated Or Deleted",
         "LogTypes": [
@@ -6632,6 +7163,15 @@
             "Wiz.Audit"
         ],
         "YAMLPath": "rules/wiz_rules/wiz_integration_updated_or_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule enriches and contextualizes security alerts generated by Wiz.",
+        "DisplayName": "Wiz Issue Alert Passthrough Rule",
+        "LogTypes": [
+            "Wiz.IssuesWebhook"
+        ],
+        "YAMLPath": "rules/wiz_rules/wiz_issue_alert_passthrough.yml"
     },
     {
         "AnalysisType": "Correlation Rule",

@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rule_context, get_actor_user, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context, get_actor_user
 from panther_core import PantherEvent
 
 
@@ -8,7 +8,7 @@ def rule(_) -> bool:
 
 def title(event: PantherEvent) -> str:
     actor = get_actor_user(event)
-    aws_account = lookup_aws_account_name(event.get("recipientAccountId"))
+    aws_account = event.get("recipientAccountId")
     return f"Multiple SSM Sessions Started by {actor} in {aws_account}"
 
 

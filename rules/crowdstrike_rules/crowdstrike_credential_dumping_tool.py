@@ -44,8 +44,8 @@ def title(event):
     tool = (
         event.deep_get("event", "ImageFileName", default="<TOOL_NOT_FOUND>").lower().split("\\")[-1]
     )
-    aid = event.get("aid", "<AID_NOT_FOUND>")
-    return f"Crowdstrike: Credential dumping tool [{tool}] detected on aid [{aid}]"
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
+    return f"Crowdstrike: Credential dumping tool [{tool}] detected on host [{host}]"
 
 
 def alert_context(event):

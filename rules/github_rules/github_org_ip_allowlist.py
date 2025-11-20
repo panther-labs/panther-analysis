@@ -1,5 +1,3 @@
-from global_filter_github import filter_include_event
-
 ALLOWLIST_ACTIONS = [
     "ip_allow_list.enable",
     "ip_allow_list.disable",
@@ -12,8 +10,7 @@ ALLOWLIST_ACTIONS = [
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     return (
         event.get("action").startswith("ip_allow_list") and event.get("action") in ALLOWLIST_ACTIONS
     )

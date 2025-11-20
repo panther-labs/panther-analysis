@@ -17,8 +17,8 @@ def rule(event):
 
 
 def title(event):
-    aid = event.get("aid", "<UNKNOWN_AID>")
-    return f"Crowdstrike: New trusted cert added on device [{aid}]"
+    host = event.get("ComputerName") or event.get("aid", "<AID_NOT_FOUND>")
+    return f"Crowdstrike: New trusted cert added on device [{host}]"
 
 
 def alert_context(event):

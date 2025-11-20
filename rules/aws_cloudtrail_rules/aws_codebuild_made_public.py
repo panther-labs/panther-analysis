@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -11,7 +11,7 @@ def rule(event):
 def title(event):
     return (
         f"AWS CodeBuild Project made Public by {event.deep_get('userIdentity', 'arn')} "
-        f"in account {lookup_aws_account_name(event.deep_get('recipientAccountId'))}"
+        f"in account {event.deep_get('recipientAccountId')}"
     )
 
 

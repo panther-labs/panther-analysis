@@ -1,0 +1,81 @@
+AnalysisType: rule
+Filename: docusign_recipient_authentication_failure.py
+RuleID: "Docusign.Connect.RecipientAuthenticationFailure"
+DisplayName: "DocuSign Recipient Authentication Failure"
+Enabled: true
+LogTypes:
+  - Docusign.Connect
+Tags:
+  - DocuSign
+  - Authentication
+Severity: Medium
+Threshold: 5
+DedupPeriodMinutes: 60
+Description: >
+  Detects when a DocuSign recipient fails authentication while attempting to access an envelope.
+  This could indicate attempted unauthorized access to sensitive documents or credential compromise.
+Runbook: |
+  1. Review the recipient's email and authentication method used
+  2. Check if this is a legitimate user having authentication issues
+  3. Verify if the envelope contains sensitive information
+  4. Consider blocking the recipient if suspicious activity is detected
+  5. Review other envelopes sent to the same recipient
+Reference: https://developer.docusign.com/docs/connect/events/
+SummaryAttributes:
+  - data.email
+  - data.envelopeId
+  - data.authenticationStatus
+Tests:
+  - Name: "Recipient Authentication Failure"
+    ExpectedResult: true
+    Log:
+      event: "recipient-authentication-failure"
+      uri: "/api/v2/accounts/12345/envelopes/abc123/recipients/recipient123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        recipientId: "recipient123"
+        envelopeId: "envelope123"
+        name: "John Doe"
+        email: "sam@lotr.com"
+        routingOrder: 1
+        authenticationStatus: "Failed"
+        errorReason: "Invalid authentication credentials"
+        method: "SMS"
+        phoneNumber: "+1234567890"
+  - Name: "Successful Authentication"
+    ExpectedResult: false
+    Log:
+      event: "recipient-authentication-success"
+      uri: "/api/v2/accounts/12345/envelopes/abc123/recipients/recipient123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        recipientId: "recipient123"
+        envelopeId: "envelope123"
+        name: "John Doe"
+        email: "sam@lotr.com"
+        routingOrder: 1
+        authenticationStatus: "Success"
+        method: "SMS"
+        phoneNumber: "+1234567890"
+  - Name: "Different Event Type"
+    ExpectedResult: false
+    Log:
+      event: "envelope-sent"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        envelopeId: "envelope123"

@@ -8,6 +8,7 @@ PackDefinition:
     - GitHub.Advanced.Security.Change.NOT.FOLLOWED.BY.Repo.Archived
     - GitHub.Branch.PolicyOverride
     - GitHub.Branch.ProtectionDisabled
+    - GitHub.CrossFork.Workflow.Run
     - GitHub.Org.AuthChange
     - GitHub.Org.IpAllowlist
     - GitHub.Org.Moderators.Add
@@ -27,10 +28,27 @@ PackDefinition:
     - Github.Organization.App.Integration.Installed
     - Github.Public.Repository.Created
     - Github.Repository.Transfer
+    - GitHub.Webhook.WorkflowArtifactDownload
+    - GitHub.Webhook.MaliciousPRTitles
+    - GitHub.Webhook.MaliciousCommentContent
+    - GitHub.Webhook.MaliciousCommitContent
+    - GitHub.Webhook.MaliciousIssuePagesContent
+    - GitHub.Webhook.PullRequestTargetUsage
+    - GitHub.Webhook.SelfHostedRunnerUsed
+    - GitHub.Webhook.WorkflowSkipCommits
+    - GitHub.Webhook.WorkflowContainsCheckout
+    - GitHub.Workflow.DispatchByGitHubBot
+    - GitHub.Workflow.PermissionsModified
+    - GitHub.SupplyChain.SuspiciousUserAgents
+    # Correlation rules
+    - GitHub.ArtifactDownload.FROM.CrossFork.Workflow
+    - GitHub.PullRequestTarget.WITH.Checkout.In.Workflow
+    - GitHub.PullRequestTarget.WITH.SelfHostedRunner
+    # Queries
+    - NX Supply Chain - S1ngularity Repository Detection
     # Data model
     - Standard.Github.Audit
     # Globals
+    - panther_base_helpers
     - panther_github_helpers
     - panther_event_type_helpers
-    - global_filter_github
-

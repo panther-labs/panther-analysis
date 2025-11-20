@@ -1,10 +1,8 @@
-from global_filter_auth0 import filter_include_event
 from panther_auth0_helpers import auth0_alert_context, is_auth0_config_event
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
+
     data_description = event.deep_get("data", "description", default="<NO_DATA_DESCRIPTION_FOUND>")
     request_path = event.deep_get(
         "data", "details", "request", "path", default="<NO_REQUEST_PATH_FOUND>"

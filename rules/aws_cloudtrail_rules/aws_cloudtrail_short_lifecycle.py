@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context, lookup_aws_account_name
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 from panther_base_helpers import deep_get
 
 # Use this to record the names of your S3 buckets that have cloudtrail logs
@@ -43,7 +43,7 @@ def title(event):
     rule_id = lifecycle.get("ID", "<UNKNOWN RULE ID>")
     account = event.deep_get("userIdentity", "accountId", default="<UNKNOWN_AWS_ACCOUNT>")
     return (
-        f"S3 Bucket {bucket_name} in account {lookup_aws_account_name(account)} "
+        f"S3 Bucket {bucket_name} in account {account} "
         f"has new rule {rule_id} set to delete CloudTrail logs after "
         f"{duration} day{'s' if duration != 1 else ''}"
     )

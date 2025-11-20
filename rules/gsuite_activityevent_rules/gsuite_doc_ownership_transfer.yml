@@ -2,12 +2,11 @@ AnalysisType: rule
 Filename: gsuite_doc_ownership_transfer.py
 RuleID: "GSuite.DocOwnershipTransfer"
 DisplayName: "GSuite Document External Ownership Transfer"
-Enabled: false
+Enabled: true
 LogTypes:
   - GSuite.ActivityEvent
 Tags:
   - GSuite
-  - Configuration Required
   - Collection:Data from Information Repositories
 Reports:
   MITRE ATT&CK:
@@ -25,15 +24,93 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "id": { "applicationName": "admin" },
-        "name": "TRANSFER_DOCUMENT_OWNERSHIP",
-        "parameters": { "NEW_VALUE": "homer.simpson@example.com" },
+        "actor": {
+          "email": "alice@panther.com",
+          "profileId": "1234567890"
+        },
+        "id": {
+          "applicationName": "drive",
+          "customerId": "C123abcde",
+          "time": "2025-08-12 18:41:56.232000000",
+          "uniqueQualifier": "1234567890"
+        },
+        "ipAddress": "1.2.3.4",
+        "kind": "admin#reports#activity",
+        "name": "change_owner",
+        "parameters": {
+          "billable": true,
+          "doc_id": "1234567890",
+          "doc_title": "sensitive_document.xlsx",
+          "doc_type": "msexcel",
+          "new_owner": "bob@panther.com",
+          "owner": "alice@panther.com",
+          "primary_event": true,
+          "visibility": "shared_internally"
+        },
+        "type": "acl_change"
       }
   - Name: Document Transferred to External User
     ExpectedResult: true
     Log:
       {
-        "id": { "applicationName": "admin" },
-        "name": "TRANSFER_DOCUMENT_OWNERSHIP",
-        "parameters": { "NEW_VALUE": "monty.burns@badguy.com" },
+        "actor": {
+          "email": "alice@panther.com",
+          "profileId": "1234567890"
+        },
+        "id": {
+          "applicationName": "drive",
+          "customerId": "C123abcde",
+          "time": "2025-07-11 19:50:09.324000000",
+          "uniqueQualifier": "1234567890"
+        },
+        "kind": "admin#reports#activity",
+        "name": "change_owner",
+        "parameters": {
+          "billable": true,
+          "doc_id": "1234567890",
+          "doc_title": "sensitive_document.xlsx",
+          "doc_type": "msexcel",
+          "new_owner": "bob@example.com",
+          "owner": "alice@panther.com",
+          "primary_event": true,
+          "visibility": "unknown"
+        },
+        "type": "acl_change"
+      }
+  - Name: Document Transferred to Group within Organization
+    ExpectedResult: false
+    Log:
+      {
+        "actor": {
+          "email": "alice@panther.com",
+          "profileId": "100606748236723241722"
+        },
+        "id": {
+          "applicationName": "drive",
+          "customerId": "C123abcde",
+          "time": "2025-07-07 23:50:22.743000000",
+          "uniqueQualifier": "1234567890"
+        },
+        "ipAddress": "1.2.3.4",
+        "kind": "admin#reports#activity",
+        "name": "change_owner",
+        "parameters": {
+          "billable": true,
+          "doc_id": "1234567890",
+          "doc_title": "sensitive_document.xlsx",
+          "doc_type": "msexcel",
+          "new_owner": "Execs",
+          "new_owner_is_team_drive": true,
+          "new_owner_team_drive_id": "1234567890",
+          "originating_app_id": "1234567890",
+          "owner": "Engineering",
+          "owner_is_shared_drive": true,
+          "owner_is_team_drive": true,
+          "owner_team_drive_id": "1234567890",
+          "primary_event": true,
+          "shared_drive_id": "1234567890",
+          "team_drive_id": "1234567890",
+          "visibility": "shared_internally"
+        },
+        "type": "acl_change"
       }

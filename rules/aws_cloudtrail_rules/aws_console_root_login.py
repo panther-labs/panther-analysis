@@ -1,4 +1,3 @@
-from panther_aws_helpers import lookup_aws_account_name
 from panther_ipinfo_helpers import geoinfo_from_ip_formatted
 
 
@@ -15,7 +14,7 @@ def title(event):
         "AWS root login detected from "
         f"({geoinfo_from_ip_formatted(event, 'sourceIPAddress')}) "
         f"in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 

@@ -166,20 +166,34 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
 
 
 def is_base64(b64: str) -> str:
-    # if the string is base64 encoded, return the decoded ASCII string
+    # if the string is base64 encoded, return the decoded string
     # otherwise return an empty string
     # handle false positives for very short strings
     if len(b64) < 12:
         return ""
+    # Base64 strings should only contain ASCII characters
+    try:
+        b64.encode("ascii")
+    except UnicodeEncodeError:
+        return ""
+    # Base64 uses only: A-Z, a-z, 0-9, +, /, and = for padding
+    if not re.match(r"^[A-Za-z0-9+/]*={0,2}$", b64):
+        return ""
     # Pad args with "=" to ensure proper decoding
     b64 = b64.ljust((len(b64) + 3) // 4 * 4, "=")
-    # Check if the matched string can be decoded back into ASCII
+    # Decode and try multiple encodings
     try:
-        return b64decode(b64, validate=True).decode("ascii")
-    except AsciiError:
-        pass
-    except UnicodeDecodeError:
-        pass
+        decoded_bytes = b64decode(b64, validate=True)
+    except (AsciiError, ValueError):
+        return ""
+
+    # Try decoding with different encodings in order of likelihood
+    for encoding in ["ascii", "utf-16-le", "utf-8"]:
+        try:
+            return decoded_bytes.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+
     return ""
 
 
@@ -352,3 +366,10 @@ def pantherflow_investigation(event, interval="30m"):
     query += "| sort p_event_time"
 
     return query
+
+
+def dbprint(*values: object, sep: str = " ", end: str = "\n"):  # pylint: disable=unused-argument
+    """This is a placeholder function for printing to stdout when using pat debug. The debugging
+    comamnd will patch this to `print`. We introduce this function so users can print potentially
+    sensitive fields when debugging unit tests, and not worry about it being logged when Panther
+    the rule on production logs."""

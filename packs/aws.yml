@@ -28,6 +28,8 @@ PackDefinition:
     - AWS.S3.Bucket.SecureAccess
     - AWS.S3.Bucket.Versioning
     - AWS.S3.Bucket.PolicyConfusedDeputyProtection
+    - AWS.S3.LargeDownload
+    - AWS S3 Large Download
     # Encryption Status
     - AWS.EC2.EBS.Encryption.Disabled
     - AWS.EC2.Volume.Encryption
@@ -154,6 +156,8 @@ PackDefinition:
     # Bedrock rules
     - AWS.Bedrock.DeleteModelInvocationLoggingConfiguration
     - AWS.Bedrock.GuardrailUpdateDelete
+    - AWS.BedrockModelInvocation.AbnormalTokenUsage
+    - AWS.BedrockModelInvocation.GuardRailIntervened
     # Other rules
     - Amazon.EKS.AnonymousAPIAccess
     - AWS.CloudTrail.Account.Discovery
@@ -244,9 +248,7 @@ PackDefinition:
     # Globals used in these rules/policies
     - panther_aws_helpers
     - panther_base_helpers
-    - panther_config
-    - panther_config_defaults
-    - panther_config_overrides
     - panther_iocs
     - panther_ipinfo_helpers
     - panther_lookuptable_helpers
+    - panther_misp_helpers

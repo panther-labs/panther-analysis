@@ -3,20 +3,35 @@ PackID: PantherManaged.Auth0
 Description: Group of all Auth0 detections
 PackDefinition:
   IDs:
+    - Auth0.AttackProtection.Disabled
+    - Auth0.BotDetection.Disabled
+    - Auth0.Brute.Force
     - Auth0.CIC.Credential.Stuffing
     - Auth0.Custom.Role.Created
+    - Auth0.Delete.TenantMember
+    - Auth0.FraudRisk.Volume
     - Auth0.Integration.Installed
+    - Auth0.Leaked.Password.Login.Attempt
+    - Auth0.Limits
     - Auth0.MFA.Factor.Setting.Enabled
     - Auth0.MFA.Policy.Disabled
     - Auth0.MFA.Policy.Enabled
     - Auth0.MFA.Risk.Assessment.Disabled
     - Auth0.MFA.Risk.Assessment.Enabled
+    - Auth0.NewAdmin.Invitation
     - Auth0.User.Invitation.Created
     - Auth0.User.Joined.Tenant
     - Auth0.Post.Login.Action.Flow
+    - Auth0.PushNotification.Fatigue
+    - Auth0.Rapid.DynamicClient.Creation
+    - Auth0.RefreshToken.Reuse
+    - Auth0.SamePhone.MultipleUsers.MFA
+    # Queries
+    - Auth0 Brute Force Detection
+    # Correlation Rules
+    - Auth0.AdminInvited.FOLLOWED-BY.TenantMemberDeletion
     # Globals used in these detections
     - panther_base_helpers
     - panther_auth0_helpers
-    - global_filter_auth0
 
 DisplayName: "Panther Auth0 Pack"

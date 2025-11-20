@@ -1,0 +1,17 @@
+AnalysisType: scheduled_query
+QueryName: Auth0 Brute Force Detection
+Enabled: false
+# run every hour and look for >= 5 incidents in the last hour
+Query: |
+  SELECT
+   data, COUNT(*) OVER () AS total_incidents
+  FROM
+   panther_logs.public.auth0_events
+  WHERE
+   data:type IN ('limit_mu', 'limit_sul', 'limit_wc')
+   AND p_occurs_since('1 hour')
+  QUALIFY COUNT(*) OVER () > 4
+
+Schedule:
+  CronExpression: '0 * * * *'
+  TimeoutMinutes: 1

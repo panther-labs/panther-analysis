@@ -27,7 +27,7 @@ Tags:
   - Credential Access:Credentials from Password Stores
   - Credential Access
   - Credentials from Password Stores
-  - Beta
+Status: Experimental
 Tests:
   - Name: Unsuccessful Attempt
     ExpectedResult: true
@@ -38,7 +38,7 @@ Tests:
         "p_parse_time": "2024-12-11 21:50:54.495464364",
         "awsRegion": "us-west-2",
         "errorCode": "Client.UnauthorizedOperation",
-        "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins is not authorized to perform: ec2:GetPasswordData on resource: arn:aws:ec2:us-west-2:111122223333:instance/* because no identity-based policy allows the ec2:GetPasswordData action. Encoded authorization failure message: VbdJrM7j1Czq6HEj1lZpnU-AWGICaaPZQs1K_-9U3hQcFpXimBHYHwvg4SOc36ACu0GUYqWoSeX6_wI7ke3QxC0d1_Wv2XYLI96rYdMY2aWzdzwkIp__hUQQi-XqaHmp-QHOHiiJ31xqEkDZvyZXaO0BHhCpf8m7mIMeMaAB2CPtKhPj5NPGGkPc1f6rNFx0grhDkKZ3MrWBo65U4nRjzJrThuyK3146B1k1tWuQfI2_H-QMCuOl_aTIZ93xIeWFoIqKUWnD6-F68V8hhxHHXl0EhiFL9p7LAGvYTPXtJ1wEH1ve8iOW1S9ptI8CuFVP-Q7E7-NS45tIaheVJusaq3JtS03XAnKYC2NuVXnXBwbPNbNiQWH8LfSdgl43MZ5Q9Kin-tqCoA_Yskz0F_JNokjmIB2PKegJ5kANzHcb09u9sSqvgqKqpVHpfIDtjcI8LPzWjZyUNExaymEWOkE4HhtF19t1zyBvuoO6xgZtCyAx-6fsDSO8jpBZbLz9MsPmjhJLfp_yQPOF9ROIrBhvNCY_2tC7hyDDwdl11iNzHQvBaCjiLjE5PcoEchYWTHqlVHZ-yMA3",
+        "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::111111111111:assumed-role/sample-role-nostalgic-merkle/sample-role-quizzical-goldstine.jenkins is not authorized to perform: ec2:GetPasswordData on resource: arn:aws:ec2:us-west-2:111111111111:instance/* because no identity-based policy allows the ec2:GetPasswordData action. Encoded authorization failure message: VbdJrM7j1Czq6HEj1lZpnU-AWGICaaPZQs1K_-9U3hQcFpXimBHYHwvg4SOc36ACu0GUYqWoSeX6_wI7ke3QxC0d1_Wv2XYLI96rYdMY2aWzdzwkIp__hUQQi-XqaHmp-QHOHiiJ31xqEkDZvyZXaO0BHhCpf8m7mIMeMaAB2CPtKhPj5NPGGkPc1f6rNFx0grhDkKZ3MrWBo65U4nRjzJrThuyK3146B1k1tWuQfI2_H-QMCuOl_aTIZ93xIeWFoIqKUWnD6-F68V8hhxHHXl0EhiFL9p7LAGvYTPXtJ1wEH1ve8iOW1S9ptI8CuFVP-Q7E7-NS45tIaheVJusaq3JtS03XAnKYC2NuVXnXBwbPNbNiQWH8LfSdgl43MZ5Q9Kin-tqCoA_Yskz0F_JNokjmIB2PKegJ5kANzHcb09u9sSqvgqKqpVHpfIDtjcI8LPzWjZyUNExaymEWOkE4HhtF19t1zyBvuoO6xgZtCyAx-6fsDSO8jpBZbLz9MsPmjhJLfp_yQPOF9ROIrBhvNCY_2tC7hyDDwdl11iNzHQvBaCjiLjE5PcoEchYWTHqlVHZ-yMA3",
         "eventCategory": "Management",
         "eventID": "9e2b3bf0-8f58-4d50-83af-b3175b68c2f8",
         "eventName": "GetPasswordData",
@@ -48,7 +48,7 @@ Tests:
         "eventVersion": "1.10",
         "managementEvent": true,
         "readOnly": true,
-        "recipientAccountId": "111122223333",
+        "recipientAccountId": "111111111111",
         "requestID": "b22ce7ac-297f-41b4-a92e-f4aa38668c6d",
         "requestParameters": {
           "instanceId": "i-abcdef1234567890"
@@ -62,8 +62,8 @@ Tests:
         "userAgent": "SampleUserAgent",
         "userIdentity": {
           "accessKeyId": "SAMPLE_ACCESS_KEY",
-          "accountId": "111122223333",
-          "arn": "arn:aws:sts::111122223333:assumed-role/SampleRole/leroy.jenkins",
+          "accountId": "111111111111",
+          "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-nostalgic-merkle/sample-role-quizzical-goldstine.jenkins",
           "principalId": "SAMPLE_PRINCIPAL_ID:leroy.jenkins",
           "sessionContext": {
             "attributes": {
@@ -71,8 +71,8 @@ Tests:
               "mfaAuthenticated": "false"
             },
             "sessionIssuer": {
-              "accountId": "111122223333",
-              "arn": "arn:aws:iam::111122223333:role/SampleRole",
+              "accountId": "111111111111",
+              "arn": "arn:aws:iam::111111111111:role/sample-role-nostalgic-merkle",
               "principalId": "SAMPLE_PRINCIPAL_ID",
               "type": "Role",
               "userName": "SampleRole"

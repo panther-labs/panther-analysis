@@ -8,6 +8,14 @@
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
 
 
+## AWS BedrockModelInvocation
+
+- [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml)
+  - Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.
+- [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
+  - Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.
+
+
 ## AWS CloudFormation
 
 - [AWS CloudFormation Stack Drift](../policies/aws_cloudformation_policies/aws_cloudformation_stack_drifted.yml)
@@ -137,6 +145,8 @@
   - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
   - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Large Download](../queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml)
+  - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)

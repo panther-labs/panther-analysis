@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_redshift_cluster_snapshot_retention_acceptable.py
 PolicyID: "AWS.Redshift.Cluster.SnapshotRetentionAcceptable"
 DisplayName: "AWS Redshift Cluster Has Acceptable Snapshot Retention Period"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.Redshift.Cluster
 Tags:
@@ -12,7 +12,7 @@ Tags:
 Reports:
   PCI:
     - 3.1
-Severity: Medium
+Severity: Low
 Description: >
   This policy validates that Redshift Cluster snapshot retention periods are set to an appropriate time. This ensures that records are kept long enough for compliance and security reasons, but no too long for compliance and performance reasons.
 Runbook: >

@@ -16,6 +16,7 @@
 # A
 
 - [AWS ACM](#aws-acm)
+- [AWS BedrockModelInvocation](#aws-bedrockmodelinvocation)
 - [AWS CloudFormation](#aws-cloudformation)
 - [AWS CloudTrail](#aws-cloudtrail)
 - [AWS CloudWatch](#aws-cloudwatch)
@@ -41,6 +42,7 @@
 - [Asana](#asana)
 - [Atlassian](#atlassian)
 - [Auth0](#auth0)
+- [Axonius](#axonius)
 - [Azure](#azure)
 
 
@@ -52,6 +54,14 @@
   - This policy checks if an ACM certificate renewal is pending or has failed and is in use by any other resources within the account.
 - [AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml)
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
+
+
+## AWS BedrockModelInvocation
+
+- [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml)
+  - Monitors for potential misuse or abuse of AWS Bedrock AI models by detecting abnormal token usage patterns and alerts when the total token usage exceeds the appropriate threshold for each different type of model.
+- [AWS Bedrock Model Invocation GuardRail Intervened](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_guardrailintervened.yml)
+  - Detects when AWS Bedrock guardrail features have intervened during AI model invocations. It specifically monitors when an AI model request was blocked by Guardrails. This helps security teams identify when users attempt to generate potentially harmful or inappropriate content through AWS Bedrock models.
 
 
 ## AWS CloudFormation
@@ -183,6 +193,8 @@
   - This rule detects when many objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS S3 Delete Objects Detection](../rules/aws_cloudtrail_rules/aws_s3_delete_objects.yml)
   - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
+- [AWS S3 Large Download](../queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml)
+  - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
@@ -756,14 +768,28 @@
 
 ## Auth0
 
+- [Auth0 Attack Protection Monitoring Disabled](../rules/auth0_rules/auth0_attack_protection_disabled.yml)
+  - An attack protection monitoring configuration was changed.
+- [Auth0 Bot Detection Policy Disabled](../rules/auth0_rules/auth0_bot_detection_disabled.yml)
+  - A bot detection policy was disabled.
+- [Auth0 Brute Force](../rules/auth0_rules/auth0_login_brute_force.yml)
+  - Scheduled rule for brute force detection for Auth0 login or signup which looks for incidents of more than 10 incidents in one hour
 - [Auth0 CIC Credential Stuffing](../rules/auth0_rules/auth0_cic_credential_stuffing.yml)
-  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.
+  - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa and scoa events.
 - [Auth0 CIC Credential Stuffing Query](../queries/auth0_queries/auth0_cic_credential_stuffing_query.yml)
   - Okta has determined that the cross-origin authentication feature in Customer Identity Cloud (CIC) is prone to being targeted by threat actors orchestrating credential-stuffing attacks.  Okta has observed suspicious activity that started on April 15, 2024.  Review tenant logs for unexpected fcoa, scoa, and pwd_leak events.  https://sec.okta.com/articles/2024/05/detecting-cross-origin-authentication-credential-stuffing-attacks
 - [Auth0 Custom Role Created](../rules/auth0_rules/auth0_custom_role_created.yml)
   - An Auth0 User created a role in your organization's tenant.
+- [Auth0 Delete Tenant Member](../rules/auth0_rules/auth0_delete_tenant_member.yml)
+  - A tenant member was deleted.
+- [Auth0 Fraud Risk by Volume](../rules/auth0_rules/auth0_fraud_risk_volume.yml)
+  - Detects a surge in either failed, successful or suspicious login attempts using leaked passwords over a window of time and a threshold. Exceeding set threshold may indicate potential fraud.
 - [Auth0 Integration Installed](../rules/auth0_rules/auth0_integration_installed.yml)
   - An Auth0 integration was installed from the auth0 action library.
+- [Auth0 Leaked Password Login Attempt](../rules/auth0_rules/auth0_leaked_password_login_attempt.yml)
+  - Detect Auth0 Leaked Password Login Attempt
+- [Auth0 Limit Detections](../rules/auth0_rules/auth0_limits.yml)
+  - Detect Auth0 Limit Logs
 - [Auth0 mfa factor enabled](../rules/auth0_rules/auth0_mfa_factor_setting_enabled.yml)
   - An Auth0 user enabled an mfa factor in your organization's mfa settings.
 - [Auth0 MFA Policy Disabled](../rules/auth0_rules/auth0_mfa_policy_disabled.yml)
@@ -774,11 +800,35 @@
   - An Auth0 User disabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 MFA Risk Assessment Enabled](../rules/auth0_rules/auth0_mfa_risk_assessment_enabled.yml)
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
+- [Auth0 New Admin Invited](../rules/auth0_rules/auth0_new_admin_invited.yml)
+  - A new admin invitation was issued.
+- [Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion](../correlation_rules/auth0_account_takeover.yml)
+  - A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
+- [Auth0 Push Notification Fatigue](../rules/auth0_rules/auth0_push_notification_fatigue.yml)
+  - Push notifications threshold exceeded for a user. It may indicate a push notification fatigue attempt.
+- [Auth0 Rapid Dynamic Client Creation](../rules/auth0_rules/auth0_rapid_dynamic_client_creation.yml)
+  - Detects a spike in registered dynamic clients. This can indicate attempts to use such dynamic clients for malicious purposes.
+- [Auth0 Refresh Token Reused](../rules/auth0_rules/auth0_token_reuse.yml)
+  - A refresh token was reused.
+- [Auth0 Same Phone Number Shared Across Multiple Users as MFA](../rules/auth0_rules/auth0_same_phone_mfa_multiple_users.yml)
+  - Detecs when more than one user shares a phone number with another for MFA purposes. Attackers may register their phone number for multiple compromised accounts.
 - [Auth0 User Invitation Created](../rules/auth0_rules/auth0_user_invitation_created.yml)
 - [Auth0 User Joined Tenant](../rules/auth0_rules/auth0_user_joined_tenant.yml)
   - User accepted invitation from Auth0 member to join an Auth0 tenant.
+
+
+## Axonius
+
+- [Axonius API Key Reset](../rules/axonius_rules/axonius_resetapikey.yml)
+  - Detects an Axonius API Key Reset
+- [Axonius External User Added](../rules/axonius_rules/axonius_add_external_user.yml)
+  - Detects when an external user is added in Axonius
+- [Axonius login from Tor IP](../rules/axonius_rules/axonius_too_many_failed_logins.yml)
+  - Detects an Axonius login from a malicious IP address
+- [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
+  - Detects when an Axonius Webhook is Created
 
 
 ## Azure
@@ -814,8 +864,6 @@
   - A user violated the content workflow policy.
 - [Box event triggered by unknown or external user](../rules/box_rules/box_event_triggered_externally.yml)
   - An external user has triggered a box enterprise event.
-- [Box item shared externally](../rules/box_rules/box_item_shared_externally.yml)
-  - A user has shared an item and it is accessible to anyone with the share link (internal or external to the company). This rule requires that the boxsdk[jwt] be installed in the environment.
 - [Box Large Number of Downloads](../rules/box_rules/box_user_downloads.yml)
   - A user has exceeded the threshold for number of downloads within a single time frame.
 - [Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.yml)
@@ -970,8 +1018,23 @@
 
 # D
 
+- [Docusign](#docusign)
 - [Dropbox](#dropbox)
 - [Duo](#duo)
+
+
+## Docusign
+
+- [DocuSign Envelope Corrected](../rules/docusign_rules/docusign_envelope_corrected.yml)
+  - Detects when a DocuSign envelope is corrected after being sent. Frequent corrections could indicate document tampering attempts, process abuse, or suspicious modification of legal documents. Monitor for patterns of correction behavior that may indicate fraud.
+- [DocuSign Envelope Voided](../rules/docusign_rules/docusign_envelope_voided.yml)
+  - Detects when a DocuSign envelope is voided. Frequent voiding of envelopes could indicate fraudulent activity, document tampering attempts, or process abuse. Monitor for patterns of voiding behavior.
+- [DocuSign Recipient Authentication Failure](../rules/docusign_rules/docusign_recipient_authentication_failure.yml)
+  - Detects when a DocuSign recipient fails authentication while attempting to access an envelope. This could indicate attempted unauthorized access to sensitive documents or credential compromise.
+- [DocuSign Recipient Declined Envelope](../rules/docusign_rules/docusign_recipient_declined.yml)
+  - Detects when a DocuSign recipient declines to sign an envelope. While often legitimate business activity, frequent declines or patterns of declines may indicate issues with document validity, recipient concerns about authenticity, or potential fraud attempts.
+- [DocuSign Template Management Activity](../rules/docusign_rules/docusign_template_management.yml)
+  - Detects DocuSign template management activities including creation, modification, and deletion. Template changes can affect business processes and should be monitored for unauthorized modifications. Deletions are particularly critical as they may indicate data destruction or process disruption.
 
 
 ## Dropbox
@@ -1062,8 +1125,10 @@
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
 - [GCP Compute IAM Policy Update Detection](../rules/gcp_audit_rules/gcp_compute_set_iam_policy.yml)
   - This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
+- [GCP Compute SSH Connection](../rules/gcp_audit_rules/gcp_compute_ssh_connection.yml)
+  - Detect any SSH connections to a Compute Instance.
 - [GCP compute.instances.create Privilege Escalation](../rules/gcp_audit_rules/gcp_computeinstances_create_privilege_escalation.yml)
-  - Detects compute.instances.create method for privilege escalation in GCP.
+  - Detects compute.instances.create method for privilege escalation in GCP. This rule identifies when users create compute instances with service accounts that may lead to privilege escalation. Known good service accounts (GKE, Kubernetes, compute automation) are excluded to reduce false positives.
 - [GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.yml)
   - Unexpected domain is being used instead of a corporate email
 - [GCP Destructive Queries](../rules/gcp_audit_rules/gcp_destructive_queries.yml)
@@ -1082,6 +1147,8 @@
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
+- [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
+  - Detects enumeration of IAM policies and tags in GCP, which could be a precursor to privilege escalation attempts via tag-based access control.
 - [GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.yml)
   - A custom role has been created, deleted, or updated.
 - [GCP IAM serviceAccounts getAccessToken Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_service_accounts_get_access_token_privilege_escalation.yml)
@@ -1100,7 +1167,7 @@
 - [GCP K8s Pod Attached To Node Host Network](../rules/gcp_k8s_rules/gcp_k8s_pod_attached_to_node_host_network.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [GCP K8S Pod Create Or Modify Host Path Volume Mount](../rules/gcp_k8s_rules/gcp_k8s_pod_create_or_modify_host_path_vol_mount.yml)
-  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
+  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.
 - [GCP K8s Pod Using Host PID Namespace](../rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml)
   - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
 - [GCP K8S Privileged Pod Created](../rules/gcp_k8s_rules/gcp_k8s_privileged_pod_created.yml)
@@ -1117,6 +1184,10 @@
   - Alert if a GCP Org or Folder Policy Was Changed Manually.
 - [GCP Permissions Granted to Create or Manage Service Account Key](../rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml)
   - Permissions granted to impersonate a service account. This includes predefined service account IAM roles granted at the parent project, folder or organization-level.
+- [GCP Privilege Escalation via TagBinding](../correlation_rules/gcp_tag_escalation.yml)
+  - Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation
+- [GCP Privileged Operation](../rules/gcp_audit_rules/gcp_privileged_operation.yml)
+  - Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.
 - [GCP Resource in Unused Region](../rules/gcp_audit_rules/gcp_unused_regions.yml)
   - Adversaries may create cloud instances in unused geographic service regions in order to evade detection.
 - [GCP Service Account Access Denied](../rules/gcp_audit_rules/gcp_service_account_access_denied.yml)
@@ -1131,6 +1202,8 @@
   - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
 - [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
   - There is a feature of Cloud Storage, “interoperability”, that provides a way for Cloud Storage to interact with storage offerings from other cloud providers, like AWS S3. As part of that, there are HMAC keys that can be created for both Service Accounts and regular users. We can escalate Cloud Storage permissions by creating an HMAC key for a higher-privileged Service Account.
+- [GCP Tag Binding Creation](../rules/gcp_audit_rules/gcp_tag_binding_creation.yml)
+  - Detects the creation of tag bindings in GCP, which could be part of a privilege escalation attempt using tag-based access control.
 - [GCP User Added to IAP Protected Service](../rules/gcp_audit_rules/gcp_user_added_to_iap_protected_service.yml)
   - A user has been granted access to a IAP protected service.
 - [GCP User Added to Privileged Group](../rules/gcp_audit_rules/gcp_user_added_to_privileged_group.yml)
@@ -1155,12 +1228,26 @@
   - A monitored github action has failed.
 - [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)
   - Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
+- [GitHub Artifact Download from Cross-Fork Workflow](../correlation_rules/github_artifact_download_from_forked_repo.yml)
+  - The "download artifacts" API, and various custom actions encapsulating it, doesn't differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.
 - [GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.yml)
   - Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
 - [GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.yml)
   - Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Commits Skipping Workflows](../rules/github_rules/github_workflow_skip_commits.yml)
+  - Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.
+- [GitHub Cross-Fork Workflow Run](../rules/github_rules/github_crossfork_workflow_run.yml)
+  - Tracks workflows run in cross-fork pull requests.
 - [GitHub Dependabot Vulnerability Dismissed](../rules/github_rules/github_repo_vulnerability_dismissed.yml)
   - Creates an alert if a dependabot alert is dismissed without being fixed.
+- [GitHub Malicious Comment/Review Content](../rules/github_rules/github_malicious_comment_content.yml)
+  - Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Commit Content](../rules/github_rules/github_malicious_commit_content.yml)
+  - Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Issue/Pages Content](../rules/github_rules/github_malicious_issue_pages.yml)
+  - Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.
+- [GitHub Malicious Pull Request Content](../rules/github_rules/github_malicious_pr_titles.yml)
+  - Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.
 - [GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.yml)
   - Detects changes to GitHub org authentication changes.
 - [GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.yml)
@@ -1169,6 +1256,12 @@
   - An application integration was installed to your organization's Github account by someone in your organization.
 - [Github Public Repository Created](../rules/github_rules/github_public_repository_created.yml)
   - A public Github repository was created.
+- [GitHub pull_request_target Workflow on Self-Hosted Runner](../correlation_rules/github_pull_request_target_with_self_hosted_runner.yml)
+  - Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.
+- [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
+  - Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
+- [GitHub pull_request_target Workflow with Checkout Action](../correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml)
+  - Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous attack vectors. This is a well-known technique for supply chain compromise in GitHub Actions, often called a "pwn request".
 - [GitHub Repository Archived](../rules/github_rules/github_repo_archived.yml)
   - Detects when a repository is archived.
 - [GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.yml)
@@ -1185,6 +1278,8 @@
   - GitHub detected a secret and created a secret scanning alert.
 - [GitHub Security Change, includes GitHub Advanced Security](../rules/github_rules/github_advanced_security_change.yml)
   - The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
+- [GitHub Supply Chain - Software Installation Tool User Agents](../rules/github_rules/github_supply_chain_suspicious_user_agents.yml)
+  - Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.
 - [GitHub Team Modified](../rules/github_rules/github_team_modified.yml)
   - Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.
 - [GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.yml)
@@ -1199,8 +1294,20 @@
   - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 - [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
   - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
+  - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+- [GitHub Workflow Downloading Artifacts](../rules/github_rules/github_workflow_artifact_download.yml)
+  - Detects when a GitHub Actions workflow downloads artifacts.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
+- [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
+  - Detects when a GitHub Actions workflow runs on a self-hosted runner.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
+  - https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598cDetects GitHub activity associated with the NX supply chain compromise (CVE-2024-XXXX).The s1ngularity attack compromised popular NX build system packages affecting ~4M weekly downloads.Attack Details:- Malicious NPM packages published August 26-27, 2025 (22:32-03:37 UTC)- Created repositories: "s1ngularity-repository", "s1ngularity-repository-0/1" for data exfiltration- Targeted cryptocurrency wallets, SSH keys, GitHub/NPM tokens, .env files- Used triple base64 encoding to upload stolen credentials- First documented case of weaponizing AI CLI tools for reconnaissanceThis query detects repository creation, access, and API activity patterns consistent with the attack.
 - [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
   - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
 
@@ -1223,6 +1330,10 @@
   - An actor user was denied login access more times than the configured threshold.
 - [External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.yml)
   - An employee shared a sensitive file externally with another organization
+- [Gmail Malicious SMTP Response](../rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml)
+  - Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
+- [Gmail Potential Spoofed Email Delivered](../rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml)
+  - Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.
 - [Google Accessed a GSuite Resource](../rules/gsuite_activityevent_rules/gsuite_google_access.yml)
   - Google accessed one of your GSuite resources directly, most likely in response to a support incident.
 - [Google Drive High Download Count](../queries/gsuite_queries/gsuite_drive_many_docs_downloaded.yml)
@@ -1239,6 +1350,8 @@
   - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
 - [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
   - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+- [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
+  - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
   - A User or Admin Has Modified A Calendar To Be Public
 - [GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.yml)
@@ -1247,10 +1360,14 @@
   - A GSuite document's ownership was transferred to an external party.
 - [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
   - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
+  - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
   - A Google drive resource became externally accessible.
 - [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
   - GSuite reported that it detected a government backed attack against your account.
+- [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
+  - Detects when a user click links contained in a received email that is classified as spam.
 - [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
   - A login of a non-approved type was detected for this user.
 - [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
@@ -1293,14 +1410,22 @@
   - A Workspace Admin Has Disabled The Enforcement Of Strong Passwords
 - [GSuite Workspace Trusted Domain Allowlist Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_trusted_domains_allowlist.yml)
   - A Workspace Admin Has Modified The Trusted Domains List
+- [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
+  - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
+  - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
   - GSuite reported a suspicious login for this user.
+- [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
+  - GSuite reported a suspicious activity for this user.
 
 
 # M
 
 - [Microsoft365](#microsoft365)
+- [MicrosoftDefenderXDR](#microsoftdefenderxdr)
 - [MicrosoftGraph](#microsoftgraph)
+- [MicrosoftIntune](#microsoftintune)
 - [MongoDB](#mongodb)
 
 
@@ -1316,10 +1441,26 @@
   - A user's MFA has been removed
 
 
+## MicrosoftDefenderXDR
+
+- [Defender Detection Passthrough](../rules/microsoft_defender_rules/defender_detection_passthrough.yml)
+  - Microsoft Defender has detected malicious activity. This activty could be on a host or on a connected platform such as Azure, Microsoft 365, or Intune.
+
+
 ## MicrosoftGraph
 
 - [Microsoft Graph Passthrough](../rules/microsoft_rules/microsoft_graph_passthrough.yml)
   - The Microsoft Graph security API federates queries to all onboarded security providers, including Azure AD Identity Protection, Microsoft 365, Microsoft Defender (Cloud, Endpoint, Identity) and Microsoft Sentinel
+
+
+## MicrosoftIntune
+
+- [Intune Create or Modify Client App](../rules/intune_rules/intune_create_modify_client_app.yml)
+  - Microsoft Intune allows administrators to deploy applications to devices as a means of remote management and configuration. This functionality can be abused by adversaries to deploy malicious executables to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies the creation of or changes to apps that are deployed to devices.
+- [Intune Device Not Compliant](../rules/intune_rules/intune_device_not_compliant.yml)
+  - Microsoft Intune allows administrators to manage devices and enforce compliance with established policies. This detection identifies devices that are not compliant with the established policies.
+- [Intune New Device Management Script](../rules/intune_rules/intune_new_device_management_script.yml)
+  - Microsoft Intune allows administrators to deploy scripts to devices as a means of remote management and configuration. These scripts, which can be executed by the local SYSTEM account, provides a powerful capability to managed devices. This functionality can be abused by adversaries to deploy malicious scripts to devices, thereby allowing adversaries to pivot from compromised accounts to endpoints. This detection identifies changes to device management scripts, to include creation, modification, and deletion of scripts.
 
 
 ## MongoDB
@@ -1737,7 +1878,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
@@ -1915,10 +2056,14 @@
   - This rule detects updates and deletions of connectors.
 - [Wiz Data Classifier Updated Or Deleted](../rules/wiz_rules/wiz_data_classifier_updated_or_deleted.yml)
   - This rule detects updates and deletions of data classifiers.
+- [Wiz Defend Alert Passthrough Rule](../rules/wiz_rules/wiz_defend_passthrough.yml)
+  - This rule enriches and contextualizes security alerts generated by Wiz.
 - [Wiz Image Integrity Validator Updated Or Deleted](../rules/wiz_rules/wiz_image_integrity_validator_updated_or_deleted.yml)
   - This rule detects updates and deletions of image integrity validators.
 - [Wiz Integration Updated Or Deleted](../rules/wiz_rules/wiz_integration_updated_or_deleted.yml)
   - This rule detects updates and deletions of Wiz integrations.
+- [Wiz Issue Alert Passthrough Rule](../rules/wiz_rules/wiz_issue_alert_passthrough.yml)
+  - This rule enriches and contextualizes security alerts generated by Wiz.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 - [Wiz Revoke User Sessions](../rules/wiz_rules/wiz_revoke_user_sessions.yml)

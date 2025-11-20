@@ -111,52 +111,6 @@ Tests:
         "groupId": "8fffffff-1555-4444-b000-b55555555555",
         "userId": "05555555-3333-4ddd-8ccc-755555555555",
       }
-  - Name: Snyk System Policy Setting event happened ( License Policy ) excluded by filter
-    ExpectedResult: false
-    Mocks:
-      - objectName: filter_include_event
-        returnValue: false
-    Log:
-      {
-        "content":
-          {
-            "after":
-              {
-                "configuration":
-                  {
-                    "licenses":
-                      [
-                        {
-                          "instructions": "",
-                          "licenseType": "ADSL",
-                          "severity": "medium",
-                        },
-                        {
-                          "instructions": "",
-                          "licenseType": "AGPL-3.0",
-                          "severity": "medium",
-                        },
-                        {
-                          "instructions": "",
-                          "licenseType": "AGPL-3.0-only",
-                          "severity": "high",
-                        },
-                      ],
-                  },
-                "description": "this is a policy description",
-                "group": "8fffffff-1555-4444-b000-b55555555555",
-                "name": "Example License Policy",
-                "projectAttributes":
-                  { "criticality": [], "environment": [], "lifecycle": [] },
-              },
-            "before": {},
-            "publicId": "21111111-a222-4eee-8ddd-a99999999999",
-          },
-        "created": "2023-03-03 00:10:02.351",
-        "event": "group.policy.create",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
-      }
   - Name: Snyk Group SSO Membership sync
     ExpectedResult: false
     Log:

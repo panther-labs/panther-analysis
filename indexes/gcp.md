@@ -26,8 +26,10 @@
   - The Identity and Access Management (IAM) service manages authorization and authentication for a GCP environment. This means that there are very likely multiple privilege escalation methods that use the IAM service and/or its permissions.
 - [GCP Compute IAM Policy Update Detection](../rules/gcp_audit_rules/gcp_compute_set_iam_policy.yml)
   - This rule detects updates to IAM policies for Compute Disks, Images, and Snapshots.
+- [GCP Compute SSH Connection](../rules/gcp_audit_rules/gcp_compute_ssh_connection.yml)
+  - Detect any SSH connections to a Compute Instance.
 - [GCP compute.instances.create Privilege Escalation](../rules/gcp_audit_rules/gcp_computeinstances_create_privilege_escalation.yml)
-  - Detects compute.instances.create method for privilege escalation in GCP.
+  - Detects compute.instances.create method for privilege escalation in GCP. This rule identifies when users create compute instances with service accounts that may lead to privilege escalation. Known good service accounts (GKE, Kubernetes, compute automation) are excluded to reduce false positives.
 - [GCP Corporate Email Not Used](../rules/gcp_audit_rules/gcp_iam_corp_email.yml)
   - Unexpected domain is being used instead of a corporate email
 - [GCP Destructive Queries](../rules/gcp_audit_rules/gcp_destructive_queries.yml)
@@ -46,6 +48,8 @@
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
+- [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
+  - Detects enumeration of IAM policies and tags in GCP, which could be a precursor to privilege escalation attempts via tag-based access control.
 - [GCP IAM Role Has Changed](../rules/gcp_audit_rules/gcp_iam_custom_role_changes.yml)
   - A custom role has been created, deleted, or updated.
 - [GCP IAM serviceAccounts getAccessToken Privilege Escalation](../rules/gcp_audit_rules/gcp_iam_service_accounts_get_access_token_privilege_escalation.yml)
@@ -64,7 +68,7 @@
 - [GCP K8s Pod Attached To Node Host Network](../rules/gcp_k8s_rules/gcp_k8s_pod_attached_to_node_host_network.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [GCP K8S Pod Create Or Modify Host Path Volume Mount](../rules/gcp_k8s_rules/gcp_k8s_pod_create_or_modify_host_path_vol_mount.yml)
-  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
+  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.
 - [GCP K8s Pod Using Host PID Namespace](../rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml)
   - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as of the host’s processes. This can offer a powerful escape hatch to the underlying host.
 - [GCP K8S Privileged Pod Created](../rules/gcp_k8s_rules/gcp_k8s_privileged_pod_created.yml)
@@ -81,6 +85,10 @@
   - Alert if a GCP Org or Folder Policy Was Changed Manually.
 - [GCP Permissions Granted to Create or Manage Service Account Key](../rules/gcp_audit_rules/gcp_permissions_granted_to_create_or_manage_service_account_key.yml)
   - Permissions granted to impersonate a service account. This includes predefined service account IAM roles granted at the parent project, folder or organization-level.
+- [GCP Privilege Escalation via TagBinding](../correlation_rules/gcp_tag_escalation.yml)
+  - Detects a sequence of events that could indicate a privilege escalation attempt via GCP's tag-based access control. The sequence includes: 1. Enumeration of IAM policies and tags 2. Creation of a tag binding 3. Performance of a privileged operation
+- [GCP Privileged Operation](../rules/gcp_audit_rules/gcp_privileged_operation.yml)
+  - Detects privileged operations in GCP that could be part of a privilege escalation attempt, especially when following tag binding creation.
 - [GCP Resource in Unused Region](../rules/gcp_audit_rules/gcp_unused_regions.yml)
   - Adversaries may create cloud instances in unused geographic service regions in order to evade detection.
 - [GCP Service Account Access Denied](../rules/gcp_audit_rules/gcp_service_account_access_denied.yml)
@@ -95,6 +103,8 @@
   - Monitoring changes to Sql Instance configuration may reduce time to detect and correct misconfigurations done on sql server.
 - [GCP storage hmac keys create](../rules/gcp_audit_rules/gcp_storage_hmac_keys_create.yml)
   - There is a feature of Cloud Storage, “interoperability”, that provides a way for Cloud Storage to interact with storage offerings from other cloud providers, like AWS S3. As part of that, there are HMAC keys that can be created for both Service Accounts and regular users. We can escalate Cloud Storage permissions by creating an HMAC key for a higher-privileged Service Account.
+- [GCP Tag Binding Creation](../rules/gcp_audit_rules/gcp_tag_binding_creation.yml)
+  - Detects the creation of tag bindings in GCP, which could be part of a privilege escalation attempt using tag-based access control.
 - [GCP User Added to IAP Protected Service](../rules/gcp_audit_rules/gcp_user_added_to_iap_protected_service.yml)
   - A user has been granted access to a IAP protected service.
 - [GCP User Added to Privileged Group](../rules/gcp_audit_rules/gcp_user_added_to_privileged_group.yml)

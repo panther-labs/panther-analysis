@@ -5,7 +5,6 @@ from typing import Any, Dict, List
 
 import boto3
 from panther_base_helpers import deep_get, pantherflow_investigation
-from panther_config import config
 
 
 class BadLookup(Exception):
@@ -16,7 +15,6 @@ class PantherBadInput(Exception):
     """Error returned when a Panther helper function is provided bad input."""
 
 
-AWS_ACCOUNTS = config.AWS_ACCOUNTS
 _RESOURCE_TABLE = None  # boto3.Table resource, lazily constructed
 FIPS_ENABLED = os.getenv("ENABLE_FIPS", "").lower() == "true"
 FIPS_SUFFIX = "-fips." + os.getenv("AWS_REGION", "") + ".amazonaws.com"
@@ -111,20 +109,25 @@ def aws_event_tense(event_name):
 
 
 # Adapted from https://medium.com/@TalBeerySec/a-short-note-on-aws-key-id-f88cc4317489
-def aws_key_account_id(aws_key: str):
-    """retrieve the AWS account ID associated with a given access key ID"""
-    key_no_prefix = aws_key[4:]  # remove the four-character prefix
-    base32_key = base64.b32decode(key_no_prefix)  # remainder of the key is base32-encoded
-    decoded_key = base32_key[0:6]  # retrieve the 10-byte string
+def extract_account_id(uniq_id: str):
+    """retrieve the AWS account ID associated with a given unique ID"""
+    no_prefix = uniq_id[4:20]  # remove the four-character prefix
+    base32_key = base64.b32decode(no_prefix)  # remainder of the key is base32-encoded
+    decoded = base32_key[0:6]  # retrieve the 10-byte string
 
     # Convert the 10-byte string to an integer
-    key_id_int = int.from_bytes(decoded_key, byteorder="big", signed=False)
+    id_int = int.from_bytes(decoded, byteorder="big", signed=False)
     mask = int.from_bytes(binascii.unhexlify(b"7fffffffff80"), byteorder="big", signed=False)
 
     # Do a bitwise AND with the mask to retrieve the account ID
     # (divide the 10-byte key integer by 128 and remove the fractional part(s))
-    account_id = (key_id_int & mask) >> 7
+    account_id = (id_int & mask) >> 7
     return str(account_id)
+
+
+# backwards compatibility for old aws_key_account_id
+def aws_key_account_id(aws_key: str):
+    return extract_account_id(aws_key)
 
 
 def aws_regions() -> List[str]:
@@ -169,16 +172,13 @@ def aws_regions() -> List[str]:
 
 def lookup_aws_account_name(account_id):
     """Lookup the AWS account name, return the ID if not found
-
+    Deprecated: this function remains for backwards compatibility
     Args:
         account_id (str): The AWS account ID
-
     Returns:
-        str: The name of the AWS account ID
-        or
-        str: The AWS account ID (unnamed account)
+        str: The AWS account ID
     """
-    return AWS_ACCOUNTS.get(account_id, f"{account_id} (unnamed account)")
+    return account_id
 
 
 def get_s3_arn_by_name(name: str) -> str:

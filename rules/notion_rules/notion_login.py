@@ -1,10 +1,7 @@
-from global_filter_notion import filter_include_event
 from panther_notion_helpers import notion_alert_context
 
 
 def rule(event):
-    if not filter_include_event(event):
-        return False
 
     if event.deep_walk("event", "type") == "user.login":
         return True

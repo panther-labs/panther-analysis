@@ -2,7 +2,7 @@ AnalysisType: policy
 Filename: aws_elbv2_load_balancer_has_ssl_policy.py
 PolicyID: "AWS.ELBV2.LoadBalancer.HasSSLPolicy"
 DisplayName: "AWS Enforces SSL Policies"
-Enabled: true
+Enabled: false
 ResourceTypes:
   - AWS.ELBV2.ApplicationLoadBalancer
 Tags:
@@ -15,7 +15,7 @@ Reports:
     - 4.1
   MITRE ATT&CK:
     - TA0001:T1190
-Severity: High
+Severity: Medium
 Description: This policy validates that ELBV2 load balancer listeners are using an SSL policy.
 Runbook: Apply an SSL policy to the listener to force HTTPS.
 Reference: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-update-certificates.html#update-security-policy
