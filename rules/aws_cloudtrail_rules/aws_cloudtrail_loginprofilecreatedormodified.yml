@@ -6,12 +6,18 @@ Enabled: true
 LogTypes:
     - AWS.CloudTrail
 Severity: Low
+
 Reports:
-    MITRE ATT&CK:
-        - TA0003:T1098
-        - TA0005:T1108
-        - TA0005:T1550
-        - TA0008:T1550
+  MITRE ATT&CK:
+    - TA0003:T1098
+    - TA0005:T1108
+    - TA0005:T1550
+    - TA0008:T1550
+
+  Stratus Red Team:
+    - aws.persistence.iam-create-user-login-profile
+    - aws.privilege-escalation.iam-update-user-login-profile
+
 Description: An attacker with iam:UpdateLoginProfile permission on other users can change the password used to login to the AWS console. May be legitimate account administration.
 DedupPeriodMinutes: 60
 Threshold: 1

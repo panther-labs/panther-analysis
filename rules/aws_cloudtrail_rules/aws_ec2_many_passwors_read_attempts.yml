@@ -9,11 +9,13 @@ Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0006:T1555 # Credential Access: Credentials from Password Stores
+  Stratus Red Team:
+    - aws.credential-access.ec2-get-password-data
 Description: >
   An actor in AWS has made many attempts to retrieve EC2 passwords. It is typically
   not necessary to retrieve EC2 passwords more than a few times an hour.
 DedupPeriodMinutes: 60
-Threshold: 3
+Threshold: 30
 Reference: 
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.credential-access.ec2-get-password-data/
 Runbook: Identify the actor and the EC2 instances for which the credential access
