@@ -74,88 +74,60 @@ def rule(event):
     # a change in the parent folder's permission. We ignore
     # these events to prevent every folder change from
     # generating multiple alerts.
-    if event.deep_get("events", "name") in INHERITANCE_EVENTS:
+    if event.get("name") in INHERITANCE_EVENTS:
         return False
 
     log = event.get("p_row_id")
     init_alert_details(log)
 
-    #########
-    # for visibility changes that apply to a domain, not a user
-    change_document_visibility = False
-
     # We need to type-cast ALLOWED_DOMAINS for unit testing mocks
     if isinstance(ALLOWED_DOMAINS, MagicMock):
         ALLOWED_DOMAINS = set(json.loads(ALLOWED_DOMAINS()))  # pylint: disable=not-callable
 
-    for details in event.get("events", [{}]):
-        if (
-            details.get("type") == "acl_change"
-            and details.get("name") == "change_document_visibility"
-            and param_lookup(details.get("parameters", {}), "new_value") != ["private"]
-            and not param_lookup(details.get("parameters", {}), "target_domain") in ALLOWED_DOMAINS
-            and param_lookup(details.get("parameters", {}), "visibility") in VISIBILITY
-        ):
-            ALERT_DETAILS[log]["TARGET_DOMAIN"] = param_lookup(
-                details.get("parameters", {}), "target_domain"
+    # For GSuite.ActivityEvent, each log is a single event.
+    # Check if this event is a visibility change for a domain
+    if (
+        event.get("type") == "acl_change"
+        and event.get("name") == "change_document_visibility"
+        and param_lookup(event.get("parameters", {}), "new_value") != ["private"]
+        and not param_lookup(event.get("parameters", {}), "target_domain") in ALLOWED_DOMAINS
+        and param_lookup(event.get("parameters", {}), "visibility") in VISIBILITY
+    ):
+        ALERT_DETAILS[log]["TARGET_DOMAIN"] = param_lookup(
+            event.get("parameters", {}), "target_domain"
+        )
+        ALERT_DETAILS[log]["NEW_VISIBILITY"] = param_lookup(
+            event.get("parameters", {}), "visibility"
+        )
+        ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(event.get("parameters", {}), "doc_title")
+        if param_lookup(event.get("parameters", {}), "new_value") != ["none"]:
+            ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
+                event.get("parameters", {}), "new_value"
             )
-            ALERT_DETAILS[log]["NEW_VISIBILITY"] = param_lookup(
-                details.get("parameters", {}), "visibility"
-            )
-            ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(
-                details.get("parameters", {}), "doc_title"
-            )
-
-            change_document_visibility = True
-            break
-
-    # "change_document_visibility" events are always paired with
-    # "change_document_access_scope" events. the "target_domain" and
-    # "visibility" attributes are equivalent.
-    if change_document_visibility:
-        for details in event.get("events", [{}]):
-            if (
-                details.get("type") == "acl_change"
-                and details.get("name") == "change_document_access_scope"
-                and param_lookup(details.get("parameters", {}), "new_value") != ["none"]
-            ):
-                ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
-                    details.get("parameters", {}), "new_value"
-                )
         return True
 
-    #########
-    # for visibility changes that apply to a user
-    # there is a change_user_access event for each user
-    # change_user_access and change_document_visibility events are
-    # not found in the same report
-    change_user_access = False
+    # For visibility changes that apply to a user
+    if (
+        event.get("type") == "acl_change"
+        and event.get("name") == "change_user_access"
+        and param_lookup(event.get("parameters", {}), "new_value") != ["none"]
+        and user_is_external(param_lookup(event.get("parameters", {}), "target_user"))
+    ):
+        if ALERT_DETAILS[log]["TARGET_USER_EMAILS"] != ["<UNKNOWN_USER>"]:
+            ALERT_DETAILS[log]["TARGET_USER_EMAILS"].append(
+                param_lookup(event.get("parameters", {}), "target_user")
+            )
+        else:
+            ALERT_DETAILS[log]["TARGET_USER_EMAILS"] = [
+                param_lookup(event.get("parameters", {}), "target_user")
+            ]
+            ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(event.get("parameters", {}), "doc_title")
+            ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
+                event.get("parameters", {}), "new_value"
+            )
+        return True
 
-    for details in event.get("events", [{}]):
-        if (
-            details.get("type") == "acl_change"
-            and details.get("name") == "change_user_access"
-            and param_lookup(details.get("parameters", {}), "new_value") != ["none"]
-            and user_is_external(param_lookup(details.get("parameters", {}), "target_user"))
-        ):
-            if ALERT_DETAILS[log]["TARGET_USER_EMAILS"] != ["<UNKNOWN_USER>"]:
-                ALERT_DETAILS[log]["TARGET_USER_EMAILS"].append(
-                    param_lookup(details.get("parameters", {}), "target_user")
-                )
-            else:
-                ALERT_DETAILS[log]["TARGET_USER_EMAILS"] = [
-                    param_lookup(details.get("parameters", {}), "target_user")
-                ]
-                ALERT_DETAILS[log]["DOC_TITLE"] = param_lookup(
-                    details.get("parameters", {}), "doc_title"
-                )
-                ALERT_DETAILS[log]["ACCESS_SCOPE"] = param_lookup(
-                    details.get("parameters", {}), "new_value"
-                )
-
-            change_user_access = True
-
-    return change_user_access
+    return False
 
 
 def alert_context(event):
