@@ -4396,6 +4396,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.",
+        "DisplayName": "Gmail Malicious SMTP Response",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.",
+        "DisplayName": "Gmail Potential Spoofed Email Delivered",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Google accessed one of your GSuite resources directly, most likely in response to a support incident.",
         "DisplayName": "Google Accessed a GSuite Resource",
         "LogTypes": [
@@ -4468,6 +4486,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.",
+        "DisplayName": "Gsuite Attachments Downloaded from Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A User or Admin Has Modified A Calendar To Be Public",
         "DisplayName": "GSuite Calendar Has Been Made Public",
         "LogTypes": [
@@ -4504,6 +4531,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects if an email received by a user has bypassed the organization's spam filter.",
+        "DisplayName": "Gsuite Email Bypassed Spam Filter",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A Google drive resource became externally accessible.",
         "DisplayName": "GSuite External Drive Document",
         "LogTypes": [
@@ -4519,6 +4555,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_gov_attack.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user click links contained in a received email that is classified as spam.",
+        "DisplayName": "Gsuite Link Clicked in Spam Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4992,6 +5037,15 @@
             "Zeek.DNS"
         ],
         "YAMLPath": "rules/standard_rules/malicious_sso_dns_lookup.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.",
+        "DisplayName": "Malware Detected in Email",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6649,6 +6703,15 @@
             "Snyk.OrgAudit"
         ],
         "YAMLPath": "rules/snyk_rules/snyk_user_mgmt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.",
+        "DisplayName": "Spam Email Surge",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_spam_email.yml"
     },
     {
         "AnalysisType": "Correlation Rule",

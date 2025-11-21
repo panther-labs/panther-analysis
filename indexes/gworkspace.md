@@ -8,6 +8,10 @@
   - An actor user was denied login access more times than the configured threshold.
 - [External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.yml)
   - An employee shared a sensitive file externally with another organization
+- [Gmail Malicious SMTP Response](../rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml)
+  - Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
+- [Gmail Potential Spoofed Email Delivered](../rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml)
+  - Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.
 - [Google Accessed a GSuite Resource](../rules/gsuite_activityevent_rules/gsuite_google_access.yml)
   - Google accessed one of your GSuite resources directly, most likely in response to a support incident.
 - [Google Drive High Download Count](../queries/gsuite_queries/gsuite_drive_many_docs_downloaded.yml)
@@ -24,6 +28,8 @@
   - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
 - [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
   - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+- [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
+  - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
   - A User or Admin Has Modified A Calendar To Be Public
 - [GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.yml)
@@ -32,10 +38,14 @@
   - A GSuite document's ownership was transferred to an external party.
 - [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
   - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
+  - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
   - A Google drive resource became externally accessible.
 - [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
   - GSuite reported that it detected a government backed attack against your account.
+- [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
+  - Detects when a user click links contained in a received email that is classified as spam.
 - [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
   - A login of a non-approved type was detected for this user.
 - [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
@@ -78,6 +88,10 @@
   - A Workspace Admin Has Disabled The Enforcement Of Strong Passwords
 - [GSuite Workspace Trusted Domain Allowlist Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_trusted_domains_allowlist.yml)
   - A Workspace Admin Has Modified The Trusted Domains List
+- [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
+  - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
+  - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
   - GSuite reported a suspicious login for this user.
 - [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
