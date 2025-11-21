@@ -15,7 +15,7 @@ Reports:
 Description: >
   An Amazon Machine Image (AMI) was modified to allow it to be launched by anyone.
   Any sensitive configuration or application data stored in the AMI's block devices is at risk.
-Runbook: >
+Runbook: |
   Determine if the AMI is intended to be publicly accessible.
   If not, first modify the AMI to not be publicly accessible then change any sensitive data stored
   in the block devices associated to the AMI (as they may be compromised).
