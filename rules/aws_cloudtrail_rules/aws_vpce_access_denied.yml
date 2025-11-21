@@ -19,7 +19,7 @@ Reports:
     - TA0005:T1599 # Network Boundary Bridging
     - TA0007:T1526 # Cloud Service Discovery
 Description: Detects when access is denied due to VPC Endpoint policies, which could indicate attempted unauthorized access to AWS resources.
-Runbook: >
+Runbook: |
   1. Identify the principal (user/role) and source IP that was denied access
   2. Determine if this is expected behavior based on your VPC endpoint policies
   3. Check if there are multiple failed attempts from the same principal/IP

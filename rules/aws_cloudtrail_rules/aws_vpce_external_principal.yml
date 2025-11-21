@@ -21,7 +21,7 @@ Severity: Medium
 Description: >
   This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint.
   While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
-Runbook: >
+Runbook: |
   1. Identify the principal account and the accessed account from the alert context.
   2. Verify if the cross-account access is expected and authorized:
      - Check if the principal account is part of your organization
