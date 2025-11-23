@@ -37,7 +37,7 @@ def title(event):
     }
 
     reasons = event.deep_get("details", "reason", default=[])
-    reasons_str = reasons[0] if set(reasons) and len(reasons) > 0 else ""
+    reasons_str = reasons[0] if reasons else ""
     anomaly_description = anomalies.get(reasons_str, reasons_str)
 
     actor = event.deep_get("actor", "user", "email", default="")
