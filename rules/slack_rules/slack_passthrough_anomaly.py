@@ -35,14 +35,14 @@ def title(event):
         "unexpected_user_agent": "An unexpected user agent was detected",
         "user_agent": "An anomaly was detected in the user agent used for the user token",
     }
-    
+
     reasons = event.deep_get("details", "reason", default=[])
     reasons_str = reasons[0] if set(reasons) and len(reasons) > 0 else ""
     anomaly_description = anomalies.get(reasons_str, reasons_str)
-    
+
     actor = event.deep_get("actor", "user", "email", default="")
     actor_str = f" for {actor}" if actor else ""
-    
+
     return f"Slack Anomaly Detected{actor_str}: {anomaly_description}"
 
 
