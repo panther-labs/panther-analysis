@@ -1,0 +1,42 @@
+AnalysisType: saved_query
+QueryName: Shai Hulud V2 Filenames Added to Repository
+Description: |
+  This saved query detects filanemes associated with the Shai Hulud worm 2.0 campaign, 
+  where malicious JS files are inserted into GitHub repositories to exfiltrate secrets.
+  Attack details: 
+  - GitHub repositories get compromised via vulnerable workflows
+  - Attackers are able to push their malicious code, contained in
+    filenames "setup_bun.js" and "bun_environment.js"
+  - These files are responsible for exfiltrating cloud credentials, secrets and tokens.
+Tags:
+  - GitHub
+  - Supply Chain
+  - Suspicious Files
+  - Code Injection
+Query: |
+  SELECT
+    p_event_time,
+    repository:full_name AS repo_name,
+    repository:organization AS org_name,
+    head_commit:author:username AS author_username,
+    head_commit:author:email AS author_email,
+    head_commit:id AS commit_id,
+    head_commit:message AS commit_message,
+    head_commit:url AS commit_url,
+    ref AS branch_ref,
+    pusher:name AS pusher_name,
+    commits AS all_commits
+  FROM panther_logs.public.github_webhook
+  WHERE p_log_type = 'GitHub.Webhook'
+    AND (
+      ARRAY_CONTAINS('setup_bun.js'::VARIANT, head_commit:added)
+      OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, head_commit:added)
+      OR EXISTS(
+        SELECT 1
+        FROM TABLE(FLATTEN(commits)) AS commit
+        WHERE ARRAY_CONTAINS('setup_bun.js'::VARIANT, commit.value:added)
+           OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, commit.value:added)
+      )
+    )
+  ORDER BY p_event_time DESC
+  
