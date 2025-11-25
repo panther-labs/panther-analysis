@@ -14,29 +14,17 @@ Tags:
   - Suspicious Files
   - Code Injection
 Query: |
-  WITH suspicious_files AS (
-    SELECT DISTINCT
-      p_event_time,
-      repository:full_name AS repo_name,
-      repository:organization AS org_name,
-      head_commit:author:username AS author_username,
-      head_commit:author:email AS author_email,
-      head_commit:id AS commit_id,
-      head_commit:message AS commit_message,
-      head_commit:url AS commit_url,
-      ref AS branch_ref,
-      pusher:name AS pusher_name,
-      commits AS all_commits
-    FROM panther_logs.public.github_webhook,
-         LATERAL FLATTEN(input => commits, outer => true) AS commit
-    WHERE p_event_time >= TIMESTAMP '2025-11-24 03:00:00'
-      AND p_log_type = 'GitHub.Webhook'
-      AND (
-        ARRAY_CONTAINS('setup_bun.js'::VARIANT, head_commit:added)
-        OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, head_commit:added)
-        OR ARRAY_CONTAINS('setup_bun.js'::VARIANT, commit.value:added)
-        OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, commit.value:added)
-      )
-  )
-  SELECT * FROM suspicious_files
+  SELECT 
+      github_webhook.*,
+      all_commits.value AS commit_data,
+      added_files.value AS added_file
+  FROM panther_logs.public.github_webhook,
+      TABLE(FLATTEN(input => commits, outer => true)) all_commits,
+      TABLE(FLATTEN(input => all_commits.value:added, outer => true)) added_files
+  WHERE p_event_time >= TIMESTAMP '2025-11-24 03:00:00'
+    AND (
+      added_files.value::STRING IN ('setup_bun.js', 'bun_environment.js')
+      OR ARRAY_CONTAINS('setup_bun.js'::VARIANT, head_commit:added)
+      OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, head_commit:added)
+    )
   ORDER BY p_event_time DESC
