@@ -4,7 +4,7 @@ RuleID: "GSuite.DriveOverlyVisible"
 DisplayName: "GSuite Overly Visible Drive Document"
 Enabled: true
 LogTypes:
-  - GSuite.Reports
+  - GSuite.ActivityEvent
 Tags:
   - GSuite
   - Collection:Data from Information Repositories
@@ -25,64 +25,70 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events": [{ "type": "access", "name": "download" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
+            },
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "access",
+            "name": "download"
       }
   - Name: Modify Event Without Over Visibility
     ExpectedResult: false
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters": [{ "name": "visibility", "value": "private" }],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-          ],
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "access",
+            "name": "edit",
+            "parameters": {
+                  "visibility": "private"
+            }
       }
   - Name: Overly Visible Doc Modified
     ExpectedResult: true
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "email": "bobert@example.com" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "visibility", "value": "people_with_link" },
-                  { "name": "doc_title", "value": "my shared document" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "email": "bobert@example.com"
             },
-          ],
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "access",
+            "name": "edit",
+            "parameters": {
+                  "visibility": "people_with_link",
+                  "doc_title": "my shared document"
+            }
       }
   - Name: Overly Visible Doc Modified - no email
     ExpectedResult: true
     Log:
       {
-        "p_row_id": "111222",
-        "actor": { "profileId": "1234567890123" },
-        "id": { "applicationName": "drive" },
-        "events":
-          [
-            {
-              "type": "access",
-              "name": "edit",
-              "parameters":
-                [
-                  { "name": "visibility", "value": "people_with_link" },
-                  { "name": "doc_title", "value": "my shared document" },
-                ],
+            "p_log_type": "GSuite.ActivityEvent",
+            "p_row_id": "111222",
+            "actor": {
+                  "profileId": "1234567890123"
             },
-          ],
+            "id": {
+                  "applicationName": "drive"
+            },
+            "type": "access",
+            "name": "edit",
+            "parameters": {
+                  "visibility": "people_with_link",
+                  "doc_title": "my shared document"
+            }
       }
