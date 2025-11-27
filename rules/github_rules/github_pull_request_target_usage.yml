@@ -20,7 +20,7 @@ Description: >
   secrets even when triggered by external contributors from forks. These workflows pose security risks
   as they run in the context of the target repository rather than the fork, potentially allowing
   malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
-Runbook: >
+Runbook: |
   1. Verify the pull_request_target workflow is necessary and properly secured
   2. Check that the workflow doesn't build or run untrusted code from the pull request
   3. Ensure the workflow follows security best practices:

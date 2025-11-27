@@ -19,7 +19,7 @@ Description: >
   This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where
   PR titles contained bash injection payloads that could be executed by vulnerable CI workflows.
   Lower severity for PRs that are not cross-fork.
-Runbook: >
+Runbook: |
   1. Immediately review the pull request content and metadata for malicious patterns
   2. Check if the repository has workflows that process PR titles or descriptions unsafely
   3. Verify the identity and legitimacy of the PR author, especially for cross-fork PRs
