@@ -10,7 +10,7 @@ Description: >
   for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration
   or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the
   kube-system namespace are excluded to prevent false positives from legitimate system components.
-Runbook: >
+Runbook: |
   Investigate the reason of adding hostPath volume mount. Advise that it is discouraged practice.
   Create ticket if appropriate.
 Reference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#host-namespaces
