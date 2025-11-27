@@ -8,7 +8,7 @@ LogTypes:
   - Atlassian.Audit
   - AWS.CloudTrail
   - Box.Event
-  - GSuite.Reports
+  - GSuite.ActivityEvent
   - Okta.SystemLog
   - OneLogin.Events
   - OnePassword.SignInAttempt
@@ -164,8 +164,9 @@ Tests:
       {
         "id": { "applicationName": "login" },
         "ipAddress": "111.111.111.111",
-        "events": [{ "type": "login", "name": "login_success" }],
-        "p_log_type": "GSuite.Reports",
+        "type": "login",
+        "name": "login_success",
+        "p_log_type": "GSuite.ActivityEvent",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
       }
@@ -187,8 +188,9 @@ Tests:
         "actor": { "email": "bob@example.com" },
         "id": { "applicationName": "login" },
         "ipAddress": "111.111.111.111",
-        "events": [{ "type": "login", "name": "login_failure" }],
-        "p_log_type": "GSuite.Reports",
+        "type": "login",
+        "name": "login_failure",
+        "p_log_type": "GSuite.ActivityEvent",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
       }
