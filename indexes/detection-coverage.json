@@ -163,7 +163,7 @@
             "Asana.Audit",
             "Atlassian.Audit",
             "GCP.AuditLog",
-            "GSuite.Reports",
+            "GSuite.ActivityEvent",
             "GitHub.Audit",
             "OneLogin.Events",
             "Zendesk.Audit"
@@ -2575,7 +2575,7 @@
             "Asana.Audit",
             "Atlassian.Audit",
             "Box.Event",
-            "GSuite.Reports",
+            "GSuite.ActivityEvent",
             "Okta.SystemLog",
             "OneLogin.Events",
             "OnePassword.SignInAttempt"
@@ -2591,7 +2591,7 @@
             "Asana.Audit",
             "Atlassian.Audit",
             "Box.Event",
-            "GSuite.Reports",
+            "GSuite.ActivityEvent",
             "Okta.SystemLog",
             "OneLogin.Events",
             "OnePassword.SignInAttempt"
@@ -3481,7 +3481,7 @@
         "Description": "An employee shared a sensitive file externally with another organization",
         "DisplayName": "External GSuite File Share",
         "LogTypes": [
-            "GSuite.Reports"
+            "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_reports_rules/gsuite_drive_external_share.yml"
     },
@@ -4279,6 +4279,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a repository is created with the description \"Sha1-Hulud: The Second Coming.\", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign.",
+        "DisplayName": "GitHub Sha1-Hulud Malicious Repository Created",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_shai_hulud_repo_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.",
         "DisplayName": "GitHub Supply Chain - Software Installation Tool User Agents",
         "LogTypes": [
@@ -4543,7 +4552,7 @@
         "Description": "A Google drive resource became externally accessible.",
         "DisplayName": "GSuite External Drive Document",
         "LogTypes": [
-            "GSuite.Reports"
+            "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml"
     },
@@ -4606,7 +4615,7 @@
         "Description": "A Google drive resource that is overly visible has been modified.",
         "DisplayName": "GSuite Overly Visible Drive Document",
         "LogTypes": [
-            "GSuite.Reports"
+            "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml"
     },
@@ -6179,6 +6188,15 @@
             "SentinelOne.Activity"
         ],
         "YAMLPath": "rules/sentinelone_rules/sentinelone_threats.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "This saved query detects filenames associated with the Sha1-Hulud worm 2.0 campaign, where malicious JS files are inserted into GitHub repositories to exfiltrate secrets.Attack details: - GitHub repositories get compromised via vulnerable workflows- Attackers are able to push their malicious code, contained in  filenames \"setup_bun.js\" and \"bun_environment.js\"- These files are responsible for exfiltrating cloud credentials, secrets and tokens.",
+        "DisplayName": "Sha1-Hulud V2 Filenames Added to Repository",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "queries/github_queries/shai_hulud_filenames_in_repo.yml"
     },
     {
         "AnalysisType": "Rule",

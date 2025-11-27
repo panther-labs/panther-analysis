@@ -42,11 +42,9 @@ EXCEPTION_PATTERNS = {
 }
 
 
-def _check_acl_change_event(actor_email, acl_change_event):
-    parameters = {
-        p.get("name", ""): (p.get("value") or p.get("multiValue"))
-        for p in acl_change_event["parameters"]
-    }
+def _check_acl_change_event(actor_email, event):
+    # For GSuite.ActivityEvent, parameters is a dict, not an array
+    parameters = event.get("parameters", {})
 
     doc_title = parameters.get("doc_title", "TITLE_UNKNOWN")
     old_visibility = parameters.get("old_visibility", "OLD_VISIBILITY_UNKNOWN")
@@ -91,36 +89,22 @@ def _check_acl_change_event(actor_email, acl_change_event):
 
 def rule(event):
     application_name = event.deep_get("id", "applicationName")
-    events = event.get("events")
     actor_email = event.deep_get("actor", "email", default="EMAIL_UNKNOWN")
 
-    if application_name == "drive" and events and "acl_change" in set(e["type"] for e in events):
-        # If any of the events in this record are a dangerous file share, alert:
-        return any(
-            _check_acl_change_event(actor_email, acl_change_event) for acl_change_event in events
-        )
+    # For GSuite.ActivityEvent, each log is a single event (no events array)
+    if application_name == "drive" and event.get("type") == "acl_change":
+        # If this event is a dangerous file share, alert:
+        return bool(_check_acl_change_event(actor_email, event))
     return False
 
 
 def title(event):
-    events = event.get("events", [])
     actor_email = event.deep_get("actor", "email", default="EMAIL_UNKNOWN")
-    matching_events = [
-        _check_acl_change_event(actor_email, acl_change_event)
-        for acl_change_event in events
-        if _check_acl_change_event(actor_email, acl_change_event)
-    ]
+    matching_event = _check_acl_change_event(actor_email, event)
 
-    if matching_events:
-        len_events = len(matching_events)
-        first_event = matching_events[0]
-        actor = first_event.get("actor", "ACTOR_UNKNOWN")
-        doc_title = first_event.get("doc_title", "DOC_TITLE_UNKNOWN")
-        target_user = first_event.get("target_user", "USER_UNKNOWN")
-        if len(matching_events) > 1:
-            return (
-                f"Multiple dangerous shares ({len_events}) by [{actor}], including "
-                + f'"{doc_title}" to {target_user}'
-            )
+    if matching_event:
+        actor = matching_event.get("actor", "ACTOR_UNKNOWN")
+        doc_title = matching_event.get("doc_title", "DOC_TITLE_UNKNOWN")
+        target_user = matching_event.get("target_user", "USER_UNKNOWN")
         return f'Dangerous file share by [{actor}]: "{doc_title}" to {target_user}'
     return "No matching events, but DangerousShares still fired"
