@@ -38,12 +38,15 @@ def title(event):
 
     reasons = event.deep_get("details", "reason", default=[])
     reasons_str = reasons[0] if reasons else ""
-    anomaly_description = anomalies.get(reasons_str, reasons_str)
+    anomaly_description = anomalies.get(reasons_str)
 
     actor = event.deep_get("actor", "user", "email", default="")
     actor_str = f" for {actor}" if actor else ""
 
-    return f"Slack Anomaly Detected{actor_str}: {anomaly_description}"
+    if anomaly_description:
+        return f"Slack Anomaly Detected{actor_str}: {anomaly_description}"
+    # if the anomaly is not in our list (for future use) 
+    return f"Slack Anomaly Detected{actor_str}"
 
 
 def alert_context(event):
