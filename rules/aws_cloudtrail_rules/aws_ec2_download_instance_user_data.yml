@@ -9,13 +9,16 @@ Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0007:T1580 # Discovery: Cloud Infrastructure Discovery
+
+  Stratus Red Team:
+    - aws.discovery.ec2-download-user-data
 Description: >
   An entity has accessed the user data scripts of multiple EC2 instances.
 Threshold: 10
 DedupPeriodMinutes: 1440
 Reference: >
   https://hackingthe.cloud/aws/general-knowledge/introduction_user_data/
-Runbook: >
+Runbook: |
   An entity has accessed the user data scripts of multiple EC2 instances. This is
   often an attempt to find unsecured credentials. Ensure the EC2 instances accessed
   do not have any sensitive information stored in the user data.

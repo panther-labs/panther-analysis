@@ -14,7 +14,7 @@ Description: >
   Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with
   policy violations, such as missing Encryption. If an attacker disables Macie, it could potentially hide data exfiltration.
 Reference: https://aws.amazon.com/macie/
-Runbook: >
+Runbook: |
   Analyze the events to ensure it's not normal maintenance.
   If it's abnormal, run the Indicator Search on the UserIdentity:Arn for the past hour and analyze other services accessed/changed.
 DedupPeriodMinutes: 60

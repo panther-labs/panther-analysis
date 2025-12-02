@@ -9,13 +9,16 @@ Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0008:T1021.005 # Lateral Movement: Remote Services: SSH
+
+  Stratus Red Team:
+    - aws.lateral-movement.ec2-instance-connect
 Description: >
   Detect when an attacker pushes an SSH public key to multiple EC2 instances.
 DedupPeriodMinutes: 60
 Threshold: 1
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.lateral-movement.ec2-instance-connect/
-Runbook: >
+Runbook: |
   Followup with the actor to determine if the SSH key is genuine. Consider using a different SSH key for each instance.
 SummaryAttributes:
   - p_any_actor_ids

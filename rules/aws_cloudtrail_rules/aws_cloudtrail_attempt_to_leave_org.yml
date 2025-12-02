@@ -10,13 +10,16 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562.008 # Defense Evasion: Impair Defenses - Disable or Modify Cloud Logs
     - TA0005:T1666 # Defense Evasion: Modify Cloud Resource Hierarchy
+
+  Stratus Red Team:
+    - aws.defense-evasion.organizations-leave
 Description: >
   Detects when an actor attempts to remove an AWS account from an Organization. Security
   configurations are often defined at the organizational level. Leaving the organization can
   disrupt or totally shut down these controls.
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.defense-evasion.organizations-leave/
-Runbook: >
+Runbook: |
   Determine if the attempt was successful. Monitor and potentially suspect the user account which 
   attempted the action. Determine if the root account is compromised.
 SummaryAttributes:
