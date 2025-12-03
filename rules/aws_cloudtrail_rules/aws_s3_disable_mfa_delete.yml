@@ -1,0 +1,255 @@
+AnalysisType: rule
+Filename: aws_s3_disable_mfa_delete.py
+RuleID: "AWS.S3.DisableMfaDelete"
+DisplayName: "S3 MFA Delete Disabled"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Defense Evasion
+  - Impact:Data Destruction
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+    - TA0040:T1485
+Severity: Low
+Status: Experimental
+Description: Detects when MFA Delete is disabled on an S3 bucket, removing an important security control that prevents accidental or malicious deletion of versioned objects and could indicate ransomware preparation activity.
+Runbook: |
+  1. Query CloudTrail for all S3 API calls by the userIdentity:arn on the requestParameters:bucketName in the 24 hours before and after MFA Delete was disabled
+  2. Find any DeleteObject or DeleteObjects events on this bucket in the 6 hours after MFA Delete was disabled to check if bulk deletion occurred
+  3. Search for other security control changes (DisableBucketLogging, SuspendVersioning, DeleteBucketEncryption) on the same bucket in the past 7 days to identify ransomware preparation patterns
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/MultiFactorAuthenticationDelete.html
+SummaryAttributes:
+  - sourceIpAddress
+  - userAgent
+  - recipientAccountId
+  - p_any_aws_arns
+Tests:
+  - Name: MFA Delete Disabled Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/sample-role-brave-yalow-role-intelligent-brahmagupta-role-beautiful-keldysh-role-happy-easley-role-bold-buck",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "true",
+                    "creationDate": "2024-01-15T10:30:00Z",
+                  },
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "AAAAAAAAAAAAAAAAAAAAA",
+                    "arn": "arn:aws:iam::111111111111:role/sample-role-dreamy-yonath",
+                    "accountId": "111111111111",
+                    "userName": "AdminRole",
+                  },
+              },
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "sample-bucket-lucid-kowalevski.s3.amazonaws.com",
+            "VersioningConfiguration":
+              {
+                "Status": "Enabled",
+                "MfaDelete": "Disabled",
+              },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+        "vpcEndpointId": "vpce-1a2b3c4d",
+      }
+  - Name: MFA Delete Disabled - Failed
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "AIDAI23HXS4EXAMPLE",
+            "arn": "arn:aws:iam::111111111111:user/testuser",
+            "accountId": "111111111111",
+            "accessKeyId": "AKIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "errorCode": "AccessDenied",
+        "errorMessage": "Access Denied",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "sample-bucket-lucid-kowalevski.s3.amazonaws.com",
+            "VersioningConfiguration":
+              {
+                "Status": "Enabled",
+                "MfaDelete": "Disabled",
+              },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: MFA Delete Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/sample-role-brave-yalow-role-intelligent-brahmagupta-role-beautiful-keldysh-role-happy-easley-role-bold-buck",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "sample-bucket-lucid-kowalevski.s3.amazonaws.com",
+            "VersioningConfiguration":
+              {
+                "Status": "Enabled",
+                "MfaDelete": "Enabled",
+              },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: Different S3 Event
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/sample-role-brave-yalow-role-intelligent-brahmagupta-role-beautiful-keldysh-role-happy-easley-role-bold-buck",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "DeleteBucketEncryption",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "sample-bucket-lucid-kowalevski.s3.amazonaws.com",
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: Non-S3 Event
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/sample-role-brave-yalow-role-intelligent-brahmagupta-role-beautiful-keldysh-role-happy-easley-role-bold-buck",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "ec2.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters": {},
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: MFA Delete Field Missing
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::123456789012:assumed-role/AdminRole/user_name",
+            "accountId": "123456789012",
+            "accessKeyId": "ASIAIOSFODNN7EXAMPLE",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "203.0.113.42",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration":
+              {
+                "Status": "Enabled",
+              },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-123456789012",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "123456789012",
+      }

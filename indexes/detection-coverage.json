@@ -2023,6 +2023,42 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an S3 object is copied from one bucket to another bucket in a different AWS account. This could indicate data exfiltration or a ransomware attack where data is copied to an attacker-controlled account.",
+        "DisplayName": "AWS S3 Object Copied to External Account Bucket",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_copy_object_to_external_account_bucket.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.",
+        "DisplayName": "AWS S3 Object Exfiltration FOLLOWED BY Object Deletion",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "correlation_rules/aws_s3_exfiltration_and_deletion.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.",
+        "DisplayName": "AWS S3 Ransomware Note Upload Detection",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects the sequential disabling of S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this sequence enables early intervention before actual data loss occurs.",
+        "DisplayName": "AWS S3 Security Controls Disabled",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "correlation_rules/aws_s3_disable_security_controls.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Checks for S3 access attempts where the requester is not an authenticated AWS user.",
         "DisplayName": "AWS S3 Unauthenticated Access",
         "LogTypes": [
@@ -6117,6 +6153,24 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_bucket_deleted.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when S3 bucket encryption configuration is deleted, which could expose data to unauthorized access or indicate ransomware preparation activity.",
+        "DisplayName": "S3 Bucket Encryption Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_delete_bucket_encryption.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when server access logging is disabled on an S3 bucket, removing audit trail capabilities that could indicate ransomware preparation activity or an attempt to evade detection.",
+        "DisplayName": "S3 Bucket Logging Disabled",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_disable_bucket_logging.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "Ensures that S3 bucket policies with service principals include conditions to prevent the confused deputy problem.",
         "DisplayName": "S3 Bucket Policy Confused Deputy Protection for Service Principals",
@@ -6124,6 +6178,51 @@
             "AWS.S3.Bucket"
         ],
         "YAMLPath": "policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when S3 bucket replication configuration is deleted, which could prevent data backup and indicate ransomware preparation activity.",
+        "DisplayName": "S3 Bucket Replication Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_delete_bucket_replication.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when S3 bucket versioning is suspended or disabled, which removes the ability to recover previous versions of objects and is a common precursor to ransomware attacks or data destruction.",
+        "DisplayName": "S3 Bucket Versioning Suspended",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_suspend_versioning.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when MFA Delete is disabled on an S3 bucket, removing an important security control that prevents accidental or malicious deletion of versioned objects and could indicate ransomware preparation activity.",
+        "DisplayName": "S3 MFA Delete Disabled",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_disable_mfa_delete.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an S3 object is copied with a KMS key belonging to an account ID different than the bucket owner's account ID. This technique is used in S3 ransomware attacks where attackers encrypt objects with their own KMS key from an attacker-controlled AWS account, making the data inaccessible to the original owner. This is often a precursor to ransom demands or permanent data loss.",
+        "DisplayName": "S3 Object Encrypted with External KMS Key",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_copy_object_cross_account_kms.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when S3 bucket public access block configuration is deleted, which could allow unauthorized public access to sensitive data or indicate preparation for data exfiltration.",
+        "DisplayName": "S3 Public Access Block Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_delete_public_access_block.yml"
     },
     {
         "AnalysisType": "Rule",

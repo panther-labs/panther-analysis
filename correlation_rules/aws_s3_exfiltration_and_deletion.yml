@@ -1,0 +1,83 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion"
+DisplayName: "AWS S3 Object Exfiltration FOLLOWED BY Object Deletion"
+Enabled: true
+Severity: High
+Status: Experimental
+Description: >
+  Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket
+  to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe.
+  This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
+Runbook: |
+  1. Query CloudTrail for all S3 API calls by the userIdentity:arn in the 24 hours before and after the alert to establish the full scope of bucket access
+  2. Verify if the destination account ID in the CopyObject events appears in any legitimate cross-account S3 operations in the past 90 days
+  3. Check if the source IP addresses for both exfiltration and deletion events match known VPN endpoints, cloud provider ranges, or previously seen IPs for this user
+  4. Find all other CopyObject and DeleteObject events to the same or other buckets from any user in the past 7 days to identify if this is part of a broader campaign 
+Reference: https://www.trendmicro.com/en_us/research/25/k/s3-ransomware.html
+Tags:
+  - AWS
+  - Exfiltration:Transfer Data to Cloud Account
+  - Impact:Data Encrypted for Impact
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+    - TA0040:T1486
+Detection:
+    - Sequence:
+        - ID: Bulk Exfiltration
+          RuleID: AWS.S3.CopyObjectToExternalAccountBucket
+          MinMatchCount: 10
+        - ID: Bulk Deletion
+          RuleID: AWS.S3.DeleteObject
+          MinMatchCount: 10
+      Transitions:
+        - ID: Bulk Exfiltration to Bulk Deletion on Same Source Bucket
+          From: Bulk Exfiltration
+          To: Bulk Deletion
+          WithinTimeFrameMinutes: 15
+          Match:
+            - On: p_alert_context.bucketName
+      Schedule:
+        RateMinutes: 1440
+        TimeoutMinutes: 10
+      LookbackWindowMinutes: 2160
+Tests:
+  - Name: Ransomware Attack Sequence
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Bulk Exfiltration
+        Matches:
+          p_alert_context.bucketName:
+            'ransomware-test-victim-1764604156':
+              - "2024-01-15T10:00:00Z"
+              - "2024-01-15T10:00:01Z"
+              - "2024-01-15T10:00:05Z"
+              - "2024-01-15T10:00:10Z"
+              - "2024-01-15T10:00:15Z"
+              - "2024-01-15T10:00:20Z"
+              - "2024-01-15T10:00:25Z"
+              - "2024-01-15T10:00:30Z"
+              - "2024-01-15T10:00:35Z"
+              - "2024-01-15T10:00:40Z"
+      - ID: Bulk Deletion
+        Matches:
+          p_alert_context.bucketName:
+            'ransomware-test-victim-1764604156':
+              - "2024-01-15T10:05:00Z"
+              - "2024-01-15T10:05:05Z"
+              - "2024-01-15T10:05:10Z"
+              - "2024-01-15T10:05:15Z"
+              - "2024-01-15T10:05:20Z"
+              - "2024-01-15T10:05:25Z"
+              - "2024-01-15T10:05:30Z"
+              - "2024-01-15T10:05:35Z"
+              - "2024-01-15T10:05:40Z"
+              - "2024-01-15T10:05:45Z"
+  - Name: Only Exfiltration
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Bulk Exfiltration
+        Matches:
+          p_alert_context.bucketName:
+            'target-bucket':
+              - "2024-01-15T10:00:00Z"

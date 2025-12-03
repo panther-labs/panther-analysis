@@ -195,6 +195,14 @@
   - This rule detects when multiple objects are deleted from an S3 bucket. Such actions can be indicative of unauthorized data deletion or other suspicious activities.
 - [AWS S3 Large Download](../queries/aws_queries/aws_s3_large_download_specific_bucket_query.yml)
   - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
+- [AWS S3 Object Copied to External Account Bucket](../rules/aws_cloudtrail_rules/aws_s3_copy_object_to_external_account_bucket.yml)
+  - Detects when an S3 object is copied from one bucket to another bucket in a different AWS account. This could indicate data exfiltration or a ransomware attack where data is copied to an attacker-controlled account.
+- [AWS S3 Object Exfiltration FOLLOWED BY Object Deletion](../correlation_rules/aws_s3_exfiltration_and_deletion.yml)
+  - Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
+- [AWS S3 Ransomware Note Upload Detection](../rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml)
+  - This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.
+- [AWS S3 Security Controls Disabled](../correlation_rules/aws_s3_disable_security_controls.yml)
+  - Detects the sequential disabling of S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this sequence enables early intervention before actual data loss occurs.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
   - Identifies when SAML activity has occurred in AWS. An adversary could gain backdoor access via SAML.
 - [AWS Secrets Manager Batch Retrieve Secrets](../rules/aws_cloudtrail_rules/aws_secretsmanager_retrieve_secrets_batch.yml)
@@ -319,6 +327,20 @@
   - Detects S3 data access through VPC endpoints from external/public IP addresses, which could indicate data exfiltration attempts.This rule can be customized with the following overrides:- S3_DATA_ACCESS_OPERATIONS: List of S3 operations to monitor
 - [S3 Bucket Deleted](../rules/aws_cloudtrail_rules/aws_s3_bucket_deleted.yml)
   - A S3 Bucket, Policy, or Website was deleted
+- [S3 Bucket Encryption Deleted](../rules/aws_cloudtrail_rules/aws_s3_delete_bucket_encryption.yml)
+  - Detects when S3 bucket encryption configuration is deleted, which could expose data to unauthorized access or indicate ransomware preparation activity.
+- [S3 Bucket Logging Disabled](../rules/aws_cloudtrail_rules/aws_s3_disable_bucket_logging.yml)
+  - Detects when server access logging is disabled on an S3 bucket, removing audit trail capabilities that could indicate ransomware preparation activity or an attempt to evade detection.
+- [S3 Bucket Replication Deleted](../rules/aws_cloudtrail_rules/aws_s3_delete_bucket_replication.yml)
+  - Detects when S3 bucket replication configuration is deleted, which could prevent data backup and indicate ransomware preparation activity.
+- [S3 Bucket Versioning Suspended](../rules/aws_cloudtrail_rules/aws_s3_suspend_versioning.yml)
+  - Detects when S3 bucket versioning is suspended or disabled, which removes the ability to recover previous versions of objects and is a common precursor to ransomware attacks or data destruction.
+- [S3 MFA Delete Disabled](../rules/aws_cloudtrail_rules/aws_s3_disable_mfa_delete.yml)
+  - Detects when MFA Delete is disabled on an S3 bucket, removing an important security control that prevents accidental or malicious deletion of versioned objects and could indicate ransomware preparation activity.
+- [S3 Object Encrypted with External KMS Key](../rules/aws_cloudtrail_rules/aws_s3_copy_object_cross_account_kms.yml)
+  - Detects when an S3 object is copied with a KMS key belonging to an account ID different than the bucket owner's account ID. This technique is used in S3 ransomware attacks where attackers encrypt objects with their own KMS key from an attacker-controlled AWS account, making the data inaccessible to the original owner. This is often a precursor to ransom demands or permanent data loss.
+- [S3 Public Access Block Deleted](../rules/aws_cloudtrail_rules/aws_s3_delete_public_access_block.yml)
+  - Detects when S3 bucket public access block configuration is deleted, which could allow unauthorized public access to sensitive data or indicate preparation for data exfiltration.
 - [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
   - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
 - [Sensitive API Calls Via VPC Endpoint](../rules/aws_cloudtrail_rules/aws_vpce_sensitive_api_calls.yml)
