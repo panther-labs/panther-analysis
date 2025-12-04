@@ -2050,7 +2050,7 @@
     },
     {
         "AnalysisType": "Correlation Rule",
-        "Description": "Detects the sequential disabling of S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this sequence enables early intervention before actual data loss occurs.",
+        "Description": "Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.",
         "DisplayName": "AWS S3 Security Controls Disabled",
         "LogTypes": [
             "AWS.CloudTrail"
