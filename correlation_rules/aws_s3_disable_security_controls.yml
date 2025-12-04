@@ -5,10 +5,10 @@ Enabled: true
 Severity: High
 Status: Experimental
 Description: >
-  Detects the sequential disabling of S3 security controls (logging, versioning and MFA delete protection)
+  Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection)
   on the same bucket within a short timeframe. This pattern is a strong indicator of preparation
   for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms
-  before encrypting or deleting data. Alerting on this sequence enables early intervention before
+  before encrypting or deleting data. Alerting on this activity enables early intervention before
   actual data loss occurs.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the actor ARN on the affected bucket in the 24 hours before and after the bucket logging was disabled to identify if this is part of a larger attack pattern
@@ -23,30 +23,25 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562 # Defense Evasion: Impair Defenses
 Detection:
-    - Sequence:
+    - Group:
         - ID: Disable S3 Logging
           RuleID: AWS.S3.DisableBucketLogging
         - ID: Versioning Suspended
           RuleID: AWS.S3.SuspendVersioning
         - ID: MFA Delete Disabled
           RuleID: AWS.S3.DisableMfaDelete
-      Transitions:
-        - ID: Disable S3 Logging to Versioning Suspended on Same Bucket
-          From: Disable S3 Logging
-          To: Versioning Suspended
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.bucketName
-        - ID: Versioning Suspended to MFA Delete Disabled on Same Bucket
-          From: Versioning Suspended
-          To: MFA Delete Disabled
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.bucketName
+      MatchCriteria:
+        field_name:
+          - GroupID: Disable S3 Logging
+            Match: p_alert_context.bucketName
+          - GroupID: Versioning Suspended
+            Match: p_alert_context.bucketName
+          - GroupID: MFA Delete Disabled
+            Match: p_alert_context.bucketName
+      LookbackWindowMinutes: 60
       Schedule:
         RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 2160
 Tests:
   - Name: Suspicious Security Control Disabling
     ExpectedResult: true
@@ -60,12 +55,12 @@ Tests:
         Matches:
           p_alert_context.bucketName:
             'target-bucket':
-              - "2024-01-15T10:00:00Z"
+              - "2024-01-15T09:30:00Z"
       - ID: MFA Delete Disabled
         Matches:
           p_alert_context.bucketName:
             'target-bucket':
-              - "2024-01-15T10:15:00Z"
+              - "2024-01-15T09:45:00Z"
   - Name: Only Versioning Suspended - No Follow-up Actions
     ExpectedResult: false
     RuleOutputs:
