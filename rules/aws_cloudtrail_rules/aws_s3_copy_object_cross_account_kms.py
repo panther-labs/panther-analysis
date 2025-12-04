@@ -1,9 +1,5 @@
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
-# Allowlist for AWS accounts that are expected to perform cross-account KMS operations
-# Add account IDs here to suppress alerts for trusted accounts
-ALLOW_LIST_ACCOUNT = []
-
 
 def rule(event):
 
@@ -25,9 +21,6 @@ def rule(event):
 
             # Alert on cross-account KMS key usage
             if kms_account_id != bucket_account_id:
-                # Check if the KMS account is in the allowlist
-                if kms_account_id in ALLOW_LIST_ACCOUNT:
-                    return False
                 return True
 
     return False

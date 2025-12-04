@@ -1,9 +1,5 @@
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
-# Allowlist for AWS accounts that are expected to perform cross-account copy operations
-# Add account IDs here to suppress alerts for trusted accounts
-ALLOW_LIST_ACCOUNT = []
-
 
 def extract_resources(event):
     resources = event.get("resources", [])
@@ -31,15 +27,6 @@ def rule(event):
     # Check if buckets belong to different accounts
     account_ids = set(bucket_accounts.values())
     if len(account_ids) > 1:
-        # Get destination bucket name from requestParameters
-        dest_bucket_name = event.deep_get("requestParameters", "bucketName", default="")
-
-        # Get destination account ID from bucket_accounts dictionary
-        dest_account_id = bucket_accounts.get(dest_bucket_name, "")
-
-        # Check if the destination account is in the allowlist
-        if dest_account_id in ALLOW_LIST_ACCOUNT:
-            return False
         return True
 
     return False
