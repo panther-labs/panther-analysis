@@ -40,7 +40,7 @@ def title(event):
 def alert_context(event):
     context = aws_rule_context(event)
     context["bucketName"] = event.deep_get(
-        "requestParameters", "bucketName", default="UNKNOWN_BUCKET"
+        "requestParameters", "bucketName", default="<UNKNOWN_BUCKET>"
     )
     context["objectKey"] = event.deep_get("requestParameters", "key", default="<UNKNOWN_KEY>")
 
@@ -62,6 +62,6 @@ def alert_context(event):
             context["bucketAccountId"] = bucket_account_id
 
     context["encryption"] = event.deep_get(
-        "requestParameters", "x-amz-server-side-encryption", default="N/A"
+        "requestParameters", "x-amz-server-side-encryption", default="<UNKNOWN_ENCRYPTION>"
     )
     return context
