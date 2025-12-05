@@ -5,7 +5,7 @@ def rule(event):
     return (
         aws_cloudtrail_success(event)
         and event.get("eventSource") == "s3.amazonaws.com"
-        and event.get("eventName") == "DeleteObjects"
+        and event.get("eventName") in ("DeleteObjects", "DeleteObjectVersion")
     )
 
 
@@ -18,4 +18,8 @@ def title(event):
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    context = aws_rule_context(event)
+    context["bucketName"] = event.deep_get(
+        "requestParameters", "bucketName", default="UNKNOWN_BUCKET"
+    )
+    return context
