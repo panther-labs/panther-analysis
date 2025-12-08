@@ -12,7 +12,7 @@ def rule(event):
         default="<UNKNOWN_KEY_ID>",
     )
 
-    if kms_key_arn:
+    if kms_key_arn.startswith("arn:aws:kms:"):
         # Extract account ID from KMS key ARN (format: arn:aws:kms:region:account:key/key-id)
         kms_parts = kms_key_arn.split(":")
         if len(kms_parts) >= 5:

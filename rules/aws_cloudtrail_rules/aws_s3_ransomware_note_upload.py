@@ -29,9 +29,6 @@ RANSOM_NOTE_PATTERNS = [
     # Help decrypt/restore (specific to ransomware)
     # HELP_DECRYPT_YOUR_FILES.txt
     r"(?i)help[_-]?(restore|decrypt|recover)[_-]?(your[_-]?)?files.*\.(txt|html?)$",
-    # Read me first (common in ransomware, but with specific patterns)
-    # READ_ME_FIRST.txt, READ_THIS_NOW.txt
-    r"(?i)read[_-]?(me|this)[_-]?(first|now|urgent|important).*\.(txt|html?)$",
 ]
 
 COMPILED_PATTERNS = [re.compile(pattern) for pattern in RANSOM_NOTE_PATTERNS]

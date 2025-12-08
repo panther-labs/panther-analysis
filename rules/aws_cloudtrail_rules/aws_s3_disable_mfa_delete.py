@@ -15,7 +15,7 @@ def title(event):
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
         f"disabled MFA Delete feature for bucket "
-        f"[{event.deep_get('requestParameters', 'bucketName')}] bucket"
+        f"[{event.deep_get('requestParameters', 'bucketName')}] "
     )
 
 

@@ -15,7 +15,7 @@ def title(event):
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
         f"suspended object versioning in bucket "
-        f"[{event.deep_get('requestParameters', 'bucketName')}] bucket"
+        f"[{event.deep_get('requestParameters', 'bucketName')}]"
     )
 
 

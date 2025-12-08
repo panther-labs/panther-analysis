@@ -23,25 +23,25 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562 # Defense Evasion: Impair Defenses
 Detection:
-    - Group:
-        - ID: Disable S3 Logging
-          RuleID: AWS.S3.DisableBucketLogging
-        - ID: Versioning Suspended
-          RuleID: AWS.S3.SuspendVersioning
-        - ID: MFA Delete Disabled
-          RuleID: AWS.S3.DisableMfaDelete
-      MatchCriteria:
-        field_name:
-          - GroupID: Disable S3 Logging
-            Match: p_alert_context.bucketName
-          - GroupID: Versioning Suspended
-            Match: p_alert_context.bucketName
-          - GroupID: MFA Delete Disabled
-            Match: p_alert_context.bucketName
-      LookbackWindowMinutes: 60
-      Schedule:
-        RateMinutes: 1440
-        TimeoutMinutes: 10
+  - Group:
+      - ID: Disable S3 Logging
+        RuleID: AWS.S3.DisableBucketLogging
+      - ID: Versioning Suspended
+        RuleID: AWS.S3.SuspendVersioning
+      - ID: MFA Delete Disabled
+        RuleID: AWS.S3.DisableMfaDelete
+    MatchCriteria:
+      field_name:
+        - GroupID: Disable S3 Logging
+          Match: p_alert_context.bucketName
+        - GroupID: Versioning Suspended
+          Match: p_alert_context.bucketName
+        - GroupID: MFA Delete Disabled
+          Match: p_alert_context.bucketName
+    LookbackWindowMinutes: 90
+    Schedule:
+      RateMinutes: 60
+      TimeoutMinutes: 10
 Tests:
   - Name: Suspicious Security Control Disabling
     ExpectedResult: true
