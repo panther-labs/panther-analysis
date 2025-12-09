@@ -5,21 +5,23 @@ def rule(event):
     return (
         aws_cloudtrail_success(event)
         and event.get("eventSource") == "s3.amazonaws.com"
-        and event.get("eventName") == "DeleteObject"
+        and event.get("eventName") == "PutBucketVersioning"
+        and event.deep_get("requestParameters", "VersioningConfiguration", "MfaDelete")
+        == "Disabled"
     )
 
 
 def title(event):
     return (
         f"[AWS.CloudTrail] User [{event.udm('actor_user')}] "
-        f"deleted many items from the "
-        f"[{event.deep_get('requestParameters', 'bucketName')}] bucket"
+        f"disabled MFA Delete feature for bucket "
+        f"[{event.deep_get('requestParameters', 'bucketName')}] "
     )
 
 
 def alert_context(event):
     context = aws_rule_context(event)
     context["bucketName"] = event.deep_get(
-        "requestParameters", "bucketName", default="<UNKNOWN_BUCKET>"
+        "requestParameters", "bucketName", default="UNKNOWN_BUCKET"
     )
     return context
