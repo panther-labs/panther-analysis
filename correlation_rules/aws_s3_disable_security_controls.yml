@@ -1,0 +1,71 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.S3.Disable.Security.Controls"
+DisplayName: "AWS S3 Security Controls Disabled"
+Enabled: true
+Severity: High
+Status: Experimental
+Description: >
+  Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection)
+  on the same bucket within a short timeframe. This pattern is a strong indicator of preparation
+  for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms
+  before encrypting or deleting data. Alerting on this activity enables early intervention before
+  actual data loss occurs.
+Runbook: |
+  1. Query CloudTrail for all S3 API calls by the actor ARN on the affected bucket in the 24 hours before and after the bucket logging was disabled to identify if this is part of a larger attack pattern
+  2. Check for subsequent suspicious activities on the same bucket including DeleteObject, DeleteObjects, PutBucketEncryption, or GetObject events in the 6 hours after all three security controls were disabled
+  3. Find all other S3 buckets where this actor ARN has disabled logging, versioning, or MFA delete in the past 7 days to determine if this is a widespread attack
+Reference: https://rhinosecuritylabs.com/aws/s3-ransomware-part-1-attack-vector/
+Tags:
+  - AWS
+  - S3
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562 # Defense Evasion: Impair Defenses
+Detection:
+  - Group:
+      - ID: Disable S3 Logging
+        RuleID: AWS.S3.DisableBucketLogging
+      - ID: Versioning Suspended
+        RuleID: AWS.S3.SuspendVersioning
+      - ID: MFA Delete Disabled
+        RuleID: AWS.S3.DisableMfaDelete
+    MatchCriteria:
+      field_name:
+        - GroupID: Disable S3 Logging
+          Match: p_alert_context.bucketName
+        - GroupID: Versioning Suspended
+          Match: p_alert_context.bucketName
+        - GroupID: MFA Delete Disabled
+          Match: p_alert_context.bucketName
+    LookbackWindowMinutes: 90
+    Schedule:
+      RateMinutes: 60
+      TimeoutMinutes: 10
+Tests:
+  - Name: Suspicious Security Control Disabling
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Disable S3 Logging
+        Matches:
+          p_alert_context.bucketName:
+            'target-bucket':
+              - "2024-01-15T09:00:00Z"
+      - ID: Versioning Suspended
+        Matches:
+          p_alert_context.bucketName:
+            'target-bucket':
+              - "2024-01-15T09:30:00Z"
+      - ID: MFA Delete Disabled
+        Matches:
+          p_alert_context.bucketName:
+            'target-bucket':
+              - "2024-01-15T09:45:00Z"
+  - Name: Only Versioning Suspended - No Follow-up Actions
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Versioning Suspended
+        Matches:
+          p_alert_context.bucketName:
+            'target-bucket':
+              - "2024-01-15T10:00:00Z"

@@ -1,0 +1,130 @@
+AnalysisType: rule
+DedupPeriodMinutes: 60
+DisplayName: AWS S3 Ransomware Note Upload Detection
+Enabled: true
+Filename: aws_s3_ransomware_note_upload.py
+RuleID: "AWS.S3.RansomwareNoteUpload"
+Severity: Medium
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - S3
+  - CloudTrail
+  - Ransomware
+  - DataSecurity
+Status: Experimental
+Description: >
+  This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets.
+  Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt,
+  RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and
+  provide payment instructions.
+Runbook: |
+  1. Query CloudTrail for all S3 API calls by the userIdentity:arn in the 24 hours before and after this alert, focusing on DeleteObject, DeleteObjects, PutBucketEncryption, DeleteBucketEncryption, and PutBucketVersioning events from the same requestParameters:bucketName
+  2. Check if the sourceIPAddress has accessed this S3 bucket in the past 90 days and compare the volume of operations to establish if this is anomalous activity
+  3. Find other alerts with this rule ID or any S3 deletion/encryption rules for the same bucket or user in the past 7 days to identify if this is part of a coordinated ransomware attack pattern
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
+Tests:
+  - Name: Ransomware Note - HOW_TO_DECRYPT_FILES.txt
+    LogType: AWS.CloudTrail
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDA-MOCKIAMUSERID-1",
+          "arn": "arn:aws:iam::111111111111:user/compromised-user",
+          "accountId": "111111111111",
+          "accessKeyId": "AKIA-MOCKACCESSKEYID-1",
+          "userName": "compromised-user"
+        },
+        "eventTime": "2025-12-03T18:00:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutObject",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-sdk-python/1.26.0",
+        "requestParameters": {
+          "bucketName": "production-data",
+          "key": "documents/financial/HOW_TO_DECRYPT_FILES.txt",
+          "Host": "sample-bucket-hungry-buck.s3.us-west-2.amazonaws.com"
+        },
+        "responseElements": null,
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "TLS_AES_128_GCM_SHA256",
+          "bytesTransferredIn": 2048,
+          "bytesTransferredOut": 0,
+          "SSEApplied": "SSE_S3"
+        },
+        "requestID": "EXAMPLE987654321",
+        "eventID": "z9y8x7w6-5432-10fe-dcba-EXAMPLE22222",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::sample-bucket-hungry-buck",
+            "accountId": "111111111111"
+          },
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::sample-bucket-hungry-buck/documents/financial/HOW_TO_DECRYPT_FILES.txt"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "111111111111"
+      }
+  - Name: Normal File Upload - quarterly_report.pdf
+    LogType: AWS.CloudTrail
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAI23HXE2NYPEXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/legitimate-user",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "userName": "legitimate-user"
+        },
+        "eventTime": "2025-12-03T18:00:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutObject",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "203.0.113.10",
+        "userAgent": "aws-cli/2.13.0",
+        "requestParameters": {
+          "bucketName": "my-company-bucket",
+          "key": "reports/quarterly-report.pdf",
+          "Host": "my-company-bucket.s3.us-east-1.amazonaws.com"
+        },
+        "responseElements": {
+          "x-amz-server-side-encryption": "AES256"
+        },
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 524288,
+          "bytesTransferredOut": 0
+        },
+        "requestID": "EXAMPLE555666777",
+        "eventID": "b1b2b3b4-4444-5555-6666-EXAMPLE55555",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::my-company-bucket",
+            "accountId": "123456789012"
+          },
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::my-company-bucket/reports/quarterly-report.pdf"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "123456789012"
+      }
