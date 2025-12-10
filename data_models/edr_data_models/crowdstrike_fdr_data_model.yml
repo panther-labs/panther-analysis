@@ -1,0 +1,81 @@
+AnalysisType: datamodel
+DataModelID: "Standard.Crowdstrike.FDR"
+DisplayName: "Crowdstrike FDR - Sigma Field Mappings"
+Enabled: true
+Filename: crowdstrike_fdr_data_model.py
+LogTypes:
+  - Crowdstrike.FDREvent
+Mappings:
+  # Standard UDM Mappings (existing)
+  - Name: actor_user
+    Path: $.event.UserName
+  - Name: cmd
+    Path: $.event.CommandLine
+  - Name: destination_ip
+    Path: $.event.RemoteAddressIP4
+  - Name: destination_port
+    Path: $.event.RemotePort
+  - Name: dns_query
+    Method: get_dns_query
+  - Name: process_name
+    Method: get_process_name
+  - Name: source_ip
+    Path: $.aip
+  - Name: source_port
+    Path: $.event.LocalPort
+
+  # Sigma Field Mappings - Process Creation
+  - Name: Image
+    Path: $.event.ImageFileName
+  - Name: CommandLine
+    Path: $.event.CommandLine
+  - Name: User
+    Path: $.event.UserName
+  - Name: ParentImage
+    Path: $.event.ParentBaseFileName
+  - Name: ParentCommandLine
+    Path: $.event.ParentCommandLine
+  - Name: ParentProcessName
+    Method: get_parent_process_name
+
+  # Sigma Field Mappings - Hashes
+  - Name: sha256
+    Path: $.event.SHA256HashData
+  - Name: sha1
+    Path: $.event.SHA1HashData
+  - Name: md5
+    Path: $.event.MD5HashData
+
+  # Sigma Field Mappings - Network
+  - Name: DestinationIp
+    Path: $.event.RemoteAddressIP4
+  - Name: DestinationPort
+    Path: $.event.RemotePort
+  - Name: SourceIp
+    Path: $.aip
+  - Name: SourcePort
+    Path: $.event.LocalPort
+  - Name: dst_ip
+    Path: $.event.RemoteAddressIP4
+  - Name: dst_port
+    Path: $.event.RemotePort
+  - Name: src_ip
+    Path: $.aip
+  - Name: src_port
+    Path: $.event.LocalPort
+
+  # Sigma Field Mappings - DNS
+  - Name: QueryName
+    Method: get_dns_query
+  - Name: query
+    Method: get_dns_query
+  - Name: QueryResults
+    Path: $.event.IP4Records
+
+  # Additional Process Fields
+  - Name: ProcessId
+    Path: $.event.ContextProcessId
+  - Name: ParentProcessId
+    Path: $.event.ParentProcessId
+  - Name: IntegrityLevel
+    Path: $.event.IntegrityLevel
