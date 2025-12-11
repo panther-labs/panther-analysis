@@ -18,4 +18,8 @@ def title(event):
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    context = aws_rule_context(event)
+    context["bucketName"] = event.deep_get(
+        "requestParameters", "bucketName", default="<UNKNOWN_BUCKET>"
+    )
+    return context

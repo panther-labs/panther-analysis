@@ -12,9 +12,14 @@ Tags:
   - AWS
   - S3
   - CloudTrail
+  - Ransomware
+  - Impact:Data Destruction
+Reports:
+  Stratus Red Team:
+    - aws.impact.s3-ransomware-client-side-encryption
 Description: >
   This rule detects when objects are copied in an S3 bucket with client-side encryption. Such actions can be indicative of unauthorized data access or other suspicious activities.
-Runbook: >
+Runbook: |
   Investigate the user and the actions performed on the S3 bucket to ensure they were authorized. Unauthorized copying of encrypted objects can lead to data exposure.
   Steps to investigate:
   1. Identify the user who performed the action.

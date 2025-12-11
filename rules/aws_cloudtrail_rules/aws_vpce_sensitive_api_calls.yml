@@ -21,7 +21,7 @@ Reports:
     - TA0005:T1562 # Impair Defenses
     - TA0005:T1599 # Network Boundary Bridging
 Description: Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
-Runbook: >
+Runbook: |
   1. Identify the principal making the sensitive API call and the specific service affected
   2. Determine if this action is expected from this principal
   3. Check if the API call is one that typically requires additional scrutiny (e.g., logging configuration changes)

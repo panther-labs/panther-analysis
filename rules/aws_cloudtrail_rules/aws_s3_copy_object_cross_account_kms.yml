@@ -1,0 +1,117 @@
+AnalysisType: rule
+Filename: aws_s3_copy_object_cross_account_kms.py
+RuleID: "AWS.S3.CopyObject.CrossAccount.Encryption.KMS"
+DisplayName: "S3 Object Encrypted with External KMS Key"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - S3
+  - Ransomware
+  - Impact:Data Destruction
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1486 # Impact: Data Encrypted for Impact
+Severity: High
+Status: Experimental
+Description: >
+  Detects when an S3 object is copied with a KMS key belonging to an account ID different than
+  the bucket owner's account ID. This technique is used in S3
+  ransomware attacks where attackers encrypt objects with their own KMS key from
+  an attacker-controlled AWS account, making the data inaccessible to the original
+  owner. This is often a precursor to ransom demands or permanent data loss.
+Runbook: |
+  1. Query CloudTrail for all CopyObject events by the userIdentity:arn in the 24 hours before and after the alert to identify all affected objects in the requestParameters:bucketName
+  2. Check if the KMS key ARN from resources field belongs to an external account ID that appears in any legitimate cross-account operations in the past 90 days
+  3. Find all S3 GetObject and ListBucket events by this user on the source bucket in the 1 hour before the first CopyObject to check if the attacker performed reconnaissance
+Reference: https://rhinosecuritylabs.com/aws/s3-ransomware-part-1-attack-vector/
+Tests:
+  - Name: In-Place Copy with KMS Key Change
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "AAAAAAAAAAAAAAAAAAAAA:attacker",
+          "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-elastic-rhodes/sample-role-brave-yalow-role-jolly-banzai-role-intelligent-brahmagupta-role-admiring-cori-role-beautiful-keldysh-role-hopeful-chaplygin",
+          "accountId": "111111111111",
+          "accessKeyId": "ASIA-MOCKACCESSKEYID-1"
+        },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "CopyObject",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4",
+        "requestParameters": {
+          "bucketName": "victim-data-bucket",
+          "key": "important-file.txt",
+          "x-amz-copy-source": "victim-data-bucket/important-file.txt",
+          "x-amz-server-side-encryption": "aws:kms",
+          "x-amz-server-side-encryption-aws-kms-key-id": "arn:aws:kms:us-east-1:999999999999:key/attacker-key-id"
+        },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::sample-bucket-quizzical-yalow/important-file.txt"
+          },
+          {
+            "accountId": "999999999999",
+            "type": "AWS::KMS::Key",
+            "ARN": "arn:aws:kms:us-east-1:999999999999:key/attacker-key-id"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "111111111111"
+      }
+  - Name: Copy with Same Account Owner
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "AAAAAAAAAAAAAAAAAAAAA:attacker",
+          "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-elastic-rhodes/sample-role-beautiful-keldysh-role-hopeful-chaplygin",
+          "accountId": "111111111111",
+          "accessKeyId": "ASIA-MOCKACCESSKEYID-1"
+        },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "CopyObject",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4",
+        "requestParameters": {
+          "bucketName": "victim-data-bucket",
+          "key": "important-file.txt",
+          "x-amz-copy-source": "victim-data-bucket/important-file.txt",
+          "x-amz-server-side-encryption": "aws:kms",
+          "x-amz-server-side-encryption-aws-kms-key-id": "arn:aws:kms:us-east-1:111111111111:key/developer"
+        },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::sample-bucket-quizzical-yalow/important-file.txt"
+          },
+          {
+            "accountId": "111111111111",
+            "type": "AWS::KMS::Key",
+            "ARN": "arn:aws:kms:us-east-1:111111111111:key/attacker-key-id"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "111111111111"
+      }

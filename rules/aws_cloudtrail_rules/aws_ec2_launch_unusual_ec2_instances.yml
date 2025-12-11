@@ -9,12 +9,15 @@ Severity: Info
 Reports:
   MITRE ATT&CK:
     - TA0002:T1610 # Execution - Deploy Container
+
+  Stratus Red Team:
+    - aws.execution.ec2-launch-unusual-instances
 Description: >
   Detect when an actor deploys an EC2 instance with an unusual profile based on
   your business needs.
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.execution.ec2-launch-unusual-instances/
-Runbook: >
+Runbook: |
   Follow up with the instance to identify whether the instance has a legitimate
   purpose. Reach out to the actor to ensure they performed the action.
 SummaryAttributes:
