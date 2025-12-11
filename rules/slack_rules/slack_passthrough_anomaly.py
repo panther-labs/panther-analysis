@@ -45,7 +45,7 @@ def title(event):
 
     if anomaly_description:
         return f"Slack Anomaly Detected{actor_str}: {anomaly_description}"
-    # if the anomaly is not in our list (for future use) 
+    # if the anomaly is not in our list (for future use)
     return f"Slack Anomaly Detected{actor_str}"
 
 
