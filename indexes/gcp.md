@@ -44,8 +44,16 @@
   - This rule detects deletions of GCP firewall rules.
 - [GCP Firewall Rule Modified](../rules/gcp_audit_rules/gcp_firewall_rule_modified.yml)
   - This rule detects modifications to GCP firewall rules.
+- [GCP GCS Bucket Configuration Updated](../rules/gcp_audit_rules/gcp_gcs_update_bucket_configuration.yml)
+  - Detects when a GCS bucket configuration is updated. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.
+- [GCP GCS Bulk Object Deletion](../rules/gcp_audit_rules/gcp_gcs_bulk_deletion.yml)
+  - Detects bulk deletion of GCS objects. This pattern is indicative of a ransomware attack or data destruction where an adversary deletes storage objects at scale. The threshold of 10+ deletion operations suggests automated bulk deletion rather than normal application behavior. This can be part of a double extortion ransomware attack where data is both encrypted and deleted to increase pressure on victims.
+- [GCP GCS Bulk Object Rewrite Operation](../rules/gcp_audit_rules/gcp_gcs_object_rewrite.yml)
+  - Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.
 - [GCP GCS IAM Permission Changes](../rules/gcp_audit_rules/gcp_gcs_iam_changes.yml)
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
+- [GCP GCS Object Copied to Different Bucket](../rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml)
+  - Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
 - [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
@@ -75,6 +83,14 @@
   - Alerts when a user creates privileged pod. These particular pods have full access to the host’s namespace and devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks. In the event of a successful container escape where a user is operating with root privileges, the attacker retains this role on the node.
 - [GCP K8S Service Type NodePort Deployed](../rules/gcp_k8s_rules/gcp_k8s_service_type_node_port_deployed.yml)
   - This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+- [GCP KMS Bulk Encryption by GCS Service Account](../rules/gcp_audit_rules/gcp_kms_bulk_encryption.yml)
+  - Detects bulk KMS encryption operations performed by the GCS service account. This pattern is indicative of a ransomware attack where an adversary directly calls the KMS Encrypt API using the GCS service account identity to encrypt data at scale, effectively holding data hostage. The threshold of 10+ encryption operations suggests automated bulk encryption rather than normal application behavior.
+- [GCP KMS Cross-Project Encryption](../rules/gcp_audit_rules/gcp_kms_cross_project_encryption.yml)
+  - Detects when a GCS service account in one project uses a KMS encryption key from a different project. This could indicate potential ransomware activity where an attacker is using their own KMS key to encrypt data in a victim's project, making it inaccessible without the attacker's key.
+- [GCP KMS Key Granted to GCS Service Account](../rules/gcp_audit_rules/gcp_kms_enable_key.yml)
+  - Detects when a KMS IAM policy grants encryption/decryption permissions to a GCS service account. This pattern may indicate a ransomware attack where an adversary grants a GCS service account access to KMS keys to enable encryption of cloud storage objects.
+- [GCP KMS Key Version Disabled or Destroyed](../rules/gcp_audit_rules/gcp_kms_erase_key.yml)
+  - Detects when a KMS key version is disabled, scheduled for destruction, or destroyed. Disabling or destroying KMS key versions can be used to deny access to encrypted data—a ransomware tactic where attackers disable keys to prevent victims from accessing their data.
 - [GCP Log Bucket or Sink Deleted](../rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.yml)
   - This rule detects deletions of GCP Log Buckets or Sinks.
 - [GCP Logging Settings Modified](../rules/gcp_audit_rules/gcp_logging_settings_modified.yml)
