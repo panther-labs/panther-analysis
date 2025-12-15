@@ -1,0 +1,110 @@
+AnalysisType: rule
+Filename: gcp_gcs_update_bucket_configuration.py
+RuleID: "GCP.GCS.UpdateBucketConfiguration"
+DisplayName: "GCP GCS Bucket Configuration Updated"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Defense Evasion:Impair Defenses
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+    - TA0040:T1486
+Severity: Info
+Description: >
+  Detects when a GCS bucket configuration is updated. Bucket configuration changes can be
+  part of a ransomware attack, such as disabling security settings to prevent data recovery.
+Runbook: |
+  1. Query GCP Audit logs for all bucket operations by the principal email in the 24 hours before and after this alert
+  2. Check if the source IP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access patterns
+  3. Identify what specific configuration was changed (encryption, retention, versioning, lifecycle policies)
+  4. Search for related KMS key changes or IAM policy modifications on the same bucket in the past 6 hours
+  5. Look for bulk object operations (rewrite, copy, delete) on this bucket following the configuration change
+Reference: https://cloud.google.com/storage/docs/json_api/v1/buckets/update
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  - Name: GCS Bucket Configuration Updated
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "oauthInfo":
+                  {
+                    "oauthClientId": "111111111111-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
+                  },
+                "principalEmail": "denethor@lotr.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "storage.buckets.update",
+                  "resource": "projects/_/buckets/test-bucket",
+                  "resourceAttributes": {},
+                },
+              ],
+            "methodName": "storage.buckets.update",
+            "requestMetadata":
+              {
+                "callerIP": "1.2.3.4",
+                "callerIp": "1.2.3.4",
+                "callerSuppliedUserAgent": "google-cloud-sdk gcloud/548.0.0 command/gcloud.storage.buckets.update",
+                "destinationAttributes": {},
+                "requestAttributes":
+                  { "auth": {}, "time": "2025-12-15T15:40:29.542006648Z" },
+              },
+            "resourceLocation": { "currentLocations": ["us"] },
+            "resourceName": "projects/_/buckets/test-bucket",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "insertId": "abc123def456",
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2025-12-15 15:40:31.301053122",
+        "resource":
+          {
+            "labels":
+              {
+                "bucket_name": "test-bucket",
+                "location": "us",
+                "project_id": "test-project",
+              },
+            "type": "gcs_bucket",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2025-12-15 15:40:29.533794920",
+      }
+  - Name: GCS Bucket Created
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo": { "principalEmail": "user@example.com" },
+            "methodName": "storage.buckets.create",
+            "resourceName": "projects/_/buckets/test-bucket",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels": { "bucket_name": "test-bucket" },
+            "type": "gcs_bucket",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2025-12-15 15:40:29.533794920",
+      }
