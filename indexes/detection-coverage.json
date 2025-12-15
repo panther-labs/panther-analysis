@@ -3595,7 +3595,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects GCP cloud storage bucket updates and deletes.",
+        "Description": "Detects when a GCS bucket configuration is updated or deleted. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.",
         "DisplayName": "GCP Cloud Storage Buckets Modified Or Deleted",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3718,15 +3718,6 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_firewall_rule_modified.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a GCS bucket configuration is updated. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.",
-        "DisplayName": "GCP GCS Bucket Configuration Updated",
-        "LogTypes": [
-            "GCP.AuditLog"
-        ],
-        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_update_bucket_configuration.yml"
     },
     {
         "AnalysisType": "Rule",
