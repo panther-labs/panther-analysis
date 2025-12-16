@@ -1,0 +1,199 @@
+AnalysisType: rule
+Filename: aws_waf_javadeserializationrce_header.py
+RuleID: "AWS.WAF.JavaDeserializationRCE.Header"
+DisplayName: "AWS WAF Java Deserialization RCE Attempt via Header"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Initial Access:Exploit Public-Facing Application
+  - Execution:Exploitation for Client Execution
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+    - TA0002:T1203
+Severity: High
+Description: >
+  Detects when AWS WAF's managed rule JavaDeserializationRCE_HEADER matches a request,
+  indicating a potential Java deserialization remote code execution attempt through HTTP headers.
+  Java deserialization vulnerabilities allow attackers to execute arbitrary code by sending
+  malicious serialized objects that are unsafely deserialized by the application.
+Runbook: |
+  1. Review the alert context to identify the source IP, URI, and HTTP headers involved
+  2. Check if the request was blocked (HIGH severity) or allowed (CRITICAL severity)
+  3. If allowed, immediately investigate the target application for signs of compromise
+  4. Review application logs on the backend servers for any suspicious activity
+  5. Consider blocking the source IP if it shows repeated attack attempts
+  6. Ensure Java applications properly validate and sanitize deserialized input
+  7. Review and update WAF rules to ensure proper blocking of deserialization attacks
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list.html
+Tests:
+  - Name: JavaDeserializationRCE HEADER Blocked by WAF
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "JavaDeserializationRCE_HEADER"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpSourceId: "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/1234567890abcdef"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        headers:
+          - name: "Host"
+            value: "example.com"
+          - name: "User-Agent"
+            value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          - name: "X-Custom-Header"
+            value: "rO0ABXNyABdqYXZhLnV0aWwuUHJpb3JpdHlRdWV1ZQ"
+        uri: "/api/endpoint"
+        httpMethod: "POST"
+        httpVersion: "HTTP/1.1"
+        requestId: "1-507f191e810c19729de860ea-trace"
+      terminatingRuleMatchDetails:
+        - conditionType: "JavaDeserialization"
+          location: "HEADER"
+          matchedData:
+            - "rO0ABXNyABdq"
+            - "serialized"
+
+  - Name: JavaDeserializationRCE HEADER Allowed (Critical)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpSourceId: "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/1234567890abcdef"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        headers:
+          - name: "Host"
+            value: "example.com"
+          - name: "User-Agent"
+            value: "curl/7.68.0"
+          - name: "Content-Type"
+            value: "application/x-java-serialized-object"
+        uri: "/admin/upload"
+        httpMethod: "POST"
+        httpVersion: "HTTP/1.1"
+        requestId: "2-507f191e810c19729de860ea-trace"
+      nonTerminatingMatchingRules:
+        - ruleId: "JavaDeserializationRCE_HEADER"
+          action: "COUNT"
+          ruleMatchDetails:
+            - conditionType: "JavaDeserialization"
+              location: "HEADER"
+              matchedData:
+                - "x-java-serialized"
+
+  - Name: JavaDeserializationRCE in Rule Group
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+      terminatingRuleType: "GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpSourceId: "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/1234567890abcdef"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        headers:
+          - name: "Host"
+            value: "api.example.com"
+          - name: "User-Agent"
+            value: "python-requests/2.28.0"
+          - name: "Accept-Language"
+            value: "rO0ABXNy"
+        uri: "/api/v1/process"
+        httpMethod: "POST"
+        httpVersion: "HTTP/2.0"
+        requestId: "3-507f191e810c19729de860ea-trace"
+      ruleGroupList:
+        - ruleGroupId: "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+          terminatingRule:
+            ruleId: "JavaDeserializationRCE_HEADER"
+            action: "BLOCK"
+            ruleMatchDetails:
+              - conditionType: "JavaDeserialization"
+                location: "HEADER"
+                matchedData:
+                  - "rO0ABXNy"
+
+  - Name: Non-ALB Source (CloudFront) - Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "JavaDeserializationRCE_HEADER"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpSourceId: "E1234EXAMPLE"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/api/endpoint"
+        httpMethod: "POST"
+        httpVersion: "HTTP/1.1"
+
+  - Name: Different WAF Rule Match - Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "SQLi_BODY"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpSourceId: "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/1234567890abcdef"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/search"
+        httpMethod: "GET"
+        httpVersion: "HTTP/1.1"
+      terminatingRuleMatchDetails:
+        - conditionType: "SQL_INJECTION"
+          location: "BODY"
+          matchedData:
+            - "' OR '1'='1"
+
+  - Name: Normal Traffic - Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      formatVersion: 1
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpSourceId: "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/web/1234567890abcdef"
+      httpRequest:
+        clientIp: "198.51.100.10"
+        country: "US"
+        headers:
+          - name: "Host"
+            value: "example.com"
+          - name: "User-Agent"
+            value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        uri: "/home"
+        httpMethod: "GET"
+        httpVersion: "HTTP/1.1"
+        requestId: "4-507f191e810c19729de860ea-trace"
+
+DedupPeriodMinutes: 60
+Threshold: 1
