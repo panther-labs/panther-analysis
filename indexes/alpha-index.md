@@ -708,7 +708,7 @@
 - [AWS WAF WebACL Has Associated Resources](../policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml)
   - This policy ensures that AWS WAF WebACLs are associated with at least one resource (ALB, CloudFront Distribution, or API Gateway). If a WebACL is not associated with any resources, it is inactive and not providing any protection.
 - [AWS WAF Java Deserialization RCE Attempt via Header](https://github.com/panther-labs/panther-analysis/blob/e64955670972544169f25fc62fee905f09489350/rules/aws_waf_rules/aws_waf_javadeserializationrce_header.yml)
-  -This rule detects AWS WAF JavaDeserializationRCE_HEADER managed rule matches (ALB, CloudFront, API Gateway, and AppSync.) Can detect against React2Shell type vulnerabilities.
+  - This rule detects AWS WAF JavaDeserializationRCE_HEADER managed rule matches (ALB, CloudFront, API Gateway, and AppSync.) Can detect against React2Shell type vulnerabilities.
 
 ## AppOmni
 
