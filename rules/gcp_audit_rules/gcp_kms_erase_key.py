@@ -1,30 +1,33 @@
 def rule(event):
-
-    if (
-        event.deep_get("protoPayload", "methodName") != "UpdateCryptoKeyVersion"
-        or event.deep_get("protoPayload", "serviceName") != "cloudkms.googleapis.com"
-        or event.deep_get("protoPayload", "request", "updateMask") != "state"
-    ):
+    if event.deep_get("protoPayload", "serviceName") != "cloudkms.googleapis.com":
         return False
 
-    # Check if the key is being disabled or destroyed
-    crypto_key_state = event.deep_get(
-        "protoPayload", "request", "cryptoKeyVersion", "state", default="<UNKNOWN_STATE>"
-    )
-    dangerous_states = ["DISABLED", "DESTROY_SCHEDULED", "DESTROYED"]
+    method = event.deep_get("protoPayload", "methodName", default="<UNKNOWN_METHOD>")
 
-    return crypto_key_state in dangerous_states
+    # Direct key version destruction
+    if method == "DestroyCryptoKeyVersion":
+        return True
+
+    # Key version state change, check for dangerous states
+    if method == "UpdateCryptoKeyVersion":
+        if event.deep_get("protoPayload", "request", "updateMask") != "state":
+            return False
+
+        crypto_key_state = event.deep_get(
+            "protoPayload", "request", "cryptoKeyVersion", "state", default="<UNKNOWN_STATE>"
+        )
+        dangerous_states = ["DISABLED", "DESTROY_SCHEDULED", "DESTROYED"]
+        return crypto_key_state in dangerous_states
+
+    return False
 
 
 def title(event):
     actor = event.deep_get(
         "protoPayload", "authenticationInfo", "principalEmail", default="Unknown"
     )
-    state = event.deep_get(
-        "protoPayload", "request", "cryptoKeyVersion", "state", default="Unknown"
-    )
     key = event.deep_get("protoPayload", "request", "cryptoKeyVersion", "name", default="Unknown")
-    return f"GCP KMS key [{key}] version set to {state} by {actor}"
+    return f"GCP KMS key [{key}] version disabled or destroyed by {actor}"
 
 
 def alert_context(event):

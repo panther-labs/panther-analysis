@@ -117,7 +117,7 @@ Tests:
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
-              { "principalEmail": "user@example.com" },
+              { "principalEmail": "denethor@lotr.com" },
             "methodName": "UpdateCryptoKeyVersion",
             "request":
               {
@@ -128,6 +128,35 @@ Tests:
                     "state": "ENABLED",
                   },
                 "updateMask": "state",
+              },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels": { "project_id": "test-project" },
+            "type": "cloudkms_cryptokeyversion",
+          },
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
+  - Name: KMS Key Version Destroyed
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "user@example.com" },
+            "methodName": "DestroyCryptoKeyVersion",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.cloud.kms.v1.UpdateCryptoKeyVersionRequest",
+                "cryptoKeyVersion":
+                  {
+                    "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                  },
               },
             "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
             "serviceName": "cloudkms.googleapis.com",
