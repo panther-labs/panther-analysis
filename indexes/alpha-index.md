@@ -1173,6 +1173,8 @@
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
 - [GCP GCS Object Copied to Different Bucket](../rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml)
   - Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.
+- [GCP GCS Ransom Note Upload](../rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.yml)
+  - Detects when a file with a name matching common ransomware note patterns is uploaded to a Google Cloud Storage bucket. Ransomware attackers often leave ransom notes with distinctive filenames to provide victims with payment instructions.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
 - [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
