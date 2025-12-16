@@ -4,10 +4,13 @@ def rule(event):
 
     This rule identifies potential Java deserialization RCE attempts through HTTP headers
     that match the JavaDeserializationRCE_HEADER managed rule from AWS WAF.
+
+    Detects across all WAF sources: ALB, CloudFront, API Gateway, and AppSync.
     """
-    # Check if httpSourceName is ALB (optional - remove if you want all sources)
-    if event.get("httpSourceName") != "ALB":
-        return False
+    # Check terminating rule ID directly
+    terminating_rule_id = event.get("terminatingRuleId", "")
+    if "JavaDeserializationRCE_HEADER" in terminating_rule_id:
+        return True
 
     # Check terminating rule match details
     terminating_matches = event.get("terminatingRuleMatchDetails", [])
@@ -16,12 +19,12 @@ def rule(event):
 
     # Check non-terminating matching rules
     non_terminating = event.get("nonTerminatingMatchingRules", [])
-    if check_non_terminating_rules(non_terminating):
+    if non_terminating and check_non_terminating_rules(non_terminating):
         return True
 
     # Check rule groups
     rule_groups = event.get("ruleGroupList", [])
-    if check_rule_groups(rule_groups):
+    if rule_groups and check_rule_groups(rule_groups):
         return True
 
     return False
@@ -29,7 +32,13 @@ def rule(event):
 
 def contains_java_deser_match(match_details):
     """Check if match details contain JavaDeserializationRCE_HEADER"""
+    if not match_details:
+        return False
+
     for match in match_details:
+        if not match:
+            continue
+
         condition_type = match.get("conditionType", "")
         if "JavaDeserialization" in condition_type or "RCE" in condition_type:
             return True
@@ -38,14 +47,20 @@ def contains_java_deser_match(match_details):
 
 def check_non_terminating_rules(rules):
     """Check non-terminating rules for JavaDeserializationRCE_HEADER match"""
+    if not rules:
+        return False
+
     for rule in rules:
+        if not rule:
+            continue
+
         rule_id = rule.get("ruleId", "")
         if "JavaDeserializationRCE_HEADER" in rule_id:
             return True
 
         # Check rule match details within non-terminating rules
         match_details = rule.get("ruleMatchDetails", [])
-        if contains_java_deser_match(match_details):
+        if match_details and contains_java_deser_match(match_details):
             return True
 
     return False
@@ -53,7 +68,13 @@ def check_non_terminating_rules(rules):
 
 def check_rule_groups(rule_groups):
     """Check rule groups for JavaDeserializationRCE_HEADER match"""
+    if not rule_groups:
+        return False
+
     for group in rule_groups:
+        if not group:
+            continue
+
         # Check terminating rule within group
         terminating_rule = group.get("terminatingRule", {})
         if terminating_rule:
@@ -62,12 +83,12 @@ def check_rule_groups(rule_groups):
                 return True
 
             match_details = terminating_rule.get("ruleMatchDetails", [])
-            if contains_java_deser_match(match_details):
+            if match_details and contains_java_deser_match(match_details):
                 return True
 
         # Check non-terminating rules within group
         non_terminating = group.get("nonTerminatingMatchingRules", [])
-        if check_non_terminating_rules(non_terminating):
+        if non_terminating and check_non_terminating_rules(non_terminating):
             return True
 
     return False

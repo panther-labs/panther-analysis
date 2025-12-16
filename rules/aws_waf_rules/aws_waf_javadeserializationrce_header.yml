@@ -20,6 +20,7 @@ Description: >
   indicating a potential Java deserialization remote code execution attempt through HTTP headers.
   Java deserialization vulnerabilities allow attackers to execute arbitrary code by sending
   malicious serialized objects that are unsafely deserialized by the application.
+  Monitors traffic across all WAF sources including ALB, CloudFront, API Gateway, and AppSync.
 Runbook: |
   1. Review the alert context to identify the source IP, URI, and HTTP headers involved
   2. Check if the request was blocked (HIGH severity) or allowed (CRITICAL severity)
@@ -131,8 +132,8 @@ Tests:
                 matchedData:
                   - "rO0ABXNy"
 
-  - Name: Non-ALB Source (CloudFront) - Should Not Alert
-    ExpectedResult: false
+  - Name: CloudFront Source - Should Alert
+    ExpectedResult: true
     Log:
       timestamp: "2024-03-20T10:45:00.000Z"
       formatVersion: 1
