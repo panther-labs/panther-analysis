@@ -3730,7 +3730,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.",
+        "Description": "Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.",
         "DisplayName": "GCP GCS Bulk Object Rewrite Operation",
         "LogTypes": [
             "GCP.AuditLog"
