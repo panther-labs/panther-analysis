@@ -8,7 +8,6 @@ REACT2SHELL_RULE_IDS = [
 
 
 def rule(event):
-
     rule_id = event.get("RuleID", "")
     return rule_id in REACT2SHELL_RULE_IDS
 
