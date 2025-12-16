@@ -1,12 +1,14 @@
+# Cloudflare Rule IDs for CVE-2025-55182
+REACT2SHELL_RULE_IDS = [
+    "33aa8a8a948b48b28d40450c5fb92fba",  # Managed Ruleset
+    "2b5d06e34a814a889bee9a0699702280",  # Free Ruleset
+]
+
+
 def rule(event):
-    # Cloudflare Rule IDs for CVE-2025-55182
-    react2shell_rule_ids = [
-        "33aa8a8a948b48b28d40450c5fb92fba",  # Managed Ruleset
-        "2b5d06e34a814a889bee9a0699702280",  # Free Ruleset
-    ]
 
     rule_id = event.get("RuleID", "")
-    return rule_id in react2shell_rule_ids
+    return rule_id in REACT2SHELL_RULE_IDS
 
 
 def title(event):
