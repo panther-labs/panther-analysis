@@ -1,24 +1,25 @@
+# CloudArmor signature IDs for CVE-2025-55182
+REACT2SHELL_SIGNATURES = [
+    "google-mrs-v202512-id000001-rce",
+    "google-mrs-v202512-id000002-rce",
+]
+
+
 def rule(event):
     # Check that this is an HTTP load balancer event
     if event.deep_get("resource", "type") != "http_load_balancer":
         return False
 
-    # CloudArmor signature IDs for CVE-2025-55182
-    react2shell_signatures = [
-        "google-mrs-v202512-id000001-rce",
-        "google-mrs-v202512-id000002-rce",
-    ]
-
     # Check enforced policy match
     enforced_policy = event.deep_get("jsonPayload", "enforcedSecurityPolicy", default={})
     enforced_sigs = enforced_policy.get("preconfiguredExprIds", [])
-    if any(sig in enforced_sigs for sig in react2shell_signatures):
+    if any(sig in enforced_sigs for sig in REACT2SHELL_SIGNATURES):
         return True
 
     # Check preview policy for non-blocking WAF matches
     preview_policy = event.deep_get("jsonPayload", "previewSecurityPolicy", default={})
     preview_sigs = preview_policy.get("preconfiguredExprIds", [])
-    if any(sig in preview_sigs for sig in react2shell_signatures):
+    if any(sig in preview_sigs for sig in REACT2SHELL_SIGNATURES):
         return True
 
     return False
