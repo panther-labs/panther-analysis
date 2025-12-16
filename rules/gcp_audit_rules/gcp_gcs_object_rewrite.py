@@ -17,6 +17,23 @@ def rule(event):
     if method not in ["storage.objects.create"]:
         return False
 
+    # Get the resource from authorizationInfo for storage.objects.create permission
+    auth_info = event.deep_get("protoPayload", "authorizationInfo", default=[])
+    requested_file = next(
+        (
+            entry.get("resource")
+            for entry in auth_info
+            if entry.get("permission") == "storage.objects.create"
+        ),
+        None,
+    )
+    resource_file = event.deep_get("protoPayload", "resourceName", default=None)
+
+    # Only alert on files that are being rewritten in the same bucket
+    # (where the authorized resource matches the actual resource being created)
+    if not requested_file or not resource_file or requested_file != resource_file:
+        return False
+
     # This field contains commands executed on cli
     user_agent = event.deep_get(
         "protoPayload", "requestMetadata", "callerSuppliedUserAgent", default="<UNKNOWN_USER_AGENT>"
@@ -37,11 +54,11 @@ def title(event):
     resource = event.deep_get("protoPayload", "resourceName", default="")
     obj_name = resource.split("/objects/")[-1] if "/objects/" in resource else "Unknown"
     bucket = event.deep_get("resource", "labels", "bucket_name", default="Unknown")
-    return f"GCS object [{obj_name}] re-encryption in [{bucket}] by [{actor}]"
+    return f"GCS object [{obj_name}] rewritten in [{bucket}] by [{actor}]"
 
 
 def dedup(event):
-    # Dedupe by bucket and actor to group related re-encryption operations
+    # Dedup by bucket and actor to group related rewrite operations
     bucket = event.deep_get("resource", "labels", "bucket_name", default="unknown")
     actor = event.deep_get(
         "protoPayload", "authenticationInfo", "principalEmail", default="unknown"

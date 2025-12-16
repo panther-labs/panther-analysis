@@ -20,18 +20,14 @@ Reports:
     - TA0010:T1537  # Exfiltration: Transfer Data to Cloud Account
 Severity: Medium
 Description: >
-  Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the bucket with an attacker-controlled encryption key.
+  Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key.
   Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects,
   effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k'
   command patterns in user agent strings, with a threshold of 10 events.
-Runbook: >
-  1. Verify the identity and authorization of the principal performing the rewrite operations
-  2. Check if this is a legitimate encryption key rotation or migration activity
-  3. Examine the scope: How many objects and buckets are affected?
-  4. Review the source IP address and location for anomalies
-  5. Check for other suspicious activity from the same principal (unusual access patterns, privilege escalation, data exfiltration)
-  6. If confirmed malicious: Revoke compromised credentials immediately, isolate affected buckets, assess backup integrity, and engage incident response
-  7. Validate that object backups exist and are not affected by the same compromise
+Runbook: |
+  1. Query GCP Audit Logs for all storage.objects.create operations by the principalEmail in the 24 hours before and after the alert to determine the scope of rewrite operations
+  2. Check if the callerIP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access locations from the past 90 days
+  3. Find other alerts or suspicious GCS activity from this principalEmail or bucket in the past 7 days to identify potential ransomware patterns
 Reference: https://cloud.google.com/storage/docs/gsutil/commands/rewrite
 SummaryAttributes:
   - severity
