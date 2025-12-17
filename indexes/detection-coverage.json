@@ -3568,6 +3568,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.",
+        "DisplayName": "GCP Cloud Armor RCE Attempt Detected",
+        "LogTypes": [
+            "GCP.HTTPLoadBalancer"
+        ],
+        "YAMLPath": "rules/gcp_http_lb_rules/gcp_cloud_armor_r2s_rce_attempt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.",
         "DisplayName": "GCP Cloud Run Service Created",
         "LogTypes": [
