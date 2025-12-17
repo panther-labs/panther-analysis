@@ -2396,6 +2396,15 @@
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
     },
     {
+      "AnalysisType": "Rule",
+      "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
+      "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
+      "LogTypes": [
+          "AWS.WAFWebACL"
+      ],
+      "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.",
         "DisplayName": "AWS.Administrative.IAM.User.Created",
@@ -2732,6 +2741,15 @@
             "Cloudflare.Firewall"
         ],
         "YAMLPath": "rules/cloudflare_rules/cloudflare_firewall_ddos.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF",
+        "DisplayName": "Cloudflare React2Shell RCE Attempt Detected",
+        "LogTypes": [
+            "Cloudflare.Firewall"
+        ],
+        "YAMLPath": "rules/cloudflare_rules/cloudflare_react2shell_rce_attempt.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3565,6 +3583,15 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_bigquery_large_scan.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.",
+        "DisplayName": "GCP Cloud Armor RCE Attempt Detected",
+        "LogTypes": [
+            "GCP.HTTPLoadBalancer"
+        ],
+        "YAMLPath": "rules/gcp_http_lb_rules/gcp_cloud_armor_r2s_rce_attempt.yml"
     },
     {
         "AnalysisType": "Rule",
