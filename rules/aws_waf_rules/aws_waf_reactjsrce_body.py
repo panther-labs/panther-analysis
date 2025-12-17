@@ -8,8 +8,8 @@ def rule(event):
         return True
 
     # Check non-terminating rules
-    for rule in event.get("nonTerminatingMatchingRules", []) or []:
-        if "ReactJSRCE_BODY" in rule.get("ruleId", ""):
+    for matching_rule in event.get("nonTerminatingMatchingRules", []) or []:
+        if "ReactJSRCE_BODY" in matching_rule.get("ruleId", ""):
             return True
 
     # Check rule groups
@@ -18,8 +18,8 @@ def rule(event):
         if "ReactJSRCE_BODY" in terminating.get("ruleId", ""):
             return True
 
-        for rule in group.get("nonTerminatingMatchingRules", []) or []:
-            if "ReactJSRCE_BODY" in rule.get("ruleId", ""):
+        for matching_rule in group.get("nonTerminatingMatchingRules", []) or []:
+            if "ReactJSRCE_BODY" in matching_rule.get("ruleId", ""):
                 return True
 
     return False
@@ -37,7 +37,9 @@ def alert_context(event):
     """Provide alert context."""
     http_request = event.get("httpRequest", {})
     headers = http_request.get("headers", [])
-    user_agent = next((h.get("value") for h in headers if h.get("name", "").lower() == "user-agent"), None)
+    user_agent = next(
+        (h.get("value") for h in headers if h.get("name", "").lower() == "user-agent"), None
+    )
 
     context = {
         "client_ip": http_request.get("clientIp"),
