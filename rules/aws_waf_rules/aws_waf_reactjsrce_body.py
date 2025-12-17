@@ -1,40 +1,37 @@
+RULE_ID = "ReactJSRCE_BODY"
+
+
 def rule(event):
-    """
-    Detects AWS WAF ReactJSRCE_BODY managed rule matches.
-    Monitors all WAF sources: ALB, CloudFront, API Gateway, and AppSync.
-    """
     # Direct check of terminating rule ID
-    if "ReactJSRCE_BODY" in event.get("terminatingRuleId", ""):
+    if RULE_ID in event.get("terminatingRuleId", ""):
         return True
 
     # Check non-terminating rules
     for matching_rule in event.get("nonTerminatingMatchingRules", []) or []:
-        if "ReactJSRCE_BODY" in matching_rule.get("ruleId", ""):
+        if RULE_ID in matching_rule.get("ruleId", ""):
             return True
 
     # Check rule groups
     for group in event.get("ruleGroupList", []) or []:
         terminating = group.get("terminatingRule") or {}
-        if "ReactJSRCE_BODY" in terminating.get("ruleId", ""):
+        if RULE_ID in terminating.get("ruleId", ""):
             return True
 
         for matching_rule in group.get("nonTerminatingMatchingRules", []) or []:
-            if "ReactJSRCE_BODY" in matching_rule.get("ruleId", ""):
+            if RULE_ID in matching_rule.get("ruleId", ""):
                 return True
 
     return False
 
 
 def title(event):
-    """Generate dynamic alert title."""
     client_ip = event.get("httpRequest", {}).get("clientIp", "unknown")
     action = event.get("action", "unknown")
     source = event.get("httpSourceName", "unknown")
-    return f"AWS WAF ReactJSRCE_BODY Match - {action} from {client_ip} via {source}"
+    return f"AWS WAF {RULE_ID} Match - {action} from {client_ip} via {source}"
 
 
 def alert_context(event):
-    """Provide alert context."""
     http_request = event.get("httpRequest", {})
     headers = http_request.get("headers", [])
     user_agent = next(
@@ -70,7 +67,6 @@ def alert_context(event):
 
 
 def severity(event):
-    """Dynamic severity based on WAF action."""
     action = event.get("action", "")
     if action == "ALLOW":
         return "CRITICAL"

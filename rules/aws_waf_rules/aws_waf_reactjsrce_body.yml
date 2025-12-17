@@ -8,6 +8,7 @@ LogTypes:
 Tags:
   - AWS
   - WAF
+  - React2Shell
   - Initial Access:Exploit Public-Facing Application
   - Execution:Command and Scripting Interpreter
 Reports:
@@ -16,8 +17,8 @@ Reports:
     - TA0002:T1059
 Severity: High
 Description: >
-  Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE
-  attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
+  Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182)
+  ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 Runbook: |
   1. Review alert context for source IP, URI, and body content
   2. Check action: BLOCK (HIGH) or ALLOW (CRITICAL - investigate immediately)
