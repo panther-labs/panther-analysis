@@ -61,7 +61,7 @@ def alert_context(event):
             {
                 "condition_type": m.get("conditionType"),
                 "location": m.get("location"),
-                "matched_strings": m.get("matchedData", [])
+                "matched_strings": m.get("matchedData", []),
             }
             for m in terminating_matches
         ]
