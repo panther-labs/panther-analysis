@@ -2360,6 +2360,15 @@
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
     },
     {
+      "AnalysisType": "Rule",
+      "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
+      "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
+      "LogTypes": [
+          "AWS.WAFWebACL"
+      ],
+      "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
+    }
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.",
         "DisplayName": "AWS.Administrative.IAM.User.Created",
