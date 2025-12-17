@@ -1,46 +1,27 @@
 def rule(event):
     """
-    Detects AWS WAF JavaDeserializationRCE_HEADER managed rule matches.
+    Detects AWS WAF ReactJSRCE_BODY managed rule matches.
     Monitors all WAF sources: ALB, CloudFront, API Gateway, and AppSync.
     """
     # Direct check of terminating rule ID
-    if "JavaDeserializationRCE_HEADER" in event.get("terminatingRuleId", ""):
-        return True
-
-    # Check terminating rule match details
-    if _has_java_deser_match(event.get("terminatingRuleMatchDetails", [])):
+    if "ReactJSRCE_BODY" in event.get("terminatingRuleId", ""):
         return True
 
     # Check non-terminating rules
     for rule in event.get("nonTerminatingMatchingRules", []) or []:
-        if "JavaDeserializationRCE_HEADER" in rule.get("ruleId", ""):
-            return True
-        if _has_java_deser_match(rule.get("ruleMatchDetails", [])):
+        if "ReactJSRCE_BODY" in rule.get("ruleId", ""):
             return True
 
     # Check rule groups
     for group in event.get("ruleGroupList", []) or []:
         terminating = group.get("terminatingRule") or {}
-        if "JavaDeserializationRCE_HEADER" in terminating.get("ruleId", ""):
-            return True
-        if _has_java_deser_match(terminating.get("ruleMatchDetails", [])):
+        if "ReactJSRCE_BODY" in terminating.get("ruleId", ""):
             return True
 
         for rule in group.get("nonTerminatingMatchingRules", []) or []:
-            if "JavaDeserializationRCE_HEADER" in rule.get("ruleId", ""):
-                return True
-            if _has_java_deser_match(rule.get("ruleMatchDetails", [])):
+            if "ReactJSRCE_BODY" in rule.get("ruleId", ""):
                 return True
 
-    return False
-
-
-def _has_java_deser_match(match_details):
-    """Check if match details contain Java deserialization indicators."""
-    for match in match_details or []:
-        condition = match.get("conditionType", "")
-        if "JavaDeserialization" in condition or "RCE" in condition:
-            return True
     return False
 
 
@@ -49,7 +30,7 @@ def title(event):
     client_ip = event.get("httpRequest", {}).get("clientIp", "unknown")
     action = event.get("action", "unknown")
     source = event.get("httpSourceName", "unknown")
-    return f"AWS WAF JavaDeserializationRCE_HEADER Match - {action} from {client_ip} via {source}"
+    return f"AWS WAF ReactJSRCE_BODY Match - {action} from {client_ip} via {source}"
 
 
 def alert_context(event):
@@ -89,8 +70,10 @@ def alert_context(event):
 def severity(event):
     """Dynamic severity based on WAF action."""
     action = event.get("action", "")
-    if action == "BLOCK":
-        return "HIGH"
     if action == "ALLOW":
         return "CRITICAL"
-    return "MEDIUM"
+    if action == "BLOCK":
+        return "HIGH"
+    if action == "COUNT":
+        return "MEDIUM"
+    return "DEFAULT"
