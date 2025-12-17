@@ -952,6 +952,8 @@
   - Monitors for bots making HTTP Requests at a rate higher than 2req/sec
 - [Cloudflare L7 DDoS](../rules/cloudflare_rules/cloudflare_firewall_ddos.yml)
   - Layer 7 Distributed Denial of Service (DDoS) detected
+- [Cloudflare React2Shell RCE Attempt Detected](../rules/cloudflare_rules/cloudflare_react2shell_rce_attempt.yml)
+  - Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
 
 
 ## Crowdstrike
