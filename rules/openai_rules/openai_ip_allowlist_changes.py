@@ -72,6 +72,8 @@ def alert_context(event):
     elif event_type == "ip_allowlist.config.activated":
         context["activated_configs"] = deep_get(event, "ip_allowlist_config_activated", "configs")
     elif event_type == "ip_allowlist.config.deactivated":
-        context["deactivated_configs"] = deep_get(event, "ip_allowlist_config_deactivated", "configs")
+        context["deactivated_configs"] = deep_get(
+            event, "ip_allowlist_config_deactivated", "configs"
+        )
 
     return context
