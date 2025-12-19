@@ -921,7 +921,6 @@
 - [CiscoUmbrella](#ciscoumbrella)
 - [Cloudflare](#cloudflare)
 - [Crowdstrike](#crowdstrike)
-- [Custom](#custom)
 
 
 ## CarbonBlack
@@ -1046,14 +1045,6 @@
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
-
-
-## Custom
-
-- [OpenAI Admin Role Assignment](../rules/openai_rules/openai_admin_role_assignment.yml)
-  - Detects when an admin or owner role is assigned to a user or group in OpenAI.Admin and owner roles grant elevated privileges that allow significant control overthe organization, including managing users, API keys, billing, and security settings.Unauthorized or unexpected admin role assignments can indicate:- Privilege escalation attempts- Insider threats- Compromised administrator accounts- Policy violationsThis rule alerts on all admin role assignments for visibility and audit purposes.
-- [OpenAI Anomalous API Key Activity](../rules/openai_rules/openai_api_key_anomalous_activity.yml)
-  - Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
 
 
 # D
@@ -1601,6 +1592,7 @@
 - [Okta](#okta)
 - [OneLogin](#onelogin)
 - [OnePassword](#onepassword)
+- [OpenAI](#openai)
 - [Orca](#orca)
 - [Osquery](#osquery)
 
@@ -1759,6 +1751,14 @@
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
   - Detects when unusual or undesirable 1Password clients access your 1Password account
+
+
+## OpenAI
+
+- [OpenAI Admin Role Assignment](../rules/openai_rules/openai_admin_role_assignment.yml)
+  - Detects when an admin or owner role is assigned to a user or group in OpenAI.Admin and owner roles grant elevated privileges that allow significant control overthe organization, including managing users, API keys, billing, and security settings.Unauthorized or unexpected admin role assignments can indicate:- Privilege escalation attempts- Insider threats- Compromised administrator accounts- Policy violationsThis rule alerts on all admin role assignments for visibility and audit purposes.
+- [OpenAI Anomalous API Key Activity](../rules/openai_rules/openai_api_key_anomalous_activity.yml)
+  - Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
 
 
 ## Orca
