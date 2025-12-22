@@ -2604,6 +2604,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when Azure Key Vault secrets are accessed or when soft-deleted secrets are recovered. Recovering soft-deleted secrets may indicate an attacker attempting to extract previously deleted credentials.",
+        "DisplayName": "Azure Key Vault Secret Accessed or Recovered",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_keyvault_secret_accessed_or_recovered.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when a RoleBinding or ClusterRoleBinding is created in Azure Kubernetes Service (AKS) or Arc-enabled Kubernetes clusters. Role bindings grant permissions to Kubernetes subjects (users, groups, or service accounts) by binding them to roles with specific permissions. Adversaries with appropriate access may create malicious role bindings to escalate privileges, assign cluster-admin roles, or maintain persistent access to the Kubernetes cluster. This detection applies to both AKS managed clusters and Arc-enabled connected clusters.",
         "DisplayName": "Azure Kubernetes RoleBinding or ClusterRoleBinding Created",
         "LogTypes": [
