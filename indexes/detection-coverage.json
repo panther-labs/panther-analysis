@@ -2802,6 +2802,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when Azure storage account blob anonymous access is enabled at the account level or when container public access is configured. Enabling anonymous access allows unauthenticated users to read blob data and may lead to data exposure.",
+        "DisplayName": "Azure Storage Blob Anonymous Access Enabled",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_blob_anonymous_access_enabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when permissions are modified on an Azure Storage blob container. Adversaries may modify container permissions to enable public access, grant unauthorized access, or prepare for data exfiltration. Changes to blob permissions can indicate attempts to access sensitive data, establish persistence through external access, or facilitate ransomware by modifying access controls before encryption.",
         "DisplayName": "Azure Storage Blob Container Permissions Modified",
         "LogTypes": [
