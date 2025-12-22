@@ -1,0 +1,88 @@
+AnalysisType: rule
+Filename: azure_vm_command_executed.py
+RuleID: "Azure.MonitorActivity.Compute.VMCommandExecuted"
+DisplayName: "Azure VM Command Executed"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Low
+Status: Experimental
+Description: >
+  Detects when commands are executed on Azure virtual machines using the Run Command feature.
+  While the Virtual Machine Contributor role permits VM management without direct access,
+  commands can still be executed remotely via PowerShell with System privileges. Adversaries
+  may abuse this capability to execute unauthorized commands, deploy malware, or move laterally
+  within the environment.
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1651 # Execution: Cloud Administration Command
+Runbook: |
+  1. Query Azure Monitor Activity logs for all VM operations (command executions, VM modifications, extensions installed) by the callerIpAddress in the 24 hours before and after the alert
+  2. Find all Run Command executions across all VMs in the past 6 hours to identify if this is part of a broader lateral movement campaign
+  3. Check if the callerIpAddress has executed VM commands in the past 90 days to establish if this is typical administrative activity
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/execution_compute_vm_command_executed.toml
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: VM Command Executed Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/compute-rg/providers/Microsoft.Compute/virtualMachines/prod-vm-01",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION",
+        "operationVersion": "2021-11-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "level": "Informational",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: VM Command Executed Case Insensitive
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T11:15:00.0000000Z",
+        "resourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/prod-compute/providers/Microsoft.Compute/virtualMachines/web-server-02",
+        "operationName": "microsoft.compute/virtualmachines/runcommand/action",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+        "level": "Information",
+        "location": "westeurope",
+        "tenantId": "22222222-2222-2222-2222-222222222222"
+      }
+  - Name: Failed VM Command Execution
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-12-22T12:00:00.0000000Z",
+        "resourceId": "/subscriptions/33333333-3333-3333-3333-333333333333/resourceGroups/test-rg/providers/Microsoft.Compute/virtualMachines/test-vm",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION",
+        "category": "Administrative",
+        "resultType": "Failed",
+        "resultSignature": "403",
+        "callerIpAddress": "3.3.3.3",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-111111111111",
+        "level": "Error",
+        "tenantId": "33333333-3333-3333-3333-333333333333"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-12-22T13:00:00.0000000Z",
+        "resourceId": "/subscriptions/44444444-4444-4444-4444-444444444444/resourceGroups/compute-rg/providers/Microsoft.Compute/virtualMachines/app-vm",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "4.4.4.4",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-456789012345",
+        "tenantId": "44444444-4444-4444-4444-444444444444"
+      }

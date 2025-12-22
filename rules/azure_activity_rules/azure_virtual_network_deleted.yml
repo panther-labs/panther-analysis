@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: azure_virtual_network_deleted.py
+RuleID: "Azure.MonitorActivity.Network.VNetDeleted"
+DisplayName: "Azure Virtual Network Deleted"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: High
+Status: Experimental
+Description: >
+  Detects when an Azure Virtual Network (VNet) is deleted.
+  VNet deletion removes the entire network infrastructure and disconnects all resources within it, causing significant service disruption.
+  This may indicate ransomware activity, sabotage, or unauthorized infrastructure destruction.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Impact: Data Destruction
+    - TA0040:T1499 # Impact: Endpoint Denial of Service
+Runbook: |
+  1. Query Azure Monitor Activity logs for all VNet operations by the callerIpAddress in the past 24 hours to identify if multiple VNets are being deleted
+  2. Identify which resources (VMs, App Services, etc.) were connected to the deleted VNet to assess service impact
+  3. Check for service outages or connectivity issues resulting from the VNet deletion
+  4. Search for other Azure resource deletions from the same user or IP in the past 7 days to assess the scope of potential infrastructure destruction
+  5. Verify if this was part of a scheduled decommissioning or authorized infrastructure change
+  6. If unauthorized, investigate for signs of ransomware or malicious activity and initiate recovery procedures
+Reference: https://learn.microsoft.com/en-us/azure/virtual-network/manage-virtual-network
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: VNet Deleted Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Network/virtualNetworks/myvnet",
+        "operationName": "Microsoft.Network/virtualNetworks/delete",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "location": "",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Network/virtualNetworks/prodvnet",
+        "operationName": "microsoft.network/virtualnetworks/delete",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Network/virtualNetworks/myvnet",
+        "operationName": "Microsoft.Network/virtualNetworks/write",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "203.0.113.75",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-234567890123",
+        "location": "westus",
+        "tenantId": "87654321-4321-4321-4321-210987654321"
+      }
