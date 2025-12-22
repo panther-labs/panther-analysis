@@ -1,15 +1,19 @@
-from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
+from panther_azureactivity_helpers import (
+    azure_activity_alert_context,
+    azure_activity_success,
+    azure_parse_requestbody,
+)
 
 STORAGE_ACCOUNT_WRITE = "MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE"
 
 
 def rule(event):
+    requestbody = azure_parse_requestbody(event)
     return all(
         [
             event.get("operationName", "").upper() == STORAGE_ACCOUNT_WRITE,
-            event.deep_get("properties", "requestbody", "properties", "supportsHttpsTrafficOnly")
-            is False,
-            event.deep_get("properties", "requestbody", "location") is None,
+            requestbody.get("properties", {}).get("supportsHttpsTrafficOnly") is False,
+            requestbody.get("location") is None,
             azure_activity_success(event),
         ]
     )
@@ -26,11 +30,8 @@ def title(event):
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-    context["supports_https_traffic_only"] = event.deep_get(
-        "properties",
-        "requestbody",
-        "properties",
-        "supportsHttpsTrafficOnly",
-        default=None,
+    requestbody = azure_parse_requestbody(event)
+    context["supports_https_traffic_only"] = requestbody.get("properties", {}).get(
+        "supportsHttpsTrafficOnly"
     )
     return context

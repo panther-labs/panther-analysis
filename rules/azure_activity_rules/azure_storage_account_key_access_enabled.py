@@ -1,15 +1,19 @@
-from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
+from panther_azureactivity_helpers import (
+    azure_activity_alert_context,
+    azure_activity_success,
+    azure_parse_requestbody,
+)
 
 STORAGE_ACCOUNT_WRITE = "MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE"
 
 
 def rule(event):
+    requestbody = azure_parse_requestbody(event)
     return all(
         [
             event.get("operationName", "").upper() == STORAGE_ACCOUNT_WRITE,
-            event.deep_get("properties", "requestbody", "properties", "allowSharedKeyAccess")
-            is True,
-            event.deep_get("properties", "requestbody", "location") is None,
+            requestbody.get("properties", {}).get("allowSharedKeyAccess") is True,
+            requestbody.get("location") is None,
             azure_activity_success(event),
         ]
     )
@@ -24,11 +28,8 @@ def title(event):
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-    context["allow_shared_key_access"] = event.deep_get(
-        "properties",
-        "requestbody",
-        "properties",
-        "allowSharedKeyAccess",
-        default=None,
+    requestbody = azure_parse_requestbody(event)
+    context["allow_shared_key_access"] = requestbody.get("properties", {}).get(
+        "allowSharedKeyAccess"
     )
     return context

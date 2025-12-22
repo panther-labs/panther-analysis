@@ -1,6 +1,8 @@
-import json
-
-from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
+from panther_azureactivity_helpers import (
+    azure_activity_alert_context,
+    azure_activity_success,
+    azure_parse_requestbody,
+)
 
 ROLE_ASSIGNMENT_WRITE = "MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE"
 
@@ -25,22 +27,6 @@ ELEVATED_ROLES = {
     "8b54135c-b56d-4d72-a534-26097cfdc8d8": "Key Vault Data Access Administrator",
     "4633458b-17de-408a-b874-0445c86b69e6": "Key Vault Secrets User",
 }
-
-
-def _parse_request_body(event):
-    # The role assignment is a JSON string
-    request_body = event.deep_get("properties", "requestbody")
-
-    if not request_body:
-        return None
-
-    if isinstance(request_body, str):
-        try:
-            return json.loads(request_body)
-        except (json.JSONDecodeError, ValueError):
-            return None
-
-    return request_body
 
 
 def _get_role_def_id(request_body):
@@ -78,7 +64,7 @@ def _match_role_name(role_def_id):
 
 def extract_role_name(event):
     # Extract and return the role name being assigned from the event
-    request_body = _parse_request_body(event)
+    request_body = azure_parse_requestbody(event)
     role_def_id = _get_role_def_id(request_body)
     return _match_role_name(role_def_id)
 
@@ -146,7 +132,7 @@ def alert_context(event):
     context = azure_activity_alert_context(event)
 
     # Parse and add request body fields
-    request_body = _parse_request_body(event)
+    request_body = azure_parse_requestbody(event)
     _add_request_body_fields(context, request_body)
 
     # Add role name

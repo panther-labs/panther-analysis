@@ -1,17 +1,20 @@
-from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
+from panther_azureactivity_helpers import (
+    azure_activity_alert_context,
+    azure_activity_success,
+    azure_parse_requestbody,
+)
 
 STORAGE_ACCOUNT_WRITE = "MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE"
 
 
 def rule(event):
+    requestbody = azure_parse_requestbody(event)
     return all(
         [
             event.get("operationName", "").upper() == STORAGE_ACCOUNT_WRITE,
-            event.deep_get(
-                "properties", "requestbody", "properties", "networkAcls", "defaultAction"
-            )
+            requestbody.get("properties", {}).get("networkAcls", {}).get("defaultAction")
             == "Allow",
-            event.deep_get("properties", "requestbody", "location") is None,
+            requestbody.get("location") is None,
             azure_activity_success(event),
         ]
     )
@@ -30,11 +33,6 @@ def title(event):
 def alert_context(event):
     context = azure_activity_alert_context(event)
     # Add storage-specific network ACLs information
-    context["network_acls"] = event.deep_get(
-        "properties",
-        "requestbody",
-        "properties",
-        "networkAcls",
-        default={},
-    )
+    requestbody = azure_parse_requestbody(event)
+    context["network_acls"] = requestbody.get("properties", {}).get("networkAcls", {})
     return context

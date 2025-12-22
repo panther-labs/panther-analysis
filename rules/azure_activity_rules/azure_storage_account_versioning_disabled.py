@@ -1,14 +1,18 @@
-from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
+from panther_azureactivity_helpers import (
+    azure_activity_alert_context,
+    azure_activity_success,
+    azure_parse_requestbody,
+)
 
 BLOB_SERVICES_WRITE = "MICROSOFT.STORAGE/STORAGEACCOUNTS/BLOBSERVICES/WRITE"
 
 
 def rule(event):
+    requestbody = azure_parse_requestbody(event)
     return all(
         [
             event.get("operationName", "").upper() == BLOB_SERVICES_WRITE,
-            event.deep_get("properties", "requestbody", "properties", "isVersioningEnabled")
-            is False,
+            requestbody.get("properties", {}).get("isVersioningEnabled") is False,
             azure_activity_success(event),
         ]
     )
@@ -23,11 +27,6 @@ def title(event):
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-    context["is_versioning_enabled"] = event.deep_get(
-        "properties",
-        "requestbody",
-        "properties",
-        "isVersioningEnabled",
-        default=None,
-    )
+    requestbody = azure_parse_requestbody(event)
+    context["is_versioning_enabled"] = requestbody.get("properties", {}).get("isVersioningEnabled")
     return context
