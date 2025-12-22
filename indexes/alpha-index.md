@@ -938,6 +938,8 @@
   - Detects when an existing Azure storage account's network settings are modified to enable public network access (defaultAction: Allow). This could indicate a potential data exfiltration risk or misconfiguration.
 - [Azure Storage Account Shared Key Access Enabled](../rules/azure_activity_rules/azure_storage_account_key_access_enabled.yml)
   - Detects when an existing Azure storage account's shared key access is enabled (allowSharedKeyAccess: true). Shared key access uses storage account keys for authentication, which is less secure than Azure AD-based authentication.
+- [Azure Storage Blob Anonymous Access Enabled](../rules/azure_activity_rules/azure_storage_blob_anonymous_access_enabled.yml)
+  - Detects when Azure storage account blob anonymous access is enabled at the account level or when container public access is configured. Enabling anonymous access allows unauthenticated users to read blob data and may lead to data exposure.
 - [Azure Storage Blob Container Permissions Modified](../rules/azure_activity_rules/azure_storage_blob_permissions_modified.yml)
   - Detects when permissions are modified on an Azure Storage blob container. Adversaries may modify container permissions to enable public access, grant unauthorized access, or prepare for data exfiltration. Changes to blob permissions can indicate attempts to access sensitive data, establish persistence through external access, or facilitate ransomware by modifying access controls before encryption.
 - [Azure Storage Blob CPK Encryption Detected](../rules/azure_activity_rules/azure_storage_blob_cpk_encryption_detected.yml)
