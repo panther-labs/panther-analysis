@@ -1,13 +1,15 @@
 def rule(event):
 
-    if (
-        event.deep_get("protoPayload", "methodName") != "storage.objects.delete"
-        or event.deep_get("protoPayload", "serviceName") != "storage.googleapis.com"
-        or event.get("severity") == "ERROR"  # Operation failed
-    ):
-        return False
-
-    return True
+    method_name = event.deep_get("protoPayload", "methodName", default="UNKNOWN_METHOD_NAME")
+    service_name = event.deep_get("protoPayload", "serviceName")
+    severity = event.get("severity")
+    return all(
+        [
+            method_name == "storage.objects.delete",
+            service_name == "storage.googleapis.com",
+            severity != "ERROR",  # Operation succeeded
+        ]
+    )
 
 
 def title(event):

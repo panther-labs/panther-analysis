@@ -1,17 +1,19 @@
 def rule(event):
 
-    if (
-        event.deep_get("protoPayload", "methodName") != "Encrypt"
-        or event.deep_get("protoPayload", "serviceName") != "cloudkms.googleapis.com"
-        or "gs-project-accounts.iam.gserviceaccount.com"
-        not in event.deep_get(
-            "protoPayload", "authenticationInfo", "principalEmail", default="<UNKNOWN_PRINCIPAL>"
-        )
-        or event.get("severity") == "ERROR"  # Operation failed
-    ):
-        return False
-
-    return True
+    method_name = event.deep_get("protoPayload", "methodName")
+    service_name = event.deep_get("protoPayload", "serviceName")
+    principal = event.deep_get(
+        "protoPayload", "authenticationInfo", "principalEmail", default="<UNKNOWN_PRINCIPAL>"
+    )
+    severity = event.get("severity")
+    return all(
+        [
+            method_name == "Encrypt",
+            service_name == "cloudkms.googleapis.com",
+            "gs-project-accounts.iam.gserviceaccount.com" in principal,
+            severity != "ERROR",  # Operation succeeded
+        ]
+    )
 
 
 def title(event):

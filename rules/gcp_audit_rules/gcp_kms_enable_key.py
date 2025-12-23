@@ -1,8 +1,16 @@
 def rule(event):
-    if (
-        event.deep_get("protoPayload", "methodName") != "SetIamPolicy"
-        or event.deep_get("protoPayload", "serviceName") != "cloudkms.googleapis.com"
-        or event.deep_get("protoPayload", "status", "code")  # Operation failed
+    method_name = event.deep_get("protoPayload", "methodName")
+    service_name = event.deep_get("protoPayload", "serviceName")
+    status_code = event.deep_get("protoPayload", "status", "code")
+
+    # Pre-filter
+    # return False if any basic condition fails
+    if any(
+        [
+            method_name != "SetIamPolicy",
+            service_name != "cloudkms.googleapis.com",
+            status_code,  # Operation failed
+        ]
     ):
         return False
 
