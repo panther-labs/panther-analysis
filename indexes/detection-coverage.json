@@ -2376,6 +2376,15 @@
         "YAMLPath": "policies/aws_waf_policies/aws_waf_logging_configured.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
+        "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.",
         "DisplayName": "AWS WAF Rule Ordering",
@@ -2394,15 +2403,6 @@
             "AWS.WAF.WebACL"
         ],
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
-    },
-    {
-      "AnalysisType": "Rule",
-      "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
-      "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
-      "LogTypes": [
-          "AWS.WAFWebACL"
-      ],
-      "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
     },
     {
         "AnalysisType": "Correlation Rule",
