@@ -2376,6 +2376,15 @@
         "YAMLPath": "policies/aws_waf_policies/aws_waf_logging_configured.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
+        "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.",
         "DisplayName": "AWS WAF Rule Ordering",
@@ -2394,15 +2403,6 @@
             "AWS.WAF.WebACL"
         ],
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
-    },
-    {
-      "AnalysisType": "Rule",
-      "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
-      "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
-      "LogTypes": [
-          "AWS.WAFWebACL"
-      ],
-      "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
     },
     {
         "AnalysisType": "Correlation Rule",
@@ -3622,7 +3622,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects GCP cloud storage bucket updates and deletes.",
+        "Description": "Detects when a GCS bucket configuration is updated or deleted. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.",
         "DisplayName": "GCP Cloud Storage Buckets Modified Or Deleted",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3748,12 +3748,48 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects bulk deletion of GCS objects. This pattern is indicative of a ransomware attack or data destruction where an adversary deletes storage objects at scale. The threshold of 10+ deletion operations suggests automated bulk deletion rather than normal application behavior. This can be part of a double extortion ransomware attack where data is both encrypted and deleted to increase pressure on victims.",
+        "DisplayName": "GCP GCS Bulk Object Deletion",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_bulk_deletion.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.",
+        "DisplayName": "GCP GCS Bulk Object Rewrite Operation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_object_rewrite.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.",
         "DisplayName": "GCP GCS IAM Permission Changes",
         "LogTypes": [
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_iam_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.",
+        "DisplayName": "GCP GCS Object Copied to Different Bucket",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a file with a name matching common ransomware note patterns is uploaded to a Google Cloud Storage bucket. Ransomware attackers often leave ransom notes with distinctive filenames to provide victims with payment instructions.",
+        "DisplayName": "GCP GCS Ransom Note Upload",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3889,6 +3925,42 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_k8s_rules/gcp_k8s_service_type_node_port_deployed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects bulk KMS encryption operations performed by the GCS service account. This pattern is indicative of a ransomware attack where an adversary directly calls the KMS Encrypt API using the GCS service account identity to encrypt data at scale, effectively holding data hostage. The threshold of 10+ encryption operations suggests automated bulk encryption rather than normal application behavior.",
+        "DisplayName": "GCP KMS Bulk Encryption by GCS Service Account",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_bulk_encryption.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GCS service account in one project uses a KMS encryption key from a different project. This could indicate potential ransomware activity where an attacker is using their own KMS key to encrypt data in a victim's project, making it inaccessible without the attacker's key.",
+        "DisplayName": "GCP KMS Cross-Project Encryption",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_cross_project_encryption.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a KMS IAM policy grants encryption/decryption permissions to a GCS service account. This pattern may indicate a ransomware attack where an adversary grants a GCS service account access to KMS keys to enable encryption of cloud storage objects.",
+        "DisplayName": "GCP KMS Key Granted to GCS Service Account",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_enable_key.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a KMS key version is disabled, scheduled for destruction, or destroyed. Disabling or destroying KMS key versions can be used to deny access to encrypted data\u2014a ransomware tactic where attackers disable keys to prevent victims from accessing their data.",
+        "DisplayName": "GCP KMS Key Version Disabled or Destroyed",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_erase_key.yml"
     },
     {
         "AnalysisType": "Rule",

@@ -1,9 +1,31 @@
 AnalysisType: rule
-Description: Detects GCP cloud storage bucket updates and deletes.
 DisplayName: "GCP Cloud Storage Buckets Modified Or Deleted"
 Enabled: true
 Filename: gcp_cloud_storage_buckets_modified_or_deleted.py
-Reference: https://cloud.google.com/storage/docs/buckets
+Description: >
+  Detects when a GCS bucket configuration is updated or deleted. Bucket configuration changes can be
+  part of a ransomware attack, such as disabling security settings to prevent data recovery.
+Runbook: |
+  1. Query GCP Audit logs for all bucket operations by the principal email in the 24 hours before and after this alert
+  2. Check if the source IP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access patterns
+  3. Identify what specific configuration was changed (encryption, retention, versioning, lifecycle policies)
+  4. Search for related KMS key changes or IAM policy modifications on the same bucket in the past 6 hours
+  5. Look for bulk object operations (rewrite, copy, delete) on this bucket following the configuration change
+Reference: https://cloud.google.com/storage/docs/json_api/v1/buckets/update
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Defense Evasion:Impair Defenses
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+    - TA0040:T1486
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
 Severity: Low
 Tests:
   - ExpectedResult: false
@@ -21,7 +43,7 @@ Tests:
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: test@company.io
+          principalEmail: john@justice.org
         authorizationInfo:
           - granted: true
             permission: logging.sinks.update
@@ -38,13 +60,13 @@ Tests:
               - filter: protoPayload.serviceName = 'k8s.io
                 name: excludek8s
             name: log-sink
-            writerIdentity: serviceAccount:p197946410614-915152@gcp-sa-logging.iam.gserviceaccount.com
+            writerIdentity: serviceAccount:denethor@lotr.com
           sinkName: projects/gcp-project1/sinks/log-sink
           uniqueWriterIdentity: true
           updateMask: exclusions
         requestMetadata:
           callerIP: 1.2.3.4
-          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
+          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/1.2.3.4 Safari/537.36,gzip(gfe),gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
             auth: {}

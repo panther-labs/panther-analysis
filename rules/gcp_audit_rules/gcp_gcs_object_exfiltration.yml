@@ -1,0 +1,140 @@
+AnalysisType: rule
+Filename: gcp_gcs_object_exfiltration.py
+RuleID: "GCP.GCS.ObjectExfiltration"
+DisplayName: "GCP GCS Object Copied to Different Bucket"
+Enabled: true
+Status: Experimental
+Threshold: 10
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Exfiltration:Transfer Data to Cloud Account
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Severity: Medium
+Description: >
+  Detects when GCS objects are copied from one bucket to another bucket. This pattern
+  can indicate data exfiltration where an adversary copies sensitive data to a bucket
+  they control. The threshold of 10+ copy operations suggests bulk exfiltration rather
+  than normal operations. This is detected by monitoring storage.objects.get operations
+  that include a destination field in the metadata, indicating a copy operation.
+Runbook: |
+  1. Query GCP Audit logs for all storage.objects.get operations with destination metadata by the principal email in the 1 hour window around this alert
+  2. Identify the total number of objects copied, source and destination buckets, and the rate of copies per minute
+  3. Check if the destination bucket is in the same project or a different project
+  4. Review IAM permissions on both source and destination buckets to determine if access was recently granted
+  5. Assess the sensitivity of the data in the source bucket and objects copied
+  6. Check if the source IP matches the user's typical access patterns or is associated with known VPN/cloud providers
+  7. Look for other ransomware or exfiltration indicators from this principal in the past 24 hours
+Reference: https://cloud.google.com/storage/docs/copying-renaming-moving-objects
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  - Name: Cross-Project Object Copy
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "denethor@lotr.com" },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "storage.objects.get",
+                  "resource": "projects/_/buckets/source-bucket/objects/sensitive.txt",
+                },
+              ],
+            "metadata":
+              {
+                "destination": "projects/attacker-project/buckets/exfil-bucket/objects/sensitive.txt",
+                "requested_bytes": 12345,
+              },
+            "methodName": "storage.objects.get",
+            "requestMetadata":
+              {
+                "callerIp": "1.2.3.4",
+                "callerSuppliedUserAgent": "google-cloud-sdk gcloud/548.0.0 command/gcloud.storage.cp",
+              },
+            "resourceName": "projects/_/buckets/source-bucket/objects/sensitive.txt",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels":
+              {
+                "bucket_name": "source-bucket",
+                "location": "us",
+                "project_id": "victim-project",
+              },
+            "type": "gcs_bucket",
+          },
+        "severity": "INFO",
+        "timestamp": "2025-12-15 15:55:03.915792086",
+      }
+  - Name: Same-Project Different Bucket Copy
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "denethor@lotr.com" },
+            "metadata":
+              {
+                "destination": "projects/_/buckets/backup-bucket/objects/file.txt",
+                "requested_bytes": 100,
+              },
+            "methodName": "storage.objects.get",
+            "resourceName": "projects/_/buckets/prod-bucket/objects/file.txt",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels":
+              {
+                "bucket_name": "prod-bucket",
+                "project_id": "test-project",
+              },
+            "type": "gcs_bucket",
+          },
+        "severity": "INFO",
+        "timestamp": "2025-12-15 15:55:03.915792086",
+      }
+  - Name: Object Get Without Copy Operation
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "user@example.com" },
+            "methodName": "storage.objects.get",
+            "resourceName": "projects/_/buckets/test-bucket/objects/file.txt",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels":
+              {
+                "bucket_name": "test-bucket",
+                "project_id": "test-project",
+              },
+            "type": "gcs_bucket",
+          },
+        "severity": "INFO",
+        "timestamp": "2025-12-15 15:55:03.915792086",
+      }

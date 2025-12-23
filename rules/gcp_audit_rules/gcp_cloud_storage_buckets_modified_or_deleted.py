@@ -6,6 +6,7 @@ def rule(event):
         [
             event.deep_get("protoPayload", "serviceName", default="") == "storage.googleapis.com",
             event.deep_get("protoPayload", "methodName", default="") in BUCKET_OPERATIONS,
+            event.get("severity") != "ERROR",
         ]
     )
 
@@ -19,3 +20,13 @@ def title(event):
     bucket = event.deep_get("resource", "labels", "bucket_name", default="<BUCKET_NOT_FOUND>")
 
     return f"GCP: [{actor}] performed a [{operation}] on bucket [{bucket}] in project [{project}]."
+
+
+def alert_context(event):
+    return {
+        "actor": event.deep_get("protoPayload", "authenticationInfo", "principalEmail"),
+        "bucket": event.deep_get("resource", "labels", "bucket_name"),
+        "source_ip": event.deep_get("protoPayload", "requestMetadata", "callerIp"),
+        "user_agent": event.deep_get("protoPayload", "requestMetadata", "callerSuppliedUserAgent"),
+        "project": event.deep_get("resource", "labels", "project_id"),
+    }

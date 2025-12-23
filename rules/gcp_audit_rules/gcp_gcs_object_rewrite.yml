@@ -1,0 +1,211 @@
+AnalysisType: rule
+Filename: gcp_gcs_object_rewrite.py
+RuleID: "GCP.GCS.BulkObjectRewrite"
+DisplayName: "GCP GCS Bulk Object Rewrite Operation"
+Enabled: true
+Threshold: 10
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Collection:Data From Cloud Storage Object
+  - Ransomware
+Reports:
+  CIS:
+    - 2.10
+  MITRE ATT&CK:
+    - TA0040:T1486  # Impact: Data Encrypted for Impact
+    - TA0009:T1530  # Collection: Data from Cloud Storage Object
+    - TA0010:T1537  # Exfiltration: Transfer Data to Cloud Account
+Severity: Medium
+Status: Experimental
+Description: >
+  Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key.
+  Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects,
+  effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k'
+  command patterns in user agent strings, with a threshold of 10 events.
+Runbook: |
+  1. Query GCP Audit Logs for all storage.objects.create operations by the principalEmail in the 24 hours before and after the alert to determine the scope of rewrite operations
+  2. Check if the callerIP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access locations from the past 90 days
+  3. Find other alerts or suspicious GCS activity from this principalEmail or bucket in the past 7 days to identify potential ransomware patterns
+Reference: https://cloud.google.com/storage/docs/gsutil/commands/rewrite
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_domain_names
+Tests:
+  - Name: GCS Object Rewrite
+    ExpectedResult: true
+    Log:
+      {
+      "p_any_ip_addresses": [
+        "1.2.3.4"
+      ],
+      "p_any_emails": [
+        "frodo@lotr.com"
+      ],
+      "p_any_usernames": [
+        "homer.simpson"
+      ],
+      "p_event_time": "2025-12-15 15:35:44.471503481",
+      "p_log_type": "GCP.AuditLog",
+      "p_parse_time": "2025-12-15 15:37:21.119003440",
+      "p_row_id": "000000000088d76191e538b59ed49209",
+      "p_schema_version": 0,
+      "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+      "p_source_label": "your-project-pubsub",
+      "p_udm": {
+        "source": {
+          "address": "1.2.3.4",
+          "ip": "1.2.3.4"
+        },
+        "user": {
+          "email": "frodo@lotr.com"
+        }
+      },
+      "insertId": "kua6lje2lauj",
+      "logName": "projects/your-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+      "protoPayload": {
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+        "authenticationInfo": {
+          "oauthInfo": {
+            "oauthClientId": "111111111111-example1a2b3c4d5e6f7g8h9i0j.apps.googleusercontent.com"
+          },
+          "principalEmail": "frodo@lotr.com"
+        },
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "storage.objects.create",
+            "resource": "projects/_/buckets/victim-bucket/objects/victim-file.txt",
+            "resourceAttributes": {}
+          },
+          {
+            "granted": true,
+            "permission": "storage.objects.delete",
+            "resource": "projects/_/buckets/victim-bucket/objects/victim-file.txt",
+            "resourceAttributes": {}
+          }
+        ],
+        "methodName": "storage.objects.create",
+        "requestMetadata": {
+          "callerIP": "1.2.3.4",
+          "callerIp": "1.2.3.4",
+          "callerSuppliedUserAgent": "apitools Python/3.13.7 gsutil/5.35 (linux) analytics/enabled interactive/True invocation-id/000000000098a6854caf369de05cd1c0 command/rewrite-k google-cloud-sdk/548.0.0,gzip(gfe)",
+          "destinationAttributes": {},
+          "requestAttributes": {
+            "auth": {},
+            "time": "2025-12-15T15:35:44.477602259Z"
+          }
+        },
+        "resourceLocation": {
+          "currentLocations": [
+            "us"
+          ]
+        },
+        "resourceName": "projects/_/buckets/victim-bucket/objects/victim-file.txt",
+        "serviceData": {
+          "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+          "at_sign_type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+          "policyDelta": {}
+        },
+        "serviceName": "storage.googleapis.com",
+        "status": {}
+      },
+      "receiveTimestamp": "2025-12-15 15:35:45.157653388",
+      "resource": {
+        "labels": {
+          "bucket_name": "victim-bucket",
+          "location": "us",
+          "project_id": "your-project"
+        },
+        "type": "gcs_bucket"
+      },
+      "severity": "INFO",
+      "timestamp": "2025-12-15 15:35:44.471503481"
+    }
+  - Name: GCS Object Get
+    ExpectedResult: false
+    Log:
+      {
+      "p_any_ip_addresses": [
+        "1.2.3.4"
+      ],
+      "p_any_emails": [
+        "homer.simpson@example.com"
+      ],
+      "p_any_usernames": [
+        "homer.simpson"
+      ],
+      "p_event_time": "2025-12-15 15:35:44.471503481",
+      "p_log_type": "GCP.AuditLog",
+      "p_parse_time": "2025-12-15 15:37:21.119003440",
+      "p_row_id": "c6d39a8b9284ee95bfc3d7de2ad6f407",
+      "p_schema_version": 0,
+      "p_source_id": "bd7da315-647e-4eca-bcfe-083fab18f3f1",
+      "p_source_label": "your-project-pubsub",
+      "p_udm": {
+        "source": {
+          "address": "1.2.3.4",
+          "ip": "1.2.3.4"
+        },
+        "user": {
+          "email": "homer.simpson@example.com"
+        }
+      },
+      "insertId": "kua6lje2lauj",
+      "logName": "projects/your-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+      "protoPayload": {
+        "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+        "authenticationInfo": {
+          "oauthInfo": {
+            "oauthClientId": "123456789012-example1a2b3c4d5e6f7g8h9i0j.apps.googleusercontent.com"
+          },
+          "principalEmail": "homer.simpson@example.com"
+        },
+        "authorizationInfo": [
+          {
+            "granted": true,
+            "permission": "storage.objects.get",
+            "resource": "projects/_/buckets/victim-bucket/objects/victim-file.txt",
+            "resourceAttributes": {}
+          }
+        ],
+        "methodName": "storage.objects.list",
+        "requestMetadata": {
+          "callerIP": "1.2.3.4",
+          "callerIp": "1.2.3.4",
+          "callerSuppliedUserAgent": "apitools Python/3.13.7 gsutil/5.35 (linux) analytics/enabled interactive/True invocation-id/8ad1636b4f184078859fe329c196a5c3 command/rewrite-k google-cloud-sdk/548.0.0,gzip(gfe)",
+          "destinationAttributes": {},
+          "requestAttributes": {
+            "auth": {},
+            "time": "2025-12-15T15:35:44.477602259Z"
+          }
+        },
+        "resourceLocation": {
+          "currentLocations": [
+            "us"
+          ]
+        },
+        "resourceName": "projects/_/buckets/victim-bucket/objects/victim-file.txt",
+        "serviceData": {
+          "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+          "at_sign_type": "type.googleapis.com/google.iam.v1.logging.AuditData",
+          "policyDelta": {}
+        },
+        "serviceName": "storage.googleapis.com",
+        "status": {}
+      },
+      "receiveTimestamp": "2025-12-15 15:35:45.157653388",
+      "resource": {
+        "labels": {
+          "bucket_name": "victim-bucket",
+          "location": "us",
+          "project_id": "your-project"
+        },
+        "type": "gcs_bucket"
+      },
+      "severity": "INFO",
+      "timestamp": "2025-12-15 15:35:44.471503481"
+    }

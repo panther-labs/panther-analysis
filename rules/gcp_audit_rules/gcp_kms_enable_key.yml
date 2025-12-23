@@ -1,0 +1,153 @@
+AnalysisType: rule
+Filename: gcp_kms_enable_key.py
+RuleID: "GCP.KMS.EnableKey"
+DisplayName: "GCP KMS Key Granted to GCS Service Account"
+Enabled: true
+Status: Experimental
+DedupPeriodMinutes: 60
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud KMS
+  - Defense Evasion:Impair Defenses
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+    - TA0040:T1486
+Severity: Medium
+Description: >
+  Detects when a KMS IAM policy grants encryption/decryption permissions to a GCS service account.
+  This pattern may indicate a ransomware attack where an adversary grants a GCS service account
+  access to KMS keys to enable encryption of cloud storage objects.
+Runbook: |
+  1. Query GCP Audit logs for all SetIamPolicy events on KMS keys by the principal email in the 24 hours before and after this alert
+  2. Check if the source IP is associated with known cloud provider IP ranges, VPN endpoints, or if the IP matches the user's typical access patterns
+  3. Search for GCS object rewrite or copy operations using the same service account in the 6 hours after the KMS policy change
+  4. Look for other alerts related to ransomware indicators (e.g., bulk object operations, unusual encryption activity) from this project in the past 7 days
+Reference: https://cloud.google.com/kms/docs/iam
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  - Name: KMS Key Granted to GCS Service Account - EncrypterDecrypter Role
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "oauthInfo":
+                  {
+                    "oauthClientId": "111111111111-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
+                  },
+                "principalEmail": "denethor@lotr.com",
+                "principalSubject": "user:denethor@lotr.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "cloudkms.cryptoKeys.setIamPolicy",
+                  "permissionType": "ADMIN_WRITE",
+                  "resource": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+                  "resourceAttributes":
+                    {
+                      "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+                      "service": "google.cloud.kms",
+                      "type": "cloudkms.googleapis.com/CryptoKey",
+                    },
+                },
+              ],
+            "metadata": {},
+            "methodName": "SetIamPolicy",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+                "at_sign_type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
+                "policy":
+                  {
+                    "bindings":
+                      [
+                        {
+                          "members":
+                            [
+                              "serviceAccount:service-111111111111-gs-project-accounts.iam.gserviceaccount.com",
+                            ],
+                          "role": "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+                        },
+                      ],
+                    "etag": "ABCD",
+                    "version": 3,
+                  },
+                "resource": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+              },
+            "requestMetadata":
+              {
+                "callerIP": "1.2.3.4",
+                "callerIp": "1.2.3.4",
+                "callerSuppliedUserAgent": "google-cloud-sdk gcloud/500.0.0 command/gcloud.kms.keys.add-iam-policy-binding",
+                "destinationAttributes": {},
+                "requestAttributes":
+                  { "auth": {}, "time": "2025-12-02T19:39:34.390943642Z" },
+              },
+            "resourceLocation": { "currentLocations": ["us"] },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "insertId": "abc123def456",
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2025-12-02 19:39:35.556705822",
+        "resource":
+          {
+            "labels":
+              {
+                "crypto_key_id": "test-key",
+                "key_ring_id": "test-keyring",
+                "location": "us",
+                "project_id": "test-project",
+              },
+            "type": "cloudkms_cryptokey",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2025-12-02 19:39:33.896113820",
+      }
+  - Name: KMS Key Granted to Regular Service Account
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "user@example.com" },
+            "methodName": "SetIamPolicy",
+            "request":
+              {
+                "policy":
+                  {
+                    "bindings":
+                      [
+                        {
+                          "members":
+                            [
+                              "serviceAccount:app-service@test-project.iam.gserviceaccount.com",
+                            ],
+                          "role": "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+                        },
+                      ],
+                  },
+              },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource": { "type": "cloudkms_cryptokey" },
+        "timestamp": "2025-12-02 19:39:33.896113820",
+      }

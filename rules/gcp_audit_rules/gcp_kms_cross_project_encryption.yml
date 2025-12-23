@@ -1,0 +1,108 @@
+AnalysisType: rule
+Filename: gcp_kms_cross_project_encryption.py
+RuleID: "GCP.KMS.CrossProjectEncryption"
+DisplayName: "GCP KMS Cross-Project Encryption"
+Enabled: true
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - KMS
+  - Encryption
+  - Ransomware
+Severity: High
+Status: Experimental
+Description: >
+  Detects when a GCS service account in one project uses a KMS encryption key from a different project.
+  This could indicate potential ransomware activity where an attacker is using their own KMS key to encrypt
+  data in a victim's project, making it inaccessible without the attacker's key.
+Runbook: |
+  1. Query GCP audit logs for all KMS operations by the principal email in the 24 hours before and after this alert to understand the scope of encryption activity
+  2. Check if the cross-project KMS key access is documented in approved service integrations or has been used by this service account in the past 90 days
+  3. Find all storage operations (GCS object writes, rewrites) by this service account in the 1 hour window around the alert to identify potentially affected data
+Reference: >
+  https://cloud.google.com/kms/docs/encrypt-decrypt
+  https://cloud.google.com/storage/docs/encryption/customer-managed-keys
+SummaryAttributes:
+  - protoPayload:authenticationInfo:principalEmail
+  - protoPayload:resourceName
+  - resource:labels:project_id
+Tests:
+  - Name: Cross-Project KMS Encryption Detected
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "GCP.AuditLog",
+        "insertId": "test-insert-id-001",
+        "logName": "projects/victim-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "service-111111111111-gs-project-accounts.iam.gserviceaccount.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "cloudkms.cryptoKeyVersions.useToEncrypt",
+              "permissionType": "DATA_READ",
+              "resource": "projects/victim-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key"
+            }
+          ],
+          "methodName": "Encrypt",
+          "request": {
+            "@type": "type.googleapis.com/google.cloud.kms.v1.EncryptRequest",
+            "name": "projects/victim-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key"
+          },
+          "resourceName": "projects/attacker-project/locations/us/keyRings/malicious-keyring/cryptoKeys/ransomware-key",
+          "serviceName": "cloudkms.googleapis.com"
+        },
+        "resource": {
+          "labels": {
+            "crypto_key_id": "test-key",
+            "key_ring_id": "test-keyring",
+            "location": "us",
+            "project_id": "victim-project"
+          },
+          "type": "cloudkms_cryptokey"
+        },
+        "severity": "INFO",
+        "timestamp": "2025-12-02 19:41:27.745108384"
+      }
+  - Name: Same-Project KMS Encryption (No Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "GCP.AuditLog",
+        "insertId": "test-insert-id-002",
+        "logName": "projects/legitimate-project/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {
+            "principalEmail": "service-111111111111-gs-project-accounts.iam.gserviceaccount.com"
+          },
+          "authorizationInfo": [
+            {
+              "granted": true,
+              "permission": "cloudkms.cryptoKeyVersions.useToEncrypt",
+              "permissionType": "DATA_READ",
+              "resource": "projects/legitimate-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key"
+            }
+          ],
+          "methodName": "Encrypt",
+          "request": {
+            "@type": "type.googleapis.com/google.cloud.kms.v1.EncryptRequest",
+            "name": "projects/legitimate-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key"
+          },
+          "resourceName": "projects/legitimate-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+          "serviceName": "cloudkms.googleapis.com"
+        },
+        "resource": {
+          "labels": {
+            "crypto_key_id": "test-key",
+            "project_id": "legitimate-project"
+          },
+          "type": "cloudkms_cryptokey"
+        },
+        "severity": "INFO",
+        "timestamp": "2025-12-02 19:41:27.745108384"
+      }
