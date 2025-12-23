@@ -729,7 +729,8 @@
   - This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.
 - [AWS WAF WebACL Has Associated Resources](../policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml)
   - This policy ensures that AWS WAF WebACLs are associated with at least one resource (ALB, CloudFront Distribution, or API Gateway). If a WebACL is not associated with any resources, it is inactive and not providing any protection.
-
+- [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
+  - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 
 ## AppOmni
 
@@ -952,6 +953,8 @@
   - Monitors for bots making HTTP Requests at a rate higher than 2req/sec
 - [Cloudflare L7 DDoS](../rules/cloudflare_rules/cloudflare_firewall_ddos.yml)
   - Layer 7 Distributed Denial of Service (DDoS) detected
+- [Cloudflare React2Shell RCE Attempt Detected](../rules/cloudflare_rules/cloudflare_react2shell_rce_attempt.yml)
+  - Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
 
 
 ## Crowdstrike
@@ -1131,6 +1134,8 @@
   - An access attempt violating VPC service controls (such as Perimeter controls) has been made.
 - [GCP BigQuery Large Scan](../rules/gcp_audit_rules/gcp_bigquery_large_scan.yml)
   - Detect any BigQuery query that is doing a very large scan (> 1 GB).
+- [GCP Cloud Armor RCE Attempt Detected](../rules/gcp_http_lb_rules/gcp_cloud_armor_r2s_rce_attempt.yml)
+  - Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.
 - [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
   - Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.
 - [GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)

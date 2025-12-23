@@ -10,6 +10,8 @@
   - An access attempt violating VPC service controls (such as Perimeter controls) has been made.
 - [GCP BigQuery Large Scan](../rules/gcp_audit_rules/gcp_bigquery_large_scan.yml)
   - Detect any BigQuery query that is doing a very large scan (> 1 GB).
+- [GCP Cloud Armor RCE Attempt Detected](../rules/gcp_http_lb_rules/gcp_cloud_armor_r2s_rce_attempt.yml)
+  - Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.
 - [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
   - Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.
 - [GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
