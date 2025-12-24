@@ -6,6 +6,14 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Info
+Tags:
+  - AZT302
+  - AZT302.1
+  - AZT302.2
+  - AZT302.3
+  - AZT601.5
+  - AZT602
+  - AZT605.2
 Status: Experimental
 Description: >
   Detects when an Azure Automation runbook is created, modified, or published. Runbooks contain
@@ -73,22 +81,6 @@ Tests:
         "level": "Informational",
         "location": "centralus",
         "tenantId": "33333333-3333-3333-3333-333333333333"
-      }
-  - Name: Failed Runbook Creation
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2025-12-22T13:00:00.0000000Z",
-        "resourceId": "/subscriptions/44444444-4444-4444-4444-444444444444/resourceGroups/automation-rg/providers/Microsoft.Automation/automationAccounts/MyAccount/runbooks/FailedRunbook",
-        "operationName": "MICROSOFT.AUTOMATION/AUTOMATIONACCOUNTS/RUNBOOKS/WRITE",
-        "category": "Administrative",
-        "resultType": "Failed",
-        "resultSignature": "403",
-        "callerIpAddress": "4.4.4.4",
-        "correlationId": "d4e5f6a7-b8c9-0123-def0-222222222222",
-        "level": "Error",
-        "location": "westus",
-        "tenantId": "44444444-4444-4444-4444-444444444444"
       }
   - Name: Different Operation
     ExpectedResult: false

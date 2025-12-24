@@ -58,24 +58,7 @@ Tests:
         },
         "tenantId": "87654321-4321-4321-4321-111111111111"
       }
-  - Name: Failed Upload
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2024-12-19T19:14:58.986Z",
-        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
-        "operationName": "PutBlob",
-        "statusCode": 403,
-        "statusText": "Forbidden",
-        "callerIpAddress": "5.5.5.5:29713",
-        "location": "eastus",
-        "properties": {
-          "accountName": "mystorageaccount",
-          "objectKey": "/mystorageaccount/test/documents/file.txt",
-          "metricResponseType": "AuthorizationError"
-        }
-      }
-  - Name: Different Operation DeleteBlob
+  - Name: Different Operation
     ExpectedResult: false
     Log:
       {

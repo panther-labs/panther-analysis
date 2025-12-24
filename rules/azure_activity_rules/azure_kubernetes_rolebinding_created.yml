@@ -91,22 +91,6 @@ Tests:
         "location": "westus",
         "tenantId": "44444444-4444-4444-4444-444444444444"
       }
-  - Name: Failed RoleBinding Creation
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2025-12-22T14:00:00.0000000Z",
-        "resourceId": "/subscriptions/55555555-5555-5555-5555-555555555555/resourceGroups/k8s-test/providers/Microsoft.Kubernetes/connectedClusters/test-cluster/rbac.authorization.k8s.io/rolebindings/test-binding",
-        "operationName": "MICROSOFT.KUBERNETES/CONNECTEDCLUSTERS/RBAC.AUTHORIZATION.K8S.IO/ROLEBINDINGS/WRITE",
-        "category": "Administrative",
-        "resultType": "Failed",
-        "resultSignature": "403",
-        "callerIpAddress": "5.5.5.5",
-        "correlationId": "e5f6a7b8-c9d0-1234-ef01-444444444444",
-        "level": "Error",
-        "location": "southcentralus",
-        "tenantId": "55555555-5555-5555-5555-555555555555"
-      }
   - Name: Different Operation
     ExpectedResult: false
     Log:

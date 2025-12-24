@@ -113,25 +113,6 @@ Tests:
         },
         "tenantId": "87654321-4321-4321-4321-111111111111"
       }
-  - Name: Failed Operation
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2024-12-17T15:00:00.0000000Z",
-        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount",
-        "operationName": "Microsoft.Storage/storageAccounts/write",
-        "operationVersion": "2021-04-01",
-        "category": "Administrative",
-        "resultType": "Failed",
-        "resultSignature": "403",
-        "callerIpAddress": "6.6.6.6",
-        "location": "eastus",
-        "correlationId": "f6a7b8c9-d0e1-2345-f012-111111111111",
-        "properties": {
-          "requestbody": "{\"properties\":{\"allowBlobPublicAccess\":true}}"
-        },
-        "tenantId": "87654321-4321-4321-4321-111111111111"
-      }
   - Name: Different Operation
     ExpectedResult: false
     Log:

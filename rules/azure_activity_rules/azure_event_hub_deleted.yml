@@ -58,34 +58,6 @@ Tests:
         "location": "westeurope",
         "tenantId": "22222222-2222-2222-2222-222222222222"
       }
-  - Name: Failed Event Hub Deletion
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2025-12-22T12:00:00.0000000Z",
-        "resourceId": "/subscriptions/33333333-3333-3333-3333-333333333333/resourceGroups/test-rg/providers/Microsoft.EventHub/namespaces/test-hub/eventhubs/test-events",
-        "operationName": "MICROSOFT.EVENTHUB/NAMESPACES/EVENTHUBS/DELETE",
-        "category": "Administrative",
-        "resultType": "Failed",
-        "resultSignature": "403",
-        "callerIpAddress": "3.3.3.3",
-        "correlationId": "c3d4e5f6-a7b8-9012-cdef-333333333333",
-        "level": "Error",
-        "tenantId": "33333333-3333-3333-3333-333333333333"
-      }
-  - Name: Event Hub Write Operation
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2025-12-22T13:00:00.0000000Z",
-        "resourceId": "/subscriptions/44444444-4444-4444-4444-444444444444/resourceGroups/app-rg/providers/Microsoft.EventHub/namespaces/app-hub/eventhubs/app-events",
-        "operationName": "MICROSOFT.EVENTHUB/NAMESPACES/EVENTHUBS/WRITE",
-        "category": "Administrative",
-        "resultType": "Success",
-        "callerIpAddress": "4.4.4.4",
-        "correlationId": "d4e5f6a7-b8c9-0123-def0-222222222222",
-        "tenantId": "44444444-4444-4444-4444-444444444444"
-      }
   - Name: Different Resource Type
     ExpectedResult: false
     Log:

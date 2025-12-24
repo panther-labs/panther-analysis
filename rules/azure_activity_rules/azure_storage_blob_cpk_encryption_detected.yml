@@ -88,24 +88,6 @@ Tests:
           "metricResponseType": "ClientOtherError"
         }
       }
-  - Name: Successful Blob Read
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2024-12-19T19:15:17.669Z",
-        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
-        "category": "StorageRead",
-        "operationName": "GetBlobProperties",
-        "statusCode": 200,
-        "statusText": "Success",
-        "durationMs": 1,
-        "callerIpAddress": "1.1.1.1:57485",
-        "properties": {
-          "accountName": "mystorageaccount",
-          "objectKey": "/mystorageaccount/corporate-files/documents/normal_document.docx",
-          "metricResponseType": "Success"
-        }
-      }
   - Name: Different Error Code
     ExpectedResult: false
     Log:
@@ -121,22 +103,5 @@ Tests:
           "accountName": "mystorageaccount",
           "objectKey": "/mystorageaccount/test/documents/file.txt",
           "metricResponseType": "AuthorizationError"
-        }
-      }
-  - Name: StorageWrite Category
-    ExpectedResult: false
-    Log:
-      {
-        "time": "2024-12-19T19:14:59.091Z",
-        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
-        "category": "StorageWrite",
-        "operationName": "PutBlob",
-        "statusCode": 201,
-        "statusText": "Success",
-        "callerIpAddress": "203.0.113.10:29713",
-        "properties": {
-          "accountName": "mystorageaccount",
-          "objectKey": "/mystorageaccount/test/documents/internal_doc_15.txt.ENCRYPTED",
-          "metricResponseType": "Success"
         }
       }

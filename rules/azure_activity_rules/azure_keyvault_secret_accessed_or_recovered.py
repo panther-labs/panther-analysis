@@ -2,13 +2,14 @@ from panther_azureactivity_helpers import azure_activity_alert_context, azure_ac
 
 SECRET_GET = "MICROSOFT.KEYVAULT/VAULTS/SECRETS/GETSECRET/ACTION"  # nosec B105
 SECRET_RECOVER = "MICROSOFT.KEYVAULT/VAULTS/SECRETS/RECOVER/ACTION"  # nosec B105
+SECRET_RESTORE = "MICROSOFT.KEYVAULT/VAULTS/SECRETS/RESTORE/ACTION"  # nosec B105
 
 
 def rule(event):
     operation = event.get("operationName", "").upper()
     return all(
         [
-            operation in [SECRET_GET, SECRET_RECOVER],
+            operation in [SECRET_GET, SECRET_RECOVER, SECRET_RESTORE],
             azure_activity_success(event),
         ]
     )
