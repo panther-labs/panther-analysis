@@ -2523,6 +2523,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an Azure Automation schedule is created or modified. Schedules define when and how often automation runbooks execute. Adversaries may create or modify schedules to establish persistence by executing malicious runbooks at regular intervals or specific times. This technique allows attackers to maintain access and execute commands without requiring direct interaction.",
+        "DisplayName": "Azure Automation Schedule Created or Modified",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_automation_schedule_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Automation webhook is created. A webhook uses a custom URL passed to Azure Automation along with a data payload specific to the runbook. Adversaries may exploit this capability to trigger runbooks containing malicious code for persistence or to execute unauthorized actions in the environment.",
         "DisplayName": "Azure Automation Webhook Created",
         "LogTypes": [
@@ -2559,6 +2568,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects excessive read operations on Azure public IP addresses and virtual machines. Adversaries may enumerate public IPs and virtual machines to identify external attack surfaces, map network topology, and identify potential targets for exploitation. This reconnaissance pattern often precedes lateral movement attempts, privilege escalation, or targeted attacks. The threshold-based detection triggers when the same resource type is read excessively within a time window.",
+        "DisplayName": "Azure Excessive IP and VM Discovery",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_network_ip_discovery.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects excessive read operations on Azure Network Security Groups. Adversaries may repeatedly read Network Security Group configurations to map network ports and firewall rules as part of reconnaissance activities. This pattern can indicate an attacker attempting to understand network security controls before launching lateral movement or exfiltration attacks. The threshold-based detection triggers when the same resource is read excessively within a time window.",
+        "DisplayName": "Azure Excessive Network Security Group Read",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_network_port_mapping.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Firewall policy is deleted. Firewall policies define critical network security rules that control traffic flow and protect resources. Adversaries may delete firewall policies to disable network security controls, allow malicious traffic, or enable data exfiltration. This activity is a strong indicator of defense evasion or preparation for follow-on attacks.",
         "DisplayName": "Azure Firewall Policy Deleted",
         "LogTypes": [
@@ -2577,12 +2604,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when Azure Key Vault certificates are accessed via read operations. Certificates in Key Vault contain both public and private key information used for authentication and encryption. Adversaries may attempt to dump certificates to extract credentials for service principals or establish persistence through certificate-based authentication.",
+        "DisplayName": "Azure Key Vault Certificate Accessed",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_keyvault_certificate_accessed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Key Vault is deleted. Key Vault deletion is a destructive operation that may indicate ransomware activity or malicious destruction of secrets and encryption keys.",
         "DisplayName": "Azure Key Vault Deleted",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_keyvault_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Azure Key Vault cryptographic keys are accessed via read operations. Key Vault keys contain public key information used for encryption, decryption, and signing operations. While private keys cannot be directly exported from Key Vault, adversaries may access key metadata and properties to understand the encryption architecture, identify sensitive keys, or enumerate available cryptographic resources for targeted attacks.",
+        "DisplayName": "Azure Key Vault Key Accessed",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_keyvault_key_accessed.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2658,12 +2703,12 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when an Azure Network Security Group (NSG) is deleted. NSG deletion removes network security controls and firewall rules, which may indicate defense evasion tactics by attackers attempting to open network access for lateral movement or data exfiltration.",
-        "DisplayName": "Azure Network Security Group Deleted",
+        "Description": "Identifies when a network security configuration is modified or deleted. This includes Network Security Group (NSG) changes, security rule modifications, NSG joins to subnets/interfaces, and diagnostic settings changes. These actions may indicate defense evasion, persistence, or preparation for data exfiltration.",
+        "DisplayName": "Azure Network Security Configuration Modified or Deleted",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
-        "YAMLPath": "rules/azure_activity_rules/azure_nsg_deleted.yml"
+        "YAMLPath": "rules/azure_activity_rules/azure_nsg_deleted_or_modified.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2682,6 +2727,15 @@
             "Azure.Audit"
         ],
         "YAMLPath": "rules/azure_signin_rules/azure_policy_changed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an Azure Policy with the DeployIfNotExists effect is triggered and executes a deployment. The DeployIfNotExists effect allows policies to automatically deploy resources when certain conditions are met. Adversaries may abuse this feature to establish persistence by creating policies that automatically deploy backdoors, malicious configurations, or unauthorized resources when specific conditions occur. This technique enables stealthy persistence as deployments appear to be legitimate policy enforcement actions.",
+        "DisplayName": "Azure Policy DeployIfNotExists Action Triggered",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_policy_deployifnotexists.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2739,6 +2793,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when serverless resources execute PowerShell or Python scripts through Azure Automation runbook jobs or Azure Function Apps. Adversaries may abuse access to serverless resources to execute commands with inherited permissions from managed identities, RunAs accounts, or hybrid worker groups. Unlike runbook creation/modification (which is the setup phase), this rule detects actual script execution, which represents active threat activity. This detection implements comprehensive coverage of the AZT302 Serverless Scripting technique from the Azure Threat Research Matrix.",
+        "DisplayName": "Azure Serverless Script Execution",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_serverless_execution.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This detection looks for Successful Logins that have used legacy authentication protocols",
         "DisplayName": "Azure SignIn via Legacy Authentication Protocol",
         "LogTypes": [
@@ -2790,6 +2853,15 @@
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_storage_account_key_regenerated.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Azure Storage Account access keys are listed or retrieved. This operation returns the full access keys which grant complete control over the storage account and all its data. Adversaries may list storage account keys to gain persistent access to blob containers, file shares, queues, and tables without needing to maintain their current permissions.",
+        "DisplayName": "Azure Storage Account Keys Listed",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_account_keys_listed.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2883,6 +2955,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an Azure Storage file share is created or modified. File shares can be mounted as network drives using SMB or NFS protocols, providing persistent access to storage. Adversaries may create or modify file shares to establish data exfiltration channels or mount shares to local systems for easier data transfer. While file share operations are common in legitimate scenarios, monitoring these activities helps establish baselines and identify unusual patterns that may indicate data exfiltration.",
+        "DisplayName": "Azure Storage File Share Created or Modified",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_fileshare_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Virtual Machine is deleted. VM deletion may indicate normal deprovisioning or could be part of a larger attack pattern to disrupt services.",
         "DisplayName": "Azure Virtual Machine Deleted",
         "LogTypes": [
@@ -2901,12 +2982,21 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when commands are executed on Azure virtual machines using the Run Command feature. While the Virtual Machine Contributor role permits VM management without direct access, commands can still be executed remotely via PowerShell with System privileges. Adversaries may abuse this capability to execute unauthorized commands, deploy malware, or move laterally within the environment.",
+        "Description": "Detects when commands are executed on Azure virtual machines through multiple execution methods including RunCommand, VM extensions (CustomScriptExtension, DSC), gallery applications, AKS command invoke, VMSS run commands, and serial console access. All these methods allow command execution with SYSTEM privileges. Adversaries may abuse these capabilities to execute unauthorized commands, deploy malware, establish persistence, or move laterally within the environment. This detection implements comprehensive coverage of the AZT301 Virtual Machine Scripting technique from the Azure Threat Research Matrix.",
         "DisplayName": "Azure VM Command Executed",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_vm_command_executed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a Shared Access Signature (SAS) URI is generated for an Azure VM disk. SAS URIs provide time-limited, unauthenticated access to download disk contents directly from Azure Storage. Adversaries can generate SAS URIs to exfiltrate entire virtual machine disks, including operating systems, applications, and all data. This allows offline analysis to extract credentials, secrets, and sensitive data without detection. This is a critical indicator of data exfiltration and should be investigated immediately.",
+        "DisplayName": "Azure VM Disk SAS URI Generated",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_vm_disk_sas_uri_generated.yml"
     },
     {
         "AnalysisType": "Rule",

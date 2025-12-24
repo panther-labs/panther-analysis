@@ -876,6 +876,8 @@
   - Detects when an Azure Automation runbook is created, modified, or published. Runbooks contain executable code that can automate tasks within Azure environments. Adversaries may abuse runbooks for persistence, privilege escalation, or execution of malicious scripts. This rule monitors draft creation, runbook modifications, and publishing activities that could indicate unauthorized automation code deployment.
 - [Azure Automation Runbook Deleted](../rules/azure_activity_rules/azure_automation_runbook_deleted.yml)
   - Detects when an Azure Automation runbook is deleted. Adversaries may delete runbooks to cover their tracks after using them for malicious purposes, to disrupt automated security responses, or to eliminate forensic evidence. Legitimate runbook deletions should be rare and controlled through change management processes.
+- [Azure Automation Schedule Created or Modified](../rules/azure_activity_rules/azure_automation_schedule_created.yml)
+  - Detects when an Azure Automation schedule is created or modified. Schedules define when and how often automation runbooks execute. Adversaries may create or modify schedules to establish persistence by executing malicious runbooks at regular intervals or specific times. This technique allows attackers to maintain access and execute commands without requiring direct interaction.
 - [Azure Automation Webhook Created](../rules/azure_activity_rules/azure_automation_webhook_created.yml)
   - Detects when an Azure Automation webhook is created. A webhook uses a custom URL passed to Azure Automation along with a data payload specific to the runbook. Adversaries may exploit this capability to trigger runbooks containing malicious code for persistence or to execute unauthorized actions in the environment.
 - [Azure Diagnostic Settings Deleted](../rules/azure_activity_rules/azure_diagnostic_settings_deleted.yml)
@@ -884,12 +886,20 @@
   - Detects when an Azure managed disk is deleted. Unauthorized disk deletion can indicate ransomware activity where attackers destroy data or delete backup disks to prevent recovery. This may also indicate legitimate cleanup operations.
 - [Azure Event Hub Deleted](../rules/azure_activity_rules/azure_event_hub_deleted.yml)
   - Detects when an Azure Event Hub is deleted. Event Hubs are critical event processing services that ingest and process large volumes of data for log collection, SIEM ingestion, and real-time analytics. Adversaries may delete Event Hubs to evade detection by disrupting data flows and erasing evidence of their malicious activities. Deletion of Event Hubs used for security logging can blind security teams to ongoing attacks.
+- [Azure Excessive IP and VM Discovery](../rules/azure_activity_rules/azure_network_ip_discovery.yml)
+  - Detects excessive read operations on Azure public IP addresses and virtual machines. Adversaries may enumerate public IPs and virtual machines to identify external attack surfaces, map network topology, and identify potential targets for exploitation. This reconnaissance pattern often precedes lateral movement attempts, privilege escalation, or targeted attacks. The threshold-based detection triggers when the same resource type is read excessively within a time window.
+- [Azure Excessive Network Security Group Read](../rules/azure_activity_rules/azure_network_port_mapping.yml)
+  - Detects excessive read operations on Azure Network Security Groups. Adversaries may repeatedly read Network Security Group configurations to map network ports and firewall rules as part of reconnaissance activities. This pattern can indicate an attacker attempting to understand network security controls before launching lateral movement or exfiltration attacks. The threshold-based detection triggers when the same resource is read excessively within a time window.
 - [Azure Firewall Policy Deleted](../rules/azure_activity_rules/azure_firewall_policy_deleted.yml)
   - Detects when an Azure Firewall policy is deleted. Firewall policies define critical network security rules that control traffic flow and protect resources. Adversaries may delete firewall policies to disable network security controls, allow malicious traffic, or enable data exfiltration. This activity is a strong indicator of defense evasion or preparation for follow-on attacks.
 - [Azure Invite External Users](../rules/azure_signin_rules/azure_invite_external_users.yml)
   - This detection looks for a Azure users inviting external users
+- [Azure Key Vault Certificate Accessed](../rules/azure_activity_rules/azure_keyvault_certificate_accessed.yml)
+  - Detects when Azure Key Vault certificates are accessed via read operations. Certificates in Key Vault contain both public and private key information used for authentication and encryption. Adversaries may attempt to dump certificates to extract credentials for service principals or establish persistence through certificate-based authentication.
 - [Azure Key Vault Deleted](../rules/azure_activity_rules/azure_keyvault_deleted.yml)
   - Detects when an Azure Key Vault is deleted. Key Vault deletion is a destructive operation that may indicate ransomware activity or malicious destruction of secrets and encryption keys.
+- [Azure Key Vault Key Accessed](../rules/azure_activity_rules/azure_keyvault_key_accessed.yml)
+  - Detects when Azure Key Vault cryptographic keys are accessed via read operations. Key Vault keys contain public key information used for encryption, decryption, and signing operations. While private keys cannot be directly exported from Key Vault, adversaries may access key metadata and properties to understand the encryption architecture, identify sensitive keys, or enumerate available cryptographic resources for targeted attacks.
 - [Azure Key Vault Key Permanently Purged](../rules/azure_activity_rules/azure_keyvault_key_purged.yml)
   - Detects when an Azure Key Vault key is permanently purged. Purging a key is an irreversible operation that permanently destroys cryptographic keys. If done on an unrecognized key, it may indicate ransomware or malicious destruction.
 - [Azure Key Vault Permanently Purged](../rules/azure_activity_rules/azure_keyvault_purged.yml)
@@ -906,12 +916,14 @@
   - This detection looks for MFA being disabled in conditional access policy
 - [Azure Network Packet Capture Enabled](../rules/azure_activity_rules/azure_network_packet_capture_enabled.yml)
   - Detects when Azure's Network Watcher packet capture feature is activated.  Packet capture operations could enable threat actors to inspect unencrypted network traffic and potentially extract sensitive credentials or data. While packet capture is a legitimate network diagnostics tool, adversaries may abuse it to sniff credentials or intercept sensitive data in transit.
-- [Azure Network Security Group Deleted](../rules/azure_activity_rules/azure_nsg_deleted.yml)
-  - Detects when an Azure Network Security Group (NSG) is deleted. NSG deletion removes network security controls and firewall rules, which may indicate defense evasion tactics by attackers attempting to open network access for lateral movement or data exfiltration.
+- [Azure Network Security Configuration Modified or Deleted](../rules/azure_activity_rules/azure_nsg_deleted_or_modified.yml)
+  - Identifies when a network security configuration is modified or deleted. This includes Network Security Group (NSG) changes, security rule modifications, NSG joins to subnets/interfaces, and diagnostic settings changes. These actions may indicate defense evasion, persistence, or preparation for data exfiltration.
 - [Azure Network Watcher Deleted](../rules/azure_activity_rules/azure_network_watcher_deleted.yml)
   - Detects when an Azure Network Watcher is deleted. Network Watcher is a regional service that enables monitoring and diagnostics for network resources in Azure, including packet capture, connection monitoring, flow logging, and network performance diagnostics. Adversaries may delete Network Watchers to disable network visibility and evade detection during lateral movement, data exfiltration, or other network-based attacks.
 - [Azure Policy Changed](../rules/azure_signin_rules/azure_policy_changed.yml)
   - This detection looks for policy changes in AuditLogs
+- [Azure Policy DeployIfNotExists Action Triggered](../rules/azure_activity_rules/azure_policy_deployifnotexists.yml)
+  - Detects when an Azure Policy with the DeployIfNotExists effect is triggered and executes a deployment. The DeployIfNotExists effect allows policies to automatically deploy resources when certain conditions are met. Adversaries may abuse this feature to establish persistence by creating policies that automatically deploy backdoors, malicious configurations, or unauthorized resources when specific conditions occur. This technique enables stealthy persistence as deployments appear to be legitimate policy enforcement actions.
 - [Azure Policy Violation Detected](../rules/azure_activity_rules/azure_policy_violation.yml)
   - Detects when an Azure resource is found to be non-compliant with assigned Azure Policies. Policy violations indicate that resources do not meet organizational compliance requirements for security, networking, encryption, or other governance controls. Repeated violations may indicate configuration drift or potential security misconfigurations.
 - [Azure Privileged or Elevated Role Assignment](../rules/azure_activity_rules/azure_role_assignment_privileged_or_elevated.yml)
@@ -924,6 +936,8 @@
   - This detection surfaces an alert based on riskLevelAggregated, riskLevelDuringSignIn, and riskState.riskLevelAggregated and riskLevelDuringSignIn are only expected for Azure AD Premium P2 customers.
 - [Azure Role Changed PIM](../rules/azure_signin_rules/azure_role_changed_pim.yml)
   - This detection looks for a change in member's PIM roles in EntraID
+- [Azure Serverless Script Execution](../rules/azure_activity_rules/azure_serverless_execution.yml)
+  - Detects when serverless resources execute PowerShell or Python scripts through Azure Automation runbook jobs or Azure Function Apps. Adversaries may abuse access to serverless resources to execute commands with inherited permissions from managed identities, RunAs accounts, or hybrid worker groups. Unlike runbook creation/modification (which is the setup phase), this rule detects actual script execution, which represents active threat activity. This detection implements comprehensive coverage of the AZT302 Serverless Scripting technique from the Azure Threat Research Matrix.
 - [Azure SignIn via Legacy Authentication Protocol](../rules/azure_signin_rules/azure_legacyauth.yml)
   - This detection looks for Successful Logins that have used legacy authentication protocols
 - [Azure SQL Server Deleted](../rules/azure_activity_rules/azure_sql_server_deleted.yml)
@@ -936,6 +950,8 @@
   - Detects when Azure storage account HTTPS-only traffic requirement is disabled. Disabling HTTPS-only allows unencrypted HTTP connections, which is a security downgrade that may expose data in transit.
 - [Azure Storage Account Key Regenerated](../rules/azure_activity_rules/azure_storage_account_key_regenerated.yml)
   - Detects when an Azure storage account access key is regenerated. Key regeneration is a normal operational activity but may indicate an attacker attempting to maintain persistence or rotate credentials after compromise.
+- [Azure Storage Account Keys Listed](../rules/azure_activity_rules/azure_storage_account_keys_listed.yml)
+  - Detects when Azure Storage Account access keys are listed or retrieved. This operation returns the full access keys which grant complete control over the storage account and all its data. Adversaries may list storage account keys to gain persistent access to blob containers, file shares, queues, and tables without needing to maintain their current permissions.
 - [Azure Storage Account Public Network Access Enabled](../rules/azure_activity_rules/azure_storage_account_public_network_access_enabled.yml)
   - Detects when an existing Azure storage account's network settings are modified to enable public network access (defaultAction: Allow). This could indicate a potential data exfiltration risk or misconfiguration.
 - [Azure Storage Account Shared Key Access Enabled](../rules/azure_activity_rules/azure_storage_account_key_access_enabled.yml)
@@ -956,12 +972,16 @@
   - Tracks successful blob uploads to Azure Storage accounts.
 - [Azure Storage Container Soft Delete Disabled](../rules/azure_activity_rules/azure_storage_container_soft_delete_disabled.yml)
   - Detects when Azure storage account container soft delete is disabled. Disabling container soft delete removes protection against accidental deletion and may indicate preparation for data destruction.
+- [Azure Storage File Share Created or Modified](../rules/azure_activity_rules/azure_storage_fileshare_modified.yml)
+  - Detects when an Azure Storage file share is created or modified. File shares can be mounted as network drives using SMB or NFS protocols, providing persistent access to storage. Adversaries may create or modify file shares to establish data exfiltration channels or mount shares to local systems for easier data transfer. While file share operations are common in legitimate scenarios, monitoring these activities helps establish baselines and identify unusual patterns that may indicate data exfiltration.
 - [Azure Virtual Machine Deleted](../rules/azure_activity_rules/azure_vm_deleted.yml)
   - Detects when an Azure Virtual Machine is deleted. VM deletion may indicate normal deprovisioning or could be part of a larger attack pattern to disrupt services.
 - [Azure Virtual Network Deleted](../rules/azure_activity_rules/azure_virtual_network_deleted.yml)
   - Detects when an Azure Virtual Network (VNet) is deleted. VNet deletion removes the entire network infrastructure and disconnects all resources within it, causing significant service disruption. This may indicate ransomware activity, sabotage, or unauthorized infrastructure destruction.
 - [Azure VM Command Executed](../rules/azure_activity_rules/azure_vm_command_executed.yml)
-  - Detects when commands are executed on Azure virtual machines using the Run Command feature. While the Virtual Machine Contributor role permits VM management without direct access, commands can still be executed remotely via PowerShell with System privileges. Adversaries may abuse this capability to execute unauthorized commands, deploy malware, or move laterally within the environment.
+  - Detects when commands are executed on Azure virtual machines through multiple execution methods including RunCommand, VM extensions (CustomScriptExtension, DSC), gallery applications, AKS command invoke, VMSS run commands, and serial console access. All these methods allow command execution with SYSTEM privileges. Adversaries may abuse these capabilities to execute unauthorized commands, deploy malware, establish persistence, or move laterally within the environment. This detection implements comprehensive coverage of the AZT301 Virtual Machine Scripting technique from the Azure Threat Research Matrix.
+- [Azure VM Disk SAS URI Generated](../rules/azure_activity_rules/azure_vm_disk_sas_uri_generated.yml)
+  - Detects when a Shared Access Signature (SAS) URI is generated for an Azure VM disk. SAS URIs provide time-limited, unauthenticated access to download disk contents directly from Azure Storage. Adversaries can generate SAS URIs to exfiltrate entire virtual machine disks, including operating systems, applications, and all data. This allows offline analysis to extract credentials, secrets, and sensitive data without detection. This is a critical indicator of data exfiltration and should be investigated immediately.
 - [Azure VM Snapshot Deleted](../rules/azure_activity_rules/azure_vm_snapshot_deleted.yml)
   - Detects when an Azure disk snapshot is deleted. Snapshots serve critical functions for backup, disaster recovery, and forensic analysis. Adversaries may target snapshots to prevent data recovery, destroy forensic evidence, or undermine backup strategies before launching ransomware or destructive operations.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
