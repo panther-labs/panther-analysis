@@ -1,5 +1,4 @@
 from panther_azureactivity_helpers import azure_activity_alert_context, azure_activity_success
-from panther_base_helpers import deep_get
 
 KEY_LIST_OPERATIONS = [
     "MICROSOFT.STORAGE/STORAGEACCOUNTS/LISTKEYS/ACTION",
@@ -13,7 +12,7 @@ def rule(event):
 
 
 def title(event):
-    caller = deep_get(event, "identity", "claims", "ipaddr", default="<UNKNOWN_IP>")
+    caller = event.deep_get(event, "identity", "claims", "ipaddr", default="<UNKNOWN_IP>")
     resource_id = event.get("resourceId", "")
     storage_account_name = "<UNKNOWN_STORAGE_ACCOUNT>"
 
