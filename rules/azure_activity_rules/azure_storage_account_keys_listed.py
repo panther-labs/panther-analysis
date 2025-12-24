@@ -12,7 +12,7 @@ def rule(event):
 
 
 def title(event):
-    caller = event.deep_get(event, "identity", "claims", "ipaddr", default="<UNKNOWN_IP>")
+    caller = event.deep_get("identity", "claims", "ipaddr", default="<UNKNOWN_IP>")
     resource_id = event.get("resourceId", "")
     storage_account_name = "<UNKNOWN_STORAGE_ACCOUNT>"
 
