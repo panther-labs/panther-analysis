@@ -3,6 +3,13 @@ PackID: PantherManaged.Azure.MonitorActivity
 Description: Group of Azure.MonitorActivity detections
 PackDefinition:
   IDs:
+    # Network-related rules
+    - Azure.MonitorActivity.Network.IPDiscovery
+    - Azure.MonitorActivity.Network.NSGModifiedOrDeleted
+    - Azure.MonitorActivity.Network.PacketCaptureEnabled
+    - Azure.MonitorActivity.Network.PortMapping
+    - Azure.MonitorActivity.Network.VNetDeleted
+    - Azure.MonitorActivity.Network.WatcherDeleted
     # Globals used in these detections
     - panther_azureactivity_helpers
 DisplayName: "Panther Azure MonitorActivity Pack"
