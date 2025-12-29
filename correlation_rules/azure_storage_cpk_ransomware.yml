@@ -15,12 +15,6 @@ Runbook: |
   1. Query Azure MonitorActivity logs for all PutBlob operations by the callerIpAddress in the 6 hours before the alert to identify the full scope of encrypted blobs
   2. Check Azure AD sign-in logs for authentication events from the same callerIpAddress in the 24 hours before the first upload to determine if credentials were compromised
   3. Search for LISTACCOUNTSAS or LISTKEYS operations on the affected storage_account in the 48 hours before the uploads to identify potential credential theft
-Tags:
-  - Azure
-  - Ransomware
-  - CPK Encryption
-  - Azure Storage
-  - Data Encrypted for Impact
 Reference: https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.models.bloberrorcode.blobusescustomerspecifiedencryption?view=azure-dotnet
 Reports:
   MITRE ATT&CK:
