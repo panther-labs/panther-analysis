@@ -3,6 +3,16 @@ PackID: PantherManaged.Azure.MonitorActivity
 Description: Group of Azure.MonitorActivity detections
 PackDefinition:
   IDs:
+   # VM/Compute/Execution Rules
+    - Azure.MonitorActivity.Automation.ServerlessExecution
+    - Azure.MonitorActivity.Compute.DiskDeleted
+    - Azure.MonitorActivity.Compute.DiskSASURIGenerated
+    - Azure.MonitorActivity.Compute.RestorePointCollectionDeleted
+    - Azure.MonitorActivity.Compute.SnapshotDeleted
+    - Azure.MonitorActivity.Compute.VMCommandExecuted
+    - Azure.MonitorActivity.Kubernetes.RoleBindingCreated
+    - Azure.MonitorActivity.SQL.ServerDeleted
+    - Azure.MonitorActivity.VirtualMachine.Deleted
     # Globals used in these detections
     - panther_azureactivity_helpers
 DisplayName: "Panther Azure MonitorActivity Pack"
