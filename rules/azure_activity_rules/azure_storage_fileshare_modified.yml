@@ -5,8 +5,6 @@ DisplayName: "Azure Storage File Share Created or Modified"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT702
 Severity: Info
 Status: Experimental
 Description: >
@@ -19,6 +17,15 @@ Reports:
   MITRE ATT&CK:
     - TA0010:T1048 # Exfiltration: Exfiltration Over Alternative Protocol
     - TA0009:T1530 # Collection: Data from Cloud Storage
+Tags:
+  - Exfiltration
+  - Exfiltration Over Alternative Protocol
+  - Collection
+  - Data from Cloud Storage
+  - AZT702
+  - AZT702.1
+  - File Share Mounting
+  - Storage Account File Share NFS/SMB Mount
 Runbook: |
   1. Find all storage account operations by the callerIpAddress in the 6 hours before and after this alert to identify if this is part of a data staging or exfiltration pattern
   2. Query for the storage account configuration to determine if the file share has public access or is restricted to specific networks

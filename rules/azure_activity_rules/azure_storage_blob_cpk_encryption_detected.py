@@ -34,10 +34,6 @@ def title(event):
 def alert_context(event):
     context = azure_activity_alert_context(event)
     # Add blob-specific context
-    resource_id = event.get("resourceId", "<UNKNOWN_STORAGE_ACCOUNT>")
-    storage_account_name = extract_resource_name_from_id(resource_id, "storageAccounts", default="")
-    if storage_account_name:
-        context["storage_account"] = storage_account_name
     context["blob_path"] = event.deep_get("properties", "objectKey", default="<UNKNOWN>")
     context["user_agent"] = event.deep_get("properties", "userAgentHeader", default="<UNKNOWN>")
     context["status_code"] = event.get("statusCode", "<UNKNOWN>")

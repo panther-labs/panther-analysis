@@ -13,6 +13,9 @@ Description: >
 Reports:
   MITRE ATT&CK:
     - TA0006:T1098 # Persistence: Account Manipulation
+Tags:
+  - Persistence
+  - Account Manipulation
 Runbook: |
   1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 24 hours before and after this alert to identify suspicious patterns
   2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence

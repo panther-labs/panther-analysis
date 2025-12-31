@@ -31,17 +31,13 @@ def rule(event):
 
 def title(event):
     resource_id = event.get("resourceId", "")
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
     operation = event.get("operationName", "").upper()
 
     if operation == STORAGE_WRITE:
         storage_account = extract_resource_name_from_id(
             resource_id, "storageAccounts", default="<UNKNOWN_ACCOUNT>"
         )
-        return (
-            f"Azure Storage Account anonymous blob access enabled "
-            f"on [{storage_account}] from [{caller}]"
-        )
+        return f"Azure Storage Account anonymous blob access enabled on [{storage_account}]"
 
     # For container-level operations, try to extract container name
     container = extract_resource_name_from_id(
@@ -56,23 +52,9 @@ def title(event):
 
     requestbody = azure_parse_json_string(event.deep_get("properties", "requestbody", default=None))
     resource_type = requestbody.get("properties", {}).get("publicAccess", "")
-    return (
-        f"Azure Storage public access allowed on [{resource_type}] "
-        f"for [{storage_resource}] from [{caller}]"
-    )
+    return f"Azure Storage public access allowed on [{resource_type}] " f"for [{storage_resource}]"
 
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-
-    resource_id = event.get("resourceId", "")
-
-    storage_account_name = extract_resource_name_from_id(resource_id, "storageAccounts", default="")
-    if storage_account_name:
-        context["storage_account_name"] = storage_account_name
-
-    resource_group = extract_resource_name_from_id(resource_id, "resourceGroups", default="")
-    if resource_group:
-        context["resource_group"] = resource_group
-
     return context

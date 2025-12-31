@@ -16,6 +16,11 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1486 # Impact: Data Encrypted for Impact
     - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Encrypted for Impact
+  - Inhibit System Recovery
+  - Ransomware
 Runbook: |
   1. Query Azure MonitorActivity logs for all PutBlob operations on the affected resourceId in the 48 hours before the first error to identify when files were encrypted and from which callerIpAddress
   2. Find all ListAccountSAS and ListKeys operations by any callerIpAddress or p_any_usernames in the 7 days before the first PutBlob operation to identify potential credential theft

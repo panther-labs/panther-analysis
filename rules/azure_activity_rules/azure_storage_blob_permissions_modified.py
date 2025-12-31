@@ -25,24 +25,11 @@ def title(event):
         resource_id, "storageAccounts", default="<UNKNOWN_STORAGE_ACCOUNT>"
     )
 
-    caller = event.get("callerIpAddress", "<UNKNOWN_CALLER>")
     return (
-        f"Azure Storage Blob Container Modified: [{container_name}] "
-        f"in [{storage_account_name}] by [{caller}]"
+        f"Azure Storage Blob Container Modified: [{container_name}] " f"in [{storage_account_name}]"
     )
 
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-
-    resource_id = event.get("resourceId", "")
-
-    container_name = extract_resource_name_from_id(resource_id, "containers", default="")
-    if container_name:
-        context["container_name"] = container_name
-
-    storage_account_name = extract_resource_name_from_id(resource_id, "storageAccounts", default="")
-    if storage_account_name:
-        context["storage_account_name"] = storage_account_name
-
     return context

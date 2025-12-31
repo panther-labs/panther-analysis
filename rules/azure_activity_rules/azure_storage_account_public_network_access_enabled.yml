@@ -12,7 +12,10 @@ Description: >
   This could indicate a potential data exfiltration risk or misconfiguration.
 Reports:
   MITRE ATT&CK:
-    - TA0010:T1567 # Exfiltration Over Web Service
+    - TA0010:T1567 # Exfiltration: Exfiltration Over Web Service
+Tags:
+  - Exfiltration
+  - Exfiltration Over Web Service
 Runbook: |
   1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this alert to establish activity patterns
   2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence

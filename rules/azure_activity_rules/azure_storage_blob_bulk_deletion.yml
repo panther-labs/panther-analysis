@@ -19,6 +19,11 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1485 # Impact: Data Destruction
     - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Destruction
+  - Inhibit System Recovery
+  - Ransomware
 Runbook: |
   1. Query Azure MonitorActivity logs for all DeleteBlob operations from the callerIpAddress in the 2 hours before and after the alert to identify the deletion pattern and volume
   2. Find all ListAccountSAS, ListKeys, and PutBlob operations by the same callerIpAddress or p_any_usernames in the 6 hours before the first deletion to identify potential credential theft or ransomware staging

@@ -18,22 +18,9 @@ def title(event):
     storage_account = extract_resource_name_from_id(
         resource_id, "storageAccounts", default="<UNKNOWN_ACCOUNT>"
     )
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
-
-    return f"Azure Storage Account [{storage_account}] deleted from [{caller}]"
+    return f"Azure Storage Account [{storage_account}] deleted"
 
 
 def alert_context(event):
     context = azure_activity_alert_context(event)
-
-    resource_id = event.get("resourceId", "")
-
-    storage_account_name = extract_resource_name_from_id(resource_id, "storageAccounts", default="")
-    if storage_account_name:
-        context["storage_account_name"] = storage_account_name
-
-    resource_group = extract_resource_name_from_id(resource_id, "resourceGroups", default="")
-    if resource_group:
-        context["resource_group"] = resource_group
-
     return context

@@ -17,9 +17,16 @@ Reports:
     - TA0006:T1552 # Credential Access: Unsecured Credentials
     - TA0009:T1530 # Collection: Data from Cloud Storage
 Tags:
+  - Credential Access
+  - Unsecured Credentials
+  - Collection
+  - Data from Cloud Storage
   - AZT605
   - AZT605.1
   - AZT701.2
+  - Resource Secret Reveal
+  - Storage Account Access Key Dumping
+  - Automation Account Credential Secret Dump
 Runbook: |
   1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this key listing to identify if blob downloads, file share access, or data exfiltration followed
   2. Check if the caller identity recently obtained new role assignments or elevated privileges in the 24 hours before this operation that would explain the key access

@@ -19,10 +19,9 @@ def title(event):
     storage_account = extract_resource_name_from_id(
         resource_id, "storageAccounts", default="<UNKNOWN_ACCOUNT>"
     )
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
     requestbody = azure_parse_json_string(event.deep_get("properties", "requestbody", default=None))
     key = requestbody.get("keyName", "<UNKNOWN_KEY>")
-    return f"Azure Storage Account key [{key}] regenerated on [{storage_account}] from [{caller}]"
+    return f"Azure Storage Account key [{key}] regenerated on [{storage_account}]"
 
 
 def alert_context(event):

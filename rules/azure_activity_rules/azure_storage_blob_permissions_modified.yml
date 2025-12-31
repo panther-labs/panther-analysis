@@ -17,6 +17,11 @@ Reports:
   MITRE ATT&CK:
     - TA0010:T1567.002 # Exfiltration: Exfiltration to Cloud Storage
     - TA0005:T1222 # Defense Evasion: File and Directory Permissions Modification
+Tags:
+  - Exfiltration
+  - Exfiltration to Cloud Storage
+  - Defense Evasion
+  - File and Directory Permissions Modification
 Runbook: |
   1. Query Azure Monitor Activity logs for all storage container operations (create, modify, delete) by the callerIpAddress in the 24 hours before and after the alert to identify permission modification patterns
   2. Find all blob upload and download operations for the affected storage container in the 6 hours after the permission change to identify potential data exfiltration

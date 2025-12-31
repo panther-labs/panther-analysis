@@ -13,6 +13,9 @@ Description: >
 Reports:
   MITRE ATT&CK:
     - TA0009:T1071 # Command and Control: Application Layer Protocol
+Tags:
+  - Command and Control
+  - Application Layer Protocol
 Runbook: |
   1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this alert to identify patterns
   2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
