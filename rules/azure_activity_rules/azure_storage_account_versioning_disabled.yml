@@ -1,0 +1,85 @@
+AnalysisType: rule
+Filename: azure_storage_account_versioning_disabled.py
+RuleID: "Azure.MonitorActivity.StorageAccount.VersioningDisabled"
+DisplayName: "Azure Storage Account Blob Versioning Disabled"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: High
+Status: Experimental
+Description: >
+  Detects when Azure storage account blob versioning is disabled.
+  Disabling versioning removes protection against accidental deletion or modification and may indicate preparation for permanent data destruction.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Impact: Data Destruction
+Tags:
+  - Impact
+  - Data Destruction
+Runbook: |
+  1. Query Azure Monitor Activity logs for all storage account blob service operations by the callerIpAddress in the 6 hours before and after this alert to identify patterns
+  2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
+  3. Search for other Azure storage account configuration changes or blob deletion events from the same user or IP in the past 7 days to assess if this is part of a data destruction campaign
+Reference: https://www.azadvertizer.net/azpolicyadvertizer/c36a325b-ae04-4863-ad4f-19c6678f8e08.html
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Versioning Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "Microsoft.Storage/storageAccounts/blobServices/write",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "durationMs": 1523,
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "identity": {
+          "claims": {
+            "name": "denethor@lotr.com"
+          }
+        },
+        "level": "Informational",
+        "location": "eastus",
+        "properties": {
+          "requestbody": "{\"properties\":{\"isVersioningEnabled\":false}}"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Storage/storageAccounts/prodstorage/blobServices/default",
+        "operationName": "microsoft.storage/storageaccounts/blobservices/write",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+        "properties": {
+          "requestbody": "{\"properties\":{\"isVersioningEnabled\":false}}"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount",
+        "operationName": "Microsoft.Storage/storageAccounts/delete",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "3.3.3.3",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-444444444444",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
