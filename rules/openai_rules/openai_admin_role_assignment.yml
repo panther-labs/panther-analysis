@@ -1,7 +1,6 @@
 AnalysisType: rule
 Description: |
   Detects when an admin or owner role is assigned to a user or group in OpenAI.
-
   Admin and owner roles grant elevated privileges that allow significant control over
   the organization, including managing users, API keys, billing, and security settings.
   Unauthorized or unexpected admin role assignments can indicate:
@@ -9,7 +8,6 @@ Description: |
   - Insider threats
   - Compromised administrator accounts
   - Policy violations
-
   This rule alerts on all admin role assignments for visibility and audit purposes.
 DisplayName: "OpenAI Admin Role Assignment"
 Enabled: true
@@ -17,9 +15,7 @@ Filename: openai_admin_role_assignment.py
 Reference: https://platform.openai.com/docs/api-reference/audit-logs
 Runbook: |
   1. Verify the role assignment was authorized. Confirm the assigned user/group should have admin privileges and the assignment aligns with approved access requests or organizational policy.
-
   2. Review the assignment context including the actor performing the assignment, source IP address, geolocation, and timing. Check for anomalous patterns such as assignments from unusual locations or during off-hours.
-
   3. If the assignment is suspicious or unauthorized, immediately revoke the admin role. Review all actions performed by the principal since the role was granted, investigate potential account compromise of the actor who granted the role, and escalate for security review.
 Reports:
   MITRE ATT&CK:
@@ -58,7 +54,6 @@ Tests:
         principal_type: "user"
         resource_id: "org-abc123"
         resource_type: "api.organization"
-
   - Name: "Admin role assignment - contains admin keyword - Alert"
     ExpectedResult: true
     Log:
@@ -80,7 +75,6 @@ Tests:
         principal_type: "user"
         resource_id: "proj-xyz789"
         resource_type: "api.project"
-
   - Name: "Group assigned owner role - Alert"
     ExpectedResult: true
     Log:
@@ -102,7 +96,6 @@ Tests:
         principal_type: "group"
         resource_id: "org-abc123"
         resource_type: "api.organization"
-
   - Name: "Non-admin role assignment - reader - No Alert"
     ExpectedResult: false
     Log:
@@ -124,7 +117,6 @@ Tests:
         principal_type: "user"
         resource_id: "org-abc123"
         resource_type: "api.organization"
-
   - Name: "Non-admin role assignment - viewer - No Alert"
     ExpectedResult: false
     Log:
@@ -146,7 +138,6 @@ Tests:
         principal_type: "user"
         resource_id: "proj-def456"
         resource_type: "api.project"
-
   - Name: "Role assignment removed - No Alert"
     ExpectedResult: false
     Log:
@@ -166,7 +157,6 @@ Tests:
         id: "role_assignment_role-api-organization-owner__api-organization__org-abc123_user-oldadmin999"
         principal_id: "user-oldadmin999"
         principal_type: "user"
-
   - Name: "Unrelated event type - No Alert"
     ExpectedResult: false
     Log:

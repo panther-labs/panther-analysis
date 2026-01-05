@@ -14,8 +14,8 @@ def rule(event):
 
 
 def title(event):
-    event_type = event.get("type", "Unknown")
-    email = deep_get(event, "actor", "session", "user", "email", default="Unknown User")
+    event_type = event.get("type", "")
+    email = event.deep_get("actor", "session", "user", "email", default="<UNKNOWN_USER>")
 
     action_map = {
         "ip_allowlist.created": "Created",
@@ -26,7 +26,7 @@ def title(event):
     }
 
     action = action_map.get(event_type, "Modified")
-    return f"OpenAI IP Allowlist {action} by {email}"
+    return f"OpenAI IP Allowlist {action} by [{email}]"
 
 
 def severity(event):
@@ -39,7 +39,7 @@ def severity(event):
         return "HIGH"
 
     if event_type in ["ip_allowlist.created", "ip_allowlist.config.activated"]:
-        return "MEDIUM"
+        return "LOW"
 
     return "DEFAULT"
 

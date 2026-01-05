@@ -5,6 +5,7 @@ Description: |
 DisplayName: "OpenAI Successful Login (Base Rule)"
 Enabled: true
 Filename: openai_login_success.py
+CreateAlert: false
 Severity: Info
 DedupPeriodMinutes: 60
 Threshold: 999999
@@ -27,7 +28,6 @@ Tests:
             email: "user@company.com"
           ip_address: "203.0.113.100"
           user_agent: "Mozilla/5.0"
-
   - Name: "Failed login - No match"
     ExpectedResult: false
     Log:

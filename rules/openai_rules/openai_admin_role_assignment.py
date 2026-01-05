@@ -25,8 +25,8 @@ def rule(event):
 
 def title(event):
     principal_id = deep_get(event, "role_assignment_created", "principal_id", default="Unknown")
-    email = deep_get(event, "actor", "session", "user", "email", default="Unknown User")
-    return f"OpenAI Admin Role Assigned to {principal_id} by {email}"
+    email = event.deep_get("actor", "session", "user", "email", default="<UNKNOWN_USER>")
+    return f"OpenAI Admin Role Assigned to {principal_id} by [{email}]"
 
 
 def severity(event):
@@ -40,7 +40,7 @@ def severity(event):
 
     if "organization" in resource_type.lower() and "owner" in assignment_lower:
         return "CRITICAL"
-    if any(keyword in assignment_lower for keyword in ADMIN_KEYWORDS):
+    if "admin" in assignment_lower:
         return "HIGH"
 
     return "DEFAULT"

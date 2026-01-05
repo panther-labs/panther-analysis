@@ -14,9 +14,9 @@ def rule(event):
 
 
 def title(event):
-    event_type = event.get("type", "Unknown")
-    email = deep_get(event, "actor", "session", "user", "email", default="Unknown User")
-    return f"OpenAI API Key with Elevated Scopes: {event_type} by {email}"
+    event_type = event.get("type", "")
+    email = event.deep_get("actor", "session", "user", "email", default="<UNKNOWN_USER>")
+    return f"OpenAI API Key with Elevated Scopes: {event_type} by [{email}]"
 
 
 def severity(event):

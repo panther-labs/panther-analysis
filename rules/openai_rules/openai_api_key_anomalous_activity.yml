@@ -2,11 +2,9 @@ AnalysisType: rule
 Description: |
   Detects anomalous OpenAI API key activity indicative of potential key compromise,
   unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).
-
   OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse or
   compromise of these keys enables attackers to blend malicious activity into legitimate
   cloud traffic, bypassing traditional network-based detections.
-
   This rule alerts on:
   - API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
 DisplayName: "OpenAI Anomalous API Key Activity"
@@ -15,9 +13,7 @@ Filename: openai_api_key_anomalous_activity.py
 Reference: https://platform.openai.com/docs/api-reference/audit-logs
 Runbook: |
   1. Validate the identity responsible for the API key activity. Confirm whether the user or service account is authorized to manage API keys and if the action aligns with an approved business process (e.g., onboarding, rotation).
-
   2. Review the key's scopes/permissions for elevated or unrestricted access. Check recent API usage, source IP address, geolocation, and TLS fingerprints for unusual client patterns or concurrent suspicious activities.
-
   3. If suspicious activity is confirmed, immediately revoke or rotate the affected API key. Review all API keys created by the same identity, investigate potential account compromise, and escalate for further investigation.
 Reports:
   MITRE ATT&CK:
@@ -57,7 +53,6 @@ Tests:
           name: "Production API Key"
           scopes:
             - "models:read"
-
   # Test 2: Should ALERT HIGH - API key created with elevated permissions
   - Name: "API key with elevated permissions - Alert HIGH"
     ExpectedResult: true
@@ -85,7 +80,6 @@ Tests:
             - "models:write"
             - "organization:write"
             - "all"
-
   # Test 3: Should ALERT HIGH - API key updated with elevated permissions
   - Name: "API key updated with elevated permissions - Alert HIGH"
     ExpectedResult: true
@@ -109,7 +103,6 @@ Tests:
             - "models:write"
             - "api_keys:write"
             - "admin"
-
   # Test 4: Should NOT alert - API key deleted
   - Name: "API key deleted - No Alert"
     ExpectedResult: false
@@ -131,7 +124,6 @@ Tests:
             city: "Beijing"
       api_key_deleted:
         id: "key-production001"
-
   # Test 5: Should ALERT HIGH - API key created with 'all' scope
   - Name: "API key with 'all' scope - Alert HIGH"
     ExpectedResult: true
@@ -154,7 +146,6 @@ Tests:
           name: "Nested API Key"
           scopes:
             - "all"
-
   # Test 6: Should ALERT HIGH - Multiple elevated scopes
   - Name: "API key with multiple elevated scopes - Alert HIGH"
     ExpectedResult: true
@@ -180,7 +171,6 @@ Tests:
           scopes:
             - "organization:write"
             - "admin"
-
   # Test 7: Should NOT alert - API key updated without elevated scopes
   - Name: "API key updated without elevated scopes - No Alert"
     ExpectedResult: false
@@ -203,7 +193,6 @@ Tests:
           name: "Updated Key Name"
           scopes:
             - "models:read"
-
   # Test 8: Should NOT alert - Non-API key event
   - Name: "Login event - No Alert"
     ExpectedResult: false

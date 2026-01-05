@@ -6,17 +6,17 @@ def rule(event):
 
 
 def title(event):
-    event_type = event.get("type", "Unknown")
+    event_type = event.get("type", "")
     action = "Enabled" if event_type == "scim.enabled" else "Disabled"
-    email = deep_get(event, "actor", "session", "user", "email", default="Unknown User")
-    return f"OpenAI SCIM {action} by {email}"
+    email = event.deep_get("actor", "session", "user", "email", default="<UNKNOWN_USER>")
+    return f"OpenAI SCIM {action} by [{email}]"
 
 
 def severity(event):
     if event.get("type") == "scim.disabled":
         return "HIGH"
     if event.get("type") == "scim.enabled":
-        return "MEDIUM"
+        return "LOW"
     return "DEFAULT"
 
 

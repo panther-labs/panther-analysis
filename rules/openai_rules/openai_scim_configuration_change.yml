@@ -2,14 +2,12 @@ AnalysisType: rule
 Description: |
   Detects when SCIM (System for Cross-domain Identity Management) is enabled or disabled
   in an OpenAI organization.
-
   SCIM provides automated user provisioning and deprovisioning from identity providers (IdP)
   to OpenAI. Disabling SCIM can:
   - Bypass identity governance and access control policies
   - Allow orphaned accounts to persist after employee offboarding
   - Indicate an attempt to maintain unauthorized access
   - Violate compliance requirements for automated access management
-
   Enabling SCIM should be monitored for visibility into identity integration changes.
 DisplayName: "OpenAI SCIM Configuration Change"
 Enabled: true
@@ -18,14 +16,11 @@ Reference: https://platform.openai.com/docs/api-reference/audit-logs
 Runbook: |
   1. Verify the SCIM configuration change was authorized. Confirm whether the change aligns
   with approved identity management policies or integration updates.
-
   2. If SCIM was disabled, immediately verify that user provisioning and deprovisioning
   workflows are not disrupted. Check if there are alternative mechanisms in place for
   user lifecycle management.
-
   3. Review the actor who made the change, including source IP, geolocation, and timing.
   Investigate if the change was made from an unusual location or during off-hours.
-
   4. If the change is unauthorized or suspicious, immediately re-enable SCIM (if disabled),
   review all user accounts for unauthorized access, audit recent role assignments, and
   escalate for security review.
@@ -61,7 +56,6 @@ Tests:
             region: "California"
       scim_enabled:
         id: "org-abc123"
-
   - Name: "SCIM disabled - Alert HIGH"
     ExpectedResult: true
     Log:
@@ -82,7 +76,6 @@ Tests:
             city: "Bucharest"
       scim_disabled:
         id: "org-abc123"
-
   - Name: "SCIM disabled by service account - Alert HIGH"
     ExpectedResult: true
     Log:
@@ -99,7 +92,6 @@ Tests:
             id: "sa-automation001"
       scim_disabled:
         id: "org-abc123"
-
   - Name: "Unrelated event - No Alert"
     ExpectedResult: false
     Log:

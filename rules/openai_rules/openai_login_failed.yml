@@ -5,6 +5,7 @@ Description: |
 DisplayName: "OpenAI Failed Login (Base Rule)"
 Enabled: true
 Filename: openai_login_failed.py
+CreateAlert: false
 Severity: Info
 DedupPeriodMinutes: 60
 Threshold: 999999
@@ -30,7 +31,6 @@ Tests:
       login_failed:
         error_code: "invalid_credentials"
         error_message: "Invalid username or password"
-
   - Name: "Successful login - No match"
     ExpectedResult: false
     Log:
