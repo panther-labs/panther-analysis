@@ -1,0 +1,150 @@
+AnalysisType: rule
+DisplayName: "GCP GCS Ransom Note Upload"
+LogTypes:
+  - GCP.AuditLog
+RuleID: "GCP.GCS.Ransom.Note.Upload"
+Enabled: true
+Filename: gcp_gcs_ransom_note_upload.py
+Description: >
+  Detects when a file with a name matching common ransomware note patterns is uploaded to a Google Cloud Storage bucket.
+  Ransomware attackers often leave ransom notes with distinctive filenames to provide victims with payment instructions.
+Runbook: |
+  1. Query GCP Audit logs for all bucket operations by the principal email in the 24 hours before and after this alert
+  2. Check if the source IP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access patterns
+  3. Search for related KMS key changes or IAM policy modifications on the same bucket in the past 6 hours
+  4. Look for bulk object operations (rewrite, copy, delete) on this bucket in the past 24 hours that could indicate file encryption
+  5. Verify backups are intact and check for any bucket configuration changes (versioning, retention, encryption) in the past 24 hours
+Reference: https://attack.mitre.org/techniques/T1486/
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1486
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Severity: High
+Status: Experimental
+Tests:
+  - Name: Ransomware note uploaded
+    ExpectedResult: true
+    Log:
+      insertId: 1vfv897ejxgc2
+      logName: projects/example-project/logs/cloudaudit.googleapis.com%2Fdata_access
+      p_any_ip_addresses:
+        - 1.2.3.4
+      p_any_emails:
+        - denethor@lotr.com
+      p_any_usernames:
+        - user
+      p_event_time: "2025-12-12 22:05:35.878912806"
+      p_log_type: GCP.AuditLog
+      p_parse_time: "2025-12-12 22:06:21.141743969"
+      p_row_id: 000000000013a23f82a982753925d2c2
+      p_schema_version: 0
+      p_source_id: bd7da315-647e-4eca-bcfe-083fab18f3f1
+      p_source_label: gcp-audit-logs
+      protoPayload:
+        at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
+        authenticationInfo:
+          oauthInfo:
+            oauthClientId: 111111111111-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com
+          principalEmail: denethor@lotr.com
+        authorizationInfo:
+          - granted: true
+            permission: storage.objects.delete
+            resource: projects/_/buckets/data-bucket/objects/HOW_TO_DECRYPT_FILES.txt
+            resourceAttributes: {}
+          - granted: true
+            permission: storage.objects.create
+            resource: projects/_/buckets/data-bucket/objects/HOW_TO_DECRYPT_FILES.txt
+            resourceAttributes: {}
+        methodName: storage.objects.create
+        requestMetadata:
+          callerIP: 1.2.3.4
+          callerIp: 1.2.3.4
+          callerSuppliedUserAgent: google-cloud-sdk gcloud/548.0.0 command/gcloud.storage.cp invocation-id/abc123def456 environment/devshell environment-version/None client-os/LINUX client-os-ver/6.6.111 client-pltf-arch/x86_64 interactive/False from-script/False python/3.13.7,gzip(gfe)
+          destinationAttributes: {}
+          requestAttributes:
+            auth: {}
+            time: "2025-12-12T22:05:35.887374247Z"
+        resourceLocation:
+          currentLocations:
+            - us
+        resourceName: projects/_/buckets/data-bucket/objects/HOW_TO_DECRYPT_FILES.txt
+        serviceData:
+          "@type": type.googleapis.com/google.iam.v1.logging.AuditData
+          at_sign_type: type.googleapis.com/google.iam.v1.logging.AuditData
+          policyDelta: {}
+        serviceName: storage.googleapis.com
+        status: {}
+      receiveTimestamp: "2025-12-12 22:05:36.474700595"
+      resource:
+        labels:
+          bucket_name: data-bucket
+          location: us
+          project_id: example-project
+        type: gcs_bucket
+      severity: INFO
+      timestamp: "2025-12-12 22:05:35.878912806"
+  - Name: Normal file upload
+    ExpectedResult: false
+    Log:
+      insertId: 2abc123xyz789
+      logName: projects/example-project/logs/cloudaudit.googleapis.com%2Fdata_access
+      p_any_ip_addresses:
+        - 10.0.0.200
+      p_any_emails:
+        - admin@example.com
+      p_any_usernames:
+        - admin
+      p_event_time: "2025-12-12 22:10:15.123456789"
+      p_log_type: GCP.AuditLog
+      p_parse_time: "2025-12-12 22:11:01.987654321"
+      p_row_id: 11d269250d7ba7e2b399f8e83bbb9915
+      p_schema_version: 0
+      p_source_id: bd7da315-647e-4eca-bcfe-083fab18f3f1
+      p_source_label: gcp-audit-logs
+      protoPayload:
+        at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
+        authenticationInfo:
+          oauthInfo:
+            oauthClientId: 123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com
+          principalEmail: admin@example.com
+        authorizationInfo:
+          - granted: true
+            permission: storage.objects.create
+            resource: projects/_/buckets/data-bucket/objects/quarterly_report_2025.pdf
+            resourceAttributes: {}
+        methodName: storage.objects.create
+        requestMetadata:
+          callerIP: 10.0.0.200
+          callerIp: 10.0.0.200
+          callerSuppliedUserAgent: google-cloud-sdk gcloud/548.0.0 command/gcloud.storage.cp invocation-id/def789ghi012 environment/devshell environment-version/None client-os/LINUX client-os-ver/6.6.111 client-pltf-arch/x86_64 interactive/True from-script/False python/3.13.7,gzip(gfe)
+          destinationAttributes: {}
+          requestAttributes:
+            auth: {}
+            time: "2025-12-12T22:10:15.234567890Z"
+        resourceLocation:
+          currentLocations:
+            - us
+        resourceName: projects/_/buckets/data-bucket/objects/quarterly_report_2025.pdf
+        serviceData:
+          "@type": type.googleapis.com/google.iam.v1.logging.AuditData
+          at_sign_type: type.googleapis.com/google.iam.v1.logging.AuditData
+          policyDelta: {}
+        serviceName: storage.googleapis.com
+        status: {}
+      receiveTimestamp: "2025-12-12 22:10:16.345678901"
+      resource:
+        labels:
+          bucket_name: data-bucket
+          location: us
+          project_id: example-project
+        type: gcs_bucket
+      severity: INFO
+      timestamp: "2025-12-12 22:10:15.123456789"
