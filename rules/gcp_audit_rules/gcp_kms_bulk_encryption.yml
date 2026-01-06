@@ -1,0 +1,117 @@
+AnalysisType: rule
+Filename: gcp_kms_bulk_encryption.py
+RuleID: "GCP.KMS.BulkEncryption"
+DisplayName: "GCP KMS Bulk Encryption by GCS Service Account"
+Enabled: true
+Status: Experimental
+Threshold: 10
+DedupPeriodMinutes: 15
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud KMS
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1486
+Severity: Medium
+Description: >
+  Detects bulk KMS encryption operations performed by the GCS service account. This pattern
+  is indicative of a ransomware attack where an adversary directly calls the KMS Encrypt API
+  using the GCS service account identity to encrypt data at scale, effectively holding data
+  hostage. The threshold of 10+ encryption operations suggests automated bulk encryption
+  rather than normal application behavior.
+Runbook: |
+  1. Query GCP Audit logs for all KMS Encrypt API calls by the GCS service account in the 1 hour window around this alert
+  2. Identify the total number of encryption operations and the rate of operations per minute
+  3. Check if KMS IAM policies were recently modified to grant the GCS service account encryption permissions
+  4. Investigate the source of these encryption calls and what data is being encrypted
+  5. Search for related GCS operations (object rewrite, copy, bucket updates) in the same time window
+  6. Look for other ransomware indicators (disabled KMS keys, bucket configuration changes) from this project in the past 24 hours
+Reference: https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys/encrypt
+SummaryAttributes:
+  - severity
+  - p_any_emails
+Tests:
+  - Name: KMS Encrypt by GCS Service Account - Success
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "service-111111111111-gs-project-accounts.iam.gserviceaccount.com",
+              },
+            "methodName": "Encrypt",
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels":
+              {
+                "crypto_key_id": "test-key",
+                "key_ring_id": "test-keyring",
+                "location": "us",
+                "project_id": "test-project",
+              },
+            "type": "cloudkms_cryptokey",
+          },
+        "severity": "INFO",
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
+  - Name: KMS Encrypt by Regular Service Account
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "denethor@lotr.com" },
+            "methodName": "Encrypt",
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels": { "project_id": "test-project" },
+            "type": "cloudkms_cryptokey",
+          },
+        "severity": "INFO",
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
+  - Name: KMS Encrypt by GCS Service Account - Failed
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "service-111111111111-gs-project-accounts.iam.gserviceaccount.com",
+              },
+            "methodName": "Encrypt",
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key",
+            "serviceName": "cloudkms.googleapis.com",
+            "status":
+              {
+                "code": 9,
+                "message": "key is not enabled, current state is: DISABLED.",
+              },
+          },
+        "resource":
+          {
+            "labels": { "project_id": "test-project" },
+            "type": "cloudkms_cryptokey",
+          },
+        "severity": "ERROR",
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
