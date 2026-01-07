@@ -16,6 +16,10 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1078 # Persistence: Valid Accounts
     - TA0005:T1078 # Defense Evasion: Valid Accounts
+Tags:
+  - Persistence
+  - Defense Evasion
+  - Valid Accounts
 Runbook: |
   1. Query Azure Monitor Activity logs for all automation-related operations (runbook creation, webhook creation, job executions) for the newly created automation account in the 6 hours after the account was created
   2. Find all automation account creations by the callerIpAddress in the past 24 hours to identify if multiple accounts are being created

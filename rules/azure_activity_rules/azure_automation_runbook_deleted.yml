@@ -15,6 +15,9 @@ Description: >
 Reports:
   MITRE ATT&CK:
     - TA0005:T1070 # Defense Evasion: Indicator Removal
+Tags:
+  - Defense Evasion
+  - Indicator Removal
 Runbook: |
   1. Query Azure Monitor Activity logs for all runbook operations (create, modify, delete) by the callerIpAddress in the 24 hours before the deletion to identify if the runbook was recently created by the same actor
   2. Find all runbook deletions in the past 6 hours to determine if this is part of a larger cleanup operation

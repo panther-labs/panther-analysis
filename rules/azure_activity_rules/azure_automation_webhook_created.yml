@@ -20,6 +20,10 @@ Tags:
 - AZT502
 - AZT503
 - AZT503.3
+- Persistence
+- Resource Development
+- Event Triggered Execution
+- Stage Capabilities
 Runbook: |
   1. Query Azure Monitor Activity logs for all automation account operations (account creation, runbook creation, webhook creation) by the callerIpAddress in the 24 hours before and after the alert to identify a sequence of persistence activities
   2. Find all webhook creations in the past 6 hours to determine if multiple persistence mechanisms are being established

@@ -6,15 +6,6 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Info
-Tags:
-  - AZT302
-  - AZT302.1
-  - AZT302.2
-  - AZT302.3
-  - AZT601
-  - AZT601.5
-  - AZT602
-  - AZT605.2
 Status: Experimental
 Description: >
   Detects when an Azure Automation runbook is created, modified, or published. Runbooks contain
@@ -26,6 +17,19 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1078.004 # Persistence: Cloud Accounts
     - TA0002:T1059 # Execution: Command and Scripting Interpreter
+Tags:
+  - AZT302
+  - AZT302.1
+  - AZT302.2
+  - AZT302.3
+  - AZT601
+  - AZT601.5
+  - AZT602
+  - AZT605.2
+  - Persistence
+  - Execution
+  -  Cloud Accounts
+  - Command and Scripting Interpreter
 Runbook: |
   1. Query Azure Monitor Activity logs for all operations by the callerIpAddress in the 24 hours before and after the alert to establish activity patterns
   2. Check if the caller has created or modified automation runbooks in the past 90 days to determine if this is typical behavior

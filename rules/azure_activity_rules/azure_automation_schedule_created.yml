@@ -5,8 +5,6 @@ DisplayName: "Azure Automation Schedule Created or Modified"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT505
 Severity: Info
 Status: Experimental
 Description: >
@@ -18,6 +16,12 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1053.005 # Persistence: Scheduled Task/Job - Scheduled Task
     - TA0004:T1068 # Privilege Escalation: Exploitation for Privilege Escalation
+Tags:
+  - AZT505
+  - Persistence
+  - Privilege Escalation
+  - Scheduled Task
+  - Exploitation for Privilege Escalation
 Runbook: |
   1. Find all automation account operations by the callerIpAddress in the 24 hours before and after this alert to identify if runbooks were created or modified alongside this schedule
   2. Query for runbook job execution events from the automation account in the 6 hours after the schedule creation to determine if the schedule has already triggered
