@@ -5,11 +5,6 @@ DisplayName: "Azure Key Vault Key Accessed or Recovered"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT604
-  - AZT604.3
-  - AZT704
-  - AZT704.1
 Severity: Medium
 Status: Experimental
 Description: >
@@ -22,6 +17,16 @@ Reports:
   MITRE ATT&CK:
     - TA0006:T1555 # Credential Access: Credentials from Password Stores
     - TA0007:T1087.004 # Discovery: Account Discovery - Cloud Account
+Tags:
+  - AZT604
+  - AZT604.3
+  - AZT704
+  - AZT704.1
+  - Credential Access
+  - Discovery
+  - Credentials from Password Stores
+  - Account Discovery
+  - Cloud Account
 Runbook: |
   1. Find all Key Vault key, certificate, and secret operations by the callerIpAddress in the 6 hours before and after this alert to identify patterns of credential enumeration
   2. Query for the key usage to determine which applications or services rely on this key for encryption operations
