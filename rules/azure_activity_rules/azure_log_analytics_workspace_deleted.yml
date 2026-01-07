@@ -14,6 +14,12 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562.008 # Defense Evasion: Impair Defenses - Disable Cloud Logs
     - TA0040:T1485 # Impact: Data Destruction
+Tags:
+  - Defense Evasion
+  - Impact
+  - Impair Defenses
+  - Disable Cloud Logs
+  - Data Destruction
 Runbook: |
   1. Query Azure Monitor Activity logs for all Log Analytics and monitoring operations by the callerIpAddress in the 24 hours before this alert to identify if this is part of a larger attack on monitoring infrastructure
   2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence

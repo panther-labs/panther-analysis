@@ -11,9 +11,6 @@ Description: >
   Detects when Azure Advisor generates a new security recommendation for a resource.
   Azure Advisor analyzes your resource configurations and usage telemetry to recommend solutions
   that can help improve security, cost effectiveness, performance, reliability, and operational excellence.
-Reports:
-  MITRE ATT&CK:
-    - TA0043:T1608 # Resource Development: Stage Capabilities
 Runbook: |
   1. Query Azure Monitor Activity logs for all operations on the resourceId in the 48 hours before the alert to identify recent configuration changes
   2. Check if this recommendationType has been triggered for other resources in the tenantId in the past 30 days to identify patterns

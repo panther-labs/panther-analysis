@@ -18,6 +18,12 @@ Reports:
     - TA0005:T1078.004 # Defense Evasion: Valid Accounts - Cloud Accounts
 Tags:
   - AZT402
+  - Persistence
+  - Defense Evasion
+  - Account Manipulation
+  - Add Office 365 Global Administrator Role
+  - Valid Accounts
+  - Cloud Accounts
 Runbook: |
   1. Find all Azure Monitor Activity role assignment and elevate access operations by the callerIpAddress in the 24 hours before and after the alert to identify if multiple privileged roles are being granted
   2. Query for all API calls by the principalId in the 6 hours after the role assignment to determine if newly granted permissions were immediately exploited
