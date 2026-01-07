@@ -13,12 +13,9 @@ Description: >
   for security, networking, encryption, or other governance controls. Repeated violations
   may indicate configuration drift or potential security misconfigurations.
 Runbook: |
-  1. Review the policy violation details in the alert context to understand which policy was violated and on which resource
-  2. Query Azure Monitor Activity logs for recent configuration changes to the affected resource in the past 48 hours
-  3. Check if this is an isolated violation or part of a pattern by querying for other policy violations on the same resource or by the same operator
-  4. Determine if the violation requires immediate remediation based on the policy type (security, network access, encryption, etc.)
-  5. If the violation is security-related (e.g., public access enabled, encryption disabled), prioritize remediation
-  6. Review policy exemptions to determine if this resource should be excluded from the policy or if remediation is required
+  1. Query Azure Monitor Activity logs for all configuration changes to the resource ID in the 48 hours before the policy violation to identify what triggered the non-compliance
+  2. Find all policy violations for the same resource ID in the past 30 days to determine if this is an isolated incident or pattern of configuration drift
+  3. Check for other policy violations with the same policy definition name across all resources in the past 7 days to identify broader compliance issues
 Reference: https://learn.microsoft.com/en-us/azure/governance/policy/overview
 SummaryAttributes:
   - properties.entity
