@@ -5,8 +5,6 @@ DisplayName: "Azure VM Disk SAS URI Generated"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT701.1
 Severity: High
 Status: Experimental
 Description: >
@@ -19,6 +17,13 @@ Reports:
   MITRE ATT&CK:
     - TA0010:T1567.002 # Exfiltration: Exfiltration Over Web Service - Exfiltration to Cloud Storage
     - TA0009:T1530 # Collection: Data from Cloud Storage
+Tags:
+  - AZT701.1
+  - Exfiltration
+  - Collection
+  - Exfiltration Over Web Service
+  - Exfiltration to Cloud Storage
+  - Data from Cloud Storage
 Runbook: |
   1. Find all disk and storage operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple disks are being exfiltrated
   2. Query for the VM associated with this disk to determine what applications and data are stored on the disk

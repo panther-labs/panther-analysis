@@ -18,6 +18,12 @@ Reports:
   MITRE ATT&CK:
     - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
     - TA0003:T1098 # Persistence: Account Manipulation
+Tags:
+  - Privilege Escalation
+  - Persistence
+  - Valid Accounts
+  - Cloud Accounts
+  - Account Manipulation
 Runbook: |
   1. Query Azure Monitor Activity logs for all Kubernetes RBAC operations (rolebinding creation, clusterrolebinding creation, role modifications) by the callerIpAddress in the 24 hours before and after the alert
   2. Find all rolebinding and clusterrolebinding creations across all Kubernetes clusters in the past 6 hours to identify if this is part of a privilege escalation campaign

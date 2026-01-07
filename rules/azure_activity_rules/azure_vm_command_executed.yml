@@ -6,16 +6,6 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Info
-Tags:
-  - Azure Threat Research Matrix
-  - AZT301
-  - AZT301.1
-  - AZT301.2
-  - AZT301.3
-  - AZT301.4
-  - AZT301.5
-  - AZT301.6
-  - AZT301.7
 Status: Experimental
 Description: >
   Detects when commands are executed on Azure virtual machines through multiple execution methods
@@ -25,6 +15,17 @@ Description: >
 Reports:
   MITRE ATT&CK:
     - TA0002:T1651 # Execution: Cloud Administration Command
+Tags:
+  - AZT301
+  - AZT301.1
+  - AZT301.2
+  - AZT301.3
+  - AZT301.4
+  - AZT301.5
+  - AZT301.6
+  - AZT301.7
+  - Execution
+  - Cloud Administration Command
 Runbook: |
   1. Query Azure Monitor Activity logs for all VM-related command execution operations (RunCommand, extensions, AKS commands, VMSS commands, serial console) by the callerIpAddress in the 24 hours before and after the alert to identify the full scope of activity
   2. Check if the same callerIpAddress has performed other suspicious activities such as reconnaissance (reading VMs, IPs, NSGs) or privilege escalation in the 6 hours before and after the alert

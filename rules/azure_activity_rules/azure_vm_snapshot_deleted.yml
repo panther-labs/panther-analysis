@@ -16,6 +16,11 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1485 # Impact: Data Destruction
     - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Destruction
+  - Inhibit System Recovery
+  - Ransomware
 Runbook: |
   1. Query Azure Monitor Activity logs for all backup and recovery operations (snapshot deletions, restore point deletions, disk deletions) by the callerIpAddress in the 24 hours before and after the alert
   2. Find all snapshot deletions across all subscriptions in the past 6 hours to determine if this is part of a pre-ransomware attack pattern

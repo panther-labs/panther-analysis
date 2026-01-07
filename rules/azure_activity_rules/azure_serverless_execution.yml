@@ -6,14 +6,6 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Info
-Tags:
-  - AZT404
-  - AZT404.3
-  - AZT302
-  - AZT302.1
-  - AZT302.2
-  - AZT302.3
-  - AZT302.4
 Status: Experimental
 Description: >
   Detects when serverless resources execute PowerShell or Python scripts through Azure Automation
@@ -24,6 +16,17 @@ Reports:
   MITRE ATT&CK:
     - TA0002:T1059 # Execution: Command and Scripting Interpreter
     - TA0002:T1651 # Execution: Cloud Administration Command
+Tags:
+  - AZT404
+  - AZT404.3
+  - AZT302
+  - AZT302.1
+  - AZT302.2
+  - AZT302.3
+  - AZT302.4
+  - Execution
+  - Command and Scripting Interpreter
+  - Cloud Administration Command
 Runbook: |
   1. Query Azure Monitor Activity logs for all automation and function app execution operations by the callerIpAddress in the 24 hours before and after the alert to identify patterns of serverless execution
   2. Find all runbook or function app creation/modification activities by the same callerIpAddress in the 6 hours before the alert to determine if this is part of a setup-then-execute attack pattern
