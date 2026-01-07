@@ -5,8 +5,6 @@ DisplayName: "Azure Policy DeployIfNotExists Action Triggered"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT508
 Severity: Medium
 Status: Experimental
 Description: >
@@ -19,6 +17,13 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1078.004 # Persistence: Valid Accounts - Cloud Accounts
     - TA0005:T1564 # Defense Evasion: Hide Artifacts
+Tags:
+  - AZT508
+  - Persistence
+  - Defense Evasion
+  - Valid Accounts
+  - Cloud Accounts
+  - Hide Artifacts
 Runbook: |
   1. Find all policy-related operations by the callerIpAddress in the 48 hours before and after this alert to identify if new policies were created or assignments were modified
   2. Query for the policy definition details to understand what resources are being deployed and review the deployment template for malicious configurations
