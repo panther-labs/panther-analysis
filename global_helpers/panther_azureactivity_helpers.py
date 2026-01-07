@@ -10,6 +10,19 @@ def azure_activity_alert_context(event) -> dict:
     a_c["correlation_id"] = event.get("correlationId", "<UNKNOWN_CORRELATION_ID>")
     a_c["location"] = event.get("location", "<UNKNOWN_LOCATION>")
     a_c["tenant_id"] = event.get("tenantId", "<UNKNOWN_TENANT_ID>")
+
+    resource_id = event.get("resourceId", "")
+    storage_account_name = extract_resource_name_from_id(resource_id, "storageAccounts", default="")
+    if storage_account_name:
+        a_c["storage_account_name"] = storage_account_name
+
+    resource_group = extract_resource_name_from_id(resource_id, "resourceGroups", default="")
+    if resource_group:
+        a_c["resource_group"] = resource_group
+
+    properties = event.get("properties", "")
+    if properties:
+        a_c["properties"] = properties
     return a_c
 
 
