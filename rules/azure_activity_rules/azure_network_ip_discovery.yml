@@ -6,8 +6,6 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Medium
-Tags:
-  - AZT102
 Threshold: 50
 Status: Experimental
 Description: >
@@ -21,6 +19,14 @@ Reports:
     - TA0007:T1046 # Discovery: Network Service Discovery
     - TA0007:T1018 # Discovery: Remote System Discovery
     - TA0043:T1595.002 # Reconnaissance: Active Scanning - Vulnerability Scanning
+Tags:
+  - AZT102
+  - Discovery
+  - Reconnaissance
+  - Network Service Discovery
+  - Remote System Discovery
+  - Active Scanning
+  - Vulnerability Scanning
 Runbook: |
   1. Query Azure Monitor Activity logs for all public IP address and virtual machine read operations by the callerIpAddress in the 24 hours before and after the alert to identify the scope of reconnaissance activity
   2. Find all resource read operations (network security groups, route tables, virtual networks, storage accounts) by the same callerIpAddress in the 6 hours before and after the alert to determine if this is part of broader reconnaissance

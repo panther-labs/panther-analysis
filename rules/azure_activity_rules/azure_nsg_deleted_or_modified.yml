@@ -5,8 +5,6 @@ DisplayName: "Azure Network Security Configuration Modified or Deleted"
 Enabled: true
 LogTypes:
   - Azure.MonitorActivity
-Tags:
-  - AZT506
 Severity: Medium
 Status: Experimental
 Description: >
@@ -17,6 +15,13 @@ Reports:
   MITRE ATT&CK:
     - TA0005:T1562.007 # Defense Evasion: Impair Defenses - Disable or Modify Cloud Firewall
     - TA0040:T1485 # Impact: Data Destruction
+Tags:
+  - AZT506
+  - Defense Evasion
+  - Impact
+  - Impair Defenses
+  - Disable or Modify Cloud Firewall
+  - Data Destruction
 Runbook: |
   1. Find all network security group and firewall operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple security controls are being modified
   2. Query for all network configuration changes from the same caller in the past 7 days to determine if this is part of a broader defense evasion pattern

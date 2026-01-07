@@ -6,8 +6,6 @@ Enabled: true
 LogTypes:
   - Azure.MonitorActivity
 Severity: Medium
-Tags:
-  - AZT101
 Threshold: 50
 Status: Experimental
 Description: >
@@ -20,6 +18,13 @@ Reports:
   MITRE ATT&CK:
     - TA0007:T1046 # Discovery: Network Service Discovery
     - TA0043:T1595.002 # Reconnaissance: Active Scanning - Vulnerability Scanning
+Tags:
+  - AZT101
+  - Discovery
+  - Reconnaissance
+  - Network Service Discovery
+  - Active Scanning
+  - Vulnerability Scanning
 Runbook: |
   1. Query Azure Monitor Activity logs for all Network Security Group read operations by the callerIpAddress in the 24 hours before and after the alert
   2. Check if the same caller has performed other reconnaissance activities (reading route tables, virtual networks, or other network configurations)
