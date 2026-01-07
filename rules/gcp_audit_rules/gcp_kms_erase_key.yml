@@ -1,0 +1,171 @@
+AnalysisType: rule
+Filename: gcp_kms_erase_key.py
+RuleID: "GCP.KMS.EraseKey"
+DisplayName: "GCP KMS Key Version Disabled or Destroyed"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud KMS
+  - Defense Evasion:Impair Defenses
+  - Impact:Data Encrypted for Impact
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562
+    - TA0040:T1486
+Severity: Info
+Description: >
+  Detects when a KMS key version is disabled, scheduled for destruction, or destroyed.
+  Disabling or destroying KMS key versions can be used to deny access to encrypted data—a
+  ransomware tactic where attackers disable keys to prevent victims from accessing their data.
+Runbook: |
+  1. Query GCP Audit logs for all KMS key operations by the principal email in the 24 hours before and after this alert
+  2. Check if the source IP is associated with known cloud provider IP ranges, VPN endpoints, or matches the user's typical access patterns
+  3. Search for other KMS key state changes (disabled, destroyed) across different keys in the same project in the past 6 hours
+  4. Identify which GCS buckets or other resources use this KMS key for encryption and assess data access impact
+  5. Look for other alerts related to ransomware indicators (e.g., bulk operations, unusual encryption activity) from this project in the past 7 days
+Reference: https://cloud.google.com/kms/docs/key-states
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  - Name: KMS Key Version Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "oauthInfo":
+                  {
+                    "oauthClientId": "111111111111-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
+                  },
+                "principalEmail": "denethor@lotr.com",
+                "principalSubject": "user:denethor@lotr.com",
+              },
+            "authorizationInfo":
+              [
+                {
+                  "granted": true,
+                  "permission": "cloudkms.cryptoKeyVersions.update",
+                  "permissionType": "ADMIN_WRITE",
+                  "resource": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                  "resourceAttributes":
+                    {
+                      "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                      "service": "google.cloud.kms",
+                      "type": "cloudkms.googleapis.com/CryptoKeyVersion",
+                    },
+                },
+              ],
+            "metadata": {},
+            "methodName": "UpdateCryptoKeyVersion",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.cloud.kms.v1.UpdateCryptoKeyVersionRequest",
+                "at_sign_type": "type.googleapis.com/google.cloud.kms.v1.UpdateCryptoKeyVersionRequest",
+                "cryptoKeyVersion":
+                  {
+                    "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                    "state": "DISABLED",
+                  },
+                "updateMask": "state",
+              },
+            "requestMetadata":
+              {
+                "callerIP": "1.2.3.4",
+                "callerIp": "1.2.3.4",
+                "callerSuppliedUserAgent": "google-cloud-sdk gcloud/548.0.0 command/gcloud.kms.keys.versions.disable",
+                "destinationAttributes": {},
+                "requestAttributes":
+                  { "auth": {}, "time": "2025-12-15T15:40:47.296683147Z" },
+              },
+            "resourceLocation": { "currentLocations": ["us"] },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "insertId": "abc123def456",
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2025-12-15 15:40:48.642133512",
+        "resource":
+          {
+            "labels":
+              {
+                "crypto_key_id": "test-key",
+                "crypto_key_version_id": "1",
+                "key_ring_id": "test-keyring",
+                "location": "us",
+                "project_id": "test-project",
+              },
+            "type": "cloudkms_cryptokeyversion",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
+  - Name: KMS Key Version Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "denethor@lotr.com" },
+            "methodName": "UpdateCryptoKeyVersion",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.cloud.kms.v1.UpdateCryptoKeyVersionRequest",
+                "cryptoKeyVersion":
+                  {
+                    "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                    "state": "ENABLED",
+                  },
+                "updateMask": "state",
+              },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels": { "project_id": "test-project" },
+            "type": "cloudkms_cryptokeyversion",
+          },
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
+  - Name: KMS Key Version Destroyed
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "user@example.com" },
+            "methodName": "DestroyCryptoKeyVersion",
+            "request":
+              {
+                "@type": "type.googleapis.com/google.cloud.kms.v1.UpdateCryptoKeyVersionRequest",
+                "cryptoKeyVersion":
+                  {
+                    "name": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+                  },
+              },
+            "resourceName": "projects/test-project/locations/us/keyRings/test-keyring/cryptoKeys/test-key/cryptoKeyVersions/1",
+            "serviceName": "cloudkms.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels": { "project_id": "test-project" },
+            "type": "cloudkms_cryptokeyversion",
+          },
+        "timestamp": "2025-12-15 15:40:47.284488263",
+      }
