@@ -23,7 +23,7 @@ def title(event):
     operation = event.get("operationName", "").upper()
     resource_id = event.get("resourceId", "")
     keyvault_name = extract_resource_name_from_id(resource_id, "vaults", default="")
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
+    caller = event.get("callerIpAddress", default="<UNKNOWN_CALLER>")
 
     if operation == SECRET_RECOVER:
         return (

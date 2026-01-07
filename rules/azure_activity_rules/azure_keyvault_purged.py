@@ -18,7 +18,7 @@ def title(event):
     keyvault = extract_resource_name_from_id(
         resource_id, "deletedVaults", default="<UNKNOWN_KEYVAULT>"
     )
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
+    caller = event.get("callerIpAddress", default="<UNKNOWN_CALLER>")
 
     return f"Azure Key Vault permanently purged [{keyvault}] from [{caller}]"
 

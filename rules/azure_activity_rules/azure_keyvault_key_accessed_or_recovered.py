@@ -17,7 +17,7 @@ def rule(event):
 def title(event):
     resource_id = event.get("resourceId", "")
     keyvault_name = extract_resource_name_from_id(resource_id, "vaults", default="")
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
+    caller = event.get("callerIpAddress", default="<UNKNOWN_CALLER>")
     operation = event.get("operationName", "").upper()
     action = None
     if operation == KEY_READ:

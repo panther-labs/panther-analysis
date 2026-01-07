@@ -16,7 +16,7 @@ def rule(event):
 def title(event):
     resource_id = event.get("resourceId", "")
     keyvault = extract_resource_name_from_id(resource_id, "vaults", default="<UNKNOWN_KEYVAULT>")
-    caller = event.deep_get("callerIpAddress", default="<UNKNOWN_CALLER>")
+    caller = event.get("callerIpAddress", default="<UNKNOWN_CALLER>")
 
     return f"Azure Key Vault deleted [{keyvault}] from [{caller}]"
 
