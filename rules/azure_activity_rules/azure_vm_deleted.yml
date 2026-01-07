@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: azure_vm_deleted.py
+RuleID: "Azure.MonitorActivity.VirtualMachine.Deleted"
+DisplayName: "Azure Virtual Machine Deleted"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Info
+Status: Experimental
+Description: >
+  Detects when an Azure Virtual Machine is deleted.
+  VM deletion may indicate normal deprovisioning or could be part of a larger attack pattern to disrupt services.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Impact: Data Destruction
+    - TA0040:T1489 # Impact: Service Stop
+Tags:
+  - Impact
+  - Data Destruction
+  - Service Stop
+Runbook: |
+  1. Query Azure Monitor Activity logs for all compute resource operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple VMs are being deleted
+  2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
+  3. Search for other Azure resource deletions or service disruption activities from the same user or IP in the past 7 days to assess the scope of potential impact
+Reference: https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/delete?view=rest-compute-2025-04-01&tabs=HTTP
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Virtual Machine Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Compute/virtualMachines/myvm",
+        "operationName": "Microsoft.Compute/virtualMachines/delete",
+        "operationVersion": "2021-07-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "location": "",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Compute/virtualMachines/prodvm",
+        "operationName": "microsoft.compute/virtualmachines/delete",
+        "operationVersion": "2021-07-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Compute/virtualMachines/myvm",
+        "operationName": "Microsoft.Compute/virtualMachines/write",
+        "operationVersion": "2021-07-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "203.0.113.75",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-234567890123",
+        "location": "westus",
+        "tenantId": "87654321-4321-4321-4321-210987654321"
+      }

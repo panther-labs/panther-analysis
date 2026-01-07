@@ -1,0 +1,158 @@
+AnalysisType: rule
+Filename: azure_vm_command_executed.py
+RuleID: "Azure.MonitorActivity.Compute.VMCommandExecuted"
+DisplayName: "Azure VM Command Executed"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Info
+Status: Experimental
+Description: >
+  Detects when commands are executed on Azure virtual machines through multiple execution methods
+  including RunCommand, VM extensions (CustomScriptExtension, DSC), gallery applications, AKS command
+  invoke, VMSS run commands, and serial console access. Adversaries may abuse these capabilities to 
+  execute unauthorized commands, deploy malware, establish persistence, or move laterally within the environment.
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1651 # Execution: Cloud Administration Command
+Tags:
+  - AZT301
+  - AZT301.1
+  - AZT301.2
+  - AZT301.3
+  - AZT301.4
+  - AZT301.5
+  - AZT301.6
+  - AZT301.7
+  - Execution
+  - Cloud Administration Command
+Runbook: |
+  1. Query Azure Monitor Activity logs for all VM-related command execution operations (RunCommand, extensions, AKS commands, VMSS commands, serial console) by the callerIpAddress in the 24 hours before and after the alert to identify the full scope of activity
+  2. Check if the same callerIpAddress has performed other suspicious activities such as reconnaissance (reading VMs, IPs, NSGs) or privilege escalation in the 6 hours before and after the alert
+  3. Verify if the callerIpAddress and caller identity have a history of legitimate VM administration in the past 90 days to distinguish between authorized admin activity and potential compromise
+Reference: https://microsoft.github.io/Azure-Threat-Research-Matrix/Execution/AZT301/AZT301/
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: VM RunCommand Executed Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/compute-rg/providers/Microsoft.Compute/virtualMachines/prod-vm-01",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION",
+        "operationVersion": "2021-11-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "level": "Informational",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: VM RunCommand Case Insensitive
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T11:15:00.0000000Z",
+        "resourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/prod-compute/providers/Microsoft.Compute/virtualMachines/web-server-02",
+        "operationName": "microsoft.compute/virtualmachines/runcommand/action",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+        "level": "Information",
+        "location": "westeurope",
+        "tenantId": "22222222-2222-2222-2222-222222222222"
+      }
+  - Name: VM Extension Write (CustomScript/DSC)
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T12:00:00.0000000Z",
+        "resourceId": "/subscriptions/22222222-2222-2222-2222-222222222222/resourceGroups/compute-rg/providers/Microsoft.Compute/virtualMachines/db-vm/extensions/customScript",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/EXTENSIONS/WRITE",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "3.3.3.3",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-222222222222",
+        "level": "Informational",
+        "location": "centralus",
+        "tenantId": "22222222-2222-2222-2222-222222222222"
+      }
+  - Name: Gallery Application Version Write
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T13:00:00.0000000Z",
+        "resourceId": "/subscriptions/33333333-3333-3333-3333-333333333333/resourceGroups/gallery-rg/providers/Microsoft.Compute/galleries/myGallery/applications/maliciousApp/versions/1.0.0",
+        "operationName": "MICROSOFT.COMPUTE/GALLERIES/APPLICATIONS/VERSIONS/WRITE",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "4.4.4.4",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-333333333333",
+        "level": "Informational",
+        "location": "westus",
+        "tenantId": "33333333-3333-3333-3333-333333333333"
+      }
+  - Name: AKS RunCommand Executed
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T14:00:00.0000000Z",
+        "resourceId": "/subscriptions/44444444-4444-4444-4444-444444444444/resourceGroups/aks-rg/providers/Microsoft.ContainerService/managedClusters/prod-aks-cluster",
+        "operationName": "MICROSOFT.CONTAINERSERVICE/MANAGEDCLUSTERS/RUNCOMMAND/ACTION",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "5.5.5.5",
+        "correlationId": "e5f6a7b8-c9d0-1234-ef01-444444444444",
+        "level": "Informational",
+        "location": "eastus2",
+        "tenantId": "44444444-4444-4444-4444-444444444444"
+      }
+  - Name: VMSS RunCommand Executed
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T15:00:00.0000000Z",
+        "resourceId": "/subscriptions/55555555-5555-5555-5555-555555555555/resourceGroups/vmss-rg/providers/Microsoft.Compute/virtualMachineScaleSets/web-vmss/virtualMachines/0",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINESCALESETS/VIRTUALMACHINES/RUNCOMMAND/ACTION",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "6.6.6.6",
+        "correlationId": "f6a7b8c9-d0e1-2345-f012-555555555555",
+        "level": "Informational",
+        "location": "northeurope",
+        "tenantId": "55555555-5555-5555-5555-555555555555"
+      }
+  - Name: Serial Console Connect
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T16:00:00.0000000Z",
+        "resourceId": "/subscriptions/66666666-6666-6666-6666-666666666666/resourceGroups/compute-rg/providers/Microsoft.SerialConsole/serialPorts/0",
+        "operationName": "MICROSOFT.SERIALCONSOLE/SERIALPORTS/CONNECT/ACTION",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "7.7.7.7",
+        "correlationId": "a7b8c9d0-e1f2-3456-0123-666666666666",
+        "level": "Informational",
+        "location": "southcentralus",
+        "tenantId": "66666666-6666-6666-6666-666666666666"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-12-22T18:00:00.0000000Z",
+        "resourceId": "/subscriptions/88888888-8888-8888-8888-888888888888/resourceGroups/compute-rg/providers/Microsoft.Compute/virtualMachines/app-vm",
+        "operationName": "MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "9.9.9.9",
+        "correlationId": "c9d0e1f2-a3b4-5678-2345-888888888888",
+        "tenantId": "88888888-8888-8888-8888-888888888888"
+      }
