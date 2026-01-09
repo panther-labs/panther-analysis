@@ -25,7 +25,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"[Zscaler.ZIA]: SAML configuration was changed by admin with id "
+        f"[Zscaler.ZIA]: Password expiration setting was changed by admin with id "
         f"[{event.deep_get('event', 'adminid', default='<ADMIN_ID_NOT_FOUND>')}]"
     )
 
