@@ -156,7 +156,7 @@ def rule(event):
 
     # Calculation is complete, write the current login to the cache
     # Only if non-VPN non-relay!
-    if not IS_PRIVATE_RELAY and not IS_VPN:
+    if not any((IS_VPN, IS_PRIVATE_RELAY, IS_SATELLITE_NETWORK)):
         put_string_set(
             key=CACHE_KEY,
             val=[dumps(new_login_stats)],
