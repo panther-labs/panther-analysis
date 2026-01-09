@@ -6,15 +6,14 @@ def rule(event):
         return False
     action = event.deep_get("event", "action", default="ACTION_NOT_FOUND")
     category = event.deep_get("event", "category", default="CATEGORY_NOT_FOUND")
-    saml_enabled_pre = event.deep_get(
-        "event", "preaction", "samlEnabled", default="<PRE_SAML_STATUS_NOT_FOUND>"
-    )
-    saml_enabled_post = event.deep_get(
-        "event", "postaction", "samlEnabled", default="<POST_SAML_STATUS_NOT_FOUND>"
-    )
+    saml_enabled_pre = event.deep_get("event", "preaction", "samlEnabled", default="")
+    saml_enabled_post = event.deep_get("event", "postaction", "samlEnabled", default="")
+    # Only alert if both fields are present and have different values
     if (
         action == "UPDATE"
         and category == "ADMINISTRATOR_MANAGEMENT"
+        and saml_enabled_pre != ""
+        and saml_enabled_post != ""
         and saml_enabled_pre != saml_enabled_post
     ):
         return True
