@@ -2224,7 +2224,7 @@
 - [ZIA Logs Downloaded](../rules/zscaler_rules/zia/zia_logs_downloaded.yml)
   - This rule detects when ZIA Audit Logs were downloaded.
 - [ZIA Password Expiration](../rules/zscaler_rules/zia/zia_password_expiration.yml)
-  - This rule detects when password expiration eas set/removed.
+  - This rule detects when password expiration was set/removed.
 - [ZIA Trust Modification](../rules/zscaler_rules/zia/zia_trust_modification.yml)
   - This rule detects when SAML authentication was enabled/disabled.
 
