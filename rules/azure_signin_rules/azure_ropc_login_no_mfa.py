@@ -67,15 +67,4 @@ def alert_context(event):
     for key, (*path, default) in fields.items():
         context[key] = event.deep_get(*path, default=default)
 
-    # Add authentication methods
-    auth_details = event.deep_get("properties", "authenticationDetails", default=[])
-    if isinstance(auth_details, list):
-        auth_methods = [
-            detail.get("authenticationMethod")
-            for detail in auth_details
-            if isinstance(detail, dict) and detail.get("authenticationMethod")
-        ]
-        if auth_methods:
-            context["authentication_methods"] = auth_methods
-
     return context
