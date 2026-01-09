@@ -1,0 +1,17 @@
+AnalysisType: pack
+PackID: PantherManaged.OpenAI
+Description: Group of all OpenAI detections for monitoring API security, access control, and privileged operations
+PackDefinition:
+  IDs:
+    - OpenAI.API.Key.Anomalous.Activity
+    - OpenAI.Admin.Role.Assignment
+    - OpenAI.SCIM.Configuration.Change
+    - OpenAI.IP.Allowlist.Changes
+    - OpenAI.Login.Failed
+    - OpenAI.Login.Success
+    # Correlation rules
+    - OpenAI.BruteForce.Login.Success
+    # Globals used in these detections
+    - panther_base_helpers
+
+DisplayName: "Panther OpenAI Pack"
