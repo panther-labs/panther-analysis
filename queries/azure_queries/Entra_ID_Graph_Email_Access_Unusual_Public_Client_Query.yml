@@ -1,0 +1,40 @@
+AnalysisType: saved_query
+QueryName: "Microsoft Entra ID Graph Email Access by Unusual Public Client"
+Enabled: false
+Description: >
+  Detects when a public client application accesses email data via Microsoft Graph API 
+  from an application the user has not used in the past 14 days. 
+  This pattern can indicate OAuth phishing where attackers trick users into granting
+  malicious applications access to read or send emails on their behalf.
+Tags:
+  - Anomaly Detection
+  - Microsoft Graph
+  - Email Access
+Query: |-
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+
+  with subquery as (
+      SELECT *
+      FROM panther_logs.public.azure_audit
+      WHERE
+        p_occurs_since('14 day')
+        AND category = 'MicrosoftGraphActivityLogs'
+        AND properties:appId IS NOT NULL
+        AND properties:C_Idtyp::string = 'user'
+        AND properties:clientAuthMethod::int = 0
+        AND properties:responseStatusCode::int = 200
+        AND properties:requestMethod::string IN ('GET', 'POST', 'PUT', 'PATCH', 'DELETE')
+        AND (properties:requestUri::string ILIKE '%/v1.0/me/%' OR properties:requestUri::string ILIKE '%/v1.0/users/%')
+        AND (
+          properties:requestUri::string ILIKE '%mail%'
+          OR properties:requestUri::string ILIKE '%messages%'
+          OR properties:requestUri::string ILIKE '%inbox%'
+          OR properties:scopes::string ILIKE '%Mail.Read%'
+          OR properties:scopes::string ILIKE '%Mail.ReadWrite%'
+          OR properties:scopes::string ILIKE '%Mail.Send%'
+          OR properties:scopes::string ILIKE '%email%'
+        )
+  ),
+  {{ new_unique_values('subquery', 'properties:UserPrincipalObjectID', 'properties:appId', '1h') }}

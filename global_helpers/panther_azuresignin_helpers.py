@@ -29,3 +29,7 @@ def azure_signin_alert_context(event) -> dict:
     )
     a_c["resourceId"] = event.deep_get("properties", "resourceId", default="<NO_RESOURCEID>")
     return a_c
+
+
+def azure_signin_success(event):
+    return event.get("resultSignature") == "SUCCESS"
