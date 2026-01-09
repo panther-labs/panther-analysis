@@ -862,20 +862,48 @@
 
 ## Azure
 
+- [Azure Authentication Methods Policy OIDC Discovery URL Changed](../rules/azure_signin_rules/azure_auth_methods_policy_oidc_change.yml)
+  - Detects modifications to the OIDC discovery URL in Azure Entra ID's Authentication Methods Policy. This technique enables attackers to federate the tenant with attacker-controlled identity providers, bypassing multi-factor authentication and enabling unauthorized access through bring-your-own IdP methods.
+- [Azure Device Code Authentication with Broker Client](../rules/azure_signin_rules/azure_device_code_broker_client.yml)
+  - Detects device code authentication using the Microsoft Broker Client application, which may indicate Primary Refresh Token (PRT) abuse. Device code flow allows adversaries to trick users into entering codes on attacker-controlled applications. When combined with Microsoft Broker Client (app ID 29d9ed98-a469-4536-ade2-f981bc1d605e), this may indicate PRT theft or replay attacks that bypass MFA and Conditional Access policies.
+- [Azure Domain Federation Settings Modified](../rules/azure_signin_rules/azure_domain_trust_settings_modified.yml)
+  - Detects modifications to domain federation settings in Microsoft Entra ID, including changes to federation trust configurations and OIDC discovery endpoints. Adversaries who compromise administrative accounts may modify these settings to federate the tenant with attacker-controlled identity providers, enabling unauthorized access and MFA bypass. This technique allows attackers to establish persistent access by redirecting authentication to malicious infrastructure.
+- [Azure Excessive Account Lockouts](../rules/azure_signin_rules/azure_excessive_account_lockouts.yml)
+  - Detects high volumes of failed Microsoft Entra ID sign-in attempts resulting in account lockouts, indicating potential brute-force credential attacks such as password spraying, password guessing, or credential stuffing. When adversaries repeatedly attempt authentication with incorrect credentials, Entra ID Smart Lockout policies trigger account lockouts (error code 50053).
+- [Azure High-Risk Sign-In](../rules/azure_signin_rules/azure_high_risk_signin.yml)
+  - Detects high-risk sign-in attempts flagged by Microsoft Entra ID Protection. These alerts indicate potential account compromise where Microsoft's machine learning has identified suspicious authentication patterns. High-risk sign-ins may result from credential theft, impossible travel, or unfamiliar locations.
 - [Azure Invite External Users](../rules/azure_signin_rules/azure_invite_external_users.yml)
   - This detection looks for a Azure users inviting external users
 - [Azure Many Failed SignIns](../rules/azure_signin_rules/azure_failed_signins.yml)
   - This detection looks for a number of failed sign-ins for the same ServicePrincipalName or UserPrincipalName
 - [Azure MFA Disabled](../rules/azure_signin_rules/azure_mfa_disabled.yml)
   - This detection looks for MFA being disabled in conditional access policy
+- [Azure Microsoft Graph Single Session from Multiple IP Addresses](../rules/azure_signin_rules/azure_graph_session_multiple_ips.yml)
+  - Detects when a user signs in to Microsoft Entra ID and subsequently accesses Microsoft Graph from a different IP address using the same session ID. This behavior may indicate OAuth application abuse, session hijacking, token replay attacks, or adversary-in-the-middle attacks where an attacker has obtained a valid session token and is using it from their own infrastructure.
 - [Azure Policy Changed](../rules/azure_signin_rules/azure_policy_changed.yml)
   - This detection looks for policy changes in AuditLogs
+- [Azure Protection Multiple Alerts for User](../rules/azure_signin_rules/azure_multiple_protection_alerts.yml)
+  - Detects when a user account triggers multiple Microsoft Entra ID Protection risk alerts within a short time window, indicating a potentially ongoing attack or compromised account. Entra ID Protection uses machine learning and heuristics to detect risky sign-in activity including anonymous IP usage, atypical travel patterns, malware-linked IP addresses, unfamiliar sign-in properties, password spray attempts, leaked credentials, and other suspicious behaviors.
 - [Azure RiskLevel Passthrough](../rules/azure_signin_rules/azure_risklevel_passthrough.yml)
   - This detection surfaces an alert based on riskLevelAggregated, riskLevelDuringSignIn, and riskState.riskLevelAggregated and riskLevelDuringSignIn are only expected for Azure AD Premium P2 customers.
 - [Azure Role Changed PIM](../rules/azure_signin_rules/azure_role_changed_pim.yml)
   - This detection looks for a change in member's PIM roles in EntraID
+- [Azure ROPC Login Attempt Without MFA](../rules/azure_signin_rules/azure_ropc_login_no_mfa.yml)
+  - Detects Resource Owner Password Credentials (ROPC) OAuth 2.0 authentication attempts in Microsoft Entra ID using single-factor authentication without MFA enforcement. ROPC is a deprecated legacy flow that allows applications to directly collect user credentials to obtain access tokens, bypassing modern authentication and MFA requirements. Adversaries commonly exploit ROPC during credential enumeration and password spraying campaigns using tools like TeamFiltration and MSOLSpray.
+- [Azure Service Principal Credentials Added](../rules/azure_signin_rules/azure_service_principal_credentials_added.yml)
+  - Detects when new credentials (client secrets or certificates) are added to Microsoft Entra ID service principals or applications. Service principals are identities used by applications, services, and automation tools to access Azure resources, and they authenticate using credentials such as client secrets or certificates. Adversaries who compromise administrative credentials may add rogue credentials to existing service principals to establish persistent access that bypasses multi-factor authentication (MFA) requirements, as service principal authentication uses client credentials rather than interactive user login.
 - [Azure SignIn via Legacy Authentication Protocol](../rules/azure_signin_rules/azure_legacyauth.yml)
   - This detection looks for Successful Logins that have used legacy authentication protocols
+- [Azure User Elevated to User Access Administrator Role](../rules/azure_signin_rules/azure_elevate_user_access_admin.yml)
+  - Detects when a user elevates their permissions to the "User Access Administrator" role in Azure, which grants full control over access management for Azure resources. The User Access Administrator role is one of the most powerful privileged roles in Azure, allowing the holder to manage user access to all Azure resources, assign roles to other users including administrative roles, and effectively control the entire Azure subscription's permission structure.
+- [Azure VS Code OAuth Phishing](../rules/azure_signin_rules/azure_vscode_oauth_phishing.yml)
+  - Detects OAuth authorization flows where Visual Studio Code successfully authenticates to Microsoft Graph. While legitimate for developers, this pattern is commonly abused in phishing campaigns where attackers use the trusted VS Code client ID to trick users into granting OAuth tokens.
+- [Microsoft Entra ID Anomalous Application Consent](../queries/azure_queries/Entra_ID_Anomalous_Application_Consent_Query.yml)
+  - Detects anomalous OAuth application consent grants in Microsoft Entra ID where users approve permissions to applications they have not consented to in the past 14 days. Identifies potential OAuth phishing attacks where attackers trick users into granting malicious applications access to their accounts and organizational data.
+- [Microsoft Entra ID First Time Seen Device Code Authentication](../queries/azure_queries/Entra_ID_First_Time_Device_Code_Auth_Query.yml)
+  - Detects when users authenticate via device code flow for the first time in the past 14 days. Device code flow can be exploited through phishing attacks to steal tokens and impersonate victims.  This baseline detection helps identify new device code usage patterns that may indicate account compromise.
+- [Microsoft Entra ID Graph Email Access by Unusual Public Client](../queries/azure_queries/Entra_ID_Graph_Email_Access_Unusual_Public_Client_Query.yml)
+  - Detects when a public client application accesses email data via Microsoft Graph API  from an application the user has not used in the past 14 days.  This pattern can indicate OAuth phishing where attackers trick users into granting malicious applications access to read or send emails on their behalf.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
