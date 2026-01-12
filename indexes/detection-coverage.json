@@ -5992,6 +5992,69 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an admin or owner role is assigned to a user or group in OpenAI.Admin and owner roles grant elevated privileges that allow significant control overthe organization, including managing users, API keys, billing, and security settings.Unauthorized or unexpected admin role assignments can indicate:- Privilege escalation attempts- Insider threats- Compromised administrator accounts- Policy violationsThis rule alerts on all admin role assignments for visibility and audit purposes.",
+        "DisplayName": "OpenAI Admin Role Assignment",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_admin_role_assignment.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)",
+        "DisplayName": "OpenAI Anomalous API Key Activity",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_api_key_anomalous_activity.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.",
+        "DisplayName": "OpenAI Brute Force Login Success",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "correlation_rules/openai_brute_force_login_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
+        "DisplayName": "OpenAI Failed Login (Base Rule)",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_login_failed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects changes to OpenAI IP allowlist configurations including creation, updates,deletion, activation, and deactivation.IP allowlists restrict API and console access to specific IP addresses or CIDR ranges,providing network-level access control. Changes to IP allowlists can indicate:- Security control removal (deletion/deactivation) - CRITICAL- Addition of dangerous IPs like 0.0.0.0 (updates) - HIGH- Configuration changes for visibility (creation/activation) - MEDIUMUnauthorized modifications can expose the organization to unauthorized access,bypass network security controls, or indicate preparation for malicious activity.",
+        "DisplayName": "OpenAI IP Allowlist Configuration Changes",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_ip_allowlist_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when SCIM (System for Cross-domain Identity Management) is enabled or disabledin an OpenAI organization.SCIM provides automated user provisioning and deprovisioning from identity providers (IdP)to OpenAI. Disabling SCIM can:- Bypass identity governance and access control policies- Allow orphaned accounts to persist after employee offboarding- Indicate an attempt to maintain unauthorized access- Violate compliance requirements for automated access managementEnabling SCIM should be monitored for visibility into identity integration changes.",
+        "DisplayName": "OpenAI SCIM Configuration Change",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_scim_configuration_change.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Base rule for detecting OpenAI successful login events. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
+        "DisplayName": "OpenAI Successful Login (Base Rule)",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_login_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Re-raise Orca alerts in Panther",
         "DisplayName": "Orca Passthrough",
         "LogTypes": [
