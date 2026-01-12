@@ -38,6 +38,7 @@
 - [AWS VPCDns](#aws-vpcdns)
 - [AWS VPCFlow](#aws-vpcflow)
 - [AWS WAF](#aws-waf)
+- [AWS WAFWebACL](#aws-wafwebacl)
 - [AppOmni](#appomni)
 - [Asana](#asana)
 - [Atlassian](#atlassian)
@@ -118,7 +119,7 @@
   - This policy validates that CloudTrail S3 buckets are not publicly accessible.
 - [AWS CloudTrail SES Check Identity Verifications](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_identity_verifications.yml)
 - [AWS CloudTrail SES Check Send Quota](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.yml)
-  - Detect when someone checks how many emails can be delivered via SES
+  - Detect when someone checks how many emails can be delivered via SES. Excludes automated checks from AWS Trusted Advisor to reduce false positives.
 - [AWS CloudTrail SES Check SES Sending Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_ses_sending_enabled.yml)
   - Detect when a user inquires whether SES Sending is enabled.
 - [AWS CloudTrail SES Enumeration](../rules/aws_cloudtrail_rules/aws_cloudtrail_ses_enumeration.yml)
@@ -729,8 +730,13 @@
   - This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.
 - [AWS WAF WebACL Has Associated Resources](../policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml)
   - This policy ensures that AWS WAF WebACLs are associated with at least one resource (ALB, CloudFront Distribution, or API Gateway). If a WebACL is not associated with any resources, it is inactive and not providing any protection.
+
+
+## AWS WAFWebACL
+
 - [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
-  - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
+  - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
+
 
 ## AppOmni
 
@@ -1143,7 +1149,7 @@
 - [GCP Cloud Run Set IAM Policy](../rules/gcp_audit_rules/gcp_cloud_run_set_iam_policy.yml)
   - Detects new roles granted to users to Cloud Run Services. This could potentially allow the user to perform actions within the project and its resources, which could pose a security risk.
 - [GCP Cloud Storage Buckets Modified Or Deleted](../rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.yml)
-  - Detects GCP cloud storage bucket updates and deletes.
+  - Detects when a GCS bucket configuration is updated or deleted. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.
 - [GCP CloudBuild Potential Privilege Escalation](../rules/gcp_audit_rules/gcp_cloudbuild_potential_privilege_escalation.yml)
   - Detects privilege escalation attacks designed to gain access to the Cloud Build Service Account. A user with permissions to start a new build with Cloud Build can gain access to the Cloud Build Service Account and abuse it for more access to the environment.
 - [GCP cloudfunctions functions create](../rules/gcp_audit_rules/gcp_cloudfunctions_functions_create.yml)
@@ -1170,8 +1176,16 @@
   - This rule detects deletions of GCP firewall rules.
 - [GCP Firewall Rule Modified](../rules/gcp_audit_rules/gcp_firewall_rule_modified.yml)
   - This rule detects modifications to GCP firewall rules.
+- [GCP GCS Bulk Object Deletion](../rules/gcp_audit_rules/gcp_gcs_bulk_deletion.yml)
+  - Detects bulk deletion of GCS objects. This pattern is indicative of a ransomware attack or data destruction where an adversary deletes storage objects at scale. The threshold of 10+ deletion operations suggests automated bulk deletion rather than normal application behavior. This can be part of a double extortion ransomware attack where data is both encrypted and deleted to increase pressure on victims.
+- [GCP GCS Bulk Object Rewrite Operation](../rules/gcp_audit_rules/gcp_gcs_object_rewrite.yml)
+  - Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.
 - [GCP GCS IAM Permission Changes](../rules/gcp_audit_rules/gcp_gcs_iam_changes.yml)
   - Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.
+- [GCP GCS Object Copied to Different Bucket](../rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml)
+  - Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.
+- [GCP GCS Ransom Note Upload](../rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.yml)
+  - Detects when a file with a name matching common ransomware note patterns is uploaded to a Google Cloud Storage bucket. Ransomware attackers often leave ransom notes with distinctive filenames to provide victims with payment instructions.
 - [GCP GKE Kubernetes Cron Job Created Or Modified](../rules/gcp_k8s_rules/gcp_k8s_cron_job_created_or_modified.yml)
   - This detection monitor for any modifications or creations of a cron job in GKE. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
 - [GCP IAM and Tag Enumeration](../rules/gcp_audit_rules/gcp_iam_tag_enumeration.yml)
@@ -1201,6 +1215,14 @@
   - Alerts when a user creates privileged pod. These particular pods have full access to the host’s namespace and devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks. In the event of a successful container escape where a user is operating with root privileges, the attacker retains this role on the node.
 - [GCP K8S Service Type NodePort Deployed](../rules/gcp_k8s_rules/gcp_k8s_service_type_node_port_deployed.yml)
   - This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+- [GCP KMS Bulk Encryption by GCS Service Account](../rules/gcp_audit_rules/gcp_kms_bulk_encryption.yml)
+  - Detects bulk KMS encryption operations performed by the GCS service account. This pattern is indicative of a ransomware attack where an adversary directly calls the KMS Encrypt API using the GCS service account identity to encrypt data at scale, effectively holding data hostage. The threshold of 10+ encryption operations suggests automated bulk encryption rather than normal application behavior.
+- [GCP KMS Cross-Project Encryption](../rules/gcp_audit_rules/gcp_kms_cross_project_encryption.yml)
+  - Detects when a GCS service account in one project uses a KMS encryption key from a different project. This could indicate potential ransomware activity where an attacker is using their own KMS key to encrypt data in a victim's project, making it inaccessible without the attacker's key.
+- [GCP KMS Key Granted to GCS Service Account](../rules/gcp_audit_rules/gcp_kms_enable_key.yml)
+  - Detects when a KMS IAM policy grants encryption/decryption permissions to a GCS service account. This pattern may indicate a ransomware attack where an adversary grants a GCS service account access to KMS keys to enable encryption of cloud storage objects.
+- [GCP KMS Key Version Disabled or Destroyed](../rules/gcp_audit_rules/gcp_kms_erase_key.yml)
+  - Detects when a KMS key version is disabled, scheduled for destruction, or destroyed. Disabling or destroying KMS key versions can be used to deny access to encrypted data—a ransomware tactic where attackers disable keys to prevent victims from accessing their data.
 - [GCP Log Bucket or Sink Deleted](../rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.yml)
   - This rule detects deletions of GCP Log Buckets or Sinks.
 - [GCP Logging Settings Modified](../rules/gcp_audit_rules/gcp_logging_settings_modified.yml)
@@ -1586,6 +1608,7 @@
 - [Okta](#okta)
 - [OneLogin](#onelogin)
 - [OnePassword](#onepassword)
+- [OpenAI](#openai)
 - [Orca](#orca)
 - [Osquery](#osquery)
 
@@ -1744,6 +1767,24 @@
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
   - Detects when unusual or undesirable 1Password clients access your 1Password account
+
+
+## OpenAI
+
+- [OpenAI Admin Role Assignment](../rules/openai_rules/openai_admin_role_assignment.yml)
+  - Detects when an admin or owner role is assigned to a user or group in OpenAI.Admin and owner roles grant elevated privileges that allow significant control overthe organization, including managing users, API keys, billing, and security settings.Unauthorized or unexpected admin role assignments can indicate:- Privilege escalation attempts- Insider threats- Compromised administrator accounts- Policy violationsThis rule alerts on all admin role assignments for visibility and audit purposes.
+- [OpenAI Anomalous API Key Activity](../rules/openai_rules/openai_api_key_anomalous_activity.yml)
+  - Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
+- [OpenAI Brute Force Login Success](../correlation_rules/openai_brute_force_login_success.yml)
+  - Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.
+- [OpenAI Failed Login (Base Rule)](../rules/openai_rules/openai_login_failed.yml)
+  - Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.
+- [OpenAI IP Allowlist Configuration Changes](../rules/openai_rules/openai_ip_allowlist_changes.yml)
+  - Detects changes to OpenAI IP allowlist configurations including creation, updates,deletion, activation, and deactivation.IP allowlists restrict API and console access to specific IP addresses or CIDR ranges,providing network-level access control. Changes to IP allowlists can indicate:- Security control removal (deletion/deactivation) - CRITICAL- Addition of dangerous IPs like 0.0.0.0 (updates) - HIGH- Configuration changes for visibility (creation/activation) - MEDIUMUnauthorized modifications can expose the organization to unauthorized access,bypass network security controls, or indicate preparation for malicious activity.
+- [OpenAI SCIM Configuration Change](../rules/openai_rules/openai_scim_configuration_change.yml)
+  - Detects when SCIM (System for Cross-domain Identity Management) is enabled or disabledin an OpenAI organization.SCIM provides automated user provisioning and deprovisioning from identity providers (IdP)to OpenAI. Disabling SCIM can:- Bypass identity governance and access control policies- Allow orphaned accounts to persist after employee offboarding- Indicate an attempt to maintain unauthorized access- Violate compliance requirements for automated access managementEnabling SCIM should be monitored for visibility into identity integration changes.
+- [OpenAI Successful Login (Base Rule)](../rules/openai_rules/openai_login_success.yml)
+  - Base rule for detecting OpenAI successful login events. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.
 
 
 ## Orca
@@ -2202,7 +2243,7 @@
 - [ZIA Logs Downloaded](../rules/zscaler_rules/zia/zia_logs_downloaded.yml)
   - This rule detects when ZIA Audit Logs were downloaded.
 - [ZIA Password Expiration](../rules/zscaler_rules/zia/zia_password_expiration.yml)
-  - This rule detects when password expiration eas set/removed.
+  - This rule detects when password expiration was set/removed.
 - [ZIA Trust Modification](../rules/zscaler_rules/zia/zia_trust_modification.yml)
   - This rule detects when SAML authentication was enabled/disabled.
 

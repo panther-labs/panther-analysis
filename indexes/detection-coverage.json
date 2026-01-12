@@ -833,7 +833,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detect when someone checks how many emails can be delivered via SES",
+        "Description": "Detect when someone checks how many emails can be delivered via SES. Excludes automated checks from AWS Trusted Advisor to reduce false positives.",
         "DisplayName": "AWS CloudTrail SES Check Send Quota",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -2376,6 +2376,15 @@
         "YAMLPath": "policies/aws_waf_policies/aws_waf_logging_configured.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
+        "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that all WAF's have the correct rule ordering. Incorrect rule ordering could lead to less restrictive rules being matched and allowing traffic through before more restrictive rules that should have blocked the traffic.",
         "DisplayName": "AWS WAF Rule Ordering",
@@ -2394,15 +2403,6 @@
             "AWS.WAF.WebACL"
         ],
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
-    },
-    {
-      "AnalysisType": "Rule",
-      "Description": "Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.",
-      "DisplayName": "AWS WAF ReactJS RCE Attempt via Body",
-      "LogTypes": [
-          "AWS.WAFWebACL"
-      ],
-      "YAMLPath": "rules/aws_waf_rules/aws_waf_reactjsrce_body.yml"
     },
     {
         "AnalysisType": "Correlation Rule",
@@ -3622,7 +3622,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects GCP cloud storage bucket updates and deletes.",
+        "Description": "Detects when a GCS bucket configuration is updated or deleted. Bucket configuration changes can be part of a ransomware attack, such as disabling security settings to prevent data recovery.",
         "DisplayName": "GCP Cloud Storage Buckets Modified Or Deleted",
         "LogTypes": [
             "GCP.AuditLog"
@@ -3748,12 +3748,48 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects bulk deletion of GCS objects. This pattern is indicative of a ransomware attack or data destruction where an adversary deletes storage objects at scale. The threshold of 10+ deletion operations suggests automated bulk deletion rather than normal application behavior. This can be part of a double extortion ransomware attack where data is both encrypted and deleted to increase pressure on victims.",
+        "DisplayName": "GCP GCS Bulk Object Deletion",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_bulk_deletion.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects GCS object rewrite operations which may indicate ransomware operations attempting to rewrite data in the same bucket with an attacker-controlled encryption key. Attackers with compromised credentials can use gsutil rewrite commands to replace existing encryption keys on cloud storage objects, effectively encrypting data for ransom. This detection focuses on identifying suspicious re-encryption activity through the 'gsutil rewrite -k' command patterns in user agent strings, with a threshold of 10 events.",
+        "DisplayName": "GCP GCS Bulk Object Rewrite Operation",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_object_rewrite.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Monitoring changes to Cloud Storage bucket permissions may reduce time to detect and correct permissions on sensitive Cloud Storage bucket and objects inside the bucket.",
         "DisplayName": "GCP GCS IAM Permission Changes",
         "LogTypes": [
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_iam_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.",
+        "DisplayName": "GCP GCS Object Copied to Different Bucket",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a file with a name matching common ransomware note patterns is uploaded to a Google Cloud Storage bucket. Ransomware attackers often leave ransom notes with distinctive filenames to provide victims with payment instructions.",
+        "DisplayName": "GCP GCS Ransom Note Upload",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3889,6 +3925,42 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/gcp_k8s_rules/gcp_k8s_service_type_node_port_deployed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects bulk KMS encryption operations performed by the GCS service account. This pattern is indicative of a ransomware attack where an adversary directly calls the KMS Encrypt API using the GCS service account identity to encrypt data at scale, effectively holding data hostage. The threshold of 10+ encryption operations suggests automated bulk encryption rather than normal application behavior.",
+        "DisplayName": "GCP KMS Bulk Encryption by GCS Service Account",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_bulk_encryption.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a GCS service account in one project uses a KMS encryption key from a different project. This could indicate potential ransomware activity where an attacker is using their own KMS key to encrypt data in a victim's project, making it inaccessible without the attacker's key.",
+        "DisplayName": "GCP KMS Cross-Project Encryption",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_cross_project_encryption.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a KMS IAM policy grants encryption/decryption permissions to a GCS service account. This pattern may indicate a ransomware attack where an adversary grants a GCS service account access to KMS keys to enable encryption of cloud storage objects.",
+        "DisplayName": "GCP KMS Key Granted to GCS Service Account",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_enable_key.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a KMS key version is disabled, scheduled for destruction, or destroyed. Disabling or destroying KMS key versions can be used to deny access to encrypted data\u2014a ransomware tactic where attackers disable keys to prevent victims from accessing their data.",
+        "DisplayName": "GCP KMS Key Version Disabled or Destroyed",
+        "LogTypes": [
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/gcp_audit_rules/gcp_kms_erase_key.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5920,6 +5992,69 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an admin or owner role is assigned to a user or group in OpenAI.Admin and owner roles grant elevated privileges that allow significant control overthe organization, including managing users, API keys, billing, and security settings.Unauthorized or unexpected admin role assignments can indicate:- Privilege escalation attempts- Insider threats- Compromised administrator accounts- Policy violationsThis rule alerts on all admin role assignments for visibility and audit purposes.",
+        "DisplayName": "OpenAI Admin Role Assignment",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_admin_role_assignment.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)",
+        "DisplayName": "OpenAI Anomalous API Key Activity",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_api_key_anomalous_activity.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.",
+        "DisplayName": "OpenAI Brute Force Login Success",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "correlation_rules/openai_brute_force_login_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
+        "DisplayName": "OpenAI Failed Login (Base Rule)",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_login_failed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects changes to OpenAI IP allowlist configurations including creation, updates,deletion, activation, and deactivation.IP allowlists restrict API and console access to specific IP addresses or CIDR ranges,providing network-level access control. Changes to IP allowlists can indicate:- Security control removal (deletion/deactivation) - CRITICAL- Addition of dangerous IPs like 0.0.0.0 (updates) - HIGH- Configuration changes for visibility (creation/activation) - MEDIUMUnauthorized modifications can expose the organization to unauthorized access,bypass network security controls, or indicate preparation for malicious activity.",
+        "DisplayName": "OpenAI IP Allowlist Configuration Changes",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_ip_allowlist_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when SCIM (System for Cross-domain Identity Management) is enabled or disabledin an OpenAI organization.SCIM provides automated user provisioning and deprovisioning from identity providers (IdP)to OpenAI. Disabling SCIM can:- Bypass identity governance and access control policies- Allow orphaned accounts to persist after employee offboarding- Indicate an attempt to maintain unauthorized access- Violate compliance requirements for automated access managementEnabling SCIM should be monitored for visibility into identity integration changes.",
+        "DisplayName": "OpenAI SCIM Configuration Change",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_scim_configuration_change.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Base rule for detecting OpenAI successful login events. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
+        "DisplayName": "OpenAI Successful Login (Base Rule)",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_login_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Re-raise Orca alerts in Panther",
         "DisplayName": "Orca Passthrough",
         "LogTypes": [
@@ -7554,7 +7689,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This rule detects when password expiration eas set/removed.",
+        "Description": "This rule detects when password expiration was set/removed.",
         "DisplayName": "ZIA Password Expiration",
         "LogTypes": [
             "Zscaler.ZIA.AdminAuditLog"
