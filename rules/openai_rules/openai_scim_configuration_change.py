@@ -23,12 +23,18 @@ def severity(event):
 def alert_context(event):
     field = "scim_enabled" if event.get("type") == "scim.enabled" else "scim_disabled"
     return {
-        "event_type": event.get("type"),
-        "event_id": event.get("id"),
-        "scim_resource_id": deep_get(event, field, "id"),
-        "actor_email": deep_get(event, "actor", "session", "user", "email"),
-        "actor_id": deep_get(event, "actor", "session", "user", "id"),
-        "source_ip": deep_get(event, "actor", "session", "ip_address"),
-        "user_agent": deep_get(event, "actor", "session", "user_agent"),
-        "ip_details": deep_get(event, "actor", "session", "ip_address_details"),
+        "event_type": event.get("type", "<UNKNOWN_EVENT_TYPE>"),
+        "event_id": event.get("id", "<UNKNOWN_EVENT_ID>"),
+        "scim_resource_id": deep_get(event, field, "id", default="<UNKNOWN_SCIM_RESOURCE_ID>"),
+        "actor_email": deep_get(
+            event, "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
+        ),
+        "actor_id": deep_get(event, "actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
+        "source_ip": deep_get(
+            event, "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
+        ),
+        "user_agent": deep_get(
+            event, "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
+        ),
+        "ip_details": deep_get(event, "actor", "session", "ip_address_details", default={}),
     }

@@ -48,32 +48,50 @@ def alert_context(event):
     event_type = event.get("type")
 
     context = {
-        "event_type": event_type,
-        "event_id": event.get("id"),
-        "actor_email": deep_get(event, "actor", "session", "user", "email"),
-        "actor_id": deep_get(event, "actor", "session", "user", "id"),
-        "source_ip": deep_get(event, "actor", "session", "ip_address"),
-        "user_agent": deep_get(event, "actor", "session", "user_agent"),
-        "ip_details": deep_get(event, "actor", "session", "ip_address_details"),
+        "event_type": event_type if event_type else "<UNKNOWN_EVENT_TYPE>",
+        "event_id": event.get("id", "<UNKNOWN_EVENT_ID>"),
+        "actor_email": deep_get(
+            event, "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
+        ),
+        "actor_id": deep_get(event, "actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
+        "source_ip": deep_get(
+            event, "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
+        ),
+        "user_agent": deep_get(
+            event, "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
+        ),
+        "ip_details": deep_get(event, "actor", "session", "ip_address_details", default={}),
     }
 
     # Add event-specific fields
     if event_type == "ip_allowlist.created":
-        context["allowlist_id"] = deep_get(event, "ip_allowlist_created", "id")
-        context["allowlist_name"] = deep_get(event, "ip_allowlist_created", "name")
-        context["allowed_ips"] = deep_get(event, "ip_allowlist_created", "allowed_ips")
+        context["allowlist_id"] = deep_get(
+            event, "ip_allowlist_created", "id", default="<UNKNOWN_ALLOWLIST_ID>"
+        )
+        context["allowlist_name"] = deep_get(
+            event, "ip_allowlist_created", "name", default="<UNKNOWN_ALLOWLIST_NAME>"
+        )
+        context["allowed_ips"] = deep_get(event, "ip_allowlist_created", "allowed_ips", default=[])
     elif event_type == "ip_allowlist.updated":
-        context["allowlist_id"] = deep_get(event, "ip_allowlist_updated", "id")
-        context["allowed_ips"] = deep_get(event, "ip_allowlist_updated", "allowed_ips")
+        context["allowlist_id"] = deep_get(
+            event, "ip_allowlist_updated", "id", default="<UNKNOWN_ALLOWLIST_ID>"
+        )
+        context["allowed_ips"] = deep_get(event, "ip_allowlist_updated", "allowed_ips", default=[])
     elif event_type == "ip_allowlist.deleted":
-        context["allowlist_id"] = deep_get(event, "ip_allowlist_deleted", "id")
-        context["allowlist_name"] = deep_get(event, "ip_allowlist_deleted", "name")
-        context["allowed_ips"] = deep_get(event, "ip_allowlist_deleted", "allowed_ips")
+        context["allowlist_id"] = deep_get(
+            event, "ip_allowlist_deleted", "id", default="<UNKNOWN_ALLOWLIST_ID>"
+        )
+        context["allowlist_name"] = deep_get(
+            event, "ip_allowlist_deleted", "name", default="<UNKNOWN_ALLOWLIST_NAME>"
+        )
+        context["allowed_ips"] = deep_get(event, "ip_allowlist_deleted", "allowed_ips", default=[])
     elif event_type == "ip_allowlist.config.activated":
-        context["activated_configs"] = deep_get(event, "ip_allowlist_config_activated", "configs")
+        context["activated_configs"] = deep_get(
+            event, "ip_allowlist_config_activated", "configs", default=[]
+        )
     elif event_type == "ip_allowlist.config.deactivated":
         context["deactivated_configs"] = deep_get(
-            event, "ip_allowlist_config_deactivated", "configs"
+            event, "ip_allowlist_config_deactivated", "configs", default=[]
         )
 
     return context

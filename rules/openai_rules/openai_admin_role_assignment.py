@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 ADMIN_KEYWORDS = {"owner", "admin"}
 
 
@@ -7,7 +5,7 @@ def rule(event):
     if event.get("type") != "role.assignment.created":
         return False
 
-    assignment_id = deep_get(event, "role_assignment_created", "id", default="")
+    assignment_id = event.deep_get("role_assignment_created", "id", default="")
     if not assignment_id:
         return False
 
@@ -24,14 +22,14 @@ def rule(event):
 
 
 def title(event):
-    principal_id = deep_get(event, "role_assignment_created", "principal_id", default="Unknown")
+    principal_id = event.deep_get("role_assignment_created", "principal_id", default="Unknown")
     email = event.deep_get("actor", "session", "user", "email", default="<UNKNOWN_USER>")
     return f"OpenAI Admin Role Assigned to {principal_id} by [{email}]"
 
 
 def severity(event):
-    assignment_id = deep_get(event, "role_assignment_created", "id", default="")
-    resource_type = deep_get(event, "role_assignment_created", "resource_type", default="")
+    assignment_id = event.deep_get("role_assignment_created", "id", default="")
+    resource_type = event.deep_get("role_assignment_created", "resource_type", default="")
 
     if not assignment_id:
         return "DEFAULT"
@@ -48,15 +46,31 @@ def severity(event):
 
 def alert_context(event):
     return {
-        "event_type": event.get("type"),
-        "event_id": event.get("id"),
-        "assignment_id": deep_get(event, "role_assignment_created", "id"),
-        "principal_id": deep_get(event, "role_assignment_created", "principal_id"),
-        "principal_type": deep_get(event, "role_assignment_created", "principal_type"),
-        "resource_id": deep_get(event, "role_assignment_created", "resource_id"),
-        "resource_type": deep_get(event, "role_assignment_created", "resource_type"),
-        "actor_email": deep_get(event, "actor", "session", "user", "email"),
-        "actor_id": deep_get(event, "actor", "session", "user", "id"),
-        "source_ip": deep_get(event, "actor", "session", "ip_address"),
-        "user_agent": deep_get(event, "actor", "session", "user_agent"),
+        "event_type": event.get("type", "<UNKNOWN_EVENT_TYPE>"),
+        "event_id": event.get("id", "<UNKNOWN_EVENT_ID>"),
+        "assignment_id": event.deep_get(
+            "role_assignment_created", "id", default="<UNKNOWN_ASSIGNMENT_ID>"
+        ),
+        "principal_id": event.deep_get(
+            "role_assignment_created", "principal_id", default="<UNKNOWN_PRINCIPAL_ID>"
+        ),
+        "principal_type": event.deep_get(
+            "role_assignment_created", "principal_type", default="<UNKNOWN_PRINCIPAL_TYPE>"
+        ),
+        "resource_id": event.deep_get(
+            "role_assignment_created", "resource_id", default="<UNKNOWN_RESOURCE_ID>"
+        ),
+        "resource_type": event.deep_get(
+            "role_assignment_created", "resource_type", default="<UNKNOWN_RESOURCE_TYPE>"
+        ),
+        "actor_email": event.deep_get(
+            "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
+        ),
+        "actor_id": event.deep_get("actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
+        "source_ip": event.deep_get(
+            "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
+        ),
+        "user_agent": event.deep_get(
+            "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
+        ),
     }

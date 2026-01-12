@@ -37,12 +37,18 @@ def severity(event):
 def alert_context(event):
     field = "api_key_created" if event.get("type") == "api_key.created" else "api_key_updated"
     return {
-        "event_type": event.get("type"),
-        "event_id": event.get("id"),
-        "api_key_id": deep_get(event, field, "id"),
+        "event_type": event.get("type", "<UNKNOWN_EVENT_TYPE>"),
+        "event_id": event.get("id", "<UNKNOWN_EVENT_ID>"),
+        "api_key_id": deep_get(event, field, "id", default="<UNKNOWN_API_KEY_ID>"),
         "api_key_scopes": deep_get(event, field, "data", "scopes", default=[]),
-        "actor_email": deep_get(event, "actor", "session", "user", "email"),
-        "actor_id": deep_get(event, "actor", "session", "user", "id"),
-        "source_ip": deep_get(event, "actor", "session", "ip_address"),
-        "user_agent": deep_get(event, "actor", "session", "user_agent"),
+        "actor_email": deep_get(
+            event, "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
+        ),
+        "actor_id": deep_get(event, "actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
+        "source_ip": deep_get(
+            event, "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
+        ),
+        "user_agent": deep_get(
+            event, "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
+        ),
     }
