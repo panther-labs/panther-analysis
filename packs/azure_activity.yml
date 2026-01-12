@@ -3,6 +3,9 @@ PackID: PantherManaged.Azure.MonitorActivity
 Description: Group of Azure.MonitorActivity detections
 PackDefinition:
   IDs:
+    - Azure.MonitorActivity.ActionGroups.Deleted
+    - Azure.MonitorActivity.Advisor.SecurityRecommendation
+    - Azure.MonitorActivity.AlertRules.Deleted
     - Azure.MonitorActivity.Automation.AccountCreated
     - Azure.MonitorActivity.Automation.RunbookCreatedOrModified
     - Azure.MonitorActivity.Automation.RunbookDeleted
@@ -14,6 +17,8 @@ PackDefinition:
     - Azure.MonitorActivity.Compute.RestorePointCollectionDeleted
     - Azure.MonitorActivity.Compute.SnapshotDeleted
     - Azure.MonitorActivity.Compute.VMCommandExecuted
+    - Azure.MonitorActivity.DiagnosticSettings.Deleted
+    - Azure.MonitorActivity.EventHub.Deleted
     - Azure.MonitorActivity.Kubernetes.RoleBindingCreated
     - Azure.MonitorActivity.KeyVault.CertificateAccessed
     - Azure.MonitorActivity.KeyVault.Deleted
@@ -21,6 +26,7 @@ PackDefinition:
     - Azure.MonitorActivity.KeyVault.KeyPurged
     - Azure.MonitorActivity.KeyVault.Purged
     - Azure.MonitorActivity.KeyVault.SecretAccessedOrRecovered
+    - Azure.MonitorActivity.LogAnalyticsWorkspace.Deleted
     - Azure.MonitorActivity.Network.IPDiscovery
     - Azure.MonitorActivity.Network.NSGModifiedOrDeleted
     - Azure.MonitorActivity.Network.PacketCaptureEnabled
@@ -42,6 +48,9 @@ PackDefinition:
     - Azure.MonitorActivity.StorageAccount.PublicNetworkAccessEnabled
     - Azure.MonitorActivity.StorageAccount.SharedKeyAccessEnabled
     - Azure.MonitorActivity.StorageAccount.VersioningDisabled
+    - Azure.MonitorActivity.Security.AlertSuppressionRuleCreated
+    - Azure.MonitorActivity.ResourceGroup.Deleted
+    - Azure.MonitorActivity.RoleAssignment.PrivilegedOrElevated
     # Correlation Rules
     - Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError
     - Azure.MonitorActivity.SQL.ServerDeleted
