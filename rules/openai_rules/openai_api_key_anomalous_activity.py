@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 ELEVATED_SCOPES = {"all", "models:write", "organization:write", "api_keys:write", "admin"}
 
 
@@ -8,7 +6,7 @@ def rule(event):
         return False
 
     field = "api_key_created" if event.get("type") == "api_key.created" else "api_key_updated"
-    scopes = deep_get(event, field, "data", "scopes", default=[])
+    scopes = event.deep_get(field, "data", "scopes", default=[])
 
     return any(scope.lower() in {s.lower() for s in ELEVATED_SCOPES} for scope in scopes if scope)
 
@@ -21,7 +19,7 @@ def title(event):
 
 def severity(event):
     field = "api_key_created" if event.get("type") == "api_key.created" else "api_key_updated"
-    scopes = deep_get(event, field, "data", "scopes", default=[])
+    scopes = event.deep_get(field, "data", "scopes", default=[])
 
     if not scopes:
         return "DEFAULT"
@@ -39,16 +37,16 @@ def alert_context(event):
     return {
         "event_type": event.get("type", "<UNKNOWN_EVENT_TYPE>"),
         "event_id": event.get("id", "<UNKNOWN_EVENT_ID>"),
-        "api_key_id": deep_get(event, field, "id", default="<UNKNOWN_API_KEY_ID>"),
-        "api_key_scopes": deep_get(event, field, "data", "scopes", default=[]),
-        "actor_email": deep_get(
-            event, "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
+        "api_key_id": event.deep_get(field, "id", default="<UNKNOWN_API_KEY_ID>"),
+        "api_key_scopes": event.deep_get(field, "data", "scopes", default=[]),
+        "actor_email": event.deep_get(
+            "actor", "session", "user", "email", default="<UNKNOWN_ACTOR_EMAIL>"
         ),
-        "actor_id": deep_get(event, "actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
-        "source_ip": deep_get(
-            event, "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
+        "actor_id": event.deep_get("actor", "session", "user", "id", default="<UNKNOWN_ACTOR_ID>"),
+        "source_ip": event.deep_get(
+            "actor", "session", "ip_address", default="<UNKNOWN_SOURCE_IP>"
         ),
-        "user_agent": deep_get(
-            event, "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
+        "user_agent": event.deep_get(
+            "actor", "session", "user_agent", default="<UNKNOWN_USER_AGENT>"
         ),
     }
