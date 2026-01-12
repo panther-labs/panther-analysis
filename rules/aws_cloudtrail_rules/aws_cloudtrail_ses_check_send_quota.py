@@ -5,7 +5,8 @@ from panther_core import PantherEvent
 def rule(event: PantherEvent) -> bool:
     if event.get("eventName") == "GetSendQuota":
         # Exclude AWS Trusted Advisor automated checks
-        if event.deep_get("userIdentity", "sessionContext", "sessionIssuer", "userName") == "AWSServiceRoleForTrustedAdvisor":
+        role_name = event.deep_get("userIdentity", "sessionContext", "sessionIssuer", "userName")
+        if role_name == "AWSServiceRoleForTrustedAdvisor":
             return False
         return True
     return False
