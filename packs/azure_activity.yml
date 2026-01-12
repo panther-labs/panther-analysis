@@ -3,6 +3,13 @@ PackID: PantherManaged.Azure.MonitorActivity
 Description: Group of Azure.MonitorActivity detections
 PackDefinition:
   IDs:
+    - Azure.MonitorActivity.Automation.ServerlessExecution
+    - Azure.MonitorActivity.Compute.DiskDeleted
+    - Azure.MonitorActivity.Compute.DiskSASURIGenerated
+    - Azure.MonitorActivity.Compute.RestorePointCollectionDeleted
+    - Azure.MonitorActivity.Compute.SnapshotDeleted
+    - Azure.MonitorActivity.Compute.VMCommandExecuted
+    - Azure.MonitorActivity.Kubernetes.RoleBindingCreated
     - Azure.MonitorActivity.KeyVault.CertificateAccessed
     - Azure.MonitorActivity.KeyVault.Deleted
     - Azure.MonitorActivity.KeyVault.KeyAccessed.Recovered
@@ -26,6 +33,8 @@ PackDefinition:
     - Azure.MonitorActivity.StorageAccount.VersioningDisabled
     # Correlation Rules
     - Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError
+    - Azure.MonitorActivity.SQL.ServerDeleted
+    - Azure.MonitorActivity.VirtualMachine.Deleted
     # Globals used in these detections
     - panther_azureactivity_helpers
 DisplayName: "Panther Azure MonitorActivity Pack"
