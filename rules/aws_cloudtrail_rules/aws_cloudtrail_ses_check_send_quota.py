@@ -3,7 +3,12 @@ from panther_core import PantherEvent
 
 
 def rule(event: PantherEvent) -> bool:
-    return event.get("eventName") == "GetSendQuota"
+    if event.get("eventName") == "GetSendQuota":
+        # Exclude AWS Trusted Advisor automated checks
+        if event.deep_get("userIdentity", "sessionContext", "sessionIssuer", "userName") == "AWSServiceRoleForTrustedAdvisor":
+            return False
+        return True
+    return False
 
 
 def alert_context(event: PantherEvent) -> dict:
