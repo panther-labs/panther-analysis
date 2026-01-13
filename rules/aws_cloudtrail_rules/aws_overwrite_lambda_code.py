@@ -36,7 +36,7 @@ def title(event):
     )
 
 
-def severity(event):
+def severity(event):  # pylint: disable=unused-argument
     # IAM User modifying Lambda code is high severity
     # This is unusual and bypasses normal CI/CD guardrails
     return "HIGH"
