@@ -1974,9 +1974,13 @@ versions:
         commit_hash: c611d6ef0183833e3e82881750c70a25b0dc90be
         py_file_path: policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.py
         yaml_file_path: policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.yml
-    sha256: 13c068129f6d922a3b52f1f927dcb2def44ad6cd7b8866bd459f3bc953d55fe2
+      3:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.py
+        yaml_file_path: policies/aws_s3_policies/aws_s3_bucket_policy_confused_deputy.yml
+    sha256: 63fbaf8dc50a496ea2100e5b40efb784a95a996b20de5d8463df588579e275b3
     type: policy
-    version: 2
+    version: 3
   AWS.S3.Bucket.PrincipalRestrictions:
     history:
       1:
@@ -3993,9 +3997,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.py
         yaml_file_path: rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.yml
-    sha256: 08de2516bcf8194c3b7eadc1525f8cbfbcf344cf67b52619b6513c8282766105
+      2:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_cloud_storage_buckets_modified_or_deleted.yml
+    sha256: 139f0d435d90cd674725713cea205d35d963843ac6a6a018bc0d9969aaefe540
     type: rule
-    version: 1
+    version: 2
   GCP.CloudArmor.React2Shell.RCE.Attempt:
     history:
       1:
@@ -4104,6 +4112,24 @@ versions:
     sha256: 5cb70fdc1c91499220e016357f53eb76eb4db32b9b9d77587f6e57ed6f5bd948
     type: rule
     version: 1
+  GCP.GCS.BulkDeletion:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_gcs_bulk_deletion.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_gcs_bulk_deletion.yml
+    sha256: 32a00714dfd074e47da683363fec2fe0076a4dd5f33919ef3e0f2a355ea08679
+    type: rule
+    version: 1
+  GCP.GCS.BulkObjectRewrite:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_gcs_object_rewrite.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_gcs_object_rewrite.yml
+    sha256: f63385f3100f8e3f8d042f74b48987900323301d30b841469ec6057951781fe8
+    type: rule
+    version: 1
   GCP.GCS.IAMChanges:
     history:
       1:
@@ -4113,6 +4139,15 @@ versions:
     sha256: f1a476029ec98a344d552e66a7f67b5cc1442b7eab268bcee0881fe0dd5d8807
     type: rule
     version: 1
+  GCP.GCS.ObjectExfiltration:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_gcs_object_exfiltration.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_gcs_object_exfiltration.yml
+    sha256: d06ac9ce46f49effadf62176a21ad769dbc64db99175d3f2d51f015eecc70e6a
+    type: rule
+    version: 1
   GCP.GCS.Public:
     history:
       1:
@@ -4120,6 +4155,15 @@ versions:
         py_file_path: rules/gcp_audit_rules/gcp_gcs_public.py
         yaml_file_path: rules/gcp_audit_rules/gcp_gcs_public.yml
     sha256: 93926381a8a25394f7fba9f44d2a24baae79bc1bc6e9e9972d98bee7f9f2beac
+    type: rule
+    version: 1
+  GCP.GCS.Ransom.Note.Upload:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_gcs_ransom_note_upload.yml
+    sha256: 606de2eb45824aebcda80eaf06ffbee74ab83da3fe0938c0d4688ba4b048c706
     type: rule
     version: 1
   GCP.GKE.Kubernetes.Cron.Job.Created.Or.Modified:
@@ -4293,6 +4337,42 @@ versions:
         py_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.py
         yaml_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml
     sha256: a9067dc6b20df8e5a58a2375c5b5e94c44e0cf3988d1713ed39cc03ccba38b2f
+    type: rule
+    version: 1
+  GCP.KMS.BulkEncryption:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_kms_bulk_encryption.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_kms_bulk_encryption.yml
+    sha256: 6a87a652c478f134f359e07aa5c04dc4c1c70f27003766f99a1e47632817a9d5
+    type: rule
+    version: 1
+  GCP.KMS.CrossProjectEncryption:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_kms_cross_project_encryption.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_kms_cross_project_encryption.yml
+    sha256: fe450061d6e35bd519e35b54f34c79be8c702f81c1aa257dc562b50669f31604
+    type: rule
+    version: 1
+  GCP.KMS.EnableKey:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_kms_enable_key.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_kms_enable_key.yml
+    sha256: f40bebcb41c752327eb543ff2c07fc758b2a9eedb66226bfb2d4516765daad7e
+    type: rule
+    version: 1
+  GCP.KMS.EraseKey:
+    history:
+      1:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/gcp_audit_rules/gcp_kms_erase_key.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_kms_erase_key.yml
+    sha256: 903003e6e990fa03e654e44a7bc99a6e15d159a2f1106dad940a649f26b104d1
     type: rule
     version: 1
   GCP.Log.Bucket.Or.Sink.Deleted:
@@ -6836,9 +6916,12 @@ versions:
       3:
         commit_hash: d1c829a36bb1f76ed6f52e583ef43eae407515b1
         yaml_file_path: packs/gcp_audit.yml
-    sha256: 10c975f9092bfbbcf679db8dcbebd54b1b69192f7ed14ab830284a50244d3e58
+      4:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        yaml_file_path: packs/gcp_audit.yml
+    sha256: caa7df0926ca68843ff6f6c39aa9566c9066b20a8bf335d528827b315c961a57
     type: pack
-    version: 3
+    version: 4
   PantherManaged.GCP.K8:
     history:
       1:
@@ -7674,9 +7757,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/slack_rules/slack_passthrough_anomaly.py
         yaml_file_path: rules/slack_rules/slack_passthrough_anomaly.yml
-    sha256: d8a229c91a2a74ae70601e7f77ba248d9a6ba8168d86b0919141f995b1492b29
+      2:
+        commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
+        py_file_path: rules/slack_rules/slack_passthrough_anomaly.py
+        yaml_file_path: rules/slack_rules/slack_passthrough_anomaly.yml
+    sha256: dada78d46d2aa3767614b9ae0c4a6fcd31afc88f2bbd6a008c448c0a7a9bba9b
     type: rule
-    version: 1
+    version: 2
   Slack.AuditLogs.PotentiallyMaliciousFileShared:
     history:
       1:
