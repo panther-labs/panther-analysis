@@ -5560,17 +5560,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Unauthorized lambda Create, Read, Update, or Delete event occurred.",
-        "DisplayName": "Lambda CRUD Actions",
-        "LogTypes": [
-            "AWS.CloudTrail"
-        ],
-        "YAMLPath": "rules/aws_cloudtrail_rules/aws_lambda_crud.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Identifies when the code of a Lambda function is updated, which could indicate a potential security risk.",
-        "DisplayName": "Lambda Update Function Code",
+        "Description": "Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.",
+        "DisplayName": "Lambda Code Updated by IAM User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -5578,12 +5569,21 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Identifies when a Lambda function configuration is updated with layers, which could indicate a potential security risk.",
-        "DisplayName": "Lambda Update Function Configuration with Layers",
+        "Description": "Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.",
+        "DisplayName": "Lambda Configuration with Layers Updated by IAM User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Unauthorized lambda Create, Read, Update, or Delete event occurred.",
+        "DisplayName": "Lambda CRUD Actions",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_lambda_crud.yml"
     },
     {
         "AnalysisType": "Rule",
