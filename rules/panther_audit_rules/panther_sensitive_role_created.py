@@ -30,7 +30,7 @@ def rule(event):
 def title(event):
     role_name = event.deep_get("actionParams", "dynamic", "input", "name")
     if role_name is None:
-        role_name = event.deep_get("actionParams", "input", "name", default="<UNKNWON ROLE>")
+        role_name = event.deep_get("actionParams", "input", "name", default="<UNKNOWN ROLE>")
     return (
         f"Role with Admin Permissions created by {event.udm('actor_user')}"
         f"Role Name: {role_name}"

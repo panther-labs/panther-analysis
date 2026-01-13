@@ -1,0 +1,96 @@
+AnalysisType: rule
+Filename: azure_storage_account_keys_listed.py
+RuleID: "Azure.MonitorActivity.StorageAccount.KeysListed"
+DisplayName: "Azure Storage Account Keys Listed"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Medium
+Status: Experimental
+Description: >
+  Detects when Azure Storage Account access keys are listed or retrieved. This operation returns
+  the full access keys which could grant complete control over the storage account and all its data.
+  Adversaries may list storage account keys to gain persistent access to blob containers, file shares,
+  queues, and tables without needing to maintain their current permissions.
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1552 # Credential Access: Unsecured Credentials
+    - TA0009:T1530 # Collection: Data from Cloud Storage
+Tags:
+  - Credential Access
+  - Unsecured Credentials
+  - Collection
+  - Data from Cloud Storage
+  - AZT605
+  - AZT605.1
+  - AZT701.2
+  - Resource Secret Reveal
+  - Storage Account Access Key Dumping
+  - Automation Account Credential Secret Dump
+Runbook: |
+  1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this key listing to identify if blob downloads, file share access, or data exfiltration followed
+  2. Check if the caller identity recently obtained new role assignments or elevated privileges in the 24 hours before this operation that would explain the key access
+  3. Search for subsequent SAS token generation, object replication policy creation, or anonymous access configuration on this storage account within 1 hour after the key listing as indicators of data exfiltration preparation
+Reference: https://microsoft.github.io/Azure-Threat-Research-Matrix/CredentialAccess/AZT605/AZT605-1
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Storage Account Keys Listed
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-24T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Storage/storageAccounts/prodstorage123",
+        "operationName": "Microsoft.Storage/storageAccounts/listkeys/action",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "1.1.1.1",
+        "location": "eastus",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "identity": {
+          "claims": {
+            "ipaddr": "1.1.1.1",
+            "name": "denethor@lotr.com"
+          }
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-24T11:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/security-rg/providers/Microsoft.Storage/storageAccounts/securitystorage",
+        "operationName": "microsoft.storage/storageaccounts/listkeys/action",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "2.2.2.2",
+        "location": "westus",
+        "correlationId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "identity": {
+          "claims": {
+            "ipaddr": "2.2.2.2"
+          }
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Failed Key Listing
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-24T12:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Storage/storageAccounts/prodstorage123",
+        "operationName": "Microsoft.Storage/storageAccounts/listkeys/action",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Failed",
+        "resultSignature": "403",
+        "callerIpAddress": "3.3.3.3",
+        "location": "eastus",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-222222222222",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }

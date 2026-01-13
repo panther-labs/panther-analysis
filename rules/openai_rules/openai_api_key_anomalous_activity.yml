@@ -1,0 +1,212 @@
+AnalysisType: rule
+Description: |
+  Detects anomalous OpenAI API key activity indicative of potential key compromise,
+  unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).
+  OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse or
+  compromise of these keys enables attackers to blend malicious activity into legitimate
+  cloud traffic, bypassing traditional network-based detections.
+  This rule alerts on:
+  - API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
+DisplayName: "OpenAI Anomalous API Key Activity"
+Enabled: true
+Status: Experimental
+Filename: openai_api_key_anomalous_activity.py
+Reference: https://platform.openai.com/docs/api-reference/audit-logs
+Runbook: |
+  1. Validate the identity responsible for the API key activity. Confirm whether the user or service account is authorized to manage API keys and if the action aligns with an approved business process (e.g., onboarding, rotation).
+  2. Review the key's scopes/permissions for elevated or unrestricted access. Check recent API usage, source IP address, geolocation, and TLS fingerprints for unusual client patterns or concurrent suspicious activities.
+  3. If suspicious activity is confirmed, immediately revoke or rotate the affected API key. Review all API keys created by the same identity, investigate potential account compromise, and escalate for further investigation.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078  # Valid Accounts
+    - TA0003:T1098  # Account Manipulation
+    - TA0005:T1550  # Use Alternate Authentication Material
+    - TA0011:T1071  # Application Layer Protocol (for C2)
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+LogTypes:
+  - OpenAI.Audit
+RuleID: "OpenAI.API.Key.Anomalous.Activity"
+Tests:
+  # Test 1: Should NOT alert - API key created with read-only scopes
+  - Name: "API key created with read-only scopes - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test001"
+      type: "api_key.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-developer456"
+            email: "developer@company.com"
+          ip_address: "203.0.113.50"
+          user_agent: "Mozilla/5.0"
+          ip_address_details:
+            country: "US"
+            city: "San Francisco"
+      api_key_created:
+        id: "key-abc123"
+        data:
+          name: "Production API Key"
+          scopes:
+            - "models:read"
+  # Test 2: Should ALERT HIGH - API key created with elevated permissions
+  - Name: "API key with elevated permissions - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test002"
+      type: "api_key.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-contractor789"
+            email: "contractor@external.com"
+          ip_address: "192.0.2.100"
+          user_agent: "curl/7.68.0"
+          ip_address_details:
+            country: "RO"
+            city: "Bucharest"
+      api_key_created:
+        id: "key-suspicious001"
+        data:
+          name: "Full Access Key"
+          scopes:
+            - "models:write"
+            - "organization:write"
+            - "all"
+  # Test 3: Should ALERT HIGH - API key updated with elevated permissions
+  - Name: "API key updated with elevated permissions - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test003"
+      type: "api_key.updated"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-intern001"
+            email: "intern@company.com"
+          ip_address: "203.0.113.75"
+          user_agent: "Mozilla/5.0"
+      api_key_updated:
+        id: "key-existing123"
+        data:
+          scopes:
+            - "models:write"
+            - "api_keys:write"
+            - "admin"
+  # Test 4: Should NOT alert - API key deleted
+  - Name: "API key deleted - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test004"
+      type: "api_key.deleted"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-unknown999"
+            email: "unknown@suspicious.com"
+          ip_address: "198.18.0.50"
+          user_agent: "python-requests/2.28.0"
+          ip_address_details:
+            country: "CN"
+            city: "Beijing"
+      api_key_deleted:
+        id: "key-production001"
+  # Test 5: Should ALERT HIGH - API key created with 'all' scope
+  - Name: "API key with 'all' scope - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test005"
+      type: "api_key.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "api_key"
+        api_key:
+          type: "user"
+          id: "key-parent001"
+          user:
+            id: "user-suspicious002"
+            email: "suspicious@external.com"
+      api_key_created:
+        id: "key-child001"
+        data:
+          name: "Nested API Key"
+          scopes:
+            - "all"
+  # Test 6: Should ALERT HIGH - Multiple elevated scopes
+  - Name: "API key with multiple elevated scopes - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test006"
+      type: "api_key.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-compromised001"
+            email: "compromised@company.com"
+          ip_address: "192.0.2.200"
+          user_agent: "PostmanRuntime/7.29.2"
+          ja3: "771,4865-4866-4867,0-23-65281,29-23-24,0"
+          ja4: "t13d1516h2_8daaf6152771_e5627efa2ab1"
+      api_key_created:
+        id: "key-malicious001"
+        data:
+          name: "Admin Override Key"
+          scopes:
+            - "organization:write"
+            - "admin"
+  # Test 7: Should NOT alert - API key updated without elevated scopes
+  - Name: "API key updated without elevated scopes - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test007"
+      type: "api_key.updated"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin001"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      api_key_updated:
+        id: "key-regular001"
+        data:
+          name: "Updated Key Name"
+          scopes:
+            - "models:read"
+  # Test 8: Should NOT alert - Non-API key event
+  - Name: "Login event - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test008"
+      type: "login.succeeded"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-normal001"
+            email: "user@company.com"
+          ip_address: "203.0.113.200"
+          user_agent: "Mozilla/5.0"
