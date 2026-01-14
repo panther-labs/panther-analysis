@@ -94,12 +94,10 @@ PackDefinition:
     - AWS.CloudFormation.Stack.UsesIAMServiceRole
     - AWS.CloudTrail.CodebuildProjectMadePublic
     - AWS.CloudTrail.Created
-    - AWS.CloudTrail.DNSLogsDeleted
     - AWS.CloudTrail.Enabled
     - AWS.CloudTrail.EnableRegion
     - AWS.CloudTrail.EventSelectorsDisabled
     - AWS.CloudTrail.SecurityConfigurationChange
-    - AWS.CloudTrail.ShortLifecycle
     - AWS.CloudTrail.Stopped
     - AWS.CloudTrail.UnauthorizedAPICall
     - AWS.CloudWatchLogs.DataRetention1Year
@@ -112,7 +110,6 @@ PackDefinition:
     - AWS.ConfigService.DisabledDeleted
     - AWS.DynamoDB.Autoscaling
     - AWS.EC2.Instance.EBSOptimization
-    - AWS.EC2.ManyPasswordReadAttempts
     - AWS.EC2.Startup.Script.Change
     - AWS.EC2.StopInstances
     - AWS.EC2.StopInstance.FOLLOWED.BY.ModifyInstanceAttributes
@@ -138,45 +135,28 @@ PackDefinition:
     - AWS.S3.Bucket.NameDNSCompliance
     - AWS.S3.BucketDeleted
     - AWS.S3.BucketPolicyModified
-    - AWS.S3.CopyObject.CrossAccount.Encryption.KMS
-    - AWS.S3.CopyObjectToExternalAccountBucket
     - AWS.S3.CopyObjectWithClientSideEncryption
-    - AWS.S3.DeleteBucketEncryption
-    - AWS.S3.DeleteBucketReplication
     - AWS.S3.DeleteObject
     - AWS.S3.DeleteObjects
-    - AWS.S3.DeletePublicAccessBlock
-    - AWS.S3.DisableBucketLogging
-    - AWS.S3.DisableMfaDelete
-    - AWS.S3.RansomwareNoteUpload
     - AWS.S3.ServerAccess.Error
-    - AWS.S3.SuspendVersioning
     - AWS.SecurityHub.Finding.Evasion
     - AWS.VPC.FlowLogs
-    - AWS.VPCFlow.LogsDeleted
     - AWS.WAF.Disassociation
     - AWS.WAF.HasXSSPredicate
     - AWS.WAF.LoggingConfigured
     - AWS.WAF.WebACLHasAssociatedResources
-    - AWS.WAF.ReactJSRCE.Body    
+    - AWS.WAF.ReactJSRCE.Body
     # Lambda rules
-    - AWS.Lambda.UpdateFunctionConfiguration
-    - AWS.Potential.Backdoor.Lambda
-    - AWS.Lambda.UpdateFunctionCode
     # Bedrock rules
     - AWS.Bedrock.DeleteModelInvocationLoggingConfiguration
     - AWS.Bedrock.GuardrailUpdateDelete
-    - AWS.BedrockModelInvocation.AbnormalTokenUsage
-    - AWS.BedrockModelInvocation.GuardRailIntervened
     # Other rules
     - Amazon.EKS.AnonymousAPIAccess
     - AWS.CloudTrail.Account.Discovery
-    - AWS.CloudTrail.AttemptToLeaveOrg
     - AWS.CloudTrail.CloudWatchLogs
     - AWS.CloudTrail.LogEncryption
     - AWS.CloudTrail.LogValidation
     - AWS.CloudTrail.S3Bucket.AccessLogging
-    - AWS.CloudTrail.SES.CheckIdentityVerifications
     - AWS.CloudTrail.VPCE.AccessDenied
     - AWS.CloudTrail.VPCE.ExternalPrincipal
     - AWS.CloudTrail.VPCE.S3ExternalIP
@@ -184,8 +164,6 @@ PackDefinition:
     - AWS.CMK.KeyRotation
     - AWS.DynamoDB.TableTTLEnabled
     - AWS.EC2.DownloadInstanceUserData
-    - AWS.EC2.LaunchUnusualEC2Instances
-    - AWS.EC2.MultiInstanceConnect
     - AWS.EC2.Vulnerable.XZ.Image.Launched
     - AWS.IAM.Policy.DoesNotGrantAdminAccess
     - AWS.IAM.Policy.DoesNotGrantNetworkAdminAccess
@@ -214,8 +192,6 @@ PackDefinition:
     - AWS.Backdoor.Administrative.IAM.Role.Created
     - AWS.Privilege.Escalation.Via.User.Compromise
     - AWS.CloudTrail.SES.SESEnumeration
-    - AWS.S3.Disable.Security.Controls
-    - AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion
     - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP
     - AWS.User.Takeover.Via.Password.Reset
     # Signal Rules
@@ -228,19 +204,16 @@ PackDefinition:
     - AWS.IAM.AttachAdminUserPolicy
     - AWS.IAM.CreateRole
     - AWS.IAM.CreateUser
+    - Retrieve.SSO.access.token
+    - Sign-in.with.AWS.CLI.prompt
+    - AWS.CloudTrail.SES.CheckIdentityVerifications
     - AWS.CloudTrail.SES.CheckSESSendingEnabled
     - AWS.CloudTrail.SES.CheckSendQuota
     - AWS.CloudTrail.SES.ListIdentities
-    - Retrieve.SSO.access.token
-    - Sign-in.with.AWS.CLI.prompt
+    - AWS.Console.Sign-In
+    - AWS.VPC.SSHAllowedSignal
     # Stratus Red Team Rules
     - AWS SSM Multiple Sessions
-    - AWS.SecretsManager.RetrieveSecretsMultiRegion
-    - AWS.SecretsManager.RetrieveSecrets
-    - AWS.SecretsManager.BatchRetrieveSecrets
-    - AWS.SecretsManager.BatchRetrieveSecretsCatchAll
-    - AWS.SSM.DecryptSSMParams
-    - AWS.SSM.DistributedCommand
     - AWS.SSM.MultipleSessions
     # Queries
     - AWS EC2 Discovery Commands Executed
