@@ -32,10 +32,11 @@ def rule(event):
             continue
         member = delta.get("member", "")
         if any(fnmatch(member, pattern) for pattern in ACCEPTED_MEMBER_PATTERNS):
-            return False
+            continue  # Skip this member, check others
         if member.endswith(f"@{expected_domain}"):
-            return False
-    return True
+            continue  # Skip this member, check others
+        return True  # Found a suspicious member - alert
+    return False  # No suspicious members found
 
 
 def title(event):

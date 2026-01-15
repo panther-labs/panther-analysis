@@ -8,13 +8,13 @@ LogTypes:
 Severity: Info
 CreateAlert: false
 Description: >
-  Detect when someone checks how many emails can be delivered via SES 
+  Detect when someone checks how many emails can be delivered via SES.
+  Excludes automated checks from AWS Trusted Advisor to reduce false positives. 
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.discovery.ses-enumerate/
 Tags:
   - AWS CloudTrail
   - SES
-Status: Experimental
 Tests:
   - Name: GetSendQuota Event
     ExpectedResult: true
@@ -64,5 +64,44 @@ Tests:
             }
           },
           "type": "AssumedRole"
+        }
+      }
+  - Name: GetSendQuota from Trusted Advisor (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-01-11 22:54:56.000000000",
+        "p_log_type": "AWS.CloudTrail",
+        "awsRegion": "us-east-1",
+        "eventCategory": "Management",
+        "eventID": "test-event-id",
+        "eventName": "GetSendQuota",
+        "eventSource": "ses.amazonaws.com",
+        "eventTime": "2026-01-11 22:54:56.000000000",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "managementEvent": true,
+        "readOnly": true,
+        "recipientAccountId": "187901811700",
+        "sourceIPAddress": "trustedadvisor.amazonaws.com",
+        "userAgent": "trustedadvisor.amazonaws.com",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "AROASXP6SDP2MIDOVDS5K:TrustedAdvisor_187901811700_7472a099-2df6-4080-b339-9681aa0a066a",
+          "arn": "arn:aws:sts::187901811700:assumed-role/AWSServiceRoleForTrustedAdvisor/TrustedAdvisor_187901811700_7472a099-2df6-4080-b339-9681aa0a066a",
+          "accountId": "187901811700",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROASXP6SDP2MIDOVDS5K",
+              "arn": "arn:aws:iam::187901811700:role/aws-service-role/trustedadvisor.amazonaws.com/AWSServiceRoleForTrustedAdvisor",
+              "accountId": "187901811700",
+              "userName": "AWSServiceRoleForTrustedAdvisor"
+            },
+            "attributes": {
+              "creationDate": "2026-01-11T22:54:56Z",
+              "mfaAuthenticated": "false"
+            }
+          }
         }
       }

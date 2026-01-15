@@ -10,13 +10,13 @@ def rule(event):
         "event",
         "preaction",
         "passwordExpirationEnabled",
-        default="<PRE_PASSWORD_EXPIRATION_NOT_FOUND>",
+        default="",
     )
     password_exp_post = event.deep_get(
         "event",
         "postaction",
         "passwordExpirationEnabled",
-        default="<POST_PASSWORD_EXPIRATION_NOT_FOUND>",
+        default="",
     )
     if action == "UPDATE" and category == "LOGIN" and password_exp_pre != password_exp_post:
         return True

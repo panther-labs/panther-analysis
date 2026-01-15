@@ -1,0 +1,110 @@
+AnalysisType: rule
+Description: |
+  Detects when SCIM (System for Cross-domain Identity Management) is enabled or disabled
+  in an OpenAI organization.
+  SCIM provides automated user provisioning and deprovisioning from identity providers (IdP)
+  to OpenAI. Disabling SCIM can:
+  - Bypass identity governance and access control policies
+  - Allow orphaned accounts to persist after employee offboarding
+  - Indicate an attempt to maintain unauthorized access
+  - Violate compliance requirements for automated access management
+  Enabling SCIM should be monitored for visibility into identity integration changes.
+DisplayName: "OpenAI SCIM Configuration Change"
+Enabled: true
+Status: Experimental
+Filename: openai_scim_configuration_change.py
+Reference: https://platform.openai.com/docs/api-reference/audit-logs
+Runbook: |
+  1. Verify the SCIM configuration change was authorized. Confirm whether the change aligns
+  with approved identity management policies or integration updates.
+  2. If SCIM was disabled, immediately verify that user provisioning and deprovisioning
+  workflows are not disrupted. Check if there are alternative mechanisms in place for
+  user lifecycle management.
+  3. Review the actor who made the change, including source IP, geolocation, and timing.
+  Investigate if the change was made from an unusual location or during off-hours.
+  4. If the change is unauthorized or suspicious, immediately re-enable SCIM (if disabled),
+  review all user accounts for unauthorized access, audit recent role assignments, and
+  escalate for security review.
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098  # Account Manipulation
+    - TA0005:T1562.001  # Impair Defenses: Disable or Modify Tools
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+LogTypes:
+  - OpenAI.Audit
+RuleID: "OpenAI.SCIM.Configuration.Change"
+Tests:
+  - Name: "SCIM enabled - Alert MEDIUM"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-scim001"
+      type: "scim.enabled"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+          ip_address_details:
+            country: "US"
+            city: "San Francisco"
+            region: "California"
+      scim_enabled:
+        id: "org-abc123"
+  - Name: "SCIM disabled - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-scim002"
+      type: "scim.disabled"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-suspicious001"
+            email: "contractor@external.com"
+          ip_address: "192.0.2.100"
+          user_agent: "curl/7.68.0"
+          ip_address_details:
+            country: "RO"
+            city: "Bucharest"
+      scim_disabled:
+        id: "org-abc123"
+  - Name: "SCIM disabled by service account - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-scim003"
+      type: "scim.disabled"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "api_key"
+        api_key:
+          type: "service_account"
+          id: "key-service001"
+          service_account:
+            id: "sa-automation001"
+      scim_disabled:
+        id: "org-abc123"
+  - Name: "Unrelated event - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-other001"
+      type: "login.succeeded"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-normal001"
+            email: "user@company.com"
+          ip_address: "203.0.113.200"
+          user_agent: "Mozilla/5.0"
