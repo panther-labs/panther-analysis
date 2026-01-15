@@ -648,7 +648,7 @@
 - [AWS DNS Crypto Domain](../rules/aws_vpc_flow_rules/aws_dns_crypto_domain.yml)
   - Identifies clients that may be performing DNS lookups associated with common currency mining pools.
 - [DNS Base64 Encoded Query](../rules/standard_rules/standard_dns_base64.yml)
-  - Detects DNS queries with Base64 encoded subdomains (≥28 chars), which could indicate an attempt to obfuscate data exfil. Excludes common enterprise services (Azure, Google, Microsoft, etc.) that legitimately use Base64-like identifiers.
+  - Detects DNS queries with Base64 encoded subdomains, which could indicate an attempt to obfuscate data exfil.
 - [VPC DNS Tunneling](../queries/aws_queries/vpc_dns_tunneling.yml)
   - Detect dns tunneling traffic using a scheduled query
 
