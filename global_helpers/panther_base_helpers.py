@@ -165,13 +165,13 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
     return datetime.strptime(golang_time_rounded, golang_time_format)
 
 
-def is_base64(b64: str) -> str:
+def is_base64(b64: str, min_length: int = 28) -> str:
     # if the string is base64 encoded, return the decoded string
     # otherwise return an empty string
     # Minimum length for intentional base64 encoding
     # Legitimate service identifiers are typically shorter; exfil chunks are longer
-    min_base64_length = 28
-    if len(b64) < min_base64_length:
+    # Default 28 chars for DNS exfiltration, but can be customized per use case
+    if len(b64) < min_length:
         return ""
     # Base64 strings should only contain ASCII characters
     try:
@@ -200,9 +200,9 @@ def is_base64(b64: str) -> str:
             # Additional validation: check if decoded content is mostly printable
             # This filters out random alphanumeric strings that decode to gibberish
             if decoded_str:
-                printable_ratio = sum(
-                    c.isprintable() or c.isspace() for c in decoded_str
-                ) / len(decoded_str)
+                printable_ratio = sum(c.isprintable() or c.isspace() for c in decoded_str) / len(
+                    decoded_str
+                )
                 # Require at least 70% printable characters
                 if printable_ratio < 0.7:
                     continue
