@@ -697,7 +697,7 @@
 - [AWS DNS Crypto Domain](../rules/aws_vpc_flow_rules/aws_dns_crypto_domain.yml)
   - Identifies clients that may be performing DNS lookups associated with common currency mining pools.
 - [DNS Base64 Encoded Query](../rules/standard_rules/standard_dns_base64.yml)
-  - Detects DNS queries with Base64 encoded subdomains (≥28 chars), which could indicate an attempt to obfuscate data exfil. Excludes common enterprise services (Azure, Google, Microsoft, etc.) that legitimately use Base64-like identifiers.
+  - Detects DNS queries with Base64 encoded subdomains, which could indicate an attempt to obfuscate data exfil.
 - [VPC DNS Tunneling](../queries/aws_queries/vpc_dns_tunneling.yml)
   - Detect dns tunneling traffic using a scheduled query
 
@@ -1056,7 +1056,7 @@
 - [Cisco Umbrella Suspicious Domains](../rules/cisco_umbrella_dns_rules/suspicious_domains.yml)
   - Monitor suspicious or known malicious domains
 - [DNS Base64 Encoded Query](../rules/standard_rules/standard_dns_base64.yml)
-  - Detects DNS queries with Base64 encoded subdomains (≥28 chars), which could indicate an attempt to obfuscate data exfil. Excludes common enterprise services (Azure, Google, Microsoft, etc.) that legitimately use Base64-like identifiers.
+  - Detects DNS queries with Base64 encoded subdomains, which could indicate an attempt to obfuscate data exfil.
 - [Malicious SSO DNS Lookup](../rules/standard_rules/malicious_sso_dns_lookup.yml)
   - The rule looks for DNS requests to sites potentially posing as SSO domains.
 
@@ -1140,7 +1140,7 @@
 - [Crowdstrike WMI Query Detection](../rules/crowdstrike_rules/crowdstrike_wmi_query_detection.yml)
   - Detects execution of WMI queries involving information gathering or actions on remote systems, which could indicate reconnaissance or lateral movement.
 - [DNS Base64 Encoded Query](../rules/standard_rules/standard_dns_base64.yml)
-  - Detects DNS queries with Base64 encoded subdomains (≥28 chars), which could indicate an attempt to obfuscate data exfil. Excludes common enterprise services (Azure, Google, Microsoft, etc.) that legitimately use Base64-like identifiers.
+  - Detects DNS queries with Base64 encoded subdomains, which could indicate an attempt to obfuscate data exfil.
 - [DNS request to denylisted domain](../rules/crowdstrike_rules/crowdstrike_dns_request.yml)
   - A DNS request was made to a domain on an explicit denylist
 - [Execution of Command Line Tool with Base64 Encoded Arguments](../rules/crowdstrike_rules/crowdstrike_base64_encoded_args.yml)
