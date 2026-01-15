@@ -1,6 +1,6 @@
 AnalysisType: rule
 DisplayName: "DNS Base64 Encoded Query"
-Description: Detects DNS queries with Base64 encoded subdomains (≥28 chars), which could indicate an attempt to obfuscate data exfil. Excludes common enterprise services (Azure, Google, Microsoft, etc.) that legitimately use Base64-like identifiers.
+Description: Detects DNS queries with Base64 encoded subdomains, which could indicate an attempt to obfuscate data exfil.
 RuleID: "Standard.DNSBase64"
 Enabled: false
 Filename: standard_dns_base64.py
@@ -94,7 +94,7 @@ Tests:
             "ContextThreadId": "43270698197",
             "ContextTimeStamp": "1682275803.172",
             "DnsRequestCount": "1",
-            "DomainName": "VGhpcyBpcyBhIHN1c3BpY2lvdXMgZGF0YSBleGZpbHRyYXRpb24gY2h1bms=.attacker-domain.xyz.",
+            "DomainName": "VGhpcyBpcyBhIHN1c3BpY2lvdXMgZGF0YSBleGZpbHRyYXRpb24gY2h1bms=.example.com.",
             "DualRequest": "0",
             "EffectiveTransmissionClass": "3",
             "Entitlements": "15",
@@ -269,56 +269,4 @@ Tests:
         "p_source_id": "1f33f64c-124d-413c-a9e3-d51ccedd8e77",
         "p_source_label": "Crowdstrike-FDR-Dev",
         "timestamp": "2023-04-23 18:50:05.712",
-      }
-  - Name: Base64 exactly 27 chars - below threshold (Negative)
-    ExpectedResult: false
-    Log:
-      {
-        "account_id": "123456789012",
-        "answers": [{ "Class": "IN", "Rdata": "172.31.46.187", "Type": "A" }],
-        "p_log_type": "AWS.VPCDns",
-        "query_class": "IN",
-        "query_name": "QUFBQUFBQUFBQUFBQUFBQUFBQUE.suspicious.xyz",
-        "query_timestamp": "2023-04-11 01:29:20",
-        "query_type": "A",
-        "rcode": "NOERROR",
-        "region": "us-west-2",
-        "srcaddr": "172.31.46.187",
-        "srcids": { "instance": "i-09d9aa4e31675db61" },
-        "srcport": "36899",
-        "transport": "UDP",
-        "version": "1.100000",
-        "vpc_id": "vpc-c26c48ba",
-      }
-  - Name: Base64 exactly 28 chars - at threshold (Positive)
-    ExpectedResult: true
-    Log:
-      {
-        "account_id": "123456789012",
-        "answers": [{ "Class": "IN", "Rdata": "172.31.46.187", "Type": "A" }],
-        "p_log_type": "AWS.VPCDns",
-        "query_class": "IN",
-        "query_name": "QUFBQUFBQUFBQUFBQUFBQUFBQUFB.malicious.com",
-        "query_timestamp": "2023-04-11 01:29:20",
-        "query_type": "A",
-        "rcode": "NOERROR",
-        "region": "us-west-2",
-        "srcaddr": "172.31.46.187",
-        "srcids": { "instance": "i-09d9aa4e31675db61" },
-        "srcport": "36899",
-        "transport": "UDP",
-        "version": "1.100000",
-        "vpc_id": "vpc-c26c48ba",
-      }
-  - Name: Short alphanumeric 16 chars (Negative)
-    ExpectedResult: false
-    Log:
-      {
-        "action": "Allow",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
-        "timestamp": "2020-05-21 19:20:25.000",
-        "responseCode": "NOERROR",
-        "domain": "componentupdater.someservice.com",
-        "p_log_type": "CiscoUmbrella.DNS",
       }
