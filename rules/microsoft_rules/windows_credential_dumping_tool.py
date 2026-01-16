@@ -27,7 +27,7 @@ CREDENTIAL_DUMPING_TOOLS = {
     "hivedump.exe",
     "kerbrute.exe",
     "sessiongopher.ps1",
-    "GoTokenTheft.exe"
+    "GoTokenTheft.exe",
 }
 
 
