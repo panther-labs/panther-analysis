@@ -1,0 +1,134 @@
+AnalysisType: rule
+Filename: azure_auth_methods_policy_oidc_change.py
+RuleID: "Azure.Audit.OIDC.Changed"
+DisplayName: "Azure Authentication Methods Policy OIDC Discovery URL Changed"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: High
+Description: >
+  Detects modifications to the OIDC discovery URL in Azure Entra ID's Authentication Methods Policy. This technique enables attackers to federate the tenant with attacker-controlled identity providers, bypassing multi-factor authentication and enabling unauthorized access through bring-your-own IdP methods.
+Tags:
+  - Persistence
+  - Modify Authentication Process
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1556
+    - TA0003:T1556.009
+Runbook: |
+  1. Query Azure.Audit logs for all authentication policy changes by properties:initiatedBy:user:userPrincipalName in the 7 days before and after this change to determine if this modification was part of a broader attack campaign
+  2. Immediately verify the new OIDC discovery URL with your identity team to confirm it points to a legitimate identity provider owned by your organization and not an attacker-controlled domain
+  3. Query Azure.Audit and sign-in logs for all authentication events in the 24 hours after the policy change to identify any suspicious token issuance or unauthorized access attempts, and if the modification was unauthorized, immediately revert the authentication methods policy, revoke all active sessions, and review all API access and resource modifications that occurred during the compromise window
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/persistence_entra_id_oidc_discovery_url_change.toml
+SummaryAttributes:
+  - properties:initiatedBy:user:userPrincipalName
+  - properties:targetResources:displayName
+  - properties:initiatedBy:user:ipAddress
+Tests:
+  - Name: Authentication Methods Policy OIDC Discovery URL Changed
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 14:20:35.456",
+        "resourceId": "/tenants/tenant-abc/providers/Microsoft.aadiam",
+        "operationName": "Authentication Methods Policy Update",
+        "operationVersion": "1.0",
+        "category": "Policy",
+        "tenantId": "tenant-abc",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "policy-update-001",
+        "Level": "4",
+        "properties":
+          {
+            "result": "success",
+            "operationName": "Authentication Methods Policy Update",
+            "activityDisplayName": "Update authentication methods policy",
+            "activityDateTime": "2025-01-15T14:20:35.4567890Z",
+            "loggedByService": "Core Directory",
+            "operationType": "Update",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "admin-compromised-001",
+                    "displayName": "Compromised Global Admin",
+                    "userPrincipalName": "denethor@lotr.com",
+                    "ipAddress": "1.2.3.4",
+                  },
+              },
+            "targetResources":
+              [
+                {
+                  "id": "policy-auth-methods-123",
+                  "displayName": "Authentication Methods Policy",
+                  "type": "Policy",
+                  "modifiedProperties":
+                    [
+                      {
+                        "displayName": "OpenIdConnectConfiguration",
+                        "oldValue": "{\"discoveryUrl\":\"https://login.microsoftonline.com/tenant-abc/.well-known/openid-configuration\"}",
+                        "newValue": "{\"discoveryUrl\":\"https://attacker-idp.evil.com/.well-known/openid-configuration\"}",
+                      },
+                    ],
+                },
+              ],
+          },
+        "p_event_time": "2025-01-15 14:20:35.456",
+        "p_log_type": "Azure.Audit",
+      }
+  - Name: Non-OIDC Policy Change
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 15:30:40.789",
+        "resourceId": "/tenants/tenant-xyz/providers/Microsoft.aadiam",
+        "operationName": "Authentication Methods Policy Update",
+        "operationVersion": "1.0",
+        "category": "Policy",
+        "tenantId": "tenant-xyz",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "203.0.113.50",
+        "correlationId": "policy-update-002",
+        "Level": "4",
+        "properties":
+          {
+            "result": "success",
+            "operationName": "Authentication Methods Policy Update",
+            "activityDisplayName": "Update authentication methods policy",
+            "activityDateTime": "2025-01-15T15:30:40.7890123Z",
+            "loggedByService": "Core Directory",
+            "operationType": "Update",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "admin-legitimate-002",
+                    "displayName": "Legitimate Admin",
+                    "userPrincipalName": "admin@company.com",
+                    "ipAddress": "203.0.113.50",
+                  },
+              },
+            "targetResources":
+              [
+                {
+                  "id": "policy-auth-methods-456",
+                  "displayName": "Authentication Methods Policy",
+                  "type": "Policy",
+                  "modifiedProperties":
+                    [
+                      {
+                        "displayName": "PasswordlessMFAEnabled",
+                        "oldValue": "false",
+                        "newValue": "true",
+                      },
+                    ],
+                },
+              ],
+          },
+        "p_event_time": "2025-01-15 15:30:40.789",
+        "p_log_type": "Azure.Audit",
+      }
