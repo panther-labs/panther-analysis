@@ -1,0 +1,45 @@
+AnalysisType: scheduled_rule
+DisplayName: "Google Workspace OAuth Token Requests from New IP"
+DedupPeriodMinutes: 1440
+RuleID: "Google.Workspace.OAuth.Token.New.IP"
+Description: |
+  Alerts when users request OAuth tokens from IP addresses they haven't used in the past 30 days,
+  with 3+ requests indicating active usage. This may indicate GAIA credential theft where attackers
+  use stolen refresh tokens to request access tokens from their infrastructure.
+ScheduledQueries:
+  - Google Workspace OAuth Token Requests from New IPs
+Enabled: true
+Status: Experimental
+Filename: gsuite_oauth_token_new_ip_rule.py
+Reference: https://businessinsights.bitdefender.com/the-chain-reaction-new-methods-for-extending-local-breaches-in-google-workspace
+Runbook: |
+  1. Query GSuite.ActivityEvent for all OAuth token requests (applicationName: "token") by the user in the 24 hours before and after the alert to identify the full scope of token activity from the new IP address
+  2. Check if the new IP address is associated with cloud providers, VPN services, proxy networks, or residential ISPs, and compare its geographic location to the user's typical login locations in the past 30 days
+  3. Search for other authentication anomalies for this user in the past 7 days, including login type changes, rapid multi-IP authentication, password changes, or device compromise warnings
+Severity: Medium
+Tags:
+  - GSuite
+  - Initial Access
+  - Valid Accounts
+  - GAIA
+  - Credential Theft
+  - OAuth
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078.004
+    - TA0006:T1550
+SummaryAttributes:
+  - user
+  - new_ip
+  - app_names
+Tests:
+  - Name: Google Chrome from new IP
+    ExpectedResult: true
+    Log:
+      user: user@example.com
+      new_ip: 1.2.3.4
+      request_count: 5
+      app_names: ["Google Chrome"]
+      client_ids: ["12345.apps.googleusercontent.com"]
+      first_seen: "2024-01-15 10:00:00.000"
+      last_seen: "2024-01-15 10:05:00.000"
