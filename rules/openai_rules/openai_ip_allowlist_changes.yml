@@ -1,0 +1,144 @@
+AnalysisType: rule
+Description: |
+  Detects changes to OpenAI IP allowlist configurations including creation, updates,
+  deletion, activation, and deactivation.
+  IP allowlists restrict API and console access to specific IP addresses or CIDR ranges,
+  providing network-level access control. Changes to IP allowlists can indicate:
+  - Security control removal (deletion/deactivation) - CRITICAL
+  - Addition of dangerous IPs like 0.0.0.0 (updates) - HIGH
+  - Configuration changes for visibility (creation/activation) - MEDIUM
+  Unauthorized modifications can expose the organization to unauthorized access,
+  bypass network security controls, or indicate preparation for malicious activity.
+DisplayName: "OpenAI IP Allowlist Configuration Changes"
+Enabled: true
+Status: Experimental
+Filename: openai_ip_allowlist_changes.py
+Reference: https://platform.openai.com/docs/api-reference/audit-logs
+Runbook: |
+  1. Verify the IP allowlist change was authorized and aligns with approved network security policies. Review the specific IPs added, removed, or modified, and confirm they match expected organizational infrastructure.
+  2. For deletions or deactivations, immediately assess if the organization is now exposed to unauthorized access. For updates, check if dangerous IPs like 0.0.0.0 (allow all), unknown ranges, or suspicious geolocations were added.
+  3. If the change is unauthorized or suspicious, immediately revert the configuration, review all access from non-allowlisted IPs since the change, audit role assignments and API key usage, and escalate for security review.
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.001  # Impair Defenses: Disable or Modify Tools
+    - TA0005:T1562.007  # Impair Defenses: Disable or Modify Cloud Firewall
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 1
+LogTypes:
+  - OpenAI.Audit
+RuleID: "OpenAI.IP.Allowlist.Changes"
+Tests:
+  - Name: "IP allowlist deleted - Alert CRITICAL"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-ip001"
+      type: "ip_allowlist.deleted"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      ip_allowlist_deleted:
+        id: "ipallow_org-abc123"
+        name: "Corporate VPN"
+        allowed_ips:
+          - "203.0.113.0/24"
+          - "198.51.100.0/24"
+  - Name: "IP allowlist deactivated - Alert CRITICAL"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-ip002"
+      type: "ip_allowlist.config.deactivated"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-suspicious001"
+            email: "contractor@external.com"
+          ip_address: "192.0.2.100"
+          user_agent: "curl/7.68.0"
+      ip_allowlist_config_deactivated:
+        configs:
+          - id: "ipallow_org-abc123"
+            name: "Corporate VPN"
+  - Name: "IP allowlist updated with suspicious IP - Alert HIGH"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-ip003"
+      type: "ip_allowlist.updated"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      ip_allowlist_updated:
+        id: "ipallow_org-abc123"
+        allowed_ips:
+          - "0.0.0.0"
+  - Name: "IP allowlist created - Alert MEDIUM"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-ip004"
+      type: "ip_allowlist.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      ip_allowlist_created:
+        id: "ipallow_org-new123"
+        name: "New Office Network"
+        allowed_ips:
+          - "198.51.100.0/24"
+  - Name: "IP allowlist activated - Alert MEDIUM"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-ip005"
+      type: "ip_allowlist.config.activated"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      ip_allowlist_config_activated:
+        configs:
+          - id: "ipallow_org-abc123"
+            name: "Corporate VPN"
+  - Name: "Unrelated event - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-other001"
+      type: "login.succeeded"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-normal001"
+            email: "user@company.com"
+          ip_address: "203.0.113.200"
+          user_agent: "Mozilla/5.0"

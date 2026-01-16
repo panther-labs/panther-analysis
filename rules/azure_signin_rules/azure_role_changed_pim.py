@@ -23,7 +23,7 @@ def title(event):
 
 def dedup(event):
     # Ensure every event is a separate alert
-    return event.get("p_row_id", "<UNKNWON_ROW_ID>")
+    return event.get("p_row_id", "<UNKNOWN_ROW_ID>")
 
 
 def alert_context(event):

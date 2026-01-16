@@ -87,8 +87,8 @@ def gsuite_details_lookup(detail_type, detail_names, event):
 # Standardized alert context for GSuite activity events
 def gsuite_activityevent_alert_context(event):
     return {
-        "actor": event.deep_get("actor", "email", ""),
-        "applicationName": event.deep_get("id", "applicationName", ""),
+        "actor": event.deep_get("actor", "email", default=""),
+        "applicationName": event.deep_get("id", "applicationName", default=""),
         "name": event.get("name", ""),
         "type": event.get("type", ""),
         "parameters": event.get("parameters", {}),

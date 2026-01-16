@@ -1,0 +1,74 @@
+AnalysisType: correlation_rule
+RuleID: "Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError"
+DisplayName: "Azure Storage Blob Upload FOLLOWED BY CPK Encryption Error"
+Enabled: true
+Severity: High
+Status: Experimental
+Description: >
+  Detects potential CPK-based ransomware attacks on Azure Storage by correlating blob
+  uploads with subsequent Customer-Provided Key (CPK) encryption errors on the same blob path.
+  This pattern indicates an attacker has encrypted blobs using CPK and legitimate users
+  are now unable to access their data without the attacker's encryption key.
+  This technique allows attackers to hold data hostage while maintaining access themselves,
+  as only they possess the customer-provided encryption key needed to decrypt the blobs.
+Runbook: |
+  1. Query Azure MonitorActivity logs for all PutBlob operations by the callerIpAddress in the 6 hours before the alert to identify the full scope of encrypted blobs
+  2. Check Azure AD sign-in logs for authentication events from the same callerIpAddress in the 24 hours before the first upload to determine if credentials were compromised
+  3. Search for LISTACCOUNTSAS or LISTKEYS operations on the affected storage_account in the 48 hours before the uploads to identify potential credential theft
+Reference: https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.models.bloberrorcode.blobusescustomerspecifiedencryption?view=azure-dotnet
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1486 # Impact: Data Encrypted for Impact
+    - TA0040:T1490 # Impact: Inhibit System Recovery
+Detection:
+    - Sequence:
+        - ID: Blob Upload
+          RuleID: Azure.MonitorActivity.Storage.Blob.Uploaded
+        - ID: CPK Access Denied
+          RuleID: Azure.MonitorActivity.Storage.Blob.CPKEncryptionDetected
+      Transitions:
+        - ID: Upload to CPK Error on Same Blob
+          From: Blob Upload
+          To: CPK Access Denied
+          WithinTimeFrameMinutes: 60
+          Match:
+            - On: p_alert_context.blob_path
+      Schedule:
+        RateMinutes: 60
+        TimeoutMinutes: 5
+      LookbackWindowMinutes: 120
+Tests:
+  - Name: CPK Ransomware Pattern
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Blob Upload
+        Matches:
+          p_alert_context.blob_path:
+            '/mystorageaccount/test/documents/internal_doc_8.txt.ENCRYPTED':
+              - "2024-12-19T16:32:15Z"
+      - ID: CPK Access Denied
+        Matches:
+          p_alert_context.blob_path:
+            '/mystorageaccount/test/documents/internal_doc_8.txt.ENCRYPTED':
+              - "2024-12-19T16:35:07Z"
+  - Name: Upload Without Subsequent CPK Errors
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Blob Upload
+        Matches:
+          p_alert_context.blob_path:
+            '/mystorageaccount/test/normal_file.txt':
+              - "2024-12-19T16:32:15Z"
+  - Name: CPK Errors On Different Blob Path
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Blob Upload
+        Matches:
+          p_alert_context.blob_path:
+            '/mystorageaccount/test/file1.txt':
+              - "2024-12-19T16:32:15Z"
+      - ID: CPK Access Denied
+        Matches:
+          p_alert_context.blob_path:
+            '/mystorageaccount/test/different_file.txt':
+              - "2024-12-19T16:35:07Z"
