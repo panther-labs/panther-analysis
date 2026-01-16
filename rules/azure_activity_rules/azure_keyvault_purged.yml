@@ -1,0 +1,78 @@
+AnalysisType: rule
+Filename: azure_keyvault_purged.py
+RuleID: "Azure.MonitorActivity.KeyVault.Purged"
+DisplayName: "Azure Key Vault Permanently Purged"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Low
+Status: Experimental
+Description: >
+  Detects when an entire Azure Key Vault is permanently purged.
+  Purging a Key Vault is an irreversible operation that permanently destroys all keys, secrets, and certificates stored within it.
+  This is more destructive than deleting a vault and may indicate ransomware activity or malicious data destruction.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Impact: Data Destruction
+    - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Destruction
+  - Inhibit System Recovery
+  - Ransomware
+Runbook: |
+  1. Query Azure MonitorActivity logs for all Key Vault delete and purge operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple vaults are being targeted
+  2. Check if the callerIpAddress is associated with known cloud providers, VPN services, or threat intelligence indicators
+  3. Search for other Azure resource deletion or purge operations from the same callerIpAddress in the past 7 days to determine the scope of data destruction activity
+Reference: https://learn.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Key Vault Purged Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/mykeyvault",
+        "operationName": "Microsoft.KeyVault/locations/deletedVaults/purge/action",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/providers/Microsoft.KeyVault/locations/westus/deletedVaults/prodvault",
+        "operationName": "microsoft.keyvault/locations/deletedvaults/purge/action",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.KeyVault/vaults/mykeyvault",
+        "operationName": "Microsoft.KeyVault/vaults/delete",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-234567890123",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-210987654321"
+      }

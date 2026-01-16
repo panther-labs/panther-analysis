@@ -1,0 +1,91 @@
+AnalysisType: rule
+Filename: azure_storage_blob_bulk_deletion.py
+RuleID: "Azure.MonitorActivity.Storage.Blob.BulkDeletion"
+DisplayName: "Azure Storage Blob Deletion"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Medium
+Status: Experimental
+Threshold: 15
+DedupPeriodMinutes: 15
+Description: >
+  Detects when blobs are deleted from Azure Storage accounts via the DeleteBlob operation.
+  Multiple deletion events in a short time frame may indicate ransomware activity, data destruction,
+  or malicious insider activity. This rule fires on individual deletions and can be aggregated
+  in Panther to detect bulk deletion patterns by configuring deduplication on storage account
+  or caller IP address.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Impact: Data Destruction
+    - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Destruction
+  - Inhibit System Recovery
+  - Ransomware
+Runbook: |
+  1. Query Azure MonitorActivity logs for all DeleteBlob operations from the callerIpAddress in the 2 hours before and after the alert to identify the deletion pattern and volume
+  2. Find all ListAccountSAS, ListKeys, and PutBlob operations by the same callerIpAddress or p_any_usernames in the 6 hours before the first deletion to identify potential credential theft or ransomware staging
+  3. Check if the callerIpAddress or p_any_usernames have accessed this storage account in the past 90 days to establish if this is expected behavior
+Reference: https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.blobcontainerclient.deleteblob?view=azure-dotnet
+SummaryAttributes:
+  - callerIpAddress
+  - resourceId
+  - p_any_usernames
+Tests:
+  - Name: Successful Blob Deletion
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-19T16:37:59.255Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "DeleteBlob",
+        "callerIpAddress": "5.5.5.5:28915",
+        "location": "eastus",
+        "category": "StorageWrite",
+        "level": "Informational",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "clientRequestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "metricResponseType": "Success",
+          "objectKey": "/mystorageaccount/corporate-files/documents/internal_doc_13.txt",
+          "serverLatencyMs": 22,
+          "serviceType": "blob",
+          "tlsVersion": "TLS 1.3",
+          "userAgentHeader": "AZURECLI/2.79.0 (RPM) azsdk-python-storage-blob/12.16.0 Python/3.12.9 (Linux-6.6.6.6-microsoft-standard-x86_64-with-glibc2.38) cloud-shell/1.0"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-19T16:37:50.733Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "deleteblob",
+        "callerIpAddress": "5.5.5.5:3832",
+        "location": "eastus",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "metricResponseType": "Success",
+          "objectKey": "/mystorageaccount/corporate-files/documents/board_meeting_notes.docx",
+          "userAgentHeader": "AZURECLI/2.79.0 (RPM) azsdk-python-storage-blob/12.16.0 Python/3.12.9"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-19T17:01:29.151Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "GetBlobServiceProperties",
+        "callerIpAddress": "10.0.0.1:42781",
+        "location": "eastus",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "metricResponseType": "Success"
+        },
+        "tenantId": "87654321-4321-4321-4321-210987654321"
+      }

@@ -1,0 +1,77 @@
+AnalysisType: rule
+Filename: azure_diagnostic_settings_deleted.py
+RuleID: "Azure.MonitorActivity.DiagnosticSettings.Deleted"
+DisplayName: "Azure Diagnostic Settings Deleted"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Medium
+Status: Experimental
+Description: >
+  Detects when Azure diagnostic settings are deleted. Deleting diagnostic settings disables logging and monitoring, which is a common technique to hide malicious activity.
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008 # Defense Evasion: Impair Defenses - Disable Cloud Logs
+Tags:
+  - Defense Evasion
+  - Impair Defenses
+  - Disable Cloud Logs
+Runbook: |
+  1. Query Azure Monitor Activity logs for all diagnostic settings and monitoring operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple resources are being de-monitored
+  2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
+  3. Search for other Azure resource modifications or suspicious activities from the same user or IP in the past 7 days to assess if this is part of a defense evasion campaign
+Reference: https://docs.datadoghq.com/security/default_rules/apn-0ib-a6f/
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Diagnostic Settings Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/providers/Microsoft.Insights/diagnosticSettings/mydiagnostics",
+        "operationName": "Microsoft.Insights/diagnosticSettings/delete",
+        "operationVersion": "2021-05-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.KeyVault/vaults/prodvault/providers/Microsoft.Insights/diagnosticSettings/logging",
+        "operationName": "microsoft.insights/diagnosticsettings/delete",
+        "operationVersion": "2021-05-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+
+        "location": "westus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Insights/diagnosticSettings/mydiagnostics",
+        "operationName": "Microsoft.Insights/diagnosticSettings/write",
+        "operationVersion": "2021-05-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "203.0.113.75",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-234567890123",
+
+        "location": "centralus",
+        "tenantId": "87654321-4321-4321-4321-210987654321"
+      }

@@ -1,0 +1,13 @@
+AnalysisType: pack
+PackID: PantherManaged.OpenAI
+Description: Group of all OpenAI detections for monitoring API security, access control, and privileged operations
+PackDefinition:
+  IDs:
+    - OpenAI.Login.Failed
+    - OpenAI.Login.Success
+    # Correlation rules
+    - OpenAI.BruteForce.Login.Success
+    # Globals used in these detections
+    - panther_base_helpers
+
+DisplayName: "Panther OpenAI Pack"

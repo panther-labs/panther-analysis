@@ -1,0 +1,101 @@
+AnalysisType: rule
+Filename: azure_storage_blob_cpk_encryption_detected.py
+RuleID: "Azure.MonitorActivity.Storage.Blob.CPKEncryptionDetected"
+DisplayName: "Azure Storage Blob CPK Encryption Detected"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: High
+Status: Experimental
+Description: >
+  Detects when users attempt to access Azure Storage blobs that are encrypted with
+  Customer-Provided Keys (CPK) but fail because they don't have the encryption key.
+  This may indicate a ransomware operation that is using CPK encryption to hold data hostage,
+  as legitimate users cannot access their own encrypted blobs without the attacker's key.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1486 # Impact: Data Encrypted for Impact
+    - TA0040:T1490 # Impact: Inhibit System Recovery
+Tags:
+  - Impact
+  - Data Encrypted for Impact
+  - Inhibit System Recovery
+  - Ransomware
+Runbook: |
+  1. Query Azure MonitorActivity logs for all PutBlob operations on the affected resourceId in the 48 hours before the first error to identify when files were encrypted and from which callerIpAddress
+  2. Find all ListAccountSAS and ListKeys operations by any callerIpAddress or p_any_usernames in the 7 days before the first PutBlob operation to identify potential credential theft
+  3. Search for all other storage accounts accessed by the same callerIpAddress in the past 24 hours to determine the scope of the attack across the Azure environment
+Reference: https://learn.microsoft.com/en-us/dotnet/api/azure.storage.blobs.models.bloberrorcode.blobusescustomerspecifiedencryption?view=azure-dotnet
+SummaryAttributes:
+  - callerIpAddress
+  - resourceId
+  - p_any_usernames
+Tests:
+  - Name: CPK Encrypted Blob Access Denied
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-19T19:15:07.295Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "category": "StorageRead",
+        "operationName": "GetBlobMetadata",
+        "operationVersion": "2024-11-04",
+        "schemaVersion": "1.0",
+        "statusCode": 409,
+        "statusText": "BlobUsesCustomerSpecifiedEncryption",
+        "durationMs": 4,
+        "callerIpAddress": "1.1.1.1:57485",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "identity": {
+          "type": "SAS",
+          "tokenHash": "key1(EXAMPLE_HASH)"
+        },
+        "location": "westus2",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "userAgentHeader": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/7.7.7.7 Safari/537.36",
+          "serviceType": "blob",
+          "objectKey": "/mystorageaccount/corporate-files/documents/internal_doc_8.txt.ENCRYPTED",
+          "metricResponseType": "ClientOtherError",
+          "serverLatencyMs": 4,
+          "tlsVersion": "TLS 1.3"
+        },
+        "protocol": "HTTPS"
+      }
+  - Name: GetBlobProperties CPK Error
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-19T19:15:07.304Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "category": "StorageRead",
+        "operationName": "GetBlobProperties",
+        "statusCode": 409,
+        "statusText": "BlobUsesCustomerSpecifiedEncryption",
+        "durationMs": 2,
+        "callerIpAddress": "1.1.1.1:57484",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "userAgentHeader": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          "serviceType": "blob",
+          "objectKey": "/mystorageaccount/corporate-files/documents/sensitive_data.xlsx.ENCRYPTED",
+          "metricResponseType": "ClientOtherError"
+        }
+      }
+  - Name: Different Error Code
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-19T19:15:08.173Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "category": "StorageRead",
+        "operationName": "GetBlobMetadata",
+        "statusCode": 403,
+        "statusText": "AuthorizationPermissionMismatch",
+        "callerIpAddress": "1.1.1.1:57484",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "objectKey": "/mystorageaccount/test/documents/file.txt",
+          "metricResponseType": "AuthorizationError"
+        }
+      }

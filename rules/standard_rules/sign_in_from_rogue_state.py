@@ -54,7 +54,7 @@ def get_account_name(event) -> str:
     """Returns the account name."""
     if account_name := event.udm("actor_user"):
         return account_name
-    return "UNKNWON ACCOUNT"
+    return "UNKNOWN ACCOUNT"
 
 
 def is_rogue_state(country_code: str) -> bool:
