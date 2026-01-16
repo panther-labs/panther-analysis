@@ -1,0 +1,217 @@
+AnalysisType: rule
+Description: |
+  Detects Salesforce Bulk API operations that could indicate data exfiltration attempts. The Bulk API allows users to process large volumes of records (up to millions) asynchronously, making it a common vector for data theft.
+
+  This detection triggers on all Bulk API job completions and adjusts severity based on:
+  - Operation type (query operations are highest risk for exfiltration)
+  - Volume of records processed
+  - Entity/object type being accessed
+DisplayName: "Salesforce Bulk API Data Exfiltration"
+Enabled: true
+Filename: salesforce_bulk_data_exfiltration.py
+Status: Experimental
+Runbook: |
+  1. Review the operation type and number of records processed
+  2. Identify if this is expected behavior for the user (data analyst, integration user, etc.)
+  3. Check the user's recent activity for other suspicious patterns
+  4. Verify the source IP is expected for this user
+  5. Review what entity/object was accessed (sensitive data like Contacts, Accounts, etc.)
+  6. Check if data was exported or if this was an internal operation
+  7. If confirmed malicious:
+     - Immediately disable the user's API access
+     - Reset credentials
+     - Review all data accessed in the session
+     - Check for data exfiltration to external systems
+  8. Consider implementing IP restrictions or rate limits for bulk API access
+Reference: https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/
+Severity: Medium
+Tests:
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: BulkApiResultEventStore
+      TIMESTAMP: "2024-01-20 15:45:30.123"
+      TIMESTAMP_DERIVED: "2024-01-20 15:45:30.123"
+      EVENT_DATE: "2024-01-20"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000HyJSw
+      USER_ID_DERIVED: 0055f00000HyJSwXXY
+      USER_NAME: suspicious.user@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 203.45.67.89
+      REQUEST_ID: 9xpIUTyIfTT3ZTL-rTRaN-
+      JOB_ID: 7505f000008xKLmAAM
+      OPERATION_TYPE: query
+      ENTITY_NAME: Contact
+      RECORDS_PROCESSED: 150000
+      NUMBER_OF_BATCHES: 15
+      API_VERSION: "59.0"
+      JOB_TYPE: V2
+      CONCURRENCY_MODE: Parallel
+      p_event_time: "2024-01-20 15:45:30.123"
+      p_parse_time: "2024-01-20 15:46:12.456"
+      p_log_type: Salesforce.BulkApiResultEventStore
+      p_row_id: e2j7h89i1fg3j6i5e7h0j2f8g1i3e5f6
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 203.45.67.89
+      p_any_usernames:
+        - suspicious.user@company.com
+      p_any_actor_ids:
+        - 0055f00000HyJSw
+      p_any_trace_ids:
+        - 9xpIUTyIfTT3ZTL-rTRaN-
+    Name: Large Query Exfiltration - Critical
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: BulkApiResultEventStore
+      TIMESTAMP: "2024-01-21 09:15:22.789"
+      TIMESTAMP_DERIVED: "2024-01-21 09:15:22.789"
+      EVENT_DATE: "2024-01-21"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000IzKTx
+      USER_ID_DERIVED: 0055f00000IzKTxYYZ
+      USER_NAME: data.analyst@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 10.20.30.40
+      REQUEST_ID: 0yqJVUzJgUU4AUM-sTSbO-
+      JOB_ID: 7505f000008xLMnBBN
+      OPERATION_TYPE: query
+      ENTITY_NAME: Account
+      RECORDS_PROCESSED: 25000
+      NUMBER_OF_BATCHES: 3
+      API_VERSION: "58.0"
+      JOB_TYPE: V1
+      CONCURRENCY_MODE: Serial
+      p_event_time: "2024-01-21 09:15:22.789"
+      p_parse_time: "2024-01-21 09:16:05.123"
+      p_log_type: Salesforce.BulkApiResultEventStore
+      p_row_id: f3k8i90j2gh4k7j6f8i1k3g9h2j4f6g7
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 10.20.30.40
+      p_any_usernames:
+        - data.analyst@company.com
+      p_any_actor_ids:
+        - 0055f00000IzKTx
+      p_any_trace_ids:
+        - 0yqJVUzJgUU4AUM-sTSbO-
+    Name: Medium Query Volume - Medium Severity
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: BulkApiResultEventStore
+      TIMESTAMP: "2024-01-22 14:30:45.456"
+      TIMESTAMP_DERIVED: "2024-01-22 14:30:45.456"
+      EVENT_DATE: "2024-01-22"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000JzLUy
+      USER_ID_DERIVED: 0055f00000JzLUyZZA
+      USER_NAME: malicious.actor@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 185.220.101.45
+      REQUEST_ID: 1zrKWV0KhVV5BVN-uUTcP-
+      JOB_ID: 7505f000008xMNoCCO
+      OPERATION_TYPE: delete
+      ENTITY_NAME: Opportunity
+      RECORDS_PROCESSED: 15000
+      NUMBER_OF_BATCHES: 5
+      API_VERSION: "59.0"
+      JOB_TYPE: V2
+      CONCURRENCY_MODE: Parallel
+      p_event_time: "2024-01-22 14:30:45.456"
+      p_parse_time: "2024-01-22 14:31:28.789"
+      p_log_type: Salesforce.BulkApiResultEventStore
+      p_row_id: g4l9j01k3hi5l8k7g9j2l4h0i3k5g7h8
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 185.220.101.45
+      p_any_usernames:
+        - malicious.actor@company.com
+      p_any_actor_ids:
+        - 0055f00000JzLUy
+      p_any_trace_ids:
+        - 1zrKWV0KhVV5BVN-uUTcP-
+    Name: Bulk Delete Operation - High Severity
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: BulkApiResultEventStore
+      TIMESTAMP: "2024-01-23 11:20:15.789"
+      TIMESTAMP_DERIVED: "2024-01-23 11:20:15.789"
+      EVENT_DATE: "2024-01-23"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000KzMVz
+      USER_ID_DERIVED: 0055f00000KzMVzAAB
+      USER_NAME: integration.service@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 192.168.1.100
+      REQUEST_ID: 2AsLXW1LiWW6CWO-vVUdQ-
+      JOB_ID: 7505f000008xNOpDDP
+      OPERATION_TYPE: insert
+      ENTITY_NAME: Lead
+      RECORDS_PROCESSED: 5000
+      NUMBER_OF_BATCHES: 1
+      API_VERSION: "59.0"
+      JOB_TYPE: V2
+      CONCURRENCY_MODE: Parallel
+      p_event_time: "2024-01-23 11:20:15.789"
+      p_parse_time: "2024-01-23 11:21:02.123"
+      p_log_type: Salesforce.BulkApiResultEventStore
+      p_row_id: h5m0k12l4ij6m9l8h0k3m5i1j4l6h8i9
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 192.168.1.100
+      p_any_usernames:
+        - integration.service@company.com
+      p_any_actor_ids:
+        - 0055f00000KzMVz
+      p_any_trace_ids:
+        - 2AsLXW1LiWW6CWO-vVUdQ-
+    Name: Normal Insert Operation - Low Severity
+  - ExpectedResult: false
+    Log:
+      EVENT_TYPE: Login
+      TIMESTAMP: "2024-01-24 10:30:15.789"
+      TIMESTAMP_DERIVED: "2024-01-24 10:30:15.789"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000LzNWA
+      USER_ID_DERIVED: 0055f00000LzNWABBC
+      USER_NAME: normal.user@company.com
+      USER_TYPE: Standard
+      LOGIN_STATUS: LOGIN_NO_ERROR
+      SOURCE_IP: 10.10.10.10
+      REQUEST_ID: 3BtMYX2MjXX7DXP-wWVeR-
+      API_VERSION: "59.0"
+      BROWSER_TYPE: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+      p_event_time: "2024-01-24 10:30:15.789"
+      p_parse_time: "2024-01-24 10:31:02.123"
+      p_log_type: Salesforce.Login
+      p_row_id: i6n1l23m5jk7n0m9i1l4n6j2k5m7i9j0
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 10.10.10.10
+      p_any_usernames:
+        - normal.user@company.com
+      p_any_actor_ids:
+        - 0055f00000LzNWA
+      p_any_trace_ids:
+        - 3BtMYX2MjXX7DXP-wWVeR-
+    Name: Normal Login Event - Not Bulk API
+DedupPeriodMinutes: 60
+LogTypes:
+  - Salesforce.RealtimeEvent
+RuleID: "Salesforce.BulkAPI.DataExfiltration"
+Threshold: 1
+Tags:
+  - Salesforce
+  - Data Exfiltration
+  - Bulk API
+  - Insider Threat
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567  # Exfiltration: Exfiltration Over Web Service
+    - TA0009:T1530  # Collection: Data from Cloud Storage Object
+    - TA0010:T1020  # Exfiltration: Automated Exfiltration

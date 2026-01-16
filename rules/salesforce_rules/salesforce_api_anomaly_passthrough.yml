@@ -1,0 +1,171 @@
+AnalysisType: rule
+Description: "Salesforce Real-Time Event Monitoring has detected anomalous API activity. This could indicate compromised credentials, automated abuse, data exfiltration attempts, or other suspicious API usage patterns."
+DisplayName: "Salesforce API Anomaly Detection (RET Passthrough)"
+Enabled: true
+Filename: salesforce_api_anomaly_passthrough.py
+Status: Experimental
+Runbook: |
+  1. Review the anomaly score and summary to understand what triggered the alert
+  2. Investigate the user's recent API activity in Salesforce EventLogFile
+  3. Check if the source IP is expected for this user
+  4. Review session details and authentication method
+  5. Look for other anomalous activity from the same user or session
+  6. If confirmed malicious, reset user credentials and review data access
+  7. Consider enabling additional API monitoring or rate limiting
+Reference: https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/sforce_api_objects_apianomalyevent.htm
+Severity: Medium
+Tests:
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ApiAnomalyEventStore
+      TIMESTAMP: "2024-01-15 14:23:45.123"
+      TIMESTAMP_DERIVED: "2024-01-15 14:23:45.123"
+      EVENT_DATE: "2024-01-15"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000CyENt
+      USER_ID_DERIVED: 0055f00000CyENtAAN
+      USERNAME: suspicious.user@company.com
+      USER_TYPE: Standard
+      SESSION_KEY: fJ8kL2drc73p8/Wk
+      SOURCE_IP: 45.67.89.123
+      REQUEST_ID: 5tlEQPuEcPPzVPH-nPNWK-
+      SCORE: 85.5
+      SUMMARY: "Unusual API query volume and pattern detected"
+      SECURITY_EVENT_DATA: '{"anomaly_type":"volume","threshold_exceeded":true,"queries_per_hour":1250}'
+      p_event_time: "2024-01-15 14:23:45.123"
+      p_parse_time: "2024-01-15 14:24:12.456"
+      p_log_type: Salesforce.ApiAnomalyEventStore
+      p_row_id: a8f3d45e7bc9f2e1a3d6f8b4c7e9a1b2
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 45.67.89.123
+      p_any_usernames:
+        - suspicious.user@company.com
+      p_any_actor_ids:
+        - 0055f00000CyENt
+      p_any_trace_ids:
+        - 5tlEQPuEcPPzVPH-nPNWK-
+    Name: High Score API Anomaly Detected
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ApiAnomalyEventStore
+      TIMESTAMP: "2024-01-16 09:15:22.789"
+      TIMESTAMP_DERIVED: "2024-01-16 09:15:22.789"
+      EVENT_DATE: "2024-01-16"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000DzFPu
+      USER_ID_DERIVED: 0055f00000DzFPuBBP
+      USERNAME: api.service@company.com
+      USER_TYPE: Standard
+      SESSION_KEY: gK9mM3esc84q9/Xl
+      SOURCE_IP: 203.45.67.89
+      REQUEST_ID: 6umFRQvFdQQ0WQI-oQOXL-
+      SCORE: 42.3
+      SUMMARY: "Atypical API access time and geolocation"
+      SECURITY_EVENT_DATA: '{"anomaly_type":"geolocation","expected_country":"US","actual_country":"RU"}'
+      p_event_time: "2024-01-16 09:15:22.789"
+      p_parse_time: "2024-01-16 09:16:05.123"
+      p_log_type: Salesforce.ApiAnomalyEventStore
+      p_row_id: b9g4e56f8cd0g3f2b4e7g9c5d8f0b2c3
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 203.45.67.89
+      p_any_usernames:
+        - api.service@company.com
+      p_any_actor_ids:
+        - 0055f00000DzFPu
+      p_any_trace_ids:
+        - 6umFRQvFdQQ0WQI-oQOXL-
+    Name: Medium Score Geolocation Anomaly
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ApiAnomalyEventStore
+      TIMESTAMP: "2024-01-17 16:45:33.456"
+      TIMESTAMP_DERIVED: "2024-01-17 16:45:33.456"
+      EVENT_DATE: "2024-01-17"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000EzGQv
+      USER_ID_DERIVED: 0055f00000EzGQvCCP
+      USERNAME: data.export@company.com
+      USER_TYPE: Standard
+      SESSION_KEY: hL0nN4ftd95r0/Ym
+      SOURCE_IP: 192.168.1.100
+      REQUEST_ID: 7vnGSRwGeRR1XRJ-pRPYM-
+      SCORE: 95.8
+      SUMMARY: "Large data extraction detected"
+      SECURITY_EVENT_DATA: '{"anomaly_type":"data_exfiltration","records_accessed":50000,"threshold":5000}'
+      p_event_time: "2024-01-17 16:45:33.456"
+      p_parse_time: "2024-01-17 16:46:18.789"
+      p_log_type: Salesforce.ApiAnomalyEventStore
+      p_row_id: c0h5f67g9de1h4g3c5f8h0d6e9g1c3d4
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 192.168.1.100
+      p_any_usernames:
+        - data.export@company.com
+      p_any_actor_ids:
+        - 0055f00000EzGQv
+      p_any_trace_ids:
+        - 7vnGSRwGeRR1XRJ-pRPYM-
+    Name: Critical Data Exfiltration Anomaly
+  - ExpectedResult: false
+    Log:
+      API_TYPE: ""
+      API_VERSION: "59.0"
+      AUTHENTICATION_METHOD_REFERENCE: ""
+      BROWSER_TYPE: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+      CIPHER_SUITE: ECDHE-RSA-AES256-GCM-SHA384
+      CLIENT_IP: 10.10.10.10
+      CPU_TIME: 15
+      DB_TOTAL_TIME: 1.8e+07
+      EVENT_TYPE: Login
+      LOGIN_KEY: IMwYW6cv9ydaPrRm
+      LOGIN_STATUS: LOGIN_NO_ERROR
+      ORGANIZATION_ID: 00D5f000005uVo7
+      REQUEST_ID: 8woHTSxHfSS2YSK-qSQZN-
+      REQUEST_STATUS: Success
+      RUN_TIME: 38
+      SESSION_KEY: jM2oO5gue06s2/Zo
+      SOURCE_IP: 10.10.10.10
+      TIMESTAMP: "2024-01-18 10:30:15.789"
+      TIMESTAMP_DERIVED: "2024-01-18 10:30:15.789"
+      TLS_PROTOCOL: TLSv1.3
+      URI: /home.jsp
+      USER_ID: 0055f00000FzHRw
+      USER_ID_DERIVED: 0055f00000FzHRwDDP
+      USER_NAME: normal.user@company.com
+      USER_TYPE: Standard
+      p_event_time: "2024-01-18 10:30:15.789"
+      p_parse_time: "2024-01-18 10:31:02.123"
+      p_log_type: Salesforce.Login
+      p_row_id: d1i6g78h0ef2i5h4d6g9i1e7f0h2d4e5
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 10.10.10.10
+      p_any_usernames:
+        - normal.user@company.com
+      p_any_actor_ids:
+        - 0055f00000FzHRw
+      p_any_trace_ids:
+        - 8woHTSxHfSS2YSK-qSQZN-
+    Name: Normal Login Event - Not Anomaly
+DedupPeriodMinutes: 60
+LogTypes:
+  - Salesforce.RealtimeEvent
+RuleID: "Salesforce.API.Anomaly.Passthrough"
+Threshold: 1
+Tags:
+  - Salesforce
+  - API Security
+  - Real-Time Event Monitoring
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078  # Initial Access: Valid Accounts
+    - TA0006:T1110  # Credential Access: Brute Force
+    - TA0009:T1530  # Collection: Data from Cloud Storage Object
+    - TA0010:T1567  # Exfiltration: Exfiltration Over Web Service
