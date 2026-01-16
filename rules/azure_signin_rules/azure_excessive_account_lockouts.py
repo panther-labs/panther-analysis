@@ -19,9 +19,11 @@ def rule(event):
 
 
 def title(event):
-    resource_id = event.get("resourceId", "<UNKNOWN_RESOURCE>")
+    user_principal_name = event.deep_get(
+        "properties", "userPrincipalName", default="<UNKNOWN_USER>"
+    )
 
-    return f"Excessive Account Lockouts Detected on [{resource_id}]"
+    return f"Excessive Account Lockouts Detected for [{user_principal_name}]"
 
 
 def alert_context(event):

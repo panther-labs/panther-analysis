@@ -30,9 +30,10 @@ def rule(event):
         return False
 
     # Only track events with actual risk
-    risk_state = event.deep_get("properties", "riskState", default="<UNKNOWN_RISK_STATE>").lower()
-    if risk_state not in RISK_STATES:
+    risk_state = event.deep_get("properties", "riskState", default="")
+    if not risk_state or risk_state.lower() not in RISK_STATES:
         return False
+    risk_state = risk_state.lower()
 
     # Check risk levels
     risk_level_during = event.deep_get("properties", "riskLevelDuringSignIn", default="").lower()

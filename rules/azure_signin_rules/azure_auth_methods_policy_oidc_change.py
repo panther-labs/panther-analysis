@@ -20,12 +20,17 @@ def rule(event):
     if len(old_values) != len(new_values):
         # Lists have different lengths; check all values to be safe
         for value in old_values + new_values:
-            if "discoveryUrl" in value:
+            if isinstance(value, str) and "discoveryUrl" in value:
                 return True
         return False
 
     for old_value, new_value in zip(old_values, new_values):
-        if "discoveryUrl" in old_value and "discoveryUrl" in new_value:
+        if (
+            isinstance(old_value, str)
+            and isinstance(new_value, str)
+            and "discoveryUrl" in old_value
+            and "discoveryUrl" in new_value
+        ):
             if old_value != new_value:
                 return True
 
@@ -72,7 +77,9 @@ def alert_context(event):
         new_values = [new_values] if new_values else []
 
     for old_value, new_value in zip(old_values, new_values):
-        if "discoveryUrl" in old_value or "discoveryUrl" in new_value:
+        if (isinstance(old_value, str) and "discoveryUrl" in old_value) or (
+            isinstance(new_value, str) and "discoveryUrl" in new_value
+        ):
             context["old_discovery_url"] = old_value
             context["new_discovery_url"] = new_value
             break

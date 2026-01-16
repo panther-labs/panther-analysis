@@ -30,31 +30,27 @@ def title(event):
 
 def alert_context(event):
     # Build context for audit logs (not sign-in logs)
-    fields = {
-        "tenantId": ("tenantId", "<NO_TENANTID>"),
-        "operation_name": ("operationName", "<NO_OPERATION>"),
-        "activity_display_name": ("properties", "activityDisplayName", "<NO_ACTIVITY>"),
-        "category": ("category", "<NO_CATEGORY>"),
-        "result": ("properties", "result", "<NO_RESULT>"),
-        "actor_user": ("properties", "initiatedBy", "user", "userPrincipalName", "<NO_ACTOR>"),
-        "initiator_user_id": ("properties", "initiatedBy", "user", "id", "<NO_USER_ID>"),
-        "initiator_display_name": (
-            "properties",
-            "initiatedBy",
-            "user",
-            "displayName",
-            "<NO_DISPLAY_NAME>",
+    context = {
+        "tenantId": event.get("tenantId", "<NO_TENANTID>"),
+        "operation_name": event.get("operationName", "<NO_OPERATION>"),
+        "activity_display_name": event.deep_get(
+            "properties", "activityDisplayName", default="<NO_ACTIVITY>"
         ),
-        "source_ip": ("properties", "initiatedBy", "user", "ipAddress", "<NO_IP>"),
+        "category": event.get("category", "<NO_CATEGORY>"),
+        "result": event.deep_get("properties", "result", default="<NO_RESULT>"),
+        "actor_user": event.deep_get(
+            "properties", "initiatedBy", "user", "userPrincipalName", default="<NO_ACTOR>"
+        ),
+        "initiator_user_id": event.deep_get(
+            "properties", "initiatedBy", "user", "id", default="<NO_USER_ID>"
+        ),
+        "initiator_display_name": event.deep_get(
+            "properties", "initiatedBy", "user", "displayName", default="<NO_DISPLAY_NAME>"
+        ),
+        "source_ip": event.deep_get(
+            "properties", "initiatedBy", "user", "ipAddress", default="<NO_IP>"
+        ),
     }
-
-    context = {}
-    for key, field_path in fields.items():
-        *path, default = field_path
-        if len(path) > 1:
-            context[key] = event.deep_get(*path, default=default)
-        else:
-            context[key] = event.get(path[0], default)
 
     # Add target service principal details
     target_resources = event.deep_get("properties", "targetResources", default=[])
