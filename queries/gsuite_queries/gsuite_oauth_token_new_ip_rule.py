@@ -1,3 +1,15 @@
+import re
+
+
+def normalize_username(email):
+    if not email:
+        return None
+    # Extract username before @ symbol
+    username = email.split("@")[0] if "@" in email else email
+    # Remove all non-alphanumeric characters and convert to lowercase
+    return re.sub(r"[^a-z0-9]", "", username.lower())
+
+
 def rule(_):
     return True
 
@@ -13,8 +25,10 @@ def title(event):
 
 
 def alert_context(event):
+    user = event.get("user")
     return {
-        "user": event.get("user"),
+        "user": user,
+        "username_normalized": normalize_username(user),
         "new_ip": event.get("new_ip"),
         "request_count": event.get("request_count"),
         "app_names": event.get("app_names"),

@@ -8,20 +8,23 @@ def rule(event):
     app_name = event.deep_get("id", "applicationName", default="")
     event_name = event.get("name")
 
+    if app_name != "token" or event_name != "authorize":
+        return False
+
     # Handle both list and string formats
     if scopes and isinstance(scopes, str):
         scopes = [scopes]
 
-    return all(
-        [
-            app_name == "token",
-            event_name == "authorize",
-            any(
-                scope_url.split("/")[-1].lower() in [ps.lower() for ps in PRIVILEGED_SCOPES]
-                for scope_url in scopes
-            ),
-        ]
-    )
+    # Check if any scope matches privileged scopes
+    privileged_scopes_lower = [ps.lower() for ps in PRIVILEGED_SCOPES]
+
+    for scope_url in scopes:
+        # Extract the last part of the scope URL (e.g., "admin.directory.user" from full URL)
+        scope_name = scope_url.split("/")[-1].lower()
+        if scope_name in privileged_scopes_lower:
+            return True
+
+    return False
 
 
 def title(event):

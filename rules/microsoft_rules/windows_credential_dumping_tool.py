@@ -60,7 +60,8 @@ def rule(event):
         return False
 
     # Extract just the filename from the full path
-    process_filename = process_name.lower().split("\\")[-1]
+    # Handle both backslash and forward slash separators, and UNC paths
+    process_filename = process_name.lower().replace("/", "\\").split("\\")[-1]
 
     return process_filename in CREDENTIAL_DUMPING_TOOLS
 
@@ -68,20 +69,32 @@ def rule(event):
 def title(event):
     extra_data = event.get("ExtraEventData", {})
     process_name = extra_data.get("NewProcessName", "") or extra_data.get("Image", "")
-    process_filename = process_name.lower().split("\\")[-1] if process_name else "<UNKNOWN>"
+    if process_name:
+        process_filename = process_name.lower().replace("/", "\\").split("\\")[-1]
+    else:
+        process_filename = "<UNKNOWN>"
 
     computer = event.get("Computer", "<UNKNOWN_HOST>")
 
     # Try to extract username from process path (e.g., C:\Users\jdoe\...)
     username = "<UNKNOWN_USER>"
     if process_name:
-        parts = process_name.split("\\")
-        try:
-            users_index = [p.lower() for p in parts].index("users")
-            if users_index + 1 < len(parts):
-                username = parts[users_index + 1]
-        except (ValueError, IndexError):
-            # Fall back to SID if path doesn't contain \Users\
+        # Normalize path separators for consistent parsing
+        normalized_path = process_name.replace("/", "\\")
+        parts = normalized_path.split("\\")
+        parts_lower = [p.lower() for p in parts]
+
+        # Check for standard Windows user profile path
+        if "users" in parts_lower:
+            try:
+                users_index = parts_lower.index("users")
+                if users_index + 1 < len(parts) and parts[users_index + 1]:
+                    username = parts[users_index + 1]
+            except (ValueError, IndexError):
+                pass
+
+        # Fall back to SID if username not extracted from path
+        if username == "<UNKNOWN_USER>":
             username = event.get("UserID", "<UNKNOWN_USER>")
 
     return (
@@ -97,13 +110,19 @@ def alert_context(event):
     # Extract username from process path or fall back to SID
     username = None
     if process_name:
-        parts = process_name.split("\\")
-        try:
-            users_index = [p.lower() for p in parts].index("users")
-            if users_index + 1 < len(parts):
-                username = parts[users_index + 1]
-        except (ValueError, IndexError):
-            pass
+        # Normalize path separators for consistent parsing
+        normalized_path = process_name.replace("/", "\\")
+        parts = normalized_path.split("\\")
+        parts_lower = [p.lower() for p in parts]
+
+        # Check for standard Windows user profile path
+        if "users" in parts_lower:
+            try:
+                users_index = parts_lower.index("users")
+                if users_index + 1 < len(parts) and parts[users_index + 1]:
+                    username = parts[users_index + 1]
+            except (ValueError, IndexError):
+                pass
 
     return {
         "computer": event.get("Computer"),
