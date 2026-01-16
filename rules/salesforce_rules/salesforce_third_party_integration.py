@@ -19,8 +19,8 @@ def title(event):
 
 def severity(event):
     # Map based on connection type and context
-    connection_type = event.get("CONNECTION_TYPE", "").lower()
-    app_name = event.get("CONNECTED_APP_NAME", "").lower()
+    connection_type = str(event.get("CONNECTION_TYPE", "")).lower()
+    app_name = str(event.get("CONNECTED_APP_NAME", "")).lower()
 
     # OAuth refresh token grants are sensitive (persistent access)
     if "refresh" in connection_type:
@@ -31,8 +31,12 @@ def severity(event):
         return "MEDIUM"
 
     # Unknown or suspicious app names
-    suspicious_keywords = ["test", "dev", "temp", "demo", "unknown"]
-    if any(keyword in app_name for keyword in suspicious_keywords):
+    # Check for common test/development naming patterns that may indicate
+    # non-production or unapproved apps
+    suspicious_keywords = ["test", "dev", "temp", "demo", "unknown", "sandbox", "trial"]
+    # Only flag if the app name starts with or exactly matches these keywords
+    # to reduce false positives from legitimate apps containing these terms
+    if any(app_name.startswith(keyword) or app_name == keyword for keyword in suspicious_keywords):
         return "MEDIUM"
 
     return "DEFAULT"

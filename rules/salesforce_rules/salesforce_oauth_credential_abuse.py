@@ -10,7 +10,7 @@ def rule(event):
         "ApiConnectedApp",
     ]
 
-    return event_type in oauth_events or "oauth" in event_type.lower()
+    return event_type in oauth_events or "oauth" in str(event_type).lower()
 
 
 def title(event):
@@ -31,7 +31,7 @@ def title(event):
 def severity(event):
     # Map based on event type and context
     event_type = event.get("EVENT_TYPE", "")
-    status = event.get("STATUS", "").lower()
+    status = str(event.get("STATUS", "")).lower()
 
     # Token revocation may indicate compromise
     if "Revoked" in event_type:
@@ -43,6 +43,8 @@ def severity(event):
 
     # Excessive API usage may indicate abuse
     api_calls = event.get("API_TOTAL_COUNT", 0)
+    # Ensure api_calls is numeric
+    api_calls = api_calls if isinstance(api_calls, (int, float)) else 0
     if api_calls > 10000:
         return "HIGH"
     if api_calls > 5000:

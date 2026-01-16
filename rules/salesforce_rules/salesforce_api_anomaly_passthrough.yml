@@ -5,14 +5,14 @@ Enabled: true
 Filename: salesforce_api_anomaly_passthrough.py
 Status: Experimental
 Runbook: |
-  1. Review the anomaly score and summary to understand what triggered the aler
+  1. Review the anomaly score and summary to understand what triggered the alert
   2. Investigate the user's recent API activity in Salesforce EventLogFile
   3. Check if the source IP is expected for this user
   4. Review session details and authentication method
   5. Look for other anomalous activity from the same user or session
   6. If confirmed malicious, reset user credentials and review data access
   7. Consider enabling additional API monitoring or rate limiting
-Reference: https://help.salesforce.com/s/articleView?id=sf.real_time_event_monitoring_api_anomaly.htm
+Reference: https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/sforce_api_objects_apianomalyevent.htm
 Severity: Medium
 Tests:
   - ExpectedResult: true
@@ -22,7 +22,7 @@ Tests:
       TIMESTAMP_DERIVED: "2024-01-15 14:23:45.123"
       EVENT_DATE: "2024-01-15"
       ORGANIZATION_ID: 00D5f000005uVo7
-      USER_ID: 0055f00000CyEN
+      USER_ID: 0055f00000CyENt
       USER_ID_DERIVED: 0055f00000CyENtAAN
       USERNAME: suspicious.user@company.com
       USER_TYPE: Standard
@@ -43,7 +43,7 @@ Tests:
       p_any_usernames:
         - suspicious.user@company.com
       p_any_actor_ids:
-        - 0055f00000CyEN
+        - 0055f00000CyENt
       p_any_trace_ids:
         - 5tlEQPuEcPPzVPH-nPNWK-
     Name: High Score API Anomaly Detected
@@ -167,5 +167,5 @@ Reports:
   MITRE ATT&CK:
     - TA0001:T1078  # Initial Access: Valid Accounts
     - TA0006:T1110  # Credential Access: Brute Force
-    - TA0009:T1530  # Collection: Data from Cloud Storage Objec
+    - TA0009:T1530  # Collection: Data from Cloud Storage Object
     - TA0010:T1567  # Exfiltration: Exfiltration Over Web Service

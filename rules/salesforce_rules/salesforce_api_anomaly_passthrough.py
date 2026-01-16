@@ -17,6 +17,8 @@ def severity(event):
     # Map anomaly score to Panther severity
     # Salesforce scores range from 0-100, higher = more anomalous
     score = event.get("SCORE", 0)
+    # Ensure score is numeric
+    score = score if isinstance(score, (int, float)) else 0
 
     if score >= 80:
         return "CRITICAL"

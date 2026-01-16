@@ -12,13 +12,15 @@ def title(event):
     records = event.get("RECORDS_PROCESSED", 0)
     entity = event.get("ENTITY_NAME", "<UNKNOWN_ENTITY>")
 
-    return f"Salesforce Bulk API: {operation} on {entity} " f"({records:,} records) - User: {user}"
+    return f"Salesforce Bulk API: {operation} on {entity} ({records:,} records) - User: {user}"
 
 
 def severity(event):
     # Map based on operation type and volume
     operation = event.get("OPERATION_TYPE", "")
     records = event.get("RECORDS_PROCESSED", 0)
+    # Ensure records is numeric
+    records = records if isinstance(records, (int, float)) else 0
 
     # Query operations are most concerning for data exfiltration
     if operation in ["query", "queryAll"]:
