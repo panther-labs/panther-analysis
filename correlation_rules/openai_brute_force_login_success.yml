@@ -1,0 +1,102 @@
+AnalysisType: correlation_rule
+RuleID: "OpenAI.BruteForce.Login.Success"
+DisplayName: "OpenAI Brute Force Login Success"
+Enabled: true
+Severity: High
+Description: |
+  Detects successful credential stuffing or brute force attacks against OpenAI accounts.
+  This rule identifies when a user account experiences 5 or more failed login attempts
+  followed by a successful login within 30 minutes. This pattern indicates:
+  - Successful credential stuffing attack
+  - Successful brute force attack
+  - Compromised user credentials
+  - Automated attack tools successfully gaining access
+  The correlation is performed by matching on the user email address to track attempts
+  against the same account across multiple failed attempts and the eventual success.
+Reference: https://platform.openai.com/docs/api-reference/audit-logs
+Runbook: |
+  1. Verify if the successful login was legitimate by contacting the user via a trusted out-of-band channel to confirm they logged in. Review the failed login attempts including source IPs, geolocations, user agents, and timing patterns for anomalies.
+  2. If the login is confirmed as unauthorized, immediately disable the compromised account, force password reset, revoke all active sessions and API keys, and review all actions taken by the account since the successful login.
+  3. Investigate potential breach scope by checking if the same IP targeted multiple accounts, reviewing API key modifications, auditing role assignments and permission changes, and checking for data exfiltration or suspicious API usage.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1110  # Brute Force
+    - TA0006:T1110.001  # Password Guessing
+    - TA0006:T1110.003  # Password Spraying
+    - TA0006:T1110.004  # Credential Stuffing
+Detection:
+  - Sequence:
+      - ID: Multiple Failed Logins
+        RuleID: OpenAI.Login.Failed
+        MinMatchCount: 5
+      - ID: Successful Login
+        RuleID: OpenAI.Login.Success
+    Transitions:
+      - ID: Multiple Failed Logins FOLLOWED BY Successful Login
+        From: Multiple Failed Logins
+        To: Successful Login
+        WithinTimeFrameMinutes: 30
+        Match:
+          - On: p_any_emails
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 5
+    LookbackWindowMinutes: 2160
+Tests:
+  - Name: "5 Failed Logins FOLLOWED BY Successful Login"
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          p_any_emails:
+            "user@company.com": [0, 2, 4, 6, 8]
+      - ID: Successful Login
+        Matches:
+          p_any_emails:
+            "user@company.com": [10]
+  - Name: "5 Failed Logins FOLLOWED BY Successful Login - Different User"
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          p_any_emails:
+            "user@company.com": [0, 2, 4, 6, 8]
+      - ID: Successful Login
+        Matches:
+          p_any_emails:
+            "other@company.com": [10]
+  - Name: "Only 3 Failed Logins FOLLOWED BY Success"
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          p_any_emails:
+            "user@company.com": [0, 2, 4]
+      - ID: Successful Login
+        Matches:
+          p_any_emails:
+            "user@company.com": [6]
+  - Name: "5 Failed Logins FOLLOWED BY Success After 35 Minutes"
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          p_any_emails:
+            "user@company.com": [0, 2, 4, 6, 8]
+      - ID: Successful Login
+        Matches:
+          p_any_emails:
+            "user@company.com": [45]
+  - Name: "Multiple Users - Only One Triggers"
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: Multiple Failed Logins
+        Matches:
+          p_any_emails:
+            "user@company.com": [0, 2, 4, 6, 8]
+            "other@company.com": [1, 3]
+      - ID: Successful Login
+        Matches:
+          p_any_emails:
+            "user@company.com": [10]
+            "other@company.com": [11]

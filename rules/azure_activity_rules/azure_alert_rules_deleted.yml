@@ -1,0 +1,94 @@
+AnalysisType: rule
+Filename: azure_alert_rules_deleted.py
+RuleID: "Azure.MonitorActivity.AlertRules.Deleted"
+DisplayName: "Azure Alert Rules Deleted"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Medium
+Status: Experimental
+Description: >
+  Detects when Azure alert rules are deleted. Deleting alert rules disables security notifications and is a common defense evasion technique.
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008 # Defense Evasion: Impair Defenses - Disable Cloud Logs
+Tags:
+  - Defense Evasion
+  - Impair Defenses
+  - Disable Cloud Logs
+Runbook: |
+  1. Query Azure Monitor Activity logs for all alert rule and notification operations by the callerIpAddress in the 24 hours before and after this alert to identify if multiple alerts are being deleted
+  2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
+  3. Search for other Azure monitoring or security configuration changes from the same user or IP in the past 7 days to assess if this is part of a defense evasion campaign
+Reference: https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/alerts-manage-alert-rules
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Alert Rule Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Insights/alertRules/myalert",
+        "operationName": "Microsoft.Insights/alertRules/delete",
+        "operationVersion": "2016-03-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Metric Alert Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T11:45:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Insights/metricAlerts/cpualert",
+        "operationName": "Microsoft.Insights/metricAlerts/delete",
+        "operationVersion": "2018-03-01",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "1.2.3.4",
+        "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
+
+        "location": "westus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T12:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/security-rg/providers/Microsoft.Insights/metricAlerts/securityalert",
+        "operationName": "microsoft.insights/metricalerts/delete",
+        "operationVersion": "2018-03-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-222222222222",
+
+        "location": "centralus",
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T13:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Insights/alertRules/myalert",
+        "operationName": "Microsoft.Insights/alertRules/write",
+        "operationVersion": "2016-03-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "203.0.113.75",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-234567890123",
+
+        "location": "westeurope",
+
+        tenantId": "87654321-4321-4321-4321-210987654321"
+      }

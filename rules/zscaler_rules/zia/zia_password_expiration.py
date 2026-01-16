@@ -10,13 +10,13 @@ def rule(event):
         "event",
         "preaction",
         "passwordExpirationEnabled",
-        default="<PRE_PASSWORD_EXPIRATION_NOT_FOUND>",
+        default="",
     )
     password_exp_post = event.deep_get(
         "event",
         "postaction",
         "passwordExpirationEnabled",
-        default="<POST_PASSWORD_EXPIRATION_NOT_FOUND>",
+        default="",
     )
     if action == "UPDATE" and category == "LOGIN" and password_exp_pre != password_exp_post:
         return True
@@ -25,7 +25,7 @@ def rule(event):
 
 def title(event):
     return (
-        f"[Zscaler.ZIA]: SAML configuration was changed by admin with id "
+        f"[Zscaler.ZIA]: Password expiration setting was changed by admin with id "
         f"[{event.deep_get('event', 'adminid', default='<ADMIN_ID_NOT_FOUND>')}]"
     )
 
