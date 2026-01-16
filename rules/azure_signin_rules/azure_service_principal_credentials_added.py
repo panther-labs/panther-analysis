@@ -49,10 +49,12 @@ def alert_context(event):
     }
 
     context = {}
-    for key, (*path, default) in fields.items():
-        context[key] = (
-            event.deep_get(*path, default=default) if len(path) > 1 else event.get(path[0], default)
-        )
+    for key, field_path in fields.items():
+        *path, default = field_path
+        if len(path) > 1:
+            context[key] = event.deep_get(*path, default=default)
+        else:
+            context[key] = event.get(path[0], default)
 
     # Add target service principal details
     target_resources = event.deep_get("properties", "targetResources", default=[])

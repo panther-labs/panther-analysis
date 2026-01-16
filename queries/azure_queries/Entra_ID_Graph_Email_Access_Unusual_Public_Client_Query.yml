@@ -15,7 +15,18 @@ Query: |-
   {% import 'anomalies' new_unique_values %}
 
   with subquery as (
-      SELECT *
+      SELECT
+        p_event_time,
+        category,
+        properties:UserPrincipalObjectID AS user_principal_object_id,
+        properties:appId AS app_id,
+        properties:C_Idtyp AS identity_type,
+        properties:clientAuthMethod AS client_auth_method,
+        properties:responseStatusCode AS response_status_code,
+        properties:requestMethod AS request_method,
+        properties:requestUri AS request_uri,
+        properties:scopes AS scopes,
+        properties
       FROM panther_logs.public.azure_audit
       WHERE
         p_occurs_since('14 day')
@@ -35,5 +46,6 @@ Query: |-
           OR properties:scopes::string ILIKE '%Mail.Send%'
           OR properties:scopes::string ILIKE '%email%'
         )
+      LIMIT 10000
   ),
-  {{ new_unique_values('subquery', 'properties:UserPrincipalObjectID', 'properties:appId', '1h') }}
+  {{ new_unique_values('subquery', 'user_principal_object_id', 'app_id', '1h') }}

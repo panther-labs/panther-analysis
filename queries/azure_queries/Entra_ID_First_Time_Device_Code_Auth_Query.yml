@@ -13,7 +13,17 @@ Query: |-
   {% import 'anomalies' new_unique_values %}
 
   with subquery as (
-      SELECT *
+      SELECT
+        p_event_time,
+        operationName,
+        category,
+        resultType,
+        properties:userPrincipalName AS user_principal_name,
+        properties:authenticationProtocol AS authentication_protocol,
+        properties:originalTransferMethod AS original_transfer_method,
+        properties:appDisplayName AS app_display_name,
+        properties:ipAddress AS ip_address,
+        properties
       FROM panther_logs.public.azure_audit
       WHERE
         p_occurs_since('14 day')
@@ -24,5 +34,6 @@ Query: |-
           properties:authenticationProtocol::string = 'deviceCode'
           OR properties:originalTransferMethod::string ILIKE '%device%code%'
         )
+      LIMIT 10000
   ),
-  {{ new_unique_values('subquery', 'properties:userPrincipalName', 'properties:authenticationProtocol', '1h') }}
+  {{ new_unique_values('subquery', 'user_principal_name', 'authentication_protocol', '1h') }}

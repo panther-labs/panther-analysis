@@ -20,6 +20,12 @@ def rule(event):
         if not isinstance(new_values, list):
             new_values = [new_values] if new_values else []
 
+        if len(display_names) != len(new_values):
+            # Lists have different lengths; check all values
+            if "LiveType" in display_names and any("Federated" in val for val in new_values):
+                return True
+            return False
+
         # Check if the same property has displayName="LiveType" AND newValue contains "Federated"
         for display_name, new_value in zip(display_names, new_values):
             if display_name == "LiveType" and "Federated" in new_value:

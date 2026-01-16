@@ -13,7 +13,15 @@ Query: |-
   {% import 'anomalies' new_unique_values %}
 
   with subquery as (
-      SELECT *
+      SELECT
+        p_event_time,
+        operationName,
+        category,
+        properties:initiatedBy:user:userPrincipalName AS user_principal_name,
+        properties:additionalDetails:key AS additional_details_key,
+        properties:additionalDetails:value AS app_id,
+        properties:result AS result,
+        properties
       FROM panther_logs.public.azure_audit
       WHERE
         p_occurs_since('14 day')
@@ -21,5 +29,6 @@ Query: |-
         AND operationName = 'Consent to application'
         AND properties:result::string = 'success'
         AND ARRAY_CONTAINS('AppId'::VARIANT, properties:additionalDetails:key)
+      LIMIT 10000
   ),
-  {{ new_unique_values('subquery', 'properties:initiatedBy:user:userPrincipalName', 'properties:additionalDetails:value', '1h') }}
+  {{ new_unique_values('subquery', 'user_principal_name', 'app_id', '1h') }}

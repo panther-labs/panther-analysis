@@ -17,7 +17,13 @@ def rule(event):
     if not isinstance(new_values, list):
         new_values = [new_values] if new_values else []
 
-    # Check if discoveryUrl changed
+    if len(old_values) != len(new_values):
+        # Lists have different lengths; check all values to be safe
+        for value in old_values + new_values:
+            if "discoveryUrl" in value:
+                return True
+        return False
+
     for old_value, new_value in zip(old_values, new_values):
         if "discoveryUrl" in old_value and "discoveryUrl" in new_value:
             if old_value != new_value:

@@ -15,7 +15,7 @@ def rule(event):
     user_principal_name = event.deep_get("properties", "userPrincipalName", default="")
 
     # Exclude Microsoft ASN
-    return all([error_code == 50053, asn not in MICROSOFT_ASNS, user_principal_name is not None])
+    return all([error_code == 50053, asn not in MICROSOFT_ASNS, user_principal_name])
 
 
 def title(event):
