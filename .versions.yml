@@ -541,9 +541,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.yml
-    sha256: 5e21b458205c890755d91b243606ad71fa70f666baadb813c91fe8d26a3f3435
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_ses_check_send_quota.yml
+    sha256: a52455f5fbe42c52e0a154d848fbad78d82dec5173bca38ac6c4f1820849611d
     type: rule
-    version: 1
+    version: 2
   AWS.CloudTrail.SES.ListIdentities:
     history:
       1:
@@ -2651,9 +2655,13 @@ versions:
         commit_hash: c611d6ef0183833e3e82881750c70a25b0dc90be
         py_file_path: rules/aws_eks_rules/anonymous_api_access.py
         yaml_file_path: rules/aws_eks_rules/anonymous_api_access.yml
-    sha256: c98cd50a38c343b03a6d70af637aa33a6dfdbc0b027be4b6165ef6c0692c1bce
+      3:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/aws_eks_rules/anonymous_api_access.py
+        yaml_file_path: rules/aws_eks_rules/anonymous_api_access.yml
+    sha256: 3d5e773aecda3d0fb36dc13bfce8e0100b8d02d50659ef771cf4b809175ca8f3
     type: rule
-    version: 2
+    version: 3
   Amazon.EKS.Audit.Multiple403:
     history:
       1:
@@ -3145,8 +3153,497 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/azure_signin_rules/azure_role_changed_pim.py
         yaml_file_path: rules/azure_signin_rules/azure_role_changed_pim.yml
-    sha256: 07b9a673aebe3445f79668ec8902e33563c056b46c5781f10bb5ae96b06c5dc0
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_signin_rules/azure_role_changed_pim.py
+        yaml_file_path: rules/azure_signin_rules/azure_role_changed_pim.yml
+    sha256: caaf19414f41f054b90f4120dfce8644dc133bd2ecd7ea73e520b3719a52d882
     type: rule
+    version: 2
+  Azure.MonitorActivity.ActionGroups.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_action_groups_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_action_groups_deleted.yml
+    sha256: 5589fcf881a7e13c656a2e312e2a74d8e6addcd53413ba6aef0be70770fe2db9
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Advisor.SecurityRecommendation:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_advisor_security_recommendation.py
+        yaml_file_path: rules/azure_activity_rules/azure_advisor_security_recommendation.yml
+    sha256: 4dd5723c9fde231247932cb5414ae90aaeb0749d07a1b2ae718d674d5492e0e2
+    type: rule
+    version: 1
+  Azure.MonitorActivity.AlertRules.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_alert_rules_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_alert_rules_deleted.yml
+    sha256: 82adf98d263dc9d53f52eb3cd7e7f4097f8658d24676684e2e942e7162eea86c
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.AccountCreated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_automation_account_created.py
+        yaml_file_path: rules/azure_activity_rules/azure_automation_account_created.yml
+    sha256: 9de65e5d9ef4ca5fed12570d61668644d40ac41e1cd443f29e3745c57dfda329
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.RunbookCreatedOrModified:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_automation_runbook_created_or_modified.py
+        yaml_file_path: rules/azure_activity_rules/azure_automation_runbook_created_or_modified.yml
+    sha256: 7b21e9426ebf46f0d271cd79967343a67c844f766092f657dded071b7343b1af
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.RunbookDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_automation_runbook_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_automation_runbook_deleted.yml
+    sha256: da53e5f0d61718a15ba3ed3331ad2d06058160818d473b9cd347cfb8bc58b7c4
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.ScheduleCreated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_automation_schedule_created.py
+        yaml_file_path: rules/azure_activity_rules/azure_automation_schedule_created.yml
+    sha256: 985c30dfa0201f3cdf610c1919d4a77d67097ea6113fdc0560653e3023e1769d
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.ServerlessExecution:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_serverless_execution.py
+        yaml_file_path: rules/azure_activity_rules/azure_serverless_execution.yml
+    sha256: 4222a9059a76c7a3ca4e57746689dc842fe31cf6cc03b8e998f9367b291e6fe5
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Automation.WebhookCreated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_automation_webhook_created.py
+        yaml_file_path: rules/azure_activity_rules/azure_automation_webhook_created.yml
+    sha256: eefb1270abfc5c792c8971d2e5aa2b776a3266da08fb3b2da6d213ed0b2226df
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Compute.DiskDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_disk_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_disk_deleted.yml
+    sha256: fba482be7280820c266ea14de05538f8ae23c85f5395f783b8618f4039719331
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Compute.DiskSASURIGenerated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_vm_disk_sas_uri_generated.py
+        yaml_file_path: rules/azure_activity_rules/azure_vm_disk_sas_uri_generated.yml
+    sha256: 427931afc039f7c9a647c74e182f1755115dce9394e14aa8a0aa48da49317957
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Compute.RestorePointCollectionDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_restore_point_collection_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_restore_point_collection_deleted.yml
+    sha256: 9491eda09c5d15d7a4f2346de1314d4525d3d064240833c63deee4b13afcb6db
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Compute.SnapshotDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_vm_snapshot_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_vm_snapshot_deleted.yml
+    sha256: 6e5f09336394350db807db3218514da724ca86da5a345b439c407387e2e4faab
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Compute.VMCommandExecuted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_vm_command_executed.py
+        yaml_file_path: rules/azure_activity_rules/azure_vm_command_executed.yml
+    sha256: 68d9b2fb37d4d7bff496312ff9b062baa75560c122d8d05b1872987340ed3ef6
+    type: rule
+    version: 1
+  Azure.MonitorActivity.DiagnosticSettings.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_diagnostic_settings_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_diagnostic_settings_deleted.yml
+    sha256: 95e9ee66bc9a569422fc6cfdd023b577f248f0eff004b5f7cc4f70dd48109d7c
+    type: rule
+    version: 1
+  Azure.MonitorActivity.EventHub.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_event_hub_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_event_hub_deleted.yml
+    sha256: 15b0348d5cb0862c97a58d0a661e4dac3eb346c6f50141c182401603b294e538
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.CertificateAccessed:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_certificate_accessed.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_certificate_accessed.yml
+    sha256: 403d0a3d43f9d85996464233c96433045e40366a31de07d309122e3bddd3aec9
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_deleted.yml
+    sha256: 19e7151ab7f88403bf9821b39edc3d19a45541b06ff932206715bb4e86f16965
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.KeyAccessed.Recovered:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_key_accessed_or_recovered.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_key_accessed_or_recovered.yml
+    sha256: 6fd56d4c071e20cba6f081548d09e82d63e4dbb64782bf2c8338aad7896c7a0f
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.KeyPurged:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_key_purged.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_key_purged.yml
+    sha256: 644cc850fb0ebd9f6e520ee68a40df60e1630aa74e878a8d5da5117d58eb4469
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.Purged:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_purged.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_purged.yml
+    sha256: 17a3895425356a1d92d7cedc3573be15614b915b91314253ee6b5a1a53212bd4
+    type: rule
+    version: 1
+  Azure.MonitorActivity.KeyVault.SecretAccessedOrRecovered:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_keyvault_secret_accessed_or_recovered.py
+        yaml_file_path: rules/azure_activity_rules/azure_keyvault_secret_accessed_or_recovered.yml
+    sha256: 0778813cc7f0905311c52e205650204f12577aa8c761581275ffa4ece88ef304
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Kubernetes.RoleBindingCreated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_kubernetes_rolebinding_created.py
+        yaml_file_path: rules/azure_activity_rules/azure_kubernetes_rolebinding_created.yml
+    sha256: 10787a2a266a35f398e0327c1fcb7966cf01faa46b903d2057d6ddb49e4841a2
+    type: rule
+    version: 1
+  Azure.MonitorActivity.LogAnalyticsWorkspace.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_log_analytics_workspace_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_log_analytics_workspace_deleted.yml
+    sha256: 4d91a277eed575189ff8efe80ff7a0dab6845ae3ab564ddd754e0815e3dc5142
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.FirewallPolicyDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_firewall_policy_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_firewall_policy_deleted.yml
+    sha256: 225493634d8ba754927f16dd437e4915a8eda0e7a272827f2ae2b33c6dd7a2ea
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.IPDiscovery:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_network_ip_discovery.py
+        yaml_file_path: rules/azure_activity_rules/azure_network_ip_discovery.yml
+    sha256: 8537e7d56c8932b18c93b6f7b02904359a2f2d13d262528e553c21e61f45e006
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.NSGModifiedOrDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_nsg_deleted_or_modified.py
+        yaml_file_path: rules/azure_activity_rules/azure_nsg_deleted_or_modified.yml
+    sha256: 98ea3d4e6ed870a0fc81fe4da01926168c64f955dd5a35ec4a84bdd384bb16c3
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.PacketCaptureEnabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_network_packet_capture_enabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_network_packet_capture_enabled.yml
+    sha256: 07ed7770909199c3ed8dd5ab856d679de978aa163b35b6d62f9dda542cb210e9
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.PortMapping:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_network_port_mapping.py
+        yaml_file_path: rules/azure_activity_rules/azure_network_port_mapping.yml
+    sha256: 9a05a256a69f6ed3c2b2d965a7d2e0da48006cb44003617263f92ae88587795c
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.VNetDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_virtual_network_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_virtual_network_deleted.yml
+    sha256: 2a009852b8c5d69dc8ae73cc3dcce9847016544f5db13c18b2db86ffee1ecb6e
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Network.WatcherDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_network_watcher_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_network_watcher_deleted.yml
+    sha256: 46b06dd9c57fa057ede83b19a53eaf71000199535e60427dddd50a197494d212
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Policy.DeployIfNotExists:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_policy_deployifnotexists.py
+        yaml_file_path: rules/azure_activity_rules/azure_policy_deployifnotexists.yml
+    sha256: b76cb50f7df64d312dfa0d46aa637a9c31ae16bdf132a106f5905c0a6509ad74
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Policy.Violation:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_policy_violation.py
+        yaml_file_path: rules/azure_activity_rules/azure_policy_violation.yml
+    sha256: fdbe84edb45e5a4241c7f0255c5e015b2d8333d036e93bd575711e2be07f4ac5
+    type: rule
+    version: 1
+  Azure.MonitorActivity.ResourceGroup.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_resource_group_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_resource_group_deleted.yml
+    sha256: fe40459ee5b1a116524fe96c8264f1407ff373dc162557eaa851ec799a974f09
+    type: rule
+    version: 1
+  Azure.MonitorActivity.RoleAssignment.PrivilegedOrElevated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_role_assignment_privileged_or_elevated.py
+        yaml_file_path: rules/azure_activity_rules/azure_role_assignment_privileged_or_elevated.yml
+    sha256: 5c789fd348c26a694f4f34cf33a2137083f4ba314c3b34db6c6c6c170adae6fa
+    type: rule
+    version: 1
+  Azure.MonitorActivity.SQL.ServerDeleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_sql_server_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_sql_server_deleted.yml
+    sha256: 4ae68a426cce3cf451ae9d0988a7fda2f257ef70e9373eed7936470fbe433805
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Security.AlertSuppressionRuleCreated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_alert_suppression_rule_created.py
+        yaml_file_path: rules/azure_activity_rules/azure_alert_suppression_rule_created.yml
+    sha256: 34b72b719e64147caa93bdb56fa3b75665b0cebb323409d2b33bead0c7d9c21c
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Storage.Blob.BulkDeletion:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_bulk_deletion.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_bulk_deletion.yml
+    sha256: 16202436f1317ea5af76b24471714df18b18d35d952c09196fedbf1a08a86075
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Storage.Blob.CPKEncryptionDetected:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_cpk_encryption_detected.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_cpk_encryption_detected.yml
+    sha256: ca46f3df84ea521e3c232510b9f7bb024af45b0617ddab3f0e03951686a63d03
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Storage.Blob.Uploaded:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_uploaded.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_uploaded.yml
+    sha256: cb5bbd8d589f1d23b1cadaa8b87dc5c3782546796e1fd87bd176fdec783169a7
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Storage.BlobPermissionsModified:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_permissions_modified.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_permissions_modified.yml
+    sha256: aaac0c2aa35d9a540c07f9b61691e5bbefb7a9d8466424f57644c59c2ffe07f8
+    type: rule
+    version: 1
+  Azure.MonitorActivity.Storage.FileShareModified:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_fileshare_modified.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_fileshare_modified.yml
+    sha256: 7e9004da7cd73967ba761416da696294210da83cbdf2a7c20d456807d5d3b9c8
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.BlobAnonymousAccessEnabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_anonymous_access_enabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_anonymous_access_enabled.yml
+    sha256: 53020c6cf47c222e8d80a445948fb56ecdd27a4e62a6d4775ab426502882d892
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.BlobSoftDeleteDisabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_blob_soft_delete_disabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_blob_soft_delete_disabled.yml
+    sha256: 1c48c086592b243efa064aefcf01178c35dc62390e711f8fd13f188fb150efec
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.ContainerSoftDeleteDisabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_container_soft_delete_disabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_container_soft_delete_disabled.yml
+    sha256: 978f3ff6dacbaf7807e3352e919d56f5fd0f187c6c67fa91ae2430517fb28eef
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_deleted.yml
+    sha256: 84123e63882e581b7d0506dde5f190abfa24de8ae6e9c0d81c2f00d447f208b8
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.HttpsOnlyDisabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_https_only_disabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_https_only_disabled.yml
+    sha256: a9d4c8841fb76ff11171c1c0cca550c39cbdf1d191807e5b2007535e72ebf743
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.KeyRegenerated:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_key_regenerated.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_key_regenerated.yml
+    sha256: 361b7ce6ae6d4e3e2392d410643bde59b58f5c178d1d170dc5d32696308178f9
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.KeysListed:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_keys_listed.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_keys_listed.yml
+    sha256: 34a45e7c92f3999ab63403955c6b723e7dc056504bffbd1854406cee785d5868
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.PublicNetworkAccessEnabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_public_network_access_enabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_public_network_access_enabled.yml
+    sha256: 8f695270a6dfbed412137daa39b5d20713a43ea2543b8c6c15a2908ca2af69af
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.SharedKeyAccessEnabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_key_access_enabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_key_access_enabled.yml
+    sha256: 1313c9313a5cac07c07ea8e95c92dbc5205aedb3ac3dace92bccf41678c7cdc2
+    type: rule
+    version: 1
+  Azure.MonitorActivity.StorageAccount.VersioningDisabled:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_storage_account_versioning_disabled.py
+        yaml_file_path: rules/azure_activity_rules/azure_storage_account_versioning_disabled.yml
+    sha256: 0ca36141b255606d2848906d13f0d5f9719ca292b3f55ba513cdf02a383c41d8
+    type: rule
+    version: 1
+  Azure.MonitorActivity.VirtualMachine.Deleted:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/azure_activity_rules/azure_vm_deleted.py
+        yaml_file_path: rules/azure_activity_rules/azure_vm_deleted.yml
+    sha256: ffff0a346f26a937a94f7fd1504da3d3a1241f968f183f627b97d6a6d73b3a05
+    type: rule
+    version: 1
+  Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        yaml_file_path: correlation_rules/azure_storage_cpk_ransomware.yml
+    sha256: b313e41171be858fb7d6b9b5fc2c70343f0dab7debdfcc4dcb7a636f7db9d68f
+    type: correlation_rule
     version: 1
   Box.Access.Granted:
     history:
@@ -3408,9 +3905,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_admin_role_assigned.py
         yaml_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_admin_role_assigned.yml
-    sha256: e1ac5ebb44e9409b94a662854845b71b69ad3c8ad7033fc36379b9e29da6fb67
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_admin_role_assigned.py
+        yaml_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_admin_role_assigned.yml
+    sha256: dc64c7c53fbbc35dcd2045529c808a53860004d60783090238b58b93db2e554c
     type: rule
-    version: 1
+    version: 2
   Crowdstrike.AllowlistRemoved:
     history:
       1:
@@ -3541,9 +4042,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_new_user_created.py
         yaml_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_new_user_created.yml
-    sha256: b60f490d1c3cddbcc6b0cda72115ca44781f4ed6f14de5aeb3b40a0012868d2b
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_new_user_created.py
+        yaml_file_path: rules/crowdstrike_rules/event_stream_rules/crowdstrike_new_user_created.yml
+    sha256: 816adcd8fee12e0dea026246a45f2d7f0b249521eec8df3185448d223c95baae
     type: rule
-    version: 1
+    version: 2
   Crowdstrike.RealTimeResponse.Session:
     history:
       1:
@@ -4181,9 +4686,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gcp_audit_rules/gcp_iam_corp_email.py
         yaml_file_path: rules/gcp_audit_rules/gcp_iam_corp_email.yml
-    sha256: b42181caf9e155192d7276b8efb3dbf2174b4afa6bfed3ea3f5ef6ad3ccf51dd
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/gcp_audit_rules/gcp_iam_corp_email.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_iam_corp_email.yml
+    sha256: d2ef42e3dff0390caaeddec0577a592a7d0af5d7645b9792672e70637b82ea6e
     type: rule
-    version: 1
+    version: 2
   GCP.IAM.CustomRoleChanges:
     history:
       1:
@@ -4336,9 +4845,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.py
         yaml_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml
-    sha256: a9067dc6b20df8e5a58a2375c5b5e94c44e0cf3988d1713ed39cc03ccba38b2f
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.py
+        yaml_file_path: rules/gcp_k8s_rules/gcp_k8s_pod_using_host_pid_namespace.yml
+    sha256: cde55e8a08017f304b64c336788e9c30220b7aa15d8b7280393437e6f54a9930
     type: rule
-    version: 1
+    version: 2
   GCP.KMS.BulkEncryption:
     history:
       1:
@@ -4381,9 +4894,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.py
         yaml_file_path: rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.yml
-    sha256: 264e61e5b4aa1b1dd9f4524d067a8770d552e5084db9bbe54e5e404d43b058c7
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.py
+        yaml_file_path: rules/gcp_audit_rules/gcp_log_bucket_or_sink_deleted.yml
+    sha256: 569cd26449d8013b909564dd24f3bd48b5a926fc4010317bd534b48f1769778c
     type: rule
-    version: 1
+    version: 2
   GCP.Logging.Settings.Modified:
     history:
       1:
@@ -4762,9 +5279,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gsuite_activityevent_rules/gsuite_spam_email.py
         yaml_file_path: rules/gsuite_activityevent_rules/gsuite_spam_email.yml
-    sha256: a212c8f5f49e2a2e1150ad20c09b893db8eba40c4a3332b7a0cb8f379a70b16d
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/gsuite_activityevent_rules/gsuite_spam_email.py
+        yaml_file_path: rules/gsuite_activityevent_rules/gsuite_spam_email.yml
+    sha256: a7fe5061b139b0374b5056c3737226e0d7a1ab7b163b939127acf2c95163ebc1
     type: rule
-    version: 1
+    version: 2
   GSuite.Gmail.SpamEmail.AttachmentDownload:
     history:
       1:
@@ -4816,9 +5337,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.py
         yaml_file_path: rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml
-    sha256: a61e33e559a93fedd24f7d6beb931682ee532e05477424d2f4e68219fc621f3c
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.py
+        yaml_file_path: rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml
+    sha256: 92bd965791d6471e40b13552d87604563c76772b97e1b39424ec75d31e020734
     type: rule
-    version: 1
+    version: 2
   GSuite.LeakedPassword:
     history:
       1:
@@ -5972,9 +6497,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/notion_rules/notion_login_from_new_location.py
         yaml_file_path: rules/notion_rules/notion_login_from_new_location.yml
-    sha256: c6affabf1d079230fb2b4a36b5bce2b5e65dd4b15871a51736affe82f95f161f
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/notion_rules/notion_login_from_new_location.py
+        yaml_file_path: rules/notion_rules/notion_login_from_new_location.yml
+    sha256: 4892ca2270dc8cd29da7db37f4e1d4a6c35133f28b5e6dfc932f3ccea239dd36
     type: rule
-    version: 1
+    version: 2
   Notion.Many.Pages.Deleted:
     history:
       1:
@@ -6571,6 +7100,68 @@ versions:
     sha256: 1947bc22af3d59ba30aa4c630d77cc5ac698df53cf1049e1859066f7eed3f516
     type: rule
     version: 1
+  OpenAI.API.Key.Anomalous.Activity:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_api_key_anomalous_activity.py
+        yaml_file_path: rules/openai_rules/openai_api_key_anomalous_activity.yml
+    sha256: afc78339711b719a54d309b2b472e447f803e175df23f4bc6ea1556ef627157e
+    type: rule
+    version: 1
+  OpenAI.Admin.Role.Assignment:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_admin_role_assignment.py
+        yaml_file_path: rules/openai_rules/openai_admin_role_assignment.yml
+    sha256: 39e75def8e7145e4e475d71724ce8289405b1787d7593d38ebeba156036ae023
+    type: rule
+    version: 1
+  OpenAI.BruteForce.Login.Success:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        yaml_file_path: correlation_rules/openai_brute_force_login_success.yml
+    sha256: d09c0ffdeb51d6862a46f9704b05a103d4f17a87dac3b2afe76763ce7cb00c09
+    type: correlation_rule
+    version: 1
+  OpenAI.IP.Allowlist.Changes:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_ip_allowlist_changes.py
+        yaml_file_path: rules/openai_rules/openai_ip_allowlist_changes.yml
+    sha256: 3e4a492c305f9505176b964794bd7ecba24cdd78771e981543babd5f274e84f1
+    type: rule
+    version: 1
+  OpenAI.Login.Failed:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_login_failed.py
+        yaml_file_path: rules/openai_rules/openai_login_failed.yml
+    sha256: cad188e17f21841223698a75c7a08a6f9332440cb93d0260fb1e64071edd4aea
+    type: rule
+    version: 1
+  OpenAI.Login.Success:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_login_success.py
+        yaml_file_path: rules/openai_rules/openai_login_success.yml
+    sha256: d8a143bf2a22be25c99ca730e8b8dfae23a991a5378db8f9091dbefbc2604663
+    type: rule
+    version: 1
+  OpenAI.SCIM.Configuration.Change:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/openai_rules/openai_scim_configuration_change.py
+        yaml_file_path: rules/openai_rules/openai_scim_configuration_change.yml
+    sha256: 6cd051eeb25f323b87f864acc39b7c82a781cf81ee8740158f921a9ecfac6699
+    type: rule
+    version: 1
   Orca.Passthrough:
     history:
       1:
@@ -6721,9 +7312,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/panther_audit_rules/panther_sensitive_role_created.py
         yaml_file_path: rules/panther_audit_rules/panther_sensitive_role_created.yml
-    sha256: 8ba96939461ece32695bc85056073ae4dafbb7a7182b572bc9391731ec589ae6
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/panther_audit_rules/panther_sensitive_role_created.py
+        yaml_file_path: rules/panther_audit_rules/panther_sensitive_role_created.yml
+    sha256: d619b53f4b294b681fd67c57c08f9079622993236c1ec2e0b2ba7ba1001d01e8
     type: rule
-    version: 1
+    version: 2
   Panther.User.Modified:
     history:
       1:
@@ -6809,6 +7404,14 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/axonius.yml
     sha256: 9f0ab60aee1c7af7e81a2cf061eab290ea250100a76b9103154d267bcb20e44b
+    type: pack
+    version: 1
+  PantherManaged.Azure.MonitorActivity:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        yaml_file_path: packs/azure_activity.yml
+    sha256: ae45a73f2c4a35a6fbf3ebb273475dd3834f23f31cd8871ba040fecd54d8e9b0
     type: pack
     version: 1
   PantherManaged.AzureAudit.Signin:
@@ -7035,6 +7638,14 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/onepassword.yml
     sha256: b13e961d93951b0983b5b2ed8c13cd4a3d83a72ef5bdf8d7164d01198e97e8ba
+    type: pack
+    version: 1
+  PantherManaged.OpenAI:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        yaml_file_path: packs/openai.yml
+    sha256: 5f2c8e5a3fba80b4d63fd1485b8c30c83cae67d13c5c2eaa20c97f914c79f351
     type: pack
     version: 1
   PantherManaged.Orca.Alert:
@@ -7761,9 +8372,13 @@ versions:
         commit_hash: 4eb1c0af52bb468553e4b4db39c065abd77c9023
         py_file_path: rules/slack_rules/slack_passthrough_anomaly.py
         yaml_file_path: rules/slack_rules/slack_passthrough_anomaly.yml
-    sha256: dada78d46d2aa3767614b9ae0c4a6fcd31afc88f2bbd6a008c448c0a7a9bba9b
+      3:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/slack_rules/slack_passthrough_anomaly.py
+        yaml_file_path: rules/slack_rules/slack_passthrough_anomaly.yml
+    sha256: bc903d3d9592a0fdbb8bed8daa8f1362ecc3344df5619d38be019879be318243
     type: rule
-    version: 2
+    version: 3
   Slack.AuditLogs.PotentiallyMaliciousFileShared:
     history:
       1:
@@ -8026,9 +8641,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/snowflake_rules/snowflake_stream_public_role_grant.py
         yaml_file_path: rules/snowflake_rules/snowflake_stream_public_role_grant.yml
-    sha256: 48befad80569d9c946f695be7c0c1295ae8517f64775e8957917126fb446ca9d
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/snowflake_rules/snowflake_stream_public_role_grant.py
+        yaml_file_path: rules/snowflake_rules/snowflake_stream_public_role_grant.yml
+    sha256: 808c3432de218f74d75e691769e0ba5e37105f021af76a8783df28f83449cd77
     type: rule
-    version: 1
+    version: 2
   Snowflake.Stream.SuspiciousSession.UnusualApp:
     history:
       1:
@@ -8446,9 +9065,13 @@ versions:
         commit_hash: c611d6ef0183833e3e82881750c70a25b0dc90be
         py_file_path: rules/standard_rules/impossible_travel_login.py
         yaml_file_path: rules/standard_rules/impossible_travel_login.yml
-    sha256: 9a3c4d16f4f41c78c5cc5df2843e92c751f1d83d428e98d1dda6b61bd322702e
+      3:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/standard_rules/impossible_travel_login.py
+        yaml_file_path: rules/standard_rules/impossible_travel_login.yml
+    sha256: 5d0f78c9d117f063063ec5596b8fecfd95b5051ea14db505d250286a7c040377
     type: rule
-    version: 2
+    version: 3
   Standard.MFADisabled:
     history:
       1:
@@ -8569,9 +9192,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/standard_rules/sign_in_from_rogue_state.py
         yaml_file_path: rules/standard_rules/sign_in_from_rogue_state.yml
-    sha256: 738b9144b0e355f886b99e573004b17efe951cef95d9715b3afff95ac9be4d2f
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/standard_rules/sign_in_from_rogue_state.py
+        yaml_file_path: rules/standard_rules/sign_in_from_rogue_state.yml
+    sha256: 517abaf8980fc6b719508564aec436fa2e4080809fd6f18090da6dd96def968f
     type: rule
-    version: 1
+    version: 2
   Standard.Slack.AccessLogs:
     history:
       1:
@@ -9251,18 +9878,26 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/zscaler_rules/zia/zia_password_expiration.py
         yaml_file_path: rules/zscaler_rules/zia/zia_password_expiration.yml
-    sha256: d6a12de7513d391a4741ced9cdf49ea359546bce621f5b4ead6b35c13d729d64
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/zscaler_rules/zia/zia_password_expiration.py
+        yaml_file_path: rules/zscaler_rules/zia/zia_password_expiration.yml
+    sha256: 9dc02d6602c613e52ee9b5b62049019381e159632b2cf7ef6fe6b2c2253994f4
     type: rule
-    version: 1
+    version: 2
   ZIA.Trust.Modification:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/zscaler_rules/zia/zia_trust_modification.py
         yaml_file_path: rules/zscaler_rules/zia/zia_trust_modification.yml
-    sha256: 170e5b7a4f1778eae6ea34e841fa4a70285de090ea6dbf3f5a79f4a051083962
+      2:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: rules/zscaler_rules/zia/zia_trust_modification.py
+        yaml_file_path: rules/zscaler_rules/zia/zia_trust_modification.yml
+    sha256: 1311c70eedc872e52920aa300b4ac788de3af1079d26de7dc3a153ee4f78f395
     type: rule
-    version: 1
+    version: 2
   Zendesk.AccountOwnerChanged:
     history:
       1:
@@ -9507,6 +10142,15 @@ versions:
     sha256: ffb58073ea1aec142a36201b7edcc12257c6d78114125ba012d738858a1dcd03
     type: global
     version: 1
+  panther_azureactivity_helpers:
+    history:
+      1:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: global_helpers/panther_azureactivity_helpers.py
+        yaml_file_path: global_helpers/panther_azureactivity_helpers.yml
+    sha256: 8d19169ffe70730eb2acd4ee85a90c4dd4bbcd2427120afd47067e291091a581
+    type: global
+    version: 1
   panther_azuresignin_helpers:
     history:
       1:
@@ -9625,9 +10269,13 @@ versions:
         commit_hash: c611d6ef0183833e3e82881750c70a25b0dc90be
         py_file_path: global_helpers/panther_gsuite_helpers.py
         yaml_file_path: global_helpers/panther_gsuite_helpers.yml
-    sha256: 3c7ea1e31a01f3f669775fbed1433a0b1460e9b83ff2994903c5c6f64f2beeee
+      3:
+        commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
+        py_file_path: global_helpers/panther_gsuite_helpers.py
+        yaml_file_path: global_helpers/panther_gsuite_helpers.yml
+    sha256: 34593ecef9644ffa155d0579bd58549a9e83d51a891fb3fe790a9df544697114
     type: global
-    version: 2
+    version: 3
   panther_iocs:
     history:
       1:
