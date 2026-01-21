@@ -1,0 +1,287 @@
+AnalysisType: rule
+Filename: okta_skeleton_key_bypass.py
+RuleID: "Okta.SkeletonKey.Bypass"
+DisplayName: "Okta Authentication Bypass via Skeleton Key Injection"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+  - Okta
+  - Defense Evasion:Valid Accounts
+  - Initial Access:Valid Accounts
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1078  # Valid Accounts
+    - TA0001:T1078  # Valid Accounts (Initial Access)
+  CVE:
+    - CVE-2024-9191
+Severity: Medium
+Description: |
+  Detects potential Okta Classic Application Sign-On Policy bypass attempts through skeleton key injection.
+  This vulnerability (CVE-2024-9191) allowed attackers with valid credentials to bypass configured
+  sign-on policy conditions by using automation tools with unknown device types. Successful SSO
+  authentications from unknown devices using suspicious user agents indicate potential exploitation.
+Reference: https://www.splunk.com/en_us/blog/security/bypassing-the-bypass-detecting-okta-classic-application-sign-on-policy-evasion.html
+Runbook: |
+  1. Verify if the authentication was legitimate and authorized
+  2. Check the user-agent string for automation/scripting tools (Python, curl, Postman, etc.)
+  3. Review the source IP address and geolocation for anomalies
+  4. Investigate if the user has recently had their credentials compromised
+  5. Check for other authentication attempts from the same IP or user around the same time
+  6. If unauthorized, immediately disable the user account and revoke active sessions
+  7. Review Okta application sign-on policies to ensure proper device trust conditions
+  8. Investigate the target application accessed during the bypass
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventType
+  - severity
+  - displayMessage
+  - p_any_ip_addresses
+Tests:
+  - Name: Successful SSO from Unknown Device with Python User-Agent
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+        "published": "2024-10-01 14:30:45.123",
+        "eventType": "user.authentication.sso",
+        "version": "0",
+        "severity": "INFO",
+        "legacyEventType": "core.user_auth.login_success",
+        "displayMessage": "User single sign on to app",
+        "actor":
+          {
+            "alternateId": "attacker@company.com",
+            "displayName": "Attacker User",
+            "id": "00u123456789abcdef",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Unknown",
+            "ipAddress": "203.0.113.50",
+            "userAgent":
+              {
+                "browser": "UNKNOWN",
+                "os": "Unknown",
+                "rawUserAgent": "python-requests/2.31.0",
+              },
+            "geographicalContext":
+              {
+                "city": "Unknown",
+                "country": "Unknown",
+                "state": "Unknown",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa987654321fedcba",
+              "type": "AppInstance",
+              "alternateId": "Office365",
+              "displayName": "Microsoft Office 365",
+            },
+          ],
+        "transaction": { "id": "txn123456789", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful SSO from Unknown Device with Curl User-Agent
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "b2c3d4e5-f6a7-8901-bcde-2345678901bc",
+        "published": "2024-10-01 15:45:22.456",
+        "eventType": "user.authentication.sso",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User single sign on to app",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "Test User",
+            "id": "00u234567890bcdefg",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "unknown",
+            "ipAddress": "192.0.2.100",
+            "userAgent": { "rawUserAgent": "curl/7.68.0" },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa123456789abcdef",
+              "type": "AppInstance",
+              "alternateId": "Radius",
+              "displayName": "Radius Server",
+            },
+          ],
+        "transaction": { "id": "txn234567890", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful SSO from Unknown Device with Postman User-Agent
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "c3d4e5f6-a7b8-9012-cdef-3456789012cd",
+        "published": "2024-10-01 16:20:33.789",
+        "eventType": "user.authentication.sso",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User single sign on to app",
+        "actor":
+          {
+            "alternateId": "admin@company.com",
+            "displayName": "Admin User",
+            "id": "00u345678901cdefgh",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Unknown",
+            "ipAddress": "198.51.100.75",
+            "userAgent":
+              {
+                "browser": "UNKNOWN",
+                "os": "Unknown",
+                "rawUserAgent": "PostmanRuntime/7.29.2",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa345678901cdefgh",
+              "type": "AppInstance",
+              "alternateId": "AWS",
+              "displayName": "Amazon Web Services",
+            },
+          ],
+        "transaction": { "id": "txn345678901", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Normal Browser SSO from Known Device
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "d4e5f6a7-b8c9-0123-def1-4567890123de",
+        "published": "2024-10-01 17:00:00.000",
+        "eventType": "user.authentication.sso",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User single sign on to app",
+        "actor":
+          {
+            "alternateId": "normaluser@company.com",
+            "displayName": "Normal User",
+            "id": "00u456789012defghi",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.100",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              },
+            "geographicalContext":
+              {
+                "city": "San Francisco",
+                "country": "United States",
+                "state": "California",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa456789012defghi",
+              "type": "AppInstance",
+              "alternateId": "Salesforce",
+              "displayName": "Salesforce",
+            },
+          ],
+        "transaction": { "id": "txn456789012", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Failed SSO from Unknown Device
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "e5f6a7b8-c9d0-1234-ef12-5678901234ef",
+        "published": "2024-10-01 18:15:10.234",
+        "eventType": "user.authentication.sso",
+        "version": "0",
+        "severity": "WARN",
+        "displayMessage": "User single sign on to app failed",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "Test User",
+            "id": "00u567890123efghij",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Unknown",
+            "ipAddress": "203.0.113.99",
+            "userAgent": { "rawUserAgent": "python-requests/2.31.0" },
+          },
+        "outcome": { "result": "FAILURE", "reason": "INVALID_CREDENTIALS" },
+        "target":
+          [
+            {
+              "id": "0oa567890123efghij",
+              "type": "AppInstance",
+              "alternateId": "Office365",
+              "displayName": "Microsoft Office 365",
+            },
+          ],
+        "transaction": { "id": "txn567890123", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Different Event Type
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "f6a7b8c9-d0e1-2345-f123-6789012345f0",
+        "published": "2024-10-01 19:30:15.567",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User login to Okta",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "User",
+            "id": "00u678901234fghijk",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.50",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "transaction": { "id": "txn678901234", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
