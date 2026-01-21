@@ -16,7 +16,7 @@ Reports:
   MITRE ATT&CK:
     - TA0006:T1528  # Steal Application Access Token
     - TA0003:T1098  # Account Manipulation
-Severity: Medium
+Severity: High
 Description: >
   Detects potential Okta AD Agent token theft and abuse. The "Secret Agent" attack
   involves stealing the SSWS token from an Okta AD Agent to register a malicious
@@ -40,7 +40,7 @@ SummaryAttributes:
   - p_any_ip_addresses
 Tests:
   - Name: AD Agent Configuration Change
-    ExpectedResult: false
+    ExpectedResult: true
     Log:
       {
         "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -89,7 +89,7 @@ Tests:
       }
 
   - Name: New AD Agent Instance Added
-    ExpectedResult: false
+    ExpectedResult: true
     Log:
       {
         "uuid": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
@@ -286,5 +286,49 @@ Tests:
             },
           ],
         "transaction": { "id": "txn444555666", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: API Token Creation by User with Service in Name (False Positive Prevention)
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "a1b2c3d4-e5f6-7890-abcd-ef9876543210",
+        "published": "2024-01-15 20:15:30.123",
+        "eventType": "system.api_token.create",
+        "version": "0",
+        "severity": "INFO",
+        "legacyEventType": "api.token.create",
+        "displayMessage": "Create API token",
+        "actor":
+          {
+            "alternateId": "customerservice@company.com",
+            "displayName": "Customer Service Rep",
+            "id": "00u555666777888999",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.80",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "00T555666777888999",
+              "type": "Token",
+              "alternateId": "unknown",
+              "displayName": "support-api-key",
+              "details": null,
+            },
+          ],
+        "transaction": { "id": "txn555666777", "type": "WEB" },
         "p_log_type": "Okta.SystemLog",
       }

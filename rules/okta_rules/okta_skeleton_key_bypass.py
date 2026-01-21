@@ -1,3 +1,4 @@
+from panther_base_helpers import get_val_from_list
 from panther_okta_helpers import okta_alert_context
 
 # Suspicious user-agent patterns indicating automation/scripting tools
@@ -32,8 +33,10 @@ def rule(event):
 
 def title(event):
     actor = event.deep_get("actor", "alternateId", default="<UNKNOWN_ACTOR>")
-    target = event.get("target", [{}])
-    app_name = target[0].get("displayName", "<UNKNOWN_APP>") if target else "<UNKNOWN_APP>"
+    app_names = get_val_from_list(
+        event.get("target", [{}]), "displayName", "type", "AppInstance"
+    )
+    app_name = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
     user_agent = event.deep_get(
         "client", "userAgent", "rawUserAgent", default="<UNKNOWN_USER_AGENT>"
     )

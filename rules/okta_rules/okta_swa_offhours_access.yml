@@ -9,11 +9,12 @@ LogTypes:
 Tags:
   - Identity & Access Management
   - Okta
-  - Credential Access
+  - SWA
+  - Credential Access:Credentials from Password Stores
   - Persistence
 Reports:
   MITRE ATT&CK:
-    - TA0006:T1552  # Credentials from Password Stores
+    - TA0006:T1555  # Credentials from Password Stores
     - TA0003:T1078  # Valid Accounts (Persistence)
 Severity: Medium
 Description: |
@@ -394,5 +395,266 @@ Tests:
           },
         "outcome": { "result": "SUCCESS" },
         "transaction": { "id": "txn789012345", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Boundary - Exactly 08:00 UTC (Start of Business Hours)
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "b8c9d0e1-f2a3-4567-b234-890123456b2",
+        "published": "2024-10-15T08:00:00.000Z",
+        "eventType": "application.user_membership.show_password",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User accessed application password",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "Test User",
+            "id": "00u890123456hijklm",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.100",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+              },
+          },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "signOnMode": "BROWSER_PLUGIN",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "user@company.com",
+              "displayName": "Test User",
+              "id": "00u890123456hijklm",
+              "type": "AppUser",
+            },
+            {
+              "alternateId": "Salesforce",
+              "displayName": "Salesforce",
+              "id": "0oa890123456hijklm",
+              "type": "AppInstance",
+            },
+          ],
+        "transaction": { "id": "txn890123456", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Boundary - Exactly 18:00 UTC (End of Business Hours - MEDIUM)
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "c9d0e1f2-a3b4-5678-c345-901234567c3",
+        "published": "2024-10-15T18:00:00.000Z",
+        "eventType": "application.user_membership.show_password",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User accessed application password",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "Test User",
+            "id": "00u901234567ijklmn",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.100",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "user@company.com",
+              "displayName": "Test User",
+              "id": "00u901234567ijklmn",
+              "type": "AppUser",
+            },
+            {
+              "alternateId": "Workday",
+              "displayName": "Workday HCM",
+              "id": "0oa901234567ijklmn",
+              "type": "AppInstance",
+            },
+          ],
+        "transaction": { "id": "txn901234567", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Boundary - Exactly 22:00 UTC (Start of Late Night - HIGH)
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "d0e1f2a3-b4c5-6789-d456-012345678d4",
+        "published": "2024-10-15T22:00:00.000Z",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "admin@company.com",
+            "displayName": "Admin User",
+            "id": "00u012345678jklmno",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.75",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+              },
+          },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "signOnMode": "BROWSER_PLUGIN",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa012345678jklmno",
+              "type": "AppInstance",
+              "alternateId": "AWS",
+              "displayName": "Amazon Web Services",
+            },
+          ],
+        "transaction": { "id": "txn012345678", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Boundary - Exactly 04:00 UTC (End of Late Night - MEDIUM)
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "e1f2a3b4-c5d6-7890-e567-123456789e5",
+        "published": "2024-10-15T04:00:00.000Z",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "User",
+            "id": "00u123456789klmnop",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.50",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "signOnMode": "BROWSER_PLUGIN",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa123456789klmnop",
+              "type": "AppInstance",
+              "alternateId": "Zendesk",
+              "displayName": "Zendesk Support",
+            },
+          ],
+        "transaction": { "id": "txn123456789", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Early Morning Access at 06:00 UTC (MEDIUM Severity)
+    ExpectedResult: true
+    Log:
+      {
+        "uuid": "f2a3b4c5-d6e7-8901-f678-234567890f6",
+        "published": "2024-10-15T06:00:00.000Z",
+        "eventType": "application.user_membership.show_password",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User accessed application password",
+        "actor":
+          {
+            "alternateId": "developer@company.com",
+            "displayName": "Developer User",
+            "id": "00u234567890lmnopq",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.200",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Linux",
+                "rawUserAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+              },
+            "geographicalContext":
+              {
+                "city": "Seattle",
+                "country": "United States",
+                "state": "Washington",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "developer@company.com",
+              "displayName": "Developer User",
+              "id": "00u234567890lmnopq",
+              "type": "AppUser",
+            },
+            {
+              "alternateId": "GitHub",
+              "displayName": "GitHub Enterprise",
+              "id": "0oa234567890lmnopq",
+              "type": "AppInstance",
+            },
+            {
+              "alternateId": "developer@company.com",
+              "displayName": "Developer User",
+              "id": "00u234567890lmnopq",
+              "type": "User",
+            },
+          ],
+        "transaction": { "id": "txn234567890", "type": "WEB" },
         "p_log_type": "Okta.SystemLog",
       }

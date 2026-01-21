@@ -9,7 +9,10 @@ LogTypes:
 Tags:
   - Identity & Access Management
   - Okta
-  - Credential Access
+  - SWA
+  - Credential Access:Credentials from Password Stores
+  - Base Detection
+  - Correlation
 Reports:
   MITRE ATT&CK:
     - TA0006:T1555  # Credentials from Password Stores
@@ -155,5 +158,188 @@ Tests:
           },
         "outcome": { "result": "SUCCESS" },
         "transaction": { "id": "txn345678901", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful Sign-On with SAML (Not SWA)
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "d4e5f6a7-b8c9-0123-def1-4567890123de",
+        "published": "2024-10-15 17:00:00.000",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "User",
+            "id": "00u456789012defghi",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.100",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "signOnMode": "SAML_2_0",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa456789012defghi",
+              "type": "AppInstance",
+              "alternateId": "Office365",
+              "displayName": "Microsoft Office 365",
+            },
+          ],
+        "transaction": { "id": "txn456789012", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful Sign-On with OIDC (Not SWA)
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "e5f6a7b8-c9d0-1234-ef12-5678901234ef",
+        "published": "2024-10-15 18:15:30.456",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "admin@company.com",
+            "displayName": "Admin",
+            "id": "00u567890123efghij",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.75",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+              },
+          },
+        "debugContext":
+          {
+            "debugData":
+              {
+                "signOnMode": "OPENID_CONNECT",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa567890123efghij",
+              "type": "AppInstance",
+              "alternateId": "GitHub",
+              "displayName": "GitHub Enterprise",
+            },
+          ],
+        "transaction": { "id": "txn567890123", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful Sign-On Missing signOnMode Field
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "f6a7b8c9-d0e1-2345-f123-6789012345f0",
+        "published": "2024-10-15 19:30:45.789",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "User",
+            "id": "00u678901234fghijk",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.50",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Windows",
+                "rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              },
+          },
+        "debugContext": { "debugData": {} },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa678901234fghijk",
+              "type": "AppInstance",
+              "alternateId": "Slack",
+              "displayName": "Slack Workspace",
+            },
+          ],
+        "transaction": { "id": "txn678901234", "type": "WEB" },
+        "p_log_type": "Okta.SystemLog",
+      }
+
+  - Name: Successful Sign-On Missing debugContext Entirely
+    ExpectedResult: false
+    Log:
+      {
+        "uuid": "a7b8c9d0-e1f2-3456-a123-7890123456a1",
+        "published": "2024-10-15 20:45:12.345",
+        "eventType": "policy.evaluate_sign_on",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Evaluation of sign-on policy",
+        "actor":
+          {
+            "alternateId": "user@company.com",
+            "displayName": "User",
+            "id": "00u789012345ghijkl",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "192.168.1.100",
+            "userAgent":
+              {
+                "browser": "FIREFOX",
+                "os": "Linux",
+                "rawUserAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0)",
+              },
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "id": "0oa789012345ghijkl",
+              "type": "AppInstance",
+              "alternateId": "Jira",
+              "displayName": "Jira Cloud",
+            },
+          ],
+        "transaction": { "id": "txn789012345", "type": "WEB" },
         "p_log_type": "Okta.SystemLog",
       }

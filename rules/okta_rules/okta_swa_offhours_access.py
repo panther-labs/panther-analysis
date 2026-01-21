@@ -7,6 +7,15 @@ BUSINESS_HOURS_START = 8
 BUSINESS_HOURS_END = 18
 
 
+def get_app_name(event):
+    """Extract app name from target based on event type."""
+    event_type = event.get("eventType", "")
+    # Password reveal events use alternateId, sign-on events use displayName
+    field = "alternateId" if event_type == "application.user_membership.show_password" else "displayName"
+    app_names = get_val_from_list(event.get("target", [{}]), field, "type", "AppInstance")
+    return list(app_names)[0] if app_names else "<UNKNOWN_APP>"
+
+
 def rule(event):
     event_type = event.get("eventType", "")
 
@@ -44,16 +53,11 @@ def title(event):
     actor = event.deep_get("actor", "alternateId", default="<UNKNOWN_ACTOR>")
     event_type = event.get("eventType", "")
     timestamp = event.get("published", "<UNKNOWN_TIME>")
+    app_name = get_app_name(event)
 
     if event_type == "application.user_membership.show_password":
-        app_names = get_val_from_list(
-            event.get("target", [{}]), "alternateId", "type", "AppInstance"
-        )
-        app_name = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
         return f"Okta SWA Off-Hours Password Access: {actor} accessed [{app_name}] at [{timestamp}]"
 
-    app_names = get_val_from_list(event.get("target", [{}]), "displayName", "type", "AppInstance")
-    app_name = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
     return f"Okta SWA Off-Hours Application Access: {actor} accessed [{app_name}] at [{timestamp}]"
 
 
@@ -66,9 +70,11 @@ def severity(event):
         event_time = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         hour = event_time.hour
 
+        # Late night access (10 PM - 4 AM UTC) is highest risk - likely unauthorized activity
         if 22 <= hour or hour < 4:
             return "HIGH"
 
+        # Early morning (4 AM - 8 AM) or evening (6 PM - 10 PM) is medium risk - less common but possible
         if (4 <= hour < BUSINESS_HOURS_START) or (BUSINESS_HOURS_END <= hour < 22):
             return "MEDIUM"
 
@@ -95,18 +101,7 @@ def alert_context(event):
 
     event_type = event.get("eventType", "")
     context["event_type"] = event_type
-
-    if event_type == "application.user_membership.show_password":
-        app_names = get_val_from_list(
-            event.get("target", [{}]), "alternateId", "type", "AppInstance"
-        )
-        context["app_name"] = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
-    else:
-        app_names = get_val_from_list(
-            event.get("target", [{}]), "displayName", "type", "AppInstance"
-        )
-        context["app_name"] = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
-
+    context["app_name"] = get_app_name(event)
     context["business_hours"] = f"{BUSINESS_HOURS_START}:00 - {BUSINESS_HOURS_END}:00 UTC"
     context["user_agent"] = event.deep_get("client", "userAgent", "rawUserAgent", default="")
 
