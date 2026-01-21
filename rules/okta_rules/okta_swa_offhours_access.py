@@ -11,7 +11,11 @@ def get_app_name(event):
     """Extract app name from target based on event type."""
     event_type = event.get("eventType", "")
     # Password reveal events use alternateId, sign-on events use displayName
-    field = "alternateId" if event_type == "application.user_membership.show_password" else "displayName"
+    field = (
+        "alternateId"
+        if event_type == "application.user_membership.show_password"
+        else "displayName"
+    )
     app_names = get_val_from_list(event.get("target", [{}]), field, "type", "AppInstance")
     return list(app_names)[0] if app_names else "<UNKNOWN_APP>"
 
@@ -70,11 +74,11 @@ def severity(event):
         event_time = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         hour = event_time.hour
 
-        # Late night access (10 PM - 4 AM UTC) is highest risk - likely unauthorized activity
+        # Late night access (10 PM - 4 AM UTC) is highest risk - likely unauthorized
         if 22 <= hour or hour < 4:
             return "HIGH"
 
-        # Early morning (4 AM - 8 AM) or evening (6 PM - 10 PM) is medium risk - less common but possible
+        # Early morning (4 AM - 8 AM) or evening (6 PM - 10 PM) is medium risk
         if (4 <= hour < BUSINESS_HOURS_START) or (BUSINESS_HOURS_END <= hour < 22):
             return "MEDIUM"
 

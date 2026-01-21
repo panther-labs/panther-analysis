@@ -53,8 +53,11 @@ def rule(event):
     event_type = event.get("eventType", "")
     outcome = event.deep_get("outcome", "result", default="")
 
-    # Detect config changes and new agent registrations (suspicious regardless of outcome)
-    if event_type in ["system.agent.ad.config_change_detected", "system.agent.ad.agent_instance_added"]:
+    # Detect config changes and new agent registrations (suspicious regardless)
+    if event_type in [
+        "system.agent.ad.config_change_detected",
+        "system.agent.ad.agent_instance_added",
+    ]:
         return True
 
     # Detect failed AD agent authentication attempts
@@ -84,9 +87,7 @@ def title(event):
     if "bad_credentials" in event_type:
         return f"Failed Okta AD Agent Authentication: {actor}"
     if event_type == "system.api_token.create":
-        token_names = get_val_from_list(
-            event.get("target", [{}]), "displayName", "type", "Token"
-        )
+        token_names = get_val_from_list(event.get("target", [{}]), "displayName", "type", "Token")
         token_name = list(token_names)[0] if token_names else "<UNKNOWN_TOKEN>"
         return f"API Token Created by Service Account {actor}: {token_name}"
 
