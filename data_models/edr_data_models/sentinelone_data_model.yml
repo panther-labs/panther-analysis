@@ -1,0 +1,141 @@
+AnalysisType: datamodel
+DataModelID: "Standard.SentinelOne.DeepVisibility"
+DisplayName: "SentinelOne Deep Visibility - Sigma Field Mappings"
+Enabled: true
+Filename: sentinelone_data_model.py
+LogTypes:
+  - SentinelOne.DeepVisibility
+Mappings:
+  # Process Creation Fields
+  - Name: ProcessId
+    Path: $.tgt_process_pid
+  - Name: Image
+    Path: $.tgt_process_image_path
+  - Name: Description
+    Path: $.tgt_process_displayName
+  - Name: Product
+    Path: $.tgt_process_displayName
+  - Name: Company
+    Path: $.tgt_process_publisher
+  - Name: CommandLine
+    Path: $.tgt_process_cmdline
+  - Name: CurrentDirectory
+    Path: $.tgt_process_image_path
+  - Name: User
+    Path: $.tgt_process_user
+  - Name: TerminalSessionId
+    Path: $.tgt_process_sessionId
+  - Name: IntegrityLevel
+    Path: $.tgt_process_integrityLevel
+  - Name: md5
+    Path: $.tgt_process_image_md5
+  - Name: sha1
+    Path: $.tgt_process_image_sha1
+  - Name: sha256
+    Path: $.tgt_process_image_sha256
+  - Name: ParentProcessId
+    Path: $.src_process_pid
+  - Name: ParentImage
+    Path: $.src_process_image_path
+  - Name: ParentCommandLine
+    Path: $.src_process_cmdline
+
+  # File Event Fields
+  - Name: TargetFilename
+    Path: $.tgt_file_path
+  - Name: SourceFilename
+    Path: $.tgt_file_oldPath
+
+  # Image Load Fields
+  - Name: ImageLoaded
+    Path: $.module_path
+  - Name: module_sha1
+    Path: $.module_sha1
+  - Name: module_md5
+    Path: $.module_md5
+
+  # Pipe Creation Fields
+  - Name: PipeName
+    Path: $.namedPipe_name
+
+  # Registry Event Fields
+  - Name: TargetObject
+    Path: $.registry_keyPath
+  - Name: Details
+    Path: $.registry_value
+
+  # DNS Event Fields
+  - Name: query
+    Path: $.event_dns_request
+  - Name: answer
+    Path: $.event_dns_response
+  - Name: QueryName
+    Path: $.event_dns_request
+  - Name: record_type
+    Path: $.event_dns_response
+
+  # Network Event Fields
+  - Name: DestinationHostname
+    Method: get_destination_hostname
+  - Name: DestinationPort
+    Path: $.dst_port_number
+  - Name: DestinationIp
+    Path: $.dst_ip_address
+  - Name: SourceIp
+    Path: $.src_ip_address
+  - Name: SourcePort
+    Path: $.src_port_number
+  - Name: Protocol
+    Path: $.event_network_protocolName
+  - Name: dst_ip
+    Path: $.dst_ip_address
+  - Name: src_ip
+    Path: $.src_ip_address
+  - Name: dst_port
+    Path: $.dst_port_number
+  - Name: src_port
+    Path: $.src_port_number
+
+  # Common Process Fields (used across multiple event types)
+  - Name: src_process_image_path
+    Path: $.src_process_image_path
+  - Name: src_process_cmdline
+    Path: $.src_process_cmdline
+  - Name: src_process_parent_image_path
+    Path: $.src_process_parent_image_path
+  - Name: src_process_parent_cmdline
+    Path: $.src_process_parent_cmdline
+  - Name: src_process_user
+    Path: $.src_process_user
+  - Name: url_address
+    Path: $.url_address
+
+  # Standard UDM Mappings
+  - Name: actor_user
+    Path: $.tgt_process_user
+  - Name: cmd
+    Path: $.tgt_process_cmdline
+  - Name: destination_ip
+    Path: $.dst_ip_address
+  - Name: destination_port
+    Path: $.dst_port_number
+  - Name: source_ip
+    Path: $.src_ip_address
+  - Name: source_port
+    Path: $.src_port_number
+  - Name: dns_query
+    Path: $.event_dns_request
+  - Name: process_name
+    Method: get_process_name
+  - Name: parent_process_name
+    Method: get_parent_process_name
+  - Name: ProcessName
+    Method: get_process_name
+  - Name: ParentProcessName
+    Method: get_parent_process_name
+
+  # Sigma Metadata Fields (normalized)
+  - Name: _event_category
+    Method: get_event_category
+  - Name: _os
+    Method: get_os
