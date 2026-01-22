@@ -41,7 +41,8 @@ def rule(event):
     for arg in command_line_args:
         # pylint: disable=global-statement
         global DECODED
-        DECODED = is_base64(arg)
+        # Use min_length=12 for command-line args (malicious commands can be shorter)
+        DECODED = is_base64(arg, min_length=12)
         if DECODED:
             return True
 
