@@ -14,10 +14,10 @@ def rule(event):
 
 def title(event):
     actor = event.deep_get("actor", "alternateId", default="<UNKNOWN_ACTOR>")
-    app_names = get_val_from_list(event.get("target", [{}]), "displayName", "type", "AppInstance")
-    app_name = list(app_names)[0] if app_names else "<UNKNOWN_APP>"
-
-    return f"Okta SWA Application Access: {actor} accessed [{app_name}]"
+    return (
+        f"Okta SWA Bulk Credential Extraction: {actor} accessed "
+        "6+ SWA applications within 10 minutes"
+    )
 
 
 def alert_context(event):

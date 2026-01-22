@@ -12,6 +12,7 @@ Tags:
   - SWA
   - Credential Access:Credentials from Password Stores
   - Persistence
+  - Configuration Required
 Reports:
   MITRE ATT&CK:
     - TA0006:T1555  # Credentials from Password Stores
@@ -23,6 +24,10 @@ Description: |
   indicate compromised accounts, insider threats, or unauthorized access attempts. SWA applications
   store credentials in Okta's encrypted vault, making off-hours access a high-risk indicator.
 
+  NOTE: Panther logs are in UTC. The default business hours (8 AM - 6 PM UTC) may not match your
+  organization's timezone. You must adjust the BUSINESS_HOURS_START and BUSINESS_HOURS_END constants
+  in the Python file to reflect your organization's working hours in UTC.
+
   This rule monitors two event types:
   - application.user_membership.show_password: Direct password reveal from Okta vault
   - policy.evaluate_sign_on: SWA application sign-on (filtered for BROWSER_PLUGIN mode)
@@ -32,18 +37,19 @@ Description: |
   - MEDIUM: Early morning/evening access (4 AM - 8 AM, 6 PM - 10 PM UTC)
 Reference: https://help.okta.com/en-us/content/topics/apps/apps-about-swa.htm
 Runbook: |
-  1. Verify the user's normal working hours and timezone
-  2. Check if the user has legitimate business need for off-hours access
-  3. Review the accessed application for sensitivity and criticality
-  4. Investigate the source IP address and geolocation for anomalies
-  5. Check for other suspicious activity from the same user or IP
-  6. Review user-agent string for automation tools or unexpected devices
-  7. Verify if the user was on-call or had authorized after-hours work
-  8. Check for multiple off-hours accesses indicating pattern of abuse
-  9. If unauthorized, suspend the account and revoke active sessions
-  10. Force password reset and MFA re-enrollment if compromise is suspected
-  11. Audit all applications accessed during the off-hours window
-  12. Review Okta admin logs for any configuration changes around the same time
+  1. Verify the configured business hours (BUSINESS_HOURS_START/END in the Python file) match your organization's timezone converted to UTC
+  2. Verify the user's normal working hours and timezone
+  3. Check if the user has legitimate business need for off-hours access
+  4. Review the accessed application for sensitivity and criticality
+  5. Investigate the source IP address and geolocation for anomalies
+  6. Check for other suspicious activity from the same user or IP
+  7. Review user-agent string for automation tools or unexpected devices
+  8. Verify if the user was on-call or had authorized after-hours work
+  9. Check for multiple off-hours accesses indicating pattern of abuse
+  10. If unauthorized, suspend the account and revoke active sessions
+  11. Force password reset and MFA re-enrollment if compromise is suspected
+  12. Audit all applications accessed during the off-hours window
+  13. Review Okta admin logs for any configuration changes around the same time
 DedupPeriodMinutes: 60
 SummaryAttributes:
   - eventType

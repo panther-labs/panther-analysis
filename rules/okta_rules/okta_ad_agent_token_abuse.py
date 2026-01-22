@@ -8,7 +8,7 @@ SUSPICIOUS_AD_AGENT_EVENTS = [
     "system.agent.ad.bad_credentials",  # Failed AD agent authentication
 ]
 
-# Service account patterns (matched at word boundaries to avoid false positives)
+# Service account patterns (matched as substrings)
 SERVICE_ACCOUNT_PATTERNS = [
     "svc-",
     "svc_",
@@ -36,10 +36,7 @@ SERVICE_ACCOUNT_PATTERNS = [
 
 
 def is_service_account(actor_id):
-    """
-    Check if an actor ID matches common service account naming patterns.
-    Uses word-boundary matching to avoid false positives like 'customerservice@'.
-    """
+    # Check if an actor ID matches common service account naming patterns using substring matching
     if not actor_id:
         return False
 

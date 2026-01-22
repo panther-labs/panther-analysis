@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: okta_swa_app_access.py
 RuleID: "Okta.SWA.App.Access"
-DisplayName: "Okta SWA Application Access"
+DisplayName: "Okta SWA Bulk Credential Extraction"
 Enabled: true
 Status: Experimental
 LogTypes:
@@ -11,23 +11,33 @@ Tags:
   - Okta
   - SWA
   - Credential Access:Credentials from Password Stores
-  - Base Detection
-  - Correlation
+  - Bulk Activity
 Reports:
   MITRE ATT&CK:
     - TA0006:T1555  # Credentials from Password Stores
-Severity: Info
+Severity: High
 Description: |
-  Detects successful sign-on policy evaluations for Okta applications. This rule serves
-  as a base detection for correlation analysis to identify bulk SWA credential extraction
-  attempts. Individual accesses are expected behavior and logged for correlation purposes.
-Reference: https://help.okta.com/en-us/content/topics/apps/apps-about-swa.htm
+  Detects potential bulk SWA (Secure Web Authentication) credential extraction attempts
+  in Okta. When a user or attacker accesses 6 or more SWA applications within a 10-minute
+  window, this may indicate automated credential harvesting. SWA apps store credentials in
+  Okta's encrypted vault, and bulk access patterns suggest an attempt to extract multiple
+  application credentials rapidly.
+Reference: https://www.spera.security/resources/okta-swa-configuration-understanding-the-concept-and-different-configurations
 Runbook: |
-  This is an informational rule used for correlation analysis. Individual app accesses
-  are normal behavior. Investigate only if correlated with bulk access patterns.
-DedupPeriodMinutes: 1
+  1. Verify if the bulk application access was legitimate user behavior
+  2. Review the list of accessed applications for sensitive targets
+  3. Check the source IP address and geolocation for anomalies
+  4. Investigate the user's recent authentication history for signs of compromise
+  5. Review user-agent strings for automation tools (scripts, bots)
+  6. If unauthorized, immediately suspend the user account and revoke active sessions
+  7. Force password reset and MFA re-enrollment for the affected user
+  8. Audit all SWA application credentials accessed during the window
+  9. Check for any credential usage in the target applications
+  10. Review Okta admin audit logs for any policy or configuration changes
+Threshold: 6
+DedupPeriodMinutes: 10
 SummaryAttributes:
-  - eventType
+  - actor.alternateId
   - p_any_ip_addresses
 Tests:
   - Name: Successful Sign-On Policy Evaluation

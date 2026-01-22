@@ -8,7 +8,7 @@ BUSINESS_HOURS_END = 18
 
 
 def get_app_name(event):
-    """Extract app name from target based on event type."""
+    # Extract app name from target based on event type
     event_type = event.get("eventType", "")
     # Password reveal events use alternateId, sign-on events use displayName
     field = (
