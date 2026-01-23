@@ -1,0 +1,46 @@
+AnalysisType: scheduled_query
+QueryName: CrowdStrike MacOS plutil New File Access
+Enabled: true
+Description: Detects when plutil performs MODIFICATION operations (insert, replace, remove, create) on plist files it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-only operations (convert, print, lint) that generate noise.
+Tags:
+  - Anomaly Detection
+  - CrowdStrike
+  - macOS
+  - Persistence
+Query: |-
+    -- pragma: template
+
+    {% import 'anomalies' new_unique_values %}
+
+    with subquery as (
+        SELECT
+            *,
+            aid as device_id,
+            -- Extract the plist file path from command line (last argument)
+            SPLIT_PART(event:CommandLine, ' ', -1) as plist_file
+        FROM panther_logs.public.crowdstrike_fdrevent
+        WHERE
+            p_occurs_since('60 day')
+            AND event_platform = 'Mac'
+            AND fdr_event_type = 'ProcessRollup2'
+            AND event:ImageFileName = '/usr/bin/plutil'
+            -- BEHAVIORAL FILTERING: Focus on modification operations
+            -- Only alert on operations that CHANGE plists, not just read them
+            AND (
+                event:CommandLine LIKE '%--insert%'      -- Adding new keys
+                OR event:CommandLine LIKE '%-insert%'
+                OR event:CommandLine LIKE '%--replace%'  -- Modifying existing keys
+                OR event:CommandLine LIKE '%-replace%'
+                OR event:CommandLine LIKE '%--remove%'   -- Deleting keys
+                OR event:CommandLine LIKE '%-remove%'
+                OR event:CommandLine LIKE '%--create%'   -- Creating new plists
+                OR event:CommandLine LIKE '%-create%'
+            )
+            -- Exclude known benign operations
+            AND event:CommandLine != 'plutil -convert binary1 /Library/Preferences/com.tinyspeck.slackmacgap.plist'
+    ),
+    {{ new_unique_values('subquery', 'device_id', 'plist_file', '1day') }}
+
+Schedule:
+  CronExpression: '0 */4 * * *'
+  TimeoutMinutes: 5
