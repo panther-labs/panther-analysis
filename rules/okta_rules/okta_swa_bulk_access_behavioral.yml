@@ -1,0 +1,159 @@
+AnalysisType: scheduled_rule
+Filename: okta_swa_bulk_access_behavioral.py
+RuleID: "Okta.SWA.BulkAccess.Behavioral"
+DisplayName: "Okta SWA Bulk Credential Extraction - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SWABulkAccessBehavioral
+Severity: High
+Status: Experimental
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+  - Okta
+  - SWA
+  - Credential Access:Credentials from Password Stores
+  - Bulk Activity
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1555
+Description: |
+  Detects potential bulk SWA (Secure Web Authentication) credential extraction using
+  statistical anomaly detection. Instead of a fixed threshold, this detection identifies
+  when users access significantly more SWA applications per hour than their historical
+  baseline. This behavioral approach adapts to each user's normal access patterns while
+  detecting credential harvesting attempts or automated bulk credential extraction attacks.
+
+  The detection uses a z-score threshold of 3, meaning it alerts when access volume is
+  3 standard deviations above the user's historical mean. Minimum of 5 app accesses
+  required to reduce noise from low-volume users.
+Reference: https://www.spera.security/resources/okta-swa-configuration-understanding-the-concept-and-different-configurations
+Runbook: |
+  1. Review the z-score to understand how anomalous this activity is
+  2. Verify if the bulk application access was legitimate user behavior
+  3. Check the accessed applications for sensitivity and criticality
+  4. Investigate the source IP address and geolocation
+  5. Review user-agent strings for automation tools
+  6. If unauthorized, suspend the user account immediately
+  7. Force password reset and MFA re-enrollment
+  8. Audit all SWA application credentials accessed during the window
+  9. Check for credential usage in the target applications
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - actorId
+  - N
+  - p_zscore
+Tests:
+  # Positive Tests - Should Alert
+  - Name: Critical SWA Access Volume - Very High Z-Score
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "attacker@company.com",
+        "N": 25,
+        "p_mean": 2.0,
+        "p_stddev": 3.5,
+        "p_zscore": 6.57,
+        "t1": "2024-10-15 14:00:00.000Z",
+        "t2": "2024-10-15 15:00:00.000Z"
+      }
+  - Name: Critical SWA Access Volume - Very High Count
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "exfil@company.com",
+        "N": 22,
+        "p_mean": 4.5,
+        "p_stddev": 2.8,
+        "p_zscore": 6.25,
+        "t1": "2024-10-15 15:00:00.000Z",
+        "t2": "2024-10-15 16:00:00.000Z"
+      }
+  - Name: High SWA Access Volume - Z-Score 4
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "compromised@company.com",
+        "N": 12,
+        "p_mean": 3.0,
+        "p_stddev": 2.25,
+        "p_zscore": 4.0,
+        "t1": "2024-10-15 16:00:00.000Z",
+        "t2": "2024-10-15 17:00:00.000Z"
+      }
+  - Name: High SWA Access Volume - Count 10
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "suspicious@company.com",
+        "N": 10,
+        "p_mean": 2.5,
+        "p_stddev": 1.8,
+        "p_zscore": 4.17,
+        "t1": "2024-10-15 17:00:00.000Z",
+        "t2": "2024-10-15 18:00:00.000Z"
+      }
+  - Name: Medium SWA Access Volume - Z-Score 3
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "user@company.com",
+        "N": 8,
+        "p_mean": 3.5,
+        "p_stddev": 1.5,
+        "p_zscore": 3.0,
+        "t1": "2024-10-15 18:00:00.000Z",
+        "t2": "2024-10-15 19:00:00.000Z"
+      }
+  # Negative Tests - Should Not Alert (query filters these out)
+  - Name: Normal SWA Access Volume - Below Threshold
+    ExpectedResult: false
+    Log:
+      {
+        "actorId": "normaluser@company.com",
+        "N": 3,
+        "p_mean": 2.8,
+        "p_stddev": 0.5,
+        "p_zscore": 0.4,
+        "t1": "2024-10-15 10:00:00.000Z",
+        "t2": "2024-10-15 11:00:00.000Z"
+      }
+  # Edge Cases
+  - Name: Minimum Threshold - Exactly 5 Accesses
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "edgecase@company.com",
+        "N": 5,
+        "p_mean": 1.0,
+        "p_stddev": 1.2,
+        "p_zscore": 3.33,
+        "t1": "2024-10-15 20:00:00.000Z",
+        "t2": "2024-10-15 21:00:00.000Z"
+      }
+  - Name: Zero Standard Deviation Edge Case
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "consistent@company.com",
+        "N": 15,
+        "p_mean": 5.0,
+        "p_stddev": 0.0,
+        "p_zscore": 999.0,
+        "t1": "2024-10-15 21:00:00.000Z",
+        "t2": "2024-10-15 22:00:00.000Z"
+      }
+  - Name: High Count Low Z-Score - Default Severity
+    ExpectedResult: true
+    Log:
+      {
+        "actorId": "poweruser@company.com",
+        "N": 8,
+        "p_mean": 7.5,
+        "p_stddev": 0.5,
+        "p_zscore": 1.0,
+        "t1": "2024-10-15 22:00:00.000Z",
+        "t2": "2024-10-15 23:00:00.000Z"
+      }

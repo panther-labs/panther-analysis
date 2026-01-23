@@ -1,0 +1,42 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.SWABulkAccessBehavioral"
+Enabled: true
+Description: |
+  Detects anomalous volumes of SWA application access using statistical anomaly detection.
+  Identifies users accessing significantly more SWA apps than their historical baseline.
+Query: |
+  -- pragma: template
+
+  {% import 'anomalies' statistical_anomaly %}
+
+  with subquery as (
+    SELECT
+      p_event_time,
+      actor.alternateId as actorId,
+      actor.displayName as actorName,
+      eventType,
+      client.ipAddress as sourceIP,
+      client.userAgent.rawUserAgent as userAgent,
+      debugContext.debugData.signOnMode as signOnMode,
+      outcome.result as result,
+      target[0].displayName as appName,
+      target[0].alternateId as appId,
+      1 as app_access_count
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_occurs_since('14 day')
+      AND eventType = 'policy.evaluate_sign_on'
+      AND debugContext.debugData.signOnMode = 'BROWSER_PLUGIN'
+      AND outcome.result = 'SUCCESS'
+      AND actor.alternateId IS NOT NULL
+  ),
+  {{ statistical_anomaly('subquery', 'actorId', 'app_access_count', 'count', '1', 'hour', 3) }}
+  WHERE t2 >= dateadd('hour', -24, p_current_timestamp())
+    AND N >= 5
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Okta
+  - Anomaly Detection
+  - Behavioral Analytics

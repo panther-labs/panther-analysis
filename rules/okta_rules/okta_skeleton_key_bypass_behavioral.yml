@@ -1,0 +1,188 @@
+AnalysisType: scheduled_rule
+Filename: okta_skeleton_key_bypass_behavioral.py
+RuleID: "Okta.SkeletonKey.Bypass.Behavioral"
+DisplayName: "Okta Authentication Bypass - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SkeletonKeyBypassBehavioral
+Severity: Medium
+Status: Experimental
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Identity & Access Management
+  - Okta
+  - Defense Evasion:Valid Accounts
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1078
+  CVE:
+    - CVE-2024-9191
+Description: |
+  Detects potential Okta authentication bypass attempts using behavioral analysis.
+  Instead of relying on hardcoded lists of suspicious user agents, this detection
+  identifies when users successfully authenticate via SSO using devices or user agents
+  they haven't used historically. This catches skeleton key injection attacks
+  (CVE-2024-9191) and other authentication bypass techniques that rely on unusual
+  automation tools or device types.
+Reference: https://www.splunk.com/en_us/blog/security/bypassing-the-bypass-detecting-okta-classic-application-sign-on-policy-evasion.html
+Runbook: |
+  1. Review the anomaly_type to understand if this is a new device or new user agent
+  2. Check if the authentication was legitimate and authorized
+  3. Examine the user agent string for automation/scripting tools
+  4. Review the source IP address and geolocation for anomalies
+  5. Investigate if the user has recently had credentials compromised
+  6. Check for other authentication attempts from the same IP or user
+  7. If unauthorized, disable the user account and revoke active sessions
+  8. Review Okta application sign-on policies for proper device trust
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - actorId
+  - anomaly_type
+  - deviceType
+Tests:
+  # Positive Tests - Should Alert
+  - Name: SSO from New Unknown Device Type - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 14:30:45.123",
+        "actorId": "user@company.com",
+        "actorName": "Test User",
+        "sourceIP": "203.0.113.50",
+        "deviceType": "Unknown",
+        "userAgent": "python-requests/2.31.0",
+        "browser": "UNKNOWN",
+        "operatingSystem": "Unknown",
+        "targetApp": "Microsoft Office 365",
+        "targetAppId": "Office365",
+        "anomaly_type": "New Device Type"
+      }
+  - Name: SSO from New Curl User Agent - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 15:45:22.456",
+        "actorId": "admin@company.com",
+        "actorName": "Admin User",
+        "sourceIP": "192.0.2.100",
+        "deviceType": "Computer",
+        "userAgent": "curl/7.68.0",
+        "browser": "UNKNOWN",
+        "operatingSystem": "Linux",
+        "targetApp": "Amazon Web Services",
+        "targetAppId": "AWS",
+        "anomaly_type": "New User Agent"
+      }
+  - Name: SSO from New Postman User Agent - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 18:30:00.000",
+        "actorId": "attacker@company.com",
+        "actorName": "Compromised User",
+        "sourceIP": "198.51.100.200",
+        "deviceType": "Unknown",
+        "userAgent": "PostmanRuntime/7.32.3",
+        "browser": "UNKNOWN",
+        "operatingSystem": "Unknown",
+        "targetApp": "Salesforce",
+        "targetAppId": "Salesforce",
+        "anomaly_type": "New User Agent"
+      }
+  - Name: SSO from New Legitimate Browser - Default Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 16:20:33.789",
+        "actorId": "developer@company.com",
+        "actorName": "Developer User",
+        "sourceIP": "198.51.100.75",
+        "deviceType": "Computer",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "browser": "EDGE",
+        "operatingSystem": "Windows",
+        "targetApp": "GitHub Enterprise",
+        "targetAppId": "GitHub",
+        "anomaly_type": "New User Agent"
+      }
+  - Name: SSO from New Mobile Device - Default Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 17:10:15.234",
+        "actorId": "user@company.com",
+        "actorName": "Mobile User",
+        "sourceIP": "203.0.113.100",
+        "deviceType": "Mobile",
+        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+        "browser": "MOBILE_SAFARI",
+        "operatingSystem": "iOS",
+        "targetApp": "Slack",
+        "targetAppId": "Slack",
+        "anomaly_type": "New Device Type"
+      }
+  # Negative Tests - Should Not Alert (query filters these out)
+  - Name: Normal SSO Event Without Anomaly Type
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-10-01 10:00:00.000",
+        "actorId": "normaluser@company.com",
+        "actorName": "Normal User",
+        "sourceIP": "192.168.1.100",
+        "deviceType": "Computer",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+        "browser": "CHROME",
+        "operatingSystem": "Mac OS X",
+        "targetApp": "Salesforce",
+        "targetAppId": "Salesforce"
+      }
+  # Edge Cases
+  - Name: Empty Device Type Field
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 20:00:00.000",
+        "actorId": "user@company.com",
+        "actorName": "User",
+        "sourceIP": "203.0.113.150",
+        "deviceType": "",
+        "userAgent": "python-requests/2.31.0",
+        "browser": "UNKNOWN",
+        "operatingSystem": "Unknown",
+        "targetApp": "AWS",
+        "targetAppId": "AWS",
+        "anomaly_type": "New User Agent"
+      }
+  - Name: Missing Optional Fields
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 21:15:00.000",
+        "actorId": "user@company.com",
+        "actorName": "User",
+        "sourceIP": "203.0.113.175",
+        "deviceType": "Unknown",
+        "userAgent": "wget/1.21",
+        "targetApp": "Office365",
+        "targetAppId": "Office365",
+        "anomaly_type": "New Device Type"
+      }
+  - Name: Case Insensitive Device Type Check
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-01 22:00:00.000",
+        "actorId": "user@company.com",
+        "actorName": "User",
+        "sourceIP": "203.0.113.200",
+        "deviceType": "UNKNOWN",
+        "userAgent": "Mozilla/5.0",
+        "browser": "CHROME",
+        "operatingSystem": "Windows",
+        "targetApp": "Slack",
+        "targetAppId": "Slack",
+        "anomaly_type": "New Device Type"
+      }

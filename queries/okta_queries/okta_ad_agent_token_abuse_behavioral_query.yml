@@ -1,0 +1,83 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.ADAgentTokenAbuseBehavioral"
+Enabled: true
+Description: |
+  Detects API token creation and AD agent activity from previously unseen IP addresses or user agents.
+  Uses behavioral analysis to identify anomalous token creation patterns.
+Query: |
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+
+  with subquery as (
+    SELECT
+      p_event_time,
+      actor.alternateId as actorId,
+      actor.displayName as actorName,
+      eventType,
+      client.ipAddress as sourceIP,
+      client.userAgent.rawUserAgent as userAgent,
+      outcome.result as result,
+      target
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_occurs_since('30 day')
+      AND (
+        eventType = 'system.api_token.create'
+        OR eventType IN (
+          'system.agent.ad.config_change_detected',
+          'system.agent.ad.agent_instance_added',
+          'system.agent.ad.bad_credentials'
+        )
+      )
+      AND outcome.result = 'SUCCESS'
+      AND actor.alternateId IS NOT NULL
+  ),
+  ip_anomalies as (
+    {{ new_unique_values('subquery', 'actorId', 'sourceIP', '1day') }}
+  ),
+  useragent_anomalies as (
+    {{ new_unique_values('subquery', 'actorId', 'userAgent', '1day') }}
+  )
+  SELECT
+    s.p_event_time,
+    s.actorId,
+    s.actorName,
+    s.eventType,
+    s.sourceIP,
+    s.userAgent,
+    s.result,
+    s.target,
+    'New IP Address' as anomaly_type
+  FROM subquery s
+  JOIN ip_anomalies ia
+    ON s.actorId = ia.actorId
+    AND s.sourceIP = ia.sourceIP
+  WHERE p_occurs_since('1day')
+
+  UNION ALL
+
+  SELECT
+    s.p_event_time,
+    s.actorId,
+    s.actorName,
+    s.eventType,
+    s.sourceIP,
+    s.userAgent,
+    s.result,
+    s.target,
+    'New User Agent' as anomaly_type
+  FROM subquery s
+  JOIN useragent_anomalies ua
+    ON s.actorId = ua.actorId
+    AND s.userAgent = ua.userAgent
+  WHERE p_occurs_since('1day')
+
+  ORDER BY p_event_time DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Okta
+  - Anomaly Detection
+  - Behavioral Analytics
