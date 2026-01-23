@@ -1115,6 +1115,8 @@
   - Detects attempt to install a root certificate on MacOS
 - [CrowdStrike MacOS Osascript as Administrator](../rules/crowdstrike_rules/crowdstrike_macos_osascript_administrator.yml)
   - Detects usage of osascript with administrator privileges
+- [CrowdStrike MacOS plutil New File Access](../rules/crowdstrike_rules/crowdstrike_macos_plutil_new_files.yml)
+  - Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.
 - [CrowdStrike MacOS plutil Usage](../rules/crowdstrike_rules/crowdstrike_macos_plutil_usage.yml)
   - Detects the usage of plutil to modify plist files. Plist files run on start up and are often used by attackers to maintain persistence.
 - [Crowdstrike New Admin User Created](../rules/crowdstrike_rules/event_stream_rules/crowdstrike_new_admin_user_created.yml)
