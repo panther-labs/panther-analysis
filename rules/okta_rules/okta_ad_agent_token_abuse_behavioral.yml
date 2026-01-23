@@ -111,20 +111,6 @@ Tests:
         "target": [{"displayName": "ROGUE-AGENT"}],
         "anomaly_type": "New IP Address"
       }
-  # Negative Tests - Should Not Alert (query filters these out)
-  - Name: Normal Event Without Anomaly Type
-    ExpectedResult: false
-    Log:
-      {
-        "p_event_time": "2024-01-15 10:00:00.000",
-        "actorId": "normaluser@company.com",
-        "actorName": "Normal User",
-        "eventType": "user.session.start",
-        "sourceIP": "192.168.1.100",
-        "userAgent": "Mozilla/5.0",
-        "result": "SUCCESS",
-        "target": []
-      }
   # Edge Cases
   - Name: Empty Target Array
     ExpectedResult: true

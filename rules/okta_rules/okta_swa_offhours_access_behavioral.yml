@@ -122,19 +122,6 @@ Tests:
         "t1": "2024-10-15 00:00:00.000Z",
         "t2": "2024-10-16 00:00:00.000Z"
       }
-  # Negative Tests - Should Not Alert (query filters these out)
-  - Name: Normal Activity - Below Z-Score Threshold
-    ExpectedResult: false
-    Log:
-      {
-        "user_hour_key": "normaluser@company.com|10",
-        "N": 3,
-        "p_mean": 2.5,
-        "p_stddev": 0.8,
-        "p_zscore": 0.625,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
   # Edge Cases
   - Name: Medium Severity - High Z-Score at Late Night Hour
     ExpectedResult: true

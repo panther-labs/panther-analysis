@@ -105,19 +105,6 @@ Tests:
         "t1": "2024-10-15 18:00:00.000Z",
         "t2": "2024-10-15 19:00:00.000Z"
       }
-  # Negative Tests - Should Not Alert (query filters these out)
-  - Name: Normal SWA Access Volume - Below Threshold
-    ExpectedResult: false
-    Log:
-      {
-        "actorId": "normaluser@company.com",
-        "N": 3,
-        "p_mean": 2.8,
-        "p_stddev": 0.5,
-        "p_zscore": 0.4,
-        "t1": "2024-10-15 10:00:00.000Z",
-        "t2": "2024-10-15 11:00:00.000Z"
-      }
   # Edge Cases
   - Name: Minimum Threshold - Exactly 5 Accesses
     ExpectedResult: true

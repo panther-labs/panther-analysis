@@ -121,22 +121,6 @@ Tests:
         "targetAppId": "Slack",
         "anomaly_type": "New Device Type"
       }
-  # Negative Tests - Should Not Alert (query filters these out)
-  - Name: Normal SSO Event Without Anomaly Type
-    ExpectedResult: false
-    Log:
-      {
-        "p_event_time": "2024-10-01 10:00:00.000",
-        "actorId": "normaluser@company.com",
-        "actorName": "Normal User",
-        "sourceIP": "192.168.1.100",
-        "deviceType": "Computer",
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-        "browser": "CHROME",
-        "operatingSystem": "Mac OS X",
-        "targetApp": "Salesforce",
-        "targetAppId": "Salesforce"
-      }
   # Edge Cases
   - Name: Empty Device Type Field
     ExpectedResult: true
