@@ -9,7 +9,10 @@ Status: Experimental
 Tags:
   - Proofpoint
   - Email Security
-  - Multi-Vector Attack
+  - Phishing
+  - Malware
+  - Initial Access:Phishing
+  - Execution:User Execution
 Severity: Medium
 Description: >
   This rule alerts when multiple active threats are detected in a single
@@ -17,14 +20,10 @@ Description: >
   combining malware, phishing URLs, and malicious attachments. Severity
   is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
 Runbook: |
-  1. Review all threats detected in the alert context
-  2. Verify the email was successfully quarantined
-  3. Check if this is part of a larger campaign targeting the organization
-  4. Block the sender domain and any associated infrastructure
-  5. Review similar emails that may have been delivered before detection
-  6. Escalate to security team for threat intelligence analysis
-  7. Update security controls to block this attack pattern
-Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+  1. Verify the email was quarantined and review all threat types in the alert context immediately
+  2. Block sender infrastructure within 15 minutes and search for similar multi-vector attacks from the last 7 days
+  3. Escalate to threat intelligence team within 1 hour for campaign analysis and update security controls
+Reference: https://www.proofpoint.com/us/resources/webinars/blocking-multi-vector-attacks
 Tests:
   - Name: Two Active Threats
     ExpectedResult: true
@@ -165,6 +164,42 @@ Tests:
           threatStatus: "active"
           threat: "http://phishing-site.com"
           threatID: "threat-011"
+  - Name: One Active With Multiple Cleared - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:30:00Z"
+      sender: "mixed-status@example.com"
+      senderIP: "203.0.113.88"
+      fromAddress:
+        - "mixed-status@example.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Mixed Threat Status"
+      malwareScore: 30
+      phishScore: 40
+      spamScore: 15
+      impostorScore: 0
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<mixed-threats@example.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://active-phish.com"
+          threatID: "threat-014"
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "cleared"
+          threat: "old-malware.exe"
+          threatID: "threat-015"
+        - threatType: "url"
+          classification: "malware"
+          threatStatus: "cleared"
+          threat: "http://cleared-malware.com"
+          threatID: "threat-016"
   - Name: Multiple Threats But Not Active - No Alert
     ExpectedResult: false
     Log:

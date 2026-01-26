@@ -11,6 +11,8 @@ Tags:
   - Email Security
   - Phishing
   - Credential Theft
+  - Initial Access:Phishing
+  - Credential Access:Phishing for Information
 Severity: High
 Description: >
   This rule alerts when Proofpoint detects phishing attempts in email.
@@ -18,13 +20,10 @@ Description: >
   high phish score (80+), or contain active phishing threats in the
   threats map.
 Runbook: |
-  1. Review the sender and phishing indicators in the alert context
-  2. Check if any users clicked on malicious links (check email gateway logs)
-  3. If credentials may have been compromised, force password reset for affected users
-  4. Add the sender domain/URL to block list
-  5. Notify SOC and potentially affected users
-  6. Report the phishing attempt to appropriate authorities
-Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+  1. Check if users clicked on malicious links within the last 4 hours and force password reset immediately if credentials may be compromised
+  2. Block the sender domain/URL within 15 minutes and notify affected users
+  3. Report to anti-phishing authorities within 24 hours and share IOCs with threat intelligence platforms
+Reference: https://www.proofpoint.com/us/solutions/protect-against-phishing
 Tests:
   - Name: Phishing Quarantine Rule
     ExpectedResult: true

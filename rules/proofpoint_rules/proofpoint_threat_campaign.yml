@@ -9,8 +9,12 @@ Status: Experimental
 Tags:
   - Proofpoint
   - Email Security
-  - Threat Campaign
-  - APT
+  - Phishing
+  - Malware
+  - Campaign
+  - Initial Access:Phishing
+  - Execution:User Execution
+  - Resource Development:Develop Capabilities
 Severity: High
 Description: >
   This rule alerts when Proofpoint identifies an email as part of an active
@@ -18,15 +22,10 @@ Description: >
   are targeting multiple organizations or users. These threats are typically
   more sophisticated and require immediate attention.
 Runbook: |
-  1. Review the campaign ID and associated threat intelligence
-  2. Search for other emails from the same campaign across the organization
-  3. Check Proofpoint Threat Insight for campaign details and indicators
-  4. Verify all campaign-related emails were quarantined
-  5. Block all IOCs (domains, IPs, file hashes) associated with the campaign
-  6. Notify security team and consider threat hunting activities
-  7. Share campaign IOCs with threat intelligence platforms
-  8. Monitor for lateral movement or persistence if any emails were delivered
-Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+  1. Search for all emails from this campaign in the last 30 days and verify quarantine status across the organization
+  2. Block all campaign IOCs (domains, IPs, file hashes) within 15 minutes and check Proofpoint Threat Insight for details
+  3. Initiate threat hunting within 2 hours for lateral movement and share IOCs with threat intelligence platforms
+Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/Campaign_API
 Tests:
   - Name: Active Campaign with Malware
     ExpectedResult: true
@@ -166,3 +165,34 @@ Tests:
           threat: "http://old-threat.com"
           threatID: "phish-mno345"
           campaignID: "old-campaign-2025"
+  - Name: Cleared Campaign Threats Only - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:30:00Z"
+      sender: "remediated@historical.com"
+      senderIP: "198.51.100.250"
+      fromAddress:
+        - "remediated@historical.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Previously Flagged Campaign"
+      malwareScore: 10
+      phishScore: 15
+      spamScore: 5
+      impostorScore: 0
+      messageID: "<all-cleared@historical.com>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "cleared"
+          threat: "old-file.exe"
+          threatID: "mal-pqr678"
+          campaignID: "remediated-campaign-2025"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "cleared"
+          threat: "http://remediated-phish.com"
+          threatID: "phish-stu901"
+          campaignID: "remediated-campaign-2025"

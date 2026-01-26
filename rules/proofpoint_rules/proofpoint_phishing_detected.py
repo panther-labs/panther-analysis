@@ -9,7 +9,10 @@ def rule(event):
 
     # Check threats map for phishing classification
     for threat in event.get("threatsInfoMap", []):
-        if threat.get("classification") == "phish" and threat.get("threatStatus") == "active":
+        if (
+            threat.get("classification") == "phish"
+            and threat.get("threatStatus") == "active"
+        ):
             return True
 
     return False
@@ -33,32 +36,37 @@ def title(event):
 
 def alert_context(event):
     threats = []
-    threats_info = event.get("threatsInfoMap", [])
-    if not isinstance(threats_info, list):
-        threats_info = []
-
-    for threat in threats_info:
-        if hasattr(threat, "get"):
-            threats.append(
-                {
-                    "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                    "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                    "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                    "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
-                    "threatUrl": threat.get("threatUrl", "<UNKNOWN_THREAT_URL>"),
-                }
-            )
+    for threat in event.get("threatsInfoMap", []):
+        threats.append(
+            {
+                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
+                "threatType": threat.get(
+                    "threatType", "<UNKNOWN_THREAT_TYPE>"
+                ),
+                "classification": threat.get(
+                    "classification", "<UNKNOWN_CLASSIFICATION>"
+                ),
+                "threatStatus": threat.get(
+                    "threatStatus", "<UNKNOWN_THREAT_STATUS>"
+                ),
+                "threatUrl": threat.get("threatUrl"),
+            }
+        )
 
     return {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
         "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
         "recipients": event.get("recipient", []),
         "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
+        "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
+        "quarantineFolder": event.get(
+            "quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"
+        ),
+        "quarantineRule": event.get(
+            "quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"
+        ),
         "phishScore": event.get("phishScore"),
         "malwareScore": event.get("malwareScore"),
-        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
-        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
         "threats": threats,
-        "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "headerFrom": event.get("headerFrom", "<UNKNOWN_HEADER_FROM>"),
     }

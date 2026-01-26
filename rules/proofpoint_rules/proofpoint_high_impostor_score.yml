@@ -12,6 +12,8 @@ Tags:
   - Business Email Compromise
   - BEC
   - Impersonation
+  - Phishing
+  - Initial Access:Phishing
 Severity: Medium
 Description: >
   This rule alerts when Proofpoint detects a high impostor score (50+),
@@ -20,15 +22,10 @@ Description: >
   impersonating a trusted entity. Severity is dynamic based on the score:
   CRITICAL (80+), HIGH (65+), MEDIUM (50+).
 Runbook: |
-  1. Immediately review the sender details and compare to legitimate senders
-  2. Check if the email address is a lookalike domain (e.g., company.co vs company.com)
-  3. Verify if any recipients responded or took action based on the email
-  4. Check for financial transaction requests or credential harvesting attempts
-  5. If BEC is confirmed, notify finance/accounting teams immediately
-  6. Block the impersonating sender domain
-  7. Alert executives if they are being impersonated
-  8. Report to law enforcement if financial fraud was attempted
-Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+  1. Review sender details for lookalike domains and verify if recipients took action on the email within the last 24 hours
+  2. If BEC is confirmed, immediately notify finance/accounting teams and block the sender domain
+  3. Report to law enforcement within 24 hours if financial fraud was attempted or executives were impersonated
+Reference: https://www.proofpoint.com/us/threat-reference/business-email-compromise
 Tests:
   - Name: Critical Impostor Score
     ExpectedResult: true
@@ -87,6 +84,25 @@ Tests:
       impostorScore: 50
       headerFrom: "Human Resources <hr@c0mpany.com>"
       messageID: "<fake-hr@c0mpany.com>"
+  - Name: Boundary Case - Score 49 Below Threshold
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:30:00Z"
+      sender: "suspicious@example.com"
+      senderIP: "198.51.100.99"
+      fromAddress:
+        - "suspicious@example.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Account Verification"
+      malwareScore: 0
+      phishScore: 40
+      spamScore: 25
+      impostorScore: 49
+      headerFrom: "Support Team <suspicious@example.com>"
+      messageID: "<boundary49@example.com>"
   - Name: Low Impostor Score - No Alert
     ExpectedResult: false
     Log:

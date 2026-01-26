@@ -27,35 +27,43 @@ def severity(event):
 def title(event):
     subject = event.get("subject", "<UNKNOWN_SUBJECT>")
     sender = event.get("sender", "<UNKNOWN_SENDER>")
-    return f"Proofpoint: Virus Detected in Email from {sender} - [{subject}]"
+    return (
+        f"Proofpoint: Virus Detected in Email from {sender} "
+        f"- [{subject}]"
+    )
 
 
 def alert_context(event):
     threats = []
-    threats_info = event.get("threatsInfoMap", [])
-    if not isinstance(threats_info, list):
-        threats_info = []
-
-    for threat in threats_info:
-        if hasattr(threat, "get"):
-            threats.append(
-                {
-                    "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                    "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                    "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                    "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
-                }
-            )
+    for threat in event.get("threatsInfoMap", []):
+        threats.append(
+            {
+                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
+                "threatType": threat.get(
+                    "threatType", "<UNKNOWN_THREAT_TYPE>"
+                ),
+                "classification": threat.get(
+                    "classification", "<UNKNOWN_CLASSIFICATION>"
+                ),
+                "threatStatus": threat.get(
+                    "threatStatus", "<UNKNOWN_THREAT_STATUS>"
+                ),
+            }
+        )
 
     return {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
         "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
         "recipients": event.get("recipient", []),
         "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
-        "malwareScore": event.get("malwareScore"),
-        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
-        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "threats": threats,
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
+        "quarantineFolder": event.get(
+            "quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"
+        ),
+        "quarantineRule": event.get(
+            "quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"
+        ),
+        "malwareScore": event.get("malwareScore"),
+        "threats": threats,
         "messageSize": event.get("messageSize"),
     }

@@ -10,19 +10,20 @@ Tags:
   - Proofpoint
   - Email Security
   - Virus
+  - Malware
+  - Phishing
+  - Initial Access:Phishing
+  - Execution:User Execution
 Severity: High
 Description: >
-  This rule alerts when Proofpoint detects a virus in an email that could
-  not be cleaned. It triggers when emails are quarantined to the Virus folder,
+  This rule alerts when Proofpoint detects a virus in an email that cannot
+  be disinfected. It triggers when emails are quarantined to the Virus folder,
   have the notcleaned quarantine rule applied, or have a malware score of 95+.
 Runbook: |
-  1. Review the alert context for sender, recipients, and virus details
-  2. Confirm the email was quarantined and not delivered
-  3. Check for any other emails from the same sender
-  4. Verify endpoint protection status on recipient systems
-  5. Block the sender domain/IP at the email gateway
-  6. Report to security team for further investigation
-Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+  1. Confirm the email was quarantined and immediately verify endpoint protection status on recipient systems
+  2. Block the sender domain/IP within 15 minutes and search for similar emails from the last 7 days
+  3. Escalate to IR team within 30 minutes if virus delivery to endpoints is confirmed
+Reference: https://www.proofpoint.com/sites/default/files/2020-05/pfpt-uk-ds-email-protection.pdf
 Tests:
   - Name: Virus Quarantine Folder
     ExpectedResult: true
@@ -79,6 +80,29 @@ Tests:
           classification: "malware"
           threatStatus: "active"
           threat: "update.exe"
+  - Name: High Malware Score Without Quarantine - Backup Check
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:30:00Z"
+      sender: "highscore@malware.net"
+      senderIP: "192.0.2.99"
+      fromAddress:
+        - "highscore@malware.net"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Suspicious Attachment"
+      malwareScore: 98
+      phishScore: 10
+      spamScore: 20
+      impostorScore: 0
+      messageID: "<highscore98@malware.net>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "suspicious.exe"
   - Name: Clean Email - No Alert
     ExpectedResult: false
     Log:
