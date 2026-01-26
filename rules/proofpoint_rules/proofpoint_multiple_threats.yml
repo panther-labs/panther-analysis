@@ -1,0 +1,195 @@
+AnalysisType: rule
+Filename: proofpoint_multiple_threats.py
+RuleID: "Proofpoint.MultipleThreats"
+DisplayName: "Proofpoint Multiple Threats Detected"
+Enabled: true
+LogTypes:
+  - Proofpoint.Event
+Tags:
+  - Proofpoint
+  - Email Security
+  - Multi-Vector Attack
+Severity: Medium
+Description: >
+  This rule alerts when multiple active threats are detected in a single
+  email message. This could indicate a sophisticated multi-vector attack
+  combining malware, phishing URLs, and malicious attachments. Severity
+  is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
+Runbook: |
+  1. Review all threats detected in the alert context
+  2. Verify the email was successfully quarantined
+  3. Check if this is part of a larger campaign targeting the organization
+  4. Block the sender domain and any associated infrastructure
+  5. Review similar emails that may have been delivered before detection
+  6. Escalate to security team for threat intelligence analysis
+  7. Update security controls to block this attack pattern
+Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+Tests:
+  - Name: Two Active Threats
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T12:00:00Z"
+      sender: "attacker@evil.com"
+      senderIP: "192.0.2.88"
+      fromAddress:
+        - "attacker@evil.com"
+      toAddresses:
+        - "victim@company.com"
+      recipient:
+        - "victim@company.com"
+      subject: "Urgent Action Required"
+      malwareScore: 80
+      phishScore: 75
+      spamScore: 20
+      impostorScore: 10
+      quarantineFolder: "Attachment Defense"
+      quarantineRule: "threat"
+      messageID: "<multi-threat@evil.com>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "invoice.exe"
+          threatID: "threat-001"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://fake-login.com/verify"
+          threatID: "threat-002"
+  - Name: Five Active Threats - Critical
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T13:30:00Z"
+      sender: "sophisticated@attacker.net"
+      senderIP: "198.51.100.123"
+      fromAddress:
+        - "sophisticated@attacker.net"
+      toAddresses:
+        - "target@company.com"
+      recipient:
+        - "target@company.com"
+      subject: "Critical Update Required"
+      malwareScore: 95
+      phishScore: 90
+      spamScore: 50
+      impostorScore: 20
+      quarantineFolder: "Attachment Defense"
+      quarantineRule: "threat"
+      messageID: "<advanced-threat@attacker.net>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "update.zip"
+          threatID: "threat-003"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://phish1.com"
+          threatID: "threat-004"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://phish2.com"
+          threatID: "threat-005"
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "document.pdf"
+          threatID: "threat-006"
+        - threatType: "url"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "http://malware-download.com"
+          threatID: "threat-007"
+  - Name: Three Active Threats - High Severity
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:00:00Z"
+      sender: "bad-actor@malicious.org"
+      senderIP: "203.0.113.77"
+      fromAddress:
+        - "bad-actor@malicious.org"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Invoice Attached"
+      malwareScore: 70
+      phishScore: 65
+      spamScore: 15
+      impostorScore: 5
+      quarantineFolder: "Attachment Defense"
+      quarantineRule: "threat"
+      messageID: "<triple-threat@malicious.org>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "invoice.doc"
+          threatID: "threat-008"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://credential-stealer.com"
+          threatID: "threat-009"
+        - threatType: "url"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "http://drive-by-download.net"
+          threatID: "threat-010"
+  - Name: One Active Threat - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:00:00Z"
+      sender: "sender@example.com"
+      senderIP: "198.51.100.50"
+      fromAddress:
+        - "sender@example.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Suspicious Link"
+      malwareScore: 5
+      phishScore: 60
+      spamScore: 10
+      impostorScore: 0
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<single-threat@example.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://phishing-site.com"
+          threatID: "threat-011"
+  - Name: Multiple Threats But Not Active - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:00:00Z"
+      sender: "old-threat@example.com"
+      senderIP: "203.0.113.99"
+      fromAddress:
+        - "old-threat@example.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Old Campaign"
+      malwareScore: 10
+      phishScore: 10
+      spamScore: 5
+      impostorScore: 0
+      messageID: "<inactive-threats@example.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "cleared"
+          threat: "http://old-phish.com"
+          threatID: "threat-012"
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "cleared"
+          threat: "old-malware.exe"
+          threatID: "threat-013"

@@ -1,0 +1,167 @@
+AnalysisType: rule
+Filename: proofpoint_threat_campaign.py
+RuleID: "Proofpoint.ThreatCampaign"
+DisplayName: "Proofpoint Active Threat Campaign Detected"
+Enabled: true
+LogTypes:
+  - Proofpoint.Event
+Tags:
+  - Proofpoint
+  - Email Security
+  - Threat Campaign
+  - APT
+Severity: High
+Description: >
+  This rule alerts when Proofpoint identifies an email as part of an active
+  threat campaign. Campaign-based threats indicate coordinated attacks that
+  are targeting multiple organizations or users. These threats are typically
+  more sophisticated and require immediate attention.
+Runbook: |
+  1. Review the campaign ID and associated threat intelligence
+  2. Search for other emails from the same campaign across the organization
+  3. Check Proofpoint Threat Insight for campaign details and indicators
+  4. Verify all campaign-related emails were quarantined
+  5. Block all IOCs (domains, IPs, file hashes) associated with the campaign
+  6. Notify security team and consider threat hunting activities
+  7. Share campaign IOCs with threat intelligence platforms
+  8. Monitor for lateral movement or persistence if any emails were delivered
+Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/SIEM_API
+Tests:
+  - Name: Active Campaign with Malware
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T09:30:00Z"
+      sender: "campaign-actor@malware.net"
+      senderIP: "192.0.2.200"
+      fromAddress:
+        - "campaign-actor@malware.net"
+      toAddresses:
+        - "target@company.com"
+      recipient:
+        - "target@company.com"
+      subject: "Invoice #98765"
+      malwareScore: 100
+      phishScore: 30
+      spamScore: 10
+      impostorScore: 0
+      quarantineFolder: "Attachment Defense"
+      quarantineRule: "threat"
+      messageID: "<campaign-email-001@malware.net>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "invoice_98765.exe"
+          threatID: "mal-threat-abc123"
+          campaignID: "46e01b8a-0e67-4464-ac5a-b87ad4cc1f2a"
+  - Name: Active Phishing Campaign
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T11:00:00Z"
+      sender: "support@paypa1-secure.com"
+      senderIP: "198.51.100.88"
+      fromAddress:
+        - "support@paypa1-secure.com"
+      toAddresses:
+        - "victim@company.com"
+      recipient:
+        - "victim@company.com"
+      subject: "Verify Your Account Now"
+      malwareScore: 0
+      phishScore: 95
+      spamScore: 20
+      impostorScore: 15
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<phish-campaign-002@paypa1-secure.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://paypa1-verify-account.com/login"
+          threatID: "phish-threat-xyz789"
+          campaignID: "credential-harvest-2026-01"
+  - Name: Multiple Campaigns in One Email
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:00:00Z"
+      sender: "multi-campaign@attacker.org"
+      senderIP: "203.0.113.150"
+      fromAddress:
+        - "multi-campaign@attacker.org"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Urgent Security Update"
+      malwareScore: 85
+      phishScore: 80
+      spamScore: 15
+      impostorScore: 10
+      quarantineFolder: "Attachment Defense"
+      quarantineRule: "threat"
+      messageID: "<multi-campaign@attacker.org>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "security-update.zip"
+          threatID: "mal-def456"
+          campaignID: "malware-campaign-alpha"
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://fake-security-portal.com"
+          threatID: "phish-ghi789"
+          campaignID: "phish-campaign-beta"
+  - Name: Threat Without Campaign - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:00:00Z"
+      sender: "random-attacker@spam.net"
+      senderIP: "198.51.100.200"
+      fromAddress:
+        - "random-attacker@spam.net"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Click Here Now"
+      malwareScore: 20
+      phishScore: 70
+      spamScore: 50
+      impostorScore: 0
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<no-campaign@spam.net>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://isolated-phish.com"
+          threatID: "phish-jkl012"
+  - Name: Campaign But Threat Not Active - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:00:00Z"
+      sender: "old-campaign@historical.com"
+      senderIP: "203.0.113.250"
+      fromAddress:
+        - "old-campaign@historical.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Old Threat"
+      malwareScore: 5
+      phishScore: 5
+      spamScore: 10
+      impostorScore: 0
+      messageID: "<cleared-campaign@historical.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "cleared"
+          threat: "http://old-threat.com"
+          threatID: "phish-mno345"
+          campaignID: "old-campaign-2025"
