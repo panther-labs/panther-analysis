@@ -31,10 +31,7 @@ def title(event):
         if threat.get("threatStatus") == "active":
             active_count += 1
 
-    return (
-        f"Proofpoint: Multiple Threats Detected ({active_count}) "
-        f"- Email from {sender}"
-    )
+    return f"Proofpoint: Multiple Threats Detected ({active_count}) " f"- Email from {sender}"
 
 
 def alert_context(event):
@@ -46,12 +43,8 @@ def alert_context(event):
         if threat.get("threatStatus") == "active":
             threat_dict = {
                 "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get(
-                    "threatType", "<UNKNOWN_THREAT_TYPE>"
-                ),
-                "classification": threat.get(
-                    "classification", "<UNKNOWN_CLASSIFICATION>"
-                ),
+                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
+                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
                 "threatID": threat.get("threatID", "<UNKNOWN_THREAT_ID>"),
             }
             threats.append(threat_dict)
@@ -64,12 +57,8 @@ def alert_context(event):
         "recipients": event.get("recipient", []),
         "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get(
-            "quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"
-        ),
-        "quarantineRule": event.get(
-            "quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"
-        ),
+        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
+        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
         "malwareScore": event.get("malwareScore"),
         "phishScore": event.get("phishScore"),
         "threatCount": len(threats),

@@ -27,10 +27,7 @@ def severity(event):
 def title(event):
     subject = event.get("subject", "<UNKNOWN_SUBJECT>")
     sender = event.get("sender", "<UNKNOWN_SENDER>")
-    return (
-        f"Proofpoint: Virus Detected in Email from {sender} "
-        f"- [{subject}]"
-    )
+    return f"Proofpoint: Virus Detected in Email from {sender} " f"- [{subject}]"
 
 
 def alert_context(event):
@@ -39,15 +36,9 @@ def alert_context(event):
         threats.append(
             {
                 "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get(
-                    "threatType", "<UNKNOWN_THREAT_TYPE>"
-                ),
-                "classification": threat.get(
-                    "classification", "<UNKNOWN_CLASSIFICATION>"
-                ),
-                "threatStatus": threat.get(
-                    "threatStatus", "<UNKNOWN_THREAT_STATUS>"
-                ),
+                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
+                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
+                "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
             }
         )
 
@@ -57,12 +48,8 @@ def alert_context(event):
         "recipients": event.get("recipient", []),
         "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get(
-            "quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"
-        ),
-        "quarantineRule": event.get(
-            "quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"
-        ),
+        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
+        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
         "malwareScore": event.get("malwareScore"),
         "threats": threats,
         "messageSize": event.get("messageSize"),

@@ -18,10 +18,7 @@ def severity(event):
 def title(event):
     sender = event.get("sender", "<UNKNOWN_SENDER>")
     impostor_score = event.get("impostorScore", 0)
-    return (
-        f"Proofpoint: High Impostor Score ({impostor_score}) "
-        f"- Email from {sender}"
-    )
+    return f"Proofpoint: High Impostor Score ({impostor_score}) " f"- Email from {sender}"
 
 
 def alert_context(event):
@@ -31,12 +28,8 @@ def alert_context(event):
         "recipients": event.get("recipient", []),
         "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get(
-            "quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"
-        ),
-        "quarantineRule": event.get(
-            "quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"
-        ),
+        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
+        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
         "malwareScore": event.get("malwareScore"),
         "phishScore": event.get("phishScore"),
         "spamScore": event.get("spamScore"),
