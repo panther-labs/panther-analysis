@@ -12,22 +12,22 @@ Query: |
   with subquery as (
     SELECT
       p_event_time,
-      actor.alternateId as actorId,
-      actor.displayName as actorName,
-      eventType,
-      client.ipAddress as sourceIP,
-      client.device as deviceType,
-      client.userAgent.rawUserAgent as userAgent,
-      client.userAgent.browser as browser,
-      client.userAgent.os as operatingSystem,
-      outcome.result as result,
-      target[0].displayName as targetApp,
-      target[0].alternateId as targetAppId
+      actor:alternateId::string as actorId,
+      actor:displayName::string as actorName,
+      eventType::string as eventType,
+      client:ipAddress::string as sourceIP,
+      client:device::string as deviceType,
+      client:userAgent:rawUserAgent::string as userAgent,
+      client:userAgent:browser::string as browser,
+      client:userAgent:os::string as operatingSystem,
+      outcome:result::string as result,
+      target[0]:displayName::string as targetApp,
+      target[0]:alternateId::string as targetAppId
     FROM panther_logs.public.okta_systemlog
     WHERE p_occurs_since('30 day')
       AND eventType = 'user.authentication.sso'
-      AND outcome.result = 'SUCCESS'
-      AND actor.alternateId IS NOT NULL
+      AND outcome:result = 'SUCCESS'
+      AND actor:alternateId IS NOT NULL
   ),
   device_anomalies as (
     {{ new_unique_values('subquery', 'actorId', 'deviceType', '3day') }}

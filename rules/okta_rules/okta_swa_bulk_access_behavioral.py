@@ -31,16 +31,18 @@ def severity(event):
 
 
 def alert_context(event):
+    access_count = event.get("N", 0)
+    mean = event.get("p_mean", 0)
+
     return {
         "actor_id": event.get("actorId", "<UNKNOWN_ACTORID>"),
-        "access_count": event.get("N", 0),
-        "historical_mean": event.get("p_mean", 0),
+        "access_count": access_count,
+        "historical_mean": mean,
         "standard_deviation": event.get("p_stddev", 0),
         "z_score": event.get("p_zscore", 0),
         "time_window_start": event.get("t1", "<UNKNOWN_TIMEWINDOWSTART>"),
         "time_window_end": event.get("t2", "<UNKNOWN_TIMEWINDOWEND>"),
         "anomaly_description": (
-            f"User accessed {event.get('N', 0)} SWA apps "
-            f"vs historical average of {event.get('p_mean', 0):.1f}"
+            f"User accessed {access_count} SWA apps " f"vs historical average of {mean:.1f}"
         ),
     }

@@ -12,12 +12,12 @@ Query: |
   with subquery as (
     SELECT
       p_event_time,
-      actor.alternateId as actorId,
-      actor.displayName as actorName,
-      eventType,
-      client.ipAddress as sourceIP,
-      client.userAgent.rawUserAgent as userAgent,
-      outcome.result as result,
+      actor:alternateId::string as actorId,
+      actor:displayName::string as actorName,
+      eventType::string as eventType,
+      client:ipAddress::string as sourceIP,
+      client:userAgent:rawUserAgent::string as userAgent,
+      outcome:result::string as result,
       target
     FROM panther_logs.public.okta_systemlog
     WHERE p_occurs_since('30 day')
@@ -29,8 +29,8 @@ Query: |
           'system.agent.ad.bad_credentials'
         )
       )
-      AND outcome.result = 'SUCCESS'
-      AND actor.alternateId IS NOT NULL
+      AND outcome:result = 'SUCCESS'
+      AND actor:alternateId IS NOT NULL
   ),
   ip_anomalies as (
     {{ new_unique_values('subquery', 'actorId', 'sourceIP', '1day') }}

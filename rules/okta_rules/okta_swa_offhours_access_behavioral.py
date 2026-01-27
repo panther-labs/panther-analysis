@@ -44,17 +44,20 @@ def alert_context(event):
     actor = parts[0] if len(parts) > 0 else "<UNKNOWN_ACTORID>"
     hour = parts[1] if len(parts) > 1 else "<UNKNOWN_HOUR>"
 
+    access_count = event.get("N", 0)
+    mean = event.get("p_mean", 0)
+
     return {
         "actor_id": actor,
         "hour_of_day_utc": hour,
-        "access_count": event.get("N", 0),
-        "historical_mean_for_hour": event.get("p_mean", 0),
+        "access_count": access_count,
+        "historical_mean_for_hour": mean,
         "standard_deviation": event.get("p_stddev", 0),
         "z_score": event.get("p_zscore", 0),
         "time_window_start": event.get("t1", "<UNKNOWN_TIMEWINDOWSTART>"),
         "time_window_end": event.get("t2", "<UNKNOWN_TIMEWINDOWEND>"),
         "anomaly_description": (
-            f"User accessed SWA apps {event.get('N', 0)} times at hour {hour} UTC "
-            f"vs historical average of {event.get('p_mean', 0):.1f}"
+            f"User accessed SWA apps {access_count} times at hour {hour} UTC "
+            f"vs historical average of {mean:.1f}"
         ),
     }

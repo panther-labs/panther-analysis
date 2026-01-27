@@ -12,27 +12,27 @@ Query: |
   with subquery as (
     SELECT
       p_event_time,
-      actor.alternateId || '|' || CAST(HOUR(p_event_time) AS VARCHAR) as user_hour_key,
-      actor.alternateId as actorId,
-      actor.displayName as actorName,
-      eventType,
-      client.ipAddress as sourceIP,
-      client.userAgent.rawUserAgent as userAgent,
-      debugContext.debugData.signOnMode as signOnMode,
-      outcome.result as result,
-      target[0].displayName as appName,
-      target[0].alternateId as appId,
+      actor:alternateId::string || '|' || CAST(HOUR(p_event_time) AS VARCHAR) as user_hour_key,
+      actor:alternateId::string as actorId,
+      actor:displayName::string as actorName,
+      eventType::string as eventType,
+      client:ipAddress::string as sourceIP,
+      client:userAgent:rawUserAgent::string as userAgent,
+      debugContext:debugData:signOnMode::string as signOnMode,
+      outcome:result::string as result,
+      target[0]:displayName::string as appName,
+      target[0]:alternateId::string as appId,
       HOUR(p_event_time) as hour_of_day,
       1 as access_count
     FROM panther_logs.public.okta_systemlog
     WHERE p_occurs_since('30 day')
       AND (
         (eventType = 'policy.evaluate_sign_on'
-         AND debugContext.debugData.signOnMode = 'BROWSER_PLUGIN')
+         AND debugContext:debugData:signOnMode = 'BROWSER_PLUGIN')
         OR eventType = 'application.user_membership.show_password'
       )
-      AND outcome.result = 'SUCCESS'
-      AND actor.alternateId IS NOT NULL
+      AND outcome:result = 'SUCCESS'
+      AND actor:alternateId IS NOT NULL
   ),
   {{ statistical_anomaly('subquery', 'user_hour_key', 'access_count', 'count', '1', 'day', 2) }}
   WHERE t2 >= dateadd('day', -3, p_current_timestamp())
