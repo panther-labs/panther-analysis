@@ -1,3 +1,6 @@
+from panther_proofpoint_helpers import extract_threats
+
+
 def rule(event):
     # Check if any threats have a campaign ID
     for threat in event.get("threatsInfoMap", []):
@@ -34,21 +37,12 @@ def title(event):
 
 
 def alert_context(event):
-    threats = []
-    campaign_ids = set()
+    # Extract all threats using the helper
+    all_threats = extract_threats(event)
 
-    for threat in event.get("threatsInfoMap", []):
-        if threat.get("campaignID"):
-            threat_dict = {
-                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
-                "campaignID": threat.get("campaignID", "<UNKNOWN_CAMPAIGN_ID>"),
-                "threatID": threat.get("threatID", "<UNKNOWN_THREAT_ID>"),
-            }
-            threats.append(threat_dict)
-            campaign_ids.add(threat_dict["campaignID"])
+    # Filter to only threats with campaign IDs
+    campaign_threats = [t for t in all_threats if "campaignID" in t]
+    campaign_ids = set(t.get("campaignID") for t in campaign_threats if t.get("campaignID"))
 
     return {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
@@ -58,9 +52,9 @@ def alert_context(event):
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
         "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore"),
-        "phishScore": event.get("phishScore"),
+        "malwareScore": event.get("malwareScore", 0),
+        "phishScore": event.get("phishScore", 0),
         "campaignIDs": list(campaign_ids),
         "campaignCount": len(campaign_ids),
-        "threats": threats,
+        "threats": campaign_threats,
     }

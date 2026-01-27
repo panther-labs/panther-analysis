@@ -1,3 +1,6 @@
+from panther_proofpoint_helpers import extract_threats
+
+
 def rule(event):
     # Check if quarantined for phish
     if event.get("quarantineRule") == "phish" or event.get("quarantineFolder") == "Phish":
@@ -31,20 +34,15 @@ def title(event):
     return f"Proofpoint: Phishing Email Detected from {sender} - [{subject}]"
 
 
-def alert_context(event):
-    threats = []
-    for threat in event.get("threatsInfoMap", []):
-        threats.append(
-            {
-                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
-                "threatUrl": threat.get("threatUrl"),
-            }
-        )
+def dedup(event):
+    # Deduplicate by sender and threat type to group related phishing alerts
+    sender = event.get("sender", "<UNKNOWN_SENDER>")
+    quarantine_folder = event.get("quarantineFolder", "phish")
+    return f"proofpoint:phishing:{sender}:{quarantine_folder}"
 
-    return {
+
+def alert_context(event):
+    context = {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
         "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
         "recipients": event.get("recipient", []),
@@ -52,8 +50,9 @@ def alert_context(event):
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
         "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "phishScore": event.get("phishScore"),
-        "malwareScore": event.get("malwareScore"),
-        "threats": threats,
+        "phishScore": event.get("phishScore", 0),
+        "malwareScore": event.get("malwareScore", 0),
+        "threats": extract_threats(event, include_threat_url=True),
         "headerFrom": event.get("headerFrom", "<UNKNOWN_HEADER_FROM>"),
     }
+    return context

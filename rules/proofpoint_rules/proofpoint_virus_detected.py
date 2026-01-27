@@ -1,3 +1,6 @@
+from panther_proofpoint_helpers import extract_threats
+
+
 def rule(event):
     quarantine_rule = event.get("quarantineRule", "")
     quarantine_folder = event.get("quarantineFolder", "")
@@ -30,19 +33,15 @@ def title(event):
     return f"Proofpoint: Virus Detected in Email from {sender} " f"- [{subject}]"
 
 
-def alert_context(event):
-    threats = []
-    for threat in event.get("threatsInfoMap", []):
-        threats.append(
-            {
-                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                "threatStatus": threat.get("threatStatus", "<UNKNOWN_THREAT_STATUS>"),
-            }
-        )
+def dedup(event):
+    # Deduplicate by sender and threat type to group related virus alerts
+    sender = event.get("sender", "<UNKNOWN_SENDER>")
+    quarantine_folder = event.get("quarantineFolder", "Virus")
+    return f"proofpoint:virus:{sender}:{quarantine_folder}"
 
-    return {
+
+def alert_context(event):
+    context = {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
         "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
         "recipients": event.get("recipient", []),
@@ -50,7 +49,8 @@ def alert_context(event):
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
         "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore"),
-        "threats": threats,
-        "messageSize": event.get("messageSize"),
+        "malwareScore": event.get("malwareScore", 0),
+        "threats": extract_threats(event),
+        "messageSize": event.get("messageSize", 0),
     }
+    return context

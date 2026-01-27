@@ -30,9 +30,9 @@ def alert_context(event):
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
         "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore"),
-        "phishScore": event.get("phishScore"),
-        "spamScore": event.get("spamScore"),
-        "impostorScore": event.get("impostorScore"),
+        "malwareScore": event.get("malwareScore", 0),
+        "phishScore": event.get("phishScore", 0),
+        "spamScore": event.get("spamScore", 0),
+        "impostorScore": event.get("impostorScore", 0),
         "headerFrom": event.get("headerFrom", "<UNKNOWN_HEADER_FROM>"),
     }

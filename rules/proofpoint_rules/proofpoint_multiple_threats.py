@@ -1,3 +1,6 @@
+from panther_proofpoint_helpers import extract_threats
+
+
 def rule(event):
     # Must have at least 2 active threats
     active_count = 0
@@ -35,21 +38,15 @@ def title(event):
 
 
 def alert_context(event):
-    threats = []
-    threat_types = set()
-    classifications = set()
+    # Extract all threats using the helper
+    all_threats = extract_threats(event)
 
-    for threat in event.get("threatsInfoMap", []):
-        if threat.get("threatStatus") == "active":
-            threat_dict = {
-                "threat": threat.get("threat", "<UNKNOWN_THREAT>"),
-                "threatType": threat.get("threatType", "<UNKNOWN_THREAT_TYPE>"),
-                "classification": threat.get("classification", "<UNKNOWN_CLASSIFICATION>"),
-                "threatID": threat.get("threatID", "<UNKNOWN_THREAT_ID>"),
-            }
-            threats.append(threat_dict)
-            threat_types.add(threat_dict["threatType"])
-            classifications.add(threat_dict["classification"])
+    # Filter to only active threats
+    active_threats = [t for t in all_threats if t.get("threatStatus") == "active"]
+    threat_types = set(t.get("threatType") for t in active_threats if t.get("threatType"))
+    classifications = set(
+        t.get("classification") for t in active_threats if t.get("classification")
+    )
 
     return {
         "sender": event.get("sender", "<UNKNOWN_SENDER>"),
@@ -59,10 +56,10 @@ def alert_context(event):
         "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
         "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
         "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore"),
-        "phishScore": event.get("phishScore"),
-        "threatCount": len(threats),
+        "malwareScore": event.get("malwareScore", 0),
+        "phishScore": event.get("phishScore", 0),
+        "threatCount": len(active_threats),
         "threatTypes": list(threat_types),
         "classifications": list(classifications),
-        "threats": threats,
+        "threats": active_threats,
     }
