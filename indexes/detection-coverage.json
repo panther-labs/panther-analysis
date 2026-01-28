@@ -2757,12 +2757,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects deletion of Azure Recovery Services protection containers containing VM and workload backups. Storm-0501 systematically deletes backup containers before deploying ransomware to prevent recovery. This operation permanently destroys all recovery points for protected resources.",
+        "DisplayName": "Azure Recovery Services Protection Container Deleted",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_recovery_services_container_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Resource Group is deleted. Resource group deletion removes all resources within the group and may indicate mass destruction or legitimate cleanup.",
         "DisplayName": "Azure Resource Group Deleted",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_resource_group_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Azure resource locks are deleted. Storm-0501 and other ransomware operators delete resource locks before destroying storage accounts and backups, as locks prevent deletion even by administrators. This is a critical pre-ransomware indicator.",
+        "DisplayName": "Azure Resource Lock Deleted",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_resource_lock_deleted.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2892,6 +2910,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects high-volume blob extraction (50+ GetBlob operations in 15 minutes) from Azure Storage accounts. Storm-0501 rapidly extracts data using stolen credentials before ransomware deployment. Replicates Defender for Cloud alert 'Unusual amount of data extracted from a storage account'.",
+        "DisplayName": "Azure Storage Blob Bulk Extraction",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_blob_bulk_extraction.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when permissions are modified on an Azure Storage blob container. Adversaries may modify container permissions to enable public access, grant unauthorized access, or prepare for data exfiltration. Changes to blob permissions can indicate attempts to access sensitive data, establish persistence through external access, or facilitate ransomware by modifying access controls before encryption.",
         "DisplayName": "Azure Storage Blob Container Permissions Modified",
         "LogTypes": [
@@ -2961,6 +2988,24 @@
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_storage_fileshare_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of Azure Storage immutability policies that provide WORM protection. Storm-0501 ransomware operators delete these policies before encrypting data, as WORM-protected blobs cannot be modified even by administrators. Critical pre-ransomware indicator.",
+        "DisplayName": "Azure Storage Immutability Policy Deleted",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_immutability_policy_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects SAS token usage from external public IPs by parsing the signature parameter in storage URIs. Storm-0501 uses stolen SAS tokens from external C2 infrastructure for data exfiltration. Replicates Defender for Cloud alert 'Storage.Blob_AccountSas.InternalSasUsedExternally'.",
+        "DisplayName": "Azure Storage SAS Token Access from External IP",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_storage_sas_external_access.yml"
     },
     {
         "AnalysisType": "Rule",
