@@ -1,0 +1,28 @@
+AnalysisType: scheduled_query
+QueryName: "Google Workspace Login Type Anomaly"
+Description: |
+  Detects users authenticating with login types they haven't used in the past 30 days.
+  May indicate GAIA credential theft where attackers use stolen tokens with different
+  authentication methods than the victim's normal pattern (e.g., google_password instead of SAML).
+Enabled: false
+Query: |
+  -- pragma: template
+  {% import 'anomalies' new_unique_values %}
+
+  WITH subquery AS (
+    SELECT
+      actor:email AS email,
+      parameters:login_type AS login_type,
+      ipAddress,
+      p_event_time
+    FROM panther_logs.public.gsuite_activityevent
+    WHERE p_occurs_since('30 days')
+      AND id:applicationName = 'login'
+      AND name = 'login_success'
+      AND parameters:login_type IS NOT NULL
+      AND parameters:login_type != 'reauth'
+  ),
+  {{ new_unique_values('subquery', 'email', 'login_type', '1 day') }}
+Schedule:
+  RateMinutes: 360
+  TimeoutMinutes: 3
