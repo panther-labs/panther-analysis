@@ -1,0 +1,113 @@
+AnalysisType: rule
+Filename: azure_storage_blob_bulk_extraction.py
+RuleID: "Azure.MonitorActivity.Storage.Blob.BulkExtraction"
+DisplayName: "Azure Storage Blob Bulk Extraction"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Medium
+Status: Experimental
+Threshold: 50
+DedupPeriodMinutes: 15
+Description: >
+  Detects high-volume blob extraction (50+ GetBlob operations in 15 minutes) from Azure Storage accounts.
+  Storm-0501 rapidly extracts data using stolen credentials before ransomware deployment.
+  Replicates Defender for Cloud alert 'Unusual amount of data extracted from a storage account'.
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567 # Exfiltration: Exfiltration Over Web Service
+    - TA0009:T1530 # Collection: Data from Cloud Storage
+Reference: https://learn.microsoft.com/en-us/azure/defender-for-cloud/alerts-azure-storage
+Tags:
+  - Exfiltration
+  - Collection
+  - Storm-0501
+  - Defender for Cloud
+  - Data Theft
+Runbook: |
+  1. Query Azure MonitorActivity logs for all GetBlob operations from the callerIpAddress in the 2 hours before and after the alert to calculate total blob count
+  2. Compare the blob count from step 1 to the callerIpAddress's 30-day average for this storage account to determine if this is anomalous volume
+  3. Find all SAS token generation operations (listAccountSas, listServiceSas) in the 6 hours before the first GetBlob to identify if stolen SAS tokens are being used
+  4. Check if the callerIpAddress has accessed this storage account in the past 90 days to determine if this is a new or known accessor
+  5. Search for authentication events from the callerIpAddress in Azure.Audit logs in the 48 hours before the alert to assess if account compromise preceded the extraction
+SummaryAttributes:
+  - callerIpAddress
+  - resourceId
+  - properties:objectKey
+Tests:
+  - Name: Successful Blob Extraction
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-28T18:00:00.000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "GetBlob",
+        "callerIpAddress": "8.8.8.8:44321",
+        "location": "eastus",
+        "category": "StorageRead",
+        "level": "Informational",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "clientRequestId": "b1c2d3e4-f5g6-7890-hijk-lm9876543210",
+          "metricResponseType": "Success",
+          "objectKey": "/mystorageaccount/sensitive-data/financials/report_2025.xlsx",
+          "serverLatencyMs": 18,
+          "serviceType": "blob",
+          "tlsVersion": "TLS 1.3",
+          "userAgentHeader": "python-requests/2.31.0"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111",
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: Case Insensitive Match
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-28T18:00:05.000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "getblob",
+        "callerIpAddress": "1.1.1.1:55443",
+        "location": "eastus",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "metricResponseType": "Success",
+          "objectKey": "/mystorageaccount/backups/database_backup.bak",
+          "userAgentHeader": "curl/8.4.0"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111",
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-28T18:01:00.000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "PutBlob",
+        "callerIpAddress": "10.0.0.1:42781",
+        "location": "eastus",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "metricResponseType": "Success",
+          "objectKey": "/mystorageaccount/uploads/data.json"
+        },
+        "tenantId": "87654321-4321-4321-4321-210987654321",
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: Failed Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-28T18:02:00.000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount/blobServices/default",
+        "operationName": "GetBlob",
+        "callerIpAddress": "9.9.9.9:33333",
+        "location": "eastus",
+        "properties": {
+          "accountName": "mystorageaccount",
+          "metricResponseType": "AuthorizationFailure",
+          "objectKey": "/mystorageaccount/secrets/config.json"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111",
+        "p_log_type": "Azure.MonitorActivity"
+      }
