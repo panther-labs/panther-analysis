@@ -1,0 +1,122 @@
+AnalysisType: rule
+Filename: azure_elevate_user_access_admin.py
+RuleID: "Azure.Audit.ElevateUserAccessAdministrator"
+DisplayName: "Azure User Elevated to User Access Administrator Role"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: High
+Description: >
+  Detects when a user elevates their permissions to the "User Access Administrator" role in Azure,
+  which grants full control over access management for Azure resources. The User Access Administrator
+  role is one of the most powerful privileged roles in Azure, allowing the holder to manage user access
+  to all Azure resources, assign roles to other users including administrative roles, and effectively
+  control the entire Azure subscription's permission structure.
+Tags:
+  - Persistence
+  - Account Manipulation
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1098
+    - TA0004:T1098.003
+Runbook: |
+  1. Query Azure.Audit logs for all role assignment operations and permission changes by properties:initiatedBy:user:userPrincipalName in the 24 hours after the elevation to identify what privileged actions the user performed with the elevated access
+  2. Verify with the user or their manager whether this elevation was authorized and required for a specific operational task, incident response activity, or break-glass scenario documented in your organization's procedures
+  3. Review Azure.Audit logs for role assignments made during the elevated access period to identify if the user granted themselves or others persistent administrative roles that should be revoked, and check if the User Access Administrator role was properly removed after the task completion
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/privilege_escalation_entra_id_elevate_to_user_administrator_access.toml
+SummaryAttributes:
+  - properties:initiatedBy:user:userPrincipalName
+  - properties:initiatedBy:user:ipAddress
+  - tenantId
+Tests:
+  - Name: User Elevated to User Access Administrator
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 08:45:30.123",
+        "resourceId": "/subscriptions/sub-123/providers/Microsoft.Authorization",
+        "operationName": "User has elevated their access to User Access Administrator for their Azure Resources",
+        "operationVersion": "1.0",
+        "category": "AuditLogs",
+        "tenantId": "tenant-123",
+        "durationMs": 0,
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "elevate-access-001",
+        "Level": "4",
+        "properties":
+          {
+            "activityDateTime": "2025-01-15T08:45:30.1234567Z",
+            "loggedByService": "Microsoft.Authorization",
+            "operationType": "Assign",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "user-admin-789",
+                    "displayName": "Senior Administrator",
+                    "userPrincipalName": "denethor@lotr.com",
+                    "ipAddress": "2.2.2.2",
+                  },
+              },
+            "additionalDetails":
+              [
+                { "key": "Action", "value": "Microsoft.Authorization/elevateAccess/action" },
+                { "key": "Scope", "value": "/subscriptions/sub-123" },
+              ],
+          },
+        "result": "SUCCESS",
+        "p_event_time": "2025-01-15 08:45:30.123",
+        "p_log_type": "Azure.Audit",
+      }
+  - Name: Different Operation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 14:15:35.345",
+        "resourceId": "/subscriptions/sub-def/providers/Microsoft.Authorization",
+        "operationName": "Delete role assignment",
+        "operationVersion": "1.0",
+        "category": "AuditLogs",
+        "tenantId": "tenant-def",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "198.51.100.150",
+        "correlationId": "role-remove-001",
+        "Level": "4",
+        "properties":
+          {
+            "result": "success",
+            "operationName": "Delete role assignment",
+            "activityDisplayName": "Remove role assignment",
+            "activityDateTime": "2025-01-15T14:15:35.3456789Z",
+            "loggedByService": "Microsoft.Authorization",
+            "operationType": "Unassign",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "user-security-777",
+                    "displayName": "Security Admin",
+                    "userPrincipalName": "secadmin@company.com",
+                    "ipAddress": "198.51.100.150",
+                  },
+              },
+            "targetResources":
+              [
+                {
+                  "id": "user-former-888",
+                  "displayName": "Former Employee",
+                  "userPrincipalName": "former@company.com",
+                  "type": "User",
+                },
+              ],
+            "additionalDetails":
+              [
+                { "key": "RoleName", "value": "Reader" },
+                { "key": "Scope", "value": "/subscriptions/sub-def" },
+              ],
+          },
+        "p_event_time": "2025-01-15 14:15:35.345",
+        "p_log_type": "Azure.Audit",
+      }

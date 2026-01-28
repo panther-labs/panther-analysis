@@ -17,15 +17,19 @@ def is_sign_in_event(event):
 
 
 def azure_signin_alert_context(event) -> dict:
-    ac_actor_user = actor_user(event)
-    if ac_actor_user is None:
-        ac_actor_user = "<NO_ACTORUSER>"
-    a_c = {}
-    a_c["tenantId"] = event.get("tenantId", "<NO_TENANTID>")
-    a_c["source_ip"] = event.deep_get("properties", "ipAddress", default="<NO_SOURCEIP>")
-    a_c["actor_user"] = ac_actor_user
-    a_c["resourceDisplayName"] = event.deep_get(
+    actor_user_name = actor_user(event)
+    if actor_user_name is None:
+        actor_user_name = "<NO_ACTORUSER>"
+    context = {}
+    context["tenantId"] = event.get("tenantId", "<NO_TENANTID>")
+    context["source_ip"] = event.deep_get("properties", "ipAddress", default="<NO_SOURCEIP>")
+    context["actor_user"] = actor_user_name
+    context["resourceDisplayName"] = event.deep_get(
         "properties", "resourceDisplayName", default="<NO_RESOURCEDISPLAYNAME>"
     )
-    a_c["resourceId"] = event.deep_get("properties", "resourceId", default="<NO_RESOURCEID>")
-    return a_c
+    context["resourceId"] = event.deep_get("properties", "resourceId", default="<NO_RESOURCEID>")
+    return context
+
+
+def azure_signin_success(event):
+    return event.get("resultSignature") == "SUCCESS"
