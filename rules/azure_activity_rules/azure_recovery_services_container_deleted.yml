@@ -27,11 +27,11 @@ Tags:
   - Storm-0501
   - Backup
 Runbook: |
-  1. Query Azure Monitor Activity logs for all Recovery Services vault operations (protection container deletions, backup item deletions, vault deletions) by the callerIpAddress in the past 6 hours to calculate the total number of backups destroyed
-  2. Search for preceding defensive capability removals by the same caller in the 6 hours before this deletion to identify Storm-0501 attack sequence: resource lock deletions, immutability policy deletions, soft-delete disablement
-  3. Find all role assignment operations for the caller identity in the 48 hours before deletion to identify if Owner or Backup Operator permissions were recently granted or escalated
-  4. Check Azure.Audit logs for authentication events from the callerIpAddress in the 48-72 hours before to identify account compromise indicators (unusual geographic locations, MFA bypass attempts, new device registrations)
-  5. Search for other backup destruction or ransomware-related alerts triggered by the same callerIpAddress across all subscriptions in the past 7 days to determine if this is a multi-tenant attack
+  1. Query Azure Monitor Activity logs for all protection container deletions by the callerIpAddress in the past 6 hours to calculate the total number of backup containers destroyed
+  2. Search for resource lock deletions on the same vault by the same caller in the 6 hours before this deletion to identify Storm-0501 attack pattern
+  3. Find all role assignment operations for the caller identity in the 48 hours before deletion to identify if Owner or Backup Operator permissions were recently granted
+  4. Check Azure.Audit logs for authentication events from the callerIpAddress in the 48-72 hours before to identify account compromise indicators
+  5. Search for other backup destruction or ransomware-related alerts triggered by the same callerIpAddress across all subscriptions in the past 7 days
 SummaryAttributes:
   - resourceId
   - callerIpAddress

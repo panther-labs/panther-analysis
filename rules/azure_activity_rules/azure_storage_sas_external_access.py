@@ -22,20 +22,32 @@ def rule(event):
         return False
 
     # Check if IP is external (not private/RFC1918)
-    caller_ip = event.get("callerIpAddress", "").split(":")[0]
+    caller_ip = extract_caller_ip(event)
     if not caller_ip or is_private_ip(caller_ip):
         return False
 
     return True
 
 
+def extract_caller_ip(event):
+    """Extract IP address from callerIpAddress field, removing port if present"""
+    caller_ip_address = event.get("callerIpAddress", "")
+    if not caller_ip_address:
+        return ""
+    # Split by colon to remove port if present
+    return caller_ip_address.split(":")[0] if ":" in caller_ip_address else caller_ip_address
+
+
 def is_private_ip(ip_address):
     """Check if IP is in private ranges (RFC1918) or localhost"""
+    if not ip_address:
+        return True  # Treat empty/missing IPs as private to filter them out
+
     try:
         ip_obj = ipaddress.ip_address(ip_address)
         return ip_obj.is_private or ip_obj.is_loopback
     except ValueError:
-        # If we can't parse the IP, treat it as suspicious (don't filter out)
+        # Unparseable IPs are treated as external (suspicious) to avoid missing potential threats
         return False
 
 
@@ -45,7 +57,7 @@ def is_permissive_sas(uri):
     SAS permissions in 'sp' parameter: r=read, a=add, c=create, w=write, d=delete, l=list
     """
     if not uri:
-        return True  # Unknown URIs treated as potentially permissive
+        return False  # Unknown URIs default to non-permissive (read-only assumption)
 
     parsed = urlparse(uri)
     params = parse_qs(parsed.query)
@@ -56,7 +68,7 @@ def is_permissive_sas(uri):
 
 
 def title(event):
-    caller_ip = event.get("callerIpAddress", "<UNKNOWN_IP>").split(":")[0]
+    caller_ip = extract_caller_ip(event) or "<UNKNOWN_IP>"
     storage_account = event.deep_get("properties", "accountName", default="<UNKNOWN_ACCOUNT>")
     operation = event.get("operationName", "<UNKNOWN_OPERATION>")
 
@@ -88,8 +100,9 @@ def severity(event):
 
 
 def alert_context(event):
+    # Start with standard Azure activity context
     context = {
-        "caller_ip": event.get("callerIpAddress", "<UNKNOWN_IP>").split(":")[0],
+        "caller_ip": extract_caller_ip(event) or "<UNKNOWN>",
         "storage_account": event.deep_get("properties", "accountName", default="<UNKNOWN>"),
         "operation": event.get("operationName", "<UNKNOWN_OPERATION>"),
         "object_key": event.deep_get("properties", "objectKey", default="<UNKNOWN>"),
@@ -99,7 +112,7 @@ def alert_context(event):
         "category": event.get("category"),
     }
 
-    # Extract SAS permissions if available
+    # Extract SAS-specific parameters from URI
     uri = event.get("uri", "")
     if uri:
         parsed = urlparse(uri)
@@ -114,6 +127,6 @@ def alert_context(event):
 
 def dedup(event):
     """Group alerts by storage account and external IP"""
-    caller_ip = event.get("callerIpAddress", "").split(":")[0]
+    caller_ip = extract_caller_ip(event) or "unknown"
     storage_account = event.deep_get("properties", "accountName", default="unknown")
     return f"{storage_account}:{caller_ip}"

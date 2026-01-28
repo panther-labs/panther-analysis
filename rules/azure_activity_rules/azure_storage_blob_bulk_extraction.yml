@@ -25,10 +25,10 @@ Tags:
   - Defender for Cloud
   - Data Theft
 Runbook: |
-  1. Query Azure MonitorActivity logs for all GetBlob operations from the callerIpAddress in the 2 hours before and after the alert to calculate total blob count and identify if this exceeds the user's 30-day average
-  2. Find all SAS token generation operations (listAccountSas, listServiceSas) by any identity in the 6 hours before the first GetBlob to identify if stolen SAS tokens are being used
-  3. Check if the callerIpAddress has accessed this storage account in the past 90 days to determine if this is a new or known accessor
-  4. Analyze the objectKey paths in the alert context to identify if sensitive data patterns were accessed (backups, financial, credentials, PII)
+  1. Query Azure MonitorActivity logs for all GetBlob operations from the callerIpAddress in the 2 hours before and after the alert to calculate total blob count
+  2. Compare the blob count from step 1 to the callerIpAddress's 30-day average for this storage account to determine if this is anomalous volume
+  3. Find all SAS token generation operations (listAccountSas, listServiceSas) in the 6 hours before the first GetBlob to identify if stolen SAS tokens are being used
+  4. Check if the callerIpAddress has accessed this storage account in the past 90 days to determine if this is a new or known accessor
   5. Search for authentication events from the callerIpAddress in Azure.Audit logs in the 48 hours before the alert to assess if account compromise preceded the extraction
 SummaryAttributes:
   - callerIpAddress
