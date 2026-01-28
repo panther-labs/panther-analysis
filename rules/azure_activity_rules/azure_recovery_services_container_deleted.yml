@@ -1,0 +1,117 @@
+AnalysisType: rule
+Filename: azure_recovery_services_container_deleted.py
+RuleID: "Azure.MonitorActivity.RecoveryServices.ProtectionContainerDeleted"
+DisplayName: "Azure Recovery Services Protection Container Deleted"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: High
+Status: Experimental
+Description: >
+  Detects deletion of Azure Recovery Services protection containers containing VM and workload backups.
+  Storm-0501 systematically deletes backup containers before deploying ransomware to prevent recovery.
+  This operation permanently destroys all recovery points for protected resources.
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1490 # Impact: Inhibit System Recovery
+    - TA0040:T1485 # Impact: Data Destruction
+    - TA0005:T1562 # Defense Evasion: Impair Defenses
+Reference: https://www.microsoft.com/en-us/security/blog/2025/08/27/storm-0501s-evolving-techniques-lead-to-cloud-based-ransomware/
+Tags:
+  - Impact
+  - Inhibit System Recovery
+  - Data Destruction
+  - Defense Evasion
+  - Impair Defenses
+  - Ransomware
+  - Storm-0501
+  - Backup
+Runbook: |
+  1. Query Azure Monitor Activity logs for all Recovery Services vault operations (protection container deletions, backup item deletions, vault deletions) by the callerIpAddress in the past 6 hours to calculate the total number of backups destroyed
+  2. Search for preceding defensive capability removals by the same caller in the 6 hours before this deletion to identify Storm-0501 attack sequence: resource lock deletions, immutability policy deletions, soft-delete disablement
+  3. Find all role assignment operations for the caller identity in the 48 hours before deletion to identify if Owner or Backup Operator permissions were recently granted or escalated
+  4. Check Azure.Audit logs for authentication events from the callerIpAddress in the 48-72 hours before to identify account compromise indicators (unusual geographic locations, MFA bypass attempts, new device registrations)
+  5. Search for other backup destruction or ransomware-related alerts triggered by the same callerIpAddress across all subscriptions in the past 7 days to determine if this is a multi-tenant attack
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: Protection Container Deleted Successfully
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-27T14:55:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/backup-rg/providers/Microsoft.RecoveryServices/vaults/ProductionBackupVault/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;prod-rg;prod-vm-001",
+        "operationName": "MICROSOFT.RECOVERYSERVICES/VAULTS/BACKUPFABRICS/PROTECTIONCONTAINERS/DELETE",
+        "operationVersion": "2021-12-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "resultSignature": "200",
+        "callerIpAddress": "203.0.113.42",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "level": "Informational",
+        "location": "eastus",
+        "tenantId": "87654321-4321-4321-4321-111111111111",
+        "identity": {
+          "claims": {
+            "name": "compromised-admin@company.com",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn": "compromised-admin@company.com"
+          }
+        }
+      }
+  - Name: Multiple Protection Containers Deleted - Mass Backup Destruction
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-27T15:30:00.0000000Z",
+        "resourceId": "/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/backup-rg/providers/Microsoft.RecoveryServices/vaults/EnterpriseBackupVault/backupFabrics/Azure/protectionContainers/VMAppContainer;Compute;app-rg;sqlserver-vm",
+        "operationName": "microsoft.recoveryservices/vaults/backupfabrics/protectioncontainers/delete",
+        "category": "Administrative",
+        "resultType": "Succeeded",
+        "callerIpAddress": "198.51.100.50",
+        "correlationId": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+        "level": "Information",
+        "location": "westus2",
+        "tenantId": "11111111-1111-1111-1111-111111111111"
+      }
+  - Name: Storage Account Backup Container Deleted
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-27T16:15:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/storage-backup-rg/providers/Microsoft.RecoveryServices/vaults/StorageBackupVault/backupFabrics/Azure/protectionContainers/StorageContainer;Storage;storage-rg;criticaldata001",
+        "operationName": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/delete",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "192.0.2.100",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "tenantId": "22222222-2222-2222-2222-222222222222"
+      }
+  - Name: Failed Protection Container Deletion
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-27T17:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/locked-backup-rg/providers/Microsoft.RecoveryServices/vaults/ProtectedVault/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;critical-rg;critical-vm",
+        "operationName": "MICROSOFT.RECOVERYSERVICES/VAULTS/BACKUPFABRICS/PROTECTIONCONTAINERS/DELETE",
+        "category": "Administrative",
+        "resultType": "Failed",
+        "resultSignature": "403",
+        "callerIpAddress": "198.18.0.50",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-456789012345",
+        "tenantId": "33333333-3333-3333-3333-333333333333"
+      }
+  - Name: Different Operation - Protection Container Refresh
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-27T18:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/backup-rg/providers/Microsoft.RecoveryServices/vaults/BackupVault/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;vm-rg;vm-001",
+        "operationName": "MICROSOFT.RECOVERYSERVICES/VAULTS/BACKUPFABRICS/PROTECTIONCONTAINERS/REFRESH/ACTION",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "203.0.113.10",
+        "correlationId": "e5f6a7b8-c9d0-1234-ef01-567890123456",
+        "tenantId": "44444444-4444-4444-4444-444444444444"
+      }
