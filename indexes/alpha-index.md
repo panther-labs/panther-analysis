@@ -1436,7 +1436,7 @@
 - [GitHub Security Change, includes GitHub Advanced Security](../rules/github_rules/github_advanced_security_change.yml)
   - The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
 - [GitHub Sha1-Hulud Malicious Repository Created](../rules/github_rules/github_shai_hulud_repo_created.yml)
-  - Detects when a repository is created with the description "Sha1-Hulud: The Second Coming.", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign.
+  - Detects when a repository is created with the description "Sha1-Hulud: The Second Coming.", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign. Repos created with this description are typically indicators of an exfiltration attempt by the worm.
 - [GitHub Supply Chain - Software Installation Tool User Agents](../rules/github_rules/github_supply_chain_suspicious_user_agents.yml)
   - Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.
 - [GitHub Team Modified](../rules/github_rules/github_team_modified.yml)
@@ -2000,6 +2000,14 @@
 
 - [Salesforce Admin Login As User](../rules/salesforce_rules/salesforce_admin_login_as_user.yml)
   - Salesforce detection that alerts when an admin logs in as another user.
+- [Salesforce API Anomaly Detection (RET Passthrough)](../rules/salesforce_rules/salesforce_api_anomaly_passthrough.yml)
+  - Salesforce Real-Time Event Monitoring has detected anomalous API activity. This could indicate compromised credentials, automated abuse, data exfiltration attempts, or other suspicious API usage patterns.
+- [Salesforce Bulk API Data Exfiltration](../rules/salesforce_rules/salesforce_bulk_data_exfiltration.yml)
+  - Detects Salesforce Bulk API operations that could indicate data exfiltration attempts. The Bulk API allows users to process large volumes of records (up to millions) asynchronously, making it a common vector for data theft.This detection triggers on all Bulk API job completions and adjusts severity based on:- Operation type (query operations are highest risk for exfiltration)- Volume of records processed- Entity/object type being accessed
+- [Salesforce OAuth Credential Abuse Detection](../rules/salesforce_rules/salesforce_oauth_credential_abuse.yml)
+  - Detects OAuth credential abuse and suspicious token usage patterns in Salesforce. OAuth tokens provide API access and can be abused if compromised, making this detection critical for:- Stolen or leaked OAuth tokens- Token replay attacks- Excessive API usage indicating automated abuse- Failed token refresh attempts (potential brute force)- Unauthorized token revocationsThis detection triggers on OAuth-related security events and adjusts severity based on:- Token revocation events (may indicate compromise response)- Failed OAuth operations (potential attack attempts)- Excessive API usage patterns
+- [Salesforce Third-Party Integration Monitoring](../rules/salesforce_rules/salesforce_third_party_integration.yml)
+  - Monitors third-party integrations and OAuth connected apps accessing Salesforce. Connected apps use OAuth for authorization and can access data on behalf of users, making them a potential vector for:- Unauthorized data access- Shadow IT applications- Compromised OAuth tokens- Over-privileged integrationsThis detection triggers on connected app usage events and adjusts severity based on:- Connection type (refresh tokens are higher risk)- App authorization events- Suspicious app naming patterns
 
 
 ## SentinelOne
