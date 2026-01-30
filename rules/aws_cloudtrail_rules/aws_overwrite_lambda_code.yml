@@ -1,23 +1,64 @@
 AnalysisType: rule
 Filename: aws_overwrite_lambda_code.py
 RuleID: "AWS.Lambda.UpdateFunctionCode"
-DisplayName: "Lambda Update Function Code"
+DisplayName: "Lambda Code Updated by IAM User"
 Enabled: true
-CreateAlert: false
+CreateAlert: true
 LogTypes:
   - AWS.CloudTrail
 Reports:
   MITRE ATT&CK:
     - TA0007:T1078
-Severity: Info
+Severity: High
 Status: Experimental
 Description: >
-  Identifies when the code of a Lambda function is updated, which could indicate a potential security risk.
-Runbook: Verify the event details and the user that triggered the event. If the event is expected, no action is required. If the event is unexpected, investigate the user and the function that was updated.
+  Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles.
+  This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails,
+  or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user
+  activity on Lambda code updates a high-confidence security signal.
+Runbook: |
+  Verify the IAM user identity and whether this is authorized.
+  Review the code changes made to the Lambda function.
+  If unauthorized:
+  - Disable the IAM user access key
+  - Revert Lambda function code to previous version
+  - Investigate credential compromise
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-overwrite-code/
 Tests:
-  - Name: Lambda Update Function Code Event
+  - Name: IAM User Updates Lambda Code
     ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAI123456789EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/john.developer",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIAI123456789EXAMPLE",
+          "userName": "john.developer"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionCode20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api"
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: AssumedRole Updates Lambda Code (Normal CI/CD)
+    ExpectedResult: false
     Log:
       {
         "eventVersion": "1.05",
@@ -61,8 +102,8 @@ Tests:
         "recipientAccountId": "123456789012",
         "p_log_type": "AWS.CloudTrail"
       }
-  - Name: Lambda Update Function Code Event v2
-    ExpectedResult: true
+  - Name: AssumedRole Updates Lambda Code v2 (Normal CI/CD)
+    ExpectedResult: false
     Log:
       {
         "eventVersion": "1.05",
