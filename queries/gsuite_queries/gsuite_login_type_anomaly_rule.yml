@@ -1,0 +1,45 @@
+AnalysisType: scheduled_rule
+DisplayName: "Google Workspace Login Type Anomaly"
+DedupPeriodMinutes: 360
+RuleID: "Google.Workspace.Login.Type.Anomaly"
+Description: >
+  Alerts when users authenticate with login types they haven't used in the past 30 days.
+  This may indicate GAIA credential theft where attackers use stolen OAuth tokens with
+  different authentication methods (e.g., google_password instead of SAML). Particularly
+  suspicious when a user who normally uses SSO/SAML suddenly authenticates via password.
+ScheduledQueries:
+  - Google Workspace Login Type Anomaly
+Enabled: true
+Status: Experimental
+Filename: gsuite_login_type_anomaly_rule.py
+Reference: https://businessinsights.bitdefender.com/the-chain-reaction-new-methods-for-extending-local-breaches-in-google-workspace
+Runbook: |
+  1. Query GSuite.ActivityEvent for all login events by the user email in the 24 hours before and after the alert to identify login patterns, IP addresses used, and the context around the anomalous login_type
+  2. Check if the source IP addresses from recent logins are associated with known VPN services, cloud providers, or corporate network ranges, and compare to the user's typical login locations in the past 30 days
+  3. Search for other authentication anomalies or alerts for this user in the past 7 days, including failed logins, OAuth token authorizations, password changes, or suspicious activity warnings
+Severity: Medium
+Tags:
+  - GSuite
+  - Lateral Movement
+  - Valid Accounts
+  - GAIA
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1078.004
+    - TA0006:T1550
+SummaryAttributes:
+  - email
+Tests:
+  - Name: User with anomalous google_password login
+    ExpectedResult: true
+    Log:
+      email: user@example.com
+      login_type: google_password
+      ipAddress: 1.1.1.1
+
+  - Name: User with anomalous exchange login
+    ExpectedResult: true
+    Log:
+      email: user@example.com
+      login_type: exchange
+      ipAddress: 1.1.1.1

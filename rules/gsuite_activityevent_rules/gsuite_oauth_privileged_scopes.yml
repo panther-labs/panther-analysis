@@ -1,0 +1,117 @@
+AnalysisType: rule
+RuleID: "Google.Workspace.OAuth.Privileged.Scopes"
+DisplayName: "Google Workspace OAuth Application Authorized with Privileged Scopes"
+Filename: gsuite_oauth_privileged_scopes.py
+LogTypes:
+  - GSuite.ActivityEvent
+Enabled: true
+Severity: Low
+DedupPeriodMinutes: 60
+Status: Experimental
+Reference: https://businessinsights.bitdefender.com/the-chain-reaction-new-methods-for-extending-local-breaches-in-google-workspace
+Description: >
+  Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace.
+  Privileged scopes grant broad access to sensitive data and administrative functions.
+Runbook: |
+  1. Query GSuite.ActivityEvent logs for all OAuth token authorize events by actor:email in the 7 days before and after this alert to identify if this is an isolated incident or part of a pattern of suspicious OAuth grants by this user
+  2. Contact the user listed in actor:email within 1 hour to verify whether they intentionally authorized the OAuth application named in parameters:app_name and whether they recognize the application's stated purpose
+  3. If the authorization was not intentional or the application is not recognized, immediately revoke the OAuth application's access via Google Workspace Admin Console > Security > API Controls > Manage Third-Party App Access, search for the client_id from parameters:client_id, and remove access
+Tags:
+  - GSuite
+  - Initial Access
+  - Persistence
+  - Account Manipulation
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078.004
+    - TA0003:T1098
+SummaryAttributes:
+  - actor:email
+  - p_any_ip_addresses
+Tests:
+  - Name: Malicious App Privileged Scopes
+    ExpectedResult: true
+    Log:
+      actor:
+        email: user@example.com
+        profileId: "123456789012345678901"
+      id:
+        applicationName: token
+        customerId: C01234abc
+        time: "2024-01-15 10:30:00.000000000"
+        uniqueQualifier: "987654321098765432"
+      ipAddress: 192.0.2.1
+      kind: admin#reports#activity
+      name: authorize
+      parameters:
+        app_name: SuspiciousThirdPartyApp
+        client_id: "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com"
+        client_type: WEB
+        scope:
+          - https://www.googleapis.com/auth/admin.directory.user
+          - https://www.googleapis.com/auth/ediscovery
+          - https://www.googleapis.com/auth/drive
+          - https://www.googleapis.com/auth/cloud_search.query
+      type: auth
+
+  - Name: Normal App Normal Scopes
+    ExpectedResult: false
+    Log:
+      actor:
+        email: user@example.com
+        profileId: "123456789012345678901"
+      id:
+        applicationName: token
+        customerId: C01234abc
+        time: "2024-01-15 10:30:00.000000000"
+        uniqueQualifier: "987654321098765432"
+      ipAddress: 192.0.2.1
+      kind: admin#reports#activity
+      name: authorize
+      parameters:
+        app_name: LegitimateCalendarApp
+        client_id: "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com"
+        client_type: WEB
+        scope:
+          - https://www.googleapis.com/auth/calendar
+          - https://www.googleapis.com/auth/gmail.send
+      type: auth
+
+  - Name: Non-OAuth Event
+    ExpectedResult: false
+    Log:
+      actor:
+        email: user@example.com
+        profileId: "123456789012345678901"
+      id:
+        applicationName: admin
+        customerId: C01234abc
+        time: "2024-01-15 10:30:00.000000000"
+        uniqueQualifier: "987654321098765432"
+      ipAddress: 192.0.2.1
+      kind: admin#reports#activity
+      name: CREATE_USER
+      type: USER_SETTINGS
+
+  - Name: OAuth App with Single Privileged Scope
+    ExpectedResult: true
+    Log:
+      actor:
+        email: admin@example.com
+        profileId: "123456789012345678901"
+      id:
+        applicationName: token
+        customerId: C01234abc
+        time: "2024-01-15 10:30:00.000000000"
+        uniqueQualifier: "987654321098765432"
+      ipAddress: 192.0.2.1
+      kind: admin#reports#activity
+      name: authorize
+      parameters:
+        app_name: AdminToolApp
+        client_id: "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com"
+        client_type: WEB
+        scope:
+          - https://www.googleapis.com/auth/admin.directory.user
+          - https://www.googleapis.com/auth/calendar
+      type: auth
