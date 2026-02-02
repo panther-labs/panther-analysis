@@ -2811,18 +2811,21 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects deletion of Azure Recovery Services protection containers containing VM and workload backups. Storm-0501 systematically deletes backup containers before deploying ransomware to prevent recovery. This operation permanently destroys all recovery points for protected resources.",
-        "DisplayName": "Azure Recovery Services Protection Container Deleted",
-        "LogTypes": [
-            "Azure.MonitorActivity"
-        ],
-        "YAMLPath": "rules/azure_activity_rules/azure_recovery_services_container_deleted.yml"
         "Description": "Detects when a user account triggers multiple Microsoft Entra ID Protection risk alerts within a short time window, indicating a potentially ongoing attack or compromised account. Entra ID Protection uses machine learning and heuristics to detect risky sign-in activity including anonymous IP usage, atypical travel patterns, malware-linked IP addresses, unfamiliar sign-in properties, password spray attempts, leaked credentials, and other suspicious behaviors.",
         "DisplayName": "Azure Protection Multiple Alerts for User",
         "LogTypes": [
             "Azure.Audit"
         ],
         "YAMLPath": "rules/azure_signin_rules/azure_multiple_protection_alerts.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of Azure Recovery Services protection containers containing VM and workload backups. Storm-0501 systematically deletes backup containers before deploying ransomware to prevent recovery. This operation permanently destroys all recovery points for protected resources.",
+        "DisplayName": "Azure Recovery Services Protection Container Deleted",
+        "LogTypes": [
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/azure_activity_rules/azure_recovery_services_container_deleted.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3084,6 +3087,9 @@
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_storage_sas_external_access.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when a user elevates their permissions to the \"User Access Administrator\" role in Azure, which grants full control over access management for Azure resources. The User Access Administrator role is one of the most powerful privileged roles in Azure, allowing the holder to manage user access to all Azure resources, assign roles to other users including administrative roles, and effectively control the entire Azure subscription's permission structure.",
         "DisplayName": "Azure User Elevated to User Access Administrator Role",
         "LogTypes": [
