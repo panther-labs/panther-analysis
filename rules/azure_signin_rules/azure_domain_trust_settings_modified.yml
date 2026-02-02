@@ -1,0 +1,122 @@
+AnalysisType: rule
+Filename: azure_domain_trust_settings_modified.py
+RuleID: "Azure.Audit.DomainSettingsModified"
+DisplayName: "Azure Domain Federation Settings Modified"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: Medium
+Description: >
+  Detects modifications to domain federation settings in Microsoft Entra ID, including changes to
+  federation trust configurations and OIDC discovery endpoints. Adversaries who compromise administrative
+  accounts may modify these settings to federate the tenant with attacker-controlled identity providers,
+  enabling unauthorized access and MFA bypass. This technique allows attackers to establish persistent
+  access by redirecting authentication to malicious infrastructure.
+Tags:
+  - Persistence
+  - Modify Authentication Process
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1556
+    - TA0003:T1556.006
+Runbook: |
+  1. Query Azure.Audit logs for all federation-related operations by properties:initiatedBy:user:userPrincipalName in the 7 days before and after this change to determine if this modification was part of a broader attack campaign involving administrative credential compromise or privilege escalation
+  2. Verify with your identity team and the initiating administrator whether this federation settings change was authorized through proper change management procedures, and review the new OIDC discovery endpoint URL to confirm it points to a legitimate identity provider owned by your organization and not an attacker-controlled domain
+  3. Query Azure.Audit logs and sign-in logs for all authentication events using the affected domain in the 24 hours after the federation change to identify any suspicious token issuance or unauthorized access attempts, and if the modification was unauthorized, immediately revert the federation settings, revoke all active sessions for affected users, and review all API access and resource modifications that occurred during the compromise window
+Reference: https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Microsoft%20Entra%20ID/Analytic%20Rules/ADFSDomainTrustMods.yaml
+SummaryAttributes:
+  - properties:initiatedBy:user:userPrincipalName
+  - properties:targetResources:displayName
+  - properties:initiatedBy:user:ipAddress
+Tests:
+  - Name: Set Federation Settings
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 09:30:25.123",
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "operationName": "Set federation settings on domain",
+        "operationVersion": "1.0",
+        "category": "DirectoryManagement",
+        "tenantId": "tenant-123",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "federation-change-001",
+        "Level": "4",
+        "properties":
+          {
+            "result": "success",
+            "operationName": "Set federation settings on domain",
+            "activityDisplayName": "Set federation settings on domain",
+            "activityDateTime": "2025-01-15T09:30:25.1234567Z",
+            "loggedByService": "Core Directory",
+            "operationType": "Update",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "admin-attacker-123",
+                    "displayName": "Compromised Admin",
+                    "userPrincipalName": "frodo@lotr.com",
+                    "ipAddress": "2.2.2.2",
+                  },
+              },
+          },
+        "p_event_time": "2025-01-15 09:30:25.123",
+        "p_log_type": "Azure.Audit",
+      }
+  - Name: Different Values Changed
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 11:15:30.789",
+        "resourceId": "/tenants/tenant-789/providers/Microsoft.aadiam",
+        "operationName": "Set domain authentication",
+        "operationVersion": "1.0",
+        "category": "DirectoryManagement",
+        "tenantId": "tenant-789",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "203.0.113.100",
+        "correlationId": "auth-change-002",
+        "Level": "4",
+        "properties":
+          {
+            "result": "success",
+            "operationName": "Set domain authentication",
+            "activityDisplayName": "Set domain authentication",
+            "activityDateTime": "2025-01-15T11:15:30.7890123Z",
+            "loggedByService": "Core Directory",
+            "operationType": "Update",
+            "initiatedBy":
+              {
+                "user":
+                  {
+                    "id": "admin-benign-456",
+                    "displayName": "Legitimate Admin",
+                    "userPrincipalName": "admin@company.com",
+                    "ipAddress": "203.0.113.100",
+                  },
+              },
+            "targetResources":
+              [
+                {
+                  "id": "domain-normal-123",
+                  "displayName": "normal.company.com",
+                  "type": "Domain",
+                  "modifiedProperties":
+                    [
+                      {
+                        "displayName": "SomeOtherProperty",
+                        "oldValue": "\"value1\"",
+                        "newValue": "\"value2\"",
+                      },
+                    ],
+                },
+              ],
+          },
+        "p_event_time": "2025-01-15 11:15:30.789",
+        "p_log_type": "Azure.Audit",
+      }

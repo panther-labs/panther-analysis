@@ -1,0 +1,50 @@
+AnalysisType: scheduled_query
+QueryName: "Google Workspace OAuth Token Requests from New IPs"
+Description: |
+  Detects users requesting OAuth tokens from IPv4 addresses they haven't used in the past 30 days,
+  with 3+ requests indicating active usage. May indicate GAIA credential theft where attackers use
+  stolen refresh tokens from their infrastructure.
+Enabled: false
+Query: |
+  WITH baseline_ips AS (
+    SELECT
+      actor:email AS user,
+      ARRAY_AGG(DISTINCT ipAddress) AS normal_ips
+    FROM panther_logs.public.gsuite_activityevent
+    WHERE p_event_time >= DATEADD(day, -30, CURRENT_TIMESTAMP)
+      AND p_event_time < DATEADD(day, -1, CURRENT_TIMESTAMP)
+      AND id:applicationName = 'token'
+      AND name = 'authorize'
+      AND ipAddress NOT LIKE '%:%'
+    GROUP BY actor:email
+  ),
+  recent_tokens AS (
+    SELECT
+      actor:email AS user,
+      ipAddress,
+      parameters:app_name AS app_name,
+      parameters:client_id AS client_id,
+      p_event_time
+    FROM panther_logs.public.gsuite_activityevent
+    WHERE p_occurs_since('1 day')
+      AND id:applicationName = 'token'
+      AND name = 'authorize'
+      AND ipAddress NOT LIKE '%:%'
+  )
+  SELECT
+    r.user,
+    r.ipAddress AS new_ip,
+    COUNT(*) AS request_count,
+    ARRAY_UNIQUE_AGG(r.app_name) AS app_names,
+    ARRAY_UNIQUE_AGG(r.client_id) AS client_ids,
+    MIN(r.p_event_time) AS first_seen,
+    MAX(r.p_event_time) AS last_seen
+  FROM recent_tokens r
+  LEFT JOIN baseline_ips b ON r.user = b.user
+  WHERE NOT ARRAY_CONTAINS(r.ipAddress::VARIANT, COALESCE(b.normal_ips, ARRAY_CONSTRUCT()))
+  GROUP BY r.user, r.ipAddress
+  HAVING COUNT(*) >= 3
+  ORDER BY request_count DESC
+Schedule:
+  RateMinutes: 1440
+  TimeoutMinutes: 5
