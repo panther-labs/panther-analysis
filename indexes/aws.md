@@ -247,12 +247,12 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml)
   - A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
+- [Lambda Code Updated by IAM User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
+  - Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.
+- [Lambda Configuration with Layers Updated by IAM User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
+  - Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.
 - [Lambda CRUD Actions](../rules/aws_cloudtrail_rules/aws_lambda_crud.yml)
   - Unauthorized lambda Create, Read, Update, or Delete event occurred.
-- [Lambda Update Function Code](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
-  - Identifies when the code of a Lambda function is updated, which could indicate a potential security risk.
-- [Lambda Update Function Configuration with Layers](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
-  - Identifies when a Lambda function configuration is updated with layers, which could indicate a potential security risk.
 - [Logins Without MFA](../rules/aws_cloudtrail_rules/aws_console_login_without_mfa.yml)
   - A console login was made without multi-factor authentication.
 - [Logins Without SAML](../rules/aws_cloudtrail_rules/aws_console_login_without_saml.yml)

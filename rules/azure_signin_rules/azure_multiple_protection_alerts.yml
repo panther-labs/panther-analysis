@@ -1,0 +1,110 @@
+AnalysisType: rule
+Filename: azure_multiple_protection_alerts.py
+RuleID: "Azure.Audit.MultipleProtectionAlerts"
+DisplayName: "Azure Protection Multiple Alerts for User"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: High
+DedupPeriodMinutes: 15
+Description: >
+  Detects when a user account triggers multiple Microsoft Entra ID Protection risk alerts within
+  a short time window, indicating a potentially ongoing attack or compromised account. Entra ID
+  Protection uses machine learning and heuristics to detect risky sign-in activity including
+  anonymous IP usage, atypical travel patterns, malware-linked IP addresses, unfamiliar sign-in
+  properties, password spray attempts, leaked credentials, and other suspicious behaviors.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+    - TA0001:T1078.004
+Runbook: |
+  1. Query Azure.Audit logs for all sign-in events by properties:userPrincipalName in the 1 hour surrounding this alert to identify the full sequence of risk events, noting properties:riskEventTypes, callerIpAddress, properties:location, and properties:userAgent for each authentication attempt
+  2. Review properties:riskDetail and properties:riskState for each event to understand the specific risk detections that triggered the alerts, and check if multiple different risk types occurred (e.g., anonymous IP + atypical travel + unfamiliar properties) which strongly indicates account compromise rather than false positives
+  3. Immediately disable the user account or revoke all active sessions if suspicious activity is confirmed, force password reset with MFA re-enrollment, review Azure.Audit logs for any API calls or resource access by the user in the 24 hours after the first risk event to identify data exfiltration or privilege escalation, and contact the user through out-of-band communication to verify if they are aware of the authentication attempts
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/initial_access_entra_id_protection_alerts_for_user.toml
+SummaryAttributes:
+  - properties:userPrincipalName
+  - callerIpAddress
+  - properties:riskState
+  - properties:riskLevelDuringSignIn
+Tests:
+  - Name: Third Risk Event Triggers Alert
+    ExpectedResult: true
+    Mocks:
+      - objectName: "add_to_string_set"
+        returnValue: '["2025-01-15 09:30:25.123", "2025-01-15 09:32:30.456", "2025-01-15 09:35:45.789"]'
+    Log:
+      {
+        "time": "2025-01-15 09:35:45.789",
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-123",
+        "resultType": "0",
+        "resultSignature": "SUCCESS",
+        "durationMs": 0,
+        "callerIpAddress": "3.3.3.3",
+        "correlationId": "risk-event-003",
+        "Level": "4",
+        "properties":
+          {
+            "createdDateTime": "2025-01-15T09:35:45.7890123Z",
+            "userPrincipalName": "aragorn@lotr.com",
+            "userId": "user-victim-123",
+            "ipAddress": "3.3.3.3",
+            "riskState": "confirmedCompromised",
+            "riskLevelDuringSignIn": "high",
+            "riskLevelAggregated": "high",
+            "riskDetail": "aiConfirmedSigninCompromised",
+            "riskEventTypes": ["leakedCredentials", "anomalousToken"],
+            "authenticationProtocol": "oAuth2",
+            "clientAppUsed": "Browser",
+            "isInteractive": true,
+            "location": { "city": "Beijing", "countryOrRegion": "China" },
+            "deviceDetail": { "browser": "Firefox", "operatingSystem": "Linux" },
+            "userAgent": "Mozilla/5.0 (X11; Linux x86_64)",
+          },
+        "p_event_time": "2025-01-15 09:35:45.789",
+        "p_log_type": "Azure.Audit",
+        "p_parse_time": "2025-01-15 09:35:46.000",
+        "p_row_id": "row-003",
+      }
+  - Name: No Risk Sign-In
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 10:00:30.012",
+        "resourceId": "/tenants/tenant-456/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-456",
+        "resultType": "0",
+        "resultSignature": "SUCCESS",
+        "durationMs": 0,
+        "callerIpAddress": "203.0.113.200",
+        "correlationId": "normal-signin-001",
+        "Level": "4",
+        "properties":
+          {
+            "createdDateTime": "2025-01-15T10:00:30.0123456Z",
+            "userPrincipalName": "normaluser@company.com",
+            "userId": "user-normal-456",
+            "ipAddress": "203.0.113.200",
+            "riskState": "none",
+            "riskLevelDuringSignIn": "none",
+            "riskLevelAggregated": "none",
+            "riskDetail": "none",
+            "riskEventTypes": [],
+            "authenticationProtocol": "oAuth2",
+            "clientAppUsed": "Browser",
+            "isInteractive": true,
+            "location": { "city": "Seattle", "countryOrRegion": "United States" },
+            "deviceDetail": { "browser": "Chrome", "operatingSystem": "Windows 11" },
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0)",
+          },
+        "p_event_time": "2025-01-15 10:00:30.012",
+        "p_log_type": "Azure.Audit",
+      }

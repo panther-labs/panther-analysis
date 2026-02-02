@@ -1,0 +1,115 @@
+AnalysisType: rule
+Filename: azure_device_code_broker_client.py
+RuleID: "Azure.Audit.DeviceCodeBrokerClient"
+DisplayName: "Azure Device Code Authentication with Broker Client"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: Medium
+DedupPeriodMinutes: 60
+Description: >
+  Detects device code authentication using the Microsoft Broker Client application, which may indicate
+  Primary Refresh Token (PRT) abuse. Device code flow allows adversaries to trick users into entering
+  codes on attacker-controlled applications. When combined with Microsoft Broker Client (app ID
+  29d9ed98-a469-4536-ade2-f981bc1d605e), this may indicate PRT theft or replay attacks that bypass MFA
+  and Conditional Access policies.
+Tags:
+  - Initial Access
+  - Phishing
+  - Use Alternate Authentication Material
+  - Valid Accounts
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566
+    - TA0001:T1566.002
+    - TA0005:T1550
+    - TA0005:T1550.001
+    - TA0008:T1078
+    - TA0008:T1078.004
+Runbook: |
+  1. Query Azure.Audit logs for all device code authentication attempts by properties:userPrincipalName in the 24 hours before and after this event to identify the scope of potential phishing campaign or PRT abuse affecting this user
+  2. Check properties:deviceDetail to verify if the device is registered and compliant in Azure AD, and review whether the user recognizes this device and the sign-in activity as legitimate
+  3. Search for other users in the organization with similar device code authentication patterns using the broker client application ID to determine if this is an isolated incident or part of a broader attack campaign targeting multiple accounts
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/initial_access_entra_id_device_code_auth_with_broker_client.toml
+SummaryAttributes:
+  - properties:userPrincipalName
+  - callerIpAddress
+  - properties:deviceDetail:deviceId
+  - properties:appDisplayName
+Tests:
+  - Name: Device Code Auth with Broker Client
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 09:30:45.123",
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-123",
+        "durationMs": 0,
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "device-code-001",
+        "Level": "4",
+        "properties":
+          {
+            "userId": "user-victim-123",
+            "userPrincipalName": "aragorn@lotr.com",
+            "ipAddress": "2.2.2.2",
+            "authenticationProtocol": "deviceCode",
+            "appDisplayName": "Microsoft Authentication Broker",
+            "appId": "29d9ed98-a469-4536-ade2-f981bc1d605e",
+            "resourceDisplayName": "Microsoft Graph",
+            "isInteractive": true,
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/1.1.1.1",
+            "deviceDetail":
+              {
+                "deviceId": "device-attacker-456",
+                "operatingSystem": "Windows 10",
+                "browser": "Chrome 120",
+              },
+            "conditionalAccessAudiences":
+              [
+                { "applicationId": "29d9ed98-a469-4536-ade2-f981bc1d605e" },
+                { "applicationId": "00000003-0000-0000-c000-111111111111" },
+              ],
+          },
+        "resultSignature": "SUCCESS",
+        "resultType": "0",
+      }
+  - Name: Device Code Without Broker Client
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 11:20:15.789",
+        "resourceId": "/tenants/tenant-789/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-789",
+        "resultType": "Success",
+        "resultSignature": "SUCCESS",
+        "durationMs": 0,
+        "callerIpAddress": "192.0.2.100",
+        "correlationId": "device-code-legit-001",
+        "Level": "4",
+        "properties":
+          {
+            "userId": "user-iot-456",
+            "userPrincipalName": "iotdevice@company.com",
+            "ipAddress": "192.0.2.100",
+            "authenticationProtocol": "deviceCode",
+            "appDisplayName": "Azure CLI",
+            "appId": "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+            "resourceDisplayName": "Microsoft Azure Management",
+            "isInteractive": false,
+            "userAgent": "python-requests/2.28.0",
+            "deviceDetail": { "deviceId": "iot-device-789", "operatingSystem": "Linux" },
+            "conditionalAccessAudiences":
+              [{ "applicationId": "04b07795-8ddb-461a-bbee-02f9e1bf7b46" }],
+            "result": "success",
+          },
+        "p_event_time": "2025-01-15 11:20:15.789",
+        "p_log_type": "Azure.Audit",
+      }
