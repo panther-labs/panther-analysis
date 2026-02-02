@@ -1,4 +1,4 @@
-from panther_proofpoint_helpers import extract_threats
+from panther_proofpoint_helpers import proofpoint_alert_context
 
 
 def rule(event):
@@ -41,16 +41,7 @@ def dedup(event):
 
 
 def alert_context(event):
-    context = {
-        "sender": event.get("sender", "<UNKNOWN_SENDER>"),
-        "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
-        "recipients": event.get("recipient", []),
-        "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
-        "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
-        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore", 0),
-        "threats": extract_threats(event),
-        "messageSize": event.get("messageSize", 0),
-    }
+    # Use the common helper and extend with virus-specific fields
+    context = proofpoint_alert_context(event)
+    context["messageSize"] = event.get("messageSize", 0)
     return context

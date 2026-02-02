@@ -26,6 +26,11 @@ Runbook: |
   2. Block all campaign IOCs (domains, IPs, file hashes) within 15 minutes and check Proofpoint Threat Insight for details
   3. Initiate threat hunting within 2 hours for lateral movement and share IOCs with threat intelligence platforms
 Reference: https://help.proofpoint.com/Threat_Insight_Dashboard/API_Documentation/Campaign_API
+Reports:
+  MITRE ATT&CK:
+    - TA0042:T1587 # Resource Development: Develop Capabilities
+    - TA0001:T1566 # Initial Access: Phishing
+    - TA0002:T1204 # Execution: User Execution
 Tests:
   - Name: Active Campaign with Malware
     ExpectedResult: true

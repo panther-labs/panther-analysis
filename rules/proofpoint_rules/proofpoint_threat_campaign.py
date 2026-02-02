@@ -1,4 +1,4 @@
-from panther_proofpoint_helpers import extract_threats
+from panther_proofpoint_helpers import proofpoint_alert_context
 
 
 def rule(event):
@@ -37,24 +37,20 @@ def title(event):
 
 
 def alert_context(event):
-    # Extract all threats using the helper
-    all_threats = extract_threats(event)
+    # Use the common helper
+    context = proofpoint_alert_context(event)
 
     # Filter to only threats with campaign IDs
+    all_threats = context["threats"]
     campaign_threats = [t for t in all_threats if "campaignID" in t]
     campaign_ids = set(t.get("campaignID") for t in campaign_threats if t.get("campaignID"))
 
-    return {
-        "sender": event.get("sender", "<UNKNOWN_SENDER>"),
-        "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
-        "recipients": event.get("recipient", []),
-        "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
-        "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
-        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore", 0),
-        "phishScore": event.get("phishScore", 0),
-        "campaignIDs": list(campaign_ids),
-        "campaignCount": len(campaign_ids),
-        "threats": campaign_threats,
-    }
+    # Extend with campaign-specific fields
+    context.update(
+        {
+            "campaignIDs": list(campaign_ids),
+            "campaignCount": len(campaign_ids),
+            "threats": campaign_threats,
+        }
+    )
+    return context

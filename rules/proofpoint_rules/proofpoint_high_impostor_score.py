@@ -1,3 +1,6 @@
+from panther_proofpoint_helpers import proofpoint_alert_context
+
+
 def rule(event):
     # Alert on impostor scores of 50 or higher
     return event.get("impostorScore", 0) >= 50
@@ -22,17 +25,13 @@ def title(event):
 
 
 def alert_context(event):
-    return {
-        "sender": event.get("sender", "<UNKNOWN_SENDER>"),
-        "senderIP": event.get("senderIP", "<UNKNOWN_IP>"),
-        "recipients": event.get("recipient", []),
-        "subject": event.get("subject", "<UNKNOWN_SUBJECT>"),
-        "messageID": event.get("messageID", "<UNKNOWN_MESSAGE_ID>"),
-        "quarantineFolder": event.get("quarantineFolder", "<UNKNOWN_QUARANTINE_FOLDER>"),
-        "quarantineRule": event.get("quarantineRule", "<UNKNOWN_QUARANTINE_RULE>"),
-        "malwareScore": event.get("malwareScore", 0),
-        "phishScore": event.get("phishScore", 0),
-        "spamScore": event.get("spamScore", 0),
-        "impostorScore": event.get("impostorScore", 0),
-        "headerFrom": event.get("headerFrom", "<UNKNOWN_HEADER_FROM>"),
-    }
+    # Use the common helper and extend with impostor-specific fields
+    context = proofpoint_alert_context(event)
+    context.update(
+        {
+            "spamScore": event.get("spamScore", 0),
+            "impostorScore": event.get("impostorScore", 0),
+            "headerFrom": event.get("headerFrom", "<UNKNOWN_HEADER_FROM>"),
+        }
+    )
+    return context

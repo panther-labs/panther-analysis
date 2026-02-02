@@ -24,6 +24,10 @@ Runbook: |
   2. Block the sender domain/IP within 15 minutes and search for similar emails from the last 7 days
   3. Escalate to IR team within 30 minutes if virus delivery to endpoints is confirmed
 Reference: https://www.proofpoint.com/sites/default/files/2020-05/pfpt-uk-ds-email-protection.pdf
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566 # Initial Access: Phishing
+    - TA0002:T1204 # Execution: User Execution
 Tests:
   - Name: Virus Quarantine Folder
     ExpectedResult: true
