@@ -2496,6 +2496,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects modifications to the OIDC discovery URL in Azure Entra ID's Authentication Methods Policy. This technique enables attackers to federate the tenant with attacker-controlled identity providers, bypassing multi-factor authentication and enabling unauthorized access through bring-your-own IdP methods.",
+        "DisplayName": "Azure Authentication Methods Policy OIDC Discovery URL Changed",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_auth_methods_policy_oidc_change.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Automation account is created. Azure Automation accounts can be used to automate management tasks and orchestrate actions across systems. Adversaries may create Automation accounts to maintain persistence in their target's environment by leveraging managed identities and runbooks to execute code with elevated privileges.",
         "DisplayName": "Azure Automation Account Created",
         "LogTypes": [
@@ -2541,6 +2550,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects device code authentication using the Microsoft Broker Client application, which may indicate Primary Refresh Token (PRT) abuse. Device code flow allows adversaries to trick users into entering codes on attacker-controlled applications. When combined with Microsoft Broker Client (app ID 29d9ed98-a469-4536-ade2-f981bc1d605e), this may indicate PRT theft or replay attacks that bypass MFA and Conditional Access policies.",
+        "DisplayName": "Azure Device Code Authentication with Broker Client",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_device_code_broker_client.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when Azure diagnostic settings are deleted. Deleting diagnostic settings disables logging and monitoring, which is a common technique to hide malicious activity.",
         "DisplayName": "Azure Diagnostic Settings Deleted",
         "LogTypes": [
@@ -2559,12 +2577,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects modifications to domain federation settings in Microsoft Entra ID, including changes to federation trust configurations and OIDC discovery endpoints. Adversaries who compromise administrative accounts may modify these settings to federate the tenant with attacker-controlled identity providers, enabling unauthorized access and MFA bypass. This technique allows attackers to establish persistent access by redirecting authentication to malicious infrastructure.",
+        "DisplayName": "Azure Domain Federation Settings Modified",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_domain_trust_settings_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Event Hub is deleted. Event Hubs are critical event processing services that ingest and process large volumes of data for log collection, SIEM ingestion, and real-time analytics. Adversaries may delete Event Hubs to evade detection by disrupting data flows and erasing evidence of their malicious activities. Deletion of Event Hubs used for security logging can blind security teams to ongoing attacks.",
         "DisplayName": "Azure Event Hub Deleted",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_event_hub_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects high volumes of failed Microsoft Entra ID sign-in attempts resulting in account lockouts, indicating potential brute-force credential attacks such as password spraying, password guessing, or credential stuffing. When adversaries repeatedly attempt authentication with incorrect credentials, Entra ID Smart Lockout policies trigger account lockouts (error code 50053).",
+        "DisplayName": "Azure Excessive Account Lockouts",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_excessive_account_lockouts.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2592,6 +2628,15 @@
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_firewall_policy_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects high-risk sign-in attempts flagged by Microsoft Entra ID Protection. These alerts indicate potential account compromise where Microsoft's machine learning has identified suspicious authentication patterns. High-risk sign-ins may result from credential theft, impossible travel, or unfamiliar locations.",
+        "DisplayName": "Azure High-Risk Sign-In",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_high_risk_signin.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2694,6 +2739,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user signs in to Microsoft Entra ID and subsequently accesses Microsoft Graph from a different IP address using the same session ID. This behavior may indicate OAuth application abuse, session hijacking, token replay attacks, or adversary-in-the-middle attacks where an attacker has obtained a valid session token and is using it from their own infrastructure.",
+        "DisplayName": "Azure Microsoft Graph Single Session from Multiple IP Addresses",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_graph_session_multiple_ips.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when Azure's Network Watcher packet capture feature is activated.  Packet capture operations could enable threat actors to inspect unencrypted network traffic and potentially extract sensitive credentials or data. While packet capture is a legitimate network diagnostics tool, adversaries may abuse it to sniff credentials or intercept sensitive data in transit.",
         "DisplayName": "Azure Network Packet Capture Enabled",
         "LogTypes": [
@@ -2757,6 +2811,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user account triggers multiple Microsoft Entra ID Protection risk alerts within a short time window, indicating a potentially ongoing attack or compromised account. Entra ID Protection uses machine learning and heuristics to detect risky sign-in activity including anonymous IP usage, atypical travel patterns, malware-linked IP addresses, unfamiliar sign-in properties, password spray attempts, leaked credentials, and other suspicious behaviors.",
+        "DisplayName": "Azure Protection Multiple Alerts for User",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_multiple_protection_alerts.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Resource Group is deleted. Resource group deletion removes all resources within the group and may indicate mass destruction or legitimate cleanup.",
         "DisplayName": "Azure Resource Group Deleted",
         "LogTypes": [
@@ -2793,12 +2856,30 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects Resource Owner Password Credentials (ROPC) OAuth 2.0 authentication attempts in Microsoft Entra ID using single-factor authentication without MFA enforcement. ROPC is a deprecated legacy flow that allows applications to directly collect user credentials to obtain access tokens, bypassing modern authentication and MFA requirements. Adversaries commonly exploit ROPC during credential enumeration and password spraying campaigns using tools like TeamFiltration and MSOLSpray.",
+        "DisplayName": "Azure ROPC Login Attempt Without MFA",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_ropc_login_no_mfa.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when serverless resources execute PowerShell or Python scripts through Azure Automation runbook jobs or Azure Function Apps. Adversaries may abuse access to serverless resources to execute commands with inherited permissions from managed identities, RunAs accounts, or hybrid worker groups.",
         "DisplayName": "Azure Serverless Script Execution",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_serverless_execution.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when new credentials (client secrets or certificates) are added to Microsoft Entra ID service principals or applications. Service principals are identities used by applications, services, and automation tools to access Azure resources, and they authenticate using credentials such as client secrets or certificates. Adversaries who compromise administrative credentials may add rogue credentials to existing service principals to establish persistent access that bypasses multi-factor authentication (MFA) requirements, as service principal authentication uses client credentials rather than interactive user login.",
+        "DisplayName": "Azure Service Principal Credentials Added",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_service_principal_credentials_added.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2964,6 +3045,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a user elevates their permissions to the \"User Access Administrator\" role in Azure, which grants full control over access management for Azure resources. The User Access Administrator role is one of the most powerful privileged roles in Azure, allowing the holder to manage user access to all Azure resources, assign roles to other users including administrative roles, and effectively control the entire Azure subscription's permission structure.",
+        "DisplayName": "Azure User Elevated to User Access Administrator Role",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_elevate_user_access_admin.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when an Azure Virtual Machine is deleted. VM deletion may indicate normal deprovisioning or could be part of a larger attack pattern to disrupt services.",
         "DisplayName": "Azure Virtual Machine Deleted",
         "LogTypes": [
@@ -3006,6 +3096,15 @@
             "Azure.MonitorActivity"
         ],
         "YAMLPath": "rules/azure_activity_rules/azure_vm_snapshot_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects OAuth authorization flows where Visual Studio Code successfully authenticates to Microsoft Graph. While legitimate for developers, this pattern is commonly abused in phishing campaigns where attackers use the trusted VS Code client ID to trick users into granting OAuth tokens.",
+        "DisplayName": "Azure VS Code OAuth Phishing",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "rules/azure_signin_rules/azure_vscode_oauth_phishing.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -4044,6 +4143,16 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Detects the GAIA (Google Account Information and Authentication) credential theftattack chain: credential dumping tool execution on Windows followed by anomalous GoogleWorkspace authentication. This pattern indicates an attacker has extracted OAuth refreshtokens from a Windows machine and is using them to authenticate to Google Workspace.",
+        "DisplayName": "GAIA GCPW Credential Theft Attack Chain",
+        "LogTypes": [
+            "GSuite.ActivityEvent",
+            "Windows.EventLogs"
+        ],
+        "YAMLPath": "correlation_rules/gaia_credential_theft_attack_chain.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "GCP Access Attempts Violating IAP Access Controls",
         "DisplayName": "GCP Access Attempts Violating IAP Access Controls",
@@ -4900,7 +5009,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when a repository is created with the description \"Sha1-Hulud: The Second Coming.\", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign.",
+        "Description": "Detects when a repository is created with the description \"Sha1-Hulud: The Second Coming.\", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign. Repos created with this description are typically indicators of an exfiltration attempt by the worm.",
         "DisplayName": "GitHub Sha1-Hulud Malicious Repository Created",
         "LogTypes": [
             "GitHub.Webhook"
@@ -5106,6 +5215,15 @@
         "YAMLPath": "rules/gsuite_activityevent_rules/google_workspace_apps_new_mobile_app_installed.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects users authenticating with login types they haven't used in the past 30 days.May indicate GAIA credential theft where attackers use stolen tokens with differentauthentication methods than the victim's normal pattern (e.g., google_password instead of SAML).",
+        "DisplayName": "Google Workspace Login Type Anomaly",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_Login_Type_Anomaly_Query.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.",
         "DisplayName": "Google Workspace Many Docs Downloaded",
@@ -5113,6 +5231,60 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects new OAuth applications authorized with privileged scopes in Google Workspace.Uses anomaly detection to identify users authorizing OAuth apps they haven't used inthe past 7 days.",
+        "DisplayName": "Google Workspace OAuth Anomalous Privileged Request",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_OAuth_Anomalous_Scope_Patterns_Query.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace. Privileged scopes grant broad access to sensitive data and administrative functions.",
+        "DisplayName": "Google Workspace OAuth Application Authorized with Privileged Scopes",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Alerts when users request OAuth tokens from IP addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. This may indicate GAIA credential theft where attackersuse stolen refresh tokens to request access tokens from their infrastructure.",
+        "DisplayName": "Google Workspace OAuth Token Requests from New IP",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/gsuite_oauth_token_new_ip_rule.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects users requesting OAuth tokens from IPv4 addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. May indicate GAIA credential theft where attackers usestolen refresh tokens from their infrastructure.",
+        "DisplayName": "Google Workspace OAuth Token Requests from New IPs",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_OAuth_Token_New_IP_Query.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.",
+        "DisplayName": "Google Workspace OAuthLogin Scope Anomalous Application Access",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_OAuth_Login_Scope_Anomalous_Access_Query.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.",
+        "DisplayName": "Google Workspace Rapid Multi-IP Authentication",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5560,17 +5732,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Unauthorized lambda Create, Read, Update, or Delete event occurred.",
-        "DisplayName": "Lambda CRUD Actions",
-        "LogTypes": [
-            "AWS.CloudTrail"
-        ],
-        "YAMLPath": "rules/aws_cloudtrail_rules/aws_lambda_crud.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Identifies when the code of a Lambda function is updated, which could indicate a potential security risk.",
-        "DisplayName": "Lambda Update Function Code",
+        "Description": "Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.",
+        "DisplayName": "Lambda Code Updated by IAM User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -5578,12 +5741,21 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Identifies when a Lambda function configuration is updated with layers, which could indicate a potential security risk.",
-        "DisplayName": "Lambda Update Function Configuration with Layers",
+        "Description": "Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.",
+        "DisplayName": "Lambda Configuration with Layers Updated by IAM User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Unauthorized lambda Create, Read, Update, or Delete event occurred.",
+        "DisplayName": "Lambda CRUD Actions",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_lambda_crud.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5688,6 +5860,33 @@
             "Zendesk.Audit"
         ],
         "YAMLPath": "rules/standard_rules/mfa_disabled.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "Detects anomalous OAuth application consent grants in Microsoft Entra ID where users approve permissions to applications they have not consented to in the past 14 days. Identifies potential OAuth phishing attacks where attackers trick users into granting malicious applications access to their accounts and organizational data.",
+        "DisplayName": "Microsoft Entra ID Anomalous Application Consent",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "queries/azure_queries/Entra_ID_Anomalous_Application_Consent_Query.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "Detects when users authenticate via device code flow for the first time in the past 14 days. Device code flow can be exploited through phishing attacks to steal tokens and impersonate victims.  This baseline detection helps identify new device code usage patterns that may indicate account compromise.",
+        "DisplayName": "Microsoft Entra ID First Time Seen Device Code Authentication",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "queries/azure_queries/Entra_ID_First_Time_Device_Code_Auth_Query.yml"
+    },
+    {
+        "AnalysisType": "Saved Query",
+        "Description": "Detects when a public client application accesses email data via Microsoft Graph API  from an application the user has not used in the past 14 days.  This pattern can indicate OAuth phishing where attackers trick users into granting malicious applications access to read or send emails on their behalf.",
+        "DisplayName": "Microsoft Entra ID Graph Email Access by Unusual Public Client",
+        "LogTypes": [
+            "Azure.Audit"
+        ],
+        "YAMLPath": "queries/azure_queries/Entra_ID_Graph_Email_Access_Unusual_Public_Client_Query.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6882,6 +7081,42 @@
         "YAMLPath": "rules/salesforce_rules/salesforce_admin_login_as_user.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Salesforce Real-Time Event Monitoring has detected anomalous API activity. This could indicate compromised credentials, automated abuse, data exfiltration attempts, or other suspicious API usage patterns.",
+        "DisplayName": "Salesforce API Anomaly Detection (RET Passthrough)",
+        "LogTypes": [
+            "Salesforce.RealtimeEvent"
+        ],
+        "YAMLPath": "rules/salesforce_rules/salesforce_api_anomaly_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects Salesforce Bulk API operations that could indicate data exfiltration attempts. The Bulk API allows users to process large volumes of records (up to millions) asynchronously, making it a common vector for data theft.This detection triggers on all Bulk API job completions and adjusts severity based on:- Operation type (query operations are highest risk for exfiltration)- Volume of records processed- Entity/object type being accessed",
+        "DisplayName": "Salesforce Bulk API Data Exfiltration",
+        "LogTypes": [
+            "Salesforce.RealtimeEvent"
+        ],
+        "YAMLPath": "rules/salesforce_rules/salesforce_bulk_data_exfiltration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects OAuth credential abuse and suspicious token usage patterns in Salesforce. OAuth tokens provide API access and can be abused if compromised, making this detection critical for:- Stolen or leaked OAuth tokens- Token replay attacks- Excessive API usage indicating automated abuse- Failed token refresh attempts (potential brute force)- Unauthorized token revocationsThis detection triggers on OAuth-related security events and adjusts severity based on:- Token revocation events (may indicate compromise response)- Failed OAuth operations (potential attack attempts)- Excessive API usage patterns",
+        "DisplayName": "Salesforce OAuth Credential Abuse Detection",
+        "LogTypes": [
+            "Salesforce.RealtimeEvent"
+        ],
+        "YAMLPath": "rules/salesforce_rules/salesforce_oauth_credential_abuse.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Monitors third-party integrations and OAuth connected apps accessing Salesforce. Connected apps use OAuth for authorization and can access data on behalf of users, making them a potential vector for:- Unauthorized data access- Shadow IT applications- Compromised OAuth tokens- Over-privileged integrationsThis detection triggers on connected app usage events and adjusts severity based on:- Connection type (refresh tokens are higher risk)- App authorization events- Suspicious app naming patterns",
+        "DisplayName": "Salesforce Third-Party Integration Monitoring",
+        "LogTypes": [
+            "Salesforce.RealtimeEvent"
+        ],
+        "YAMLPath": "rules/salesforce_rules/salesforce_third_party_integration.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.",
         "DisplayName": "Secret Enumeration by a User",
@@ -7865,6 +8100,15 @@
             "AWS.VPCFlow"
         ],
         "YAMLPath": "queries/aws_queries/anomalous_vpc_port_activity_query.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects execution of tools commonly used for credential dumping on Windows systems. These tools can extract OAuth refresh tokens (GAIA), passwords, and authentication secrets from Windows memory (LSASS) and registry.",
+        "DisplayName": "Windows Credential Dumping Tool",
+        "LogTypes": [
+            "Windows.EventLogs"
+        ],
+        "YAMLPath": "rules/microsoft_rules/windows_credential_dumping_tool.yml"
     },
     {
         "AnalysisType": "Rule",

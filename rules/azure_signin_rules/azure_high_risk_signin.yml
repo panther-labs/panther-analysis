@@ -1,0 +1,117 @@
+AnalysisType: rule
+Filename: azure_high_risk_signin.py
+RuleID: "Azure.Audit.HighRiskSignIn"
+DisplayName: "Azure High-Risk Sign-In"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: High
+DedupPeriodMinutes: 60
+Description: >
+  Detects high-risk sign-in attempts flagged by Microsoft Entra ID Protection. These alerts indicate potential account compromise where Microsoft's machine learning has identified suspicious authentication patterns. High-risk sign-ins may result from credential theft, impossible travel, or unfamiliar locations.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+Runbook: |
+  1. Query Azure.Audit sign-in logs for all authentication events by properties:userPrincipalName in the 24 hours before and after the alert to establish normal sign-in patterns
+  2. Check if callerIpAddress has been used by this user in the past 30 days and verify if the location matches expected geographic regions for the user
+  3. Find other high-risk or failed sign-in attempts for this user or from this IP address in the past 7 days to identify potential credential compromise patterns
+Reference: https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies
+SummaryAttributes:
+  - properties:userPrincipalName
+  - properties:servicePrincipalName
+  - callerIpAddress
+  - properties:riskLevelAggregated
+  - properties:riskLevelDuringSignIn
+  - properties:riskEventTypes
+Tests:
+  - Name: High Risk During Sign-In
+    ExpectedResult: true
+    Log:
+      {
+        "callerIpAddress": "4.4.4.4",
+        "category": "SignInLogs",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "durationMs": 0,
+        "Level": "4",
+        "location": "RU",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "p_event_time": "2025-01-15 14:23:10.123",
+        "p_log_type": "Azure.Audit",
+        "properties":
+          {
+            "userId": "user123-456-789",
+            "userPrincipalName": "john@justice.org",
+            "appId": "00000002-0000-0ff1-ce00-111111111111",
+            "authenticationProtocol": "oAuth2",
+            "conditionalAccessStatus": "success",
+            "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "createdDateTime": "2025-01-15T14:23:10.1234567Z",
+            "ipAddress": "4.4.4.4",
+            "isInteractive": true,
+            "location":
+              {
+                "city": "Moscow",
+                "countryOrRegion": "RU",
+                "geoCoordinates": { "latitude": 55.7558, "longitude": 37.6173 },
+                "state": "Moscow",
+              },
+            "resourceDisplayName": "Microsoft 365",
+            "resourceId": "00000002-0000-0ff1-ce00-111111111111",
+            "riskDetail": "aiConfirmedSigninSafe",
+            "riskLevelAggregated": "none",
+            "riskLevelDuringSignIn": "high",
+            "riskState": "atRisk",
+            "riskEventTypes": ["unfamiliarFeatures", "anonymizedIPAddress"],
+            "status": { "errorCode": 0 },
+            "tokenIssuerType": "AzureAD",
+            "clientAppUsed": "Browser",
+          },
+        "resourceId": "/tenants/tenant-id-123/providers/Microsoft.aadiam",
+        "resultSignature": "SUCCESS",
+        "resultType": "0",
+        "tenantId": "tenant-id-123",
+        "time": "2025-01-15 14:23:10.123",
+      }
+  - Name: High Risk Dismissed
+    ExpectedResult: false
+    Log:
+      {
+        "callerIpAddress": "4.4.4.4",
+        "category": "SignInLogs",
+        "correlationId": "d4e5f6a7-b8c9-0123-def0-333333333333",
+        "durationMs": 0,
+        "Level": "4",
+        "location": "US",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "p_event_time": "2025-01-15 17:10:15.234",
+        "p_log_type": "Azure.Audit",
+        "properties":
+          {
+            "userId": "user234-567-890",
+            "userPrincipalName": "cross@lotr.com",
+            "appId": "00000002-0000-0ff1-ce00-111111111111",
+            "authenticationProtocol": "oAuth2",
+            "conditionalAccessStatus": "success",
+            "correlationId": "d4e5f6a7-b8c9-0123-def0-333333333333",
+            "createdDateTime": "2025-01-15T17:10:15.2345678Z",
+            "ipAddress": "4.4.4.4",
+            "isInteractive": true,
+            "resourceDisplayName": "Microsoft 365",
+            "resourceId": "00000002-0000-0ff1-ce00-111111111111",
+            "riskDetail": "adminDismissedAllRiskForUser",
+            "riskLevelAggregated": "high",
+            "riskLevelDuringSignIn": "high",
+            "riskState": "dismissed",
+            "status": { "errorCode": 0 },
+            "tokenIssuerType": "AzureAD",
+          },
+        "resourceId": "/tenants/tenant-id-012/providers/Microsoft.aadiam",
+        "resultSignature": "SUCCESS",
+        "resultType": "0",
+        "tenantId": "tenant-id-012",
+        "time": "2025-01-15 17:10:15.234",
+      }

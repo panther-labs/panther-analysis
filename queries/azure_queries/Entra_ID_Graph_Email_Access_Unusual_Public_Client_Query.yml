@@ -1,0 +1,51 @@
+AnalysisType: saved_query
+QueryName: "Microsoft Entra ID Graph Email Access by Unusual Public Client"
+Description: >
+  Detects when a public client application accesses email data via Microsoft Graph API 
+  from an application the user has not used in the past 14 days. 
+  This pattern can indicate OAuth phishing where attackers trick users into granting
+  malicious applications access to read or send emails on their behalf.
+Tags:
+  - Anomaly Detection
+  - Microsoft Graph
+  - Email Access
+Query: |-
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+
+  with subquery as (
+      SELECT
+        p_event_time,
+        category,
+        properties:UserPrincipalObjectID AS user_principal_object_id,
+        properties:appId AS app_id,
+        properties:C_Idtyp AS identity_type,
+        properties:clientAuthMethod AS client_auth_method,
+        properties:responseStatusCode AS response_status_code,
+        properties:requestMethod AS request_method,
+        properties:requestUri AS request_uri,
+        properties:scopes AS scopes,
+        properties
+      FROM panther_logs.public.azure_audit
+      WHERE
+        p_occurs_since('14 day')
+        AND category = 'MicrosoftGraphActivityLogs'
+        AND properties:appId IS NOT NULL
+        AND properties:C_Idtyp::string = 'user'
+        AND properties:clientAuthMethod::int = 0
+        AND properties:responseStatusCode::int = 200
+        AND properties:requestMethod::string IN ('GET', 'POST', 'PUT', 'PATCH', 'DELETE')
+        AND (properties:requestUri::string ILIKE '%/v1.0/me/%' OR properties:requestUri::string ILIKE '%/v1.0/users/%')
+        AND (
+          properties:requestUri::string ILIKE '%mail%'
+          OR properties:requestUri::string ILIKE '%messages%'
+          OR properties:requestUri::string ILIKE '%inbox%'
+          OR properties:scopes::string ILIKE '%Mail.Read%'
+          OR properties:scopes::string ILIKE '%Mail.ReadWrite%'
+          OR properties:scopes::string ILIKE '%Mail.Send%'
+          OR properties:scopes::string ILIKE '%email%'
+        )
+      LIMIT 10000
+  ),
+  {{ new_unique_values('subquery', 'user_principal_object_id', 'app_id', '1h') }}
