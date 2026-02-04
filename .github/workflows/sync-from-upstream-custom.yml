@@ -1,0 +1,180 @@
+# Custom sync workflow: same behavior as Panther's sync-from-upstream but with
+# automatic conflict resolution (paths under /cloudinary/ keep our version).
+# We use a separate file so upstream can change their workflow without causing
+# merge conflicts in our logic.
+name: Sync Panther Analysis from Upstream
+
+on:
+  schedule:
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
+  workflow_dispatch: # or on button click
+
+env:
+  YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
+
+jobs:
+  check_upstream:
+    if: |
+      github.repository != 'panther-labs/panther-analysis'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set token
+        id: set_token
+        run: |
+          PANTHER_SYNC_UPSTREAM="${{ secrets.PANTHER_SYNC_UPSTREAM }}"
+          if [ -n "$PANTHER_SYNC_UPSTREAM" ]; then
+            echo "Using PANTHER_SYNC_UPSTREAM for authentication"
+            echo "token=${{ secrets.PANTHER_SYNC_UPSTREAM }}" >> $GITHUB_OUTPUT
+          else
+            echo "PANTHER_SYNC_UPSTREAM not found, using default GITHUB_TOKEN"
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
+        id: set_upstream
+        name: Check Upstream (one release before latest)
+        with:
+          github-token: ${{ steps.set_token.outputs.token }}
+          script: |
+            const fs = require('fs');
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: 'panther-labs',
+              repo: 'panther-analysis',
+              per_page: 2
+            });
+            const tag = releases.length >= 2 ? releases[1].tag_name : releases[0].tag_name;
+            fs.appendFileSync(
+              process.env['GITHUB_OUTPUT'],
+              'latest-release=' + tag + '\n');
+
+      - uses: peterjgrainger/action-create-branch@10c7d268152480ae859347db45dc69086cef1d9c #v3.0.0
+        id: create_a_branch
+        env:
+          GITHUB_TOKEN: ${{ steps.set_token.outputs.token }}
+        with:
+          branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
+
+      - name: Checkout your local repo in PR branch
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5.0.0
+        with:
+          ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
+          token: ${{ steps.set_token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: |
+          if ! git remote get-url upstream &>/dev/null; then
+            git remote add upstream https://github.com/panther-labs/panther-analysis.git
+          fi
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Record HEAD before merge
+        id: before_merge
+        run: echo "rev=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Merge upstream main and resolve conflicts (upstream wins except cloudinary)
+        env:
+          GIT_AUTHOR_NAME: "github-actions[bot]"
+          GIT_AUTHOR_EMAIL: "github-actions[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: "github-actions[bot]"
+          GIT_COMMITTER_EMAIL: "github-actions[bot]@users.noreply.github.com"
+        run: |
+          set +e
+          git merge upstream/main --allow-unrelated-histories -m "Sync from panther-labs/panther-analysis main"
+          MERGE_EXIT=$?
+          set -e
+          CONFLICTS=$(git diff --name-only --diff-filter=U)
+          if [ -n "$CONFLICTS" ]; then
+            echo "$CONFLICTS" | while IFS= read -r f; do
+              if [[ "$f" == *"/cloudinary/"* ]]; then
+                echo "Keeping our version: $f"
+                git checkout --ours -- "$f"
+              else
+                echo "Taking upstream version: $f"
+                git checkout --theirs -- "$f"
+              fi
+            done
+            git add -A
+            git commit -m "Sync from panther-labs/panther-analysis main (conflicts resolved; cloudinary folders kept local)"
+          elif [ "$MERGE_EXIT" -ne 0 ]; then
+            echo "Merge failed for reasons other than conflicts"
+            exit 1
+          fi
+
+      # Remove upstream's workflow file so only our custom workflow runs (avoids duplicate runs and conflicts)
+      - name: Remove upstream sync workflow file
+        env:
+          GIT_AUTHOR_NAME: "github-actions[bot]"
+          GIT_AUTHOR_EMAIL: "github-actions[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: "github-actions[bot]"
+          GIT_COMMITTER_EMAIL: "github-actions[bot]@users.noreply.github.com"
+        run: |
+          if [ -f .github/workflows/sync-from-upstream.yml ]; then
+            git rm .github/workflows/sync-from-upstream.yml
+            git commit -m "Use custom sync workflow only (remove upstream workflow file)"
+          fi
+
+      - name: Set has_new_commits output
+        id: sync
+        run: |
+          if [ "$(git rev-parse HEAD)" != "${{ steps.before_merge.outputs.rev }}" ]; then
+            echo "has_new_commits=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_new_commits=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push sync branch
+        run: git push origin "sync_upstream_${{ steps.set_upstream.outputs.latest-release }}"
+
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
+        id: create_pr
+        name: Create a PR to bring upstream changes into the local repo primary branch
+        if: steps.sync.outputs.has_new_commits == 'true'
+        with:
+          github-token: ${{ steps.set_token.outputs.token }}
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+            try {
+              const response = await github.rest.pulls.create({
+                owner: '${{github.repository_owner}}',
+                repo: '${{  github.event.repository.name }}',
+                title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
+                head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
+                base: '${{env.YOUR_REPO_PRIMARY_BRANCH_NAME}}',
+              });
+            } catch(e) {
+              if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('No commits between')) {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=no-updates\n');
+              } else if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('A pull request already exists for')) {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=update-pr-already-exists\n');
+              } else {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=error\n');
+                console.log(e);
+              }
+            }
+      - id: pr_not_needed_already_exists
+        name: PR for latest release already exists
+        if: ${{ steps.create_pr.outputs.pr_state == 'update-pr-already-exists' }}
+        run: |
+          echo "PR for latest release was previously created and is not closed"
+      - id: pr_not_needed_in_sync
+        name: Local repo already synced to latest release
+        if: ${{ steps.create_pr.outputs.pr_state == 'no-updates' }}
+        run: |
+          echo "Local repo in sync with latest release"
+      - id: pr_create_error
+        name: Create PR step had an error
+        if: ${{ steps.create_pr.outputs.pr_state == 'error' }}
+        run: |
+          echo "unhandled exception in PR create step. Check output of that step."
+          exit 128
