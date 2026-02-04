@@ -5,8 +5,14 @@ from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 from panther_core import PantherEvent
 from panther_detection_helpers.caching import get_string_set, put_string_set
 
-# Determine how many secets must be accessed in order to trigger an alert
-PARAM_THRESHOLD = 10
+# Determine how many secrets must be accessed in order to trigger an alert
+PARAM_THRESHOLD = 25
+
+# Whitelisted IAM role name patterns (case-insensitive)
+WHITELISTED_ROLE_PATTERNS = [
+    "AWSReservedSSO_DevAdmin_",  # SSO admin roles
+    "AWSReservedSSO_Admin_",  # SSO admin roles
+]
 
 all_param_names = set()
 
@@ -16,6 +22,15 @@ def rule(event: PantherEvent) -> bool:
     if not (
         event.get("eventName") in ("GetParameter", "GetParameters")
         and event.deep_get("requestParameters", "withDecryption")
+    ):
+        return False
+
+    # Check if the role is whitelisted
+    role_name = event.deep_get(
+        "userIdentity", "sessionContext", "sessionIssuer", "userName", default=""
+    )
+    if role_name and any(
+        pattern.lower() in role_name.lower() for pattern in WHITELISTED_ROLE_PATTERNS
     ):
         return False
 

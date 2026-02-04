@@ -4,7 +4,7 @@ RuleID: "GCP.GCS.ObjectExfiltration"
 DisplayName: "GCP GCS Object Copied to Different Bucket"
 Enabled: true
 Status: Experimental
-Threshold: 10
+Threshold: 50
 LogTypes:
   - GCP.AuditLog
 Tags:
@@ -17,11 +17,12 @@ Reports:
     - TA0010:T1537
 Severity: Medium
 Description: >
-  Detects when GCS objects are copied from one bucket to another bucket. This pattern
-  can indicate data exfiltration where an adversary copies sensitive data to a bucket
-  they control. The threshold of 10+ copy operations suggests bulk exfiltration rather
-  than normal operations. This is detected by monitoring storage.objects.get operations
-  that include a destination field in the metadata, indicating a copy operation.
+  Detects when GCS objects are copied from one bucket to a bucket in a different GCP project.
+  Cross-project copies are more suspicious than same-project copies and can indicate data
+  exfiltration where an adversary copies sensitive data to a project they control. The
+  threshold of 50+ copy operations suggests bulk exfiltration rather than normal operations.
+  This is detected by monitoring storage.objects.get operations that include a destination
+  field in the metadata, indicating a copy operation.
 Runbook: |
   1. Query GCP Audit logs for all storage.objects.get operations with destination metadata by the principal email in the 1 hour window around this alert
   2. Identify the total number of objects copied, source and destination buckets, and the rate of copies per minute
@@ -82,7 +83,7 @@ Tests:
         "timestamp": "2025-12-15 15:55:03.915792086",
       }
   - Name: Same-Project Different Bucket Copy
-    ExpectedResult: true
+    ExpectedResult: false
     Log:
       {
         "protoPayload":
