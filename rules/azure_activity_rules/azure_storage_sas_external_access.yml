@@ -1,0 +1,129 @@
+AnalysisType: rule
+Filename: azure_storage_sas_external_access.py
+RuleID: "Azure.MonitorActivity.Storage.SASTokenExternalAccess"
+DisplayName: "Azure Storage SAS Token Access from External IP"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Low
+Status: Experimental
+DedupPeriodMinutes: 60
+Description: >
+  Detects SAS token usage from external public IPs by parsing the signature parameter in storage URIs.
+  Storm-0501 uses stolen SAS tokens from external C2 infrastructure for data exfiltration.
+  Replicates Defender for Cloud alert 'Storage.Blob_AccountSas.InternalSasUsedExternally'.
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567 # Exfiltration: Exfiltration Over Web Service
+    - TA0006:T1552.001 # Credential Access: Unsecured Credentials - Credentials In Files
+Reference: https://learn.microsoft.com/en-us/azure/defender-for-cloud/alerts-azure-storage
+Tags:
+  - Exfiltration
+  - Credential Access
+  - Storm-0501
+  - Defender for Cloud
+  - SAS Token
+Runbook: |
+  1. Query Azure Monitor Activity logs for SAS token generation operations (Microsoft.Storage/storageAccounts/listAccountSas/action) by the same identity in the 24 hours before this access to identify when the token was created and by whom
+  2. Find all storage operations (GetBlob, ListBlobs, DeleteBlob) from the callerIpAddress in the 6 hours before and after the alert to assess if this is isolated access or part of bulk exfiltration
+  3. Check if the callerIpAddress has accessed this storage account in the past 90 days to establish if this external IP is expected
+  4. Review Azure Audit logs for authentication events from the callerIpAddress in the 48 hours before the alert to identify potential account compromise or credential theft
+  5. Search for other alerts with the same callerIpAddress across all storage accounts in the past 7 days to identify if this is targeted or widespread
+SummaryAttributes:
+  - callerIpAddress
+  - properties:accountName
+  - operationName
+Tests:
+  - Name: SAS Token from External IP - Read Operation
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-28T15:30:00.0000000Z",
+        "category": "StorageRead",
+        "operationName": "GetBlob",
+        "callerIpAddress": "8.8.8.8:45123",
+        "statusCode": 200,
+        "uri": "https://criticaldata001.blob.core.windows.net/backups/data.zip?sv=2021-12-02&ss=b&srt=sco&sp=rl&se=2025-12-31T23:59:59Z&sig=SIGNATURE_HERE",
+        "properties": {
+          "accountName": "criticaldata001",
+          "objectKey": "/criticaldata001/backups/data.zip",
+          "userAgentHeader": "python-requests/2.31.0",
+          "metricResponseType": "Success"
+        },
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: SAS Token from External IP - Delete Operation
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-28T16:00:00.0000000Z",
+        "category": "StorageDelete",
+        "operationName": "DeleteBlob",
+        "callerIpAddress": "1.1.1.1:12345",
+        "statusCode": 202,
+        "uri": "https://proddata.blob.core.windows.net/financial/records.xlsx?sv=2021-12-02&sp=rwdl&sig=ATTACKER_SIG",
+        "properties": {
+          "accountName": "proddata",
+          "objectKey": "/proddata/financial/records.xlsx",
+          "userAgentHeader": "curl/7.88.0",
+          "metricResponseType": "Success"
+        },
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: SAS Token from Internal IP 
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-28T16:30:00.0000000Z",
+        "category": "StorageWrite",
+        "operationName": "PutBlob",
+        "callerIpAddress": "10.158.74.16:36683",
+        "statusCode": 201,
+        "uri": "https://internaldata.blob.core.windows.net/logs/app.log?sv=2021-12-02&sp=w&sig=INTERNAL_SIG",
+        "properties": {
+          "accountName": "internaldata",
+          "objectKey": "/internaldata/logs/app.log",
+          "userAgentHeader": "Azure-Storage/1.0",
+          "metricResponseType": "Success"
+        },
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: Storage Account Key Auth from External IP 
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-28T17:00:00.0000000Z",
+        "category": "StorageRead",
+        "operationName": "GetBlob",
+        "callerIpAddress": "9.9.9.9:55555",
+        "statusCode": 200,
+        "uri": "https://publicdata.blob.core.windows.net/downloads/file.pdf",
+        "properties": {
+          "accountName": "publicdata",
+          "objectKey": "/publicdata/downloads/file.pdf",
+          "userAgentHeader": "Microsoft.Azure.Storage/9.0",
+          "metricResponseType": "Success"
+        },
+        "identity": {
+          "type": "AccountKey"
+        },
+        "p_log_type": "Azure.MonitorActivity"
+      }
+  - Name: Failed SAS Token Access 
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-28T17:30:00.0000000Z",
+        "category": "StorageRead",
+        "operationName": "GetBlob",
+        "callerIpAddress": "4.4.4.4:33333",
+        "statusCode": 403,
+        "statusText": "AuthenticationFailed",
+        "uri": "https://securedata.blob.core.windows.net/secrets/key.txt?sv=2021-12-02&sp=r&sig=EXPIRED_SIG",
+        "properties": {
+          "accountName": "securedata",
+          "objectKey": "/securedata/secrets/key.txt",
+          "metricResponseType": "AuthenticationFailed"
+        },
+        "p_log_type": "Azure.MonitorActivity"
+      }
