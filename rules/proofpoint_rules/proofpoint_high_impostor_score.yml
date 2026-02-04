@@ -1,0 +1,146 @@
+AnalysisType: rule
+Filename: proofpoint_high_impostor_score.py
+RuleID: "Proofpoint.HighImpostorScore"
+DisplayName: "Proofpoint High Impostor Score Detected"
+Enabled: true
+LogTypes:
+  - Proofpoint.Event
+Status: Experimental
+Tags:
+  - Proofpoint
+  - Email Security
+  - Business Email Compromise
+  - BEC
+  - Impersonation
+  - Phishing
+  - Initial Access:Phishing
+Severity: Medium
+Description: >
+  This rule alerts when Proofpoint detects a high impostor score (50+),
+  indicating potential Business Email Compromise (BEC) or impersonation
+  attacks. The impostor score measures the likelihood that the sender is
+  impersonating a trusted entity. Severity is dynamic based on the score:
+  CRITICAL (80+), HIGH (65+), MEDIUM (50+).
+Runbook: |
+  1. Review sender details for lookalike domains and verify if recipients took action on the email within the last 24 hours
+  2. If BEC is confirmed, immediately notify finance/accounting teams and block the sender domain
+  3. Report to law enforcement within 24 hours if financial fraud was attempted or executives were impersonated
+Reference: https://www.proofpoint.com/us/threat-reference/business-email-compromise
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566 # Initial Access: Phishing
+Tests:
+  - Name: Critical Impostor Score
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:00:00Z"
+      sender: "ceo@comp4ny.com"
+      senderIP: "192.0.2.150"
+      fromAddress:
+        - "ceo@comp4ny.com"
+      toAddresses:
+        - "finance@company.com"
+      recipient:
+        - "finance@company.com"
+      subject: "Urgent Wire Transfer Request"
+      malwareScore: 0
+      phishScore: 60
+      spamScore: 10
+      impostorScore: 95
+      headerFrom: "CEO <ceo@comp4ny.com>"
+      messageID: "<bec-urgent@comp4ny.com>"
+  - Name: High Impostor Score
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T15:30:00Z"
+      sender: "it-support@company-support.net"
+      senderIP: "198.51.100.175"
+      fromAddress:
+        - "it-support@company-support.net"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Password Reset Required"
+      malwareScore: 0
+      phishScore: 45
+      spamScore: 15
+      impostorScore: 70
+      headerFrom: "IT Support <it-support@company-support.net>"
+      messageID: "<fake-it@company-support.net>"
+  - Name: Medium Impostor Score at Threshold
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T16:00:00Z"
+      sender: "hr@c0mpany.com"
+      senderIP: "203.0.113.88"
+      fromAddress:
+        - "hr@c0mpany.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Update Your Benefits"
+      malwareScore: 0
+      phishScore: 30
+      spamScore: 20
+      impostorScore: 50
+      headerFrom: "Human Resources <hr@c0mpany.com>"
+      messageID: "<fake-hr@c0mpany.com>"
+  - Name: Boundary Case - Score 49 Below Threshold
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:30:00Z"
+      sender: "suspicious@example.com"
+      senderIP: "198.51.100.99"
+      fromAddress:
+        - "suspicious@example.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Account Verification"
+      malwareScore: 0
+      phishScore: 40
+      spamScore: 25
+      impostorScore: 49
+      headerFrom: "Support Team <suspicious@example.com>"
+      messageID: "<boundary49@example.com>"
+  - Name: Low Impostor Score - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T17:00:00Z"
+      sender: "marketing@partner.com"
+      senderIP: "203.0.113.20"
+      fromAddress:
+        - "marketing@partner.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "New Product Launch"
+      malwareScore: 0
+      phishScore: 0
+      spamScore: 30
+      impostorScore: 15
+      headerFrom: "Marketing Team <marketing@partner.com>"
+      messageID: "<newsletter@partner.com>"
+  - Name: Zero Impostor Score - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T18:00:00Z"
+      sender: "colleague@company.com"
+      senderIP: "203.0.113.5"
+      fromAddress:
+        - "colleague@company.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Project Update"
+      malwareScore: 0
+      phishScore: 0
+      spamScore: 0
+      impostorScore: 0
+      headerFrom: "Jane Doe <colleague@company.com>"
+      messageID: "<project-update@company.com>"

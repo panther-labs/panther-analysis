@@ -1,0 +1,147 @@
+AnalysisType: rule
+Filename: proofpoint_virus_detected.py
+RuleID: "Proofpoint.VirusDetected"
+DisplayName: "Proofpoint Virus Detected"
+Enabled: true
+LogTypes:
+  - Proofpoint.Event
+Status: Experimental
+Tags:
+  - Proofpoint
+  - Email Security
+  - Virus
+  - Malware
+  - Phishing
+  - Initial Access:Phishing
+  - Execution:User Execution
+Severity: High
+Description: >
+  This rule alerts when Proofpoint detects a virus in an email that cannot
+  be disinfected. It triggers when emails are quarantined to the Virus folder,
+  have the notcleaned quarantine rule applied, or have a malware score of 95+.
+Runbook: |
+  1. Confirm the email was quarantined and immediately verify endpoint protection status on recipient systems
+  2. Block the sender domain/IP within 15 minutes and search for similar emails from the last 7 days
+  3. Escalate to IR team within 30 minutes if virus delivery to endpoints is confirmed
+Reference: https://www.proofpoint.com/sites/default/files/2020-05/pfpt-uk-ds-email-protection.pdf
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566 # Initial Access: Phishing
+    - TA0002:T1204 # Execution: User Execution
+Tests:
+  - Name: Virus Quarantine Folder
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T12:30:00Z"
+      sender: "infected@example.com"
+      senderIP: "192.0.2.50"
+      fromAddress:
+        - "infected@example.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Document for Review"
+      malwareScore: 100
+      phishScore: 0
+      spamScore: 0
+      impostorScore: 0
+      quarantineFolder: "Virus"
+      quarantineRule: "notcleaned"
+      messageID: "<virus123@example.com>"
+      messageSize: 150000
+      modulesRun:
+        - av
+        - spam
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "document.doc"
+          threatID: "abc123def456"
+  - Name: Not Cleaned Quarantine Rule
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:00:00Z"
+      sender: "virus@malware.net"
+      senderIP: "198.51.100.100"
+      fromAddress:
+        - "virus@malware.net"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Important Update"
+      malwareScore: 85
+      phishScore: 5
+      spamScore: 10
+      impostorScore: 0
+      quarantineFolder: "Virus"
+      quarantineRule: "notcleaned"
+      messageID: "<virus789@malware.net>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "update.exe"
+  - Name: High Malware Score Without Quarantine - Backup Check
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T14:30:00Z"
+      sender: "highscore@malware.net"
+      senderIP: "192.0.2.99"
+      fromAddress:
+        - "highscore@malware.net"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Suspicious Attachment"
+      malwareScore: 98
+      phishScore: 10
+      spamScore: 20
+      impostorScore: 0
+      messageID: "<highscore98@malware.net>"
+      threatsInfoMap:
+        - threatType: "attachment"
+          classification: "malware"
+          threatStatus: "active"
+          threat: "suspicious.exe"
+  - Name: Clean Email - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:00:00Z"
+      sender: "colleague@company.com"
+      senderIP: "203.0.113.10"
+      fromAddress:
+        - "colleague@company.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Weekly Report"
+      malwareScore: 0
+      phishScore: 0
+      spamScore: 0
+      impostorScore: 0
+      messageID: "<clean123@company.com>"
+  - Name: Different Quarantine Type - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T16:00:00Z"
+      sender: "phisher@example.com"
+      senderIP: "198.51.100.200"
+      fromAddress:
+        - "phisher@example.com"
+      toAddresses:
+        - "victim@company.com"
+      recipient:
+        - "victim@company.com"
+      subject: "Verify Your Account"
+      malwareScore: 0
+      phishScore: 95
+      spamScore: 10
+      impostorScore: 0
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<phish456@example.com>"
