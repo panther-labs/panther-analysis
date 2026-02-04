@@ -978,7 +978,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.",
+        "Description": "Identify principals retrieving a high number of SSM Parameters of type 'SecretString'. This rule filters out known administrative roles that legitimately need bulk parameter access.",
         "DisplayName": "AWS Decrypt SSM Parameters",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -4370,7 +4370,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when GCS objects are copied from one bucket to another bucket. This pattern can indicate data exfiltration where an adversary copies sensitive data to a bucket they control. The threshold of 10+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.",
+        "Description": "Detects when GCS objects are copied from one bucket to a bucket in a different GCP project. Cross-project copies are more suspicious than same-project copies and can indicate data exfiltration where an adversary copies sensitive data to a project they control. The threshold of 50+ copy operations suggests bulk exfiltration rather than normal operations. This is detected by monitoring storage.objects.get operations that include a destination field in the metadata, indicating a copy operation.",
         "DisplayName": "GCP GCS Object Copied to Different Bucket",
         "LogTypes": [
             "GCP.AuditLog"
