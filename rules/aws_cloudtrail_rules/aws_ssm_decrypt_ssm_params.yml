@@ -12,8 +12,9 @@ Reports:
   Stratus Red Team:
     - aws.credential-access.ssm-retrieve-securestring-parameters
 Description: >
-  Identify principles retrieving a high number of SSM Parameters of type 'SecretString'.
-Threshold: 10
+  Identify principals retrieving a high number of SSM Parameters of type 'SecretString'.
+  This rule filters out known administrative roles that legitimately need bulk parameter access.
+Threshold: 25
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.credential-access.ssm-retrieve-securestring-parameters/
 Runbook: >
@@ -30,7 +31,7 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: get_string_set
-        returnValue: '["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]'
+        returnValue: '["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y"]'
       - objectName: put_string_set
         returnValue: ''
     Log:
@@ -91,7 +92,7 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: get_string_set
-        returnValue: '[]'
+        returnValue: '["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]'
       - objectName: put_string_set
         returnValue: ''
     Log:
@@ -200,7 +201,7 @@ Tests:
     ExpectedResult: true
     Mocks:
       - objectName: get_string_set
-        returnValue: '["a", "b", "c", "d", "e", "f"]'
+        returnValue: '["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u"]'
       - objectName: put_string_set
         returnValue: ''
     Log:
