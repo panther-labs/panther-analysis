@@ -1988,6 +1988,7 @@
 # P
 
 - [Panther](#panther)
+- [Proofpoint](#proofpoint)
 - [PushSecurity](#pushsecurity)
 
 
@@ -2005,6 +2006,22 @@
   - An Admin has modified Panther's SAML configuration.
 - [Snowflake User Daily Query Volume Spike - Threat Hunting](../queries/snowflake_queries/snowflake_user_query_volume_spike_threat_hunting.yml)
   - This query returns the most voluminous queries executed by a specific user over the past 48 hours.
+
+
+## Proofpoint
+
+- [Proofpoint Active Threat Campaign Detected](../rules/proofpoint_rules/proofpoint_threat_campaign.yml)
+  - This rule alerts when Proofpoint identifies an email as part of an active threat campaign. Campaign-based threats indicate coordinated attacks that are targeting multiple organizations or users. These threats are typically more sophisticated and require immediate attention.
+- [Proofpoint High Impostor Score Detected](../rules/proofpoint_rules/proofpoint_high_impostor_score.yml)
+  - This rule alerts when Proofpoint detects a high impostor score (50+), indicating potential Business Email Compromise (BEC) or impersonation attacks. The impostor score measures the likelihood that the sender is impersonating a trusted entity. Severity is dynamic based on the score: CRITICAL (80+), HIGH (65+), MEDIUM (50+).
+- [Proofpoint Malware Detected](../rules/proofpoint_rules/proofpoint_malware_detected.yml)
+  - This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 85 or higher.
+- [Proofpoint Multiple Threats Detected](../rules/proofpoint_rules/proofpoint_multiple_threats.yml)
+  - This rule alerts when multiple active threats are detected in a single email message. This could indicate a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
+- [Proofpoint Phishing Email Detected](../rules/proofpoint_rules/proofpoint_phishing_detected.yml)
+  - This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (80+), or contain active phishing threats in the threats map.
+- [Proofpoint Virus Detected](../rules/proofpoint_rules/proofpoint_virus_detected.yml)
+  - This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder, have the notcleaned quarantine rule applied, or have a malware score of 95+.
 
 
 ## PushSecurity
