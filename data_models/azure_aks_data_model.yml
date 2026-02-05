@@ -1,0 +1,36 @@
+AnalysisType: datamodel
+LogTypes:
+  - Azure.MonitorActivity
+DataModelID: "Standard.Azure.AKS.Audit"
+DisplayName: "Azure AKS Audit"
+Filename: azure_aks_data_model.py
+Enabled: true
+Mappings:
+  - Name: annotations
+    Method: get_annotations
+  - Name: apiGroup
+    Method: get_api_group
+  - Name: apiVersion
+    Method: get_api_version
+  - Name: namespace
+    Method: get_namespace
+  - Name: resource
+    Method: get_resource
+  - Name: name
+    Method: get_name
+  - Name: requestURI
+    Method: get_request_uri
+  - Name: responseStatus
+    Method: get_response_status
+  - Name: sourceIPs
+    Method: get_source_ips
+  - Name: username
+    Method: get_username
+  - Name: userAgent
+    Method: get_user_agent
+  - Name: verb
+    Method: get_verb
+  - Name: requestObject
+    Method: get_request_object
+  - Name: responseObject
+    Method: get_response_object
