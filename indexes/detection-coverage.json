@@ -6902,6 +6902,60 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "This rule alerts when Proofpoint identifies an email as part of an active threat campaign. Campaign-based threats indicate coordinated attacks that are targeting multiple organizations or users. These threats are typically more sophisticated and require immediate attention.",
+        "DisplayName": "Proofpoint Active Threat Campaign Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_threat_campaign.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule alerts when Proofpoint detects a high impostor score (50+), indicating potential Business Email Compromise (BEC) or impersonation attacks. The impostor score measures the likelihood that the sender is impersonating a trusted entity. Severity is dynamic based on the score: CRITICAL (80+), HIGH (65+), MEDIUM (50+).",
+        "DisplayName": "Proofpoint High Impostor Score Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_high_impostor_score.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 85 or higher.",
+        "DisplayName": "Proofpoint Malware Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_malware_detected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule alerts when multiple active threats are detected in a single email message. This could indicate a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).",
+        "DisplayName": "Proofpoint Multiple Threats Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_multiple_threats.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (80+), or contain active phishing threats in the threats map.",
+        "DisplayName": "Proofpoint Phishing Email Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_phishing_detected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder, have the notcleaned quarantine rule applied, or have a malware score of 95+.",
+        "DisplayName": "Proofpoint Virus Detected",
+        "LogTypes": [
+            "Proofpoint.Event"
+        ],
+        "YAMLPath": "rules/proofpoint_rules/proofpoint_virus_detected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "",
         "DisplayName": "Push Security App Banner Acknowledged",
         "LogTypes": [

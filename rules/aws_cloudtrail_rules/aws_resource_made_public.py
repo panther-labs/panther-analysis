@@ -5,8 +5,44 @@ from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 
 
+def _has_organization_condition(statement):
+    """
+    Check if a policy statement has organization ID conditions that restrict access.
+
+    Args:
+        statement: A policyuniverse Statement object
+
+    Returns:
+        bool: True if organization conditions are found, False otherwise
+    """
+    # Check both the policyuniverse category and specific AWS condition keys
+    for condition in statement.condition_entries:
+        # Check policyuniverse category
+        if condition.category == "organization":
+            return True
+
+        # Also check for specific AWS organization condition keys
+        # These include aws:PrincipalOrgID, aws:SourceOrgID, aws:PrincipalOrgPaths, etc.
+        condition_key = getattr(condition, "key", "").lower()
+        if "orgid" in condition_key or "orgpath" in condition_key:
+            return True
+
+    # Alternative: Check raw conditions in the statement if condition_entries doesn't work
+    if hasattr(statement, "statement"):
+        raw_conditions = statement.statement.get("Condition", {})
+        for conditions in raw_conditions.values():
+            for key in conditions.keys():
+                # Check for organization-related condition keys
+                if any(
+                    org_key in key.lower()
+                    for org_key in ["principalorgid", "sourceorgid", "principalorgpaths"]
+                ):
+                    return True
+
+    return False
+
+
 # Check if a policy (string or JSON) allows resource accessibility via the Internet
-# pylint: disable=too-complex
 def policy_is_internet_accessible(policy):
     """
     Check if a policy (string or JSON) allows resource accessibility via the Internet.
@@ -38,26 +74,16 @@ def policy_is_internet_accessible(policy):
 
     # For policies with multiple statements, we need to check each statement individually
     # If ANY statement is truly internet accessible, the policy is internet accessible
-    has_internet_accessible_statement = False
-
     for statement in policy_obj.statements:
         if statement.effect != "Allow" or "*" not in statement.principals:
             continue
 
-        # Check if there are organization ID conditions which restrict access
-        has_org_condition = False
-        for condition in statement.condition_entries:
-            if condition.category == "organization":
-                has_org_condition = True
-                break
-
         # If this statement has a wildcard principal but no organization ID restrictions,
         # it's truly internet accessible
-        if not has_org_condition:
-            has_internet_accessible_statement = True
-            break
+        if not _has_organization_condition(statement):
+            return True
 
-    return has_internet_accessible_statement
+    return False
 
 
 def rule(event):
