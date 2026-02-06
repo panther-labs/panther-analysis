@@ -1,0 +1,75 @@
+{
+  "python.defaultInterpreterPath": "/Users/zaynahsd/.local/share/virtualenvs/panther-analysis-2-v6DPNJ/bin/python",
+  "yaml.schemas": {
+    ".vscode/schemas/rule.json": [
+      "rules/*.{yml,yaml}",
+      "rules/**/*.{yml,yaml}",
+      "queries/*.{yml,yaml}",
+      "!queries/*[Qq]uery.{yml,yaml}",
+      "queries/**/*.{yml,yaml}",
+      "!queries/**/*[Qq]uery.{yml,yaml}"
+    ],
+    ".vscode/schemas/analysis_config_schema.json": [
+      "simple_rules/*.{yml,yaml}",
+      "simple_rules/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/correlation_rule.json": [
+      "correlation_rules/*.{yml,yaml}",
+      "correlation_rules/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/policy.json": [
+      "policies/*.{yml,yaml}",
+      "policies/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/query.json": [
+      "queries/*[Qq]uery.{yml,yaml}",
+      "queries/**/*[Qq]uery.{yml,yaml}",
+      "queries/macros/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/global.json": [
+      "global_helpers/*.{yml,yaml}",
+      "global_helpers/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/lookup_table.json": [
+      "lookup_tables/*.{yml,yaml}",
+      "lookup_tables/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/pack.json": [
+      "packs/*.{yml,yaml}",
+      "packs/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/derived.json": [
+      "derived_rules/*.{yml,yaml}",
+      "derived_rules/**/*.{yml,yaml}"
+    ],
+    ".vscode/schemas/data_model.json": [
+      "data_models/*.{yml,yaml}",
+      "data_models/**/*.{yml,yaml}"
+    ],
+    "https://panther-community-us-east-1.s3.amazonaws.com/latest/logschema/schema.json": [
+      "schemas/*.{yml,yaml}",
+      "schemas/**/*.{yml,yaml}",
+      "log_schemas/*.{yml,yaml}",
+      "log_schemas/**/*.{yml,yaml}"
+    ]
+  },
+  "python.analysis.extraPaths": ["global_helpers"],
+  "files.exclude": {
+    "**/__pycache": true,
+    "**/*pyc": true
+  },
+  "files.associations": {
+    "panther_analysis_tool": "python"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  // Add pylint.lintOnChange to your User (not Workspace) settings
+  // Cmd+Shift+P -> Preferences: Open Settings (JSON)
+  "pylint.lintOnChange": true,
+  "bandit.args": ["-r", "."]
+}

@@ -23,16 +23,9 @@ Description: >
   than normal operations. This is detected by monitoring storage.objects.get operations
   that include a destination field in the metadata, indicating a copy operation.
 Runbook: |
-  1. Review the alert details to identify the principal email, source bucket, destination bucket, total number of objects copied, and the timeframe of the bulk copy operations
-  2. Query GCP Audit logs for all storage.objects.get operations with destination metadata by the principal email in the 1 hour window around this alert to build a complete picture of the exfiltration activity
-  3. Identify the total number of objects copied, calculate the rate of copies per minute, and determine if the destination bucket is in the same project, a different project in the same organization, or an external project
-  4. Review IAM permissions on both source and destination buckets to determine if the principal recently gained access or if permissions were modified to enable the copy operations
-  5. Assess the sensitivity classification of the data in the source bucket and review the specific objects that were copied to determine potential data exposure impact
-  6. Analyze the source IP address to verify if it matches the user's typical access patterns, geographic location, or is associated with known VPN/cloud providers that might indicate compromised credentials
-  7. Look for other indicators of compromise from this principal in the past 24 hours including unusual API calls, permission changes, bucket policy modifications, or service account key creation
-  8. If unauthorized exfiltration is confirmed: Immediately revoke the principal's access to GCS buckets, disable any service account keys, and reset user credentials
-  9. Review the destination bucket to determine if data is still accessible there, coordinate with the project owner to delete copied data if it's in an attacker-controlled bucket, and document what data was exfiltrated
-  10. Implement preventive controls including VPC Service Controls to restrict data exfiltration, enable Data Loss Prevention (DLP) scanning on sensitive buckets, and set up alerts for bulk copy operations exceeding normal thresholds
+  1. Query GCP Audit logs for all storage.objects.get operations with destination metadata by authenticationInfo:principalEmail in the 2 hours around this alert to identify the full scope of copy operations
+  2. Check if the protoPayload:metadata:destination bucket belongs to the same project, a different project in the organization, or an external attacker-controlled project
+  3. Review GCP Audit logs for IAM permission changes, service account key creation, or bucket policy modifications by this principal in the 24 hours before the first copy operation
 Reference: https://cloud.google.com/storage/docs/copying-renaming-moving-objects
 SummaryAttributes:
   - severity

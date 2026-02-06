@@ -6,16 +6,9 @@ Enabled: true
 Filename: aws_waf_disassociation.py
 Reference: https://docs.aws.amazon.com/waf/latest/APIReference/API_DisassociateWebACL.html
 Runbook: |
-  1. Identify the affected resource from the alert (check requestParameters.resourceArn for the ALB, API Gateway, CloudFront, or AppSync resource that had WAF protection removed)
-  2. Determine who disassociated the WAF by reviewing the userIdentity information (ARN, principal ID, source IP address, and user agent) and verify with the user or team if this was an authorized change
-  3. If unauthorized or if the account may be compromised, immediately re-associate the WAF Web ACL to the affected resource using the AWS Console or CLI command: `aws wafv2 associate-web-acl --web-acl-arn <WEB_ACL_ARN> --resource-arn <RESOURCE_ARN> --region <REGION>`
-  4. Review CloudTrail logs for the timeframe between WAF disassociation and re-association to identify any suspicious API calls or attack traffic that may have reached the unprotected application
-  5. Analyze application logs, ALB access logs, and CloudFront logs for the affected resource to detect potential exploitation attempts (SQL injection patterns, XSS payloads, unusual request volumes, or successful attacks)
-  6. If evidence of compromise is found, engage incident response procedures including isolating affected resources, analyzing attack vectors, and assessing data exfiltration
-  7. Review IAM permissions to determine how the unauthorized user gained access to disassociate the WAF and implement least-privilege controls
-  8. Enable AWS Config rules to monitor WAF associations and alert on configuration drift (e.g., waf-regional-webacl-not-empty, wafv2-logging-enabled)
-  9. Implement SCPs (Service Control Policies) at the AWS Organizations level to restrict or require approval for WAF disassociation actions in production environments
-  10. Document the incident including root cause analysis, timeline of events, impact assessment, and remediation steps taken to prevent recurrence
+  1. Query ALB access logs, CloudFront logs, or API Gateway logs for requestParameters.resourceArn in the timeframe between this DisassociateWebACL event and WAF re-association to identify attack traffic that reached the unprotected resource
+  2. Search for SQL injection patterns, XSS payloads, or unusual request volumes in the application logs that may indicate exploitation while WAF protection was removed
+  3. Review CloudTrail for other security-related API calls by userIdentity.arn in the 6 hours around this event to identify if other defensive controls were modified or disabled
 Severity: Critical
 Tags:
   - AWS

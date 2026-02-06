@@ -22,16 +22,9 @@ Severity: Critical
 Description: >
   This policy validates that no programmatic access keys exist for the root account. The root account has unrestricted access to all resources in the AWS account and cannot have its permissions limited. Access keys provide programmatic access and, if compromised, could allow an attacker to gain complete control over the AWS account, including the ability to create, modify, or delete any resource, access sensitive data, and potentially cause significant financial and operational damage. AWS recommends never creating root access keys, and if they exist, removing them immediately and using IAM users or roles with appropriate permissions instead. Root account usage should be reserved only for tasks that specifically require root credentials and must be performed through the console with MFA enabled.
 Runbook: |
-  1. Sign in to the AWS Management Console using root account credentials at https://console.aws.amazon.com, navigate to the IAM dashboard, click on your account name in the top right, then select "Security credentials"
-  2. Scroll down to the "Access keys" section and review all existing access keys
-  3. Before deletion, check AWS CloudTrail logs to identify any recent usage (search for events where userIdentity.type = "Root") and document any applications, scripts, or automation currently using these root access keys
-  4. Create a new IAM user or assume an IAM role with only the minimum required permissions for the legitimate use case
-  5. Update all applications, scripts, and automation tools to use the new IAM credentials instead of root access keys, and generate new access keys for the IAM user if needed
-  6. Test that all services and applications function correctly with the new IAM credentials
-  7. Return to the root account Security Credentials page and delete each root access key by clicking "Delete" next to each key, then confirm the deletion when prompted
-  8. Verify that no access keys remain in the "Access keys" section
-  9. Enable CloudWatch Events or EventBridge rules to alert on any future root account activity, including access key creation
-  10. Document this remediation in your security incident log and consider implementing AWS Organizations Service Control Policies (SCPs) to prevent root access key creation across all accounts in your organization
+  1. Query CloudTrail for all API calls where userIdentity.type equals "Root" in the past 90 days to identify if the root access keys are actively being used and document which applications or automation depend on them
+  2. Create IAM users or roles with minimum required permissions, update all applications to use the new IAM credentials, then delete the root access keys via AWS Console Security Credentials page
+  3. Enable CloudWatch Events rules to alert on future root account activity and consider implementing AWS Organizations SCPs to prevent root access key creation
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   - Name: Access Key 1 Active

@@ -28,16 +28,9 @@ Tags:
   - Storage Account Access Key Dumping
   - Automation Account Credential Secret Dump
 Runbook: |
-  1. Review the alert details to identify the caller identity (user or service principal), source IP address, storage account name, and timestamp of the key listing operation
-  2. Contact the owner of the caller identity to verify if they authorized this storage account key access and if it aligns with legitimate operational or administrative needs
-  3. Query Azure Monitor Activity logs for all storage account operations by the same callerIpAddress in the 6 hours before and after this key listing to identify if blob downloads, file share access, or data exfiltration followed
-  4. Check if the caller identity recently obtained new role assignments or elevated privileges in the 24 hours before this operation using Azure AD audit logs
-  5. Search for subsequent SAS token generation, object replication policy creation, or anonymous access configuration on this storage account within 1 hour after the key listing as indicators of data exfiltration preparation
-  6. Review the storage account's access logs to identify any unusual data access patterns, bulk downloads, or connections from unfamiliar IP addresses following the key listing
-  7. If unauthorized activity is confirmed: Immediately regenerate both storage account access keys using Azure Portal or CLI to invalidate the compromised keys and prevent further unauthorized access
-  8. Update all legitimate applications and services that use the storage account keys with the newly generated keys and test connectivity to ensure operations continue normally
-  9. Review and tighten Azure RBAC permissions for the storage account to implement least privilege access and consider using managed identities instead of shared access keys where possible
-  10. Document the incident including timeline, accessed data, remediation actions, and implement monitoring alerts for future storage account key listing operations from the same identity or IP range
+  1. Query Azure Monitor Activity logs for all storage account operations on the same resourceId in the 4 hours after this key listing to identify blob downloads, container modifications, or SAS token generation that may indicate data exfiltration
+  2. Review Azure AD audit logs for the caller identity in the 24 hours before this operation to check if they recently obtained new role assignments or elevated privileges using correlationId
+  3. Check the storage account's diagnostic logs for data plane operations from callerIpAddress in the 6 hours after the key listing to identify unusual access patterns or bulk downloads
 Reference: https://microsoft.github.io/Azure-Threat-Research-Matrix/CredentialAccess/AZT605/AZT605-1
 SummaryAttributes:
   - resourceId

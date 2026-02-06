@@ -17,16 +17,9 @@ Threshold: 10
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.credential-access.ssm-retrieve-securestring-parameters/
 Runbook: |
-  1. Review the alert details to identify the IAM principal (user or role), source IP address, and the list of SSM parameters that were accessed with decryption enabled
-  2. Contact the owner of the IAM identity to verify if they authorized this bulk retrieval of encrypted SSM parameters and if it aligns with legitimate operational needs
-  3. Review the CloudTrail logs for additional context: Check if the same principal accessed other sensitive resources, made configuration changes, or exhibited other suspicious behavior around the same timeframe
-  4. Analyze the source IP address and user agent: Determine if the access originated from expected infrastructure (corporate network, known CI/CD systems) or from suspicious locations (foreign IPs, VPNs, cloud providers)
-  5. Identify the sensitivity of the accessed parameters: Review the parameter names and paths to determine if they contain database credentials, API keys, encryption keys, or other critical secrets
-  6. If the activity is unauthorized or suspicious: Immediately suspend the IAM identity's access by attaching a deny-all policy or deleting access keys to prevent further credential harvesting
-  7. Assume compromise of all accessed secrets and initiate credential rotation: Rotate database passwords, API keys, service account credentials, and any other secrets that were retrieved
-  8. Review IAM policies and permissions for the compromised identity: Determine how the principal gained access to decrypt SSM parameters and whether the permissions follow least privilege
-  9. Check for signs of lateral movement or data exfiltration: Review logs for unauthorized resource access, data transfer to external destinations, or creation of backdoor access mechanisms
-  10. Document the incident including accessed parameters, compromised secrets, rotation actions, and implement SCPs or permission boundaries to restrict bulk SSM parameter access in the future
+  1. Query CloudTrail for all GetParameter and GetParameters events by userIdentity.arn with requestParameters.withDecryption=true in the 4 hours around this alert to identify the complete list of accessed SSM parameters
+  2. Review the parameter names from the resources array to determine if they contain database credentials, API keys, or encryption keys, and assess the impact if those secrets are compromised
+  3. Search CloudTrail for other suspicious API calls by the same userIdentity.arn and sourceIPAddress in the 24 hours before the first parameter access, looking for privilege escalation, IAM changes, or unusual resource access
 SummaryAttributes:
   - sourceIpAddress
   - p_alert_context.accessedParams

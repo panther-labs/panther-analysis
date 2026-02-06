@@ -15,16 +15,9 @@ Reports:
   MITRE ATT&CK:
     - TA0001:T1195.001
 Runbook: |
-  1. Identify the launched instance and AMI details from the alert context (instance ID, AMI ID, region, and account)
-  2. Connect to the instance via AWS Systems Manager Session Manager or SSH and verify the XZ version by running `xz -V` or `xz --version` - Vulnerable versions: 5.6.0 or 5.6.1 (contains CVE-2024-3094 backdoor), Safe versions: 5.4.x and earlier, or 5.6.2 and later
-  3. If the instance is confirmed vulnerable, immediately isolate it by modifying the security group to block all inbound/outbound traffic except for necessary management access
-  4. Document the instance metadata, running processes, network connections, and any suspicious activity for forensic analysis
-  5. Terminate the vulnerable instance and launch a replacement using an updated, non-vulnerable AMI
-  6. Identify and deprecate the vulnerable AMI in your AWS account to prevent future launches using `aws ec2 disable-image-deprecation` or the AWS Console
-  7. Search for other running instances using the same vulnerable AMI across all regions and accounts, and repeat steps 2-5 as needed
-  8. Review CloudTrail logs to determine who launched the instance and whether it was intentional or part of automated infrastructure
-  9. Update infrastructure-as-code templates (Terraform, CloudFormation, etc.) to remove references to the vulnerable AMI and ensure all automated deployment pipelines use patched images
-  10. Document the incident including affected instances, remediation actions taken, and notify security stakeholders and compliance teams about the vulnerable deployment
+  1. Query CloudTrail for all RunInstances events using the same responseElements.instancesSet.items.imageId across all regions in the 30 days before this alert to identify other instances launched with vulnerable XZ AMIs
+  2. For the launched instance ID in responseElements.instancesSet.items.instanceId, verify the XZ Utils version using AWS Systems Manager Session Manager by running `xz --version` to confirm if version 5.6.0 or 5.6.1 is installed
+  3. Review CloudTrail logs for userIdentity.arn in the 24 hours before the launch to determine if this was automated infrastructure deployment or manual execution, and check for other suspicious API calls from the same principal
 Tests:
   - ExpectedResult: true
     Name: Single vulnerable AMI Launched

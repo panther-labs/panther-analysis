@@ -16,16 +16,9 @@ Tags:
   - Endpoint Detection
   - Performance Degradation
 Runbook: |
-  1. Immediately identify the affected host from the alert (aid field for CrowdStrike Agent ID, aip for IP address, ComputerName) and determine which cryptocurrency mining tool was executed (check ImageFileName and CommandLine fields)
-  2. Use CrowdStrike Real Time Response (RTR) to contain the host by executing network isolation: `contain` command in the Falcon console to prevent mining pool communication and lateral movement to other systems
-  3. Identify the user account and parent process that launched the mining tool (check UserSid, ParentBaseFileName, ParentProcessId, SourceProcessId) to determine execution context, then immediately kill the mining process using RTR `kill` command or PowerShell `Stop-Process` to halt resource consumption
-  4. Check for persistence mechanisms: search Windows Task Scheduler (`schtasks /query /fo LIST /v`), registry Run keys (`reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run`), Windows Services (`sc query`), and startup folders for mining tool references
-  5. Review network connections from the compromised host to identify mining pool domains/IPs (check DNS queries for stratum+tcp://, pool addresses like xmr-pool.com, nanopool.org, ethermine.org) and add these indicators to block lists
-  6. Hunt for the initial access vector by reviewing process timeline before miner execution: look for suspicious downloads, phishing email attachments, exploit activity, vulnerable service exploitation (RDP, SMB, exposed services), or supply chain compromise
-  7. Search all endpoints in the environment for the mining tool's hash (MD5, SHA256 from alert) using CrowdStrike IOC search or EDR hunt capabilities to identify other compromised hosts in the cryptojacking campaign
-  8. Collect forensic artifacts including the mining tool binary, configuration files (often contain wallet addresses and pool information), memory dumps, and any dropper/loader executables for malware analysis and attribution
-  9. Analyze the miner configuration to extract attacker infrastructure: cryptocurrency wallet addresses (useful for tracking attacker profits and attribution), mining pool domains, and C2 callbacks. Review system logs for abnormal CPU/GPU usage patterns indicating long-running mining activity before detection
-  10. Calculate business impact including electricity costs and system performance degradation, then remove all miner components, delete persistence mechanisms, patch vulnerabilities that enabled initial access, and implement monitoring for mining-related indicators (high CPU usage, mining pool connections, miner process names)
+  1. Review the process tree in CrowdStrike for event:ParentBaseFileName and event:SourceProcessId to identify what launched the cryptomining tool and determine the initial access vector
+  2. Query CrowdStrike DNS logs and network telemetry from the affected host (aid and aip) in the 24 hours around this event to identify mining pool domains contacted (e.g., xmr-pool.com, nanopool.org, ethermine.org)
+  3. Search CrowdStrike for the event:SHA256HashData across all endpoints to identify other hosts running the same cryptomining tool and assess the scope of the cryptojacking campaign
 Reports:
   MITRE ATT&CK:
     - TA0040:T1496

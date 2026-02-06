@@ -1,26 +1,31 @@
 AnalysisType: rule
 Filename: slack_service_owner_transferred.py
 RuleID: "Slack.AuditLogs.ServiceOwnerTransferred"
-DisplayName: "Slack Service Owner Transferred"
+DisplayName: "Slack Primary Owner Transferred"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
 Tags:
   - Slack
   - Defense Evasion
-  - File and Directory Permissions Modification
   - Persistence
   - Account Manipulation
   - Impact
   - Account Access Removal
+  - Privilege Escalation
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1222
+    - TA0004:T1078.004
     - TA0003:T1098
     - TA0040:T1531
 Severity: Critical
-Description: Detects transferring of service owner on request from primary owner
+Description: >
+  Detects when Slack workspace or organization Primary Owner (the highest administrative privilege level) transfers complete ownership and control to another user, representing a critical change in administrative authority that could indicate account compromise, insider threat, or unauthorized privilege escalation. The Primary Owner role in Slack holds absolute administrative control over the workspace or organization including the ability to add or remove all other owners and administrators, modify all workspace settings and security policies, delete the entire workspace or organization permanently, control billing and subscription management, access all channels and direct messages regardless of membership, manage Enterprise Grid organization structure and policies, and transfer ownership to another user. When ownership is transferred, the recipient immediately gains all Primary Owner privileges while the previous Primary Owner typically loses this highest level of access (though they may remain as a regular Owner or Admin if not explicitly removed). This action is extremely rare in normal operations and typically only occurs during major organizational changes such as leadership transitions when a CEO or senior executive leaves the company, mergers and acquisitions where workspace ownership must transfer between organizations, business restructuring or divestitures, or emergency situations where the current Primary Owner is unavailable and business continuity requires immediate ownership transfer. Malicious or unauthorized ownership transfers represent one of the most severe security events in Slack because they could indicate a compromised Primary Owner account being used by an attacker to establish persistent administrative access, an insider threat where a malicious administrator transfers ownership to an external account they control for data exfiltration or sabotage, a hostile takeover scenario where an attacker gains ownership to lock out legitimate administrators and hold the workspace for ransom, preparation for workspace deletion or data destruction as part of a sabotage attack, or account takeover where an attacker transfers ownership to maintain access even after the original compromise is detected. The security impact is catastrophic because the new Primary Owner can immediately lock out all other administrators including security teams, disable all security controls such as two-factor authentication requirements, EKM encryption, and audit logging, export all workspace data including private channels and direct messages, delete the workspace causing permanent data loss and business disruption, modify billing to commit financial fraud, or transfer ownership again to further obscure the attack chain. Legitimate ownership transfers should always require executive-level approval, comprehensive documentation of business justification, verification of the new owner's identity through multiple channels, formal change management processes with security review, and immediate notification to security, legal, and compliance teams.
 Reference: https://slack.com/intl/en-gb/help/articles/204401633-Transfer-ownership-of-a-workspace-or-org
+Runbook: |
+  1. Query Slack audit logs for both actor.user.email and entity.user.email in the 30 days before the ownership transfer to identify suspicious authentication patterns, logins from unusual locations, or unexpected administrative actions indicating account compromise
+  2. Check if entity.user.email has made any concerning administrative changes since receiving ownership such as removing administrators, disabling security controls, adding unknown users, or creating API tokens
+  3. Review the context.ip_address and user agent from where the transfer was initiated to determine if it matches the previous Primary Owner's normal access patterns and geographic location
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:
