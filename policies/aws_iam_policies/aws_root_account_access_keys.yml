@@ -20,7 +20,7 @@ Reports:
     - TA0003:T1098
 Severity: Critical
 Description: >
-  This policy validates that no programmatic access keys exist for the root account. The root account has unrestricted access to all resources in the AWS account and cannot have its permissions limited. Access keys provide programmatic access and, if compromised, could allow an attacker to gain complete control over the AWS account, including the ability to create, modify, or delete any resource, access sensitive data, and potentially cause significant financial and operational damage. AWS recommends never creating root access keys, and if they exist, removing them immediately and using IAM users or roles with appropriate permissions instead. Root account usage should be reserved only for tasks that specifically require root credentials and must be performed through the console with MFA enabled.
+  Validates that no programmatic access keys exist for the AWS root account. Root access keys provide unrestricted access to all AWS resources and cannot have permissions limited. If compromised, these keys grant attackers complete account control including resource modification, data access, and billing changes.
 Runbook: |
   1. Query CloudTrail for all API calls where userIdentity.type equals "Root" in the past 90 days to identify if the root access keys are actively being used and document which applications or automation depend on them
   2. Create IAM users or roles with minimum required permissions, update all applications to use the new IAM credentials, then delete the root access keys via AWS Console Security Credentials page

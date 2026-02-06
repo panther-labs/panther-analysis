@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: >
-  Detects the launch of EC2 instances using Amazon Machine Images (AMIs) that contain vulnerable versions of the XZ Utils library (versions 5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a sophisticated backdoor into the XZ compression library through compromised upstream releases in March 2024. The backdoor could allow remote attackers to bypass SSH authentication on affected Linux systems. While most major distributions have patched this vulnerability, launching instances with older, vulnerable AMIs poses a significant security risk. This rule monitors CloudTrail RunInstances events and checks the AMI ID against a list of known vulnerable images to provide early warning of potentially compromised deployments.
+  Detects EC2 instances launched using Amazon Machine Images containing vulnerable XZ Utils library versions (5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a backdoor allowing remote attackers to bypass SSH authentication on affected Linux systems. The rule monitors CloudTrail RunInstances events and checks AMI IDs against known vulnerable images.
 DisplayName: "AWS EC2 Vulnerable XZ Image Launched"
 Enabled: true
 Filename: aws_ec2_vulnerable_xz_image_launched.py

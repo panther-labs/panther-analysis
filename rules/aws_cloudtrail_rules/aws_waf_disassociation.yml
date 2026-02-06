@@ -1,6 +1,6 @@
 AnalysisType: rule
 Description: >
-  Detects when an AWS Web Application Firewall (WAF) is disassociated from a protected resource such as an Application Load Balancer, API Gateway, CloudFront distribution, or AppSync GraphQL API. WAF disassociation removes critical security protections that defend web applications against common attack vectors including SQL injection, cross-site scripting (XSS), DDoS attacks, bot traffic, and OWASP Top 10 vulnerabilities. Removing WAF protection significantly increases the attack surface and exposes the application to potential exploitation. This action is often performed by attackers after gaining access to disable security controls before launching attacks, or could indicate a misconfiguration or unauthorized change. This rule monitors CloudTrail for DisassociateWebACL API calls to provide immediate alerting when web application security protections are removed, enabling rapid response to prevent potential compromise.
+  Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.
 DisplayName: "AWS WAF Disassociation"
 Enabled: true
 Filename: aws_waf_disassociation.py
