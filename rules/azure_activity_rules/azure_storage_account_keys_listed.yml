@@ -29,9 +29,9 @@ Tags:
   - Storage Account Access Key Dumping
   - Automation Account Credential Secret Dump
 Runbook: |
-  1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this key listing to identify if blob downloads, file share access, or data exfiltration followed
-  2. Check if the caller identity recently obtained new role assignments or elevated privileges in the 24 hours before this operation that would explain the key access
-  3. Search for subsequent SAS token generation, object replication policy creation, or anonymous access configuration on this storage account within 1 hour after the key listing as indicators of data exfiltration preparation
+  1. Query Azure Monitor Activity logs for all storage account operations on the same resourceId in the 4 hours after this key listing to identify blob downloads, container modifications, or SAS token generation that may indicate data exfiltration
+  2. Review Azure AD audit logs for the caller identity in the 24 hours before this operation to check if they recently obtained new role assignments or elevated privileges using correlationId
+  3. Check the storage account's diagnostic logs for data plane operations from callerIpAddress in the 6 hours after the key listing to identify unusual access patterns or bulk downloads
 Reference: https://microsoft.github.io/Azure-Threat-Research-Matrix/CredentialAccess/AZT605/AZT605-1
 SummaryAttributes:
   - resourceId

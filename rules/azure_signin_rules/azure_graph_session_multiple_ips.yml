@@ -24,9 +24,9 @@ Reports:
     - TA0005:T1550
     - TA0005:T1550.001
 Runbook: |
-  1. Query Azure.Audit logs for all Microsoft Graph access events with the same properties:sessionId in the 4 hours surrounding the alert to identify all source IP addresses, user agents, accessed Graph resources, and application IDs used during the session
-  2. Compare the geographic locations and ASN information for all distinct source IPs to determine if they represent different countries, cloud providers, or VPN services that would be inconsistent with legitimate user behavior
-  3. Review Azure.Audit logs for the properties:userPrincipalName in the 7 days before and after the session to identify any OAuth consent grants, application registrations, token-related events, or suspicious sign-ins that may indicate initial access or persistence mechanisms
+  1. Query Azure.Audit logs for all Microsoft Graph access events with properties:sessionId in the 4 hours around this alert to identify all source IP addresses, user agents, and accessed resources
+  2. Compare the geographic locations and ASN information for all distinct callerIpAddress values to determine if they represent different countries, cloud providers, or inconsistent network types
+  3. Review Azure.Audit logs for properties:userPrincipalName in the 7 days before this session to identify OAuth consent grants, new application registrations, risky sign-ins, or token issuance events that may indicate initial compromise
 Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/initial_access_entra_id_graph_single_session_from_multiple_addresses.toml
 SummaryAttributes:
   - properties:userPrincipalName

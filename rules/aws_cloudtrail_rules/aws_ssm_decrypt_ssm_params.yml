@@ -17,8 +17,10 @@ Description: >
 Threshold: 25
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.credential-access.ssm-retrieve-securestring-parameters/
-Runbook: >
-  Determine if the secrets accessed contain sensitive information. Consider suspecing access for the user identity until their intentions are verified. If any IAM credentials or similar were compromised, rotate them.
+Runbook: |
+  1. Query CloudTrail for all GetParameter and GetParameters events by userIdentity.arn with requestParameters.withDecryption=true in the 4 hours around this alert to identify the complete list of accessed SSM parameters
+  2. Review the parameter names from the resources array to determine if they contain database credentials, API keys, or encryption keys, and assess the impact if those secrets are compromised
+  3. Search CloudTrail for other suspicious API calls by the same userIdentity.arn and sourceIPAddress in the 24 hours before the first parameter access, looking for privilege escalation, IAM changes, or unusual resource access
 SummaryAttributes:
   - sourceIpAddress
   - p_alert_context.accessedParams

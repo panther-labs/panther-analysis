@@ -13,11 +13,12 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1098
 Severity: Critical
-Description: An access key was created for the Root account
+Description: >
+  Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.
 Runbook: |
-  Verify that the root access key was created for legitimate reasons. If not, immediately revoke it
-  and change the root login credentials. If it was created for legitimate reasons, monitor its use
-  and ensure it is revoked when its need is gone.
+  1. Query CloudTrail for all API calls where userIdentity.accessKeyId matches responseElements.accessKey.accessKeyId in the 24 hours after the key creation to identify all actions taken using the root access key
+  2. Check if the root account credentials may be compromised by reviewing sourceIPAddress and userAgent against known legitimate access patterns, then verify with the account owner if this creation was authorized
+  3. Search CloudTrail for IAM policy modifications, user creations, role changes, and resource deletions by userIdentity.type="Root" in the 6 hours around this event to identify unauthorized changes made using root credentials
 Reference: https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html
 SummaryAttributes:
   - userAgent

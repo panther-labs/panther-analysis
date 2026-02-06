@@ -1,10 +1,27 @@
 AnalysisType: rule
-Description: Detects the execution of known crytocurrency mining tools.
-DisplayName: "Crowdstrike Cryptomining Tools "
+Description: >
+  Detects execution of cryptocurrency mining tools like XMRig, CGMiner, and ETHMiner that hijack computing resources for unauthorized financial gain. These tools consume significant CPU/GPU resources, degrade system performance, and increase costs. Unauthorized deployment typically indicates compromise through malware, supply chain attacks, or exploitation of vulnerable services.
+DisplayName: "Crowdstrike Cryptomining Tools"
 Enabled: true
 Filename: crowdstrike_cryptomining_tools.py
 Reference: https://www.crowdstrike.com/cybersecurity-101/cryptojacking/
 Severity: Critical
+Tags:
+  - CrowdStrike
+  - Windows
+  - Resource Hijacking
+  - Cryptojacking
+  - Cryptomining
+  - Impact
+  - Endpoint Detection
+  - Performance Degradation
+Runbook: |
+  1. Review the process tree in CrowdStrike for event:ParentBaseFileName and event:SourceProcessId to identify what launched the cryptomining tool and determine the initial access vector
+  2. Query CrowdStrike DNS logs and network telemetry from the affected host (aid and aip) in the 24 hours around this event to identify mining pool domains contacted (e.g., xmr-pool.com, nanopool.org, ethermine.org)
+  3. Search CrowdStrike for the event:SHA256HashData across all endpoints to identify other hosts running the same cryptomining tool and assess the scope of the cryptojacking campaign
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496
 Tests:
   - ExpectedResult: true
     Log:
