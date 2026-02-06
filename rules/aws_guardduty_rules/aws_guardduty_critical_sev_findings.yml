@@ -7,13 +7,29 @@ LogTypes:
   - AWS.GuardDuty
 Tags:
   - AWS
+  - Threat Detection
+  - Automated Security
+  - Anomaly Detection
+  - GuardDuty
+  - Machine Learning
 Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
 DedupPeriodMinutes: 15
 Description: >
-  A critical-severity GuardDuty finding has been identified.
-Runbook: >
-  Search related logs to understand the root cause of the activity.
-  Search the Panther Summary Attribute type value in https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html for additional details.
+  Detects critical-severity findings from AWS GuardDuty, Amazon's intelligent threat detection service that continuously monitors AWS accounts and workloads for malicious activity and unauthorized behavior. GuardDuty uses machine learning, anomaly detection, and integrated threat intelligence to identify threats such as compromised credentials, cryptocurrency mining, data exfiltration, unauthorized infrastructure deployments, reconnaissance activity, and communication with known malicious IPs. Critical severity findings (9.0 on GuardDuty's 0-9 scale) represent the most serious threats that indicate active compromise, imminent data loss, or ongoing attacks that require immediate investigation and response. These findings often include attack sequences showing multiple MITRE ATT&CK tactics and techniques, connections from malicious infrastructure (Tor nodes, botnets), or high-impact API calls targeting sensitive resources. This rule filters out sample/test data and alerts only on genuine critical findings to enable rapid incident response and minimize potential damage from confirmed threats.
+Runbook: |
+  1. Review the GuardDuty finding details from the alert including the finding type, title, description, affected resource, MITRE ATT&CK tactics/techniques, and timeline, then look up the specific finding type in AWS documentation at https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html
+  2. Immediately assess the scope by identifying all affected resources (IAM users, roles, EC2 instances, S3 buckets) and determine if credentials or resources are actively compromised
+  3. If credentials are compromised, immediately rotate or disable the affected access keys, passwords, or session tokens; if EC2 instances are compromised, isolate them by modifying security groups, create forensic snapshots, and consider terminating and rebuilding from clean AMIs
+  4. Review CloudTrail logs for the affected principal/resource during the attack timeframe to identify all unauthorized actions, API calls, resource modifications, and potential data access or exfiltration
+  5. Search application logs, VPC Flow Logs, and S3 access logs for evidence of data access, exfiltration attempts, lateral movement, or persistence mechanisms established by the attacker
+  6. For Attack Sequence findings, investigate each signal in the sequence to understand the full attack chain and identify any additional compromised resources not explicitly listed in the finding
+  7. Remediate based on finding type: revoke unauthorized permissions, delete malicious resources (backdoor users, roles, Lambda functions), remove data access policies, terminate cryptocurrency miners, etc.
+  8. Enable additional logging and monitoring (CloudTrail Insights, VPC Flow Logs, S3 access logging) on affected resources to detect any recurring malicious activity
+  9. Document the incident including attack timeline, affected resources, actions taken, data potentially accessed or exfiltrated, and root cause analysis
+  10. Implement preventive measures such as enforcing MFA, enabling CloudTrail protection, implementing SCPs to restrict sensitive actions, and reviewing IAM permissions for least privilege
 Reference: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity
 SummaryAttributes:
   - severity

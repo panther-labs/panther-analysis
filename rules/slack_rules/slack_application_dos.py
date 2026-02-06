@@ -15,6 +15,13 @@ def rule(event):
     return True
 
 
+def title(event):
+    admin = event.deep_get("actor", "user", "email", default="<UNKNOWN_ADMIN>")
+    target = event.deep_get("entity", "user", "name", default="<UNKNOWN_USER>")
+    action = event.get("action", "<UNKNOWN_ACTION>")
+    return f"Slack: Potential DoS - Admin [{admin}] performed [{action}] on user [{target}]"
+
+
 def dedup(event):
     return f"Slack.AuditLogs.ApplicationDoS{event.deep_get('entity', 'user', 'name')}"
 

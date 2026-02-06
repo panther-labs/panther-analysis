@@ -2,12 +2,31 @@ AnalysisType: correlation_rule
 RuleID: "Snowflake.Data.Exfiltration"
 DisplayName: "Snowflake Data Exfiltration"
 Enabled: true
+Tags:
+  - Snowflake
+  - Data Exfiltration
+  - Database
+  - Cloud Security
 Severity: Critical
-Description: In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
+Description: >
+  This correlation rule detects a multi-step data exfiltration sequence from Snowflake databases by identifying when a temporary stage is created, table data is copied into that stage, and files are subsequently downloaded from the stage. This technique was notably used in the April 2024 Snowflake breach where threat actor UNC5537 (tracked by Mandiant) compromised multiple organizations' Snowflake instances using credentials stolen via infostealer malware. The threat actors exploited accounts without multi-factor authentication (MFA) enabled to access Snowflake instances and exfiltrate valuable data including customer records, financial information, and proprietary business data. The exfiltration workflow involves creating a temporary staging location within Snowflake, using COPY INTO commands to export table data to the stage, and then downloading the staged files to attacker-controlled infrastructure. This detection identifies the complete kill chain from staging preparation through data extraction, providing high-confidence evidence of active data theft. Legitimate uses of temporary stages and COPY INTO commands exist for ETL operations and data migration, but the correlation of all three steps within a short timeframe combined with contextual indicators (unusual users, IP addresses, or timing) strongly suggests malicious exfiltration activity. Organizations should investigate these alerts immediately as successful data exfiltration can lead to extortion attempts, competitive intelligence theft, regulatory violations, and significant reputational damage.
+Runbook: |
+  1. Review the alert details to identify the Snowflake account, database, schema, temporary stage name, tables copied, files downloaded, and timestamps for each step of the exfiltration sequence
+  2. Immediately query Snowflake's ACCESS_HISTORY and QUERY_HISTORY views to identify the user account, session, source IP address, and client application used for the staging and exfiltration operations
+  3. Check if the account involved has legitimate business reasons to perform data exports: Contact the account owner to verify if they authorized these activities and review job schedules for automated ETL processes
+  4. If unauthorized activity is confirmed: Immediately disable the compromised Snowflake account, terminate all active sessions for that user, and reset credentials for the account
+  5. Review the Snowflake login history for the compromised account to identify the initial compromise timeframe, authentication method used, and check if MFA was enabled (threat actors often target non-MFA accounts)
+  6. Analyze the source IP addresses used in the exfiltration sequence: Check if they are corporate IPs, VPN endpoints, cloud provider IPs, or suspicious/foreign geolocations, and correlate with threat intelligence feeds
+  7. Identify the scope of data exfiltration by reviewing the tables that were copied into the stage and downloaded: Determine data sensitivity (PII, financial records, intellectual property, customer data) and estimate the volume of data stolen
+  8. Check if the temporary stage and downloaded files still exist in Snowflake storage: If present, preserve them as evidence and prevent further downloads; if deleted, review Snowflake query logs to determine what data was accessed
+  9. Enable Snowflake network policies to restrict access to approved IP ranges, enforce MFA on all accounts (especially privileged accounts), enable session timeout policies, and implement data masking or column-level security for sensitive data
+  10. Document the incident including timeline, compromised accounts, exfiltrated data classification, attacker infrastructure, and coordinate with legal/compliance teams for breach notification requirements, regulatory reporting, and potential law enforcement involvement
 Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Reports:
-    MITRE ATT&CK:
-        - TA0010:T1041  # Exfiltration Over C2 Channel
+  MITRE ATT&CK:
+    - TA0010:T1041 # Exfiltration: Exfiltration Over C2 Channel
+    - TA0010:T1530 # Exfiltration: Data from Cloud Storage
+    - TA0009:T1213 # Collection: Data from Information Repositories
 Detection:
   - Sequence:
       - ID: SnowflakeTempStageCreated

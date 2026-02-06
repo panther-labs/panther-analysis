@@ -1,11 +1,11 @@
 AnalysisType: rule
 Description: >
-  Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)
+  Detects the launch of EC2 instances using Amazon Machine Images (AMIs) that contain vulnerable versions of the XZ Utils library (versions 5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a sophisticated backdoor into the XZ compression library through compromised upstream releases in March 2024. The backdoor could allow remote attackers to bypass SSH authentication on affected Linux systems. While most major distributions have patched this vulnerability, launching instances with older, vulnerable AMIs poses a significant security risk. This rule monitors CloudTrail RunInstances events and checks the AMI ID against a list of known vulnerable images to provide early warning of potentially compromised deployments.
 DisplayName: "AWS EC2 Vulnerable XZ Image Launched"
 Enabled: true
 Filename: aws_ec2_vulnerable_xz_image_launched.py
 Reference: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-3094
-Severity: Critical
+Severity: High
 Tags:
   - AWS
   - Linux
@@ -15,8 +15,16 @@ Reports:
   MITRE ATT&CK:
     - TA0001:T1195.001
 Runbook: |
-  - Verify that the AMI is indeed vulnerable to CVE-2024-3094 (xz -V being 5.6.0 or 5.6.1)
-  - If the AMI is vulnerable, terminate the instance and launch a new instance with a non-vulnerable AMI
+  1. Identify the launched instance and AMI details from the alert context (instance ID, AMI ID, region, and account)
+  2. Connect to the instance via AWS Systems Manager Session Manager or SSH and verify the XZ version by running `xz -V` or `xz --version` - Vulnerable versions: 5.6.0 or 5.6.1 (contains CVE-2024-3094 backdoor), Safe versions: 5.4.x and earlier, or 5.6.2 and later
+  3. If the instance is confirmed vulnerable, immediately isolate it by modifying the security group to block all inbound/outbound traffic except for necessary management access
+  4. Document the instance metadata, running processes, network connections, and any suspicious activity for forensic analysis
+  5. Terminate the vulnerable instance and launch a replacement using an updated, non-vulnerable AMI
+  6. Identify and deprecate the vulnerable AMI in your AWS account to prevent future launches using `aws ec2 disable-image-deprecation` or the AWS Console
+  7. Search for other running instances using the same vulnerable AMI across all regions and accounts, and repeat steps 2-5 as needed
+  8. Review CloudTrail logs to determine who launched the instance and whether it was intentional or part of automated infrastructure
+  9. Update infrastructure-as-code templates (Terraform, CloudFormation, etc.) to remove references to the vulnerable AMI and ensure all automated deployment pipelines use patched images
+  10. Document the incident including affected instances, remediation actions taken, and notify security stakeholders and compliance teams about the vulnerable deployment
 Tests:
   - ExpectedResult: true
     Name: Single vulnerable AMI Launched

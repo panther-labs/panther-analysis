@@ -12,16 +12,25 @@ Tags:
 Reports:
   CIS:
     - 1.13
-    - 1.14
   PCI:
-    - 7.1.2
+    - 8.3
+    - 8.4
   MITRE ATT&CK:
     - TA0004:T1078
 Severity: Critical
 Description: >
-  This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-root-account-has-mfa-enabled
+  This policy validates that Multi-Factor Authentication (MFA) is enabled for the root account. The root account has complete and unrestricted access to all AWS resources and services, making it the highest-value target for attackers. Without MFA, the root account is protected only by a password, which can be compromised through phishing, credential stuffing, keylogging, or database breaches. Enabling MFA adds a critical second layer of defense that requires physical possession of an authentication device in addition to the password. If an attacker gains access to the root account, they can create backdoor access, exfiltrate sensitive data, launch resources for cryptomining or other malicious purposes, modify security controls, and cause complete account takeover with potentially catastrophic financial and operational consequences. AWS strongly recommends enabling MFA on the root account as one of the most fundamental security controls, and it should never be used for day-to-day operations.
+Runbook: |
+  1. Sign in to the AWS Management Console using root account credentials at https://console.aws.amazon.com, click on your account name in the top-right corner and select "Security credentials"
+  2. In the Multi-factor authentication (MFA) section, review the current status - if "Not assigned" is displayed, MFA is not enabled
+  3. Click the "Assign MFA device" or "Activate MFA" button and choose your MFA device type: Virtual MFA device (authenticator app), Hardware TOTP token, or FIDO security key (hardware MFA is recommended for highest security per CIS 1.14)
+  4. If using a virtual MFA device: Install an authenticator app on your mobile device, scan the QR code, and enter two consecutive MFA codes; if using hardware token: enter device serial number and two consecutive codes; if using FIDO security key: insert the key and follow browser prompts
+  5. Click "Assign MFA" or "Add MFA" to complete the configuration and verify the MFA device is listed as "Assigned" in the Security credentials page
+  6. Test the MFA setup by signing out and signing back in - you should be prompted for an MFA code after entering your password
+  7. Store the root account password and MFA device in separate secure locations (e.g., password in a password manager, MFA device in a physical safe) to prevent simultaneous compromise
+  8. Document the MFA device type, serial number (if applicable), and storage location in your security documentation
+  9. Set up account recovery options in case MFA device is lost by storing recovery codes or contact information in a secure, separate location
+  10. Consider implementing AWS Organizations Service Control Policies (SCPs) to monitor root account console logins and establish a process for regular verification that root account MFA remains enabled
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   - Name: MFA Enabled

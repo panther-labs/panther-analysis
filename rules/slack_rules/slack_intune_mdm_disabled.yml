@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: slack_intune_mdm_disabled.py
 RuleID: "Slack.AuditLogs.IntuneMDMDisabled"
-DisplayName: "Slack Intune MDM Disabled"
+DisplayName: "Slack Microsoft Intune Mobile Device Management Disabled"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
@@ -10,12 +10,27 @@ Tags:
   - Defense Evasion
   - Impair Defenses
   - Disable or Modify Tools
+  - Mobile Security
+  - Data Loss Prevention
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562.001
+    - TA0010:T1567
 Severity: Critical
-Description: Detects the disabling of Microsoft Intune Enterprise MDM within Slack
+Description: >
+  Detects when Microsoft Intune Mobile Device Management (MDM) integration is disabled for a Slack workspace, removing critical mobile app security controls and enabling potential data exfiltration via unmanaged mobile devices. Microsoft Intune integration with Slack provides enterprise mobile application management (MAM) and mobile device management (MDM) capabilities that enforce security policies on iOS and Android devices accessing the Slack workspace. When Intune MDM is enabled, organizations can enforce mobile app protection policies including preventing copy/paste or screen capture of Slack content to unmanaged applications, requiring device-level security controls such as device encryption and PIN/biometric authentication, detecting and blocking jailbroken or rooted devices, remotely wiping Slack data from lost or stolen devices, controlling which applications can share data with Slack, and enforcing data loss prevention policies that prevent sensitive information from leaving corporate control. Disabling Intune MDM immediately removes all these mobile security controls, allowing users on unmanaged personal devices to freely access Slack without security restrictions, copy sensitive messages and files to personal applications or cloud storage, take screenshots of confidential communications, and access Slack from compromised or insecure devices without detection. This represents a severe security degradation particularly for organizations with BYOD (Bring Your Own Device) policies, those handling sensitive data in regulated industries (healthcare, financial services, legal), or any environment where mobile access to Slack presents data exfiltration risks. Legitimate reasons for disabling Intune MDM are extremely rare and typically only occur during migrations to alternative MDM solutions (VMware Workspace ONE, MobileIron), major organizational changes such as divestitures where devices are transitioning to new management, or troubleshooting critical technical issues with Intune connectivity, and should always require executive-level approval and thorough security review. Malicious disabling could indicate a compromised administrator account being used to remove mobile security controls in preparation for data exfiltration via mobile devices, an insider threat attempting to bypass data loss prevention controls to steal information, or an attacker setting up conditions for future mobile-based attacks by ensuring devices are not monitored or managed. This action should trigger immediate investigation to verify authorization, assess data exfiltration risk from unmanaged mobile devices, and determine if re-enabling Intune MDM is required to restore mobile security posture.
 Reference: https://slack.com/intl/en-gb/help/articles/6495319642387-Set-up-Slack-for-Intune-mobile-apps
+Runbook: |
+  1. Immediately identify the actor who disabled Intune MDM (check actor.user.email and actor.user.name from the alert) and the affected Slack workspace (check context.location.domain) to understand the scope of this mobile security control removal
+  2. Contact the identified actor through a secure out-of-band communication channel (phone call, in-person meeting, secondary messaging platform) within minutes to verify they intentionally disabled Intune MDM and have documented executive authorization with a valid business justification for removing mobile security controls
+  3. If the actor confirms this was authorized, immediately obtain and review the change authorization documentation including executive approval, business justification (migration to alternative MDM, organizational restructuring, technical troubleshooting), timeline for implementing alternative mobile security controls or re-enabling Intune, and risk acceptance for the period without mobile management
+  4. Assess the mobile security impact by identifying how many users access Slack via mobile devices (iOS/Android apps), what sensitive data or channels they can access, whether any users are on personal/BYOD devices now without security controls, and what data loss prevention policies are no longer being enforced on mobile endpoints
+  5. If this was unauthorized or the actor's account appears compromised, immediately use Slack Organization Settings to re-enable Microsoft Intune MDM integration to restore mobile app protection policies and prevent data exfiltration via unmanaged mobile devices while investigation continues
+  6. Review the actor's complete Slack audit log activity for the past 30 days to identify other suspicious security control modifications such as disabling EKM, changing data retention policies, modifying export permissions, disabling session management, adding suspicious apps or integrations, or other defense evasion indicators that might suggest broader compromise or insider threat activity
+  7. Investigate mobile device access patterns during the period when Intune MDM was disabled by querying Slack audit logs for mobile app logins, checking for unusual data access or download activity from mobile devices, identifying any users who may have taken advantage of the security control gap to exfiltrate data, and reviewing for suspicious file shares or exports via mobile clients
+  8. Check Microsoft Intune admin logs and Azure AD audit logs for correlated suspicious activity by the same actor such as removing devices from management, disabling other mobile security policies across different applications, modifying conditional access rules, or downloading device inventory data that might indicate reconnaissance for a broader mobile security compromise
+  9. If this was malicious or unauthorized activity, collect comprehensive forensic evidence including complete Slack and Intune audit logs, the actor's authentication history across both platforms, IP addresses and user agents, any mobile device data access or export activity during the unmanaged period, and correlation with other security events for potential incident response escalation, HR investigation involving data theft, or law enforcement notification if intellectual property was compromised
+  10. Document the incident including who disabled Intune MDM, when detected, duration of exposure, business justification if authorized, number of users affected on mobile devices, data at risk of exfiltration, and remediation actions taken, then notify executive leadership, information security teams, compliance officers, and potentially legal counsel depending on data sensitivity and regulatory requirements, and implement preventive controls such as requiring multi-person approval for MDM changes, enhanced monitoring and alerting for mobile security control modifications, regular audits of Intune enrollment status, and implementing alternative DLP controls (Slack Enterprise DLP) if Intune cannot be immediately restored
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:

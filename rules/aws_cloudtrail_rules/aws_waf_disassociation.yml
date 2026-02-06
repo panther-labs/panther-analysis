@@ -1,13 +1,31 @@
 AnalysisType: rule
-Description: Detection to alert when a WAF disassociates from a source.
+Description: >
+  Detects when an AWS Web Application Firewall (WAF) is disassociated from a protected resource such as an Application Load Balancer, API Gateway, CloudFront distribution, or AppSync GraphQL API. WAF disassociation removes critical security protections that defend web applications against common attack vectors including SQL injection, cross-site scripting (XSS), DDoS attacks, bot traffic, and OWASP Top 10 vulnerabilities. Removing WAF protection significantly increases the attack surface and exposes the application to potential exploitation. This action is often performed by attackers after gaining access to disable security controls before launching attacks, or could indicate a misconfiguration or unauthorized change. This rule monitors CloudTrail for DisassociateWebACL API calls to provide immediate alerting when web application security protections are removed, enabling rapid response to prevent potential compromise.
 DisplayName: "AWS WAF Disassociation"
 Enabled: true
 Filename: aws_waf_disassociation.py
-Reference: https://attack.mitre.org/techniques/T1078/
+Reference: https://docs.aws.amazon.com/waf/latest/APIReference/API_DisassociateWebACL.html
+Runbook: |
+  1. Identify the affected resource from the alert (check requestParameters.resourceArn for the ALB, API Gateway, CloudFront, or AppSync resource that had WAF protection removed)
+  2. Determine who disassociated the WAF by reviewing the userIdentity information (ARN, principal ID, source IP address, and user agent) and verify with the user or team if this was an authorized change
+  3. If unauthorized or if the account may be compromised, immediately re-associate the WAF Web ACL to the affected resource using the AWS Console or CLI command: `aws wafv2 associate-web-acl --web-acl-arn <WEB_ACL_ARN> --resource-arn <RESOURCE_ARN> --region <REGION>`
+  4. Review CloudTrail logs for the timeframe between WAF disassociation and re-association to identify any suspicious API calls or attack traffic that may have reached the unprotected application
+  5. Analyze application logs, ALB access logs, and CloudFront logs for the affected resource to detect potential exploitation attempts (SQL injection patterns, XSS payloads, unusual request volumes, or successful attacks)
+  6. If evidence of compromise is found, engage incident response procedures including isolating affected resources, analyzing attack vectors, and assessing data exfiltration
+  7. Review IAM permissions to determine how the unauthorized user gained access to disassociate the WAF and implement least-privilege controls
+  8. Enable AWS Config rules to monitor WAF associations and alert on configuration drift (e.g., waf-regional-webacl-not-empty, wafv2-logging-enabled)
+  9. Implement SCPs (Service Control Policies) at the AWS Organizations level to restrict or require approval for WAF disassociation actions in production environments
+  10. Document the incident including root cause analysis, timeline of events, impact assessment, and remediation steps taken to prevent recurrence
 Severity: Critical
+Tags:
+  - AWS
+  - Web Application Firewall
+  - Defense Evasion
+  - Impair Defenses
+  - Network Security
 Reports:
   MITRE ATT&CK:
-    - TA0004:T1498
+    - TA0005:T1562.004
 Tests:
   - ExpectedResult: true
     Log:

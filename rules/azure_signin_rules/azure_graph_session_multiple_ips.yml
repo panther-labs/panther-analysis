@@ -24,9 +24,16 @@ Reports:
     - TA0005:T1550
     - TA0005:T1550.001
 Runbook: |
-  1. Query Azure.Audit logs for all Microsoft Graph access events with the same properties:sessionId in the 4 hours surrounding the alert to identify all source IP addresses, user agents, accessed Graph resources, and application IDs used during the session
-  2. Compare the geographic locations and ASN information for all distinct source IPs to determine if they represent different countries, cloud providers, or VPN services that would be inconsistent with legitimate user behavior
-  3. Review Azure.Audit logs for the properties:userPrincipalName in the 7 days before and after the session to identify any OAuth consent grants, application registrations, token-related events, or suspicious sign-ins that may indicate initial access or persistence mechanisms
+  1. Review the alert details to identify the user principal name, session ID, all source IP addresses observed, user agents, and the timeline of Microsoft Graph access events
+  2. Query Azure.Audit logs for all Microsoft Graph access events with the same session ID in the 4 hours surrounding the alert to build a complete picture of all accessed resources and API calls
+  3. Compare the geographic locations and ASN information for all distinct source IPs to determine if they represent different countries, cloud providers, VPN services, or residential ISPs that would be inconsistent with legitimate user behavior
+  4. Contact the user directly through an out-of-band communication method to verify if they accessed Microsoft Graph from multiple locations during the identified timeframe
+  5. Review the user agent strings for each IP address to identify if different applications, browsers, or OAuth applications were used, which may indicate token theft or session hijacking
+  6. Review Azure.Audit logs for the user principal name in the 7 days before the session to identify any OAuth consent grants, new application registrations, risky sign-ins, or MFA changes that may have enabled initial access
+  7. Check for signs of token-related activity including OAuth token issuance events, refresh token usage, or authentication policy changes that could explain the multi-IP access pattern
+  8. If session hijacking or token theft is confirmed: Immediately revoke all active sessions and refresh tokens for the user, force password reset, and require MFA re-enrollment
+  9. Review the Microsoft Graph resources that were accessed during the suspicious session to assess potential data exposure including emails, files, contacts, calendar events, or organizational directory information
+  10. Document the incident including all accessed resources, implement conditional access policies to restrict Microsoft Graph access based on IP ranges or compliant devices, and enable continuous access evaluation to detect token replay attacks
 Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/initial_access_entra_id_graph_single_session_from_multiple_addresses.toml
 SummaryAttributes:
   - properties:userPrincipalName

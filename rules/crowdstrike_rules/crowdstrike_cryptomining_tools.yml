@@ -1,10 +1,34 @@
 AnalysisType: rule
-Description: Detects the execution of known crytocurrency mining tools.
-DisplayName: "Crowdstrike Cryptomining Tools "
+Description: >
+  Detects the execution of known cryptocurrency mining tools such as XMRig, CGMiner, ETHMiner, PhoenixMiner, and similar utilities that consume system resources to mine digital currencies. These tools are commonly deployed by attackers during cryptojacking operations to hijack computing resources for financial gain without authorization. Cryptocurrency miners consume significant CPU and GPU resources, degrading system performance and increasing electricity costs while generating revenue for attackers. While some organizations may legitimately use mining software for research or blockchain operations, unauthorized deployment typically indicates compromise through malware droppers, supply chain attacks, or exploitation of vulnerable services. Cryptominers are often deployed as secondary payloads following initial access and may persist through scheduled tasks, registry modifications, or service installations. This rule leverages CrowdStrike's endpoint telemetry to detect process execution of known mining tools by filename, enabling rapid response to resource hijacking attempts before significant infrastructure impact or lateral movement to additional systems.
+DisplayName: "Crowdstrike Cryptomining Tools"
 Enabled: true
 Filename: crowdstrike_cryptomining_tools.py
 Reference: https://www.crowdstrike.com/cybersecurity-101/cryptojacking/
 Severity: Critical
+Tags:
+  - CrowdStrike
+  - Windows
+  - Resource Hijacking
+  - Cryptojacking
+  - Cryptomining
+  - Impact
+  - Endpoint Detection
+  - Performance Degradation
+Runbook: |
+  1. Immediately identify the affected host from the alert (aid field for CrowdStrike Agent ID, aip for IP address, ComputerName) and determine which cryptocurrency mining tool was executed (check ImageFileName and CommandLine fields)
+  2. Use CrowdStrike Real Time Response (RTR) to contain the host by executing network isolation: `contain` command in the Falcon console to prevent mining pool communication and lateral movement to other systems
+  3. Identify the user account and parent process that launched the mining tool (check UserSid, ParentBaseFileName, ParentProcessId, SourceProcessId) to determine execution context, then immediately kill the mining process using RTR `kill` command or PowerShell `Stop-Process` to halt resource consumption
+  4. Check for persistence mechanisms: search Windows Task Scheduler (`schtasks /query /fo LIST /v`), registry Run keys (`reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run`), Windows Services (`sc query`), and startup folders for mining tool references
+  5. Review network connections from the compromised host to identify mining pool domains/IPs (check DNS queries for stratum+tcp://, pool addresses like xmr-pool.com, nanopool.org, ethermine.org) and add these indicators to block lists
+  6. Hunt for the initial access vector by reviewing process timeline before miner execution: look for suspicious downloads, phishing email attachments, exploit activity, vulnerable service exploitation (RDP, SMB, exposed services), or supply chain compromise
+  7. Search all endpoints in the environment for the mining tool's hash (MD5, SHA256 from alert) using CrowdStrike IOC search or EDR hunt capabilities to identify other compromised hosts in the cryptojacking campaign
+  8. Collect forensic artifacts including the mining tool binary, configuration files (often contain wallet addresses and pool information), memory dumps, and any dropper/loader executables for malware analysis and attribution
+  9. Analyze the miner configuration to extract attacker infrastructure: cryptocurrency wallet addresses (useful for tracking attacker profits and attribution), mining pool domains, and C2 callbacks. Review system logs for abnormal CPU/GPU usage patterns indicating long-running mining activity before detection
+  10. Calculate business impact including electricity costs and system performance degradation, then remove all miner components, delete persistence mechanisms, patch vulnerabilities that enabled initial access, and implement monitoring for mining-related indicators (high CPU usage, mining pool connections, miner process names)
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496
 Tests:
   - ExpectedResult: true
     Log:

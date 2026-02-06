@@ -7,7 +7,13 @@ LogTypes:
   - GitHub.Audit
 Tags:
   - GitHub
-  - Persistence:Account Manipulation
+  - Persistence
+  - Account Manipulation
+  - Identity and Access Management
+  - Security Configuration
+  - Privilege Escalation
+  - Defense Evasion
+  - Organization Security
 Reports:
   MITRE ATT&CK:
     - TA0003:T1098
@@ -15,11 +21,22 @@ Severity: Critical
 SummaryAttributes:
   - actor
   - action
-Description: Detects changes to GitHub org authentication changes.
-Runbook: Verify that the GitHub admin performed this activity and validate its use.
+Description: >
+  Detects critical changes to GitHub organization authentication and access control settings that govern how users authenticate and access organizational resources. This rule monitors eight high-impact configuration changes: SAML single sign-on enablement or disablement, organization-wide two-factor authentication (2FA) requirement changes, SAML identity provider settings modifications, and OAuth application restriction policy changes. These authentication controls are foundational security mechanisms that protect entire GitHub organizations, and unauthorized or malicious modifications can severely weaken security posture. Disabling SAML SSO can allow attackers to bypass centralized identity management and maintain access even after corporate credentials are revoked. Disabling the organization-wide 2FA requirement removes a critical defense layer, enabling attackers with compromised passwords to access repositories without second-factor verification. Modifying SAML provider settings could redirect authentication to attacker-controlled identity providers for credential harvesting. Disabling OAuth app restrictions allows potentially malicious third-party applications to access organizational data without approval workflows. Attackers who compromise a GitHub organization owner or admin account often make these changes to establish persistence, weaken defenses for lateral movement, or prepare for data exfiltration. Legitimate changes do occur during planned security policy updates, migrations to new SSO providers, or organizational restructuring, but these should be rare, well-documented, and performed by authorized administrators. This rule leverages GitHub Audit Log events to detect these configuration changes in real-time, enabling security teams to validate authorization and rollback unauthorized changes before widespread impact.
+Runbook: |
+  1. Identify the actor who made the authentication configuration change (check the actor field from the alert), their GitHub role (Owner, Admin), and the specific action performed (SAML disabled, 2FA requirement disabled, OAuth restrictions disabled, etc.)
+  2. Immediately contact the identified actor through a trusted out-of-band communication channel (Slack, phone, in-person) to verify they intentionally made this change and it was authorized by your organization's change management process
+  3. Assess the security impact of the specific authentication change: disabling SAML or 2FA requirements represents immediate severe security degradation requiring urgent rollback, while enabling these features or updating SAML settings may be legitimate security improvements
+  4. If the change was unauthorized or the actor's account appears compromised, immediately use GitHub organization owner privileges to rollback the configuration change through Organization Settings > Authentication Security to restore secure authentication policies
+  5. Review the actor's recent GitHub audit log activity for the past 48 hours to identify other suspicious actions such as adding new organization members, creating personal access tokens, modifying repository permissions, downloading sensitive data, or accessing private repositories
+  6. Validate the actor's current active sessions in GitHub and revoke any suspicious sessions, then force the actor to re-authenticate and verify their account has not been compromised by checking for unauthorized SSH keys, personal access tokens, or OAuth app authorizations
+  7. Query GitHub audit logs for authentication failures, suspicious login locations, or unusual access patterns preceding this change that might indicate account compromise through credential stuffing, phishing, or session hijacking
+  8. Review organization membership changes, team permission modifications, and repository access grants performed in the time window around this authentication change to identify if an attacker used elevated access to establish additional persistence mechanisms
+  9. If this was an unauthorized change indicating potential compromise, perform a comprehensive access review: audit all organization owners and admins, review all OAuth apps with organization access, check repository deploy keys and webhooks, and verify SAML/SSO identity provider configurations for tampering
+  10. Document the incident including who made the change, whether it was authorized, what security impact occurred, and any remediation actions taken, then implement preventive controls such as requiring multiple approvers for authentication policy changes, enabling GitHub Advanced Security features, and configuring alerts for sensitive configuration modifications
 Reference: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
 Tests:
-  - Name: GitHub - Authentication Method Changed
+  - Name: GitHub - SAML Disabled
     ExpectedResult: true
     Log:
       {
@@ -29,6 +46,66 @@ Tests:
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
         "repo": "my-org/my-repo",
+      }
+  - Name: GitHub - Two Factor Requirement Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "admin-user",
+        "action": "org.disable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - Two Factor Requirement Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-admin",
+        "action": "org.enable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - OAuth App Restrictions Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "org-owner",
+        "action": "org.disable_oauth_app_restrictions",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - OAuth App Restrictions Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-admin",
+        "action": "org.enable_oauth_app_restrictions",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - SAML Provider Settings Updated
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "it-admin",
+        "action": "org.update_saml_provider_settings",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - SAML Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-team",
+        "action": "org.saml_enabled",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
       }
   - Name: GitHub - Non Auth Related Org Change
     ExpectedResult: false
@@ -40,4 +117,15 @@ Tests:
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
+      }
+  - Name: GitHub - Non Org Action
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "developer",
+        "action": "repo.create",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/new-repo",
       }

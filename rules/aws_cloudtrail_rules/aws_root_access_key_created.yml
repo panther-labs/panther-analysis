@@ -13,11 +13,19 @@ Reports:
   MITRE ATT&CK:
     - TA0003:T1098
 Severity: Critical
-Description: An access key was created for the Root account
+Description: >
+  Detects the creation of an access key for the AWS root account, which represents a critical security violation of AWS best practices. The root account has unrestricted access to all AWS services and resources within the account, including billing information and the ability to close the account. Creating programmatic access keys for the root account significantly increases the attack surface, as these credentials cannot be scoped with granular permissions, are difficult to rotate without service disruption, and if compromised, provide an attacker with complete control over the AWS environment. AWS strongly recommends never creating root access keys and instead using IAM users or roles with appropriate least-privilege permissions. This rule monitors CloudTrail for CreateAccessKey API calls where the user identity type is 'Root' to detect this dangerous practice and enable immediate response.
 Runbook: |
-  Verify that the root access key was created for legitimate reasons. If not, immediately revoke it
-  and change the root login credentials. If it was created for legitimate reasons, monitor its use
-  and ensure it is revoked when its need is gone.
+  1. Immediately identify the source of the access key creation from the alert context (source IP address, user agent, session details, and timestamp)
+  2. Contact the account owner or designated security contact to verify whether this action was authorized and determine if the root account credentials may be compromised
+  3. If unauthorized or if compromise is suspected, immediately delete the newly created root access key through the AWS Console (Security Credentials page) or AWS CLI using `aws iam delete-access-key --access-key-id <KEY_ID>`
+  4. Review CloudTrail logs for any API calls made using the compromised root access key to assess the scope of potential unauthorized activity
+  5. If the root account is compromised, immediately change the root account password and enable MFA if not already configured
+  6. Audit all IAM users, roles, and policies for unauthorized changes that may have been made using the root credentials
+  7. If the access key was created for a legitimate but temporary purpose, work with the team to migrate the workload to use IAM roles or users with least-privilege permissions, then delete the root access key
+  8. Enable AWS IAM Access Analyzer and AWS Config rules to continuously monitor for root account usage and access key creation
+  9. Document the incident, including who created the key, why it was created, what actions were taken with it, and when it was deleted
+  10. Implement preventive controls such as AWS Organizations SCPs (Service Control Policies) to restrict root account access key creation across the organization
 Reference: https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html
 SummaryAttributes:
   - userAgent

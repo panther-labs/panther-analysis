@@ -13,9 +13,16 @@ Description: >
   Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace.
   Privileged scopes grant broad access to sensitive data and administrative functions.
 Runbook: |
-  1. Query GSuite.ActivityEvent logs for all OAuth token authorize events by actor:email in the 7 days before and after this alert to identify if this is an isolated incident or part of a pattern of suspicious OAuth grants by this user
-  2. Contact the user listed in actor:email within 1 hour to verify whether they intentionally authorized the OAuth application named in parameters:app_name and whether they recognize the application's stated purpose
-  3. If the authorization was not intentional or the application is not recognized, immediately revoke the OAuth application's access via Google Workspace Admin Console > Security > API Controls > Manage Third-Party App Access, search for the client_id from parameters:client_id, and remove access
+  1. Review the alert details to identify the user email (actor:email), OAuth application name (parameters:app_name), client ID (parameters:client_id), authorized scopes, and timestamp of the authorization
+  2. Query GSuite.ActivityEvent logs for all OAuth token authorize events by the user in the 7 days before and after this alert to identify if this is an isolated incident or part of a pattern of suspicious OAuth grants
+  3. Research the OAuth application using the client ID and application name to determine if it's a known legitimate application or a potentially malicious application impersonating a trusted service
+  4. Review the specific privileged scopes that were granted to assess the level of access the application now has (e.g., read all emails, access all Drive files, manage users, admin directory access)
+  5. Contact the user listed in actor:email within 1 hour via phone or secure messaging to verify whether they intentionally authorized the OAuth application and whether they recognize the application's stated purpose
+  6. Check if the user was recently targeted by phishing or social engineering attempts that could have tricked them into granting OAuth consent, and review the source IP address of the authorization for suspicious locations
+  7. If the authorization was not intentional or the application is not recognized: Immediately revoke the OAuth application's access via Google Workspace Admin Console > Security > API Controls > Manage Third-Party App Access
+  8. Search for the revoked application's client ID across all users in the organization to identify if other users also authorized the same malicious application, and revoke access for all affected users
+  9. Review audit logs for any actions taken by the OAuth application between authorization and revocation including email access, file downloads, user enumeration, or administrative changes
+  10. Document the incident including authorized scopes, application details, user impact, and implement OAuth application whitelisting policies in Google Workspace Admin Console to prevent future unauthorized application access
 Tags:
   - GSuite
   - Initial Access

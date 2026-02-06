@@ -7,12 +7,34 @@ LogTypes:
   - GSuite.ActivityEvent
 Tags:
   - GSuite
+  - APT
+  - Advanced Persistent Threat
+  - Nation State
+  - Targeted Attack
+  - Reconnaissance
+  - Initial Access
+  - Government Backed Attack
+  - High Profile Target
 Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595
+    - TA0001:T1566
+    - TA0042:T1589
 Description: >
-  GSuite reported that it detected a government backed attack against your account.
+  Detects when Google Workspace (GSuite) identifies and reports a government-backed attack targeting a user account within your organization. Google issues these warnings extremely rarely and only when their threat intelligence and security systems detect indicators consistent with nation-state threat actors or advanced persistent threat (APT) groups conducting reconnaissance, credential harvesting attempts, or targeted phishing campaigns against specific users. Government-backed attacks are characterized by sophisticated techniques, significant resources, persistence, and strategic objectives typically including espionage, intellectual property theft, supply chain compromise, or surveillance of high-value individuals such as executives, researchers, activists, journalists, or government officials. These threat actors employ advanced tactics including zero-day exploits, spear-phishing with legitimate-looking infrastructure, credential stuffing with previously compromised passwords, session hijacking, and social engineering tailored to the specific target. Google's detection is based on analyzing login patterns, device fingerprints, network infrastructure associated with known APT groups, correlation with global threat intelligence, and behavioral anomalies indicating reconnaissance or account compromise attempts. When Google issues this warning, it means the user account has been specifically targeted and is at elevated risk of compromise if not already compromised. This represents one of the highest severity security events because successful compromise by nation-state actors can lead to long-term persistent access, theft of sensitive intellectual property or communications, lateral movement to other systems, supply chain attacks affecting your customers, or reputational damage. Immediate action is required to protect the targeted user, investigate for signs of compromise, and implement enhanced security controls across the organization.
 Reference: https://support.google.com/a/answer/9007870?hl=en
-Runbook: >
-  Followup with GSuite support for more details.
+Runbook: |
+  1. Immediately notify the targeted user (identified in actor:email field) through a secure out-of-band communication channel (in-person meeting, phone call, encrypted messaging) to inform them of the nation-state threat, advise extreme caution with emails and links, and instruct them not to access their account until security review is complete
+  2. Force the user to immediately reset their Google Workspace password using a secure trusted device, enable or enforce Advanced Protection Program enrollment for the user account, and require re-authentication of all active sessions to terminate any potentially compromised sessions
+  3. Contact Google Workspace support immediately through your enterprise support channel to obtain additional threat intelligence details about the government-backed attack including threat actor attribution, attack vectors observed, indicators of compromise, and recommended security controls specific to this incident
+  4. Review the targeted user's Google Workspace audit logs for the past 90 days to identify suspicious activity: unusual login locations or impossible travel, unrecognized devices, delegated access grants, OAuth app authorizations, email forwarding rules, data exports or downloads, sharing of sensitive documents, or access to critical resources
+  5. Assess why this user was targeted based on their role, access to sensitive information, public profile, or organizational position (executive, researcher with valuable IP, system administrator with privileged access, activist or journalist, government liaison) to understand the threat actor's likely objectives and inform protection strategies
+  6. Implement immediate enhanced security controls for the targeted user: enforce hardware security key 2FA (Advanced Protection Program), disable less secure authentication methods, enable context-aware access policies restricting access to trusted locations and devices, enable Gmail advanced phishing and malware protections, and increase audit log retention
+  7. Expand investigation to identify other high-value users in your organization with similar roles or access who may be targeted next, proactively implement enhanced security controls for these users, and increase monitoring sensitivity for their accounts
+  8. Notify executive leadership, legal counsel, and compliance teams about the nation-state threat as this may have regulatory reporting requirements (depending on industry and jurisdiction), affect business risk assessments, or require notification to customers, partners, or government agencies if sensitive data or systems are involved
+  9. Engage threat intelligence resources to research the specific threat actor if Google provided attribution details: understand their tactics, techniques, and procedures (TTPs), previous campaigns, targeting patterns, and motivations to inform defensive measures and assess whether your organization may be part of a broader campaign affecting your industry
+  10. Document the incident comprehensively including the targeted user, timing of Google's warning, all investigation findings, security controls implemented, and any indicators of compromise discovered, then conduct a security posture review to implement organization-wide improvements such as mandatory Advanced Protection Program for executives and high-risk users, enhanced security awareness training focused on nation-state threats, deployment of additional email security controls, and establishment of a high-risk user protection program
 SummaryAttributes:
   - actor:email
 Tests:
