@@ -178,9 +178,10 @@ def is_base64(b64: str, min_length: int = 28) -> str:
         b64.encode("ascii")
     except UnicodeEncodeError:
         return ""
-    # Filter out hex strings (UUIDs without dashes) - these are common in CDN/service domains
-    # 32-char hex strings like "ba680ec474b5402da89ce553c20075eb" decode to gibberish CJK
-    if len(b64) == 32 and re.match(r"^[0-9a-fA-F]{32}$", b64):
+    # Filter out 32-char alphanumeric strings - these are common service/session IDs
+    # Examples: hex UUIDs like "ba680ec474b5402da89ce553c20075eb"
+    # or other IDs like "4ifgvg5jcq6meu7m4acon5vnfa0kocom" (both decode to gibberish CJK)
+    if len(b64) == 32 and re.match(r"^[A-Za-z0-9]{32}$", b64):
         return ""
     # Base64 uses only: A-Z, a-z, 0-9, +, /, and = for padding
     if not re.match(r"^[A-Za-z0-9+/]*={0,2}$", b64):
@@ -205,6 +206,13 @@ def is_base64(b64: str, min_length: int = 28) -> str:
                 )
                 # Require at least 70% printable characters
                 if printable_ratio < 0.7:
+                    continue
+
+                # Filter out gibberish CJK/unicode by requiring mostly ASCII characters
+                # This prevents false positives from strings like "NewUpdatesReadyToApply"
+                # that decode to CJK characters (e.g., ꔔ귖쑺楞鏜ઠ革)
+                ascii_ratio = sum(ord(c) < 128 for c in decoded_str) / len(decoded_str)
+                if ascii_ratio < 0.6:  # At least 60% ASCII characters
                     continue
             return decoded_str
         except UnicodeDecodeError:
