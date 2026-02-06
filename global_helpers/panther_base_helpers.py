@@ -207,6 +207,13 @@ def is_base64(b64: str, min_length: int = 28) -> str:
                 # Require at least 70% printable characters
                 if printable_ratio < 0.7:
                     continue
+
+                # Filter out gibberish CJK/unicode by requiring mostly ASCII characters
+                # This prevents false positives from strings like "NewUpdatesReadyToApply"
+                # that decode to CJK characters (e.g., ꔔ귖쑺楞鏜ઠ革)
+                ascii_ratio = sum(ord(c) < 128 for c in decoded_str) / len(decoded_str)
+                if ascii_ratio < 0.6:  # At least 60% ASCII characters
+                    continue
             return decoded_str
         except UnicodeDecodeError:
             continue
