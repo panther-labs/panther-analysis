@@ -2635,5 +2635,54 @@ class TestEmailRegex(unittest.TestCase):
             self.assertFalse(email_regex.match(email))
 
 
+class TestIsBase64(unittest.TestCase):
+    """Test cases for the is_base64 function"""
+
+    def test_filters_32char_hex_strings(self):
+        """32-char hex strings (UUIDs) should be filtered out"""
+        hex_uuid = "ba680ec474b5402da89ce553c20075eb"
+        self.assertEqual(p_b_h.is_base64(hex_uuid), "")
+
+    def test_filters_32char_alphanumeric_aws_lambda_url(self):
+        """32-char alphanumeric strings (AWS Lambda URLs) should be filtered out"""
+        lambda_id = "4ifgvg5jcq6meu7m4acon5vnfa0kocom"
+        self.assertEqual(p_b_h.is_base64(lambda_id), "")
+
+    def test_filters_strings_decoding_to_cjk_gibberish(self):
+        """Strings that decode to CJK gibberish should be filtered by ASCII ratio check"""
+        # "NewUpdatesReadyToApply" decodes to CJK characters like ꔔ귖쑺楞鏜ઠ革
+        windows_term = "NewUpdatesReadyToApply"
+        self.assertEqual(p_b_h.is_base64(windows_term, min_length=12), "")
+
+    def test_filters_centennial_term(self):
+        """Common Windows app terms like 'centennial' should be filtered"""
+        centennial = "centennial"
+        self.assertEqual(p_b_h.is_base64(centennial, min_length=10), "")
+
+    def test_allows_valid_base64_with_ascii_content(self):
+        """Valid base64 strings with ASCII content should pass through"""
+        # "Hello World" in base64
+        valid_b64 = "SGVsbG8gV29ybGQ="
+        decoded = p_b_h.is_base64(valid_b64, min_length=10)
+        self.assertEqual(decoded, "Hello World")
+
+    def test_allows_valid_base64_command(self):
+        """Valid base64 encoded commands should be detected"""
+        # "powershell -enc" encoded command
+        valid_cmd = "cG93ZXJzaGVsbCAtZW5j"
+        decoded = p_b_h.is_base64(valid_cmd, min_length=10)
+        self.assertEqual(decoded, "powershell -enc")
+
+    def test_filters_short_strings(self):
+        """Strings shorter than min_length should be filtered"""
+        short_string = "abc123"
+        self.assertEqual(p_b_h.is_base64(short_string, min_length=28), "")
+
+    def test_filters_non_base64_characters(self):
+        """Strings with invalid base64 characters should be filtered"""
+        invalid = "this has spaces and special chars!"
+        self.assertEqual(p_b_h.is_base64(invalid, min_length=10), "")
+
+
 if __name__ == "__main__":
     unittest.main()
