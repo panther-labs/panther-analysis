@@ -95,6 +95,161 @@ Tests:
       threatid: "123456789"
       updatedat: "2022-12-07 16:08:55.698"
     Name: suspicious event
+  - ExpectedResult: true
+    Log:
+      accountid: "123456789"
+      accountname: Account1
+      activitytype: 18
+      activityuuid: 123-456-678-90
+      agentid: "1111112222233334"
+      createdat: "2022-12-07 16:10:00.000"
+      data:
+        accountname: Account1
+        computername: AlicePC
+        confidencelevel: malicious
+        filecontenthash: abc123def456789012345678901234567890abcd
+        filedisplayname: malware.exe
+        filepath: C:\Users\Alice\Downloads\malware.exe
+        fullscopedetails: Group Testing in Site Default site of Account Account1
+        fullscopedetailspath: Global / Account1 / Default site / Testing
+        groupname: Testing
+        sitename: Default site
+        threatclassification: Trojan
+        threatclassificationsource: Engine
+      groupid: "12345"
+      groupname: Testing
+      id: "22222222"
+      primarydescription: "Threat with confidence level malicious detected and Mitigated: malware.exe"
+      secondarydescription: abc123def456789012345678901234567890abcd
+      siteid: "456789"
+      sitename: Default site
+      threatid: "987654321"
+      updatedat: "2022-12-07 16:10:00.000"
+    Name: mitigated malicious threat
+  - ExpectedResult: true
+    Log:
+      accountid: "123456789"
+      accountname: Account1
+      activitytype: 20
+      activityuuid: 123-456-678-91
+      agentid: "1111112222233335"
+      createdat: "2022-12-07 16:15:00.000"
+      data:
+        accountname: Account1
+        computername: CharliePC
+        confidencelevel: suspicious
+        filecontenthash: def789abc012345678901234567890123456def0
+        filedisplayname: suspicious_script.ps1
+        filepath: C:\Temp\suspicious_script.ps1
+        fullscopedetails: Group Testing in Site Default site of Account Account1
+        fullscopedetailspath: Global / Account1 / Default site / Testing
+        groupname: Testing
+        sitename: Default site
+        threatclassification: Script
+        threatclassificationsource: Cloud
+      groupid: "12345"
+      groupname: Testing
+      id: "33333333"
+      primarydescription: "Threat with confidence level suspicious detected and Mitigated preemptively: suspicious_script.ps1"
+      secondarydescription: def789abc012345678901234567890123456def0
+      siteid: "456789"
+      sitename: Default site
+      threatid: "567890123"
+      updatedat: "2022-12-07 16:15:00.000"
+    Name: preemptive block suspicious threat
+  - ExpectedResult: true
+    Log:
+      accountid: "123456789"
+      accountname: Account1
+      activitytype: 4110
+      activityuuid: 123-456-678-92
+      agentid: "1111112222233336"
+      createdat: "2022-12-07 16:20:00.000"
+      data:
+        accountname: Account1
+        computername: DavePC
+        confidencelevel: malicious
+        filecontenthash: 1234567890abcdef1234567890abcdef12345678
+        filedisplayname: ransomware.bin
+        filepath: /tmp/ransomware.bin
+        fullscopedetails: Group Testing in Site Default site of Account Account1
+        fullscopedetailspath: Global / Account1 / Default site / Testing
+        groupname: Testing
+        sitename: Default site
+        threatclassification: Ransomware
+        threatclassificationsource: ThreatIntelligence
+      groupid: "12345"
+      groupname: Testing
+      id: "44444444"
+      primarydescription: "Singularity Threat Intelligence engine automatically marked event as malicious: ransomware.bin"
+      secondarydescription: 1234567890abcdef1234567890abcdef12345678
+      siteid: "456789"
+      sitename: Default site
+      threatid: "234567890"
+      updatedat: "2022-12-07 16:20:00.000"
+    Name: threat intelligence malicious detection
+  - ExpectedResult: true
+    Log:
+      accountid: "123456789"
+      accountname: Account1
+      activitytype: 4107
+      activityuuid: 123-456-678-93
+      agentid: "1111112222233337"
+      createdat: "2022-12-07 16:25:00.000"
+      data:
+        accountname: Account1
+        computername: EvePC
+        confidencelevel: suspicious
+        filecontenthash: fedcba0987654321fedcba0987654321fedcba09
+        filedisplayname: anomalous_process.exe
+        filepath: C:\Windows\Temp\anomalous_process.exe
+        fullscopedetails: Group Testing in Site Default site of Account Account1
+        fullscopedetailspath: Global / Account1 / Default site / Testing
+        groupname: Testing
+        sitename: Default site
+        threatclassification: Anomaly
+        threatclassificationsource: STAR
+      groupid: "12345"
+      groupname: Testing
+      id: "55555555"
+      primarydescription: "Custom Rule automatically marked event as suspicious: anomalous_process.exe"
+      secondarydescription: fedcba0987654321fedcba0987654321fedcba09
+      siteid: "456789"
+      sitename: Default site
+      threatid: "345678901"
+      updatedat: "2022-12-07 16:25:00.000"
+    Name: star active response suspicious detection
+  - ExpectedResult: true
+    Log:
+      accountid: "123456789"
+      accountname: Account1
+      activitytype: 4111
+      activityuuid: 123-456-678-94
+      agentid: "1111112222233338"
+      createdat: "2022-12-07 16:30:00.000"
+      data:
+        accountname: Account1
+        computername: FrankPC
+        confidencelevel: malicious
+        filecontenthash: 0123456789abcdef0123456789abcdef01234567
+        filedisplayname: cryptominer.exe
+        filepath: C:\ProgramData\cryptominer.exe
+        fullscopedetails: Group Testing in Site Default site of Account Account1
+        fullscopedetailspath: Global / Account1 / Default site / Testing
+        groupname: Testing
+        sitename: Default site
+        threatclassification: Cryptominer
+        threatclassificationsource: Watchtower
+      groupid: "12345"
+      groupname: Testing
+      id: "66666666"
+      primarydescription: "Watchtower Cloud Detection engine marked event as threat: cryptominer.exe"
+      secondarydescription: 0123456789abcdef0123456789abcdef01234567
+      siteid: "456789"
+      sitename: Default site
+      threatid: "456789012"
+      updatedat: "2022-12-07 16:30:00.000"
+    Name: watchtower cloud detection
 DedupPeriodMinutes: 60
 LogTypes:
   - SentinelOne.Activity
