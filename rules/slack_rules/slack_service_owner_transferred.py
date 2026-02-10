@@ -10,7 +10,7 @@ def title(event):
     new_owner = event.deep_get("entity", "user", "email", default="<UNKNOWN_NEW_OWNER>")
     workspace = event.deep_get("context", "location", "domain", default="<UNKNOWN_WORKSPACE>")
     return (
-        f"CRITICAL: Slack Primary Owner transferred for workspace [{workspace}] "
+        f"Slack: Primary Owner transferred for workspace [{workspace}] "
         f"from [{previous_owner}] to [{new_owner}] - Highest privilege transfer"
     )
 
