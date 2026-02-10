@@ -9,7 +9,7 @@ def title(event):
     uploader = event.deep_get("actor", "user", "email", default="<UNKNOWN_USER>")
     workspace = event.deep_get("context", "location", "domain", default="<UNKNOWN_WORKSPACE>")
     return (
-        f"CRITICAL: Malicious file detected in Slack workspace [{workspace}] "
+        f"Slack: Malicious file detected in Slack workspace [{workspace}] "
         f"uploaded by [{uploader}] - Potential malware or phishing attack"
     )
 
