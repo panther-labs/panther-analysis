@@ -10,7 +10,7 @@ def title(event):
     actor = event.deep_get("actor", "user", "email", default="<UNKNOWN_ACTOR>")
     workspace = event.deep_get("context", "location", "domain", default="<UNKNOWN_WORKSPACE>")
     return (
-        f"CRITICAL: Slack workspace [{workspace}] unenrolled from Enterprise Key Management "
+        f"Slack: Workspace [{workspace}] unenrolled from Enterprise Key Management "
         f"by [{actor}] - Customer-controlled encryption disabled"
     )
 
