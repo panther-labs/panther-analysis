@@ -1,0 +1,84 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.SkeletonKeyBypassBehavioral"
+Enabled: true
+Description: |
+  Detects successful SSO authentications from previously unseen user agents or device types.
+  Uses behavioral analysis to identify authentication bypass attempts.
+Query: |
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+
+  with subquery as (
+    SELECT
+      p_event_time,
+      actor:alternateId::string as actorId,
+      actor:displayName::string as actorName,
+      eventType::string as eventType,
+      client:ipAddress::string as sourceIP,
+      client:device::string as deviceType,
+      client:userAgent:rawUserAgent::string as userAgent,
+      client:userAgent:browser::string as browser,
+      client:userAgent:os::string as operatingSystem,
+      outcome:result::string as result,
+      target[0]:displayName::string as targetApp,
+      target[0]:alternateId::string as targetAppId
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_occurs_since('30 day')
+      AND eventType = 'user.authentication.sso'
+      AND outcome:result = 'SUCCESS'
+      AND actor:alternateId IS NOT NULL
+  ),
+  device_anomalies as (
+    {{ new_unique_values('subquery', 'actorId', 'deviceType', '3day') }}
+  ),
+  useragent_anomalies as (
+    {{ new_unique_values('subquery', 'actorId', 'userAgent', '3day') }}
+  )
+  SELECT
+    s.p_event_time,
+    s.actorId,
+    s.actorName,
+    s.sourceIP,
+    s.deviceType,
+    s.userAgent,
+    s.browser,
+    s.operatingSystem,
+    s.targetApp,
+    s.targetAppId,
+    'New Device Type' as anomaly_type
+  FROM subquery s
+  JOIN device_anomalies da
+    ON s.actorId = da.actorId
+    AND s.deviceType = da.deviceType
+  WHERE p_occurs_since('3day')
+
+  UNION ALL
+
+  SELECT
+    s.p_event_time,
+    s.actorId,
+    s.actorName,
+    s.sourceIP,
+    s.deviceType,
+    s.userAgent,
+    s.browser,
+    s.operatingSystem,
+    s.targetApp,
+    s.targetAppId,
+    'New User Agent' as anomaly_type
+  FROM subquery s
+  JOIN useragent_anomalies ua
+    ON s.actorId = ua.actorId
+    AND s.userAgent = ua.userAgent
+  WHERE p_occurs_since('3day')
+
+  ORDER BY p_event_time DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Okta
+  - Anomaly Detection
+  - Behavioral Analytics
