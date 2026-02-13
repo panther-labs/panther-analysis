@@ -7,12 +7,27 @@ LogTypes:
   - GSuite.ActivityEvent
 Tags:
   - GSuite
+  - APT
+  - Advanced Persistent Threat
+  - Nation State
+  - Targeted Attack
+  - Reconnaissance
+  - Initial Access
+  - Government Backed Attack
+  - High Profile Target
 Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595
+    - TA0001:T1566
+    - TA0042:T1589
 Description: >
-  GSuite reported that it detected a government backed attack against your account.
+  Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
 Reference: https://support.google.com/a/answer/9007870?hl=en
-Runbook: >
-  Followup with GSuite support for more details.
+Runbook: |
+  1. Query GSuite.ActivityEvent logs for all login events, OAuth app authorizations, email forwarding rules, delegated access grants, and data exports by actor:email in the 90 days before this warning to identify suspicious activity indicating potential compromise
+  2. Review login locations, IP addresses, and device information from the targeted user's recent authentication events to detect unusual geographic access patterns or impossible travel that may indicate reconnaissance or account takeover attempts
+  3. Contact Google Workspace enterprise support to obtain additional threat intelligence about the government-backed attack including threat actor attribution, attack vectors observed, and specific indicators of compromise related to this incident
 SummaryAttributes:
   - actor:email
 Tests:

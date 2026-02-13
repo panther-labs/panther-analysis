@@ -7,16 +7,27 @@ LogTypes:
   - Crowdstrike.DNSRequest
   - Crowdstrike.FDREvent
 Tags:
-  - Crowdstrike
-  - Initial Access:Phishing
+  - CrowdStrike
   - Configuration Required
-Severity: Critical
+  - DNS
+  - Command and Control
+  - Initial Access
+  - Exfiltration
+  - Threat Intelligence
+  - Network Monitoring
+Severity: High
 Reports:
   MITRE ATT&CK:
     - TA0001:T1566
-Description: A DNS request was made to a domain on an explicit denylist
+    - TA0011:T1071.004
+    - TA0010:T1567
+Description: >
+  Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.
 Reference: https://docs.runpanther.io/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
-Runbook: Filter for host ID in title in Crowdstrike Host Management console to identify the system that queried the domain.
+Runbook: |
+  1. Query CrowdStrike ProcessRollup events for ContextProcessId matching this DNS request to identify the process, user account, and parent process that initiated the query to DomainName
+  2. Search CrowdStrike DNS logs for all queries to the same DomainName from the affected host (aid) in the past 30 days to determine when it was first queried and the frequency of attempts
+  3. Hunt across all endpoints for other hosts querying the same denylisted domain using CrowdStrike IOC search to identify additional compromised systems in the campaign
 DedupPeriodMinutes: 15
 SummaryAttributes:
   - DomainName

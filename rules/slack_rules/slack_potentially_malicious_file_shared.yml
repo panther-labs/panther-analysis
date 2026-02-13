@@ -9,13 +9,22 @@ Tags:
   - Slack
   - Initial Access
   - Phishing
-  - Spearphising Attachment
+  - Spearphishing Attachment
+  - Malware
+  - Execution
 Reports:
   MITRE ATT&CK:
     - TA0001:T1566.001
+    - TA0002:T1204.002
+    - TA0040:T1486
 Severity: Critical
-Description: Detects when a potentially malicious file is shared within Slack
-Reference: https://threatpost.com/slack-remote-file-hijacking-malware/144871/
+Description: >
+  Detects when Slack's automated security scanning identifies malicious files uploaded to the workspace, indicating malware delivery or phishing attempts. Slack scans for executable malware, ransomware, phishing documents, malicious scripts, and files matching threat actor signatures. This detection indicates compromised accounts, insider threats, or successful phishing attacks where users uploaded infected files.
+Reference: https://docs.datadoghq.com/security/default_rules/def-003-oxv/
+Runbook: |
+  1. Query Slack audit logs for file_downloaded events associated with the malicious file to identify all users who downloaded it before Slack detected the threat, then coordinate with IT to isolate their endpoints and scan for malware
+  2. Review actor.user.email's complete Slack audit log activity in the 7 days before the upload to identify suspicious patterns such as logins from unusual locations, sharing multiple suspicious files, or mass direct messaging indicating account compromise
+  3. Search the Slack workspace for other files with similar names, file types, or uploaded from the same context.ip_address to determine if this is part of a broader malware distribution campaign
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:

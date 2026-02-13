@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: slack_ekm_unenrolled.py
 RuleID: "Slack.AuditLogs.EKMUnenrolled"
-DisplayName: "Slack EKM Unenrolled"
+DisplayName: "Slack Enterprise Key Management Unenrolled"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
@@ -9,12 +9,21 @@ Tags:
   - Slack
   - Defense Evasion
   - Weaken Encryption
+  - Compliance
+  - Data Protection
 Reports:
   MITRE ATT&CK:
     - TA0005:T1600
+    - TA0009:T1530
+    - TA0010:T1567
 Severity: Critical
-Description: Detects when a workspace is no longer enrolled or managed by EKM
+Description: >
+  Detects when Slack Enterprise Key Management (EKM) is unenrolled, removing customer-controlled encryption and reverting to Slack-managed keys. EKM allows organizations to store encryption keys externally (e.g., AWS KMS), ensuring data remains protected even from Slack infrastructure compromise. Unenrollment exposes all workspace data to decryption by Slack systems and violates compliance requirements for regulated industries.
 Reference: https://slack.com/intl/en-gb/help/articles/360019110974-Slack-Enterprise-Key-Management
+Runbook: |
+  1. Query Slack audit logs for all actions by actor.user.email in the 30 days around the EKM unenrollment to identify other suspicious administrative actions such as data exports, workspace settings changes, user privilege escalations, or API token creations
+  2. Check if the unenrollment occurred outside normal business hours or from an unusual context.ip_address or geographic location that doesn't match the actor's typical access patterns
+  3. Search Slack audit logs for data export events, file downloads, or external sharing modifications during the period when EKM was unenrolled to assess potential data exposure while customer-controlled encryption was disabled
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:

@@ -1,13 +1,24 @@
 AnalysisType: rule
-Description: Detection to alert when a WAF disassociates from a source.
+Description: >
+  Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.
 DisplayName: "AWS WAF Disassociation"
 Enabled: true
 Filename: aws_waf_disassociation.py
-Reference: https://attack.mitre.org/techniques/T1078/
+Reference: https://docs.aws.amazon.com/waf/latest/APIReference/API_DisassociateWebACL.html
+Runbook: |
+  1. Query ALB access logs, CloudFront logs, or API Gateway logs for requestParameters.resourceArn in the timeframe between this DisassociateWebACL event and WAF re-association to identify attack traffic that reached the unprotected resource
+  2. Search for SQL injection patterns, XSS payloads, or unusual request volumes in the application logs that may indicate exploitation while WAF protection was removed
+  3. Review CloudTrail for other security-related API calls by userIdentity.arn in the 6 hours around this event to identify if other defensive controls were modified or disabled
 Severity: Critical
+Tags:
+  - AWS
+  - Web Application Firewall
+  - Defense Evasion
+  - Impair Defenses
+  - Network Security
 Reports:
   MITRE ATT&CK:
-    - TA0004:T1498
+    - TA0005:T1562.004
 Tests:
   - ExpectedResult: true
     Log:

@@ -3,13 +3,24 @@ RuleID: "Okta.Login.Without.Push"
 DisplayName: "Okta Login Without Push"
 Enabled: false
 Tags:
+  - Okta
   - Push Security
+  - Identity Verification
   - Configuration Required
+  - Credential Access
 Reports:
   MITRE ATT&CK:
-    - TA0006:T1212 # Exploitation for Credential Access
-    - TA0006:T1539 # Steal Web Session Cookie
+    - TA0001:T1078 # Initial Access: Valid Accounts
+    - TA0006:T1539 # Credential Access: Steal Web Session Cookie
+    - TA0006:T1621 # Credential Access: Multi-Factor Authentication Request Generation
 Severity: Critical
+Description: >
+  Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
+Runbook: |
+  1. Query Okta System Log for all authentication events by actor.alternateId in the 90 minutes around the login to check if Push Security authentication occurred outside the 60-minute detection window, and review the source IP, geolocation, device, and MFA method used
+  2. Query Push Security logs for any authentication attempts or failures by the same user in the 2 hours around the Okta login to determine if the user attempted but failed to complete Push Security verification
+  3. Check Okta audit logs for all application access, permission changes, and administrative actions during the Okta session to identify suspicious activity that may indicate compromised credentials or session hijacking
+Reference: https://www.okta.com/resources/datasheet/okta-adaptive-multi-factor-authentication-product-datasheet/
 Detection:
   - Sequence:
       - ID: Okta

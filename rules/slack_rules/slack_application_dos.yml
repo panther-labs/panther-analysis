@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: slack_application_dos.py
 RuleID: "Slack.AuditLogs.ApplicationDoS"
-DisplayName: "Slack Denial of Service"
+DisplayName: "Slack Denial of Service via Session Invalidation"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
@@ -14,8 +14,13 @@ Reports:
   MITRE ATT&CK:
     - TA0040:T1499.003
 Severity: Critical
-Description: Detects when slack admin invalidates user session(s). If it happens more than once in a 24 hour period it can lead to DoS
+Description: >
+  Detects potential DoS attacks via excessive session invalidation when administrators reset user sessions 60+ times within 24 hours. Repeated session termination prevents users from maintaining Slack access, disrupting communication and productivity. Legitimate session resets for incident response or troubleshooting typically occur 1-3 times, so reaching the 60-event threshold indicates malicious intent.
 Reference: https://slack.com/intl/en-gb/help/articles/115005223763-Manage-session-duration-#pro-and-business+-subscriptions-2
+Runbook: |
+  1. Query Slack audit logs for all actions by actor.user.email in the 7 days around this event to identify other malicious activities such as unauthorized user removals, workspace settings changes, data exports, or app installations indicating compromised admin account
+  2. Review the total number of session reset events targeting entity.user.name and the time span to calculate the frequency and determine if this represents a sustained denial of service attack
+  3. Search Slack audit logs for session reset patterns targeting other users to determine if this is an isolated incident or part of a broader campaign affecting multiple users
 DedupPeriodMinutes: 1440
 Threshold: 60
 SummaryAttributes:
@@ -23,7 +28,7 @@ SummaryAttributes:
   - p_any_ip_addresses
   - p_any_emails
 Tests:
-  - Name: User Session Reset
+  - Name: User Session Reset By Admin
     ExpectedResult: true
     Log:
       {
@@ -33,9 +38,20 @@ Tests:
             "type": "user",
             "user":
               {
-                "email": "user@example.com",
+                "email": "admin@example.com",
                 "id": "W012J3FEWAU",
                 "name": "primary-owner",
+                "team": "T01234N56GB",
+              },
+          },
+        "entity":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "target@example.com",
+                "id": "U987654321",
+                "name": "target-user",
                 "team": "T01234N56GB",
               },
           },
@@ -52,7 +68,87 @@ Tests:
             "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
           },
       }
-  - Name: Other action
+  - Name: Bulk Session Reset By Admin
+    ExpectedResult: true
+    Log:
+      {
+        "action": "bulk_session_reset_by_admin",
+        "actor":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "admin@example.com",
+                "id": "W012J3FEWAU",
+                "name": "workspace-admin",
+                "team": "T01234N56GB",
+              },
+          },
+        "entity":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "target@example.com",
+                "id": "U987654321",
+                "name": "target-user",
+                "team": "T01234N56GB",
+              },
+          },
+        "context":
+          {
+            "ip_address": "5.6.7.8",
+            "location":
+              {
+                "domain": "test-workspace-1",
+                "id": "T01234N56GB",
+                "name": "test-workspace-1",
+                "type": "workspace",
+              },
+            "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          },
+      }
+  - Name: User Session Invalidated
+    ExpectedResult: true
+    Log:
+      {
+        "action": "user_session_invalidated",
+        "actor":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "admin@example.com",
+                "id": "W012J3FEWAU",
+                "name": "security-admin",
+                "team": "T01234N56GB",
+              },
+          },
+        "entity":
+          {
+            "type": "user",
+            "user":
+              {
+                "email": "victim@example.com",
+                "id": "U555666777",
+                "name": "victim-user",
+                "team": "T01234N56GB",
+              },
+          },
+        "context":
+          {
+            "ip_address": "10.0.0.1",
+            "location":
+              {
+                "domain": "test-workspace-1",
+                "id": "T01234N56GB",
+                "name": "test-workspace-1",
+                "type": "workspace",
+              },
+            "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          },
+      }
+  - Name: Other Action
     ExpectedResult: false
     Log:
       {

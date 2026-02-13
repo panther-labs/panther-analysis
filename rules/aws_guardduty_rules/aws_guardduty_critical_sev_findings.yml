@@ -7,13 +7,22 @@ LogTypes:
   - AWS.GuardDuty
 Tags:
   - AWS
+  - Threat Detection
+  - Automated Security
+  - Anomaly Detection
+  - GuardDuty
+  - Machine Learning
 Severity: Critical
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
 DedupPeriodMinutes: 15
 Description: >
-  A critical-severity GuardDuty finding has been identified.
-Runbook: >
-  Search related logs to understand the root cause of the activity.
-  Search the Panther Summary Attribute type value in https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html for additional details.
+  Detects critical-severity findings (9.0/9.0) from AWS GuardDuty indicating active compromise, imminent data loss, or ongoing attacks. GuardDuty uses machine learning and threat intelligence to identify compromised credentials, cryptocurrency mining, data exfiltration, and connections to malicious infrastructure. This rule filters out sample data and alerts only on genuine critical threats requiring immediate investigation.
+Runbook: |
+  1. Look up the finding type in AWS GuardDuty documentation at https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html, then query CloudTrail for all API calls by the affected principal or resource between service.eventFirstSeen and service.eventLastSeen
+  2. For AttackSequence findings, review the description field to identify all MITRE ATT&CK tactics, techniques, and sensitive APIs called, then search for each of these API calls in CloudTrail to understand the full attack chain
+  3. Search VPC Flow Logs and S3 access logs for connections from the source IPs mentioned in the GuardDuty finding during the timeframe to identify data exfiltration, lateral movement, or persistence mechanisms
 Reference: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity
 SummaryAttributes:
   - severity
