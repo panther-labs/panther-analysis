@@ -62,6 +62,12 @@ def get_name(event):
     return deep_get(k8s_log, "objectRef", "name") if k8s_log else None
 
 
+def get_subresource(event):
+    """Extract subresource from objectRef"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "objectRef", "subresource") if k8s_log else None
+
+
 def get_request_uri(event):
     """Extract request URI"""
     k8s_log = _parse_k8s_audit_log(event)
@@ -108,3 +114,45 @@ def get_response_object(event):
     """Extract response object"""
     k8s_log = _parse_k8s_audit_log(event)
     return k8s_log.get("responseObject") if k8s_log else None
+
+
+def get_containers(event):
+    """Extract containers from requestObject.spec.containers"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "containers") if k8s_log else None
+
+
+def get_volumes(event):
+    """Extract volumes from requestObject.spec.volumes"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "volumes") if k8s_log else None
+
+
+def get_host_ipc(event):
+    """Extract hostIPC from requestObject.spec.hostIPC"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "hostIPC") if k8s_log else None
+
+
+def get_host_network(event):
+    """Extract hostNetwork from requestObject.spec.hostNetwork"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "hostNetwork") if k8s_log else None
+
+
+def get_host_pid(event):
+    """Extract hostPID from requestObject.spec.hostPID"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "hostPID") if k8s_log else None
+
+
+def get_webhooks(event):
+    """Extract webhooks from requestObject.webhooks"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "webhooks") if k8s_log else None
+
+
+def get_service_type(event):
+    """Extract service type from requestObject.spec.type"""
+    k8s_log = _parse_k8s_audit_log(event)
+    return deep_get(k8s_log, "requestObject", "spec", "type") if k8s_log else None

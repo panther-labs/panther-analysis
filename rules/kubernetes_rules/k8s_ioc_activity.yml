@@ -1,0 +1,143 @@
+AnalysisType: rule
+RuleID: "Kubernetes.API.IOC.Activity"
+DisplayName: "Kubernetes API Activity from Tor Exit Node"
+Enabled: true
+Status: Experimental
+Filename: k8s_ioc_activity.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Command and Control
+  - Encrypted Channel
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for Kubernetes API requests originating from known Indicators
+  of Compromise, specifically Tor exit nodes. Tor usage may indicate attempts to hide
+  the true source of malicious activity or unauthorized access attempts. This detection
+  works across AWS EKS, Azure AKS, and GCP GKE clusters.
+Runbook: |
+  1. Find all API operations performed by username through the Tor exit node IP in the 6 hours before and after the alert
+  2. Compare the operations and resources accessed against normal baseline activity for this user in the past 30 days to identify anomalous behavior
+  3. Check if the Tor exit node IP has accessed other clusters or sensitive resources in the past 24 hours to assess campaign scope
+Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
+Reports:
+  MITRE ATT&CK:
+    - TA0011:T1573.002 # Command and Control: Encrypted Channel - Asymmetric Cryptography
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - p_any_ip_addresses
+  - p_source_label
+Tests:
+  - Name: EKS Activity from Tor Exit Node
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "list",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/default/pods",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster",
+        "p_enrichment": {
+          "tor_exit_nodes": ["1.2.3.4"]
+        }
+      }
+  - Name: AKS Activity from Tor Exit Node
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"5.5.5.5\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\"},\"responseStatus\":{\"code\":200}}"
+        },
+        "p_source_label": "aks-cluster",
+        "p_enrichment": {
+          "tor_exit_nodes": ["5.5.5.5"]
+        }
+      }
+  - Name: GCP GKE Activity from Tor Exit Node
+    ExpectedResult: true
+    Log:
+      {
+        "operation": {"producer": "k8s.io"},
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.list",
+            "resource": "core/v1/namespaces/default/pods"
+          }],
+          "methodName": "io.k8s.core.v1.pods.list",
+          "requestMetadata": {
+            "callerIP": "8.8.8.8",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "core/v1/namespaces/default/pods",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "p_enrichment": {
+          "tor_exit_nodes": ["8.8.8.8"]
+        }
+      }
+  - Name: Non-K8s GCP Activity (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "operation": {"producer": "compute.googleapis.com"},
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "methodName": "compute.instances.list",
+          "serviceName": "compute.googleapis.com"
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_enrichment": {
+          "tor_exit_nodes": ["8.8.8.8"]
+        }
+      }
+  - Name: K8s Activity Without Tor Enrichment
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "list",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["192.168.1.1"],
+        "objectRef": {"resource": "pods"},
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Non-K8s Azure Activity (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "Administrative",
+        "operationName": "Microsoft.Compute/virtualMachines/write",
+        "p_enrichment": {
+          "tor_exit_nodes": ["1.2.3.4"]
+        }
+      }

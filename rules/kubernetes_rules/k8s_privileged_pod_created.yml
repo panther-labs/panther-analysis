@@ -1,0 +1,242 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Privileged.Created"
+DisplayName: "Kubernetes Privileged Pod Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_privileged_pod_created.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Severity: High
+Description: >
+  Detects creation of privileged pods across Kubernetes clusters. Privileged pods have full access
+  to the host's namespace and devices, have the ability to exploit the kernel, have dangerous linux
+  capabilities, and can be a powerful launching point for further attacks. In the event of a
+  successful container escape where a user is operating with root privileges, the attacker retains
+  this role on the node.
+Runbook: |
+  1. Check if the username who created the privileged pod has a history of deploying system infrastructure in the past 90 days
+  2. Review all API calls by this username in the 6 hours before the alert to understand context and related activity
+  3. Query for other privileged pods created by the same user in the past 30 days to identify if this is an established pattern
+Reference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1548 # Abuse Elevation Control Mechanism
+DedupPeriodMinutes: 360
+Tags:
+  - Kubernetes
+  - Security Control
+  - Privilege Escalation
+  - Unified Detection
+Tests:
+  - Name: EKS Privileged Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "level": "RequestResponse",
+        "auditID": "abc-123",
+        "stage": "ResponseComplete",
+        "requestURI": "/api/v1/namespaces/default/pods",
+        "verb": "create",
+        "user": {
+          "username": "john.doe@company.com",
+          "groups": ["system:authenticated"]
+        },
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "test-privileged-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "apiVersion": "v1",
+          "metadata": {"name": "test-privileged-pod", "namespace": "default"},
+          "spec": {
+            "containers": [{
+              "name": "nginx",
+              "image": "nginx",
+              "securityContext": {"privileged": true}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster",
+        "p_event_time": "2024-02-13 12:45:06.073"
+      }
+  - Name: AKS Privileged Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "resourceId": "/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.ContainerService/managedClusters/cluster",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"level\":\"RequestResponse\",\"auditID\":\"abc-123\",\"stage\":\"ResponseComplete\",\"requestURI\":\"/api/v1/namespaces/default/pods\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\",\"groups\":[\"system:authenticated\"]},\"sourceIPs\":[\"10.0.0.1\"],\"userAgent\":\"kubectl/v1.28.0\",\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"test-pod\",\"apiVersion\":\"v1\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Pod\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"test-pod\"},\"spec\":{\"containers\":[{\"name\":\"nginx\",\"image\":\"nginx\",\"securityContext\":{\"privileged\":true}}]}}}"
+        },
+        "p_source_label": "aks-cluster",
+        "p_event_time": "2024-03-20 10:00:00.000"
+      }
+  - Name: GCP GKE Privileged Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+          "authenticationInfo": {"principalEmail": "john.doe@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/test-privileged-pod"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {"name": "test-privileged-pod", "namespace": "default"},
+            "spec": {
+              "containers": [{
+                "image": "nginx",
+                "name": "nginx",
+                "securityContext": {"privileged": true}
+              }]
+            }
+          },
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/pods/test-privileged-pod",
+          "response": {
+            "@type": "core.k8s.io/v1.Pod",
+            "spec": {
+              "containers": [{
+                "image": "nginx",
+                "name": "nginx",
+                "securityContext": {"privileged": true}
+              }]
+            }
+          },
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "resource": {
+          "labels": {
+            "cluster_name": "gke-cluster",
+            "project_id": "test-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "timestamp": "2024-02-13 12:45:06.073"
+      }
+  - Name: Run-As-Root Pod Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "level": "RequestResponse",
+        "auditID": "abc-123",
+        "stage": "ResponseComplete",
+        "requestURI": "/api/v1/namespaces/default/pods",
+        "verb": "create",
+        "user": {"username": "john.doe@company.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "test-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "nginx",
+              "image": "nginx",
+              "securityContext": {"runAsNonRoot": false}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Non-Privileged Pod Created
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "john.doe@company.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "test-pod"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "nginx",
+              "image": "nginx",
+              "securityContext": {}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Error Creating Pod
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 409, "status": "Failure"},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "nginx",
+              "securityContext": {"privileged": true}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Privileged Pod in System Namespace (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:deployment-controller"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-system",
+          "name": "network-agent"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "agent",
+              "securityContext": {"privileged": true}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

@@ -1,0 +1,236 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Ingress.NoTLS"
+DisplayName: "Kubernetes Ingress Created Without TLS"
+Enabled: true
+Status: Experimental
+Filename: k8s_ingress_without_tls.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Network Security
+  - Encryption
+  - Compliance
+  - Unified Detection
+Severity: Low
+Description: >
+  This detection monitors for Ingress objects being created without TLS certificates configured. Ingresses
+  without TLS expose services over unencrypted HTTP, allowing sensitive data like passwords, tokens, and PII
+  to be transmitted in cleartext. This violates security best practices and compliance requirements like
+  PCI-DSS and HIPAA, and enables man-in-the-middle attacks.
+Runbook: |
+  1. Review the ingress specification to determine if this is an internal-only service or if TLS is terminated at an external load balancer
+  2. If TLS is required, work with the team to configure TLS certificates using cert-manager or manual certificate creation
+  3. Search for other ingresses without TLS in the past 7 days to identify if this is a systemic configuration issue
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1040 # Collection: Network Sniffing
+    - TA0006:T1552.004 # Credential Access: Unsecured Credentials - Private Keys
+Reference: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS Ingress without TLS
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "ingresses",
+          "namespace": "production",
+          "name": "api-ingress",
+          "apiGroup": "networking.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Ingress",
+          "metadata": {
+            "name": "api-ingress",
+            "namespace": "production",
+            "annotations": {
+              "kubernetes.io/ingress.class": "nginx"
+            }
+          },
+          "spec": {
+            "rules": [
+              {
+                "host": "api.example.com",
+                "http": {
+                  "paths": [
+                    {
+                      "path": "/",
+                      "backend": {
+                        "serviceName": "api-service",
+                        "servicePort": 80
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Ingress without TLS
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"ingresses\",\"namespace\":\"default\",\"name\":\"test-ingress\",\"apiGroup\":\"networking.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Ingress\",\"metadata\":{\"name\":\"test-ingress\"},\"spec\":{\"rules\":[{\"http\":{\"paths\":[{\"path\":\"/testpath\",\"backend\":{\"serviceName\":\"test\",\"servicePort\":80}}]}}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE Ingress without TLS with external DNS annotation
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.networking.v1.ingresses.create",
+            "resource": "networking.k8s.io/v1/namespaces/production/ingresses/web-ingress"
+          }],
+          "methodName": "io.k8s.networking.v1.ingresses.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "networking.k8s.io/v1/namespaces/production/ingresses/web-ingress",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "Ingress",
+            "metadata": {
+              "name": "web-ingress",
+              "annotations": {
+                "external-dns.alpha.kubernetes.io/hostname": "web.example.com"
+              }
+            },
+            "spec": {
+              "rules": [
+                {
+                  "host": "web.example.com",
+                  "http": {
+                    "paths": [{"path": "/", "backend": {"serviceName": "web", "servicePort": 8080}}]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS Ingress with TLS configured
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "objectRef": {
+          "resource": "ingresses",
+          "namespace": "production",
+          "name": "secure-ingress"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Ingress",
+          "spec": {
+            "tls": [
+              {
+                "hosts": ["api.example.com"],
+                "secretName": "api-tls-cert"
+              }
+            ],
+            "rules": [
+              {
+                "host": "api.example.com",
+                "http": {"paths": [{"path": "/", "backend": {"serviceName": "api", "servicePort": 443}}]}
+              }
+            ]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System namespace (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "ingresses",
+          "namespace": "kube-system",
+          "name": "system-ingress"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Ingress",
+          "spec": {
+            "rules": [{"http": {"paths": [{"path": "/"}]}}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "objectRef": {
+          "resource": "ingresses",
+          "namespace": "production",
+          "name": "test-ingress"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "kind": "Ingress",
+          "spec": {
+            "rules": [{"http": {"paths": [{"path": "/"}]}}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Updating existing ingress (not creating)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "ingresses",
+          "namespace": "production",
+          "name": "api-ingress"
+        },
+        "responseStatus": {"code": 200},
+        "requestObject": {
+          "kind": "Ingress",
+          "spec": {
+            "rules": [{"http": {"paths": [{"path": "/"}]}}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

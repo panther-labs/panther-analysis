@@ -1,0 +1,271 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Role.Wildcard"
+DisplayName: "Kubernetes Role With Wildcard Permissions Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_role_wildcard.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Privilege Escalation
+  - Excessive Permissions
+  - RBAC
+  - Unified Detection
+Severity: High
+Description: >
+  This detection monitors for Roles or ClusterRoles being created with wildcard (*) permissions in resources
+  or verbs. Wildcard permissions grant overly broad access, such as all operations on all resources, which
+  violates the principle of least privilege. Attackers who gain RBAC modification permissions often create
+  wildcard roles to maximize their access across the cluster without knowing specific resource names or API operations.
+Runbook: |
+  1. Review the role rules to identify the scope of wildcard permissions and determine if this role creation is expected
+  2. Identify all API operations by the creating user in the 2 hours before and after the alert and search for RoleBindings or ClusterRoleBindings that reference this role
+  3. If unauthorized, immediately delete the role and any bindings, then audit all API activity in the cluster in the past 24 hours to assess impact
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
+    - TA0005:T1222 # Defense Evasion: File and Directory Permissions Modification
+Reference: >
+  - https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping
+  - https://hub.datree.io/built-in-rules/prevent-wildcards-role-clusterrole
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - resource
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS ClusterRole with wildcard resources and verbs
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "super-admin",
+          "apiGroup": "rbac.authorization.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "metadata": {"name": "super-admin"},
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["*"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Role with wildcard verbs only
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-admin\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-admin\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"*\"]}]}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE ClusterRole with wildcard resources only
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.rbac.v1.clusterroles.create",
+            "resource": "rbac.authorization.k8s.io/v1/clusterroles/all-reader"
+          }],
+          "methodName": "io.k8s.rbac.v1.clusterroles.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "rbac.authorization.k8s.io/v1/clusterroles/all-reader",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "ClusterRole",
+            "metadata": {"name": "all-reader"},
+            "rules": [
+              {
+                "apiGroups": [""],
+                "resources": ["*"],
+                "verbs": ["get", "list", "watch"]
+              }
+            ]
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS ClusterRole with multiple rules, one with wildcard
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "suspicious-user@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "mixed-permissions",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods"],
+              "verbs": ["get", "list"]
+            },
+            {
+              "apiGroups": ["*"],
+              "resources": ["secrets"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Role with specific resources and verbs (no wildcard)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "roles",
+          "namespace": "default",
+          "name": "pod-reader",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Role",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods", "pods/log"],
+              "verbs": ["get", "list"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: ClusterRole with wildcard apiGroups only (not resources or verbs)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "api-reader",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["deployments"],
+              "verbs": ["get", "list"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating role (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:operator"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "operator-role"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["*"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "wildcard-role"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["*"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Updating existing role (not creating)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "existing-role"
+        },
+        "responseStatus": {"code": 200},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["*"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

@@ -1,0 +1,206 @@
+AnalysisType: rule
+Filename: k8s_anonymous_api_access.py
+RuleID: "Kubernetes.API.AnonymousAccess"
+DisplayName: "Kubernetes Anonymous API Access Detected"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Severity: Info
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190 # Initial Access: Exploit Public-Facing Application
+Description: >
+  This rule detects anonymous API requests made to Kubernetes API servers across
+  AWS EKS, Azure AKS, and GCP GKE clusters. In production environments, anonymous
+  access should be disabled to prevent unauthorized access to the API server.
+DedupPeriodMinutes: 60
+Reference:
+  https://raesene.github.io/blog/2023/03/18/lets-talk-about-anonymous-access-to-Kubernetes/
+Runbook: |
+  1. Query all API requests by the anonymous username (system:anonymous) in the 24 hours before and after the alert to identify scope of unauthorized access
+  2. Check if the sourceIPs field contains internal, cloud provider, or external addresses to determine access vector
+  3. Review other authentication attempts from the same sourceIPs in the past 7 days to identify related suspicious activity
+SummaryAttributes:
+  - username
+  - p_any_ip_addresses
+  - p_source_label
+Tags:
+  - Kubernetes
+  - Security Control
+  - API
+  - Initial Access
+  - Unified Detection
+Tests:
+  - Name: EKS Anonymous API Access
+    ExpectedResult: true
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abcde12345",
+        "kind": "Event",
+        "level": "Request",
+        "objectRef": {
+          "apiVersion": "v1",
+          "name": "test-pod",
+          "namespace": "default",
+          "resource": "pods"
+        },
+        "p_any_ip_addresses": ["8.8.8.8"],
+        "p_any_usernames": ["system:anonymous"],
+        "p_event_time": "2022-11-29 00:09:04.38",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
+        "requestURI": "/api/v1/namespaces/default/pods/test-pod",
+        "responseStatus": {"code": 200},
+        "sourceIPs": ["8.8.8.8"],
+        "stage": "ResponseComplete",
+        "user": {"username": "system:anonymous"},
+        "userAgent": "kubectl/v1.25.4"
+      }
+  - Name: AKS Anonymous API Access
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "resourceId": "/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.ContainerService/managedClusters/cluster",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"level\":\"Request\",\"auditID\":\"abc-123\",\"stage\":\"ResponseComplete\",\"requestURI\":\"/api/v1/namespaces/default/pods/test-pod\",\"verb\":\"get\",\"user\":{\"username\":\"system:anonymous\",\"groups\":[\"system:unauthenticated\"]},\"sourceIPs\":[\"10.0.0.1\"],\"userAgent\":\"kubectl/v1.28.0\",\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"test-pod\",\"apiVersion\":\"v1\"},\"responseStatus\":{\"code\":200},\"annotations\":{\"authorization.k8s.io/decision\":\"allow\"}}"
+        },
+        "p_any_ip_addresses": ["10.0.0.1"],
+        "p_any_usernames": ["system:anonymous"],
+        "p_source_label": "azure-aks-cluster",
+        "p_event_time": "2024-03-20 10:00:00.000"
+      }
+  - Name: GCP GKE Anonymous API Access
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"authoritySelector": "system:anonymous"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.get",
+            "resource": "core/v1/namespaces/default/pods/test-pod"
+          }],
+          "methodName": "io.k8s.core.v1.pods.get",
+          "requestMetadata": {
+            "callerIP": "8.8.8.8",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "core/v1/namespaces/default/pods/test-pod",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_any_ip_addresses": ["8.8.8.8"],
+        "p_any_usernames": ["system:anonymous"],
+        "p_source_label": "gcp-gke-cluster"
+      }
+  - Name: Non-Anonymous API Access
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abcde12345",
+        "kind": "Event",
+        "level": "Request",
+        "objectRef": {
+          "apiVersion": "v1",
+          "name": "test-pod",
+          "namespace": "default",
+          "resource": "pods"
+        },
+        "p_any_ip_addresses": ["8.8.8.8"],
+        "p_any_usernames": ["kubernetes-admin"],
+        "p_event_time": "2022-11-29 00:09:04.38",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "example-cluster-eks-logs",
+        "requestURI": "/api/v1/namespaces/default/pods/test-pod",
+        "responseStatus": {"code": 200},
+        "sourceIPs": ["8.8.8.8"],
+        "stage": "ResponseComplete",
+        "user": {"username": "kubernetes-admin"},
+        "userAgent": "kubectl/v1.25.4"
+      }
+  - Name: Localhost Access
+    ExpectedResult: false
+    Log:
+      {
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "sourceIPs": ["127.0.0.1"],
+        "user": {"username": "system:anonymous"},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: AWS EKS ELB Health Check (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "sourceIPs": ["10.0.1.100"],
+        "user": {"username": "system:anonymous"},
+        "userAgent": "ELB-HealthChecker/2.0",
+        "requestURI": "/healthz",
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: GCP GKE kube-probe Health Check (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"authoritySelector": "system:anonymous"},
+          "methodName": "io.k8s.core.v1.componentstatuses.list",
+          "requestMetadata": {
+            "callerIP": "10.128.0.1",
+            "callerSuppliedUserAgent": "kube-probe/1.28"
+          },
+          "serviceName": "k8s.io"
+        },
+        "resource": {"type": "k8s_cluster"},
+        "p_log_type": "GCP.AuditLog"
+      }
+  - Name: GCP GKE Google Load Balancer Health Check (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"authoritySelector": "system:anonymous"},
+          "methodName": "io.k8s.core.v1.componentstatuses.list",
+          "requestMetadata": {
+            "callerIP": "35.191.0.1",
+            "callerSuppliedUserAgent": "GoogleHC/1.0"
+          },
+          "serviceName": "k8s.io"
+        },
+        "resource": {"type": "k8s_cluster"},
+        "p_log_type": "GCP.AuditLog"
+      }
+  - Name: Azure AKS kube-probe Health Check (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"user\":{\"username\":\"system:anonymous\"},\"sourceIPs\":[\"10.240.0.1\"],\"userAgent\":\"kube-probe/1.28\",\"requestURI\":\"/healthz\",\"responseStatus\":{\"code\":200}}"
+        }
+      }

@@ -1,0 +1,180 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Dangerous.Capabilities"
+DisplayName: "Kubernetes Pod with Dangerous Linux Capabilities"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_dangerous_capabilities.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Privilege Escalation
+  - Container Escape
+  - Unified Detection
+Severity: High
+Description: >
+  This detection monitors for pods created with dangerous Linux capabilities such as SYS_ADMIN,
+  NET_ADMIN, or BPF. These capabilities can enable privilege escalation, container escape, or
+  unauthorized access to host resources. Attackers often add these capabilities to containers
+  to bypass security restrictions and gain elevated privileges on the underlying host.
+Runbook: |
+  1. Review all pod creation events by the username in the 24 hours before the alert to determine if this is routine deployment activity
+  2. Analyze the specific capabilities granted and their legitimate business justification for the workload
+  3. Search for other pods with dangerous capabilities deployed by this user across all clusters in the past 30 days
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1611 # Privilege Escalation: Escape to Host
+    - TA0005:T1068 # Defense Evasion: Exploitation for Privilege Escalation
+Reference: >
+  - https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  - https://www.dynatrace.com/news/blog/kubernetes-security-essentials-container-misconfigurations-from-theory-to-exploitation/
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - p_source_label
+Tests:
+  - Name: EKS Pod with SYS_ADMIN Capability
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "test-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "test",
+              "image": "nginx",
+              "securityContext": {
+                "capabilities": {
+                  "add": ["SYS_ADMIN", "NET_RAW"]
+                }
+              }
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Pod with NET_ADMIN Capability
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"user@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"network-tool\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"spec\":{\"containers\":[{\"name\":\"net\",\"securityContext\":{\"capabilities\":{\"add\":[\"NET_ADMIN\"]}}}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE Pod with BPF Capability
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/monitoring"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/pods/monitoring",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "Pod",
+            "spec": {
+              "containers": [{
+                "name": "monitor",
+                "image": "bpftrace:latest",
+                "securityContext": {
+                  "capabilities": {
+                    "add": ["BPF", "SYS_PTRACE"]
+                  }
+                }
+              }]
+            }
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Pod with Safe Capabilities Only
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "containers": [{
+              "securityContext": {
+                "capabilities": {
+                  "add": ["NET_BIND_SERVICE", "CHOWN"]
+                }
+              }
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod without Capabilities
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "containers": [{
+              "name": "app",
+              "image": "nginx"
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "spec": {
+            "containers": [{
+              "securityContext": {
+                "capabilities": {"add": ["SYS_ADMIN"]}
+              }
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

@@ -1,0 +1,258 @@
+AnalysisType: rule
+RuleID: "Kubernetes.ClusterRoleBinding.Privileged"
+DisplayName: "Kubernetes ClusterRoleBinding to Privileged Role"
+Enabled: true
+Status: Experimental
+Filename: k8s_clusterrolebinding_privileged.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Privilege Escalation
+  - Persistence
+  - RBAC
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for ClusterRoleBindings being created that grant privileged cluster
+  roles like cluster-admin or system:masters. Attackers who gain initial cluster access often create
+  ClusterRoleBindings to escalate privileges and gain full control over all cluster resources and namespaces.
+  While some bindings to privileged roles are legitimate for cluster operators, unexpected bindings should be
+  investigated immediately as they may indicate compromise or insider threat.
+Runbook: |
+  1. Review the subjects being granted the privileged role and immediately delete the ClusterRoleBinding if unauthorized
+  2. Identify all API operations by the creating user in the 2 hours before and after the alert and audit all actions by the subjects that were granted privileges
+  3. Review all ClusterRoleBindings across all clusters and search for other RBAC changes in the past 7 days
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
+    - TA0003:T1098 # Persistence: Account Manipulation
+Reference: >
+  - https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  - https://seifrajhi.github.io/blog/kubernetes-rbac-privilege-escalation-mitigation/#%EF%B8%8F-rolebinding-permissions-in-kubernetes-implications-and-safeguards
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS ClusterRoleBinding to cluster-admin
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "backdoor-admin",
+          "apiGroup": "rbac.authorization.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRoleBinding",
+          "metadata": {"name": "backdoor-admin"},
+          "roleRef": {
+            "apiGroup": "rbac.authorization.k8s.io",
+            "kind": "ClusterRole",
+            "name": "cluster-admin"
+          },
+          "subjects": [
+            {
+              "kind": "User",
+              "name": "attacker@example.com",
+              "apiGroup": "rbac.authorization.k8s.io"
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS ClusterRoleBinding to system:masters
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"clusterrolebindings\",\"name\":\"privilege-escalation\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"ClusterRoleBinding\",\"metadata\":{\"name\":\"privilege-escalation\"},\"roleRef\":{\"apiGroup\":\"rbac.authorization.k8s.io\",\"kind\":\"ClusterRole\",\"name\":\"system:masters\"},\"subjects\":[{\"kind\":\"ServiceAccount\",\"name\":\"malicious-sa\",\"namespace\":\"default\"}]}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE ClusterRoleBinding to admin role
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.rbac.v1.clusterrolebindings.create",
+            "resource": "rbac.authorization.k8s.io/v1/clusterrolebindings/admin-binding"
+          }],
+          "methodName": "io.k8s.rbac.v1.clusterrolebindings.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "rbac.authorization.k8s.io/v1/clusterrolebindings/admin-binding",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "ClusterRoleBinding",
+            "metadata": {"name": "admin-binding"},
+            "roleRef": {
+              "apiGroup": "rbac.authorization.k8s.io",
+              "kind": "ClusterRole",
+              "name": "admin"
+            },
+            "subjects": [
+              {
+                "kind": "User",
+                "name": "user@company.com"
+              }
+            ]
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS ClusterRoleBinding to controller-manager role
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "suspicious-user@example.com"},
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "controller-access",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "roleRef": {
+            "kind": "ClusterRole",
+            "name": "system:kube-controller-manager"
+          },
+          "subjects": [
+            {
+              "kind": "ServiceAccount",
+              "name": "attacker-sa",
+              "namespace": "default"
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: ClusterRoleBinding to non-privileged role
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "view-binding",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "roleRef": {
+            "kind": "ClusterRole",
+            "name": "view"
+          },
+          "subjects": [
+            {
+              "kind": "User",
+              "name": "readonly-user@example.com"
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: RoleBinding (not ClusterRoleBinding)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "rolebindings",
+          "namespace": "default",
+          "name": "admin-binding",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "roleRef": {
+            "kind": "ClusterRole",
+            "name": "cluster-admin"
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating binding (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:controller"},
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "system-binding"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "roleRef": {
+            "kind": "ClusterRole",
+            "name": "cluster-admin"
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "backdoor"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "roleRef": {
+            "kind": "ClusterRole",
+            "name": "cluster-admin"
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Reading ClusterRoleBinding (not creating)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterrolebindings",
+          "name": "admin-binding"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
