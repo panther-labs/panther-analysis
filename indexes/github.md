@@ -5,7 +5,7 @@
 - [GitHub Action Failed](../rules/github_rules/github_action_failed.yml)
   - A monitored github action has failed.
 - [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)
-  - Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
+  - Identifies when GitHub Advanced Security (GHAS) settings are modified without the repository being archived within 90 minutes. GHAS provides code scanning, secret scanning, and dependency review to detect vulnerabilities and exposed credentials. Disabling GHAS while keeping repositories active suggests attackers hiding malicious code, preventing security alert detection, or facilitating backdoors and supply chain attacks.
 - [GitHub Artifact Download from Cross-Fork Workflow](../correlation_rules/github_artifact_download_from_forked_repo.yml)
   - The "download artifacts" API, and various custom actions encapsulating it, doesn't differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.
 - [GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.yml)
@@ -27,7 +27,7 @@
 - [GitHub Malicious Pull Request Content](../rules/github_rules/github_malicious_pr_titles.yml)
   - Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.
 - [GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.yml)
-  - Detects changes to GitHub org authentication changes.
+  - Detects critical changes to GitHub organization authentication settings including SAML SSO, 2FA requirements, SAML provider configuration, and OAuth restrictions. These foundational security controls protect entire organizations, and unauthorized modifications can enable attackers to bypass identity management, maintain persistence, or prepare for data exfiltration. Legitimate changes are rare and should be well-documented with proper authorization.
 - [GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.yml)
   - Detects changes to a GitHub Org IP Allow List
 - [Github Organization App Integration Installed](../rules/github_rules/github_organization_app_integration_installed.yml)

@@ -44,6 +44,8 @@
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [Okta Login Without Push](../correlation_rules/okta_login_without_push.yml)
+  - Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
 - [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
   - An admin user has disabled the MFA requirement for your Okta account
 - [Okta New Behaviors Acessing Admin Console](../rules/okta_rules/okta_new_behavior_accessing_admin_console.yml)
@@ -78,6 +80,8 @@
   - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
 - [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
   - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
+  - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
