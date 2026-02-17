@@ -26,6 +26,8 @@ Runbook: |
   2. Find all RoleBindings or ClusterRoleBindings that reference this role name in the 24 hours after creation to determine who was granted these permissions
   3. Search for API operations to nodes/proxy endpoints from the p_source_label cluster in the past 7 days to identify if these permissions have been exploited
 Reports:
+  Stratus Red Team:
+    - k8s.privilege-escalation.nodes-proxy
   MITRE ATT&CK:
     - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
     - TA0005:T1562.001 # Defense Evasion: Impair Defenses - Disable or Modify Tools

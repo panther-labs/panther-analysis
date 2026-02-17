@@ -26,6 +26,9 @@ Runbook: |
   2. Identify all API operations by the creating user in the 2 hours before and after the alert and audit all actions by the subjects that were granted privileges
   3. Review all ClusterRoleBindings across all clusters and search for other RBAC changes in the past 7 days
 Reports:
+  Stratus Red Team:
+    - k8s.persistence.create-admin-clusterrole
+    - k8s.privilege-escalation.create-admin-clusterrole
   MITRE ATT&CK:
     - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
     - TA0003:T1098 # Persistence: Account Manipulation
