@@ -59,7 +59,7 @@
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
   - A Google drive resource became externally accessible.
 - [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
-  - GSuite reported that it detected a government backed attack against your account.
+  - Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
 - [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
   - Detects when a user click links contained in a received email that is classified as spam.
 - [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
