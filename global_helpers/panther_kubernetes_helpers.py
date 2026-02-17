@@ -196,6 +196,9 @@ def is_privileged_container(containers):
         if security_context.get("runAsNonRoot") is False:
             return True
 
+        if security_context.get("runAsUser") == 0:
+            return True
+
     return False
 
 
