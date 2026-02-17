@@ -3,7 +3,8 @@ from panther_kubernetes_helpers import k8s_alert_context
 
 def is_system_access(event):
     # Skip localhost and health check traffic
-    src_ip = event.udm("sourceIPs") or ["0.0.0.0"]  # nosec
+    # nosec: Fallback to empty list is safe - we check for localhost separately
+    src_ip = event.udm("sourceIPs") or []
     if src_ip == ["127.0.0.1"]:
         return True
 

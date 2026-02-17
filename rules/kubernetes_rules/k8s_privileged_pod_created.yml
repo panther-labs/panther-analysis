@@ -22,7 +22,7 @@ Runbook: |
 Reference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
 Reports:
   MITRE ATT&CK:
-    - TA0004:T1548 # Abuse Elevation Control Mechanism
+    - TA0004:T1548.003 # Abuse Elevation Control Mechanism: Sudo and Sudo Caching
 DedupPeriodMinutes: 360
 Tags:
   - Kubernetes
@@ -164,6 +164,35 @@ Tests:
               "name": "nginx",
               "image": "nginx",
               "securityContext": {"runAsNonRoot": false}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Pod with runAsUser=0 (root)
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "developer@company.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "root-user-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{
+              "name": "nginx",
+              "image": "nginx",
+              "securityContext": {"runAsUser": 0}
             }]
           }
         },

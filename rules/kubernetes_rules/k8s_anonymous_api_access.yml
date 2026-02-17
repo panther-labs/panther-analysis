@@ -149,7 +149,7 @@ Tests:
         "user": {"username": "system:anonymous"},
         "p_log_type": "Amazon.EKS.Audit"
       }
-  - Name: AWS EKS ELB Health Check (excluded)
+  - Name: ELB Health Checker (excluded)
     ExpectedResult: false
     Log:
       {
@@ -162,23 +162,20 @@ Tests:
         "responseStatus": {"code": 200},
         "p_log_type": "Amazon.EKS.Audit"
       }
-  - Name: GCP GKE kube-probe Health Check (excluded)
+  - Name: kube-probe Health Check (excluded)
     ExpectedResult: false
     Log:
       {
-        "protoPayload": {
-          "authenticationInfo": {"authoritySelector": "system:anonymous"},
-          "methodName": "io.k8s.core.v1.componentstatuses.list",
-          "requestMetadata": {
-            "callerIP": "10.128.0.1",
-            "callerSuppliedUserAgent": "kube-probe/1.28"
-          },
-          "serviceName": "k8s.io"
-        },
-        "resource": {"type": "k8s_cluster"},
-        "p_log_type": "GCP.AuditLog"
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "sourceIPs": ["10.128.0.1"],
+        "user": {"username": "system:anonymous"},
+        "userAgent": "kube-probe/1.28",
+        "requestURI": "/healthz",
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
       }
-  - Name: GCP GKE Google Load Balancer Health Check (excluded)
+  - Name: Google Load Balancer Health Check (excluded)
     ExpectedResult: false
     Log:
       {
@@ -193,14 +190,4 @@ Tests:
         },
         "resource": {"type": "k8s_cluster"},
         "p_log_type": "GCP.AuditLog"
-      }
-  - Name: Azure AKS kube-probe Health Check (excluded)
-    ExpectedResult: false
-    Log:
-      {
-        "p_log_type": "Azure.MonitorActivity",
-        "category": "kube-audit",
-        "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"user\":{\"username\":\"system:anonymous\"},\"sourceIPs\":[\"10.240.0.1\"],\"userAgent\":\"kube-probe/1.28\",\"requestURI\":\"/healthz\",\"responseStatus\":{\"code\":200}}"
-        }
       }

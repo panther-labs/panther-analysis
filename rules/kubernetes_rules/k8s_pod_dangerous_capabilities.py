@@ -8,10 +8,10 @@ from panther_kubernetes_helpers import (
 
 # Dangerous Linux capabilities that enable privilege escalation or container escape
 DANGEROUS_CAPABILITIES = {
-    "SYS_ADMIN",  # Most powerful - can do almost anything
-    "NET_ADMIN",  # Network manipulation, can sniff traffic
-    "BPF",  # eBPF programs, kernel-level access
-    "SYS_PTRACE",  # Process tracing, can read other process memory
+    "SYS_ADMIN",  # Most powerful
+    "NET_ADMIN",  # Network manipulation
+    "BPF",  # eBPF programs
+    "SYS_PTRACE",  # Process tracing
     "SYS_MODULE",  # Load kernel modules
     "DAC_READ_SEARCH",  # Bypass file read permission checks
     "DAC_OVERRIDE",  # Bypass file permission checks

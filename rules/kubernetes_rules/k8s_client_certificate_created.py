@@ -36,7 +36,7 @@ def title(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     name = event.udm("name") or "<UNKNOWN_CSR>"
 
-    return f"[{username}] created client certificate signing request {name}]"
+    return f"[{username}] created client certificate signing request [{name}]"
 
 
 def dedup(event):

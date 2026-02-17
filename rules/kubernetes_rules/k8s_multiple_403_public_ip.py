@@ -18,7 +18,8 @@ def rule(event):
         source_ip = source_ips[0]
         ip_obj = ip_address(source_ip)
         # alert on public IPs
-        if ip_obj.is_global:
+        # Check if is_global attribute exists (Python 3.4+)
+        if hasattr(ip_obj, "is_global") and ip_obj.is_global:
             return True
     except (ValueError, IndexError):
         return False

@@ -52,9 +52,9 @@ def title(event):
     action = "deleted" if verb == "delete" else "modified"
 
     if namespace != "<CLUSTER_SCOPED>":
-        return f"[{username}] {action} system {role_type} [{namespace}/{name}] " f""
+        return f"[{username}] {action} system {role_type} [{namespace}/{name}]"
 
-    return f"[{username}] {action} system {role_type} [{name}] " f""
+    return f"[{username}] {action} system {role_type} [{name}]"
 
 
 def dedup(event):
