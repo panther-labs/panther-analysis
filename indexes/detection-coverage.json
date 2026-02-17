@@ -6000,6 +6000,17 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "This detection monitors for Roles or ClusterRoles being created with permissions to access node proxy endpoints (nodes/proxy or nodes/*). These permissions allow users to access the kubelet API through the Kubernetes API server proxy, enabling privilege escalation by executing commands on nodes, accessing container logs and filesystems, and potentially escaping to the underlying host. This technique is documented by Stratus Red Team as a privilege escalation vector.",
+        "DisplayName": "Kubernetes Role With Node Proxy Permissions Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_role_node_proxy_permissions.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This detection monitors for Roles or ClusterRoles being created that grant permissions to exec into pods. The pods/exec subresource allows executing arbitrary commands inside containers, which can be abused for lateral movement, credential theft, or container escape. Attackers who gain RBAC modification permissions often create roles with pods/exec to establish backdoor access for executing commands across the cluster.",
         "DisplayName": "Kubernetes Role With Pod Exec Permissions Created",
         "LogTypes": [
