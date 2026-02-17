@@ -1,0 +1,204 @@
+AnalysisType: rule
+RuleID: "Kubernetes.ClientCertificate.Created"
+DisplayName: "Kubernetes Client Certificate Credential Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_client_certificate_created.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Persistence
+  - Credential Access
+  - Unified Detection
+Severity: Info
+Description: >
+  Detects the creation of client certificate signing requests (CSRs) for Kubernetes API authentication. Attackers with
+  appropriate RBAC permissions can create and approve client certificates to establish persistent access to the cluster.
+  Client certificates provide long-term authentication that bypasses service account token expiration and can be harder
+  to revoke. This technique is documented by Stratus Red Team as a persistence mechanism.
+Runbook: |
+  1. Immediately investigate the user creating the certificate and verify if they are authorized to create client auth credentials
+  2. Check if the CSR was approved and review who approved it within the last 10 minutes by searching audit logs for certificate approval events
+  3. Search for API activity using the newly created certificate in the past 24 hours to identify any unauthorized access
+Reports:
+  Stratus Red Team:
+    - k8s.persistence.create-client-certificate
+  MITRE ATT&CK:
+    - TA0003:T1098 # Persistence: Account Manipulation
+    - TA0006:T1552 # Credential Access: Unsecured Credentials
+Reference: https://stratus-red-team.cloud/attack-techniques/kubernetes/k8s.persistence.create-client-certificate/
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS client certificate CSR created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "malicious-csr",
+          "apiVersion": "certificates.k8s.io/v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "apiVersion": "certificates.k8s.io/v1",
+          "kind": "CertificateSigningRequest",
+          "metadata": {"name": "malicious-csr"},
+          "spec": {
+            "groups": ["system:authenticated"],
+            "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0=",
+            "signerName": "kubernetes.io/kube-apiserver-client",
+            "usages": ["client auth"]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS client certificate CSR created
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"persistence-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"certificatesigningrequests\",\"name\":\"backdoor-cert\",\"apiVersion\":\"certificates.k8s.io/v1\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"spec\":{\"signerName\":\"kubernetes.io/kube-apiserver-client\",\"usages\":[\"client auth\"]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE client certificate CSR created
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.certificates.v1.certificatesigningrequests.create",
+            "resource": "certificates.k8s.io/v1/certificatesigningrequests/persistence-csr"
+          }],
+          "methodName": "io.k8s.certificates.v1.certificatesigningrequests.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "certificates.k8s.io/v1/certificatesigningrequests/persistence-csr",
+          "serviceName": "k8s.io",
+          "request": {
+            "spec": {
+              "signerName": "kubernetes.io/kube-apiserver-client",
+              "usages": ["client auth"],
+              "groups": ["system:authenticated"]
+            }
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Service account creating certificate (higher severity)
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:default:compromised-sa"},
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "sa-cert"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "signerName": "kubernetes.io/kube-apiserver-client",
+            "usages": ["client auth"]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating certificate (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:kube-controller-manager"},
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "system-cert"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "signerName": "kubernetes.io/kube-apiserver-client",
+            "usages": ["client auth"]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed CSR creation (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "failed-csr"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "spec": {
+            "signerName": "kubernetes.io/kube-apiserver-client",
+            "usages": ["client auth"]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Server auth certificate (not client auth)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "server-cert"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "signerName": "kubernetes.io/kubelet-serving",
+            "usages": ["server auth"]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Get CSR (not creation)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "certificatesigningrequests",
+          "name": "existing-csr"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }

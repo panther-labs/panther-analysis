@@ -1231,7 +1231,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)",
+        "Description": "Detects EC2 instances launched using Amazon Machine Images containing vulnerable XZ Utils library versions (5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a backdoor allowing remote attackers to bypass SSH authentication on affected Linux systems. The rule monitors CloudTrail RunInstances events and checks AMI IDs against known vulnerable images.",
         "DisplayName": "AWS EC2 Vulnerable XZ Image Launched",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -1267,7 +1267,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "A critical-severity GuardDuty finding has been identified.",
+        "Description": "Detects critical-severity findings (9.0/9.0) from AWS GuardDuty indicating active compromise, imminent data loss, or ongoing attacks. GuardDuty uses machine learning and threat intelligence to identify compromised credentials, cryptocurrency mining, data exfiltration, and connections to malicious infrastructure. This rule filters out sample data and alerts only on genuine critical threats requiring immediate investigation.",
         "DisplayName": "AWS GuardDuty Critical Severity Finding",
         "LogTypes": [
             "AWS.GuardDuty"
@@ -1798,7 +1798,7 @@
     },
     {
         "AnalysisType": "Policy",
-        "Description": "This policy validates that no programmatic access keys exist for the root account.",
+        "Description": "Validates that no programmatic access keys exist for the AWS root account. Root access keys provide unrestricted access to all AWS resources and cannot have permissions limited. If compromised, these keys grant attackers complete account control including resource modification, data access, and billing changes.",
         "DisplayName": "AWS Root Account Access Keys",
         "LogTypes": [
             "AWS.IAM.RootUser"
@@ -1816,7 +1816,7 @@
     },
     {
         "AnalysisType": "Policy",
-        "Description": "This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.",
+        "Description": "Validates that Multi-Factor Authentication (MFA) is enabled for the AWS root account. The root account has complete unrestricted access to all AWS resources and is the highest-value target for attackers. Without MFA, accounts are vulnerable to phishing, credential stuffing, and password compromise attacks.",
         "DisplayName": "AWS Root Account MFA",
         "LogTypes": [
             "AWS.IAM.RootUser"
@@ -1951,7 +1951,7 @@
     },
     {
         "AnalysisType": "Policy",
-        "Description": "Ensures that the S3 bucket is not publicly writeable.",
+        "Description": "Ensures S3 buckets are not publicly writeable, preventing critical security vulnerabilities. Public write access allows attackers to upload malicious content, delete legitimate data, or consume storage for massive AWS bills. Attackers can use writable buckets for C2 infrastructure, malware distribution, or supply chain attacks.",
         "DisplayName": "AWS S3 Bucket Public Write",
         "LogTypes": [
             "AWS.S3.Bucket"
@@ -2348,7 +2348,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detection to alert when a WAF disassociates from a source.",
+        "Description": "Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.",
         "DisplayName": "AWS WAF Disassociation",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -3482,7 +3482,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects usage of tools commonly used for credential dumping.",
+        "Description": "Detects execution of credential dumping tools like Mimikatz, ProcDump, and Lazagne that extract passwords, hashes, and Kerberos tickets from memory and credential stores. These tools enable lateral movement, privilege escalation, and persistent access by allowing attackers to authenticate as legitimate users. This detection identifies a critical attack phase where adversaries transition from initial compromise to broader network access.",
         "DisplayName": "Crowdstrike Credential Dumping Tool",
         "LogTypes": [
             "Crowdstrike.FDREvent"
@@ -3491,8 +3491,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects the execution of known crytocurrency mining tools.",
-        "DisplayName": "Crowdstrike Cryptomining Tools ",
+        "Description": "Detects execution of cryptocurrency mining tools like XMRig, CGMiner, and ETHMiner that hijack computing resources for unauthorized financial gain. These tools consume significant CPU/GPU resources, degrade system performance, and increase costs. Unauthorized deployment typically indicates compromise through malware, supply chain attacks, or exploitation of vulnerable services.",
+        "DisplayName": "Crowdstrike Cryptomining Tools",
         "LogTypes": [
             "Crowdstrike.FDREvent"
         ],
@@ -3792,7 +3792,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "A DNS request was made to a domain on an explicit denylist",
+        "Description": "Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.",
         "DisplayName": "DNS request to denylisted domain",
         "LogTypes": [
             "Crowdstrike.DNSRequest",
@@ -4820,7 +4820,7 @@
     },
     {
         "AnalysisType": "Correlation Rule",
-        "Description": "Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.",
+        "Description": "Identifies when GitHub Advanced Security (GHAS) settings are modified without the repository being archived within 90 minutes. GHAS provides code scanning, secret scanning, and dependency review to detect vulnerabilities and exposed credentials. Disabling GHAS while keeping repositories active suggests attackers hiding malicious code, preventing security alert detection, or facilitating backdoors and supply chain attacks.",
         "DisplayName": "GitHub Advanced Security Change WITHOUT Repo Archived",
         "LogTypes": [
             "GitHub.Audit"
@@ -4919,7 +4919,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects changes to GitHub org authentication changes.",
+        "Description": "Detects critical changes to GitHub organization authentication settings including SAML SSO, 2FA requirements, SAML provider configuration, and OAuth restrictions. These foundational security controls protect entire organizations, and unauthorized modifications can enable attackers to bypass identity management, maintain persistence, or prepare for data exfiltration. Legitimate changes are rare and should be well-documented with proper authorization.",
         "DisplayName": "GitHub Org Authentication Method Changed",
         "LogTypes": [
             "GitHub.Audit"
@@ -5396,7 +5396,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "GSuite reported that it detected a government backed attack against your account.",
+        "Description": "Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.",
         "DisplayName": "GSuite Government Backed Attack",
         "LogTypes": [
             "GSuite.ActivityEvent"
@@ -5751,6 +5751,83 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).",
+        "DisplayName": "Kubernetes Admission Controller Webhook Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_admission_controller_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for cluster-wide secret list operations that dump all secrets across all namespaces in a single API call. Attackers with list secrets permissions at the cluster level can trivially access every secret in the cluster using the LIST /api/v1/secrets API, exposing all credentials, tokens, and sensitive configuration data. This is a known attack technique documented by Stratus Red Team and represents mass credential theft.",
+        "DisplayName": "Kubernetes All Secrets Dumped Across Namespaces",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This rule detects anonymous API requests made to Kubernetes API servers across AWS EKS, Azure AKS, and GCP GKE clusters. In production environments, anonymous access should be disabled to prevent unauthorized access to the API server.",
+        "DisplayName": "Kubernetes Anonymous API Access Detected",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_anonymous_api_access.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Kubernetes API requests originating from known Indicators of Compromise, specifically Tor exit nodes. Tor usage may indicate attempts to hide the true source of malicious activity or unauthorized access attempts. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.",
+        "DisplayName": "Kubernetes API Activity from Tor Exit Node",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_ioc_activity.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection identifies when a public source IP generates multiple 403 (Forbidden) responses from the Kubernetes API server. This pattern may indicate reconnaissance attempts, permission enumeration, brute force attacks, or misconfigured access. Private IPs are excluded as they typically represent legitimate internal traffic.",
+        "DisplayName": "Kubernetes API Multiple 403 Responses from Single Public IP",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_multiple_403_public_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects the creation of client certificate signing requests (CSRs) for Kubernetes API authentication. Attackers with appropriate RBAC permissions can create and approve client certificates to establish persistent access to the cluster. Client certificates provide long-term authentication that bypasses service account token expiration and can be harder to revoke. This technique is documented by Stratus Red Team as a persistence mechanism.",
+        "DisplayName": "Kubernetes Client Certificate Credential Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_client_certificate_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for ClusterRoleBindings being created that grant privileged cluster roles like cluster-admin or system:masters. Attackers who gain initial cluster access often create ClusterRoleBindings to escalate privileges and gain full control over all cluster resources and namespaces. While some bindings to privileged roles are legitimate for cluster operators, unexpected bindings should be investigated immediately as they may indicate compromise or insider threat.",
+        "DisplayName": "Kubernetes ClusterRoleBinding to Privileged Role",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_clusterrolebinding_privileged.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.",
         "DisplayName": "Kubernetes Cron Job Created or Modified",
@@ -5758,6 +5835,93 @@
             "Amazon.EKS.Audit"
         ],
         "YAMLPath": "queries/kubernetes_queries/kubernetes_cron_job_created_or_modified_query.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for creation or modification of CronJobs in Kubernetes clusters. Attackers may create or modify scheduled jobs to achieve cluster persistence, execute malicious code on a schedule, or maintain backdoor access to compromised clusters. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.",
+        "DisplayName": "Kubernetes CronJob Created or Modified",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_cronjob_created_or_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for creation of DaemonSets in Kubernetes clusters. DaemonSets ensure that a copy of a pod runs on all (or selected) nodes in the cluster. Attackers may abuse DaemonSets to deploy malicious containers across all nodes for cluster-wide persistence, credential harvesting, cryptomining, or lateral movement. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.",
+        "DisplayName": "Kubernetes DaemonSet Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_daemonset_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for kubectl cp operations that copy files from pods to local machines, which can indicate data exfiltration. When kubectl cp is used to copy files from a pod, it executes a tar command with stdout output (tar cf -) inside the container and streams the data back through the Kubernetes API server. Attackers who gain cluster access can use this technique to steal application secrets, credentials, configuration files, or sensitive data from container filesystems without leaving obvious traces inside the pod itself. While kubectl cp has legitimate uses for debugging and backup, unexpected usage should be investigated.",
+        "DisplayName": "Kubernetes Data Copy via kubectl cp",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_kubectl_cp_operation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when users exec into pods across Kubernetes clusters. Execing into pods should be monitored as it can be used for unauthorized access, privilege escalation, or persistent access to workloads. This detection is disabled by default and should be configured with inline filters in the Panther UI to exclude legitimate use cases (e.g., specific service accounts, namespaces, or authorized users).",
+        "DisplayName": "Kubernetes Exec Into Pod",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_exec_into_pod.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Ingress objects being created without TLS certificates configured. Ingresses without TLS expose services over unencrypted HTTP, allowing sensitive data like passwords, tokens, and PII to be transmitted in cleartext. This violates security best practices and compliance requirements like PCI-DSS and HIPAA, and enables man-in-the-middle attacks.",
+        "DisplayName": "Kubernetes Ingress Created Without TLS",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_ingress_without_tls.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects the creation of long-lived service account tokens via the serviceaccounts/token subresource. Kubernetes 1.24+ deprecated automatic token creation, but users with appropriate permissions can still manually create non-expiring tokens for service accounts. Attackers can abuse this to establish persistent access credentials that don't expire automatically. This technique is documented by Stratus Red Team as a persistence mechanism. Note: GCP GKE does not log TokenRequest API operations in Kubernetes audit logs.",
+        "DisplayName": "Kubernetes Long-Lived Service Account Token Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_serviceaccount_token_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for any Kubernetes service deployed with type NodePort. A NodePort service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.",
+        "DisplayName": "Kubernetes NodePort Service Deployed",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_service_nodeport.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed compute on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.",
+        "DisplayName": "Kubernetes Pod Attached To Host Network",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_host_network.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
@@ -5769,11 +5933,165 @@
         "YAMLPath": "queries/kubernetes_queries/kubernetes_pod_in_default_name_space_query.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for pods being created in system namespaces like kube-system, kube-public, gke-system, or kube-node-lease. These namespaces are reserved for Kubernetes control plane components and cluster infrastructure. Attackers who gain cluster access may create malicious pods in system namespaces to hide among legitimate system workloads, gain elevated privileges, or establish persistence mechanisms that are less likely to be noticed.",
+        "DisplayName": "Kubernetes Pod Created in System Namespace",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_created_in_system_namespace.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for pods created with hostIPC set to true, which allows the pod to use the host's IPC namespace. This breaks isolation between the pod and the host system, giving the pod direct access to shared memory segments, semaphores, and message queues on the host. Attackers can abuse this to communicate with or interfere with processes on the host system or other containers using the same IPC namespace.",
+        "DisplayName": "Kubernetes Pod Using Host IPC Namespace",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_host_ipc.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as the host's processes. This can offer a powerful escape hatch to the underlying host.",
+        "DisplayName": "Kubernetes Pod Using Host PID Namespace",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_host_pid.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for pods created with dangerous Linux capabilities such as SYS_ADMIN, NET_ADMIN, or BPF. These capabilities can enable privilege escalation, container escape, or unauthorized access to host resources. Attackers often add these capabilities to containers to bypass security restrictions and gain elevated privileges on the underlying host.",
+        "DisplayName": "Kubernetes Pod with Dangerous Linux Capabilities",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_dangerous_capabilities.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.",
+        "DisplayName": "Kubernetes Pod With HostPath Volume Mount",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_pod_hostpath_volume.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation of privileged pods across Kubernetes clusters. Privileged pods have full access to the host's namespace and devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks. In the event of a successful container escape where a user is operating with root privileges, the attacker retains this role on the node.",
+        "DisplayName": "Kubernetes Privileged Pod Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_privileged_pod_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Roles or ClusterRoles being created with permissions to access node proxy endpoints (nodes/proxy or nodes/*). These permissions allow users to access the kubelet API through the Kubernetes API server proxy, enabling privilege escalation by executing commands on nodes, accessing container logs and filesystems, and potentially escaping to the underlying host. This technique is documented by Stratus Red Team as a privilege escalation vector.",
+        "DisplayName": "Kubernetes Role With Node Proxy Permissions Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_role_node_proxy_permissions.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Roles or ClusterRoles being created that grant permissions to exec into pods. The pods/exec subresource allows executing arbitrary commands inside containers, which can be abused for lateral movement, credential theft, or container escape. Attackers who gain RBAC modification permissions often create roles with pods/exec to establish backdoor access for executing commands across the cluster.",
+        "DisplayName": "Kubernetes Role With Pod Exec Permissions Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_role_pod_exec.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Roles or ClusterRoles being created with wildcard (*) permissions in resources or verbs. Wildcard permissions grant overly broad access, such as all operations on all resources, which violates the principle of least privilege. Attackers who gain RBAC modification permissions often create wildcard roles to maximize their access across the cluster without knowing specific resource names or API operations.",
+        "DisplayName": "Kubernetes Role With Wildcard Permissions Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_role_wildcard.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.",
+        "DisplayName": "Kubernetes Role With Write Permissions Created",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_role_write_permissions.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.",
+        "DisplayName": "Kubernetes Secret Access Denied",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_secret_access_denied.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.",
+        "DisplayName": "Kubernetes Service Account Token Theft from Pod",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "This detection monitors for any kubernetes service deployed with type node port. A Node Port service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.",
         "DisplayName": "Kubernetes Service with Type Node Port Deployed",
         "LogTypes": [],
         "YAMLPath": "queries/kubernetes_queries/kubernetes_service_type_node_port_deployed_query.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection identifies when Kubernetes system principals (service accounts with usernames starting with \"system:\", \"eks:\", or \"aks:\") are accessed from non-cloud provider public IP addresses. System principals should only operate from within the cluster (private IPs) or from legitimate cloud infrastructure. Access from external public IPs indicates potential service account token theft or compromise, often following initial access to a cluster.",
+        "DisplayName": "Kubernetes System Principal Accessed from Non-Cloud Public IP",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_system_principal_public_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "This detection monitors for modifications or deletions of system ClusterRoles/Roles (those starting with \"system:\"). These are built-in Kubernetes roles for control plane components like kube-scheduler, kube-controller-manager, and system:admin. Tampering with system roles can break cluster functionality, create privilege escalation backdoors, or disable security controls. Legitimate modifications to system roles are extremely rare outside of cluster upgrades.",
+        "DisplayName": "Kubernetes System Role Modified or Deleted",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_system_role_modified.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6469,6 +6787,16 @@
         "YAMLPath": "queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.",
+        "DisplayName": "Okta Login Without Push",
+        "LogTypes": [
+            "Okta.SystemLog",
+            "PushSecurity.Activity"
+        ],
+        "YAMLPath": "correlation_rules/okta_login_without_push.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "An admin user has disabled the MFA requirement for your Okta account",
         "DisplayName": "Okta MFA Globally Disabled",
@@ -6892,6 +7220,16 @@
         "YAMLPath": "queries/kubernetes_queries/kubernetes_pod_create_or_modify_host_path_vol_mount_query.yml"
     },
     {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.",
+        "DisplayName": "Potential Compromised Okta Credentials",
+        "LogTypes": [
+            "Okta.SystemLog",
+            "PushSecurity.Controls"
+        ],
+        "YAMLPath": "correlation_rules/potential_compromised_okta_credentials.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.",
         "DisplayName": "Privileged Pod Created",
@@ -7046,7 +7384,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "An access key was created for the Root account",
+        "Description": "Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.",
         "DisplayName": "Root Account Access Key Created",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -7336,8 +7674,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when slack admin invalidates user session(s). If it happens more than once in a 24 hour period it can lead to DoS",
-        "DisplayName": "Slack Denial of Service",
+        "Description": "Detects potential DoS attacks via excessive session invalidation when administrators reset user sessions 60+ times within 24 hours. Repeated session termination prevents users from maintaining Slack access, disrupting communication and productivity. Legitimate session resets for incident response or troubleshooting typically occur 1-3 times, so reaching the 60-event threshold indicates malicious intent.",
+        "DisplayName": "Slack Denial of Service via Session Invalidation",
         "LogTypes": [
             "Slack.AuditLogs"
         ],
@@ -7372,8 +7710,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when a workspace is no longer enrolled or managed by EKM",
-        "DisplayName": "Slack EKM Unenrolled",
+        "Description": "Detects when Slack Enterprise Key Management (EKM) is unenrolled, removing customer-controlled encryption and reverting to Slack-managed keys. EKM allows organizations to store encryption keys externally (e.g., AWS KMS), ensuring data remains protected even from Slack infrastructure compromise. Unenrollment exposes all workspace data to decryption by Slack systems and violates compliance requirements for regulated industries.",
+        "DisplayName": "Slack Enterprise Key Management Unenrolled",
         "LogTypes": [
             "Slack.AuditLogs"
         ],
@@ -7399,15 +7737,6 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects the disabling of Microsoft Intune Enterprise MDM within Slack",
-        "DisplayName": "Slack Intune MDM Disabled",
-        "LogTypes": [
-            "Slack.AuditLogs"
-        ],
-        "YAMLPath": "rules/slack_rules/slack_intune_mdm_disabled.yml"
-    },
-    {
-        "AnalysisType": "Rule",
         "Description": "Detects changes to configured legal hold policies",
         "DisplayName": "Slack Legal Hold Policy Modified",
         "LogTypes": [
@@ -7423,6 +7752,15 @@
             "Slack.AuditLogs"
         ],
         "YAMLPath": "rules/slack_rules/slack_mfa_settings_changed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when Microsoft Intune MDM integration is disabled for Slack, removing mobile security controls and enabling data exfiltration via unmanaged devices. Intune enforces policies preventing copy/paste to unmanaged apps, requires device encryption, blocks jailbroken devices, and enables remote wipe. Disabling these controls allows unrestricted Slack access from personal or compromised devices without security restrictions.",
+        "DisplayName": "Slack Microsoft Intune Mobile Device Management Disabled",
+        "LogTypes": [
+            "Slack.AuditLogs"
+        ],
+        "YAMLPath": "rules/slack_rules/slack_intune_mdm_disabled.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -7444,12 +7782,21 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when a potentially malicious file is shared within Slack",
+        "Description": "Detects when Slack's automated security scanning identifies malicious files uploaded to the workspace, indicating malware delivery or phishing attempts. Slack scans for executable malware, ransomware, phishing documents, malicious scripts, and files matching threat actor signatures. This detection indicates compromised accounts, insider threats, or successful phishing attacks where users uploaded infected files.",
         "DisplayName": "Slack Potentially Malicious File Shared",
         "LogTypes": [
             "Slack.AuditLogs"
         ],
         "YAMLPath": "rules/slack_rules/slack_potentially_malicious_file_shared.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects Slack Primary Owner transfers, representing the highest administrative privilege change with absolute control over workspace settings, security, billing, and data access. Primary Owners can add/remove all admins, delete entire workspaces, and transfer ownership. Unauthorized transfers indicate account compromise, insider threats, or hostile takeovers that could lead to permanent data loss or complete security control loss.",
+        "DisplayName": "Slack Primary Owner Transferred",
+        "LogTypes": [
+            "Slack.AuditLogs"
+        ],
+        "YAMLPath": "rules/slack_rules/slack_service_owner_transferred.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -7459,15 +7806,6 @@
             "Slack.AuditLogs"
         ],
         "YAMLPath": "rules/slack_rules/slack_private_channel_made_public.yml"
-    },
-    {
-        "AnalysisType": "Rule",
-        "Description": "Detects transferring of service owner on request from primary owner",
-        "DisplayName": "Slack Service Owner Transferred",
-        "LogTypes": [
-            "Slack.AuditLogs"
-        ],
-        "YAMLPath": "rules/slack_rules/slack_service_owner_transferred.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -7561,7 +7899,7 @@
     },
     {
         "AnalysisType": "Correlation Rule",
-        "Description": "In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim\u2019s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization\u2019s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer\u2019s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.",
+        "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
             "Snowflake.AccountUsage"

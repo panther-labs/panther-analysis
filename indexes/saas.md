@@ -107,7 +107,7 @@
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
   - A Google drive resource became externally accessible.
 - [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
-  - GSuite reported that it detected a government backed attack against your account.
+  - Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
 - [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
   - Detects when a user click links contained in a received email that is classified as spam.
 - [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
@@ -208,6 +208,8 @@
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [Okta Login Without Push](../correlation_rules/okta_login_without_push.yml)
+  - Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
 - [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
   - An admin user has disabled the MFA requirement for your Okta account
 - [Okta New Behaviors Acessing Admin Console](../rules/okta_rules/okta_new_behavior_accessing_admin_console.yml)
@@ -242,6 +244,8 @@
   - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
 - [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
   - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
+  - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -306,36 +310,36 @@
   - Detects when a Slack App has been added to a workspace
 - [Slack App Removed](../rules/slack_rules/slack_app_removed.yml)
   - Detects when a Slack App has been removed
-- [Slack Denial of Service](../rules/slack_rules/slack_application_dos.yml)
-  - Detects when slack admin invalidates user session(s). If it happens more than once in a 24 hour period it can lead to DoS
+- [Slack Denial of Service via Session Invalidation](../rules/slack_rules/slack_application_dos.yml)
+  - Detects potential DoS attacks via excessive session invalidation when administrators reset user sessions 60+ times within 24 hours. Repeated session termination prevents users from maintaining Slack access, disrupting communication and productivity. Legitimate session resets for incident response or troubleshooting typically occur 1-3 times, so reaching the 60-event threshold indicates malicious intent.
 - [Slack DLP Modified](../rules/slack_rules/slack_dlp_modified.yml)
   - Detects when a Data Loss Prevention (DLP) rule has been deactivated or a violation has been deleted
 - [Slack EKM Config Changed](../rules/slack_rules/slack_ekm_config_changed.yml)
   - Detects when the logging settings for a workspace's EKM configuration has changed
 - [Slack EKM Slackbot Unenrolled](../rules/slack_rules/slack_ekm_slackbot_unenrolled.yml)
   - Detects when a workspace is longer enrolled in EKM
-- [Slack EKM Unenrolled](../rules/slack_rules/slack_ekm_unenrolled.yml)
-  - Detects when a workspace is no longer enrolled or managed by EKM
+- [Slack Enterprise Key Management Unenrolled](../rules/slack_rules/slack_ekm_unenrolled.yml)
+  - Detects when Slack Enterprise Key Management (EKM) is unenrolled, removing customer-controlled encryption and reverting to Slack-managed keys. EKM allows organizations to store encryption keys externally (e.g., AWS KMS), ensuring data remains protected even from Slack infrastructure compromise. Unenrollment exposes all workspace data to decryption by Slack systems and violates compliance requirements for regulated industries.
 - [Slack IDP Configuration Changed](../rules/slack_rules/slack_idp_configuration_change.yml)
   - Detects changes to the identity provider (IdP) configuration for Slack organizations.
 - [Slack Information Barrier Modified](../rules/slack_rules/slack_information_barrier_modified.yml)
   - Detects when a Slack information barrier is deleted/updated
-- [Slack Intune MDM Disabled](../rules/slack_rules/slack_intune_mdm_disabled.yml)
-  - Detects the disabling of Microsoft Intune Enterprise MDM within Slack
 - [Slack Legal Hold Policy Modified](../rules/slack_rules/slack_legal_hold_policy_modified.yml)
   - Detects changes to configured legal hold policies
 - [Slack MFA Settings Changed](../rules/slack_rules/slack_mfa_settings_changed.yml)
   - Detects changes to Multi-Factor Authentication requirements
+- [Slack Microsoft Intune Mobile Device Management Disabled](../rules/slack_rules/slack_intune_mdm_disabled.yml)
+  - Detects when Microsoft Intune MDM integration is disabled for Slack, removing mobile security controls and enabling data exfiltration via unmanaged devices. Intune enforces policies preventing copy/paste to unmanaged apps, requires device encryption, blocks jailbroken devices, and enables remote wipe. Disabling these controls allows unrestricted Slack access from personal or compromised devices without security restrictions.
 - [Slack Organization Created](../rules/slack_rules/slack_org_created.yml)
   - Detects when a Slack organization is created
 - [Slack Organization Deleted](../rules/slack_rules/slack_org_deleted.yml)
   - Detects when a Slack organization is deleted
 - [Slack Potentially Malicious File Shared](../rules/slack_rules/slack_potentially_malicious_file_shared.yml)
-  - Detects when a potentially malicious file is shared within Slack
+  - Detects when Slack's automated security scanning identifies malicious files uploaded to the workspace, indicating malware delivery or phishing attempts. Slack scans for executable malware, ransomware, phishing documents, malicious scripts, and files matching threat actor signatures. This detection indicates compromised accounts, insider threats, or successful phishing attacks where users uploaded infected files.
+- [Slack Primary Owner Transferred](../rules/slack_rules/slack_service_owner_transferred.yml)
+  - Detects Slack Primary Owner transfers, representing the highest administrative privilege change with absolute control over workspace settings, security, billing, and data access. Primary Owners can add/remove all admins, delete entire workspaces, and transfer ownership. Unauthorized transfers indicate account compromise, insider threats, or hostile takeovers that could lead to permanent data loss or complete security control loss.
 - [Slack Private Channel Made Public](../rules/slack_rules/slack_private_channel_made_public.yml)
   - Detects when a channel that was previously private is made public
-- [Slack Service Owner Transferred](../rules/slack_rules/slack_service_owner_transferred.yml)
-  - Detects transferring of service owner on request from primary owner
 - [Slack SSO Settings Changed](../rules/slack_rules/slack_sso_settings_changed.yml)
   - Detects changes to Single Sign On (SSO) restrictions
 - [Slack User Privilege Escalation](../rules/slack_rules/slack_user_privilege_escalation.yml)

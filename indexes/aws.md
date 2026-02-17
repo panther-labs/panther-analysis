@@ -109,7 +109,7 @@
 - [AWS EC2 Traffic Mirroring](../rules/aws_cloudtrail_rules/aws_ec2_traffic_mirroring.yml)
   - This rule captures multiple traffic mirroring events in AWS Cloudtrail.
 - [AWS EC2 Vulnerable XZ Image Launched](../rules/aws_cloudtrail_rules/aws_ec2_vulnerable_xz_image_launched.yml)
-  - Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)
+  - Detects EC2 instances launched using Amazon Machine Images containing vulnerable XZ Utils library versions (5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a backdoor allowing remote attackers to bypass SSH authentication on affected Linux systems. The rule monitors CloudTrail RunInstances events and checks AMI IDs against known vulnerable images.
 - [AWS ECR Events](../rules/aws_cloudtrail_rules/aws_ecr_events.yml)
   - An ECR event occurred outside of an expected account or region
 - [AWS IAM Access Key Compromise Detection](../rules/aws_cloudtrail_rules/aws_key_compromised.yml)
@@ -187,7 +187,7 @@
 - [AWS VPC Flow Logs Removed](../rules/aws_cloudtrail_rules/aws_vpc_flow_logs_deleted.yml)
   - Detects when logs for a VPC have been removed.
 - [AWS WAF Disassociation](../rules/aws_cloudtrail_rules/aws_waf_disassociation.yml)
-  - Detection to alert when a WAF disassociates from a source.
+  - Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.
 - [AWS.Administrative.IAM.User.Created](../correlation_rules/aws_create_admin_iam_user.yml)
   - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS.CloudTrail.UserAccessKeyAuth](../rules/aws_cloudtrail_rules/aws_cloudtrail_useraccesskeyauth.yml)
@@ -268,7 +268,7 @@
 - [RoleAssumes by Multiple Useragents](../queries/aws_queries/anomalous_role_assume_query.yml)
   - RoleAssumes with multiple Useragents could indicate compromised credentials.
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
-  - An access key was created for the Root account
+  - Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.
 - [Root Account Activity](../rules/aws_cloudtrail_rules/aws_root_activity.yml)
   - Root account activity was detected.
 - [Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login.yml)
@@ -417,10 +417,68 @@
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
 - [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
+- [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
+  - This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).
+- [Kubernetes All Secrets Dumped Across Namespaces](../rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml)
+  - This detection monitors for cluster-wide secret list operations that dump all secrets across all namespaces in a single API call. Attackers with list secrets permissions at the cluster level can trivially access every secret in the cluster using the LIST /api/v1/secrets API, exposing all credentials, tokens, and sensitive configuration data. This is a known attack technique documented by Stratus Red Team and represents mass credential theft.
+- [Kubernetes Anonymous API Access Detected](../rules/kubernetes_rules/k8s_anonymous_api_access.yml)
+  - This rule detects anonymous API requests made to Kubernetes API servers across AWS EKS, Azure AKS, and GCP GKE clusters. In production environments, anonymous access should be disabled to prevent unauthorized access to the API server.
+- [Kubernetes API Activity from Tor Exit Node](../rules/kubernetes_rules/k8s_ioc_activity.yml)
+  - This detection monitors for Kubernetes API requests originating from known Indicators of Compromise, specifically Tor exit nodes. Tor usage may indicate attempts to hide the true source of malicious activity or unauthorized access attempts. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.
+- [Kubernetes API Multiple 403 Responses from Single Public IP](../rules/kubernetes_rules/k8s_multiple_403_public_ip.yml)
+  - This detection identifies when a public source IP generates multiple 403 (Forbidden) responses from the Kubernetes API server. This pattern may indicate reconnaissance attempts, permission enumeration, brute force attacks, or misconfigured access. Private IPs are excluded as they typically represent legitimate internal traffic.
+- [Kubernetes Client Certificate Credential Created](../rules/kubernetes_rules/k8s_client_certificate_created.yml)
+  - Detects the creation of client certificate signing requests (CSRs) for Kubernetes API authentication. Attackers with appropriate RBAC permissions can create and approve client certificates to establish persistent access to the cluster. Client certificates provide long-term authentication that bypasses service account token expiration and can be harder to revoke. This technique is documented by Stratus Red Team as a persistence mechanism.
+- [Kubernetes ClusterRoleBinding to Privileged Role](../rules/kubernetes_rules/k8s_clusterrolebinding_privileged.yml)
+  - This detection monitors for ClusterRoleBindings being created that grant privileged cluster roles like cluster-admin or system:masters. Attackers who gain initial cluster access often create ClusterRoleBindings to escalate privileges and gain full control over all cluster resources and namespaces. While some bindings to privileged roles are legitimate for cluster operators, unexpected bindings should be investigated immediately as they may indicate compromise or insider threat.
 - [Kubernetes Cron Job Created or Modified](../queries/kubernetes_queries/kubernetes_cron_job_created_or_modified_query.yml)
   - This detection monitor for any modifications or creations of a cron job. Attackers may create or modify an existing scheduled job in order to achieve cluster persistence.
+- [Kubernetes CronJob Created or Modified](../rules/kubernetes_rules/k8s_cronjob_created_or_modified.yml)
+  - This detection monitors for creation or modification of CronJobs in Kubernetes clusters. Attackers may create or modify scheduled jobs to achieve cluster persistence, execute malicious code on a schedule, or maintain backdoor access to compromised clusters. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.
+- [Kubernetes DaemonSet Created](../rules/kubernetes_rules/k8s_daemonset_created.yml)
+  - This detection monitors for creation of DaemonSets in Kubernetes clusters. DaemonSets ensure that a copy of a pod runs on all (or selected) nodes in the cluster. Attackers may abuse DaemonSets to deploy malicious containers across all nodes for cluster-wide persistence, credential harvesting, cryptomining, or lateral movement. This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.
+- [Kubernetes Data Copy via kubectl cp](../rules/kubernetes_rules/k8s_kubectl_cp_operation.yml)
+  - This detection monitors for kubectl cp operations that copy files from pods to local machines, which can indicate data exfiltration. When kubectl cp is used to copy files from a pod, it executes a tar command with stdout output (tar cf -) inside the container and streams the data back through the Kubernetes API server. Attackers who gain cluster access can use this technique to steal application secrets, credentials, configuration files, or sensitive data from container filesystems without leaving obvious traces inside the pod itself. While kubectl cp has legitimate uses for debugging and backup, unexpected usage should be investigated.
+- [Kubernetes Exec Into Pod](../rules/kubernetes_rules/k8s_exec_into_pod.yml)
+  - Detects when users exec into pods across Kubernetes clusters. Execing into pods should be monitored as it can be used for unauthorized access, privilege escalation, or persistent access to workloads. This detection is disabled by default and should be configured with inline filters in the Panther UI to exclude legitimate use cases (e.g., specific service accounts, namespaces, or authorized users).
+- [Kubernetes Ingress Created Without TLS](../rules/kubernetes_rules/k8s_ingress_without_tls.yml)
+  - This detection monitors for Ingress objects being created without TLS certificates configured. Ingresses without TLS expose services over unencrypted HTTP, allowing sensitive data like passwords, tokens, and PII to be transmitted in cleartext. This violates security best practices and compliance requirements like PCI-DSS and HIPAA, and enables man-in-the-middle attacks.
+- [Kubernetes Long-Lived Service Account Token Created](../rules/kubernetes_rules/k8s_serviceaccount_token_created.yml)
+  - Detects the creation of long-lived service account tokens via the serviceaccounts/token subresource. Kubernetes 1.24+ deprecated automatic token creation, but users with appropriate permissions can still manually create non-expiring tokens for service accounts. Attackers can abuse this to establish persistent access credentials that don't expire automatically. This technique is documented by Stratus Red Team as a persistence mechanism. Note: GCP GKE does not log TokenRequest API operations in Kubernetes audit logs.
+- [Kubernetes NodePort Service Deployed](../rules/kubernetes_rules/k8s_service_nodeport.yml)
+  - This detection monitors for any Kubernetes service deployed with type NodePort. A NodePort service allows an attacker to expose a set of pods hosting the service to the internet by opening their port and redirecting traffic here. This can be used to bypass network controls and intercept traffic, creating a direct line to the outside network.
+- [Kubernetes Pod Attached To Host Network](../rules/kubernetes_rules/k8s_pod_host_network.yml)
+  - This detection monitors for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed compute on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [Kubernetes Pod Created in Pre-Configured or Default Name Spaces](../queries/kubernetes_queries/kubernetes_pod_in_default_name_space_query.yml)
   - This detection monitors for any pod created in pre-configured or default namespaces. Only Cluster Admins should be creating pods in the kube-system namespace, and it is best practice not to run any cluster critical infrastructure here. The kube-public namespace is intended to be readable by unauthenticated users. The default namespace is shipped with the cluster and it is best practice not to deploy production workloads here. These namespaces may be used to evade defenses or hide attacker infrastructure.
+- [Kubernetes Pod Created in System Namespace](../rules/kubernetes_rules/k8s_pod_created_in_system_namespace.yml)
+  - This detection monitors for pods being created in system namespaces like kube-system, kube-public, gke-system, or kube-node-lease. These namespaces are reserved for Kubernetes control plane components and cluster infrastructure. Attackers who gain cluster access may create malicious pods in system namespaces to hide among legitimate system workloads, gain elevated privileges, or establish persistence mechanisms that are less likely to be noticed.
+- [Kubernetes Pod Using Host IPC Namespace](../rules/kubernetes_rules/k8s_pod_host_ipc.yml)
+  - This detection monitors for pods created with hostIPC set to true, which allows the pod to use the host's IPC namespace. This breaks isolation between the pod and the host system, giving the pod direct access to shared memory segments, semaphores, and message queues on the host. Attackers can abuse this to communicate with or interfere with processes on the host system or other containers using the same IPC namespace.
+- [Kubernetes Pod Using Host PID Namespace](../rules/kubernetes_rules/k8s_pod_host_pid.yml)
+  - This detection monitors for any pod creation or modification using the host PID namespace. The Host PID namespace enables a pod and its containers to have direct access and share the same view as the host's processes. This can offer a powerful escape hatch to the underlying host.
+- [Kubernetes Pod with Dangerous Linux Capabilities](../rules/kubernetes_rules/k8s_pod_dangerous_capabilities.yml)
+  - This detection monitors for pods created with dangerous Linux capabilities such as SYS_ADMIN, NET_ADMIN, or BPF. These capabilities can enable privilege escalation, container escape, or unauthorized access to host resources. Attackers often add these capabilities to containers to bypass security restrictions and gain elevated privileges on the underlying host.
+- [Kubernetes Pod With HostPath Volume Mount](../rules/kubernetes_rules/k8s_pod_hostpath_volume.yml)
+  - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement. System service accounts in the kube-system namespace are excluded to prevent false positives from legitimate system components.
+- [Kubernetes Privileged Pod Created](../rules/kubernetes_rules/k8s_privileged_pod_created.yml)
+  - Detects creation of privileged pods across Kubernetes clusters. Privileged pods have full access to the host's namespace and devices, have the ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks. In the event of a successful container escape where a user is operating with root privileges, the attacker retains this role on the node.
+- [Kubernetes Role With Node Proxy Permissions Created](../rules/kubernetes_rules/k8s_role_node_proxy_permissions.yml)
+  - This detection monitors for Roles or ClusterRoles being created with permissions to access node proxy endpoints (nodes/proxy or nodes/*). These permissions allow users to access the kubelet API through the Kubernetes API server proxy, enabling privilege escalation by executing commands on nodes, accessing container logs and filesystems, and potentially escaping to the underlying host. This technique is documented by Stratus Red Team as a privilege escalation vector.
+- [Kubernetes Role With Pod Exec Permissions Created](../rules/kubernetes_rules/k8s_role_pod_exec.yml)
+  - This detection monitors for Roles or ClusterRoles being created that grant permissions to exec into pods. The pods/exec subresource allows executing arbitrary commands inside containers, which can be abused for lateral movement, credential theft, or container escape. Attackers who gain RBAC modification permissions often create roles with pods/exec to establish backdoor access for executing commands across the cluster.
+- [Kubernetes Role With Wildcard Permissions Created](../rules/kubernetes_rules/k8s_role_wildcard.yml)
+  - This detection monitors for Roles or ClusterRoles being created with wildcard (*) permissions in resources or verbs. Wildcard permissions grant overly broad access, such as all operations on all resources, which violates the principle of least privilege. Attackers who gain RBAC modification permissions often create wildcard roles to maximize their access across the cluster without knowing specific resource names or API operations.
+- [Kubernetes Role With Write Permissions Created](../rules/kubernetes_rules/k8s_role_write_permissions.yml)
+  - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
+- [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
+  - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
+  - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
+- [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
+  - This detection identifies when Kubernetes system principals (service accounts with usernames starting with "system:", "eks:", or "aks:") are accessed from non-cloud provider public IP addresses. System principals should only operate from within the cluster (private IPs) or from legitimate cloud infrastructure. Access from external public IPs indicates potential service account token theft or compromise, often following initial access to a cluster.
+- [Kubernetes System Role Modified or Deleted](../rules/kubernetes_rules/k8s_system_role_modified.yml)
+  - This detection monitors for modifications or deletions of system ClusterRoles/Roles (those starting with "system:"). These are built-in Kubernetes roles for control plane components like kube-scheduler, kube-controller-manager, and system:admin. Tampering with system roles can break cluster functionality, create privilege escalation backdoors, or disable security controls. Legitimate modifications to system roles are extremely rare outside of cluster upgrades.
 - [New Admission Controller Created](../queries/kubernetes_queries/kubernetes_admission_controller_created_query.yml)
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
 - [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed_query.yml)
@@ -458,7 +516,7 @@
 ## AWS GuardDuty
 
 - [AWS GuardDuty Critical Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_critical_sev_findings.yml)
-  - A critical-severity GuardDuty finding has been identified.
+  - Detects critical-severity findings (9.0/9.0) from AWS GuardDuty indicating active compromise, imminent data loss, or ongoing attacks. GuardDuty uses machine learning and threat intelligence to identify compromised credentials, cryptocurrency mining, data exfiltration, and connections to malicious infrastructure. This rule filters out sample data and alerts only on genuine critical threats requiring immediate investigation.
 - [AWS GuardDuty Enabled](../policies/aws_guardduty_policies/aws_guardduty_enabled.yml)
   - GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior.
 - [AWS GuardDuty High Severity Finding](../rules/aws_guardduty_rules/aws_guardduty_high_sev_findings.yml)
@@ -512,11 +570,11 @@
 - [AWS Resource Required Tags](../policies/aws_account_policies/aws_resource_required_tags.yml)
   - This policy ensures that AWS resources have specific tags, dependent on their resource type.
 - [AWS Root Account Access Keys](../policies/aws_iam_policies/aws_root_account_access_keys.yml)
-  - This policy validates that no programmatic access keys exist for the root account.
+  - Validates that no programmatic access keys exist for the AWS root account. Root access keys provide unrestricted access to all AWS resources and cannot have permissions limited. If compromised, these keys grant attackers complete account control including resource modification, data access, and billing changes.
 - [AWS Root Account Hardware MFA](../policies/aws_iam_policies/aws_root_account_hardware_mfa.yml)
   - This policy validates that a hardware MFA device is in use for access to the root account.
 - [AWS Root Account MFA](../policies/aws_iam_policies/aws_root_account_mfa.yml)
-  - This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.
+  - Validates that Multi-Factor Authentication (MFA) is enabled for the AWS root account. The root account has complete unrestricted access to all AWS resources and is the highest-value target for attackers. Without MFA, accounts are vulnerable to phishing, credential stuffing, and password compromise attacks.
 - [AWS Unused Access Key](../policies/aws_iam_policies/aws_access_key_unused.yml)
   - This policy validates that IAM user access keys are used at least once every 90 days.
 - [IAM Inline Policy Network Admin](../policies/aws_iam_policies/aws_iam_inline_policy_does_not_grant_network_admin_access.yml)
@@ -606,7 +664,7 @@
 - [AWS S3 Bucket Public Read](../policies/aws_s3_policies/aws_s3_bucket_public_read.yml)
   - Ensures that the S3 bucket is not publicly readable.
 - [AWS S3 Bucket Public Write](../policies/aws_s3_policies/aws_s3_bucket_public_write.yml)
-  - Ensures that the S3 bucket is not publicly writeable.
+  - Ensures S3 buckets are not publicly writeable, preventing critical security vulnerabilities. Public write access allows attackers to upload malicious content, delete legitimate data, or consume storage for massive AWS bills. Attackers can use writable buckets for C2 infrastructure, malware distribution, or supply chain attacks.
 - [AWS S3 Bucket Secure Access](../policies/aws_s3_policies/aws_s3_bucket_secure_access.yml)
   - Ensures access to S3 buckets is forced to use a secure (HTTPS) connection.
 - [AWS S3 Bucket Versioning](../policies/aws_s3_policies/aws_s3_bucket_versioning.yml)

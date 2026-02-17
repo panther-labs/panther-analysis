@@ -1,0 +1,166 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Kubectl.CP.Operation"
+DisplayName: "Kubernetes Data Copy via kubectl cp"
+Enabled: true
+Status: Experimental
+Filename: k8s_kubectl_cp_operation.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Exfiltration
+  - Data Theft
+  - Credential Access
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for kubectl cp operations that copy files from pods to local machines,
+  which can indicate data exfiltration. When kubectl cp is used to copy files from a pod, it
+  executes a tar command with stdout output (tar cf -) inside the container and streams the data
+  back through the Kubernetes API server. Attackers who gain cluster access can use this technique
+  to steal application secrets, credentials, configuration files, or sensitive data from container
+  filesystems without leaving obvious traces inside the pod itself. While kubectl cp has legitimate
+  uses for debugging and backup, unexpected usage should be investigated.
+Runbook: |
+  1. Review all exec and kubectl cp operations by this user in the 24 hours before and after the alert
+  2. Identify what files or directories were exfiltrated and assess their sensitivity
+  3. Search for other suspicious API activity from this user or service account across all clusters in the past 7 days
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1530 # Exfiltration: Data from Cloud Storage
+    - TA0006:T1552 # Credential Access: Unsecured Credentials
+Reference: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cp
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS kubectl cp from pod (requestURI format)
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "subresource": "exec",
+          "namespace": "production",
+          "name": "webapp-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/production/pods/webapp-pod/exec?command=tar&command=cf&command=-&command=/app/secrets/credentials.json&container=webapp&stdout=true",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS kubectl cp from pod with SSH keys
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"api-server\"},\"responseStatus\":{\"code\":200},\"requestObject\":{\"command\":[\"tar\",\"cf\",\"-\",\"/root/.ssh/id_rsa\"],\"container\":\"api\"}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE kubectl cp from pod
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.exec",
+            "resource": "core/v1/namespaces/production/pods/database/exec"
+          }],
+          "methodName": "io.k8s.core.v1.pods.exec.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "core/v1/namespaces/production/pods/database/exec",
+          "serviceName": "k8s.io",
+          "request": {
+            "command": ["tar", "cf", "-", "/var/lib/postgresql/data/config"],
+            "container": "postgres"
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS kubectl cp TO pod (not exfiltration)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "subresource": "exec", "namespace": "default", "name": "app-pod"},
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/default/pods/app-pod/exec?command=tar&command=xf&command=-&command=-C&command=/tmp&container=app",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: EKS regular tar archive creation
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "subresource": "exec", "namespace": "default", "name": "backup-pod"},
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/default/pods/backup-pod/exec?command=tar&command=czf&command=backup.tar.gz&command=/app/data",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: EKS regular exec without tar
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {"resource": "pods", "subresource": "exec", "namespace": "default", "name": "debug-pod"},
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/default/pods/debug-pod/exec?command=/bin/sh&stdin=true&tty=true",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: EKS system namespace (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:debug"},
+        "objectRef": {"resource": "pods", "subresource": "exec", "namespace": "kube-system", "name": "debug-pod"},
+        "responseStatus": {"code": 200},
+        "requestURI": "/api/v1/namespaces/kube-system/pods/debug-pod/exec?command=tar&command=cf&command=-&command=/var/log",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: EKS failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {"resource": "pods", "subresource": "exec", "namespace": "default", "name": "secret-pod"},
+        "responseStatus": {"code": 403},
+        "requestURI": "/api/v1/namespaces/default/pods/secret-pod/exec?command=tar&command=cf&command=-&command=/app/secrets",
+        "requestObject": null,
+        "p_log_type": "Amazon.EKS.Audit"
+      }

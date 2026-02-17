@@ -1,0 +1,128 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Host.PID"
+DisplayName: "Kubernetes Pod Using Host PID Namespace"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_host_pid.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Escape to Host
+  - Deploy Container
+  - Unified Detection
+Severity: Medium
+Description:
+  This detection monitors for any pod creation or modification using the host PID namespace.
+  The Host PID namespace enables a pod and its containers to have direct access and share the
+  same view as the host's processes. This can offer a powerful escape hatch to the underlying host.
+Runbook: |
+  1. Query API calls by the username in the 24 hours before and after the alert to understand the deployment context and related activity
+  2. Check if the pod namespace indicates system or infrastructure purpose (kube-system, kube-monitoring) versus user workloads
+  3. Search for other host PID pod creations by this user in the past 30 days to determine if this is an established pattern or new behavior
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1611 # Escape to Host
+    - TA0002:T1610 # Deploy Container
+Reference: >
+  - https://kubernetes.io/docs/concepts/security/pod-security-standards/#host-namespaces
+  - https://medium.com/@chrispisano/limiting-pod-privileges-hostpid-57ce07b05896
+Tests:
+  - Name: EKS Pod With Host PID
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "nginx-test",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "hostPID": true,
+            "containers": [{"name": "nginx", "image": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Pod With Host PID
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"nginx-test\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Pod\",\"spec\":{\"hostPID\":true,\"containers\":[{\"name\":\"nginx\"}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE Pod With Host PID
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@example.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "spec": {
+              "hostPID": true,
+              "containers": [{"name": "nginx"}]
+            }
+          },
+          "resourceName": "core/v1/namespaces/default/pods/nginx-test",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Pod Without Host PID
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "hostPID": false,
+            "containers": [{"name": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "spec": {"hostPID": true}
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

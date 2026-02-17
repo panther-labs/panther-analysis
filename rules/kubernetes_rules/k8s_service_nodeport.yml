@@ -1,0 +1,142 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Service.NodePort.Deployed"
+DisplayName: "Kubernetes NodePort Service Deployed"
+Enabled: true
+Status: Experimental
+Filename: k8s_service_nodeport.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Severity: High
+Description: >
+  This detection monitors for any Kubernetes service deployed with type NodePort. A NodePort
+  service allows an attacker to expose a set of pods hosting the service to the internet by
+  opening their port and redirecting traffic here. This can be used to bypass network controls
+  and intercept traffic, creating a direct line to the outside network.
+Runbook: |
+  1. Identify all services created by the username in the 48 hours before the alert to understand deployment patterns
+  2. Check the NodePort service specification to determine if it exposes cluster-critical services or standard application workloads
+  3. Review exposed ports and compare against documented internal services in the past 30 days to verify if this is authorized
+Reference: https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/
+Tags:
+  - Kubernetes
+  - Exploit Public-Facing Application
+  - Initial Access
+  - Unified Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190 # Exploit Public-Facing Application
+Tests:
+  - Name: EKS NodePort Service Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "user@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.2",
+        "objectRef": {
+          "resource": "services",
+          "namespace": "default",
+          "name": "test-ns",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Service",
+          "apiVersion": "v1",
+          "spec": {
+            "type": "NodePort",
+            "ports": [{
+              "port": 5678,
+              "targetPort": 8080,
+              "protocol": "TCP"
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS NodePort Service Created
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"services\",\"namespace\":\"default\",\"name\":\"test-svc\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Service\",\"spec\":{\"type\":\"NodePort\",\"ports\":[{\"port\":80}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE NodePort Service Created
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.services.create",
+            "resource": "core/v1/namespaces/default/services/test-ns"
+          }],
+          "methodName": "io.k8s.core.v1.services.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Service",
+            "apiVersion": "v1",
+            "kind": "Service",
+            "spec": {
+              "type": "NodePort",
+              "ports": [{"port": 5678, "targetPort": 8080}]
+            }
+          },
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/services/test-ns",
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "resource": {
+          "labels": {"project_id": "test-project"},
+          "type": "k8s_cluster"
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: ClusterIP Service Created
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "services", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {"type": "ClusterIP"}
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Service Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "services", "namespace": "default"},
+        "responseStatus": {"code": 409, "status": "Failure"},
+        "requestObject": {
+          "spec": {"type": "NodePort"}
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Not a Service Creation
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "objectRef": {"resource": "services", "namespace": "default"},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
