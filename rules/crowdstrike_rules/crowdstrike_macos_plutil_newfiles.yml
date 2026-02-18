@@ -1,0 +1,137 @@
+AnalysisType: scheduled_rule
+Filename: crowdstrike_macos_plutil_newfiles.py
+DisplayName: CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)
+Enabled: true
+Status: Experimental
+Description: |
+  Detects when plutil performs modification operations (insert, replace, remove, create) on plist
+  files it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-only
+  operations (convert, print, lint). This anomaly-based approach reduces noise from legitimate
+  repeated operations while catching novel persistence attempts, even in /Applications/.
+Severity: Medium
+DedupPeriodMinutes: 1440
+Threshold: 1
+Reference: https://attack.mitre.org/techniques/T1547/011/
+Runbook: |
+  1. Verify the plist modification was authorized. Query CrowdStrike for the full plutil command line on the affected device to determine the exact operation performed (insert, replace, remove, create) and identify the parent process that executed the command.
+  2. Review the modification context including the user account, source process, and timing. Assess the risk level based on the plist location - LaunchAgents/LaunchDaemons indicate persistence attempts (high risk), while /Applications/ modifications could be legitimate software updates (medium risk). Check for suspicious parent processes such as bash, python, curl, or remote shell activity.
+  3. If the modification is suspicious or unauthorized, quarantine the device and analyze the modified plist content for malicious payloads or references to external scripts. Review all processes currently running that may have been launched by the modified plist, revoke any persistence mechanisms, and hunt for related IOCs across other endpoints. Escalate for forensic analysis if compromise is confirmed.
+Tags:
+  - Anomaly Detection
+  - macOS
+  - Persistence
+  - CrowdStrike
+  - T1547.011
+InlineFilters:
+  - All: []
+ScheduledQueries:
+  - CrowdStrike MacOS plutil Novel Plist Modification
+RuleID: Crowdstrike.Macos.Plutil.NewFiles
+Tests:
+  - Name: Anomaly - New LaunchAgent modified for first time (insert operation)
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": "/Library/LaunchAgents/com.suspicious.agent.plist"
+      }
+  - Name: Anomaly - New LaunchAgent modified for first time (replace operation)
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": "/Library/LaunchAgents/com.attacker.plist"
+      }
+  - Name: Anomaly - New LaunchDaemon modified for first time (remove operation)
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "xyz789ghi012345",
+        "plist_file": "/Library/LaunchDaemons/com.evil.daemon.plist"
+      }
+  - Name: Anomaly - New plist created for first time (create operation)
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "xyz789ghi012345",
+        "plist_file": "/Users/user/Library/LaunchAgents/com.new.persistence.plist"
+      }
+  - Name: Anomaly - User LaunchAgent never modified before on this device
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": "/Users/john.doe/Library/LaunchAgents/com.malware.backdoor.plist"
+      }
+  - Name: Anomaly - System LaunchDaemon first modification in 30 days
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "xyz789ghi012345",
+        "plist_file": "/System/Library/LaunchDaemons/com.evil.daemon.plist"
+      }
+  - Name: Anomaly - New application Info.plist modification (potential tampering)
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "mno345pqr678901",
+        "plist_file": "/Applications/CustomApp.app/Contents/Info.plist"
+      }
+  - Name: Anomaly - First-time modification of Homebrew app plist
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "def456ghi789012",
+        "plist_file": "/usr/local/Cellar/suspicious-tool/1.0/Info.plist"
+      }
+  - Name: Anomaly - User preferences plist modified for first time
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "ghi789jkl012345",
+        "plist_file": "/Users/jane.smith/Library/Preferences/com.custom.config.plist"
+      }
+  - Name: Anomaly - Previously unseen plist file in non-standard location
+    ExpectedResult: true
+    Log:
+      {
+        "device_id": "stu901vwx234567",
+        "plist_file": "/opt/custom/config.plist"
+      }
+  - Name: Invalid - Empty plist file path
+    ExpectedResult: false
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": ""
+      }
+  - Name: Invalid - Whitespace only plist path
+    ExpectedResult: false
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": "   "
+      }
+  - Name: Invalid - Missing plist_file field
+    ExpectedResult: false
+    Log:
+      {
+        "device_id": "abc123def456789"
+      }
+  - Name: Invalid - Unknown placeholder value from query
+    ExpectedResult: false
+    Log:
+      {
+        "device_id": "abc123def456789",
+        "plist_file": "<UNKNOWN_FILE>"
+      }
+  - Name: Invalid - Null plist_file value
+    ExpectedResult: false
+    Log:
+      {
+        "device_id": "jkl012mno345678",
+        "plist_file": null
+      }
+  - Name: Invalid - Empty result object
+    ExpectedResult: false
+    Log: {}
