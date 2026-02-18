@@ -2442,12 +2442,12 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects an Axonius login from a malicious IP address",
+        "Description": "Detects an Axonius login from Tor IP address",
         "DisplayName": "Axonius login from Tor IP",
         "LogTypes": [
             "Axonius.Activity"
         ],
-        "YAMLPath": "rules/axonius_rules/axonius_too_many_failed_logins.yml"
+        "YAMLPath": "rules/axonius_rules/axonius_tor_login.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3437,13 +3437,22 @@
         "YAMLPath": "rules/crowdstrike_rules/crowdstrike_macos_osascript_administrator.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects when plutil performs MODIFICATION operations (insert, replace, remove, create) on plist files it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-only operations (convert, print, lint) that generate noise.",
+        "DisplayName": "CrowdStrike MacOS plutil Novel Plist Modification",
+        "LogTypes": [
+            "Crowdstrike.FDREvent"
+        ],
+        "YAMLPath": "queries/crowdstrike_queries/crowdstrike.macos.plutil.novel.modification.yml"
+    },
+    {
         "AnalysisType": "Scheduled Rule",
         "Description": "Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.",
         "DisplayName": "CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)",
         "LogTypes": [
             "Crowdstrike.FDREvent"
         ],
-        "YAMLPath": "rules/crowdstrike_rules/crowdstrike.macos.plutil.novel.modification.yml"
+        "YAMLPath": "rules/crowdstrike_rules/crowdstrike_macos_plutil_newfiles.yml"
     },
     {
         "AnalysisType": "Rule",

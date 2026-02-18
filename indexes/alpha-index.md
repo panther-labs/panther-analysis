@@ -854,8 +854,8 @@
   - Detects an Axonius API Key Reset
 - [Axonius External User Added](../rules/axonius_rules/axonius_add_external_user.yml)
   - Detects when an external user is added in Axonius
-- [Axonius login from Tor IP](../rules/axonius_rules/axonius_too_many_failed_logins.yml)
-  - Detects an Axonius login from a malicious IP address
+- [Axonius login from Tor IP](../rules/axonius_rules/axonius_tor_login.yml)
+  - Detects an Axonius login from Tor IP address
 - [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
   - Detects when an Axonius Webhook is Created
 
@@ -1115,7 +1115,9 @@
   - Detects attempt to install a root certificate on MacOS
 - [CrowdStrike MacOS Osascript as Administrator](../rules/crowdstrike_rules/crowdstrike_macos_osascript_administrator.yml)
   - Detects usage of osascript with administrator privileges
-- [CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)](../rules/crowdstrike_rules/crowdstrike.macos.plutil.novel.modification.yml)
+- [CrowdStrike MacOS plutil Novel Plist Modification](../queries/crowdstrike_queries/crowdstrike.macos.plutil.novel.modification.yml)
+  - Detects when plutil performs MODIFICATION operations (insert, replace, remove, create) on plist files it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-only operations (convert, print, lint) that generate noise.
+- [CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)](../rules/crowdstrike_rules/crowdstrike_macos_plutil_newfiles.yml)
   - Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.
 - [CrowdStrike MacOS plutil Usage](../rules/crowdstrike_rules/crowdstrike_macos_plutil_usage.yml)
   - Detects the usage of plutil to modify plist files. Plist files run on start up and are often used by attackers to maintain persistence.
