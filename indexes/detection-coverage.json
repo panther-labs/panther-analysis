@@ -3439,15 +3439,6 @@
     {
         "AnalysisType": "Scheduled Rule",
         "Description": "Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.",
-        "DisplayName": "CrowdStrike MacOS plutil New File Access",
-        "LogTypes": [
-            "Crowdstrike.FDREvent"
-        ],
-        "YAMLPath": "rules/crowdstrike_rules/crowdstrike_macos_plutil_new_files.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.",
         "DisplayName": "CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)",
         "LogTypes": [
             "Crowdstrike.FDREvent"
