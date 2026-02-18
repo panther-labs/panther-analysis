@@ -1,0 +1,185 @@
+AnalysisType: scheduled_rule
+Filename: okta_swa_offhours_access_behavioral.py
+RuleID: "Okta.SWA.OffhoursAccess.Behavioral"
+DisplayName: "Okta SWA Unusual Time Access - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SWAOffhoursAccessBehavioral
+Severity: Low
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - SWA
+  - Credential Access:Credentials from Password Stores
+  - Persistence
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1555
+    - TA0003:T1078
+Description: |
+  Detects SWA (Secure Web Authentication) application access occurring at unusual times
+  using statistical anomaly detection. Instead of hardcoded business hours, this detection
+  learns each user's typical access patterns and flags deviations. The detection creates
+  a composite key of user+hour_of_day and identifies when users have unusually high SWA
+  access at specific hours compared to their historical baseline for that hour.
+
+  This behavioral approach automatically adapts to different timezones, work schedules,
+  and user habits, making it more effective at detecting compromised accounts accessing
+  credentials at atypical hours. Uses a z-score threshold of 2 with 30-day baseline.
+
+  Severity is based purely on the z-score (how anomalous the behavior is), not hardcoded
+  hours, which ensures consistent behavioral detection across all timezones and work schedules.
+Reference: https://help.okta.com/en-us/content/topics/apps/apps-about-swa.htm
+Runbook: |
+  1. Extract the hour from the user_hour_key to see what time this occurred
+  2. Review the z-score to understand how unusual this time is for this user
+  3. Verify the user's normal working hours and timezone
+  4. Check if the user has legitimate business need for off-hours access
+  5. Investigate the source IP address and geolocation
+  6. Review user-agent string for automation tools
+  7. Check for multiple off-hours accesses indicating a pattern
+  8. If unauthorized, suspend the account and revoke active sessions
+  9. Force password reset and MFA re-enrollment if compromise suspected
+  10. Audit all applications accessed during the anomalous window
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - user_hour_key
+  - N
+  - p_zscore
+Tests:
+  # Positive Tests - Should Alert
+  - Name: High Severity - Z-Score 6.25 (Very Anomalous)
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "attacker@company.com|2",
+        "N": 8,
+        "p_mean": 0.5,
+        "p_stddev": 1.2,
+        "p_zscore": 6.25,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: High Severity - Z-Score 5.2 at Midday Hour
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "suspicious@company.com|14",
+        "N": 15,
+        "p_mean": 2.0,
+        "p_stddev": 2.5,
+        "p_zscore": 5.2,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Medium Severity - Z-Score 4.5
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "compromised@company.com|23",
+        "N": 10,
+        "p_mean": 1.0,
+        "p_stddev": 2.0,
+        "p_zscore": 4.5,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Medium Severity - Z-Score 3.0
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "nightowl@company.com|19",
+        "N": 5,
+        "p_mean": 0.8,
+        "p_stddev": 1.5,
+        "p_zscore": 3.0,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Low Severity - Z-Score 2.5
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "earlybird@company.com|7",
+        "N": 6,
+        "p_mean": 1.5,
+        "p_stddev": 1.8,
+        "p_zscore": 2.5,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Low Severity - Minimum Threshold Z-Score 2.0
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "user@company.com|12",
+        "N": 4,
+        "p_mean": 1.5,
+        "p_stddev": 1.25,
+        "p_zscore": 2.0,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  # Edge Cases
+  - Name: Medium Severity - High Z-Score at Late Night Hour
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "boundary@company.com|22",
+        "N": 7,
+        "p_mean": 0.5,
+        "p_stddev": 1.5,
+        "p_zscore": 4.33,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Low Severity - Early Morning Hour
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "earlyshift@company.com|4",
+        "N": 5,
+        "p_mean": 1.0,
+        "p_stddev": 1.8,
+        "p_zscore": 2.22,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Malformed User Hour Key - Missing Pipe
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "malformed@company.com",
+        "N": 8,
+        "p_mean": 2.0,
+        "p_stddev": 2.0,
+        "p_zscore": 3.0,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Malformed User Hour Key - Non-Numeric Hour
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "user@company.com|invalid",
+        "N": 6,
+        "p_mean": 1.5,
+        "p_stddev": 1.5,
+        "p_zscore": 3.0,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
+  - Name: Zero Access Count Edge Case
+    ExpectedResult: true
+    Log:
+      {
+        "user_hour_key": "inactive@company.com|15",
+        "N": 0,
+        "p_mean": 5.0,
+        "p_stddev": 1.0,
+        "p_zscore": -5.0,
+        "t1": "2024-10-15 00:00:00.000Z",
+        "t2": "2024-10-16 00:00:00.000Z"
+      }
