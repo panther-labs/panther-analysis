@@ -1,0 +1,45 @@
+AnalysisType: scheduled_query
+QueryName: "AWS EC2 High Instance Creation Volume"
+Enabled: false
+Description: Detects abnormally high volume of EC2 instances created in a short time period, which could indicate cryptomining, resource hijacking, or compromised credentials.
+Tags:
+  - AWS
+  - CloudTrail
+  - EC2
+  - Resource Hijacking
+Query: |
+  SELECT
+    recipientAccountId as account_id,
+    awsRegion as region,
+    userIdentity:principalId as principal_id,
+    userIdentity:arn as user_arn,
+    userIdentity:type as identity_type,
+    sourceIPAddress as source_ip,
+    COUNT(*) as total_run_instances_calls,
+    SUM(COALESCE(CAST(responseElements:instancesSet[0]:instancesCount AS INT),
+                 ARRAY_SIZE(responseElements:instancesSet))) as total_instances_created,
+    COUNT(DISTINCT requestParameters:instanceType) as distinct_instance_types,
+    LISTAGG(DISTINCT requestParameters:instanceType, ', ') as instance_types,
+    COUNT(DISTINCT requestParameters:imageId) as distinct_amis,
+    MIN(p_event_time) as first_creation_time,
+    MAX(p_event_time) as last_creation_time,
+    DATEDIFF('minute', MIN(p_event_time), MAX(p_event_time)) as time_span_minutes
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE
+    p_occurs_since('60 minutes')
+    AND eventName = 'RunInstances'
+    AND errorCode IS NULL
+  GROUP BY
+    recipientAccountId,
+    awsRegion,
+    userIdentity:principalId,
+    userIdentity:arn,
+    userIdentity:type,
+    sourceIPAddress
+  HAVING
+    total_instances_created >= 10
+  ORDER BY
+    total_instances_created DESC
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 2

@@ -1,0 +1,100 @@
+AnalysisType: scheduled_rule
+Filename: ec2_high_instance_creation.py
+RuleID: "AWS.EC2.HighInstanceCreationVolume"
+DisplayName: "AWS EC2 High Instance Creation Volume Detected"
+Enabled: true
+ScheduledQueries:
+  - AWS EC2 High Instance Creation Volume
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496 # Impact: Resource Hijacking
+    - TA0005:T1078 # Defense Evasion: Valid Accounts
+Description: >
+  Detects an abnormally high volume of EC2 instances created within a short time period.
+  This behavior may indicate:
+  - Cryptocurrency mining or resource hijacking
+  - Compromised AWS credentials being abused
+  - Unauthorized access for computational resource abuse
+  - Misconfigured automation or runaway scripts
+
+  The detection triggers when 10 or more EC2 instances are successfully created within a 60-minute window
+  by the same principal in the same region. The severity is dynamically adjusted based on the total
+  number of instances created (CRITICAL for 50+, HIGH for 25+, MEDIUM for 10+).
+DedupPeriodMinutes: 60
+Reference:
+  - https://attack.mitre.org/techniques/T1496/
+  - https://www.trendmicro.com/vinfo/us/security/news/virtualization-and-cloud/how-to-prevent-cryptojacking-in-cloud-environments
+Runbook: >
+  1. Verify if the EC2 instance creation was authorized and expected
+  2. Check if this aligns with known deployment or scaling activities
+  3. Review the user/role ARN and determine if credentials may be compromised
+  4. Examine the source IP address for suspicious locations or known malicious IPs
+  5. Check the instance types and AMIs used - cryptomining often uses compute-optimized instances
+  6. Review CloudTrail logs for other suspicious activities from the same principal
+  7. If unauthorized, immediately:
+     - Terminate the unauthorized instances
+     - Rotate credentials for the affected IAM user/role
+     - Review and restrict IAM permissions
+     - Check for any data exfiltration or other malicious activities
+  8. Consider implementing AWS Budgets alerts and service quotas to limit blast radius
+Tags:
+  - AWS
+  - CloudTrail
+  - EC2
+  - Resource Hijacking
+  - Cryptomining
+  - Compromised Credentials
+  - Anomaly Detection
+Tests:
+  - Name: High Volume Instance Creation - 15 Instances
+    ExpectedResult: true
+    Log:
+      account_id: "123456789012"
+      region: "us-east-1"
+      principal_id: "AIDAI23EXAMPLE456QW"
+      user_arn: "arn:aws:iam::123456789012:user/developer"
+      identity_type: "IAMUser"
+      source_ip: "192.0.2.1"
+      total_run_instances_calls: 3
+      total_instances_created: 15
+      distinct_instance_types: 1
+      instance_types: "t3.large"
+      distinct_amis: 1
+      first_creation_time: "2024-01-15 10:00:00"
+      last_creation_time: "2024-01-15 10:45:00"
+      time_span_minutes: 45
+  - Name: Critical Volume Instance Creation - 60 Instances
+    ExpectedResult: true
+    Log:
+      account_id: "123456789012"
+      region: "us-west-2"
+      principal_id: "AIDAI23EXAMPLE789XY"
+      user_arn: "arn:aws:sts::123456789012:assumed-role/AdminRole/session"
+      identity_type: "AssumedRole"
+      source_ip: "198.51.100.1"
+      total_run_instances_calls: 12
+      total_instances_created: 60
+      distinct_instance_types: 2
+      instance_types: "c5.xlarge, c5.2xlarge"
+      distinct_amis: 1
+      first_creation_time: "2024-01-15 14:00:00"
+      last_creation_time: "2024-01-15 14:55:00"
+      time_span_minutes: 55
+  - Name: Multiple Instance Types - Potential Cryptomining
+    ExpectedResult: true
+    Log:
+      account_id: "987654321098"
+      region: "eu-west-1"
+      principal_id: "AIDAI23EXAMPLE123AB"
+      user_arn: "arn:aws:iam::987654321098:user/compromised-user"
+      identity_type: "IAMUser"
+      source_ip: "203.0.113.5"
+      total_run_instances_calls: 5
+      total_instances_created: 25
+      distinct_instance_types: 3
+      instance_types: "c5.large, c5.xlarge, c5.2xlarge"
+      distinct_amis: 2
+      first_creation_time: "2024-01-15 16:00:00"
+      last_creation_time: "2024-01-15 16:30:00"
+      time_span_minutes: 30
