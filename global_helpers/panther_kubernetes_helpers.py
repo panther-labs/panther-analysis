@@ -87,8 +87,8 @@ def is_system_principal(username):
     if username.startswith(tuple(SYSTEM_IDENTITY_PREFIXES)):
         return True
 
-    # Azure AKS managed identity service principal
-    if username == "masterclient":
+    # Azure AKS managed identity service principals
+    if username in ("masterclient", "aksService"):
         return True
 
     # Kubernetes system components (not service accounts)
