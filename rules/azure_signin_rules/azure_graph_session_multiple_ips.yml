@@ -74,6 +74,42 @@ Tests:
         "p_parse_time": "2025-01-15 09:35:21.000",
         "p_row_id": "row-456",
       }
+  - Name: Non-Interactive Sign-In via NonInteractiveUserSignInLogs Category
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2026-02-18 07:34:37.443",
+        "resourceId": "/tenants/18360841-3f87-44a6-8c9a-3ffc680611a0/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "NonInteractiveUserSignInLogs",
+        "tenantId": "18360841-3f87-44a6-8c9a-3ffc680611a0",
+        "resultType": "0",
+        "resultSignature": "SUCCESS",
+        "durationMs": 0,
+        "callerIpAddress": "203.0.113.10",
+        "correlationId": "6d657aae-f797-466f-8b35-31eb5b7ffde2",
+        "Level": "4",
+        "properties":
+          {
+            "createdDateTime": "2026-02-18T07:32:50.552947800Z",
+            "userPrincipalName": "jane.doe@example.com",
+            "userId": "3b4e2783-2b5d-4f1f-a3d9-ddc0ed1c623f",
+            "ipAddress": "203.0.113.10",
+            "sessionId": "00baf379-e510-523f-1c0e-346163d4a768",
+            "resourceDisplayName": "Microsoft Graph",
+            "resourceId": "00000003-0000-0000-c000-000000000000",
+            "appDisplayName": "Custom App",
+            "appId": "app-noninteractive-test-999",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+            "isInteractive": false,
+            "signInEventTypes": ["nonInteractiveUser"],
+            "authenticationProtocol": "none",
+            "conditionalAccessStatus": "notApplied",
+          },
+        "p_event_time": "2026-02-18 07:34:37.443",
+        "p_log_type": "Azure.Audit",
+      }
   - Name: Whitelisted Office 365
     ExpectedResult: false
     Log:
