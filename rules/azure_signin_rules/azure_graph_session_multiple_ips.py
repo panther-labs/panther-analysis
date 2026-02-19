@@ -49,6 +49,8 @@ WHITELISTED_APP_IDS = {
     "98db8bd6-0cc0-4e67-9de5-f187f1cd1b41",  # Microsoft Substrate Management
     # Panther Integrations (distributed infrastructure)
     "6821c7a6-ae62-49ba-8669-3f2e72d8d803",  # GL - Panther Graph Integration
+    # Microsoft Account Services
+    "7eadcef8-456d-4611-9480-4fff72b8b9e2",  # Microsoft Account Controls V2
 }
 
 
@@ -64,7 +66,8 @@ def rule(event):
         return False
 
     is_interactive = event.deep_get("properties", "isInteractive", default=True)
-    if not is_interactive:
+    category = event.get("category", "")
+    if not is_interactive or category == "NonInteractiveUserSignInLogs":
         return False
 
     # Skip if essential fields are missing or failed attempts
