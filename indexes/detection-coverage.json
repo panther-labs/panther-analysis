@@ -3581,6 +3581,24 @@
         "YAMLPath": "rules/crowdstrike_rules/crowdstrike_macos_osascript_administrator.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Detects when plutil performs MODIFICATION operations (insert, replace, remove, create) on plist files it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-only operations (convert, print, lint) that generate noise.",
+        "DisplayName": "CrowdStrike MacOS plutil Novel Plist Modification",
+        "LogTypes": [
+            "Crowdstrike.FDREvent"
+        ],
+        "YAMLPath": "queries/crowdstrike_queries/crowdstrike.macos.plutil.novel.modification.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects when plutil performs modification operations (insert, replace, remove, create) on plistfiles it hasn't modified in the previous 30 days. Uses behavioral filtering to exclude read-onlyoperations (convert, print, lint). This anomaly-based approach reduces noise from legitimaterepeated operations while catching novel persistence attempts, even in /Applications/.",
+        "DisplayName": "CrowdStrike MacOS plutil Novel Plist Modification (Anomaly Detection)",
+        "LogTypes": [
+            "Crowdstrike.FDREvent"
+        ],
+        "YAMLPath": "rules/crowdstrike_rules/crowdstrike_macos_plutil_newfiles.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Detects the usage of plutil to modify plist files. Plist files run on start up and are often used by attackers to maintain persistence.",
         "DisplayName": "CrowdStrike MacOS plutil Usage",
