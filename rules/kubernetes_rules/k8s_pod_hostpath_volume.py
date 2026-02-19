@@ -1,5 +1,7 @@
 from panther_kubernetes_helpers import (
     get_hostpath_paths,
+    get_pod_context_fields,
+    get_pod_name,
     has_hostpath_volume,
     is_failed_request,
     is_sensitive_hostpath,
@@ -52,7 +54,7 @@ def severity(event):
 def title(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     namespace = event.udm("namespace") or "<UNKNOWN_NAMESPACE>"
-    name = event.udm("name") or "<UNKNOWN_POD>"
+    name = get_pod_name(event)
 
     volumes = event.udm("volumes") or []
     paths = get_hostpath_paths(volumes)
@@ -72,12 +74,12 @@ def dedup(event):
 
 def alert_context(event):
     volumes = event.udm("volumes") or []
+    pod_context = get_pod_context_fields(event)
 
     return k8s_alert_context(
         event,
         extra_fields={
-            "pod_name": event.udm("name"),
-            "volumes": volumes,
+            **pod_context,
             "hostpath_paths": get_hostpath_paths(volumes),
         },
     )

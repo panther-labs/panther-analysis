@@ -1,4 +1,6 @@
 from panther_kubernetes_helpers import (
+    get_pod_context_fields,
+    get_pod_name,
     is_failed_request,
     is_privileged_container,
     is_system_namespace,
@@ -39,7 +41,7 @@ def rule(event):
 def title(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     namespace = event.udm("namespace") or "<UNKNOWN_NAMESPACE>"
-    name = event.udm("name") or "<UNKNOWN_POD>"
+    name = get_pod_name(event)
 
     return f"[{username}] created a privileged pod [{namespace}/{name}]"
 
@@ -50,12 +52,4 @@ def dedup(event):
 
 
 def alert_context(event):
-    containers = event.udm("containers") or []
-
-    return k8s_alert_context(
-        event,
-        extra_fields={
-            "pod_name": event.udm("name"),
-            "pod_security_contexts": [c.get("securityContext", {}) for c in containers],
-        },
-    )
+    return k8s_alert_context(event, extra_fields=get_pod_context_fields(event))
