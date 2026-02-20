@@ -1,5 +1,7 @@
 from panther_kubernetes_helpers import (
     SYSTEM_NAMESPACES,
+    get_pod_context_fields,
+    get_pod_name,
     is_failed_request,
     is_system_principal,
     k8s_alert_context,
@@ -40,7 +42,7 @@ def rule(event):
 def title(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     namespace = event.udm("namespace") or "<UNKNOWN_NAMESPACE>"
-    name = event.udm("name") or "<UNKNOWN_POD>"
+    name = get_pod_name(event)
 
     return f"[{username}] created pod [{namespace}/{name}] in system namespace"
 
@@ -48,23 +50,9 @@ def title(event):
 def dedup(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     namespace = event.udm("namespace") or "<UNKNOWN_NAMESPACE>"
-    name = event.udm("name") or "<UNKNOWN_POD>"
+    name = get_pod_name(event)
     return f"k8s_pod_system_ns_{username}_{namespace}_{name}"
 
 
 def alert_context(event):
-    request_object = event.udm("requestObject") or {}
-    spec = request_object.get("spec", {})
-    containers = spec.get("containers", [])
-
-    # Extract container images
-    images = [container.get("image") for container in containers if container.get("image")]
-
-    return k8s_alert_context(
-        event,
-        extra_fields={
-            "pod_name": event.udm("name"),
-            "system_namespace": event.udm("namespace"),
-            "container_images": images,
-        },
-    )
+    return k8s_alert_context(event, extra_fields=get_pod_context_fields(event))

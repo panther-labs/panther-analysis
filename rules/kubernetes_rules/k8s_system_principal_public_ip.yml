@@ -216,3 +216,189 @@ Tests:
         "stage": "ResponseComplete",
         "p_log_type": "Amazon.EKS.Audit"
       }
+  - Name: AKS CSI Disk Driver from Azure Node
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azuredisk-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"20.127.0.45\"],\"objectRef\":{\"resource\":\"nodes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
+        },
+        "p_source_label": "aks-cluster",
+        "p_enrichment": {
+          "ipinfo_asn": {
+            "sourceIPs": [{
+              "asn": "AS8075",
+              "domain": "microsoft.com",
+              "name": "Microsoft Corporation",
+              "p_match": "20.127.0.45",
+              "type": "hosting"
+            }]
+          }
+        }
+      }
+  - Name: AKS CSI File Driver from Azure Node
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"list\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azurefile-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"52.152.245.238\"],\"objectRef\":{\"resource\":\"persistentvolumes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE Anonymous Health Check with User Agent
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "system:anonymous"},
+          "methodName": "io.k8s.core.v1.healthz.get",
+          "requestMetadata": {
+            "callerIP": "35.186.224.25",
+            "callerSuppliedUserAgent": "GoogleHC/1.0"
+          },
+          "resourceName": "core/v1/healthz",
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "p_enrichment": {
+          "ipinfo_asn": {
+            "callerIP": [{
+              "asn": "AS15169",
+              "domain": "google.com",
+              "name": "Google LLC",
+              "p_match": "35.186.224.25",
+              "type": "hosting"
+            }]
+          }
+        }
+      }
+  - Name: GKE Anonymous Readyz Check via RequestURI
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "system:anonymous"},
+          "methodName": "io.k8s.readyz",
+          "requestMetadata": {
+            "callerIP": "108.177.75.65",
+            "callerSuppliedUserAgent": "GoogleKubernetesEngineFrontend"
+          },
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "p_enrichment": {
+          "ipinfo_asn": {
+            "callerIP": [{
+              "asn": "AS15169",
+              "domain": "google.com"
+            }]
+          }
+        }
+      }
+  - Name: Pod with Mixed Public and Private IPs
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "watch",
+        "user": {"username": "system:serviceaccount:default:app"},
+        "sourceIPs": ["10.0.1.5", "54.212.83.236"],
+        "objectRef": {"resource": "endpoints"},
+        "responseStatus": {"code": 200},
+        "stage": "ResponseComplete",
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: AKS System Node from Azure IP
+    ExpectedResult: false
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"system:node:aks-nodepool1-12345-vmss000001\",\"groups\":[\"system:nodes\",\"system:authenticated\"]},\"sourceIPs\":[\"20.127.0.100\"],\"objectRef\":{\"resource\":\"leases\"},\"responseStatus\":{\"code\":201},\"stage\":\"ResponseComplete\"}"
+        },
+        "p_source_label": "aks-cluster",
+        "p_enrichment": {
+          "ipinfo_asn": {
+            "sourceIPs": [{
+              "asn": "AS8075",
+              "domain": "microsoft.com",
+              "name": "Microsoft Corporation",
+              "p_match": "20.127.0.100",
+              "type": "hosting"
+            }]
+          }
+        }
+      }
+  - Name: Invalid IP in sourceIPs (Skip Invalid)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "user": {"username": "system:serviceaccount:kube-system:coredns"},
+        "sourceIPs": ["not-an-ip", "10.0.1.5"],
+        "objectRef": {"resource": "services"},
+        "responseStatus": {"code": 200},
+        "stage": "ResponseComplete",
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: system:anonymous from Public IP (Excluded - Not a Real Principal)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "propfind",
+        "user": {"username": "system:anonymous"},
+        "sourceIPs": ["176.65.134.20"],
+        "objectRef": {"resource": ""},
+        "responseStatus": {"code": 403},
+        "stage": "ResponseComplete",
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: system:unauthenticated from Public IP (Excluded - Not a Real Principal)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "user": {"username": "system:unauthenticated"},
+        "sourceIPs": ["1.2.3.4"],
+        "objectRef": {"resource": "apis"},
+        "responseStatus": {"code": 403},
+        "stage": "ResponseComplete",
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: GKE system:anonymous Health Check (Excluded - Anonymous)
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "system:anonymous"},
+          "methodName": "io.k8s.readyz",
+          "requestMetadata": {
+            "callerIP": "108.177.75.65",
+            "callerSuppliedUserAgent": "GoogleHC/1.0"
+          },
+          "resourceName": "/readyz",
+          "serviceName": "k8s.io",
+          "status": {}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from panther_base_helpers import pantherflow_investigation
 
 SYSTEM_NAMESPACES = {"kube-system", "gke-system", "kube-node-lease", "kube-public"}
@@ -85,8 +87,8 @@ def is_system_principal(username):
     if username.startswith(tuple(SYSTEM_IDENTITY_PREFIXES)):
         return True
 
-    # Azure AKS managed identity service principal
-    if username == "masterclient":
+    # Azure AKS managed identity service principals
+    if username in ("masterclient", "aksService"):
         return True
 
     # Kubernetes system components (not service accounts)
@@ -273,3 +275,148 @@ def get_resource_name(event, default="<UNKNOWN>"):
         Resource name string
     """
     return event.udm("name") or default
+
+
+def get_pod_name(event: Any, default: str = "<UNKNOWN_POD>") -> str:
+    """Extract pod name from event with fallbacks for creation events.
+
+    For pod creation events, the name may not be in objectRef (only generateName),
+    so we check responseObject.metadata.name where the actual assigned name appears.
+
+    Args:
+        event: The event object
+        default: Default value if name not found
+
+    Returns:
+        Pod name string
+    """
+    # Try objectRef.name first (works for most operations)
+    name = event.udm("name")
+    if name:
+        return name
+
+    # For creation events, check responseObject.metadata.name
+    response_object = event.udm("responseObject") or {}
+    name = response_object.get("metadata", {}).get("name")
+    if name:
+        return name
+
+    # Fallback to requestObject.metadata.name
+    request_object = event.udm("requestObject") or {}
+    name = request_object.get("metadata", {}).get("name")
+    if name:
+        return name
+
+    return default
+
+
+def _extract_container_summary(container: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract summary info for a single container.
+
+    Args:
+        container: Container specification dictionary
+
+    Returns:
+        Dictionary with container details
+    """
+    env_vars = []
+    secret_refs = []
+    for env_var in container.get("env", []):
+        env_name = env_var.get("name")
+        if env_name:
+            env_vars.append(env_name)
+            value_from = env_var.get("valueFrom", {})
+            if "secretKeyRef" in value_from:
+                secret_refs.append(
+                    {
+                        "env_var": env_name,
+                        "secret_name": value_from["secretKeyRef"].get("name"),
+                        "secret_key": value_from["secretKeyRef"].get("key"),
+                    }
+                )
+
+    return {
+        "name": container.get("name"),
+        "image": container.get("image"),
+        "ports": [p.get("containerPort") for p in container.get("ports", [])],
+        "env_vars": env_vars,
+        "secret_refs": secret_refs if secret_refs else None,
+        "volume_mounts": [
+            {"path": vm.get("mountPath"), "name": vm.get("name")}
+            for vm in container.get("volumeMounts", [])
+            if vm.get("mountPath") and vm.get("name")
+        ],
+        "security_context": container.get("securityContext", {}),
+        "resources": container.get("resources", {}),
+    }
+
+
+def _extract_volume_info(volume: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract info for a single volume.
+
+    Args:
+        volume: Volume specification dictionary
+
+    Returns:
+        Dictionary with volume details
+    """
+    vol_info = {"name": volume.get("name")}
+    if "hostPath" in volume:
+        vol_info["type"] = "hostPath"
+        path = volume["hostPath"].get("path")
+        vol_info["path"] = path
+        vol_info["sensitive"] = is_sensitive_hostpath(path) if path else False
+    elif "configMap" in volume:
+        vol_info["type"] = "configMap"
+        vol_info["source"] = volume["configMap"].get("name")
+    elif "secret" in volume:
+        vol_info["type"] = "secret"
+        vol_info["source"] = volume["secret"].get("secretName")
+    else:
+        vol_info["type"] = "other"
+        vol_info["keys"] = list(volume.keys())
+    return vol_info
+
+
+def get_pod_context_fields(event: Any) -> Dict[str, Any]:
+    """Extract enriched pod context for alert_context in pod-related rules.
+
+    Works across EKS, AKS, and GKE via the requestObject UDM field.
+    Includes container images, owner references (to identify the controlling workload),
+    ports, environment variable names (with secret references flagged), volume mounts,
+    security contexts, resources, and pod-level host settings.
+
+    Args:
+        event: The event object
+
+    Returns:
+        Dictionary with pod metadata and per-container details
+    """
+    request_object = event.udm("requestObject") or {}
+    pod_metadata = request_object.get("metadata", {})
+    pod_spec = request_object.get("spec", {})
+
+    # Extract container summaries
+    containers = event.udm("containers") or []
+    container_summaries = [_extract_container_summary(c) for c in containers]
+
+    # Extract owner references
+    owner_refs = [
+        {"kind": ref.get("kind"), "name": ref.get("name")}
+        for ref in pod_metadata.get("ownerReferences", [])
+    ]
+
+    # Extract volumes
+    volumes = [_extract_volume_info(v) for v in pod_spec.get("volumes", [])]
+
+    return {
+        "pod_name": get_pod_name(event),
+        "owner_references": owner_refs if owner_refs else None,
+        "host_settings": {
+            "hostPID": pod_spec.get("hostPID", False),
+            "hostIPC": pod_spec.get("hostIPC", False),
+            "hostNetwork": pod_spec.get("hostNetwork", False),
+        },
+        "containers": container_summaries if container_summaries else None,
+        "volumes": volumes if volumes else None,
+    }

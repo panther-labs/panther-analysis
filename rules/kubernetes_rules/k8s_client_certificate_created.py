@@ -19,6 +19,10 @@ def rule(event):
     if is_system_principal(username):
         return False
 
+    # Exclude node bootstrap processes that legitimately create CSRs during cluster operations
+    if username == "kubelet-nodepool-bootstrap":
+        return False
+
     # Check if this is for client authentication
     request_object = event.udm("requestObject") or {}
     spec = request_object.get("spec", {})

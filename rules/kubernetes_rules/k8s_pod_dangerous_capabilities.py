@@ -1,5 +1,7 @@
 from panther_base_helpers import deep_get
 from panther_kubernetes_helpers import (
+    get_pod_context_fields,
+    get_pod_name,
     is_failed_request,
     is_system_namespace,
     is_system_principal,
@@ -69,7 +71,7 @@ def rule(event):
 def title(event):
     username = event.udm("username") or "<UNKNOWN_USER>"
     namespace = event.udm("namespace") or "<UNKNOWN_NAMESPACE>"
-    name = event.udm("name") or "<UNKNOWN_POD>"
+    name = get_pod_name(event)
 
     containers = event.udm("containers") or []
     dangerous_caps = has_dangerous_capabilities(containers)
@@ -91,11 +93,6 @@ def alert_context(event):
     containers = event.udm("containers") or []
     dangerous_caps = has_dangerous_capabilities(containers)
 
-    return k8s_alert_context(
-        event,
-        extra_fields={
-            "pod_name": event.udm("name"),
-            "containers": containers,
-            "dangerous_capabilities": sorted(set(dangerous_caps)),
-        },
-    )
+    context_fields = get_pod_context_fields(event)
+    context_fields["dangerous_capabilities"] = sorted(set(dangerous_caps))
+    return k8s_alert_context(event, extra_fields=context_fields)
