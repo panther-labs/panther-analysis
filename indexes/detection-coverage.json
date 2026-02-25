@@ -2442,8 +2442,17 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects an Axonius login from a malicious IP address",
+        "Description": "Detects an Axonius login from Tor IP address",
         "DisplayName": "Axonius login from Tor IP",
+        "LogTypes": [
+            "Axonius.Activity"
+        ],
+        "YAMLPath": "rules/axonius_rules/axonius_tor_login.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects too many failed Axonius login attempts, which may indicate a brute-force attack",
+        "DisplayName": "Axonius Too Many Failed Logins",
         "LogTypes": [
             "Axonius.Activity"
         ],
@@ -7920,9 +7929,9 @@
         "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.QueryHistory"
+            "Snowflake.AccountUsage"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
     },
     {
         "AnalysisType": "Rule",
