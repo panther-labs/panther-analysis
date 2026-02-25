@@ -1,14 +1,14 @@
 AnalysisType: rule
 Filename: axonius_too_many_failed_logins.py
 RuleID: Axonius.TooManyFailedLogins
-DisplayName: Axonius login from Tor IP
+DisplayName: Axonius Too Many Failed Logins
 Enabled: true
 LogTypes:
   - Axonius.Activity
 Tags:
   - Axonius
 Severity: Medium
-Description: Detects an Axonius login from a malicious IP address
+Description: Detects too many failed Axonius login attempts, which may indicate a brute-force attack
 Runbook: Review the actions taken, check credentials/service user used and escalate.
 Tests:
   - Name: Successful Login
