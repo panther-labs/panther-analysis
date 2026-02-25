@@ -643,7 +643,7 @@ Tests:
             "ConfigStateHash": "3645117824",
             "EffectiveTransmissionClass": "2",
             "Entitlements": "15",
-            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\cmd.exe",
             "ImageSubsystem": "3",
             "IntegrityLevel": "12288",
             "MD5HashData": "c031e215b8b08c752bf362f6d4c5d3ad",
@@ -704,7 +704,7 @@ Tests:
             "ConfigStateHash": "3645117824",
             "EffectiveTransmissionClass": "2",
             "Entitlements": "15",
-            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\cmd.exe",
             "ImageSubsystem": "3",
             "IntegrityLevel": "12288",
             "MD5HashData": "c031e215b8b08c752bf362f6d4c5d3ad",
@@ -1047,6 +1047,73 @@ Tests:
         "fdr_event_type": "ProcessRollup2",
         "id": "b0c07877-f288-49f8-8cb3-150149a557b2",
         "name": "ProcessRollup2V19",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "timestamp": "2023-04-24 20:33:36.719",
+      }
+  - Name: PowerShell -Command with plain English args - no encoding flag (Negative)
+    ExpectedResult: false
+    Log:
+      {
+        "aid": "2c1d1b0b1e324c5894399c8b870994d4",
+        "aip": "46.17.161.146",
+        "cid": "e4a46c2a445744f7860dcf62bf1b6ad4",
+        "event":
+          {
+            "CommandLine": "\"powershell.exe\" -ExecutionPolicy Bypass -NoProfile -Command \\\"1-GPUpdate -Name 'Require user authentication for remote connections by using Network Level Authentication' -Force\\\"",
+            "ImageFileName": "\\Device\\HarddiskVolume3\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "ParentBaseFileName": "ThreatLockerService.exe",
+            "UserSid": "S-1-5-18",
+            "event_platform": "Win",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2V19",
+          },
+        "event_platform": "Win",
+        "event_simpleName": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "timestamp": "2026-02-24 16:38:26.949000000",
+      }
+  - Name: PowerShell -enc abbreviated flag (Positive)
+    ExpectedResult: true
+    Log:
+      {
+        "aid": "877761efa8db44d792ddc2redacted",
+        "aip": "1.1.1.1",
+        "cid": "cfe698690964434083fecdredacted",
+        "event":
+          {
+            "CommandLine": "powershell.exe -NoProfile -enc aGVsbG93b3JsZA==",
+            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "ParentBaseFileName": "cmd.exe",
+            "event_platform": "Win",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2V19",
+          },
+        "event_platform": "Win",
+        "event_simpleName": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
+        "p_log_type": "Crowdstrike.FDREvent",
+        "timestamp": "2023-04-24 20:33:36.719",
+      }
+  - Name: PowerShell -e abbreviated flag (Positive)
+    ExpectedResult: true
+    Log:
+      {
+        "aid": "877761efa8db44d792ddc2redacted",
+        "aip": "1.1.1.1",
+        "cid": "cfe698690964434083fecdredacted",
+        "event":
+          {
+            "CommandLine": "powershell.exe -NoProfile -e aGVsbG93b3JsZA==",
+            "ImageFileName": "\\Device\\HarddiskVolume2\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "ParentBaseFileName": "cmd.exe",
+            "event_platform": "Win",
+            "event_simpleName": "ProcessRollup2",
+            "name": "ProcessRollup2V19",
+          },
+        "event_platform": "Win",
+        "event_simpleName": "ProcessRollup2",
+        "fdr_event_type": "ProcessRollup2",
         "p_log_type": "Crowdstrike.FDREvent",
         "timestamp": "2023-04-24 20:33:36.719",
       }
