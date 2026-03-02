@@ -14,7 +14,6 @@ Reports:
     - TA0005:T1562
     - TA0040:T1485
 Severity: Medium
-Status: Experimental
 Description: Detects when S3 bucket replication configuration is deleted, which could prevent data backup and indicate ransomware preparation activity.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the userIdentity:arn on the requestParameters:bucketName in the 24 hours before and after the replication deletion to establish full activity context

@@ -14,7 +14,6 @@ Reports:
     - TA0005:T1562
     - TA0040:T1485
 Severity: Low
-Status: Experimental
 Description: Detects when MFA Delete is disabled on an S3 bucket, removing an important security control that prevents accidental or malicious deletion of versioned objects and could indicate ransomware preparation activity.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the userIdentity:arn on the requestParameters:bucketName in the 24 hours before and after MFA Delete was disabled
