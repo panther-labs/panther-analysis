@@ -1,31 +1,15 @@
-import time
-
-from panther_detection_helpers.caching import (
-    get_counter,
-    increment_counter,
-    reset_counter,
-    set_key_expiration,
-)
-
 MAX_FAILS = 5
-TIME_WINDOW = 60 * 5
-CACHE_PREFIX = "axonius_too_many_failed_logins:"
 
 
 def rule(event):
     action = event.deep_get("event", "action", default="")
     status = event.deep_get("event", "params", "status", default="")
     username = event.deep_get("event", "user", default="")
-    if status != "successful" and action == "AuditAction.LoginFrom":
-        cache_key = f"{CACHE_PREFIX}{username}"
-        count = int(get_counter(cache_key))
-        if count > MAX_FAILS:
-            reset_counter(cache_key)
-            return True
+    return status != "successful" and action == "AuditAction.LoginFrom" and bool(username)
 
-        increment_counter(cache_key)
-        set_key_expiration(cache_key, time.time() + TIME_WINDOW)
-    return False
+
+def dedup(event):
+    return event.deep_get("event", "user", default="<UNKNOWN_USER>")
 
 
 def title(event):

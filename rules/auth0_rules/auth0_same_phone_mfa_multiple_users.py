@@ -1,38 +1,34 @@
-import json
-
 from panther_auth0_helpers import auth0_alert_context
-from panther_detection_helpers.caching import add_to_string_set
 
 RULE_ID = "Auth0.SamePhone.MultipleUsers.MFA"
 
 
 def rule(event):
-
     data_type = event.deep_get("data", "type", default="<NO_TYPE_FOUND>")
     data_description = event.deep_get("data", "description", default="<NO_DATA_DESCRIPTION_FOUND>")
-    user_id = event.deep_get("data", "user_id", default="<NO_USER_ID_FOUND>")
-
     phone_number = str(
         event.deep_get(
             "data", "details", "authenticator", "phone_number", default="<NO_PHONE_NUMBER_FOUND>"
         )
     )
 
-    if (
-        data_type != "gd_enrollment_complete"
-        or data_description != "Guardian - Enrollment complete (sms)"
-        or not phone_number
-    ):
-        return False
+    return (
+        data_type == "gd_enrollment_complete"
+        and data_description == "Guardian - Enrollment complete (sms)"
+        and bool(phone_number)
+    )
 
-    key = phone_number + "-" + RULE_ID
-    user_set = add_to_string_set(key, [user_id])
 
-    if isinstance(user_set, str):
-        # This is a unit test
-        user_set = json.loads(user_set) if user_set else []
+def unique(event):
+    return event.deep_get("data", "user_id", default="")
 
-    return len(user_set) > 1
+
+def dedup(event):
+    return str(
+        event.deep_get(
+            "data", "details", "authenticator", "phone_number", default="<NO_PHONE_NUMBER_FOUND>"
+        )
+    )
 
 
 def title(event):

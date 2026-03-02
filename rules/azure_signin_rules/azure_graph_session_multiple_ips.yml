@@ -7,6 +7,7 @@ Status: Experimental
 LogTypes:
   - Azure.Audit
 Severity: Medium
+Threshold: 2
 DedupPeriodMinutes: 60
 Description: >
   Detects when a user signs in to Microsoft Entra ID and subsequently accesses Microsoft Graph from
@@ -36,9 +37,6 @@ SummaryAttributes:
 Tests:
   - Name: Multiple IP Access to Same Microsoft Graph Session
     ExpectedResult: true
-    Mocks:
-      - objectName: "add_to_string_set"
-        returnValue: '["203.0.113.45", "198.51.100.88"]'
     Log:
       {
         "time": "2025-01-15 09:35:20.456",
