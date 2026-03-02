@@ -914,6 +914,8 @@
   - Detects when an external user is added in Axonius
 - [Axonius login from Tor IP](../rules/axonius_rules/axonius_tor_login.yml)
   - Detects an Axonius login from Tor IP address
+- [Axonius Too Many Failed Logins](../rules/axonius_rules/axonius_too_many_failed_logins.yml)
+  - Detects too many failed Axonius login attempts, which may indicate a brute-force attack
 - [Axonius Webhook Created](../rules/axonius_rules/axonius_webhook_created.yml)
   - Detects when an Axonius Webhook is Created
 
