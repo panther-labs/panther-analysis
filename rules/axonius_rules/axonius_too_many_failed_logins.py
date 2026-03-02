@@ -1,6 +1,3 @@
-MAX_FAILS = 5
-
-
 def rule(event):
     action = event.deep_get("event", "action", default="")
     status = event.deep_get("event", "params", "status", default="")

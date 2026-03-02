@@ -1,7 +1,5 @@
 from panther_auth0_helpers import auth0_alert_context
 
-RULE_ID = "Auth0.SamePhone.MultipleUsers.MFA"
-
 
 def rule(event):
     data_type = event.deep_get("data", "type", default="<NO_TYPE_FOUND>")

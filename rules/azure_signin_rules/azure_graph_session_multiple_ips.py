@@ -1,7 +1,5 @@
 from panther_azuresignin_helpers import azure_signin_alert_context, azure_signin_success
 
-RULE_ID = "Azure.SignIn.GraphSessionMultipleIPs"
-
 # Whitelisted application IDs (common Microsoft services that may legitimately use multiple IPs)
 WHITELISTED_APP_IDS = {
     # Office 365 / Microsoft 365
@@ -86,7 +84,7 @@ def unique(event):
 def dedup(event):
     session_id = event.deep_get("properties", "sessionId", default="")
     user_principal_name = event.deep_get("properties", "userPrincipalName", default="")
-    return f"{session_id}-{user_principal_name}-{RULE_ID}"
+    return f"{session_id}-{user_principal_name}"
 
 
 def title(event):
