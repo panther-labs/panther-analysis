@@ -54,13 +54,20 @@
         },
         "PeriodMinutes": {
           "type": "integer"
+        },
+        "AlarmPeriodMinutes": {
+          "type": "integer"
+        },
+        "CronExpression": {
+          "type": "string"
         }
-      },
-      "required": [
-        "RoleARN",
-        "ObjectPath",
-        "PeriodMinutes"
-      ]
+      }
+    },
+    "SnowflakeQuery": {
+      "type": "string"
+    },
+    "Query": {
+      "type": "string"
     },
     "Schema": {
       "type": "string"
@@ -90,6 +97,40 @@
         }
       }
     },
+    "Indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string"
+          },
+          "Indicators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Validations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string"
+          },
+          "Validations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "Description": {
       "type": "string"
     },
@@ -101,8 +142,10 @@
     "AnalysisType",
     "LookupName",
     "Enabled",
-    "Schema",
     "LogTypeMap"
   ],
+  "not": {
+    "required": ["SnowflakeQuery", "Query"]
+  },
   "additionalProperties": false
 }
