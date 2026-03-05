@@ -1,185 +1,186 @@
 AnalysisType: scheduled_rule
 Filename: okta_swa_offhours_access_behavioral.py
-RuleID: "Okta.SWA.OffhoursAccess.Behavioral"
-DisplayName: "Okta SWA Unusual Time Access - Behavioral"
+RuleID: "Okta.SWA.OffHoursAccess.Behavioral"
+DisplayName: "Okta SWA Off-Hours Credential Access - Behavioral"
 Enabled: true
 ScheduledQueries:
-  - Query.Okta.SWAOffhoursAccessBehavioral
-Severity: Low
+  - Query.Okta.SWAOffHoursAccessBehavioral
+Severity: High  # Default, dynamic severity in rule function
 Status: Experimental
 Tags:
   - Identity & Access Management
   - Okta
   - SWA
   - Credential Access:Credentials from Password Stores
-  - Persistence
+  - Initial Access:Valid Accounts
   - Anomaly Detection
 Reports:
   MITRE ATT&CK:
-    - TA0006:T1555
-    - TA0003:T1078
+    - TA0006:T1555  # Credentials from Password Stores
+    - TA0001:T1078  # Valid Accounts
 Description: |
-  Detects SWA (Secure Web Authentication) application access occurring at unusual times
-  using statistical anomaly detection. Instead of hardcoded business hours, this detection
-  learns each user's typical access patterns and flags deviations. The detection creates
-  a composite key of user+hour_of_day and identifies when users have unusually high SWA
-  access at specific hours compared to their historical baseline for that hour.
+  Detects Okta SWA credential access occurring outside normal business hours using behavioral
+  z-score analysis on temporal patterns.
 
-  This behavioral approach automatically adapts to different timezones, work schedules,
-  and user habits, making it more effective at detecting compromised accounts accessing
-  credentials at atypical hours. Uses a z-score threshold of 2 with 30-day baseline.
+  Compromised admin accounts often access SWA credentials at unusual times - late at night,
+  during weekends, or from a different geographic location than normal. This detection builds
+  a 90-day baseline for each admin's temporal credential access patterns, then identifies
+  anomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.
 
-  Severity is based purely on the z-score (how anomalous the behavior is), not hardcoded
-  hours, which ensures consistent behavioral detection across all timezones and work schedules.
-Reference: https://help.okta.com/en-us/content/topics/apps/apps-about-swa.htm
+  **Detection Logic:**
+  - Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)
+  - Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)
+  - Z-score: Weekend ratio spike (> 2σ)
+  - Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)
+  - Cold-start: First-time late-night access (>= 2 events, no prior baseline)
+  - Cold-start: First-time weekend access (>= 2 events, no prior baseline)
+  - Compound: Geographic shift + off-hours activity (high-confidence indicator)
+
+  **Why This Matters:**
+  Attackers using stolen admin credentials typically operate at off-hours to avoid detection
+  and minimize interference with active users. A sudden shift in the time distribution of
+  SWA credential accesses is a strong indicator of account compromise.
+
+  **Complementary Detection:**
+  Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vector
+  based on volume rather than temporal patterns.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
 Runbook: |
-  1. Extract the hour from the user_hour_key to see what time this occurred
-  2. Review the z-score to understand how unusual this time is for this user
-  3. Verify the user's normal working hours and timezone
-  4. Check if the user has legitimate business need for off-hours access
-  5. Investigate the source IP address and geolocation
-  6. Review user-agent string for automation tools
-  7. Check for multiple off-hours accesses indicating a pattern
-  8. If unauthorized, suspend the account and revoke active sessions
-  9. Force password reset and MFA re-enrollment if compromise suspected
-  10. Audit all applications accessed during the anomalous window
-DedupPeriodMinutes: 60
+  1. Compare recent_late_night_ratio and recent_offhours_ratio for admin_email against baseline_late_night_ratio and baseline_offhours_ratio - query Okta SystemLog for application.user_membership.change_username events by admin_email in the 7 days around recent_first_event, listing UTC timestamps and app names for all off-hours accesses
+  2. Check is_geographic_shift by comparing baseline_primary_country against recent_primary_country for admin_email - review client IP addresses and geolocation data for recent accesses in the 24 hours around recent_first_event to confirm whether the location change is legitimate travel or suspicious
+  3. Search for Okta.SWA.BulkAccess.Behavioral and any MFA bypass or session anomaly alerts for admin_email in the 48 hours before recent_first_event to determine whether this off-hours access is part of a broader credential theft campaign
+
+DedupPeriodMinutes: 1440  # 24 hours
 SummaryAttributes:
-  - user_hour_key
-  - N
-  - p_zscore
+  - admin_email
+  - anomaly_severity_score
+  - is_geographic_shift
 Tests:
   # Positive Tests - Should Alert
-  - Name: High Severity - Z-Score 6.25 (Very Anomalous)
+  - Name: Geographic Shift with Late-Night Access - Critical Severity
     ExpectedResult: true
     Log:
       {
-        "user_hour_key": "attacker@company.com|2",
-        "N": 8,
-        "p_mean": 0.5,
-        "p_stddev": 1.2,
-        "p_zscore": 6.25,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
+        "admin_email": "victim-admin@company.com",
+        "baseline_total_credential_access": 80,
+        "baseline_active_days": 25,
+        "baseline_offhours_ratio": 0.1,
+        "baseline_late_night_ratio": 0.0,
+        "baseline_weekend_ratio": 0.05,
+        "baseline_total_offhours": 8,
+        "baseline_total_late_night": 0,
+        "baseline_total_weekend": 4,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "San Francisco",
+        "recent_total_credential_access": 20,
+        "recent_offhours_ratio": 0.8,
+        "recent_late_night_ratio": 0.5,
+        "recent_weekend_ratio": 0.0,
+        "recent_total_offhours": 16,
+        "recent_total_late_night": 10,
+        "recent_total_weekend": 0,
+        "recent_primary_country": "Russia",
+        "recent_primary_city": "Moscow",
+        "z_score_offhours_ratio": 7.0,
+        "z_score_late_night_ratio": 5.0,
+        "z_score_weekend_ratio": -0.5,
+        "is_offhours_ratio_anomaly": true,
+        "is_late_night_ratio_anomaly": true,
+        "is_weekend_ratio_anomaly": false,
+        "is_first_time_offhours": false,
+        "is_first_time_late_night": false,
+        "is_first_time_weekend": false,
+        "is_geographic_shift": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 34.0,
+        "recent_first_event": "2024-01-15 02:00:00",
+        "recent_last_event": "2024-01-15 05:00:00"
       }
-  - Name: High Severity - Z-Score 5.2 at Midday Hour
+
+  - Name: First-Time Late-Night Credential Access - High Severity
     ExpectedResult: true
     Log:
       {
-        "user_hour_key": "suspicious@company.com|14",
-        "N": 15,
-        "p_mean": 2.0,
-        "p_stddev": 2.5,
-        "p_zscore": 5.2,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
+        "admin_email": "admin@company.com",
+        "baseline_total_credential_access": 0,
+        "baseline_total_offhours": 0,
+        "baseline_total_late_night": 0,
+        "baseline_total_weekend": 0,
+        "baseline_offhours_ratio": 0.0,
+        "baseline_late_night_ratio": 0.0,
+        "baseline_weekend_ratio": 0.0,
+        "baseline_primary_country": null,
+        "recent_total_credential_access": 8,
+        "recent_offhours_ratio": 0.63,
+        "recent_late_night_ratio": 0.38,
+        "recent_weekend_ratio": 0.0,
+        "recent_total_offhours": 5,
+        "recent_total_late_night": 3,
+        "recent_total_weekend": 0,
+        "recent_primary_country": "United States",
+        "recent_primary_city": "New York",
+        "z_score_offhours_ratio": null,
+        "z_score_late_night_ratio": null,
+        "is_offhours_ratio_anomaly": false,
+        "is_late_night_ratio_anomaly": false,
+        "is_first_time_offhours": true,
+        "is_first_time_late_night": true,
+        "is_first_time_weekend": false,
+        "is_geographic_shift": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 25.0,
+        "recent_first_event": "2024-01-15 03:00:00",
+        "recent_last_event": "2024-01-15 04:00:00"
       }
-  - Name: Medium Severity - Z-Score 4.5
+
+  - Name: Off-Hours Ratio Z-Score Spike - High Severity
     ExpectedResult: true
     Log:
       {
-        "user_hour_key": "compromised@company.com|23",
-        "N": 10,
-        "p_mean": 1.0,
-        "p_stddev": 2.0,
-        "p_zscore": 4.5,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
+        "admin_email": "svc-admin@company.com",
+        "baseline_total_credential_access": 60,
+        "baseline_active_days": 20,
+        "baseline_offhours_ratio": 0.05,
+        "baseline_late_night_ratio": 0.0,
+        "baseline_weekend_ratio": 0.02,
+        "baseline_total_offhours": 3,
+        "baseline_total_late_night": 0,
+        "baseline_total_weekend": 1,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "Chicago",
+        "recent_total_credential_access": 15,
+        "recent_offhours_ratio": 0.73,
+        "recent_late_night_ratio": 0.0,
+        "recent_weekend_ratio": 0.0,
+        "recent_total_offhours": 11,
+        "recent_total_late_night": 0,
+        "recent_total_weekend": 0,
+        "recent_primary_country": "United States",
+        "recent_primary_city": "Chicago",
+        "z_score_offhours_ratio": 6.8,
+        "z_score_late_night_ratio": 0.0,
+        "z_score_weekend_ratio": -0.2,
+        "is_offhours_ratio_anomaly": true,
+        "is_late_night_ratio_anomaly": false,
+        "is_weekend_ratio_anomaly": false,
+        "is_first_time_offhours": false,
+        "is_first_time_late_night": false,
+        "is_first_time_weekend": false,
+        "is_geographic_shift": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 13.6,
+        "recent_first_event": "2024-01-15 19:00:00",
+        "recent_last_event": "2024-01-15 23:00:00"
       }
-  - Name: Medium Severity - Z-Score 3.0
-    ExpectedResult: true
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Admin Email
+    ExpectedResult: false
     Log:
       {
-        "user_hour_key": "nightowl@company.com|19",
-        "N": 5,
-        "p_mean": 0.8,
-        "p_stddev": 1.5,
-        "p_zscore": 3.0,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Low Severity - Z-Score 2.5
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "earlybird@company.com|7",
-        "N": 6,
-        "p_mean": 1.5,
-        "p_stddev": 1.8,
-        "p_zscore": 2.5,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Low Severity - Minimum Threshold Z-Score 2.0
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "user@company.com|12",
-        "N": 4,
-        "p_mean": 1.5,
-        "p_stddev": 1.25,
-        "p_zscore": 2.0,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  # Edge Cases
-  - Name: Medium Severity - High Z-Score at Late Night Hour
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "boundary@company.com|22",
-        "N": 7,
-        "p_mean": 0.5,
-        "p_stddev": 1.5,
-        "p_zscore": 4.33,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Low Severity - Early Morning Hour
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "earlyshift@company.com|4",
-        "N": 5,
-        "p_mean": 1.0,
-        "p_stddev": 1.8,
-        "p_zscore": 2.22,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Malformed User Hour Key - Missing Pipe
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "malformed@company.com",
-        "N": 8,
-        "p_mean": 2.0,
-        "p_stddev": 2.0,
-        "p_zscore": 3.0,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Malformed User Hour Key - Non-Numeric Hour
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "user@company.com|invalid",
-        "N": 6,
-        "p_mean": 1.5,
-        "p_stddev": 1.5,
-        "p_zscore": 3.0,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
-      }
-  - Name: Zero Access Count Edge Case
-    ExpectedResult: true
-    Log:
-      {
-        "user_hour_key": "inactive@company.com|15",
-        "N": 0,
-        "p_mean": 5.0,
-        "p_stddev": 1.0,
-        "p_zscore": -5.0,
-        "t1": "2024-10-15 00:00:00.000Z",
-        "t2": "2024-10-16 00:00:00.000Z"
+        "baseline_total_credential_access": 60,
+        "recent_total_late_night": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 25.0
       }

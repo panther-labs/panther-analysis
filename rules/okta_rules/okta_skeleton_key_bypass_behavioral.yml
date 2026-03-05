@@ -1,170 +1,196 @@
 AnalysisType: scheduled_rule
 Filename: okta_skeleton_key_bypass_behavioral.py
-RuleID: "Okta.SkeletonKey.Bypass.Behavioral"
-DisplayName: "Okta Authentication Bypass - Behavioral"
+RuleID: "Okta.SkeletonKeyBypass.Behavioral"
+DisplayName: "Okta Authentication Bypass via Skeleton Key Injection - Behavioral"
 Enabled: true
 ScheduledQueries:
   - Query.Okta.SkeletonKeyBypassBehavioral
-Severity: Medium
+Severity: High  # Default, dynamic severity in rule function
 Status: Experimental
 Tags:
   - Identity & Access Management
   - Okta
-  - Defense Evasion:Valid Accounts
+  - Active Directory
+  - Defense Evasion:Modify Authentication Process
+  - Persistence:Account Manipulation
   - Anomaly Detection
 Reports:
   MITRE ATT&CK:
-    - TA0005:T1078
-  CVE:
-    - CVE-2024-9191
+    - TA0005:T1556  # Modify Authentication Process
+    - TA0003:T1098  # Account Manipulation
 Description: |
-  Detects potential Okta authentication bypass attempts using behavioral analysis.
-  Instead of relying on hardcoded lists of suspicious user agents, this detection
-  identifies when users successfully authenticate via SSO using devices or user agents
-  they haven't used historically. This catches skeleton key injection attacks
-  (CVE-2024-9191) and other authentication bypass techniques that rely on unusual
-  automation tools or device types.
-Reference: https://www.splunk.com/en_us/blog/security/bypassing-the-bypass-detecting-okta-classic-application-sign-on-policy-evasion.html
+  Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.
+
+  Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements
+  (disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlled
+  authenticators on victim accounts. This detection builds a 90-day behavioral baseline for each
+  admin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last
+  7 days.
+
+  **Detection Logic:**
+  - Z-score: Spike in security-weakening policy changes (> 2σ above baseline)
+  - Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)
+  - Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)
+  - Cold-start: First-time admin-enrolled factors for other users
+
+  **Why This Matters:**
+  Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,
+  then enroll attacker-controlled authenticators on victim accounts. This detection catches both
+  steps using behavioral baselines that adapt to legitimate admin workflows.
+
+  **Complementary Detection:**
+  Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
 Runbook: |
-  1. Review the anomaly_type to understand if this is a new device or new user agent
-  2. Check if the authentication was legitimate and authorized
-  3. Examine the user agent string for automation/scripting tools
-  4. Review the source IP address and geolocation for anomalies
-  5. Investigate if the user has recently had credentials compromised
-  6. Check for other authentication attempts from the same IP or user
-  7. If unauthorized, disable the user account and revoke active sessions
-  8. Review Okta application sign-on policies for proper device trust
-DedupPeriodMinutes: 60
+  1. Review recent_total_weakenings and recent_max_weakenings_per_hour for admin_email against baseline_total_weakenings - query Okta SystemLog for policy.rule.update and policy.lifecycle.update events by admin_email in the 24 hours around recent_policy_first_event, focusing on changedAttributes containing requireFactor=false or maxSessionLifetimeMinutes=0
+  2. Check recent_total_admin_enrollments and z_score_admin_enrollments for user.mfa.factor.activate events by admin_email in the 7 days around recent_enrollment_first_event - identify target accounts enrolled and verify whether enrollment was authorized and factor types are consistent with corporate standards
+  3. Search for Okta.ADAgent.TokenAbuse.Behavioral or other privileged account alerts for admin_email in the 48 hours before recent_policy_first_event to determine whether the admin account itself was compromised prior to the policy manipulation
+
+DedupPeriodMinutes: 1440  # 24 hours
 SummaryAttributes:
-  - actorId
-  - anomaly_type
-  - deviceType
+  - admin_email
+  - anomaly_severity_score
+  - recent_total_weakenings
 Tests:
   # Positive Tests - Should Alert
-  - Name: SSO from New Unknown Device Type - High Severity
+  - Name: First-Time Security Policy Weakening - Critical Severity
     ExpectedResult: true
     Log:
       {
-        "p_event_time": "2024-10-01 14:30:45.123",
-        "actorId": "user@company.com",
-        "actorName": "Test User",
-        "sourceIP": "203.0.113.50",
-        "deviceType": "Unknown",
-        "userAgent": "python-requests/2.31.0",
-        "browser": "UNKNOWN",
-        "operatingSystem": "Unknown",
-        "targetApp": "Microsoft Office 365",
-        "targetAppId": "Office365",
-        "anomaly_type": "New Device Type"
+        "admin_email": "attacker@company.com",
+        "baseline_total_policy_changes": 0,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "baseline_total_enrollments": 0,
+        "baseline_total_admin_enrollments": 0,
+        "recent_total_policy_changes": 3,
+        "recent_max_policy_changes_per_hour": 3,
+        "recent_total_weakenings": 2,
+        "recent_max_weakenings_per_hour": 2,
+        "recent_total_enrollments": 0,
+        "recent_total_admin_enrollments": 0,
+        "z_score_policy_changes": null,
+        "z_score_security_weakenings": null,
+        "z_score_enrollments": null,
+        "z_score_admin_enrollments": null,
+        "is_policy_volume_anomaly": false,
+        "is_security_weakening_anomaly": false,
+        "is_admin_enrollment_anomaly": false,
+        "is_first_time_security_weakening": true,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 20.0,
+        "recent_policy_first_event": "2024-01-15 02:00:00",
+        "recent_policy_last_event": "2024-01-15 03:00:00"
       }
-  - Name: SSO from New Curl User Agent - High Severity
+
+  - Name: Security Weakening Z-Score Anomaly with Enrollment Spike - Critical Severity
     ExpectedResult: true
     Log:
       {
-        "p_event_time": "2024-10-01 15:45:22.456",
-        "actorId": "admin@company.com",
-        "actorName": "Admin User",
-        "sourceIP": "192.0.2.100",
-        "deviceType": "Computer",
-        "userAgent": "curl/7.68.0",
-        "browser": "UNKNOWN",
-        "operatingSystem": "Linux",
-        "targetApp": "Amazon Web Services",
-        "targetAppId": "AWS",
-        "anomaly_type": "New User Agent"
+        "admin_email": "compromised-admin@company.com",
+        "baseline_total_policy_changes": 100,
+        "baseline_active_days_policy": 30,
+        "baseline_mean_policy_changes_per_hour": 2.0,
+        "baseline_stddev_policy_changes_per_hour": 1.0,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "recent_total_policy_changes": 20,
+        "recent_max_policy_changes_per_hour": 15,
+        "recent_total_weakenings": 5,
+        "recent_max_weakenings_per_hour": 5,
+        "baseline_total_enrollments": 50,
+        "baseline_active_days_enrollment": 20,
+        "baseline_mean_enrollments_per_hour": 1.0,
+        "baseline_stddev_enrollments_per_hour": 0.5,
+        "baseline_total_admin_enrollments": 2,
+        "baseline_mean_admin_enrollments_per_hour": 0.1,
+        "recent_total_enrollments": 5,
+        "recent_max_enrollments_per_hour": 3,
+        "recent_total_admin_enrollments": 2,
+        "recent_max_admin_enrollments_per_hour": 1,
+        "z_score_policy_changes": 13.0,
+        "z_score_security_weakenings": 50.0,
+        "z_score_enrollments": 4.0,
+        "z_score_admin_enrollments": 9.0,
+        "is_security_weakening_anomaly": true,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 109.0,
+        "recent_policy_first_event": "2024-01-15 10:00:00",
+        "recent_policy_last_event": "2024-01-15 14:00:00"
       }
-  - Name: SSO from New Postman User Agent - High Severity
+
+  - Name: Bulk Admin Factor Enrollment Spike - High Severity
     ExpectedResult: true
     Log:
       {
-        "p_event_time": "2024-10-01 18:30:00.000",
-        "actorId": "attacker@company.com",
-        "actorName": "Compromised User",
-        "sourceIP": "198.51.100.200",
-        "deviceType": "Unknown",
-        "userAgent": "PostmanRuntime/7.32.3",
-        "browser": "UNKNOWN",
-        "operatingSystem": "Unknown",
-        "targetApp": "Salesforce",
-        "targetAppId": "Salesforce",
-        "anomaly_type": "New User Agent"
+        "admin_email": "svc-admin@company.com",
+        "baseline_total_policy_changes": 50,
+        "baseline_active_days_policy": 25,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "recent_total_policy_changes": 5,
+        "recent_max_policy_changes_per_hour": 2,
+        "recent_total_weakenings": 0,
+        "recent_max_weakenings_per_hour": 0,
+        "baseline_total_enrollments": 30,
+        "baseline_active_days_enrollment": 15,
+        "baseline_mean_enrollments_per_hour": 0.5,
+        "baseline_stddev_enrollments_per_hour": 0.3,
+        "baseline_total_admin_enrollments": 1,
+        "baseline_mean_admin_enrollments_per_hour": 0.02,
+        "recent_total_enrollments": 20,
+        "recent_max_enrollments_per_hour": 8,
+        "recent_total_admin_enrollments": 8,
+        "recent_max_admin_enrollments_per_hour": 8,
+        "z_score_enrollments": 25.0,
+        "z_score_admin_enrollments": 79.8,
+        "is_policy_volume_anomaly": false,
+        "is_security_weakening_anomaly": false,
+        "is_admin_enrollment_anomaly": true,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 79.8,
+        "recent_enrollment_first_event": "2024-01-15 09:00:00",
+        "recent_enrollment_last_event": "2024-01-15 11:00:00"
       }
-  - Name: SSO from New Legitimate Browser - Default Severity
+
+  - Name: First-Time Admin Enrollment - Medium Severity
     ExpectedResult: true
     Log:
       {
-        "p_event_time": "2024-10-01 16:20:33.789",
-        "actorId": "developer@company.com",
-        "actorName": "Developer User",
-        "sourceIP": "198.51.100.75",
-        "deviceType": "Computer",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "browser": "EDGE",
-        "operatingSystem": "Windows",
-        "targetApp": "GitHub Enterprise",
-        "targetAppId": "GitHub",
-        "anomaly_type": "New User Agent"
+        "admin_email": "new-admin@company.com",
+        "baseline_total_policy_changes": 0,
+        "baseline_total_weakenings": 0,
+        "baseline_total_enrollments": 0,
+        "baseline_total_admin_enrollments": 0,
+        "recent_total_policy_changes": 0,
+        "recent_total_weakenings": 0,
+        "recent_total_enrollments": 3,
+        "recent_total_admin_enrollments": 3,
+        "recent_max_admin_enrollments_per_hour": 3,
+        "z_score_policy_changes": null,
+        "z_score_security_weakenings": null,
+        "z_score_admin_enrollments": null,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 9.0,
+        "recent_enrollment_first_event": "2024-01-15 16:00:00",
+        "recent_enrollment_last_event": "2024-01-15 16:00:00"
       }
-  - Name: SSO from New Mobile Device - Default Severity
-    ExpectedResult: true
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Admin Email
+    ExpectedResult: false
     Log:
       {
-        "p_event_time": "2024-10-01 17:10:15.234",
-        "actorId": "user@company.com",
-        "actorName": "Mobile User",
-        "sourceIP": "203.0.113.100",
-        "deviceType": "Mobile",
-        "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
-        "browser": "MOBILE_SAFARI",
-        "operatingSystem": "iOS",
-        "targetApp": "Slack",
-        "targetAppId": "Slack",
-        "anomaly_type": "New Device Type"
-      }
-  # Edge Cases
-  - Name: Empty Device Type Field
-    ExpectedResult: true
-    Log:
-      {
-        "p_event_time": "2024-10-01 20:00:00.000",
-        "actorId": "user@company.com",
-        "actorName": "User",
-        "sourceIP": "203.0.113.150",
-        "deviceType": "",
-        "userAgent": "python-requests/2.31.0",
-        "browser": "UNKNOWN",
-        "operatingSystem": "Unknown",
-        "targetApp": "AWS",
-        "targetAppId": "AWS",
-        "anomaly_type": "New User Agent"
-      }
-  - Name: Missing Optional Fields
-    ExpectedResult: true
-    Log:
-      {
-        "p_event_time": "2024-10-01 21:15:00.000",
-        "actorId": "user@company.com",
-        "actorName": "User",
-        "sourceIP": "203.0.113.175",
-        "deviceType": "Unknown",
-        "userAgent": "wget/1.21",
-        "targetApp": "Office365",
-        "targetAppId": "Office365",
-        "anomaly_type": "New Device Type"
-      }
-  - Name: Case Insensitive Device Type Check
-    ExpectedResult: true
-    Log:
-      {
-        "p_event_time": "2024-10-01 22:00:00.000",
-        "actorId": "user@company.com",
-        "actorName": "User",
-        "sourceIP": "203.0.113.200",
-        "deviceType": "UNKNOWN",
-        "userAgent": "Mozilla/5.0",
-        "browser": "CHROME",
-        "operatingSystem": "Windows",
-        "targetApp": "Slack",
-        "targetAppId": "Slack",
-        "anomaly_type": "New Device Type"
+        "baseline_total_policy_changes": 100,
+        "recent_total_weakenings": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 50.0
       }

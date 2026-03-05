@@ -1,63 +1,67 @@
-def rule(_):
-    # Query already filtered for statistical anomalies
-    return True
+def rule(event):
+    # Query already filtered for is_anomalous = TRUE.
+    # Guard against malformed rows missing the primary key field.
+    return bool(event.get("admin_email"))
 
 
 def title(event):
-    user_hour_key = event.get("user_hour_key", "<UNKNOWN>")
-    parts = user_hour_key.split("|")
-    actor = parts[0] if len(parts) > 0 else "<UNKNOWN_ACTOR>"
-    hour = parts[1] if len(parts) > 1 else "<UNKNOWN_HOUR>"
-
-    access_count = event.get("N", 0)
-    zscore = event.get("p_zscore", 0)
-
-    return (
-        f"Okta SWA Unusual Time Access: {actor} at hour {hour} UTC "
-        f"({access_count} accesses, z-score: {zscore:.2f})"
-    )
+    admin = event.get("admin_email", "Unknown")
+    is_geo_shift = event.get("is_geographic_shift") or False
+    recent_late_night = event.get("recent_total_late_night") or 0
+    baseline_country = event.get("baseline_primary_country", "Unknown")
+    recent_country = event.get("recent_primary_country", "Unknown")
+    if is_geo_shift and recent_late_night > 0:
+        return (
+            f"Okta SWA: Late-Night Credential Access with Geographic Shift for {admin}"
+            f" ({baseline_country} -> {recent_country})"
+        )
+    if recent_late_night > 0:
+        return f"Okta SWA: Off-Hours Late-Night Credential Access by {admin}"
+    if is_geo_shift:
+        return (
+            f"Okta SWA: Off-Hours Credential Access with Geographic Shift for {admin}"
+            f" ({baseline_country} -> {recent_country})"
+        )
+    return f"Okta SWA: Off-Hours Credential Access Anomaly for {admin}"
 
 
 def severity(event):
-    # Pure behavioral severity based on z-score (how anomalous the behavior is)
-    # This aligns with the behavioral detection approach and doesn't rely on hardcoded hours
-    zscore = event.get("p_zscore", 0)
-
-    # Extremely anomalous behavior (>5 std deviations)
-    if zscore >= 5:
+    is_geo_shift = event.get("is_geographic_shift") or False
+    recent_late_night = event.get("recent_total_late_night") or 0
+    is_first_late_night = event.get("is_first_time_late_night") or False
+    is_late_night_anomaly = event.get("is_late_night_ratio_anomaly") or False
+    is_offhours_anomaly = event.get("is_offhours_ratio_anomaly") or False
+    score = event.get("anomaly_severity_score") or 0
+    if is_geo_shift and recent_late_night > 0:
+        return "CRITICAL"
+    if (
+        recent_late_night > 0
+        or is_geo_shift
+        or is_first_late_night
+        or is_late_night_anomaly
+        or is_offhours_anomaly
+        or score > 20
+    ):
         return "HIGH"
-
-    # Highly anomalous behavior (>3 std deviations)
-    if zscore >= 3:
-        return "MEDIUM"
-
-    # Moderately anomalous (query threshold is 2)
-    if zscore >= 2:
-        return "LOW"
-
-    return "DEFAULT"
+    return "MEDIUM"
 
 
 def alert_context(event):
-    user_hour_key = event.get("user_hour_key", "<UNKNOWN_USERHOURKEY>")
-    parts = user_hour_key.split("|")
-    actor = parts[0] if len(parts) > 0 else "<UNKNOWN_ACTORID>"
-    hour = parts[1] if len(parts) > 1 else "<UNKNOWN_HOUR>"
-
-    access_count = event.get("N", 0)
-    mean = event.get("p_mean", 0)
-
     return {
-        "actor_id": actor,
-        "hour_of_day_utc": hour,
-        "access_count": access_count,
-        "historical_mean_for_hour": mean,
-        "standard_deviation": event.get("p_stddev", 0),
-        "z_score": event.get("p_zscore", 0),
-        "time_window_start": event.get("t1", "<UNKNOWN_TIMEWINDOWSTART>"),
-        "time_window_end": event.get("t2", "<UNKNOWN_TIMEWINDOWEND>"),
-        "anomaly_description": (
-            f"User accessed SWA apps {access_count} times at hour {hour} UTC "
-            f"vs historical average of {mean:.1f}"
-        ),
+        "admin_email": event.get("admin_email"),
+        "recent_total_late_night": event.get("recent_total_late_night"),
+        "recent_total_offhours": event.get("recent_total_offhours"),
+        "recent_total_weekend": event.get("recent_total_weekend"),
+        "recent_late_night_ratio": event.get("recent_late_night_ratio"),
+        "recent_offhours_ratio": event.get("recent_offhours_ratio"),
+        "baseline_late_night_ratio": event.get("baseline_late_night_ratio"),
+        "baseline_offhours_ratio": event.get("baseline_offhours_ratio"),
+        "z_score_late_night_ratio": event.get("z_score_late_night_ratio"),
+        "z_score_offhours_ratio": event.get("z_score_offhours_ratio"),
+        "is_geographic_shift": event.get("is_geographic_shift"),
+        "baseline_primary_country": event.get("baseline_primary_country"),
+        "recent_primary_country": event.get("recent_primary_country"),
+        "anomaly_severity_score": event.get("anomaly_severity_score"),
+        "recent_first_event": event.get("recent_first_event"),
+        "recent_last_event": event.get("recent_last_event"),
     }

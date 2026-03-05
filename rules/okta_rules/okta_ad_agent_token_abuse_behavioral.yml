@@ -25,15 +25,23 @@ Description: |
   occur from previously unseen IP addresses or user agents. This behavioral approach
   adapts to your environment and catches anomalous access patterns that may indicate
   compromised credentials or unauthorized token generation.
+
+  **What This Detection Catches:**
+  - API token creation from new IPs or user agents
+  - New AD agent registrations from unexpected sources
+  - AD agent configuration changes from new locations
+  - Authentication failures from new sources
+
+  **Complementary Detection:**
+  Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actual
+  USE of stolen tokens through authentication pattern anomalies.
+
 Reference: https://www.varonis.com/blog/okta-attack-vectors
 Runbook: |
-  1. Review the anomaly_type to understand if this is a new IP or new user agent
-  2. Check if the source IP and user agent are legitimate for this actor
-  3. For new agent registrations, verify authorization in Okta admin console
-  4. Review the actor's recent authentication history for signs of compromise
-  5. If unauthorized, immediately revoke the compromised agent token
-  6. Investigate any authentication events through the suspicious agent
-  7. Reset credentials for any users that authenticated through rogue agents
+  1. Query Okta SystemLog for all events by actorId in the 24 hours before and after the alert, focusing on system.api_token.create, system.agent.ad.agent_instance_added, and system.agent.ad.config_change_detected events to establish the full scope of activity
+  2. Verify whether sourceIP and userAgent have been seen for actorId in the past 30 days, and check if sourceIP is associated with known corporate or administrative network ranges
+  3. Search for other alerts from actorId or sourceIP in the past 7 days, including Okta.ADAgent.AuthenticationAnomaly.ZScore detections that may indicate a stolen token is actively being used
+
 DedupPeriodMinutes: 60
 SummaryAttributes:
   - eventType
@@ -149,5 +157,16 @@ Tests:
         "userAgent": "Mozilla/5.0",
         "result": "SUCCESS",
         "target": [{"displayName": "Something"}],
+        "anomaly_type": "New IP Address"
+      }
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Actor ID
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-01-15 22:00:00.000",
+        "eventType": "system.api_token.create",
+        "sourceIP": "203.0.113.50",
+        "result": "SUCCESS",
         "anomaly_type": "New IP Address"
       }

@@ -1,6 +1,7 @@
-def rule(_):
-    # Query already filtered for anomalies
-    return True
+def rule(event):
+    # Query already filtered for anomalies.
+    # Guard against malformed rows missing the primary key field.
+    return bool(event.get("actorId"))
 
 
 def title(event):

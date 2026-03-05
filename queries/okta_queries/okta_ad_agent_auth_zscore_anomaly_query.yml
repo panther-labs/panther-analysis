@@ -1,0 +1,271 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.ADAgentAuthZScoreAnomaly"
+Enabled: true
+Description: |
+  Detects anomalous authentication patterns via Okta AD Agent using z-score statistical analysis.
+  Reads behavioral baseline from lookup table and alerts when recent activity shows volume spikes
+  combined with geographic/IP diversity anomalies - indicators of token theft and credential abuse.
+
+  PREREQUISITE: Requires the baseline builder query to populate the lookup table first.
+Query: |
+  -- OKTA AD AGENT AUTHENTICATION ANOMALY DETECTION (Z-SCORE)
+  -- Uses lookup table baseline for efficient anomaly detection
+  -- Detects: Volume spike + Geographic diversity spike = Token being used from multiple locations
+
+  WITH recent_activity AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          published,
+          outcome:result::string AS outcome,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          client:ipAddress::string AS ip_address,
+          securityContext:asNumber::string AS asn,
+          debugContext:debugData:deviceFingerprint::string AS device_fingerprint,
+          DATE_TRUNC('hour', published) AS event_hour
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND actor:alternateId::string LIKE '%@%'
+          AND eventType = 'user.authentication.auth_via_AD_agent'
+          AND outcome:result = 'SUCCESS'
+  ),
+
+  -- Recent activity aggregated by hour
+  recent_hourly AS (
+      SELECT
+          user_email,
+          event_hour,
+          COUNT(*) AS hourly_total_events,
+          COUNT(DISTINCT ip_address) AS hourly_ip_diversity,
+          COUNT(DISTINCT country) AS hourly_country_diversity,
+          COUNT(DISTINCT city) AS hourly_city_diversity,
+          COUNT(DISTINCT device_fingerprint) AS hourly_device_diversity,
+          ARRAY_AGG(DISTINCT ip_address) AS sample_ips,
+          ARRAY_AGG(DISTINCT country) AS sample_countries
+      FROM recent_activity
+      GROUP BY user_email, event_hour
+  ),
+
+  -- Recent activity summary statistics (no flatten here to avoid cartesian product)
+  recent_stats_agg AS (
+      SELECT
+          user_email,
+          SUM(hourly_total_events) AS recent_total_events,
+          COUNT(DISTINCT DATE(event_hour)) AS recent_active_days,
+
+          -- Max per hour (to catch spikes)
+          MAX(hourly_total_events) AS recent_max_events_per_hour,
+          MAX(hourly_ip_diversity) AS recent_max_ip_diversity_per_hour,
+          MAX(hourly_country_diversity) AS recent_max_country_diversity_per_hour,
+          MAX(hourly_city_diversity) AS recent_max_city_diversity_per_hour,
+          MAX(hourly_device_diversity) AS recent_max_device_diversity_per_hour,
+
+          -- Average per hour
+          AVG(hourly_total_events)::FLOAT AS recent_avg_events_per_hour,
+          AVG(hourly_ip_diversity)::FLOAT AS recent_avg_ip_diversity_per_hour,
+
+          -- Temporal context
+          MIN(event_hour) AS first_anomaly_hour,
+          MAX(event_hour) AS last_anomaly_hour
+
+      FROM recent_hourly
+      GROUP BY user_email
+  ),
+
+  -- Collect unique IPs across all hourly windows (separate flatten to avoid cartesian product)
+  recent_ips AS (
+      SELECT
+          user_email,
+          ARRAY_AGG(DISTINCT ip.value::string) AS all_recent_ips
+      FROM recent_hourly
+      CROSS JOIN LATERAL FLATTEN(input => sample_ips) AS ip
+      GROUP BY user_email
+  ),
+
+  -- Collect unique countries across all hourly windows
+  recent_countries AS (
+      SELECT
+          user_email,
+          ARRAY_AGG(DISTINCT country.value::string) AS all_recent_countries
+      FROM recent_hourly
+      CROSS JOIN LATERAL FLATTEN(input => sample_countries) AS country
+      GROUP BY user_email
+  ),
+
+  -- Join aggregates with IP/country collections
+  recent_stats AS (
+      SELECT
+          a.*,
+          i.all_recent_ips,
+          c.all_recent_countries
+      FROM recent_stats_agg a
+      LEFT JOIN recent_ips i ON a.user_email = i.user_email
+      LEFT JOIN recent_countries c ON a.user_email = c.user_email
+  ),
+
+  -- Join with baseline from lookup table and calculate z-scores
+  anomaly_detection AS (
+      SELECT
+          r.user_email,
+
+          -- Baseline metrics (from lookup table)
+          b.baseline_total_events,
+          b.baseline_active_days,
+          b.baseline_mean_events_per_hour,
+          b.baseline_stddev_events_per_hour,
+          b.baseline_mean_ip_diversity_per_hour,
+          b.baseline_stddev_ip_diversity_per_hour,
+          b.baseline_mean_country_diversity_per_hour,
+          b.baseline_stddev_country_diversity_per_hour,
+          b.baseline_mean_city_diversity_per_hour,
+          b.baseline_stddev_city_diversity_per_hour,
+          b.baseline_mean_device_diversity_per_hour,
+          b.baseline_stddev_device_diversity_per_hour,
+          b.primary_country,
+          b.primary_city,
+          b.primary_ip,
+          b.baseline_updated_at,
+
+          -- Recent activity metrics
+          r.recent_total_events,
+          r.recent_active_days,
+          r.recent_max_events_per_hour,
+          r.recent_max_ip_diversity_per_hour,
+          r.recent_max_country_diversity_per_hour,
+          r.recent_max_city_diversity_per_hour,
+          r.recent_max_device_diversity_per_hour,
+          r.recent_avg_events_per_hour,
+          r.recent_avg_ip_diversity_per_hour,
+          r.all_recent_ips,
+          r.all_recent_countries,
+          r.first_anomaly_hour,
+          r.last_anomaly_hour,
+
+          -- Z-SCORES (using GREATEST to prevent division by zero)
+          ROUND(
+              (r.recent_max_events_per_hour - b.baseline_mean_events_per_hour) /
+              GREATEST(b.baseline_stddev_events_per_hour, 0.1),
+              2
+          ) AS z_score_volume,
+
+          ROUND(
+              (r.recent_max_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) /
+              GREATEST(b.baseline_stddev_ip_diversity_per_hour, 0.1),
+              2
+          ) AS z_score_ip_diversity,
+
+          ROUND(
+              (r.recent_max_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) /
+              GREATEST(b.baseline_stddev_country_diversity_per_hour, 0.1),
+              2
+          ) AS z_score_country_diversity,
+
+          ROUND(
+              (r.recent_max_city_diversity_per_hour - b.baseline_mean_city_diversity_per_hour) /
+              GREATEST(b.baseline_stddev_city_diversity_per_hour, 0.1),
+              2
+          ) AS z_score_city_diversity,
+
+          ROUND(
+              (r.recent_max_device_diversity_per_hour - b.baseline_mean_device_diversity_per_hour) /
+              GREATEST(b.baseline_stddev_device_diversity_per_hour, 0.1),
+              2
+          ) AS z_score_device_diversity,
+
+          -- Anomaly severity score (sum of positive z-scores)
+          ROUND(
+              GREATEST((r.recent_max_events_per_hour - b.baseline_mean_events_per_hour) / GREATEST(b.baseline_stddev_events_per_hour, 0.1), 0) +
+              GREATEST((r.recent_max_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) / GREATEST(b.baseline_stddev_ip_diversity_per_hour, 0.1), 0) +
+              GREATEST((r.recent_max_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) / GREATEST(b.baseline_stddev_country_diversity_per_hour, 0.1), 0) +
+              GREATEST((r.recent_max_city_diversity_per_hour - b.baseline_mean_city_diversity_per_hour) / GREATEST(b.baseline_stddev_city_diversity_per_hour, 0.1), 0) +
+              GREATEST((r.recent_max_device_diversity_per_hour - b.baseline_mean_device_diversity_per_hour) / GREATEST(b.baseline_stddev_device_diversity_per_hour, 0.1), 0),
+              2
+          ) AS anomaly_severity_score,
+
+          -- Multi-dimensional anomaly flag
+          CASE
+              WHEN (
+                  -- Volume spike (z > 3)
+                  (r.recent_max_events_per_hour - b.baseline_mean_events_per_hour) /
+                      GREATEST(b.baseline_stddev_events_per_hour, 0.1) > 3
+                  AND (
+                      -- AND either IP diversity spike (z > 2) OR country diversity spike (z > 2)
+                      (r.recent_max_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) /
+                          GREATEST(b.baseline_stddev_ip_diversity_per_hour, 0.1) > 2
+                      OR (r.recent_max_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) /
+                          GREATEST(b.baseline_stddev_country_diversity_per_hour, 0.1) > 2
+                  )
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          -- Detection metadata
+          CURRENT_TIMESTAMP AS detection_timestamp
+
+      FROM recent_stats r
+      INNER JOIN panther_lookups.public.okta_ad_agent_baseline b
+          ON r.user_email = b.user_email
+      WHERE r.recent_total_events >= 5  -- Minimum recent activity threshold
+  )
+
+  -- Final output: Only anomalous users
+  SELECT
+      user_email,
+
+      -- Baseline context
+      baseline_total_events,
+      baseline_active_days,
+      baseline_mean_events_per_hour,
+      baseline_stddev_events_per_hour,
+      baseline_mean_ip_diversity_per_hour,
+      baseline_stddev_ip_diversity_per_hour,
+      baseline_mean_country_diversity_per_hour,
+      baseline_stddev_country_diversity_per_hour,
+      baseline_mean_city_diversity_per_hour,
+      baseline_stddev_city_diversity_per_hour,
+      baseline_mean_device_diversity_per_hour,
+      baseline_stddev_device_diversity_per_hour,
+      primary_country,
+      primary_city,
+      primary_ip,
+      baseline_updated_at,
+
+      -- Recent activity context
+      recent_total_events,
+      recent_active_days,
+      recent_max_events_per_hour,
+      recent_max_ip_diversity_per_hour,
+      recent_max_country_diversity_per_hour,
+      recent_max_city_diversity_per_hour,
+      recent_max_device_diversity_per_hour,
+      recent_avg_events_per_hour,
+      recent_avg_ip_diversity_per_hour,
+      all_recent_ips,
+      all_recent_countries,
+      first_anomaly_hour,
+      last_anomaly_hour,
+
+      -- Z-scores and anomaly metrics
+      z_score_volume,
+      z_score_ip_diversity,
+      z_score_country_diversity,
+      z_score_city_diversity,
+      z_score_device_diversity,
+      anomaly_severity_score,
+
+      -- Detection metadata
+      detection_timestamp
+
+  FROM anomaly_detection
+  WHERE is_anomalous = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 360  # Run every 6 hours
+  TimeoutMinutes: 10
+Tags:
+  - Okta
+  - Active Directory
+  - Anomaly Detection
+  - Statistical Analysis
+  - Token Theft
