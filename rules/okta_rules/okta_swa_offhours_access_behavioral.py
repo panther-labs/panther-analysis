@@ -34,12 +34,12 @@ def severity(event):
     score = event.get("anomaly_severity_score") or 0
     if is_geo_shift and recent_late_night > 0:
         return "CRITICAL"
+    is_temporal_anomaly = is_late_night_anomaly or is_offhours_anomaly
     if (
         recent_late_night > 0
         or is_geo_shift
         or is_first_late_night
-        or is_late_night_anomaly
-        or is_offhours_anomaly
+        or is_temporal_anomaly
         or score > 20
     ):
         return "HIGH"
