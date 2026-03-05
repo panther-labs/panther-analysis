@@ -193,3 +193,38 @@ Tests:
         "z_score_ip_diversity": 12.0,
         "anomaly_severity_score": 40.0
       }
+
+  # Note: rule() only validates the primary key (user_email); anomaly thresholds
+  # are enforced at the query level (WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE).
+  # All rows reaching rule() with a valid user_email are expected to return true.
+
+  - Name: Cold Start - No Baseline, High IP Diversity
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "new.account@company.com",
+        "baseline_total_events": null,
+        "baseline_active_days": null,
+        "baseline_mean_events_per_hour": null,
+        "baseline_stddev_events_per_hour": null,
+        "baseline_mean_ip_diversity_per_hour": null,
+        "baseline_stddev_ip_diversity_per_hour": null,
+        "baseline_mean_country_diversity_per_hour": null,
+        "baseline_stddev_country_diversity_per_hour": null,
+        "recent_total_events": 25,
+        "recent_max_events_per_hour": 10,
+        "recent_max_ip_diversity_per_hour": 4,
+        "recent_max_country_diversity_per_hour": 2,
+        "recent_max_device_diversity_per_hour": 3,
+        "z_score_volume": null,
+        "z_score_ip_diversity": null,
+        "z_score_country_diversity": null,
+        "z_score_device_diversity": null,
+        "anomaly_severity_score": 0,
+        "all_recent_ips": ["203.0.113.1", "198.51.100.2", "192.0.2.3", "185.220.101.4"],
+        "all_recent_countries": ["United States", "Russia"],
+        "first_anomaly_hour": "2024-01-15 12:00:00",
+        "last_anomaly_hour": "2024-01-15 13:00:00",
+        "detection_timestamp": "2024-01-15 14:00:00",
+        "is_cold_start_anomaly": true
+      }

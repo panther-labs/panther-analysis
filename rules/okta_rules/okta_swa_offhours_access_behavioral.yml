@@ -174,11 +174,25 @@ Tests:
         "recent_last_event": "2024-01-15 23:00:00"
       }
 
+  # Note: rule() only validates admin_email; anomaly thresholds are enforced at the query level.
+  # All rows reaching rule() with a valid admin_email are expected to return true.
+
   # Negative Tests - Should Not Alert
   - Name: Malformed Row - Missing Admin Email
     ExpectedResult: false
     Log:
       {
+        "baseline_total_credential_access": 60,
+        "recent_total_late_night": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 25.0
+      }
+
+  - Name: Malformed Row - Empty Admin Email String
+    ExpectedResult: false
+    Log:
+      {
+        "admin_email": "",
         "baseline_total_credential_access": 60,
         "recent_total_late_night": 5,
         "is_anomalous": true,

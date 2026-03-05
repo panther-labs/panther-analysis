@@ -3,7 +3,7 @@ QueryName: "Query.Okta.SkeletonKeyBypassBehavioral"
 Enabled: true
 Description: |
   Detects Okta authentication bypass attempts via skeleton key injection using behavioral z-score analysis.
-  Reads pre-computed 90-day baselines from the okta_baseline_30d lookup table, then compares recent
+  Reads pre-computed 90-day baselines from the okta_baseline_90d lookup table, then compares recent
   (last 7 days) admin policy change and MFA factor enrollment patterns against those baselines.
 
   DETECTION LOGIC:
@@ -12,7 +12,7 @@ Description: |
   - Cold-start: First-time security weakening with no prior baseline
   - Cold-start: First-time admin-enrolled factors for other users
 
-  PREREQUISITE: okta_baseline_30d lookup table must be populated.
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
 Query: |
   -- OKTA SKELETON KEY BYPASS BEHAVIORAL DETECTION
   -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
@@ -246,7 +246,7 @@ Query: |
 
       FROM policy_recent_stats pr
       FULL OUTER JOIN enrollment_recent_stats er ON pr.admin_email = er.admin_email
-      LEFT JOIN panther_lookups.public.okta_baseline_30d b
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b
           ON COALESCE(pr.admin_email, er.admin_email) = b.user_email
   )
 

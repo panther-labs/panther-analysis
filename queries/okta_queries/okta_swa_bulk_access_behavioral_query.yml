@@ -3,7 +3,7 @@ QueryName: "Query.Okta.SWABulkAccessBehavioral"
 Enabled: true
 Description: |
   Detects Okta SWA bulk credential extraction, abuse, and access from new network sources using
-  behavioral z-score analysis. Reads pre-computed 90-day baselines from the okta_baseline_30d
+  behavioral z-score analysis. Reads pre-computed 90-day baselines from the okta_baseline_90d
   lookup table, then compares recent (last 7 days) admin SWA access and credential extraction
   patterns against those baselines.
 
@@ -18,7 +18,7 @@ Description: |
   - New source: SWA access from user agent not seen in 90-day baseline
   - Critical compound: New IP + any credential extraction events
 
-  PREREQUISITE: okta_baseline_30d lookup table must be populated.
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
 Query: |
   -- OKTA SWA BULK CREDENTIAL EXTRACTION BEHAVIORAL DETECTION
   -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
@@ -38,6 +38,9 @@ Query: |
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
+          -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
+          -- Availability varies by tenant. Validate against actual log samples
+          -- and adjust conditions if SWA events are not being detected.
           AND (
               debugContext:debugData:swa_mode::string = 'true'
               OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
@@ -81,7 +84,7 @@ Query: |
               (eventType = 'application.user_membership.change_username'
                   AND (
                       debugContext:debugData:swa_credential_access::string = 'true'
-                      OR debugContext:debugData:changedAttributes::string LIKE '%username%'
+                      OR debugContext:debugData:swa_credential_access::string = 'view'
                   ))
           )
       GROUP BY admin_email
@@ -99,7 +102,7 @@ Query: |
           AND actor:alternateId::string LIKE '%@%'
           AND (
               debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:changedAttributes::string LIKE '%username%'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
           )
       GROUP BY admin_email, source_ip
   ),
@@ -117,7 +120,7 @@ Query: |
           AND actor:alternateId::string LIKE '%@%'
           AND (
               debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:changedAttributes::string LIKE '%username%'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
           )
       GROUP BY admin_email, event_hour
   ),
@@ -134,6 +137,19 @@ Query: |
           MAX(event_hour) AS recent_extraction_last_event
       FROM credential_extraction_recent_hourly
       GROUP BY admin_email
+  ),
+
+  -- Pre-compute new-IP extraction stats to avoid repeated correlated subqueries
+  new_ip_extraction_stats AS (
+      SELECT
+          eip.admin_email,
+          SUM(eip.extractions_from_ip) AS new_ip_extraction_count,
+          SUM(eip.victims_from_ip) AS new_ip_victim_count
+      FROM extraction_by_ip eip
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON eip.admin_email = b.user_email
+      WHERE b.swa_known_ips IS NULL
+          OR NOT ARRAY_CONTAINS(eip.source_ip::variant, b.swa_known_ips)
+      GROUP BY eip.admin_email
   ),
 
   admin_anomalies AS (
@@ -246,21 +262,8 @@ Query: |
               ELSE ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips))
           END AS new_ip_count,
 
-          (
-              SELECT COALESCE(SUM(eip.extractions_from_ip), 0)
-              FROM extraction_by_ip eip
-              WHERE eip.admin_email = COALESCE(sr.admin_email, cr.admin_email)
-                  AND (b.swa_known_ips IS NULL
-                       OR NOT ARRAY_CONTAINS(eip.source_ip::variant, b.swa_known_ips))
-          ) AS new_ip_extraction_count,
-
-          (
-              SELECT COALESCE(SUM(eip.victims_from_ip), 0)
-              FROM extraction_by_ip eip
-              WHERE eip.admin_email = COALESCE(sr.admin_email, cr.admin_email)
-                  AND (b.swa_known_ips IS NULL
-                       OR NOT ARRAY_CONTAINS(eip.source_ip::variant, b.swa_known_ips))
-          ) AS new_ip_victim_count,
+          COALESCE(niex.new_ip_extraction_count, 0) AS new_ip_extraction_count,
+          COALESCE(niex.new_ip_victim_count, 0) AS new_ip_victim_count,
 
           -- ANOMALY FLAGS: Z-SCORE BASED
           CASE
@@ -376,21 +379,7 @@ Query: |
                           0
                       ) +
                       -- New IP + extraction: weight 5x extraction count from new IPs
-                      GREATEST(
-                          CASE
-                              WHEN (b.swa_known_ips IS NULL
-                                    OR ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0)
-                              THEN (
-                                  SELECT COALESCE(SUM(eip.extractions_from_ip), 0)
-                                  FROM extraction_by_ip eip
-                                  WHERE eip.admin_email = COALESCE(sr.admin_email, cr.admin_email)
-                                      AND (b.swa_known_ips IS NULL
-                                           OR NOT ARRAY_CONTAINS(eip.source_ip::variant, b.swa_known_ips))
-                              ) * 5.0
-                              ELSE 0
-                          END,
-                          0
-                      ),
+                      GREATEST(COALESCE(niex.new_ip_extraction_count, 0) * 5.0, 0),
                       2
                   )
               ELSE
@@ -398,21 +387,17 @@ Query: |
                       (COALESCE(sr.recent_total_swa_events, 0) * 0.5) +
                       (COALESCE(cr.recent_total_extractions, 0) * 10) +
                       (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) * 5) +
-                      CASE
-                          WHEN (b.swa_known_ips IS NULL
-                                OR ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0)
-                          THEN COALESCE(cr.recent_total_extractions, 0) * 5.0
-                          ELSE 0
-                      END,
+                      COALESCE(niex.new_ip_extraction_count, 0) * 5.0,
                       2
                   )
           END AS anomaly_severity_score
 
       FROM swa_access_recent_stats sr
       FULL OUTER JOIN credential_extraction_recent_stats cr ON sr.admin_email = cr.admin_email
-      LEFT JOIN panther_lookups.public.okta_baseline_30d b
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b
           ON COALESCE(sr.admin_email, cr.admin_email) = b.user_email
       LEFT JOIN recent_sources rs ON COALESCE(sr.admin_email, cr.admin_email) = rs.admin_email
+      LEFT JOIN new_ip_extraction_stats niex ON COALESCE(sr.admin_email, cr.admin_email) = niex.admin_email
   )
 
   SELECT

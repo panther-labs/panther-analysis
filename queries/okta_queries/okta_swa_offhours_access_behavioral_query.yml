@@ -3,7 +3,7 @@ QueryName: "Query.Okta.SWAOffHoursAccessBehavioral"
 Enabled: true
 Description: |
   Detects Okta SWA credential access during suspicious time windows using behavioral z-score analysis.
-  Reads pre-computed 90-day baselines from the okta_baseline_30d lookup table, then compares recent
+  Reads pre-computed 90-day baselines from the okta_baseline_90d lookup table, then compares recent
   (last 7 days) admin temporal credential access patterns against those baselines.
 
   DETECTION LOGIC:
@@ -15,7 +15,7 @@ Description: |
   - Cold-start: First-time weekend credential access (>= 2 events, no prior baseline)
   - Compound: Geographic shift + off-hours activity
 
-  PREREQUISITE: okta_baseline_30d lookup table must be populated.
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
 Query: |
   -- OKTA SWA OFF-HOURS CREDENTIAL ACCESS BEHAVIORAL DETECTION
   -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
@@ -44,7 +44,7 @@ Query: |
           AND actor:alternateId::string LIKE '%@%'
           AND (
               debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:changedAttributes::string LIKE '%username%'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
           )
   ),
 
@@ -205,22 +205,25 @@ Query: |
               ELSE FALSE
           END AS is_geographic_shift,
 
-          -- ANOMALY FLAGS: Z-Score Based
+          -- ANOMALY FLAGS: Volume Z-Score Based (true z-scores using baseline mean/stddev)
           CASE
               WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_offhours_ratio, 0) - COALESCE(b.baseline_offhours_ratio, 0)) / 0.1 > 3
+                  AND (COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
+                      GREATEST(b.stddev_offhours_per_hour, 0.1) > 3
               THEN TRUE ELSE FALSE
           END AS is_offhours_ratio_anomaly,
 
           CASE
               WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_late_night_ratio, 0) - COALESCE(b.baseline_late_night_ratio, 0)) / 0.1 > 2
+                  AND (COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
+                      GREATEST(b.stddev_late_night_per_hour, 0.1) > 2
               THEN TRUE ELSE FALSE
           END AS is_late_night_ratio_anomaly,
 
           CASE
               WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) / 0.1 > 2
+                  AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
+                      GREATEST(b.baseline_weekend_ratio, 0.05) > 2
               THEN TRUE ELSE FALSE
           END AS is_weekend_ratio_anomaly,
 
@@ -247,13 +250,16 @@ Query: |
           CASE
               WHEN (
                   (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_offhours_ratio, 0) - COALESCE(b.baseline_offhours_ratio, 0)) / 0.1 > 3)
+                      AND (COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
+                          GREATEST(b.stddev_offhours_per_hour, 0.1) > 3)
                   OR
                   (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_late_night_ratio, 0) - COALESCE(b.baseline_late_night_ratio, 0)) / 0.1 > 2)
+                      AND (COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
+                          GREATEST(b.stddev_late_night_per_hour, 0.1) > 2)
                   OR
                   (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) / 0.1 > 2)
+                      AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
+                          GREATEST(b.baseline_weekend_ratio, 0.05) > 2)
                   OR
                   ((b.baseline_total_offhours IS NULL OR b.baseline_total_offhours = 0)
                       AND r.recent_total_offhours >= 3)
@@ -264,7 +270,9 @@ Query: |
                   ((b.baseline_total_weekend IS NULL OR b.baseline_total_weekend = 0)
                       AND r.recent_total_weekend >= 2)
                   OR
-                  (b.primary_country != rg.recent_primary_country
+                  (b.primary_country IS NOT NULL
+                      AND rg.recent_primary_country IS NOT NULL
+                      AND b.primary_country != rg.recent_primary_country
                       AND r.recent_total_offhours >= 3)
               ) THEN TRUE
               ELSE FALSE
@@ -276,19 +284,24 @@ Query: |
               THEN
                   ROUND(
                       GREATEST(
-                          COALESCE((COALESCE(r.recent_offhours_ratio, 0) - COALESCE(b.baseline_offhours_ratio, 0)) / 0.1, 0) * 2,
+                          COALESCE((COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
+                              GREATEST(b.stddev_offhours_per_hour, 0.1), 0) * 2,
                           0
                       ) +
                       GREATEST(
-                          COALESCE((COALESCE(r.recent_late_night_ratio, 0) - COALESCE(b.baseline_late_night_ratio, 0)) / 0.1, 0) * 3,
+                          COALESCE((COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
+                              GREATEST(b.stddev_late_night_per_hour, 0.1), 0) * 3,
                           0
                       ) +
                       GREATEST(
-                          COALESCE((COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) / 0.1, 0),
+                          COALESCE((COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
+                              GREATEST(b.baseline_weekend_ratio, 0.05), 0),
                           0
                       ) +
                       CASE
-                          WHEN b.primary_country != rg.recent_primary_country THEN 5
+                          WHEN b.primary_country IS NOT NULL
+                              AND rg.recent_primary_country IS NOT NULL
+                              AND b.primary_country != rg.recent_primary_country THEN 5
                           ELSE 0
                       END,
                       2
@@ -304,7 +317,7 @@ Query: |
 
       FROM recent_stats r
       LEFT JOIN recent_geo rg ON r.admin_email = rg.admin_email
-      LEFT JOIN panther_lookups.public.okta_baseline_30d b ON r.admin_email = b.user_email
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
   )
 
   SELECT

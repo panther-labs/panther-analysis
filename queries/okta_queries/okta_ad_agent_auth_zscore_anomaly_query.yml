@@ -184,6 +184,7 @@ Query: |
 
           -- Multi-dimensional anomaly flag
           CASE
+              WHEN b.user_email IS NULL THEN FALSE  -- No baseline yet; cold-start handled below
               WHEN (
                   -- Volume spike (z > 3)
                   (r.recent_max_events_per_hour - b.baseline_mean_events_per_hour) /
@@ -199,11 +200,19 @@ Query: |
               ELSE FALSE
           END AS is_anomalous,
 
+          -- Cold-start: no baseline yet, but recent activity shows high IP or country diversity
+          CASE
+              WHEN b.user_email IS NULL
+                  AND r.recent_max_ip_diversity_per_hour >= 3
+              THEN TRUE
+              ELSE FALSE
+          END AS is_cold_start_anomaly,
+
           -- Detection metadata
           CURRENT_TIMESTAMP AS detection_timestamp
 
       FROM recent_stats r
-      INNER JOIN panther_lookups.public.okta_ad_agent_baseline b
+      LEFT JOIN panther_lookups.public.okta_ad_agent_baseline b
           ON r.user_email = b.user_email
       WHERE r.recent_total_events >= 5  -- Minimum recent activity threshold
   )
@@ -254,10 +263,11 @@ Query: |
       anomaly_severity_score,
 
       -- Detection metadata
-      detection_timestamp
+      detection_timestamp,
+      is_cold_start_anomaly
 
   FROM anomaly_detection
-  WHERE is_anomalous = TRUE
+  WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE
   ORDER BY anomaly_severity_score DESC
   LIMIT 100
 Schedule:

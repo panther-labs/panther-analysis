@@ -161,6 +161,7 @@ SnowflakeQuery: |
   FROM scalar_features s
   JOIN ad_agent_stats stats ON s.user_email = stats.user_email
   ORDER BY stats.total_events DESC
+  LIMIT 100
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:

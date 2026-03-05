@@ -27,7 +27,7 @@ def severity(event):
     if "config_change" in event_type or "bad_credentials" in event_type:
         return "MEDIUM"
 
-    return "DEFAULT"
+    return "MEDIUM"
 
 
 def alert_context(event):

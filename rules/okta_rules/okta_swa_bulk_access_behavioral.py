@@ -39,7 +39,7 @@ def severity(event):
         return "HIGH"
     if has_new_user_agent:
         return "MEDIUM"
-    return "MEDIUM"
+    return "MEDIUM"  # Default: anomalous SWA volume with no other escalating signals
 
 
 def alert_context(event):

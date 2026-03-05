@@ -1,11 +1,11 @@
 AnalysisType: lookup_table
-LookupName: okta_baseline_30d
+LookupName: okta_baseline_90d
 Enabled: true
 Description: |
-  Shared 30-day behavioral baseline for all Okta users, extended with event-specific 90-day
-  statistical baselines for security detections.
+  Shared 90-day behavioral baseline for all Okta users with event-specific statistical baselines
+  for security detections.
 
-  GENERAL SECTION (30-day, all events):
+  GENERAL SECTION (90-day, all events):
   - Scalar features: volume, diversity counts, temporal ratios, security patterns
   - Distribution features: country, IP, hour, app, browser, OS, ASN, MFA factor, VPN
 
@@ -21,7 +21,7 @@ Description: |
 Reference: https://www.varonis.com/blog/okta-attack-vectors
 SnowflakeQuery: |
   -- OKTA SHARED BEHAVIORAL BASELINE
-  -- PART 1: General 30-day baseline (all event types)
+  -- PART 1: General 90-day baseline (all event types)
   -- PARTS 2-5: Event-specific 90-day baselines for detection z-scores
 
   WITH base AS (
@@ -63,7 +63,7 @@ SnowflakeQuery: |
           target[0]:displayName::string AS app,
           HOUR(published) AS utc_hour
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
           AND actor:alternateId::string LIKE '%@%'
   ),
 
@@ -125,7 +125,7 @@ SnowflakeQuery: |
           SUM(CASE WHEN security_data:behaviors:"Velocity"::string = 'POSITIVE' THEN 1 ELSE 0 END) AS velocity_anomaly_count,
           SUM(CASE WHEN threat_suspected = 'true' THEN 1 ELSE 0 END) AS threat_suspected_events,
           COUNT(DISTINCT device_fingerprint) AS device_fingerprint_diversity,
-          AVG(response_time_ms) AS avg_response_time_ms,
+          ROUND(AVG(response_time_ms))::int AS avg_response_time_ms,
           MAX(response_time_ms) AS max_response_time_ms
       FROM base
       GROUP BY user_email
@@ -324,6 +324,9 @@ SnowflakeQuery: |
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
+          -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
+          -- Availability varies by tenant. Validate against actual log samples
+          -- and adjust conditions if SWA events are not being detected.
           AND (
               debugContext:debugData:swa_mode::string = 'true'
               OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
@@ -389,7 +392,7 @@ SnowflakeQuery: |
           AND actor:alternateId::string LIKE '%@%'
           AND (
               debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:changedAttributes::string LIKE '%username%'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
           )
       GROUP BY user_email, event_hour
   ),
@@ -593,6 +596,7 @@ SnowflakeQuery: |
   LEFT JOIN extraction_stats ex ON s.user_email = ex.user_email
 
   ORDER BY s.total_events DESC
+  LIMIT 100
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:
