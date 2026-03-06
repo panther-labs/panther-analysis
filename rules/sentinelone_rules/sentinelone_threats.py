@@ -1,20 +1,20 @@
 NEW_THREAT_ACTIVITYTYPES = [
     # Malicious Threats - Not Mitigated
-    19,  # New Malicious Threat Not Mitigated
-    4108,  # New Malicious Threat Not Mitigated (detected by SentinelOne Cloud)
+    "19",  # New Malicious Threat Not Mitigated
+    "4108",  # New Malicious Threat Not Mitigated (detected by SentinelOne Cloud)
     # Suspicious Threats - Not Mitigated
-    4003,  # New Suspicious Threat Not Mitigated
-    4109,  # New Suspicious Threat Not Mitigated (detected by SentinelOne Cloud)
+    "4003",  # New Suspicious Threat Not Mitigated
+    "4109",  # New Suspicious Threat Not Mitigated (detected by SentinelOne Cloud)
     # New Threats - Mitigated/Blocked
-    18,  # New Threat Mitigated
-    20,  # New Threat Preemptive Block
+    "18",  # New Threat Mitigated
+    "20",  # New Threat Preemptive Block
     # Automated Threat Intelligence Detections
-    4106,  # STAR Active Response Marked Event As Malicious
-    4107,  # STAR Active Response Marked Event As Suspicious
-    4110,  # Singularity Threat Intelligence Engine Marked Event As Malicious
-    4111,  # Watchtower Cloud Detection Engine Marked Event As Threat
-    4112,  # Watchtower Cloud Detection Engine Marked Event As Suspicious
-    4113,  # Singularity Threat Intelligence Engine Marked Event As Suspicious
+    "4106",  # STAR Active Response Marked Event As Malicious
+    "4107",  # STAR Active Response Marked Event As Suspicious
+    "4110",  # Singularity Threat Intelligence Engine Marked Event As Malicious
+    "4111",  # Watchtower Cloud Detection Engine Marked Event As Threat
+    "4112",  # Watchtower Cloud Detection Engine Marked Event As Suspicious
+    "4113",  # Singularity Threat Intelligence Engine Marked Event As Suspicious
 ]
 
 
