@@ -1,10 +1,4 @@
-from datetime import timedelta
-
 from panther_base_helpers import is_ip_in_network
-from panther_detection_helpers.caching import add_to_string_set, get_string_set, put_string_set
-
-THRESH = 2
-THRESH_TTL = timedelta(hours=12).total_seconds()
 
 # Safelist for IP Subnets to ignore in this ruleset
 # Each entry in the list should be in CIDR notation
@@ -28,26 +22,15 @@ def rule(event):
     # We expect to see multiple user logins from these shared, common ip addresses
     if is_ip_in_network(event.get("ipaddr"), SHARED_IP_SPACE):
         return False
-    # This tracks multiple successful logins for different accounts from the same ip address
-    # First, keep a list of unique user ids that have logged in from this ip address
-    event_key = get_key(event)
-    user_ids = get_string_set(event_key)
-    # the user id of the user that has just logged in
-    user_id = str(event.get("user_id"))
-    if not user_ids:
-        # store this as the first user login from this ip address
-        put_string_set(event_key, [user_id], epoch_seconds=event.event_time_epoch() + THRESH_TTL)
-        return False
-    # add a new username if this is a unique user from this ip address
-    if user_id not in user_ids:
-        user_ids = add_to_string_set(
-            event_key, user_id, epoch_seconds=event.event_time_epoch() + THRESH_TTL
-        )
-    return len(user_ids) > THRESH
+    return True
 
 
-def get_key(event):
-    return __name__ + ":" + event.get("ipaddr", "<UNKNOWN_IP>")
+def unique(event):
+    return str(event.get("user_id", ""))
+
+
+def dedup(event):
+    return event.get("ipaddr", "<UNKNOWN_IP>")
 
 
 def title(event):

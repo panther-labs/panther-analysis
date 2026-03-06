@@ -4,7 +4,7 @@ RuleID: "GCP.GCS.ObjectExfiltration"
 DisplayName: "GCP GCS Object Copied to Different Bucket"
 Enabled: true
 Status: Experimental
-Threshold: 10
+Threshold: 50
 LogTypes:
   - GCP.AuditLog
 Tags:
@@ -17,19 +17,16 @@ Reports:
     - TA0010:T1537
 Severity: Medium
 Description: >
-  Detects when GCS objects are copied from one bucket to another bucket. This pattern
-  can indicate data exfiltration where an adversary copies sensitive data to a bucket
-  they control. The threshold of 10+ copy operations suggests bulk exfiltration rather
-  than normal operations. This is detected by monitoring storage.objects.get operations
-  that include a destination field in the metadata, indicating a copy operation.
+  Detects when GCS objects are copied from one bucket to a bucket in a different GCP project.
+  Cross-project copies are more suspicious than same-project copies and can indicate data
+  exfiltration where an adversary copies sensitive data to a project they control. The
+  threshold of 50+ copy operations suggests bulk exfiltration rather than normal operations.
+  This is detected by monitoring storage.objects.get operations that include a destination
+  field in the metadata, indicating a copy operation.
 Runbook: |
-  1. Query GCP Audit logs for all storage.objects.get operations with destination metadata by the principal email in the 1 hour window around this alert
-  2. Identify the total number of objects copied, source and destination buckets, and the rate of copies per minute
-  3. Check if the destination bucket is in the same project or a different project
-  4. Review IAM permissions on both source and destination buckets to determine if access was recently granted
-  5. Assess the sensitivity of the data in the source bucket and objects copied
-  6. Check if the source IP matches the user's typical access patterns or is associated with known VPN/cloud providers
-  7. Look for other ransomware or exfiltration indicators from this principal in the past 24 hours
+  1. Query GCP Audit logs for all storage.objects.get operations with destination metadata by authenticationInfo:principalEmail in the 2 hours around this alert to identify the full scope of copy operations
+  2. Check if the protoPayload:metadata:destination bucket belongs to the same project, a different project in the organization, or an external attacker-controlled project
+  3. Review GCP Audit logs for IAM permission changes, service account key creation, or bucket policy modifications by this principal in the 24 hours before the first copy operation
 Reference: https://cloud.google.com/storage/docs/copying-renaming-moving-objects
 SummaryAttributes:
   - severity
@@ -82,7 +79,7 @@ Tests:
         "timestamp": "2025-12-15 15:55:03.915792086",
       }
   - Name: Same-Project Different Bucket Copy
-    ExpectedResult: true
+    ExpectedResult: false
     Log:
       {
         "protoPayload":

@@ -12,16 +12,18 @@ Tags:
 Reports:
   CIS:
     - 1.13
-    - 1.14
   PCI:
-    - 7.1.2
+    - 8.3
+    - 8.4
   MITRE ATT&CK:
     - TA0004:T1078
 Severity: Critical
 Description: >
-  This policy validates that Multi Factor Authentication (MFA) is required for access to the root account.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-root-account-has-mfa-enabled
+  Validates that Multi-Factor Authentication (MFA) is enabled for the AWS root account. The root account has complete unrestricted access to all AWS resources and is the highest-value target for attackers. Without MFA, accounts are vulnerable to phishing, credential stuffing, and password compromise attacks.
+Runbook: |
+  1. Query CloudTrail for ConsoleLogin events where userIdentity.type equals "Root" in the past 90 days to identify when the root account was last used and assess the risk window without MFA
+  2. Sign in to AWS Console as root, navigate to Security Credentials, assign an MFA device (Virtual MFA, Hardware TOTP, or FIDO security key), and test the MFA configuration by logging out and back in
+  3. Store the root password and MFA device in separate secure locations, document the MFA device details, and implement AWS Organizations SCPs to monitor root account console logins
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   - Name: MFA Enabled

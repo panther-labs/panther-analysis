@@ -17,6 +17,8 @@ Mappings:
     Path: $.objectRef.resource
   - Name: name
     Path: $.objectRef.name
+  - Name: subresource
+    Path: $.objectRef.subresource
   - Name: requestURI
     Path: $.requestURI
   - Name: responseStatus
@@ -33,3 +35,17 @@ Mappings:
     Path: $.requestObject
   - Name: responseObject
     Path: $.responseObject
+  - Name: containers
+    Path: $.requestObject.spec.containers
+  - Name: volumes
+    Path: $.requestObject.spec.volumes
+  - Name: hostIPC
+    Path: $.requestObject.spec.hostIPC
+  - Name: hostNetwork
+    Path: $.requestObject.spec.hostNetwork
+  - Name: hostPID
+    Path: $.requestObject.spec.hostPID
+  - Name: webhooks
+    Path: $.requestObject.webhooks
+  - Name: serviceType
+    Path: $.requestObject.spec.type

@@ -1,0 +1,161 @@
+AnalysisType: rule
+RuleID: "Kubernetes.AdmissionController.Created"
+DisplayName: "Kubernetes Admission Controller Webhook Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_admission_controller_created.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Persistence
+  - Credential Access
+  - Collection
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration
+  resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server,
+  allowing attackers to inspect, modify, or block any resource creation or modification. This provides
+  powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft
+  (intercepting secrets), and reconnaissance (enumerating all cluster activity).
+Runbook: |
+  1. Review the webhook configuration details including the target webhook service URL and failure policy
+  2. Identify all API operations performed by the username in the 48 hours before webhook creation to establish intent
+  3. Search for other webhook configurations or suspicious API activity from this user across all clusters in the past 7 days
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1546 # Persistence: Event Triggered Execution
+    - TA0006:T1552 # Credential Access: Unsecured Credentials
+    - TA0009:T1530 # Collection: Data from Cloud Storage Object
+Reference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - p_source_label
+Tests:
+  - Name: EKS MutatingWebhookConfiguration Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "mutatingwebhookconfigurations",
+          "name": "custom-mutator",
+          "apiGroup": "admissionregistration.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "MutatingWebhookConfiguration",
+          "metadata": {"name": "custom-mutator"},
+          "webhooks": [{
+            "name": "mutate.example.com",
+            "clientConfig": {
+              "url": "https://webhook.example.com/mutate"
+            },
+            "rules": [{
+              "operations": ["CREATE", "UPDATE"],
+              "apiGroups": ["*"],
+              "apiVersions": ["*"],
+              "resources": ["*"]
+            }]
+          }]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS ValidatingWebhookConfiguration Created
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"policy-admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"validatingwebhookconfigurations\",\"name\":\"policy-validator\",\"apiGroup\":\"admissionregistration.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"ValidatingWebhookConfiguration\",\"webhooks\":[{\"name\":\"validate.policy.com\"}]}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE MutatingWebhookConfiguration Created
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.admissionregistration.v1.mutatingwebhookconfigurations.create",
+            "resource": "admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/istio-sidecar"
+          }],
+          "methodName": "io.k8s.admissionregistration.v1.mutatingwebhookconfigurations.create",
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/istio-sidecar",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "MutatingWebhookConfiguration",
+            "metadata": {"name": "istio-sidecar"},
+            "webhooks": [{
+              "name": "sidecar-injector.istio.io",
+              "clientConfig": {
+                "service": {
+                  "name": "istio-sidecar-injector",
+                  "namespace": "istio-system"
+                }
+              }
+            }]
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Webhook Update (Not Create)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "objectRef": {
+          "resource": "mutatingwebhookconfigurations",
+          "name": "existing-webhook"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Different Resource Type
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "configmaps",
+          "name": "test-config"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Webhook Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "validatingwebhookconfigurations",
+          "name": "test-webhook"
+        },
+        "responseStatus": {"code": 403},
+        "p_log_type": "Amazon.EKS.Audit"
+      }

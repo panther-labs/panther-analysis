@@ -1,0 +1,165 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Host.IPC"
+DisplayName: "Kubernetes Pod Using Host IPC Namespace"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_host_ipc.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Privilege Escalation
+  - Container Escape
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for pods created with hostIPC set to true, which allows the pod to
+  use the host's IPC namespace. This breaks isolation between the pod and the host system,
+  giving the pod direct access to shared memory segments, semaphores, and message queues on
+  the host. Attackers can abuse this to communicate with or interfere with processes on the
+  host system or other containers using the same IPC namespace.
+Runbook: |
+  1. Review all pod creation events by the username in the 24 hours before the alert to establish normal deployment patterns
+  2. Determine if the hostIPC setting is required for legitimate inter-process communication needs for this specific workload
+  3. Search for other pods with hostIPC enabled deployed by this user across all clusters in the past 30 days
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1611 # Privilege Escalation: Escape to Host
+    - TA0005:T1562 # Defense Evasion: Impair Defenses
+Reference: >
+  - https://kubernetes.io/docs/concepts/security/pod-security-standards/
+  - https://www.fairwinds.com/blog/kubernetes-basics-tutorial-host-ipc-should-not-be-configured
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - p_source_label
+Tests:
+  - Name: EKS Pod with HostIPC
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "debug-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "metadata": {"name": "debug-pod", "namespace": "default"},
+          "spec": {
+            "hostIPC": true,
+            "containers": [{
+              "name": "debug",
+              "image": "busybox"
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Pod with HostIPC
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"ipc-test\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"spec\":{\"hostIPC\":true,\"containers\":[{\"name\":\"test\",\"image\":\"alpine\"}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE Pod with HostIPC
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/shared-mem"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/pods/shared-mem",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "Pod",
+            "spec": {
+              "hostIPC": true,
+              "containers": [{
+                "name": "app",
+                "image": "myapp:latest"
+              }]
+            }
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Pod without HostIPC
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "hostIPC": false,
+            "containers": [{"name": "app", "image": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System Namespace with HostIPC (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:daemon"},
+        "objectRef": {"resource": "pods", "namespace": "kube-system"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "hostIPC": true,
+            "containers": [{"name": "agent"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "spec": {
+            "hostIPC": true,
+            "containers": [{"name": "test"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

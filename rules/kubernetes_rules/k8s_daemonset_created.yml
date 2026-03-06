@@ -1,0 +1,187 @@
+AnalysisType: rule
+RuleID: "Kubernetes.DaemonSet.Created"
+DisplayName: "Kubernetes DaemonSet Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_daemonset_created.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Persistence
+  - Deploy Container
+  - Unified Detection
+Severity: Info
+Description: >
+  This detection monitors for creation of DaemonSets in Kubernetes clusters.
+  DaemonSets ensure that a copy of a pod runs on all (or selected) nodes in the cluster.
+  Attackers may abuse DaemonSets to deploy malicious containers across all nodes for
+  cluster-wide persistence, credential harvesting, cryptomining, or lateral movement.
+  This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.
+Runbook: |
+  1. Review all DaemonSet and Deployment creation events by username in the 24 hours before the alert to establish if this is routine activity
+  2. Analyze the container image, hostPath volumes, and privileged security context from the requestObject specification to identify risk factors
+  3. Search for similar DaemonSet deployments by this user in the past 90 days and compare images, namespaces, and security settings to identify anomalies
+Reference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1610 # Execution: Deploy Container
+    - TA0003:T1543 # Persistence: Create or Modify System Process
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - p_source_label
+Tests:
+  - Name: EKS DaemonSet Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "daemonsets",
+          "namespace": "kube-system",
+          "name": "monitoring-agent",
+          "apiVersion": "apps/v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestURI": "/apis/apps/v1/namespaces/kube-system/daemonsets",
+        "requestObject": {
+          "kind": "DaemonSet",
+          "metadata": {"name": "monitoring-agent", "namespace": "kube-system"},
+          "spec": {
+            "selector": {"matchLabels": {"app": "monitoring"}},
+            "template": {
+              "metadata": {"labels": {"app": "monitoring"}},
+              "spec": {
+                "containers": [{
+                  "name": "agent",
+                  "image": "monitoring-agent:latest",
+                  "volumeMounts": [{
+                    "name": "docker-sock",
+                    "mountPath": "/var/run/docker.sock"
+                  }]
+                }],
+                "volumes": [{
+                  "name": "docker-sock",
+                  "hostPath": {"path": "/var/run/docker.sock"}
+                }]
+              }
+            }
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS DaemonSet Created
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"daemonsets\",\"namespace\":\"default\",\"name\":\"log-collector\"},\"responseStatus\":{\"code\":201},\"requestURI\":\"/apis/apps/v1/namespaces/default/daemonsets\"}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE DaemonSet Created
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.apps.v1.daemonsets.create",
+            "resource": "apps/v1/namespaces/kube-system/daemonsets/node-exporter"
+          }],
+          "methodName": "io.k8s.apps.v1.daemonsets.create",
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "apps/v1/namespaces/kube-system/daemonsets/node-exporter",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "DaemonSet",
+            "metadata": {"name": "node-exporter", "namespace": "kube-system"}
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: DaemonSet Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "daemonsets",
+          "namespace": "default",
+          "name": "test-ds"
+        },
+        "responseStatus": {"code": 403, "status": "Failure"},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Deployment Creation (Not DaemonSet)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "deployments",
+          "namespace": "default",
+          "name": "web-app"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: DaemonSet Update (Not Create)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "objectRef": {
+          "resource": "daemonsets",
+          "namespace": "kube-system",
+          "name": "existing-ds"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System controller creating DaemonSet in kube-system (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:daemon-set-controller"},
+        "sourceIPs": ["10.0.0.1"],
+        "objectRef": {
+          "resource": "daemonsets",
+          "namespace": "kube-system",
+          "name": "kube-proxy",
+          "apiVersion": "apps/v1"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }

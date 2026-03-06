@@ -11,14 +11,21 @@ Tags:
   - Identity & Access Management
   - Impact:Data Destruction
 Reports:
+  CIS:
+    - S3.8
   PCI:
-    - 10.5.2
+    - 1.3.1
+    - 7.1
+    - 7.2.1
   MITRE ATT&CK:
     - TA0040:T1485
 Severity: Critical
-Description: Ensures that the S3 bucket is not publicly writeable.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-not-publicly-writeable
+Description: >
+  Ensures S3 buckets are not publicly writeable, preventing critical security vulnerabilities. Public write access allows attackers to upload malicious content, delete legitimate data, or consume storage for massive AWS bills. Attackers can use writable buckets for C2 infrastructure, malware distribution, or supply chain attacks.
+Runbook: |
+  1. Query CloudTrail for s3:PutObject, s3:DeleteObject, and s3:PutObjectAcl events on the bucket in the past 30 days to identify any unauthorized write operations from unfamiliar IP addresses or principals
+  2. Remove public write permissions from the bucket's ACL and bucket policy, enable all four S3 Block Public Access settings, and quarantine or delete any malicious objects that were uploaded
+  3. Enable S3 server access logging and CloudTrail S3 data events for ongoing monitoring, and review how the public write access was configured to prevent recurrence
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 Tests:
   - Name: Bucket Grants READ To All Authenticated Users

@@ -13,15 +13,18 @@ Reports:
   CIS:
     - 1.12
   PCI:
-    - 7.1.2
-    - 8.5
+    - 2.2.2
+    - 7.1
+    - 8.2
   MITRE ATT&CK:
     - TA0003:T1098
 Severity: Critical
 Description: >
-  This policy validates that no programmatic access keys exist for the root account.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-root-account-has-no-access-keys
+  Validates that no programmatic access keys exist for the AWS root account. Root access keys provide unrestricted access to all AWS resources and cannot have permissions limited. If compromised, these keys grant attackers complete account control including resource modification, data access, and billing changes.
+Runbook: |
+  1. Query CloudTrail for all API calls where userIdentity.type equals "Root" in the past 90 days to identify if the root access keys are actively being used and document which applications or automation depend on them
+  2. Create IAM users or roles with minimum required permissions, update all applications to use the new IAM credentials, then delete the root access keys via AWS Console Security Credentials page
+  3. Enable CloudWatch Events rules to alert on future root account activity and consider implementing AWS Organizations SCPs to prevent root access key creation
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 Tests:
   - Name: Access Key 1 Active

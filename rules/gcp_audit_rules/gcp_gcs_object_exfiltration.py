@@ -33,17 +33,22 @@ def rule(event):
     ):
         return False
 
-    # Extract source and destination buckets
+    # Extract source and destination buckets and projects
     source_bucket = event.deep_get("resource", "labels", "bucket_name")
+    source_project = event.deep_get("resource", "labels", "project_id")
     destination = event.deep_get("protoPayload", "metadata", "destination", default="")
 
-    dest_bucket, _ = _parse_destination(destination)
+    dest_bucket, dest_project = _parse_destination(destination)
 
-    # Alert if copying to a different bucket
-    if source_bucket and dest_bucket and source_bucket != dest_bucket:
-        return True
+    # Validate required fields
+    if not all([source_bucket, dest_bucket, source_project, dest_project]):
+        return False
 
-    return False
+    # Only alert on cross-project copies (more suspicious than same-project copies)
+    is_different_bucket = source_bucket != dest_bucket
+    is_cross_project = dest_project != source_project
+
+    return is_different_bucket and is_cross_project
 
 
 def severity(event):

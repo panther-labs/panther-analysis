@@ -2,12 +2,24 @@ AnalysisType: correlation_rule
 RuleID: "Snowflake.Stream.DataExfiltration"
 DisplayName: "Snowflake Data Exfiltration"
 Enabled: true
+Tags:
+  - Snowflake
+  - Data Exfiltration
+  - Database
+  - Cloud Security
 Severity: Critical
-Description: In April 2024, Mandiant received threat intelligence on database records that were subsequently determined to have originated from a victim’s Snowflake instance. Mandiant notified the victim, who then engaged Mandiant to investigate suspected data theft involving their Snowflake instance. During this investigation, Mandiant determined that the organization’s Snowflake instance had been compromised by a threat actor using credentials previously stolen via infostealer malware. The threat actor used these stolen credentials to access the customer’s Snowflake instance and ultimately exfiltrate valuable data. At the time of the compromise, the account did not have multi-factor authentication (MFA) enabled.
+Description: >
+  Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
+Runbook: |
+  1. Query Snowflake's QUERY_HISTORY and ACCESS_HISTORY views for the stage name in p_alert_context.stage to identify the user account, session ID, source IP addresses, client application, and all tables that were copied into the stage
+  2. Review the specific tables copied into the stage to determine data sensitivity (PII, financial records, intellectual property) and estimate the volume of data exfiltrated, then check Snowflake's LOGIN_HISTORY to verify if the user account had MFA enabled
+  3. Analyze the source IP addresses used during the exfiltration sequence against threat intelligence feeds to determine if they are corporate IPs, suspicious cloud providers, or known malicious infrastructure, and check for impossible travel patterns
 Reference: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
 Reports:
-    MITRE ATT&CK:
-        - TA0010:T1041  # Exfiltration Over C2 Channel
+  MITRE ATT&CK:
+    - TA0010:T1041 # Exfiltration: Exfiltration Over C2 Channel
+    - TA0010:T1530 # Exfiltration: Data from Cloud Storage
+    - TA0009:T1213 # Collection: Data from Information Repositories
 Detection:
   - Sequence:
       - ID: SnowflakeTempStageCreated

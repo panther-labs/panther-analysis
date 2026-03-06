@@ -12,6 +12,7 @@ This is the Panther Analysis repository, containing security detection rules, po
 - `make test` - Run all tests (unit tests + panther_analysis_tool tests)
 - `pipenv run panther_analysis_tool test` - Run all detection tests
 - `pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/` - Test specific path
+- `pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/ --filter RuleID=Aws.Example.Rule` - Test specific rule
 - `pipenv run panther_analysis_tool test --filter Severity=Critical` - Test by severity
 - `pipenv run panther_analysis_tool test --filter LogTypes=AWS.GuardDuty` - Test by log type
 - `make global-helpers-unit-test` - Run unit tests for global helpers

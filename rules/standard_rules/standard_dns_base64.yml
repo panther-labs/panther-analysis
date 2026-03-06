@@ -270,3 +270,53 @@ Tests:
         "p_source_label": "Crowdstrike-FDR-Dev",
         "timestamp": "2023-04-23 18:50:05.712",
       }
+  - Name: Crowdstrike 32-char service ID (Negative)
+    ExpectedResult: false
+    Log:
+      {
+        "aid": "d825772fcca046f3b2876decaafacd60",
+        "aip": "83.106.110.25",
+        "cid": "e4a46c2a445744f7860dcf62bf1b6ad4",
+        "event":
+          {
+            "DomainName": "4ifgvg5jcq6meu7m4acon5vnfa0kocom.cloudfront.net.",
+            "event_platform": "Win",
+            "event_simpleName": "DnsRequest",
+          },
+        "event_platform": "Win",
+        "event_simpleName": "DnsRequest",
+        "fdr_event_type": "DnsRequest",
+        "p_log_type": "Crowdstrike.FDREvent",
+      }
+  - Name: AWS VPC DNS - label decodes to CJK (Negative - isascii fix)
+    ExpectedResult: false
+    Log:
+      {
+        "account_id": "123456789012",
+        "p_log_type": "AWS.VPCDns",
+        "query_class": "IN",
+        "query_name": "c2VydmljZXPkuK1pZGVudGlmaWVy.serviceregistry.internal",
+        "query_timestamp": "2024-01-01 00:00:00",
+        "query_type": "A",
+        "rcode": "NOERROR",
+        "region": "us-east-1",
+        "srcaddr": "10.0.0.1",
+        "version": "1.000000",
+        "vpc_id": "vpc-12345678",
+      }
+  - Name: AWS VPC DNS - label decodes to pure ASCII exfil data (Positive)
+    ExpectedResult: true
+    Log:
+      {
+        "account_id": "123456789012",
+        "p_log_type": "AWS.VPCDns",
+        "query_class": "IN",
+        "query_name": "c2VjcmV0LWRhdGEtZXhmaWwtY2h1bms.malicious.com",
+        "query_timestamp": "2024-01-01 00:00:00",
+        "query_type": "A",
+        "rcode": "NOERROR",
+        "region": "us-east-1",
+        "srcaddr": "10.0.0.1",
+        "version": "1.000000",
+        "vpc_id": "vpc-12345678",
+      }

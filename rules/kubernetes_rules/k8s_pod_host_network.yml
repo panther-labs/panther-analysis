@@ -1,0 +1,147 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Host.Network"
+DisplayName: "Kubernetes Pod Attached To Host Network"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_host_network.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Escape to Host
+  - Unified Detection
+Severity: Medium
+Description:
+  This detection monitors for the creation of pods which are attached to the host's network.
+  This allows a pod to listen to all network traffic for all deployed compute on that particular
+  node and communicate with other compute on the network namespace. Attackers can use this to
+  capture secrets passed in arguments or connections.
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1611 # Escape to Host
+Runbook: |
+  1. Find all pod creation events by the username in the 24 hours before the alert to establish normal deployment behavior
+  2. Check if the pod namespace indicates system infrastructure purpose (kube-system, kube-public) which may be legitimate
+  3. Review all pods with hostNetwork by this user in the past 30 days to identify if this is an established pattern or anomalous activity
+Reference: >
+  - https://kubernetes.io/docs/concepts/security/pod-security-standards/#host-namespaces
+  - https://securitylabs.datadoghq.com/articles/kubernetes-security-fundamentals-part-6/
+Tests:
+  - Name: EKS Pod With Host Network
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "nginx-test",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "apiVersion": "v1",
+          "metadata": {"name": "nginx-test", "namespace": "default"},
+          "spec": {
+            "hostNetwork": true,
+            "containers": [{"name": "nginx", "image": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Pod With Host Network
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"auditID\":\"abc-123\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"nginx-test\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Pod\",\"spec\":{\"hostNetwork\":true,\"containers\":[{\"name\":\"nginx\",\"image\":\"nginx\"}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE Pod With Host Network
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@example.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-test"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "spec": {
+              "hostNetwork": true,
+              "containers": [{"name": "nginx", "image": "nginx"}]
+            }
+          },
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/pods/nginx-test",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Pod Without Host Network
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "hostNetwork": false,
+            "containers": [{"name": "nginx", "image": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 403, "status": "Failure"},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "hostNetwork": true,
+            "containers": [{"name": "nginx"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Not a Pod Creation
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "p_log_type": "Amazon.EKS.Audit"
+      }

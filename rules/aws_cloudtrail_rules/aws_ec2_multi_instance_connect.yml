@@ -15,7 +15,7 @@ Reports:
 Description: >
   Detect when an attacker pushes an SSH public key to multiple EC2 instances.
 DedupPeriodMinutes: 60
-Threshold: 1
+Threshold: 2
 Reference: >
   https://stratus-red-team.cloud/attack-techniques/AWS/aws.lateral-movement.ec2-instance-connect/
 Runbook: |
@@ -33,12 +33,7 @@ Tags:
   - Lateral Movement:Remote Services
 Status: Experimental
 Tests:
-  - Name: Public SSH Key Sent Successfully to Multiple Instances
-    Mocks:
-      - objectName: get_string_set
-        returnValue: '["i-other-id"]'
-      - objectName: put_string_set
-        returnValue: ''
+  - Name: Public SSH Key Sent Successfully - Counts Toward Threshold
     ExpectedResult: true
     Log:
       {
@@ -95,13 +90,8 @@ Tests:
           "type": "AssumedRole"
         }
       }
-  - Name: Public SSH Key Sent Successfully to Same Instance
-    Mocks:
-      - objectName: get_string_set
-        returnValue: '["i-abcdef01234567890"]'
-      - objectName: put_string_set
-        returnValue: ''
-    ExpectedResult: false
+  - Name: Public SSH Key Sent Successfully to Same Instance - Also Counts
+    ExpectedResult: true
     Log:
       {
         "p_event_time": "2025-01-13 19:58:59.000000000",
