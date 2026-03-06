@@ -1,0 +1,466 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.SWABulkAccessBehavioral"
+Enabled: true
+Description: |
+  Detects Okta SWA bulk credential extraction, abuse, and access from new network sources using
+  behavioral z-score analysis. Reads pre-computed 90-day baselines from the okta_baseline_90d
+  lookup table, then compares recent (last 7 days) admin SWA access and credential extraction
+  patterns against those baselines.
+
+  DETECTION LOGIC:
+  - Z-score: SWA authentication volume spike (> 3σ above baseline)
+  - Z-score: Unique SWA app diversity spike (accessing many different apps in an hour) (> 3σ)
+  - Z-score: Credential extraction volume spike (> 3σ)
+  - Z-score: Victim diversity spike (targeting many different users) (> 2σ)
+  - Cold-start: First-time bulk SWA access (>= 10 events, no baseline)
+  - Cold-start: First-time credential extraction (>= 5 events, no baseline)
+  - New source: SWA access from IP address not seen in 90-day baseline
+  - New source: SWA access from user agent not seen in 90-day baseline
+  - Critical compound: New IP + any credential extraction events
+
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
+Query: |
+  -- OKTA SWA BULK CREDENTIAL EXTRACTION BEHAVIORAL DETECTION
+  -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
+  -- Flags: bulk SWA authentication spikes + credential extraction anomalies
+
+  WITH swa_access_recent_hourly AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_swa_events,
+          COUNT(DISTINCT target[0]:displayName::string) AS hourly_app_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
+          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity,
+          SUM(CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END) AS hourly_offhours_events,
+          SUM(CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END) AS hourly_weekend_events
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.authentication.sso'
+          AND actor:alternateId::string LIKE '%@%'
+          -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
+          -- Availability varies by tenant. Validate against actual log samples
+          -- and adjust conditions if SWA events are not being detected.
+          AND (
+              debugContext:debugData:swa_mode::string = 'true'
+              OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+              OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
+          )
+      GROUP BY admin_email, event_hour
+  ),
+
+  swa_access_recent_stats AS (
+      SELECT
+          admin_email,
+          SUM(hourly_swa_events) AS recent_total_swa_events,
+          MAX(hourly_swa_events) AS recent_max_swa_events_per_hour,
+          MAX(hourly_app_diversity) AS recent_max_app_diversity_per_hour,
+          MAX(hourly_country_diversity) AS recent_max_country_diversity_per_hour,
+          MAX(hourly_ip_diversity) AS recent_max_ip_diversity_per_hour,
+          AVG(hourly_swa_events)::FLOAT AS recent_avg_swa_events_per_hour,
+          SUM(hourly_offhours_events)::FLOAT / NULLIF(SUM(hourly_swa_events), 0) AS recent_offhours_ratio,
+          MIN(event_hour) AS recent_swa_first_event,
+          MAX(event_hour) AS recent_swa_last_event
+      FROM swa_access_recent_hourly
+      GROUP BY admin_email
+  ),
+
+  recent_sources AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:ipAddress::string)) AS recent_ips,
+          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS recent_user_agents
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND actor:alternateId::string LIKE '%@%'
+          AND (
+              (eventType = 'user.authentication.sso'
+                  AND (
+                      debugContext:debugData:swa_mode::string = 'true'
+                      OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+                      OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
+                  ))
+              OR
+              (eventType = 'application.user_membership.change_username'
+                  AND (
+                      debugContext:debugData:swa_credential_access::string = 'true'
+                      OR debugContext:debugData:swa_credential_access::string = 'view'
+                  ))
+          )
+      GROUP BY admin_email
+  ),
+
+  extraction_by_ip AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          client:ipAddress::string AS source_ip,
+          COUNT(*) AS extractions_from_ip,
+          COUNT(DISTINCT target[0]:alternateId::string) AS victims_from_ip
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'application.user_membership.change_username'
+          AND actor:alternateId::string LIKE '%@%'
+          AND (
+              debugContext:debugData:swa_credential_access::string = 'true'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
+          )
+      GROUP BY admin_email, source_ip
+  ),
+
+  credential_extraction_recent_hourly AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_credential_extractions,
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_victim_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'application.user_membership.change_username'
+          AND actor:alternateId::string LIKE '%@%'
+          AND (
+              debugContext:debugData:swa_credential_access::string = 'true'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
+          )
+      GROUP BY admin_email, event_hour
+  ),
+
+  credential_extraction_recent_stats AS (
+      SELECT
+          admin_email,
+          SUM(hourly_credential_extractions) AS recent_total_extractions,
+          MAX(hourly_credential_extractions) AS recent_max_extractions_per_hour,
+          MAX(hourly_victim_diversity) AS recent_max_victim_diversity_per_hour,
+          MAX(hourly_country_diversity) AS recent_max_extraction_country_diversity_per_hour,
+          AVG(hourly_credential_extractions)::FLOAT AS recent_avg_extractions_per_hour,
+          MIN(event_hour) AS recent_extraction_first_event,
+          MAX(event_hour) AS recent_extraction_last_event
+      FROM credential_extraction_recent_hourly
+      GROUP BY admin_email
+  ),
+
+  -- Pre-compute new-IP extraction stats to avoid repeated correlated subqueries
+  new_ip_extraction_stats AS (
+      SELECT
+          eip.admin_email,
+          SUM(eip.extractions_from_ip) AS new_ip_extraction_count,
+          SUM(eip.victims_from_ip) AS new_ip_victim_count
+      FROM extraction_by_ip eip
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON eip.admin_email = b.user_email
+      WHERE b.swa_known_ips IS NULL
+          OR NOT ARRAY_CONTAINS(eip.source_ip::variant, b.swa_known_ips)
+      GROUP BY eip.admin_email
+  ),
+
+  admin_anomalies AS (
+      SELECT
+          COALESCE(sr.admin_email, cr.admin_email) AS admin_email,
+
+          -- SWA ACCESS: BASELINE from lookup table
+          COALESCE(b.baseline_total_swa_events, 0) AS baseline_total_swa_events,
+          COALESCE(b.baseline_active_days_swa, 0) AS baseline_active_days_swa,
+          ROUND(COALESCE(b.mean_swa_events_per_hour, 0), 2) AS baseline_mean_swa_events_per_hour,
+          ROUND(COALESCE(b.stddev_swa_events_per_hour, 0), 2) AS baseline_stddev_swa_events_per_hour,
+          ROUND(COALESCE(b.mean_app_diversity_per_hour, 0), 2) AS baseline_mean_app_diversity_per_hour,
+          ROUND(COALESCE(b.stddev_app_diversity_per_hour, 0), 2) AS baseline_stddev_app_diversity_per_hour,
+          ROUND(COALESCE(b.mean_country_diversity_per_hour, 0), 2) AS baseline_mean_country_diversity_per_hour,
+          ROUND(COALESCE(b.swa_baseline_offhours_ratio, 0), 2) AS baseline_offhours_ratio,
+
+          -- SWA ACCESS: RECENT ACTIVITY
+          COALESCE(sr.recent_total_swa_events, 0) AS recent_total_swa_events,
+          COALESCE(sr.recent_max_swa_events_per_hour, 0) AS recent_max_swa_events_per_hour,
+          COALESCE(sr.recent_max_app_diversity_per_hour, 0) AS recent_max_app_diversity_per_hour,
+          COALESCE(sr.recent_max_country_diversity_per_hour, 0) AS recent_max_country_diversity_per_hour,
+          COALESCE(sr.recent_max_ip_diversity_per_hour, 0) AS recent_max_ip_diversity_per_hour,
+          ROUND(COALESCE(sr.recent_avg_swa_events_per_hour, 0), 2) AS recent_avg_swa_events_per_hour,
+          ROUND(COALESCE(sr.recent_offhours_ratio, 0), 2) AS recent_offhours_ratio,
+          sr.recent_swa_first_event,
+          sr.recent_swa_last_event,
+
+          -- CREDENTIAL EXTRACTION: BASELINE from lookup table
+          COALESCE(b.baseline_total_extractions, 0) AS baseline_total_extractions,
+          COALESCE(b.baseline_active_days_extraction, 0) AS baseline_active_days_extraction,
+          ROUND(COALESCE(b.mean_extractions_per_hour, 0), 2) AS baseline_mean_extractions_per_hour,
+          ROUND(COALESCE(b.stddev_extractions_per_hour, 0), 2) AS baseline_stddev_extractions_per_hour,
+          ROUND(COALESCE(b.mean_victim_diversity_per_hour, 0), 2) AS baseline_mean_victim_diversity_per_hour,
+          ROUND(COALESCE(b.stddev_victim_diversity_per_hour, 0), 2) AS baseline_stddev_victim_diversity_per_hour,
+
+          -- CREDENTIAL EXTRACTION: RECENT ACTIVITY
+          COALESCE(cr.recent_total_extractions, 0) AS recent_total_extractions,
+          COALESCE(cr.recent_max_extractions_per_hour, 0) AS recent_max_extractions_per_hour,
+          COALESCE(cr.recent_max_victim_diversity_per_hour, 0) AS recent_max_victim_diversity_per_hour,
+          COALESCE(cr.recent_max_extraction_country_diversity_per_hour, 0) AS recent_max_extraction_country_diversity_per_hour,
+          ROUND(COALESCE(cr.recent_avg_extractions_per_hour, 0), 2) AS recent_avg_extractions_per_hour,
+          cr.recent_extraction_first_event,
+          cr.recent_extraction_last_event,
+
+          -- Z-SCORES: SWA ACCESS
+          CASE
+              WHEN b.baseline_total_swa_events >= 3
+              THEN ROUND(
+                  (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
+                  GREATEST(b.stddev_swa_events_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_swa_volume,
+
+          CASE
+              WHEN b.baseline_total_swa_events >= 3
+              THEN ROUND(
+                  (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
+                  GREATEST(b.stddev_app_diversity_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_app_diversity,
+
+          CASE
+              WHEN b.baseline_total_swa_events >= 3
+              THEN ROUND(
+                  (COALESCE(sr.recent_max_country_diversity_per_hour, 0) - b.mean_country_diversity_per_hour) /
+                  GREATEST(b.stddev_country_diversity_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_swa_country_diversity,
+
+          -- Z-SCORES: CREDENTIAL EXTRACTION
+          CASE
+              WHEN b.baseline_total_extractions >= 3
+              THEN ROUND(
+                  (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
+                  GREATEST(b.stddev_extractions_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_extraction_volume,
+
+          CASE
+              WHEN b.baseline_total_extractions >= 3
+              THEN ROUND(
+                  (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
+                  GREATEST(b.stddev_victim_diversity_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_victim_diversity,
+
+          -- NEW SOURCE FLAGS
+          CASE
+              WHEN rs.admin_email IS NULL THEN FALSE
+              WHEN b.swa_known_ips IS NULL THEN TRUE
+              WHEN ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0 THEN TRUE
+              ELSE FALSE
+          END AS has_new_ip,
+
+          CASE
+              WHEN rs.admin_email IS NULL THEN FALSE
+              WHEN b.swa_known_user_agents IS NULL THEN TRUE
+              WHEN ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_user_agents, ARRAY_CONSTRUCT()), b.swa_known_user_agents)) > 0 THEN TRUE
+              ELSE FALSE
+          END AS has_new_user_agent,
+
+          CASE
+              WHEN rs.admin_email IS NULL THEN 0
+              WHEN b.swa_known_ips IS NULL THEN ARRAY_SIZE(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()))
+              ELSE ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips))
+          END AS new_ip_count,
+
+          COALESCE(niex.new_ip_extraction_count, 0) AS new_ip_extraction_count,
+          COALESCE(niex.new_ip_victim_count, 0) AS new_ip_victim_count,
+
+          -- ANOMALY FLAGS: Z-SCORE BASED
+          CASE
+              WHEN b.baseline_total_swa_events >= 3
+                  AND (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
+                      GREATEST(b.stddev_swa_events_per_hour, 0.1) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_swa_volume_anomaly,
+
+          CASE
+              WHEN b.baseline_total_swa_events >= 3
+                  AND (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
+                      GREATEST(b.stddev_app_diversity_per_hour, 0.1) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_app_diversity_anomaly,
+
+          CASE
+              WHEN b.baseline_total_extractions >= 3
+                  AND (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
+                      GREATEST(b.stddev_extractions_per_hour, 0.1) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_extraction_volume_anomaly,
+
+          CASE
+              WHEN b.baseline_total_extractions >= 3
+                  AND (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
+                      GREATEST(b.stddev_victim_diversity_per_hour, 0.1) > 2
+              THEN TRUE ELSE FALSE
+          END AS is_victim_diversity_anomaly,
+
+          -- COLD START FLAGS
+          CASE
+              WHEN (b.baseline_total_swa_events IS NULL OR b.baseline_total_swa_events < 3)
+                  AND sr.recent_total_swa_events >= 10
+              THEN TRUE ELSE FALSE
+          END AS is_first_time_bulk_swa_access,
+
+          CASE
+              WHEN (b.baseline_total_extractions IS NULL OR b.baseline_total_extractions < 3)
+                  AND cr.recent_total_extractions >= 5
+              THEN TRUE ELSE FALSE
+          END AS is_first_time_credential_extraction,
+
+          -- OVERALL ANOMALY FLAG
+          CASE
+              WHEN (
+                  (b.baseline_total_swa_events >= 3
+                      AND (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
+                          GREATEST(b.stddev_swa_events_per_hour, 0.1) > 3)
+                  OR
+                  (b.baseline_total_swa_events >= 3
+                      AND (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
+                          GREATEST(b.stddev_app_diversity_per_hour, 0.1) > 3)
+                  OR
+                  (b.baseline_total_extractions >= 3
+                      AND (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
+                          GREATEST(b.stddev_extractions_per_hour, 0.1) > 3)
+                  OR
+                  (b.baseline_total_extractions >= 3
+                      AND (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
+                          GREATEST(b.stddev_victim_diversity_per_hour, 0.1) > 2)
+                  OR
+                  ((b.baseline_total_swa_events IS NULL OR b.baseline_total_swa_events < 3)
+                      AND sr.recent_total_swa_events >= 10)
+                  OR
+                  ((b.baseline_total_extractions IS NULL OR b.baseline_total_extractions < 3)
+                      AND cr.recent_total_extractions >= 5)
+                  OR
+                  -- New IP with any recent SWA or extraction activity
+                  (
+                      rs.admin_email IS NOT NULL
+                      AND (b.swa_known_ips IS NULL
+                           OR ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0)
+                      AND (COALESCE(sr.recent_total_swa_events, 0) > 0
+                           OR COALESCE(cr.recent_total_extractions, 0) > 0)
+                  )
+                  OR
+                  -- New user agent with any activity (requires existing baseline to avoid over-firing)
+                  (
+                      rs.admin_email IS NOT NULL
+                      AND b.swa_known_user_agents IS NOT NULL
+                      AND ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_user_agents, ARRAY_CONSTRUCT()), b.swa_known_user_agents)) > 0
+                      AND (COALESCE(sr.recent_total_swa_events, 0) > 0
+                           OR COALESCE(cr.recent_total_extractions, 0) > 0)
+                  )
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          -- ANOMALY SEVERITY SCORE
+          CASE
+              WHEN b.baseline_total_swa_events >= 3 OR b.baseline_total_extractions >= 3
+              THEN
+                  ROUND(
+                      GREATEST(
+                          COALESCE((COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
+                              GREATEST(b.stddev_swa_events_per_hour, 0.1), 0),
+                          0
+                      ) +
+                      GREATEST(
+                          COALESCE((COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
+                              GREATEST(b.stddev_app_diversity_per_hour, 0.1), 0),
+                          0
+                      ) +
+                      GREATEST(
+                          COALESCE((COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
+                              GREATEST(b.stddev_extractions_per_hour, 0.1), 0) * 3,
+                          0
+                      ) +
+                      GREATEST(
+                          COALESCE((COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
+                              GREATEST(b.stddev_victim_diversity_per_hour, 0.1), 0) * 2,
+                          0
+                      ) +
+                      -- New IP + extraction: weight 5x extraction count from new IPs
+                      GREATEST(COALESCE(niex.new_ip_extraction_count, 0) * 5.0, 0),
+                      2
+                  )
+              ELSE
+                  ROUND(
+                      (COALESCE(sr.recent_total_swa_events, 0) * 0.5) +
+                      (COALESCE(cr.recent_total_extractions, 0) * 10) +
+                      (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) * 5) +
+                      COALESCE(niex.new_ip_extraction_count, 0) * 5.0,
+                      2
+                  )
+          END AS anomaly_severity_score
+
+      FROM swa_access_recent_stats sr
+      FULL OUTER JOIN credential_extraction_recent_stats cr ON sr.admin_email = cr.admin_email
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b
+          ON COALESCE(sr.admin_email, cr.admin_email) = b.user_email
+      LEFT JOIN recent_sources rs ON COALESCE(sr.admin_email, cr.admin_email) = rs.admin_email
+      LEFT JOIN new_ip_extraction_stats niex ON COALESCE(sr.admin_email, cr.admin_email) = niex.admin_email
+  )
+
+  SELECT
+      admin_email,
+      baseline_total_swa_events,
+      baseline_active_days_swa,
+      baseline_mean_swa_events_per_hour,
+      baseline_stddev_swa_events_per_hour,
+      baseline_mean_app_diversity_per_hour,
+      baseline_stddev_app_diversity_per_hour,
+      baseline_mean_country_diversity_per_hour,
+      baseline_offhours_ratio,
+      recent_total_swa_events,
+      recent_max_swa_events_per_hour,
+      recent_max_app_diversity_per_hour,
+      recent_max_country_diversity_per_hour,
+      recent_max_ip_diversity_per_hour,
+      recent_avg_swa_events_per_hour,
+      recent_offhours_ratio,
+      recent_swa_first_event,
+      recent_swa_last_event,
+      baseline_total_extractions,
+      baseline_active_days_extraction,
+      baseline_mean_extractions_per_hour,
+      baseline_stddev_extractions_per_hour,
+      baseline_mean_victim_diversity_per_hour,
+      baseline_stddev_victim_diversity_per_hour,
+      recent_total_extractions,
+      recent_max_extractions_per_hour,
+      recent_max_victim_diversity_per_hour,
+      recent_max_extraction_country_diversity_per_hour,
+      recent_avg_extractions_per_hour,
+      recent_extraction_first_event,
+      recent_extraction_last_event,
+      z_score_swa_volume,
+      z_score_app_diversity,
+      z_score_swa_country_diversity,
+      z_score_extraction_volume,
+      z_score_victim_diversity,
+      is_swa_volume_anomaly,
+      is_app_diversity_anomaly,
+      is_extraction_volume_anomaly,
+      is_victim_diversity_anomaly,
+      is_first_time_bulk_swa_access,
+      is_first_time_credential_extraction,
+      has_new_ip,
+      has_new_user_agent,
+      new_ip_count,
+      new_ip_extraction_count,
+      new_ip_victim_count,
+      is_anomalous,
+      anomaly_severity_score
+
+  FROM admin_anomalies
+  WHERE is_anomalous = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 1440  # Run once per day
+  TimeoutMinutes: 10
+Tags:
+  - Okta
+  - SWA
+  - Credential Access
+  - Anomaly Detection
+  - Statistical Analysis

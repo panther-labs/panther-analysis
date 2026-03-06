@@ -1,0 +1,230 @@
+AnalysisType: scheduled_rule
+Filename: okta_ad_agent_auth_zscore_anomaly.py
+RuleID: "Okta.ADAgent.AuthenticationAnomaly.ZScore"
+DisplayName: "Okta AD Agent Authentication Anomaly - Z-Score Detection"
+Enabled: false  # Start disabled for tuning
+ScheduledQueries:
+  - Query.Okta.ADAgentAuthZScoreAnomaly
+Severity: Medium  # Default, dynamic severity in rule function
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - Active Directory
+  - Credential Access:Steal Application Access Token
+  - Credential Access:Brute Force
+  - Initial Access:Valid Accounts
+  - Anomaly Detection
+  - Statistical Analysis
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1528  # Steal Application Access Token
+    - TA0006:T1110  # Brute Force
+    - TA0001:T1078  # Valid Accounts
+Description: |
+  Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.
+
+  This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agent
+  authentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.
+
+  **PREREQUISITES:**
+  1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`
+  2. Lookup table must be configured: `okta_ad_agent_baseline`
+  3. Allow 24 hours for initial baseline to populate
+
+  **Detection Logic:**
+  - Calculates mean and standard deviation for hourly authentication volume, IP diversity,
+    country diversity, and device diversity
+  - Alerts when recent activity shows BOTH:
+    1. Volume spike (z-score > 3 standard deviations)
+    2. Geographic/IP diversity spike (z-score > 2 standard deviations)
+
+  **Why This Matters:**
+  Token theft attacks have a distinct signature: stolen credentials are used from multiple
+  locations/IPs simultaneously or in rapid succession. This creates both a volume spike and
+  a diversity spike that this detection identifies.
+
+  **Complementary Detection:**
+  This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions
+  (token creation, agent configuration) from new sources. This rule detects the actual USE
+  of stolen tokens through authentication patterns.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Runbook: |
+  1. Compare recent_max_events_per_hour against baseline_mean_events_per_hour for user_email and review z_score_volume and z_score_ip_diversity to quantify the anomaly - confirm baseline_updated_at is within the past 7 days to ensure the baseline reflects current normal behavior
+  2. Check all_recent_ips and all_recent_countries for geographic anomalies in the 7 days around first_anomaly_hour - look for simultaneous access from multiple countries or rapid location changes inconsistent with the user's primary_country and primary_ip
+  3. Search Okta SystemLog for system.api_token.create and system.agent.ad.agent_instance_added events by user_email in the 48 hours before first_anomaly_hour, and check for Okta.ADAgent.TokenAbuse.Behavioral alerts from this user in the past 7 days
+
+DedupPeriodMinutes: 360  # 6 hours, match query frequency
+SummaryAttributes:
+  - user_email
+  - anomaly_severity_score
+  - z_score_volume
+Tests:
+  # Positive Tests - Should Alert
+  - Name: High Volume and IP Diversity Spike - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "compromised.user@company.com",
+        "baseline_total_events": 1000,
+        "baseline_active_days": 30,
+        "baseline_mean_events_per_hour": 10.5,
+        "baseline_stddev_events_per_hour": 2.5,
+        "baseline_mean_ip_diversity_per_hour": 1.2,
+        "baseline_stddev_ip_diversity_per_hour": 0.3,
+        "baseline_mean_country_diversity_per_hour": 1.0,
+        "baseline_stddev_country_diversity_per_hour": 0.1,
+        "recent_total_events": 500,
+        "recent_max_events_per_hour": 50,
+        "recent_max_ip_diversity_per_hour": 5,
+        "recent_max_country_diversity_per_hour": 3,
+        "recent_max_device_diversity_per_hour": 4,
+        "z_score_volume": 15.8,
+        "z_score_ip_diversity": 12.7,
+        "z_score_country_diversity": 20.0,
+        "z_score_device_diversity": 8.5,
+        "anomaly_severity_score": 57.0,
+        "all_recent_ips": ["203.0.113.1", "198.51.100.50", "192.0.2.100", "203.0.113.200", "198.51.100.75"],
+        "all_recent_countries": ["United States", "Russia", "China"],
+        "first_anomaly_hour": "2024-01-15 14:00:00",
+        "last_anomaly_hour": "2024-01-15 18:00:00",
+        "detection_timestamp": "2024-01-15 19:00:00"
+      }
+
+  - Name: Moderate Volume Spike with Country Diversity - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "test.user@company.com",
+        "baseline_total_events": 500,
+        "baseline_active_days": 20,
+        "baseline_mean_events_per_hour": 5.0,
+        "baseline_stddev_events_per_hour": 1.5,
+        "baseline_mean_ip_diversity_per_hour": 1.0,
+        "baseline_stddev_ip_diversity_per_hour": 0.2,
+        "baseline_mean_country_diversity_per_hour": 1.0,
+        "baseline_stddev_country_diversity_per_hour": 0.1,
+        "recent_total_events": 100,
+        "recent_max_events_per_hour": 20,
+        "recent_max_ip_diversity_per_hour": 1.5,
+        "recent_max_country_diversity_per_hour": 2,
+        "recent_max_device_diversity_per_hour": 2,
+        "z_score_volume": 10.0,
+        "z_score_ip_diversity": 2.5,
+        "z_score_country_diversity": 10.0,
+        "z_score_device_diversity": 5.0,
+        "anomaly_severity_score": 27.5,
+        "all_recent_ips": ["10.0.0.1", "172.16.0.50"],
+        "all_recent_countries": ["United States", "Canada"],
+        "first_anomaly_hour": "2024-01-15 10:00:00",
+        "last_anomaly_hour": "2024-01-15 12:00:00",
+        "detection_timestamp": "2024-01-15 13:00:00"
+      }
+
+  - Name: Edge Case - Minimal Baseline Data - Medium Severity
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "new.user@company.com",
+        "baseline_total_events": 15,
+        "baseline_active_days": 5,
+        "baseline_mean_events_per_hour": 1.5,
+        "baseline_stddev_events_per_hour": 0.5,
+        "baseline_mean_ip_diversity_per_hour": 1.0,
+        "baseline_stddev_ip_diversity_per_hour": 0.1,
+        "baseline_mean_country_diversity_per_hour": 1.0,
+        "baseline_stddev_country_diversity_per_hour": 0.1,
+        "recent_total_events": 25,
+        "recent_max_events_per_hour": 8,
+        "recent_max_ip_diversity_per_hour": 3,
+        "recent_max_country_diversity_per_hour": 2,
+        "recent_max_device_diversity_per_hour": 2,
+        "z_score_volume": 13.0,
+        "z_score_ip_diversity": 20.0,
+        "z_score_country_diversity": 10.0,
+        "z_score_device_diversity": 10.0,
+        "anomaly_severity_score": 53.0,
+        "all_recent_ips": ["203.0.113.50", "198.51.100.100", "192.0.2.150"],
+        "all_recent_countries": ["United States", "Germany"],
+        "first_anomaly_hour": "2024-01-15 08:00:00",
+        "last_anomaly_hour": "2024-01-15 09:00:00",
+        "detection_timestamp": "2024-01-15 10:00:00"
+      }
+
+  - Name: Token Theft Pattern - Multiple Countries Simultaneously
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "victim@company.com",
+        "baseline_total_events": 2000,
+        "baseline_active_days": 45,
+        "baseline_mean_events_per_hour": 8.0,
+        "baseline_stddev_events_per_hour": 2.0,
+        "baseline_mean_ip_diversity_per_hour": 1.1,
+        "baseline_stddev_ip_diversity_per_hour": 0.2,
+        "baseline_mean_country_diversity_per_hour": 1.0,
+        "baseline_stddev_country_diversity_per_hour": 0.0,
+        "recent_total_events": 300,
+        "recent_max_events_per_hour": 35,
+        "recent_max_ip_diversity_per_hour": 8,
+        "recent_max_country_diversity_per_hour": 4,
+        "recent_max_device_diversity_per_hour": 6,
+        "z_score_volume": 13.5,
+        "z_score_ip_diversity": 34.5,
+        "z_score_country_diversity": 30.0,
+        "z_score_device_diversity": 25.0,
+        "anomaly_severity_score": 103.0,
+        "all_recent_ips": ["203.0.113.1", "198.51.100.2", "192.0.2.3", "185.220.101.4", "5.188.10.5", "45.134.144.6", "91.219.236.7", "178.62.193.8"],
+        "all_recent_countries": ["United States", "Russia", "China", "Iran"],
+        "first_anomaly_hour": "2024-01-15 16:00:00",
+        "last_anomaly_hour": "2024-01-15 17:00:00",
+        "detection_timestamp": "2024-01-15 18:00:00"
+      }
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing User Email
+    ExpectedResult: false
+    Log:
+      {
+        "baseline_total_events": 1000,
+        "baseline_mean_events_per_hour": 10.5,
+        "z_score_volume": 15.0,
+        "z_score_ip_diversity": 12.0,
+        "anomaly_severity_score": 40.0
+      }
+
+  # Note: rule() only validates the primary key (user_email); anomaly thresholds
+  # are enforced at the query level (WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE).
+  # All rows reaching rule() with a valid user_email are expected to return true.
+
+  - Name: Cold Start - No Baseline, High IP Diversity
+    ExpectedResult: true
+    Log:
+      {
+        "user_email": "new.account@company.com",
+        "baseline_total_events": null,
+        "baseline_active_days": null,
+        "baseline_mean_events_per_hour": null,
+        "baseline_stddev_events_per_hour": null,
+        "baseline_mean_ip_diversity_per_hour": null,
+        "baseline_stddev_ip_diversity_per_hour": null,
+        "baseline_mean_country_diversity_per_hour": null,
+        "baseline_stddev_country_diversity_per_hour": null,
+        "recent_total_events": 25,
+        "recent_max_events_per_hour": 10,
+        "recent_max_ip_diversity_per_hour": 4,
+        "recent_max_country_diversity_per_hour": 2,
+        "recent_max_device_diversity_per_hour": 3,
+        "z_score_volume": null,
+        "z_score_ip_diversity": null,
+        "z_score_country_diversity": null,
+        "z_score_device_diversity": null,
+        "anomaly_severity_score": 0,
+        "all_recent_ips": ["203.0.113.1", "198.51.100.2", "192.0.2.3", "185.220.101.4"],
+        "all_recent_countries": ["United States", "Russia"],
+        "first_anomaly_hour": "2024-01-15 12:00:00",
+        "last_anomaly_hour": "2024-01-15 13:00:00",
+        "detection_timestamp": "2024-01-15 14:00:00",
+        "is_cold_start_anomaly": true
+      }

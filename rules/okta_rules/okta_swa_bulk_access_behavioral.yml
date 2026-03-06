@@ -1,0 +1,340 @@
+AnalysisType: scheduled_rule
+Filename: okta_swa_bulk_access_behavioral.py
+RuleID: "Okta.SWA.BulkAccess.Behavioral"
+DisplayName: "Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SWABulkAccessBehavioral
+Severity: High  # Default, dynamic severity in rule function
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - SWA
+  - Credential Access:Credentials from Password Stores
+  - Collection:Data from Information Repositories
+  - Initial Access:Valid Accounts
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1555  # Credentials from Password Stores
+    - TA0009:T1213  # Data from Information Repositories
+    - TA0001:T1078  # Valid Accounts
+Description: |
+  Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access from
+  previously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.
+
+  SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view or
+  rotate credentials for users across many apps. This detection builds a 90-day behavioral baseline
+  for each admin's SWA access, credential change patterns, and known source IPs/user agents, then
+  identifies anomalous spikes or new sources in the last 7 days.
+
+  **Detection Logic:**
+  - Z-score: SWA authentication volume spike (> 3σ above baseline)
+  - Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3σ)
+  - Z-score: Credential extraction volume spike (> 3σ)
+  - Z-score: Victim diversity spike (credential changes across many users) (> 2σ)
+  - Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)
+  - Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)
+  - New source: SWA access from IP address not seen in 90-day baseline
+  - New source: SWA access from user agent not seen in 90-day baseline
+  - Critical compound: New IP + any credential extraction events
+
+  **Why This Matters:**
+  SWA credential extraction is a powerful lateral movement technique. An attacker with admin access
+  can silently retrieve plaintext credentials for hundreds of SWA-protected applications without
+  triggering MFA or generating obvious authentication failures. New source detection catches the
+  initial access phase when a compromised admin account is used from an unfamiliar device or location.
+
+  **Complementary Detection:**
+  Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vector
+  occurring outside normal business hours.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Runbook: |
+  1. Review recent_total_extractions and recent_max_victim_diversity_per_hour for admin_email against baseline_total_extractions - query Okta SystemLog for application.user_membership.change_username events by admin_email in the 24 hours around recent_extraction_first_event, listing all target users and app names affected
+  2. If has_new_ip is true, review new_ip_extraction_count and new_ip_victim_count - query Okta SystemLog for all events by admin_email in the 7 days preceding the alert to identify the specific new IPs used; verify whether these IPs belong to known corporate VPN ranges, cloud egress IPs, or the admin's registered home network
+  3. Check recent_max_app_diversity_per_hour and z_score_app_diversity for user.authentication.sso events by admin_email in the 7 days around recent_swa_first_event - compare the set of apps accessed against the admin's baseline_mean_app_diversity_per_hour to identify apps outside their normal scope
+  4. Search for concurrent alerts from admin_email in the 48 hours before recent_swa_first_event, including Okta.SkeletonKeyBypass.Behavioral and any failed MFA events, to determine whether the admin account was compromised prior to the bulk access activity
+
+DedupPeriodMinutes: 1440  # 24 hours
+SummaryAttributes:
+  - admin_email
+  - anomaly_severity_score
+  - recent_total_extractions
+Tests:
+  # Positive Tests - Should Alert
+  - Name: First-Time Bulk Credential Extraction - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "attacker@company.com",
+        "baseline_total_swa_events": 0,
+        "baseline_total_extractions": 0,
+        "recent_total_swa_events": 8,
+        "recent_max_swa_events_per_hour": 8,
+        "recent_max_app_diversity_per_hour": 6,
+        "recent_offhours_ratio": 0.88,
+        "recent_total_extractions": 12,
+        "recent_max_extractions_per_hour": 8,
+        "recent_max_victim_diversity_per_hour": 7,
+        "z_score_swa_volume": null,
+        "z_score_extraction_volume": null,
+        "z_score_victim_diversity": null,
+        "is_swa_volume_anomaly": false,
+        "is_extraction_volume_anomaly": false,
+        "is_victim_diversity_anomaly": false,
+        "is_first_time_bulk_swa_access": false,
+        "is_first_time_credential_extraction": true,
+        "has_new_ip": false,
+        "has_new_user_agent": false,
+        "new_ip_count": 0,
+        "new_ip_extraction_count": 0,
+        "new_ip_victim_count": 0,
+        "is_anomalous": true,
+        "anomaly_severity_score": 159.0,
+        "recent_extraction_first_event": "2024-01-15 03:00:00",
+        "recent_extraction_last_event": "2024-01-15 04:00:00"
+      }
+
+  - Name: Credential Extraction Z-Score Spike with Victim Diversity Anomaly - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "compromised-admin@company.com",
+        "baseline_total_swa_events": 200,
+        "baseline_active_days_swa": 40,
+        "baseline_mean_swa_events_per_hour": 3.0,
+        "baseline_stddev_swa_events_per_hour": 1.5,
+        "baseline_mean_app_diversity_per_hour": 2.0,
+        "baseline_stddev_app_diversity_per_hour": 0.8,
+        "baseline_offhours_ratio": 0.1,
+        "baseline_total_extractions": 20,
+        "baseline_active_days_extraction": 10,
+        "baseline_mean_extractions_per_hour": 0.3,
+        "baseline_stddev_extractions_per_hour": 0.2,
+        "baseline_mean_victim_diversity_per_hour": 0.2,
+        "baseline_stddev_victim_diversity_per_hour": 0.1,
+        "recent_total_swa_events": 50,
+        "recent_max_swa_events_per_hour": 20,
+        "recent_max_app_diversity_per_hour": 8,
+        "recent_total_extractions": 30,
+        "recent_max_extractions_per_hour": 15,
+        "recent_max_victim_diversity_per_hour": 10,
+        "recent_offhours_ratio": 0.6,
+        "z_score_swa_volume": 11.33,
+        "z_score_app_diversity": 7.5,
+        "z_score_extraction_volume": 73.5,
+        "z_score_victim_diversity": 98.0,
+        "is_swa_volume_anomaly": true,
+        "is_app_diversity_anomaly": true,
+        "is_extraction_volume_anomaly": true,
+        "is_victim_diversity_anomaly": true,
+        "is_first_time_credential_extraction": false,
+        "has_new_ip": false,
+        "has_new_user_agent": false,
+        "new_ip_count": 0,
+        "new_ip_extraction_count": 0,
+        "new_ip_victim_count": 0,
+        "is_anomalous": true,
+        "anomaly_severity_score": 435.33,
+        "recent_extraction_first_event": "2024-01-15 14:00:00",
+        "recent_extraction_last_event": "2024-01-15 16:00:00"
+      }
+
+  - Name: Bulk SWA App Access Volume Spike - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "svc-admin@company.com",
+        "baseline_total_swa_events": 150,
+        "baseline_active_days_swa": 30,
+        "baseline_mean_swa_events_per_hour": 2.0,
+        "baseline_stddev_swa_events_per_hour": 1.0,
+        "baseline_mean_app_diversity_per_hour": 1.5,
+        "baseline_stddev_app_diversity_per_hour": 0.6,
+        "baseline_offhours_ratio": 0.05,
+        "baseline_total_extractions": 0,
+        "recent_total_swa_events": 40,
+        "recent_max_swa_events_per_hour": 25,
+        "recent_max_app_diversity_per_hour": 12,
+        "recent_max_ip_diversity_per_hour": 1,
+        "recent_offhours_ratio": 0.15,
+        "recent_total_extractions": 0,
+        "recent_max_extractions_per_hour": 0,
+        "z_score_swa_volume": 23.0,
+        "z_score_app_diversity": 17.5,
+        "z_score_extraction_volume": null,
+        "is_swa_volume_anomaly": true,
+        "is_app_diversity_anomaly": true,
+        "is_extraction_volume_anomaly": false,
+        "is_victim_diversity_anomaly": false,
+        "is_first_time_bulk_swa_access": false,
+        "is_first_time_credential_extraction": false,
+        "has_new_ip": false,
+        "has_new_user_agent": false,
+        "new_ip_count": 0,
+        "new_ip_extraction_count": 0,
+        "new_ip_victim_count": 0,
+        "is_anomalous": true,
+        "anomaly_severity_score": 40.5,
+        "recent_swa_first_event": "2024-01-15 09:00:00",
+        "recent_swa_last_event": "2024-01-15 11:00:00"
+      }
+
+  - Name: New IP with Credential Extraction - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "attacker@company.com",
+        "baseline_total_swa_events": 150,
+        "baseline_active_days_swa": 30,
+        "baseline_mean_swa_events_per_hour": 2.0,
+        "baseline_stddev_swa_events_per_hour": 1.0,
+        "baseline_mean_app_diversity_per_hour": 1.5,
+        "baseline_stddev_app_diversity_per_hour": 0.6,
+        "baseline_offhours_ratio": 0.05,
+        "baseline_total_extractions": 10,
+        "baseline_active_days_extraction": 5,
+        "baseline_mean_extractions_per_hour": 0.2,
+        "baseline_stddev_extractions_per_hour": 0.1,
+        "baseline_mean_victim_diversity_per_hour": 0.1,
+        "baseline_stddev_victim_diversity_per_hour": 0.05,
+        "recent_total_swa_events": 5,
+        "recent_max_swa_events_per_hour": 5,
+        "recent_max_app_diversity_per_hour": 3,
+        "recent_max_ip_diversity_per_hour": 1,
+        "recent_offhours_ratio": 0.8,
+        "recent_total_extractions": 8,
+        "recent_max_extractions_per_hour": 8,
+        "recent_max_victim_diversity_per_hour": 6,
+        "z_score_swa_volume": 1.5,
+        "z_score_extraction_volume": 2.0,
+        "z_score_victim_diversity": 1.8,
+        "is_swa_volume_anomaly": false,
+        "is_app_diversity_anomaly": false,
+        "is_extraction_volume_anomaly": false,
+        "is_victim_diversity_anomaly": false,
+        "is_first_time_bulk_swa_access": false,
+        "is_first_time_credential_extraction": false,
+        "has_new_ip": true,
+        "has_new_user_agent": false,
+        "new_ip_count": 1,
+        "new_ip_extraction_count": 8,
+        "new_ip_victim_count": 6,
+        "is_anomalous": true,
+        "anomaly_severity_score": 45.0,
+        "recent_extraction_first_event": "2024-01-15 14:00:00",
+        "recent_extraction_last_event": "2024-01-15 15:00:00"
+      }
+
+  - Name: New IP Only - No Extraction - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "compromised-admin@company.com",
+        "baseline_total_swa_events": 200,
+        "baseline_active_days_swa": 40,
+        "baseline_mean_swa_events_per_hour": 3.0,
+        "baseline_stddev_swa_events_per_hour": 1.5,
+        "baseline_mean_app_diversity_per_hour": 2.0,
+        "baseline_stddev_app_diversity_per_hour": 0.8,
+        "baseline_offhours_ratio": 0.1,
+        "baseline_total_extractions": 5,
+        "baseline_mean_extractions_per_hour": 0.1,
+        "baseline_stddev_extractions_per_hour": 0.05,
+        "recent_total_swa_events": 12,
+        "recent_max_swa_events_per_hour": 6,
+        "recent_max_app_diversity_per_hour": 4,
+        "recent_max_ip_diversity_per_hour": 1,
+        "recent_offhours_ratio": 0.92,
+        "recent_total_extractions": 0,
+        "recent_max_extractions_per_hour": 0,
+        "recent_max_victim_diversity_per_hour": 0,
+        "z_score_swa_volume": 1.0,
+        "z_score_extraction_volume": null,
+        "z_score_victim_diversity": null,
+        "is_swa_volume_anomaly": false,
+        "is_app_diversity_anomaly": false,
+        "is_extraction_volume_anomaly": false,
+        "is_victim_diversity_anomaly": false,
+        "is_first_time_bulk_swa_access": false,
+        "is_first_time_credential_extraction": false,
+        "has_new_ip": true,
+        "has_new_user_agent": false,
+        "new_ip_count": 2,
+        "new_ip_extraction_count": 0,
+        "new_ip_victim_count": 0,
+        "is_anomalous": true,
+        "anomaly_severity_score": 5.0,
+        "recent_swa_first_event": "2024-01-15 03:00:00",
+        "recent_swa_last_event": "2024-01-15 04:00:00"
+      }
+
+  - Name: New User Agent Only - No Extraction - Medium Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "admin@company.com",
+        "baseline_total_swa_events": 300,
+        "baseline_active_days_swa": 60,
+        "baseline_mean_swa_events_per_hour": 4.0,
+        "baseline_stddev_swa_events_per_hour": 2.0,
+        "baseline_mean_app_diversity_per_hour": 2.5,
+        "baseline_stddev_app_diversity_per_hour": 1.0,
+        "baseline_offhours_ratio": 0.05,
+        "baseline_total_extractions": 2,
+        "baseline_mean_extractions_per_hour": 0.05,
+        "baseline_stddev_extractions_per_hour": 0.02,
+        "recent_total_swa_events": 8,
+        "recent_max_swa_events_per_hour": 4,
+        "recent_max_app_diversity_per_hour": 3,
+        "recent_max_ip_diversity_per_hour": 1,
+        "recent_offhours_ratio": 0.0,
+        "recent_total_extractions": 0,
+        "recent_max_extractions_per_hour": 0,
+        "recent_max_victim_diversity_per_hour": 0,
+        "z_score_swa_volume": 0.0,
+        "z_score_extraction_volume": null,
+        "z_score_victim_diversity": null,
+        "is_swa_volume_anomaly": false,
+        "is_app_diversity_anomaly": false,
+        "is_extraction_volume_anomaly": false,
+        "is_victim_diversity_anomaly": false,
+        "is_first_time_bulk_swa_access": false,
+        "is_first_time_credential_extraction": false,
+        "has_new_ip": false,
+        "has_new_user_agent": true,
+        "new_ip_count": 0,
+        "new_ip_extraction_count": 0,
+        "new_ip_victim_count": 0,
+        "is_anomalous": true,
+        "anomaly_severity_score": 2.0,
+        "recent_swa_first_event": "2024-01-15 10:00:00",
+        "recent_swa_last_event": "2024-01-15 10:30:00"
+      }
+
+  # Note: rule() only validates admin_email; anomaly thresholds are enforced at the query level.
+  # All rows reaching rule() with a valid admin_email are expected to return true.
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Admin Email
+    ExpectedResult: false
+    Log:
+      {
+        "baseline_total_swa_events": 100,
+        "recent_total_extractions": 10,
+        "is_anomalous": true,
+        "anomaly_severity_score": 80.0
+      }
+
+  - Name: Malformed Row - Empty Admin Email String
+    ExpectedResult: false
+    Log:
+      {
+        "admin_email": "",
+        "baseline_total_swa_events": 100,
+        "recent_total_extractions": 10,
+        "is_anomalous": true,
+        "anomaly_severity_score": 80.0
+      }

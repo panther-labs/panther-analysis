@@ -1,0 +1,305 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.SkeletonKeyBypassBehavioral"
+Enabled: true
+Description: |
+  Detects Okta authentication bypass attempts via skeleton key injection using behavioral z-score analysis.
+  Reads pre-computed 90-day baselines from the okta_baseline_90d lookup table, then compares recent
+  (last 7 days) admin policy change and MFA factor enrollment patterns against those baselines.
+
+  DETECTION LOGIC:
+  - Z-score: Security-weakening policy changes (requireFactor=false, maxSessionLifetime=0) > 2σ
+  - Z-score: Admin-on-behalf-of MFA factor enrollments for other users > 3σ
+  - Cold-start: First-time security weakening with no prior baseline
+  - Cold-start: First-time admin-enrolled factors for other users
+
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
+Query: |
+  -- OKTA SKELETON KEY BYPASS BEHAVIORAL DETECTION
+  -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
+  -- Flags: security-weakening policy changes + admin bulk factor enrollments
+
+  WITH policy_recent_hourly AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_policy_changes,
+          SUM(CASE
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%requireFactor%false%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
+              ELSE 0
+          END) AS hourly_security_weakenings
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
+          AND actor:alternateId::string LIKE '%@%'
+      GROUP BY admin_email, event_hour
+  ),
+
+  policy_recent_stats AS (
+      SELECT
+          admin_email,
+          SUM(hourly_policy_changes) AS recent_total_policy_changes,
+          MAX(hourly_policy_changes) AS recent_max_policy_changes_per_hour,
+          SUM(hourly_security_weakenings) AS recent_total_weakenings,
+          MAX(hourly_security_weakenings) AS recent_max_weakenings_per_hour,
+          MIN(event_hour) AS recent_policy_first_event,
+          MAX(event_hour) AS recent_policy_last_event
+      FROM policy_recent_hourly
+      GROUP BY admin_email
+  ),
+
+  enrollment_recent_hourly AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_enrollments,
+          SUM(CASE
+              WHEN actor:alternateId::string != target[0]:alternateId::string THEN 1
+              ELSE 0
+          END) AS hourly_admin_enrollments,
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.mfa.factor.activate'
+          AND actor:alternateId::string LIKE '%@%'
+      GROUP BY admin_email, event_hour
+  ),
+
+  enrollment_recent_stats AS (
+      SELECT
+          admin_email,
+          SUM(hourly_enrollments) AS recent_total_enrollments,
+          MAX(hourly_enrollments) AS recent_max_enrollments_per_hour,
+          SUM(hourly_admin_enrollments) AS recent_total_admin_enrollments,
+          MAX(hourly_admin_enrollments) AS recent_max_admin_enrollments_per_hour,
+          MAX(hourly_unique_targets) AS recent_max_targets_per_hour,
+          MIN(event_hour) AS recent_enrollment_first_event,
+          MAX(event_hour) AS recent_enrollment_last_event
+      FROM enrollment_recent_hourly
+      GROUP BY admin_email
+  ),
+
+  admin_anomalies AS (
+      SELECT
+          COALESCE(pr.admin_email, er.admin_email) AS admin_email,
+
+          -- POLICY BASELINE from lookup table
+          COALESCE(b.baseline_total_policy_changes, 0) AS baseline_total_policy_changes,
+          COALESCE(b.baseline_active_days_policy, 0) AS baseline_active_days_policy,
+          ROUND(COALESCE(b.mean_policy_changes_per_hour, 0), 2) AS baseline_mean_policy_changes_per_hour,
+          ROUND(COALESCE(b.stddev_policy_changes_per_hour, 0), 2) AS baseline_stddev_policy_changes_per_hour,
+          COALESCE(b.baseline_total_weakenings, 0) AS baseline_total_weakenings,
+          ROUND(COALESCE(b.mean_weakenings_per_hour, 0), 2) AS baseline_mean_weakenings_per_hour,
+
+          -- POLICY RECENT ACTIVITY
+          COALESCE(pr.recent_total_policy_changes, 0) AS recent_total_policy_changes,
+          COALESCE(pr.recent_max_policy_changes_per_hour, 0) AS recent_max_policy_changes_per_hour,
+          COALESCE(pr.recent_total_weakenings, 0) AS recent_total_weakenings,
+          COALESCE(pr.recent_max_weakenings_per_hour, 0) AS recent_max_weakenings_per_hour,
+          pr.recent_policy_first_event,
+          pr.recent_policy_last_event,
+
+          -- ENROLLMENT BASELINE from lookup table
+          COALESCE(b.baseline_total_enrollments, 0) AS baseline_total_enrollments,
+          COALESCE(b.baseline_active_days_enrollment, 0) AS baseline_active_days_enrollment,
+          ROUND(COALESCE(b.mean_enrollments_per_hour, 0), 2) AS baseline_mean_enrollments_per_hour,
+          ROUND(COALESCE(b.stddev_enrollments_per_hour, 0), 2) AS baseline_stddev_enrollments_per_hour,
+          COALESCE(b.baseline_total_admin_enrollments, 0) AS baseline_total_admin_enrollments,
+          ROUND(COALESCE(b.mean_admin_enrollments_per_hour, 0), 2) AS baseline_mean_admin_enrollments_per_hour,
+
+          -- ENROLLMENT RECENT ACTIVITY
+          COALESCE(er.recent_total_enrollments, 0) AS recent_total_enrollments,
+          COALESCE(er.recent_max_enrollments_per_hour, 0) AS recent_max_enrollments_per_hour,
+          COALESCE(er.recent_total_admin_enrollments, 0) AS recent_total_admin_enrollments,
+          COALESCE(er.recent_max_admin_enrollments_per_hour, 0) AS recent_max_admin_enrollments_per_hour,
+          COALESCE(er.recent_max_targets_per_hour, 0) AS recent_max_targets_per_hour,
+          er.recent_enrollment_first_event,
+          er.recent_enrollment_last_event,
+
+          -- Z-SCORES: POLICY CHANGES
+          CASE
+              WHEN b.baseline_total_policy_changes >= 3
+              THEN ROUND(
+                  (COALESCE(pr.recent_max_policy_changes_per_hour, 0) - b.mean_policy_changes_per_hour) /
+                  GREATEST(b.stddev_policy_changes_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_policy_changes,
+
+          CASE
+              WHEN b.baseline_total_policy_changes >= 3
+              THEN ROUND(
+                  (COALESCE(pr.recent_max_weakenings_per_hour, 0) - b.mean_weakenings_per_hour) /
+                  GREATEST(b.stddev_weakenings_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_security_weakenings,
+
+          -- Z-SCORES: ENROLLMENTS
+          CASE
+              WHEN b.baseline_total_enrollments >= 3
+              THEN ROUND(
+                  (COALESCE(er.recent_max_enrollments_per_hour, 0) - b.mean_enrollments_per_hour) /
+                  GREATEST(b.stddev_enrollments_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_enrollments,
+
+          CASE
+              WHEN b.baseline_total_enrollments >= 3
+              THEN ROUND(
+                  (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
+                  GREATEST(b.stddev_admin_enrollments_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_admin_enrollments,
+
+          CASE
+              WHEN b.baseline_total_enrollments >= 3
+              THEN ROUND(
+                  (COALESCE(er.recent_max_targets_per_hour, 0) - b.mean_targets_per_hour) /
+                  GREATEST(b.stddev_targets_per_hour, 0.1),
+                  2)
+              ELSE NULL
+          END AS z_score_targets,
+
+          -- ANOMALY FLAGS: Z-SCORE BASED
+          CASE
+              WHEN b.baseline_total_policy_changes >= 3
+                  AND (COALESCE(pr.recent_max_policy_changes_per_hour, 0) - b.mean_policy_changes_per_hour) /
+                      GREATEST(b.stddev_policy_changes_per_hour, 0.1) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_policy_volume_anomaly,
+
+          CASE
+              WHEN b.baseline_total_policy_changes >= 3
+                  AND (COALESCE(pr.recent_max_weakenings_per_hour, 0) - b.mean_weakenings_per_hour) /
+                      GREATEST(b.stddev_weakenings_per_hour, 0.1) > 2
+              THEN TRUE ELSE FALSE
+          END AS is_security_weakening_anomaly,
+
+          CASE
+              WHEN b.baseline_total_enrollments >= 3
+                  AND (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
+                      GREATEST(b.stddev_admin_enrollments_per_hour, 0.1) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_admin_enrollment_anomaly,
+
+          -- COLD START FLAGS
+          CASE
+              WHEN (b.baseline_total_policy_changes IS NULL OR b.baseline_total_policy_changes < 3)
+                  AND pr.recent_total_weakenings > 0
+              THEN TRUE ELSE FALSE
+          END AS is_first_time_security_weakening,
+
+          CASE
+              WHEN (b.baseline_total_enrollments IS NULL OR b.baseline_total_enrollments < 3)
+                  AND er.recent_total_admin_enrollments > 0
+              THEN TRUE ELSE FALSE
+          END AS is_first_time_admin_enrollment,
+
+          -- OVERALL ANOMALY FLAG
+          CASE
+              WHEN (
+                  (b.baseline_total_policy_changes >= 3
+                      AND (COALESCE(pr.recent_max_weakenings_per_hour, 0) - b.mean_weakenings_per_hour) /
+                          GREATEST(b.stddev_weakenings_per_hour, 0.1) > 2)
+                  OR
+                  (b.baseline_total_enrollments >= 3
+                      AND (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
+                          GREATEST(b.stddev_admin_enrollments_per_hour, 0.1) > 3)
+                  OR
+                  ((b.baseline_total_policy_changes IS NULL OR b.baseline_total_policy_changes < 3)
+                      AND pr.recent_total_weakenings > 0)
+                  OR
+                  ((b.baseline_total_enrollments IS NULL OR b.baseline_total_enrollments < 3)
+                      AND er.recent_total_admin_enrollments > 0)
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          -- ANOMALY SEVERITY SCORE
+          CASE
+              WHEN b.baseline_total_policy_changes >= 3 OR b.baseline_total_enrollments >= 3
+              THEN
+                  ROUND(
+                      GREATEST(
+                          COALESCE((COALESCE(pr.recent_max_weakenings_per_hour, 0) - b.mean_weakenings_per_hour) /
+                              GREATEST(b.stddev_weakenings_per_hour, 0.1), 0) * 2,
+                          0
+                      ) +
+                      GREATEST(
+                          COALESCE((COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
+                              GREATEST(b.stddev_admin_enrollments_per_hour, 0.1), 0),
+                          0
+                      ),
+                      2
+                  )
+              ELSE
+                  ROUND(
+                      (COALESCE(pr.recent_total_weakenings, 0) * 10) +
+                      (COALESCE(er.recent_total_admin_enrollments, 0) * 3),
+                      2
+                  )
+          END AS anomaly_severity_score
+
+      FROM policy_recent_stats pr
+      FULL OUTER JOIN enrollment_recent_stats er ON pr.admin_email = er.admin_email
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b
+          ON COALESCE(pr.admin_email, er.admin_email) = b.user_email
+  )
+
+  SELECT
+      admin_email,
+      baseline_total_policy_changes,
+      baseline_active_days_policy,
+      baseline_mean_policy_changes_per_hour,
+      baseline_stddev_policy_changes_per_hour,
+      baseline_total_weakenings,
+      baseline_mean_weakenings_per_hour,
+      recent_total_policy_changes,
+      recent_max_policy_changes_per_hour,
+      recent_total_weakenings,
+      recent_max_weakenings_per_hour,
+      recent_policy_first_event,
+      recent_policy_last_event,
+      baseline_total_enrollments,
+      baseline_active_days_enrollment,
+      baseline_mean_enrollments_per_hour,
+      baseline_stddev_enrollments_per_hour,
+      baseline_total_admin_enrollments,
+      baseline_mean_admin_enrollments_per_hour,
+      recent_total_enrollments,
+      recent_max_enrollments_per_hour,
+      recent_total_admin_enrollments,
+      recent_max_admin_enrollments_per_hour,
+      recent_max_targets_per_hour,
+      recent_enrollment_first_event,
+      recent_enrollment_last_event,
+      z_score_policy_changes,
+      z_score_security_weakenings,
+      z_score_enrollments,
+      z_score_admin_enrollments,
+      z_score_targets,
+      is_policy_volume_anomaly,
+      is_security_weakening_anomaly,
+      is_admin_enrollment_anomaly,
+      is_first_time_security_weakening,
+      is_first_time_admin_enrollment,
+      is_anomalous,
+      anomaly_severity_score
+
+  FROM admin_anomalies
+  WHERE is_anomalous = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 1440  # Run once per day
+  TimeoutMinutes: 10
+Tags:
+  - Okta
+  - Active Directory
+  - Skeleton Key
+  - Anomaly Detection
+  - Statistical Analysis

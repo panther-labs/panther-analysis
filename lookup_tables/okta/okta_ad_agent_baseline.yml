@@ -1,0 +1,172 @@
+AnalysisType: lookup_table
+LookupName: okta_ad_agent_baseline
+Enabled: true
+Refresh:
+  PeriodMinutes: 1440
+Description: |
+  Builds 90-day behavioral baseline for Okta AD Agent authentication patterns.
+  Stores per-user statistical metrics (mean, stddev) for hourly authentication volume,
+  IP diversity, country diversity, city diversity, and device diversity.
+  Used by the Okta.ADAgent.AuthenticationAnomaly.ZScore detection for z-score anomaly detection.
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+SnowflakeQuery: |
+  -- OKTA AD AGENT BASELINE BUILDER: 90-Day Behavioral Profile
+  -- Purpose: Establish normal AD Agent authentication patterns for anomaly detection
+  -- Output: Stored in lookup table for z-score anomaly detection
+  -- Target Event: user.authentication.auth_via_AD_agent
+
+  WITH base AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          published,
+          eventType::string AS event_type,
+          outcome:result::string AS outcome,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          client:geographicalContext:state::string AS state,
+          client:userAgent:browser::string AS browser,
+          client:userAgent:os::string AS os,
+          client:device::string AS device,
+          securityContext:asNumber::string AS asn,
+          client:ipAddress::string AS ip_address,
+          securityContext:isp::string AS isp,
+          securityContext:domain::string AS domain,
+          securityContext:asOrg::string AS asn_org,
+          client:userAgent:rawUserAgent::string AS raw_user_agent,
+          debugContext:debugData:deviceFingerprint::string AS device_fingerprint,
+
+          -- Temporal features
+          HOUR(published) AS utc_hour,
+          DATE(published) AS event_date,
+          DATE_TRUNC('hour', published) AS event_hour,
+          CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END AS is_weekend,
+          CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END AS is_offhours
+
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND actor:alternateId::string LIKE '%@%'
+          AND eventType = 'user.authentication.auth_via_AD_agent'
+          AND outcome:result = 'SUCCESS'
+  ),
+
+  -- Scalar features
+  scalar_features AS (
+      SELECT
+          user_email,
+          COUNT(*) AS total_ad_agent_events,
+          COUNT(DISTINCT country) AS country_diversity,
+          COUNT(DISTINCT city) AS city_diversity,
+          COUNT(DISTINCT ip_address) AS ip_diversity,
+          COUNT(DISTINCT device_fingerprint) AS device_fingerprint_diversity,
+          COUNT(DISTINCT asn) AS asn_diversity,
+          COUNT(DISTINCT DATE(published)) AS active_days_count,
+          MODE(country) AS primary_country,
+          MODE(city) AS primary_city,
+          MODE(ip_address) AS primary_ip
+      FROM base
+      GROUP BY user_email
+  ),
+
+  -- Hourly aggregation for statistical analysis
+  ad_agent_hourly AS (
+      SELECT
+          user_email,
+          event_hour,
+          COUNT(*) AS hourly_total_events,
+          COUNT(DISTINCT ip_address) AS hourly_ip_diversity,
+          COUNT(DISTINCT country) AS hourly_country_diversity,
+          COUNT(DISTINCT city) AS hourly_city_diversity,
+          COUNT(DISTINCT asn) AS hourly_asn_diversity,
+          COUNT(DISTINCT device_fingerprint) AS hourly_device_diversity
+      FROM base
+      GROUP BY user_email, event_hour
+  ),
+
+  -- Statistical metrics (mean & stddev)
+  ad_agent_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_total_events) AS total_events,
+          COUNT(DISTINCT DATE(event_hour)) AS active_days,
+
+          -- Mean and stddev for volume metrics
+          AVG(hourly_total_events)::FLOAT AS mean_events_per_hour,
+          STDDEV(hourly_total_events) AS stddev_events_per_hour,
+
+          -- Mean and stddev for IP diversity
+          AVG(hourly_ip_diversity)::FLOAT AS mean_ip_diversity_per_hour,
+          STDDEV(hourly_ip_diversity) AS stddev_ip_diversity_per_hour,
+
+          -- Mean and stddev for country diversity
+          AVG(hourly_country_diversity)::FLOAT AS mean_country_diversity_per_hour,
+          STDDEV(hourly_country_diversity) AS stddev_country_diversity_per_hour,
+
+          -- Mean and stddev for city diversity
+          AVG(hourly_city_diversity)::FLOAT AS mean_city_diversity_per_hour,
+          STDDEV(hourly_city_diversity) AS stddev_city_diversity_per_hour,
+
+          -- Mean and stddev for device diversity
+          AVG(hourly_device_diversity)::FLOAT AS mean_device_diversity_per_hour,
+          STDDEV(hourly_device_diversity) AS stddev_device_diversity_per_hour,
+
+          -- Metadata
+          COUNT(*) AS hours_with_activity,
+          MIN(event_hour) AS first_event,
+          MAX(event_hour) AS last_event
+
+      FROM ad_agent_hourly
+      GROUP BY user_email
+      HAVING SUM(hourly_total_events) >= 10  -- Minimum 10 AD Agent events to establish baseline
+  )
+
+  -- Final output: Baseline metrics for lookup table
+  SELECT
+      s.user_email,
+
+      -- Volume metrics
+      s.total_ad_agent_events,
+      s.active_days_count,
+
+      -- Diversity metrics
+      s.country_diversity,
+      s.city_diversity,
+      s.ip_diversity,
+      s.device_fingerprint_diversity,
+      s.asn_diversity,
+
+      -- Primary values (most common)
+      s.primary_country,
+      s.primary_city,
+      s.primary_ip,
+
+      -- Statistical baselines (for z-score calculation)
+      stats.total_events AS baseline_total_events,
+      stats.active_days AS baseline_active_days,
+      ROUND(stats.mean_events_per_hour, 4) AS baseline_mean_events_per_hour,
+      ROUND(stats.stddev_events_per_hour, 4) AS baseline_stddev_events_per_hour,
+      ROUND(stats.mean_ip_diversity_per_hour, 4) AS baseline_mean_ip_diversity_per_hour,
+      ROUND(stats.stddev_ip_diversity_per_hour, 4) AS baseline_stddev_ip_diversity_per_hour,
+      ROUND(stats.mean_country_diversity_per_hour, 4) AS baseline_mean_country_diversity_per_hour,
+      ROUND(stats.stddev_country_diversity_per_hour, 4) AS baseline_stddev_country_diversity_per_hour,
+      ROUND(stats.mean_city_diversity_per_hour, 4) AS baseline_mean_city_diversity_per_hour,
+      ROUND(stats.stddev_city_diversity_per_hour, 4) AS baseline_stddev_city_diversity_per_hour,
+      ROUND(stats.mean_device_diversity_per_hour, 4) AS baseline_mean_device_diversity_per_hour,
+      ROUND(stats.stddev_device_diversity_per_hour, 4) AS baseline_stddev_device_diversity_per_hour,
+      stats.hours_with_activity AS baseline_hours_with_activity,
+      stats.first_event AS baseline_first_event,
+      stats.last_event AS baseline_last_event,
+
+      -- Metadata
+      CURRENT_TIMESTAMP AS baseline_updated_at,
+      '90days' AS baseline_window
+
+  FROM scalar_features s
+  JOIN ad_agent_stats stats ON s.user_email = stats.user_email
+  ORDER BY stats.total_events DESC
+  LIMIT 100
+LogTypeMap:
+  PrimaryKey: user_email
+  AssociatedLogTypes:
+    - LogType: Okta.SystemLog
+      Selectors:
+        - "$.actor.alternateId"
