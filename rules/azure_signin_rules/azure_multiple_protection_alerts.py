@@ -1,16 +1,8 @@
-import json
-
 from panther_azuresignin_helpers import (
     azure_signin_alert_context,
     azure_signin_success,
     is_sign_in_event,
 )
-from panther_detection_helpers.caching import add_to_string_set
-
-RULE_ID = "Azure.SignIn.MultipleProtectionAlerts"
-
-# Minimum number of risk events to trigger alert
-MIN_RISK_EVENTS = 3
 
 # Risk states that indicate protection alerts
 RISK_STATES = {
@@ -33,35 +25,22 @@ def rule(event):
     risk_state = event.deep_get("properties", "riskState", default="")
     if not risk_state or risk_state.lower() not in RISK_STATES:
         return False
-    risk_state = risk_state.lower()
 
     # Check risk levels
     risk_level_during = event.deep_get("properties", "riskLevelDuringSignIn", default="").lower()
     risk_level_agg = event.deep_get("properties", "riskLevelAggregated", default="").lower()
 
     has_risk = risk_level_during in RISK_LEVELS or risk_level_agg in RISK_LEVELS
-
     if not has_risk:
         return False
 
     # Get user principal name for tracking
     user_principal_name = event.deep_get("properties", "userPrincipalName", default="")
-    if not user_principal_name:
-        return False
+    return bool(user_principal_name)
 
-    time_stamp = event.get("time", "")
-    if not time_stamp:
-        return False
 
-    cache_key = f"{user_principal_name}-{RULE_ID}"
-    event_set = add_to_string_set(cache_key, [time_stamp])
-
-    # Handle unit test mocks
-    if isinstance(event_set, str):
-        event_set = json.loads(event_set) if event_set else []
-
-    # Alert if user has 3+ risk events within the cache window (15 minutes)
-    return len(event_set) >= MIN_RISK_EVENTS
+def dedup(event):
+    return event.deep_get("properties", "userPrincipalName", default="<UNKNOWN_USER>")
 
 
 def title(event):

@@ -8,18 +8,13 @@ LogTypes:
 Tags:
   - Axonius
 Severity: Medium
+Threshold: 5
+DedupPeriodMinutes: 5
 Description: Detects too many failed Axonius login attempts, which may indicate a brute-force attack
 Runbook: Review the actions taken, check credentials/service user used and escalate.
 Tests:
   - Name: Successful Login
     ExpectedResult: False
-    Mocks:
-      - objectName: get_counter
-        returnValue: "0"
-      - objectName: increment_counter
-        returnValue: True
-      - objectName: set_key_expiration
-        returnValue: True
     Log:
       {
         "event": {
@@ -35,15 +30,8 @@ Tests:
         "source": "axonius",
         "time": 1752690986.344609
       }
-  - Name: One Failed Login
-    ExpectedResult: False
-    Mocks:
-      - objectName: get_counter
-        returnValue: "0"
-      - objectName: increment_counter
-        returnValue: True
-      - objectName: set_key_expiration
-        returnValue: True
+  - Name: Failed Login - Counts Toward Threshold
+    ExpectedResult: True
     Log:
       {
         "event": {
@@ -59,17 +47,8 @@ Tests:
         "source": "axonius",
         "time": 1752690986.344609
       }
-  - Name: Too Many Failed Login
-    ExpectedResult: True
-    Mocks:
-      - objectName: get_counter
-        returnValue: "6"
-      - objectName: increment_counter
-        returnValue: True
-      - objectName: set_key_expiration
-        returnValue: True
-      - objectName: reset_counter
-        returnValue: True
+  - Name: Failed Login Without Username - No Match
+    ExpectedResult: False
     Log:
       {
         "event": {
@@ -80,7 +59,7 @@ Tests:
             "status": "failure"
           },
           "type": "user",
-          "user": "testr@axonius.com"
+          "user": ""
         },
         "source": "axonius",
         "time": 1752690986.344609

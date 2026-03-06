@@ -1,9 +1,4 @@
-import json
-
 from panther_azuresignin_helpers import azure_signin_alert_context, azure_signin_success
-from panther_detection_helpers.caching import add_to_string_set
-
-RULE_ID = "Azure.SignIn.GraphSessionMultipleIPs"
 
 # Whitelisted application IDs (common Microsoft services that may legitimately use multiple IPs)
 WHITELISTED_APP_IDS = {
@@ -79,16 +74,17 @@ def rule(event):
     ):
         return False
 
-    # Track IPs per session
-    cache_key = f"{session_id}-{user_principal_name}-{RULE_ID}"
-    ip_set = add_to_string_set(cache_key, [source_ip])
+    return True
 
-    # Handle unit test mocks
-    if isinstance(ip_set, str):
-        ip_set = json.loads(ip_set) if ip_set else []
 
-    # Alert if multiple IPs are used for the same session
-    return len(ip_set) >= 2
+def unique(event):
+    return event.deep_get("properties", "ipAddress", default="")
+
+
+def dedup(event):
+    session_id = event.deep_get("properties", "sessionId", default="")
+    user_principal_name = event.deep_get("properties", "userPrincipalName", default="")
+    return f"{session_id}-{user_principal_name}"
 
 
 def title(event):
