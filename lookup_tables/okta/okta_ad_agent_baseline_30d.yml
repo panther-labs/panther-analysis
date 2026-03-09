@@ -1,16 +1,16 @@
 AnalysisType: lookup_table
-LookupName: okta_ad_agent_baseline
+LookupName: okta_ad_agent_baseline_30d
 Enabled: true
 Refresh:
   PeriodMinutes: 1440
 Description: |
-  Builds 90-day behavioral baseline for Okta AD Agent authentication patterns.
+  Builds 30-day behavioral baseline for Okta AD Agent authentication patterns.
   Stores per-user statistical metrics (mean, stddev) for hourly authentication volume,
   IP diversity, country diversity, city diversity, and device diversity.
   Used by the Okta.ADAgent.AuthenticationAnomaly.ZScore detection for z-score anomaly detection.
 Reference: https://www.varonis.com/blog/okta-attack-vectors
 SnowflakeQuery: |
-  -- OKTA AD AGENT BASELINE BUILDER: 90-Day Behavioral Profile
+  -- OKTA AD AGENT BASELINE BUILDER: 30-Day Behavioral Profile
   -- Purpose: Establish normal AD Agent authentication patterns for anomaly detection
   -- Output: Stored in lookup table for z-score anomaly detection
   -- Target Event: user.authentication.auth_via_AD_agent
@@ -43,7 +43,7 @@ SnowflakeQuery: |
           CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END AS is_offhours
 
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '30 days'
           AND actor:alternateId::string LIKE '%@%'
           AND eventType = 'user.authentication.auth_via_AD_agent'
           AND outcome:result = 'SUCCESS'
@@ -158,7 +158,7 @@ SnowflakeQuery: |
 
       -- Metadata
       CURRENT_TIMESTAMP AS baseline_updated_at,
-      '90days' AS baseline_window
+      '30days' AS baseline_window
 
   FROM scalar_features s
   JOIN ad_agent_stats stats ON s.user_email = stats.user_email

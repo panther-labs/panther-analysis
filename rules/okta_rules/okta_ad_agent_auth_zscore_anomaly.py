@@ -17,10 +17,11 @@ def title(event):
 def severity(event):
     # Dynamic severity based on anomaly severity score and z-score magnitudes.
     # Higher z-scores = more standard deviations from baseline = more suspicious.
-    severity_score = event.get("anomaly_severity_score", 0)
-    z_volume = event.get("z_score_volume", 0)
-    z_ip = event.get("z_score_ip_diversity", 0)
-    z_country = event.get("z_score_country_diversity", 0)
+    # Cold-start events have null z-scores (no baseline), so default to 0.
+    severity_score = event.get("anomaly_severity_score") or 0
+    z_volume = event.get("z_score_volume") or 0
+    z_ip = event.get("z_score_ip_diversity") or 0
+    z_country = event.get("z_score_country_diversity") or 0
 
     # Critical: Extreme anomaly (severity score > 15 or any z-score > 5)
     if severity_score > 15 or max(z_volume, z_ip, z_country) > 5:

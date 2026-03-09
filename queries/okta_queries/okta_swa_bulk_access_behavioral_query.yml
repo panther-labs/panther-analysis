@@ -84,7 +84,6 @@ Query: |
               (eventType = 'application.user_membership.change_username'
                   AND (
                       debugContext:debugData:swa_credential_access::string = 'true'
-                      OR debugContext:debugData:swa_credential_access::string = 'view'
                   ))
           )
       GROUP BY admin_email
@@ -100,10 +99,7 @@ Query: |
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
-          AND (
-              debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:swa_credential_access::string = 'view'
-          )
+          AND debugContext:debugData:swa_credential_access::string = 'true'
       GROUP BY admin_email, source_ip
   ),
 
@@ -118,10 +114,7 @@ Query: |
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
-          AND (
-              debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:swa_credential_access::string = 'view'
-          )
+          AND debugContext:debugData:swa_credential_access::string = 'true'
       GROUP BY admin_email, event_hour
   ),
 
