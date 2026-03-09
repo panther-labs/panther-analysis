@@ -85,11 +85,14 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
         time = self._scanner_lookup(match_field, "first_seen")
         if not time:
             return None
-        if isinstance(time, Sequence) and not isinstance(time, str):
-            if len(time) == 0:
-                return None
-            return min(parser.parse(t) for t in time)
-        return parser.parse(time)
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return min(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
 
     def found(self, match_field: str) -> bool:
         return bool(self._scanner_lookup(match_field, "found"))
@@ -98,11 +101,14 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
         time = self._scanner_lookup(match_field, "last_seen_timestamp")
         if not time:
             return None
-        if isinstance(time, Sequence) and not isinstance(time, str):
-            if len(time) == 0:
-                return None
-            return max(parser.parse(t) for t in time)
-        return parser.parse(time)
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return max(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
 
     def ip_address(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "ip")
@@ -261,11 +267,14 @@ class GreyNoiseV3BusinessService(LookupTableMatches):
         time = self._bsi_lookup(match_field, "last_updated")
         if not time:
             return None
-        if isinstance(time, Sequence) and not isinstance(time, str):
-            if len(time) == 0:
-                return None
-            return max(parser.parse(t) for t in time)
-        return parser.parse(time)
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return max(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
 
     def ip_address(self, match_field: str) -> Union[list[str], str]:
         return self._lookup(match_field, "ip")

@@ -10,37 +10,21 @@ Description: >-
   by GreyNoise V3 internet scanner intelligence. Known business services and benign
   IPs are excluded.
 Runbook: |
-  1. Review the alert context to identify the flagged IP, its GreyNoise classification
-     (malicious or unknown), and the log source where it appeared.
-  2. Open the GreyNoise URL from the alert context to review the full IP profile, including
-     associated CVEs, tags, actor attribution, and scanning behavior.
-  3. Determine what the IP interacted with in your environment:
-     - Query the data lake for all events involving this IP across log sources.
-     - Identify which assets, users, or services were contacted.
-     - Check if any connections were successful or if they were blocked by firewalls/WAFs.
-  4. Assess the classification:
-     - "malicious": Known scanner with hostile intent. Prioritize investigation.
-     - "unknown": Not yet classified. Correlate with other threat intel sources.
-  5. Check for indicators of compromise on targeted assets:
-     - Review authentication logs for brute force or credential stuffing attempts.
-     - Check for exploitation attempts matching the CVEs listed in GreyNoise tags.
-     - Look for post-exploitation activity (lateral movement, data exfiltration).
-  6. If the IP is confirmed malicious and interaction was successful:
-     - Block the IP at the firewall/WAF level.
-     - Isolate any compromised hosts for forensic analysis.
-     - Reset credentials for any accounts that interacted with the IP.
-     - Review and remediate any vulnerabilities the IP may have exploited.
-  7. If the IP is classified as "unknown" with no successful interaction,
-     consider adding it to a watchlist and monitoring for recurring activity.
+  1. Review the alert context and open the GreyNoise URL to assess the IP's classification,
+     associated CVEs, tags, and scanning behavior.
+  2. Query the data lake for all events involving this IP to determine what assets or services
+     were contacted and whether any connections were successful.
+  3. If the IP is confirmed malicious and interaction was successful, block the IP, isolate
+     affected hosts, and reset any credentials that may have been exposed.
+Reference: https://docs.panther.com/enrichment/greynoise
 DedupPeriodMinutes: 60
 Reports:
   MITRE ATT&CK:
-    - TA0043:T1595
+    - TA0043:T1595.001
 Tags:
+  - Reconnaissance:Active Scanning
   - GreyNoise
-  - Enrichment
   - Threat Intelligence
-  - IP Reputation
 SummaryAttributes:
   - p_any_ip_addresses
   - p_source_label
