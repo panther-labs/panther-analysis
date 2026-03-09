@@ -288,681 +288,297 @@ class TestTorExitNodes(unittest.TestCase):
         )
 
 
-class TestGreyNoiseBasic(unittest.TestCase):
+class TestGreyNoiseV3ScannerIntelligence(
+    unittest.TestCase
+):  # pylint: disable=too-many-public-methods
     def setUp(self):
         self.event = PantherEvent(
             {
                 "p_enrichment": {
-                    "greynoise_noise_basic": {
+                    "my_custom_greynoise_noise": {
                         "ClientIP": {
-                            "actor": "unknown",
-                            "classification": "malicious",
                             "ip": "142.93.204.250",
-                            "p_match": "142.93.204.250",
-                        }
-                    }
-                }
-            }
-        )
-
-    def test_greynoise_object(self):
-        """Should be basic"""
-        noise = p_greynoise_h.GetGreyNoiseObject(self.event)
-        self.assertEqual(noise.subscription_level(), "basic")
-        # Ensure that noise.lut_matches is None if there is no enrichment
-        # some users want to test if any greynoise enrichment exists
-        self.assertIsNotNone(noise.lut_matches)
-        noise_none = p_greynoise_h.GetGreyNoiseObject(PantherEvent({}))
-        self.assertIsNone(noise_none.lut_matches)
-
-    def test_greynoise_severity(self):
-        """Should be CRITICAL"""
-        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
-        self.assertEqual(sev, "CRITICAL")
-
-    def test_subscription_level(self):
-        """Should be basic"""
-        noise = p_greynoise_h.GreyNoiseBasic(PantherEvent({}))
-        self.assertEqual(noise.subscription_level(), "basic")
-
-    def test_ip_address_not_found(self):
-        """Should not find anything"""
-        noise = p_greynoise_h.GreyNoiseBasic(PantherEvent({}))
-        ip_address = noise.ip_address("foo")
-        self.assertEqual(ip_address, None)
-
-    def test_ip_address_found(self):
-        """Should find enrichment"""
-        noise = p_greynoise_h.GreyNoiseBasic(self.event)
-        ip_address = noise.ip_address("ClientIP")
-        self.assertEqual(ip_address, "142.93.204.250")
-
-    def test_classification(self):
-        """Should classify as malicious"""
-        noise = p_greynoise_h.GreyNoiseBasic(self.event)
-        classification = noise.classification("ClientIP")
-        self.assertEqual(classification, "malicious")
-
-    def test_actor(self):
-        """Should have unknown actor"""
-        noise = p_greynoise_h.GreyNoiseBasic(self.event)
-        actor = noise.actor("ClientIP")
-        self.assertEqual(actor, "unknown")
-
-    def test_url(self):
-        """Should have url"""
-        noise = p_greynoise_h.GreyNoiseBasic(self.event)
-        url = noise.url("ClientIP")
-        self.assertEqual(url, "https://www.greynoise.io/viz/ip/142.93.204.250")
-
-    def test_context(self):
-        """context generation"""
-        noise = p_greynoise_h.GreyNoiseBasic(self.event)
-        context = noise.context("ClientIP")
-        self.assertEqual(
-            context,
-            {
-                "Actor": "unknown",
-                "Classification": "malicious",
-                "GreyNoise_URL": "https://www.greynoise.io/viz/ip/142.93.204.250",
-                "IP": "142.93.204.250",
-            },
-        )
-
-
-# pylint: disable=too-many-public-methods
-class TestGreyNoiseAdvanced(unittest.TestCase):
-    def setUp(self):
-        self.event = PantherEvent(
-            {
-                "p_enrichment": {
-                    "greynoise_noise_advanced": {
-                        "ClientIP": {
-                            "p_match": "142.93.204.250",
-                            "actor": "unknown",
-                            "bot": False,
-                            "classification": "malicious",
-                            "cve": ["cve1244", "cve4567"],
-                            "first_seen": "2022-03-19",
-                            "ip": "142.93.204.250",
-                            "last_seen_timestamp": "2022-04-06",
-                            "metadata": {
-                                "asn": "AS14061",
-                                "category": "hosting",
-                                "city": "North Bergen",
-                                "country": "United States",
-                                "country_code": "US",
-                                "organization": "DigitalOcean, LLC",
-                                "os": "Linux 2.2-3.x",
-                                "rdns": "",
-                                "region": "New Jersey",
-                                "tor": False,
-                            },
-                            "raw_data": {
-                                "hassh": [],
-                                "ja3": [],
-                                "scan": [{"port": 23, "protocol": "TCP"}],
-                                "web": {},
-                            },
-                            "seen": True,
-                            "spoofable": False,
-                            "tags": ["Mirai", "ZMap Client"],
-                            "vpn": False,
-                            "vpn_service": "N/A",
-                        }
-                    }
-                }
-            }
-        )
-
-        self.event_list = PantherEvent(
-            {
-                "p_enrichment": {
-                    "greynoise_noise_advanced": {
-                        "p_any_ip_addresses": [
-                            {
-                                "p_match": "142.93.204.250",
-                                "actor": "unknown",
+                            "internet_scanner_intelligence": {
+                                "actor": "alphastrike",
                                 "bot": False,
                                 "classification": "malicious",
-                                "cve": ["cve1244", "cve4567"],
-                                "first_seen": "2022-03-19",
-                                "ip": "142.93.204.250",
-                                "last_seen_timestamp": "2022-04-06",
+                                "cves": ["CVE-2021-44228", "CVE-2021-45046"],
+                                "first_seen": "2021-01-01",
+                                "found": True,
+                                "last_seen": "2024-01-01",
+                                "last_seen_timestamp": "2024-01-01 12:00:00",
                                 "metadata": {
                                     "asn": "AS14061",
+                                    "carrier": "",
                                     "category": "hosting",
-                                    "city": "North Bergen",
-                                    "country": "United States",
-                                    "country_code": "US",
+                                    "datacenter": "DigitalOcean",
+                                    "domain": "digitalocean.com",
+                                    "latitude": 40.7128,
+                                    "longitude": -74.006,
+                                    "mobile": False,
                                     "organization": "DigitalOcean, LLC",
                                     "os": "Linux 2.2-3.x",
-                                    "rdns": "",
-                                    "region": "New Jersey",
-                                    "tor": False,
-                                },
-                                "raw_data": {
-                                    "hassh": [],
-                                    "ja3": [],
-                                    "scan": [{"port": 23, "protocol": "TCP"}],
-                                    "web": {},
-                                },
-                                "seen": True,
-                                "spoofable": False,
-                                "tags": ["Mirai", "ZMap Client"],
-                                "vpn": False,
-                                "vpn_service": "N/A",
-                            },
-                            {
-                                "p_match": "100.93.204.250",
-                                "actor": "stinky rat",
-                                "bot": True,
-                                "classification": "malicious",
-                                "cve": ["cve1244", "cve4567"],
-                                "first_seen": "2022-02-19",
-                                "ip": "100.93.204.250",
-                                "last_seen_timestamp": "2022-03-06",
-                                "metadata": {
-                                    "asn": "AS14461",
-                                    "category": "isp",
-                                    "city": "South Bergen",
-                                    "country": "United States",
-                                    "country_code": "US",
-                                    "organization": "DigitalOcean, LLC",
-                                    "os": "Linux 2.2-3.x",
-                                    "rdns": "",
-                                    "region": "South Hampton",
-                                    "tor": False,
+                                    "rdns": "test.example.com",
+                                    "rdns_parent": "example.com",
+                                    "region": "New York",
+                                    "sensor_count": 500,
+                                    "sensor_hits": 12345,
+                                    "source_city": "New York",
+                                    "source_country": "United States",
+                                    "source_country_code": "US",
+                                    "destination_countries": ["DE", "FR"],
                                 },
                                 "spoofable": False,
-                                "vpn": False,
-                                "vpn_service": "N/A",
+                                "tags": [
+                                    {
+                                        "id": "tag1",
+                                        "name": "Log4j Scanner",
+                                        "category": "activity",
+                                        "intention": "malicious",
+                                    },
+                                    {
+                                        "id": "tag2",
+                                        "name": "Web Crawler",
+                                        "category": "activity",
+                                        "intention": "benign",
+                                    },
+                                ],
+                                "tor": False,
+                                "vpn": True,
+                                "vpn_service": "NordVPN",
                             },
-                        ]
+                            "business_service_intelligence": {
+                                "found": False,
+                            },
+                        }
                     }
                 }
             }
         )
 
-    def test_greynoise_object(self):
-        """Should be advanced"""
-        noise = p_greynoise_h.GetGreyNoiseObject(self.event)
-        self.assertEqual(noise.subscription_level(), "advanced")
+    def test_v3_object_exists(self):
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(self.event)
+        self.assertIsNotNone(scanner)
 
-    def test_greynoise_severity(self):
-        """Should be CRITICAL"""
-        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
-        self.assertEqual(sev, "CRITICAL")
-
-    def test_greynoise_severity_list(self):
-        """Should be CRITICAL (list)"""
-        sev = p_greynoise_h.GreyNoiseSeverity(self.event_list, "p_any_ip_addresses")
-        self.assertEqual(sev, "CRITICAL")
-
-    def test_subscription_level(self):
-        """Should be advanced"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(PantherEvent({}))
-        self.assertEqual(noise.subscription_level(), "advanced")
-
-    def test_ip_address_not_found(self):
-        """Should not find anything"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(PantherEvent({}))
-        ip_address = noise.ip_address("foo")
-        self.assertEqual(ip_address, None)
-
-    def test_ip_address_found(self):
-        """Should find enrichment"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        ip_address = noise.ip_address("ClientIP")
-        self.assertEqual(ip_address, "142.93.204.250")
-
-    def test_classification(self):
-        """Should classify as malicious"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        classification = noise.classification("ClientIP")
-        self.assertEqual(classification, "malicious")
+    def test_v3_object_none(self):
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(PantherEvent({}))
+        self.assertIsNone(scanner)
 
     def test_actor(self):
-        """Should have unknown actor"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        actor = noise.actor("ClientIP")
-        self.assertEqual(actor, "unknown")
-
-    def test_url(self):
-        """Should have url"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        url = noise.url("ClientIP")
-        self.assertEqual(url, "https://www.greynoise.io/viz/ip/142.93.204.250")
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.actor("ClientIP"), "alphastrike")
 
     def test_is_bot(self):
-        """Should be bot"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        is_bot = noise.is_bot("ClientIP")
-        self.assertEqual(is_bot, False)
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertFalse(scanner.is_bot("ClientIP"))
 
-    def test_cve_string(self):
-        """Should have cve string"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        cve_string = noise.cve_string("ClientIP")
-        self.assertEqual(cve_string, "cve1244 cve4567")
+    def test_classification(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.classification("ClientIP"), "malicious")
 
     def test_cve_list(self):
-        """Should have cve list"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        cve_list = noise.cve_list("ClientIP")
-        self.assertEqual(cve_list, ["cve1244", "cve4567"])
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.cve_list("ClientIP"), ["CVE-2021-44228", "CVE-2021-45046"])
 
-    def test_first_seen(self):
-        """Should have first seen"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        first_seen = noise.first_seen("ClientIP")
-        self.assertEqual(first_seen, datetime.datetime(2022, 3, 19, 0, 0))
+    def test_cve_string(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.cve_string("ClientIP"), "CVE-2021-44228 CVE-2021-45046")
 
-    def test_first_seen_list(self):
-        """Should have first seen (list)"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event_list)
-        first_seen = noise.first_seen("p_any_ip_addresses")
-        self.assertEqual(first_seen, datetime.datetime(2022, 2, 19, 0, 0))
+    def test_found(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertTrue(scanner.found("ClientIP"))
 
-    def test_last_seen(self):
-        """Should have last seen"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        last_seen = noise.last_seen("ClientIP")
-        self.assertEqual(last_seen, datetime.datetime(2022, 4, 6, 0, 0))
+    def test_ip_address(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.ip_address("ClientIP"), "142.93.204.250")
 
-    def test_last_seen_list(self):
-        """Should have last seen (list)"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event_list)
-        last_seen = noise.last_seen("p_any_ip_addresses")
-        self.assertEqual(last_seen, datetime.datetime(2022, 4, 6, 0, 0))
+    def test_url(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.url("ClientIP"), "https://www.greynoise.io/viz/ip/142.93.204.250")
 
     def test_asn(self):
-        """Should have asn"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        asn = noise.asn("ClientIP")
-        self.assertEqual(asn, "AS14061")
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.asn("ClientIP"), "AS14061")
 
     def test_category(self):
-        """Should have catgeory"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        category = noise.category("ClientIP")
-        self.assertEqual(category, "hosting")
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.category("ClientIP"), "hosting")
 
-    def test_city(self):
-        """Should have city"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        city = noise.city("ClientIP")
-        self.assertEqual(city, "North Bergen")
-
-    def test_country(self):
-        """Should have city"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        country = noise.country("ClientIP")
-        self.assertEqual(country, "United States")
-
-    def test_country_code(self):
-        """Should have city"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        country_code = noise.country_code("ClientIP")
-        self.assertEqual(country_code, "US")
+    def test_datacenter(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.datacenter("ClientIP"), "DigitalOcean")
 
     def test_organization(self):
-        """Should have organization"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        organization = noise.organization("ClientIP")
-        self.assertEqual(organization, "DigitalOcean, LLC")
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.organization("ClientIP"), "DigitalOcean, LLC")
 
     def test_operating_system(self):
-        """Should have os"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        operating_system = noise.operating_system("ClientIP")
-        self.assertEqual(operating_system, "Linux 2.2-3.x")
-
-    def test_region(self):
-        """Should have region"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        region = noise.region("ClientIP")
-        self.assertEqual(region, "New Jersey")
-
-    def test_is_tor(self):
-        """Should not have tor"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        is_tor = noise.is_tor("ClientIP")
-        self.assertEqual(is_tor, False)
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.operating_system("ClientIP"), "Linux 2.2-3.x")
 
     def test_rev_dns(self):
-        """Should not have rev dns"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        rev_dns = noise.rev_dns("ClientIP")
-        self.assertEqual(rev_dns, "")
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.rev_dns("ClientIP"), "test.example.com")
+
+    def test_rev_dns_parent(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.rev_dns_parent("ClientIP"), "example.com")
+
+    def test_region(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.region("ClientIP"), "New York")
+
+    def test_sensor_count(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.sensor_count("ClientIP"), 500)
+
+    def test_source_city(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.source_city("ClientIP"), "New York")
+
+    def test_source_country_code(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.source_country_code("ClientIP"), "US")
+
+    def test_destination_countries(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.destination_countries("ClientIP"), ["DE", "FR"])
 
     def test_is_spoofable(self):
-        """Should not be spoofable"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        is_spoofable = noise.is_spoofable("ClientIP")
-        self.assertEqual(is_spoofable, False)
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertFalse(scanner.is_spoofable("ClientIP"))
 
-    def test_tags_string(self):
-        """Should have tags string"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        tags_string = noise.tags_string("ClientIP")
-        self.assertEqual(tags_string, "Mirai ZMap Client")
+    def test_tag_names(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.tag_names("ClientIP"), ["Log4j Scanner", "Web Crawler"])
 
-    def test_tags_list(self):
-        """Should have tags list"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        tags_list = noise.tags_list("ClientIP")
-        self.assertEqual(tags_list, ["Mirai", "ZMap Client"])
+    def test_tag_names_string(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.tag_names_string("ClientIP"), "Log4j Scanner Web Crawler")
+
+    def test_is_tor(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertFalse(scanner.is_tor("ClientIP"))
 
     def test_is_vpn(self):
-        """Should not be vpn"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        is_vpn = noise.is_vpn("ClientIP")
-        self.assertEqual(is_vpn, False)
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertTrue(scanner.is_vpn("ClientIP"))
 
     def test_vpn_service(self):
-        """Should not be vpn service"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        vpn_service = noise.vpn_service("ClientIP")
-        self.assertEqual(vpn_service, "N/A")
-
-    def test_metadata(self):
-        """Should have metadata"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        metadata = noise.metadata("ClientIP")
-        self.assertEqual(
-            metadata,
-            {
-                "asn": "AS14061",
-                "category": "hosting",
-                "city": "North Bergen",
-                "country": "United States",
-                "country_code": "US",
-                "organization": "DigitalOcean, LLC",
-                "os": "Linux 2.2-3.x",
-                "rdns": "",
-                "region": "New Jersey",
-                "tor": False,
-            },
-        )
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertEqual(scanner.vpn_service("ClientIP"), "NordVPN")
 
     def test_context(self):
-        """context generation"""
-        noise = p_greynoise_h.GreyNoiseAdvanced(self.event)
-        context = noise.context("ClientIP")
-        self.assertEqual(
-            context,
-            {
-                "Actor": "unknown",
-                "Classification": "malicious",
-                "GreyNoise_URL": "https://www.greynoise.io/viz/ip/142.93.204.250",
-                "IP": "142.93.204.250",
-                "Metadata": {
-                    "asn": "AS14061",
-                    "category": "hosting",
-                    "city": "North Bergen",
-                    "country": "United States",
-                    "country_code": "US",
-                    "organization": "DigitalOcean, LLC",
-                    "os": "Linux 2.2-3.x",
-                    "rdns": "",
-                    "region": "New Jersey",
-                    "tor": False,
-                },
-                "VPN": "N/A",
-                "Tags": ["Mirai", "ZMap Client"],
-                "CVE": ["cve1244", "cve4567"],
-            },
-        )
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        context = scanner.context("ClientIP")
+        self.assertEqual(context["IP"], "142.93.204.250")
+        self.assertEqual(context["Classification"], "malicious")
+        self.assertEqual(context["Actor"], "alphastrike")
+        self.assertEqual(context["VPN"], "NordVPN")
+        self.assertEqual(context["Tags"], ["Log4j Scanner", "Web Crawler"])
+        self.assertEqual(context["CVEs"], ["CVE-2021-44228", "CVE-2021-45046"])
+
+    def test_v3_severity_malicious(self):
+        sev = p_greynoise_h.GreyNoiseV3Severity(self.event, "ClientIP")
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_v3_severity_no_enrichment(self):
+        sev = p_greynoise_h.GreyNoiseV3Severity(PantherEvent({}), "ClientIP")
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_no_match_field(self):
+        scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
+        self.assertIsNone(scanner.classification("nonexistent"))
+        self.assertEqual(scanner.cve_list("nonexistent"), [])
+        self.assertEqual(scanner.tag_names("nonexistent"), [])
 
 
-class TestRIOTBasic(unittest.TestCase):
+class TestGreyNoiseV3BusinessService(unittest.TestCase):
     def setUp(self):
         self.event = PantherEvent(
             {
                 "p_enrichment": {
-                    "greynoise_riot_basic": {
+                    "my_custom_greynoise_noise": {
                         "ClientIP": {
-                            "p_match": "142.93.204.250",
-                            "ip_cidr": "142.93.204.250/32",
-                            "provider": {"name": "foo"},
-                            "scan_time": "2023-05-12 05:11:04.679962983",
+                            "ip": "8.8.8.8",
+                            "internet_scanner_intelligence": {
+                                "classification": "benign",
+                                "found": True,
+                            },
+                            "business_service_intelligence": {
+                                "found": True,
+                                "category": "public_dns",
+                                "description": "Google Public DNS",
+                                "explanation": (
+                                    "Google operates one of the largest public DNS services"
+                                ),
+                                "name": "Google DNS",
+                                "reference": "https://developers.google.com/speed/public-dns",
+                                "trust_level": 1,
+                                "last_updated": "2024-06-15T12:00:00Z",
+                            },
                         }
                     }
                 }
             }
         )
 
-    def test_greynoise_object(self):
-        """Should be basic"""
-        riot = p_greynoise_h.GetGreyNoiseRiotObject(self.event)
-        self.assertEqual(riot.subscription_level(), "basic")
+    def test_v3_bsi_object_exists(self):
+        bsi = p_greynoise_h.GetGreyNoiseV3BusinessServiceObject(self.event)
+        self.assertIsNotNone(bsi)
 
-    def test_subscription_level(self):
-        """Should be basic"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(PantherEvent({}))
-        self.assertEqual(riot.subscription_level(), "basic")
+    def test_v3_bsi_object_none(self):
+        bsi = p_greynoise_h.GetGreyNoiseV3BusinessServiceObject(PantherEvent({}))
+        self.assertIsNone(bsi)
 
-    def test_greynoise_severity(self):
-        """Should be INFO"""
-        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
-        self.assertEqual(sev, "INFO")
-
-    def test_is_riot(self):
-        """Should be riot"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        is_riot = riot.is_riot("ClientIP")
-        self.assertEqual(is_riot, True)
-
-    def test_ip_address(self):
-        """Should have ip address"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        cidr = riot.ip_address("ClientIP")
-        self.assertEqual(cidr, "142.93.204.250/32")
-
-    def test_name(self):
-        """Should have name"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        name = riot.name("ClientIP")
-        self.assertEqual(name, "foo")
-
-    def test_url(self):
-        """Should have url"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        url = riot.url("ClientIP")
-        self.assertEqual(url, "https://www.greynoise.io/viz/ip/142.93.204.250")
-
-    def test_last_updated(self):
-        """Should have last_updated"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        last_udpated = riot.last_updated("ClientIP")
-        self.assertEqual(last_udpated, datetime.datetime(2023, 5, 12, 5, 11, 4, 679962))
-
-    def test_context(self):
-        """Should have context"""
-        riot = p_greynoise_h.GreyNoiseRIOTBasic(self.event)
-        context = riot.context("ClientIP")
-        self.assertEqual(
-            context,
-            {
-                "GreyNoise_URL": "https://www.greynoise.io/viz/ip/142.93.204.250",
-                "IP": "142.93.204.250/32",
-                "Is_RIOT": True,
-                "Name": "foo",
-            },
-        )
-
-
-class TestRIOTAdvanced(unittest.TestCase):
-    def setUp(self):
-        self.event = PantherEvent(
-            {
-                "p_enrichment": {
-                    "greynoise_riot_advanced": {
-                        "ClientIP": {
-                            "p_match": "142.93.204.250",
-                            "ip_cidr": "142.93.204.250/32",
-                            "provider": {
-                                "name": "foo",
-                                "category": "cloud",
-                                "description": "some cloud",
-                                "explanation": "because",
-                                "reference": "my brother",
-                                "trust_level": "1",
-                            },
-                            "scan_time": "2023-05-12 05:11:04.679962983",
-                        }
-                    }
-                }
-            }
-        )
-
-        # for testing array matches
-        self.event_list = PantherEvent(
-            {
-                "p_enrichment": {
-                    "greynoise_riot_advanced": {
-                        "p_any_ip_addresses": [
-                            {
-                                "p_match": "142.93.204.250",
-                                "ip_cidr": "142.93.204.250/32",
-                                "provider": {
-                                    "name": "foo",
-                                    "category": "cloud",
-                                    "description": "some cloud",
-                                    "explanation": "because",
-                                    "reference": "my brother",
-                                    "trust_level": "1",
-                                },
-                                "scan_time": "2023-05-12 05:11:04.679962983",
-                            },
-                            {
-                                "p_match": "142.93.204.128",
-                                "ip_cidr": "142.93.204.128/32",
-                                "provider": {
-                                    "name": "bar",
-                                    "category": "cdn",
-                                    "description": "some some cdn",
-                                    "explanation": "because",
-                                    "reference": "my brother",
-                                    "trust_level": "2",
-                                },
-                                "scan_time": "2023-05-11 05:11:04.679962983",
-                            },
-                        ]
-                    }
-                }
-            }
-        )
-
-    def test_greynoise_object(self):
-        """Should be advanced"""
-        riot = p_greynoise_h.GetGreyNoiseRiotObject(self.event)
-        self.assertEqual(riot.subscription_level(), "advanced")
-
-    def test_subscription_level(self):
-        """Should be advanced"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(PantherEvent({}))
-        self.assertEqual(riot.subscription_level(), "advanced")
-
-    def test_greynoise_severity(self):
-        """Should be INFO"""
-        sev = p_greynoise_h.GreyNoiseSeverity(self.event, "ClientIP")
-        self.assertEqual(sev, "INFO")
-
-    def test_is_riot(self):
-        """Should be riot"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        is_riot = riot.is_riot("ClientIP")
-        self.assertEqual(is_riot, True)
-
-    def test_ip_address(self):
-        """Should have ip address"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        cidr = riot.ip_address("ClientIP")
-        self.assertEqual(cidr, "142.93.204.250/32")
-
-    def test_name(self):
-        """Should have name"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        name = riot.name("ClientIP")
-        self.assertEqual(name, "foo")
-
-    def test_url(self):
-        """Should have url"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        url = riot.url("ClientIP")
-        self.assertEqual(url, "https://www.greynoise.io/viz/ip/142.93.204.250")
-
-    def test_last_updated(self):
-        """Should have last_updated"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        last_udpated = riot.last_updated("ClientIP")
-        self.assertEqual(last_udpated, datetime.datetime(2023, 5, 12, 5, 11, 4, 679962))
-
-    def test_last_updated_list(self):
-        """Should have last_updated (list)"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event_list)
-        last_udpated = riot.last_updated("p_any_ip_addresses")
-        self.assertEqual(last_udpated, datetime.datetime(2023, 5, 12, 5, 11, 4, 679962))
-
-    def test_description(self):
-        """Should have description"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        desc = riot.description("ClientIP")
-        self.assertEqual(desc, "some cloud")
+    def test_found(self):
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertTrue(bsi.found("ClientIP"))
 
     def test_category(self):
-        """Should have category"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        cat = riot.category("ClientIP")
-        self.assertEqual(cat, "cloud")
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.category("ClientIP"), "public_dns")
+
+    def test_description(self):
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.description("ClientIP"), "Google Public DNS")
 
     def test_explanation(self):
-        """Should have explanation"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        exp = riot.explanation("ClientIP")
-        self.assertEqual(exp, "because")
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertIn("Google", bsi.explanation("ClientIP"))
+
+    def test_name(self):
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.name("ClientIP"), "Google DNS")
 
     def test_reference(self):
-        """Should have reference"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        ref = riot.reference("ClientIP")
-        self.assertEqual(ref, "my brother")
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertIn("google.com", bsi.reference("ClientIP"))
 
     def test_trust_level(self):
-        """Should have trust_level"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        trust_level = riot.trust_level("ClientIP")
-        self.assertEqual(trust_level, "1")
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.trust_level("ClientIP"), 1)
 
-    def test_trust_level_list(self):
-        """Should have trust_level (list)"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event_list)
-        levels = riot.trust_level("p_any_ip_addresses")
-        self.assertEqual(levels, ["1", "2"])
+    def test_ip_address(self):
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.ip_address("ClientIP"), "8.8.8.8")
+
+    def test_url(self):
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        self.assertEqual(bsi.url("ClientIP"), "https://www.greynoise.io/viz/ip/8.8.8.8")
 
     def test_context(self):
-        """Should have context"""
-        riot = p_greynoise_h.GreyNoiseRIOTAdvanced(self.event)
-        context = riot.context("ClientIP")
-        self.assertEqual(
-            context,
-            {
-                "GreyNoise_URL": "https://www.greynoise.io/viz/ip/142.93.204.250",
-                "IP": "142.93.204.250/32",
-                "Is_RIOT": True,
-                "Name": "foo",
-                "Provider Data": {
-                    "name": "foo",
-                    "category": "cloud",
-                    "description": "some cloud",
-                    "explanation": "because",
-                    "reference": "my brother",
-                    "trust_level": "1",
-                },
-            },
-        )
+        bsi = p_greynoise_h.GreyNoiseV3BusinessService(self.event)
+        context = bsi.context("ClientIP")
+        self.assertTrue(context["Found"])
+        self.assertEqual(context["Name"], "Google DNS")
+        self.assertEqual(context["Category"], "public_dns")
+        self.assertEqual(context["TrustLevel"], 1)
+
+    def test_v3_severity_known_service(self):
+        """Known business service should return INFO severity"""
+        sev = p_greynoise_h.GreyNoiseV3Severity(self.event, "ClientIP")
+        self.assertEqual(sev, "INFO")
 
 
 class TestIpInfoHelpersLocation(unittest.TestCase):
